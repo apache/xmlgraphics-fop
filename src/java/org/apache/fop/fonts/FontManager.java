@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.FontTriplet.Matcher;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 
@@ -36,8 +36,8 @@ import org.apache.fop.fonts.substitute.FontSubstitutions;
  */
 public class FontManager {
 
-    /** The base URL for all font URL resolutions. */
-    private URIResolverWrapper uriResolver;
+    /** The resource resolver */
+    private InternalResourceResolver resourceResolver;
 
     private final FontDetector fontDetector;
 
@@ -58,27 +58,27 @@ public class FontManager {
     /**
      * Main constructor
      *
-     * @param uriResolver the URI resolver
+     * @param resourceResolver the URI resolver
      * @param fontDetector the font detector
      * @param fontCacheManager the font cache manager
      */
-    public FontManager(URIResolverWrapper uriResolver, FontDetector fontDetector,
+    public FontManager(InternalResourceResolver resourceResolver, FontDetector fontDetector,
             FontCacheManager fontCacheManager) {
-        this.uriResolver = uriResolver;
+        this.resourceResolver = resourceResolver;
         this.fontDetector = fontDetector;
         this.fontCacheManager = fontCacheManager;
     }
 
     /**
-     * Sets the font URI resolver
-     * @param uriResolver font base URI
+     * Sets the font resource resolver
+     * @param resourceResolver resource resolver
      */
-    public void setFontURIResolver(URIResolverWrapper uriResolver) {
-        this.uriResolver = uriResolver;
+    public void setResourceResolver(InternalResourceResolver resourceResolver) {
+        this.resourceResolver = resourceResolver;
     }
 
-    public URIResolverWrapper getURIResolver() {
-        return this.uriResolver;
+    public InternalResourceResolver getResourceResolver() {
+        return this.resourceResolver;
     }
 
     /** @return true if kerning on base 14 fonts is enabled */

@@ -39,7 +39,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.apps.TTFReader;
 
 /**
@@ -58,7 +58,7 @@ public class FontReader extends DefaultHandler {
     private CustomFont returnFont;
     private MultiByteFont multiFont;
     private SingleByteFont singleFont;
-    private final URIResolverWrapper resolver;
+    private final InternalResourceResolver resourceResolver;
     private StringBuffer text = new StringBuffer();
 
     private List<Integer> cidWidths;
@@ -74,8 +74,8 @@ public class FontReader extends DefaultHandler {
      * @param source Source of the font metric file
      * @throws FOPException if loading the font fails
      */
-    public FontReader(InputSource source, URIResolverWrapper resolver) throws FOPException {
-        this.resolver = resolver;
+    public FontReader(InputSource source, InternalResourceResolver resourceResolver) throws FOPException {
+        this.resourceResolver = resourceResolver;
         createFont(source);
     }
 
@@ -156,25 +156,25 @@ public class FontReader extends DefaultHandler {
             throws SAXException {
         if (localName.equals("font-metrics")) {
             if ("TYPE0".equals(attributes.getValue("type"))) {
-                multiFont = new MultiByteFont(resolver);
+                multiFont = new MultiByteFont(resourceResolver);
                 returnFont = multiFont;
                 isCID = true;
                 TTFReader.checkMetricsVersion(attributes);
             } else if ("TRUETYPE".equals(attributes.getValue("type"))) {
-                singleFont = new SingleByteFont(resolver);
+                singleFont = new SingleByteFont(resourceResolver);
                 singleFont.setFontType(FontType.TRUETYPE);
                 returnFont = singleFont;
                 isCID = false;
                 TTFReader.checkMetricsVersion(attributes);
             } else {
-                singleFont = new SingleByteFont(resolver);
+                singleFont = new SingleByteFont(resourceResolver);
                 singleFont.setFontType(FontType.TYPE1);
                 returnFont = singleFont;
                 isCID = false;
             }
         } else if ("embed".equals(localName)) {
             try {
-                returnFont.setEmbedURI(URIResolverWrapper.cleanURI(attributes.getValue("file")));
+                returnFont.setEmbedURI(InternalResourceResolver.cleanURI(attributes.getValue("file")));
             } catch (URISyntaxException e) {
                 // TODO: dunno what to do here?!?!
             }

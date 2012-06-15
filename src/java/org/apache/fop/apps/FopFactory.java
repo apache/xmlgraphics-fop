@@ -38,7 +38,7 @@ import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.util.UnitConv;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fonts.FontManager;
@@ -82,15 +82,15 @@ public final class FopFactory implements ImageContext {
 
     private final FopFactoryConfig config;
 
-    private final URIResolverWrapper uriResolverWrapper;
+    private final InternalResourceResolver resolver;
 
     private final Map<String, RendererConfig> rendererConfig;
 
     private FopFactory(FopFactoryConfig config) {
         this.config = config;
-        this.uriResolverWrapper = new URIResolverWrapper(config.getBaseURI(), config.getNewURIResolver());
+        this.resolver = new InternalResourceResolver(config.getBaseURI(), config.getResourceResolver());
         this.elementMappingRegistry = new ElementMappingRegistry(this);
-        this.colorSpaceCache = new ColorSpaceCache(uriResolverWrapper);
+        this.colorSpaceCache = new ColorSpaceCache(resolver);
         this.rendererFactory = new RendererFactory(config.preferRenderer());
         this.xmlHandlers = new XMLHandlerRegistry();
         this.imageHandlers = new ImageHandlerRegistry();
@@ -163,7 +163,7 @@ public final class FopFactory implements ImageContext {
      * @throws FOPException
      */
     public FOUserAgent newFOUserAgent() {
-        FOUserAgent userAgent = new FOUserAgent(this, uriResolverWrapper);
+        FOUserAgent userAgent = new FOUserAgent(this, resolver);
         return userAgent;
     }
 

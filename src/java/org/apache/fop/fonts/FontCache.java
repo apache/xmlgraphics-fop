@@ -41,7 +41,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.util.LogUtil;
 
 /**
@@ -320,7 +320,7 @@ public final class FontCache implements Serializable {
      * @param fontInfo
      *            font info
      */
-    public void addFont(EmbedFontInfo fontInfo, URIResolverWrapper resolver) {
+    public void addFont(EmbedFontInfo fontInfo, InternalResourceResolver resourceResolver) {
         String cacheKey = getCacheKey(fontInfo);
         synchronized (changeLock) {
             CachedFontFile cachedFontFile;
@@ -331,8 +331,7 @@ public final class FontCache implements Serializable {
                 }
             } else {
                 // try and determine modified date
-                // TODO: This could be problematic?!!?!?!
-                URI fontUri = resolver.getBaseURI().resolve(fontInfo.getEmbedURI());
+                URI fontUri = resourceResolver.resolveFromBase(fontInfo.getEmbedURI());
                 File fontFile = new File(fontUri);
                 long lastModified = (fontFile != null ? fontFile.lastModified() : -1);
                 cachedFontFile = new CachedFontFile(lastModified);

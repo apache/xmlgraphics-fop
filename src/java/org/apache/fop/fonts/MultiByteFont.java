@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.complexscripts.fonts.GlyphDefinitionTable;
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable;
 import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable;
@@ -75,10 +75,10 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     private int lastUnmapped;
 
     /**
-     * @param resolver the URI resolver for controlling file access
+     * @param resourceResolver the resource resolver for accessing the font
      */
-    public MultiByteFont(URIResolverWrapper resolver) {
-        super(resolver);
+    public MultiByteFont(InternalResourceResolver resourceResolver) {
+        super(resourceResolver);
         subset.setupFirstGlyph();
         setFontType(FontType.TYPE0);
     }

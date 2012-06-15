@@ -41,7 +41,7 @@ import org.apache.xmlgraphics.image.loader.util.Penalty;
 
 import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.FontManagerConfigurator;
 import org.apache.fop.hyphenation.HyphenationTreeCache;
 import org.apache.fop.util.LogUtil;
@@ -87,13 +87,13 @@ public class FopConfParser {
      *
      * @param fopConfStream the fop conf input stream
      * @param defaultBaseURI the default base URI
-     * @param resolver the URI resolver
+     * @param resourceResolver the URI resolver
      * @throws SAXException if a SAX error was thrown parsing the FOP conf
      * @throws IOException if an I/O error is thrown while parsing the FOP conf
      */
     public FopConfParser(InputStream fopConfStream, URI defaultBaseURI,
-            ResourceResolver resolver) throws SAXException, IOException {
-        this(fopConfStream, EnvironmentalProfileFactory.createDefault(defaultBaseURI, resolver));
+            ResourceResolver resourceResolver) throws SAXException, IOException {
+        this(fopConfStream, EnvironmentalProfileFactory.createDefault(defaultBaseURI, resourceResolver));
     }
 
     /**
@@ -125,17 +125,17 @@ public class FopConfParser {
      * Constructor that parses the FOP conf and uses the URI resolver given.
      *
      * @param fopConfFile the FOP conf file
-     * @param resolver the URI resolver
+     * @param resourceResolver the URI resolver
      * @throws SAXException if a SAX error was thrown parsing the FOP conf
      * @throws IOException if an I/O error is thrown while parsing the FOP conf
      */
-    public FopConfParser(File fopConfFile, ResourceResolver resolver)
+    public FopConfParser(File fopConfFile, ResourceResolver resourceResolver)
             throws SAXException, IOException {
         this(new FileInputStream(fopConfFile),
-                fopConfFile.getAbsoluteFile().getParentFile().toURI(), resolver);
+                fopConfFile.getAbsoluteFile().getParentFile().toURI(), resourceResolver);
     }
 
-    private void configure(final URI defaultBaseURI, final ResourceResolver resolver,
+    private void configure(final URI defaultBaseURI, final ResourceResolver resourceResolver,
             Configuration cfg) throws FOPException {
         if (log.isDebugEnabled()) {
             log.debug("Initializing FopFactory Configuration");
@@ -164,7 +164,7 @@ public class FopConfParser {
         // base definitions for relative path resolution
         if (cfg.getChild("base", false) != null) {
             try {
-                URI confUri = URIResolverWrapper.getBaseURI(cfg.getChild("base").getValue(null));
+                URI confUri = InternalResourceResolver.getBaseURI(cfg.getChild("base").getValue(null));
                 fopFactoryBuilder.setBaseURI(defaultBaseURI.resolve(confUri));
             } catch (URISyntaxException use) {
                 LogUtil.handleException(log, use, strict);
@@ -233,7 +233,7 @@ public class FopConfParser {
         }
 
         // configure font manager
-        new FontManagerConfigurator(cfg, fopFactoryBuilder.getBaseUri(), resolver).configure(
+        new FontManagerConfigurator(cfg, fopFactoryBuilder.getBaseUri(), resourceResolver).configure(
                 fopFactoryBuilder.getFontManager(), strict);
 
         // configure image loader framework

@@ -31,7 +31,7 @@ import org.apache.commons.io.IOUtils;
 
 import org.apache.xmlgraphics.fonts.Glyphs;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.BFEntry;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.EncodingMode;
@@ -54,10 +54,10 @@ public class TTFFontLoader extends FontLoader {
     /**
      * Default constructor
      * @param fontFileURI the URI representing the font file
-     * @param resolver the FontResolver for font URI resolution
+     * @param resourceResolver the resource resolver for font URI resolution
      */
-    public TTFFontLoader(URI fontFileURI, URIResolverWrapper resolver) {
-        this(fontFileURI, null, true, EncodingMode.AUTO, true, true, resolver);
+    public TTFFontLoader(URI fontFileURI, InternalResourceResolver resourceResolver) {
+        this(fontFileURI, null, true, EncodingMode.AUTO, true, true, resourceResolver);
     }
 
     /**
@@ -73,7 +73,7 @@ public class TTFFontLoader extends FontLoader {
      */
     public TTFFontLoader(URI fontFileURI, String subFontName,
                 boolean embedded, EncodingMode encodingMode, boolean useKerning,
-                boolean useAdvanced, URIResolverWrapper resolver) {
+            boolean useAdvanced, InternalResourceResolver resolver) {
         super(fontFileURI, embedded, useKerning, useAdvanced, resolver);
         this.subFontName = subFontName;
         this.encodingMode = encodingMode;
@@ -95,7 +95,7 @@ public class TTFFontLoader extends FontLoader {
      * @throws IOException if an I/O error occurs
      */
     private void read(String ttcFontName) throws IOException {
-        InputStream in = resolver.resolveIn(this.fontFileURI);
+        InputStream in = resourceResolver.getResource(this.fontFileURI);
         try {
             TTFFile ttf = new TTFFile(useKerning, useAdvanced);
             FontFileReader reader = new FontFileReader(in);
@@ -123,11 +123,11 @@ public class TTFFontLoader extends FontLoader {
         }
 
         if (isCid) {
-            multiFont = new MultiByteFont(resolver);
+            multiFont = new MultiByteFont(resourceResolver);
             returnFont = multiFont;
             multiFont.setTTCName(ttcFontName);
         } else {
-            singleFont = new SingleByteFont(resolver);
+            singleFont = new SingleByteFont(resourceResolver);
             returnFont = singleFont;
         }
 

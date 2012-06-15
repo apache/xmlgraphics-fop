@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.StreamedResourceGroup;
 import org.apache.fop.apps.io.TempResourceURIGenerator;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 
 /**
  * Manages the streaming of the AFP output
@@ -51,7 +51,7 @@ public class AFPStreamer implements Streamable {
 
     private final Factory factory;
 
-    private final URIResolverWrapper uriResolverWrapper;
+    private final InternalResourceResolver resourceResolver;
 
     /** A mapping of external resource destinations to resource groups */
     private final Map<URI, ResourceGroup> pathResourceGroupMap = new HashMap<URI, ResourceGroup>();
@@ -75,10 +75,11 @@ public class AFPStreamer implements Streamable {
      * Main constructor
      *
      * @param factory a factory
+     * @param resourceResolver resource resolver
      */
-    public AFPStreamer(Factory factory, URIResolverWrapper uriResolverWrapper) {
+    public AFPStreamer(Factory factory, InternalResourceResolver resourceResolver) {
         this.factory = factory;
-        this.uriResolverWrapper = uriResolverWrapper;
+        this.resourceResolver = resourceResolver;
         this.tempUri = TEMP_URI_GENERATOR.generate();
         defaultResourceGroupUri = URI.create(DEFAULT_EXTERNAL_RESOURCE_FILENAME);
 
@@ -92,7 +93,7 @@ public class AFPStreamer implements Streamable {
      * @throws IOException thrown if an I/O exception of some sort has occurred
      */
     public DataStream createDataStream(AFPPaintingState paintingState) throws IOException {
-        this.tempOutputStream = new BufferedOutputStream(uriResolverWrapper.resolveOut(tempUri));
+        this.tempOutputStream = new BufferedOutputStream(resourceResolver.getOutputStream(tempUri));
         this.dataStream = factory.createDataStream(paintingState, tempOutputStream);
         return dataStream;
     }
@@ -127,7 +128,7 @@ public class AFPStreamer implements Streamable {
             if (resourceGroup == null) {
                 OutputStream os = null;
                 try {
-                    os = new BufferedOutputStream(uriResolverWrapper.resolveOut(uri));
+                    os = new BufferedOutputStream(resourceResolver.getOutputStream(uri));
                 } catch (IOException ioe) {
                     LOG.error("Failed to create/open external resource group for uri '"
                             + uri + "'");
@@ -184,7 +185,7 @@ public class AFPStreamer implements Streamable {
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
         tempOutputStream.close();
-        InputStream tempInputStream = uriResolverWrapper.resolveIn(tempUri);
+        InputStream tempInputStream = resourceResolver.getResource(tempUri);
         IOUtils.copy(tempInputStream, os);
         //TODO this should notify the stream provider that it is safe to delete the temp data
         tempInputStream.close();

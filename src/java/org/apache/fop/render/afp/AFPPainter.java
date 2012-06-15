@@ -203,7 +203,7 @@ public class AFPPainter extends AbstractIFPainter {
             //Do we need to embed an external page segment?
             if (pageSegment.getURI() != null) {
                 AFPResourceAccessor accessor = new AFPResourceAccessor(
-                        documentHandler.getUserAgent().getNewURIResolver());
+                        documentHandler.getUserAgent().getResourceResolver());
                 try {
                     URI resourceUri = new URI(pageSegment.getURI());
                     documentHandler.getResourceManager().createIncludedResourceFromExternal(

@@ -32,7 +32,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 
 /**
  * <p>This class is the main entry point to the hyphenation package.
@@ -69,12 +69,12 @@ public final class Hyphenator {
      * The hyphenation trees are cached.
      * @param lang the language
      * @param country the country (may be null or "none")
-     * @param resolver resolver to find the hyphenation files
+     * @param resourceResolver resolver to find the hyphenation files
      * @param hyphPatNames the map with user-configured hyphenation pattern file names
      * @return the hyphenation tree
      */
     public static HyphenationTree getHyphenationTree(String lang,
-            String country, URIResolverWrapper resolver, Map hyphPatNames) {
+            String country, InternalResourceResolver resourceResolver, Map hyphPatNames) {
         String llccKey = HyphenationTreeCache.constructLlccKey(lang, country);
         HyphenationTreeCache cache = getHyphenationTreeCache();
 
@@ -83,13 +83,13 @@ public final class Hyphenator {
             return null;
         }
 
-        HyphenationTree hTree = getHyphenationTree2(lang, country, resolver, hyphPatNames);
+        HyphenationTree hTree = getHyphenationTree2(lang, country, resourceResolver, hyphPatNames);
 
         // fallback to lang only
         if (hTree == null && country != null && !country.equals("none")) {
             String llKey = HyphenationTreeCache.constructLlccKey(lang, null);
             if (!cache.isMissing(llKey)) {
-                hTree = getHyphenationTree2(lang, null, resolver, hyphPatNames);
+                hTree = getHyphenationTree2(lang, null, resourceResolver, hyphPatNames);
                 if (hTree != null && log.isDebugEnabled()) {
                     log.debug("Couldn't find hyphenation pattern "
                               + "for lang=\"" + lang + "\",country=\"" + country + "\"."
@@ -125,12 +125,12 @@ public final class Hyphenator {
      * The hyphenation trees are cached.
      * @param lang the language
      * @param country the country (may be null or "none")
-     * @param resolver resolver to find the hyphenation files
+     * @param resourceResolver resource resolver to find the hyphenation files
      * @param hyphPatNames the map with user-configured hyphenation pattern file names
      * @return the hyphenation tree
      */
     public static HyphenationTree getHyphenationTree2(String lang,
-            String country, URIResolverWrapper resolver, Map hyphPatNames) {
+            String country, InternalResourceResolver resourceResolver, Map hyphPatNames) {
         String llccKey = HyphenationTreeCache.constructLlccKey(lang, country);
         HyphenationTreeCache cache = getHyphenationTreeCache();
 
@@ -146,8 +146,8 @@ public final class Hyphenator {
             key = llccKey;
         }
 
-        if (resolver != null) {
-            hTree = getUserHyphenationTree(key, resolver);
+        if (resourceResolver != null) {
+            hTree = getUserHyphenationTree(key, resourceResolver);
         }
         if (hTree == null) {
             hTree = getFopHyphenationTree(key);
@@ -229,11 +229,11 @@ public final class Hyphenator {
      * Load tree from serialized file or xml file
      * using configuration settings
      * @param key language key for the requested hyphenation file
-     * @param resolver resolver to find the hyphenation files
+     * @param resourceResolver resource resolver to find the hyphenation files
      * @return the requested HypenationTree or null if it is not available
      */
     public static HyphenationTree getUserHyphenationTree(String key,
-            URIResolverWrapper resolver) {
+            InternalResourceResolver resourceResolver) {
         HyphenationTree hTree = null;
         // I use here the following convention. The file name specified in
         // the configuration is taken as the base name. First we try
@@ -243,7 +243,7 @@ public final class Hyphenator {
         // first try serialized object
         String name = key + ".hyp";
         try {
-            InputStream in = getHyphenationTreeStream(name, resolver);
+            InputStream in = getHyphenationTreeStream(name, resourceResolver);
             try {
                 hTree = readHyphenationTree(in);
             } finally {
@@ -260,7 +260,7 @@ public final class Hyphenator {
         name = key + ".xml";
         hTree = new HyphenationTree();
         try {
-            InputStream in = getHyphenationTreeStream(name, resolver);
+            InputStream in = getHyphenationTreeStream(name, resourceResolver);
             try {
                 InputSource src = new InputSource(in);
                 src.setSystemId(name);
@@ -284,10 +284,10 @@ public final class Hyphenator {
         }
     }
 
-    private static InputStream getHyphenationTreeStream(String name, URIResolverWrapper resolver)
-            throws IOException {
+    private static InputStream getHyphenationTreeStream(String name,
+            InternalResourceResolver resourceResolver) throws IOException {
         try {
-            return new BufferedInputStream(resolver.resolveIn(name));
+            return new BufferedInputStream(resourceResolver.getResource(name));
         } catch (URISyntaxException use) {
             log.debug("An exception was thrown while attempting to load " + name, use);
         }
@@ -298,7 +298,7 @@ public final class Hyphenator {
      * Hyphenates a word.
      * @param lang the language
      * @param country the optional country code (may be null or "none")
-     * @param resolver resolver to find the hyphenation files
+     * @param resourceResolver resource resolver to find the hyphenation files
      * @param hyphPatNames the map with user-configured hyphenation pattern file names
      * @param word the word to hyphenate
      * @param leftMin the minimum number of characters before the hyphenation point
@@ -306,8 +306,9 @@ public final class Hyphenator {
      * @return the hyphenation result
      */
     public static Hyphenation hyphenate(String lang, String country,
-            URIResolverWrapper resolver, Map hyphPatNames, String word, int leftMin, int rightMin) {
-        HyphenationTree hTree = getHyphenationTree(lang, country, resolver, hyphPatNames);
+            InternalResourceResolver resourceResolver, Map hyphPatNames, String word, int leftMin,
+            int rightMin) {
+        HyphenationTree hTree = getHyphenationTree(lang, country, resourceResolver, hyphPatNames);
         if (hTree == null) {
             return null;
         }

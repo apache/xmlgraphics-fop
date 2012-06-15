@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.CustomFontCollection;
 import org.apache.fop.fonts.DefaultFontConfigurator;
 import org.apache.fop.fonts.EmbedFontInfo;
@@ -108,13 +108,13 @@ public abstract class PrintRendererConfigurator extends AbstractRendererConfigur
     public void setupFontInfo(String mimeType, FontInfo fontInfo) throws FOPException {
         FontManager fontManager = userAgent.getFontManager();
         List<FontCollection> fontCollections = getDefaultFontCollection();
-        fontCollections.add(getCustomFontCollection(fontManager.getURIResolver(), mimeType));
+        fontCollections.add(getCustomFontCollection(fontManager.getResourceResolver(), mimeType));
         fontManager.setup(fontInfo, fontCollections.toArray(new FontCollection[fontCollections.size()]));
     }
 
     protected abstract List<FontCollection> getDefaultFontCollection();
 
-    protected FontCollection getCustomFontCollection(URIResolverWrapper uriResolverWrapper, String mimeType)
+    protected FontCollection getCustomFontCollection(InternalResourceResolver resolver, String mimeType)
             throws FOPException {
         List<EmbedFontInfo> fontList;
         if (rendererConfigParser == null) {
@@ -122,12 +122,12 @@ public abstract class PrintRendererConfigurator extends AbstractRendererConfigur
         } else {
             fontList = fontInfoConfigurator.configure(getRendererConfig(mimeType).getFontInfoConfig());
         }
-        return createCollectionFromFontList(uriResolverWrapper, fontList);
+        return createCollectionFromFontList(resolver, fontList);
     }
 
-    protected FontCollection createCollectionFromFontList(URIResolverWrapper uriResolverWrapper,
+    protected FontCollection createCollectionFromFontList(InternalResourceResolver resolver,
             List<EmbedFontInfo> fontList) {
-        return new CustomFontCollection(uriResolverWrapper, fontList,
+        return new CustomFontCollection(resolver, fontList,
                 userAgent.isComplexScriptFeaturesEnabled());
     }
 

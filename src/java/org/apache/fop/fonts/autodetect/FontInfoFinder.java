@@ -30,7 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.EncodingMode;
@@ -131,15 +131,8 @@ public class FontInfoFinder {
         return style;
     }
 
-    /**
-     * Attempts to determine FontInfo from a given custom font
-     * @param fontUri the font URI
-     * @param customFont the custom font
-     * @param fontCache font cache (may be null)
-     * @return FontInfo from the given custom font
-     */
     private EmbedFontInfo getFontInfoFromCustomFont(URI fontUri, CustomFont customFont,
-            FontCache fontCache, URIResolverWrapper resolver) {
+            FontCache fontCache, InternalResourceResolver resourceResolver) {
         List<FontTriplet> fontTripletList = new java.util.ArrayList<FontTriplet>();
         generateTripletsFromFont(customFont, fontTripletList);
         String subFontName = null;
@@ -150,7 +143,7 @@ public class FontInfoFinder {
                 customFont.isAdvancedEnabled(), fontTripletList, fontUri, subFontName);
         fontInfo.setPostScriptName(customFont.getFontName());
         if (fontCache != null) {
-            fontCache.addFont(fontInfo, resolver);
+            fontCache.addFont(fontInfo, resourceResolver);
         }
         return fontInfo;
     }
@@ -159,13 +152,13 @@ public class FontInfoFinder {
      * Attempts to determine EmbedFontInfo from a given font file.
      *
      * @param fontURI the URI of the font resource
-     * @param resolver font resolver used to resolve font
+     * @param resourceResolver font resolver used to resolve font
      * @param fontCache font cache (may be null)
      * @return an array of newly created embed font info. Generally, this array
      *         will have only one entry, unless the fontUrl is a TrueType Collection
      */
-    public EmbedFontInfo[] find(URI fontURI, URIResolverWrapper resolver, FontCache fontCache) {
-        URI embedUri = resolver.getBaseURI().resolve(fontURI);
+    public EmbedFontInfo[] find(URI fontURI, InternalResourceResolver resourceResolver, FontCache fontCache) {
+        URI embedUri = resourceResolver.resolveFromBase(fontURI);
         String embedStr = embedUri.toASCIIString();
         boolean useKerning = true;
         boolean useAdvanced = true;
@@ -196,7 +189,7 @@ public class FontInfoFinder {
             List<String> ttcNames = null;
             InputStream in = null;
             try {
-                in = resolver.resolveIn(fontURI);
+                in = resourceResolver.getResource(fontURI);
                 TTFFile ttf = new TTFFile(false, false);
                 FontFileReader reader = new FontFileReader(in);
                 ttcNames = ttf.getTTCnames(reader);
@@ -219,7 +212,7 @@ public class FontInfoFinder {
                 }
                 try {
                     TTFFontLoader ttfLoader = new TTFFontLoader(fontURI, fontName, true,
-                            EncodingMode.AUTO, useKerning, useAdvanced, resolver);
+                            EncodingMode.AUTO, useKerning, useAdvanced, resourceResolver);
                     customFont = ttfLoader.getFont();
                     if (this.eventListener != null) {
                         customFont.setEventListener(this.eventListener);
@@ -235,7 +228,7 @@ public class FontInfoFinder {
                     continue;
                 }
                 EmbedFontInfo fi = getFontInfoFromCustomFont(fontURI, customFont, fontCache,
-                        resolver);
+                        resourceResolver);
                 if (fi != null) {
                     embedFontInfoList.add(fi);
                 }
@@ -246,7 +239,7 @@ public class FontInfoFinder {
             // The normal case
             try {
                 customFont = FontLoader.loadFont(fontURI, null, true, EncodingMode.AUTO,
-                        useKerning, useAdvanced, resolver);
+                        useKerning, useAdvanced, resourceResolver);
                 if (this.eventListener != null) {
                     customFont.setEventListener(this.eventListener);
                 }
@@ -260,7 +253,7 @@ public class FontInfoFinder {
                 }
                 return null;
             }
-            EmbedFontInfo fi = getFontInfoFromCustomFont(fontURI, customFont, fontCache, resolver);
+            EmbedFontInfo fi = getFontInfoFromCustomFont(fontURI, customFont, fontCache, resourceResolver);
             if (fi != null) {
                 return new EmbedFontInfo[] {fi};
             } else {

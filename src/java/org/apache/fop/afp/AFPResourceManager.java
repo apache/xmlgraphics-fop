@@ -44,7 +44,7 @@ import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.afp.util.AFPResourceUtil;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 
 /**
  * Manages the creation and storage of document resources
@@ -80,9 +80,9 @@ public class AFPResourceManager {
     /**
      * Main constructor
      */
-    public AFPResourceManager(URIResolverWrapper uriResolverWrapper) {
+    public AFPResourceManager(InternalResourceResolver resourceResolver) {
         this.factory = new Factory();
-        this.streamer = new AFPStreamer(factory, uriResolverWrapper);
+        this.streamer = new AFPStreamer(factory, resourceResolver);
         this.dataObjectFactory = new AFPDataObjectFactory(factory);
     }
 

@@ -72,7 +72,7 @@ public interface FopFactoryConfig {
      *
      * @return the URI resolver
      */
-    ResourceResolver getNewURIResolver();
+    ResourceResolver getResourceResolver();
 
     /**
      * The base URI from which URIs are resolved against.

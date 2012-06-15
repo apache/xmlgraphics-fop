@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.fonts.Glyphs;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 
 /**
  * Generic SingleByte font
@@ -52,10 +52,10 @@ public class SingleByteFont extends CustomFont {
 
 
     /**
-     * @param resolver the URI resolver for controlling file access
+     * @param resourceResolver the URI resolver for controlling file access
      */
-    public SingleByteFont(URIResolverWrapper resolver) {
-        super(resolver);
+    public SingleByteFont(InternalResourceResolver resourceResolver) {
+        super(resourceResolver);
         setEncoding(CodePointMapping.WIN_ANSI_ENCODING);
     }
 

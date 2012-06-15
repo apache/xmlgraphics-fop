@@ -22,7 +22,7 @@ package org.apache.fop.fonts;
 // FOP (base 14 fonts)
 import java.util.List;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.base14.Courier;
 import org.apache.fop.fonts.base14.CourierBold;
 import org.apache.fop.fonts.base14.CourierBoldOblique;
@@ -69,11 +69,11 @@ public final class FontSetup {
      *
      * @param fontInfo the font info object to set up
      * @param embedFontInfoList a list of EmbedFontInfo objects
-     * @param resolver the font resolver
+     * @param resourceResolver the font resolver
      * @param base14Kerning true if base14 kerning applies
      */
     public static void setup(FontInfo fontInfo, List embedFontInfoList,
-            URIResolverWrapper resolver, boolean base14Kerning) {
+            InternalResourceResolver resourceResolver, boolean base14Kerning) {
         fontInfo.addMetrics("F1", new Helvetica(base14Kerning));
         fontInfo.addMetrics("F2", new HelveticaOblique(base14Kerning));
         fontInfo.addMetrics("F3", new HelveticaBold(base14Kerning));
@@ -179,7 +179,7 @@ public final class FontSetup {
         final int startNum = 15;
 
         /* Add configured fonts */
-        addConfiguredFonts(fontInfo, embedFontInfoList, startNum, resolver, base14Kerning);
+        addConfiguredFonts(fontInfo, embedFontInfoList, startNum, resourceResolver, base14Kerning);
     }
 
     /**
@@ -187,15 +187,15 @@ public final class FontSetup {
      * @param fontInfo the font info to set up
      * @param embedFontInfoList a list of EmbedFontInfo objects
      * @param num starting index for internal font numbering
-     * @param resolver the font resolver
+     * @param resourceResolver the font resolver
      */
     private static void addConfiguredFonts(FontInfo fontInfo,
-            List<EmbedFontInfo> embedFontInfoList, int num, URIResolverWrapper resolver,
+            List<EmbedFontInfo> embedFontInfoList, int num, InternalResourceResolver resourceResolver,
             boolean base14Kerning) {
         if (embedFontInfoList == null) {
             return; //No fonts to process
         }
-        assert resolver != null;
+        assert resourceResolver != null;
 
         String internalName = null;
 
@@ -203,7 +203,7 @@ public final class FontSetup {
             internalName = "F" + num;
             num++;
 
-            LazyFont font = new LazyFont(embedFontInfo, resolver, false);
+            LazyFont font = new LazyFont(embedFontInfo, resourceResolver, false);
             fontInfo.addMetrics(internalName, font);
 
             List<FontTriplet> triplets = embedFontInfo.getFontTriplets();

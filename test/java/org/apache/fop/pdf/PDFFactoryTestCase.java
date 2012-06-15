@@ -22,7 +22,7 @@ package org.apache.fop.pdf;
 import org.junit.Test;
 
 import org.apache.fop.apps.io.ResourceResolverFactory;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.CIDSubset;
 import org.apache.fop.fonts.MultiByteFont;
 
@@ -40,7 +40,7 @@ public class PDFFactoryTestCase {
     @Test
     public void testSubsetFontNamePrefix() {
         class MockedFont extends MultiByteFont {
-            public MockedFont(URIResolverWrapper resolver) {
+            public MockedFont(InternalResourceResolver resolver) {
                 super(resolver);
             }
 

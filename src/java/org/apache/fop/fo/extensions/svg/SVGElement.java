@@ -71,7 +71,7 @@ public class SVGElement extends SVGObj {
         /* if width and height are zero, get the bounds of the content. */
 
         try {
-            URI baseUri = getUserAgent().getNewURIResolver().getBaseURI();
+            URI baseUri = getUserAgent().getResourceResolver().getBaseURI();
             if (baseUri != null) {
                 SVGOMDocument svgdoc = (SVGOMDocument)doc;
                 svgdoc.setURLObject(baseUri.toURL());

@@ -180,7 +180,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(java2DFontMetrics),
                 new InstalledFontCollection(java2DFontMetrics),
-                new ConfiguredFontCollection(fontManager.getURIResolver(), getFontList(),
+                new ConfiguredFontCollection(fontManager.getResourceResolver(), getFontList(),
                         userAgent.isComplexScriptFeaturesEnabled())
         };
         fontManager.setup(getFontInfo(), fontCollections);

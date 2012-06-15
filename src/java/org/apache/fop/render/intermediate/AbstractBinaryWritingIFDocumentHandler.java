@@ -64,7 +64,7 @@ public abstract class AbstractBinaryWritingIFDocumentHandler extends AbstractIFD
                 }
                 try {
                     URI resultURI = URI.create(streamResult.getSystemId());
-                    out = new BufferedOutputStream(getUserAgent().getNewURIResolver().resolveOut(resultURI));
+                    out = new BufferedOutputStream(getUserAgent().getResourceResolver().getOutputStream(resultURI));
                 } catch (IOException ioe) {
                     throw new IFException("I/O error while opening output stream" , ioe);
                 }

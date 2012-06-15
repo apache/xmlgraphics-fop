@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.DefaultFontConfig.Directory;
 import org.apache.fop.fonts.autodetect.FontFileFinder;
 import org.apache.fop.fonts.autodetect.FontInfoFinder;
@@ -46,7 +46,7 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
     protected static Log log = LogFactory.getLog(DefaultFontConfigurator.class);
 
     private final FontManager fontManager;
-    private final URIResolverWrapper uriResolver;
+    private final InternalResourceResolver resourceResolver;
     private final FontEventListener listener;
     private final boolean strict;
 
@@ -59,7 +59,7 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
      */
     public DefaultFontConfigurator(FontManager fontManager, FontEventListener listener, boolean strict) {
         this.fontManager = fontManager;
-        this.uriResolver = fontManager.getURIResolver();
+        this.resourceResolver = fontManager.getResourceResolver();
         this.listener = listener;
         this.strict = strict;
     }
@@ -78,7 +78,7 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
                 log.debug("Starting font configuration...");
                 start = System.currentTimeMillis();
             }
-            FontAdder fontAdder = new FontAdder(fontManager, uriResolver, listener);
+            FontAdder fontAdder = new FontAdder(fontManager, resourceResolver, listener);
             // native o/s search (autodetect) configuration
             fontManager.autoDetectFonts(adobeFontInfoConfig.isAutoDetectFonts(), fontAdder, strict,
                     listener, fontInfoList);
@@ -146,19 +146,19 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
         String embed = font.getEmbedURI();
         String metrics = font.getMetrics();
         String subFont = font.getSubFont();
-        URI metricsUri = metrics == null ? null : URIResolverWrapper.cleanURI(metrics);
-        URI embedUri = URIResolverWrapper.cleanURI(embed);
+        URI metricsUri = metrics == null ? null : InternalResourceResolver.cleanURI(metrics);
+        URI embedUri = InternalResourceResolver.cleanURI(embed);
 
         List<FontTriplet> tripletList = font.getTripletList();
 
         // no font triplet info
         if (tripletList.size() == 0) {
             //TODO: could be problematic!!
-            URI fontUri = uriResolver.getBaseURI().resolve(embedUri);
+            URI fontUri = resourceResolver.resolveFromBase(embedUri);
             if (fontUri != null) {
                 FontInfoFinder finder = new FontInfoFinder();
                 finder.setEventListener(listener);
-                EmbedFontInfo[] infos = finder.find(fontUri, uriResolver, fontCache);
+                EmbedFontInfo[] infos = finder.find(fontUri, resourceResolver, fontCache);
                 return infos[0]; //When subFont is set, only one font is returned
             } else {
                 return null;
@@ -169,7 +169,7 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
                 font.isAdvanced(), tripletList, embedUri, subFont, encodingMode);
         if (fontCache != null) {
             if (!fontCache.containsFont(embedFontInfo)) {
-                fontCache.addFont(embedFontInfo, uriResolver);
+                fontCache.addFont(embedFontInfo, resourceResolver);
             }
         }
 

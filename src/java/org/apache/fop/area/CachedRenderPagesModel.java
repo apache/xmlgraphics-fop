@@ -80,7 +80,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
                         // load page from cache
                         URI tempURI = pageMap.get(pageViewport);
                         log.debug("Loading page from: " + tempURI);
-                        InputStream inStream = renderer.getUserAgent().getNewURIResolver().resolveIn(tempURI);
+                        InputStream inStream = renderer.getUserAgent().getResourceResolver().getResource(tempURI);
                         ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(inStream));
                         try {
                             pageViewport.loadPage(in);
@@ -124,7 +124,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
             ObjectOutputStream tempstream;
             String fname = "fop-page-" + page.getPageIndex() + ".ser";
             URI tempURI = tempBaseURI.resolve(fname);
-            OutputStream outStream = renderer.getUserAgent().getNewURIResolver().resolveOut(tempURI);
+            OutputStream outStream = renderer.getUserAgent().getResourceResolver().getOutputStream(tempURI);
             tempstream = new ObjectOutputStream(new BufferedOutputStream(outStream));
             try {
                 page.savePage(tempstream);
