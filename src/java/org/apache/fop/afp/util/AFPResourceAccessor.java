@@ -24,34 +24,36 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 
 /**
  * Defines an interface through which external resource objects can be accessed.
  */
 public final class AFPResourceAccessor {
 
-    private final URIResolverWrapper resolver;
+    private final InternalResourceResolver resourceResolver;
     private final String baseURI;
 
     /**
      * Constructor for resource to be accessed via the {@link FOUserAgent}. This contructor
-     * can take two base URIs: the category base URI is the one to use when differentiating between
-     * normal resources (ex. images) and font resources. So, if fonts need to be accessed, you can
-     * set the {@link org.apache.fop.fonts.FontManager}'s base URI instead of the one on the
-     * {@link org.apache.fop.apps.FopFactory}.
-     * @param userAgent the FO user agent
-     * @param categoryBaseURI the category base URI (may be null)
+     * takes a base URI for resolving font resource URIs. So, if fonts need to be accessed, you can
+     * set the {@link FontManager}'s base URI instead of the one on the {@link FopFactory}.
+     *
+     * @param InternalResourceResolver resource resolver
      * @param baseURI the custom base URI to resolve relative URIs against (may be null)
      */
-    public AFPResourceAccessor(URIResolverWrapper resolver, String baseURI) {
-        this.resolver = resolver;
+    public AFPResourceAccessor(InternalResourceResolver resourceResolver, String baseURI) {
+        this.resourceResolver = resourceResolver;
         this.baseURI = baseURI;
     }
 
-    public AFPResourceAccessor(URIResolverWrapper resolver) {
-        this.resolver = resolver;
-        this.baseURI = null;
+    /**
+     * Constructor for resource to be accessed via the {@link FOUserAgent}.
+     *
+     * @param InternalResourceResolver resource resolver
+     */
+    public AFPResourceAccessor(InternalResourceResolver resourceResolver) {
+        this(resourceResolver, null);
     }
 
     private URI getResourceURI(URI uri) {
@@ -59,7 +61,7 @@ public final class AFPResourceAccessor {
             return uri;
         }
         try {
-            URI baseURI = URIResolverWrapper.getBaseURI(this.baseURI);
+            URI baseURI = InternalResourceResolver.getBaseURI(this.baseURI);
             return baseURI.resolve(uri);
         } catch (URISyntaxException use) {
             return uri;
@@ -68,7 +70,7 @@ public final class AFPResourceAccessor {
 
     /** {@inheritDoc} */
     public InputStream createInputStream(URI uri) throws IOException {
-        return resolver.resolveIn(getResourceURI(uri));
+        return resourceResolver.getResource(getResourceURI(uri));
     }
 
 }

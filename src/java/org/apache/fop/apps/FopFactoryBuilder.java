@@ -26,8 +26,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.transform.URIResolver;
-
 import org.apache.avalon.framework.configuration.Configuration;
 
 import org.apache.xmlgraphics.image.loader.ImageContext;
@@ -75,10 +73,10 @@ public final class FopFactoryBuilder {
      * A builder class for {@link FopFactory} which can be used for setting configuration.
      *
      * @param defaultBaseURI the default base URI for resolving URIs against
-     * @param uriResolver the URI resolver
+     * @param resourceResolver the URI resolver
      */
-    public FopFactoryBuilder(URI defaultBaseURI, ResourceResolver uriResolver) {
-        this(EnvironmentalProfileFactory.createDefault(defaultBaseURI, uriResolver));
+    public FopFactoryBuilder(URI defaultBaseURI, ResourceResolver resourceResolver) {
+        this(EnvironmentalProfileFactory.createDefault(defaultBaseURI, resourceResolver));
     }
 
     /**
@@ -160,19 +158,6 @@ public final class FopFactoryBuilder {
     public FopFactoryBuilder setLayoutManagerMakerOverride(
             LayoutManagerMaker lmMaker) {
         fopFactoryConfigBuilder.setLayoutManagerMakerOverride(lmMaker);
-        return this;
-    }
-
-    /**
-     * Sets the URI resolver to be used for controlling FOP's file access.
-     *
-     * @param resolver the URI resolver
-     * @return <code>this</code>
-     * @deprecated this URIResolver will be phased out in favour of a unified URI resolution
-     * mechanism
-     */
-    public FopFactoryBuilder setURIResolver(URIResolver resolver) {
-        fopFactoryConfigBuilder.setURIResolver(resolver);
         return this;
     }
 
@@ -351,8 +336,6 @@ public final class FopFactoryBuilder {
 
         private Set<String> ignoredNamespaces = new HashSet<String>();
 
-        private URIResolver resolver;
-
         private Configuration cfg;
 
         private boolean preferRenderer;
@@ -391,13 +374,8 @@ public final class FopFactoryBuilder {
         }
 
         /** {@inheritDoc} */
-        public ResourceResolver getNewURIResolver() {
+        public ResourceResolver getResourceResolver() {
             return enviro.getResourceResolver();
-        }
-
-        /** {@inheritDoc} */
-        public URIResolver getURIResolver() {
-            return resolver;
         }
 
         /** {@inheritDoc} */
@@ -485,8 +463,6 @@ public final class FopFactoryBuilder {
 
         void setLayoutManagerMakerOverride(LayoutManagerMaker lmMaker);
 
-        void setURIResolver(URIResolver resolver);
-
         void setBaseURI(URI baseURI);
 
         void setStrictFOValidation(boolean validateStrictly);
@@ -534,15 +510,7 @@ public final class FopFactoryBuilder {
 
         }
 
-        public void setURIResolver(URIResolver resolver) {
-            throwIllegalStateException();
-        }
-
         public void setBaseURI(URI baseURI) {
-            throwIllegalStateException();
-        }
-
-        public void setHyphenationBaseURI(URI hyphenationBase) {
             throwIllegalStateException();
         }
 
@@ -615,10 +583,6 @@ public final class FopFactoryBuilder {
 
         public void setLayoutManagerMakerOverride(LayoutManagerMaker lmMaker) {
             config.layoutManagerMaker = lmMaker;
-        }
-
-        public void setURIResolver(URIResolver resolver) {
-            config.resolver = resolver;
         }
 
         public void setBaseURI(URI baseURI) {

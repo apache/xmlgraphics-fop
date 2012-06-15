@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 
 
 /**
@@ -43,7 +43,7 @@ public abstract class CustomFont extends Typeface
     private String fontSubName;
     private URI embedFileURI;
     private String embedResourceName;
-    private final URIResolverWrapper resolver;
+    private final InternalResourceResolver resourceResolver;
 
     private int capHeight;
     private int xHeight;
@@ -65,10 +65,10 @@ public abstract class CustomFont extends Typeface
     private boolean useAdvanced = true;
 
     /**
-     * @param resolver the URI resolver for controlling file access
+     * @param resourceResolver the URI resource resolver for controlling file access
      */
-    public CustomFont(URIResolverWrapper resolver) {
-        this.resolver = resolver;
+    public CustomFont(InternalResourceResolver resourceResolver) {
+        this.resourceResolver = resourceResolver;
     }
 
     /** {@inheritDoc} */
@@ -127,7 +127,7 @@ public abstract class CustomFont extends Typeface
      * @throws IOException if embedFileName is not null but Source is not found
      */
     public InputStream getInputStream() throws IOException {
-        return resolver.resolveIn(embedFileURI);
+        return resourceResolver.getResource(embedFileURI);
     }
 
     /**

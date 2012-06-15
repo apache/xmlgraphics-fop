@@ -21,7 +21,7 @@ package org.apache.fop.fonts;
 
 import java.util.List;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 
 /**
  * Sets up a set of custom (embedded) fonts
@@ -29,7 +29,7 @@ import org.apache.fop.apps.io.URIResolverWrapper;
 public class CustomFontCollection implements FontCollection {
 
     private final List<EmbedFontInfo> embedFontInfoList;
-    private final URIResolverWrapper uriResolver;
+    private final InternalResourceResolver uriResolver;
     private final boolean useComplexScripts;
 
     /**
@@ -38,7 +38,7 @@ public class CustomFontCollection implements FontCollection {
      * @param customFonts the list of custom fonts
      * @param useComplexScriptFeatures true if complex script features enabled
      */
-    public CustomFontCollection(URIResolverWrapper fontResolver,
+    public CustomFontCollection(InternalResourceResolver fontResolver,
             List<EmbedFontInfo> customFonts, boolean useComplexScriptFeatures) {
         this.uriResolver = fontResolver;
         this.embedFontInfoList = customFonts;

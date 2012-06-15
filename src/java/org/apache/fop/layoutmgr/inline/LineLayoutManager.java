@@ -1398,7 +1398,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         // on an inline or wrapper below the block level.
         Hyphenation hyph = Hyphenator.hyphenate(hyphenationProperties.language.getString(),
                                hyphenationProperties.country.getString(),
-                               getFObj().getUserAgent().getNewURIResolver(),
+                               getFObj().getUserAgent().getResourceResolver(),
                                getFObj().getUserAgent().getHyphPatNames(),
                                sbChars.toString(),
                                hyphenationProperties.hyphenationRemainCharacterCount.getValue(),

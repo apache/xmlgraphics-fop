@@ -23,7 +23,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.autodetect.FontInfoFinder;
 
 /**
@@ -31,18 +31,19 @@ import org.apache.fop.fonts.autodetect.FontInfoFinder;
  */
 public class FontAdder {
     private final FontEventListener listener;
-    private final URIResolverWrapper resolver;
+    private final InternalResourceResolver resourceResolver;
     private final FontManager manager;
 
     /**
      * Main constructor
      * @param manager a font manager
-     * @param resolver a font resolver
+     * @param resourceResolver a font resolver
      * @param listener a font event handler
      */
-    public FontAdder(FontManager manager, URIResolverWrapper resolver, FontEventListener listener) {
+    public FontAdder(FontManager manager, InternalResourceResolver resourceResolver,
+            FontEventListener listener) {
         this.manager = manager;
-        this.resolver = resolver;
+        this.resourceResolver = resourceResolver;
         this.listener = listener;
     }
 
@@ -59,7 +60,7 @@ public class FontAdder {
         finder.setEventListener(listener);
 
         for (URL fontURL : fontURLList) {
-            EmbedFontInfo[] embedFontInfos = finder.find(fontURL.toURI(), resolver, cache);
+            EmbedFontInfo[] embedFontInfos = finder.find(fontURL.toURI(), resourceResolver, cache);
             if (embedFontInfos == null) {
                 continue;
             }

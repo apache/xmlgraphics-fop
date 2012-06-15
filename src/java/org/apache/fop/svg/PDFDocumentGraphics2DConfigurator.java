@@ -26,7 +26,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.io.ResourceResolverFactory;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfigurator;
 import org.apache.fop.fonts.EmbedFontInfo;
@@ -85,9 +85,9 @@ public class PDFDocumentGraphics2DConfigurator {
         FontInfo fontInfo = new FontInfo();
         final boolean strict = false;
         if (cfg != null) {
-            URIResolverWrapper resolver = ResourceResolverFactory.createDefaultWrapper();
+            InternalResourceResolver resourceResolver = ResourceResolverFactory.createDefaultWrapper();
             //TODO The following could be optimized by retaining the FontManager somewhere
-            FontManager fontManager = new FontManager(resolver, FontDetectorFactory.createDefault(),
+            FontManager fontManager = new FontManager(resourceResolver, FontDetectorFactory.createDefault(),
                     FontCacheManagerFactory.createDefault());
 
             //TODO Make use of fontBaseURL, font substitution and referencing configuration
@@ -101,7 +101,7 @@ public class PDFDocumentGraphics2DConfigurator {
                     = new DefaultFontConfigurator(fontManager, listener, strict);
             List<EmbedFontInfo> fontInfoList = fontInfoConfigurator.configure(fontInfoConfig);
             fontManager.saveCache();
-            FontSetup.setup(fontInfo, fontInfoList, resolver, useComplexScriptFeatures);
+            FontSetup.setup(fontInfo, fontInfoList, resourceResolver, useComplexScriptFeatures);
         } else {
             FontSetup.setup(fontInfo, useComplexScriptFeatures);
         }

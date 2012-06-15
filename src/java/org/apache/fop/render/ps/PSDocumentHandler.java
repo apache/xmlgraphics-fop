@@ -149,7 +149,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             final OutputStream out;
             if (psUtil.isOptimizeResources()) {
                 tempURI = TEMP_URI_GENERATOR.generate();
-                out = new BufferedOutputStream(getUserAgent().getNewURIResolver().resolveOut(tempURI));
+                out = new BufferedOutputStream(getUserAgent().getResourceResolver().getOutputStream(tempURI));
             } else {
                 out = this.outputStream;
             }
@@ -256,7 +256,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         log.debug("Processing PostScript resources...");
         long startTime = System.currentTimeMillis();
         ResourceTracker resTracker = gen.getResourceTracker();
-        InputStream in = new BufferedInputStream(getUserAgent().getNewURIResolver().resolveIn(tempURI));
+        InputStream in = new BufferedInputStream(getUserAgent().getResourceResolver().getResource(tempURI));
         try {
             try {
                 ResourceHandler handler = new ResourceHandler(getUserAgent(), this.fontInfo,

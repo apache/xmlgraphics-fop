@@ -22,7 +22,7 @@ package org.apache.fop.apps;
 import java.net.URI;
 
 import org.apache.fop.apps.io.ResourceResolver;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.FontCacheManager;
 import org.apache.fop.fonts.FontCacheManagerFactory;
 import org.apache.fop.fonts.FontDetector;
@@ -105,7 +105,7 @@ public final class EnvironmentalProfileFactory {
 
     private static FontManager createFontManager(URI defaultBaseUri, ResourceResolver resourceResolver,
             FontDetector fontDetector, FontCacheManager fontCacheManager) {
-        return new FontManager(new URIResolverWrapper(defaultBaseUri, resourceResolver), fontDetector,
+        return new FontManager(new InternalResourceResolver(defaultBaseUri, resourceResolver), fontDetector,
                 fontCacheManager);
     }
 }

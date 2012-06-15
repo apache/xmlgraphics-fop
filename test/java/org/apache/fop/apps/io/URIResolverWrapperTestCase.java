@@ -85,8 +85,8 @@ public class URIResolverWrapperTestCase {
 
     @Test
     public void getBaseURI() throws URISyntaxException {
-        assertEquals(URIResolverWrapper.getBaseURI("x/y/z/"), new URI("x/y/z/"));
-        assertEquals(URIResolverWrapper.getBaseURI("x/y/z"), new URI("x/y/z/"));
+        assertEquals(InternalResourceResolver.getBaseURI("x/y/z/"), new URI("x/y/z/"));
+        assertEquals(InternalResourceResolver.getBaseURI("x/y/z"), new URI("x/y/z/"));
     }
 
     @Test
@@ -94,19 +94,19 @@ public class URIResolverWrapperTestCase {
         String[] uris = new String[] {".", "path/to/resource", "path\\to\\resource",
                 "bad resource name"};
         for (String uri : uris) {
-            assertEquals(URIResolverWrapper.cleanURI(uri), cleanURI(uri));
+            assertEquals(InternalResourceResolver.cleanURI(uri), cleanURI(uri));
         }
-        assertNull(URIResolverWrapper.cleanURI(null));
+        assertNull(InternalResourceResolver.cleanURI(null));
     }
 
     private void test(String uriStr, URI uri, URI expected) throws IOException, URISyntaxException {
         ResourceResolver resolver = mock(ResourceResolver.class);
-        URIResolverWrapper sut = new URIResolverWrapper(base, resolver);
-        sut.resolveIn(uriStr);
+        InternalResourceResolver sut = new InternalResourceResolver(base, resolver);
+        sut.getResource(uriStr);
         verify(resolver).getResource(eq(expected));
         resolver = mock(ResourceResolver.class);
-        sut = new URIResolverWrapper(base, resolver);
-        sut.resolveIn(uri);
+        sut = new InternalResourceResolver(base, resolver);
+        sut.getResource(uri);
         verify(resolver).getResource(eq(expected));
     }
 

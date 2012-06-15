@@ -19,7 +19,7 @@
 
 package org.apache.fop.fonts;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 
 //Java
 
@@ -32,10 +32,10 @@ public abstract class CIDFont extends CustomFont {
     protected int[] width = null;
 
     /**
-     * @param resolver the URI resolver for controlling file access
+     * @param resourceResolver the URI resolver for controlling file access
      */
-    public CIDFont(URIResolverWrapper resolver) {
-        super(resolver);
+    public CIDFont(InternalResourceResolver resourceResolver) {
+        super(resourceResolver);
     }
 
     // ---- Required ----

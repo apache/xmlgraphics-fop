@@ -203,8 +203,8 @@ public class FOTreeTestCase {
             return delegate.getLayoutManagerMakerOverride();
         }
 
-        public ResourceResolver getNewURIResolver() {
-            return delegate.getNewURIResolver();
+        public ResourceResolver getResourceResolver() {
+            return delegate.getResourceResolver();
         }
 
         public URI getBaseURI() {

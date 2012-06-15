@@ -104,7 +104,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
      */
     public AFPDocumentHandler(IFContext context) {
         super(context);
-        this.resourceManager = new AFPResourceManager(context.getUserAgent().getNewURIResolver());
+        this.resourceManager = new AFPResourceManager(context.getUserAgent().getResourceResolver());
         this.paintingState = new AFPPaintingState();
         this.unitConv = paintingState.getUnitConverter();
     }
@@ -386,7 +386,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         } else if (extension instanceof AFPIncludeFormMap) {
             AFPIncludeFormMap formMap = (AFPIncludeFormMap)extension;
             AFPResourceAccessor accessor = new AFPResourceAccessor(
-                    getUserAgent().getNewURIResolver());
+                    getUserAgent().getResourceResolver());
             try {
                 getResourceManager().createIncludedResource(formMap.getName(),
                         formMap.getSrc(), accessor,

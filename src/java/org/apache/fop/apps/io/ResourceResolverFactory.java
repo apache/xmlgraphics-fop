@@ -42,10 +42,10 @@ public final class ResourceResolverFactory {
         return new TempAwareResourceResolver(tempResourceResolver, defaultResourceResolver);
     }
 
-    public static URIResolverWrapper createDefaultWrapper() {
+    public static InternalResourceResolver createDefaultWrapper() {
         // Not sure if this is the right place for this, but I don't have any better ideas as of yet
         URI thisUri = new File(".").getAbsoluteFile().toURI();
-        return new URIResolverWrapper(thisUri, new DefaultResourceResolver());
+        return new InternalResourceResolver(thisUri, new DefaultResourceResolver());
     }
 
     public static SchemaAwareResourceResolverBuilder createSchemaAwareResourceResolverBuilder(

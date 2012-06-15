@@ -45,7 +45,7 @@ import org.apache.fop.Version;
 import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.accessibility.DummyStructureTreeEventHandler;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.events.DefaultEventBroadcaster;
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventBroadcaster;
@@ -93,7 +93,7 @@ public class FOUserAgent {
 
     private final FopFactory factory;
 
-    private final URIResolverWrapper newUriResolver;
+    private final InternalResourceResolver resourceResolver;
 
     private float targetResolution = FopFactoryConfig.DEFAULT_TARGET_RESOLUTION;
     private Map rendererOptions = new java.util.HashMap();
@@ -151,11 +151,12 @@ public class FOUserAgent {
      * Main constructor. <b>This constructor should not be called directly. Please use the
      * methods from FopFactory to construct FOUserAgent instances!</b>
      * @param factory the factory that provides environment-level information
+     * @param resourceResolver the resolver used to acquire resources
      * @see org.apache.fop.apps.FopFactory
      */
-    FOUserAgent(FopFactory factory, URIResolverWrapper uriResolver) {
+    FOUserAgent(FopFactory factory, InternalResourceResolver resourceResolver) {
         this.factory = factory;
-        this.newUriResolver = uriResolver;
+        this.resourceResolver = resourceResolver;
         setTargetResolution(factory.getTargetResolution());
         setAccessibility(factory.isAccessibilityEnabled());
     }
@@ -197,12 +198,12 @@ public class FOUserAgent {
 
 
     /**
-     * Returns the URI Resolver.
+     * Returns the resource resolver.
      *
-     * @return the URI resolver
+     * @return the resource resolver
      */
-    public URIResolverWrapper getNewURIResolver() {
-        return newUriResolver;
+    public InternalResourceResolver getResourceResolver() {
+        return resourceResolver;
     }
 
     // ---------------------------------------------- rendering-run dependent stuff
@@ -405,7 +406,7 @@ public class FOUserAgent {
         // TODO: What do we want to do when resources aren't found???
         try {
             // Have to do this so we can resolve data URIs
-            Source src = new StreamSource(newUriResolver.resolveIn(uri));
+            Source src = new StreamSource(resourceResolver.getResource(uri));
             src.setSystemId(uri);
             return src;
         } catch (URISyntaxException use) {

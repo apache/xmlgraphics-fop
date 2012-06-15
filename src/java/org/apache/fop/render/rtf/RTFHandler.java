@@ -168,7 +168,7 @@ public class RTFHandler extends FOEventHandler {
         bDefer = true;
 
         boolean base14Kerning = false;
-        FontSetup.setup(fontInfo, null, userAgent.getNewURIResolver(), base14Kerning);
+        FontSetup.setup(fontInfo, null, userAgent.getResourceResolver(), base14Kerning);
     }
 
     /**

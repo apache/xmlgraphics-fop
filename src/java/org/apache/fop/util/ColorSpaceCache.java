@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.java2d.color.ICCColorSpaceWithIntent;
 import org.apache.xmlgraphics.java2d.color.RenderingIntent;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 
 /**
  * Map with cached ICC based ColorSpace objects.
@@ -41,15 +41,15 @@ public class ColorSpaceCache {
     /** logger instance */
     private static Log log = LogFactory.getLog(ColorSpaceCache.class);
 
-    private URIResolverWrapper resolver;
+    private InternalResourceResolver resourceResolver;
     private Map<String, ColorSpace> colorSpaceMap = Collections.synchronizedMap(new HashMap<String, ColorSpace>());
 
     /**
      * Default constructor
-     * @param resolver uri resolver
+     * @param resourceResolver uri resolver
      */
-    public ColorSpaceCache(URIResolverWrapper resolver) {
-        this.resolver = resolver;
+    public ColorSpaceCache(InternalResourceResolver resourceResolver) {
+        this.resourceResolver = resourceResolver;
     }
 
     /**
@@ -77,7 +77,7 @@ public class ColorSpaceCache {
                 ICC_Profile iccProfile = null;
                 // First attempt to use the FOP URI resolver to locate the ICC
                 // profile
-                InputStream stream = resolver.resolveIn(iccProfileSrc);
+                InputStream stream = resourceResolver.getResource(iccProfileSrc);
                 if (stream != null) {
                     // FOP URI resolver found ICC profile - create ICC profile
                     // from the Source

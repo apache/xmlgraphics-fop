@@ -66,7 +66,7 @@ public class FontsSubstitutionTestCase extends BaseConstructiveUserConfigTest {
         FontManager fontManager = ua.getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(fontManager.isBase14KerningEnabled()),
-                new CustomFontCollection(fontManager.getURIResolver(), renderer.getFontList(),
+                new CustomFontCollection(fontManager.getResourceResolver(), renderer.getFontList(),
                         ua.isComplexScriptFeaturesEnabled())
         };
         fontManager.setup(fontInfo, fontCollections);

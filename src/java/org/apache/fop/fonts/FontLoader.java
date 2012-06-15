@@ -25,7 +25,7 @@ import java.net.URI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.truetype.TTFFontLoader;
 import org.apache.fop.fonts.type1.Type1FontLoader;
 
@@ -39,8 +39,8 @@ public abstract class FontLoader {
 
     /** URI representing the font file */
     protected final URI fontFileURI;
-    /** the FontResolver to use for font URI resolution */
-    protected final URIResolverWrapper resolver;
+    /** the resource resolver to use for font URI resolution */
+    protected final InternalResourceResolver resourceResolver;
     /** the loaded font */
     protected CustomFont returnFont;
 
@@ -60,15 +60,15 @@ public abstract class FontLoader {
      * @param useKerning indicates whether kerning information shall be loaded if available
      * @param useAdvanced indicates whether advanced typographic information shall be loaded if
      * available
-     * @param resolver the font resolver used to resolve URIs
+     * @param resourceResolver the font resolver used to resolve URIs
      */
     public FontLoader(URI fontFileURI, boolean embedded, boolean useKerning,
-            boolean useAdvanced, URIResolverWrapper resolver) {
+            boolean useAdvanced, InternalResourceResolver resourceResolver) {
         this.fontFileURI = fontFileURI;
         this.embedded = embedded;
         this.useKerning = useKerning;
         this.useAdvanced = useAdvanced;
-        this.resolver = resolver;
+        this.resourceResolver = resourceResolver;
     }
 
     private static boolean isType1(URI fontURI) {
@@ -84,13 +84,13 @@ public abstract class FontLoader {
      * @param useKerning indicates whether kerning information should be loaded if available
      * @param useAdvanced indicates whether advanced typographic information shall be loaded if
      * available
-     * @param resolver the font resolver to use when resolving URIs
+     * @param resourceResolver the font resolver to use when resolving URIs
      * @return the newly loaded font
      * @throws IOException In case of an I/O error
      */
     public static CustomFont loadFont(URI fontFileURI, String subFontName,
             boolean embedded, EncodingMode encodingMode, boolean useKerning,
-            boolean useAdvanced, URIResolverWrapper resolver) throws IOException {
+            boolean useAdvanced, InternalResourceResolver resourceResolver) throws IOException {
         boolean type1 = isType1(fontFileURI);
         FontLoader loader;
         if (type1) {
@@ -98,10 +98,10 @@ public abstract class FontLoader {
                 throw new IllegalArgumentException(
                         "CID encoding mode not supported for Type 1 fonts");
             }
-            loader = new Type1FontLoader(fontFileURI, embedded, useKerning, resolver);
+            loader = new Type1FontLoader(fontFileURI, embedded, useKerning, resourceResolver);
         } else {
             loader = new TTFFontLoader(fontFileURI, subFontName,
-                    embedded, encodingMode, useKerning, useAdvanced, resolver);
+                    embedded, encodingMode, useKerning, useAdvanced, resourceResolver);
         }
         return loader.getFont();
     }

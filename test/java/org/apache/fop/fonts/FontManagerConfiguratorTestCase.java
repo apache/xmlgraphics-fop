@@ -71,14 +71,14 @@ public class FontManagerConfiguratorTestCase {
         String actualBase = "../../resources/fonts/ttf/";
         FontManager fontManager = setBaseAndGetManager(actualBase);
         URI expectedURI = baseURI.resolve(actualBase);
-        assertEquals(expectedURI, fontManager.getURIResolver().getBaseURI());
+        assertEquals(expectedURI, fontManager.getResourceResolver().getBaseURI());
     }
 
     @Test
     public void currentRelativeFontBaseTest() {
         String actualBase = ".";
         FontManager fontManager = setBaseAndGetManager(actualBase);
-        assertEquals(baseURI, fontManager.getURIResolver().getBaseURI());
+        assertEquals(baseURI, fontManager.getResourceResolver().getBaseURI());
     }
 
     /**
@@ -93,7 +93,7 @@ public class FontManagerConfiguratorTestCase {
         String actualBase = "non-existing-dir/";
         FontManager fontManager = setBaseAndGetManager(actualBase);
         assertEquals(baseURI.resolve("non-existing-dir/"),
-                fontManager.getURIResolver().getBaseURI());
+                fontManager.getResourceResolver().getBaseURI());
     }
 
     /**
@@ -105,13 +105,13 @@ public class FontManagerConfiguratorTestCase {
         builder.setBaseURI(actualBase);
         FontManager fontManager = getManager();
         assertEquals(baseURI.resolve(actualBase),
-                fontManager.getURIResolver().getBaseURI());
+                fontManager.getResourceResolver().getBaseURI());
     }
 
     @Test
     public void absoluteBaseURI() {
         String absoluteBase = "test:///absolute/";
         FontManager fontManager = setBaseAndGetManager(absoluteBase);
-        assertEquals(URI.create(absoluteBase), fontManager.getURIResolver().getBaseURI());
+        assertEquals(URI.create(absoluteBase), fontManager.getResourceResolver().getBaseURI());
     }
 }

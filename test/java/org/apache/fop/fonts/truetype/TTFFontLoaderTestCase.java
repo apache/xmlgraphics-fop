@@ -26,7 +26,7 @@ import java.net.URI;
 import org.junit.Test;
 
 import org.apache.fop.apps.io.ResourceResolverFactory;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.EncodingMode;
 
 import static org.junit.Assert.assertFalse;
@@ -42,7 +42,7 @@ public class TTFFontLoaderTestCase {
         boolean useComplexScriptFeatures = false;
         File file = new File("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
         URI absoluteFilePath = file.toURI();
-        URIResolverWrapper resolver = ResourceResolverFactory.createDefaultWrapper();
+        InternalResourceResolver resolver = ResourceResolverFactory.createDefaultWrapper();
         String fontName = "Deja Vu";
         boolean embedded = false;
         boolean useKerning = true;

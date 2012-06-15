@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.render.PrintRendererConfigurator;
@@ -81,9 +81,9 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator
     }
 
     @Override
-    protected FontCollection createCollectionFromFontList(URIResolverWrapper uriResolverWrapper,
+    protected FontCollection createCollectionFromFontList(InternalResourceResolver resourceResolver,
             List<EmbedFontInfo> fontList) {
-        return new ConfiguredFontCollection(uriResolverWrapper, fontList,
+        return new ConfiguredFontCollection(resourceResolver, fontList,
                 userAgent.isComplexScriptFeaturesEnabled());
     }
 

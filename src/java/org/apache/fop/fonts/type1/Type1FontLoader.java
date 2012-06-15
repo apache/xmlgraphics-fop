@@ -30,7 +30,7 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.CodePointMapping;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontType;
@@ -49,12 +49,12 @@ public class Type1FontLoader extends FontLoader {
      * @param fontFileURI the URI to the PFB file of a Type 1 font
      * @param embedded indicates whether the font is embedded or referenced
      * @param useKerning indicates whether to load kerning information if available
-     * @param resolver the font resolver used to resolve URIs
+     * @param resourceResolver the font resolver used to resolve URIs
      * @throws IOException In case of an I/O error
      */
     public Type1FontLoader(URI fontFileURI, boolean embedded, boolean useKerning,
-            URIResolverWrapper resolver) throws IOException {
-        super(fontFileURI, embedded, useKerning, true, resolver);
+            InternalResourceResolver resourceResolver) throws IOException {
+        super(fontFileURI, embedded, useKerning, true, resourceResolver);
     }
 
     private String getPFMURI(String pfbURI) {
@@ -79,7 +79,7 @@ public class Type1FontLoader extends FontLoader {
         for (int i = 0; i < AFM_EXTENSIONS.length; i++) {
             try {
                 afmUri = partialAfmUri + AFM_EXTENSIONS[i];
-                afmIn = resolver.resolveIn(afmUri);
+                afmIn = resourceResolver.getResource(afmUri);
                 if (afmIn != null) {
                     break;
                 }
@@ -102,7 +102,7 @@ public class Type1FontLoader extends FontLoader {
         String pfmUri = getPFMURI(fontFileStr);
         InputStream pfmIn = null;
         try {
-            pfmIn = resolver.resolveIn(pfmUri);
+            pfmIn = resourceResolver.getResource(pfmUri);
         } catch (IOException ioe) {
             // Ignore, PFM probably not available under the URI
         } catch (URISyntaxException e) {
@@ -134,7 +134,7 @@ public class Type1FontLoader extends FontLoader {
         if (afm == null && pfm == null) {
             throw new IllegalArgumentException("Need at least an AFM or a PFM!");
         }
-        singleFont = new SingleByteFont(resolver);
+        singleFont = new SingleByteFont(resourceResolver);
         singleFont.setFontType(FontType.TYPE1);
         if (this.embedded) {
             singleFont.setEmbedURI(this.fontFileURI);

@@ -32,7 +32,7 @@ import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPFontInfo;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
@@ -128,7 +128,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator implement
     }
 
     @Override
-    protected FontCollection getCustomFontCollection(URIResolverWrapper uriResolverWrapper,
+    protected FontCollection getCustomFontCollection(InternalResourceResolver uriResolverWrapper,
             String mimeType) throws FOPException {
         AFPRendererConfig config = (AFPRendererConfig) getRendererConfig(mimeType);
         if (config != null) {
@@ -150,7 +150,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator implement
             throws FOPException, IOException {
         List<AFPFontInfo> afpFonts = new ArrayList<AFPFontInfo>();
         for (AFPFontConfigData config : fontConfig.getFontConfig()) {
-            afpFonts.add(config.getFontInfo(userAgent.getFontManager().getURIResolver(),
+            afpFonts.add(config.getFontInfo(userAgent.getFontManager().getResourceResolver(),
                     eventProducer));
         }
         return afpFonts;

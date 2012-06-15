@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.EncodingMode;
@@ -43,19 +43,19 @@ public class ConfiguredFontCollection implements FontCollection {
 
     private static Log log = LogFactory.getLog(ConfiguredFontCollection.class);
 
-    private final URIResolverWrapper uriResolver;
+    private final InternalResourceResolver resourceResolver;
     private final List<EmbedFontInfo> embedFontInfoList;
     private final boolean useComplexScripts;
 
     /**
      * Main constructor
-     * @param uriResolver a font resolver
+     * @param resourceResolver a font resolver
      * @param customFonts the list of custom fonts
      * @param useComplexScriptFeatures true if complex script features enabled
      */
-    public ConfiguredFontCollection(URIResolverWrapper uriResolver,
+    public ConfiguredFontCollection(InternalResourceResolver resourceResolver,
             List<EmbedFontInfo> customFonts, boolean useComplexScriptFeatures) {
-        this.uriResolver = uriResolver;
+        this.resourceResolver = resourceResolver;
         this.embedFontInfoList = customFonts;
         this.useComplexScripts = useComplexScriptFeatures;
     }
@@ -78,14 +78,14 @@ public class ConfiguredFontCollection implements FontCollection {
                 // If the user specified an XML-based metrics file, we'll use it
                 // Otherwise, calculate metrics directly from the font file.
                 if (metricsURI != null) {
-                    LazyFont fontMetrics = new LazyFont(configFontInfo, uriResolver, useComplexScripts);
-                    InputStream fontSource = uriResolver.resolveIn(fontURI);
+                    LazyFont fontMetrics = new LazyFont(configFontInfo, resourceResolver, useComplexScripts);
+                    InputStream fontSource = resourceResolver.getResource(fontURI);
                     font = new CustomFontMetricsMapper(fontMetrics, fontSource);
                 } else {
                     CustomFont fontMetrics = FontLoader.loadFont(
                             fontURI, null, true, EncodingMode.AUTO,
                             configFontInfo.getKerning(),
-                            configFontInfo.getAdvanced(), uriResolver);
+                            configFontInfo.getAdvanced(), resourceResolver);
                     font = new CustomFontMetricsMapper(fontMetrics);
                 }
 

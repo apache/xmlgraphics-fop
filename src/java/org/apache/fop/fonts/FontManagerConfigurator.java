@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.io.ResourceResolver;
-import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 import org.apache.fop.fonts.substitute.FontSubstitutionsConfigurator;
 import org.apache.fop.util.LogUtil;
@@ -49,19 +49,19 @@ public class FontManagerConfigurator {
 
     private final URI defaultBaseUri;
 
-    private final ResourceResolver uriResolver;
+    private final ResourceResolver resourceResolver;
 
     /**
      * Main constructor
      * @param cfg the font manager configuration object
      * @param defaultBaseUri the default URI base to use for URI resolution
-     * @param resolver the URI resolver
+     * @param resourceResolver the resource resolver
      */
     public FontManagerConfigurator(Configuration cfg, URI defaultBaseUri,
-            ResourceResolver resolver) {
+            ResourceResolver resourceResolver) {
         this.cfg = cfg;
         this.defaultBaseUri = defaultBaseUri;
-        this.uriResolver = resolver;
+        this.resourceResolver = resourceResolver;
     }
 
     /**
@@ -88,15 +88,15 @@ public class FontManagerConfigurator {
         }
         if (cfg.getChild("font-base", false) != null) {
             try {
-                URI fontBase = URIResolverWrapper.getBaseURI(cfg.getChild("font-base").getValue(
+                URI fontBase = InternalResourceResolver.getBaseURI(cfg.getChild("font-base").getValue(
                         null));
-                fontManager.setFontURIResolver(new URIResolverWrapper(
-                        defaultBaseUri.resolve(fontBase), uriResolver));
+                fontManager.setResourceResolver(new InternalResourceResolver(
+                        defaultBaseUri.resolve(fontBase), resourceResolver));
             } catch (URISyntaxException use) {
                 LogUtil.handleException(log, use, true);
             }
         } else {
-            fontManager.setFontURIResolver(new URIResolverWrapper(defaultBaseUri, uriResolver));
+            fontManager.setResourceResolver(new InternalResourceResolver(defaultBaseUri, resourceResolver));
         }
 
         // [GA] permit configuration control over base14 kerning; without this,
