@@ -226,7 +226,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
         if (hival > MAX_HIVAL) {
             throw new UnsupportedOperationException("hival must not go beyond " + MAX_HIVAL);
         }
-        indexed.add(new Integer(hival));
+        indexed.add(Integer.valueOf(hival));
         int[] palette = new int[c];
         icm.getRGBs(palette);
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
@@ -263,7 +263,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
         icm.getBlues(blues);
         for (int i = 0; i < icm.getMapSize(); i++) {
             if ((alphas[i] & 0xFF) == 0) {
-                return new Integer(i);
+                return Integer.valueOf(i);
             }
         }
         return null;
