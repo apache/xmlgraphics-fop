@@ -35,7 +35,6 @@ import java.text.AttributedCharacterIterator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.font.GVTGlyphVector;
 import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.text.TextSpanLayout;
