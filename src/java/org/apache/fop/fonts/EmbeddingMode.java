@@ -19,6 +19,8 @@
 
 package org.apache.fop.fonts;
 
+import java.util.Locale;
+
 /**
  * This enumerates the embedding mode of fonts; full; subset; auto (auto defaults to full for
  * Type 1 fonts and subset for TrueType fonts.
@@ -37,7 +39,7 @@ public enum EmbeddingMode {
      * @return the name of this embedding mode in lower case.
      */
     public String getName() {
-        return this.toString().toLowerCase();
+        return this.toString().toLowerCase(Locale.ENGLISH);
     }
 
     /**

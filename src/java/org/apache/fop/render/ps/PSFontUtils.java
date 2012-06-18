@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -374,7 +375,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                     char ch16 = (char)ch; //TODO Handle Unicode characters beyond 16bit
                     String glyphName = Glyphs.charToGlyphName(ch16);
                     if ("".equals(glyphName)) {
-                        glyphName = "u" + Integer.toHexString(ch).toUpperCase();
+                        glyphName = "u" + Integer.toHexString(ch).toUpperCase(Locale.ENGLISH);
                     }
                     writeGlyphDefs(gen, glyphName, glyphIndex);
 
