@@ -26,8 +26,8 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
-import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.CIDFontType;
+import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.FontLoader;
