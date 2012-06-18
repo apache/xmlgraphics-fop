@@ -199,10 +199,10 @@ public class TTFFontLoader extends FontLoader {
                     if (codePoint <= 0) {
                         int glyphIndex = segment.getGlyphStartIndex() + u - segment.getUnicodeStart();
                         String glyphName = ttf.getGlyphName(glyphIndex);
-                        if (glyphName == "" && ttf.getPostScriptVersion() != PostScriptVersion.V2) {
+                        if (glyphName.length() == 0 && ttf.getPostScriptVersion() != PostScriptVersion.V2) {
                             glyphName = "u" + HexEncoder.encode(u);
                         }
-                        if (glyphName != "") {
+                        if (glyphName.length() > 0) {
                             String unicode = Character.toString(u);
                             NamedCharacter nc = new NamedCharacter(glyphName, unicode);
                             singleFont.addUnencodedCharacter(nc, wx[glyphIndex]);
