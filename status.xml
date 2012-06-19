@@ -64,6 +64,9 @@
     -->
     <release version="FOP Trunk" date="TBD">
       <action context="Images" dev="GA" type="update" fixes-bug="40676" due-to="Luis Bernardo">
+        Update site documentation about PNG image loading configuration and support.
+      </action>
+      <action context="Images" dev="GA" type="update" fixes-bug="40676" due-to="Luis Bernardo">
         Fix newly introduced findbugs warnings.
       </action>
       <action context="Images" dev="GA" type="fix" fixes-bug="40676" due-to="Luis Bernardo, Matthias Reischenbacher">
