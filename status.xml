@@ -63,6 +63,18 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Images" dev="GA" type="update" fixes-bug="40676" due-to="Luis Bernardo">
+        Update site documentation about PNG image loading configuration and support.
+      </action>
+      <action context="Images" dev="GA" type="update" fixes-bug="40676" due-to="Luis Bernardo">
+        Fix newly introduced findbugs warnings.
+      </action>
+      <action context="Images" dev="GA" type="fix" fixes-bug="40676" due-to="Luis Bernardo, Matthias Reischenbacher">
+        Support use of ImageLoaderRawPNG decoder in order to prevent re-encoding of PNG images (and unnecssary output file bloat).
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="53412" due-to="Alexios Giotis">
+        Eliminate incorrect use of object identity which produces excessive property cache collisions.
+      </action>
       <action context="Code" dev="GA" type="fix">
         Eliminate javadocs warnings.
       </action>
