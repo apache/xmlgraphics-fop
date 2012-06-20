@@ -28,6 +28,9 @@ import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.fonts.FontConfig;
 import org.apache.fop.render.RendererConfig;
 
+/**
+ * The Intermediate Format renderer configuration data object.
+ */
 public final class IFRendererConfig implements RendererConfig {
 
     private final DefaultFontConfig fontConfig;
@@ -40,14 +43,19 @@ public final class IFRendererConfig implements RendererConfig {
         return fontConfig;
     }
 
+    /**
+     * The Intermediate Format configuration data parser.
+     */
     public static final class IFRendererConfigParser implements RendererConfigParser {
 
+        /** {@inheritDoc} */
         public RendererConfig build(FOUserAgent userAgent, Configuration cfg)
                 throws FOPException {
             return new IFRendererConfig(new DefaultFontConfigParser().parse(cfg,
                     userAgent.validateStrictly()));
         }
 
+        /** {@inheritDoc} */
         public String getMimeType() {
             return "application/X-fop-intermediate-format";
         }

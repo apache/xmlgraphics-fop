@@ -176,7 +176,7 @@ public class FontReader extends DefaultHandler {
             try {
                 returnFont.setEmbedURI(InternalResourceResolver.cleanURI(attributes.getValue("file")));
             } catch (URISyntaxException e) {
-                // TODO: dunno what to do here?!?!
+                throw new SAXException("URI syntax error in metrics file: " + e.getMessage(), e);
             }
             returnFont.setEmbedResourceName(attributes.getValue("class"));
         } else if ("cid-widths".equals(localName)) {

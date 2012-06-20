@@ -153,7 +153,6 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
 
         // no font triplet info
         if (tripletList.size() == 0) {
-            //TODO: could be problematic!!
             URI fontUri = resourceResolver.resolveFromBase(embedUri);
             if (fontUri != null) {
                 FontInfoFinder finder = new FontInfoFinder();

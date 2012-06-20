@@ -15,23 +15,25 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+package org.apache.fop.apps;
 
-package org.apache.fop.render.java2d;
+import java.net.URI;
 
-import org.apache.fop.render.RendererConfigOptions;
+import org.junit.Test;
 
-public enum Java2DRendererOptions implements RendererConfigOptions {
-    /** Rendering Options key for the controlling the transparent page background option. */
-    JAVA2D_TRANSPARENT_PAGE_BACKGROUND("transparent-page-background");
+import org.apache.fop.apps.io.ResourceResolver;
 
-    private final String name;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
-    private Java2DRendererOptions(String name) {
-        this.name = name;
-    }
+public class EnvironmentalProfileFactoryTestCase {
 
-    public String getName() {
-        return name;
+    private final URI testURI = URI.create("this.is.purely.for.test.purposes");
+
+    @Test
+    public void testCreateDefault() {
+        ResourceResolver mockedResolver = mock(ResourceResolver.class);
+        EnvironmentProfile sut = EnvironmentalProfileFactory.createDefault(testURI, mockedResolver);
+        assertEquals(mockedResolver, sut.getResourceResolver());
     }
 }

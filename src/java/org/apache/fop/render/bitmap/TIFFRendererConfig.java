@@ -29,17 +29,20 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
-import org.apache.fop.render.RendererConfigOptions;
+import org.apache.fop.render.RendererConfigOption;
 
+/**
+ * The renderer configuration object for the TIFF renderer.
+ */
 public final class TIFFRendererConfig extends BitmapRendererConfig {
 
-    public enum TIFFRendererConfigOptions implements RendererConfigOptions {
+    public enum TIFFRendererConfigOption implements RendererConfigOption {
         COMPRESSION("compression", TIFFCompressionValues.PACKBITS);
 
         private final String name;
         private final Object defaultValue;
 
-        private TIFFRendererConfigOptions(String name, Object defaultValue) {
+        private TIFFRendererConfigOption(String name, Object defaultValue) {
             this.name = name;
             this.defaultValue = defaultValue;
         }
@@ -53,17 +56,20 @@ public final class TIFFRendererConfig extends BitmapRendererConfig {
         }
     }
 
-    private final EnumMap<TIFFRendererConfigOptions, Object> params
-            = new EnumMap<TIFFRendererConfigOptions, Object>(TIFFRendererConfigOptions.class);
+    private final EnumMap<TIFFRendererConfigOption, Object> params
+            = new EnumMap<TIFFRendererConfigOption, Object>(TIFFRendererConfigOption.class);
 
     private TIFFRendererConfig(DefaultFontConfig fontConfig) {
         super(fontConfig);
     }
 
     public TIFFCompressionValues getCompressionType() {
-        return (TIFFCompressionValues) params.get(TIFFRendererConfigOptions.COMPRESSION);
+        return (TIFFCompressionValues) params.get(TIFFRendererConfigOption.COMPRESSION);
     }
 
+    /**
+     * The TIFF renderer configuration parser.
+     */
     public static final class TIFFRendererConfigParser extends BitmapRendererConfigParser {
 
         public TIFFRendererConfigParser() {
@@ -72,22 +78,23 @@ public final class TIFFRendererConfig extends BitmapRendererConfig {
 
         private TIFFRendererConfig config;
 
-        private void setParam(TIFFRendererConfigOptions option, Object value) {
+        private void setParam(TIFFRendererConfigOption option, Object value) {
             config.params.put(option, value != null ? value : option.getDefaultValue());
         }
 
-        private String getValue(Configuration cfg, TIFFRendererConfigOptions option) {
+        private String getValue(Configuration cfg, TIFFRendererConfigOption option) {
             return cfg.getChild(option.getName()).getValue(null);
         }
 
+        /** {@inheritDoc} */
         public TIFFRendererConfig build(FOUserAgent userAgent, Configuration cfg) throws FOPException {
             config = new TIFFRendererConfig(new DefaultFontConfigParser()
                     .parse(cfg, userAgent.validateStrictly()));
             super.build(config, userAgent, cfg);
             if (cfg != null) {
-            setParam(TIFFRendererConfigOptions.COMPRESSION,
+            setParam(TIFFRendererConfigOption.COMPRESSION,
                         TIFFCompressionValues.getValue(getValue(cfg,
-                                TIFFRendererConfigOptions.COMPRESSION)));
+                                TIFFRendererConfigOption.COMPRESSION)));
             }
             return config;
         }

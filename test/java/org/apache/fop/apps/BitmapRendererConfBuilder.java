@@ -21,11 +21,11 @@ package org.apache.fop.apps;
 
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
 
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOptions.ANTI_ALIASING;
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOptions.BACKGROUND_COLOR;
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOptions.COLOR_MODE;
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOptions.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOptions.RENDERING_QUALITY_ELEMENT;
+import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.ANTI_ALIASING;
+import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.BACKGROUND_COLOR;
+import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.COLOR_MODE;
+import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
+import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.RENDERING_QUALITY_ELEMENT;
 
 public class BitmapRendererConfBuilder extends RendererConfBuilder {
 

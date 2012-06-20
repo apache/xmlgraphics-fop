@@ -60,7 +60,7 @@ import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererConfig;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
-import org.apache.fop.render.RendererConfigOptions;
+import org.apache.fop.render.RendererConfigOption;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
@@ -390,7 +390,7 @@ public class FOUserAgent {
      * @param option the renderer option
      * @return the value
     */
-    public Object getRendererOption(RendererConfigOptions option) {
+    public Object getRendererOption(RendererConfigOption option) {
         return rendererOptions.get(option.getName());
     }
 

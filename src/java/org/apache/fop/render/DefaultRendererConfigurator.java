@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.adobe;
+package org.apache.fop.render;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +26,15 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.base14.Base14FontCollection;
-import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
 
-public class AdobeRendererConfigurator extends PrintRendererConfigurator {
+/**
+ * This object represents the default renderer configurator and contains the methods for most the
+ * RendererConfigurators.
+ */
+public class DefaultRendererConfigurator extends PrintRendererConfigurator {
 
-    public AdobeRendererConfigurator(FOUserAgent userAgent, RendererConfigParser rendererConfigParser) {
+    public DefaultRendererConfigurator(FOUserAgent userAgent, RendererConfigParser rendererConfigParser) {
         super(userAgent, rendererConfigParser);
     }
 

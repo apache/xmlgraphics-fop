@@ -22,14 +22,14 @@ package org.apache.fop.render.pdf;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.pdf.PDFEncryptionParams;
+import org.apache.fop.render.DefaultRendererConfigurator;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
-import org.apache.fop.render.adobe.AdobeRendererConfigurator;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 
 /**
  * PDF renderer configurator.
  */
-public class PDFRendererConfigurator extends AdobeRendererConfigurator {
+public class PDFRendererConfigurator extends DefaultRendererConfigurator {
 
     /**
      * Default constructor

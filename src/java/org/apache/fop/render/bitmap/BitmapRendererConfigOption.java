@@ -22,9 +22,13 @@ package org.apache.fop.render.bitmap;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-import org.apache.fop.render.RendererConfigOptions;
+import org.apache.fop.render.RendererConfigOption;
 
-public enum BitmapRendererConfigOptions implements RendererConfigOptions {
+/**
+ * An enumeration of the Bitmap renderer configuration opetions available to the user via the FOP
+ * conf.
+ */
+public enum BitmapRendererConfigOption implements RendererConfigOption {
     JAVA2D_TRANSPARENT_PAGE_BACKGROUND("transparent-page-background", false),
     BACKGROUND_COLOR("background-color", Color.WHITE),
     ANTI_ALIASING("anti-aliasing", true),
@@ -41,15 +45,16 @@ public enum BitmapRendererConfigOptions implements RendererConfigOptions {
     private final String name;
     private final Object defaultValue;
 
-    private BitmapRendererConfigOptions(String name, Object defaultValue) {
+    private BitmapRendererConfigOption(String name, Object defaultValue) {
         this.name = name;
         this.defaultValue = defaultValue;
     }
 
-    private BitmapRendererConfigOptions(String name) {
+    private BitmapRendererConfigOption(String name) {
         this(name, null);
     }
 
+    /** {@inheritDoc} */
     public String getName() {
         return name;
     }
@@ -58,8 +63,8 @@ public enum BitmapRendererConfigOptions implements RendererConfigOptions {
         return defaultValue;
     }
 
-    public static BitmapRendererConfigOptions getValue(String str) {
-        for (BitmapRendererConfigOptions opt : BitmapRendererConfigOptions.values()) {
+    public static BitmapRendererConfigOption getValue(String str) {
+        for (BitmapRendererConfigOption opt : BitmapRendererConfigOption.values()) {
             if (opt.getName().equalsIgnoreCase(str)) {
                 return opt;
             }

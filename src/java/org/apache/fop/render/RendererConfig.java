@@ -25,14 +25,40 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontConfig;
 
+/**
+ * Implementations of this interface have all the renderer-specific configuration data found in the
+ * FOP-conf. This object is just a data object that is created by the {@link RendererConfigParser}
+ * when the FOP conf is parsed.
+ */
 public interface RendererConfig {
 
+    /**
+     * Returns the render-specific font configuration information.
+     * @return the font config
+     */
     FontConfig getFontInfoConfig();
 
+    /**
+     * Implementations of this interface parse the relevant renderer-specific configuration data
+     * within the FOP-conf and create a {@link RendererConfig}.
+     */
     public interface RendererConfigParser {
 
+        /**
+         * Builds the object that contains the renderer configuration data.
+         *
+         * @param userAgent the user agent
+         * @param rendererConfiguration the Avalon config object for parsing the data
+         * @return the configuration data object
+         * @throws FOPException if an error occurs while parsing the fop conf
+         */
         RendererConfig build(FOUserAgent userAgent, Configuration rendererConfiguration) throws FOPException;
 
+        /**
+         * The MIME type of the renderer.
+         *
+         * @return the mime type
+         */
         String getMimeType();
     }
 }

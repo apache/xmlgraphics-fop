@@ -21,7 +21,7 @@ package org.apache.fop.apps;
 
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
 
-import static org.apache.fop.render.txt.TxtRendererConfig.TxtRendererConfigOptions.ENCODING;
+import static org.apache.fop.render.txt.TxtRendererConfig.TxtRendererConfigOption.ENCODING;
 
 public class TxtRendererConfBuilder extends RendererConfBuilder {
 

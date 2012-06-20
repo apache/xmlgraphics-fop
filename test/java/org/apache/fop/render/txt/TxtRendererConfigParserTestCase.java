@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.apache.fop.apps.AbstractRendererConfigParserTester;
 import org.apache.fop.apps.TxtRendererConfBuilder;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
-import org.apache.fop.render.txt.TxtRendererConfig.TxtRendererConfigOptions;
+import org.apache.fop.render.txt.TxtRendererConfig.TxtRendererConfigOption;
 import org.apache.fop.render.txt.TxtRendererConfig.TxtRendererConfigParser;
 
 import static org.junit.Assert.assertEquals;
@@ -47,7 +47,7 @@ public class TxtRendererConfigParserTestCase
 
         // Check the default behaviour is expected
         parseConfig(createRenderer());
-        assertEquals(TxtRendererConfigOptions.ENCODING.getDefaultValue(), conf.getEncoding());
+        assertEquals(TxtRendererConfigOption.ENCODING.getDefaultValue(), conf.getEncoding());
     }
 
 }

@@ -51,7 +51,7 @@ public class PDFRendererConfigParserTestCase
         assertEquals(testPassword, conf.getEncryptionParameters().getUserPassword());
     }
 
-    private void testRestrictEncryptionParameter(PDFRendererConfigOptions option)
+    private void testRestrictEncryptionParameter(PDFRendererConfigOption option)
             throws Exception {
         parseConfig(createRenderer().startEncryptionParams()
                                 .setAllowParam(option)
@@ -62,7 +62,7 @@ public class PDFRendererConfigParserTestCase
         assertTrue(testEncryptionParameter(option));
     }
 
-    public boolean testEncryptionParameter(PDFRendererConfigOptions option) throws Exception {
+    public boolean testEncryptionParameter(PDFRendererConfigOption option) throws Exception {
         switch (option) {
         case NO_PRINT:
             return conf.getEncryptionParameters().isAllowPrint();
@@ -88,14 +88,14 @@ public class PDFRendererConfigParserTestCase
 
     @Test
     public void testAllEncryptionRestrictions() throws Exception {
-        testRestrictEncryptionParameter(PDFRendererConfigOptions.NO_PRINT);
-        testRestrictEncryptionParameter(PDFRendererConfigOptions.NO_ACCESSCONTENT);
-        testRestrictEncryptionParameter(PDFRendererConfigOptions.NO_ANNOTATIONS);
-        testRestrictEncryptionParameter(PDFRendererConfigOptions.NO_ASSEMBLEDOC);
-        testRestrictEncryptionParameter(PDFRendererConfigOptions.NO_COPY_CONTENT);
-        testRestrictEncryptionParameter(PDFRendererConfigOptions.NO_EDIT_CONTENT);
-        testRestrictEncryptionParameter(PDFRendererConfigOptions.NO_FILLINFORMS);
-        testRestrictEncryptionParameter(PDFRendererConfigOptions.NO_PRINTHQ);
+        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_PRINT);
+        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_ACCESSCONTENT);
+        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_ANNOTATIONS);
+        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_ASSEMBLEDOC);
+        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_COPY_CONTENT);
+        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_EDIT_CONTENT);
+        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_FILLINFORMS);
+        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_PRINTHQ);
     }
 
     @Test

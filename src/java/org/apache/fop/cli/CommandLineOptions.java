@@ -57,7 +57,7 @@ import org.apache.fop.render.print.PrintRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.util.CommandLineLogger;
 
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.ENCRYPTION_PARAMS;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.ENCRYPTION_PARAMS;
 
 /**
  * Options parses the commandline arguments

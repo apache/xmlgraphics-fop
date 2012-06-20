@@ -131,6 +131,13 @@ public class FontInfoFinder {
         return style;
     }
 
+    /**
+     * Attempts to determine FontInfo from a given custom font
+     * @param fontUri the font URI
+     * @param customFont the custom font
+     * @param fontCache font cache (may be null)
+     * @return FontInfo from the given custom font
+     */
     private EmbedFontInfo getFontInfoFromCustomFont(URI fontUri, CustomFont customFont,
             FontCache fontCache, InternalResourceResolver resourceResolver) {
         List<FontTriplet> fontTripletList = new java.util.ArrayList<FontTriplet>();

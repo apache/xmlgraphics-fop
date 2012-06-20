@@ -29,17 +29,20 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.render.RendererConfig;
-import org.apache.fop.render.RendererConfigOptions;
+import org.apache.fop.render.RendererConfigOption;
 
-public class TxtRendererConfig implements RendererConfig {
+/**
+ * The Text renderer configuration data object.
+ */
+public final class TxtRendererConfig implements RendererConfig {
 
-    public enum TxtRendererConfigOptions implements RendererConfigOptions {
+    public enum TxtRendererConfigOption implements RendererConfigOption {
         ENCODING("encoding", "UTF-8");
 
         private final String name;
         private final Object defaultValue;
 
-        private TxtRendererConfigOptions(String name, Object defaultValue) {
+        private TxtRendererConfigOption(String name, Object defaultValue) {
             this.name = name;
             this.defaultValue = defaultValue;
         }
@@ -53,8 +56,8 @@ public class TxtRendererConfig implements RendererConfig {
         }
     }
 
-    private final EnumMap<TxtRendererConfigOptions, Object> params
-            = new EnumMap<TxtRendererConfigOptions, Object>(TxtRendererConfigOptions.class);
+    private final EnumMap<TxtRendererConfigOption, Object> params
+            = new EnumMap<TxtRendererConfigOption, Object>(TxtRendererConfigOption.class);
 
     private final DefaultFontConfig fontConfig;
 
@@ -67,22 +70,27 @@ public class TxtRendererConfig implements RendererConfig {
     }
 
     public String getEncoding() {
-        return (String) params.get(TxtRendererConfigOptions.ENCODING);
+        return (String) params.get(TxtRendererConfigOption.ENCODING);
     }
 
+    /**
+     * The Text renderer configuration data parser.
+     */
     public static final class TxtRendererConfigParser implements RendererConfigParser {
 
+        /** {@inheritDoc} */
         public TxtRendererConfig build(FOUserAgent userAgent, Configuration cfg) throws FOPException {
             TxtRendererConfig config = new TxtRendererConfig(new DefaultFontConfigParser().parse(cfg,
                     userAgent.validateStrictly()));
             if (cfg != null) {
-                TxtRendererConfigOptions option = TxtRendererConfigOptions.ENCODING;
+                TxtRendererConfigOption option = TxtRendererConfigOption.ENCODING;
                 String value = cfg.getChild(option.getName(), true).getValue(null);
                 config.params.put(option, value != null ? value : option.getDefaultValue());
             }
             return config;
         }
 
+        /** {@inheritDoc} */
         public String getMimeType() {
             return MimeConstants.MIME_PLAIN_TEXT;
         }

@@ -31,8 +31,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 import org.apache.fop.fonts.substitute.FontSubstitutionsConfigurator;
 import org.apache.fop.util.LogUtil;
@@ -74,7 +74,6 @@ public class FontManagerConfigurator {
         // caching (fonts)
         if (cfg.getChild("use-cache", false) != null) {
             try {
-                // TODO: Find some way to deal with this!!
                 if (!cfg.getChild("use-cache").getValueAsBoolean()) {
                     fontManager.disableFontCache();
                 } else {

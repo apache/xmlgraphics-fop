@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.io.InternalResourceResolver;
 
 /**

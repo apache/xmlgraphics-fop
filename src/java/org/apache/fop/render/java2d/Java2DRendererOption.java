@@ -17,20 +17,21 @@
 
 /* $Id$ */
 
-package org.apache.fop.apps;
+package org.apache.fop.render.java2d;
 
-import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
+import org.apache.fop.render.RendererConfigOption;
 
-import static org.apache.fop.render.java2d.Java2DRendererOption.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
+public enum Java2DRendererOption implements RendererConfigOption {
+    /** Rendering Options key for the controlling the transparent page background option. */
+    JAVA2D_TRANSPARENT_PAGE_BACKGROUND("transparent-page-background");
 
-public class Java2DRendererConfBuilder extends RendererConfBuilder {
+    private final String name;
 
-    protected Java2DRendererConfBuilder() {
-        super("Java2D");
+    private Java2DRendererOption(String name) {
+        this.name = name;
     }
 
-    public Java2DRendererConfBuilder setPageBackgroundTransparency(boolean value) {
-        createTextElement(JAVA2D_TRANSPARENT_PAGE_BACKGROUND, String.valueOf(value));
-        return this;
+    public String getName() {
+        return name;
     }
 }

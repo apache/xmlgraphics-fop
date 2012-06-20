@@ -76,9 +76,9 @@ public class Type1FontLoader extends FontLoader {
         String fontFileStr = fontFileURI.toASCIIString();
         String partialAfmUri = fontFileStr.substring(0, fontFileStr.length() - 4);
         String afmUri = null;
-        for (int i = 0; i < AFM_EXTENSIONS.length; i++) {
+        for (String afmExtension : AFM_EXTENSIONS) {
             try {
-                afmUri = partialAfmUri + AFM_EXTENSIONS[i];
+                afmUri = partialAfmUri + afmExtension;
                 afmIn = resourceResolver.getResource(afmUri);
                 if (afmIn != null) {
                     break;
@@ -86,8 +86,7 @@ public class Type1FontLoader extends FontLoader {
             } catch (IOException ioe) {
                 // Ignore, AFM probably not available under the URI
             } catch (URISyntaxException e) {
-                // TODO: Not sure what the best thing to do here is?!?
-                throw new RuntimeException(e);
+                // Ignore, AFM probably not available under the URI
             }
         }
         if (afmIn != null) {

@@ -29,12 +29,15 @@ import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.render.RendererConfig;
 
-import static org.apache.fop.render.java2d.Java2DRendererOptions.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
+import static org.apache.fop.render.java2d.Java2DRendererOption.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
 
+/**
+ * The Java2D renderer configuration data object.
+ */
 public final class Java2DRendererConfig implements RendererConfig {
 
-    private final EnumMap<Java2DRendererOptions, Object> params
-            = new EnumMap<Java2DRendererOptions, Object>(Java2DRendererOptions.class);
+    private final EnumMap<Java2DRendererOption, Object> params
+            = new EnumMap<Java2DRendererOption, Object>(Java2DRendererOption.class);
 
     private final DefaultFontConfig fontConfig;
 
@@ -50,6 +53,9 @@ public final class Java2DRendererConfig implements RendererConfig {
         return Boolean.class.cast(params.get(JAVA2D_TRANSPARENT_PAGE_BACKGROUND));
     }
 
+    /**
+     * The Java2D renderer configuration data parser.
+     */
     public static class Java2DRendererConfigParser implements RendererConfigParser {
 
         private final String mimeType;
@@ -58,6 +64,7 @@ public final class Java2DRendererConfig implements RendererConfig {
             this.mimeType = mimeType;
         }
 
+        /** {@inheritDoc} */
         public Java2DRendererConfig build(FOUserAgent userAgent, Configuration cfg)
                 throws FOPException {
             Java2DRendererConfig config = new Java2DRendererConfig(new DefaultFontConfigParser()
@@ -68,6 +75,7 @@ public final class Java2DRendererConfig implements RendererConfig {
             return config;
         }
 
+        /** {@inheritDoc} */
         public String getMimeType() {
             return mimeType;
         }
