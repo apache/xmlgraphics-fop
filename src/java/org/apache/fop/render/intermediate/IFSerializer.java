@@ -40,8 +40,8 @@ import org.apache.xmlgraphics.util.XMLizable;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.render.DefaultRendererConfigurator;
 import org.apache.fop.render.RenderingContext;
-import org.apache.fop.render.adobe.AdobeRendererConfigurator;
 import org.apache.fop.render.intermediate.IFRendererConfig.IFRendererConfigParser;
 import org.apache.fop.render.intermediate.IFStructureTreeBuilder.IFStructureTreeElement;
 import org.apache.fop.render.intermediate.extensions.AbstractAction;
@@ -111,7 +111,7 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
         if (this.mimicHandler != null) {
             return getMimickedDocumentHandler().getConfigurator();
         } else {
-            return new AdobeRendererConfigurator(getUserAgent(), new IFRendererConfigParser());
+            return new DefaultRendererConfigurator(getUserAgent(), new IFRendererConfigParser());
         }
     }
 

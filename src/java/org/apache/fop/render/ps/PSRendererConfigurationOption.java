@@ -21,12 +21,12 @@ package org.apache.fop.render.ps;
 
 import org.apache.xmlgraphics.ps.PSGenerator;
 
-import org.apache.fop.render.RendererConfigOptions;
+import org.apache.fop.render.RendererConfigOption;
 
 /**
  * An enumeration of the PostScript renderer configuration options along with their default values.
  */
-public enum PSRendererConfigurationOptions implements RendererConfigOptions {
+public enum PSRendererConfigurationOption implements RendererConfigOption {
     /** Indicates whether landscape pages should be rotated, default: false */
     AUTO_ROTATE_LANDSCAPE("auto-rotate-landscape", false),
     /** Sets the PostScript language leven, default: {@see PSGenerator#DEFAULT_LANGUAGE_LEVEL}*/
@@ -42,7 +42,7 @@ public enum PSRendererConfigurationOptions implements RendererConfigOptions {
     private final String name;
     private final Object defaultValue;
 
-    private PSRendererConfigurationOptions(String name, Object defaultValue) {
+    private PSRendererConfigurationOption(String name, Object defaultValue) {
         this.name = name;
         this.defaultValue = defaultValue;
     }

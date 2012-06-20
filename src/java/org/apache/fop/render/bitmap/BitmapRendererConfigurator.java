@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.FontCollection;
@@ -55,8 +56,8 @@ public class BitmapRendererConfigurator extends Java2DRendererConfigurator {
     public void configure(IFDocumentHandler documentHandler) throws FOPException {
         AbstractBitmapDocumentHandler bitmapHandler = (AbstractBitmapDocumentHandler) documentHandler;
         BitmapRenderingSettings settings = bitmapHandler.getSettings();
-        // TODO: magic strings!
-        configure(documentHandler, settings, new BitmapRendererConfigParser("image/bitmap"));
+        configure(documentHandler, settings,
+                new BitmapRendererConfigParser(MimeConstants.MIME_BITMAP));
     }
 
     void configure(IFDocumentHandler documentHandler, BitmapRenderingSettings settings,

@@ -19,7 +19,7 @@
 
 package org.apache.fop.apps;
 
-import static org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererConfigOptions.COMPRESSION;
+import static org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererConfigOption.COMPRESSION;
 
 public class TIFFRendererConfBuilder extends BitmapRendererConfBuilder {
 

@@ -43,32 +43,34 @@ import org.apache.fop.pdf.Version;
 import org.apache.fop.render.RendererConfig;
 import org.apache.fop.util.LogUtil;
 
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.DISABLE_SRGB_COLORSPACE;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.ENCRYPTION_LENGTH;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.ENCRYPTION_PARAMS;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.FILTER_LIST;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_ACCESSCONTENT;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_ANNOTATIONS;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_ASSEMBLEDOC;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_COPY_CONTENT;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_EDIT_CONTENT;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_FILLINFORMS;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_PRINT;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_PRINTHQ;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.OUTPUT_PROFILE;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.OWNER_PASSWORD;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.PDF_A_MODE;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.PDF_X_MODE;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.USER_PASSWORD;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.VERSION;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.DISABLE_SRGB_COLORSPACE;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.ENCRYPTION_LENGTH;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.ENCRYPTION_PARAMS;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.FILTER_LIST;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_ACCESSCONTENT;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_ANNOTATIONS;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_ASSEMBLEDOC;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_COPY_CONTENT;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_EDIT_CONTENT;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_FILLINFORMS;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_PRINT;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_PRINTHQ;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.OUTPUT_PROFILE;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.OWNER_PASSWORD;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.PDF_A_MODE;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.PDF_X_MODE;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.USER_PASSWORD;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.VERSION;
 
-
+/**
+ * The PDF renderer configuration data object.
+ */
 public final class PDFRendererConfig implements RendererConfig {
 
     private static final Log LOG = LogFactory.getLog(PDFRendererConfig.class);
 
-    private final Map<PDFRendererConfigOptions, Object> configOptions
-            = new EnumMap<PDFRendererConfigOptions, Object>(PDFRendererConfigOptions.class);
+    private final Map<PDFRendererConfigOption, Object> configOptions
+            = new EnumMap<PDFRendererConfigOption, Object>(PDFRendererConfigOption.class);
 
     private final DefaultFontConfig fontConfig;
 
@@ -109,6 +111,9 @@ public final class PDFRendererConfig implements RendererConfig {
         return pdfVersion == null ? null : Version.getValueOf(pdfVersion);
     }
 
+    /**
+     * The PDF renderer configuration data parser.
+     */
     public static final class PDFRendererConfigParser implements RendererConfigParser {
 
         public PDFRendererConfig build(FOUserAgent userAgent, Configuration cfg) throws FOPException {
@@ -132,7 +137,7 @@ public final class PDFRendererConfig implements RendererConfig {
             }
         }
 
-        private void put(PDFRendererConfigOptions option, Object value) {
+        private void put(PDFRendererConfigOption option, Object value) {
             if (value != null && !value.equals(option.getDefaultValue())) {
                 pdfConfig.configOptions.put(option, value);
             }
@@ -209,12 +214,12 @@ public final class PDFRendererConfig implements RendererConfig {
             put(FILTER_LIST, filterMap);
         }
 
-        private String parseConfig(Configuration cfg, PDFRendererConfigOptions option) {
+        private String parseConfig(Configuration cfg, PDFRendererConfigOption option) {
             Configuration child = cfg.getChild(option.getName());
             return child.getValue(null);
         }
 
-        private boolean doesValueExist(Configuration cfg, PDFRendererConfigOptions option) {
+        private boolean doesValueExist(Configuration cfg, PDFRendererConfigOption option) {
             return cfg.getChild(option.getName(), false) != null;
         }
 

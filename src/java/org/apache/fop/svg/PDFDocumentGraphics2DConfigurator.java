@@ -25,8 +25,8 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfigurator;
 import org.apache.fop.fonts.EmbedFontInfo;

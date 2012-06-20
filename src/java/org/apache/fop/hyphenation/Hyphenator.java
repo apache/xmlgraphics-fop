@@ -69,12 +69,12 @@ public final class Hyphenator {
      * The hyphenation trees are cached.
      * @param lang the language
      * @param country the country (may be null or "none")
-     * @param resourceResolver resolver to find the hyphenation files
+     * @param resolver resolver to find the hyphenation files
      * @param hyphPatNames the map with user-configured hyphenation pattern file names
      * @return the hyphenation tree
      */
     public static HyphenationTree getHyphenationTree(String lang,
-            String country, InternalResourceResolver resourceResolver, Map hyphPatNames) {
+            String country, InternalResourceResolver resolver, Map hyphPatNames) {
         String llccKey = HyphenationTreeCache.constructLlccKey(lang, country);
         HyphenationTreeCache cache = getHyphenationTreeCache();
 
@@ -83,13 +83,13 @@ public final class Hyphenator {
             return null;
         }
 
-        HyphenationTree hTree = getHyphenationTree2(lang, country, resourceResolver, hyphPatNames);
+        HyphenationTree hTree = getHyphenationTree2(lang, country, resolver, hyphPatNames);
 
         // fallback to lang only
         if (hTree == null && country != null && !country.equals("none")) {
             String llKey = HyphenationTreeCache.constructLlccKey(lang, null);
             if (!cache.isMissing(llKey)) {
-                hTree = getHyphenationTree2(lang, null, resourceResolver, hyphPatNames);
+                hTree = getHyphenationTree2(lang, null, resolver, hyphPatNames);
                 if (hTree != null && log.isDebugEnabled()) {
                     log.debug("Couldn't find hyphenation pattern "
                               + "for lang=\"" + lang + "\",country=\"" + country + "\"."
@@ -125,7 +125,7 @@ public final class Hyphenator {
      * The hyphenation trees are cached.
      * @param lang the language
      * @param country the country (may be null or "none")
-     * @param resourceResolver resource resolver to find the hyphenation files
+     * @param resourceResolver resolver to find the hyphenation files
      * @param hyphPatNames the map with user-configured hyphenation pattern file names
      * @return the hyphenation tree
      */
@@ -298,7 +298,7 @@ public final class Hyphenator {
      * Hyphenates a word.
      * @param lang the language
      * @param country the optional country code (may be null or "none")
-     * @param resourceResolver resource resolver to find the hyphenation files
+     * @param resourceResolver resolver to find the hyphenation files
      * @param hyphPatNames the map with user-configured hyphenation pattern file names
      * @param word the word to hyphenate
      * @param leftMin the minimum number of characters before the hyphenation point

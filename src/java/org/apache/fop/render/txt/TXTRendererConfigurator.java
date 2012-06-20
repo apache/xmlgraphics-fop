@@ -21,14 +21,14 @@ package org.apache.fop.render.txt;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.render.DefaultRendererConfigurator;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
-import org.apache.fop.render.adobe.AdobeRendererConfigurator;
 
 /**
  * TXT Renderer configurator
  */
-public class TXTRendererConfigurator extends AdobeRendererConfigurator {
+public class TXTRendererConfigurator extends DefaultRendererConfigurator {
 
     /**
      * Default constructor

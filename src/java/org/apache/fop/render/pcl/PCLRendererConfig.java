@@ -31,33 +31,17 @@ import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.render.RendererConfig;
 
-import static org.apache.fop.render.pcl.PCLRendererConfig.Options.DISABLE_PJL;
-import static org.apache.fop.render.pcl.PCLRendererConfig.Options.RENDERING_MODE;
-import static org.apache.fop.render.pcl.PCLRendererConfig.Options.TEXT_RENDERING;
+import static org.apache.fop.render.pcl.Java2DRendererConfigOption.DISABLE_PJL;
+import static org.apache.fop.render.pcl.Java2DRendererConfigOption.RENDERING_MODE;
+import static org.apache.fop.render.pcl.Java2DRendererConfigOption.TEXT_RENDERING;
 
+/**
+ * The PCL renderer configuration data object.
+ */
 public final class PCLRendererConfig implements RendererConfig {
 
-    public enum Options {
-
-        RENDERING_MODE("rendering", PCLRenderingMode.class),
-        TEXT_RENDERING("text-rendering", Boolean.class),
-        DISABLE_PJL("disable-pjl", Boolean.class);
-
-        private final String name;
-
-        private final Class<?> type;
-
-        private Options(String name, Class<?> type) {
-            this.name = name;
-            this.type = type;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
-    private final Map<Options, Object> params = new EnumMap<Options, Object>(Options.class);
+    private final Map<Java2DRendererConfigOption, Object> params
+        = new EnumMap<Java2DRendererConfigOption, Object>(Java2DRendererConfigOption.class);
 
     private final DefaultFontConfig fontConfig;
 
@@ -81,18 +65,22 @@ public final class PCLRendererConfig implements RendererConfig {
         return getParam(DISABLE_PJL, Boolean.class);
     }
 
-    private <T> T getParam(Options option, Class<T> type) {
-        assert option.type.equals(type);
+    private <T> T getParam(Java2DRendererConfigOption option, Class<T> type) {
+        assert option.getType().equals(type);
         return type.cast(params.get(option));
     }
 
-    private <T> void setParam(Options option, T value) {
-        assert option.type.isInstance(value);
+    private <T> void setParam(Java2DRendererConfigOption option, T value) {
+        assert option.getType().isInstance(value);
         params.put(option, value);
     }
 
+    /**
+     * The PCL renderer configuration data parser.
+     */
     public static final class PCLRendererConfigParser implements RendererConfigParser {
 
+        /** {@inheritDoc} */
         public PCLRendererConfig build(FOUserAgent userAgent, Configuration cfg) throws FOPException {
             PCLRendererConfig config = new PCLRendererConfig(new DefaultFontConfigParser()
                     .parse(cfg, userAgent.validateStrictly()));
@@ -126,6 +114,7 @@ public final class PCLRendererConfig implements RendererConfig {
             }
         }
 
+        /** {@inheritDoc} */
         public String getMimeType() {
             return MimeConstants.MIME_PCL;
         }

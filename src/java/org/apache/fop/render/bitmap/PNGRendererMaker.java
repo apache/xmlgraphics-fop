@@ -24,6 +24,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.AbstractRendererMaker;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.bitmap.PNGRendererConfig.PNGRendererConfigParser;
 import org.apache.fop.render.java2d.Java2DRendererConfigurator;
 
 /**
@@ -40,8 +41,7 @@ public class PNGRendererMaker extends AbstractRendererMaker {
 
     @Override
     public void configureRenderer(FOUserAgent userAgent, Renderer renderer) throws FOPException {
-        // TODO what constructir params?
-        new Java2DRendererConfigurator(userAgent, null).configure(renderer);
+        new Java2DRendererConfigurator(userAgent, new PNGRendererConfigParser()).configure(renderer);
     }
 
     @Override

@@ -19,11 +19,12 @@
 
 package org.apache.fop.render.bitmap;
 
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.bitmap.BitmapRendererConfig.BitmapRendererConfigParser;
 
 public class BitmapRendererConfigParserTestCase extends AbstractBitmapRendererConfigParserTester {
 
     public BitmapRendererConfigParserTestCase() {
-        super(new BitmapRendererConfigParser("bitmap"));
+        super(new BitmapRendererConfigParser(MimeConstants.MIME_BITMAP));
     }
 }

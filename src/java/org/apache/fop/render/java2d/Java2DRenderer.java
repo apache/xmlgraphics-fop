@@ -84,7 +84,7 @@ import org.apache.fop.render.pdf.CTMHelper;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ColorUtil;
 
-import static org.apache.fop.render.java2d.Java2DRendererOptions.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
+import static org.apache.fop.render.java2d.Java2DRendererOption.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
 
 /**
  * The <code>Java2DRenderer</code> class provides the abstract technical

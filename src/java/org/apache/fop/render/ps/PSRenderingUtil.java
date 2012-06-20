@@ -33,9 +33,9 @@ import org.apache.fop.render.ps.extensions.PSCommentBefore;
 import org.apache.fop.render.ps.extensions.PSExtensionAttachment;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.AUTO_ROTATE_LANDSCAPE;
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.LANGUAGE_LEVEL;
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.OPTIMIZE_RESOURCES;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.AUTO_ROTATE_LANDSCAPE;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.LANGUAGE_LEVEL;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.OPTIMIZE_RESOURCES;
 
 /**
  * Utility class which enables all sorts of features that are not directly connected to the

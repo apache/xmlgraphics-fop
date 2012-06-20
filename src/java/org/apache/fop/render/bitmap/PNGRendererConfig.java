@@ -26,12 +26,18 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 
+/**
+ * The PNG renderer configuration data object.
+ */
 public final class PNGRendererConfig extends BitmapRendererConfig {
 
     private PNGRendererConfig(DefaultFontConfig fontConfig) {
         super(fontConfig);
     }
 
+    /**
+     * The PNG renderer configuration parser.
+     */
     public static class PNGRendererConfigParser implements RendererConfigParser {
 
         public PNGRendererConfig build(FOUserAgent userAgent, Configuration cfg)
@@ -40,6 +46,7 @@ public final class PNGRendererConfig extends BitmapRendererConfig {
                     userAgent.validateStrictly()));
         }
 
+        /** {@inheritDoc} */
         public String getMimeType() {
             return MimeConstants.MIME_PNG;
         }

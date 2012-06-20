@@ -68,21 +68,21 @@ import org.apache.fop.pdf.Version;
 import org.apache.fop.pdf.VersionController;
 import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileExtensionAttachment;
 
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.DISABLE_SRGB_COLORSPACE;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.ENCRYPTION_PARAMS;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_ACCESSCONTENT;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_ANNOTATIONS;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_ASSEMBLEDOC;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_COPY_CONTENT;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_EDIT_CONTENT;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_FILLINFORMS;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_PRINT;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.NO_PRINTHQ;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.OUTPUT_PROFILE;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.OWNER_PASSWORD;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.PDF_A_MODE;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.PDF_X_MODE;
-import static org.apache.fop.render.pdf.PDFRendererConfigOptions.USER_PASSWORD;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.DISABLE_SRGB_COLORSPACE;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.ENCRYPTION_PARAMS;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_ACCESSCONTENT;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_ANNOTATIONS;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_ASSEMBLEDOC;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_COPY_CONTENT;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_EDIT_CONTENT;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_FILLINFORMS;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_PRINT;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.NO_PRINTHQ;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.OUTPUT_PROFILE;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.OWNER_PASSWORD;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.PDF_A_MODE;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.PDF_X_MODE;
+import static org.apache.fop.render.pdf.PDFRendererConfigOption.USER_PASSWORD;
 
 /**
  * Utility class which enables all sorts of features that are not directly connected to the
@@ -99,10 +99,10 @@ class PDFRenderingUtil {
     private PDFDocument pdfDoc;
 
     /** the PDF/A mode (Default: disabled) */
-    private PDFAMode pdfAMode = (PDFAMode) PDFRendererConfigOptions.PDF_A_MODE.getDefaultValue();
+    private PDFAMode pdfAMode = (PDFAMode) PDFRendererConfigOption.PDF_A_MODE.getDefaultValue();
 
     /** the PDF/X mode (Default: disabled) */
-    private PDFXMode pdfXMode = (PDFXMode) PDFRendererConfigOptions.PDF_X_MODE.getDefaultValue();
+    private PDFXMode pdfXMode = (PDFXMode) PDFRendererConfigOption.PDF_X_MODE.getDefaultValue();
 
     /** the (optional) encryption parameters */
     private PDFEncryptionParams encryptionParams;

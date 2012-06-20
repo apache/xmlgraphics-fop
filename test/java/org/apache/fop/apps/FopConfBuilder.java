@@ -42,7 +42,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import org.apache.fop.render.RendererConfigOptions;
+import org.apache.fop.render.RendererConfigOption;
 
 /**
  * A builder class for creating fop.xconf XML DOMs for test purposes. You can set all the necessary
@@ -336,7 +336,7 @@ public class FopConfBuilder implements FontConfigurator<FopConfBuilder> {
             return createTextElement(name, value, rendererEl);
         }
 
-        protected final Element createTextElement(RendererConfigOptions option, String value) {
+        protected final Element createTextElement(RendererConfigOption option, String value) {
             return createTextElement(option.getName(), value, rendererEl);
         }
 

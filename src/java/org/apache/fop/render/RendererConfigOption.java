@@ -19,6 +19,11 @@
 
 package org.apache.fop.render;
 
-public interface RendererConfigOptions {
+/**
+ * Implementations of this interface enumerate the various renderer configuration options available
+ * to users in the FOP conf.
+ */
+public interface RendererConfigOption {
+    /** The name of the option. */
     String getName();
 }

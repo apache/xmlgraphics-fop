@@ -21,9 +21,9 @@ package org.apache.fop.render.pdf;
 
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFXMode;
-import org.apache.fop.render.RendererConfigOptions;
+import org.apache.fop.render.RendererConfigOption;
 
-public enum PDFRendererConfigOptions implements RendererConfigOptions {
+public enum PDFRendererConfigOption implements RendererConfigOption {
     FILTER_LIST("filterList"),
     /** Rendering Options key for the PDF/A mode, default: {@link PDFAMode#DISABLED} */
     PDF_A_MODE("pdf-a-mode", PDFAMode.DISABLED),
@@ -93,12 +93,12 @@ public enum PDFRendererConfigOptions implements RendererConfigOptions {
     private final String name;
     private final Object defaultValue;
 
-    private PDFRendererConfigOptions(String name, Object defaultValue) {
+    private PDFRendererConfigOption(String name, Object defaultValue) {
         this.name = name;
         this.defaultValue = defaultValue;
     }
 
-    private PDFRendererConfigOptions(String name) {
+    private PDFRendererConfigOption(String name) {
         this(name, null);
     }
 

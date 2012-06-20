@@ -35,17 +35,20 @@ import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.render.RendererConfig;
 import org.apache.fop.util.LogUtil;
 
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.AUTO_ROTATE_LANDSCAPE;
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.DSC_COMPLIANT;
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.LANGUAGE_LEVEL;
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.OPTIMIZE_RESOURCES;
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.RENDERING_MODE;
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.SAFE_SET_PAGE_DEVICE;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.AUTO_ROTATE_LANDSCAPE;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.DSC_COMPLIANT;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.LANGUAGE_LEVEL;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.OPTIMIZE_RESOURCES;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.RENDERING_MODE;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.SAFE_SET_PAGE_DEVICE;
 
+/**
+ * The PostScript renderer configuration data object.
+ */
 public final class PSRendererConfig implements RendererConfig {
 
-    private final EnumMap<PSRendererConfigurationOptions, Object> params
-            = new EnumMap<PSRendererConfigurationOptions, Object>(PSRendererConfigurationOptions.class);
+    private final EnumMap<PSRendererConfigurationOption, Object> params
+            = new EnumMap<PSRendererConfigurationOption, Object>(PSRendererConfigurationOption.class);
 
     private final DefaultFontConfig fontConfig;
 
@@ -81,6 +84,9 @@ public final class PSRendererConfig implements RendererConfig {
         return (PSRenderingMode) params.get(RENDERING_MODE);
     }
 
+    /**
+     * The PostScript renderer configuration data parser.
+     */
     public static final class PSRendererConfigParser implements RendererConfigParser {
 
         private static final Log LOG = LogFactory.getLog(PSRendererConfigParser.class);
@@ -126,12 +132,12 @@ public final class PSRendererConfig implements RendererConfig {
             }
         }
 
-        private void setConfigParameter(PSRendererConfigurationOptions option,
+        private void setConfigParameter(PSRendererConfigurationOption option,
                 Object value) {
             config.params.put(option, value != null ? value : option.getDefaultValue());
         }
 
-        private void setBoolConfigParam(Configuration cfg, PSRendererConfigurationOptions option) {
+        private void setBoolConfigParam(Configuration cfg, PSRendererConfigurationOption option) {
             setConfigParameter(option, cfg.getChild(
                     option.getName()).getValueAsBoolean((Boolean) option.getDefaultValue()));
         }

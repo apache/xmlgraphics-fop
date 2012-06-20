@@ -15,22 +15,35 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+package org.apache.fop.render.pcl;
 
-package org.apache.fop.apps;
+import org.apache.fop.render.RendererConfigOption;
 
-import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
+/**
+ * An enumeration of the renderer configuration options available to the Java2D renderer via the
+ * FOP conf.
+ */
+public enum Java2DRendererConfigOption implements RendererConfigOption {
 
-import static org.apache.fop.render.java2d.Java2DRendererOption.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
+    RENDERING_MODE("rendering", PCLRenderingMode.class),
+    TEXT_RENDERING("text-rendering", Boolean.class),
+    DISABLE_PJL("disable-pjl", Boolean.class);
 
-public class Java2DRendererConfBuilder extends RendererConfBuilder {
+    private final String name;
 
-    protected Java2DRendererConfBuilder() {
-        super("Java2D");
+    private final Class<?> type;
+
+    private Java2DRendererConfigOption(String name, Class<?> type) {
+        this.name = name;
+        this.type = type;
     }
 
-    public Java2DRendererConfBuilder setPageBackgroundTransparency(boolean value) {
-        createTextElement(JAVA2D_TRANSPARENT_PAGE_BACKGROUND, String.valueOf(value));
-        return this;
+    /** {@inheritDoc} */
+    public String getName() {
+        return name;
+    }
+
+    Class<?> getType() {
+        return type;
     }
 }

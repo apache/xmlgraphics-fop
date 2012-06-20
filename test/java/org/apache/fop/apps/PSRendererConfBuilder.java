@@ -21,11 +21,11 @@ package org.apache.fop.apps;
 
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
 
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.AUTO_ROTATE_LANDSCAPE;
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.DSC_COMPLIANT;
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.LANGUAGE_LEVEL;
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.OPTIMIZE_RESOURCES;
-import static org.apache.fop.render.ps.PSRendererConfigurationOptions.SAFE_SET_PAGE_DEVICE;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.AUTO_ROTATE_LANDSCAPE;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.DSC_COMPLIANT;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.LANGUAGE_LEVEL;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.OPTIMIZE_RESOURCES;
+import static org.apache.fop.render.ps.PSRendererConfigurationOption.SAFE_SET_PAGE_DEVICE;
 
 /**
  * A fop conf builder specific to a particular renderer for Postscript.

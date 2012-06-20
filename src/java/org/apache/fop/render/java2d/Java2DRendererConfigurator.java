@@ -21,14 +21,14 @@ package org.apache.fop.render.java2d;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.render.DefaultRendererConfigurator;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
-import org.apache.fop.render.adobe.AdobeRendererConfigurator;
 
 /**
  * Configurerer for Java 2D renderer
  */
-public class Java2DRendererConfigurator extends AdobeRendererConfigurator {
+public class Java2DRendererConfigurator extends DefaultRendererConfigurator {
 
     /**
      * Default constructor

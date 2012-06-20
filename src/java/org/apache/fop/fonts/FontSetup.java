@@ -190,7 +190,8 @@ public final class FontSetup {
      * @param resourceResolver the font resolver
      */
     private static void addConfiguredFonts(FontInfo fontInfo,
-            List<EmbedFontInfo> embedFontInfoList, int num, InternalResourceResolver resourceResolver,
+            List<EmbedFontInfo> embedFontInfoList, int num,
+            InternalResourceResolver resourceResolver,
             boolean base14Kerning) {
         if (embedFontInfoList == null) {
             return; //No fonts to process

@@ -108,8 +108,8 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
                     if (fontEmbedURI == null) {
                         throw new RuntimeException("Cannot load font. No font URIs available.");
                     }
-                    realFont = FontLoader.loadFont(fontEmbedURI, this.subFontName,
-                            this.embedded, this.encodingMode, useKerning, useAdvanced, resourceResolver);
+                    realFont = FontLoader.loadFont(fontEmbedURI, this.subFontName, embedded,
+                            this.encodingMode, useKerning, useAdvanced, resourceResolver);
                 }
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;
