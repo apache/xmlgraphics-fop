@@ -23,16 +23,14 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ColorModel;
-import java.awt.image.RenderedImage;
 import java.io.IOException;
 
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawPNG;
 import org.apache.xmlgraphics.ps.FormGenerator;
 import org.apache.xmlgraphics.ps.ImageEncoder;
-import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 import org.apache.xmlgraphics.ps.ImageFormGenerator;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSImageUtils;
@@ -40,34 +38,29 @@ import org.apache.xmlgraphics.ps.PSImageUtils;
 import org.apache.fop.render.RenderingContext;
 
 /**
- * Image handler implementation which handles RenderedImage instances for PostScript output.
+ * Image handler implementation which handles raw (not decoded) PNG images for PostScript output.
  */
-public class PSImageHandlerRenderedImage implements PSImageHandler {
+public class PSImageHandlerRawPNG implements PSImageHandler {
 
-    private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
-        ImageFlavor.BUFFERED_IMAGE,
-        ImageFlavor.RENDERED_IMAGE
-    };
+    private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {ImageFlavor.RAW_PNG};
 
     /** {@inheritDoc} */
-    public void handleImage(RenderingContext context, Image image, Rectangle pos)
-                throws IOException {
+    public void handleImage(RenderingContext context, Image image, Rectangle pos) throws IOException {
         PSRenderingContext psContext = (PSRenderingContext) context;
         PSGenerator gen = psContext.getGenerator();
-        ImageRendered imageRend = (ImageRendered) image;
+        ImageRawPNG png = (ImageRawPNG) image;
 
         float x = (float) pos.getX() / 1000f;
         float y = (float) pos.getY() / 1000f;
         float w = (float) pos.getWidth() / 1000f;
         float h = (float) pos.getHeight() / 1000f;
-        Rectangle2D targetRect = new Rectangle2D.Double(x, y, w, h);
+        Rectangle2D targetRect = new Rectangle2D.Float(x, y, w, h);
 
-        RenderedImage ri = imageRend.getRenderedImage();
-        ImageEncoder encoder = ImageEncodingHelper.createRenderedImageEncoder(ri);
-        Dimension imgDim = new Dimension(ri.getWidth(), ri.getHeight());
-        String imgDescription = ri.getClass().getName();
-        ImageEncodingHelper helper = new ImageEncodingHelper(ri);
-        ColorModel cm = helper.getEncodedColorModel();
+        ImageEncoder encoder = new ImageEncoderPNG(png);
+        ImageInfo info = image.getInfo();
+        Dimension imgDim = info.getSize().getDimensionPx();
+        String imgDescription = image.getClass().getName();
+        ColorModel cm = png.getColorModel();
 
         PSImageUtils.writeImage(encoder, imgDim, imgDescription, targetRect, cm, gen);
     }
@@ -75,28 +68,27 @@ public class PSImageHandlerRenderedImage implements PSImageHandler {
     /** {@inheritDoc} */
     public void generateForm(RenderingContext context, Image image, PSImageFormResource form)
             throws IOException {
-        PSRenderingContext psContext = (PSRenderingContext)context;
+        PSRenderingContext psContext = (PSRenderingContext) context;
         PSGenerator gen = psContext.getGenerator();
-        ImageRendered imageRend = (ImageRendered)image;
+        ImageRawPNG png = (ImageRawPNG) image;
         ImageInfo info = image.getInfo();
         String imageDescription = info.getMimeType() + " " + info.getOriginalURI();
 
-        RenderedImage ri = imageRend.getRenderedImage();
-        FormGenerator formGen = new ImageFormGenerator(
-                form.getName(), imageDescription,
-                info.getSize().getDimensionPt(),
-                ri, false);
+        ImageEncoder encoder = new ImageEncoderPNG(png);
+        FormGenerator formGen = new ImageFormGenerator(form.getName(), imageDescription, info.getSize()
+                .getDimensionPt(), info.getSize().getDimensionPx(), encoder, png.getColorSpace(),
+                false);
         formGen.generate(gen);
     }
 
     /** {@inheritDoc} */
     public int getPriority() {
-        return 300;
+        return 200;
     }
 
     /** {@inheritDoc} */
-    public Class getSupportedImageClass() {
-        return ImageRendered.class;
+    public Class<ImageRawPNG> getSupportedImageClass() {
+        return ImageRawPNG.class;
     }
 
     /** {@inheritDoc} */
@@ -106,8 +98,14 @@ public class PSImageHandlerRenderedImage implements PSImageHandler {
 
     /** {@inheritDoc} */
     public boolean isCompatible(RenderingContext targetContext, Image image) {
-        return (image == null || image instanceof ImageRendered)
-                && targetContext instanceof PSRenderingContext;
+        if (targetContext instanceof PSRenderingContext) {
+            PSRenderingContext psContext = (PSRenderingContext) targetContext;
+            // The filters required for this implementation need PS level 2 or higher
+            if (psContext.getGenerator().getPSLevel() >= 2) {
+                return (image == null || image instanceof ImageRawPNG);
+            }
+        }
+        return false;
     }
 
 }
