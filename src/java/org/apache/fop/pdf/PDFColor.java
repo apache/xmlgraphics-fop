@@ -30,7 +30,7 @@ import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
  * image. And in this context, only RGB and Gray values are used.
  * <p>
  * Use of this class is discouraged. {@link PDFColorHandler} is now used for in-content color
- * selection. For masked bitmaps, it may be wiser to switch to {@link Color} in the long run.
+ * selection. For masked bitmaps, it may be wiser to switch to {@link java.awt.Color} in the long run.
  */
 public class PDFColor extends PDFPathPaint {
     // could be 3.0 as well.

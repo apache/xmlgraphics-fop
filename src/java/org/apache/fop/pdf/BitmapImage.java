@@ -37,6 +37,7 @@ public class BitmapImage implements PDFImage {
     private PDFColor transparent = null;
     private String key;
     private PDFDocument pdfDoc;
+    private PDFFilter pdfFilter;
 
     /**
      * Create a bitmap image.
@@ -208,9 +209,12 @@ public class BitmapImage implements PDFImage {
      * {@inheritDoc}
      */
     public PDFFilter getPDFFilter() {
-        return null;
+        return pdfFilter;
     }
 
+    public void setPDFFilter(PDFFilter pdfFilter) {
+        this.pdfFilter = pdfFilter;
+    }
 }
 
 
