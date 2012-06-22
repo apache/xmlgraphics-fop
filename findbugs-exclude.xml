@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FindBugsFilter>
   <Match>
+    <Class name="org.apache.fop.fonts.truetype.TTFFile$1"/>
+    <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.truetype.FontFileReader"/>
+    <Method name="getAllBytes"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
     <Class name="org.apache.fop.fo.properties.FontFamilyProperty"/>
     <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
   </Match>

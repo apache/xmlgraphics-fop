@@ -42,6 +42,7 @@ public abstract class CustomFont extends Typeface
     private String embedFileName = null;
     private String embedResourceName = null;
     private FontResolver resolver = null;
+    private EmbeddingMode embeddingMode = EmbeddingMode.AUTO;
 
     private int capHeight = 0;
     private int xHeight = 0;
@@ -61,6 +62,9 @@ public abstract class CustomFont extends Typeface
 
     private boolean useKerning = true;
     private boolean useAdvanced = true;
+
+    /** the character map, mapping Unicode ranges to glyph indices. */
+    protected CMapSegment[] cmap;
 
     /** {@inheritDoc} */
     public String getFontName() {
@@ -109,6 +113,14 @@ public abstract class CustomFont extends Typeface
      */
     public String getEmbedFileName() {
         return embedFileName;
+    }
+
+    /**
+     * Returns the embedding mode for this font.
+     * @return embedding mode
+     */
+    public EmbeddingMode getEmbeddingMode() {
+        return embeddingMode;
     }
 
     /**
@@ -337,6 +349,13 @@ public abstract class CustomFont extends Typeface
     /**
      * {@inheritDoc}
      */
+    public void setEmbeddingMode(EmbeddingMode embeddingMode) {
+        this.embeddingMode = embeddingMode;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void setCapHeight(int capHeight) {
         this.capHeight = capHeight;
     }
@@ -471,6 +490,27 @@ public abstract class CustomFont extends Typeface
         } else {
             this.kerning = kerningMap;
         }
+    }
+
+    /**
+     * Sets the character map for this font. It maps all available Unicode characters
+     * to their glyph indices inside the font.
+     * @param cmap the character map
+     */
+    public void setCMap(CMapSegment[] cmap) {
+        this.cmap = new CMapSegment[cmap.length];
+        System.arraycopy(cmap, 0, this.cmap, 0, cmap.length);
+    }
+
+    /**
+     * Returns the character map for this font. It maps all available Unicode characters
+     * to their glyph indices inside the font.
+     * @return the character map
+     */
+    public CMapSegment[] getCMap() {
+        CMapSegment[] copy = new CMapSegment[cmap.length];
+        System.arraycopy(this.cmap, 0, copy, 0, this.cmap.length);
+        return copy;
     }
 
 }

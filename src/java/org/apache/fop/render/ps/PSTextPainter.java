@@ -41,12 +41,15 @@ import org.apache.batik.gvt.text.TextSpanLayout;
 
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
-import org.apache.xmlgraphics.ps.PSResource;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.fonts.LazyFont;
+import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.svg.NativeTextPainter;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.util.HexEncoder;
 
 /**
  * Renders the attributed character iterator of a text node.
@@ -240,9 +243,9 @@ public class PSTextPainter extends NativeTextPainter {
         }
     }
 
-    private PSResource getResourceForFont(Font f, String postfix) {
+    private PSFontResource getResourceForFont(Font f, String postfix) {
         String key = (postfix != null ? f.getFontName() + '_' + postfix : f.getFontName());
-        return this.fontResources.getPSResourceForFontKey(key);
+        return this.fontResources.getFontResourceForFontKey(key);
     }
 
     private void clip(PSGraphics2D ps, Shape shape) throws IOException {
@@ -299,9 +302,9 @@ public class PSTextPainter extends NativeTextPainter {
         public void selectFont(Font f, char mapped) throws IOException {
             int encoding = mapped / 256;
             String postfix = (encoding == 0 ? null : Integer.toString(encoding));
-            PSResource res = getResourceForFont(f, postfix);
+            PSFontResource res = getResourceForFont(f, postfix);
             gen.useFont("/" + res.getName(), f.getFontSize() / 1000f);
-            gen.getResourceTracker().notifyResourceUsageOnPage(res);
+            res.notifyResourceUsageOnPage(gen.getResourceTracker());
         }
 
         public Font getCurrentFont() {
@@ -427,15 +430,23 @@ public class PSTextPainter extends NativeTextPainter {
             textUtil.setCurrentFont(f, mapped);
             applyColor(paint, gen);
 
+            FontMetrics metrics = f.getFontMetrics();
+            boolean multiByte = metrics instanceof MultiByteFont
+                    || metrics instanceof LazyFont
+                            && ((LazyFont) metrics).getRealFont() instanceof MultiByteFont;
             StringBuffer sb = new StringBuffer();
-            sb.append('(');
+            sb.append(multiByte ? '<' : '(');
             for (int i = 0, c = this.currentChars.length(); i < c; i++) {
                 char ch = this.currentChars.charAt(i);
                 mapped = f.mapChar(ch);
-                char codepoint = (char) (mapped % 256);
-                PSGenerator.escapeChar(codepoint, sb);
+                if (multiByte) {
+                    sb.append(HexEncoder.encode(mapped));
+                } else {
+                    char codepoint = (char) (mapped % 256);
+                    PSGenerator.escapeChar(codepoint, sb);
+                }
             }
-            sb.append(')');
+            sb.append(multiByte ? '>' : ')');
             if (x || y) {
                 sb.append("\n[");
                 int idx = 0;
@@ -513,10 +524,20 @@ public class PSTextPainter extends NativeTextPainter {
                     textUtil.selectFont(f, mapped);
                     textUtil.setCurrentFont(f, mapped);
                 }
-                mapped = f.mapChar(this.currentChars.charAt(i));
                 //add glyph outlines to current path
-                char codepoint = (char)(mapped % 256);
-                gen.write("(" + codepoint + ")");
+                mapped = f.mapChar(this.currentChars.charAt(i));
+                FontMetrics metrics = f.getFontMetrics();
+                boolean multiByte = metrics instanceof MultiByteFont
+                        || metrics instanceof LazyFont
+                                && ((LazyFont) metrics).getRealFont() instanceof MultiByteFont;
+                if (multiByte) {
+                    gen.write('<');
+                    gen.write(HexEncoder.encode(mapped));
+                    gen.write('>');
+                } else {
+                    char codepoint = (char)(mapped % 256);
+                    gen.write("(" + codepoint + ")");
+                }
                 gen.writeln(" false charpath");
 
                 if (iter.hasNext()) {
