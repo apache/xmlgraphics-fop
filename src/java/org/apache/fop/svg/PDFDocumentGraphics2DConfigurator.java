@@ -19,6 +19,8 @@
 
 package org.apache.fop.svg;
 
+import java.io.File;
+import java.net.URI;
 import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
@@ -85,7 +87,8 @@ public class PDFDocumentGraphics2DConfigurator {
         FontInfo fontInfo = new FontInfo();
         final boolean strict = false;
         if (cfg != null) {
-            InternalResourceResolver resourceResolver = ResourceResolverFactory.createDefaultWrapper();
+            URI thisUri = new File(".").getAbsoluteFile().toURI();
+            InternalResourceResolver resourceResolver = ResourceResolverFactory.createDefaultInternalResourceResolver(thisUri);
             //TODO The following could be optimized by retaining the FontManager somewhere
             FontManager fontManager = new FontManager(resourceResolver, FontDetectorFactory.createDefault(),
                     FontCacheManagerFactory.createDefault());

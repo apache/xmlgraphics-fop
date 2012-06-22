@@ -115,7 +115,7 @@ public class CharacterSet {
         }
         this.codePage = codePage;
         this.encoding = encoding;
-        this.encoder = CharactersetEncoder.newInstance(encoding, charsetType);
+        this.encoder = charsetType.getEncoder(encoding);
         this.accessor = accessor;
 
         this.characterSetOrientations = new HashMap<String, CharacterSetOrientation>(4);

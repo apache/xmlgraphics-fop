@@ -24,17 +24,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
@@ -42,6 +39,7 @@ import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 
 import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFArray;
@@ -118,7 +116,7 @@ class PDFRenderingUtil {
     private boolean disableSRGBColorSpace = false;
 
     /** Optional URI to an output profile to be used. */
-    private String outputProfileURI;
+    private URI outputProfileURI;
 
     private Version maxPDFVersion;
 
@@ -198,7 +196,7 @@ class PDFRenderingUtil {
         }
         s = (String) userAgent.getRendererOption(OUTPUT_PROFILE);
         if (s != null) {
-            this.outputProfileURI = s;
+            this.outputProfileURI = URI.create(s);
         }
         Object disableSRGBColorSpace = userAgent.getRendererOption(DISABLE_SRGB_COLORSPACE);
         if (disableSRGBColorSpace != null) {
@@ -230,7 +228,7 @@ class PDFRenderingUtil {
      * Sets the output color profile for the PDF renderer.
      * @param outputProfileURI the URI to the output color profile
      */
-    public void setOutputProfileURI(String outputProfileURI) {
+    public void setOutputProfileURI(URI outputProfileURI) {
         this.outputProfileURI = outputProfileURI;
     }
 
@@ -303,15 +301,7 @@ class PDFRenderingUtil {
         InputStream in = null;
         if (this.outputProfileURI != null) {
             this.outputProfile = pdfDoc.getFactory().makePDFICCStream();
-            Source src = getUserAgent().resolveURI(this.outputProfileURI);
-            if (src == null) {
-                throw new IOException("Output profile not found: " + this.outputProfileURI);
-            }
-            if (src instanceof StreamSource) {
-                in = ((StreamSource)src).getInputStream();
-            } else {
-                in = new URL(src.getSystemId()).openStream();
-            }
+            in = getUserAgent().getResourceResolver().getResource(outputProfileURI);
             try {
                 profile = ColorProfileUtil.getICC_Profile(in);
             } finally {
@@ -471,8 +461,13 @@ class PDFRenderingUtil {
         //Create embedded file
         PDFEmbeddedFile file = new PDFEmbeddedFile();
         this.pdfDoc.registerObject(file);
-        Source src = getUserAgent().resolveURI(embeddedFile.getSrc());
-        InputStream in = ImageUtil.getInputStream(src);
+        URI srcURI;
+        try {
+            srcURI = InternalResourceResolver.cleanURI(embeddedFile.getSrc());
+        } catch (URISyntaxException use) {
+            throw new RuntimeException(use);
+        }
+        InputStream in = getUserAgent().getResourceResolver().getResource(srcURI);
         if (in == null) {
             throw new FileNotFoundException(embeddedFile.getSrc());
         }

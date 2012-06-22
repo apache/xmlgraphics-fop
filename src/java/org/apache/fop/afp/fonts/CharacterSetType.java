@@ -19,13 +19,39 @@
 
 package org.apache.fop.afp.fonts;
 
+import org.apache.fop.afp.fonts.CharactersetEncoder.DefaultEncoder;
+import org.apache.fop.afp.fonts.CharactersetEncoder.EbcdicDoubleByteLineDataEncoder;
+
 /**
  * An enumeration of AFP characterset types.
  */
 public enum CharacterSetType {
     /** Double byte character sets; these do NOT have the shift-in;shift-out operators */
-    DOUBLE_BYTE,
+    DOUBLE_BYTE {
+        @Override
+        CharactersetEncoder getEncoder(String encoding) {
+            return new DefaultEncoder(encoding, true);
+        }
+    },
     /** Double byte character sets; these can have the shift-in;shift-out operators */
-    DOUBLE_BYTE_LINE_DATA,
-    SINGLE_BYTE;
+    DOUBLE_BYTE_LINE_DATA {
+        @Override
+        CharactersetEncoder getEncoder(String encoding) {
+            return new EbcdicDoubleByteLineDataEncoder(encoding);
+        }
+    },
+    SINGLE_BYTE {
+        @Override
+        CharactersetEncoder getEncoder(String encoding) {
+            return new DefaultEncoder(encoding, false);
+        }
+    };
+
+    /**
+     * Returns the character-set encoder
+     *
+     * @param encoding
+     * @return
+     */
+    abstract CharactersetEncoder getEncoder(String encoding);
 }

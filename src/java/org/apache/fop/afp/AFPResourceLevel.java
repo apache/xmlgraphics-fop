@@ -145,18 +145,18 @@ public class AFPResourceLevel {
     }
 
     /**
-     * Returns the destination file path of the external resource group file
+     * Returns the URI of the external resource group.
      *
-     * @return the destination file path of the external resource group file
+     * @return the destination URI of the external resource group
      */
-    public URI getExternalUri() {
+    public URI getExternalURI() {
         return this.extUri;
     }
 
     /**
-     * Sets the external destination of the resource
+     * Sets the URI of the external resource group.
      *
-     * @param filePath the external resource group file
+     * @param filePath the URI of the external resource group
      */
     public void setExternalUri(URI uri) {
         this.extUri = uri;

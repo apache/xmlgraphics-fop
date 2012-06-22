@@ -20,6 +20,7 @@
 package org.apache.fop.afp;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.Before;
@@ -41,7 +42,8 @@ public class AFPResourceManagerTestCase {
 
     @Before
     public void setUp() throws IOException {
-        sut = new AFPResourceManager(ResourceResolverFactory.createDefaultWrapper());
+        sut = new AFPResourceManager(ResourceResolverFactory.createDefaultInternalResourceResolver(
+                                                            new File(".").toURI()));
         AFPPaintingState paintingState = new AFPPaintingState();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         DataStream stream = sut.createDataStream(paintingState, outStream);

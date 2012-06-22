@@ -22,6 +22,7 @@ package org.apache.fop.render.pdf;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -221,9 +222,9 @@ public class PDFRendererConfiguratorTestCase extends
 
     @Test
     public void testSetProfile() throws Exception {
-        String testString = "this string is purely for testing and has no contextual meaning";
+        String testString = "this.uri.is.purely.for.testing.and.has.no.contextual.meaning";
         parseConfigMockUtil(createBuilder().setOutputProfile(testString));
-        verify(pdfUtil).setOutputProfileURI(testString);
+        verify(pdfUtil).setOutputProfileURI(URI.create(testString));
     }
 
     @Test
