@@ -864,16 +864,28 @@ list of possible build targets.
   <target name="junit-text-linebreak" depends="junit-compile" description="Runs FOP's JUnit unicode linebreak tests" if="junit.present">
     <junit-run title="Unicode UAX#14 support" testsuite="org.apache.fop.text.linebreak.LineBreakStatusTestCase" outfile="TEST-linebreak"/>
   </target>
+  <target name="junit-fonts" depends="junit-compile">
+    <echo message="Running tests for the fonts package"/>
+    <junit-run title="fonts" testsuite="org.apache.fop.fonts.FOPFontsTestSuite" outfile="TEST-fonts"/>
+  </target>
+  <target name="junit-render-ps" depends="junit-compile">
+    <echo message="Running tests for the render ps package"/>
+    <junit-run title="render-ps" testsuite="org.apache.fop.render.ps.RenderPSTestSuite" outfile="TEST-render-ps"/>
+  </target>
   <target name="junit-render-pdf" depends="junit-compile">
     <junit-run title="render-pdf" testsuite="org.apache.fop.render.pdf.RenderPDFTestSuite" outfile="TEST-render-pdf"/>
   </target>
   <target name="junit-complexscripts" depends="junit-compile">
     <junit-run title="complexscripts" testsuite="org.apache.fop.complexscripts.ComplexScriptsTestSuite" outfile="TEST-complexscripts"/>
   </target>
-  <target name="junit-reduced" depends="junit-userconfig, junit-basic, junit-transcoder, junit-text-linebreak, junit-fotree, junit-render-pdf, junit-complexscripts"/>
+  <target name="junit-reduced" depends="junit-userconfig, junit-basic, junit-transcoder, 
+    junit-text-linebreak, junit-fotree, junit-fonts, junit-render-pdf, junit-render-ps, 
+    junit-complexscripts"/>
   <target name="junit" depends="junit-all" description="Runs all of FOP's JUnit tests" 
     if="junit.present">
-    <fail><condition><or><isset property="fop.junit.error"/><isset property="fop.junit.failure"/><not><isset property="hyphenation.present"/></not></or></condition>
+    <fail><condition><or><isset property="fop.junit.error"/><isset 
+            property="fop.junit.failure"/><not><isset 
+              property="hyphenation.present"/></not></or></condition>
 NOTE:
 **************************************************************************
 * One or more of the Junit tests had Failures or Errors or were skipped! *

@@ -19,10 +19,13 @@
 
 package org.apache.fop.fonts;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
+/**
+ * Tests {@link EncodingMode}.
+ */
 public class EncodingModeTestCase {
 
     @Test
@@ -34,8 +37,13 @@ public class EncodingModeTestCase {
 
     @Test
     public void testGetValue() {
-        assertEquals(EncodingMode.AUTO, EncodingMode.getEncodingMode("auto"));
-        assertEquals(EncodingMode.SINGLE_BYTE, EncodingMode.getEncodingMode("single-byte"));
-        assertEquals(EncodingMode.CID, EncodingMode.getEncodingMode("cid"));
+        assertEquals(EncodingMode.AUTO, EncodingMode.getValue("auto"));
+        assertEquals(EncodingMode.SINGLE_BYTE, EncodingMode.getValue("single-byte"));
+        assertEquals(EncodingMode.CID, EncodingMode.getValue("cid"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getValueMustCheckForIllegalArguments() {
+        EncodingMode.getValue("fail");
     }
 }
