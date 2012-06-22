@@ -402,11 +402,12 @@ public class FOUserAgent {
      * @return A {@link javax.xml.transform.Source} object, or null if the URI
      * cannot be resolved.
      */
-    public Source resolveURI(String uri) {
-        // TODO: What do we want to do when resources aren't found???
+    public StreamSource resolveURI(String uri) {
+        // TODO: What do we want to do when resources aren't found??? We also need to remove this
+        // method entirely
         try {
             // Have to do this so we can resolve data URIs
-            Source src = new StreamSource(resourceResolver.getResource(uri));
+            StreamSource src = new StreamSource(resourceResolver.getResource(uri));
             src.setSystemId(uri);
             return src;
         } catch (URISyntaxException use) {

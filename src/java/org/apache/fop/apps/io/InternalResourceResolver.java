@@ -39,16 +39,16 @@ import org.apache.xmlgraphics.util.uri.DataURIResolver;
  */
 public class InternalResourceResolver {
     private final URI baseUri;
-    private final ResourceResolver uriResolver;
+    private final ResourceResolver resourceResolver;
     private final DataURIResolver dataSchemeResolver = new DataURIResolver();
 
     /**
      * @param baseUri the base URI from which to resolve relative URIs
-     * @param uriResolver the resolver to delegate to
+     * @param resourceResolver the resolver to delegate to
      */
-    public InternalResourceResolver(URI baseUri, ResourceResolver uriResolver) {
+    InternalResourceResolver(URI baseUri, ResourceResolver resourceResolver) {
         this.baseUri = baseUri;
-        this.uriResolver = uriResolver;
+        this.resourceResolver = resourceResolver;
     }
 
     /**
@@ -87,7 +87,7 @@ public class InternalResourceResolver {
         if (uri.getScheme() != null && uri.getScheme().startsWith("data")) {
             return new Resource(resolveDataURI(uri.toASCIIString()));
         }
-        return uriResolver.getResource(resolveFromBase(uri));
+        return resourceResolver.getResource(resolveFromBase(uri));
     }
 
     /**
@@ -98,7 +98,7 @@ public class InternalResourceResolver {
      * @throws IOException if an I/O error occurrred
      */
     public OutputStream getOutputStream(URI uri) throws IOException {
-        return uriResolver.getOutputStream(resolveFromBase(uri));
+        return resourceResolver.getOutputStream(resolveFromBase(uri));
     }
 
     /**

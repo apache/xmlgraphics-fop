@@ -34,8 +34,8 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.StreamedResourceGroup;
-import org.apache.fop.apps.io.TempResourceURIGenerator;
 import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.TempResourceURIGenerator;
 
 /**
  * Manages the streaming of the AFP output
@@ -119,7 +119,7 @@ public class AFPStreamer implements Streamable {
             return null;
         }
         if (level.isExternal()) {
-            URI uri = level.getExternalUri();
+            URI uri = level.getExternalURI();
             if (uri == null) {
                 LOG.warn("No file path provided for external resource, using default.");
                 uri = defaultResourceGroupUri;

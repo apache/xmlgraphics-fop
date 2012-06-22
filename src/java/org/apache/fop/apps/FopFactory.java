@@ -39,6 +39,7 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fonts.FontManager;
@@ -88,7 +89,8 @@ public final class FopFactory implements ImageContext {
 
     private FopFactory(FopFactoryConfig config) {
         this.config = config;
-        this.resolver = new InternalResourceResolver(config.getBaseURI(), config.getResourceResolver());
+        this.resolver = ResourceResolverFactory.createInternalResourceResolver(config.getBaseURI(),
+                config.getResourceResolver());
         this.elementMappingRegistry = new ElementMappingRegistry(this);
         this.colorSpaceCache = new ColorSpaceCache(resolver);
         this.rendererFactory = new RendererFactory(config.preferRenderer());

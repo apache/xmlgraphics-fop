@@ -40,6 +40,7 @@ import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.afp.util.StructuredFieldReader;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.Typeface;
 
 /**
@@ -148,7 +149,7 @@ public abstract class CharacterSetBuilder {
             throws IOException {
         URI uri;
         try {
-            uri = new URI(uriStr.trim());
+            uri = InternalResourceResolver.cleanURI(uriStr.trim());
         } catch (URISyntaxException e) {
             throw new MalformedURLException("Invalid uri: " + uriStr + " (" + e.getMessage() + ")");
         }

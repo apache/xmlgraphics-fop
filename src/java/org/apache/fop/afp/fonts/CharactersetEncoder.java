@@ -87,7 +87,7 @@ public abstract class CharactersetEncoder {
      */
     public static EncodedChars encodeSBCS(CharSequence chars, String encoding)
             throws CharacterCodingException {
-        CharactersetEncoder encoder = newInstance(encoding, CharacterSetType.SINGLE_BYTE);
+        CharactersetEncoder encoder = CharacterSetType.SINGLE_BYTE.getEncoder(encoding);
         return encoder.encode(chars);
     }
 
@@ -97,8 +97,8 @@ public abstract class CharactersetEncoder {
      * sequence it will return its EBCDIC code-point, however, the "Shift In - Shift Out" operators
      * are removed from the sequence of bytes. These are only used in Line Data.
      */
-    private static final class EbcdicDoubleByteLineDataEncoder extends CharactersetEncoder {
-        private EbcdicDoubleByteLineDataEncoder(String encoding) {
+    static final class EbcdicDoubleByteLineDataEncoder extends CharactersetEncoder {
+        EbcdicDoubleByteLineDataEncoder(String encoding) {
             super(encoding);
         }
         @Override
@@ -115,10 +115,10 @@ public abstract class CharactersetEncoder {
      * the primary format for most Latin character sets. This can also be used for Unicode double-
      * byte character sets (DBCS).
      */
-    private static final class DefaultEncoder extends CharactersetEncoder {
+    static final class DefaultEncoder extends CharactersetEncoder {
         private final boolean isDBCS;
 
-        private DefaultEncoder(String encoding, boolean isDBCS) {
+        DefaultEncoder(String encoding, boolean isDBCS) {
             super(encoding);
             this.isDBCS = isDBCS;
         }
@@ -126,24 +126,6 @@ public abstract class CharactersetEncoder {
         @Override
         EncodedChars getEncodedChars(byte[] byteArray, int length) {
             return new EncodedChars(byteArray, isDBCS);
-        }
-    }
-
-    /**
-     * Returns an new instance of a {@link CharactersetEncoder}.
-     *
-     * @param encoding the encoding for the underlying character encoder
-     * @param isEbcdicDBCS whether or not this wraps a double-byte EBCDIC code page.
-     * @return the CharactersetEncoder
-     */
-    static CharactersetEncoder newInstance(String encoding, CharacterSetType charsetType) {
-        switch (charsetType) {
-        case DOUBLE_BYTE_LINE_DATA:
-            return new EbcdicDoubleByteLineDataEncoder(encoding);
-        case DOUBLE_BYTE:
-            return new DefaultEncoder(encoding, true);
-        default:
-            return new DefaultEncoder(encoding, false);
         }
     }
 

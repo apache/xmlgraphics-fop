@@ -28,24 +28,59 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A factory class for {@link ResourceResolver}s.
+ */
 public final class ResourceResolverFactory {
 
     private ResourceResolverFactory() {
     }
 
+    /**
+     * Returns the default resource resolver, this is most basic resolver which can be used when
+     * no there are no I/O or file access restrictions.
+     *
+     * @return the default resource resolver
+     */
     public static ResourceResolver createDefaultResourceResolver() {
         return DefaultResourceResolver.INSTANCE;
     }
 
-    public static ResourceResolver createTempAwareResourceResolver(TempResourceResolver tempResourceResolver,
-            ResourceResolver defaultResourceResolver) {
-        return new TempAwareResourceResolver(tempResourceResolver, defaultResourceResolver);
+    /**
+     * A helper merthod that creates an internal resource resolver using the default resover:
+     * {@link ResourceResolverFactory#createDefaultResourceResolver()}.
+     *
+     * @param baseURI the base URI from which to resolve URIs
+     * @return the default internal resource resolver
+     */
+    public static InternalResourceResolver createDefaultInternalResourceResolver(URI baseURI) {
+        return new InternalResourceResolver(baseURI, createDefaultResourceResolver());
     }
 
-    public static InternalResourceResolver createDefaultWrapper() {
-        // Not sure if this is the right place for this, but I don't have any better ideas as of yet
-        URI thisUri = new File(".").getAbsoluteFile().toURI();
-        return new InternalResourceResolver(thisUri, new DefaultResourceResolver());
+    /**
+     * Creates an interal resource resolver given a base URI and a resource resolver.
+     *
+     * @param baseURI the base URI from which to resolve URIs
+     * @param resolver the resource resolver
+     * @return the internal resource resolver
+     */
+    public static InternalResourceResolver createInternalResourceResolver(URI baseURI,
+            ResourceResolver resolver) {
+        return new InternalResourceResolver(baseURI, resolver);
+    }
+
+    /**
+     * Creates a temporary-resource-schema aware resource resolver. Temporary resource URIs are
+     * created by {@link TempResourceURIGenerator}.
+     *
+     * @param tempResourceResolver the temporary-resource-schema resolver to use
+     * @param defaultResourceResolver the default resource resolver to use
+     * @return the ressource resolver
+     */
+    public static ResourceResolver createTempAwareResourceResolver(
+            TempResourceResolver tempResourceResolver,
+            ResourceResolver defaultResourceResolver) {
+        return new TempAwareResourceResolver(tempResourceResolver, defaultResourceResolver);
     }
 
     public static SchemaAwareResourceResolverBuilder createSchemaAwareResourceResolverBuilder(
@@ -53,16 +88,14 @@ public final class ResourceResolverFactory {
         return new SchemaAwareResourceResolverBuilderImpl(defaultResolver);
     }
 
-
-
     private static final class DefaultResourceResolver implements ResourceResolver {
 
         private static final ResourceResolver INSTANCE = new DefaultResourceResolver();
 
         private final TempAwareResourceResolver delegate;
 
-        private  DefaultResourceResolver() {
-            delegate = new  TempAwareResourceResolver(new DefaultTempResourceResolver(),
+        private DefaultResourceResolver() {
+            delegate = new TempAwareResourceResolver(new DefaultTempResourceResolver(),
                     new NormalResourceResolver());
         }
 
@@ -123,7 +156,6 @@ public final class ResourceResolverFactory {
 
         public OutputStream getOutputStream(String id) throws IOException {
             File file = getTempFile(id);
-            // TODO handle error
             file.createNewFile();
             return new FileOutputStream(file);
         }
@@ -145,7 +177,8 @@ public final class ResourceResolverFactory {
 
         private final ResourceResolver defaultResolver;
 
-        private SchemaAwareResourceResolver(Map<String, ResourceResolver> schemaHandlingResourceResolvers,
+        private SchemaAwareResourceResolver(
+                Map<String, ResourceResolver> schemaHandlingResourceResolvers,
                 ResourceResolver defaultResolver) {
             this.schemaHandlingResourceResolvers = schemaHandlingResourceResolvers;
             this.defaultResolver = defaultResolver;
@@ -177,7 +210,7 @@ public final class ResourceResolverFactory {
     }
 
     private static final class CompletedSchemaAwareResourceResolverBuilder
-    implements SchemaAwareResourceResolverBuilder {
+            implements SchemaAwareResourceResolverBuilder {
 
         private static final SchemaAwareResourceResolverBuilder INSTANCE
                 = new CompletedSchemaAwareResourceResolverBuilder();
@@ -193,7 +226,7 @@ public final class ResourceResolverFactory {
     }
 
     private static final class ActiveSchemaAwareResourceResolverBuilder
-    implements SchemaAwareResourceResolverBuilder {
+            implements SchemaAwareResourceResolverBuilder {
 
         private final Map<String, ResourceResolver> schemaHandlingResourceResolvers
                 = new HashMap<String, ResourceResolver>();
@@ -204,7 +237,8 @@ public final class ResourceResolverFactory {
             this.defaultResolver = defaultResolver;
         }
 
-        public void registerResourceResolverForSchema(String schema, ResourceResolver resourceResolver) {
+        public void registerResourceResolverForSchema(String schema,
+                ResourceResolver resourceResolver) {
             schemaHandlingResourceResolvers.put(schema, resourceResolver);
         }
 
@@ -216,7 +250,7 @@ public final class ResourceResolverFactory {
     }
 
     private static final class SchemaAwareResourceResolverBuilderImpl
-    implements SchemaAwareResourceResolverBuilder {
+            implements SchemaAwareResourceResolverBuilder {
 
         private SchemaAwareResourceResolverBuilder delegate;
 
@@ -224,7 +258,8 @@ public final class ResourceResolverFactory {
             this.delegate = new ActiveSchemaAwareResourceResolverBuilder(defaultResolver);
         }
 
-        public void registerResourceResolverForSchema(String schema, ResourceResolver resourceResolver) {
+        public void registerResourceResolverForSchema(String schema,
+                ResourceResolver resourceResolver) {
             delegate.registerResourceResolverForSchema(schema, resourceResolver);
         }
 

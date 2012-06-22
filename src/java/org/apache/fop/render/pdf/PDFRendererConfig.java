@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.pdf;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.pdf.PDFAMode;
@@ -98,8 +101,8 @@ public final class PDFRendererConfig implements RendererConfig {
         return (PDFEncryptionParams) configOptions.get(ENCRYPTION_PARAMS);
     }
 
-    public String getOutputProfileURI() {
-        return (String) configOptions.get(OUTPUT_PROFILE);
+    public URI getOutputProfileURI() {
+        return (URI) configOptions.get(OUTPUT_PROFILE);
     }
 
     public Boolean getDisableSRGBColorSpace() {
@@ -171,12 +174,13 @@ public final class PDFRendererConfig implements RendererConfig {
                     }
                     put(ENCRYPTION_PARAMS, encryptionConfig);
                 }
-                // TODO: Check this, I'm pretty sure the getChild(Str, bool) should be false!!!
-                put(OUTPUT_PROFILE, parseConfig(cfg, OUTPUT_PROFILE));
+                put(OUTPUT_PROFILE, InternalResourceResolver.cleanURI(parseConfig(cfg, OUTPUT_PROFILE)));
                 put(DISABLE_SRGB_COLORSPACE, Boolean.valueOf(parseConfig(cfg, DISABLE_SRGB_COLORSPACE)));
                 put(VERSION, getPDFDocVersion(cfg));
             } catch (ConfigurationException e) {
                 LogUtil.handleException(LOG, e, strict);
+            } catch (URISyntaxException use) {
+                LogUtil.handleException(LOG, use, strict);
             }
         }
 

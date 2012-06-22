@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 import org.apache.fop.fonts.substitute.FontSubstitutionsConfigurator;
 import org.apache.fop.util.LogUtil;
@@ -89,13 +90,14 @@ public class FontManagerConfigurator {
             try {
                 URI fontBase = InternalResourceResolver.getBaseURI(cfg.getChild("font-base").getValue(
                         null));
-                fontManager.setResourceResolver(new InternalResourceResolver(
+                fontManager.setResourceResolver(ResourceResolverFactory.createInternalResourceResolver(
                         defaultBaseUri.resolve(fontBase), resourceResolver));
             } catch (URISyntaxException use) {
                 LogUtil.handleException(log, use, true);
             }
         } else {
-            fontManager.setResourceResolver(new InternalResourceResolver(defaultBaseUri, resourceResolver));
+            fontManager.setResourceResolver(ResourceResolverFactory.createInternalResourceResolver(
+                    defaultBaseUri, resourceResolver));
         }
 
         // [GA] permit configuration control over base14 kerning; without this,
