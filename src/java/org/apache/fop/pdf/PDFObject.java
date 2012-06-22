@@ -22,7 +22,6 @@ package org.apache.fop.pdf;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -208,11 +207,6 @@ public abstract class PDFObject implements PDFWritable {
         byte[] pdf = this.toPDF();
         stream.write(pdf);
         return pdf.length;
-    }
-
-    /** {@inheritDoc} */
-    public void outputInline(OutputStream out, Writer writer) throws IOException {
-        throw new UnsupportedOperationException("Don't use anymore: " + getClass().getName());
     }
 
     /** {@inheritDoc} */

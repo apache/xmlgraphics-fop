@@ -30,7 +30,7 @@ public abstract class TraitEnum implements Serializable {
     /**
      * Constructor to add a new named item.
      * @param name Name of the item.
-     * @param enumValue the {@link Constants}.EN_* value
+     * @param enumValue the {@link org.apache.fop.fo.Constants}.EN_* value
      */
     protected TraitEnum(String name, int enumValue) {
         this.name = name;
@@ -46,7 +46,7 @@ public abstract class TraitEnum implements Serializable {
     }
 
     /**
-     * Returns the enumeration value (one of {@link Constants}.EN_*).
+     * Returns the enumeration value (one of {@link org.apache.fop.fo.Constants}.EN_*).
      * @return the enumeration value
      */
     public int getEnumValue() {

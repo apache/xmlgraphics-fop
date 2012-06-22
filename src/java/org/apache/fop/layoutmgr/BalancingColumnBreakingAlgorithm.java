@@ -41,12 +41,16 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
      * @param topLevelLM the top level layout manager
      * @param pageProvider the page provider
      * @param layoutListener the layout listener
-     * @param alignment     alignment of the paragraph/page. One of {@link Constants#EN_START},
-     *                  {@link Constants#EN_JUSTIFY}, {@link Constants#EN_CENTER},
-     *                  {@link Constants#EN_END}.
-     *                  For pages, {@link Constants#EN_BEFORE} and {@link Constants#EN_AFTER}
-     *                  are mapped to the corresponding inline properties,
-     *                  {@link Constants#EN_START} and {@link Constants#EN_END}.
+     * @param alignment     alignment of the paragraph/page. One of
+     *   {@link org.apache.fop.fo.Constants#EN_START},
+     *   {@link org.apache.fop.fo.Constants#EN_JUSTIFY},
+     *   {@link org.apache.fop.fo.Constants#EN_CENTER},
+     *   {@link org.apache.fop.fo.Constants#EN_END}.
+     *   For pages, {@link org.apache.fop.fo.Constants#EN_BEFORE} and
+     *   {@link org.apache.fop.fo.Constants#EN_AFTER}
+     *   are mapped to the corresponding inline properties,
+     *   {@link org.apache.fop.fo.Constants#EN_START} and
+     *   {@link org.apache.fop.fo.Constants#EN_END}.
      * @param alignmentLast alignment of the paragraph's last line
      * @param footnoteSeparatorLength length of footnote separator
      * @param partOverflowRecovery  {@code true} if too long elements should be moved to

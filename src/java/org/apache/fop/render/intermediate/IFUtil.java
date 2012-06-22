@@ -147,8 +147,8 @@ public final class IFUtil {
 
     /**
      * Sets up the fonts on a document handler. If the document handler provides a configurator
-     * object the configuration from the {@link FopFactory} will be used. Otherwise,
-     * a default font configuration will be set up.
+     * object the configuration from the {@link org.apache.fop.apps.FopFactory} will be used.
+     * Otherwise, a default font configuration will be set up.
      * @param documentHandler the document handler
      * @param fontInfo the font info object (may be null)
      * @throws FOPException if an error occurs while setting up the fonts
@@ -175,8 +175,8 @@ public final class IFUtil {
 
     /**
      * Sets up the fonts on a document handler. If the document handler provides a configurator
-     * object the configuration from the {@link FopFactory} will be used. Otherwise,
-     * a default font configuration will be set up.
+     * object the configuration from the {@link org.apache.fop.apps.FopFactory} will be used.
+     * Otherwise, a default font configuration will be set up.
      * @param documentHandler the document handler
      * @throws FOPException if an error occurs while setting up the fonts
      */

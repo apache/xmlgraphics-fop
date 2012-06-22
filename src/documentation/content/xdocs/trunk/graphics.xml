@@ -108,7 +108,7 @@
         <tr>
           <td><a href="#png">PNG</a> (Portable Network Graphic)</td>
           <td>bitmap</td>
-          <td/>
+          <td>(X)</td>
           <td/>
           <td>X</td>
         </tr>
@@ -217,8 +217,8 @@
           </tr>
           <tr>
             <td><a href="#png">PNG</a> (Portable Network Graphic)</td>
-            <td>X</td>
-            <td>X</td>
+            <td>X [2]</td>
+            <td>X [2]</td>
             <td>X</td>
             <td>X</td>
             <td>X</td>
@@ -383,8 +383,11 @@
       <section id="png">
         <title>PNG</title>
         <p>
-          PNG images are supported through an Image&amp;nbsp;I/O codec. Transparency is supported but
-          not guaranteed to work with every output format.
+          FOP native support of PNG only includes the variants with 8 bits per channel and without
+          interlacing. Native support requires using the ImageLoaderRawPNG image loader.
+          Support through a Image I/O codec can use either the internal XGC PNG codec or the JRE PNG
+          codec. The associated image loaders are, respectively, ImageLoaderPNG and ImageLoaderImageIO. 
+          Transparency is supported but not guaranteed to work with every output format.
         </p>
       </section>
       <section id="svg">
