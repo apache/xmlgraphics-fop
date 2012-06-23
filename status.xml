@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix">
+        Eliminate javadocs warnings.
+      </action>
       <action context="Renderers" dev="VH" type="add" fixes-bug="52338" importance="high">
         Added possibility to embed TrueType fonts in PostScript.
       </action>
