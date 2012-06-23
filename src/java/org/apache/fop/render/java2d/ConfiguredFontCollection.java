@@ -89,7 +89,8 @@ public class ConfiguredFontCollection implements FontCollection {
                     font = new CustomFontMetricsMapper(fontMetrics, fontSource);
                 } else {
                     CustomFont fontMetrics = FontLoader.loadFont(
-                            fontFile, null, true, EncodingMode.AUTO,
+                            fontFile, null, true, configFontInfo.getEmbeddingMode(),
+                            EncodingMode.AUTO,
                             configFontInfo.getKerning(),
                             configFontInfo.getAdvanced(), fontResolver);
                     font = new CustomFontMetricsMapper(fontMetrics);
