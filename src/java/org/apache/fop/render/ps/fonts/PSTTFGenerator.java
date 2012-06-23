@@ -79,7 +79,7 @@ public class PSTTFGenerator {
      * @param byteArray byte[] a byte array
      * @param offset the position in the byte array where the streaming must start
      * @param length the number of bytes to stream. This MUST be less than
-     * {@link MAX_BUFFER_SIZE} - 1 since strings are suffixed by '00' (see Section 4.2 of
+     * {@link #MAX_BUFFER_SIZE} - 1 since strings are suffixed by '00' (see Section 4.2 of
      * Adobe Technical Note #5012, <em>The Type 42 Font Format Specification</em>.).
      */
     public void streamBytes(byte[] byteArray, int offset, int length) throws IOException {

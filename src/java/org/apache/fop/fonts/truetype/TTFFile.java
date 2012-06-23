@@ -343,7 +343,7 @@ public class TTFFile {
      * Position inputstream to position indicated
      * in the dirtab offset + offset
      * @param in font file reader
-     * @param name (tag) of table
+     * @param tableName (tag) of table
      * @param offset from start of table
      * @return true if seek succeeded
      * @throws IOException if I/O exception occurs during seek
