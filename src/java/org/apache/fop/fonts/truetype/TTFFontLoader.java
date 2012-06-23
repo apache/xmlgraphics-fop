@@ -21,17 +21,14 @@ package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
-import org.apache.xmlgraphics.fonts.Glyphs;
-
-import org.apache.fop.fonts.BFEntry;
 import org.apache.fop.fonts.CIDFontType;
+import org.apache.fop.fonts.CMapSegment;
+import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontResolver;
@@ -39,6 +36,8 @@ import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.NamedCharacter;
 import org.apache.fop.fonts.SingleByteFont;
+import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
+import org.apache.fop.util.HexEncoder;
 
 /**
  * Loads a TrueType font into memory directly from the original font file.
@@ -49,6 +48,7 @@ public class TTFFontLoader extends FontLoader {
     private SingleByteFont singleFont;
     private final String subFontName;
     private EncodingMode encodingMode;
+    private EmbeddingMode embeddingMode;
 
     /**
      * Default constructor
@@ -56,7 +56,7 @@ public class TTFFontLoader extends FontLoader {
      * @param resolver the FontResolver for font URI resolution
      */
     public TTFFontLoader(String fontFileURI, FontResolver resolver) {
-        this(fontFileURI, null, true, EncodingMode.AUTO, true, true, resolver);
+        this(fontFileURI, null, true, EmbeddingMode.AUTO, EncodingMode.AUTO, true, true, resolver);
     }
 
     /**
@@ -65,24 +65,28 @@ public class TTFFontLoader extends FontLoader {
      * @param subFontName the sub-fontname of a font in a TrueType Collection (or null for normal
      *          TrueType fonts)
      * @param embedded indicates whether the font is embedded or referenced
+     * @param embeddingMode the embedding mode of the font
      * @param encodingMode the requested encoding mode
      * @param useKerning true to enable loading kerning info if available, false to disable
      * @param useAdvanced true to enable loading advanced info if available, false to disable
      * @param resolver the FontResolver for font URI resolution
      */
     public TTFFontLoader(String fontFileURI, String subFontName,
-                boolean embedded, EncodingMode encodingMode, boolean useKerning,
-                boolean useAdvanced, FontResolver resolver) {
+                boolean embedded, EmbeddingMode embeddingMode, EncodingMode encodingMode,
+                boolean useKerning, boolean useAdvanced, FontResolver resolver) {
         super(fontFileURI, embedded, useKerning, useAdvanced, resolver);
         this.subFontName = subFontName;
         this.encodingMode = encodingMode;
+        this.embeddingMode = embeddingMode;
         if (this.encodingMode == EncodingMode.AUTO) {
             this.encodingMode = EncodingMode.CID; //Default to CID mode for TrueType
+        }
+        if (this.embeddingMode == EmbeddingMode.AUTO) {
+            this.embeddingMode = EmbeddingMode.SUBSET;
         }
     }
 
     /** {@inheritDoc} */
-    @Override
     protected void read() throws IOException {
         read(this.subFontName);
     }
@@ -145,29 +149,20 @@ public class TTFFontLoader extends FontLoader {
         returnFont.setItalicAngle(Integer.parseInt(ttf.getItalicAngle()));
         returnFont.setMissingWidth(0);
         returnFont.setWeight(ttf.getWeightClass());
-
+        returnFont.setEmbeddingMode(this.embeddingMode);
         if (isCid) {
             multiFont.setCIDType(CIDFontType.CIDTYPE2);
             int[] wx = ttf.getWidths();
             multiFont.setWidthArray(wx);
-            List entries = ttf.getCMaps();
-            BFEntry[] bfentries = new BFEntry[entries.size()];
-            int pos = 0;
-            Iterator iter = ttf.getCMaps().listIterator();
-            while (iter.hasNext()) {
-                TTFCmapEntry ce = (TTFCmapEntry)iter.next();
-                bfentries[pos] = new BFEntry(ce.getUnicodeStart(), ce.getUnicodeEnd(),
-                        ce.getGlyphStartIndex());
-                pos++;
-            }
-            multiFont.setBFEntries(bfentries);
         } else {
             singleFont.setFontType(FontType.TRUETYPE);
             singleFont.setEncoding(ttf.getCharSetName());
             returnFont.setFirstChar(ttf.getFirstChar());
             returnFont.setLastChar(ttf.getLastChar());
+            singleFont.setTrueTypePostScriptVersion(ttf.getPostScriptVersion());
             copyWidthsSingleByte(ttf);
         }
+        returnFont.setCMap(getCMap(ttf));
 
         if (useKerning) {
             copyKerning(ttf, isCid);
@@ -186,23 +181,30 @@ public class TTFFontLoader extends FontLoader {
         }
     }
 
+    private CMapSegment[] getCMap(TTFFile ttf) {
+        CMapSegment[] array = new CMapSegment[ttf.getCMaps().size()];
+        return ttf.getCMaps().toArray(array);
+    }
+
     private void copyWidthsSingleByte(TTFFile ttf) {
         int[] wx = ttf.getWidths();
         for (int i = singleFont.getFirstChar(); i <= singleFont.getLastChar(); i++) {
             singleFont.setWidth(i, ttf.getCharWidth(i));
         }
-        Iterator iter = ttf.getCMaps().listIterator();
-        while (iter.hasNext()) {
-            TTFCmapEntry ce = (TTFCmapEntry)iter.next();
-            if (ce.getUnicodeStart() < 0xFFFE) {
-                for (char u = (char)ce.getUnicodeStart(); u <= ce.getUnicodeEnd(); u++) {
+
+        for (CMapSegment segment : ttf.getCMaps()) {
+            if (segment.getUnicodeStart() < 0xFFFE) {
+                for (char u = (char)segment.getUnicodeStart(); u <= segment.getUnicodeEnd(); u++) {
                     int codePoint = singleFont.getEncoding().mapChar(u);
                     if (codePoint <= 0) {
-                        String unicode = Character.toString(u);
-                        String charName = Glyphs.stringToGlyph(unicode);
-                        if (charName.length() > 0) {
-                            NamedCharacter nc = new NamedCharacter(charName, unicode);
-                            int glyphIndex = ce.getGlyphStartIndex() + u - ce.getUnicodeStart();
+                        int glyphIndex = segment.getGlyphStartIndex() + u - segment.getUnicodeStart();
+                        String glyphName = ttf.getGlyphName(glyphIndex);
+                        if (glyphName.length() == 0 && ttf.getPostScriptVersion() != PostScriptVersion.V2) {
+                            glyphName = "u" + HexEncoder.encode(u);
+                        }
+                        if (glyphName.length() > 0) {
+                            String unicode = Character.toString(u);
+                            NamedCharacter nc = new NamedCharacter(glyphName, unicode);
                             singleFont.addUnencodedCharacter(nc, wx[glyphIndex]);
                         }
                     }
@@ -225,7 +227,6 @@ public class TTFFontLoader extends FontLoader {
         }
 
         for (Integer kpx1 : kerningSet) {
-
             Map<Integer, Integer> h2;
             if (isCid) {
                 h2 = ttf.getKerning().get(kpx1);

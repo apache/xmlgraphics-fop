@@ -36,7 +36,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.complexscripts.fonts.Positionable;
 import org.apache.fop.complexscripts.fonts.Substitutable;
 
-
 /**
  * This class is used to defer the loading of a font until it is really used.
  */
@@ -49,7 +48,8 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     private boolean useKerning;
     private boolean useAdvanced;
     private EncodingMode encodingMode = EncodingMode.AUTO;
-    private boolean embedded;
+    private EmbeddingMode embeddingMode = EmbeddingMode.AUTO;
+    private boolean embedded = true;
     private String subFontName;
 
     private boolean isMetricsLoaded;
@@ -74,6 +74,7 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
             this.useAdvanced = fontInfo.getAdvanced();
         }
         this.encodingMode = fontInfo.getEncodingMode();
+        this.embeddingMode = fontInfo.getEmbeddingMode();
         this.subFontName = fontInfo.getSubFontName();
         this.embedded = fontInfo.isEmbedded();
         this.resolver = resolver;
@@ -147,8 +148,9 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
                     if (fontEmbedPath == null) {
                         throw new RuntimeException("Cannot load font. No font URIs available.");
                     }
-                    realFont = FontLoader.loadFont(fontEmbedPath, this.subFontName,
-                            this.embedded, this.encodingMode, useKerning, useAdvanced, resolver);
+                    realFont = FontLoader.loadFont(fontEmbedPath, subFontName,
+                            embedded, embeddingMode, encodingMode,
+                            useKerning, useAdvanced, resolver);
                 }
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;
