@@ -959,11 +959,6 @@
       <Bug pattern="RV_EXCEPTION_NOT_THROWN"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.hyphenation.HyphenationTreeCache"/>
-      <Method name="constructUserKey"/>
-      <Bug pattern="RV_RETURN_VALUE_IGNORED"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.afp.AFPResourceLevel"/>
       <Method name="equals"/>
       <Bug pattern="SA_FIELD_SELF_COMPARISON"/>

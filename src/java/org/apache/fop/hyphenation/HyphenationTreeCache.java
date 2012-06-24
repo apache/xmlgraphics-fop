@@ -79,7 +79,7 @@ public class HyphenationTreeCache {
         String userKey = null;
         if (hyphPatNames != null) {
             String key = constructLlccKey(lang, country);
-            key.replace('_', '-');
+            key = key.replace('_', '-');
             userKey = (String) hyphPatNames.get(key);
         }
         return userKey;
