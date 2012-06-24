@@ -17,69 +17,38 @@
 -->
 <!-- $Id$ -->
 <known-issues>
-  <!-- NEED TO REVIEW ALL OF THE FOLLOWING
   <known-issue>
-    MIF and SVG output support have not been restored, yet.
+    Support for Unicode characters outside of the Base Multilingual Plane (BMP), i.e., characters
+    whose code points are greater than 65535, is not yet implemented.
+    See <link href="http://issues.apache.org/bugzilla/show_bug.cgi?id=51843">bug 51843</link>.
   </known-issue>
   <known-issue>
-    RTF output is inferior to other output formats supported by FOP.
-    For details, please see the "Output Targets" page of the release
-    you're using.
+    The writing-mode property does not produce the expected behavior when specified on
+    <code>fo:simple-page-master</code>  or <code>fo:region-*</code> elements.
+    See <link href="http://issues.apache.org/bugzilla/show_bug.cgi?id=53276">bug 53276</link>.
   </known-issue>
   <known-issue>
-    Auto table layout is not implemented, yet.
+    Support for Devanagari and other Indic scripts is not yet complete.
   </known-issue>
   <known-issue>
-    Footnotes may overlap with text of the region-body in multi-column 
-    documents.
+    Use of Unicode U+200C ZERO WIDTH NON-JOINER (ZWNJ) or U+200D ZERO WIDTH JOINER (ZWJ)
+    does not prevent or force contextual substitution, respectively, when used with Arabic script.
   </known-issue>
   <known-issue>
-    Space resolution does not work between footnote regions.
+    Use of Unicode U+200C ZERO WIDTH NON-JOINER (ZWNJ) or U+200D ZERO WIDTH JOINER (ZWJ)
+    does not affect conjunct formation or other special behavior prescribed when used with Indic scripts.
   </known-issue>
   <known-issue>
-    Block containers with no height currently don't create a fence for
-    spaces as they should (they behave like a normal block).
+    Support for automatic line breaking at orthographic syllable segment boundaries in Indic
+    or Southeast Asian scripts is not yet available. In the mean time, use U+200B ZERO WIDTH SPACE (ZWSP).
   </known-issue>
   <known-issue>
-    Preserved linefeeds in fo:character are not handled correctly.
+    Complex script content is presently supported only with AT, IF, and PDF output formats.
   </known-issue>
   <known-issue>
-    An empty block currently produces a fence for stacking constraints
-    which it shouldn't.
+    When complex script text encounters an  <code>fo:inline</code> or <code>fo:character</code> boundary,
+    contextual substitution and ligature formation will not occur across the boundary. This prevents,
+    for example, applying a different color to an Arabic Letter within an Arabic word, unless that letter
+    is a non-joining letter (on both sides).
   </known-issue>
-  <known-issue>
-    There are several small problems around white space handling.
-  </known-issue>
-  <known-issue>
-    Images currently don't shrink so they fit on a page when they are 
-    too big and shrinking is allowed to happen.
-  </known-issue>
-  <known-issue>
-    Inline container may not work as expected.
-  </known-issue>
-  <known-issue>
-    The letter-spacing and word-spacing properties may not work as expected.
-  </known-issue>
-  <known-issue>
-    Leaders with leader-pattern="use-content" may not work as expected.
-  </known-issue>
-  <known-issue>
-    The keep-with-previous property doesn't work inside tables and lists, yet.
-  </known-issue>
-  <known-issue>
-    If two consecutive pages don't have the same available width, the 
-    content currently isn't properly fit into the available space on
-    the new page.
-  </known-issue>
-  <known-issue>
-    Background images on page number citations are not placed correctly.
-  </known-issue>
-  <known-issue>
-    Not all FO elements can be referenced by their "id", most notably:
-    table-body, table-header, table-footer and table-row.
-  </known-issue>
-  <known-issue>
-    Border and padding conditionality are not supported on table-cells, yet.
-  </known-issue>
-  -->
 </known-issues>
