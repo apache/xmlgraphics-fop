@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Images" dev="GA" type="fix" fixes-bug="53431" due-to="Luis Bernardo">
+        Fix incorrect SVG line dash pattern with PDF output format.
+      </action>
       <action context="Images" dev="GA" type="update" fixes-bug="40676" due-to="Luis Bernardo">
         Fix interoperability issue with Adobe reader regarding use of multiple filters.
       </action>
