@@ -94,7 +94,7 @@ http://xmlgraphics.apache.org/fop/stable/running.html
 ==============================================================================
 
 Version 1.1rc1
-===========
+==============
 
 This is a candidate release of the next,  minor (dot) release of Apache FOP,
 which primarily addresses bug fixes and also adds a number of new features.
@@ -120,7 +120,7 @@ Major Changes in Version 1.1rc1
   either bidirectional processing or advanced typographic tables in
   fonts (e.g., the GSUB and GPOS tables of OpenType).
 * Adds support for fo:bidi-override and (relatively) full support
-  for writing-mode='tb-rl' (or equivalent).
+  for writing-mode='rl-tb' (or equivalent).
 * Adds support for Unicode BIDI Control characters: U+200E LEFT-TO-RIGHT
   MARK (LRM), U+200F RIGHT-TO-LEFT MARK (RLM), U+202A LEFT-TO-RIGHT EMBEDDING
   (LRE), U+202B RIGHT-TO-LEFT EMBEDDING (RLE), U+202D LEFT-TO-RIGHT OVERRIDE
