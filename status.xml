@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="53458" due-to="Dieter von Holten">
+        Fix incorrect language and country code key generation in hyphenation tree cache.
+      </action>
       <action context="Images" dev="GA" type="fix" fixes-bug="53431" due-to="Luis Bernardo">
         Fix incorrect SVG line dash pattern with PDF output format.
       </action>
