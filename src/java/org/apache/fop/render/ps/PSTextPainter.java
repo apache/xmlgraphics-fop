@@ -52,7 +52,7 @@ import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.HexEncoder;
 
 /**
- * Renders the attributed character iterator of a text node.
+ * Renders the attributed character iterator of a {@link org.apache.batik.gvt.TextNode TextNode}.
  * This class draws the text directly using PostScript text operators so
  * the text is not drawn using shapes which makes the PS files larger.
  * <p>

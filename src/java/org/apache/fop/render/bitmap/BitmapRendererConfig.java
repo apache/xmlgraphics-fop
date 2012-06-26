@@ -34,21 +34,21 @@ import org.apache.fop.render.java2d.Java2DRendererConfig;
 import org.apache.fop.render.java2d.Java2DRendererConfig.Java2DRendererConfigParser;
 import org.apache.fop.util.ColorUtil;
 
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.ANTI_ALIASING;
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.BACKGROUND_COLOR;
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.COLOR_MODE;
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.RENDERING_QUALITY;
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.RENDERING_QUALITY_ELEMENT;
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.RENDERING_SPEED;
+import static org.apache.fop.render.bitmap.BitmapRendererOption.ANTI_ALIASING;
+import static org.apache.fop.render.bitmap.BitmapRendererOption.BACKGROUND_COLOR;
+import static org.apache.fop.render.bitmap.BitmapRendererOption.COLOR_MODE;
+import static org.apache.fop.render.bitmap.BitmapRendererOption.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
+import static org.apache.fop.render.bitmap.BitmapRendererOption.RENDERING_QUALITY;
+import static org.apache.fop.render.bitmap.BitmapRendererOption.RENDERING_QUALITY_ELEMENT;
+import static org.apache.fop.render.bitmap.BitmapRendererOption.RENDERING_SPEED;
 
 /**
  * The Bitmap renderer config data object.
  */
 public class BitmapRendererConfig implements RendererConfig {
 
-    private final EnumMap<BitmapRendererConfigOption, Object> params
-            = new EnumMap<BitmapRendererConfigOption, Object>(BitmapRendererConfigOption.class);
+    private final EnumMap<BitmapRendererOption, Object> params
+            = new EnumMap<BitmapRendererOption, Object>(BitmapRendererOption.class);
 
     private final DefaultFontConfig fontConfig;
 
@@ -82,7 +82,7 @@ public class BitmapRendererConfig implements RendererConfig {
                 : JAVA2D_TRANSPARENT_PAGE_BACKGROUND.getDefaultValue());
     }
 
-    private Object get(BitmapRendererConfigOption option) {
+    private Object get(BitmapRendererOption option) {
         return params.get(option);
     }
 
@@ -97,7 +97,7 @@ public class BitmapRendererConfig implements RendererConfig {
             this.mimeType = mimeType;
         }
 
-        private void setParam(BitmapRendererConfig config, BitmapRendererConfigOption option,
+        private void setParam(BitmapRendererConfig config, BitmapRendererOption option,
                 Object value) {
             config.params.put(option, value != null ? value : option.getDefaultValue());
         }
@@ -122,17 +122,17 @@ public class BitmapRendererConfig implements RendererConfig {
                             ColorUtil.parseColorString(userAgent, background));
                 }
 
-                setParam(config, BitmapRendererConfigOption.ANTI_ALIASING,
+                setParam(config, BitmapRendererOption.ANTI_ALIASING,
                         getChild(cfg, ANTI_ALIASING).getValueAsBoolean(
                                 (Boolean) ANTI_ALIASING.getDefaultValue()));
 
                 String optimization = getValue(cfg, RENDERING_QUALITY_ELEMENT);
                 setParam(config, RENDERING_QUALITY,
-                        !(BitmapRendererConfigOption.getValue(optimization) == RENDERING_SPEED));
+                        !(BitmapRendererOption.getValue(optimization) == RENDERING_SPEED));
 
                 String color = getValue(cfg, COLOR_MODE);
                 setParam(config, COLOR_MODE,
-                        getBufferedImageIntegerFromColor(BitmapRendererConfigOption.getValue(color)));
+                        getBufferedImageIntegerFromColor(BitmapRendererOption.getValue(color)));
             }
         }
 
@@ -144,7 +144,7 @@ public class BitmapRendererConfig implements RendererConfig {
             return config;
         }
 
-        private Integer getBufferedImageIntegerFromColor(BitmapRendererConfigOption option) {
+        private Integer getBufferedImageIntegerFromColor(BitmapRendererOption option) {
             if (option == null) {
                 return null;
             }
@@ -163,11 +163,11 @@ public class BitmapRendererConfig implements RendererConfig {
             }
         }
 
-        private Configuration getChild(Configuration cfg, BitmapRendererConfigOption option) {
+        private Configuration getChild(Configuration cfg, BitmapRendererOption option) {
             return cfg.getChild(option.getName());
         }
 
-        private String getValue(Configuration cfg, BitmapRendererConfigOption option) {
+        private String getValue(Configuration cfg, BitmapRendererOption option) {
             return cfg.getChild(option.getName()).getValue(null);
         }
 

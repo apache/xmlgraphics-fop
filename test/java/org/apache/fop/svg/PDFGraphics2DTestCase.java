@@ -15,35 +15,34 @@
  * limitations under the License.
  */
 
-package org.apache.fop.render.pcl;
+/* $Id$ */
 
-import org.apache.fop.render.RendererConfigOption;
+package org.apache.fop.svg;
 
-/**
- * An enumeration of the renderer configuration options available to the Java2D renderer via the
- * FOP conf.
- */
-public enum Java2DRendererConfigOption implements RendererConfigOption {
+import java.awt.BasicStroke;
 
-    RENDERING_MODE("rendering", PCLRenderingMode.class),
-    TEXT_RENDERING("text-rendering", Boolean.class),
-    DISABLE_PJL("disable-pjl", Boolean.class);
+import org.junit.Test;
 
-    private final String name;
+import static org.junit.Assert.assertTrue;
 
-    private final Class<?> type;
+public class PDFGraphics2DTestCase {
 
-    private Java2DRendererConfigOption(String name, Class<?> type) {
-        this.name = name;
-        this.type = type;
+    @Test
+    public void testApplyStrokeNullDash() {
+        PDFGraphics2D g2d = new PDFGraphics2D(false);
+        BasicStroke stroke = new BasicStroke();
+        g2d.applyStroke(stroke);
+        assertTrue(g2d.getString().contains("[] 0 d\n"));
     }
 
-    /** {@inheritDoc} */
-    public String getName() {
-        return name;
+    @Test
+    public void testApplyStrokeNonNullDash() {
+        PDFGraphics2D g2d = new PDFGraphics2D(false);
+        float[] dashArray = {3.0f, 5.0f};
+        BasicStroke stroke = new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f,
+                dashArray, 0.0f);
+        g2d.applyStroke(stroke);
+        assertTrue(g2d.getString().contains("[3 5] 0 d\n"));
     }
 
-    Class<?> getType() {
-        return type;
-    }
 }

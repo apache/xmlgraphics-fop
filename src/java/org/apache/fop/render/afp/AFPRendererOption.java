@@ -25,7 +25,7 @@ import org.apache.fop.render.RendererConfigOption;
 /**
  * An enumeration of the configuration options available for the AFP renderer.
  */
-public enum AFPRendererConfigOption implements RendererConfigOption {
+public enum AFPRendererOption implements RendererConfigOption {
     DEFAULT_RESOURCE_LEVELS("default-resource-levels", AFPResourceLevelDefaults.class),
     IMAGES("images", null),
     IMAGES_JPEG("jpeg", null),
@@ -48,7 +48,7 @@ public enum AFPRendererConfigOption implements RendererConfigOption {
 
     private final Class<?> type;
 
-    private AFPRendererConfigOption(String name, Class<?> type) {
+    private AFPRendererOption(String name, Class<?> type) {
         this.name = name;
         this.type = type;
     }

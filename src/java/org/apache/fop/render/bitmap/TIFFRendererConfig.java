@@ -36,13 +36,13 @@ import org.apache.fop.render.RendererConfigOption;
  */
 public final class TIFFRendererConfig extends BitmapRendererConfig {
 
-    public enum TIFFRendererConfigOption implements RendererConfigOption {
+    public enum TIFFRendererOption implements RendererConfigOption {
         COMPRESSION("compression", TIFFCompressionValues.PACKBITS);
 
         private final String name;
         private final Object defaultValue;
 
-        private TIFFRendererConfigOption(String name, Object defaultValue) {
+        private TIFFRendererOption(String name, Object defaultValue) {
             this.name = name;
             this.defaultValue = defaultValue;
         }
@@ -56,15 +56,15 @@ public final class TIFFRendererConfig extends BitmapRendererConfig {
         }
     }
 
-    private final EnumMap<TIFFRendererConfigOption, Object> params
-            = new EnumMap<TIFFRendererConfigOption, Object>(TIFFRendererConfigOption.class);
+    private final EnumMap<TIFFRendererOption, Object> params
+            = new EnumMap<TIFFRendererOption, Object>(TIFFRendererOption.class);
 
     private TIFFRendererConfig(DefaultFontConfig fontConfig) {
         super(fontConfig);
     }
 
     public TIFFCompressionValues getCompressionType() {
-        return (TIFFCompressionValues) params.get(TIFFRendererConfigOption.COMPRESSION);
+        return (TIFFCompressionValues) params.get(TIFFRendererOption.COMPRESSION);
     }
 
     /**
@@ -78,11 +78,11 @@ public final class TIFFRendererConfig extends BitmapRendererConfig {
 
         private TIFFRendererConfig config;
 
-        private void setParam(TIFFRendererConfigOption option, Object value) {
+        private void setParam(TIFFRendererOption option, Object value) {
             config.params.put(option, value != null ? value : option.getDefaultValue());
         }
 
-        private String getValue(Configuration cfg, TIFFRendererConfigOption option) {
+        private String getValue(Configuration cfg, TIFFRendererOption option) {
             return cfg.getChild(option.getName()).getValue(null);
         }
 
@@ -92,9 +92,9 @@ public final class TIFFRendererConfig extends BitmapRendererConfig {
                     .parse(cfg, userAgent.validateStrictly()));
             super.build(config, userAgent, cfg);
             if (cfg != null) {
-            setParam(TIFFRendererConfigOption.COMPRESSION,
+            setParam(TIFFRendererOption.COMPRESSION,
                         TIFFCompressionValues.getValue(getValue(cfg,
-                                TIFFRendererConfigOption.COMPRESSION)));
+                                TIFFRendererOption.COMPRESSION)));
             }
             return config;
         }

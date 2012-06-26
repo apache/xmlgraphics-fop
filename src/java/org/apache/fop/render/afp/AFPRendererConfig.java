@@ -45,23 +45,23 @@ import org.apache.fop.util.LogUtil;
 
 import static org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions.MODE_COLOR;
 import static org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions.MODE_GRAYSCALE;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.DEFAULT_RESOURCE_LEVELS;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.GOCA;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.GOCA_TEXT;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_DITHERING_QUALITY;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_FS45;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_JPEG;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_MAPPING_OPTION;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_MODE;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_NATIVE;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_WRAP_PSEG;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.JPEG_ALLOW_JPEG_EMBEDDING;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.JPEG_BITMAP_ENCODING_QUALITY;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.LINE_WIDTH_CORRECTION;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.RENDERER_RESOLUTION;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.RESOURCE_GROUP_URI;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.SHADING;
+import static org.apache.fop.render.afp.AFPRendererOption.DEFAULT_RESOURCE_LEVELS;
+import static org.apache.fop.render.afp.AFPRendererOption.GOCA;
+import static org.apache.fop.render.afp.AFPRendererOption.GOCA_TEXT;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_DITHERING_QUALITY;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_FS45;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_JPEG;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MAPPING_OPTION;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MODE;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_NATIVE;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_WRAP_PSEG;
+import static org.apache.fop.render.afp.AFPRendererOption.JPEG_ALLOW_JPEG_EMBEDDING;
+import static org.apache.fop.render.afp.AFPRendererOption.JPEG_BITMAP_ENCODING_QUALITY;
+import static org.apache.fop.render.afp.AFPRendererOption.LINE_WIDTH_CORRECTION;
+import static org.apache.fop.render.afp.AFPRendererOption.RENDERER_RESOLUTION;
+import static org.apache.fop.render.afp.AFPRendererOption.RESOURCE_GROUP_URI;
+import static org.apache.fop.render.afp.AFPRendererOption.SHADING;
 
 /**
  * The AFP renderer config object.
@@ -103,7 +103,7 @@ public final class AFPRendererConfig implements RendererConfig {
         }
     }
 
-    private final EnumMap<AFPRendererConfigOption, Object> params = new EnumMap<AFPRendererConfigOption, Object>(AFPRendererConfigOption.class);
+    private final EnumMap<AFPRendererOption, Object> params = new EnumMap<AFPRendererOption, Object>(AFPRendererOption.class);
 
     private final EnumMap<ImagesModeOptions, Object> imageModeParams
     = new EnumMap<ImagesModeOptions, Object>(ImagesModeOptions.class);
@@ -189,12 +189,12 @@ public final class AFPRendererConfig implements RendererConfig {
         return getParam(GOCA_TEXT, Boolean.class);
     }
 
-    private <T> T getParam(AFPRendererConfigOption options, Class<T> type) {
+    private <T> T getParam(AFPRendererOption options, Class<T> type) {
         assert options.getType().equals(type);
         return type.cast(params.get(options));
     }
 
-    private <T> void setParam(AFPRendererConfigOption option, T value) {
+    private <T> void setParam(AFPRendererOption option, T value) {
         assert option.getType().isInstance(value);
         params.put(option, value);
     }
@@ -272,7 +272,7 @@ public final class AFPRendererConfig implements RendererConfig {
             createResourceLevel();
         }
 
-        private void setParam(AFPRendererConfigOption option, Object value) {
+        private void setParam(AFPRendererOption option, Object value) {
             config.setParam(option, value);
         }
 
@@ -289,7 +289,7 @@ public final class AFPRendererConfig implements RendererConfig {
                 config.imageModeParams.put(MODE_GRAYSCALE,
                         imagesCfg.getAttributeAsInteger(imagesMode.getModeAttribute(), 8));
             }
-            String dithering = imagesCfg.getAttribute(AFPRendererConfigOption.IMAGES_DITHERING_QUALITY.getName(), "medium");
+            String dithering = imagesCfg.getAttribute(AFPRendererOption.IMAGES_DITHERING_QUALITY.getName(), "medium");
             float dq;
             if (dithering.startsWith("min")) {
                 dq = 0.0f;

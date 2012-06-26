@@ -25,25 +25,25 @@ import org.w3c.dom.Element;
 
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
 import org.apache.fop.render.afp.AFPRendererConfig;
-import org.apache.fop.render.afp.AFPRendererConfigOption;
+import org.apache.fop.render.afp.AFPRendererOption;
 import org.apache.fop.render.afp.AFPShadingMode;
 
 import static org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions.MODE_GRAYSCALE;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.DEFAULT_RESOURCE_LEVELS;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_DITHERING_QUALITY;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_FS45;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_JPEG;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_MAPPING_OPTION;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_MODE;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_NATIVE;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.IMAGES_WRAP_PSEG;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.JPEG_ALLOW_JPEG_EMBEDDING;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.JPEG_BITMAP_ENCODING_QUALITY;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.LINE_WIDTH_CORRECTION;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.RENDERER_RESOLUTION;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.RESOURCE_GROUP_URI;
-import static org.apache.fop.render.afp.AFPRendererConfigOption.SHADING;
+import static org.apache.fop.render.afp.AFPRendererOption.DEFAULT_RESOURCE_LEVELS;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_DITHERING_QUALITY;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_FS45;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_JPEG;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MAPPING_OPTION;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MODE;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_NATIVE;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_WRAP_PSEG;
+import static org.apache.fop.render.afp.AFPRendererOption.JPEG_ALLOW_JPEG_EMBEDDING;
+import static org.apache.fop.render.afp.AFPRendererOption.JPEG_BITMAP_ENCODING_QUALITY;
+import static org.apache.fop.render.afp.AFPRendererOption.LINE_WIDTH_CORRECTION;
+import static org.apache.fop.render.afp.AFPRendererOption.RENDERER_RESOLUTION;
+import static org.apache.fop.render.afp.AFPRendererOption.RESOURCE_GROUP_URI;
+import static org.apache.fop.render.afp.AFPRendererOption.SHADING;
 
 /**
  * A config builder specific to a particular renderer for specific MIME type.
@@ -56,7 +56,7 @@ public final class AFPRendererConfBuilder extends RendererConfBuilder {
         super(MimeConstants.MIME_AFP);
     }
 
-    private AFPRendererConfBuilder createTextElement(AFPRendererConfigOption option, String value) {
+    private AFPRendererConfBuilder createTextElement(AFPRendererOption option, String value) {
         createTextElement(option.getName(), value);
         return this;
     }
@@ -153,7 +153,11 @@ public final class AFPRendererConfBuilder extends RendererConfBuilder {
             return AFPRendererConfBuilder.this.endImages();
         }
 
-        private ImagesBuilder setAttribute(AFPRendererConfigOption options, Object value) {
+        private ImagesBuilder setAttribute(AFPRendererOption options, String value) {
+            return setAttribute(options.getName(), value);
+        }
+
+        private ImagesBuilder setAttribute(AFPRendererOption options, Object value) {
             return setAttribute(options.getName(), value);
         }
 

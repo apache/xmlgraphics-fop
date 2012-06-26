@@ -29,7 +29,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
-import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontLoader;
@@ -82,10 +81,10 @@ public class ConfiguredFontCollection implements FontCollection {
                     InputStream fontSource = resourceResolver.getResource(fontURI);
                     font = new CustomFontMetricsMapper(fontMetrics, fontSource);
                 } else {
-                    CustomFont fontMetrics = FontLoader.loadFont(
-                            fontURI, null, true, configFontInfo.getEmbeddingMode(),
-                            EncodingMode.AUTO, configFontInfo.getKerning(),
-                            configFontInfo.getAdvanced(), resourceResolver);
+                    CustomFont fontMetrics = FontLoader.loadFont(fontURI, null, true,
+                            configFontInfo.getEmbeddingMode(), configFontInfo.getEncodingMode(),
+                            configFontInfo.getKerning(), configFontInfo.getAdvanced(),
+                            resourceResolver);
                     font = new CustomFontMetricsMapper(fontMetrics);
                 }
 

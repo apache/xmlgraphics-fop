@@ -2018,9 +2018,9 @@ public class TTFFile {
         try {
             boolean useKerning = true;
             boolean useAdvanced = true;
-            stream = new FileInputStream(args[0]);
             TTFFile ttfFile = new TTFFile(useKerning, useAdvanced);
 
+            stream = new FileInputStream(args[0]);
             FontFileReader reader = new FontFileReader(stream);
 
             String name = null;
@@ -2037,6 +2037,5 @@ public class TTFFile {
         } finally {
             IOUtils.closeQuietly(stream);
         }
-
     }
 }

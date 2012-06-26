@@ -28,7 +28,7 @@ import org.apache.fop.render.RendererConfigOption;
  * An enumeration of the Bitmap renderer configuration opetions available to the user via the FOP
  * conf.
  */
-public enum BitmapRendererConfigOption implements RendererConfigOption {
+public enum BitmapRendererOption implements RendererConfigOption {
     JAVA2D_TRANSPARENT_PAGE_BACKGROUND("transparent-page-background", false),
     BACKGROUND_COLOR("background-color", Color.WHITE),
     ANTI_ALIASING("anti-aliasing", true),
@@ -45,12 +45,12 @@ public enum BitmapRendererConfigOption implements RendererConfigOption {
     private final String name;
     private final Object defaultValue;
 
-    private BitmapRendererConfigOption(String name, Object defaultValue) {
+    private BitmapRendererOption(String name, Object defaultValue) {
         this.name = name;
         this.defaultValue = defaultValue;
     }
 
-    private BitmapRendererConfigOption(String name) {
+    private BitmapRendererOption(String name) {
         this(name, null);
     }
 
@@ -63,8 +63,8 @@ public enum BitmapRendererConfigOption implements RendererConfigOption {
         return defaultValue;
     }
 
-    public static BitmapRendererConfigOption getValue(String str) {
-        for (BitmapRendererConfigOption opt : BitmapRendererConfigOption.values()) {
+    public static BitmapRendererOption getValue(String str) {
+        for (BitmapRendererOption opt : BitmapRendererOption.values()) {
             if (opt.getName().equalsIgnoreCase(str)) {
                 return opt;
             }

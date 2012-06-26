@@ -46,9 +46,9 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     private final boolean useKerning;
     private final boolean useAdvanced;
     private final EncodingMode encodingMode;
-    private final EmbeddingMode embeddingMode;
-    private final boolean embedded;
+    private EmbeddingMode embeddingMode;
     private final String subFontName;
+    private final boolean embedded;
     private final InternalResourceResolver resourceResolver;
 
     private boolean isMetricsLoaded;
@@ -70,8 +70,10 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
         } else {
             this.useAdvanced = fontInfo.getAdvanced();
         }
-        this.encodingMode = fontInfo.getEncodingMode();
-        this.embeddingMode = fontInfo.getEmbeddingMode();
+        this.encodingMode = fontInfo.getEncodingMode() != null ? fontInfo.getEncodingMode()
+                : EncodingMode.AUTO;
+        this.embeddingMode = fontInfo.getEmbeddingMode() != null ? fontInfo.getEmbeddingMode()
+                : EmbeddingMode.AUTO;
         this.subFontName = fontInfo.getSubFontName();
         this.embedded = fontInfo.isEmbedded();
         this.resourceResolver = resourceResolver;

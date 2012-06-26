@@ -112,7 +112,7 @@ public final class DefaultFontConfig implements FontConfig {
                         fontCfg.getAttribute("sub-font", null), fontCfg.getAttributeAsBoolean(
                                 "kerning", true), fontCfg.getAttributeAsBoolean("advanced", true),
                         fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()),
-                        fontCfg.getAttribute("embedding-mode", EmbeddingMode.AUTO.getName()));
+                        fontCfg.getAttribute("embedding-mode", EncodingMode.AUTO.getName()));
                 instance.fonts.add(font);
                 boolean hasTriplets = false;
                 for (Configuration tripletCfg : fontCfg.getChildren("font-triplet")) {
@@ -279,6 +279,10 @@ public final class DefaultFontConfig implements FontConfig {
 
         private final String embeddingMode;
 
+        public String getEncodingMode() {
+            return encodingMode;
+        }
+
         private final List<FontTriplet> tripletList = new ArrayList<FontTriplet>();
 
         public List<FontTriplet> getTripletList() {
@@ -330,10 +334,6 @@ public final class DefaultFontConfig implements FontConfig {
          */
         public String getSubFont() {
             return subFont;
-        }
-
-        public String getEncodingMode() {
-            return encodingMode;
         }
 
         public String getEmbeddingMode() {

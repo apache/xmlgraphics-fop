@@ -22,8 +22,6 @@ package org.apache.fop.render.pdf;
 import org.junit.Test;
 
 import org.apache.fop.apps.AbstractRendererConfigParserTester;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FopConfBuilder;
 import org.apache.fop.apps.PDFRendererConfBuilder;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFXMode;
@@ -48,11 +46,10 @@ public class PDFRendererConfigParserTestCase
                 .startEncryptionParams()
                     .setUserPassword(testPassword)
                 .endEncryptionParams());
-        assertEquals(testPassword, conf.getEncryptionParameters().getUserPassword());
+        assertEquals(testPassword, conf.getConfigOptions().getEncryptionParameters().getUserPassword());
     }
 
-    private void testRestrictEncryptionParameter(PDFRendererConfigOption option)
-            throws Exception {
+    private void testRestrictEncryptionParameter(PDFEncryptionOption option) throws Exception {
         parseConfig(createRenderer().startEncryptionParams()
                                 .setAllowParam(option)
                             .endEncryptionParams());
@@ -62,24 +59,24 @@ public class PDFRendererConfigParserTestCase
         assertTrue(testEncryptionParameter(option));
     }
 
-    public boolean testEncryptionParameter(PDFRendererConfigOption option) throws Exception {
+    public boolean testEncryptionParameter(PDFEncryptionOption option) throws Exception {
         switch (option) {
         case NO_PRINT:
-            return conf.getEncryptionParameters().isAllowPrint();
+            return conf.getConfigOptions().getEncryptionParameters().isAllowPrint();
         case NO_ACCESSCONTENT:
-            return conf.getEncryptionParameters().isAllowAccessContent();
+            return conf.getConfigOptions().getEncryptionParameters().isAllowAccessContent();
         case NO_ANNOTATIONS:
-            return conf.getEncryptionParameters().isAllowEditAnnotations();
+            return conf.getConfigOptions().getEncryptionParameters().isAllowEditAnnotations();
         case NO_ASSEMBLEDOC:
-            return conf.getEncryptionParameters().isAllowAssembleDocument();
+            return conf.getConfigOptions().getEncryptionParameters().isAllowAssembleDocument();
         case NO_COPY_CONTENT:
-            return conf.getEncryptionParameters().isAllowCopyContent();
+            return conf.getConfigOptions().getEncryptionParameters().isAllowCopyContent();
         case NO_EDIT_CONTENT:
-            return conf.getEncryptionParameters().isAllowEditContent();
+            return conf.getConfigOptions().getEncryptionParameters().isAllowEditContent();
         case NO_FILLINFORMS:
-            return conf.getEncryptionParameters().isAllowFillInForms();
+            return conf.getConfigOptions().getEncryptionParameters().isAllowFillInForms();
         case NO_PRINTHQ:
-            return conf.getEncryptionParameters().isAllowPrintHq();
+            return conf.getConfigOptions().getEncryptionParameters().isAllowPrintHq();
         default:
             throw new IllegalStateException("Wrong parameter given");
         }
@@ -88,14 +85,14 @@ public class PDFRendererConfigParserTestCase
 
     @Test
     public void testAllEncryptionRestrictions() throws Exception {
-        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_PRINT);
-        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_ACCESSCONTENT);
-        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_ANNOTATIONS);
-        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_ASSEMBLEDOC);
-        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_COPY_CONTENT);
-        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_EDIT_CONTENT);
-        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_FILLINFORMS);
-        testRestrictEncryptionParameter(PDFRendererConfigOption.NO_PRINTHQ);
+        testRestrictEncryptionParameter(PDFEncryptionOption.NO_PRINT);
+        testRestrictEncryptionParameter(PDFEncryptionOption.NO_ACCESSCONTENT);
+        testRestrictEncryptionParameter(PDFEncryptionOption.NO_ANNOTATIONS);
+        testRestrictEncryptionParameter(PDFEncryptionOption.NO_ASSEMBLEDOC);
+        testRestrictEncryptionParameter(PDFEncryptionOption.NO_COPY_CONTENT);
+        testRestrictEncryptionParameter(PDFEncryptionOption.NO_EDIT_CONTENT);
+        testRestrictEncryptionParameter(PDFEncryptionOption.NO_FILLINFORMS);
+        testRestrictEncryptionParameter(PDFEncryptionOption.NO_PRINTHQ);
     }
 
     @Test
@@ -105,47 +102,47 @@ public class PDFRendererConfigParserTestCase
                 .startEncryptionParams()
                     .setOwnerPassword(testPassword)
                 .endEncryptionParams());
-        assertEquals(testPassword, conf.getEncryptionParameters().getOwnerPassword());
+        assertEquals(testPassword, conf.getConfigOptions().getEncryptionParameters().getOwnerPassword());
     }
 
     @Test
     public void testFilterListDefaultFlate() throws Exception {
         parseConfig(createRenderer().createFilterList(null, "flate"));
-        assertEquals("flate", conf.getFilterMap().get("default").get(0));
+        assertEquals("flate", conf.getConfigOptions().getFilterMap().get("default").get(0));
     }
 
     @Test
     public void testFilterListDefaultNull() throws Exception {
         parseConfig(createRenderer().createFilterList(null, "null"));
-        assertEquals("null", conf.getFilterMap().get("default").get(0));
+        assertEquals("null", conf.getConfigOptions().getFilterMap().get("default").get(0));
     }
 
     @Test
     public void testFilterListImage() throws Exception {
         parseConfig(createRenderer().createFilterList("image", "flate", "ascii-85"));
-        assertEquals("flate", conf.getFilterMap().get("image").get(0));
-        assertEquals("ascii-85", conf.getFilterMap().get("image").get(1));
+        assertEquals("flate", conf.getConfigOptions().getFilterMap().get("image").get(0));
+        assertEquals("ascii-85", conf.getConfigOptions().getFilterMap().get("image").get(1));
     }
 
     @Test
     public void testPDFAMode() throws Exception {
         parseConfig(createRenderer().setPDFAMode(PDFAMode.PDFA_1A.getName()));
-        assertEquals(PDFAMode.PDFA_1A, conf.getPDFAMode());
+        assertEquals(PDFAMode.PDFA_1A, conf.getConfigOptions().getPDFAMode());
 
         parseConfig(createRenderer().setPDFAMode(PDFAMode.PDFA_1B.getName()));
-        assertEquals(PDFAMode.PDFA_1B, conf.getPDFAMode());
+        assertEquals(PDFAMode.PDFA_1B, conf.getConfigOptions().getPDFAMode());
 
         parseConfig(createRenderer().setPDFAMode(PDFAMode.DISABLED.getName()));
-        assertEquals(null, conf.getPDFAMode());
+        assertEquals(null, conf.getConfigOptions().getPDFAMode());
     }
 
     @Test
     public void testPDFXMode() throws Exception {
         parseConfig(createRenderer().setPDFXMode(PDFXMode.PDFX_3_2003.getName()));
-        assertEquals(PDFXMode.PDFX_3_2003, conf.getPDFXMode());
+        assertEquals(PDFXMode.PDFX_3_2003, conf.getConfigOptions().getPDFXMode());
 
         parseConfig(createRenderer().setPDFXMode(PDFXMode.DISABLED.getName()));
-        assertEquals(null, conf.getPDFXMode());
+        assertEquals(null, conf.getConfigOptions().getPDFXMode());
     }
 
     @Test
@@ -155,7 +152,7 @@ public class PDFRendererConfigParserTestCase
                     .startEncryptionParams()
                         .setEncryptionLength(i)
                     .endEncryptionParams());
-            assertEquals(40, conf.getEncryptionParameters().getEncryptionLengthInBits());
+            assertEquals(40, conf.getConfigOptions().getEncryptionParameters().getEncryptionLengthInBits());
         }
 
         for (int i = 40; i <= 128; i++) {
@@ -164,7 +161,7 @@ public class PDFRendererConfigParserTestCase
                         .setEncryptionLength(i)
                     .endEncryptionParams());
             int expectedLen = Math.round(i / 8.0f) * 8;
-            assertEquals(expectedLen, conf.getEncryptionParameters()
+            assertEquals(expectedLen, conf.getConfigOptions().getEncryptionParameters()
                                                  .getEncryptionLengthInBits());
         }
 
@@ -173,7 +170,7 @@ public class PDFRendererConfigParserTestCase
                     .startEncryptionParams()
                         .setEncryptionLength(i)
                     .endEncryptionParams());
-            assertEquals(128, conf.getEncryptionParameters().getEncryptionLengthInBits());
+            assertEquals(128, conf.getConfigOptions().getEncryptionParameters().getEncryptionLengthInBits());
         }
     }
 
@@ -186,7 +183,7 @@ public class PDFRendererConfigParserTestCase
 
     private void pdfVersionTester(String version) throws Exception {
         parseConfig(createRenderer().setPDFVersion(version));
-        assertEquals(Version.getValueOf(version), conf.getPDFVersion());
+        assertEquals(Version.getValueOf(version), conf.getConfigOptions().getPDFVersion());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -199,7 +196,7 @@ public class PDFRendererConfigParserTestCase
         pdfVersionTester("0.9");
     }
 
-    @Test(expected = FOPException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testErroneousPDFVersionsNotSet() throws Exception {
         pdfVersionTester("");
     }

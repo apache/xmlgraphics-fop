@@ -64,8 +64,6 @@ public abstract class CustomFont extends Typeface
 
     private boolean useKerning = true;
     private boolean useAdvanced = true;
-    /** the character map, mapping Unicode ranges to glyph indices. */
-    protected CMapSegment[] cmap;
 
     /**
      * @param resourceResolver the URI resource resolver for controlling file access
@@ -73,6 +71,8 @@ public abstract class CustomFont extends Typeface
     public CustomFont(InternalResourceResolver resourceResolver) {
         this.resourceResolver = resourceResolver;
     }
+    /** the character map, mapping Unicode ranges to glyph indices. */
+    protected CMapSegment[] cmap;
 
     /** {@inheritDoc} */
     public String getFontName() {
@@ -124,6 +124,7 @@ public abstract class CustomFont extends Typeface
     }
 
     /**
+
      * Returns the embedding mode for this font.
      * @return embedding mode
      */

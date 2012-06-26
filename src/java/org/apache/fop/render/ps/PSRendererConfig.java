@@ -35,20 +35,20 @@ import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.render.RendererConfig;
 import org.apache.fop.util.LogUtil;
 
-import static org.apache.fop.render.ps.PSRendererConfigurationOption.AUTO_ROTATE_LANDSCAPE;
-import static org.apache.fop.render.ps.PSRendererConfigurationOption.DSC_COMPLIANT;
-import static org.apache.fop.render.ps.PSRendererConfigurationOption.LANGUAGE_LEVEL;
-import static org.apache.fop.render.ps.PSRendererConfigurationOption.OPTIMIZE_RESOURCES;
-import static org.apache.fop.render.ps.PSRendererConfigurationOption.RENDERING_MODE;
-import static org.apache.fop.render.ps.PSRendererConfigurationOption.SAFE_SET_PAGE_DEVICE;
+import static org.apache.fop.render.ps.PSRendererOption.AUTO_ROTATE_LANDSCAPE;
+import static org.apache.fop.render.ps.PSRendererOption.DSC_COMPLIANT;
+import static org.apache.fop.render.ps.PSRendererOption.LANGUAGE_LEVEL;
+import static org.apache.fop.render.ps.PSRendererOption.OPTIMIZE_RESOURCES;
+import static org.apache.fop.render.ps.PSRendererOption.RENDERING_MODE;
+import static org.apache.fop.render.ps.PSRendererOption.SAFE_SET_PAGE_DEVICE;
 
 /**
  * The PostScript renderer configuration data object.
  */
 public final class PSRendererConfig implements RendererConfig {
 
-    private final EnumMap<PSRendererConfigurationOption, Object> params
-            = new EnumMap<PSRendererConfigurationOption, Object>(PSRendererConfigurationOption.class);
+    private final EnumMap<PSRendererOption, Object> params
+            = new EnumMap<PSRendererOption, Object>(PSRendererOption.class);
 
     private final DefaultFontConfig fontConfig;
 
@@ -132,12 +132,12 @@ public final class PSRendererConfig implements RendererConfig {
             }
         }
 
-        private void setConfigParameter(PSRendererConfigurationOption option,
+        private void setConfigParameter(PSRendererOption option,
                 Object value) {
             config.params.put(option, value != null ? value : option.getDefaultValue());
         }
 
-        private void setBoolConfigParam(Configuration cfg, PSRendererConfigurationOption option) {
+        private void setBoolConfigParam(Configuration cfg, PSRendererOption option) {
             setConfigParameter(option, cfg.getChild(
                     option.getName()).getValueAsBoolean((Boolean) option.getDefaultValue()));
         }

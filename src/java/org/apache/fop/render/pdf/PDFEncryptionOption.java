@@ -23,23 +23,8 @@ import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.render.RendererConfigOption;
 
-public enum PDFRendererConfigOption implements RendererConfigOption {
-    FILTER_LIST("filterList"),
-    /** Rendering Options key for the PDF/A mode, default: {@link PDFAMode#DISABLED} */
-    PDF_A_MODE("pdf-a-mode", PDFAMode.DISABLED),
-    /** Rendering Options key for the PDF/X mode, default: {@link PDFXMode#DISABLED} */
-    PDF_X_MODE("pdf-x-mode", PDFXMode.DISABLED),
-    /** PDF version entry: specify the version of the PDF document created, datatype: String */
-    VERSION("version"),
-    /**
-     * Rendering Options key for disabling the sRGB color space (only possible if no PDF/A or
-     * PDF/X profile is active), default: false
-     */
-    DISABLE_SRGB_COLORSPACE("disable-srgb-colorspace", false),
-    /** Rendering Options key for the ICC profile for the output intent. */
-    OUTPUT_PROFILE("output-profile"),
-    /** PDF encryption parameter: all parameters as object, datatype: PDFEncryptionParams */
-    ENCRYPTION_PARAMS("encryption-params"),
+public enum PDFEncryptionOption implements RendererConfigOption {
+
     /**
      * PDF encryption length parameter: must be a multiple of 8 between 40 and 128,
      * default value 40, datatype: int, default: 40
@@ -90,15 +75,18 @@ public enum PDFRendererConfigOption implements RendererConfigOption {
     /** PDF encryption parameter: owner password, datatype: String, default: "" */
     OWNER_PASSWORD("owner-password", "");
 
+    public static final String ENCRYPTION_PARAMS = "encryption-params";
+
     private final String name;
+
     private final Object defaultValue;
 
-    private PDFRendererConfigOption(String name, Object defaultValue) {
+    private PDFEncryptionOption(String name, Object defaultValue) {
         this.name = name;
         this.defaultValue = defaultValue;
     }
 
-    private PDFRendererConfigOption(String name) {
+    private PDFEncryptionOption(String name) {
         this(name, null);
     }
 

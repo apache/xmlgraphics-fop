@@ -125,8 +125,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         return this.documentNavigationHandler;
     }
 
-    PDFRenderingUtil getPDFUtil() {
-        return this.pdfUtil;
+    void mergeRendererOptionsConfig(PDFRendererOptionsConfig config) {
+        pdfUtil.mergeRendererOptionsConfig(config);
     }
 
     PDFLogicalStructureHandler getLogicalStructureHandler() {

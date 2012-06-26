@@ -42,6 +42,7 @@ public class EmbedFontInfo implements Serializable {
     protected final boolean advanced;
     /** the requested encoding mode for the font */
     private final EncodingMode encodingMode;
+    /** the requested embedding mode for this font */
     private final EmbeddingMode embeddingMode;
 
     /** the PostScript name of the font */
@@ -63,7 +64,6 @@ public class EmbedFontInfo implements Serializable {
      * @param embedURI Path to the embeddable font file (may be null)
      * @param subFontName the sub-fontname used for TrueType Collections (null otherwise)
      * @param encodingMode the encoding mode to use for this font
-     * @param embeddingMode the embedding mode for this font
      */
     public EmbedFontInfo(URI metricsURI, boolean kerning, boolean advanced,
             List<FontTriplet> fontTriplets, URI embedURI, String subFontName,

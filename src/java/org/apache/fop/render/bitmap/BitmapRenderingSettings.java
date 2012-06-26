@@ -23,9 +23,9 @@ import org.apache.xmlgraphics.image.writer.ImageWriterParams;
 
 import org.apache.fop.render.java2d.Java2DRenderingSettings;
 
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.ANTI_ALIASING;
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.COLOR_MODE;
-import static org.apache.fop.render.bitmap.BitmapRendererConfigOption.RENDERING_QUALITY;
+import static org.apache.fop.render.bitmap.BitmapRendererOption.ANTI_ALIASING;
+import static org.apache.fop.render.bitmap.BitmapRendererOption.COLOR_MODE;
+import static org.apache.fop.render.bitmap.BitmapRendererOption.RENDERING_QUALITY;
 
 /**
  * This class holds settings used when rendering to bitmaps.

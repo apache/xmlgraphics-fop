@@ -40,6 +40,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.java2d.color.ColorUtil;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
+
 import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.fonts.CIDFont;

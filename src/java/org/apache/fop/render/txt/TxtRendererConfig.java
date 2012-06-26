@@ -36,13 +36,13 @@ import org.apache.fop.render.RendererConfigOption;
  */
 public final class TxtRendererConfig implements RendererConfig {
 
-    public enum TxtRendererConfigOption implements RendererConfigOption {
+    public enum TxtRendererOption implements RendererConfigOption {
         ENCODING("encoding", "UTF-8");
 
         private final String name;
         private final Object defaultValue;
 
-        private TxtRendererConfigOption(String name, Object defaultValue) {
+        private TxtRendererOption(String name, Object defaultValue) {
             this.name = name;
             this.defaultValue = defaultValue;
         }
@@ -56,8 +56,8 @@ public final class TxtRendererConfig implements RendererConfig {
         }
     }
 
-    private final EnumMap<TxtRendererConfigOption, Object> params
-            = new EnumMap<TxtRendererConfigOption, Object>(TxtRendererConfigOption.class);
+    private final EnumMap<TxtRendererOption, Object> params
+            = new EnumMap<TxtRendererOption, Object>(TxtRendererOption.class);
 
     private final DefaultFontConfig fontConfig;
 
@@ -70,7 +70,7 @@ public final class TxtRendererConfig implements RendererConfig {
     }
 
     public String getEncoding() {
-        return (String) params.get(TxtRendererConfigOption.ENCODING);
+        return (String) params.get(TxtRendererOption.ENCODING);
     }
 
     /**
@@ -83,7 +83,7 @@ public final class TxtRendererConfig implements RendererConfig {
             TxtRendererConfig config = new TxtRendererConfig(new DefaultFontConfigParser().parse(cfg,
                     userAgent.validateStrictly()));
             if (cfg != null) {
-                TxtRendererConfigOption option = TxtRendererConfigOption.ENCODING;
+                TxtRendererOption option = TxtRendererOption.ENCODING;
                 String value = cfg.getChild(option.getName(), true).getValue(null);
                 config.params.put(option, value != null ? value : option.getDefaultValue());
             }
