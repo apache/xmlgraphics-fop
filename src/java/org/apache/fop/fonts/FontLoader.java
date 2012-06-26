@@ -80,6 +80,7 @@ public abstract class FontLoader {
      * @param fontFileURI the URI to the font
      * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
      * @param embedded indicates whether the font is embedded or referenced
+     * @param embeddingMode the embedding mode of the font
      * @param encodingMode the requested encoding mode
      * @param useKerning indicates whether kerning information should be loaded if available
      * @param useAdvanced indicates whether advanced typographic information shall be loaded if
@@ -89,8 +90,8 @@ public abstract class FontLoader {
      * @throws IOException In case of an I/O error
      */
     public static CustomFont loadFont(URI fontFileURI, String subFontName,
-            boolean embedded, EncodingMode encodingMode, boolean useKerning,
-            boolean useAdvanced, InternalResourceResolver resourceResolver) throws IOException {
+            boolean embedded, EmbeddingMode embeddingMode, EncodingMode encodingMode,
+            boolean useKerning, boolean useAdvanced, InternalResourceResolver resourceResolver) throws IOException {
         boolean type1 = isType1(fontFileURI);
         FontLoader loader;
         if (type1) {
@@ -98,10 +99,14 @@ public abstract class FontLoader {
                 throw new IllegalArgumentException(
                         "CID encoding mode not supported for Type 1 fonts");
             }
+            if (embeddingMode == EmbeddingMode.SUBSET) {
+                throw new IllegalArgumentException(
+                        "Subset embedding for Type 1 fonts is not supported");
+            }
             loader = new Type1FontLoader(fontFileURI, embedded, useKerning, resourceResolver);
         } else {
             loader = new TTFFontLoader(fontFileURI, subFontName,
-                    embedded, encodingMode, useKerning, useAdvanced, resourceResolver);
+                    embedded, embeddingMode, encodingMode, useKerning, useAdvanced, resourceResolver);
         }
         return loader.getFont();
     }

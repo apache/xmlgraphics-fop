@@ -166,4 +166,9 @@ public class PDFImageXObject extends PDFXObject {
         return pdfimage.getFilterHint();
     }
 
+    /** {@inheritDoc} */
+    protected boolean multipleFiltersAllowed() {
+        return pdfimage.multipleFiltersAllowed();
+    }
+
 }

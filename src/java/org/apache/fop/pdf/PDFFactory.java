@@ -1641,8 +1641,8 @@ public class PDFFactory {
                     FontFileReader reader = new FontFileReader(in);
 
                     TTFSubSetFile subset = new TTFSubSetFile();
-                    byte[] subsetFont = subset.readFont(reader,
-                            mbfont.getTTCName(), mbfont.getUsedGlyphs());
+                    subset.readFont(reader, mbfont.getTTCName(), mbfont.getUsedGlyphs());
+                    byte[] subsetFont = subset.getFontSubset();
                     // Only TrueType CID fonts are supported now
 
                     embeddedFont = new PDFTTFStream(subsetFont.length);

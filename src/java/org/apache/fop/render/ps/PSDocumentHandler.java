@@ -114,6 +114,8 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     private static final int COMMENT_PAGE_TRAILER = 2;
     private static final int PAGE_TRAILER_CODE_BEFORE = 3;
 
+    private PSEventProducer eventProducer;
+
     /**
      * Default constructor.
      */
@@ -205,7 +207,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
         PSRenderingUtil.writeSetupCodeList(gen, setupCodeList, "SetupCode");
         if (!psUtil.isOptimizeResources()) {
-            this.fontResources.addAll(PSFontUtils.writeFontDict(gen, fontInfo));
+            this.fontResources.addAll(PSFontUtils.writeFontDict(gen, fontInfo, eventProducer));
         } else {
             gen.commentln("%FOPFontSetup"); //Place-holder, will be replaced in the second pass
         }
@@ -259,8 +261,8 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         InputStream in = new BufferedInputStream(getUserAgent().getResourceResolver().getResource(tempURI));
         try {
             try {
-                ResourceHandler handler = new ResourceHandler(getUserAgent(), this.fontInfo,
-                        resTracker, this.formResources);
+                ResourceHandler handler = new ResourceHandler(getUserAgent(), eventProducer,
+                        this.fontInfo, resTracker, this.formResources);
                 handler.process(in, this.outputStream,
                         this.currentPageNumber, this.documentBoundingBox);
                 this.outputStream.flush();
@@ -544,8 +546,8 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
      * @param key the font key ("F*")
      * @return the matching PSResource
      */
-    protected PSResource getPSResourceForFontKey(String key) {
-        return this.fontResources.getPSResourceForFontKey(key);
+    protected PSFontResource getPSResourceForFontKey(String key) {
+        return this.fontResources.getFontResourceForFontKey(key);
     }
 
     /**

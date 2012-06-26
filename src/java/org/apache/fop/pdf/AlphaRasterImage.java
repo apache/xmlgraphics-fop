@@ -212,6 +212,10 @@ public class AlphaRasterImage implements PDFImage {
         return null;
     }
 
+    /** {@inheritDoc} */
+    public boolean multipleFiltersAllowed() {
+        return true;
+    }
 }
 
 

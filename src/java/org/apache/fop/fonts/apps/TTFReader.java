@@ -22,7 +22,6 @@ package org.apache.fop.fonts.apps;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,9 +35,9 @@ import org.xml.sax.SAXException;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.Version;
+import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.truetype.FontFileReader;
-import org.apache.fop.fonts.truetype.TTFCmapEntry;
 import org.apache.fop.fonts.truetype.TTFFile;
 import org.apache.fop.util.CommandLineLogger;
 
@@ -295,9 +294,9 @@ public class TTFReader extends AbstractFontReader {
             root.appendChild(el);
             el.appendChild(doc.createTextNode(ttf.getFullName()));
         }
-        Set familyNames = ttf.getFamilyNames();
+        Set<String> familyNames = ttf.getFamilyNames();
         if (familyNames.size() > 0) {
-            String familyName = (String)familyNames.iterator().next();
+            String familyName = familyNames.iterator().next();
             el = doc.createElement("family-name");
             root.appendChild(el);
             el.appendChild(doc.createTextNode(familyName));
@@ -393,9 +392,7 @@ public class TTFReader extends AbstractFontReader {
 
         el = doc.createElement("bfranges");
         mel.appendChild(el);
-        Iterator iter = ttf.getCMaps().listIterator();
-        while (iter.hasNext()) {
-            TTFCmapEntry ce = (TTFCmapEntry)iter.next();
+        for (CMapSegment ce : ttf.getCMaps()) {
             Element el2 = doc.createElement("bf");
             el.appendChild(el2);
             el2.setAttribute("us", String.valueOf(ce.getUnicodeStart()));
@@ -450,35 +447,32 @@ public class TTFReader extends AbstractFontReader {
         Document doc = parent.getOwnerDocument();
 
         // Get kerning
-        Iterator iter;
+        Set<Integer> kerningKeys;
         if (isCid) {
-            iter = ttf.getKerning().keySet().iterator();
+            kerningKeys = ttf.getKerning().keySet();
         } else {
-            iter = ttf.getAnsiKerning().keySet().iterator();
+            kerningKeys = ttf.getAnsiKerning().keySet();
         }
 
-        while (iter.hasNext()) {
-            Integer kpx1 = (Integer)iter.next();
+        for (Integer kpx1 : kerningKeys) {
 
             el = doc.createElement("kerning");
             el.setAttribute("kpx1", kpx1.toString());
             parent.appendChild(el);
             Element el2 = null;
 
-            Map h2;
+            Map<Integer, Integer> h2;
             if (isCid) {
                 h2 = ttf.getKerning().get(kpx1);
             } else {
                 h2 = ttf.getAnsiKerning().get(kpx1);
             }
 
-            Iterator iter2 = h2.keySet().iterator();
-            while (iter2.hasNext()) {
-                Integer kpx2 = (Integer)iter2.next();
+            for (Integer kpx2 : h2.keySet()) {
                 if (isCid || kpx2.intValue() < 256) {
                     el2 = doc.createElement("pair");
                     el2.setAttribute("kpx2", kpx2.toString());
-                    Integer val = (Integer)h2.get(kpx2);
+                    Integer val = h2.get(kpx2);
                     el2.setAttribute("kern", val.toString());
                     el.appendChild(el2);
                 }

@@ -1201,6 +1201,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 currentStream.write("] ");
                 float offset = bs.getDashPhase();
                 currentStream.write(PDFNumber.doubleOut(offset) + " d\n");
+            } else {
+                currentStream.write("[] 0 d\n");
             }
             int ec = bs.getEndCap();
             switch (ec) {
