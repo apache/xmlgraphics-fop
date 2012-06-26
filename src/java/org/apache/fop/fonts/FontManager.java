@@ -233,6 +233,16 @@ public class FontManager {
         }
     }
 
+    /**
+     * Detect fonts from the operating system via FOPs autodetect mechanism.
+     *
+     * @param autoDetectFonts if autodetect has been enabled
+     * @param fontAdder the font adding mechanism
+     * @param strict whether to enforce strict validation
+     * @param listener the listener for font related events
+     * @param fontInfoList a list of font info objects
+     * @throws FOPException if an exception was thrown auto-detecting fonts
+     */
     public void autoDetectFonts(boolean autoDetectFonts, FontAdder fontAdder, boolean strict,
             FontEventListener  listener, List<EmbedFontInfo> fontInfoList) throws FOPException {
         if (autoDetectFonts) {

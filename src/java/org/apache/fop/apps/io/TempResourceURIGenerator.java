@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public final class TempResourceURIGenerator {
 
-    private static final String TMP_SCHEMA = "tmp";
+    public static final String TMP_SCHEMA = "tmp";
 
     private final String tempURIPrefix;
 

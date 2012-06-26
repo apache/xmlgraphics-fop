@@ -74,14 +74,35 @@ public abstract class PrintRendererConfigurator extends AbstractRendererConfigur
         this.fontInfoConfigurator = fontInfoConfigurator;
     }
 
+    /**
+     * Returns the renderer configuration data for a specific renderer.
+     *
+     * @param documentHandler the document handler
+     * @return the renderer configuration data
+     * @throws FOPException if an error occurs
+     */
     protected RendererConfig getRendererConfig(IFDocumentHandler documentHandler) throws FOPException {
-        return  getRendererConfig(documentHandler.getMimeType());
+        return getRendererConfig(documentHandler.getMimeType());
     }
 
+    /**
+     * gets the renderer configuration data for a specific renderer.
+     *
+     * @param mimeType the MIME type
+     * @return the renderer configuration data
+     * @throws FOPException if an error occurs
+     */
     protected RendererConfig getRendererConfig(String mimeType) throws FOPException {
         return userAgent.getRendererConfig(mimeType, rendererConfigParser);
     }
 
+    /**
+     * gets the renderer configuration data for a specific renderer.
+     *
+     * @param renderer the renderer
+     * @return the renderer configuration data
+     * @throws FOPException if an error occurs
+     */
     protected RendererConfig getRendererConfig(Renderer renderer) throws FOPException {
         return  getRendererConfig(renderer.getMimeType());
     }
@@ -114,6 +135,14 @@ public abstract class PrintRendererConfigurator extends AbstractRendererConfigur
 
     protected abstract List<FontCollection> getDefaultFontCollection();
 
+    /**
+     * Returns the font collection for custom configured fonts.
+     *
+     * @param resolver the resource resolver
+     * @param mimeType the renderer MIME type
+     * @return the font collection
+     * @throws FOPException if an error occurs
+     */
     protected FontCollection getCustomFontCollection(InternalResourceResolver resolver, String mimeType)
             throws FOPException {
         List<EmbedFontInfo> fontList;
@@ -125,6 +154,13 @@ public abstract class PrintRendererConfigurator extends AbstractRendererConfigur
         return createCollectionFromFontList(resolver, fontList);
     }
 
+    /***
+     * Creates the font collection given a list of embedded font infomation.
+     *
+     * @param resolver the resource resolver
+     * @param fontList the embedded font infomation
+     * @return the font collection
+     */
     protected FontCollection createCollectionFromFontList(InternalResourceResolver resolver,
             List<EmbedFontInfo> fontList) {
         return new CustomFontCollection(resolver, fontList,

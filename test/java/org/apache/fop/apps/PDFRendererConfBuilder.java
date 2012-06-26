@@ -22,19 +22,21 @@ package org.apache.fop.apps;
 import org.w3c.dom.Element;
 
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
+import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.RendererConfigOption;
-import org.apache.fop.render.pdf.PDFRendererConfigOption;
+import org.apache.fop.render.pdf.PDFEncryptionOption;
+import org.apache.fop.render.pdf.PDFRendererOption;
 
-import static org.apache.fop.render.pdf.PDFRendererConfigOption.DISABLE_SRGB_COLORSPACE;
-import static org.apache.fop.render.pdf.PDFRendererConfigOption.ENCRYPTION_LENGTH;
-import static org.apache.fop.render.pdf.PDFRendererConfigOption.ENCRYPTION_PARAMS;
-import static org.apache.fop.render.pdf.PDFRendererConfigOption.FILTER_LIST;
-import static org.apache.fop.render.pdf.PDFRendererConfigOption.OUTPUT_PROFILE;
-import static org.apache.fop.render.pdf.PDFRendererConfigOption.OWNER_PASSWORD;
-import static org.apache.fop.render.pdf.PDFRendererConfigOption.PDF_A_MODE;
-import static org.apache.fop.render.pdf.PDFRendererConfigOption.PDF_X_MODE;
-import static org.apache.fop.render.pdf.PDFRendererConfigOption.USER_PASSWORD;
-import static org.apache.fop.render.pdf.PDFRendererConfigOption.VERSION;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPTION_LENGTH;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPTION_PARAMS;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.OWNER_PASSWORD;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.USER_PASSWORD;
+import static org.apache.fop.render.pdf.PDFRendererOption.DISABLE_SRGB_COLORSPACE;
+import static org.apache.fop.render.pdf.PDFRendererOption.FILTER_LIST;
+import static org.apache.fop.render.pdf.PDFRendererOption.OUTPUT_PROFILE;
+import static org.apache.fop.render.pdf.PDFRendererOption.PDF_A_MODE;
+import static org.apache.fop.render.pdf.PDFRendererOption.PDF_X_MODE;
+import static org.apache.fop.render.pdf.PDFRendererOption.VERSION;
 
 /**
  * A config builder specific to a particular renderer for specific MIME type.
@@ -97,7 +99,7 @@ public final class PDFRendererConfBuilder extends RendererConfBuilder {
         private final Element el;
 
         private EncryptionParamsBuilder() {
-            el = createElement(ENCRYPTION_PARAMS.getName());
+            el = createElement(ENCRYPTION_PARAMS);
         }
 
         public EncryptionParamsBuilder setEncryptionLength(int length) {
@@ -115,7 +117,7 @@ public final class PDFRendererConfBuilder extends RendererConfBuilder {
             return this;
         }
 
-        public EncryptionParamsBuilder setAllowParam(PDFRendererConfigOption option) {
+        public EncryptionParamsBuilder setAllowParam(PDFEncryptionOption option) {
             el.appendChild(createElement(option.getName()));
             return this;
         }

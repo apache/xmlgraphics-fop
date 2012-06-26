@@ -92,10 +92,6 @@ public class PDFPainter extends AbstractIFPainter {
         return this.documentHandler.getContext();
     }
 
-    PDFRenderingUtil getPDFUtil() {
-        return this.documentHandler.pdfUtil;
-    }
-
     PDFDocument getPDFDoc() {
         return this.documentHandler.pdfDoc;
     }

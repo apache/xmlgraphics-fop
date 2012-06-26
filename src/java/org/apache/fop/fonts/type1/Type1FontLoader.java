@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.CodePointMapping;
@@ -41,6 +43,8 @@ import org.apache.fop.fonts.SingleByteFont;
  * Loads a Type 1 font into memory directly from the original font file.
  */
 public class Type1FontLoader extends FontLoader {
+
+    private static final Log log = LogFactory.getLog(Type1FontLoader.class);
 
     private SingleByteFont singleFont;
 

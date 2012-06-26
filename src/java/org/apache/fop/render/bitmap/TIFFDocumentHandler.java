@@ -31,7 +31,6 @@ import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
  */
 public class TIFFDocumentHandler extends AbstractBitmapDocumentHandler {
 
-
     TIFFDocumentHandler(IFContext context) {
         super(context);
     }
@@ -51,5 +50,4 @@ public class TIFFDocumentHandler extends AbstractBitmapDocumentHandler {
     public IFDocumentHandlerConfigurator getConfigurator() {
         return new TIFFRendererConfigurator(getUserAgent(), new TIFFRendererConfigParser());
     }
-
 }

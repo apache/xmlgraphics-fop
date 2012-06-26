@@ -72,10 +72,10 @@ public class TTFFontLoader extends FontLoader {
      * @param useAdvanced true to enable loading advanced info if available, false to disable
      * @param resolver the FontResolver for font URI resolution
      */
-    public TTFFontLoader(URI fontFileURI, String subFontName,
-                boolean embedded, EmbeddingMode embeddingMode, EncodingMode encodingMode,
-            boolean useKerning, boolean useAdvanced, InternalResourceResolver resourceResolver) {
-        super(fontFileURI, embedded, useKerning, useAdvanced, resourceResolver);
+    public TTFFontLoader(URI fontFileURI, String subFontName, boolean embedded,
+            EmbeddingMode embeddingMode, EncodingMode encodingMode, boolean useKerning,
+            boolean useAdvanced, InternalResourceResolver resolver) {
+        super(fontFileURI, embedded, useKerning, useAdvanced, resolver);
         this.subFontName = subFontName;
         this.encodingMode = encodingMode;
         this.embeddingMode = embeddingMode;

@@ -23,9 +23,9 @@ package org.apache.fop.render.pcl;
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
 import org.apache.fop.apps.MimeConstants;
 
-import static org.apache.fop.render.pcl.Java2DRendererConfigOption.DISABLE_PJL;
-import static org.apache.fop.render.pcl.Java2DRendererConfigOption.RENDERING_MODE;
-import static org.apache.fop.render.pcl.Java2DRendererConfigOption.TEXT_RENDERING;
+import static org.apache.fop.render.pcl.Java2DRendererOption.DISABLE_PJL;
+import static org.apache.fop.render.pcl.Java2DRendererOption.RENDERING_MODE;
+import static org.apache.fop.render.pcl.Java2DRendererOption.TEXT_RENDERING;
 /**
  * A config builder specific to a particular renderer for specific MIME type.
  */
@@ -51,7 +51,7 @@ public final class PCLRendererConfBuilder extends RendererConfBuilder {
         return createTextElement(DISABLE_PJL, String.valueOf(value));
     }
 
-    private PCLRendererConfBuilder createTextElement(Java2DRendererConfigOption option, String value) {
+    private PCLRendererConfBuilder createTextElement(Java2DRendererOption option, String value) {
         createTextElement(option.getName(), value);
         return this;
     }

@@ -67,7 +67,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     private int lastUnmapped;
 
     /**
-     * @param resourceResolver the resource resolver for accessing the font
+     * Default constructor
      */
     public MultiByteFont(InternalResourceResolver resourceResolver) {
         super(resourceResolver);

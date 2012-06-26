@@ -124,9 +124,9 @@ public class FontFileReader {
         final byte buf = read();
 
         if (buf < 0) {
-            return (int)(256 + buf);
+            return (256 + buf);
         } else {
-            return (int)buf;
+            return buf;
         }
     }
 
@@ -150,7 +150,7 @@ public class FontFileReader {
      */
     public final int readTTFUShort() throws IOException {
         final int ret = (readTTFUByte() << 8) + readTTFUByte();
-        return (int)ret;
+        return ret;
     }
 
     /**

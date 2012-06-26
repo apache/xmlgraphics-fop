@@ -153,7 +153,6 @@ public class FontReader extends DefaultHandler {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
         if (localName.equals("font-metrics")) {

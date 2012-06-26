@@ -22,9 +22,27 @@ package org.apache.fop.apps.io;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Implementations of this interface resolve URIs for temporary files used by FOP. The temporary-
+ * resource URI scheme comes from {@link TempResourceURIGenerator#TMP_SCHEMA}.
+ */
 public interface TempResourceResolver {
 
+    /**
+     * Get a temporary-resource given the URI pointing to said resource.
+     *
+     * @param uri the resource URI
+     * @return the resource
+     * @throws IOException if an I/O error occured during resource acquisition
+     */
     Resource getResource(String id) throws IOException;
 
+    /**
+     * Gets an temporary-output stream of a given URI.
+     *
+     * @param uri the output stream URI
+     * @return the output stream
+     * @throws IOException if an I/O error occured while creating an output stream
+     */
     OutputStream getOutputStream(String id) throws IOException;
 }

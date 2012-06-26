@@ -61,7 +61,7 @@ public class PDFDocumentGraphics2DConfigurator {
         try {
             //Filter map
             PDFRendererConfig pdfConfig = new PDFRendererConfigParser().build(null, cfg);
-            pdfDoc.setFilterMap(pdfConfig.getFilterMap());
+            pdfDoc.setFilterMap(pdfConfig.getConfigOptions().getFilterMap());
         } catch (FOPException e) {
             throw new RuntimeException(e);
         }

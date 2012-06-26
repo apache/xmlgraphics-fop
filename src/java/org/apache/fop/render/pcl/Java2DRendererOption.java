@@ -15,22 +15,35 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+package org.apache.fop.render.pcl;
 
-package org.apache.fop.apps;
+import org.apache.fop.render.RendererConfigOption;
 
-import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
+/**
+ * An enumeration of the renderer configuration options available to the Java2D renderer via the
+ * FOP conf.
+ */
+public enum Java2DRendererOption implements RendererConfigOption {
 
-import static org.apache.fop.render.txt.TxtRendererConfig.TxtRendererOption.ENCODING;
+    RENDERING_MODE("rendering", PCLRenderingMode.class),
+    TEXT_RENDERING("text-rendering", Boolean.class),
+    DISABLE_PJL("disable-pjl", Boolean.class);
 
-public class TxtRendererConfBuilder extends RendererConfBuilder {
+    private final String name;
 
-    protected TxtRendererConfBuilder() {
-        super(MimeConstants.MIME_PLAIN_TEXT);
+    private final Class<?> type;
+
+    private Java2DRendererOption(String name, Class<?> type) {
+        this.name = name;
+        this.type = type;
     }
 
-    public TxtRendererConfBuilder setEncoding(String value) {
-        createTextElement(ENCODING, value);
-        return this;
+    /** {@inheritDoc} */
+    public String getName() {
+        return name;
+    }
+
+    Class<?> getType() {
+        return type;
     }
 }
