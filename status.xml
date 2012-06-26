@@ -63,6 +63,21 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="53458" due-to="Dieter von Holten">
+        Fix incorrect language and country code key generation in hyphenation tree cache.
+      </action>
+      <action context="Images" dev="GA" type="fix" fixes-bug="53431" due-to="Luis Bernardo">
+        Fix incorrect SVG line dash pattern with PDF output format.
+      </action>
+      <action context="Images" dev="GA" type="update" fixes-bug="40676" due-to="Luis Bernardo">
+        Fix interoperability issue with Adobe reader regarding use of multiple filters.
+      </action>
+      <action context="Code" dev="GA" type="fix">
+        Eliminate javadocs warnings.
+      </action>
+      <action context="Renderers" dev="VH" type="add" fixes-bug="52338" importance="high">
+        Added possibility to embed TrueType fonts in PostScript.
+      </action>
       <action context="Images" dev="GA" type="update" fixes-bug="40676" due-to="Luis Bernardo">
         Update site documentation about PNG image loading configuration and support.
       </action>

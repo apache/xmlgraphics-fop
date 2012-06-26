@@ -46,6 +46,7 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     private final boolean useKerning;
     private final boolean useAdvanced;
     private final EncodingMode encodingMode;
+    private final EmbeddingMode embeddingMode;
     private final boolean embedded;
     private final String subFontName;
     private final InternalResourceResolver resourceResolver;
@@ -69,8 +70,8 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
         } else {
             this.useAdvanced = fontInfo.getAdvanced();
         }
-        this.encodingMode = fontInfo.getEncodingMode() != null ? fontInfo.getEncodingMode()
-                : EncodingMode.AUTO;
+        this.encodingMode = fontInfo.getEncodingMode();
+        this.embeddingMode = fontInfo.getEmbeddingMode();
         this.subFontName = fontInfo.getSubFontName();
         this.embedded = fontInfo.isEmbedded();
         this.resourceResolver = resourceResolver;
@@ -108,8 +109,8 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
                     if (fontEmbedURI == null) {
                         throw new RuntimeException("Cannot load font. No font URIs available.");
                     }
-                    realFont = FontLoader.loadFont(fontEmbedURI, this.subFontName, embedded,
-                            this.encodingMode, useKerning, useAdvanced, resourceResolver);
+                    realFont = FontLoader.loadFont(fontEmbedURI, subFontName, embedded,
+                            embeddingMode, encodingMode, useKerning, useAdvanced, resourceResolver);
                 }
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;

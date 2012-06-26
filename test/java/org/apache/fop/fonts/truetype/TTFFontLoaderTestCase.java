@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
+import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.EncodingMode;
 
 import static org.junit.Assert.assertFalse;
@@ -49,12 +50,12 @@ public class TTFFontLoaderTestCase {
         boolean useKerning = true;
 
         TTFFontLoader fontLoader = new TTFFontLoader(absoluteFilePath, fontName, embedded,
-                EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resourceResolver);
+                EmbeddingMode.AUTO, EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resourceResolver);
         assertTrue(fontLoader.getFont().hasKerningInfo());
         useKerning = false;
 
-        fontLoader = new TTFFontLoader(absoluteFilePath, fontName, embedded, EncodingMode.AUTO,
-                useKerning, useComplexScriptFeatures, resourceResolver);
+        fontLoader = new TTFFontLoader(absoluteFilePath, fontName, embedded, EmbeddingMode.AUTO,
+                EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resourceResolver);
         assertFalse(fontLoader.getFont().hasKerningInfo());
     }
 }

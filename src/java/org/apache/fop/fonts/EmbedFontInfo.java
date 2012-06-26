@@ -26,6 +26,8 @@ import java.util.List;
 
 /**
  * FontInfo contains meta information on fonts (where is the metrics file etc.)
+ * TODO: We need to remove this class and think about more intelligent design patterns
+ * (Data classes => Procedural code)
  */
 public class EmbedFontInfo implements Serializable {
 
@@ -40,6 +42,7 @@ public class EmbedFontInfo implements Serializable {
     protected final boolean advanced;
     /** the requested encoding mode for the font */
     private final EncodingMode encodingMode;
+    private final EmbeddingMode embeddingMode;
 
     /** the PostScript name of the font */
     protected String postScriptName;
@@ -60,21 +63,11 @@ public class EmbedFontInfo implements Serializable {
      * @param embedURI Path to the embeddable font file (may be null)
      * @param subFontName the sub-fontname used for TrueType Collections (null otherwise)
      * @param encodingMode the encoding mode to use for this font
+     * @param embeddingMode the embedding mode for this font
      */
     public EmbedFontInfo(URI metricsURI, boolean kerning, boolean advanced,
-            List<FontTriplet> fontTriplets, URI embedURI, String subFontName) {
-        this.metricsURI = metricsURI;
-        this.embedURI = embedURI;
-        this.kerning = kerning;
-        this.advanced = advanced;
-        this.fontTriplets = fontTriplets;
-        this.subFontName = subFontName;
-        this.encodingMode = EncodingMode.AUTO;
-    }
-
-    public EmbedFontInfo(URI metricsURI, boolean kerning, boolean advanced,
             List<FontTriplet> fontTriplets, URI embedURI, String subFontName,
-            EncodingMode encodingMode) {
+            EncodingMode encodingMode, EmbeddingMode embeddingMode) {
         this.metricsURI = metricsURI;
         this.embedURI = embedURI;
         this.kerning = kerning;
@@ -82,6 +75,7 @@ public class EmbedFontInfo implements Serializable {
         this.fontTriplets = fontTriplets;
         this.subFontName = subFontName;
         this.encodingMode = encodingMode;
+        this.embeddingMode = embeddingMode;
     }
 
     /**
@@ -161,6 +155,14 @@ public class EmbedFontInfo implements Serializable {
         } else {
             return this.embedded;
         }
+    }
+
+    /**
+     * Returns the embedding mode for this font.
+     * @return the embedding mode.
+     */
+    public EmbeddingMode getEmbeddingMode() {
+       return embeddingMode;
     }
 
     /**

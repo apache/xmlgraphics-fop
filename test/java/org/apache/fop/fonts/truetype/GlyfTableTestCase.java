@@ -148,10 +148,10 @@ public class GlyfTableTestCase {
 
     private void setupSubsetReader(Map<Integer, Integer> glyphs) throws IOException {
         TTFSubSetFile fontFile = new TTFSubSetFile();
-        byte[] subsetFont = fontFile.readFont(originalFontReader, "Deja", glyphs);
-        InputStream inputStream = new ByteArrayInputStream(subsetFont);
-        subsetReader = new FontFileReader(inputStream);
-        inputStream.close();
+        fontFile.readFont(originalFontReader, "Deja", glyphs);
+        byte[] subsetFont = fontFile.getFontSubset();
+        InputStream intputStream = new ByteArrayInputStream(subsetFont);
+        subsetReader = new FontFileReader(intputStream);
     }
 
     private void readLoca() throws IOException {

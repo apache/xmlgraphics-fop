@@ -52,14 +52,6 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
 
     private CIDSubset subset = new CIDSubset();
 
-    /**
-     * A map from Unicode indices to glyph indices. No assumption
-     * about ordering is made below. If lookup is changed to a binary
-     * search (from the current linear search), then addPrivateUseMapping()
-     * needs to be changed to perform ordered inserts.
-     */
-    private BFEntry[] bfentries = null;
-
     /* advanced typographic support */
     private GlyphDefinitionTable gdef;
     private GlyphSubstitutionTable gsub;
@@ -84,26 +76,31 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getDefaultWidth() {
         return defaultWidth;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getRegistry() {
         return "Adobe";
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getOrdering() {
         return "UCS";
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getSupplement() {
         return 0;
     }
 
     /** {@inheritDoc} */
+    @Override
     public CIDFontType getCIDType() {
         return cidType;
     }
@@ -117,6 +114,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getEmbedFontName() {
         if (isEmbeddable()) {
             return FontUtil.stripWhiteSpace(super.getFontName());
@@ -130,17 +128,18 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         return !(getEmbedFileURI() == null && getEmbedResourceName() == null);
     }
 
-    /** {@inheritDoc} */
     public boolean isSubsetEmbedded() {
         return true;
     }
 
     /** {@inheritDoc} */
+    @Override
     public CIDSubset getCIDSubset() {
         return this.subset;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getEncodingName() {
         return encoding;
     }
@@ -173,30 +172,30 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         int idx = c;
         int retIdx = SingleByteEncoding.NOT_FOUND_CODE_POINT;
 
-        for (int i = 0; (i < bfentries.length) && retIdx == 0; i++) {
-            if (bfentries[i].getUnicodeStart() <= idx
-                && bfentries[i].getUnicodeEnd() >= idx) {
+        for (int i = 0; (i < cmap.length) && retIdx == 0; i++) {
+            if (cmap[i].getUnicodeStart() <= idx
+                    && cmap[i].getUnicodeEnd() >= idx) {
 
-                retIdx = bfentries[i].getGlyphStartIndex()
+                retIdx = cmap[i].getGlyphStartIndex()
                     + idx
-                    - bfentries[i].getUnicodeStart();
+                    - cmap[i].getUnicodeStart();
             }
         }
         return retIdx;
     }
 
     /**
-     * Add a private use mapping {PU,GI} to the existing BFENTRIES map.
+     * Add a private use mapping {PU,GI} to the existing character map.
      * N.B. Does not insert in order, merely appends to end of existing map.
      */
     private synchronized void addPrivateUseMapping ( int pu, int gi ) {
         assert findGlyphIndex ( pu ) == SingleByteEncoding.NOT_FOUND_CODE_POINT;
-        BFEntry[] bfeOld = bfentries;
-        int       bfeCnt = bfeOld.length;
-        BFEntry[] bfeNew = new BFEntry [ bfeCnt + 1 ];
-        System.arraycopy ( bfeOld, 0, bfeNew, 0, bfeCnt );
-        bfeNew [ bfeCnt ] = new BFEntry ( pu, pu, gi );
-        bfentries = bfeNew;
+        CMapSegment[] oldCmap = cmap;
+        int cmapLength = oldCmap.length;
+        CMapSegment[] newCmap = new CMapSegment [ cmapLength + 1 ];
+        System.arraycopy ( oldCmap, 0, newCmap, 0, cmapLength );
+        newCmap [ cmapLength ] = new CMapSegment ( pu, pu, gi );
+        cmap = newCmap;
     }
 
     /**
@@ -254,12 +253,12 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     // [TBD] - needs optimization, i.e., change from linear search to binary search
     private int findCharacterFromGlyphIndex ( int gi, boolean augment ) {
         int cc = 0;
-        for ( int i = 0, n = bfentries.length; i < n; i++ ) {
-            BFEntry be = bfentries [ i ];
-            int s = be.getGlyphStartIndex();
-            int e = s + ( be.getUnicodeEnd() - be.getUnicodeStart() );
+        for ( int i = 0, n = cmap.length; i < n; i++ ) {
+            CMapSegment segment = cmap [ i ];
+            int s = segment.getGlyphStartIndex();
+            int e = s + ( segment.getUnicodeEnd() - segment.getUnicodeStart() );
             if ( ( gi >= s ) && ( gi <= e ) ) {
-                cc = be.getUnicodeStart() + ( gi - s );
+                cc = segment.getUnicodeStart() + ( gi - s );
                 break;
             }
         }
@@ -275,6 +274,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
 
 
     /** {@inheritDoc} */
+    @Override
     public char mapChar(char c) {
         notifyMapOperation();
         int glyphIndex = findGlyphIndex(c);
@@ -289,17 +289,9 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean hasChar(char c) {
         return (findGlyphIndex(c) != SingleByteEncoding.NOT_FOUND_CODE_POINT);
-    }
-
-    /**
-     * Sets the array of BFEntry instances which constitutes the Unicode to glyph index map for
-     * a font. ("BF" means "base font")
-     * @param entries the Unicode to glyph index map
-     */
-    public void setBFEntries(BFEntry[] entries) {
-        this.bfentries = entries;
     }
 
     /**

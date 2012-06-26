@@ -103,6 +103,7 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
             throw new RuntimeException("FlateFilter configuration error", e);
         }
         this.pdfFilter = flate;
+        this.disallowMultipleFilters();
 
         // Handle transparency channel if applicable; note that for palette images the transparency is
         // not TRANSLUCENT
@@ -154,6 +155,7 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
             BitmapImage alphaMask = new BitmapImage("Mask:" + this.getKey(), image.getSize().getWidthPx(),
                     image.getSize().getHeightPx(), baos.toByteArray(), null);
             alphaMask.setPDFFilter(transFlate);
+            alphaMask.disallowMultipleFilters();
             alphaMask.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
             softMask = doc.addImage(null, alphaMask).makeReference();
         }

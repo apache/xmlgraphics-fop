@@ -43,6 +43,7 @@ public class EmbedFontInfoTestCase {
     private final boolean useAdvanced = false;
     private final String subFontName = "Gladiator Bold";
     private final EncodingMode encMode = EncodingMode.CID;
+    private final EmbeddingMode embedMode = EmbeddingMode.AUTO;
     private final FontTriplet triplet = new FontTriplet(subFontName, "bold", Font.WEIGHT_BOLD);
 
     @Before
@@ -50,7 +51,7 @@ public class EmbedFontInfoTestCase {
         List<FontTriplet> triplets = new ArrayList<FontTriplet>();
         triplets.add(triplet);
         sut = new EmbedFontInfo(metricsURI, kerning, useAdvanced, triplets, embedURI, subFontName,
-                encMode);
+                encMode, embedMode);
     }
 
     @Test
@@ -80,7 +81,7 @@ public class EmbedFontInfoTestCase {
     @Test
     public void testQuirkyBoundaryCasesIsEmbedded() {
         sut = new EmbedFontInfo(metricsURI, kerning, useAdvanced, sut.getFontTriplets(), null,
-                subFontName, encMode);
+                subFontName, encMode, embedMode);
         sut.setEmbedded(true);
         assertFalse(sut.isEmbedded());
 

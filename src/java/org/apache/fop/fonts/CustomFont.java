@@ -44,6 +44,7 @@ public abstract class CustomFont extends Typeface
     private URI embedFileURI;
     private String embedResourceName;
     private final InternalResourceResolver resourceResolver;
+    private EmbeddingMode embeddingMode = EmbeddingMode.AUTO;
 
     private int capHeight;
     private int xHeight;
@@ -63,6 +64,8 @@ public abstract class CustomFont extends Typeface
 
     private boolean useKerning = true;
     private boolean useAdvanced = true;
+    /** the character map, mapping Unicode ranges to glyph indices. */
+    protected CMapSegment[] cmap;
 
     /**
      * @param resourceResolver the URI resource resolver for controlling file access
@@ -118,6 +121,14 @@ public abstract class CustomFont extends Typeface
      */
     public URI getEmbedFileURI() {
         return embedFileURI;
+    }
+
+    /**
+     * Returns the embedding mode for this font.
+     * @return embedding mode
+     */
+    public EmbeddingMode getEmbeddingMode() {
+        return embeddingMode;
     }
 
     /**
@@ -339,6 +350,13 @@ public abstract class CustomFont extends Typeface
     /**
      * {@inheritDoc}
      */
+    public void setEmbeddingMode(EmbeddingMode embeddingMode) {
+        this.embeddingMode = embeddingMode;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void setCapHeight(int capHeight) {
         this.capHeight = capHeight;
     }
@@ -465,6 +483,27 @@ public abstract class CustomFont extends Typeface
         } else {
             this.kerning = kerningMap;
         }
+    }
+
+    /**
+     * Sets the character map for this font. It maps all available Unicode characters
+     * to their glyph indices inside the font.
+     * @param cmap the character map
+     */
+    public void setCMap(CMapSegment[] cmap) {
+        this.cmap = new CMapSegment[cmap.length];
+        System.arraycopy(cmap, 0, this.cmap, 0, cmap.length);
+    }
+
+    /**
+     * Returns the character map for this font. It maps all available Unicode characters
+     * to their glyph indices inside the font.
+     * @return the character map
+     */
+    public CMapSegment[] getCMap() {
+        CMapSegment[] copy = new CMapSegment[cmap.length];
+        System.arraycopy(this.cmap, 0, copy, 0, this.cmap.length);
+        return copy;
     }
 
 }

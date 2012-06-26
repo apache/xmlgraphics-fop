@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
+import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCache;
@@ -147,7 +148,8 @@ public class FontInfoFinder {
             subFontName = ((MultiByteFont) customFont).getTTCName();
         }
         EmbedFontInfo fontInfo = new EmbedFontInfo(null, customFont.isKerningEnabled(),
-                customFont.isAdvancedEnabled(), fontTripletList, fontUri, subFontName);
+                customFont.isAdvancedEnabled(), fontTripletList, fontUri, subFontName,
+                EncodingMode.AUTO, EmbeddingMode.AUTO);
         fontInfo.setPostScriptName(customFont.getFontName());
         if (fontCache != null) {
             fontCache.addFont(fontInfo, resourceResolver);
@@ -219,7 +221,7 @@ public class FontInfoFinder {
                 }
                 try {
                     TTFFontLoader ttfLoader = new TTFFontLoader(fontURI, fontName, true,
-                            EncodingMode.AUTO, useKerning, useAdvanced, resourceResolver);
+                            EmbeddingMode.AUTO, EncodingMode.AUTO, useKerning, useAdvanced, resourceResolver);
                     customFont = ttfLoader.getFont();
                     if (this.eventListener != null) {
                         customFont.setEventListener(this.eventListener);
@@ -245,8 +247,8 @@ public class FontInfoFinder {
         } else {
             // The normal case
             try {
-                customFont = FontLoader.loadFont(fontURI, null, true, EncodingMode.AUTO,
-                        useKerning, useAdvanced, resourceResolver);
+                customFont = FontLoader.loadFont(fontURI, null, true, EmbeddingMode.AUTO,
+                        EncodingMode.AUTO, useKerning, useAdvanced, resourceResolver);
                 if (this.eventListener != null) {
                     customFont.setEventListener(this.eventListener);
                 }

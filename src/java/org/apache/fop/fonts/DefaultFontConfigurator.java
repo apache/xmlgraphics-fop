@@ -163,9 +163,10 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
                 return null;
             }
         }
-        EncodingMode encodingMode = EncodingMode.getEncodingMode(font.getEncodingMode());
+        EncodingMode encodingMode = EncodingMode.getValue(font.getEncodingMode());
+        EmbeddingMode embeddingMode = EmbeddingMode.getValue(font.getEmbeddingMode());
         EmbedFontInfo embedFontInfo = new EmbedFontInfo(metricsUri, font.isKerning(),
-                font.isAdvanced(), tripletList, embedUri, subFont, encodingMode);
+                font.isAdvanced(), tripletList, embedUri, subFont, encodingMode, embeddingMode);
         if (fontCache != null) {
             if (!fontCache.containsFont(embedFontInfo)) {
                 fontCache.addFont(embedFontInfo, resourceResolver);

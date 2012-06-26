@@ -111,7 +111,8 @@ public final class DefaultFontConfig implements FontConfig {
                 Font font = new Font(fontCfg.getAttribute("metrics-url", null), embed,
                         fontCfg.getAttribute("sub-font", null), fontCfg.getAttributeAsBoolean(
                                 "kerning", true), fontCfg.getAttributeAsBoolean("advanced", true),
-                                fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()));
+                        fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()),
+                        fontCfg.getAttribute("embedding-mode", EmbeddingMode.AUTO.getName()));
                 instance.fonts.add(font);
                 boolean hasTriplets = false;
                 for (Configuration tripletCfg : fontCfg.getChildren("font-triplet")) {
@@ -276,9 +277,7 @@ public final class DefaultFontConfig implements FontConfig {
 
         private final String encodingMode;
 
-        public String getEncodingMode() {
-            return encodingMode;
-        }
+        private final String embeddingMode;
 
         private final List<FontTriplet> tripletList = new ArrayList<FontTriplet>();
 
@@ -287,13 +286,14 @@ public final class DefaultFontConfig implements FontConfig {
         }
 
         private Font(String metrics, String embed, String subFont, boolean kerning,
-                boolean advanced, String encodingMode) {
+                boolean advanced, String encodingMode, String embeddingMode) {
             this.metrics = metrics;
             this.embedUri = embed;
             this.subFont = subFont;
             this.kerning = kerning;
             this.advanced = advanced;
             this.encodingMode = encodingMode;
+            this.embeddingMode = embeddingMode;
         }
 
         /**
@@ -303,7 +303,7 @@ public final class DefaultFontConfig implements FontConfig {
         public boolean isKerning() {
             return kerning;
         }
-        
+
         public boolean isAdvanced() {
             return advanced;
         }
@@ -330,6 +330,14 @@ public final class DefaultFontConfig implements FontConfig {
          */
         public String getSubFont() {
             return subFont;
+        }
+
+        public String getEncodingMode() {
+            return encodingMode;
+        }
+
+        public String getEmbeddingMode() {
+            return embeddingMode;
         }
     }
 }
