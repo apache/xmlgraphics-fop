@@ -39,7 +39,7 @@
       <tr>
         <td>default font characters</td>
         <td><link href="fo/fonts.fo">fonts.fo</link></td>
-        <td><link href="fo/fonts.fo.pdf">fonts.fo.pdf</link></td>
+        <td><link href="fo/fonts.pdf">fonts.pdf</link></td>
       </tr>
     </table>
     <p>Other basic examples on the use of XSL-FO can be found in the FOP distribution in
@@ -100,17 +100,17 @@ Embedding images in FO:
     <tr>
       <td>align in larger viewport</td>
       <td><link href="fo/align.fo">align.fo</link></td>
-      <td><link href="fo/align.fo.pdf">align.fo.pdf</link></td>
+      <td><link href="fo/align.pdf">align.pdf</link></td>
     </tr>
     <tr>
       <td>align in smaller viewport</td>
       <td><link href="fo/align2.fo">align2.fo</link></td>
-      <td><link href="fo/align2.fo.pdf">align2.fo.pdf</link></td>
+      <td><link href="fo/align2.pdf">align2.pdf</link></td>
     </tr>
     <tr>
       <td>scaling image</td>
       <td><link href="fo/size.fo">size.fo</link></td>
-      <td><link href="fo/size.fo.pdf">size.fo.pdf</link></td>
+      <td><link href="fo/size.pdf">size.pdf</link></td>
     </tr>
   </table>
       <p>Look also into the directory examples/fo/svg. There you find some very extensive SVG examples.
@@ -132,7 +132,7 @@ Instream Foreign Object images in FO, there are more on the
     <tr>
       <td>embedding svg in viewport</td>
       <td><link href="fo/embed.fo">embed.fo</link></td>
-      <td><link href="fo/embed.fo.pdf">embed.fo.pdf</link></td>
+      <td><link href="fo/embed.pdf">embed.pdf</link></td>
     </tr>
   </table>
   </section>

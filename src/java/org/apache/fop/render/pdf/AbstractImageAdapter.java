@@ -57,6 +57,8 @@ public abstract class AbstractImageAdapter implements PDFImage {
 
     private static final int MAX_HIVAL = 255;
 
+    private boolean multipleFiltersAllowed = true;
+
     /**
      * Creates a new PDFImage from an Image instance.
      * @param image the image
@@ -291,6 +293,18 @@ public abstract class AbstractImageAdapter implements PDFImage {
                 pdfCS.setColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         }
         return pdfCS;
+    }
+
+    /** {@inheritDoc} */
+    public boolean multipleFiltersAllowed() {
+        return multipleFiltersAllowed;
+    }
+
+    /**
+     * Disallows multiple filters.
+     */
+    public void disallowMultipleFilters() {
+        multipleFiltersAllowed = false;
     }
 
 }

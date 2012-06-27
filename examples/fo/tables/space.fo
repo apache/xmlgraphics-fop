@@ -30,7 +30,7 @@
       Table 1: spaces around cells
       </fo:block>
 
-      <fo:table border-style="solid" border-width="0.5pt" border-color="red">
+      <fo:table border-style="solid" border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -109,7 +109,7 @@
       Table 2: spaces around rows
       </fo:block>
 
-      <fo:table border-style="solid" border-width="0.5pt" border-color="red">
+      <fo:table border-style="solid" border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -190,7 +190,7 @@
       Table 3: spaces around body
       </fo:block>
 
-      <fo:table border-style="solid" border-width="0.5pt" border-color="red">
+      <fo:table border-style="solid" border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -281,7 +281,7 @@
       </fo:block>
 
     <fo:block border-style="solid" border-width="0.5pt">
-      <fo:table space-before.optimum="5pt" border-style="solid" border-width="0.5pt" border-color="red">
+      <fo:table space-before.optimum="5pt" border-style="solid" border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -309,7 +309,7 @@
     </fo:block>
 
     <fo:block border-style="solid" border-width="0.5pt">
-      <fo:table padding-left="5pt" border-style="solid" border-width="0.5pt" border-color="red">
+      <fo:table padding-left="5pt" border-style="solid" border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -337,7 +337,7 @@
     </fo:block>
 
     <fo:block border-style="solid" border-width="0.5pt">
-      <fo:table padding-right="5pt" border-style="solid" border-width="0.5pt" border-color="red">
+      <fo:table padding-right="5pt" border-style="solid" border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -365,7 +365,7 @@
     </fo:block>
 
     <fo:block border-style="solid" border-width="0.5pt">
-      <fo:table space-after.optimum="5pt" border-style="solid" border-width="0.5pt" border-color="red">
+      <fo:table space-after.optimum="5pt" border-style="solid" border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -397,7 +397,7 @@
       </fo:block>
 
     <fo:block border-style="solid" border-width="0.5pt">
-      <fo:table space-after.optimum="20pt" border-style="solid" border-width="0.5pt" border-color="red">
+      <fo:table space-after.optimum="20pt" border-style="solid" border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -462,7 +462,7 @@
     </fo:block>
 
     <fo:block border-style="solid" border-width="0.5pt">
-      <fo:table space-after.optimum="5pt" border-style="solid" border-width="0.5pt" border-color="red">
+      <fo:table space-after.optimum="5pt" border-style="solid" border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
