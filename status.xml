@@ -62,6 +62,18 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="1.1rc1" date="02 July 2012">
+      <action context="Test" dev="GA" type="fix">
+        Fix errors and warnings in example files. Add build.xml for documentation examples.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="53458" due-to="Dieter von Holten">
+        Fix incorrect language and country code key generation in hyphenation tree cache.
+      </action>
+      <action context="Images" dev="GA" type="fix" fixes-bug="53431" due-to="Luis Bernardo">
+        Fix incorrect SVG line dash pattern with PDF output format.
+      </action>
+      <action context="Images" dev="GA" type="update" fixes-bug="40676" due-to="Luis Bernardo">
+        Fix interoperability issue with Adobe reader regarding use of multiple filters.
+      </action>
       <action context="Code" dev="GA" type="fix">
         Eliminate javadocs warnings.
       </action>
