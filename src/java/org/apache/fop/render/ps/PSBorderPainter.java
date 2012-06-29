@@ -62,9 +62,10 @@ public class PSBorderPainter extends BorderPainter {
     private static void drawLine(PSGenerator gen,
             float startx, float starty, float endx, float endy) throws IOException {
         gen.writeln(gen.formatDouble(startx) + " "
-                + gen.formatDouble(starty) + " M "
+                + gen.formatDouble(starty) + " " + gen.mapCommand("moveto") + " "
                 + gen.formatDouble(endx) + " "
-                + gen.formatDouble(endy) + " lineto stroke newpath");
+                + gen.formatDouble(endy) + " " + gen.mapCommand("lineto") + " "
+                + gen.mapCommand("stroke") + " " + gen.mapCommand("newpath"));
     }
 
     /**
@@ -260,7 +261,8 @@ public class PSBorderPainter extends BorderPainter {
                 lineTo(end.x, starty + 2 * half);
                 lineTo(start.x, starty + 2 * half);
                 closePath();
-                generator.writeln(" fill newpath");
+                generator.write(" " + generator.mapCommand("fill"));
+                generator.writeln(" " + generator.mapCommand("newpath"));
                 generator.useColor(color);
                 if (style == RuleStyle.GROOVE) {
                     moveTo(start.x, starty);
@@ -276,7 +278,8 @@ public class PSBorderPainter extends BorderPainter {
                     lineTo(end.x - half, starty + half);
                 }
                 closePath();
-                generator.writeln(" fill newpath");
+                generator.write(" " + generator.mapCommand("fill"));
+                generator.writeln(" " + generator.mapCommand("newpath"));
                 break;
             default:
                 throw new UnsupportedOperationException("rule style not supported");
@@ -293,13 +296,13 @@ public class PSBorderPainter extends BorderPainter {
     /** {@inheritDoc} */
     protected void moveTo(int x, int y) throws IOException {
         generator.writeln(generator.formatDouble(toPoints(x)) + " "
-                + generator.formatDouble(toPoints(y)) + " M");
+                + generator.formatDouble(toPoints(y)) + " " + generator.mapCommand("moveto"));
     }
 
     /** {@inheritDoc} */
     protected void lineTo(int x, int y) throws IOException {
         generator.writeln(generator.formatDouble(toPoints(x)) + " "
-                + generator.formatDouble(toPoints(y)) + " lineto");
+                + generator.formatDouble(toPoints(y)) + " " + generator.mapCommand("lineto"));
     }
 
     /** {@inheritDoc} */
@@ -314,7 +317,7 @@ public class PSBorderPainter extends BorderPainter {
 
     /** {@inheritDoc} */
     protected void clip() throws IOException {
-        generator.writeln("clip newpath");
+        generator.writeln(generator.mapCommand("clip") + " " + generator.mapCommand("newpath"));
     }
 
     /** {@inheritDoc} */

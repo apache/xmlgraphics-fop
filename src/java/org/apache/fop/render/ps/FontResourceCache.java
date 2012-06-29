@@ -32,7 +32,7 @@ import org.apache.fop.fonts.Typeface;
  */
 class FontResourceCache {
 
-    private FontInfo fontInfo;
+    private final FontInfo fontInfo;
 
     /** This is a map of PSResource instances of all fonts defined (key: font key) */
     private Map fontResources = new java.util.HashMap();
@@ -42,19 +42,20 @@ class FontResourceCache {
     }
 
     /**
-     * Returns the PSResource for the given font key.
+     * Returns the PSFontResource for the given font key.
      * @param key the font key ("F*")
-     * @return the matching PSResource
+     * @return the matching PSFontResource instance
      */
-    public PSResource getPSResourceForFontKey(String key) {
-        PSResource res = null;
+    public PSFontResource getFontResourceForFontKey(String key) {
+        PSFontResource res = null;
         if (this.fontResources != null) {
-            res = (PSResource)this.fontResources.get(key);
+            res = (PSFontResource)this.fontResources.get(key);
         } else {
             this.fontResources = new java.util.HashMap();
         }
         if (res == null) {
-            res = new PSResource(PSResource.TYPE_FONT, getPostScriptNameForFontKey(key));
+            res = PSFontResource.createFontResource(
+                    new PSResource(PSResource.TYPE_FONT, getPostScriptNameForFontKey(key)));
             this.fontResources.put(key, res);
         }
         return res;
@@ -67,8 +68,8 @@ class FontResourceCache {
             postFix = key.substring(pos);
             key = key.substring(0, pos);
         }
-        Map fonts = fontInfo.getFonts();
-        Typeface tf = (Typeface)fonts.get(key);
+        Map<String, Typeface> fonts = fontInfo.getFonts();
+        Typeface tf = fonts.get(key);
         if (tf instanceof LazyFont) {
             tf = ((LazyFont)tf).getRealFont();
         }
@@ -76,9 +77,9 @@ class FontResourceCache {
             throw new IllegalStateException("Font not available: " + key);
         }
         if (postFix == null) {
-            return tf.getFontName();
+            return tf.getEmbedFontName();
         } else {
-            return tf.getFontName() + postFix;
+            return tf.getEmbedFontName() + postFix;
         }
     }
 

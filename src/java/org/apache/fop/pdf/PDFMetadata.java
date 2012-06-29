@@ -79,7 +79,7 @@ public class PDFMetadata extends PDFStream {
      * byte arrays around so much
      * {@inheritDoc}
      */
-    protected int output(java.io.OutputStream stream)
+    public int output(java.io.OutputStream stream)
                 throws java.io.IOException {
         int length = super.output(stream);
         this.xmpMetadata = null; //Release DOM when it's not used anymore
@@ -150,6 +150,9 @@ public class PDFMetadata extends PDFStream {
             dc.addLanguage(root.getLanguage());
         }
         dc.addDate(info.getCreationDate());
+
+        //Somewhat redundant but some PDF/A checkers issue a warning without this.
+        dc.setFormat("application/pdf");
 
         //PDF/A identification
         PDFAMode pdfaMode = pdfDoc.getProfile().getPDFAMode();

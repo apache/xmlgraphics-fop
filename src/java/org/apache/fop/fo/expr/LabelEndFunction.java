@@ -19,9 +19,9 @@
 
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.flow.ListItem;
@@ -34,23 +34,13 @@ import org.apache.fop.fo.properties.Property;
  */
 public class LabelEndFunction extends FunctionBase {
 
-    /**
-     * @return 0 (the number of arguments required for the label-end function)
-     */
-    public int nbArgs() {
+    /** {@inheritDoc} */
+    public int getRequiredArgsCount() {
         return 0;
     }
 
-    /**
-     *
-     * @param args array of arguments for the function (none are needed, but
-     * required for the Function interface)
-     * @param pInfo PropertyInfo object for the function
-     * @return the calculated label-end value for the list
-     * @throws PropertyException if called from outside of an fo:list-item
-     */
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+    /** {@inheritDoc} */
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
 
         Length distance = pInfo.getPropertyList().get(
                 Constants.PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getLength();

@@ -1,0 +1,176 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="400pt" page-width="300pt" margin="20pt" margin-top="10pt">
+      <fo:region-body margin-top="20pt"/>
+      <fo:region-before extent="15pt"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+
+  <fo:page-sequence master-reference="page">
+    <fo:static-content flow-name="xsl-region-before">
+      <fo:block id="1" font-size="7pt" text-align-last="justify" padding-bottom="2pt" 
+        border-bottom="0.25pt solid black">This is the page header<fo:leader/>Page <fo:page-number 
+          id="2"/></fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="xsl-footnote-separator">
+      <fo:block id="3"><fo:leader leader-length="100pt" leader-pattern="rule"/></fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block id="4">This is a link to the <fo:wrapper id="5" color="blue"><fo:basic-link id="6" 
+            internal-destination="second-start">next page-sequence</fo:basic-link></fo:wrapper> 
+        (which starts on page <fo:page-number-citation id="7" ref-id="second-start"/> and ends on 
+        page <fo:page-number-citation-last id="8" ref-id="second-end"/>).</fo:block>
+      <fo:block id="9" font-family="sans-serif" font-weight="bold" space-before="1em" 
+        space-after="0.2em" role="H1"><fo:block id="10">A Title Block</fo:block></fo:block>
+      <fo:block id="11">This block of text contains a footnote<fo:footnote id="12"><fo:inline id="13" 
+            baseline-shift="super" font-size="70%">1</fo:inline><fo:footnote-body id="14"><fo:block 
+              id="15">A footnote with a link to the  <fo:wrapper id="16" color="blue"><fo:basic-link 
+                  id="17" external-destination="http://xmlgraphics.apache.org/fop/">FOP 
+                  website</fo:basic-link></fo:wrapper></fo:block></fo:footnote-body></fo:footnote> 
+        call.</fo:block>
+      <fo:table id="18" space-before="1em" width="100%" table-layout="fixed">
+        <fo:table-column id="19" column-width="proportional-column-width(1)"/>
+        <fo:table-column id="20" column-width="proportional-column-width(2)"/>
+        <fo:table-header id="21">
+          <fo:table-row id="22">
+            <fo:table-cell id="23" border="2pt solid black" padding="2pt 2pt 0">
+              <fo:block id="24">Header 1.1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell id="25" border="2pt solid black" padding="2pt 2pt 0">
+              <fo:block id="26">Header 1.2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-header>
+        <fo:table-footer id="27">
+          <fo:table-row id="28">
+            <fo:table-cell id="29" border="2pt solid black" padding="2pt 2pt 0">
+              <fo:block id="30">Footer 1.1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell id="31" border="2pt solid black" padding="2pt 2pt 0">
+              <fo:block id="32">Footer 1.2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-footer>
+        <fo:table-body id="33">
+          <fo:table-row id="34">
+            <fo:table-cell id="35" border="1pt solid black" padding="2pt 2pt 0">
+              <fo:block id="36">Cell 1.1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell id="37" border="1pt solid black" padding="2pt 2pt 0">
+              <fo:block id="38">Cell 1.2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row id="39">
+            <fo:table-cell id="40" border="1pt solid black" padding="2pt 2pt 0">
+              <fo:block id="41">Cell 2.1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell id="42" border="1pt solid black" padding="2pt 2pt 0">
+              <fo:block id="43">Cell 2.2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+      <fo:block-container id="44" space-before="1.2em">
+        <fo:block-container id="45" absolute-position="absolute" top="6pt" right="2.5pt" 
+          inline-progression-dimension="37%" padding="3pt 1pt 2pt 3pt" border="1.5pt solid 
+          darkblue">
+          <fo:block id="46" color="darkblue" font-size="80%">This is an absolutely positioned 
+            block-container. Nullam interdum mattis ipsum sit amet molestie.</fo:block>
+        </fo:block-container>
+        <fo:block id="47" end-indent="37% + 15pt">Lorem ipsum dolor sit amet, consectetur adipiscing 
+          elit. Integer vel lacinia diam. Etiam venenatis magna vel libero imperdiet 
+          rhoncus.</fo:block>
+      </fo:block-container>
+    </fo:flow>
+  </fo:page-sequence>
+
+  <fo:page-sequence master-reference="page">
+    <fo:static-content id="48" flow-name="xsl-region-before">
+      <fo:block id="49" font-size="7pt" text-align-last="justify" padding-bottom="2pt" 
+        border-bottom="0.25pt solid black">This is the page header<fo:leader id="50"/>Page 
+        <fo:page-number id="51"/></fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="xsl-region-body" text-align="justify" space-before.minimum="8pt" 
+      space-before.optimum="10pt" space-before.maximum="12pt">
+      <fo:block id="second-start">Starting a new page-sequence.</fo:block>
+      <fo:block id="52" text-align="center">The <fo:external-graphic id="53"
+          src="test/resources/images/fop-logo-color-24bit.png" 
+          inline-progression-dimension.maximum="50%" content-width="scale-to-fit" 
+          alignment-adjust="-46%" alignment-baseline="middle" fox:alt-text="FOP Logo"/> 
+        logo.</fo:block>
+      <fo:list-block id="54" provisional-distance-between-starts="15pt" 
+        provisional-label-separation="0" space-before="inherit">
+        <fo:list-item id="55">
+          <fo:list-item-label id="56" end-indent="label-end()">
+            <fo:block id="57">1.</fo:block>
+          </fo:list-item-label>
+          <fo:list-item-body id="58" start-indent="body-start()">
+            <fo:block id="59">First item of a list</fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+        <fo:list-item id="60">
+          <fo:list-item-label id="61" end-indent="label-end()">
+            <fo:block id="62">2.</fo:block>
+          </fo:list-item-label>
+          <fo:list-item-body id="63" start-indent="body-start()">
+            <fo:block id="64">Second item of a list</fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+        <fo:list-item id="65">
+          <fo:list-item-label id="66" end-indent="label-end()">
+            <fo:block id="67">3.</fo:block>
+          </fo:list-item-label>
+          <fo:list-item-body id="68" start-indent="body-start()">
+            <fo:block id="69">Third item of a list</fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+      </fo:list-block>
+      <fo:block id="70" text-align="center"><fo:instream-foreign-object id="71" 
+          inline-progression-dimension.maximum="50%" content-width="scale-to-fit"
+          fox:alt-text="An inline SVG">
+          <svg xmlns="http://www.w3.org/2000/svg" width="319" height="286.6">
+            <g style="fill-opacity:0.7; stroke:black; stroke-width:3"
+              transform="translate(0, 286.6) scale(1, -1) translate(100, 100)">
+              <circle cx="50"  cy="86.6" r="80" style="fill:red;"/>
+              <circle cx="0"   cy="0"    r="80" style="fill:green;"/>
+              <circle cx="100" cy="0"    r="80" style="fill:blue;"/>
+            </g>
+          </svg>
+      </fo:instream-foreign-object></fo:block>
+      <fo:block id="72" space-before="inherit">A block containing an <fo:inline id="73" 
+          border="0.5pt solid black" padding="2pt" padding-bottom="0">inline</fo:inline> 
+        element.</fo:block>
+      <fo:block id="74" space-before="inherit">A block containing a fancy <fo:character id="75" 
+          border="1pt solid black" padding="0 2pt 1pt 2pt" font-family="Symbol" character="♦"/> 
+        character.</fo:block>
+      <fo:block id="76" space-before="inherit" text-align-last="justify">A leader with special 
+        content: <fo:leader id="77" leader-pattern="use-content"><fo:inline id="78"><fo:character 
+              id="79" character=" "/><fo:inline id="80" border="0.5pt solid black" 
+              padding-left="2pt" padding-right="2pt"><fo:character id="81" baseline-shift="-10%" 
+                character="•"/></fo:inline></fo:inline></fo:leader>.</fo:block>
+      <fo:block id="second-end" space-before="inherit">Ending the page-sequence.</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+
+</fo:root>

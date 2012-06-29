@@ -23,7 +23,6 @@ import java.awt.Rectangle;
 import java.io.IOException;
 
 import org.apache.xmlgraphics.image.loader.Image;
-import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 
 /**
  * This interface is a service provider interface for image handlers.
@@ -34,7 +33,8 @@ public interface ImageHandler extends ImageHandlerBase {
      * Indicates whether the image handler is compatible with the indicated target represented
      * by the rendering context object and with the image to be processed. The image is also
      * passed as a parameter because a handler might not support every subtype of image that is
-     * presented. For example: in the case of {@link ImageXMLDOM}, the image might carry an SVG
+     * presented. For example: in the case of
+     * {@link org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM}, the image might carry an SVG
      * or some other XML format. One handler might only handle SVG but no other XML format.
      * @param targetContext the target rendering context
      * @param image the image to be processed (or null if only to check based on the rendering

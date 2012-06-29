@@ -20,7 +20,6 @@
 package org.apache.fop.fo.pagination;
 
 // Java
-import java.util.Iterator;
 import java.util.Map;
 
 import org.xml.sax.Locator;
@@ -44,8 +43,8 @@ import org.apache.fop.fo.ValidationException;
  */
 public class LayoutMasterSet extends FObj {
 
-    private Map simplePageMasters;
-    private Map pageSequenceMasters;
+    private Map<String, SimplePageMaster> simplePageMasters;
+    private Map<String, PageSequenceMaster> pageSequenceMasters;
 
     /**
      * Create a LayoutMasterSet instance that is a child of the given
@@ -65,8 +64,8 @@ public class LayoutMasterSet extends FObj {
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         getRoot().setLayoutMasterSet(this);
-        simplePageMasters = new java.util.HashMap();
-        pageSequenceMasters = new java.util.HashMap();
+        simplePageMasters = new java.util.HashMap<String, SimplePageMaster>();
+        pageSequenceMasters = new java.util.HashMap<String, PageSequenceMaster>();
     }
 
     /** {@inheritDoc} */
@@ -75,6 +74,7 @@ public class LayoutMasterSet extends FObj {
             missingChildElementError("(simple-page-master|page-sequence-master)+");
         }
         checkRegionNames();
+        resolveSubSequenceReferences();
     }
 
     /**
@@ -98,18 +98,13 @@ public class LayoutMasterSet extends FObj {
      */
     private void checkRegionNames() throws ValidationException {
         // (user-entered) region-name to default region map.
-        Map allRegions = new java.util.HashMap();
-        for (Iterator spm = simplePageMasters.values().iterator();
-                spm.hasNext();) {
-            SimplePageMaster simplePageMaster
-                = (SimplePageMaster)spm.next();
-            Map spmRegions = simplePageMaster.getRegions();
-            for (Iterator e = spmRegions.values().iterator();
-                    e.hasNext();) {
-                Region region = (Region) e.next();
+        Map<String, String> allRegions = new java.util.HashMap<String, String>();
+        for (SimplePageMaster simplePageMaster : simplePageMasters.values()) {
+            Map<String, Region> spmRegions = simplePageMaster.getRegions();
+            for (Region region : spmRegions.values()) {
                 if (allRegions.containsKey(region.getRegionName())) {
                     String defaultRegionName
-                        = (String) allRegions.get(region.getRegionName());
+                        =  allRegions.get(region.getRegionName());
                     if (!defaultRegionName.equals(region.getDefaultRegionName())) {
                         getFOValidationEventProducer().regionNameMappedToMultipleRegionClasses(this,
                                 region.getRegionName(),
@@ -118,7 +113,15 @@ public class LayoutMasterSet extends FObj {
                     }
                 }
                 allRegions.put(region.getRegionName(),
-                               region.getDefaultRegionName());
+                        region.getDefaultRegionName());
+            }
+        }
+    }
+
+    private void resolveSubSequenceReferences() throws ValidationException {
+        for (PageSequenceMaster psm : pageSequenceMasters.values()) {
+            for (SubSequenceSpecifier subSequenceSpecifier : psm.getSubSequenceSpecifier()) {
+                subSequenceSpecifier.resolveReferences(this);
             }
         }
     }
@@ -155,7 +158,7 @@ public class LayoutMasterSet extends FObj {
      * @return the requested simple-page-master
      */
     public SimplePageMaster getSimplePageMaster(String masterName) {
-        return (SimplePageMaster)this.simplePageMasters.get(masterName);
+        return simplePageMasters.get(masterName);
     }
 
     /**
@@ -185,7 +188,7 @@ public class LayoutMasterSet extends FObj {
      * @return the requested PageSequenceMaster instance
      */
     public PageSequenceMaster getPageSequenceMaster(String masterName) {
-        return (PageSequenceMaster)this.pageSequenceMasters.get(masterName);
+        return this.pageSequenceMasters.get(masterName);
     }
 
     /**
@@ -194,9 +197,8 @@ public class LayoutMasterSet extends FObj {
      * @return true when the region name specified has a region in this LayoutMasterSet
      */
     public boolean regionNameExists(String regionName) {
-        for (Iterator e = simplePageMasters.values().iterator();
-                e.hasNext();) {
-            if (((SimplePageMaster)e.next()).regionNameExists(regionName)) {
+        for (SimplePageMaster spm : simplePageMasters.values()) {
+            if (spm.regionNameExists(regionName)) {
                 return true;
             }
         }

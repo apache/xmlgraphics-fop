@@ -50,27 +50,32 @@ public class PageNumberCitationLayoutManager extends AbstractPageNumberCitationL
     /**
      * if id can be resolved then simply return a word, otherwise
      * return a resolvable area
+     *
+     * TODO: [GA] May need to run bidi algorithm and script processor
+     * on resolved page number.
      */
     private InlineArea getPageNumberCitationInlineArea() {
         PageViewport page = getPSLM().getFirstPVWithID(fobj.getRefId());
         TextArea text = null;
+        int level = getBidiLevel();
         if (page != null) {
             String str = page.getPageNumberString();
             // get page string from parent, build area
             text = new TextArea();
-            int width = getStringWidth(str);
-            text.addWord(str, 0);
-            text.setIPD(width);
+            int width = getStringWidth(str);    // TODO: [GA] !I18N!
+            text.setBidiLevel(level);
+            text.addWord(str, 0, level);
+            text.setIPD(width);                 // TODO: [GA] !I18N!
             resolved = true;
         } else {
-            resolved = false;
             text = new UnresolvedPageNumber(fobj.getRefId(), font);
             String str = "MMM"; // reserve three spaces for page number
-            int width = getStringWidth(str);
-            text.setIPD(width);
+            int width = getStringWidth(str);    // TODO: [GA] !I18N!
+            text.setBidiLevel(level);
+            text.setIPD(width);                 // TODO: [GA] !I18N!
+            resolved = false;
         }
         updateTextAreaTraits(text);
-
         return text;
     }
 

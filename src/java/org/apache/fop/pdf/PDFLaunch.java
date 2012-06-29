@@ -54,10 +54,9 @@ public class PDFLaunch extends PDFAction {
     /** {@inheritDoc} */
     public String toPDFString() {
         StringBuffer sb = new StringBuffer(64);
-        sb.append(getObjectID());
         sb.append("<<\n/S /Launch\n/F ");
         sb.append(externalFileSpec.toString());
-        sb.append(" \n>>\nendobj\n");
+        sb.append("\n>>");
 
         return sb.toString();
     }

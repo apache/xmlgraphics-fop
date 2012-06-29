@@ -19,15 +19,6 @@
 
 package org.apache.fop.hyphenation;
 
-// SAX
-import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.Attributes;
-
-// Java
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -39,11 +30,18 @@ import java.util.ArrayList;
 
 import javax.xml.parsers.SAXParserFactory;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+
 /**
- * A SAX document handler to read and parse hyphenation patterns
- * from a XML file.
+ * <p>A SAX document handler to read and parse hyphenation patterns
+ * from a XML file.</p>
  *
- * @author Carlos Villegas <cav@uniscope.co.jp>
+ * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
 public class PatternParser extends DefaultHandler implements PatternConsumer {
 
@@ -273,14 +271,14 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
             parser = mainParser;
         }
     }
-    
+
     //
     // ContentHandler methods
     //
 
     /**
      * {@inheritDoc}
-     * @throws SAXException 
+     * @throws SAXException
      */
     public void startElement(String uri, String local, String raw,
                              Attributes attrs) throws SAXException {
@@ -463,9 +461,9 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     public void addPattern(String p, String v) {
         testOut.println("pattern: " + p + " : " + v);
     }
-    
+
     private PrintStream testOut = System.out;
-    
+
     /**
      * Set test out stream.
      * @param testOut the testOut to set
@@ -473,7 +471,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     public void setTestOut(PrintStream testOut) {
         this.testOut = testOut;
     }
-    
+
     /**
      * Close test out file.
      */
@@ -503,5 +501,5 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         }
     }
 
- 
+
 }

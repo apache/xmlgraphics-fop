@@ -24,10 +24,10 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXResult;
 
 import org.apache.fop.apps.FOPException;
@@ -55,11 +55,10 @@ import org.apache.fop.apps.MimeConstants;
  * <br/>
  * <b>Note:</b> This servlet is derived from FopServlet. Most methods are inherited from the
  * superclass. Only the differences to the base class are necessary.
- *
- * @author <a href="mailto:fop-dev@xmlgraphics.apache.org">Apache FOP Development Team</a>
- * @version $Id$
  */
 public class FopPrintServlet extends FopServlet {
+
+    private static final long serialVersionUID = 1645706757391617935L;
 
     /**
      * {@inheritDoc}

@@ -25,6 +25,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
@@ -34,6 +35,7 @@ import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.NonLeafPosition;
+import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 
 /**
@@ -62,6 +64,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void initialize() {
         // create an InlineStackingLM handling the fo:inline child of fo:footnote
         citationLM = new InlineLayoutManager(footnote.getFootnoteCitation());
@@ -71,6 +74,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         // for the moment, this LM is set as the citationLM's parent
@@ -119,27 +123,24 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
         return returnedList;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public List getChangedKnuthElements(List oldList,
-                                              int alignment) {
-        List returnedList = super.getChangedKnuthElements(oldList, alignment);
+    /** {@inheritDoc} */
+    @Override
+    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
+        List returnedList = super.getChangedKnuthElements(oldList, alignment, depth);
         addAnchor(returnedList);
         return returnedList;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         // "Unwrap" the NonLeafPositions stored in posIter and put
         // them in a new list, that will be given to the citationLM
-        LinkedList positionList = new LinkedList();
-        NonLeafPosition pos = null;
+        LinkedList<Position> positionList = new LinkedList<Position>();
+        Position pos;
         while (posIter.hasNext()) {
-            pos = (NonLeafPosition) posIter.next();
+            pos = posIter.next();
             if (pos != null && pos.getPosition() != null) {
                 positionList.add(pos.getPosition());
             }
@@ -151,7 +152,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
 
         // make the citationLM add its areas
         LayoutContext childContext = new LayoutContext(context);
-        StackingIter childPosIter = new StackingIter(positionList.listIterator());
+        PositionIterator childPosIter = new PositionIterator(positionList.listIterator());
         LayoutManager childLM;
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             childLM.addAreas(childPosIter, childContext);

@@ -19,16 +19,20 @@
 
 package org.apache.fop.render.mif;
 
-// Java
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.xml.sax.SAXException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOEventHandler;
+import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
+import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.fo.flow.FootnoteBody;
@@ -37,6 +41,8 @@ import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.flow.ListItemBody;
+import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
@@ -49,9 +55,9 @@ import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.SimplePageMaster;
+import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.render.DefaultFontResolver;
-import org.xml.sax.SAXException;
 
 // TODO: do we really want every method throwing a SAXException
 
@@ -84,7 +90,8 @@ public class MIFHandler extends FOEventHandler {
     public MIFHandler(FOUserAgent ua, OutputStream os) {
         super(ua);
         outStream = os;
-        FontSetup.setup(fontInfo, null, new DefaultFontResolver(ua));
+        boolean base14Kerning = false; //TODO - FIXME
+        FontSetup.setup(fontInfo, null, new DefaultFontResolver(ua), base14Kerning);
     }
 
     /** {@inheritDoc} */
@@ -265,27 +272,27 @@ public class MIFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void startListLabel() {
+    public void startListLabel(ListItemLabel listItemLabel) {
     }
 
     /** {@inheritDoc} */
-    public void endListLabel() {
+    public void endListLabel(ListItemLabel listItemLabel) {
     }
 
     /** {@inheritDoc} */
-    public void startListBody() {
+    public void startListBody(ListItemBody listItemBody) {
     }
 
     /** {@inheritDoc} */
-    public void endListBody() {
+    public void endListBody(ListItemBody listItemBody) {
     }
 
     /** {@inheritDoc} */
-    public void startStatic() {
+    public void startStatic(StaticContent staticContent) {
     }
 
     /** {@inheritDoc} */
-    public void endStatic() {
+    public void endStatic(StaticContent staticContent) {
     }
 
     /** {@inheritDoc} */
@@ -301,7 +308,7 @@ public class MIFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void endLink() {
+    public void endLink(BasicLink basicLink) {
     }
 
     /** {@inheritDoc} */
@@ -313,7 +320,11 @@ public class MIFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void foreignObject(InstreamForeignObject ifo) {
+    public void startInstreamForeignObject(InstreamForeignObject ifo) {
+    }
+
+    /** {@inheritDoc} */
+    public void endInstreamForeignObject(InstreamForeignObject ifo) {
     }
 
     /** {@inheritDoc} */
@@ -333,29 +344,20 @@ public class MIFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void leader(Leader l) {
+    public void startLeader(Leader l) {
     }
 
     /** {@inheritDoc} */
-    public void characters(char[] data, int start, int length) {
-        if (para != null) {
-            String str = new String(data, start, length);
-            str = str.trim();
-            // break into nice length chunks
-            if (str.length() == 0) {
-                return;
-            }
+    public void endLeader(Leader l) {
+    }
 
-            MIFElement line = new MIFElement("ParaLine");
-            MIFElement prop = new MIFElement("TextRectID");
-            prop.setValue("2");
-            line.addElement(prop);
-            prop = new MIFElement("String");
-            prop.setValue("\"" + str + "\"");
-            line.addElement(prop);
+    public void character(Character c) {
+        appendCharacters ( new String ( new char[] {c.getCharacter()} ) );
+    }
 
-            para.addElement(line);
-        }
+    /** {@inheritDoc} */
+    public void characters(FOText foText) {
+        appendCharacters ( foText.getCharSequence().toString() );
     }
 
     /** {@inheritDoc} */
@@ -364,6 +366,24 @@ public class MIFHandler extends FOEventHandler {
 
     /** {@inheritDoc} */
     public void endPageNumber(PageNumber pagenum) {
+    }
+
+    private void appendCharacters ( String str ) {
+        if (para != null) {
+            str = str.trim();
+            // break into nice length chunks
+            if (str.length() == 0) {
+                return;
+            }
+            MIFElement line = new MIFElement("ParaLine");
+            MIFElement prop = new MIFElement("TextRectID");
+            prop.setValue("2");
+            line.addElement(prop);
+            prop = new MIFElement("String");
+            prop.setValue("\"" + str + "\"");
+            line.addElement(prop);
+            para.addElement(line);
+        }
     }
 }
 

@@ -21,6 +21,7 @@ package org.apache.fop.area;
 
 // Java
 import java.util.List;
+import java.util.Locale;
 
 import org.xml.sax.SAXException;
 
@@ -36,19 +37,19 @@ import org.apache.commons.logging.LogFactory;
  * the life of the area tree model.
  */
 public class AreaTreeModel {
-    private List/*<PageSequence>*/ pageSequenceList = null;
-    private int currentPageSequenceIndex = -1;
+    private List<PageSequence> pageSequenceList = null;
+    private int currentPageIndex = 0;
+
     /** the current page sequence */
     protected PageSequence currentPageSequence;
-//    private List offDocumentItems = new java.util.ArrayList();
     /** logger instance */
-    protected static Log log = LogFactory.getLog(AreaTreeModel.class);
+    protected static final Log log = LogFactory.getLog(AreaTreeModel.class);
 
     /**
      * Create a new store pages model
      */
     public AreaTreeModel() {
-        pageSequenceList = new java.util.ArrayList/*<PageSequence>*/();
+        pageSequenceList = new java.util.ArrayList<PageSequence>();
     }
 
     /**
@@ -59,9 +60,11 @@ public class AreaTreeModel {
         if (pageSequence == null) {
             throw new NullPointerException("pageSequence must not be null");
         }
+        if (currentPageSequence != null) {
+            currentPageIndex += currentPageSequence.getPageCount();
+        }
         this.currentPageSequence = pageSequence;
         pageSequenceList.add(currentPageSequence);
-        currentPageSequenceIndex = pageSequenceList.size() - 1;
     }
 
     /**
@@ -70,12 +73,8 @@ public class AreaTreeModel {
      */
     public void addPage(PageViewport page) {
         currentPageSequence.addPage(page);
-        int pageIndex = 0;
-        for (int i = 0; i < currentPageSequenceIndex; i++) {
-            pageIndex += ((PageSequence)pageSequenceList.get(i)).getPageCount();
-        }
-        pageIndex += currentPageSequence.getPageCount() - 1;
-        page.setPageIndex(pageIndex);
+        page.setPageIndex(currentPageIndex
+                + currentPageSequence.getPageCount() - 1);
         page.setPageSequence(currentPageSequence);
     }
 
@@ -113,8 +112,7 @@ public class AreaTreeModel {
      * @return returns the number of pages in a page sequence
      */
     public int getPageCount(int seq) {
-        PageSequence sequence = (PageSequence)pageSequenceList.get(seq - 1);
-        return sequence.getPageCount();
+        return pageSequenceList.get(seq - 1).getPageCount();
     }
 
     /**
@@ -124,7 +122,13 @@ public class AreaTreeModel {
      * @return the PageViewport for the particular page
      */
     public PageViewport getPage(int seq, int count) {
-        PageSequence sequence = (PageSequence)pageSequenceList.get(seq - 1);
-        return sequence.getPage(count);
+        return pageSequenceList.get(seq - 1).getPage(count);
+    }
+
+    /**
+     *
+     * @param locale The locale of the document
+     */
+    public void setDocumentLocale(Locale locale) {
     }
 }

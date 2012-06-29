@@ -103,17 +103,30 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
                         pList,
                         newPropertyList);
                 addChildTo(newChild, newParent);
-                if (newChild.getNameId() == FO_TABLE) {
+                switch ( newChild.getNameId() ) {
+                case FO_TABLE:
                     Table t = (Table) child;
                     cloneSubtree(t.getColumns().iterator(),
-                            newChild, marker, newPropertyList);
+                                 newChild, marker, newPropertyList);
                     cloneSingleNode(t.getTableHeader(),
-                            newChild, marker, newPropertyList);
+                                    newChild, marker, newPropertyList);
                     cloneSingleNode(t.getTableFooter(),
-                            newChild, marker, newPropertyList);
+                                    newChild, marker, newPropertyList);
+                    cloneSubtree(child.getChildNodes(),
+                                    newChild, marker, newPropertyList);
+                    break;
+                case FO_LIST_ITEM:
+                    ListItem li = (ListItem) child;
+                    cloneSingleNode(li.getLabel(),
+                                    newChild, marker, newPropertyList);
+                    cloneSingleNode(li.getBody(),
+                                    newChild, marker, newPropertyList);
+                    break;
+                default:
+                    cloneSubtree(child.getChildNodes(),
+                                    newChild, marker, newPropertyList);
+                    break;
                 }
-                cloneSubtree(child.getChildNodes(), newChild,
-                        marker, newPropertyList);
             } else if (child instanceof FOText) {
                 FOText ft = (FOText) newChild;
                 ft.bind(parentPropertyList);

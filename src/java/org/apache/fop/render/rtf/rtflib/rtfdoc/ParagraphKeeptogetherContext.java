@@ -37,21 +37,8 @@ public final class ParagraphKeeptogetherContext {
 
     private static int paraKeepTogetherOpen = 0;
     private static boolean paraResetProperties = false;
-    private static ParagraphKeeptogetherContext instance = null;
 
     private ParagraphKeeptogetherContext() {
-    }
-
-    /**
-     * Singelton.
-     *
-     * @return The instance of ParagraphKeeptogetherContext
-     */
-    public static ParagraphKeeptogetherContext getInstance() {
-        if (instance == null) {
-            instance = new ParagraphKeeptogetherContext();
-        }
-        return instance;
     }
 
     /**

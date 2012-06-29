@@ -15,9 +15,11 @@ REM  See the License for the specific language governing permissions and
 REM  limitations under the License.
 REM  $Id$
 
+SETLOCAL ENABLEDELAYEDEXPANSION
+
 rem %~dp0 is the expanded pathname of the current script under NT
 set LOCAL_FOP_HOME=
-if "%OS%"=="Windows_NT" set LOCAL_FOP_HOME=%~dp0
+if "%OS%"=="Windows_NT" set LOCAL_FOP_HOME="%~dp0"
 
 rem Code from Apache Ant project
 rem Slurp the command line arguments. This loop allows for an unlimited number
@@ -53,24 +55,10 @@ rem set LOGLEVEL=-Dorg.apache.commons.logging.simplelog.defaultlog=INFO
 
 set LIBDIR=%LOCAL_FOP_HOME%lib
 
-set LOCALCLASSPATH=%LOCAL_FOP_HOME%build\fop.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LOCAL_FOP_HOME%build\fop-sandbox.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LOCAL_FOP_HOME%build\fop-hyph.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xml-apis-1.3.04.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xml-apis-ext-1.3.04.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xercesImpl-2.7.1.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xalan-2.7.0.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\serializer-2.7.0.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\batik-all-1.7.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xmlgraphics-commons-1.4.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\avalon-framework-4.2.0.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\commons-io-1.3.1.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\commons-logging-1.0.4.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jai_imageio.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\fop-hyph.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%FOP_HYPHENATION_PATH%
+set LOCALCLASSPATH=%FOP_HYPHENATION_PATH%
+for %%l in (%LOCAL_FOP_HOME%build\*.jar %LIBDIR%\*.jar) do set LOCALCLASSPATH=!LOCALCLASSPATH!;%%l
 
-set JAVAOPTS=-Denv.windir=%WINDIR%
+set JAVAOPTS=-Denv.windir=%WINDIR% -Djava.awt.headless=true
 
 if "%JAVA_HOME%" == "" goto noJavaHome
 if not exist "%JAVA_HOME%\bin\java.exe" goto noJavaHome
@@ -81,5 +69,7 @@ goto runFop
 if "%JAVACMD%" == "" set JAVACMD=java
 
 :runFop
-rem ECHO "%JAVACMD%" %JAVAOPTS% %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" %FOP_OPTS% org.apache.fop.cli.Main %FOP_CMD_LINE_ARGS%
+rem echo "%JAVACMD%" %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" org.apache.fop.cli.Main %FOP_CMD_LINE_ARGS%
 "%JAVACMD%" %JAVAOPTS% %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" %FOP_OPTS% org.apache.fop.cli.Main %FOP_CMD_LINE_ARGS%
+
+ENDLOCAL

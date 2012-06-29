@@ -104,24 +104,17 @@ public abstract class AFPImageHandler implements ImageHandlerBase {
      */
     public static AFPObjectAreaInfo createObjectAreaInfo(AFPPaintingState paintingState,
             Rectangle targetRect) {
-        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
         AFPUnitConverter unitConv = paintingState.getUnitConverter();
 
         int[] coords = unitConv.mpts2units(new float[] {targetRect.x, targetRect.y});
-        objectAreaInfo.setX(coords[X]);
-        objectAreaInfo.setY(coords[Y]);
 
         int width = Math.round(unitConv.mpt2units(targetRect.width));
-        objectAreaInfo.setWidth(width);
 
         int height = Math.round(unitConv.mpt2units(targetRect.height));
-        objectAreaInfo.setHeight(height);
 
         int resolution = paintingState.getResolution();
-        objectAreaInfo.setHeightRes(resolution);
-        objectAreaInfo.setWidthRes(resolution);
-
-        objectAreaInfo.setRotation(paintingState.getRotation());
+        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo(coords[X], coords[Y], width,
+                height, resolution, paintingState.getRotation());
         return objectAreaInfo;
     }
 

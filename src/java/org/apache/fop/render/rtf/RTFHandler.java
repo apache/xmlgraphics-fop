@@ -32,7 +32,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.w3c.dom.Document;
-
 import org.xml.sax.SAXException;
 
 import org.apache.commons.io.IOUtils;
@@ -78,13 +77,14 @@ import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
+import org.apache.fop.fo.flow.PageNumberCitationLast;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
-import org.apache.fop.fo.flow.table.TableFooter;
-import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.flow.table.TableFooter;
 import org.apache.fop.fo.flow.table.TableHeader;
+import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
@@ -99,6 +99,7 @@ import org.apache.fop.layoutmgr.inline.ImageLayout;
 import org.apache.fop.layoutmgr.table.ColumnSetup;
 import org.apache.fop.render.DefaultFontResolver;
 import org.apache.fop.render.RendererEventProducer;
+import org.apache.fop.render.rtf.rtflib.exceptions.RtfException;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfListContainer;
@@ -116,13 +117,14 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFootnote;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfHyperLink;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPage;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraphBreak;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableCell;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.tools.BuilderContext;
 import org.apache.fop.render.rtf.rtflib.tools.PercentContext;
 import org.apache.fop.render.rtf.rtflib.tools.TableContext;
@@ -130,12 +132,6 @@ import org.apache.fop.render.rtf.rtflib.tools.TableContext;
 /**
  * RTF Handler: generates RTF output using the structure events from
  * the FO Tree sent to this structure handler.
- *
- * @author Bertrand Delacretaz <bdelacretaz@codeconsult.ch>
- * @author Trembicki-Guy, Ed <GuyE@DNB.com>
- * @author Boris Poudérous <boris.pouderous@eads-telecom.com>
- * @author Peter Herweg <pherweg@web.de>
- * @author Andreas Putz <a.putz@skynamics.com>
  */
 public class RTFHandler extends FOEventHandler {
 
@@ -172,7 +168,8 @@ public class RTFHandler extends FOEventHandler {
         this.os = os;
         bDefer = true;
 
-        FontSetup.setup(fontInfo, null, new DefaultFontResolver(userAgent));
+        boolean base14Kerning = false;
+        FontSetup.setup(fontInfo, null, new DefaultFontResolver(userAgent), base14Kerning);
     }
 
     /**
@@ -222,7 +219,7 @@ public class RTFHandler extends FOEventHandler {
                     PageSequenceMaster master
                         = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(reference);
                     this.pagemaster = master.getNextSimplePageMaster(
-                            false, false, false, false);
+                            false, false, false, false, pageSeq.getMainFlow().getFlowName());
                 }
             }
 
@@ -434,9 +431,16 @@ public class RTFHandler extends FOEventHandler {
                     true, this);
 
             RtfTextrun textrun = container.getTextrun();
+            RtfParagraphBreak par = textrun.addParagraphBreak();
 
-            textrun.addParagraphBreak();
-            textrun.popBlockAttributes();
+            RtfTableCell cellParent = (RtfTableCell)textrun.getParentOfClass(RtfTableCell.class);
+            if (cellParent != null && par != null) {
+                int iDepth = cellParent.findChildren(textrun);
+                cellParent.setLastParagraph(par, iDepth);
+            }
+
+            int breakValue = toRtfBreakValue(bl.getBreakAfter());
+            textrun.popBlockAttributes(breakValue);
 
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
@@ -488,13 +492,29 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
 
             textrun.addParagraphBreak();
-            textrun.popBlockAttributes();
+            int breakValue = toRtfBreakValue(bl.getBreakAfter());
+            textrun.popBlockAttributes(breakValue);
 
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startBlock:" + e.getMessage());
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private int toRtfBreakValue(int foBreakValue) {
+        switch (foBreakValue) {
+        case Constants.EN_PAGE:
+            return RtfTextrun.BREAK_PAGE;
+        case Constants.EN_EVEN_PAGE:
+            return RtfTextrun.BREAK_EVEN_PAGE;
+        case Constants.EN_ODD_PAGE:
+            return RtfTextrun.BREAK_ODD_PAGE;
+        case Constants.EN_COLUMN:
+            return RtfTextrun.BREAK_COLUMN;
+        default:
+            return RtfTextrun.BREAK_NONE;
         }
     }
 
@@ -865,6 +885,14 @@ public class RTFHandler extends FOEventHandler {
         if (bDefer) {
             return;
         }
+        try {
+            RtfTableCell cell = (RtfTableCell)builderContext.getContainer(RtfTableCell.class, false, this);
+            cell.finish();
+
+        } catch (Exception e) {
+            log.error("endCell: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
 
         builderContext.popContainer();
         builderContext.getTableContext().selectNextColumn();
@@ -925,10 +953,10 @@ public class RTFHandler extends FOEventHandler {
              */
             //TODO: do this only, if the labels content <> previous labels content
             if (list.getChildCount() > 0) {
-                this.endListBody();
+                this.endListBody(null);
                 this.endList((ListBlock) li.getParent());
                 this.startList((ListBlock) li.getParent());
-                this.startListBody();
+                this.startListBody(null);
 
                 list = (RtfList)builderContext.getContainer(
                         RtfList.class, true, this);
@@ -953,7 +981,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void startListLabel() {
+    public void startListLabel(ListItemLabel listItemLabel) {
         if (bDefer) {
             return;
         }
@@ -973,7 +1001,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void endListLabel() {
+    public void endListLabel(ListItemLabel listItemLabel) {
         if (bDefer) {
             return;
         }
@@ -982,20 +1010,20 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void startListBody() {
+    public void startListBody(ListItemBody listItemBody) {
     }
 
     /** {@inheritDoc} */
-    public void endListBody() {
+    public void endListBody(ListItemBody listItemBody) {
     }
 
     // Static Regions
     /** {@inheritDoc} */
-    public void startStatic() {
+    public void startStatic(StaticContent staticContent) {
     }
 
     /** {@inheritDoc} */
-    public void endStatic() {
+    public void endStatic(StaticContent statisContent) {
     }
 
     /** {@inheritDoc} */
@@ -1038,7 +1066,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void endLink() {
+    public void endLink(BasicLink basicLink) {
         if (bDefer) {
             return;
         }
@@ -1078,7 +1106,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void foreignObject(InstreamForeignObject ifo) {
+    public void endInstreamForeignObject(InstreamForeignObject ifo) {
         if (bDefer) {
             return;
         }
@@ -1325,7 +1353,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void leader(Leader l) {
+    public void startLeader(Leader l) {
         if (bDefer) {
             return;
         }
@@ -1341,8 +1369,10 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
 
             textrun.addLeader(rtfAttr);
-
-        } catch (Exception e) {
+        } catch (IOException e) {
+            log.error("startLeader: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        } catch (FOPException e) {
             log.error("startLeader: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
@@ -1350,11 +1380,9 @@ public class RTFHandler extends FOEventHandler {
 
     /**
      * @param text FOText object
-     * @param data Array of characters to process.
-     * @param start Offset for characters to process.
-     * @param length Portion of array to process.
+     * @param characters CharSequence of the characters to process.
      */
-    public void text(FOText text, char[] data, int start, int length) {
+    public void text(FOText text, CharSequence characters) {
         if (bDefer) {
             return;
         }
@@ -1369,7 +1397,7 @@ public class RTFHandler extends FOEventHandler {
                 = TextAttributesConverter.convertCharacterAttributes(text);
 
             textrun.pushInlineAttributes(rtfAttr);
-            textrun.addString(new String(data, start, length - start));
+            textrun.addString(characters.toString());
             textrun.popInlineAttributes();
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
@@ -1431,6 +1459,29 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
+    /** {@inheritDoc} */
+    public void startPageNumberCitationLast(PageNumberCitationLast l) {
+        if (bDefer) {
+            return;
+        }
+        try {
+
+            IRtfTextrunContainer container
+                  = (IRtfTextrunContainer)builderContext.getContainer(
+                      IRtfTextrunContainer.class, true, this);
+            RtfTextrun textrun = container.getTextrun();
+
+            textrun.addPageNumberCitation(l.getRefId());
+
+        } catch (RtfException e) {
+            log.error("startPageNumberCitationLast: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        } catch (IOException e) {
+            log.error("startPageNumberCitationLast: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     private void prepareTable(Table tab) {
         // Allows to receive the available width of the table
         percentManager.setDimension(tab);
@@ -1483,9 +1534,9 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof StaticContent) {
             if (bStart) {
-                startStatic();
+                startStatic(null);
             } else {
-                endStatic();
+                endStatic(null);
             }
         } else if (foNode instanceof ExternalGraphic) {
             if (bStart) {
@@ -1493,7 +1544,7 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof InstreamForeignObject) {
             if (bStart) {
-                foreignObject( (InstreamForeignObject) foNode );
+                endInstreamForeignObject( (InstreamForeignObject) foNode );
             }
         } else if (foNode instanceof Block) {
             if (bStart) {
@@ -1512,7 +1563,7 @@ public class RTFHandler extends FOEventHandler {
             if (bStart) {
                 startLink( (BasicLink) foNode);
             } else {
-                endLink();
+                endLink(null);
             }
         } else if (foNode instanceof Inline) {
             if (bStart) {
@@ -1523,7 +1574,7 @@ public class RTFHandler extends FOEventHandler {
         } else if (foNode instanceof FOText) {
             if (bStart) {
                 FOText text = (FOText) foNode;
-                text(text, text.getCharArray(), 0, text.length());
+                text(text, text.getCharSequence());
             }
         } else if (foNode instanceof Character) {
             if (bStart) {
@@ -1556,9 +1607,9 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof ListItemBody) {
             if (bStart) {
-                startListBody();
+                startListBody(null);
             } else {
-                endListBody();
+                endListBody(null);
             }
         } else if (foNode instanceof ListItem) {
             if (bStart) {
@@ -1568,9 +1619,9 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof ListItemLabel) {
             if (bStart) {
-                startListLabel();
+                startListLabel(null);
             } else {
-                endListLabel();
+                endListLabel(null);
             }
         } else if (foNode instanceof Table) {
             if (bStart) {
@@ -1616,13 +1667,19 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof Leader) {
             if (bStart) {
-                leader((Leader) foNode);
+                startLeader((Leader) foNode);
             }
         } else if (foNode instanceof PageNumberCitation) {
             if (bStart) {
                 startPageNumberCitation((PageNumberCitation) foNode);
             } else {
                 endPageNumberCitation((PageNumberCitation) foNode);
+            }
+        } else if (foNode instanceof PageNumberCitationLast) {
+            if (bStart) {
+                startPageNumberCitationLast((PageNumberCitationLast) foNode);
+            } else {
+                endPageNumberCitationLast((PageNumberCitationLast) foNode);
             }
         } else {
             RTFEventProducer eventProducer = RTFEventProducer.Provider.get(

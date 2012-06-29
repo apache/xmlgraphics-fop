@@ -29,6 +29,15 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.ext.LexicalHandler;
+import org.xml.sax.helpers.AttributesImpl;
+
+import org.apache.xmlgraphics.util.QName;
+
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
@@ -36,15 +45,16 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
-import org.apache.xmlgraphics.util.QName;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.ext.LexicalHandler;
-import org.xml.sax.helpers.AttributesImpl;
 
 /** Abstract xml renderer base class. */
 public abstract class AbstractXMLRenderer extends PrintRenderer {
+
+    /**
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
+     */
+    public AbstractXMLRenderer(FOUserAgent userAgent) {
+        super(userAgent);
+    }
 
     /** Main namespace in use. */
     public static final String NS = "";

@@ -26,7 +26,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Paint;
@@ -68,7 +67,7 @@ import org.apache.fop.svg.NativeImageHandler;
 
 /**
  * This is a concrete implementation of {@link AbstractGraphics2D} (and
- * therefore of {@link Graphics2D}) which is able to generate GOCA byte
+ * therefore of {@link java.awt.Graphics2D}) which is able to generate GOCA byte
  * codes.
  *
  * @see org.apache.xmlgraphics.java2d.AbstractGraphics2D
@@ -166,6 +165,14 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /**
+     * Returns the AFP resource manager associated with this {@link java.awt.Graphics2D} instance.
+     * @return the resource manager
+     */
+    public AFPResourceManager getResourceManager() {
+        return this.resourceManager;
+    }
+
+    /**
      * Sets the AFP resource info
      *
      * @param resourceInfo the AFP resource info
@@ -256,14 +263,6 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
         return length * factor;
     }
 
-    /** IBM's AFP Workbench paints lines that are wider than expected. We correct manually. */
-    private static final double GUESSED_WIDTH_CORRECTION = 1.7;
-
-    private static final double SPEC_NORMAL_LINE_WIDTH = UnitConv.in2pt(0.01); //"approx" 0.01 inch
-    private static final double NORMAL_LINE_WIDTH
-        = SPEC_NORMAL_LINE_WIDTH * GUESSED_WIDTH_CORRECTION;
-
-
     /**
      * Apply the stroke to the AFP graphics object.
      * This takes the java stroke and outputs the appropriate settings
@@ -275,17 +274,11 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
         if (stroke instanceof BasicStroke) {
             BasicStroke basicStroke = (BasicStroke) stroke;
 
-            // set line width
+            // set line width and correct it; NOTE: apparently we need to correct the width so that the
+            // output looks OK since the default with depends on the output device
             float lineWidth = basicStroke.getLineWidth();
-            if (false) {
-                //Old approach. Retained until verified problems with 1440 resolution
-                graphicsObj.setLineWidth(Math.round(lineWidth / 2));
-            } else {
-                double absoluteLineWidth = lineWidth * Math.abs(getTransform().getScaleY());
-                double multiplier = absoluteLineWidth / NORMAL_LINE_WIDTH;
-                graphicsObj.setLineWidth((int)Math.round(multiplier));
-                //TODO Use GSFLW instead of GSLW for higher accuracy?
-            }
+            float correction = paintingState.getLineWidthCorrection();
+            graphicsObj.setLineWidth(lineWidth * correction);
 
             //No line join, miter limit and end cap support in GOCA. :-(
 
@@ -497,12 +490,14 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public void draw(Shape shape) {
         LOG.debug("draw() shape=" + shape);
         doDrawing(shape, false);
     }
 
     /** {@inheritDoc} */
+    @Override
     public void fill(Shape shape) {
         LOG.debug("fill() shape=" + shape);
         doDrawing(shape, true);
@@ -521,6 +516,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public void drawString(String str, float x, float y) {
         try {
             if (customTextHandler != null && !textAsShapes) {
@@ -534,21 +530,25 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public GraphicsConfiguration getDeviceConfiguration() {
         return graphicsConfig;
     }
 
     /** {@inheritDoc} */
+    @Override
     public Graphics create() {
         return new AFPGraphics2D(this);
     }
 
     /** {@inheritDoc} */
+    @Override
     public void dispose() {
         this.graphicsObj = null;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean drawImage(Image img, int x, int y, ImageObserver observer) {
         return drawImage(img, x, y, img.getWidth(observer), img.getHeight(observer), observer);
     }
@@ -595,6 +595,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean drawImage(Image img, int x, int y, int width, int height,
             ImageObserver observer) {
         // draw with AWT Graphics2D
@@ -609,6 +610,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
         int imgWidth = img.getWidth();
         int imgHeight = img.getHeight();
@@ -658,17 +660,20 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
         LOG.debug("drawRenderableImage() NYI: img=" + img + ", xform=" + xform);
     }
 
     /** {@inheritDoc} */
+    @Override
     public FontMetrics getFontMetrics(Font f) {
         LOG.debug("getFontMetrics() NYI: f=" + f);
         return null;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setXORMode(Color col) {
         LOG.debug("setXORMode() NYI: col=" + col);
     }
@@ -681,6 +686,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public void copyArea(int x, int y, int width, int height, int dx, int dy) {
         LOG.debug("copyArea() NYI: ");
     }

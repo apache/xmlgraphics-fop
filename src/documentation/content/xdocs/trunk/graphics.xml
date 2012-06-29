@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP: Graphics Formats</title>
+    <title>Apache™ FOP: Graphics Formats</title>
     <version>$Revision$</version>
   </header>
   <body>
@@ -30,7 +30,7 @@
       </p>
       <ul>
         <li>
-          The image libraries Jimi and JAI are not supported. Instead, Apache FOP uses the
+          The image libraries Jimi and JAI are not supported. Instead, Apache™ FOP uses the
           Image I/O API that was introduced with Java 1.4 for all bitmap codecs.
         </li>
         <li>
@@ -73,65 +73,65 @@
         <tr>
           <td><a href="#bmp">BMP</a> (Microsoft Windows Bitmap)</td>
           <td>bitmap</td>
-          <td></td>
-          <td></td>
+          <td/>
+          <td/>
           <td>X [1]</td>
         </tr>
         <tr>
           <td><a href="#emf">EMF</a> (Windows Enhanced Metafile)</td>
           <td>vector (with embedded bitmaps)</td>
           <td>(X)</td>
-          <td></td>
-          <td></td>
+          <td/>
+          <td/>
         </tr>
         <tr>
           <td><a href="#eps">EPS</a> (Encapsulated PostScript)</td>
           <td>metafile (both bitmap and vector), most frequently used for vector drawings</td>
           <td>(X)</td>
-          <td></td>
-          <td></td>
+          <td/>
+          <td/>
         </tr>
         <tr>
           <td>GIF (Graphics Interchange Format)</td>
           <td>bitmap</td>
-          <td></td>
-          <td></td>
+          <td/>
+          <td/>
           <td>X</td>
         </tr>
         <tr>
           <td><a href="#jpeg">JPEG</a> (Joint Photographic Experts Group)</td>
           <td>bitmap</td>
           <td>(X)</td>
-          <td></td>
+          <td/>
           <td>X</td>
         </tr>
         <tr>
           <td><a href="#png">PNG</a> (Portable Network Graphic)</td>
           <td>bitmap</td>
-          <td></td>
-          <td></td>
+          <td>(X)</td>
+          <td/>
           <td>X</td>
         </tr>
         <tr>
           <td><a href="#svg">SVG</a> (Scalable Vector Graphics)</td>
           <td>vector (with embedded bitmaps)</td>
-          <td></td>
+          <td/>
           <td>X</td>
-          <td></td>
+          <td/>
         </tr>
         <tr>
           <td><a href="#tiff">TIFF</a> (Tag Image Format File)</td>
           <td>bitmap</td>
           <td>(X)</td>
-          <td></td>
+          <td/>
           <td>X [1]</td>
         </tr>
         <tr>
           <td><a href="#wmf">WMF</a> (Windows Metafile)</td>
           <td>vector (with embedded bitmaps)</td>
-          <td></td>
+          <td/>
           <td>(X)</td>
-          <td></td>
+          <td/>
         </tr>
       </table>
       <p>
@@ -149,7 +149,7 @@
       <note>
         <a href="http://jai-imageio.dev.java.net/">JAI Image I/O Tools</a> is not the same as the
         <a href="http://java.sun.com/javase/technologies/desktop/media/jai/">JAI library</a>! The
-        former simply exposes JAI's codecs using the Image&nbsp;I/O API but does not include all
+        former simply exposes JAI's codecs using the Image&amp;nbsp;I/O API but does not include all
         the image manipulation functionality.
       </note>
       <section id="format-map">
@@ -181,21 +181,21 @@
           </tr>
           <tr>
             <td><a href="#emf">EMF</a> (Windows Enhanced Metafile)</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td/>
+            <td/>
+            <td/>
+            <td/>
+            <td/>
             <td>X [1]</td>
           </tr>
           <tr>
             <td><a href="#eps">EPS</a> (Encapsulated PostScript)</td>
-            <td></td>
+            <td/>
             <td>X [1]</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td/>
+            <td/>
+            <td/>
+            <td/>
           </tr>
           <tr>
             <td>GIF (Graphics Interchange Format)</td>
@@ -217,8 +217,8 @@
           </tr>
           <tr>
             <td><a href="#png">PNG</a> (Portable Network Graphic)</td>
-            <td>X</td>
-            <td>X</td>
+            <td>X [2]</td>
+            <td>X [2]</td>
             <td>X</td>
             <td>X</td>
             <td>X</td>
@@ -361,7 +361,7 @@
       <section id="gif">
         <title>GIF</title>
         <p>
-          GIF images are supported through an Image&nbsp;I/O codec. Transparency is supported but
+          GIF images are supported through an Image&amp;nbsp;I/O codec. Transparency is supported but
           not guaranteed to work with every output format.
         </p>
       </section>
@@ -376,15 +376,18 @@
           through without decompression. User reports indicate that grayscale, RGB, and 
           CMYK color spaces are all rendered properly. However, for other output formats, the
           JPEG images have to be decompressed. Tests have shown that there are some limitation
-          in some Image&nbsp;I/O codecs concerning images in the CMYK color space. Work-arounds are
+          in some Image&amp;nbsp;I/O codecs concerning images in the CMYK color space. Work-arounds are
           in place but may not always work as expected.
         </p>
       </section>
       <section id="png">
         <title>PNG</title>
         <p>
-          PNG images are supported through an Image&nbsp;I/O codec. Transparency is supported but
-          not guaranteed to work with every output format.
+          FOP native support of PNG only includes the variants with 8 bits per channel and without
+          interlacing. Native support requires using the ImageLoaderRawPNG image loader.
+          Support through a Image I/O codec can use either the internal XGC PNG codec or the JRE PNG
+          codec. The associated image loaders are, respectively, ImageLoaderPNG and ImageLoaderImageIO. 
+          Transparency is supported but not guaranteed to work with every output format.
         </p>
       </section>
       <section id="svg">
@@ -520,7 +523,7 @@
         <p>
           FOP can embed TIFF images without decompression into PDF, PostScript and AFP if they
           have either CCITT T.4, CCITT T.6, or JPEG compression. Otherwise, a TIFF-capable
-          Image&nbsp;I/O codec is necessary for decoding the image.
+          Image&amp;nbsp;I/O codec is necessary for decoding the image.
         </p>
         <p>
           There may be some limitation concerning images in the CMYK color space.

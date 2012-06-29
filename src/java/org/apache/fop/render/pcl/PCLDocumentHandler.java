@@ -37,7 +37,6 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
-import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
@@ -46,7 +45,8 @@ import org.apache.fop.render.java2d.Java2DUtil;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 
 /**
- * {@link IFDocumentHandler} implementation that produces PCL 5.
+ * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation
+ * that produces PCL 5.
  */
 public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             implements PCLConstants {
@@ -88,6 +88,7 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setContext(IFContext context) {
         super.setContext(context);
         this.pclUtil = new PCLRenderingUtil(context.getUserAgent());
@@ -99,6 +100,7 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setDefaultFontInfo(FontInfo fontInfo) {
         FontInfo fi = Java2DUtil.buildDefaultJava2DBasedFontInfo(fontInfo, getUserAgent());
         setFontInfo(fi);
@@ -114,7 +116,7 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     /** @return the target resolution */
     protected int getResolution() {
-        int resolution = (int)Math.round(getUserAgent().getTargetResolution());
+        int resolution = Math.round(getUserAgent().getTargetResolution());
         if (resolution <= 300) {
             return 300;
         } else {
@@ -125,10 +127,12 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     //----------------------------------------------------------------------------------------------
 
     /** {@inheritDoc} */
+    @Override
     public void startDocument() throws IFException {
         super.startDocument();
         try {
             this.gen = new PCLGenerator(this.outputStream, getResolution());
+            this.gen.setDitheringQuality(pclUtil.getDitheringQuality());
 
             if (!pclUtil.isPJLDisabled()) {
                 gen.universalEndOfLanguage();
@@ -148,10 +152,12 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endDocumentHeader() throws IFException {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endDocument() throws IFException {
         try {
             gen.separateJobs();

@@ -28,7 +28,7 @@
     </p>
   </info>
   <fo>
-    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg" id="root">
       <fo:layout-master-set>
         <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" 
               margin="20pt">
@@ -79,6 +79,7 @@
       </fo:page-sequence>
       <fo:page-sequence master-reference="normal">
         <fo:flow flow-name="xsl-region-body" font-size="8pt">
+          <fo:block>root= <fo:page-number-citation-last ref-id="root"/></fo:block>
           <fo:block>page-sequence= <fo:page-number-citation-last ref-id="page-sequence1"/></fo:block>
           <fo:block>block= <fo:page-number-citation-last ref-id="block1"/></fo:block>
           <fo:block>list= <fo:page-number-citation-last ref-id="list1"/></fo:block>
@@ -97,18 +98,19 @@
     </fo:root>
   </fo>
   <checks>
-    <true fail-msg="no ID for page-sequence" xpath="'page-sequence= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]"/>
-    <true fail-msg="no ID for block" xpath="'block= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[2]"/>
-    <true fail-msg="no ID for list-block" xpath="'list= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[3]"/>
-    <true fail-msg="no ID for list-item" xpath="'item= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[4]"/>
-    <true fail-msg="no ID for list-item-label" xpath="'item-label= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[5]"/>
-    <true fail-msg="no ID for list-item-body" xpath="'item-body= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[6]"/>
-    <true fail-msg="no ID for table" xpath="'table= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[7]"/>
-   <!-- <true fail-msg="no ID for table-header" xpath="'table-header= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[8]"/>
-    <true fail-msg="no ID for table-footer" xpath="'table-footer= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[9]"/>
-    <true fail-msg="no ID for table-body" xpath="'table-body= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[10]"/>
-    <true fail-msg="no ID for table-row" xpath="'table-row= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[11]"/>-->
-    <true fail-msg="no ID for table-cell" xpath="'table-cell= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[12]"/>
-    <true fail-msg="no ID for block-container" xpath="'block-container= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[13]"/>
+    <true fail-msg="no ID for root" xpath="'root= 2' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]"/>
+    <true fail-msg="no ID for page-sequence" xpath="'page-sequence= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[2]"/>
+    <true fail-msg="no ID for block" xpath="'block= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[3]"/>
+    <true fail-msg="no ID for list-block" xpath="'list= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[4]"/>
+    <true fail-msg="no ID for list-item" xpath="'item= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[5]"/>
+    <true fail-msg="no ID for list-item-label" xpath="'item-label= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[6]"/>
+    <true fail-msg="no ID for list-item-body" xpath="'item-body= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[7]"/>
+    <true fail-msg="no ID for table" xpath="'table= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[8]"/>
+   <!-- <true fail-msg="no ID for table-header" xpath="'table-header= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[9]"/>
+    <true fail-msg="no ID for table-footer" xpath="'table-footer= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[10]"/>
+    <true fail-msg="no ID for table-body" xpath="'table-body= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[11]"/>
+    <true fail-msg="no ID for table-row" xpath="'table-row= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[12]"/>-->
+    <true fail-msg="no ID for table-cell" xpath="'table-cell= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[13]"/>
+    <true fail-msg="no ID for block-container" xpath="'block-container= 1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[14]"/>
   </checks>
 </testcase>

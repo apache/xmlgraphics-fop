@@ -31,6 +31,9 @@ public class IFSerializerMaker extends AbstractIFDocumentHandlerMaker {
     public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
         IFSerializer handler = new IFSerializer();
         handler.setContext(new IFContext(ua));
+        if (ua.isAccessibilityEnabled()) {
+            ua.setStructureTreeEventHandler(handler.getStructureTreeEventHandler());
+        }
         return handler;
     }
 

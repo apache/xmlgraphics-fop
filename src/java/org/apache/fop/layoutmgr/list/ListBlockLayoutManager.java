@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr.list;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,9 +50,7 @@ import org.apache.fop.traits.SpaceVal;
 public class ListBlockLayoutManager extends BlockStackingLayoutManager
                 implements ConditionalElementListener {
 
-    /**
-     * logging instance
-     */
+    /** logging instance */
     private static Log log = LogFactory.getLog(ListBlockLayoutManager.class);
 
     private Block curBlockArea;
@@ -64,20 +61,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     private boolean discardPaddingAfter;
     private MinOptMax effSpaceBefore;
     private MinOptMax effSpaceAfter;
-
-    private static class StackingIter extends PositionIterator {
-        StackingIter(Iterator parentIter) {
-            super(parentIter);
-        }
-
-        protected LayoutManager getLM(Object nextObj) {
-            return ((Position) nextObj).getLM();
-        }
-
-        protected Position getPos(Object nextObj) {
-            return ((Position) nextObj);
-        }
-    }
 
     /**
      * Create a new list block layout manager.
@@ -96,6 +79,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public void initialize() {
         foSpaceBefore = new SpaceVal(
                 getListBlockFO().getCommonMarginBlock().spaceBefore, this).getSpace();
@@ -115,6 +99,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getNextKnuthElements(LayoutContext context, int alignment) {
         resetSpaces();
         List returnList = super.getNextKnuthElements(context, alignment);
@@ -134,21 +119,15 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
         return returnList;
     }
 
-    /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList, int alignment) {
-        //log.debug("LBLM.getChangedKnuthElements>");
-        return super.getChangedKnuthElements(oldList, alignment);
-    }
-
     /**
-     * The table area is a reference area that contains areas for
-     * columns, bodies, rows and the contents are in cells.
+     * A list block generates one or more normal block areas whose child areas are
+     * normal block areas returned by the children of fo:list-block. See XSL-FO 1.1 6.8.2.
      *
      * @param parentIter the position iterator
      * @param layoutContext the layout context for adding areas
      */
-    public void addAreas(PositionIterator parentIter,
-                         LayoutContext layoutContext) {
+    @Override
+    public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         getParentArea(null);
 
         // if this will create the first block area in a page
@@ -170,10 +149,10 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
 
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list;
-        LinkedList positionList = new LinkedList();
+        LinkedList<Position> positionList = new LinkedList<Position>();
         Position pos;
         while (parentIter.hasNext()) {
-            pos = (Position)parentIter.next();
+            pos = parentIter.next();
             if (pos.getIndex() >= 0) {
                 if (firstPos == null) {
                     firstPos = pos;
@@ -194,7 +173,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
 
         addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
 
-        StackingIter childPosIter = new StackingIter(positionList.listIterator());
+        PositionIterator childPosIter = new PositionIterator(positionList.listIterator());
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // Add the block areas to Area
             // set the space adjustment ratio
@@ -235,6 +214,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
      * @param childArea the child area
      * @return the parent area of the child
      */
+    @Override
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
@@ -272,6 +252,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
      *
      * @param childArea the child area to add
      */
+    @Override
     public void addChildArea(Area childArea) {
         if (curBlockArea != null) {
             curBlockArea.addBlock((Block) childArea);
@@ -279,16 +260,19 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public KeepProperty getKeepTogetherProperty() {
         return getListBlockFO().getKeepTogether();
     }
 
     /** {@inheritDoc} */
+    @Override
     public KeepProperty getKeepWithPreviousProperty() {
         return getListBlockFO().getKeepWithPrevious();
     }
 
     /** {@inheritDoc} */
+    @Override
     public KeepProperty getKeepWithNextProperty() {
         return getListBlockFO().getKeepWithNext();
     }

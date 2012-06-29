@@ -53,6 +53,7 @@ import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOPException;
@@ -145,16 +146,18 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
     private GeneralPath currentPath = null;
 
-    /** Default constructor */
-    public Java2DRenderer() {
-    }
+    /**
+     * Default constructor
+     *
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
+     */
+    public Java2DRenderer(FOUserAgent userAgent) {
+        super(userAgent);
 
-    /** {@inheritDoc} */
-    public void setUserAgent(FOUserAgent foUserAgent) {
-        super.setUserAgent(foUserAgent);
+        // MH: necessary? the caller has access to FOUserAgent
         userAgent.setRendererOverride(this); // for document regeneration
 
-        String s = (String)userAgent.getRendererOptions().get(JAVA2D_TRANSPARENT_PAGE_BACKGROUND);
+        String s = (String) userAgent.getRendererOptions().get(JAVA2D_TRANSPARENT_PAGE_BACKGROUND);
         if (s != null) {
             this.transparentPageBackground = "true".equalsIgnoreCase(s);
         }
@@ -170,12 +173,13 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         //Don't call super.setupFontInfo() here! Java2D needs a special font setup
         // create a temp Image to test font metrics on
         this.fontInfo = inFontInfo;
-        Graphics2D graphics2D = Java2DFontMetrics.createFontMetricsGraphics2D();
+        final Java2DFontMetrics java2DFontMetrics = new Java2DFontMetrics();
 
         FontCollection[] fontCollections = new FontCollection[] {
-                new Base14FontCollection(graphics2D),
-                new InstalledFontCollection(graphics2D),
-                new ConfiguredFontCollection(getFontResolver(), getFontList())
+                new Base14FontCollection(java2DFontMetrics),
+                new InstalledFontCollection(java2DFontMetrics),
+                new ConfiguredFontCollection(getFontResolver(), getFontList(),
+                                             userAgent.isComplexScriptFeaturesEnabled())
         };
         userAgent.getFactory().getFontManager().setup(
                 getFontInfo(), fontCollections);
@@ -263,10 +267,15 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
      * @param pageViewport the <code>PageViewport</code> object supplied by
      * the Area Tree
      * @throws IOException In case of an I/O error
+     * @throws FOPException if cloning of pageViewport is not supported
      * @see org.apache.fop.render.Renderer
      */
-    public void renderPage(PageViewport pageViewport) throws IOException {
-        rememberPage((PageViewport)pageViewport.clone());
+    public void renderPage(PageViewport pageViewport) throws IOException, FOPException {
+        try {
+            rememberPage((PageViewport)pageViewport.clone());
+        } catch (CloneNotSupportedException e) {
+            throw new FOPException(e);
+        }
         //The clone() call is necessary as we store the page for later. Otherwise, the
         //RenderPagesModel calls PageViewport.clear() to release memory as early as possible.
         currentPageNumber++;
@@ -317,10 +326,10 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             }
 
             scaleX = scaleX
-                * (25.4f / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
+                * (UnitConv.IN2MM / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
             scaleY = scaleY
-                * (25.4f / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
+                * (UnitConv.IN2MM / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
             int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
             int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
@@ -444,7 +453,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /** {@inheritDoc} */
-    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+    protected void startVParea(CTM ctm, Rectangle clippingRect) {
 
         saveGraphicsState();
 
@@ -712,7 +721,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         renderInlineAreaBackAndBorders(text);
 
         int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
-        int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
+        int bl = currentBPPosition + text.getBlockProgressionOffset() + text.getBaselineOffset();
         int saveIP = currentIPPosition;
 
         Font font = getFontFromArea(text);
@@ -824,7 +833,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         // TODO Colors do not work on Leaders yet
 
         float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
-        float starty = ((currentBPPosition + area.getOffset()) / 1000f);
+        float starty = ((currentBPPosition + area.getBlockProgressionOffset()) / 1000f);
         float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart()
                 + area.getIPD()) / 1000f;
 

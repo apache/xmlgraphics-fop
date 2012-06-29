@@ -72,6 +72,7 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler implements ImageH
     }
 
     /** {@inheritDoc} */
+    @Override
     protected AFPDataObjectInfo createDataObjectInfo() {
         return new AFPGraphicsObjectInfo();
     }
@@ -103,13 +104,13 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler implements ImageH
 
         // Image content
         ImageGraphics2D imageG2D = (ImageGraphics2D)image;
-        boolean textAsShapes = false; //TODO Make configurable
+        final boolean textAsShapes = paintingState.isStrokeGOCAText();
         AFPGraphics2D g2d = new AFPGraphics2D(
                 textAsShapes,
                 afpContext.getPaintingState(),
                 afpContext.getResourceManager(),
                 graphicsObjectInfo.getResourceInfo(),
-                afpContext.getFontInfo());
+                (textAsShapes ? null : afpContext.getFontInfo()));
         g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
         graphicsObjectInfo.setGraphics2D(g2d);
@@ -126,6 +127,10 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler implements ImageH
         boolean supported = (image == null || image instanceof ImageGraphics2D)
                 && targetContext instanceof AFPRenderingContext;
         if (supported) {
+            AFPRenderingContext afpContext = (AFPRenderingContext)targetContext;
+            if (!afpContext.getPaintingState().isGOCAEnabled()) {
+                return false;
+            }
             String mode = (String)targetContext.getHint(ImageHandlerUtil.CONVERSION_MODE);
             if (ImageHandlerUtil.isConversionModeBitmap(mode)) {
                 //Disabling this image handler automatically causes a bitmap to be generated

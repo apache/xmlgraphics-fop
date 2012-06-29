@@ -38,13 +38,13 @@ public class ListItemBody extends AbstractListItemPart {
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
-        getFOEventHandler().startListBody();
+        getFOEventHandler().startListBody(this);
     }
 
     /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
-        getFOEventHandler().endListBody();
+        getFOEventHandler().endListBody(this);
     }
 
     /** {@inheritDoc} */

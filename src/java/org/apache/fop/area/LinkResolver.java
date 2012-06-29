@@ -19,23 +19,21 @@
 
 package org.apache.fop.area;
 
-// Java
-import java.util.List;
 import java.io.Serializable;
-
-// FOP
-import org.apache.fop.area.Trait;
-import org.apache.fop.area.Resolvable;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Area;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Link resolving for resolving internal links.
  */
 public class LinkResolver implements Resolvable, Serializable {
+
+    private static final long serialVersionUID = -7102134165192960718L;
+
     private boolean resolved = false;
     private String idRef;
     private Area area;
+    private transient List<Resolvable> dependents = null;
 
     /**
      * Create a new link resolver.
@@ -69,8 +67,8 @@ public class LinkResolver implements Resolvable, Serializable {
      *
      * {@inheritDoc}
      */
-    public void resolveIDRef(String id, List pages) {
-        resolveIDRef(id, (PageViewport)pages.get(0));
+    public void resolveIDRef(String id, List<PageViewport> pages) {
+        resolveIDRef(id, pages.get(0));
     }
 
     /**
@@ -82,8 +80,35 @@ public class LinkResolver implements Resolvable, Serializable {
     public void resolveIDRef(String id, PageViewport pv) {
         if (idRef.equals(id) && pv != null) {
             resolved = true;
-            Trait.InternalLink iLink = new Trait.InternalLink(pv.getKey(), idRef);
-            area.addTrait(Trait.INTERNAL_LINK, iLink);
+            if ( area != null ) {
+                Trait.InternalLink iLink = new Trait.InternalLink(pv.getKey(), idRef);
+                area.addTrait(Trait.INTERNAL_LINK, iLink);
+                area = null; // break circular reference from basic link area to this resolver
+            }
+            resolveDependents(id, pv);
         }
     }
+
+    /**
+     * Add dependent resolvable. Used to resolve second-order resolvables that
+     * depend on resolution of this resolver.
+     * @param dependent resolvable
+     */
+    public void addDependent(Resolvable dependent) {
+        if ( dependents == null ) {
+            dependents = new ArrayList<Resolvable>();
+        }
+        dependents.add(dependent);
+    }
+
+    private void resolveDependents(String id, PageViewport pv) {
+        if ( dependents != null ) {
+            List<PageViewport> pages = new ArrayList<PageViewport>();
+            pages.add(pv);
+            for ( Resolvable r : dependents ) {
+                r.resolveIDRef(id, pages);
+            }
+        }
+    }
+
 }

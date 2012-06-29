@@ -200,7 +200,6 @@ public class PDFCIDFont extends PDFObject {
      */
     public String toPDFString() {
         StringBuffer p = new StringBuffer(128);
-        p.append(getObjectID());
         p.append("<< /Type /Font");
         p.append("\n/BaseFont /");
         p.append(this.basefont);
@@ -234,14 +233,13 @@ public class PDFCIDFont extends PDFObject {
             p.append("\n/DW2 [");    // always two values, see p 211
             p.append(this.dw2[0]);
             p.append(this.dw2[1]);
-            p.append("] \n>>\nendobj\n");
+            p.append("]");
         }
         if (w2 != null) {
             p.append("\n/W2 ");
             p.append(w2.toPDFString());
-            p.append(" \n>>\nendobj\n");
         }
-        p.append(" \n>>\nendobj\n");
+        p.append("\n>>");
         return p.toString();
     }
 

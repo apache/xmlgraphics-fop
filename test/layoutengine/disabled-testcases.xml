@@ -20,13 +20,6 @@
 <!--DOCTYPE disabled-testcases SYSTEM "disabled-testcases.dtd"-->
 <disabled-testcases>
   <testcase>
-    <name>External link around an SVG not properly sized</name>
-    <file>basic-link_external-destination_2.xml</file>
-    <description>The bpd trait of the inlineparent area for the basic-link
-    is not sized correctly if it wraps an image that is higher than the 
-    nominal line.</description>
-  </testcase>
-  <testcase>
     <name>Auto-height block-containers produce fences</name>
     <file>block-container_space-before_space-after_3.xml</file>
     <description>Block-containers with no height currently don't
@@ -37,12 +30,6 @@
     <name>font-stretch NYI</name>
     <file>block_font-stretch.xml</file>
     <description>Font-stretch is not implemented, yet.</description>
-  </testcase>
-  <testcase>
-    <name>Hyphenation with preserved linefeeds</name>
-    <file>block_hyphenation_linefeed_preserve.xml</file>
-    <description>When hyphenation is enabled and linefeeds are preserved,
-    the text is output multiple times.</description>
   </testcase>
   <testcase>
     <name>linefeed-treatment</name>
@@ -221,5 +208,16 @@
     <file>keep_within-page_multi-column_overflow.xml</file>
     <description>The block should cause overflow in the
     last column on the page, rather than be broken.</description>
+  </testcase>
+  <testcase>
+    <name>Block Container Reference Orientation Bug</name>
+    <file>block-container_reference-orientation_bug36391.xml</file>
+    <description>An assert is failing</description>
+  </testcase>
+  <testcase>
+    <name>Writing mode problems</name>
+    <file>simple-page-master_writing-mode_rl_region-body_writing-mode-lr.xml</file>
+    <description>Test erroneously depends upon incorrect implementation of writing-mode trait
+    derivation on fo:region-*.</description>
   </testcase>
 </disabled-testcases>

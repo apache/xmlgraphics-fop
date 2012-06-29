@@ -42,14 +42,6 @@ public class TrueCheck implements LayoutEngineCheck, IFCheck {
     private PrefixResolver prefixResolver;
 
     /**
-     * Creates a new instance
-     * @param xpath XPath statement that needs to be evaluated
-     */
-    public TrueCheck(String xpath) {
-        this.xpath = xpath;
-    }
-
-    /**
      * Creates a new instance from a DOM node.
      * @param node DOM node that defines this check
      */

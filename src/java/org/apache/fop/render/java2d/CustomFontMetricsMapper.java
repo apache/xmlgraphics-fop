@@ -30,14 +30,13 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.fop.fonts.CustomFont;
-import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
 
 /**
  * FontMetricsMapper that delegates most methods to an underlying
- * {@link FontMetrics} instance. This class was designed to allow
+ * {@link org.apache.fop.fonts.FontMetrics} instance. This class was designed to allow
  * the underlying {@link Font} to be loaded from a
  * user-configured file not registered in the current graphics environment.
  */
@@ -161,7 +160,7 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
     }
 
     /** {@inheritDoc} */
-    public final Set getFamilyNames() {
+    public final Set<String> getFamilyNames() {
         return typeface.getFamilyNames();
     }
 

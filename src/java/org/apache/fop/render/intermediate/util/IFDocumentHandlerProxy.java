@@ -20,9 +20,11 @@
 package org.apache.fop.render.intermediate.util;
 
 import java.awt.Dimension;
+import java.util.Locale;
 
 import javax.xml.transform.Result;
 
+import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
@@ -94,6 +96,11 @@ public class IFDocumentHandlerProxy implements IFDocumentHandler {
     }
 
     /** {@inheritDoc} */
+    public StructureTreeEventHandler getStructureTreeEventHandler() {
+        return this.delegate.getStructureTreeEventHandler();
+    }
+
+    /** {@inheritDoc} */
     public void setResult(Result result) throws IFException {
         this.delegate.setResult(result);
     }
@@ -101,6 +108,12 @@ public class IFDocumentHandlerProxy implements IFDocumentHandler {
     /** {@inheritDoc} */
     public void startDocument() throws IFException {
         this.delegate.startDocument();
+    }
+
+    /** {@inheritDoc} */
+    public void setDocumentLocale(Locale locale) {
+         this.delegate.setDocumentLocale(locale);
+
     }
 
     /** {@inheritDoc} */

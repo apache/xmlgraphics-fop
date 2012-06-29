@@ -22,6 +22,7 @@ package org.apache.fop.afp.ptoca;
 import java.io.IOException;
 
 import org.apache.fop.afp.AFPTextDataInfo;
+import org.apache.fop.afp.fonts.CharactersetEncoder;
 
 /**
  * {@link PtocaProducer} implementation that interprets {@link AFPTextDataInfo} objects.
@@ -55,8 +56,7 @@ public class TextDataInfoProducer implements PtocaProducer, PtocaConstants {
         // Add transparent data
         String textString = textDataInfo.getString();
         String encoding = textDataInfo.getEncoding();
-        byte[] data = textString.getBytes(encoding);
-        builder.addTransparentData(data);
+        builder.addTransparentData(CharactersetEncoder.encodeSBCS(textString, encoding));
     }
 
 }

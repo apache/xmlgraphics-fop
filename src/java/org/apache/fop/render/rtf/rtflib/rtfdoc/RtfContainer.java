@@ -26,15 +26,18 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
+import java.io.IOException;
 import java.io.Writer;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Iterator;
-import java.io.IOException;
+
 import org.apache.fop.render.rtf.rtflib.exceptions.RtfStructureException;
 
-/**  An RtfElement that can contain other elements.
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * <p>An RtfElement that can contain other elements.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 public class RtfContainer extends RtfElement {
@@ -107,6 +110,30 @@ public class RtfContainer extends RtfElement {
      */
     public int getChildCount() {
         return children.size();
+    }
+
+    private int findChildren(RtfElement aChild, int iStart) {
+        for (Iterator it = this.getChildren().iterator(); it.hasNext();) {
+          final RtfElement e = (RtfElement)it.next();
+          if (aChild == e) {
+              return iStart;
+          } else if (e instanceof RtfContainer) {
+              int iFound = ((RtfContainer)e).findChildren(aChild, (iStart + 1));
+              if (iFound != -1) {
+                  return iFound;
+              }
+          }
+        }
+        return -1;
+    }
+
+    /**
+     * Find the passed child in the current container
+     * @param aChild the child element
+     * @return the depth (nested level) inside the current container
+     */
+    public int findChildren(RtfElement aChild) {
+        return findChildren(aChild, 0);
     }
 
     /**

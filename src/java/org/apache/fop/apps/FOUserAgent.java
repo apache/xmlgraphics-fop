@@ -35,10 +35,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
+import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.Version;
 import org.apache.fop.accessibility.Accessibility;
-import org.apache.fop.accessibility.StructureTree;
+import org.apache.fop.accessibility.DummyStructureTreeEventHandler;
+import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.events.DefaultEventBroadcaster;
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventBroadcaster;
@@ -46,7 +48,6 @@ import org.apache.fop.events.EventListener;
 import org.apache.fop.events.FOPEventListenerProxy;
 import org.apache.fop.events.LoggingEventListener;
 import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
@@ -100,8 +101,8 @@ public class FOUserAgent {
     private boolean locatorEnabled = true; // true by default (for error messages).
     private boolean conserveMemoryPolicy = false;
     private EventBroadcaster eventBroadcaster = new FOPEventBroadcaster();
-
-    private StructureTree structureTree;
+    private StructureTreeEventHandler structureTreeEventHandler
+            = DummyStructureTreeEventHandler.INSTANCE;
 
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
@@ -172,6 +173,9 @@ public class FOUserAgent {
      * @param documentHandler the document handler instance to use
      */
     public void setDocumentHandlerOverride(IFDocumentHandler documentHandler) {
+        if (isAccessibilityEnabled()) {
+            setStructureTreeEventHandler(documentHandler.getStructureTreeEventHandler());
+        }
         this.documentHandlerOverride = documentHandler;
 
     }
@@ -351,7 +355,7 @@ public class FOUserAgent {
     /**
      * Sets font base URL.
      * @param fontBaseUrl font base URL
-     * @deprecated Use {@link FontManager#setFontBaseURL(String)} instead.
+     * @deprecated Use {@link org.apache.fop.fonts.FontManager#setFontBaseURL(String)} instead.
      */
     public void setFontBaseURL(String fontBaseUrl) {
         try {
@@ -450,7 +454,7 @@ public class FOUserAgent {
      * @see #getTargetResolution()
      */
     public float getTargetPixelUnitToMillimeter() {
-        return 25.4f / this.targetResolution;
+        return UnitConv.IN2MM / this.targetResolution;
     }
 
     /** @return the resolution for resolution-dependant output */
@@ -496,7 +500,8 @@ public class FOUserAgent {
     /**
      * Returns the font base URL.
      * @return the font base URL
-     * @deprecated Use {@link FontManager#getFontBaseURL()} instead. This method is not used by FOP.
+     * @deprecated Use {@link org.apache.fop.fonts.FontManager#getFontBaseURL()} instead.
+     * This method is not used by FOP.
      */
     public String getFontBaseURL() {
         String fontBase = getFactory().getFontManager().getFontBaseURL();
@@ -649,6 +654,24 @@ public class FOUserAgent {
     }
 
     /**
+     * Check whether complex script features are enabled.
+     *
+     * @return true if FOP is to use complex script features
+     */
+    public boolean isComplexScriptFeaturesEnabled() {
+        return factory.isComplexScriptFeaturesEnabled();
+    }
+
+    /**
+     * Control whether complex script features should be enabled
+     *
+     * @param useComplexScriptFeatures true if FOP is to use complex script features
+     */
+    public void setComplexScriptFeaturesEnabled(boolean useComplexScriptFeatures) {
+        factory.setComplexScriptFeaturesEnabled ( useComplexScriptFeatures );
+    }
+
+    /**
      * Activates accessibility (for output formats that support it).
      *
      * @param accessibility <code>true</code> to enable accessibility support
@@ -673,24 +696,23 @@ public class FOUserAgent {
     }
 
     /**
-     * Sets the document's structure tree, for use by accessible output formats.
+     * Sets the document's structure tree event handler, for use by accessible
+     * output formats.
      *
-     * @param structureTree a simplified version of the FO tree, retaining only
-     * its logical structure
+     * @param structureTreeEventHandler The structure tree event handler to set
      */
-    public void setStructureTree(StructureTree structureTree) {
-        this.structureTree = structureTree;
+    public void setStructureTreeEventHandler(StructureTreeEventHandler structureTreeEventHandler) {
+        this.structureTreeEventHandler = structureTreeEventHandler;
     }
 
     /**
-     * Returns the document's structure tree, for use by accessible output
-     * formats.
+     * Returns the document's structure tree event handler, for use by
+     * accessible output formats.
      *
-     * @return a simplified version of the FO tree, retaining only its logical
-     * structure
+     * @return The structure tree event handler
      */
-    public StructureTree getStructureTree() {
-        return this.structureTree;
+    public StructureTreeEventHandler getStructureTreeEventHandler() {
+        return this.structureTreeEventHandler;
     }
 }
 

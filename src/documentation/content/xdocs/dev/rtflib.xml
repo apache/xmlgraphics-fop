@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP Development: RTFLib (jfor)</title>
+    <title>Apache™ FOP Development: RTFLib (jfor)</title>
     <version>$Revision$</version>
   </header>
   <body>
@@ -30,7 +30,7 @@
         <p>The RTFLib package is an open-source, <em>independent</em> package suitable for writing RTF files in a java environment.
 By <em>independent</em> we mean:</p>
         <ul>
-          <li>Although it is used by FOP to generate FOP's RTF output, it is not dependent on FOP for any of its functionality.</li>
+          <li>Although it is used by Apache™ FOP to generate FOP's RTF output, it is not dependent on FOP for any of its functionality.</li>
           <li>It does not require FOP as a front-end, nor does it even require XSL-FO for input.
 It essentially exposes an API of relatively high-level RTF construction routines to a host program.
 This means it can be used anywhere RTF output is required and java is available.</li>
@@ -39,7 +39,7 @@ This means it can be used anywhere RTF output is required and java is available.
       </section>
       <section id="history">
         <title>History</title>
-        <p>RTFLib was originally developed by <link href="mailto:bdelacretaz@apache.org">Bertrand Delacr&#x00E9;taz</link> and the <link href="http://www.jfor.org">jfor</link> team. jfor was written under an Apache-style license, and the jfor team contributed the code to the Apache Software Foundation in June, 2003. RTFLib is a subset of the original jfor project, which also includes an XSL-FO parsing mechanism for a complete XSL-FO to RTF solution.</p>
+        <p>RTFLib was originally developed by <link href="mailto:bdelacretaz@apache.org">Bertrand Delacrétaz</link> and the <link href="http://www.jfor.org">jfor</link> team. jfor was written under an Apache-style license, and the jfor team contributed the code to the Apache Software Foundation in June, 2003. RTFLib is a subset of the original jfor project, which also includes an XSL-FO parsing mechanism for a complete XSL-FO to RTF solution.</p>
       </section>
       <section id="status">
         <title>Status</title>

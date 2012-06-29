@@ -22,6 +22,7 @@ package org.apache.fop.tools.fontlist;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontTriplet;
@@ -33,8 +34,8 @@ public class FontSpec implements Comparable {
 
     private String key;
     private FontMetrics metrics;
-    private SortedSet familyNames = new java.util.TreeSet();
-    private Collection triplets = new java.util.TreeSet();
+    private SortedSet<String> familyNames = new TreeSet<String>();
+    private Collection triplets = new TreeSet();
 
     /**
      * Creates a new font spec.
@@ -50,7 +51,7 @@ public class FontSpec implements Comparable {
      * Adds font family names.
      * @param names the names
      */
-    public void addFamilyNames(Collection names) {
+    public void addFamilyNames(Collection<String> names) {
         this.familyNames.addAll(names);
     }
 

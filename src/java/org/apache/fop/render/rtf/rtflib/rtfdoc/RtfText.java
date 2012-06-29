@@ -29,8 +29,12 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 import java.io.Writer;
 
-/**  Model of a text run (a piece of text with attributes) in an RTF document
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+import org.apache.fop.apps.FOPException;
+
+/**
+ * <p>Model of a text run (a piece of text with attributes) in an RTF document.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 public class RtfText extends RtfElement {
@@ -238,12 +242,18 @@ public class RtfText extends RtfElement {
     }
 
     /** IRtfTextContainer requirement:
-     * @return a copy of our attributes */
-    public RtfAttributes getTextContainerAttributes() {
+     * @return a copy of our attributes
+     * @throws FOPException if attributes cannot be cloned
+     */
+    public RtfAttributes getTextContainerAttributes() throws FOPException {
         if (attrib == null) {
             return null;
         }
-        return (RtfAttributes)this.attrib.clone();
+        try {
+            return (RtfAttributes)this.attrib.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new FOPException(e);
+        }
     }
 
     /** direct access to our text */

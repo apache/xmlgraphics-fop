@@ -22,11 +22,14 @@ package org.apache.fop.fo.pagination.bookmarks;
 import java.util.ArrayList;
 
 import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 
 
 /**
@@ -34,11 +37,12 @@ import org.apache.fop.fo.ValidationException;
  * <code>fo:bookmark</code></a> object, first introduced in the
  * XSL 1.1 WD.
  */
-public class Bookmark extends FObj {
+public class Bookmark extends FObj implements CommonAccessibilityHolder {
     private BookmarkTitle bookmarkTitle;
     private ArrayList childBookmarks = new ArrayList();
 
     // The value of properties relevant for this FO
+    private CommonAccessibility commonAccessibility;
     private String internalDestination;
     private String externalDestination;
     private boolean bShow = true; // from starting-state property
@@ -59,6 +63,7 @@ public class Bookmark extends FObj {
 
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         externalDestination = pList.get(PR_EXTERNAL_DESTINATION).getString();
         internalDestination = pList.get(PR_INTERNAL_DESTINATION).getString();
         bShow = (pList.get(PR_STARTING_STATE).getEnum() == EN_SHOW);
@@ -110,6 +115,11 @@ public class Bookmark extends FObj {
         } else if (obj instanceof Bookmark) {
             childBookmarks.add(obj);
         }
+    }
+
+    /** {@inheritDoc} */
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /**

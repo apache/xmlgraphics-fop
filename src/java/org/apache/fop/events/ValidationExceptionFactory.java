@@ -43,7 +43,7 @@ public class ValidationExceptionFactory implements ExceptionFactory {
     }
 
     /** {@inheritDoc} */
-    public Class getExceptionClass() {
+    public Class<ValidationException> getExceptionClass() {
         return ValidationException.class;
     }
 

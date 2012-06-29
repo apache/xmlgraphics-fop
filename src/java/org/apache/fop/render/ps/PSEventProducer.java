@@ -29,7 +29,7 @@ public interface PSEventProducer extends EventProducer {
 
     /** Provider class for the event producer. */
     final class Provider {
-        
+
         private Provider() {
         }
 
@@ -53,4 +53,11 @@ public interface PSEventProducer extends EventProducer {
      */
     void postscriptDictionaryParseError(Object source, String content, Exception e);
 
+    /**
+     * PostScript Level 3 features are necessary.
+     *
+     * @param source the event source
+     * @event.severity FATAL
+     */
+    void postscriptLevel3Needed(Object source);
 }

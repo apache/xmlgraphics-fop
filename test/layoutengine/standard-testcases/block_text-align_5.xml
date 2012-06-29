@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks text-align="justify" when writing-mode is right-to-left.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple" page-height="10in" page-width="2in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="simple" writing-mode="rl">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block text-align="justify">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- lineArea[1] - justified -->
+    <true xpath="not(boolean(//flow/block[1]/lineArea[1]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[1]/lineArea[1]/@end-indent))"/>
+    <eval expected="1" xpath="//flow/block[1]/lineArea[1]/@level"/>
+    <true xpath="//flow/block[1]/lineArea[1]/@ipd = //flow/block[1]/lineArea[1]/text[1]/@ipd"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[1]/text[1]/@twsadjust)"/>
+    <eval expected="2" xpath="//flow/block[1]/lineArea[1]/text[1]/@level"/>
+    <!-- lineArea[2] - justified -->
+    <true xpath="not(boolean(//flow/block[1]/lineArea[2]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[1]/lineArea[2]/@end-indent))"/>
+    <eval expected="1" xpath="//flow/block[1]/lineArea[2]/@level"/>
+    <true xpath="//flow/block[1]/lineArea[2]/@ipd = //flow/block[1]/lineArea[2]/text[1]/@ipd"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[2]/text[1]/@twsadjust)"/>
+    <eval expected="2" xpath="//flow/block[1]/lineArea[2]/text[1]/@level"/>
+    <!-- lineArea[3] - start -->
+    <true xpath="not(boolean(//flow/block[1]/lineArea[3]/@start-indent))"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[3]/@end-indent)"/>
+    <eval expected="1" xpath="//flow/block[1]/lineArea[3]/@level"/>
+    <true xpath="not(//flow/block[1]/lineArea[3]/@ipd = //flow/block[1]/lineArea[3]/text[1]/@ipd)"/>
+    <true xpath="not(boolean(//flow/block[1]/lineArea[3]/text[1]/@twsadjust))"/>
+    <eval expected="1" xpath="//flow/block[1]/lineArea[3]/text[1]/@level"/>
+    <true xpath="not(//flow/block[1]/lineArea[3]/@ipd = //flow/block[1]/lineArea[3]/text[2]/@ipd)"/>
+    <true xpath="not(boolean(//flow/block[1]/lineArea[3]/text[2]/@twsadjust))"/>
+    <eval expected="2" xpath="//flow/block[1]/lineArea[3]/text[2]/@level"/>
+  </checks>
+</testcase>

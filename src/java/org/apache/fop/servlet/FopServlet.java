@@ -63,12 +63,11 @@ import org.apache.fop.apps.MimeConstants;
  * <br/>
  * For this to work with Internet Explorer, you might need to append "&ext=.pdf"
  * to the URL.
- *
- * @author <a href="mailto:fop-dev@xmlgraphics.apache.org">Apache FOP Development Team</a>
- * @version $Id$
  * (todo) Ev. add caching mechanism for Templates objects
  */
 public class FopServlet extends HttpServlet {
+
+    private static final long serialVersionUID = -908918093488215264L;
 
     /** Name of the parameter used for the XSL-FO file */
     protected static final String FO_REQUEST_PARAM = "fo";

@@ -20,24 +20,18 @@
 package org.apache.fop.svg;
 
 import java.awt.Graphics2D;
-import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.batik.bridge.SVGFontFamily;
-import org.apache.batik.gvt.font.GVTFont;
-import org.apache.batik.gvt.font.GVTFontFamily;
-import org.apache.batik.gvt.renderer.StrokingTextPainter;
-import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
-import org.apache.batik.gvt.text.TextSpanLayout;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.batik.gvt.renderer.StrokingTextPainter;
+import org.apache.batik.gvt.text.TextSpanLayout;
+
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -77,6 +71,7 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
     protected abstract void paintTextRun(TextRun textRun, Graphics2D g2d) throws IOException;
 
     /** {@inheritDoc} */
+    @Override
     protected void paintTextRuns(List textRuns, Graphics2D g2d) {
         if (log.isTraceEnabled()) {
             log.trace("paintTextRuns: count = " + textRuns.size());
@@ -102,100 +97,8 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
      * @return the array of fonts
      */
     protected Font[] findFonts(AttributedCharacterIterator aci) {
-        List fonts = new java.util.ArrayList();
-        List gvtFonts = (List) aci.getAttribute(
-                GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
-        Float posture = (Float) aci.getAttribute(TextAttribute.POSTURE);
-        Float taWeight = (Float) aci.getAttribute(TextAttribute.WEIGHT);
-        Float fontSize = (Float) aci.getAttribute(TextAttribute.SIZE);
-
-        String style = ((posture != null) && (posture.floatValue() > 0.0))
-                       ? Font.STYLE_ITALIC : Font.STYLE_NORMAL;
-        int weight = toCSSWeight(taWeight != null
-                ? taWeight.floatValue()
-                        : TextAttribute.WEIGHT_REGULAR.floatValue());
-
-        String firstFontFamily = null;
-
-        //GVT_FONT can sometimes be different from the fonts in GVT_FONT_FAMILIES
-        //or GVT_FONT_FAMILIES can even be empty and only GVT_FONT is set
-        /* The following code section is not available until Batik 1.7 is released. */
-        GVTFont gvtFont = (GVTFont)aci.getAttribute(
-                GVTAttributedCharacterIterator.TextAttribute.GVT_FONT);
-        if (gvtFont != null) {
-            try {
-                String gvtFontFamily = gvtFont.getFamilyName(); //Not available in Batik 1.6!
-                if (log.isDebugEnabled()) {
-                    log.debug("Matching font family: " + gvtFontFamily);
-                }
-                if (fontInfo.hasFont(gvtFontFamily, style, weight)) {
-                    FontTriplet triplet = fontInfo.fontLookup(gvtFontFamily, style,
-                                                       weight);
-                    int fsize = (int)(fontSize.floatValue() * 1000);
-                    fonts.add(fontInfo.getFontInstance(triplet, fsize));
-                }
-                firstFontFamily = gvtFontFamily;
-            } catch (Exception e) {
-                //Most likely NoSuchMethodError here when using Batik 1.6
-                //Just skip this section in this case
-            }
-        }
-
-        if (gvtFonts != null) {
-            Iterator i = gvtFonts.iterator();
-            while (i.hasNext()) {
-                GVTFontFamily fam = (GVTFontFamily) i.next();
-                if (fam instanceof SVGFontFamily) {
-                    return null; //Let Batik paint this text!
-                }
-                String fontFamily = fam.getFamilyName();
-                if (log.isDebugEnabled()) {
-                    log.debug("Matching font family: " + fontFamily);
-                }
-                if (fontInfo.hasFont(fontFamily, style, weight)) {
-                    FontTriplet triplet = fontInfo.fontLookup(fontFamily, style,
-                                                       weight);
-                    int fsize = (int)(fontSize.floatValue() * 1000);
-                    fonts.add(fontInfo.getFontInstance(triplet, fsize));
-                }
-                if (firstFontFamily == null) {
-                    firstFontFamily = fontFamily;
-                }
-            }
-        }
-        if (fonts.size() == 0) {
-            if (firstFontFamily == null) {
-                //This will probably never happen. Just to be on the safe side.
-                firstFontFamily = "any";
-            }
-            //lookup with fallback possibility (incl. substitution notification)
-            FontTriplet triplet = fontInfo.fontLookup(firstFontFamily, style, weight);
-            int fsize = (int)(fontSize.floatValue() * 1000);
-            fonts.add(fontInfo.getFontInstance(triplet, fsize));
-        }
-        return (Font[])fonts.toArray(new Font[fonts.size()]);
-    }
-
-    private int toCSSWeight(float weight) {
-        if (weight <= TextAttribute.WEIGHT_EXTRA_LIGHT.floatValue()) {
-            return 100;
-        } else if (weight <= TextAttribute.WEIGHT_LIGHT.floatValue()) {
-            return 200;
-        } else if (weight <= TextAttribute.WEIGHT_DEMILIGHT.floatValue()) {
-            return 300;
-        } else if (weight <= TextAttribute.WEIGHT_REGULAR.floatValue()) {
-            return 400;
-        } else if (weight <= TextAttribute.WEIGHT_SEMIBOLD.floatValue()) {
-            return 500;
-        } else if (weight <= TextAttribute.WEIGHT_BOLD.floatValue()) {
-            return 600;
-        } else if (weight <= TextAttribute.WEIGHT_HEAVY.floatValue()) {
-            return 700;
-        } else if (weight <= TextAttribute.WEIGHT_EXTRABOLD.floatValue()) {
-            return 800;
-        } else {
-            return 900;
-        }
+        Font[] fonts = ACIUtils.findFontsForBatikACI(aci, fontInfo);
+        return fonts;
     }
 
     /**

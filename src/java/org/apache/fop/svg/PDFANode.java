@@ -28,9 +28,9 @@ import java.util.StringTokenizer;
 import org.apache.batik.gvt.CompositeGraphicsNode;
 
 /**
- * A graphics node that represents an image described as a graphics node.
+ * <p>A graphics node that represents an image described as a graphics node.</p>
  *
- * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
+ * <p>This work was authored by Keiron Liddle (keiron@aftexsw.com).</p>
  */
 public class PDFANode extends CompositeGraphicsNode {
     private String destination;

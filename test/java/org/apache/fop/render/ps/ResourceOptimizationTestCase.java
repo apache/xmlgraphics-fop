@@ -19,12 +19,19 @@
 
 package org.apache.fop.render.ps;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+
+import org.junit.Test;
 
 import org.apache.commons.io.IOUtils;
 
@@ -51,12 +58,13 @@ import org.apache.fop.render.intermediate.IFContext;
  * Tests the PostScript resource optimization (selective de-duplication of
  * images that are used multiple times).
  */
-public class ResourceOptimizationTestCase extends AbstractPostScriptTestCase {
+public class ResourceOptimizationTestCase extends AbstractPostScriptTest {
 
     /**
      * Tests resource optimization.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testResourceOptimization() throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();
         PSDocumentHandler handler = new PSDocumentHandler();
@@ -90,7 +98,7 @@ public class ResourceOptimizationTestCase extends AbstractPostScriptTestCase {
                 = (DSCCommentDocumentSuppliedResources)gotoDSCComment(parser,
                         DSCConstants.DOCUMENT_SUPPLIED_RESOURCES);
             Set resources = supplied.getResources();
-            assertEquals(4, resources.size());
+            assertEquals(5, resources.size());
             assertTrue(resources.contains(form1));
             assertTrue("Expected barcode.eps as supplied resource",
                     resources.contains(new PSResource(PSResource.TYPE_FILE,

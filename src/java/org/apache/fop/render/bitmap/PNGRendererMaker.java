@@ -36,7 +36,7 @@ public class PNGRendererMaker extends AbstractRendererMaker {
 
     /** {@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent ua) {
-        return new PNGRenderer();
+        return new PNGRenderer(ua);
     }
 
     /** {@inheritDoc} */

@@ -20,13 +20,13 @@
 
 <document>
   <header>
-    <title>FOP Development: Adding an Extension</title>
+    <title>Apache™ FOP Development: Adding an Extension</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="overview">
       <title>Overview</title>
-      <p>For documentation of standard FOP extensions, see the <link href="../trunk/extensions.html">User FOP Extensions</link> document.</p>
+      <p>For documentation of standard Apache™ FOP extensions, see the <link href="../trunk/extensions.html">User FOP Extensions</link> document.</p>
       <p>
 If the default funtionality of FOP needs to be extended for
 some reason then you can write an extension.
@@ -62,4 +62,3 @@ See also <link href="../examples.html">Examples</link> for more examples.</li>
     </section>
   </body>
 </document>
-

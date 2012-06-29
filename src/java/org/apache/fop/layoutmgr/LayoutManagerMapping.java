@@ -67,6 +67,7 @@ import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.layoutmgr.inline.BasicLinkLayoutManager;
+import org.apache.fop.layoutmgr.inline.BidiLayoutManager;
 import org.apache.fop.layoutmgr.inline.CharacterLayoutManager;
 import org.apache.fop.layoutmgr.inline.ContentLayoutManager;
 import org.apache.fop.layoutmgr.inline.ExternalGraphicLayoutManager;
@@ -246,28 +247,9 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     public static class BidiOverrideLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
         public void make(FONode node, List lms) {
-            /* [GA] remove broken code
-            if (false) {
-                // this is broken; it does nothing
-                // it should make something like an InlineStackingLM
-                super.make(node, lms);
-            } else {
-                ArrayList childList = new ArrayList();
-                // this is broken; it does nothing
-                // it should make something like an InlineStackingLM
-                super.make(node, childList);
-                for (int count = childList.size() - 1; count >= 0; count--) {
-                    LayoutManager lm = (LayoutManager) childList.get(count);
-                    if (lm instanceof InlineLevelLayoutManager) {
-                        LayoutManager blm = new BidiLayoutManager
-                            ((BidiOverride) node, (InlineLayoutManager) lm);
-                        lms.add(blm);
-                    } else {
-                        lms.add(lm);
-                    }
-                }
+            if ( node instanceof BidiOverride ) {
+                lms.add(new BidiLayoutManager((BidiOverride) node));
             }
-            */
         }
     }
 

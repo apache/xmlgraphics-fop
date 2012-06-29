@@ -62,11 +62,13 @@ class PDFTextPainter extends NativeTextPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected boolean isSupported(Graphics2D g2d) {
         return g2d instanceof PDFGraphics2D;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void paintTextRun(TextRun textRun, Graphics2D g2d) {
         AttributedCharacterIterator runaci = textRun.getACI();
         runaci.first();
@@ -86,7 +88,9 @@ class PDFTextPainter extends NativeTextPainter {
         runaci.first(); //Reset ACI
 
         final PDFGraphics2D pdf = (PDFGraphics2D)g2d;
+
         PDFTextUtil textUtil = new PDFTextUtil(pdf.fontInfo) {
+            @Override
             protected void write(String code) {
                 pdf.currentStream.write(code);
             }
@@ -109,7 +113,7 @@ class PDFTextPainter extends NativeTextPainter {
             return;
         }
 
-        textUtil.saveGraphicsState();
+        pdf.saveGraphicsState();
         textUtil.concatMatrix(g2d.getTransform());
         Shape imclip = g2d.getClip();
         pdf.writeClip(imclip);
@@ -182,14 +186,24 @@ class PDFTextPainter extends NativeTextPainter {
                 }
             }
             Font f = textUtil.selectFontForChar(ch);
-            if (f != textUtil.getCurrentFont()) {
+            char paintChar = (CharUtilities.isAnySpace(ch) ? ' ' : ch);
+            char mappedChar = f.mapChar(paintChar);
+            boolean encodingChanging = false; // used for single byte
+            if (!textUtil.isMultiByteFont(f.getFontName())) {
+                int encoding = mappedChar / 256;
+                mappedChar = (char) (mappedChar % 256);
+                if (textUtil.getCurrentEncoding() != encoding) {
+                    textUtil.setCurrentEncoding(encoding);
+                    encodingChanging = true;
+                }
+            }
+            if (f != textUtil.getCurrentFont() || encodingChanging) {
                 textUtil.writeTJ();
                 textUtil.setCurrentFont(f);
                 textUtil.writeTf(f);
                 textUtil.writeTextMatrix(localTransform);
             }
-            char paintChar = (CharUtilities.isAnySpace(ch) ? ' ' : ch);
-            textUtil.writeTJChar(paintChar);
+            textUtil.writeTJMappedChar(mappedChar);
 
             //Update last position
             prevPos = glyphPos;
@@ -197,7 +211,7 @@ class PDFTextPainter extends NativeTextPainter {
         }
         textUtil.writeTJ();
         textUtil.endTextObject();
-        textUtil.restoreGraphicsState();
+        pdf.restoreGraphicsState();
         if (DEBUG) {
             g2d.setStroke(new BasicStroke(0));
             g2d.setColor(Color.LIGHT_GRAY);

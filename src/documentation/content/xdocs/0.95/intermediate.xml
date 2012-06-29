@@ -19,13 +19,13 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Intermediate Format</title>
+    <title>Apache™ FOP: Intermediate Format</title>
     <version>$Revision$</version>
   </header>
   <body>
     <note>
       Please note that the intermediate format is an <strong>advanced feature</strong> and can be ignored by most
-      users of Apache FOP.
+      users of Apache™ FOP.
     </note>
     <section id="introduction">
       <title>Introduction</title>

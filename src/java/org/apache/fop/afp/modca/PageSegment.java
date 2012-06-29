@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,10 +32,10 @@ import java.util.List;
 public class PageSegment extends AbstractNamedAFPObject {
 
     private List/*<AbstractAFPObject>*/ objects = null;
-    
+
     /**
      * Main constructor
-     * 
+     *
      * @param name the name of this object
      */
     public PageSegment(String name) {
@@ -44,7 +44,7 @@ public class PageSegment extends AbstractNamedAFPObject {
 
     /**
      * Returns a list of objects contained withing this page segment
-     * 
+     *
      * @return a list of objects contained within this page segment
      */
     public List/*<AbstractAFPObject>*/ getObjects() {
@@ -56,13 +56,13 @@ public class PageSegment extends AbstractNamedAFPObject {
 
     /**
      * Adds a resource object (image/graphic) to this page segment
-     * 
+     *
      * @param object the resource objec to add to this page segment
      */
     public void addObject(AbstractAFPObject object) {
         getObjects().add(object);
     }
-    
+
     /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
@@ -82,7 +82,7 @@ public class PageSegment extends AbstractNamedAFPObject {
         copySF(data, Type.END, Category.PAGE_SEGMENT);
         os.write(data);
     }
- 
+
     /** {@inheritDoc} */
     public String toString() {
         return this.name;

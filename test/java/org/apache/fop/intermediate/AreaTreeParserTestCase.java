@@ -22,6 +22,7 @@ package org.apache.fop.intermediate;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -32,24 +33,38 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
-import org.w3c.dom.Document;
-
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.AreaTreeParser;
 import org.apache.fop.area.RenderPagesModel;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.layoutengine.LayoutEngineTestUtils;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.xml.XMLRenderer;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.w3c.dom.Document;
 
 /**
  * Tests the area tree parser.
  */
-public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
+@RunWith(Parameterized.class)
+public class AreaTreeParserTestCase extends AbstractIntermediateTest {
 
+    /**
+     * Creates the parameters for this test.
+     *
+     * @return the list of file arrays populated with test files
+     * @throws IOException if an I/O error occurs while reading the test file
+     */
+    @Parameters
+    public static Collection<File[]> getParameters() throws IOException {
+        return LayoutEngineTestUtils.getLayoutTestFiles();
+    }
     /**
      * Constructor for the test suite that is used for each test file.
      * @param testFile the test file to run
@@ -72,7 +87,7 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
         setErrorListener(transformer);
 
         //Set up XMLRenderer to render to a DOM
-        TransformerHandler handler = env.getTransformerFactory().newTransformerHandler();
+        TransformerHandler handler = testAssistant.getTransformerFactory().newTransformerHandler();
         DOMResult domResult = new DOMResult();
         handler.setResult(domResult);
 
@@ -82,10 +97,9 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
         Renderer targetRenderer = userAgent.getRendererFactory().createRenderer(
                 userAgent, getTargetMIME());
 
-        XMLRenderer renderer = new XMLRenderer();
+        XMLRenderer renderer = new XMLRenderer(userAgent);
         renderer.mimicRenderer(targetRenderer);
         renderer.setContentHandler(handler);
-        renderer.setUserAgent(userAgent);
 
         userAgent.setRendererOverride(renderer);
 
@@ -113,15 +127,13 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
         AreaTreeParser parser = new AreaTreeParser();
 
         //Set up XMLRenderer to render to a DOM
-        TransformerHandler handler = env.getTransformerFactory().newTransformerHandler();
+        TransformerHandler handler = testAssistant.getTransformerFactory().newTransformerHandler();
         DOMResult domResult = new DOMResult();
         handler.setResult(domResult);
-        XMLRenderer renderer = new XMLRenderer();
-        renderer.setContentHandler(handler);
-
         FOUserAgent userAgent = createUserAgent();
+        XMLRenderer renderer = new XMLRenderer(userAgent);
         userAgent.setRendererOverride(renderer);
-        renderer.setUserAgent(userAgent);
+        renderer.setContentHandler(handler);
 
         FontInfo fontInfo = new FontInfo();
         AreaTreeModel treeModel = new RenderPagesModel(userAgent,
@@ -130,6 +142,19 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
         treeModel.endDocument();
 
         return (Document)domResult.getNode();
+    }
+
+    @Override
+    @Test
+    public void runTest() throws Exception {
+        try {
+            testParserToIntermediateFormat();
+            testParserToPDF();
+        } catch (Exception e) {
+            org.apache.commons.logging.LogFactory.getLog(this.getClass()).error(
+                    "Error on " + testFile.getName());
+            throw e;
+        }
     }
 
 }

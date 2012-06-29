@@ -42,6 +42,11 @@
           </xs:complexContent>
         </xs:complexType>
       </xs:element>
+      <xs:element name="id">
+        <xs:complexType>
+          <xs:attribute name="name" use="required" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
       <xs:element name="font">
         <xs:complexType>
           <xs:attribute name="family" type="xs:string"/>
@@ -61,11 +66,8 @@
               <xs:attribute name="y" use="required" type="mf:lengthType"/>
               <xs:attribute name="letter-spacing" type="mf:lengthType"/>
               <xs:attribute name="word-spacing" type="mf:lengthType"/>
-              <xs:attribute name="dx">
-                <xs:simpleType>
-                  <xs:list itemType="mf:lengthType"/>
-                </xs:simpleType>
-              </xs:attribute>
+              <xs:attribute name="dx" type="mf:lengthListType"/>
+              <xs:attribute name="dp" type="mf:dpListType"/>
             </xs:extension>
           </xs:simpleContent>
         </xs:complexType>
@@ -126,10 +128,10 @@
     <xs:attributeGroup ref="mf:sizeAtts"/>
   </xs:attributeGroup>
    <xs:attributeGroup name="borderAtts">
-    <xs:attribute name="start" type="mf:borderDef"/>
-    <xs:attribute name="end" type="mf:borderDef"/>
-    <xs:attribute name="before" type="mf:borderDef"/>
-    <xs:attribute name="after" type="mf:borderDef"/>
+    <xs:attribute name="left" type="mf:borderDef"/>
+    <xs:attribute name="right" type="mf:borderDef"/>
+    <xs:attribute name="top" type="mf:borderDef"/>
+    <xs:attribute name="bottom" type="mf:borderDef"/>
   </xs:attributeGroup>
   <xs:attributeGroup name="fillAtts">
     <xs:attribute name="fill" type="xs:string" default="none"/>
@@ -141,4 +143,22 @@
   <xs:attributeGroup name="foreignAtts">
     <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:attributeGroup>
+  <xs:attribute name="xmlSpace">
+    <!--
+    This is a copy of the definition of the xml:space attribute, from the schema for the XML 
+    namespace. That schema can be found at http://www.w3.org/2001/xml.xsd.
+
+    Ideally we would want to re-use that schema. However, we don’t want to refer to it using an 
+    import statement is it causes too many connections to the W3C website. Neither can we store a 
+    local copy and ship it with FOP as its license is the W3C Document License and so far we are not 
+    allowed to redistribute files under such a license.
+    See also https://issues.apache.org/jira/browse/LEGAL-111
+    -->
+    <xs:simpleType>
+      <xs:restriction base="xs:NCName">
+        <xs:enumeration value="default"/>
+        <xs:enumeration value="preserve"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:attribute>
 </xs:schema>

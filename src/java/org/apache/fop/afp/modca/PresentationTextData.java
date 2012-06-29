@@ -24,7 +24,6 @@ import java.io.OutputStream;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
-import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaConstants;
 import org.apache.fop.afp.util.BinaryUtils;
 
@@ -47,7 +46,7 @@ import org.apache.fop.afp.util.BinaryUtils;
  * which signal an alternate mode of processing for the content of the current
  * Presentation Text data.
  * <p>
- * The content for this object can be created using {@link PtocaBuilder}.
+ * The content for this object can be created using {@link org.apache.fop.afp.ptoca.PtocaBuilder}.
  */
 public class PresentationTextData extends AbstractAFPObject implements PtocaConstants {
 

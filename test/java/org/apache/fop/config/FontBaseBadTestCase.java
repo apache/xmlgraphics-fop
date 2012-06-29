@@ -19,16 +19,12 @@
 
 package org.apache.fop.config;
 
-/*
+/**
  * This font base does not exist and a relative font path is used.
  */
-public class FontBaseBadTestCase extends BaseDestructiveUserConfigTestCase {
+public class FontBaseBadTestCase extends BaseDestructiveUserConfigTest {
 
-    public FontBaseBadTestCase(String name) {
-        super(name);
-    }
-
-    /** {@inheritDoc} */
+    @Override
     public String getUserConfigFilename() {
         return "test_fontbase_bad.xconf";
     }

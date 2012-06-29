@@ -40,7 +40,7 @@ public class TestElementMapping extends ElementMapping {
     /** @see org.apache.fop.fo.ElementMapping#initialize() */
     protected void initialize() {
         if (foObjs == null) {
-            foObjs = new java.util.HashMap();
+            foObjs = new java.util.HashMap<String, Maker>();
             foObjs.put("assert", new AssertMaker());
         }
     }

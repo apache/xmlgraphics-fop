@@ -90,23 +90,13 @@ public class FontFileReader {
     }
 
     /**
-     * Set current file position to offset
-     *
-     * @param add The number of bytes to advance
-     * @throws IOException In case of an I/O problem
-     */
-    public void seekAdd(long add) throws IOException {
-        seekSet(current + add);
-    }
-
-    /**
      * Skip a given number of bytes.
      *
      * @param add The number of bytes to advance
      * @throws IOException In case of an I/O problem
      */
     public void skip(long add) throws IOException {
-        seekAdd(add);
+        seekSet(current + add);
     }
 
     /**
@@ -133,7 +123,7 @@ public class FontFileReader {
      * @return One byte
      * @throws IOException If EOF is reached
      */
-    public byte read() throws IOException {
+    private byte read() throws IOException {
         if (current >= fsize) {
             throw new java.io.EOFException("Reached EOF, file size=" + fsize);
         }
@@ -198,14 +188,15 @@ public class FontFileReader {
      * @param val The value to write
      * @throws IOException If EOF is reached
      */
-    public final void writeTTFUShort(int pos, int val) throws IOException {
+    public final void writeTTFUShort(long pos, int val) throws IOException {
         if ((pos + 2) > fsize) {
             throw new java.io.EOFException("Reached EOF");
         }
         final byte b1 = (byte)((val >> 8) & 0xff);
         final byte b2 = (byte)(val & 0xff);
-        file[pos] = b1;
-        file[pos + 1] = b2;
+        final int fileIndex = (int) pos;
+        file[fileIndex] = b1;
+        file[fileIndex + 1] = b2;
     }
 
     /**
@@ -277,14 +268,14 @@ public class FontFileReader {
     public final String readTTFString() throws IOException {
         int i = current;
         while (file[i++] != 0) {
-            if (i > fsize) {
+            if (i >= fsize) {
                 throw new java.io.EOFException("Reached EOF, file size="
                                                + fsize);
             }
         }
 
-        byte[] tmp = new byte[i - current];
-        System.arraycopy(file, current, tmp, 0, i - current);
+        byte[] tmp = new byte[i - current - 1];
+        System.arraycopy(file, current, tmp, 0, i - current - 1);
         return new String(tmp, "ISO-8859-1");
     }
 
@@ -352,6 +343,11 @@ public class FontFileReader {
         System.arraycopy(file, offset, ret, 0, length);
         return ret;
     }
-
-
+    /**
+     * Returns the full byte array representation of the file.
+     * @return byte array.
+     */
+    public byte[] getAllBytes() {
+        return file;
+    }
 }

@@ -26,18 +26,9 @@ import org.apache.fop.svg.PDFTranscoder;
  * Basic runtime test for the PDF transcoder. It is used to verify that
  * nothing obvious is broken after compiling.
  */
-public class BasicPDFTranscoderTestCase extends AbstractBasicTranscoderTestCase {
+public class BasicPDFTranscoderTestCase extends AbstractBasicTranscoderTest {
 
-    /**
-     * @see junit.framework.TestCase#TestCase(String)
-     */
-    public BasicPDFTranscoderTestCase(String name) {
-        super(name);
-    }
-
-    /**
-     * @see org.apache.fop.AbstractBasicTranscoderTestCase#createTranscoder()
-     */
+    @Override
     protected Transcoder createTranscoder() {
         return new PDFTranscoder();
     }

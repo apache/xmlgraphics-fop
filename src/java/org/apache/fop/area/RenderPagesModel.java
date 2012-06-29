@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.xml.sax.SAXException;
 
@@ -50,9 +51,10 @@ public class RenderPagesModel extends AreaTreeModel {
     /**
      * Pages that have been prepared but not rendered yet.
      */
-    protected List/*<PageViewport>*/ prepared = new java.util.ArrayList/*<PageViewport>*/();
-    private List/*<OffDocumentItem>*/ pendingODI = new java.util.ArrayList/*<OffDocumentItem>*/();
-    private List/*<OffDocumentItem>*/ endDocODI = new java.util.ArrayList/*<OffDocumentItem>*/();
+    protected List<PageViewport> prepared = new java.util.ArrayList<PageViewport>();
+
+    private List<OffDocumentItem> pendingODI = new java.util.ArrayList<OffDocumentItem>();
+    private List<OffDocumentItem> endDocODI = new java.util.ArrayList<OffDocumentItem>();
 
     /**
      * Create a new render pages model with the given renderer.
@@ -82,7 +84,13 @@ public class RenderPagesModel extends AreaTreeModel {
         }
     }
 
+    @Override
+    public void setDocumentLocale(Locale locale) {
+        renderer.setDocumentLocale(locale);
+    }
+
     /** {@inheritDoc} */
+    @Override
     public void startPageSequence(PageSequence pageSequence) {
         super.startPageSequence(pageSequence);
         if (renderer.supportsOutOfOrder()) {
@@ -98,6 +106,7 @@ public class RenderPagesModel extends AreaTreeModel {
      * the page is added to a queue.
      * @param page the page to add to the model
      */
+    @Override
     public void addPage(PageViewport page) {
         super.addPage(page);
 
@@ -152,14 +161,15 @@ public class RenderPagesModel extends AreaTreeModel {
      *         false if the renderer doesn't support out of order
      *         rendering and there are pending pages
      */
-    protected boolean checkPreparedPages(PageViewport newPageViewport, boolean
-        renderUnresolved) {
+    protected boolean checkPreparedPages(PageViewport newPageViewport,
+                                         boolean renderUnresolved) {
+
         for (Iterator iter = prepared.iterator(); iter.hasNext();) {
             PageViewport pageViewport = (PageViewport)iter.next();
             if (pageViewport.isResolved() || renderUnresolved) {
                 if (!renderer.supportsOutOfOrder()
                         && pageViewport.getPageSequence().isFirstPage(pageViewport)) {
-                    renderer.startPageSequence(getCurrentPageSequence());
+                    renderer.startPageSequence(pageViewport.getPageSequence());
                 }
                 renderPage(pageViewport);
                 pageViewport.clear();
@@ -183,11 +193,11 @@ public class RenderPagesModel extends AreaTreeModel {
             renderer.renderPage(pageViewport);
             if (!pageViewport.isResolved()) {
                 String[] idrefs = pageViewport.getIDRefs();
-                for (int count = 0; count < idrefs.length; count++) {
+                for (String idref : idrefs) {
                     AreaEventProducer eventProducer = AreaEventProducer.Provider.get(
                             renderer.getUserAgent().getEventBroadcaster());
                     eventProducer.unresolvedIDReferenceOnPage(this,
-                            pageViewport.getPageNumberString(), idrefs[count]);
+                            pageViewport.getPageNumberString(), idref);
                 }
             }
         } catch (Exception e) {
@@ -214,9 +224,8 @@ public class RenderPagesModel extends AreaTreeModel {
         prepared.add(page);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
     public void handleOffDocumentItem(OffDocumentItem oDI) {
         switch(oDI.getWhenToProcess()) {
             case OffDocumentItem.IMMEDIATELY:
@@ -233,9 +242,8 @@ public class RenderPagesModel extends AreaTreeModel {
         }
     }
 
-    private void processOffDocumentItems(List list) {
-        for (int count = 0; count < list.size(); count++) {
-            OffDocumentItem oDI = (OffDocumentItem)list.get(count);
+    private void processOffDocumentItems(List<OffDocumentItem> list) {
+        for (OffDocumentItem oDI : list) {
             renderer.processOffDocumentItem(oDI);
         }
     }
@@ -244,6 +252,7 @@ public class RenderPagesModel extends AreaTreeModel {
      * End the document. Render any end document OffDocumentItems
      * {@inheritDoc}
      */
+    @Override
     public void endDocument() throws SAXException {
         // render any pages that had unresolved ids
         checkPreparedPages(null, true);

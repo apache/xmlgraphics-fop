@@ -44,7 +44,7 @@ public class OldExtensionElementMapping extends ElementMapping {
      */
     protected void initialize() {
         if (foObjs == null) {
-            foObjs = new HashMap();
+            foObjs = new HashMap<String, Maker>();
             foObjs.put("outline", new UnknownXMLObj.Maker(URI));
             foObjs.put("label", new UnknownXMLObj.Maker(URI));
         }

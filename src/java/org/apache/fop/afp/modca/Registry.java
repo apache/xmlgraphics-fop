@@ -20,6 +20,7 @@
 package org.apache.fop.afp.modca;
 
 import java.util.Collections;
+import java.util.HashMap;
 
 import org.apache.xmlgraphics.util.MimeConstants;
 
@@ -43,9 +44,8 @@ public final class Registry {
     private static final byte COMPID_TRUETYPE_OPENTYPE_FONT_COLLECTION_RESOURCE_OBJECT = 53;
 
     /** mime type entry mapping */
-    private final java.util.Map/*<String, ObjectType>*/ mimeObjectTypeMap
-        = Collections.synchronizedMap(
-                new java.util.HashMap/*<String, ObjectType>*/());
+    private final java.util.Map<String, ObjectType> mimeObjectTypeMap
+               = Collections.synchronizedMap(new HashMap<String, ObjectType>());
 
     /** singleton instance */
     private static Registry instance = null;
@@ -203,7 +203,7 @@ public final class Registry {
      * @return the MOD:CA object type
      */
     public ObjectType getObjectType(String mimeType) {
-        return (ObjectType)mimeObjectTypeMap.get(mimeType);
+        return mimeObjectTypeMap.get(mimeType);
     }
 
     /**

@@ -19,10 +19,12 @@
 
 package org.apache.fop.fonts;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.xmlgraphics.fonts.Glyphs;
 
 /**
@@ -49,7 +51,7 @@ public abstract class Typeface implements FontMetrics {
     /** An optional event listener that receives events such as missing glyphs etc. */
     protected FontEventListener eventListener;
 
-    private Set warnedChars;
+    private Set<Character> warnedChars;
 
     /**
      * Get the encoding of the font.
@@ -120,7 +122,7 @@ public abstract class Typeface implements FontMetrics {
         // Give up, character is not available
         Character ch = new Character(c);
         if (warnedChars == null) {
-            warnedChars = new java.util.HashSet();
+            warnedChars = new HashSet<Character>();
         }
         if (warnedChars.size() < 8 && !warnedChars.contains(ch)) {
             warnedChars.add(ch);
@@ -139,9 +141,13 @@ public abstract class Typeface implements FontMetrics {
             }
         }
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
-        return getFullName();
-    }   
+        StringBuffer sbuf = new StringBuffer(super.toString());
+        sbuf.append('{');
+        sbuf.append(getFullName());
+        sbuf.append('}');
+        return sbuf.toString();
+    }
 }

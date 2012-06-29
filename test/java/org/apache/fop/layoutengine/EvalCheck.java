@@ -42,16 +42,6 @@ public class EvalCheck implements LayoutEngineCheck, IFCheck {
     private PrefixResolver prefixResolver;
 
     /**
-     * Creates a new instance
-     * @param expected expected value
-     * @param xpath XPath statement that needs to be evaluated
-     */
-    public EvalCheck(String expected, String xpath) {
-        this.expected = expected;
-        this.xpath = xpath;
-    }
-
-    /**
      * Creates a new instance from a DOM node.
      * @param node DOM node that defines this check
      */

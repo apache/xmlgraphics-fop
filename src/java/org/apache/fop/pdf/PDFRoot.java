@@ -21,6 +21,9 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Locale;
+
+import org.apache.fop.util.LanguageTags;
 
 /**
  * Class representing a Root (/Catalog) object.
@@ -69,10 +72,11 @@ public class PDFRoot extends PDFDictionary {
         setObjectNumber(objnum);
         put("Type", new PDFName("Catalog"));
         setRootPages(pages);
+        setLanguage("x-unknown");
     }
 
     /** {@inheritDoc} */
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         getDocument().getProfile().verifyTaggedPDF();
         return super.output(stream);
     }
@@ -201,7 +205,7 @@ public class PDFRoot extends PDFDictionary {
      * @since PDF 1.4
      */
     public void setMetadata(PDFMetadata meta) {
-        if (getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
+        if (getDocumentSafely().getPDFVersion().compareTo(Version.V1_4) >= 0) {
             put("Metadata", meta.makeReference());
         }
     }
@@ -231,7 +235,7 @@ public class PDFRoot extends PDFDictionary {
      * @since PDF 1.4
      */
     public void addOutputIntent(PDFOutputIntent outputIntent) {
-        if (getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
+        if (getDocumentSafely().getPDFVersion().compareTo(Version.V1_4) >= 0) {
             PDFArray outputIntents = getOutputIntents();
             if (outputIntents == null) {
                 outputIntents = new PDFArray(this);
@@ -239,6 +243,17 @@ public class PDFRoot extends PDFDictionary {
             }
             outputIntents.add(outputIntent);
         }
+    }
+
+    /**
+     * Sets the "Version" entry. If this version is greater than that specified in the header, this
+     * version takes precedence.
+     *
+     * @param version the PDF document version
+     * @since PDF 1.4
+     */
+    void setVersion(Version version) {
+        put("Version", new PDFName(version.toString()));
     }
 
     /**
@@ -251,13 +266,17 @@ public class PDFRoot extends PDFDictionary {
     }
 
     /**
-     * Sets the language identifier of the document.
-     * @param lang the language identifier of the document.
+     * Sets the locale of the document.
+     * @param locale the locale of the document.
      */
-    public void setLanguage(String lang) {
-        if (lang == null) {
-            throw new NullPointerException("lang must not be null");
+    public void setLanguage(Locale locale) {
+        if (locale == null) {
+            throw new NullPointerException("locale must not be null");
         }
+        setLanguage(LanguageTags.toLanguageTag(locale));
+    }
+
+    private void setLanguage(String lang) {
         put("Lang", lang);
     }
 

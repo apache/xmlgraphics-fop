@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +20,7 @@
 
 <document>
   <header>
-    <title>FOP Design: Images</title>
+    <title>Apache™ FOP Design: Images</title>
     <version>$Revision$</version>
   </header>
   <body>
@@ -35,7 +35,7 @@ keep a list of invalid image urls.</p>
 <p>We have a number of different caching schemes that are possible.</p>
 <p>All images are referred to using the url given in the XSL:FO after
 removing "url('')" wrapping. This does
-not include any sort of resolving such as relative -> absolute. The
+not include any sort of resolving such as relative -&gt; absolute. The
 external graphic in the FO Tree and the image area in the Area Tree only
 have the url as a reference.
 The images are handled through a static interface in ImageFactory.</p>
@@ -149,4 +149,3 @@ renderer and the image can be released from the image cache.</p>
 
     </body>
 </document>
-

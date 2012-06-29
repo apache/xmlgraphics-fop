@@ -17,7 +17,7 @@
       <fonts>
 		<!-- this font is with a relative metrics-url
 		     so should call upon the bad font-base -->
-        <font metrics-url="test/resources/fonts/glb12.ttf.xml" embed-url="test/resources/fonts/glb12.ttf">
+        <font metrics-url="test/resources/fonts/ttf/glb12.ttf.xml" embed-url="test/resources/fonts/ttf/glb12.ttf">
           <font-triplet name="Gladiator" style="normal" weight="normal"/>
         </font>
       </fonts>

@@ -19,12 +19,12 @@
 
 package org.apache.fop.events;
 
-import junit.framework.Assert;
+import static org.junit.Assert.fail;
 
 /**
  * Class that checks that an expected event is produced, and only this one.
  */
-class EventChecker extends Assert implements EventListener {
+class EventChecker implements EventListener {
 
     private final String expectedEventID;
 
@@ -36,11 +36,9 @@ class EventChecker extends Assert implements EventListener {
 
     public void processEvent(Event event) {
         // Always create the message to make sure there is no error in the formatting process
-        String msg = EventFormatter.format(event);
-        if (event.getEventID().equals(expectedEventID)) {
+        String id = event.getEventID();
+        if (id.equals(expectedEventID)) {
             eventReceived = true;
-        } else {
-            fail("Unexpected event: id = " + event.getEventID() + ": " + msg);
         }
     }
 

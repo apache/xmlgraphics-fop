@@ -21,17 +21,21 @@ package org.apache.fop.fo.extensions.xmp;
 
 import java.io.Serializable;
 
-import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+
 import org.apache.xmlgraphics.util.XMLizable;
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.XMPConstants;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
+
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 
 /**
  * This is the pass-through value object for the XMP metadata extension.
  */
 public class XMPMetadata implements ExtensionAttachment, Serializable, XMLizable {
+
+    private static final long serialVersionUID = 591347206217931578L;
 
     /** The category URI for this extension attachment. */
     public static final String CATEGORY = XMPConstants.XMP_NAMESPACE;

@@ -20,10 +20,11 @@
 package org.apache.fop.hyphenation;
 
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Set;
 
 /**
- * This is a cache for HyphenationTree instances.
+ * <p>This is a cache for HyphenationTree instances.</p>
  */
 public class HyphenationTreeCache {
 
@@ -39,7 +40,7 @@ public class HyphenationTreeCache {
      * @return the HyhenationTree instance or null if it's not in the cache
      */
     public HyphenationTree getHyphenationTree(String lang, String country) {
-        String key = constructKey(lang, country);
+        String key = constructLlccKey(lang, country);
 
         // first try to find it in the cache
         if (hyphenTrees.containsKey(key)) {
@@ -57,13 +58,31 @@ public class HyphenationTreeCache {
      * @param country the country (may be null or "none")
      * @return the resulting key
      */
-    public static String constructKey(String lang, String country) {
+    public static String constructLlccKey(String lang, String country) {
         String key = lang;
         // check whether the country code has been used
         if (country != null && !country.equals("none")) {
             key += "_" + country;
         }
         return key;
+    }
+
+    /**
+     * If the user configured a hyphenation pattern file name
+     * for this (lang,country) value, return it. If not, return null.
+     * @param lang the language
+     * @param country the country (may be null or "none")
+     * @param hyphPatNames the map of user-configured hyphenation pattern file names
+     * @return the hyphenation pattern file name or null
+     */
+    public static String constructUserKey(String lang, String country, Map hyphPatNames) {
+        String userKey = null;
+        if (hyphPatNames != null) {
+            String key = constructLlccKey(lang, country);
+            key = key.replace('_', '-');
+            userKey = (String) hyphPatNames.get(key);
+        }
+        return userKey;
     }
 
     /**
@@ -77,7 +96,7 @@ public class HyphenationTreeCache {
 
     /**
      * Notes a key to a hyphenation tree as missing.
-     * This is to avoid searching a second time for a hyphneation pattern file which is not
+     * This is to avoid searching a second time for a hyphenation pattern file which is not
      * available.
      * @param key the key (ex. "de_CH" or "en")
      */
@@ -90,7 +109,7 @@ public class HyphenationTreeCache {
 
     /**
      * Indicates whether a hyphenation file has been requested before but it wasn't available.
-     * This is to avoid searching a second time for a hyphneation pattern file which is not
+     * This is to avoid searching a second time for a hyphenation pattern file which is not
      * available.
      * @param key the key (ex. "de_CH" or "en")
      * @return true if the hyphenation tree is unavailable

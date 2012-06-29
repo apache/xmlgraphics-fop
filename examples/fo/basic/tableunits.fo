@@ -67,9 +67,9 @@
       <fo:block space-before="12pt" space-after="6pt">The next table has width=100% on the table no column widths specified on the table-column element.</fo:block>
       <!-- table start -->
       <fo:table border-collapse="separate" table-layout="fixed" width="100%">
-        <fo:table-column background-color="yellow"/>
-        <fo:table-column background-color="blue"/>
-        <fo:table-column background-color="green"/>
+        <fo:table-column column-width="proportional-column-width(1)" background-color="yellow"/>
+        <fo:table-column column-width="proportional-column-width(1)" background-color="blue"/>
+        <fo:table-column column-width="proportional-column-width(1)" background-color="green"/>
         <fo:table-body>
           <fo:table-row>
             <fo:table-cell display-align="before"><fo:block>Some text to make this cell
@@ -83,7 +83,7 @@
       <fo:block space-before="12pt" space-after="6pt">The next table has fixed column widths=13cm, ipd.optimum=12cm and ipd.max = 100%.</fo:block>
       <!-- table start -->
       <fo:table border-collapse="separate" 
-                table-layout="fixed"
+                table-layout="fixed" width="100%"
                 inline-progression-dimension="12cm"
                 inline-progression-dimension.maximum="100%"
                 >
@@ -122,8 +122,8 @@
       <!-- table start -->
       <fo:table border-collapse="separate" table-layout="fixed" width="70% + 1cm">
         <fo:table-column column-width="from-parent('width') div 3" background-color="yellow"/>
-        <fo:table-column background-color="blue"/>
-        <fo:table-column background-color="green"/>
+        <fo:table-column column-width="proportional-column-width(1)" background-color="blue"/>
+        <fo:table-column column-width="proportional-column-width(1)" background-color="green"/>
         <fo:table-body>
           <fo:table-row>
             <fo:table-cell display-align="before"><fo:block>Some text to make this cell
@@ -140,11 +140,11 @@
       </fo:block>
       <!-- table start -->
       <fo:table border-collapse="separate"
-                table-layout="fixed"
+                table-layout="fixed" width="100%"
                 inline-progression-dimension="15cm">
-        <fo:table-column background-color="yellow"/>
+        <fo:table-column column-width="proportional-column-width(1)" background-color="yellow"/>
         <fo:table-column column-width="3cm" background-color="blue"/>
-        <fo:table-column background-color="green"/>
+        <fo:table-column column-width="proportional-column-width(1)" background-color="green"/>
         <fo:table-body>
           <fo:table-row>
             <fo:table-cell display-align="before"><fo:block>Some text to make this cell
@@ -159,10 +159,10 @@
         The next table specifies neither width nor inline-progression-dimension.
       </fo:block>
       <!-- table start -->
-      <fo:table table-layout="fixed" border-collapse="separate">
-        <fo:table-column background-color="yellow"/>
+      <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+        <fo:table-column column-width="proportional-column-width(1)" background-color="yellow"/>
         <fo:table-column column-width="3cm" background-color="blue"/>
-        <fo:table-column background-color="green"/>
+        <fo:table-column column-width="proportional-column-width(1)" background-color="green"/>
         <fo:table-body>
           <fo:table-row>
             <fo:table-cell display-align="before"><fo:block>Some text to make this cell
@@ -178,11 +178,11 @@
         specifies a column width of 5cm on the middle column only.
       </fo:block>
       <!-- table start -->
-      <fo:table table-layout="fixed" border-collapse="separate"
+      <fo:table table-layout="fixed" width="100%" border-collapse="separate"
                 inline-progression-dimension.minimum="10cm">
-        <fo:table-column background-color="yellow"/>
+        <fo:table-column column-width="proportional-column-width(1)" background-color="yellow"/>
         <fo:table-column column-width="5cm" background-color="blue"/>
-        <fo:table-column background-color="green"/>
+        <fo:table-column column-width="proportional-column-width(1)" background-color="green"/>
         <fo:table-body>
           <fo:table-row>
             <fo:table-cell display-align="before"><fo:block>Some text to make this cell
@@ -194,17 +194,17 @@
       </fo:table>
 
       <fo:block space-before="12pt" space-after="6pt">
-        The next table specifies inline-progression-dimension.minimum="10cm",
-        inline-progression-dimension.maximum="17cm and
+        The next table specifies inline-progression-dimension.minimum=&quot;10cm&quot;,
+        inline-progression-dimension.maximum=&quot;17cm and
         specifies a column width of 5cm on the middle column only.
       </fo:block>
       <!-- table start -->
-      <fo:table table-layout="fixed" border-collapse="separate"
+      <fo:table table-layout="fixed" width="100%" border-collapse="separate"
                 inline-progression-dimension.minimum="10cm"
                 inline-progression-dimension.maximum="17cm">
-        <fo:table-column background-color="yellow"/>
+        <fo:table-column column-width="proportional-column-width(1)" background-color="yellow"/>
         <fo:table-column column-width="5cm" background-color="blue"/>
-        <fo:table-column background-color="green"/>
+        <fo:table-column column-width="proportional-column-width(1)" background-color="green"/>
         <fo:table-body>
           <fo:table-row>
             <fo:table-cell display-align="before"><fo:block>Some text to make this cell

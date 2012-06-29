@@ -20,18 +20,17 @@
 package org.apache.fop.fonts;
 
 import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.fonts.autodetect.FontInfoFinder;
 
 /**
- * Adds a list of fonts to a given font info list 
+ * Adds a list of fonts to a given font info list
  */
 public class FontAdder {
-    private FontEventListener listener;
-    private FontResolver resolver;
-    private FontManager manager;
+    private final FontEventListener listener;
+    private final FontResolver resolver;
+    private final FontManager manager;
 
     /**
      * Main constructor
@@ -44,20 +43,19 @@ public class FontAdder {
         this.resolver = resolver;
         this.listener = listener;
     }
-    
+
     /**
      * Iterates over font url list adding to font info list
      * @param fontURLList font file list
      * @param fontInfoList a configured font info list
      */
-    public void add(List/*<URL>*/ fontURLList, List/*<EmbedFontInfo>*/ fontInfoList) {
+    public void add(List<URL> fontURLList, List<EmbedFontInfo> fontInfoList) {
         FontCache cache = manager.getFontCache();
         FontInfoFinder finder = new FontInfoFinder();
         finder.setEventListener(listener);
 
-        for (Iterator iter = fontURLList.iterator(); iter.hasNext();) {
-            URL fontUrl = (URL)iter.next();
-            EmbedFontInfo[] embedFontInfos = finder.find(fontUrl, resolver, cache);
+        for (URL fontURL : fontURLList) {
+            EmbedFontInfo[] embedFontInfos = finder.find(fontURL, resolver, cache);
             if (embedFontInfos == null) {
                 continue;
             }

@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.pcl;
 
-import java.awt.Graphics2D;
 import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
@@ -108,11 +107,10 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator
                 throws FOPException {
         FontManager fontManager = userAgent.getFactory().getFontManager();
 
-        Graphics2D graphics2D = Java2DFontMetrics.createFontMetricsGraphics2D();
-
-        List fontCollections = new java.util.ArrayList();
-        fontCollections.add(new Base14FontCollection(graphics2D));
-        fontCollections.add(new InstalledFontCollection(graphics2D));
+        final Java2DFontMetrics java2DFontMetrics = new Java2DFontMetrics();
+        final List fontCollections = new java.util.ArrayList();
+        fontCollections.add(new Base14FontCollection(java2DFontMetrics));
+        fontCollections.add(new InstalledFontCollection(java2DFontMetrics));
 
         Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
         if (cfg != null) {
@@ -120,7 +118,8 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator
             FontEventListener listener = new FontEventAdapter(
                     userAgent.getEventBroadcaster());
             List fontList = buildFontList(cfg, fontResolver, listener);
-            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList));
+            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList,
+                                userAgent.isComplexScriptFeaturesEnabled()));
         }
 
         fontManager.setup(fontInfo,

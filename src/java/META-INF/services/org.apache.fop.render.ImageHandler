@@ -1,6 +1,7 @@
 org.apache.fop.render.pdf.PDFImageHandlerGraphics2D
 org.apache.fop.render.pdf.PDFImageHandlerRenderedImage
 org.apache.fop.render.pdf.PDFImageHandlerRawJPEG
+org.apache.fop.render.pdf.PDFImageHandlerRawPNG
 org.apache.fop.render.pdf.PDFImageHandlerRawCCITTFax
 org.apache.fop.render.pdf.PDFImageHandlerSVG
 org.apache.fop.render.java2d.Java2DImageHandlerRenderedImage
@@ -11,10 +12,12 @@ org.apache.fop.render.ps.PSImageHandlerRenderedImage
 org.apache.fop.render.ps.PSImageHandlerEPS
 org.apache.fop.render.ps.PSImageHandlerRawCCITTFax
 org.apache.fop.render.ps.PSImageHandlerRawJPEG
+org.apache.fop.render.ps.PSImageHandlerRawPNG
 org.apache.fop.render.ps.PSImageHandlerGraphics2D
 org.apache.fop.render.ps.PSImageHandlerSVG
 org.apache.fop.render.afp.AFPImageHandlerRenderedImage
 org.apache.fop.render.afp.AFPImageHandlerGraphics2D
 org.apache.fop.render.afp.AFPImageHandlerRawStream
 org.apache.fop.render.afp.AFPImageHandlerRawCCITTFax
+org.apache.fop.render.afp.AFPImageHandlerRawJPEG
 org.apache.fop.render.afp.AFPImageHandlerSVG

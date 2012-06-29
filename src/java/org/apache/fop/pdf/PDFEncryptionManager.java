@@ -109,16 +109,18 @@ public final class PDFEncryptionManager {
      * Creates a new PDFEncryption instance if PDF encryption is available.
      * @param objnum PDF object number
      * @param params PDF encryption parameters
+     * @param pdf the PDF document to encrypt
      * @return PDFEncryption the newly created instance, null if PDF encryption
      * is unavailable.
      */
-    public static PDFEncryption newInstance(int objnum, PDFEncryptionParams params) {
+    public static PDFEncryption newInstance(int objnum, PDFEncryptionParams params,
+            PDFDocument pdf) {
         try {
-            Class clazz = Class.forName("org.apache.fop.pdf.PDFEncryptionJCE");
+            Class<?> clazz = Class.forName("org.apache.fop.pdf.PDFEncryptionJCE");
             Method makeMethod = clazz.getMethod("make",
-                        new Class[] {int.class, PDFEncryptionParams.class});
+                        new Class[] {int.class, PDFEncryptionParams.class, PDFDocument.class});
             Object obj = makeMethod.invoke(null,
-                        new Object[] {new Integer(objnum), params});
+                        new Object[] {new Integer(objnum), params, pdf});
             return (PDFEncryption)obj;
         } catch (ClassNotFoundException e) {
             if (checkAvailableAlgorithms()) {

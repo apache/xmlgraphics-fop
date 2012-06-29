@@ -21,7 +21,6 @@ package org.apache.fop.fonts;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.transform.Source;
@@ -175,11 +174,11 @@ public class FontManager {
         }
         return fontCache;
     }
-    
+
     /**
      * Saves the FontCache as necessary
-     * 
-     * @throws FOPException fop exception 
+     *
+     * @throws FOPException fop exception
      */
     public void saveCache() throws FOPException {
         if (useCache) {
@@ -225,16 +224,32 @@ public class FontManager {
         getFontSubstitutions().adjustFontInfo(fontInfo);
     }
 
-    /** @return a new FontResolver to be used by the font subsystem */
-    public static FontResolver createMinimalFontResolver() {
-        return new FontResolver() {
+    /**
+     * Minimum implemenation of FontResolver.
+     */
+    public static class MinimalFontResolver implements FontResolver {
+        private boolean useComplexScriptFeatures;
+        MinimalFontResolver(boolean useComplexScriptFeatures) {
+            this.useComplexScriptFeatures = useComplexScriptFeatures;
+        }
+        /** {@inheritDoc} */
+        public Source resolve(String href) {
+            //Minimal functionality here
+            return new StreamSource(href);
+        }
+        /** {@inheritDoc} */
+        public boolean isComplexScriptFeaturesEnabled() {
+            return useComplexScriptFeatures;
+        }
+    }
 
-            /** {@inheritDoc} */
-            public Source resolve(String href) {
-                //Minimal functionality here
-                return new StreamSource(href);
-            }
-        };
+    /**
+     * Create minimal font resolver.
+     * @param useComplexScriptFeatures true if complex script features enabled
+     * @return a new FontResolver to be used by the font subsystem
+     */
+    public static FontResolver createMinimalFontResolver(boolean useComplexScriptFeatures) {
+        return new MinimalFontResolver ( useComplexScriptFeatures );
     }
 
     /**
@@ -260,7 +275,7 @@ public class FontManager {
      * ({@link #getReferencedFontsMatcher()}).
      * @param fontInfoList a font info list
      */
-    public void updateReferencedFonts(List fontInfoList) {
+    public void updateReferencedFonts(List<EmbedFontInfo> fontInfoList) {
         Matcher matcher = getReferencedFontsMatcher();
         updateReferencedFonts(fontInfoList, matcher);
     }
@@ -270,16 +285,12 @@ public class FontManager {
      * @param fontInfoList a font info list
      * @param matcher the font triplet matcher to use
      */
-    public void updateReferencedFonts(List fontInfoList, Matcher matcher) {
+    public void updateReferencedFonts(List<EmbedFontInfo> fontInfoList, Matcher matcher) {
         if (matcher == null) {
             return; //No referenced fonts
         }
-        Iterator iter = fontInfoList.iterator();
-        while (iter.hasNext()) {
-            EmbedFontInfo fontInfo = (EmbedFontInfo)iter.next();
-            Iterator triplets = fontInfo.getFontTriplets().iterator();
-            while (triplets.hasNext()) {
-                FontTriplet triplet = (FontTriplet)triplets.next();
+        for (EmbedFontInfo fontInfo : fontInfoList) {
+            for (FontTriplet triplet : fontInfo.getFontTriplets()) {
                 if (matcher.matches(triplet)) {
                     fontInfo.setEmbedded(false);
                     break;

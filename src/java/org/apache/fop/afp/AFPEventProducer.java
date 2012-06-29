@@ -39,8 +39,7 @@ public interface AFPEventProducer extends EventProducer {
          * @return the event producer
          */
         public static AFPEventProducer get(EventBroadcaster broadcaster) {
-            return (AFPEventProducer)broadcaster.getEventProducerFor(
-                    AFPEventProducer.class);
+            return (AFPEventProducer) broadcaster.getEventProducerFor(AFPEventProducer.class);
         }
     }
 
@@ -81,4 +80,37 @@ public interface AFPEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void resourceEmbeddingError(Object source, String resourceName, Exception e);
+
+    /**
+     * A mandatory font configuration node is missing at location.
+     * @param source the event source
+     * @param missingConfig the expected configuration element
+     * @param location the position of the missing element within the config file.
+     * @event.severity ERROR
+     */
+    void fontConfigMissing(Object source, String missingConfig, String location);
+
+    /**
+     * The character set given has an invalid name.
+     * @param source the event source
+     * @param msg the error message
+     * @event.severity ERROR
+     */
+    void characterSetNameInvalid(Object source, String msg);
+
+    /**
+     * The code page for an AFP font could not be found.
+     * @param source the event source
+     * @param e the original exception
+     * @event.severity ERROR
+     */
+    void codePageNotFound(Object source, Exception e);
+
+    /**
+     * This is a generic event for invalid configuration errors.
+     * @param source the event source
+     * @param e the original exception
+     * @event.severity ERROR
+     */
+    void invalidConfiguration(Object source, Exception e);
 }

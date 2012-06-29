@@ -22,6 +22,7 @@ package org.apache.fop.render;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Locale;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -82,13 +83,6 @@ public interface Renderer {
         throws IOException;
 
     /**
-     * Set the User Agent.
-     *
-     * @param agent  The User Agent
-     */
-    void setUserAgent(FOUserAgent agent);
-
-    /**
      * Returns the associated user agent.
      * @return the user agent
      */
@@ -114,6 +108,12 @@ public interface Renderer {
      * @return   True if this renderer supports out of order rendering.
      */
     boolean supportsOutOfOrder();
+
+    /**
+     *
+     * @param locale Locale of the language
+     */
+    void setDocumentLocale(Locale locale);
 
     /**
      * Tells the renderer to process an item not explicitly placed on the

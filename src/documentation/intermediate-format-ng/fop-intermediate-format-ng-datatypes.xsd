@@ -92,7 +92,7 @@
       <!-- TODO refine me: \w+ will not be good enough for CMYK color, for example
       <xs:pattern value="\((solid|dotted|dashed|double|groove|ridge|inset|outset),\w+,\d+(,collapse-(inner|outer))?"/>
       -->
-      <xs:pattern value="\((solid|dotted|dashed|double|groove|ridge|inset|outset),.+)"/>
+      <xs:pattern value="\((solid|dotted|dashed|double|groove|ridge|inset|outset),.+\)"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="lengthListType">
@@ -101,6 +101,24 @@
   <xs:simpleType name="rectangleType">
     <xs:restriction base="mf:lengthListType">
       <xs:length value="4"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="dpListType">
+    <xs:list itemType="mf:dpItemType"/>
+  </xs:simpleType>
+  <xs:simpleType name="dpItemType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="mf:lengthType"/>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="mf:dpZeroesType"/>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="dpZeroesType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="Z(\d)+"/>
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>

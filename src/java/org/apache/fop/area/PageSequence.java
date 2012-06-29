@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class PageSequence extends AreaTreeObject {
 
-    private List pages = new java.util.ArrayList();
+    private List<PageViewport> pages = new java.util.ArrayList<PageViewport>();
     private LineArea title;
     private String language;
     private String country;
@@ -75,7 +75,7 @@ public class PageSequence extends AreaTreeObject {
      * @return the requested page or null if it was not found
      */
     public PageViewport getPage(int idx) {
-        return (PageViewport)this.pages.get(idx);
+        return this.pages.get(idx);
     }
 
     /**

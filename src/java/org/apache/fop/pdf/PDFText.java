@@ -60,11 +60,9 @@ public class PDFText extends PDFObject {
                 "The text of this PDFText must not be empty");
         }
         StringBuffer sb = new StringBuffer(64);
-        sb.append(getObjectID());
         sb.append("(");
         sb.append(escapeText(getText()));
         sb.append(")");
-        sb.append("\nendobj\n");
         return sb.toString();
     }
 

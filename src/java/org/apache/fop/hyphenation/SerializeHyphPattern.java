@@ -25,12 +25,12 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 /**
- * Serialize hyphenation patterns
- * For all xml files in the source directory a pattern file is built in the target directory
- * This class may be called from the ant build file in a java task  
+ * <p>Serialize hyphenation patterns.</p>
+ * <p>For all xml files in the source directory a pattern file is built in the target directory.</p>
+ * <p>This class may be called from the ant build file in a java task.</p>
  */
 public class SerializeHyphPattern {
-    
+
     private boolean errorDump = false;
 
     /**

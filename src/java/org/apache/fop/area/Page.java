@@ -22,18 +22,26 @@ package org.apache.fop.area;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.traits.WritingModeTraitsGetter;
+
+import static org.apache.fop.fo.Constants.EN_ERROR_IF_OVERFLOW;
+import static org.apache.fop.fo.Constants.EN_HIDDEN;
+import static org.apache.fop.fo.Constants.FO_REGION_AFTER;
+import static org.apache.fop.fo.Constants.FO_REGION_BEFORE;
+import static org.apache.fop.fo.Constants.FO_REGION_BODY;
+import static org.apache.fop.fo.Constants.FO_REGION_END;
+import static org.apache.fop.fo.Constants.FO_REGION_START;
 
 /**
  * The page.
@@ -46,7 +54,10 @@ import org.apache.fop.layoutmgr.TraitSetter;
  * The page is cloneable so the page master can make copies of
  * the top level page and regions.
  */
-public class Page extends AreaTreeObject implements Serializable, Cloneable {
+public class Page extends AreaTreeObject implements Serializable {
+
+    private static final long serialVersionUID = 6272157047421543866L;
+
     // contains before, start, body, end and after regions
     private RegionViewport regionBefore = null;
     private RegionViewport regionStart = null;
@@ -55,16 +66,15 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
     private RegionViewport regionAfter = null;
 
     // temporary map of unresolved objects used when serializing the page
-    private Map unresolved = null;
+    private Map<String, List<Resolvable>> unresolved = null;
 
     /** Set to true to make this page behave as if it were not empty. */
     private boolean fakeNonEmpty = false;
 
     /**
-     *  Empty constructor, for cloning
+     *  Empty constructor
      */
-    public Page() {
-    }
+    public Page() { }
 
     /**
      * Constructor
@@ -116,12 +126,10 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
             spm.getWritingMode(), pageRefRect, reldims);
 
         // Create a RegionViewport/ reference area pair for each page region
-        RegionReference rr = null;
-        for (Iterator regenum = spm.getRegions().values().iterator();
-            regenum.hasNext();) {
-            Region r = (Region)regenum.next();
-            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM, spm);
-            if (r.getNameId() == Constants.FO_REGION_BODY) {
+        RegionReference rr;
+        for (Region r : spm.getRegions().values()) {
+            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM);
+            if (r.getNameId() == FO_REGION_BODY) {
                 rr = new BodyRegion((RegionBody) r, rvp);
             } else {
                 rr = new RegionReference(r, rvp);
@@ -135,7 +143,7 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
             setRegionReferencePosition(rr, r, rvp.getViewArea());
             rvp.setRegionReference(rr);
             setRegionViewport(r.getNameId(), rvp);
-       }
+        }
     }
 
     /**
@@ -150,12 +158,10 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
      * @param r the region the viewport is to be created for
      * @param reldims relative dimensions
      * @param pageCTM page coordinate transformation matrix
-     * @param spm the simple-page-master for this page
      * @return the new region viewport
      */
-    private RegionViewport makeRegionViewport(Region r, FODimension reldims, CTM pageCTM,
-        SimplePageMaster spm) {
-        Rectangle2D relRegionRect = r.getViewportRectangle(reldims, spm);
+    private static RegionViewport makeRegionViewport(Region r, FODimension reldims, CTM pageCTM) {
+        Rectangle2D relRegionRect = r.getViewportRectangle(reldims);
         Rectangle2D absRegionRect = pageCTM.transform(relRegionRect);
         // Get the region viewport rectangle in absolute coords by
         // transforming it using the page CTM
@@ -163,8 +169,8 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
         rv.setBPD((int)relRegionRect.getHeight());
         rv.setIPD((int)relRegionRect.getWidth());
         TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground(), null);
-        rv.setClip(r.getOverflow() == Constants.EN_HIDDEN
-                || r.getOverflow() == Constants.EN_ERROR_IF_OVERFLOW);
+        rv.setClip(r.getOverflow() == EN_HIDDEN
+                || r.getOverflow() == EN_ERROR_IF_OVERFLOW);
         return rv;
     }
 
@@ -179,7 +185,7 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
      * where x=distance from left, y=distance from bottom, width=right-left
      * height=top-bottom
      */
-    private void setRegionReferencePosition(RegionReference rr, Region r,
+    private static void setRegionReferencePosition(RegionReference rr, Region r,
                                   Rectangle2D absRegVPRect) {
         FODimension reldims = new FODimension(0, 0);
         rr.setCTM(CTM.getCTMandRelDims(r.getReferenceOrientation(),
@@ -199,15 +205,15 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
      * @param port the region viewport to set
      */
     public void setRegionViewport(int areaclass, RegionViewport port) {
-        if (areaclass == Constants.FO_REGION_BEFORE) {
+        if (areaclass == FO_REGION_BEFORE) {
             regionBefore = port;
-        } else if (areaclass == Constants.FO_REGION_START) {
+        } else if (areaclass == FO_REGION_START) {
             regionStart = port;
-        } else if (areaclass == Constants.FO_REGION_BODY) {
+        } else if (areaclass == FO_REGION_BODY) {
             regionBody = port;
-        } else if (areaclass == Constants.FO_REGION_END) {
+        } else if (areaclass == FO_REGION_END) {
             regionEnd = port;
-        } else if (areaclass == Constants.FO_REGION_AFTER) {
+        } else if (areaclass == FO_REGION_AFTER) {
             regionAfter = port;
         }
     }
@@ -220,15 +226,15 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
      */
     public RegionViewport getRegionViewport(int areaClass) {
         switch (areaClass) {
-        case Constants.FO_REGION_BEFORE:
+        case FO_REGION_BEFORE:
             return regionBefore;
-        case Constants.FO_REGION_START:
+        case FO_REGION_START:
             return regionStart;
-        case Constants.FO_REGION_BODY:
+        case FO_REGION_BODY:
             return regionBody;
-        case Constants.FO_REGION_END:
+        case FO_REGION_END:
             return regionEnd;
-        case Constants.FO_REGION_AFTER:
+        case FO_REGION_AFTER:
             return regionAfter;
         default:
             throw new IllegalArgumentException("No such area class with ID = " + areaClass);
@@ -251,14 +257,9 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
         }
     }
 
-    /**
-     * Clone this page.
-     * This returns a new page with a clone of all the regions.
-     *
-     * @return a new clone of this page
-     */
-    public Object clone() {
-        Page p = new Page();
+    /** {@inheritDoc} */
+    public Object clone() throws CloneNotSupportedException {
+        Page p = (Page) super.clone();
         if (regionBefore != null) {
             p.regionBefore = (RegionViewport)regionBefore.clone();
         }
@@ -283,7 +284,7 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
      *
      * @param unres the Map of unresolved objects
      */
-    public void setUnresolvedReferences(Map unres) {
+    public void setUnresolvedReferences(Map<String, List<Resolvable>> unres) {
         unresolved = unres;
     }
 
@@ -294,8 +295,31 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
      *
      * @return the de-serialized HashMap of unresolved objects
      */
-    public Map getUnresolvedReferences() {
+    public Map<String, List<Resolvable>> getUnresolvedReferences() {
         return unresolved;
+    }
+
+    /**
+     * Sets the writing mode traits for the region viewports of
+     * this page.
+     * @param wmtg a WM traits getter
+     */
+    public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
+        if (regionBefore != null) {
+            regionBefore.setWritingModeTraits(wmtg);
+        }
+        if (regionStart != null) {
+            regionStart.setWritingModeTraits(wmtg);
+        }
+        if (regionBody != null) {
+            regionBody.setWritingModeTraits(wmtg);
+        }
+        if (regionEnd != null) {
+            regionEnd.setWritingModeTraits(wmtg);
+        }
+        if (regionAfter != null) {
+            regionAfter.setWritingModeTraits(wmtg);
+        }
     }
 
 }

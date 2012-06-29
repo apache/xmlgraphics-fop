@@ -19,12 +19,15 @@
 
 package org.apache.fop.afp;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,6 +41,7 @@ import org.apache.fop.afp.modca.PageSegment;
 import org.apache.fop.afp.modca.Registry;
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.ResourceObject;
+import org.apache.fop.afp.util.AFPResourceUtil;
 import org.apache.fop.afp.util.ResourceAccessor;
 
 /**
@@ -62,8 +66,8 @@ public class AFPResourceManager {
     private int instreamObjectCount = 0;
 
     /** Mapping of resourceInfo to AbstractCachedObject */
-    private final Map/*<AFPResourceInfo, AbstractCachedObject>*/ includeObjectCache
-    = new java.util.HashMap()/*<AFPResourceInfo,String>*/;
+    private final Map<AFPResourceInfo, AbstractCachedObject> includeObjectCache
+            = new java.util.HashMap<AFPResourceInfo, AbstractCachedObject>();
 
     private AFPResourceLevelDefaults resourceLevelDefaults = new AFPResourceLevelDefaults();
 
@@ -120,6 +124,20 @@ public class AFPResourceManager {
     }
 
     /**
+     * Tries to create an include of a data object that has been previously added to the
+     * AFP data stream. If no such object was available, the method returns false which serves
+     * as a signal that the object has to be created.
+     * @param dataObjectInfo the data object info
+     * @return true if the inclusion succeeded, false if the object was not available
+     * @throws IOException thrown if an I/O exception of some sort has occurred.
+     */
+    public boolean tryIncludeObject(AFPDataObjectInfo dataObjectInfo) throws IOException {
+        AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+        updateResourceInfoUri(resourceInfo);
+        return includeCachedObject(resourceInfo, dataObjectInfo.getObjectAreaInfo());
+    }
+
+    /**
      * Creates a new data object in the AFP datastream
      *
      * @param dataObjectInfo the data object info
@@ -127,14 +145,13 @@ public class AFPResourceManager {
      * @throws IOException thrown if an I/O exception of some sort has occurred.
      */
     public void createObject(AFPDataObjectInfo dataObjectInfo) throws IOException {
-        AbstractNamedAFPObject namedObj = null;
-
-        AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
-        updateResourceInfoUri(resourceInfo);
-
-        if (includeCachedObject(resourceInfo, dataObjectInfo.getObjectAreaInfo())) {
+        if (tryIncludeObject(dataObjectInfo)) {
+            //Object has already been produced and is available by inclusion, so return early.
             return;
         }
+
+        AbstractNamedAFPObject namedObj = null;
+        AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
 
         boolean useInclude = true;
         Registry.ObjectType objectType = null;
@@ -176,7 +193,6 @@ public class AFPResourceManager {
 
             // add data object into its resource group destination
             resourceGroup.addObject(namedObj);
-
             includeObject(namedObj, dataObjectInfo);
         } else {
             // not to be included so inline data object directly into the current page
@@ -294,8 +310,7 @@ public class AFPResourceManager {
 
     private void includeObject(AFPDataObjectInfo dataObjectInfo,
             String objectName) {
-        IncludeObject includeObject
-            = dataObjectFactory.createInclude(objectName, dataObjectInfo);
+        IncludeObject includeObject = dataObjectFactory.createInclude(objectName, dataObjectInfo);
         dataStream.getCurrentPage().addObject(includeObject);
     }
 
@@ -367,12 +382,9 @@ public class AFPResourceManager {
         resourceInfo.setName(resourceName);
         resourceInfo.setUri(uri.toASCIIString());
 
-
         AbstractCachedObject cachedObject = (AbstractCachedObject)
                 includeObjectCache.get(resourceInfo);
-
-        if (cachedObject == null ) {
-
+        if (cachedObject == null) {
             if (log.isDebugEnabled()) {
                 log.debug("Adding included resource: " + resourceName);
             }
@@ -395,6 +407,61 @@ public class AFPResourceManager {
             //skip, already created
         }
     }
+
+    /**
+     * Creates an included resource extracting the named resource from an external source.
+     * @param resourceName the name of the resource
+     * @param uri the URI for the resource
+     * @param accessor resource accessor to access the resource with
+     * @throws IOException if an I/O error occurs while loading the resource
+     */
+    public void createIncludedResourceFromExternal(final String resourceName,
+            final URI uri, final ResourceAccessor accessor) throws IOException {
+
+        AFPResourceLevel resourceLevel = new AFPResourceLevel(AFPResourceLevel.PRINT_FILE);
+
+        AFPResourceInfo resourceInfo = new AFPResourceInfo();
+        resourceInfo.setLevel(resourceLevel);
+        resourceInfo.setName(resourceName);
+        resourceInfo.setUri(uri.toASCIIString());
+
+        AbstractCachedObject cachedObject = (AbstractCachedObject)
+                includeObjectCache.get(resourceInfo);
+        
+        if (cachedObject == null) {
+
+            ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
+
+            //resourceObject delegates write commands to copyNamedResource()
+            //The included resource may already be wrapped in a resource object
+            AbstractNamedAFPObject resourceObject = new AbstractNamedAFPObject(null) {
+
+                @Override
+                protected void writeContent(OutputStream os) throws IOException {
+                    InputStream inputStream = null;
+                    try {
+                        inputStream = accessor.createInputStream(uri);
+                        BufferedInputStream bin = new BufferedInputStream(inputStream);
+                        AFPResourceUtil.copyNamedResource(resourceName, bin, os);
+                    } finally {
+                        IOUtils.closeQuietly(inputStream);
+                    }
+                }
+
+                //bypass super.writeStart
+                @Override
+                protected void writeStart(OutputStream os) throws IOException { }
+                //bypass super.writeEnd
+                @Override
+                protected void writeEnd(OutputStream os) throws IOException { }
+            };
+
+            resourceGroup.addObject(resourceObject);
+            cachedObject = new CachedObject(resourceName, null);
+            includeObjectCache.put(resourceInfo, cachedObject);
+        }
+    }
+
 
     /**
      * Sets resource level defaults. The existing defaults over merged with the ones passed in

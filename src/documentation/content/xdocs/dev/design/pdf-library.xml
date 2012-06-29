@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +20,7 @@
 
 <document>
   <header>
-    <title>FOP Design: PDF Library</title>
+    <title>Apache™ FOP Design: PDF Library</title>
     <version>$Revision$</version>
   </header>
 
@@ -28,7 +28,7 @@
 <section id="intro">
   <title>Introduction</title>
 
-<p>The PDF Library is an independant package of classes in FOP. These class
+<p>The PDF Library is an independant package of classes in Apache™ FOP. These class
 provide a simple way to construct documents and add the contents. The
 classes are found in <code>org.apache.fop.pdf.*</code>.</p>
 </section>
@@ -89,4 +89,3 @@ The method is: byte[] toPDF().</p>
 
     </body>
 </document>
-

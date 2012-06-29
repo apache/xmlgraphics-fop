@@ -40,7 +40,6 @@ import org.apache.fop.apps.FopFactoryConfigurator;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
-import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
@@ -48,7 +47,8 @@ import org.apache.fop.render.java2d.Java2DPainter;
 import org.apache.fop.render.java2d.Java2DUtil;
 
 /**
- * Abstract {@link IFDocumentHandler} implementation for producing bitmap images.
+ * Abstract {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation
+ * for producing bitmap images.
  */
 public abstract class AbstractBitmapDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 

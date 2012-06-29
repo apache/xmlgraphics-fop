@@ -73,7 +73,7 @@ public class AFPElementMapping extends ElementMapping {
     protected void initialize() {
 
         if (foObjs == null) {
-            super.foObjs = new java.util.HashMap();
+            super.foObjs = new java.util.HashMap<String, Maker>();
             foObjs.put(
                 TAG_LOGICAL_ELEMENT,
                 new AFPTagLogicalElementMaker());
@@ -103,7 +103,7 @@ public class AFPElementMapping extends ElementMapping {
 
     static class AFPIncludePageSegmentMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new AFPPageSetupElement(parent, INCLUDE_PAGE_SEGMENT);
+            return new AFPPageSegmentElement(parent, INCLUDE_PAGE_SEGMENT);
         }
     }
 

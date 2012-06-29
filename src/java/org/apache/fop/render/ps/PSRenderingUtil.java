@@ -56,6 +56,12 @@ public class PSRenderingUtil implements PSConfigurationConstants {
     /** Determines whether the PS file is generated in two passes to minimize file size */
     private boolean optimizeResources = false;
 
+    /**
+     * Determines whether the generated PostScript code is optimized for minimum file size
+     * of best quality.
+     */
+    private PSRenderingMode renderingMode = PSRenderingMode.QUALITY;
+
     PSRenderingUtil(FOUserAgent userAgent) {
         this.userAgent = userAgent;
         initialize();
@@ -287,5 +293,19 @@ public class PSRenderingUtil implements PSConfigurationConstants {
         return optimizeResources;
     }
 
+    /**
+     * Sets the rendering mode.
+     * @param renderingMode the rendering mode
+     */
+    public void setRenderingMode(PSRenderingMode renderingMode) {
+        this.renderingMode = renderingMode;
+    }
 
+    /**
+     * Returns the rendering mode.
+     * @return the rendering mode
+     */
+    public PSRenderingMode getRenderingMode() {
+        return this.renderingMode;
+    }
 }

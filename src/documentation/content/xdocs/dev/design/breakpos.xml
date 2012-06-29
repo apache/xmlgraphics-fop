@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +20,7 @@
 
 <document>
   <header>
-    <title>FOP Design: Layout Managers</title>
+    <title>Apache™ FOP Design: Layout Managers</title>
     <subtitle>Break Possibility Proposal</subtitle>
     <version>$Revision$</version>
     <authors>
@@ -149,7 +149,7 @@ return potential break points.</p>
 examined later.</note>
 <p>So the Line LM will ask its child LM(s) for break possibilities until
 it gets back a BP whose stacking dimension <em>could</em> fill the
-line. This means that the BP.stackdim.max >= LineIPD.min. It can look
+line. This means that the BP.stackdim.max &gt;= LineIPD.min. It can look
 for further BP, perhaps one whose stackdim.opt is closer to the
 LineIPD.opt. If it isn't happy with the choice of break possibilities,
 it can go past the end of the line to the next one, and then try to
@@ -313,4 +313,3 @@ laying out all its material and then make all the Lines at once.</p>
 </section>
     </body>
 </document>
-

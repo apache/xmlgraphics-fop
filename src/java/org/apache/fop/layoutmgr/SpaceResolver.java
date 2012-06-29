@@ -136,7 +136,7 @@ public final class SpaceResolver {
 
     private String toString(Object[] arr1, Object[] arr2) {
         if (arr1.length != arr2.length) {
-            new IllegalArgumentException("The length of both arrays must be equal");
+            throw new IllegalArgumentException("The length of both arrays must be equal");
         }
         StringBuffer sb = new StringBuffer("[");
         for (int i = 0; i < arr1.length; i++) {
@@ -647,7 +647,7 @@ public final class SpaceResolver {
                     }
                 }
                 //last = !iter.hasNext();
-                if (breakPoss == null && unresolvedSecond.size() == 0 && !last) {
+                if (breakPoss == null && unresolvedSecond.isEmpty() && !last) {
                     LOG.trace("Swap first and second parts in no-break condition,"
                             + " second part is empty.");
                     //The first list is reversed, so swap if this shouldn't happen

@@ -21,7 +21,6 @@ package org.apache.fop.util;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.Locale;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -175,37 +174,125 @@ public final class XMLUtil implements XMLConstants {
     }
 
     /**
-     * Converts a {@link Locale} instance to an RFC 3066 compliant language identifier.
-     * @param language the language
-     * @return the formatted language identifier
+     * Encode a glyph position adjustments array as a string, where the string value
+     * adheres to the following syntax:
+     *
+     * count ( 'Z' repeat | number )
+     *
+     * where each token is separated by whitespace, except that 'Z' followed by repeat
+     * are considered to be a single token with no intervening whitespace, and where
+     * 'Z' repeat encodes repeated zeroes.
+     * @param dp the adjustments array
+     * @param paCount the number of entries to encode from adjustments array
+     * @return the encoded value
      */
-    public static String toRFC3066(Locale language) {
-        if (language == null || language.getLanguage().length() == 0) {
-            return null;
-        }
+    public static String encodePositionAdjustments ( int[][] dp, int paCount ) {
+        assert dp != null;
         StringBuffer sb = new StringBuffer();
-        sb.append(language.getLanguage());
-        if (language.getCountry().length() > 0) {
-            sb.append('-');
-            sb.append(language.getCountry());
+        int na = paCount;
+        int nz = 0;
+        sb.append ( na );
+        for ( int i = 0; i < na; i++ ) {
+            int[] pa = dp [ i ];
+            for ( int k = 0; k < 4; k++ ) {
+                int a = pa [ k ];
+                if ( a != 0 ) {
+                    encodeNextAdjustment ( sb, nz, a );
+                    nz = 0;
+                } else {
+                    nz++;
+                }
+            }
         }
+        encodeNextAdjustment ( sb, nz, 0 );
         return sb.toString();
     }
 
     /**
-     * Converts an RFC 3066 compliant language identifier to a {@link Locale} instance.
-     * @param lang the language string
-     * @return the converted locale instance
+     * Encode a glyph position adjustments array as a string, where the string value
+     * adheres to the following syntax:
+     *
+     * count ( 'Z' repeat | number )
+     *
+     * where each token is separated by whitespace, except that 'Z' followed by repeat
+     * are considered to be a single token with no intervening whitespace.
+     * @param dp the adjustments array
+     * @return the encoded value
      */
-    public static Locale convertRFC3066ToLocale(String lang) {
-        if (lang == null || lang.length() == 0) {
-            return null;
+    public static String encodePositionAdjustments ( int[][] dp ) {
+        assert dp != null;
+        return encodePositionAdjustments ( dp, dp.length );
+    }
+
+    private static void encodeNextAdjustment ( StringBuffer sb, int nz, int a ) {
+        encodeZeroes ( sb, nz );
+        encodeAdjustment ( sb, a );
+    }
+
+    private static void encodeZeroes ( StringBuffer sb, int nz ) {
+        if ( nz > 0 ) {
+            sb.append ( ' ' );
+            if ( nz == 1 ) {
+                sb.append ( '0' );
+            } else {
+                sb.append ( 'Z' );
+                sb.append ( nz );
+            }
         }
-        String[] parts = lang.split("-");
-        if (parts.length == 1) {
-            return new Locale(parts[0]);
+    }
+
+    private static void encodeAdjustment ( StringBuffer sb, int a ) {
+        if ( a != 0 ) {
+            sb.append ( ' ' );
+            sb.append ( a );
+        }
+    }
+
+    /**
+     * Decode a string as a glyph position adjustments array, where the string
+     * shall adhere to the syntax specified by {@link #encodePositionAdjustments}.
+     * @param value the encoded value
+     * @return the position adjustments array
+     */
+    public static int[][] decodePositionAdjustments ( String value ) {
+        int[][] dp = null;
+        if ( value != null ) {
+            String[] sa = value.split ( "\\s" );
+            if ( sa != null ) {
+                if ( sa.length > 0 ) {
+                    int na = Integer.parseInt ( sa[0] );
+                    dp = new int [ na ] [ 4 ];
+                    for ( int i = 1, n = sa.length, k = 0; i < n; i++ ) {
+                        String s = sa [ i ];
+                        if ( s.charAt(0) == 'Z' ) {
+                            int nz = Integer.parseInt ( s.substring ( 1 ) );
+                            k += nz;
+                        } else {
+                            dp [ k / 4 ] [ k % 4 ] = Integer.parseInt ( s );
+                            k += 1;
+                        }
+                    }
+                }
+            }
+        }
+        return dp;
+    }
+
+    /**
+     * Returns an attribute value as a glyph position adjustments array. The string value
+     * is expected to be a non-empty sequence of either Z<repeat> or <number>, where the
+     * former encodes a repeat count (of zeroes) and the latter encodes a integer number,
+     * and where each item is separated by whitespace.
+     * @param attributes the Attributes object
+     * @param name the name of the attribute
+     * @return the position adjustments array
+     */
+    public static int[][] getAttributeAsPositionAdjustments(Attributes attributes, String name) {
+        String s = attributes.getValue(name);
+        if (s == null) {
+            return null;
         } else {
-            return new Locale(parts[0], parts[1]);
+            return decodePositionAdjustments(s.trim());
         }
     }
 

@@ -34,11 +34,14 @@ public class PDFEmbeddedFile extends PDFStream {
         super();
         put("Type", new PDFName("EmbeddedFile"));
         PDFDictionary params = new PDFDictionary();
-        params.put("CreationDate", params.formatDateTime(new Date()));
+        params.put("CreationDate", PDFInfo.formatDateTime(new Date()));
         put("Params", params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Determine if should encode on the fly.
+     * @return true if should encode on the fly
+     */
     protected boolean isEncodingOnTheFly() {
         //Acrobat doesn't like an indirect /Length object in this case,
         //but only when the embedded file is a PDF file.

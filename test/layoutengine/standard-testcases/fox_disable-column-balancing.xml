@@ -216,11 +216,8 @@
   </fo>
   <checks>
     <eval expected="0" xpath="//pageSequence[1]/pageViewport[2]//span[1]/flow[2]/@bpd"/>
-    <eval expected="12000" xpath="//pageSequence[1]/pageViewport[3]//span[2]/@bpd"/>
-    <!-- TODO Replace with the following test once bugs affecting multiple columns have been 
-    corrected
-        <eval expected="0" xpath="count(//pageSequence[1]/pageViewport[3]//block[@prod-id='span2'])"/>
-    -->
+    <eval expected="0" xpath="//pageSequence[1]/pageViewport[2]//span[1]/flow[2]/@bpd"/>
+    <eval expected="0" xpath="count(//pageSequence[1]/pageViewport[3]//block[@prod-id='span2'])"/>
 
     <eval expected="24000" xpath="//pageSequence[2]/pageViewport[2]//span[1]/flow[2]/@bpd"/>
     <eval expected="84000" xpath="//pageSequence[2]/pageViewport[3]//span[1]/flow[2]/@bpd"/>

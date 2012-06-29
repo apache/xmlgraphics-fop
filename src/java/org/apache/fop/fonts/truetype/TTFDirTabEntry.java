@@ -26,15 +26,26 @@ import java.io.UnsupportedEncodingException;
 /**
  * This class represents an entry to a TrueType font's Dir Tab.
  */
-class TTFDirTabEntry {
+public class TTFDirTabEntry {
 
     private byte[] tag = new byte[4];
     private int checksum;
     private long offset;
     private long length;
 
+    public TTFDirTabEntry() {
+    }
+
+    public TTFDirTabEntry(long offset, long length) {
+        this.offset = offset;
+        this.length = length;
+    }
+
     /**
-     * Read Dir Tab, return tag name
+     * Read Dir Tab.
+     * @param in font file reader
+     * @return tag name
+     * @throws IOException upon I/O exception
      */
     public String read(FontFileReader in) throws IOException {
         tag[0] = in.readTTFByte();
@@ -52,6 +63,7 @@ class TTFDirTabEntry {
     }
 
 
+    @Override
     public String toString() {
         return "Read dir tab ["
             + tag[0] + " " + tag[1] + " " + tag[2] + " " + tag[3] + "]"
