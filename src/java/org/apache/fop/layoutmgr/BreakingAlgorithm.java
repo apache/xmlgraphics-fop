@@ -42,7 +42,7 @@ import org.apache.fop.fo.Constants;
 public abstract class BreakingAlgorithm {
 
     /** the logger for the class */
-    protected static Log log = LogFactory.getLog(BreakingAlgorithm.class);
+    protected static final Log log = LogFactory.getLog(BreakingAlgorithm.class);
 
     /** Maximum adjustment ration */
     protected static final int INFINITE_RATIO = 1000;
@@ -59,7 +59,7 @@ public abstract class BreakingAlgorithm {
 
     /** Holder for symbolic literals for the fitness classes */
     static final class FitnessClasses {
-        
+
         private FitnessClasses() {
         }
 
@@ -542,7 +542,6 @@ public abstract class BreakingAlgorithm {
         addNode(0, createNode(firstBoxIndex, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, null));
         KnuthNode lastForced = getNode(0);
 
-
         if (log.isTraceEnabled()) {
             log.trace("Looping over " + (par.size() - startIndex) + " elements");
             log.trace(par);
@@ -629,6 +628,17 @@ public abstract class BreakingAlgorithm {
     protected KnuthNode recoverFromTooLong(KnuthNode lastTooLong) {
         if (log.isDebugEnabled()) {
             log.debug("Recovering from too long: " + lastTooLong);
+        }
+
+        // if lastTooLong would be the very first break in the blockList, and
+        // the first element in the paragraph is not a penalty, add an auxiliary
+        // penalty now to make it possible to create a genuine 'empty' node that
+        // represents a break before the first box/glue
+        if (lastTooLong.previous.previous == null) {
+            ListElement el = (ListElement)this.par.get(0);
+            if (!el.isPenalty()) {
+                this.par.add(0, KnuthPenalty.DUMMY_ZERO_PENALTY);
+            }
         }
 
         // content would overflow, insert empty line/page and try again
@@ -873,6 +883,7 @@ public abstract class BreakingAlgorithm {
         if (log.isDebugEnabled()) {
             log.debug("Restarting at node " + restartingNode);
         }
+
         restartingNode.totalDemerits = 0;
         addNode(restartingNode.line, restartingNode);
         startLine = restartingNode.line;

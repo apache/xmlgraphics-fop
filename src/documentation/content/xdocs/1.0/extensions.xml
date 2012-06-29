@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,14 +19,14 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Standard FOP Extensions</title>
+    <title>Standard Apache™ FOP Extensions</title>
     <version>$Revision$</version>
   </header>
   <body>
     <p>
       By "extension", we mean any data that can be placed in the input XML document that 
       is not addressed by the XSL-FO standard.
-      By having a mechanism for supporting extensions, FOP is able to add features that 
+      By having a mechanism for supporting extensions, Apache™ FOP is able to add features that
       are not covered in the specification.
     </p>
     <p>
@@ -337,4 +337,3 @@ to following pages. Here is an example of FO code creating such a table-header:<
     </section>
   </body>
 </document>
-

@@ -25,6 +25,7 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.SVGTextElementBridge;
 import org.apache.batik.bridge.UserAgent;
+import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.gvt.TextPainter;
 
 import org.apache.xmlgraphics.image.loader.ImageManager;
@@ -86,6 +87,7 @@ public class PDFBridgeContext extends AbstractFOPBridgeContext {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void registerSVGBridges() {
         super.registerSVGBridges();
 
@@ -123,10 +125,17 @@ public class PDFBridgeContext extends AbstractFOPBridgeContext {
         putBridge(new PDFImageElementBridge());
     }
 
-    // Make sure any 'sub bridge contexts' also have our bridges.
-    //TODO There's no matching method in the super-class here
-    /** @return the new bridge context */
+    /** {@inheritDoc} */
+    @Override
     public BridgeContext createBridgeContext() {
+        //Retained for pre-Batik-1.7 compatibility
+        return createBridgeContext(null);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public BridgeContext createBridgeContext(SVGOMDocument doc) {
+        // Make sure any 'sub bridge contexts' also have our bridges.
         return new PDFBridgeContext(getUserAgent(), getDocumentLoader(),
                                     fontInfo,
                                     getImageManager(),

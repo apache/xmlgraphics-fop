@@ -28,12 +28,9 @@ import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.TextPainter;
 
 /**
- * Bridge class for the &lt;text> element.
+ * <p>Bridge class for the &lt;text> element.
  * This bridge will use the direct text painter if the text
- * for the element is simple.
- *
- * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
- * @version $Id$
+ * for the element is simple.</p>
  */
 public class PSTextElementBridge extends SVGTextElementBridge {
 
@@ -65,4 +62,3 @@ public class PSTextElementBridge extends SVGTextElementBridge {
     }
 
 }
-

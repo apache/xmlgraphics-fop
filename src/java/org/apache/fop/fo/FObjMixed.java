@@ -50,6 +50,7 @@ public abstract class FObjMixed extends FObj {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void characters(char[] data, int start, int length,
                                  PropertyList pList,
                                  Locator locator) throws FOPException {
@@ -64,6 +65,7 @@ public abstract class FObjMixed extends FObj {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void endOfNode() throws FOPException {
 
         super.endOfNode();
@@ -150,6 +152,7 @@ public abstract class FObjMixed extends FObj {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void addChildNode(FONode child) throws FOPException {
 
         flushText();
@@ -169,6 +172,17 @@ public abstract class FObjMixed extends FObj {
     }
 
     /** {@inheritDoc} */
+    @Override
+    public void removeChild(FONode child) {
+        super.removeChild(child);
+        if (child == this.currentTextNode) {
+            // reset to following sibling
+            this.currentTextNode = child.siblings != null ? child.siblings[1] : null;
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void finalizeNode() throws FOPException {
 
         flushText();
@@ -183,6 +197,7 @@ public abstract class FObjMixed extends FObj {
      *
      * @return iterator for this object
      */
+    @Override
     public CharIterator charIterator() {
         return new RecursiveCharIterator(this);
     }

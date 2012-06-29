@@ -31,6 +31,8 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.util.Map;
 
@@ -65,9 +67,12 @@ import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.PresentationTextObject;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
+import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
+import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
@@ -75,6 +80,7 @@ import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
@@ -93,12 +99,12 @@ public class AFPPainter extends AbstractIFPainter {
     private static final int X = 0;
     private static final int Y = 1;
 
-    private AFPDocumentHandler documentHandler;
+    private final AFPDocumentHandler documentHandler;
 
     /** the border painter */
-    private AFPBorderPainterAdapter borderPainter;
+    private final AFPBorderPainterAdapter borderPainter;
     /** the rectangle painter */
-    private AbstractAFPPainter rectanglePainter;
+    private final AbstractAFPPainter rectanglePainter;
 
     /** unit converter */
     private final AFPUnitConverter unitConv;
@@ -119,6 +125,7 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected IFContext getContext() {
         return this.documentHandler.getContext();
     }
@@ -183,6 +190,7 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected Map createDefaultImageProcessingHints(ImageSessionContext sessionContext) {
         Map hints = super.createDefaultImageProcessingHints(sessionContext);
 
@@ -193,6 +201,7 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected RenderingContext createRenderingContext() {
         AFPRenderingContext renderingContext = new AFPRenderingContext(
                 getUserAgent(),
@@ -205,14 +214,34 @@ public class AFPPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle rect) throws IFException {
-        String name = documentHandler.getPageSegmentNameFor(uri);
-        if (name != null) {
+        PageSegmentDescriptor pageSegment = documentHandler.getPageSegmentNameFor(uri);
+
+        if (pageSegment != null) {
             float[] srcPts = {rect.x, rect.y};
             int[] coords = unitConv.mpts2units(srcPts);
             int width = Math.round(unitConv.mpt2units(rect.width));
             int height = Math.round(unitConv.mpt2units(rect.height));
 
-            getDataStream().createIncludePageSegment(name, coords[X], coords[Y], width, height);
+            getDataStream().createIncludePageSegment(pageSegment.getName(),
+                    coords[X], coords[Y], width, height);
+
+            //Do we need to embed an external page segment?
+            if (pageSegment.getURI() != null) {
+                ResourceAccessor accessor = new DefaultFOPResourceAccessor (
+                        documentHandler.getUserAgent(), null, null);
+                try {
+                    URI resourceUri = new URI(pageSegment.getURI());
+                    documentHandler.getResourceManager().createIncludedResourceFromExternal(
+                            pageSegment.getName(), resourceUri, accessor);
+
+                } catch (URISyntaxException urie) {
+                    throw new IFException("Could not handle resource url"
+                            + pageSegment.getURI(), urie);
+                } catch (IOException ioe) {
+                    throw new IFException("Could not handle resource" + pageSegment.getURI(), ioe);
+                }
+            }
+
         } else {
             drawImageUsingURI(uri, rect);
         }
@@ -279,16 +308,11 @@ public class AFPPainter extends AbstractIFPainter {
         }
     }
 
-    /** {@inheritDoc} */
-    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end, Color innerBackgroundColor) throws IFException {
-        if (before != null || after != null || start != null || end != null) {
-            try {
-                this.borderPainter.drawBorders(rect, before, after, start, end,
-                        innerBackgroundColor);
-            } catch (IFException ife) {
-                throw new IFException("Error while painting borders", ife);
-            }
+    @Override
+    public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right, Color innerBackgroundColor) throws IFException {
+        if (top != null || bottom != null || left != null || right != null) {
+            this.borderPainter.drawBorders(rect, top, bottom, left, right, innerBackgroundColor);
         }
     }
 
@@ -297,7 +321,6 @@ public class AFPPainter extends AbstractIFPainter {
     //and this one. Not done for now to avoid a lot of re-implementation and code duplication.
 
     private static class AFPBorderPainterAdapter extends BorderPainter {
-
 
         private final class BorderImagePainter implements Graphics2DImagePainter {
             private final double esf;
@@ -332,7 +355,7 @@ public class AFPPainter extends AbstractIFPainter {
                 Area[] cornerBorder
                         = new Area[]{new Area(), new Area(), new Area(), new Area()};
 
-                if (roundCorner[BEFORE_START]) {
+                if (roundCorner[TOP_LEFT]) {
 
                     AffineTransform transform =  new AffineTransform();
                     int beforeRadius = (int)(esf * bpsBefore.getRadiusStart());
@@ -340,7 +363,7 @@ public class AFPPainter extends AbstractIFPainter {
 
                     int beforeWidth = bpsBefore.width;
                     int startWidth = bpsStart.width;
-                    int corner = BEFORE_START;
+                    int corner = TOP_LEFT;
 
                     background.subtract(makeCornerClip(beforeRadius, startRadius,
                             transform));
@@ -349,14 +372,14 @@ public class AFPPainter extends AbstractIFPainter {
                     clip.transform(transform);
                     cornerRegion.add(clip);
 
-                    cornerBorder[BEFORE].add(makeCornerBorderBPD(beforeRadius,
+                    cornerBorder[TOP].add(makeCornerBorderBPD(beforeRadius,
                                     startRadius, beforeWidth, startWidth, transform));
 
-                    cornerBorder[START].add(makeCornerBorderIPD(beforeRadius,
+                    cornerBorder[LEFT].add(makeCornerBorderIPD(beforeRadius,
                             startRadius, beforeWidth, startWidth, transform));
                 }
 
-                if (roundCorner[BEFORE_END]) {
+                if (roundCorner[TOP_RIGHT]) {
                     AffineTransform transform
                             = new AffineTransform(-1, 0, 0, 1, borderRect.width, 0);
 
@@ -365,7 +388,7 @@ public class AFPPainter extends AbstractIFPainter {
 
                     int beforeWidth = bpsBefore.width;
                     int startWidth = bpsEnd.width;
-                    int corner = BEFORE_END;
+                    int corner = TOP_RIGHT;
 
                     background.subtract(makeCornerClip(beforeRadius, startRadius,
                             transform));
@@ -374,14 +397,14 @@ public class AFPPainter extends AbstractIFPainter {
                     clip.transform(transform);
                     cornerRegion.add(clip);
 
-                    cornerBorder[BEFORE].add(makeCornerBorderBPD(beforeRadius,
+                    cornerBorder[TOP].add(makeCornerBorderBPD(beforeRadius,
                                     startRadius, beforeWidth, startWidth, transform));
 
-                    cornerBorder[END].add(makeCornerBorderIPD(beforeRadius,
+                    cornerBorder[RIGHT].add(makeCornerBorderIPD(beforeRadius,
                             startRadius, beforeWidth, startWidth, transform));
                 }
 
-                if (roundCorner[AFTER_END]) {
+                if (roundCorner[BOTTOM_RIGHT]) {
                     AffineTransform transform = new AffineTransform(-1, 0, 0, -1,
                             borderRect.width, borderRect.height);
 
@@ -390,7 +413,7 @@ public class AFPPainter extends AbstractIFPainter {
 
                     int beforeWidth = bpsAfter.width;
                     int startWidth = bpsEnd.width;
-                    int corner = AFTER_END;
+                    int corner = BOTTOM_RIGHT;
 
                     background.subtract(makeCornerClip(beforeRadius, startRadius,
                             transform));
@@ -399,13 +422,13 @@ public class AFPPainter extends AbstractIFPainter {
                     clip.transform(transform);
                     cornerRegion.add(clip);
 
-                    cornerBorder[AFTER].add(makeCornerBorderBPD(beforeRadius,
+                    cornerBorder[BOTTOM].add(makeCornerBorderBPD(beforeRadius,
                             startRadius, beforeWidth, startWidth, transform));
-                    cornerBorder[END].add(makeCornerBorderIPD(beforeRadius,
+                    cornerBorder[RIGHT].add(makeCornerBorderIPD(beforeRadius,
                             startRadius, beforeWidth, startWidth, transform));
                 }
 
-                if (roundCorner[AFTER_START]) {
+                if (roundCorner[BOTTOM_LEFT]) {
                     AffineTransform transform
                             = new AffineTransform(1, 0, 0, -1, 0, borderRect.height);
 
@@ -414,7 +437,7 @@ public class AFPPainter extends AbstractIFPainter {
 
                     int beforeWidth = bpsAfter.width;
                     int startWidth = bpsStart.width;
-                    int corner = AFTER_START;
+                    int corner = BOTTOM_LEFT;
 
                     background.subtract(makeCornerClip(beforeRadius, startRadius,
                             transform));
@@ -423,9 +446,9 @@ public class AFPPainter extends AbstractIFPainter {
                     clip.transform(transform);
                     cornerRegion.add(clip);
 
-                    cornerBorder[AFTER].add(makeCornerBorderBPD(beforeRadius,
+                    cornerBorder[BOTTOM].add(makeCornerBorderBPD(beforeRadius,
                                     startRadius, beforeWidth, startWidth, transform));
-                    cornerBorder[START].add(makeCornerBorderIPD(beforeRadius,
+                    cornerBorder[LEFT].add(makeCornerBorderIPD(beforeRadius,
                             startRadius, beforeWidth, startWidth, transform));
                 }
 
@@ -449,7 +472,7 @@ public class AFPPainter extends AbstractIFPainter {
 
                     g2d.setColor(bpsBefore.color);
                     g2d.fill(border);
-                    g2d.fill(cornerBorder[BEFORE]);
+                    g2d.fill(cornerBorder[TOP]);
                 }
 
                 if (bpsEnd != null && bpsEnd.width > 0) {
@@ -469,7 +492,7 @@ public class AFPPainter extends AbstractIFPainter {
 
                     g2d.setColor(bpsEnd.color);
                     g2d.fill(border);
-                    g2d.fill(cornerBorder[END]);
+                    g2d.fill(cornerBorder[RIGHT]);
                 }
 
                 if (bpsAfter != null && bpsAfter.width > 0) {
@@ -488,7 +511,7 @@ public class AFPPainter extends AbstractIFPainter {
 
                     g2d.setColor(bpsAfter.color);
                     g2d.fill(border);
-                    g2d.fill(cornerBorder[AFTER]);
+                    g2d.fill(cornerBorder[BOTTOM]);
                 }
 
                 if (bpsStart != null && bpsStart.width > 0) {
@@ -507,7 +530,7 @@ public class AFPPainter extends AbstractIFPainter {
 
                     g2d.setColor(bpsStart.color);
                     g2d.fill(border);
-                    g2d.fill(cornerBorder[START]);
+                    g2d.fill(cornerBorder[LEFT]);
                 }
             }
 
@@ -606,7 +629,7 @@ public class AFPPainter extends AbstractIFPainter {
                 Rectangle area = new Rectangle(borderRect.x, borderRect.y,
                         startRadiusStart,  beforeRadiusStart);
 
-                drawCorner(BEFORE_START, area, bpsBefore, bpsStart,
+                drawCorner(TOP_LEFT, area, bpsBefore, bpsStart,
                         beforeRadiusStart, startRadiusStart, innerBackgroundColor);
             }
 
@@ -616,7 +639,7 @@ public class AFPPainter extends AbstractIFPainter {
                 Rectangle area = new Rectangle(borderRect.x + borderRect.width - endRadiusStart,
                         borderRect.y, endRadiusStart,  beforeRadiusEnd);
 
-                drawCorner(BEFORE_END, area, bpsBefore, bpsEnd,
+                drawCorner(TOP_RIGHT, area, bpsBefore, bpsEnd,
                         beforeRadiusEnd, endRadiusStart, innerBackgroundColor);
             }
 
@@ -629,7 +652,7 @@ public class AFPPainter extends AbstractIFPainter {
                         borderRect.y + borderRect.height - afterRadiusEnd,
                         endRadiusEnd,   afterRadiusEnd);
 
-                drawCorner(AFTER_END, area, bpsAfter, bpsEnd,
+                drawCorner(BOTTOM_RIGHT, area, bpsAfter, bpsEnd,
                         afterRadiusEnd, endRadiusEnd, innerBackgroundColor);
 
             }
@@ -641,7 +664,7 @@ public class AFPPainter extends AbstractIFPainter {
                         borderRect.y + borderRect.height - afterRadiusStart,
                         startRadiusEnd, afterRadiusStart);
 
-                drawCorner(AFTER_START, area, bpsAfter, bpsStart,
+                drawCorner(BOTTOM_LEFT, area, bpsAfter, bpsStart,
                         afterRadiusStart, startRadiusEnd, innerBackgroundColor);
             }
         }
@@ -681,8 +704,8 @@ public class AFPPainter extends AbstractIFPainter {
                    };
 
 
-            if (!roundCorner[BEFORE_START] && !roundCorner[BEFORE_END]
-                        && !roundCorner[AFTER_END] && !roundCorner[AFTER_START]) {
+            if (!roundCorner[TOP_LEFT] && !roundCorner[TOP_RIGHT]
+                        && !roundCorner[BOTTOM_RIGHT] && !roundCorner[BOTTOM_LEFT]) {
                 try {
                     drawRectangularBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
                 } catch (IOException ioe) {
@@ -908,18 +931,18 @@ public class AFPPainter extends AbstractIFPainter {
                             //No transformation
                             AffineTransform t;
                             switch(corner) {
-                            case BEFORE_START:
+                            case TOP_LEFT:
                                 //No transform required
                                 break;
-                            case BEFORE_END:
+                            case TOP_RIGHT:
                                 t = new AffineTransform(-1, 0, 0, 1, startRadius, 0);
                                 g2d.transform(t);
                                 break;
-                            case AFTER_END:
+                            case BOTTOM_RIGHT:
                                 t = new AffineTransform(-1, 0, 0, -1, startRadius, beforeRadius);
                                 g2d.transform(t);
                                 break;
-                            case AFTER_START:
+                            case BOTTOM_LEFT:
                                 t = new AffineTransform(1, 0, 0, -1, 0, beforeRadius);
                                 g2d.transform(t);
                                 break;
@@ -1047,26 +1070,32 @@ public class AFPPainter extends AbstractIFPainter {
             }
         }
 
+        @Override
         protected void clip() throws IOException {
             //not supported by AFP
         }
 
+        @Override
         protected void closePath() throws IOException {
             //used for clipping only, so not implemented
         }
 
+        @Override
         protected void moveTo(int x, int y) throws IOException {
             //used for clipping only, so not implemented
         }
 
+        @Override
         protected void lineTo(int x, int y) throws IOException {
             //used for clipping only, so not implemented
         }
 
+        @Override
         protected void saveGraphicsState() throws IOException {
             //used for clipping only, so not implemented
         }
 
+        @Override
         protected void restoreGraphicsState() throws IOException {
             //used for clipping only, so not implemented
         }
@@ -1075,6 +1104,7 @@ public class AFPPainter extends AbstractIFPainter {
             return mpt / 1000f;
         }
 
+        @Override
         protected void drawBorderLine(                           // CSOK: ParameterNumber
                 int x1, int y1, int x2, int y2, boolean horz,
                 boolean startOrBefore, int style, Color color) throws IOException {
@@ -1084,6 +1114,7 @@ public class AFPPainter extends AbstractIFPainter {
             delegate.paint(borderPaintInfo);
         }
 
+        @Override
         public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
         throws IOException {
             if (start.y != end.y) {
@@ -1135,6 +1166,7 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
     throws IFException {
         try {
@@ -1146,8 +1178,8 @@ public class AFPPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawText(                                        // CSOK: MethodLength
-            int x, int y, final int letterSpacing, final int wordSpacing, final int[] dx,
-            final String text) throws IFException {
+            int x, int y, final int letterSpacing, final int wordSpacing,
+            final int[][] dp, final String text) throws IFException {
         final int fontSize = this.state.getFontSize();
         getPaintingState().setFontSize(fontSize);
 
@@ -1161,7 +1193,7 @@ public class AFPPainter extends AbstractIFPainter {
         }
 
         // register font as necessary
-        Map/*<String,FontMetrics>*/ fontMetricMap = documentHandler.getFontInfo().getFonts();
+        Map<String, Typeface> fontMetricMap = documentHandler.getFontInfo().getFonts();
         final AFPFont afpFont = (AFPFont)fontMetricMap.get(fontKey);
         final Font font = getFontInfo().getFontInstance(triplet, fontSize);
         AFPPageFonts pageFonts = getPaintingState().getPageFonts();
@@ -1196,6 +1228,7 @@ public class AFPPainter extends AbstractIFPainter {
                     builder.setCodedFont((byte)fontReference);
 
                     int l = text.length();
+                    int[] dx = IFUtil.convertDPToDX ( dp );
                     int dxl = (dx != null ? dx.length : 0);
                     StringBuffer sb = new StringBuffer();
 

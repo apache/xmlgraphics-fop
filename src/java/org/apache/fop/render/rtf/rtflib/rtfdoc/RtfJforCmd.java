@@ -26,9 +26,9 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
-import java.io.IOException;
 
 /**
  * Process "jfor-cmd"
@@ -39,14 +39,12 @@ public class RtfJforCmd extends RtfContainer {
     private static final String PARA_KEEP_OFF = "para-keep:off";
 
     private final RtfAttributes attrib;
-    private ParagraphKeeptogetherContext paragraphKeeptogetherContext;
 
 
 
     RtfJforCmd(RtfContainer parent, Writer w, RtfAttributes attrs) throws IOException {
         super((RtfContainer)parent, w);
         attrib = attrs;
-        paragraphKeeptogetherContext = ParagraphKeeptogetherContext.getInstance();
     }
 
 

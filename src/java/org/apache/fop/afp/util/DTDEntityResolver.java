@@ -22,9 +22,10 @@ package org.apache.fop.afp.util;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.fop.afp.fonts.FontRuntimeException;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
+
+import org.apache.fop.afp.fonts.FontRuntimeException;
 
 /**
  * An entity resolver for both DOM and SAX models of the SAX document.
@@ -32,7 +33,8 @@ import org.xml.sax.InputSource;
  * The entity resolver only handles queries for the DTD. It will find any URI
  * with a recognised public id and return an {@link org.xml.sax.InputSource}.
  * <p>
- * @author <a href="mailto:joe@exubero.com">Joe Schmetzer</a>
+ *
+ * <p>This work was authored by Joe Schmetzer (joe@exubero.com).</p>
  */
 public class DTDEntityResolver implements EntityResolver {
 

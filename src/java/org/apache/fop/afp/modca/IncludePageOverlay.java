@@ -56,7 +56,7 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
 
     /**
      * Constructor for the Include Page Overlay
-     * 
+     *
      * @param overlayName Name of the page segment
      * @param x The x position
      * @param y The y position
@@ -64,7 +64,7 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
      */
     public IncludePageOverlay(String overlayName, int x, int y, int orientation) {
         super(overlayName);
-        
+
         this.x = x;
         this.y = y;
         setOrientation(orientation);

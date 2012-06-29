@@ -21,10 +21,13 @@ package org.apache.fop.fo.flow;
 
 import org.xml.sax.Locator;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.StructureTreeElementHolder;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_basic-link">
@@ -34,9 +37,14 @@ import org.apache.fop.fo.ValidationException;
  * and whether that link is external (uses a URI) or internal (an id
  * reference).
  */
-public class BasicLink extends Inline {
+public class BasicLink extends InlineLevel implements StructureTreeElementHolder {
 
     // The value of properties relevant for fo:basic-link.
+    private Length alignmentAdjust;
+    private int alignmentBaseline;
+    private Length baselineShift;
+    private int dominantBaseline;
+    private StructureTreeElement structureTreeElement;
     // private ToBeImplementedProperty destinationPlacementOffset;
     private String externalDestination;
     // private ToBeImplementedProperty indicateDestination;
@@ -65,6 +73,10 @@ public class BasicLink extends Inline {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
+        alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
+        baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
+        dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         // destinationPlacementOffset = pList.get(PR_DESTINATION_PLACEMENT_OFFSET);
         externalDestination = pList.get(PR_EXTERNAL_DESTINATION).getString();
         // indicateDestination = pList.get(PR_INDICATE_DESTINATION);
@@ -92,7 +104,7 @@ public class BasicLink extends Inline {
     /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
-        getFOEventHandler().endLink();
+        getFOEventHandler().endLink(this);
     }
 
     /** {@inheritDoc} */
@@ -109,6 +121,36 @@ public class BasicLink extends Inline {
                 blockOrInlineItemFound = true;
             }
         }
+    }
+
+    /** @return the "alignment-adjust" property */
+    public Length getAlignmentAdjust() {
+        return alignmentAdjust;
+    }
+
+    /** @return the "alignment-baseline" property */
+    public int getAlignmentBaseline() {
+        return alignmentBaseline;
+    }
+
+    /** @return the "baseline-shift" property */
+    public Length getBaselineShift() {
+        return baselineShift;
+    }
+
+    /** @return the "dominant-baseline" property */
+    public int getDominantBaseline() {
+        return dominantBaseline;
+    }
+
+    @Override
+    public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
+        this.structureTreeElement = structureTreeElement;
+    }
+
+    /** {@inheritDoc} */
+    public StructureTreeElement getStructureTreeElement() {
+        return structureTreeElement;
     }
 
     /**

@@ -18,4 +18,5 @@
 <!-- $Id$ -->
 <catalogue xml:lang="en">
   <message key="ioError">I/O error while writing to target file.[ Reason: {ioe}]</message>
+  <message key="endPage">Rendered page #{number}.</message>
 </catalogue>

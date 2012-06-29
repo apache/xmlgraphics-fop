@@ -21,8 +21,10 @@ package org.apache.fop.render;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -30,10 +32,10 @@ import org.apache.fop.apps.FOUserAgent;
  */
 public abstract class AbstractConfigurator {
     /** logger instance */
-    protected static Log log = LogFactory.getLog(AbstractConfigurator.class);
+    protected static final Log log = LogFactory.getLog(AbstractConfigurator.class);
 
     private static final String MIME = "mime";
-    
+
     /** fop factory configuration */
     protected FOUserAgent userAgent = null;
 

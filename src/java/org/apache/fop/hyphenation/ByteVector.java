@@ -22,12 +22,14 @@ package org.apache.fop.hyphenation;
 import java.io.Serializable;
 
 /**
- * This class implements a simple byte vector with access to the
- * underlying array.
+ * <p>This class implements a simple byte vector with access to the
+ * underlying array.</p>
  *
- * @author Carlos Villegas <cav@uniscope.co.jp>
+ * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
 public class ByteVector implements Serializable {
+
+    private static final long serialVersionUID = 1554572867863466772L;
 
     /**
      * Capacity increment size

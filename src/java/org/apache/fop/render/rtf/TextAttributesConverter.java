@@ -35,6 +35,7 @@ import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.PageNumber;
+import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -47,14 +48,15 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontManager;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfLeader;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 
-/**  Converts FO properties to RtfAttributes
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
- *  @author Andreas Putz a.putz@skynamics.com
- *  @author Boris Poud&#x00E9;rous boris.pouderous@eads-telecom.com
- *  @author Peter Herweg, pherweg@web.de
- *  @author Normand Mass&#x00E9;
- *  @author Chris Scott
- *  @author rmarra
+/**
+ * <p>Converts FO properties to RtfAttributes.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch),
+ * Boris Poudérous (boris.pouderous@eads-telecom.com),
+ * Peter Herweg (pherweg@web.de),
+ * Normand Massé,
+ * Christopher Scott (scottc@westinghouse.com), and
+ * Roberto Marra (roberto@link-u.com).</p>
  */
 final class TextAttributesConverter {
 
@@ -80,8 +82,46 @@ final class TextAttributesConverter {
         attrBlockMargin(fobj.getCommonMarginBlock(), attrib);
         attrBlockTextAlign(fobj.getTextAlign(), attrib);
         attrBorder(fobj.getCommonBorderPaddingBackground(), attrib, fobj);
+        attrBreak(fobj, attrib);
 
         return attrib;
+    }
+
+    private static void attrBreak(Block fobj, FOPRtfAttributes attrib) {
+        int breakValue = fobj.getBreakBefore();
+        if (breakValue != Constants.EN_AUTO) {
+            //"sect" Creates a new section and a page break,
+            //a simple page break with control word "page" caused
+            //some problems
+            boolean bHasTableCellParent = false;
+            FONode f = fobj;
+            while (f.getParent() != null) {
+                f = f.getParent();
+                if (f instanceof TableCell) {
+                    bHasTableCellParent = true;
+                    break;
+                }
+            }
+            if (!bHasTableCellParent) {
+                attrib.set("sect");
+                switch (breakValue) {
+                case Constants.EN_EVEN_PAGE:
+                    attrib.set("sbkeven");
+                    break;
+                case Constants.EN_ODD_PAGE:
+                    attrib.set("sbkodd");
+                    break;
+                case Constants.EN_COLUMN:
+                    attrib.set("sbkcol");
+                    break;
+                default:
+                    attrib.set("sbkpage");
+                }
+            } else {
+                log.warn("Cannot create break-before for a block inside a table.");
+            }
+        }
+        //Break after is handled in RtfCloseGroupMark
     }
 
     /**

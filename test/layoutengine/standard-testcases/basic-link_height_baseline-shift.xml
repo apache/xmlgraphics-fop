@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the height of an fo:basic-link with baseline-shift.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page"
+          page-height="420pt" page-width="320pt" margin="10pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block font-size="40pt">Lorem ipsum dolor <fo:basic-link id="link" color="blue" 
+              font-size="12pt" external-destination="url(http://xmlgraphics.apache.org/fop/)" 
+              baseline-shift="-5pt">sit <fo:inline baseline-shift="5pt">amet,</fo:inline> <fo:inline 
+                font-size="24pt" baseline-shift="-10pt">consectetur</fo:inline> 
+              adipiscing</fo:basic-link>elit.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- First line -->
+    <eval expected="28584" xpath="//lineArea[2]//inlineparent[@prod-id='link']/@bpd"/>
+    <eval expected="20104" xpath="//lineArea[2]//inlineparent[@prod-id='link']/@offset"/>
+
+    <eval expected="11100" xpath="//lineArea[2]//inlineparent[@prod-id='link']/text[1]/@bpd"/>
+    <eval expected="5000"  xpath="//lineArea[2]//inlineparent[@prod-id='link']/text[1]/@offset"/>
+
+    <eval expected="11100" xpath="//lineArea[2]//inlineparent[@prod-id='link']/inlineparent[1]/@bpd"/>
+    <eval expected="0"     xpath="//lineArea[2]//inlineparent[@prod-id='link']/inlineparent[1]/@offset"/>
+
+    <eval expected="22200" xpath="//lineArea[2]//inlineparent[@prod-id='link']/inlineparent[2]/@bpd"/>
+    <eval expected="6384"  xpath="//lineArea[2]//inlineparent[@prod-id='link']/inlineparent[2]/@offset"/>
+
+    <!-- Second line -->
+    <eval expected="11100" xpath="//lineArea[3]//inlineparent[@prod-id='link']/@bpd"/>
+    <eval expected="25104" xpath="//lineArea[3]//inlineparent[@prod-id='link']/@offset"/>
+  </checks>
+</testcase>

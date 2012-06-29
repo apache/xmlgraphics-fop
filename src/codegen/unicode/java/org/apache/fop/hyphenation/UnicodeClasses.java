@@ -50,7 +50,7 @@ import org.apache.fop.util.License;
  * The methods fromJava and fromTeX are commented out because they are not Java 1.4 compliant.
  */
 public final class UnicodeClasses {
-    
+
     /** directory containing unicode properties files */
     public static final String UNICODE_DIR = "http://www.unicode.org/Public/UNIDATA/";
 
@@ -73,7 +73,7 @@ public final class UnicodeClasses {
         w.write("<!--   in 'src/java/org/apache/fop/hyphenation'   -->\n");
         w.write("<!-- * commit the changed file                    -->\n");
     }
-    
+
     /**
      * Generate classes.xml from Java's compiled-in Unicode Character Database
      * @param hexcode whether to prefix each class with the hexcode (only for debugging purposes)
@@ -99,7 +99,7 @@ public final class UnicodeClasses {
         ow.write("<classes>\n");
         // loop over the first Unicode plane
         for (int code = Character.MIN_VALUE; code <= maxChar; ++code) {
-            
+
             // skip surrogate area
             if (code == Character.MIN_SURROGATE) {
                 code = Character.MAX_SURROGATE;
@@ -114,7 +114,7 @@ public final class UnicodeClasses {
                     || Character.getType(code) == Character.OTHER_LETTER)) {
                 continue;
             }
-            
+
             // skip a number of blocks
             Character.UnicodeBlock ubi = Character.UnicodeBlock.of(code);
             if (ubi.equals(Character.UnicodeBlock.SUPERSCRIPTS_AND_SUBSCRIPTS)
@@ -146,18 +146,25 @@ public final class UnicodeClasses {
         ow.flush();
         ow.close();
     }
-    
-    
-    /**
-     * The column numbers in the UCD file
-     */
-    public static final int UNICODE = 0, GENERAL_CATEGORY = 2, SIMPLE_UPPERCASE_MAPPING = 12,
-    SIMPLE_LOWERCASE_MAPPING = 13, SIMPLE_TITLECASE_MAPPING = 14, NUM_FIELDS = 15;
-    
+
+
+    /** The 1st column in the UCD file. */
+    public static final int UNICODE = 0;
+    /** The 3rd column in the UCD file. */
+    public static final int GENERAL_CATEGORY = 2;
+    /** The 13th column in the UCD file. */
+    public static final int SIMPLE_UPPERCASE_MAPPING = 12;
+    /** The 14th column in the UCD file. */
+    public static final int SIMPLE_LOWERCASE_MAPPING = 13;
+    /** The 15th column in the UCD file. */
+    public static final int SIMPLE_TITLECASE_MAPPING = 14;
+    /** The number of columns in the UCD file. */
+    public static final int NUM_FIELDS = 15;
+
     /**
      * Generate classes.xml from Unicode Character Database files
      * @param hexcode whether to prefix each class with the hexcode (only for debugging purposes)
-     * @param unidataPath path to the directory with UCD files  
+     * @param unidataPath path to the directory with UCD files
      * @param outfilePath output file
      * @throws IOException if the input files are not found
      * @throws URISyntaxException if {@code unidataPath} cannot be converted to a URI
@@ -175,7 +182,7 @@ public final class UnicodeClasses {
             throw new FileNotFoundException
             ("URI with file or http scheme required for UNIDATA input directory");
         }
-        
+
         File f = new File(outfilePath);
         if (f.exists()) {
             f.delete();
@@ -183,7 +190,7 @@ public final class UnicodeClasses {
         f.createNewFile();
         FileOutputStream fw = new FileOutputStream(f);
         OutputStreamWriter ow = new OutputStreamWriter(fw, "utf-8");
-        
+
         URI inuri = unidata.resolve("Blocks.txt");
         InputStream inis = null;
         if (scheme.equals("file")) {
@@ -253,8 +260,9 @@ public final class UnicodeClasses {
                 if (j < blockNames.length) {
                     continue;
                 }
-            
-                int uppercode = -1, titlecode = -1;
+
+                int uppercode = -1;
+                int titlecode = -1;
                 if (!"".equals(fields[SIMPLE_UPPERCASE_MAPPING])) {
                     uppercode = Integer.parseInt(fields[SIMPLE_UPPERCASE_MAPPING], 16);
                 }
@@ -284,7 +292,7 @@ public final class UnicodeClasses {
     /**
      * Generate classes.xml from XeTeX's Unicode letters file
      * @param hexcode whether to prefix each class with the hexcode (only for debugging purposes)
-     * @param lettersPath path to XeTeX's Unicode letters file unicode-letters-XeTeX.tex  
+     * @param lettersPath path to XeTeX's Unicode letters file unicode-letters-XeTeX.tex
      * @param outfilePath output file
      * @throws IOException in case of an I/O exception
      */
@@ -322,8 +330,7 @@ public final class UnicodeClasses {
             if (codes[0].equals("\\l") && codes.length != 2) {
                 ow.write("\"" + line + "\" should have one code");
                 continue;
-            }
-            else if (codes[0].equals("\\L") && codes.length != 4) {
+            } else if (codes[0].equals("\\L") && codes.length != 4) {
                 ow.write("\"" + line + "\" should have three codes");
                 continue;
             }
@@ -345,14 +352,17 @@ public final class UnicodeClasses {
         inbr.close();
     }
 
-    
+
     /**
      * @param args [--hexcode] [--java|--ucd|--tex] outfile [infile]
      * @throws IOException if the input file cannot be found
      * @throws URISyntaxException if the input URI is incorrect
      */
     public static void main(String[] args) throws IOException, URISyntaxException {
-        String type = "ucd", prefix = "--", infile = null, outfile = null;
+        String type = "ucd";
+        String prefix = "--";
+        String infile = null;
+        String outfile = null;
         boolean hexcode = false;
         int i;
         for (i = 0; i < args.length && args[i].startsWith(prefix); ++i) {
@@ -375,7 +385,7 @@ public final class UnicodeClasses {
         if (++i < args.length) {
             infile = args[i];
         }
-        
+
         if (type.equals("java") && infile != null) {
                 System.err.println("Type java does not allow an infile");
                 System.exit(1);

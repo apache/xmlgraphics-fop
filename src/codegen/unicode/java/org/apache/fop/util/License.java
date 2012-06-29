@@ -28,7 +28,7 @@ import java.io.Writer;
  * Write the Apache license text in various forms
  */
 public final class License {
-    
+
     private License() {
     }
 
@@ -56,10 +56,10 @@ public final class License {
      * The subversion Id keyword line
      */
     public static final String ID = "$Id$";
-    
+
     /**
      * Calculate the maximum line length in the Apache license text
-     * for use in formatting 
+     * for use in formatting
      */
     private static int maxLength;
     static {
@@ -103,7 +103,7 @@ public final class License {
         w.write("\n");
         w.write("<!-- " + ID + " -->\n");
     }
-    
+
     /**
      * For testing purposes
      * @param args optional, --java or --xml

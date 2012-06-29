@@ -48,6 +48,7 @@ import org.apache.fop.render.intermediate.IFConstants;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
@@ -325,7 +326,7 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
 
     /** {@inheritDoc} */
 
-    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx,
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[][] dp,
             String text) throws IFException {
         try {
             establish(MODE_TEXT);
@@ -339,7 +340,8 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
             if (wordSpacing != 0) {
                 XMLUtil.addAttribute(atts, "word-spacing", SVGUtil.formatMptToPt(wordSpacing));
             }
-            if (dx != null) {
+            if (dp != null) {
+                int[] dx = IFUtil.convertDPToDX(dp);
                 XMLUtil.addAttribute(atts, "dx", SVGUtil.formatMptArrayToPt(dx));
             }
             handler.startElement("text", atts);

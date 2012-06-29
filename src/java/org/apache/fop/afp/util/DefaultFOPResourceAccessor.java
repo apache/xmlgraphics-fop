@@ -31,8 +31,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.IOUtils;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.fonts.FontManager;
 
 /**
  * Default implementation of the {@link ResourceAccessor} interface for use inside FOP.
@@ -46,7 +44,8 @@ public class DefaultFOPResourceAccessor extends SimpleResourceAccessor {
      * Constructor for resource to be accessed via the {@link FOUserAgent}. This contructor
      * can take two base URIs: the category base URI is the one to use when differentiating between
      * normal resources (ex. images) and font resources. So, if fonts need to be accessed, you can
-     * set the {@link FontManager}'s base URI instead of the one on the {@link FopFactory}.
+     * set the {@link org.apache.fop.fonts.FontManager}'s base URI instead of the one on the
+     * {@link org.apache.fop.apps.FopFactory}.
      * @param userAgent the FO user agent
      * @param categoryBaseURI the category base URI (may be null)
      * @param baseURI the custom base URI to resolve relative URIs against (may be null)

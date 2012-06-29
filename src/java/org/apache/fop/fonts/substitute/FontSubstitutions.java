@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 
@@ -35,7 +36,7 @@ public class FontSubstitutions extends java.util.ArrayList/*<Substitutions>*/ {
     private static final long serialVersionUID = -9173104935431899722L;
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog(FontSubstitutions.class);
+    protected static final Log log = LogFactory.getLog(FontSubstitutions.class);
 
     /**
      * Adjusts a given fontInfo using this font substitution catalog

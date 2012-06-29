@@ -29,6 +29,9 @@ import org.apache.fop.area.Block;
  */
 public class InlineBlockParent extends InlineArea {
 
+
+    private static final long serialVersionUID = -3661746143321407377L;
+
     /**
      * The list of inline areas added to this inline parent.
      */
@@ -45,6 +48,7 @@ public class InlineBlockParent extends InlineArea {
      *
      * @param childArea the child area to add
      */
+    @Override
     public void addChildArea(Area childArea) {
         if (child != null) {
             throw new IllegalStateException("InlineBlockParent may have only one child area.");

@@ -498,8 +498,8 @@ class FOPTaskStarter {
         } else {
             try {
                 if (task.getFofile() != null) {
-                    this.baseURL =  task.getFofile().getParentFile().toURI().toURL().
-                                      toExternalForm();
+                    this.baseURL =  task.getFofile().getParentFile().toURI().toURL()
+                                      .toExternalForm();
                 }
             } catch (MalformedURLException mfue) {
                 logger.error("Error creating base URL from XSL-FO input file", mfue);
@@ -598,12 +598,12 @@ class FOPTaskStarter {
                 }
                 try {
                     if (task.getRelativebase()) {
-                        this.baseURL = f.getParentFile().toURI().toURL().
-                                         toExternalForm();
+                        this.baseURL = f.getParentFile().toURI().toURL()
+                                         .toExternalForm();
                     }
                     if (this.baseURL == null) {
-                        this.baseURL = fs.getDir(task.getProject()).toURI().toURL().
-                                          toExternalForm();
+                        this.baseURL = fs.getDir(task.getProject()).toURI().toURL()
+                                          .toExternalForm();
                     }
 
                 } catch (Exception e) {

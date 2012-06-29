@@ -53,4 +53,11 @@ public interface RendererEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void ioError(Object source, IOException ioe);
+
+    /**
+     * Triggered at the end of page rendering.
+     * @param source the event source
+     * @param number the page number
+     */
+    void endPage(Object source, int number);
 }

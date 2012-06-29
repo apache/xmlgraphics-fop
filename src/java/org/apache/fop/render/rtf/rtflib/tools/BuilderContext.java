@@ -26,14 +26,15 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfOptions;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfContainer;
 
 
-/**  A BuilderContext holds context information when building an RTF document
- *
- *  @author Bertrand Delacretaz <bdelacretaz@codeconsult.ch>
- *  @author putzi
- *  @author Peter Herweg <pherweg@web.de>
+/**
+ * <p>A BuilderContext holds context information when building an RTF document.</p>
  *
  *  This class was originally developed by Bertrand Delacretaz bdelacretaz@codeconsult.ch
  *  for the JFOR project and is now integrated into FOP.
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch),
+ * Andreas Putz (a.putz@skynamics.com), and
+ * Peter Herweg (pherweg@web.de).</p>
  */
 
 public class BuilderContext {
@@ -111,7 +112,7 @@ public class BuilderContext {
         return result;
     }
 
-    /** 
+    /**
      * Push an RtfContainer on our stack.
      * @param c the container
      */

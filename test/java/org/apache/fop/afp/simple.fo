@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="no"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="420pt" page-width="320pt" margin="10pt">
+      <fo:region-body background-color="#F0F0F0"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>This is a simple document.</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

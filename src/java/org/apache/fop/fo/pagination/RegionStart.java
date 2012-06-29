@@ -19,14 +19,13 @@
 
 package org.apache.fop.fo.pagination;
 
-// Java
 import java.awt.Rectangle;
 
-// FOP
-import org.apache.fop.fo.FONode;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_region-start">
@@ -44,7 +43,7 @@ public class RegionStart extends RegionSE {
     }
 
     /** {@inheritDoc} */
-    public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
+    public Rectangle getViewportRectangle (FODimension reldims) {
         /* Special rules apply to resolving extent as values are resolved relative
          * to the page size and reference orientation.
          */
@@ -52,14 +51,25 @@ public class RegionStart extends RegionSE {
         PercentBaseContext pageHeightContext = getPageHeightContext(LengthBase.CUSTOM_BASE);
         PercentBaseContext neighbourContext;
         Rectangle vpRect;
-        if (spm.getWritingMode() == EN_LR_TB || spm.getWritingMode() == EN_RL_TB) {
+        // [TBD] WRITING MODE ALERT
+        switch ( getWritingMode().getEnumValue() ) {
+        case Constants.EN_RL_TB:
             neighbourContext = pageHeightContext;
-            vpRect = new Rectangle(0, 0, getExtent().getValue(pageWidthContext), reldims.bpd);
-        } else {
+            vpRect = new Rectangle(reldims.ipd - getExtent().getValue(pageWidthContext), 0,
+                    getExtent().getValue(pageWidthContext), reldims.bpd);
+            break;
+        case Constants.EN_TB_LR:
+        case Constants.EN_TB_RL:
             neighbourContext = pageWidthContext;
             vpRect = new Rectangle(0, 0, reldims.bpd, getExtent().getValue(pageHeightContext));
+            break;
+        case Constants.EN_LR_TB:
+        default:
+            neighbourContext = pageHeightContext;
+            vpRect = new Rectangle(0, 0, getExtent().getValue(pageWidthContext), reldims.bpd);
+            break;
         }
-        adjustIPD(vpRect, spm.getWritingMode(), neighbourContext);
+        adjustIPD(vpRect, layoutMaster.getWritingMode(), neighbourContext);
         return vpRect;
     }
 

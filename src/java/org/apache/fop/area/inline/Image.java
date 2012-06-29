@@ -27,8 +27,11 @@ import org.apache.fop.area.Area;
  * The url of the image is used as a key to reference the image cache.
  */
 public class Image extends Area {
+
+    private static final long serialVersionUID = 4800834714349695386L;
+
     private String url;
-    
+
     /**
      * Create a new image with the given url.
      *

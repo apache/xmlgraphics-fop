@@ -33,21 +33,19 @@ import java.text.CharacterIterator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.batik.dom.svg.SVGOMTextElement;
 import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.TextPainter;
-import org.apache.batik.gvt.font.GVTFontFamily;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 import org.apache.batik.gvt.text.Mark;
 import org.apache.batik.gvt.text.TextPaintInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontTriplet;
 
 /**
  * Renders the attributed character iterator of a {@link TextNode}.
@@ -336,53 +334,9 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
         }
     }
 
-    private String getStyle(AttributedCharacterIterator aci) {
-        Float posture = (Float)aci.getAttribute(TextAttribute.POSTURE);
-        return ((posture != null) && (posture.floatValue() > 0.0))
-                       ? Font.STYLE_ITALIC
-                       : Font.STYLE_NORMAL;
-    }
-
-    private int getWeight(AttributedCharacterIterator aci) {
-        Float taWeight = (Float)aci.getAttribute(TextAttribute.WEIGHT);
-        return ((taWeight != null) &&  (taWeight.floatValue() > 1.0))
-                       ? Font.WEIGHT_BOLD
-                       : Font.WEIGHT_NORMAL;
-    }
-
     private Font getFont(AttributedCharacterIterator aci) {
-        Float fontSize = (Float)aci.getAttribute(TextAttribute.SIZE);
-        if (fontSize == null) {
-            fontSize = new Float(10f);
-        }
-        String style = getStyle(aci);
-        int weight = getWeight(aci);
-
-        FontInfo fontInfo = nativeTextHandler.getFontInfo();
-        String fontFamily = null;
-        List gvtFonts = (List) aci.getAttribute(
-                      GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
-        if (gvtFonts != null) {
-            Iterator i = gvtFonts.iterator();
-            while (i.hasNext()) {
-                GVTFontFamily fam = (GVTFontFamily) i.next();
-                /* (todo) Enable SVG Font painting
-                if (fam instanceof SVGFontFamily) {
-                    PROXY_PAINTER.paint(node, g2d);
-                    return;
-                }*/
-                fontFamily = fam.getFamilyName();
-                if (fontInfo.hasFont(fontFamily, style, weight)) {
-                    FontTriplet triplet = fontInfo.fontLookup(
-                            fontFamily, style, weight);
-                    int fsize = (int)(fontSize.floatValue() * 1000);
-                    return fontInfo.getFontInstance(triplet, fsize);
-                }
-            }
-        }
-        FontTriplet triplet = fontInfo.fontLookup("any", style, Font.WEIGHT_NORMAL);
-        int fsize = (int)(fontSize.floatValue() * 1000);
-        return fontInfo.getFontInstance(triplet, fsize);
+        Font[] fonts = ACIUtils.findFontsForBatikACI(aci, nativeTextHandler.getFontInfo());
+        return fonts[0];
     }
 
     private float getStringWidth(String str, Font font) {

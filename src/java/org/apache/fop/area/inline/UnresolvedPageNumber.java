@@ -19,11 +19,12 @@
 
 package org.apache.fop.area.inline;
 
+import java.util.List;
+
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolvable;
+import org.apache.fop.complexscripts.bidi.InlineRun;
 import org.apache.fop.fonts.Font;
-
-import java.util.List;
 
 /**
  * Unresolvable page number area.
@@ -31,6 +32,9 @@ import java.util.List;
  * from an id reference.
  */
 public class UnresolvedPageNumber extends TextArea implements Resolvable {
+
+
+    private static final long serialVersionUID = -1758090835371647980L;
 
     private boolean resolved = false;
     private String pageIDRef;
@@ -80,31 +84,39 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
     }
 
     /**
+     * Get the (resolved or unresolved) text.
+     *
+     * @return the text
+     */
+    public String getText() {
+        return text;
+    }
+
+    /**
      * Resolve the page number idref
      * This resolves the idref for this object by getting the page number
      * string from the first page in the list of pages that apply
      * for this ID.  The page number text is then set to the String value
      * of the page number.
      *
+     * TODO: [GA] May need to run bidi algorithm and script processor
+     * on resolved page number.
+     *
      * @param id an id whose PageViewports have been determined
      * @param pages the list of PageViewports associated with this ID
      */
-    public void resolveIDRef(String id, List pages) {
+    public void resolveIDRef(String id, List<PageViewport> pages) {
         if (!resolved && pageIDRef.equals(id) && pages != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Resolving pageNumber: " + id);
             }
             resolved = true;
-            PageViewport page;
-            if (pageType == FIRST) {
-                page = (PageViewport)pages.get(0);
-            } else {
-                page = (PageViewport)pages.get(pages.size() - 1);
-            }
+            int pageIndex = pageType ? 0 : pages.size() - 1;
+            PageViewport page = pages.get(pageIndex);
             // replace the text
             removeText();
             text = page.getPageNumberString();
-            addWord(text, 0);
+            addWord(text, 0, getBidiLevel());
             // update ipd
             if (font != null) {
                 handleIPDVariation(font.getWordWidth(text) - getIPD());
@@ -133,8 +145,26 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
      * @param lineShrink      the total shrink of the line
      * @return true if there is an UnresolvedArea descendant
      */
+    @Override
     public boolean applyVariationFactor(double variationFactor,
                                         int lineStretch, int lineShrink) {
         return true;
+    }
+
+    /**
+     * Collection bidi inline runs.
+     * Override of @{link InlineParent} implementation.
+     *
+     * N.B. [GA] without this override, the page-number-citation_writing_mode_rl
+     * layout engine test will fail. It may be that the test needs to
+     * be updated rather than using this override.
+     * @param runs current list of inline runs
+     * @return modified list of inline runs, having appended new run
+     */
+    @Override
+    public List collectInlineRuns ( List runs ) {
+        assert runs != null;
+        runs.add ( new InlineRun ( this, new int[] {getBidiLevel()}) );
+        return runs;
     }
 }

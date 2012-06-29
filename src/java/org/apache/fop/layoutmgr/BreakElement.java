@@ -21,8 +21,6 @@ package org.apache.fop.layoutmgr;
 
 import java.util.List;
 
-import org.apache.fop.fo.Constants;
-
 /**
  * This class represents an unresolved break possibility.
  */
@@ -48,8 +46,11 @@ public class BreakElement extends UnresolvedListElement {
      * Create a new BreakElement for the given {@code position}, {@code penaltyValue}
      * and {@code breakClass}. (Used principally to generate break-possibilities in
      * ranges of content that must be kept together within the context corresponding
-     * to the {@code breakClass}; expected to be one of {@link Constants#EN_AUTO},
-     * {@link Constants#EN_LINE}, {@link Constants#EN_COLUMN} or {@link Constants#EN_PAGE})
+     * to the {@code breakClass}; expected to be one of
+     *   {@link org.apache.fop.fo.Constants#EN_AUTO},
+     *   {@link org.apache.fop.fo.Constants#EN_LINE},
+     *   {@link org.apache.fop.fo.Constants#EN_COLUMN} or
+     *   {@link org.apache.fop.fo.Constants#EN_PAGE})
      * @param position  the corresponding {@link Position}
      * @param penaltyValue  the penalty value
      * @param breakClass    the break class
@@ -66,9 +67,12 @@ public class BreakElement extends UnresolvedListElement {
      * @param position the Position instance needed by the addAreas stage of the LMs.
      * @param penaltyWidth the penalty width
      * @param penaltyValue the penalty value for the penalty element to be constructed
-     * @param breakClass the break class of this penalty (one of {@link Constants#EN_AUTO},
-     * {@link Constants#EN_COLUMN}, {@link Constants#EN_PAGE},
-     * {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE})
+     * @param breakClass the break class of this penalty (one of
+     *   {@link org.apache.fop.fo.Constants#EN_AUTO},
+     *   {@link org.apache.fop.fo.Constants#EN_COLUMN},
+     *   {@link org.apache.fop.fo.Constants#EN_PAGE},
+     *   {@link org.apache.fop.fo.Constants#EN_EVEN_PAGE},
+     *   {@link org.apache.fop.fo.Constants#EN_ODD_PAGE})
      * @param context the layout context which contains the pending conditional elements
      */
     public BreakElement(Position position, int penaltyWidth, int penaltyValue,
@@ -122,9 +126,12 @@ public class BreakElement extends UnresolvedListElement {
     /**
      * Returns the break class of this penalty.
      *
-     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
-     * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE},
-     * {@link Constants#EN_ODD_PAGE}
+     * @return one of
+     *   {@link org.apache.fop.fo.Constants#EN_AUTO},
+     *   {@link org.apache.fop.fo.Constants#EN_COLUMN},
+     *   {@link org.apache.fop.fo.Constants#EN_PAGE},
+     *   {@link org.apache.fop.fo.Constants#EN_EVEN_PAGE},
+     *   {@link org.apache.fop.fo.Constants#EN_ODD_PAGE}.
      */
     public int getBreakClass() {
         return breakClass;
@@ -133,9 +140,12 @@ public class BreakElement extends UnresolvedListElement {
     /**
      * Sets the break class.
      *
-     * @param breakClass one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
-     * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE},
-     * {@link Constants#EN_ODD_PAGE}
+     * @param breakClass one of
+     *   {@link org.apache.fop.fo.Constants#EN_AUTO},
+     *   {@link org.apache.fop.fo.Constants#EN_COLUMN},
+     *   {@link org.apache.fop.fo.Constants#EN_PAGE},
+     *   {@link org.apache.fop.fo.Constants#EN_EVEN_PAGE},
+     *   {@link org.apache.fop.fo.Constants#EN_ODD_PAGE}.
      */
     public void setBreakClass(int breakClass) {
         this.breakClass = breakClass;

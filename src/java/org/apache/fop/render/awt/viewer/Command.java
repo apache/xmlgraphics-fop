@@ -19,11 +19,11 @@
 
 package org.apache.fop.render.awt.viewer;
 
-//Java
 import java.awt.event.ActionEvent;
+import java.net.URL;
+
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import java.net.URL;
 
 /**
  * This class represents UI-commands, which can be used as menu or toolbar

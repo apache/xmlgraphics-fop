@@ -19,7 +19,11 @@
 
 package org.apache.fop.area;
 
+import java.util.Iterator;
 import java.util.List;
+
+import org.apache.fop.fo.Constants;
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
 /**
  * The span-reference-area.
@@ -30,8 +34,11 @@ import java.util.List;
  * See fo:region-body definition in the XSL Rec for more information.
  */
 public class Span extends Area {
+
+    private static final long serialVersionUID = -5551430053660081549L;
+
     // the list of flow reference areas in this span area
-    private List flowAreas;
+    private List<NormalFlow> flowAreas;
     private int colCount;
     private int colGap;
     private int colWidth; // width for each normal flow, calculated value
@@ -57,7 +64,7 @@ public class Span extends Area {
      * Create the normal flows for this Span
      */
     private void createNormalFlows() {
-        flowAreas = new java.util.ArrayList(colCount);
+        flowAreas = new java.util.ArrayList<NormalFlow>(colCount);
         colWidth = (ipd - ((colCount - 1) * colGap)) / colCount;
 
         for (int i = 0; i < colCount; i++) {
@@ -102,7 +109,7 @@ public class Span extends Area {
      */
     public NormalFlow getNormalFlow(int colRequested) {
         if (colRequested >= 0 && colRequested < colCount) {
-            return (NormalFlow) flowAreas.get(colRequested);
+            return flowAreas.get(colRequested);
         } else { // internal error
             throw new IllegalArgumentException("Invalid column number "
                     + colRequested + " requested; only 0-" + (colCount - 1)
@@ -180,7 +187,30 @@ public class Span extends Area {
         return (areaCount == 0);
     }
 
+    /**
+     * Sets the writing mode traits for the main reference area of
+     * this span area.
+     * @param wmtg a WM traits getter
+     */
+    public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
+        switch ( wmtg.getColumnProgressionDirection().getEnumValue() ) {
+        case Constants.EN_RL:
+            setBidiLevel(1);
+            for ( Iterator<NormalFlow> it = flowAreas.iterator(); it.hasNext();) {
+                it.next().setBidiLevel(1);
+            }
+            break;
+        default:
+            resetBidiLevel();
+            for ( Iterator<NormalFlow> it = flowAreas.iterator(); it.hasNext();) {
+                it.next().resetBidiLevel();
+            }
+            break;
+        }
+    }
+
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         if (colCount > 1) {

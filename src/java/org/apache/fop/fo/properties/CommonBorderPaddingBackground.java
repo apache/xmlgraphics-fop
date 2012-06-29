@@ -22,6 +22,7 @@ package org.apache.fop.fo.properties;
 import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
@@ -37,19 +38,20 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * Stores all common border and padding properties.
  * See Sec. 7.7 of the XSL-FO Standard.
  */
-public class CommonBorderPaddingBackground {                    // CSOK: FinalClassCheck
+public class CommonBorderPaddingBackground {
 
     /**
      *  cache holding all canonical instances
      *  (w/ absolute background-position-* and padding-*)
      */
-    private static final PropertyCache CACHE
-        = new PropertyCache(CommonBorderPaddingBackground.class);
+    private static final PropertyCache<CommonBorderPaddingBackground> CACHE
+            = new PropertyCache<CommonBorderPaddingBackground>();
 
     private int hash = -1;
 
@@ -104,8 +106,8 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
     public static final class BorderInfo {
 
         /** cache holding all canonical instances */
-        private static final PropertyCache CACHE
-            = new PropertyCache(BorderInfo.class);
+        private static final PropertyCache<BorderInfo> CACHE
+                = new PropertyCache<BorderInfo>();
 
         private int mStyle; // Enum for border style
         private Color mColor; // Border color
@@ -192,7 +194,7 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
             return this.radiusEnd;
         }
 
-        /** {@inheritDoc} */
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer("BorderInfo");
             sb.append(" {");
@@ -209,12 +211,11 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
             return sb.toString();
         }
 
-        /** {@inheritDoc} */
+        @Override
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
             }
-
             if (obj instanceof BorderInfo) {
                 BorderInfo bi = (BorderInfo)obj;
                 return (this.mColor == bi.mColor
@@ -223,11 +224,13 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
                         && this.radiusStart == bi.radiusStart
                         && this.radiusEnd == bi.radiusEnd);
             }
-
-            return false;
+            BorderInfo other = (BorderInfo) obj;
+            return CompareUtil.equal(mColor, other.mColor)
+                    && mStyle == other.mStyle
+                    && CompareUtil.equal(mWidth, other.mWidth);
         }
 
-        /** {@inheritDoc} */
+        @Override
         public int hashCode() {
             if (this.hash == -1) {
                 int hash = 17;
@@ -263,47 +266,47 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
      */
     private static class ConditionalNullLength extends CondLengthProperty {
 
-        /** {@inheritDoc} */
+        @Override
         public Property getComponent(int cmpId) {
             throw new UnsupportedOperationException();
         }
 
-        /** {@inheritDoc} */
+        @Override
         public Property getConditionality() {
             throw new UnsupportedOperationException();
         }
 
-        /** {@inheritDoc} */
+        @Override
         public Length getLength() {
             throw new UnsupportedOperationException();
         }
 
-        /** {@inheritDoc} */
+        @Override
         public Property getLengthComponent() {
             throw new UnsupportedOperationException();
         }
 
-        /** {@inheritDoc} */
+        @Override
         public int getLengthValue() {
             return 0;
         }
 
-        /** {@inheritDoc} */
+        @Override
         public int getLengthValue(PercentBaseContext context) {
             return 0;
         }
 
-        /** {@inheritDoc} */
+        @Override
         public boolean isDiscard() {
             return true;
         }
 
-        /** {@inheritDoc} */
+        @Override
         public void setComponent(int cmpId, Property cmpnValue, boolean isDefault) {
             throw new UnsupportedOperationException();
         }
 
-        /** {@inheritDoc} */
+        @Override
         public String toString() {
             return "CondLength[0mpt, discard]";
         }
@@ -327,7 +330,7 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
      * @param pList The PropertyList to get properties from.
      * @throws PropertyException if there's an error while binding the properties
      */
-    private CommonBorderPaddingBackground(PropertyList pList) throws PropertyException {
+    CommonBorderPaddingBackground(PropertyList pList) throws PropertyException {
 
         backgroundAttachment = pList.get(Constants.PR_BACKGROUND_ATTACHMENT).getEnum();
 
@@ -396,11 +399,8 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
      * @return a CommonBorderPaddingBackground instance (cached if possible)
      * @throws PropertyException in case of an error
      */
-    public static CommonBorderPaddingBackground getInstance(PropertyList pList)
-    throws PropertyException {
-
-        CommonBorderPaddingBackground newInstance
-        = new CommonBorderPaddingBackground(pList);
+    public static CommonBorderPaddingBackground getInstance(PropertyList pList) throws PropertyException {
+        CommonBorderPaddingBackground newInstance = new CommonBorderPaddingBackground(pList);
         CommonBorderPaddingBackground cachedInstance = null;
         /* if padding-* and background-position-* resolve to absolute lengths
          * the whole instance can be cached */
@@ -418,33 +418,33 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
                     || newInstance.backgroundPositionVertical.isAbsolute())) {
             cachedInstance = CACHE.fetch(newInstance);
         }
-
-        /* for non-cached, or not-yet-cached instances, preload the image */
-        if ((cachedInstance == null
-                || cachedInstance == newInstance)
+        synchronized (newInstance.backgroundImage.intern()) {
+            /* for non-cached, or not-yet-cached instances, preload the image */
+            if ((cachedInstance == null || cachedInstance == newInstance)
                 && !("".equals(newInstance.backgroundImage))) {
-            //Additional processing: preload image
-            String uri = URISpecification.getURL(newInstance.backgroundImage);
-            FObj fobj = pList.getFObj();
-            FOUserAgent userAgent = pList.getFObj().getUserAgent();
-            ImageManager manager = userAgent.getFactory().getImageManager();
-            ImageSessionContext sessionContext = userAgent.getImageSessionContext();
-            ImageInfo info;
-            try {
-                info = manager.getImageInfo(uri, sessionContext);
-                newInstance.backgroundImageInfo = info;
-            } catch (ImageException e) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                        fobj.getUserAgent().getEventBroadcaster());
-                eventProducer.imageError(fobj, uri, e, fobj.getLocator());
-            } catch (FileNotFoundException fnfe) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                        fobj.getUserAgent().getEventBroadcaster());
-                eventProducer.imageNotFound(fobj, uri, fnfe, fobj.getLocator());
-            } catch (IOException ioe) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                        fobj.getUserAgent().getEventBroadcaster());
-                eventProducer.imageIOError(fobj, uri, ioe, fobj.getLocator());
+                //Additional processing: preload image
+                String uri = URISpecification.getURL(newInstance.backgroundImage);
+                FObj fobj = pList.getFObj();
+                FOUserAgent userAgent = pList.getFObj().getUserAgent();
+                ImageManager manager = userAgent.getFactory().getImageManager();
+                ImageSessionContext sessionContext = userAgent.getImageSessionContext();
+                ImageInfo info;
+                try {
+                    info = manager.getImageInfo(uri, sessionContext);
+                    newInstance.backgroundImageInfo = info;
+                } catch (ImageException e) {
+                    ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                            fobj.getUserAgent().getEventBroadcaster());
+                    eventProducer.imageError(fobj, uri, e, fobj.getLocator());
+                } catch (FileNotFoundException fnfe) {
+                    ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                            fobj.getUserAgent().getEventBroadcaster());
+                    eventProducer.imageNotFound(fobj, uri, fnfe, fobj.getLocator());
+                } catch (IOException ioe) {
+                    ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                            fobj.getUserAgent().getEventBroadcaster());
+                    eventProducer.imageIOError(fobj, uri, ioe, fobj.getLocator());
+                }
             }
         }
 
@@ -578,9 +578,9 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
     }
 
     /**
-     * @param side the side to retrieve
-     * @param discard indicates whether the .conditionality component should be
-     * considered (end of a reference-area)
+     * @param side the side of the border
+     * @param discard indicates whether the .conditionality component should be considered (end of a
+     * reference-area)
      * @return the width of the start-border, taking into account the specified conditionality
      */
     public int getBorderWidth(int side, boolean discard) {
@@ -709,7 +709,7 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
         + getBorderBeforeWidth(discard) + getBorderAfterWidth(discard);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "CommonBordersAndPadding (Before, After, Start, End):\n"
         + "Borders: (" + getBorderBeforeWidth(false) + ", " + getBorderAfterWidth(false) + ", "
@@ -820,7 +820,7 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
         return padding;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -833,45 +833,40 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
                     && this.backgroundPositionHorizontal == cbpb.backgroundPositionHorizontal
                     && this.backgroundPositionVertical == cbpb.backgroundPositionVertical
                     && this.backgroundRepeat == cbpb.backgroundRepeat
-                    && this.borderInfo[BEFORE] == cbpb.borderInfo[BEFORE]
-                    && this.borderInfo[AFTER] == cbpb.borderInfo[AFTER]
-                    && this.borderInfo[START] == cbpb.borderInfo[START]
-                    && this.borderInfo[END] == cbpb.borderInfo[END]
-                    && this.padding[BEFORE] == cbpb.padding[BEFORE]
-                    && this.padding[AFTER] == cbpb.padding[AFTER]
-                    && this.padding[START] == cbpb.padding[START]
-                    && this.padding[END] == cbpb.padding[END]
-                    );
+                    && Arrays.equals(borderInfo, cbpb.borderInfo)
+                    && Arrays.equals(padding, cbpb.padding));
+        } else {
+            return false;
         }
-
-        return false;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         if (this.hash == -1) {
-            int hash = 17;
+            int hash = getHashCode(backgroundColor,
+                    backgroundImage,
+                    backgroundPositionHorizontal,
+                    backgroundPositionVertical,
+                    borderInfo[BEFORE],
+                    borderInfo[AFTER],
+                    borderInfo[START],
+                    borderInfo[END],
+                    padding[BEFORE],
+                    padding[AFTER],
+                    padding[START],
+                    padding[END]);
             hash = 37 * hash + backgroundAttachment;
-            hash = 37 * hash + (backgroundColor == null ? 0 : backgroundColor.hashCode());
-            hash = 37 * hash + (backgroundImage == null ? 0 : backgroundImage.hashCode());
-            hash = 37 * hash
-                + (backgroundPositionHorizontal == null
-                   ? 0 : backgroundPositionHorizontal.hashCode());
-            hash = 37 * hash
-                + (backgroundPositionVertical == null
-                   ? 0 : backgroundPositionVertical.hashCode());
             hash = 37 * hash + backgroundRepeat;
-            hash = 37 * hash + (borderInfo[BEFORE] == null ? 0 : borderInfo[BEFORE].hashCode());
-            hash = 37 * hash + (borderInfo[AFTER] == null ? 0 : borderInfo[AFTER].hashCode());
-            hash = 37 * hash + (borderInfo[START] == null ? 0 : borderInfo[START].hashCode());
-            hash = 37 * hash + (borderInfo[END] == null ? 0 : borderInfo[END].hashCode());
-            hash = 37 * hash + (padding[BEFORE] == null ? 0 : padding[BEFORE].hashCode());
-            hash = 37 * hash + (padding[AFTER] == null ? 0 : padding[AFTER].hashCode());
-            hash = 37 * hash + (padding[START] == null ? 0 : padding[START].hashCode());
-            hash = 37 * hash + (padding[END] == null ? 0 : padding[END].hashCode());
             this.hash = hash;
         }
-
         return this.hash;
+    }
+
+    private int getHashCode(Object... objects) {
+        int hash = 17;
+        for (Object o : objects) {
+            hash = 37 * hash + (o == null ? 0 : o.hashCode());
+        }
+        return hash;
     }
 }

@@ -60,6 +60,7 @@ public class ConditionalBorder {
     private ConditionalBorder(BorderSpecification normal,
             BorderSpecification leadingTrailing, BorderSpecification rest,
             CollapsingBorderModel collapsingBorderModel) {
+        assert collapsingBorderModel != null;
         this.normal = normal;
         this.leadingTrailing = leadingTrailing;
         this.rest = rest;
@@ -74,14 +75,10 @@ public class ConditionalBorder {
      */
     ConditionalBorder(BorderSpecification borderSpecification,
             CollapsingBorderModel collapsingBorderModel) {
-        normal = borderSpecification;
-        leadingTrailing = normal;
-        if (borderSpecification.getBorderInfo().getWidth().isDiscard()) {
-            rest = BorderSpecification.getDefaultBorder();
-        } else {
-            rest = leadingTrailing;
-        }
-        this.collapsingBorderModel = collapsingBorderModel;
+        this ( borderSpecification, borderSpecification,
+               borderSpecification.getBorderInfo().getWidth().isDiscard()
+                 ? BorderSpecification.getDefaultBorder() : borderSpecification,
+               collapsingBorderModel );
     }
 
     /**

@@ -19,6 +19,9 @@
 
 package org.apache.fop.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.util.LinkedList;
 
 import org.apache.fop.layoutmgr.ElementListUtils;
@@ -26,18 +29,18 @@ import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test class for ElementListUtils.
  */
-public class ElementListUtilsTestCase extends TestCase {
+public class ElementListUtilsTestCase {
 
     /**
      * Tests ElementListUtils.removeLegalBreaks().
      * @throws Exception if the test fails
      */
+    @Test
     public void testRemoveElementPenalty1() throws Exception {
         LinkedList lst = new LinkedList();
         lst.add(new KnuthBox(4000, null, false));
@@ -64,6 +67,7 @@ public class ElementListUtilsTestCase extends TestCase {
      * Tests ElementListUtils.removeLegalBreaks().
      * @throws Exception if the test fails
      */
+    @Test
     public void testRemoveElementPenalty2() throws Exception {
         LinkedList lst = new LinkedList();
         lst.add(new KnuthBox(4000, null, false));
@@ -93,6 +97,7 @@ public class ElementListUtilsTestCase extends TestCase {
      * Tests ElementListUtils.removeLegalBreaksFromEnd().
      * @throws Exception if the test fails
      */
+    @Test
     public void testRemoveElementFromEndPenalty1() throws Exception {
         LinkedList lst = new LinkedList();
         lst.add(new KnuthBox(4000, null, false));
@@ -119,6 +124,7 @@ public class ElementListUtilsTestCase extends TestCase {
      * Tests ElementListUtils.removeLegalBreaksFromEnd().
      * @throws Exception if the test fails
      */
+    @Test
     public void testRemoveElementFromEndPenalty2() throws Exception {
         LinkedList lst = new LinkedList();
         lst.add(new KnuthBox(4000, null, false));
@@ -142,6 +148,4 @@ public class ElementListUtilsTestCase extends TestCase {
         assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(5)).getPenalty());
         assertEquals(0, ((KnuthGlue)lst.get(6)).getWidth());
     }
-
-
 }

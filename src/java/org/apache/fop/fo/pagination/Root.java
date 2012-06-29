@@ -21,6 +21,7 @@ package org.apache.fop.fo.pagination;
 
 // java
 import java.util.List;
+import java.util.Locale;
 
 import org.xml.sax.Locator;
 
@@ -33,22 +34,26 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.extensions.destination.Destination;
 import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 
 /**
  * Class modeling the <a href="http://www.w3.org/TR/xsl/#fo_root">
  * <code>fo:root</code></a> formatting object.
  * Contains page masters, page-sequences.
  */
-public class Root extends FObj {
-    // The value of properties relevant for fo:root.
+public class Root extends FObj implements CommonAccessibilityHolder {
+
+    private CommonAccessibility commonAccessibility;
+
     private int mediaUsage;
-    // End of property values
 
     private LayoutMasterSet layoutMasterSet;
     private Declarations declarations;
     private BookmarkTree bookmarkTree = null;
-    private List destinationList;
-    private List pageSequences;
+    private List<Destination> destinationList;
+    private List<PageSequence> pageSequences;
+    private Locale locale;
 
     // temporary until above list populated
     private boolean pageSequenceFound = false;
@@ -77,12 +82,32 @@ public class Root extends FObj {
      */
     public Root(FONode parent) {
         super(parent);
-        pageSequences = new java.util.ArrayList();
+        pageSequences = new java.util.ArrayList<PageSequence>();
     }
 
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         mediaUsage = pList.get(PR_MEDIA_USAGE).getEnum();
+        String language = pList.get(PR_LANGUAGE).getString();
+        String country = pList.get(PR_COUNTRY).getString();
+        if (isLocalePropertySet(language)) {
+            if (isLocalePropertySet(country)) {
+                locale = new Locale(language, country);
+            } else {
+                locale = new Locale(language);
+            }
+        }
+    }
+
+    private boolean isLocalePropertySet(String property) {
+        return property != null && !property.equals("none");
+    }
+
+     /** {@inheritDoc} */
+    protected void startOfNode() throws FOPException {
+        foEventHandler.startRoot(this);
     }
 
     /** {@inheritDoc} */
@@ -91,6 +116,7 @@ public class Root extends FObj {
             missingChildElementError("(layout-master-set, declarations?, "
                 + "bookmark-tree?, (page-sequence|fox:external-document)+)");
         }
+        foEventHandler.endRoot(this);
     }
 
     /**
@@ -153,6 +179,11 @@ public class Root extends FObj {
         if (child instanceof AbstractPageSequence) {
             pageSequenceFound = true;
         }
+    }
+
+    /** {@inheritDoc} */
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /**
@@ -243,7 +274,7 @@ public class Root extends FObj {
             return null;
         }
         if (currentIndex < (pageSequences.size() - 1)) {
-            return (PageSequence)pageSequences.get(currentIndex + 1);
+            return pageSequences.get(currentIndex + 1);
         } else {
             return null;
         }
@@ -295,7 +326,7 @@ public class Root extends FObj {
      */
     public void addDestination(Destination destination) {
         if (destinationList == null) {
-          destinationList = new java.util.ArrayList();
+          destinationList = new java.util.ArrayList<Destination>();
         }
         destinationList.add(destination);
     }
@@ -332,6 +363,12 @@ public class Root extends FObj {
      */
     public int getNameId() {
         return FO_ROOT;
+    }
+
+
+    /** @return locale proprty. */
+    public Locale getLocale() {
+        return locale;
     }
 
 }

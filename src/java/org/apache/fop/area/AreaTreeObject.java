@@ -19,8 +19,9 @@
 
 package org.apache.fop.area;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,13 +32,25 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 /**
  * Abstract base class for all area tree objects.
  */
-public abstract class AreaTreeObject {
+public abstract class AreaTreeObject implements Cloneable {
 
     /** Foreign attributes */
-    protected Map foreignAttributes = null;
+    protected Map<QName, String> foreignAttributes = null;
 
     /** Extension attachments */
-    protected List/*<ExtensionAttachment>*/ extensionAttachments = null;
+    protected List<ExtensionAttachment> extensionAttachments = null;
+
+    /** {@inheritDoc} */
+    public Object clone() throws CloneNotSupportedException {
+        AreaTreeObject ato = (AreaTreeObject) super.clone();
+        if (foreignAttributes != null) {
+            ato.foreignAttributes = (Map) ((HashMap) foreignAttributes).clone();
+        }
+        if (extensionAttachments != null) {
+            ato.extensionAttachments = (List) ((ArrayList) extensionAttachments).clone();
+        }
+        return ato;
+    }
 
     /**
      * Sets a foreign attribute.
@@ -46,25 +59,22 @@ public abstract class AreaTreeObject {
      */
     public void setForeignAttribute(QName name, String value) {
         if (this.foreignAttributes == null) {
-            this.foreignAttributes = new java.util.HashMap();
+            this.foreignAttributes = new HashMap<QName, String>();
         }
         this.foreignAttributes.put(name, value);
     }
 
     /**
-     * Set foreign attributes from a Map.
+     * Add foreign attributes from a Map.
+     *
      * @param atts a Map with attributes (keys: QName, values: String)
      */
-    public void setForeignAttributes(Map atts) {
-        if (atts.size() == 0) {
+    public void setForeignAttributes(Map<QName, String> atts) {
+        if (atts == null || atts.size() == 0) {
             return;
         }
-        Iterator iter = atts.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry)iter.next();
-            String value = (String)entry.getValue();
-            //The casting is only to ensure type safety (too bad we can't use generics, yet)
-            setForeignAttribute((QName)entry.getKey(), value);
+        for (Map.Entry<QName, String> e : atts.entrySet()) {
+            setForeignAttribute(e.getKey(), e.getValue());
         }
     }
 
@@ -75,24 +85,24 @@ public abstract class AreaTreeObject {
      */
     public String getForeignAttributeValue(QName name) {
         if (this.foreignAttributes != null) {
-            return (String)this.foreignAttributes.get(name);
+            return this.foreignAttributes.get(name);
         } else {
             return null;
         }
     }
 
     /** @return the foreign attributes associated with this area */
-    public Map getForeignAttributes() {
+    public Map<QName, String> getForeignAttributes() {
         if (this.foreignAttributes != null) {
             return Collections.unmodifiableMap(this.foreignAttributes);
         } else {
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
     }
 
     private void prepareExtensionAttachmentContainer() {
         if (this.extensionAttachments == null) {
-            this.extensionAttachments = new java.util.ArrayList/*<ExtensionAttachment>*/();
+            this.extensionAttachments = new ArrayList<ExtensionAttachment>();
         }
     }
 
@@ -109,17 +119,17 @@ public abstract class AreaTreeObject {
      * Set extension attachments from a List
      * @param extensionAttachments a List with extension attachments
      */
-    public void setExtensionAttachments(List extensionAttachments) {
+    public void setExtensionAttachments(List<ExtensionAttachment> extensionAttachments) {
         prepareExtensionAttachmentContainer();
         this.extensionAttachments.addAll(extensionAttachments);
     }
 
     /** @return the extension attachments associated with this area */
-    public List getExtensionAttachments() {
+    public List<ExtensionAttachment> getExtensionAttachments() {
         if (this.extensionAttachments != null) {
             return Collections.unmodifiableList(this.extensionAttachments);
         } else {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 

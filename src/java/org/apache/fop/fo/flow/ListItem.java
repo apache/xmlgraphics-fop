@@ -19,14 +19,19 @@
 
 package org.apache.fop.fo.flow;
 
+import java.util.Stack;
+
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.BreakPropertySet;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.KeepProperty;
@@ -35,8 +40,9 @@ import org.apache.fop.fo.properties.KeepProperty;
  * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_list-item">
  * <code>fo:list-item</code></a> object.
  */
-public class ListItem extends FObj implements BreakPropertySet {
+public class ListItem extends FObj implements BreakPropertySet, CommonAccessibilityHolder {
     // The value of properties relevant for fo:list-item.
+    private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginBlock commonMarginBlock;
     private int breakAfter;
@@ -45,7 +51,6 @@ public class ListItem extends FObj implements BreakPropertySet {
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
     // Unused but valid items, commented out for performance:
-    //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
     //     private CommonRelativePosition commonRelativePosition;
     //     private int intrusionDisplace;
@@ -67,6 +72,7 @@ public class ListItem extends FObj implements BreakPropertySet {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginBlock = pList.getMarginBlockProps();
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
@@ -134,6 +140,11 @@ public class ListItem extends FObj implements BreakPropertySet {
         }
     }
 
+    /** {@inheritDoc} */
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
+    }
+
     /** @return the {@link CommonMarginBlock} */
     public CommonMarginBlock getCommonMarginBlock() {
         return commonMarginBlock;
@@ -193,5 +204,19 @@ public class ListItem extends FObj implements BreakPropertySet {
     public int getNameId() {
         return FO_LIST_ITEM;
     }
+
+    @Override
+    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
+        ListItemLabel label = getLabel();
+        if ( label != null ) {
+            ranges = label.collectDelimitedTextRanges ( ranges );
+        }
+        ListItemBody body = getBody();
+        if ( body != null ) {
+            ranges = body.collectDelimitedTextRanges ( ranges );
+        }
+        return ranges;
+    }
+
 }
 

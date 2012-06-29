@@ -32,6 +32,8 @@ import org.apache.fop.layoutmgr.inline.KnuthInlineBox;
  */
 public class InlineKnuthSequence extends KnuthSequence  {
 
+    private static final long serialVersionUID = 1354774188859946549L;
+
     private boolean isClosed = false;
 
     /**
@@ -68,7 +70,8 @@ public class InlineKnuthSequence extends KnuthSequence  {
             return false;
         }
         // does the first element of the first paragraph add to an existing word?
-        ListElement lastOldElement, firstNewElement;
+        ListElement lastOldElement;
+        ListElement firstNewElement;
         lastOldElement = getLast();
         firstNewElement = sequence.getElement(0);
         if (firstNewElement.isBox() && !((KnuthElement) firstNewElement).isAuxiliary()

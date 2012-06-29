@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
@@ -39,9 +38,9 @@ public class PDFEmbeddedFiles extends PDFNameTreeNode {
     }
 
     /** {@inheritDoc} */
-    protected void writeDictionary(OutputStream out, Writer writer) throws IOException {
+    protected void writeDictionary(OutputStream out, StringBuilder textBuffer) throws IOException {
         sortNames(); //Sort the names before writing them out
-        super.writeDictionary(out, writer);
+        super.writeDictionary(out, textBuffer);
     }
 
     private void sortNames() {

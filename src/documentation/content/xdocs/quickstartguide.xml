@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,13 +19,13 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP: Quick Start Guide</title>
-    <subtitle>Everything you need to start using and appreciating Apache FOP quickly.</subtitle>
+    <title>Apache™ FOP: Quick Start Guide</title>
+    <subtitle>Everything you need to start using and appreciating Apache™ FOP quickly.</subtitle>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="essentials">
-      <title>FOP Essentials</title>
+      <title>Apache™ FOP Essentials</title>
       <p>The goal of this <strong>Quick Start Guide</strong> is to help novice users get Apache FOP up and running quickly. Typically, you'll need to:</p>
       <ol>
         <li><link href="download.html">Download FOP</link></li>

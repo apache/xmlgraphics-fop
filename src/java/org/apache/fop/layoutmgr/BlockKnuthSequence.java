@@ -27,6 +27,8 @@ import java.util.List;
  */
 public class BlockKnuthSequence extends KnuthSequence {
 
+    private static final long serialVersionUID = 1648962416582509095L;
+
     private boolean isClosed = false;
 
     /**

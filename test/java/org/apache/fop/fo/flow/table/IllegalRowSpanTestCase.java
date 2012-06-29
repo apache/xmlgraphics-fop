@@ -19,28 +19,30 @@
 
 package org.apache.fop.fo.flow.table;
 
+import org.junit.Test;
+
 /**
  * Testcase checking that cells spanning further than their parent element aren't
  * accepted.
  */
-public class IllegalRowSpanTestCase extends ErrorCheckTestCase {
+public class IllegalRowSpanTestCase extends ErrorCheckTest {
 
-    public IllegalRowSpanTestCase() throws Exception {
-        super();
-    }
-
+    @Test
     public void testBody1() throws Exception {
         launchTest("table/illegal-row-span_body_1.fo");
     }
 
+    @Test
     public void testBody2() throws Exception {
         launchTest("table/illegal-row-span_body_2.fo");
     }
 
+    @Test
     public void testHeader() throws Exception {
         launchTest("table/illegal-row-span_header.fo");
     }
 
+    @Test
     public void testFooter() throws Exception {
         launchTest("table/illegal-row-span_footer.fo");
     }

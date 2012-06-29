@@ -24,11 +24,13 @@ import java.net.URISyntaxException;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.render.afp.extensions.AFPPageSegmentElement.AFPPageSegmentSetup;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 
@@ -39,7 +41,7 @@ public class AFPExtensionHandler extends DefaultHandler
             implements ContentHandlerFactory.ObjectSource {
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(AFPExtensionHandler.class);
+    protected static final Log log = LogFactory.getLog(AFPExtensionHandler.class);
 
     private StringBuffer content = new StringBuffer();
     private Attributes lastAttributes;
@@ -48,11 +50,12 @@ public class AFPExtensionHandler extends DefaultHandler
     private ObjectBuiltListener listener;
 
     /** {@inheritDoc} */
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes)
                 throws SAXException {
         boolean handled = false;
         if (AFPExtensionAttachment.CATEGORY.equals(uri)) {
-            lastAttributes = attributes;
+            lastAttributes = new AttributesImpl(attributes);
             handled = true;
             if (localName.equals(AFPElementMapping.NO_OPERATION)
                     || localName.equals(AFPElementMapping.TAG_LOGICAL_ELEMENT)
@@ -77,6 +80,7 @@ public class AFPExtensionHandler extends DefaultHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (AFPExtensionAttachment.CATEGORY.equals(uri)) {
             if (AFPElementMapping.INCLUDE_FORM_MAP.equals(localName)) {
@@ -96,14 +100,12 @@ public class AFPExtensionHandler extends DefaultHandler
                 if (name != null) {
                     returnedObject.setName(name);
                 }
-            } else {
-                AFPPageSetup pageSetupExtn = null;
-                if (AFPElementMapping.INVOKE_MEDIUM_MAP.equals(localName)) {
-                    this.returnedObject = new AFPInvokeMediumMap();
-                } else {
-                    pageSetupExtn = new AFPPageSetup(localName);
-                    this.returnedObject = pageSetupExtn;
-                }
+            } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(localName)) {
+                AFPPageSegmentSetup pageSetupExtn = null;
+
+                pageSetupExtn = new AFPPageSegmentSetup(localName);
+                this.returnedObject = pageSetupExtn;
+
                 String name = lastAttributes.getValue("name");
                 if (name != null) {
                     returnedObject.setName(name);
@@ -112,15 +114,47 @@ public class AFPExtensionHandler extends DefaultHandler
                 if (value != null && pageSetupExtn != null) {
                     pageSetupExtn.setValue(value);
                 }
+
+                String resourceSrc = lastAttributes.getValue("resource-file");
+                if (resourceSrc != null && pageSetupExtn != null) {
+                    pageSetupExtn.setResourceSrc(resourceSrc);
+                }
+
+                if (content.length() > 0 && pageSetupExtn != null) {
+                    pageSetupExtn.setContent(content.toString());
+                    content.setLength(0); //Reset text buffer (see characters())
+                }
+            } else {
+                AFPPageSetup pageSetupExtn = null;
+                if (AFPElementMapping.INVOKE_MEDIUM_MAP.equals(localName)) {
+                    this.returnedObject = new AFPInvokeMediumMap();
+                } else {
+                    pageSetupExtn = new AFPPageSetup(localName);
+                    this.returnedObject = pageSetupExtn;
+                }
+                String name = lastAttributes.getValue(AFPPageSetup.ATT_NAME);
+                if (name != null) {
+                    returnedObject.setName(name);
+                }
+                String value = lastAttributes.getValue(AFPPageSetup.ATT_VALUE);
+                if (value != null && pageSetupExtn != null) {
+                    pageSetupExtn.setValue(value);
+                }
+                String placement = lastAttributes.getValue(AFPPageSetup.ATT_PLACEMENT);
+                if (placement != null && placement.length() > 0) {
+                    pageSetupExtn.setPlacement(ExtensionPlacement.fromXMLValue(placement));
+                }
                 if (content.length() > 0 && pageSetupExtn != null) {
                     pageSetupExtn.setContent(content.toString());
                     content.setLength(0); //Reset text buffer (see characters())
                 }
             }
+
         }
     }
 
     /** {@inheritDoc} */
+    @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         content.append(ch, start, length);
     }
@@ -128,6 +162,7 @@ public class AFPExtensionHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void endDocument() throws SAXException {
         if (listener != null) {
             listener.notifyObjectBuilt(getObject());

@@ -118,6 +118,8 @@ public class CommandLineOptions {
     private int targetResolution = 0;
     /* control memory-conservation policy */
     private boolean conserveMemoryPolicy = false;
+    /* true if a complex script features are enabled */
+    private boolean useComplexScriptFeatures = true;
 
     private FopFactory factory = FopFactory.newInstance();
     private FOUserAgent foUserAgent;
@@ -181,6 +183,9 @@ public class CommandLineOptions {
                 addXSLTParameter("fop-output-format", getOutputFormat());
                 addXSLTParameter("fop-version", Version.getVersion());
                 foUserAgent.setConserveMemoryPolicy(conserveMemoryPolicy);
+                if (!useComplexScriptFeatures) {
+                    foUserAgent.setComplexScriptFeaturesEnabled(false);
+                }
             } else {
                 return false;
             }
@@ -203,17 +208,14 @@ public class CommandLineOptions {
                 System.err.println("Couldn't set system look & feel!");
             }
 
-            AWTRenderer renderer = new AWTRenderer(true);
-            renderer.setRenderable(inputHandler); //set before user agent!
-            renderer.setUserAgent(foUserAgent);
+            AWTRenderer renderer = new AWTRenderer(foUserAgent, inputHandler, true, true);
             foUserAgent.setRendererOverride(renderer);
         } else if (MimeConstants.MIME_FOP_AREA_TREE.equals(outputmode)
                && mimicRenderer != null) {
             // render from FO to Intermediate Format
             Renderer targetRenderer = foUserAgent.getRendererFactory().createRenderer(
                    foUserAgent, mimicRenderer);
-            XMLRenderer xmlRenderer = new XMLRenderer();
-            xmlRenderer.setUserAgent(foUserAgent);
+            XMLRenderer xmlRenderer = new XMLRenderer(foUserAgent);
 
             //Tell the XMLRenderer to mimic the target renderer
             xmlRenderer.mimicRenderer(targetRenderer);
@@ -355,8 +357,11 @@ public class CommandLineOptions {
             } else if (args[i].equals("-a")) {
                 this.renderingOptions.put(Accessibility.ACCESSIBILITY, Boolean.TRUE);
             } else if (args[i].equals("-v")) {
-                /* Currently just print the version */
+                /* verbose mode although users may expect version; currently just print the version */
                 printVersion();
+                if (args.length == 1) {
+                    return false;
+                }
             } else if (args[i].equals("-param")) {
                   if (i + 2 < args.length) {
                       String name = args[++i];
@@ -381,6 +386,16 @@ public class CommandLineOptions {
                 getPDFEncryptionParams().setAllowEditContent(false);
             } else if (args[i].equals("-noannotations")) {
                 getPDFEncryptionParams().setAllowEditAnnotations(false);
+            } else if (args[i].equals("-nocs")) {
+                useComplexScriptFeatures = false;
+            } else if (args[i].equals("-nofillinforms")) {
+                getPDFEncryptionParams().setAllowFillInForms(false);
+            } else if (args[i].equals("-noaccesscontent")) {
+                getPDFEncryptionParams().setAllowAccessContent(false);
+            } else if (args[i].equals("-noassembledoc")) {
+                getPDFEncryptionParams().setAllowAssembleDocument(false);
+            } else if (args[i].equals("-noprinthq")) {
+                getPDFEncryptionParams().setAllowPrintHq(false);
             } else if (args[i].equals("-version")) {
                 printVersion();
                 return false;
@@ -576,7 +591,7 @@ public class CommandLineOptions {
 
     private int parsePrintOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_FOP_PRINT);
-        if ((i + 1 <= args.length)
+        if ((i + 1 < args.length)
                 && (args[i + 1].charAt(0) != '-')) {
             String arg = args[i + 1];
             String[] parts = arg.split(",");
@@ -1170,6 +1185,7 @@ public class CommandLineOptions {
             + "  -q                quiet mode  \n"
             + "  -c cfg.xml        use additional configuration file cfg.xml\n"
             + "  -l lang           the language to use for user information \n"
+            + "  -nocs             disable complex script features\n"
             + "  -r                relaxed/less strict validation (where available)\n"
             + "  -dpi xxx          target resolution in dots per inch (dpi) where xxx is a number\n"
             + "  -s                for area tree XML, down to block areas only\n"
@@ -1181,6 +1197,14 @@ public class CommandLineOptions {
             + "  -nocopy           PDF file will be encrypted without copy content permission\n"
             + "  -noedit           PDF file will be encrypted without edit content permission\n"
             + "  -noannotations    PDF file will be encrypted without edit annotation permission\n"
+            + "  -nofillinforms    PDF file will be encrypted without"
+            + " fill in interactive form fields permission\n"
+            + "  -noaccesscontent  PDF file will be encrypted without"
+            + " extract text and graphics permission\n"
+            + "  -noassembledoc    PDF file will be encrypted without"
+            + " assemble the document permission\n"
+            + "  -noprinthq        PDF file will be encrypted without"
+            + " print high quality permission\n"
             + "  -a                enables accessibility features (Tagged PDF etc., default off)\n"
             + "  -pdfprofile prof  PDF file will be generated with the specified profile\n"
             + "                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)\n\n"

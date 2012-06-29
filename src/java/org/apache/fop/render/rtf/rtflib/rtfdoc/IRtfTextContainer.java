@@ -28,8 +28,12 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 
-/**  Interface for RtfElements that can contain RtfText elements
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+import org.apache.fop.apps.FOPException;
+
+/**
+ * <p>Interface for RtfElements that can contain RtfText elements.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 public interface IRtfTextContainer {
@@ -59,6 +63,7 @@ public interface IRtfTextContainer {
     /**
      * Text containers usually provide default attributes for all texts that they contain.
      * @return a copy of the container's attributes.
+     * @throws FOPException if attributes cannot be obtained
      */
-    RtfAttributes getTextContainerAttributes();
+    RtfAttributes getTextContainerAttributes() throws FOPException;
 }

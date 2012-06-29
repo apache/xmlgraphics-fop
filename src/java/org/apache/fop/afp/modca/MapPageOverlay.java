@@ -35,7 +35,7 @@ import org.apache.fop.afp.util.BinaryUtils;
 public class MapPageOverlay extends AbstractAFPObject {
 
     private static final int MAX_SIZE = 253;
-    
+
     /**
      * The collection of overlays (maximum of 254 stored as byte[])
      */
@@ -53,7 +53,7 @@ public class MapPageOverlay extends AbstractAFPObject {
         }
         return this.overLays;
     }
-    
+
     /**
      * Add an overlay to to the map page overlay object.
      *

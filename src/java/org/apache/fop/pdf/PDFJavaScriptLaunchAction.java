@@ -43,10 +43,9 @@ public class PDFJavaScriptLaunchAction extends PDFAction {
     /** {@inheritDoc} */
     public String toPDFString() {
         StringBuffer sb = new StringBuffer(64);
-        sb.append(getObjectID());
         sb.append("<<\n/S /JavaScript\n/JS (");
         sb.append(this.script);
-        sb.append(")\n>>\nendobj\n");
+        sb.append(")\n>>");
         return sb.toString();
     }
 

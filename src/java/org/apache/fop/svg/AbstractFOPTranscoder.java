@@ -26,13 +26,16 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.DOMImplementation;
-
 import org.xml.sax.EntityResolver;
 
 import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfiguration;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.SimpleLog;
+
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.DocumentFactory;
@@ -45,13 +48,13 @@ import org.apache.batik.transcoder.keys.BooleanKey;
 import org.apache.batik.transcoder.keys.FloatKey;
 import org.apache.batik.util.ParsedURL;
 import org.apache.batik.util.SVGConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.impl.SimpleLog;
 
+import org.apache.xmlgraphics.image.GraphicsConstants;
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
+import org.apache.xmlgraphics.util.UnitConv;
 
 /**
  * This is the common base class of all of FOP's transcoders.
@@ -226,7 +229,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
         if (hints.containsKey(KEY_DEVICE_RESOLUTION)) {
             return ((Float)hints.get(KEY_DEVICE_RESOLUTION)).floatValue();
         } else {
-            return 72;
+            return GraphicsConstants.DEFAULT_DPI;
         }
     }
 
@@ -253,7 +256,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
     protected void setupImageInfrastructure(final String baseURI) {
         final ImageContext imageContext = new ImageContext() {
             public float getSourceResolution() {
-                return 25.4f / userAgent.getPixelUnitToMillimeter();
+                return UnitConv.IN2MM / userAgent.getPixelUnitToMillimeter();
             }
         };
         this.imageManager = new ImageManager(imageContext);
@@ -268,7 +271,6 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
             }
 
             public Source resolveURI(String uri) {
-                System.out.println("resolve " + uri);
                 try {
                     ParsedURL url = new ParsedURL(baseURI, uri);
                     InputStream in = url.openStream();
@@ -372,7 +374,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
                 return ((Float)getTranscodingHints().get(key)).floatValue();
             } else {
                 // return 0.3528f; // 72 dpi
-                return 25.4f / 96; //96dpi = 0.2645833333333333333f;
+                return UnitConv.IN2MM / 96; //96dpi = 0.2645833333333333333f;
             }
         }
 

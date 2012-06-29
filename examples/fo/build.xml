@@ -127,6 +127,7 @@
   </target>
   <!-- =================================================================== -->
   <!-- Compares new test pdf files to reference pdf files                  -->
+  <!-- N.B. All comparisons fail due to differences in /CreationDate       -->
   <!-- =================================================================== -->
   <target name="comparePDF" depends="newPDF">
     <compare referenceDirectory="${referenceDir}" testDirectory="${testDir}" filenames="normal.pdf,table.pdf,list.pdf,link.pdf,border.pdf,images.pdf,extensive.pdf,readme.pdf,fonts.pdf,bordershorthand.pdf,character.pdf,corresprop.pdf,hyphen.pdf,inhprop.pdf,instream.pdf,leader.pdf,newlinktest.pdf,normalex.pdf,pdfoutline.pdf,simple.pdf,textdeko.pdf,tableunits.pdf"/>
@@ -144,6 +145,7 @@
 
   <!-- =================================================================== -->
   <!-- Starts the test                                                     -->
+  <!-- N.B. All tests fail due to differences in /CreationDate             -->
   <!-- =================================================================== -->
   <target name="runtest" depends="comparePDF">
     <echo message="Running Fop tests"/>
@@ -153,6 +155,9 @@
   <!-- =================================================================== -->
   <target name="clean" depends="init">
     <delete dir="${testDir}"/>
+  </target>
+  <target name="cleantest" depends="init">
+    <delete dir="${referenceDir}"/>
   </target>
 
 </project>

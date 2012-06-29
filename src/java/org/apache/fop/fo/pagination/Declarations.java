@@ -41,7 +41,7 @@ import org.apache.fop.fo.ValidationException;
  */
 public class Declarations extends FObj {
 
-    private Map colorProfiles = null;
+    private Map<String, ColorProfile> colorProfiles = null;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -98,7 +98,7 @@ public class Declarations extends FObj {
 
     private void addColorProfile(ColorProfile cp) {
         if (colorProfiles == null) {
-            colorProfiles = new java.util.HashMap();
+            colorProfiles = new java.util.HashMap<String, ColorProfile>();
         }
         if (colorProfiles.get(cp.getColorProfileName()) != null) {
             // duplicate names
@@ -132,7 +132,7 @@ public class Declarations extends FObj {
     public ColorProfile getColorProfile(String cpName) {
         ColorProfile profile = null;
         if (this.colorProfiles != null) {
-            profile = (ColorProfile)this.colorProfiles.get(cpName);
+            profile = this.colorProfiles.get(cpName);
         }
         return profile;
     }

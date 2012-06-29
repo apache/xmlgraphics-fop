@@ -76,12 +76,6 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
     }
 
     /** {@inheritDoc} */
-    protected void writeContent(OutputStream os) throws IOException {
-        writeObjects(tagLogicalElements, os, true);
-        super.writeContent(os);
-    }
-
-    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
         copySF(data, Type.BEGIN, Category.PAGE_GROUP);

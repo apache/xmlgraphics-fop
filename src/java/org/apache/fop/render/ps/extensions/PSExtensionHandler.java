@@ -21,6 +21,7 @@ package org.apache.fop.render.ps.extensions;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.commons.logging.Log;
@@ -36,7 +37,7 @@ public class PSExtensionHandler extends DefaultHandler
             implements ContentHandlerFactory.ObjectSource {
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(PSExtensionHandler.class);
+    protected static final Log log = LogFactory.getLog(PSExtensionHandler.class);
 
     private StringBuffer content = new StringBuffer();
     private Attributes lastAttributes;
@@ -49,9 +50,10 @@ public class PSExtensionHandler extends DefaultHandler
                 throws SAXException {
         boolean handled = false;
         if (PSExtensionAttachment.CATEGORY.equals(uri)) {
-            lastAttributes = attributes;
+            lastAttributes = new AttributesImpl(attributes);
             handled = false;
             if (localName.equals(PSSetupCode.ELEMENT)
+                    || localName.equals(PSPageTrailerCodeBefore.ELEMENT)
                     || localName.equals(PSSetPageDevice.ELEMENT)
                     || localName.equals(PSCommentBefore.ELEMENT)
                     || localName.equals(PSCommentAfter.ELEMENT)) {
@@ -83,6 +85,8 @@ public class PSExtensionHandler extends DefaultHandler
                 this.returnedObject = new PSCommentBefore(content.toString());
             } else if (PSCommentAfter.ELEMENT.equals(localName)) {
                 this.returnedObject = new PSCommentAfter(content.toString());
+            } else if (PSPageTrailerCodeBefore.ELEMENT.equals(localName)) {
+                this.returnedObject = new PSPageTrailerCodeBefore(content.toString());
             }
         }
         content.setLength(0); //Reset text buffer (see characters())

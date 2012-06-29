@@ -19,13 +19,13 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.Trait;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
@@ -85,7 +85,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         text.setBaselineOffset(font.getAscender());
         TraitSetter.addFontTraits(text, font);
         text.addTrait(Trait.COLOR, fobj.getColor());
-        TraitSetter.addPtr(text, fobj.getPtr()); // used for accessibility
+        TraitSetter.addStructureTreeElement(text, fobj.getStructureTreeElement());
         TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
 
         return text;
@@ -101,7 +101,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         TraitSetter.setProducerID(ta, fobj.getId());
         ta.setIPD(baseArea.getIPD());
         ta.setBPD(baseArea.getBPD());
-        ta.setOffset(baseArea.getOffset());
+        ta.setBlockProgressionOffset(baseArea.getBlockProgressionOffset());
         ta.setBaselineOffset(baseArea.getBaselineOffset());
         ta.addTrait(Trait.COLOR, fobj.getColor()); //only to initialize the trait map
         ta.getTraits().putAll(baseArea.getTraits());

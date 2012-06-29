@@ -46,7 +46,7 @@ public interface MutableFont {
      * Sets the font's family names (Example: "Helvetica").
      * @param names the font's family names (a Set of Strings)
      */
-    void setFamilyNames(Set names);
+    void setFamilyNames(Set<String> names);
 
     /**
      * Sets the path to the embeddable font file.
@@ -59,6 +59,12 @@ public interface MutableFont {
      * @param name resource name
      */
     void setEmbedResourceName(String name);
+
+    /**
+     * Sets the embedding mode.
+     * @param embeddingMode the embedding mode
+     */
+    void setEmbeddingMode(EmbeddingMode embeddingMode);
 
     /**
      * Sets the capital height value.
@@ -133,10 +139,16 @@ public interface MutableFont {
     void setKerningEnabled(boolean enabled);
 
     /**
+     * Enables/disabled advanced typographic features.
+     * @param enabled true if advanced typographic features should be enabled if available
+     */
+    void setAdvancedEnabled(boolean enabled);
+
+    /**
      * Adds an entry to the kerning table.
      * @param key Kerning key
      * @param value Kerning value
      */
-    void putKerningEntry(Integer key, Map value);
+    void putKerningEntry(Integer key, Map<Integer, Integer> value);
 
 }

@@ -18,10 +18,14 @@
 /* $Id$ */
 
 package org.apache.fop.render.ps;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.junit.Test;
 
 import org.apache.commons.io.IOUtils;
 
@@ -40,12 +44,13 @@ import org.apache.fop.render.intermediate.IFContext;
 /**
  * Tests the image handling in PostScript output.
  */
-public class ImageHandlingTestCase extends AbstractPostScriptTestCase {
+public class ImageHandlingTestCase extends AbstractPostScriptTest {
 
     /**
      * Tests JPEG handling.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testJPEGImageLevel3() throws Exception {
         innerTestJPEGImage(3);
     }
@@ -54,6 +59,7 @@ public class ImageHandlingTestCase extends AbstractPostScriptTestCase {
      * Tests JPEG handling.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testJPEGImageLevel2() throws Exception {
         innerTestJPEGImage(2);
     }
@@ -68,7 +74,8 @@ public class ImageHandlingTestCase extends AbstractPostScriptTestCase {
         ua.setDocumentHandlerOverride(handler);
 
         // Prepare output file
-        File outputFile = renderFile(ua, "ps-jpeg-image.fo", "-if-l" + psUtil.getLanguageLevel());
+        File outputFile = renderFile(ua, "ps-jpeg-image.fo",
+                "-if-l" + psUtil.getLanguageLevel());
         verifyPostScriptFile(outputFile, psUtil.getLanguageLevel());
     }
 
@@ -83,6 +90,7 @@ public class ImageHandlingTestCase extends AbstractPostScriptTestCase {
             assertEquals(1, pages.getPageCount());
 
             //Skip procsets and encoding
+            gotoDSCComment(parser, DSCConstants.BEGIN_RESOURCE);
             gotoDSCComment(parser, DSCConstants.BEGIN_RESOURCE);
             gotoDSCComment(parser, DSCConstants.BEGIN_RESOURCE);
             gotoDSCComment(parser, DSCConstants.BEGIN_RESOURCE);

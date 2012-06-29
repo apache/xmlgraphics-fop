@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 
 /**
@@ -52,7 +51,7 @@ public class PageProvider implements Constants {
     private int startPageOfCurrentElementList;
     private int startColumnOfCurrentElementList;
     private boolean spanAllForCurrentElementList;
-    private List cachedPages = new java.util.ArrayList();
+    private List<Page> cachedPages = new java.util.ArrayList<Page>();
 
     private int lastPageIndex = -1;
     private int indexOfCachedLastPage = -1;
@@ -298,7 +297,7 @@ public class PageProvider implements Constants {
             }
             cacheNextPage(index, isBlank, isLastPage, this.spanAllForCurrentElementList);
         }
-        Page page = (Page)cachedPages.get(intIndex);
+        Page page = cachedPages.get(intIndex);
         boolean replace = false;
         if (page.getPageViewport().isBlank() != isBlank) {
             log.debug("blank condition doesn't match. Replacing PageViewport.");
@@ -331,20 +330,11 @@ public class PageProvider implements Constants {
         boolean isFirstPage = (startPageOfPageSequence == index);
         SimplePageMaster spm = pageSeq.getNextSimplePageMaster(
                 index, isFirstPage, isLastPage, isBlank);
-
-        Region body = spm.getRegion(FO_REGION_BODY);
-        if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
-            // this is fine by the XSL Rec (fo:flow's flow-name can be mapped to
-            // any region), but we don't support it yet.
-            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
-                    pageSeq.getUserAgent().getEventBroadcaster());
-            eventProducer.flowNotMappingToRegionBody(this,
-                    pageSeq.getMainFlow().getFlowName(), spm.getMasterName(), spm.getLocator());
-        }
         Page page = new Page(spm, index, pageNumberString, isBlank, spanAll);
         //Set unique key obtained from the AreaTreeHandler
         page.getPageViewport().setKey(areaTreeHandler.generatePageViewportKey());
         page.getPageViewport().setForeignAttributes(spm.getForeignAttributes());
+        page.getPageViewport().setWritingModeTraits(pageSeq);
         cachedPages.add(page);
         return page;
     }

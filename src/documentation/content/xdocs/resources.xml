@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,8 +20,8 @@
 <!-- FOP Relevant Specifications and links -->
 <document>
   <header>
-    <title>FOP: Other Resources</title>
-    <subtitle>Resources useful for developing and using FOP</subtitle>
+    <title>Apache™ FOP: Other Resources</title>
+    <subtitle>Resources useful for developing and using Apache™ FOP</subtitle>
     <version>$Revision$</version>
   </header>
   <body>

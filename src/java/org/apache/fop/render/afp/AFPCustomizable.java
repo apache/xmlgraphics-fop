@@ -72,6 +72,16 @@ public interface AFPCustomizable {
     void setDitheringQuality(float quality);
 
     /**
+     * Sets the image encoding quality setting to use when encoding bitmap images.
+     * The default setting is 1.0 which means loss-less encoding. Settings of less than 1.0
+     * allow loss-less encoding schemes like JPEG. The value serves as quality setting for
+     * the encoders in that case.
+     * @param quality Defines the desired quality level.
+     *                  Valid values: a value between 0.0f (lowest) and 1.0f (best, loss-less)
+     */
+    void setBitmapEncodingQuality(float quality);
+
+    /**
      * Sets the output/device resolution
      *
      * @param resolution
@@ -80,11 +90,66 @@ public interface AFPCustomizable {
     void setResolution(int resolution);
 
     /**
+     * Sets the line width correction
+     *
+     * @param correction the line width multiplying factor correction
+     */
+    void setLineWidthCorrection(float correction);
+
+    /**
+     * Sets whether FS11 and FS45 non-inline images should be wrapped in a page segment
+     * @param pSeg true iff images should be wrapped
+     */
+    void setWrapPSeg(boolean pSeg);
+
+    /**
+     * set true if images should be FS45
+     * @param fs45 true iff images should be FS45
+     */
+    void setFS45(boolean fs45);
+
+    /**
+     * gets whether FS11 and FS45 non-inline images should be wrapped in a page segment
+     * @return true iff images should be wrapped
+     */
+    boolean getWrapPSeg();
+
+    /**
+     * gets whether images should be FS45
+     * @return true iff images should be FS45
+     */
+    boolean getFS45();
+
+    /**
      * Returns the output/device resolution.
      *
      * @return the resolution in dpi
      */
     int getResolution();
+
+    /**
+     * Controls whether GOCA is enabled or disabled.
+     * @param enabled true if GOCA is enabled, false if it is disabled
+     */
+     void setGOCAEnabled(boolean enabled);
+
+    /**
+     * Indicates whether GOCA is enabled or disabled.
+     * @return true if GOCA is enabled, false if GOCA is disabled
+     */
+    boolean isGOCAEnabled();
+
+    /**
+     * Controls whether to stroke text in GOCA mode or to use text operators where possible.
+     * @param stroke true to stroke, false to paint with text operators where possible
+     */
+    void setStrokeGOCAText(boolean stroke);
+
+    /**
+     * Indicates whether to stroke text in GOCA mode or to use text operators where possible.
+     * @return true to stroke, false to paint with text operators where possible
+     */
+    boolean isStrokeGOCAText();
 
     /**
      * Sets the default resource group file path
@@ -98,5 +163,12 @@ public interface AFPCustomizable {
      * @param defaults the resource level defaults
      */
     void setResourceLevelDefaults(AFPResourceLevelDefaults defaults);
+
+    /**
+     * Sets whether or not to JPEG images can be embedded in the AFP document.
+     *
+     * @param canEmbed whether or not to embed JPEG image
+     */
+    void canEmbedJpeg(boolean canEmbed);
 
 }

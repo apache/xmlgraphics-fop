@@ -21,33 +21,48 @@ package org.apache.fop.events;
 
 import java.util.Collections;
 import java.util.EventObject;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.fop.events.model.EventSeverity;
 
 /**
  * This is the default event class used by this package. Each event has a unique event identifier
- * (a String), a severity indicator and a map of name/value pairs.
+ * (a String), a severity indicator, a locale (for formatting event messages), and a map of
+ * name/value pairs.
  */
 public class Event extends EventObject {
 
     private static final long serialVersionUID = -1310594422868258083L;
 
     private String eventGroupID;
-
     private String eventKey;
-
     private EventSeverity severity;
-    private Map params;
+    private Locale locale;
+    private Map<String, Object> params;
+
+    /**
+     * Creates a new Event using default locale.
+     * @param source the object that creates the event
+     * @param eventID the unique identifier of the event
+     * @param severity the severity level
+     * @param params the event parameters (a map of name/value pairs)
+     */
+    public Event(Object source, String eventID, EventSeverity severity, Map<String, Object> params)
+    {
+        this ( source, eventID, severity, Locale.getDefault(), params );
+    }
 
     /**
      * Creates a new Event.
      * @param source the object that creates the event
      * @param eventID the unique identifier of the event
      * @param severity the severity level
+     * @param locale to use when formatting event (or null, which means use default locale)
      * @param params the event parameters (a map of name/value pairs)
      */
-    public Event(Object source, String eventID, EventSeverity severity, Map params) {
+    public Event(Object source, String eventID, EventSeverity severity, Locale locale, Map<String, Object> params)
+    {
         super(source);
         int pos = eventID.lastIndexOf('.');
         if (pos < 0 || pos == eventID.length() - 1) {
@@ -57,6 +72,7 @@ public class Event extends EventObject {
             eventKey = eventID.substring(pos + 1);
         }
         setSeverity(severity);
+        this.locale = locale;
         this.params = params;
     }
 
@@ -106,6 +122,14 @@ public class Event extends EventObject {
     }
 
     /**
+     * Returns the locale.
+     * @return the locale
+     */
+    public Locale getLocale() {
+        return this.locale;
+    }
+
+    /**
      * Returns a parameter.
      * @param key the key to the parameter
      * @return the parameter value or null if no value with this key is found
@@ -122,7 +146,7 @@ public class Event extends EventObject {
      * Returns an unmodifiable {@link java.util.Map} with all event parameters.
      * @return the parameter map
      */
-    public Map getParams() {
+    public Map<String, Object> getParams() {
         return Collections.unmodifiableMap(this.params);
     }
 
@@ -138,7 +162,7 @@ public class Event extends EventObject {
      * This class is a fluent builder class for building up the parameter map.
      */
     public static class ParamsBuilder {
-        private Map params;
+        private Map<String, Object> params;
 
         /**
          * Adds a new parameter (a name/value pair).
@@ -148,7 +172,7 @@ public class Event extends EventObject {
          */
         public ParamsBuilder param(String name, Object value) {
             if (this.params == null) {
-                this.params = new java.util.HashMap();
+                this.params = new java.util.HashMap<String, Object>();
             }
             this.params.put(name, value);
             return this;
@@ -158,7 +182,7 @@ public class Event extends EventObject {
          * Returns the accumulated parameter map.
          * @return the accumulated parameter map
          */
-        public Map build() {
+        public Map<String, Object> build() {
             return this.params;
         }
     }

@@ -39,6 +39,8 @@ public interface IFConstants extends XMLConstants {
     String EL_HEADER = "header";
     /** element name trailer */
     String EL_TRAILER = "trailer";
+    /** element name locale */
+    String EL_LOCALE = "locale";
     /** element name page-sequence */
     String EL_PAGE_SEQUENCE = "page-sequence";
     /** element name page */
@@ -67,6 +69,8 @@ public interface IFConstants extends XMLConstants {
     String EL_FONT = "font";
     /** element name text */
     String EL_TEXT = "text";
+    /** element name id */
+    String EL_ID = "id";
     /** Parent element of the logical structure tree. */
     String EL_STRUCTURE_TREE = "structure-tree";
 }

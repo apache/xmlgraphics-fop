@@ -105,8 +105,7 @@ public abstract class AbstractAFPImageHandlerRawStream extends AFPImageHandler
         AFPPaintingState paintingState = afpContext.getPaintingState();
         int resolution = paintingState.getResolution();
         AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
-        objectAreaInfo.setWidthRes(resolution);
-        objectAreaInfo.setHeightRes(resolution);
+        objectAreaInfo.setResolution(resolution);
 
         // Image content
         ImageRawStream imageStream = (ImageRawStream)image;

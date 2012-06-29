@@ -24,6 +24,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,11 +49,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.accessibility.AccessibilityEventProducer;
-import org.apache.fop.accessibility.StructureTreeBuilder;
+import org.apache.fop.accessibility.StructureTreeElement;
+import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.render.intermediate.extensions.DocumentNavigationExtensionConstants;
 import org.apache.fop.render.intermediate.extensions.DocumentNavigationHandler;
 import org.apache.fop.traits.BorderProps;
@@ -61,7 +65,7 @@ import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.DOMBuilderContentHandlerFactory;
 import org.apache.fop.util.DefaultErrorListener;
-import org.apache.fop.util.DelegatingContentHandler;
+import org.apache.fop.util.LanguageTags;
 import org.apache.fop.util.XMLUtil;
 
 /**
@@ -71,12 +75,12 @@ import org.apache.fop.util.XMLUtil;
 public class IFParser implements IFConstants {
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(IFParser.class);
+    protected static final Log log = LogFactory.getLog(IFParser.class);
 
     private static SAXTransformerFactory tFactory
         = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
-    private static Set handledNamespaces = new java.util.HashSet();
+    private static Set<String> handledNamespaces = new java.util.HashSet<String>();
 
     static {
         handledNamespaces.add(XMLNS_NAMESPACE_URI);
@@ -132,7 +136,7 @@ public class IFParser implements IFConstants {
 
     private static class Handler extends DefaultHandler {
 
-        private Map elementHandlers = new java.util.HashMap();
+        private Map<String, ElementHandler> elementHandlers = new HashMap<String, ElementHandler>();
 
         private IFDocumentHandler documentHandler;
         private IFPainter painter;
@@ -152,23 +156,64 @@ public class IFParser implements IFConstants {
 
         private ContentHandler navParser;
 
-        private StructureTreeBuilder structureTreeBuilder;
-
-        private ContentHandler structureTreeBuilderWrapper;
+        private StructureTreeHandler structureTreeHandler;
 
         private Attributes pageSequenceAttributes;
 
-        private final class StructureTreeBuilderWrapper extends DelegatingContentHandler {
+        private Map<String, StructureTreeElement> structureTreeElements
+                = new HashMap<String, StructureTreeElement>();
 
-            private StructureTreeBuilderWrapper()
-                    throws SAXException {
-                super(structureTreeBuilder.getHandlerForNextPageSequence());
+        private final class StructureTreeHandler extends DefaultHandler {
+
+            private final Locale pageSequenceLanguage;
+
+            private final StructureTreeEventHandler structureTreeEventHandler;
+
+            private StructureTreeHandler(StructureTreeEventHandler structureTreeEventHandler,
+                    Locale pageSequenceLanguage) throws SAXException {
+                this.pageSequenceLanguage = pageSequenceLanguage;
+                this.structureTreeEventHandler = structureTreeEventHandler;
+            }
+
+            void startStructureTree(String type) {
+                structureTreeEventHandler.startPageSequence(pageSequenceLanguage, type);
             }
 
             public void endDocument() throws SAXException {
-                super.endDocument();
                 startIFElement(EL_PAGE_SEQUENCE, pageSequenceAttributes);
                 pageSequenceAttributes = null;
+            }
+
+            @Override
+            public void startElement(String uri, String localName, String qName,
+                    Attributes attributes) throws SAXException {
+                if (!"structure-tree".equals(localName)) {
+                    if (localName.equals("marked-content")) {
+                        localName = "#PCDATA";
+                    }
+                    String structID = attributes.getValue(InternalElementMapping.URI,
+                            InternalElementMapping.STRUCT_ID);
+                    if (structID == null) {
+                        structureTreeEventHandler.startNode(localName, attributes);
+                    } else if (localName.equals("external-graphic")
+                            || localName.equals("instream-foreign-object")) {
+                        StructureTreeElement structureTreeElement
+                                = structureTreeEventHandler.startImageNode(localName, attributes);
+                        structureTreeElements.put(structID, structureTreeElement);
+                    } else {
+                        StructureTreeElement structureTreeElement = structureTreeEventHandler
+                                    .startReferencedNode(localName, attributes);
+                        structureTreeElements.put(structID, structureTreeElement);
+                    }
+                }
+            }
+
+            @Override
+            public void endElement(String uri, String localName, String arqNameg2)
+                    throws SAXException {
+                if (!"structure-tree".equals(localName)) {
+                    structureTreeEventHandler.endNode(localName);
+                }
             }
         }
 
@@ -179,6 +224,7 @@ public class IFParser implements IFConstants {
             this.elementMappingRegistry = elementMappingRegistry;
             elementHandlers.put(EL_DOCUMENT, new DocumentHandler());
             elementHandlers.put(EL_HEADER, new DocumentHeaderHandler());
+            elementHandlers.put(EL_LOCALE, new LocaleHandler());
             elementHandlers.put(EL_TRAILER, new DocumentTrailerHandler());
             elementHandlers.put(EL_PAGE_SEQUENCE, new PageSequenceHandler());
             elementHandlers.put(EL_PAGE, new PageHandler());
@@ -188,6 +234,7 @@ public class IFParser implements IFConstants {
             //Page content
             elementHandlers.put(EL_VIEWPORT, new ViewportHandler());
             elementHandlers.put(EL_GROUP, new GroupHandler());
+            elementHandlers.put(EL_ID, new IDHandler());
             elementHandlers.put(EL_FONT, new FontHandler());
             elementHandlers.put(EL_TEXT, new TextHandler());
             elementHandlers.put(EL_CLIP_RECT, new ClipRectHandler());
@@ -195,27 +242,14 @@ public class IFParser implements IFConstants {
             elementHandlers.put(EL_LINE, new LineHandler());
             elementHandlers.put(EL_BORDER_RECT, new BorderRectHandler());
             elementHandlers.put(EL_IMAGE, new ImageHandler());
-
-            if (userAgent.isAccessibilityEnabled()) {
-                structureTreeBuilder = new StructureTreeBuilder(tFactory);
-                userAgent.setStructureTree(structureTreeBuilder.getStructureTree());
-            }
         }
 
-        private void establishForeignAttributes(Map foreignAttributes) {
+        private void establishForeignAttributes(Map<QName, String> foreignAttributes) {
             documentHandler.getContext().setForeignAttributes(foreignAttributes);
         }
 
         private void resetForeignAttributes() {
             documentHandler.getContext().resetForeignAttributes();
-        }
-
-        private void establishStructurePointer(String ptr) {
-            documentHandler.getContext().setStructurePointer(ptr);
-        }
-
-        private void resetStructurePointer() {
-            documentHandler.getContext().resetStructurePointer();
         }
 
         /** {@inheritDoc} */
@@ -229,10 +263,15 @@ public class IFParser implements IFConstants {
                 if (NAMESPACE.equals(uri)) {
                     if (localName.equals(EL_PAGE_SEQUENCE) && userAgent.isAccessibilityEnabled()) {
                         pageSequenceAttributes = new AttributesImpl(attributes);
-                        structureTreeBuilderWrapper = new StructureTreeBuilderWrapper();
+                        Locale language = getLanguage(attributes);
+                        structureTreeHandler = new StructureTreeHandler(
+                                userAgent.getStructureTreeEventHandler(), language);
+
                     } else if (localName.equals(EL_STRUCTURE_TREE)) {
                         if (userAgent.isAccessibilityEnabled()) {
-                            delegate = structureTreeBuilderWrapper;
+                            String type = attributes.getValue("type");
+                            structureTreeHandler.startStructureTree(type);
+                            delegate = structureTreeHandler;
                         } else {
                             /* Delegate to a handler that does nothing */
                             delegate = new DefaultHandler();
@@ -258,7 +297,8 @@ public class IFParser implements IFConstants {
                 } else if (DocumentNavigationExtensionConstants.NAMESPACE.equals(uri)) {
                     if (this.navParser == null) {
                         this.navParser = new DocumentNavigationHandler(
-                                this.documentHandler.getDocumentNavigationHandler());
+                                this.documentHandler.getDocumentNavigationHandler(),
+                                        structureTreeElements);
                     }
                     delegate = this.navParser;
                     delegateDepth++;
@@ -297,10 +337,15 @@ public class IFParser implements IFConstants {
             }
         }
 
+        private static Locale getLanguage(Attributes attributes) {
+            String xmllang = attributes.getValue(XML_NAMESPACE, "lang");
+            return (xmllang == null) ? null : LanguageTags.toLocale(xmllang);
+        }
+
         private boolean startIFElement(String localName, Attributes attributes)
                 throws SAXException {
             lastAttributes = new AttributesImpl(attributes);
-            ElementHandler elementHandler = (ElementHandler)elementHandlers.get(localName);
+            ElementHandler elementHandler = elementHandlers.get(localName);
             content.setLength(0);
             ignoreCharacters = true;
             if (elementHandler != null) {
@@ -346,7 +391,7 @@ public class IFParser implements IFConstants {
                 }
             } else {
                 if (NAMESPACE.equals(uri)) {
-                    ElementHandler elementHandler = (ElementHandler)elementHandlers.get(localName);
+                    ElementHandler elementHandler = elementHandlers.get(localName);
                     if (elementHandler != null) {
                         try {
                             elementHandler.endElement();
@@ -366,7 +411,7 @@ public class IFParser implements IFConstants {
 
         // ============== Element handlers for the intermediate format =============
 
-        private static interface ElementHandler {
+        private interface ElementHandler {
             void startElement(Attributes attributes) throws IFException, SAXException;
             void endElement() throws IFException;
             boolean ignoreCharacters();
@@ -411,6 +456,12 @@ public class IFParser implements IFConstants {
 
         }
 
+        private class LocaleHandler extends AbstractElementHandler {
+            public void startElement(Attributes attributes) throws IFException {
+                documentHandler.setDocumentLocale(getLanguage(attributes));
+            }
+        }
+
         private class DocumentTrailerHandler extends AbstractElementHandler {
 
             public void startElement(Attributes attributes) throws IFException {
@@ -427,12 +478,11 @@ public class IFParser implements IFConstants {
 
             public void startElement(Attributes attributes) throws IFException {
                 String id = attributes.getValue("id");
-                String xmllang = attributes.getValue(XML_NAMESPACE, "lang");
-                if (xmllang != null) {
-                    documentHandler.getContext().setLanguage(
-                            XMLUtil.convertRFC3066ToLocale(xmllang));
+                Locale language = getLanguage(attributes);
+                if (language != null) {
+                    documentHandler.getContext().setLanguage(language);
                 }
-                Map foreignAttributes = getForeignAttributes(lastAttributes);
+                Map<QName, String> foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
                 documentHandler.startPageSequence(id);
                 resetForeignAttributes();
@@ -453,7 +503,7 @@ public class IFParser implements IFConstants {
                 String pageMasterName = attributes.getValue("page-master-name");
                 int width = Integer.parseInt(attributes.getValue("width"));
                 int height = Integer.parseInt(attributes.getValue("height"));
-                Map foreignAttributes = getForeignAttributes(lastAttributes);
+                Map<QName, String> foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
                 documentHandler.startPage(index, name, pageMasterName,
                         new Dimension(width, height));
@@ -486,6 +536,7 @@ public class IFParser implements IFConstants {
 
             public void endElement() throws IFException {
                 painter = null;
+                documentHandler.getContext().setID("");
                 documentHandler.endPageContent();
             }
 
@@ -536,6 +587,16 @@ public class IFParser implements IFConstants {
 
         }
 
+        private class IDHandler extends AbstractElementHandler {
+
+            @Override
+            public void startElement(Attributes attributes) throws IFException, SAXException {
+                String id = attributes.getValue("name");
+                documentHandler.getContext().setID(id);
+            }
+
+        }
+
         private class FontHandler extends AbstractElementHandler {
 
             public void startElement(Attributes attributes) throws IFException {
@@ -565,9 +626,15 @@ public class IFParser implements IFConstants {
                 s = lastAttributes.getValue("word-spacing");
                 int wordSpacing = (s != null ? Integer.parseInt(s) : 0);
                 int[] dx = XMLUtil.getAttributeAsIntArray(lastAttributes, "dx");
-                setStructurePointer(lastAttributes);
-                painter.drawText(x, y, letterSpacing, wordSpacing, dx, content.toString());
-                resetStructurePointer();
+                int[][] dp = XMLUtil.getAttributeAsPositionAdjustments(lastAttributes, "dp");
+                // if only DX present, then convert DX to DP; otherwise use only DP,
+                // effectively ignoring DX
+                if ( ( dp == null ) && ( dx != null ) ) {
+                    dp = IFUtil.convertDXToDP ( dx );
+                }
+                establishStructureTreeElement(lastAttributes);
+                painter.drawText(x, y, letterSpacing, wordSpacing, dp, content.toString());
+                resetStructureTreeElement();
             }
 
             public boolean ignoreCharacters() {
@@ -658,7 +725,7 @@ public class IFParser implements IFConstants {
 
         }
 
-        private static final String[] SIDES = new String[] {"before", "after", "start", "end"};
+        private static final String[] SIDES = new String[] {"top", "bottom", "left", "right"};
 
         private class BorderRectHandler extends AbstractElementHandler {
 
@@ -699,9 +766,9 @@ public class IFParser implements IFConstants {
                 int y = Integer.parseInt(lastAttributes.getValue("y"));
                 int width = Integer.parseInt(lastAttributes.getValue("width"));
                 int height = Integer.parseInt(lastAttributes.getValue("height"));
-                Map foreignAttributes = getForeignAttributes(lastAttributes);
+                Map<QName, String> foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
-                setStructurePointer(lastAttributes);
+                establishStructureTreeElement(lastAttributes);
                 if (foreignObject != null) {
                     painter.drawImage(foreignObject,
                             new Rectangle(x, y, width, height));
@@ -715,7 +782,7 @@ public class IFParser implements IFConstants {
                     painter.drawImage(uri, new Rectangle(x, y, width, height));
                 }
                 resetForeignAttributes();
-                resetStructurePointer();
+                resetStructureTreeElement();
                 inForeignObject = false;
             }
 
@@ -751,8 +818,8 @@ public class IFParser implements IFConstants {
             }
         }
 
-        private static Map getForeignAttributes(Attributes atts) {
-            Map foreignAttributes = null;
+        private static Map<QName, String> getForeignAttributes(Attributes atts) {
+            Map<QName, String> foreignAttributes = null;
             for (int i = 0, c = atts.getLength(); i < c; i++) {
                 String ns = atts.getURI(i);
                 if (ns.length() > 0) {
@@ -760,7 +827,7 @@ public class IFParser implements IFConstants {
                         continue;
                     }
                     if (foreignAttributes == null) {
-                        foreignAttributes = new java.util.HashMap();
+                        foreignAttributes = new java.util.HashMap<QName, String>();
                     }
                     QName qname = new QName(ns, atts.getQName(i));
                     foreignAttributes.put(qname, atts.getValue(i));
@@ -769,11 +836,18 @@ public class IFParser implements IFConstants {
             return foreignAttributes;
         }
 
-        private void setStructurePointer(Attributes attributes) {
-            String ptr = attributes.getValue("ptr");
-            if (ptr != null && ptr.length() > 0) {
-                establishStructurePointer(ptr);
+        private void establishStructureTreeElement(Attributes attributes) {
+            String structRef = attributes.getValue(InternalElementMapping.URI,
+                    InternalElementMapping.STRUCT_REF);
+            if (structRef != null && structRef.length() > 0) {
+                assert structureTreeElements.containsKey(structRef);
+                StructureTreeElement structureTreeElement = structureTreeElements.get(structRef);
+                documentHandler.getContext().setStructureTreeElement(structureTreeElement);
             }
+        }
+
+        private void resetStructureTreeElement() {
+            documentHandler.getContext().resetStructureTreeElement();
         }
 
         /** {@inheritDoc} */

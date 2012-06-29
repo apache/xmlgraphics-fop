@@ -57,7 +57,7 @@ public class PCLElementMapping extends ElementMapping {
     protected void initialize() {
 
         if (foObjs == null) {
-            foObjs = new HashMap();
+            foObjs = new HashMap<String, Maker>();
             //No extension elements, yet, only attributes
         }
 

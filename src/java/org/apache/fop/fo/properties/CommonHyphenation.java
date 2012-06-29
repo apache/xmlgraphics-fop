@@ -38,7 +38,8 @@ public final class CommonHyphenation {
     /** Logger */
     private static final Log LOG = LogFactory.getLog(CommonHyphenation.class);
 
-    private static final PropertyCache CACHE = new PropertyCache(CommonHyphenation.class);
+    private static final PropertyCache<CommonHyphenation> CACHE =
+            new PropertyCache<CommonHyphenation>();
 
     private int hash = 0;
 
@@ -118,7 +119,6 @@ public final class CommonHyphenation {
                                 hyphenationRemainCharacterCount);
 
         return CACHE.fetch(instance);
-
     }
 
     private static final char HYPHEN_MINUS = '-';

@@ -24,66 +24,60 @@ package org.apache.fop.afp;
  * dimensions and resolutions of data objects.
  */
 public class AFPObjectAreaInfo {
-    private int x;
-    private int y;
-    private int width;
-    private int height;
+    private final int x;
+    private final int y;
+    private final int width;
+    private final int height;
     private int widthRes;
     private int heightRes;
-    private int rotation = 0;
+    private final int rotation;
 
     /**
-     * Sets the x position of the data object
+     * Constructor
      *
-     * @param x the x position of the data object
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param width the width
+     * @param height the height
+     * @param resolution the resolution (sets both width and height resolutions)
+     * @param rotation the rotation angle
      */
-    public void setX(int x) {
+    public AFPObjectAreaInfo(int x, int y, int width, int height, int resolution, int rotation) {
         this.x = x;
-    }
-
-    /**
-     * Sets the y position of the data object
-     *
-     * @param y the y position of the data object
-     */
-    public void setY(int y) {
         this.y = y;
-    }
-
-    /**
-     * Sets the data object width
-     *
-     * @param width the width of the data object
-     */
-    public void setWidth(int width) {
         this.width = width;
-    }
-
-    /**
-     * Sets the data object height
-     *
-     * @param height the height of the data object
-     */
-    public void setHeight(int height) {
         this.height = height;
+        this.rotation = rotation;
+        this.widthRes = resolution;
+        this.heightRes = resolution;
     }
 
     /**
-     * Sets the width resolution
+     * Sets both the width and the height resolutions.
      *
-     * @param widthRes the width resolution
+     * @param resolution the resolution
      */
-    public void setWidthRes(int widthRes) {
-        this.widthRes = widthRes;
+    public void setResolution(int resolution) {
+        this.widthRes = resolution;
+        this.heightRes = resolution;
     }
 
     /**
-     * Sets the height resolution
+     * Sets the width resolution.
      *
-     * @param heightRes the height resolution
+     * @param resolution the resolution
      */
-    public void setHeightRes(int heightRes) {
-        this.heightRes = heightRes;
+    public void setWidthRes(int resolution) {
+        this.widthRes = resolution;
+    }
+
+    /**
+     * Sets the height resolution.
+     *
+     * @param resolution the resolution
+     */
+    public void setHeightRes(int resolution) {
+        this.heightRes = resolution;
     }
 
     /**
@@ -125,7 +119,7 @@ public class AFPObjectAreaInfo {
     /**
      * Returns the width resolution of this data object
      *
-     * @return the width resolution of this data object
+     * @return the resolution of this data object
      */
     public int getWidthRes() {
         return widthRes;
@@ -134,7 +128,7 @@ public class AFPObjectAreaInfo {
     /**
      * Returns the height resolution of this data object
      *
-     * @return the height resolution of this data object
+     * @return the resolution of this data object
      */
     public int getHeightRes() {
         return heightRes;
@@ -149,24 +143,15 @@ public class AFPObjectAreaInfo {
         return rotation;
     }
 
-    /**
-     * Sets the data object rotation
-     *
-     * @param rotation the data object rotation
-     */
-    public void setRotation(int rotation) {
-        this.rotation = rotation;
-    }
-
     /** {@inheritDoc} */
     public String toString() {
         return "x=" + x
-        + ", y=" + y
-        + ", width=" + width
-        + ", height=" + height
-        + ", widthRes=" + widthRes
-        + ", heightRes=" + heightRes
-        + ", rotation=" + rotation;
+                + ", y=" + y
+                + ", width=" + width
+                + ", height=" + height
+                + ", widthRes=" + widthRes
+                + ", heigtRes=" + heightRes
+                + ", rotation=" + rotation;
     }
 
 }

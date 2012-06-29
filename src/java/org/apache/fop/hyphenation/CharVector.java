@@ -22,12 +22,14 @@ package org.apache.fop.hyphenation;
 import java.io.Serializable;
 
 /**
- * This class implements a simple char vector with access to the
- * underlying array.
+ * <p>This class implements a simple char vector with access to the
+ * underlying array.</p>
  *
- * @author Carlos Villegas <cav@uniscope.co.jp>
+ * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
 public class CharVector implements Cloneable, Serializable {
+
+    private static final long serialVersionUID = 4263472982169004048L;
 
     /**
      * Capacity increment size
@@ -99,9 +101,9 @@ public class CharVector implements Cloneable, Serializable {
     }
 
     /** {@inheritDoc} */
-    public Object clone() {
-        CharVector cv = new CharVector((char[])array.clone(), blockSize);
-        cv.n = this.n;
+    public Object clone() throws CloneNotSupportedException {
+        CharVector cv = (CharVector) super.clone();
+        cv.array = (char[])array.clone();
         return cv;
     }
 

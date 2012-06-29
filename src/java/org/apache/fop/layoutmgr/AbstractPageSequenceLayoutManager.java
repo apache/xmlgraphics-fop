@@ -276,10 +276,9 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
      * Makes a new page
      *
      * @param isBlank whether this page is blank or not
-     * @param isLast whether this page is the last page or not
      * @return a new page
      */
-    protected Page makeNewPage(boolean isBlank, boolean isLast) {
+    protected Page makeNewPage(boolean isBlank) {
         if (curPage != null) {
             finishPage();
         }
@@ -293,6 +292,7 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
                     + (isBlank ? "*" : "") + "]");
         }
 
+        addIDToPage(pageSeq.getRoot().getId());
         addIDToPage(pageSeq.getId());
         return curPage;
     }
@@ -359,19 +359,19 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
 
         if (forcePageCount == Constants.EN_EVEN) {
             if ((currentPageNum - startPageNum + 1) % 2 != 0) { // we have an odd number of pages
-                curPage = makeNewPage(true, false);
+                curPage = makeNewPage(true);
             }
         } else if (forcePageCount == Constants.EN_ODD) {
             if ((currentPageNum - startPageNum + 1) % 2 == 0) { // we have an even number of pages
-                curPage = makeNewPage(true, false);
+                curPage = makeNewPage(true);
             }
         } else if (forcePageCount == Constants.EN_END_ON_EVEN) {
             if (currentPageNum % 2 != 0) { // we are now on an odd page
-                curPage = makeNewPage(true, false);
+                curPage = makeNewPage(true);
             }
         } else if (forcePageCount == Constants.EN_END_ON_ODD) {
             if (currentPageNum % 2 == 0) { // we are now on an even page
-                curPage = makeNewPage(true, false);
+                curPage = makeNewPage(true);
             }
         } else if (forcePageCount == Constants.EN_NO_FORCE) {
             // i hope: nothing special at all

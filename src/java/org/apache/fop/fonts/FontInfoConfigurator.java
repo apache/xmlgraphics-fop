@@ -44,13 +44,13 @@ import org.apache.fop.util.LogUtil;
  */
 public class FontInfoConfigurator {
     /** logger instance */
-    protected static Log log = LogFactory.getLog(FontInfoConfigurator.class);
+    protected static final Log log = LogFactory.getLog(FontInfoConfigurator.class);
 
-    private Configuration cfg;
-    private FontManager fontManager;
-    private FontResolver fontResolver;
-    private FontEventListener listener;
-    private boolean strict;
+    private final Configuration cfg;
+    private final FontManager fontManager;
+    private final FontResolver fontResolver;
+    private final FontEventListener listener;
+    private final boolean strict;
 
     /**
      * Main constructor
@@ -74,7 +74,8 @@ public class FontInfoConfigurator {
      * @param fontInfoList a font info list
      * @throws FOPException if an exception occurs while processing the configuration
      */
-    public void configure(List/*<EmbedFontInfo>*/ fontInfoList) throws FOPException {
+    public void configure(List<EmbedFontInfo> fontInfoList)
+            throws FOPException {
         Configuration fontsCfg = cfg.getChild("fonts", false);
         if (fontsCfg != null) {
             long start = 0;
@@ -88,7 +89,8 @@ public class FontInfoConfigurator {
             // native o/s search (autodetect) configuration
             boolean autodetectFonts = (fontsCfg.getChild("auto-detect", false) != null);
             if (autodetectFonts) {
-                FontDetector fontDetector = new FontDetector(fontManager, fontAdder, strict);
+                FontDetector fontDetector = new FontDetector(fontManager, fontAdder, strict,
+                        listener);
                 fontDetector.detect(fontInfoList);
             }
 
@@ -120,7 +122,7 @@ public class FontInfoConfigurator {
     }
 
     private void addDirectories(Configuration fontsCfg,
-            FontAdder fontAdder, List/*<URL>*/ fontInfoList) throws FOPException {
+            FontAdder fontAdder, List<EmbedFontInfo> fontInfoList) throws FOPException {
         // directory (multiple font) configuration
         Configuration[] directories = fontsCfg.getChildren("directory");
         for (int i = 0; i < directories.length; i++) {
@@ -139,8 +141,8 @@ public class FontInfoConfigurator {
             }
 
             // add fonts found in directory
-            FontFileFinder fontFileFinder = new FontFileFinder(recursive ? -1 : 1);
-            List/*<URL>*/ fontURLList;
+            FontFileFinder fontFileFinder = new FontFileFinder(recursive ? -1 : 1, listener);
+            List<URL> fontURLList;
             try {
                 fontURLList = fontFileFinder.find(directory);
                 fontAdder.add(fontURLList, fontInfoList);
@@ -158,7 +160,7 @@ public class FontInfoConfigurator {
      * @throws FOPException if an exception occurs while processing the configuration
      */
     protected void addFonts(Configuration fontsCfg, FontCache fontCache,
-            List/*<EmbedFontInfo>*/ fontInfoList) throws FOPException {
+            List<EmbedFontInfo> fontInfoList) throws FOPException {
         // font file (singular) configuration
         Configuration[] font = fontsCfg.getChildren("font");
         for (int i = 0; i < font.length; i++) {
@@ -186,9 +188,8 @@ public class FontInfoConfigurator {
      * @return the embedded font info
      * @throws FOPException if something's wrong with the config data
      */
-    protected EmbedFontInfo getFontInfo(
-            Configuration fontCfg, FontCache fontCache)
-                    throws FOPException {
+    protected EmbedFontInfo getFontInfo(Configuration fontCfg, FontCache fontCache)
+            throws FOPException {
         String metricsUrl = fontCfg.getAttribute("metrics-url", null);
         String embedUrl = fontCfg.getAttribute("embed-url", null);
         String subFont = fontCfg.getAttribute("sub-font", null);
@@ -229,48 +230,56 @@ public class FontInfoConfigurator {
             LogUtil.handleError(log, "font without font-triplet", strict);
 
             File fontFile = FontCache.getFileFromUrls(new String[] {embedUrl, metricsUrl});
-            URL fontUrl;
+            URL fontURL = null;
             try {
-                fontUrl = fontFile.toURI().toURL();
+                fontURL = fontFile.toURI().toURL();
             } catch (MalformedURLException e) {
-                // Should never happen
-                log.debug("Malformed Url: " + e.getMessage());
-                return null;
+                LogUtil.handleException(log, e, strict);
             }
             if (fontFile != null) {
                 FontInfoFinder finder = new FontInfoFinder();
                 finder.setEventListener(listener);
-                EmbedFontInfo[] infos = finder.find(fontUrl, fontResolver, fontCache);
+                EmbedFontInfo[] infos = finder.find(fontURL, fontResolver, fontCache);
                 return infos[0]; //When subFont is set, only one font is returned
             } else {
                 return null;
             }
         }
 
-        List/*<FontTriplet>*/ tripletList = new java.util.ArrayList/*<FontTriplet>*/();
+        List<FontTriplet> tripletList = new java.util.ArrayList<FontTriplet>();
         for (int j = 0; j < tripletCfg.length; j++) {
             FontTriplet fontTriplet = getFontTriplet(tripletCfg[j]);
             tripletList.add(fontTriplet);
         }
 
         boolean useKerning = fontCfg.getAttributeAsBoolean("kerning", true);
-        EncodingMode encodingMode = EncodingMode.valueOf(
+        boolean useAdvanced = fontCfg.getAttributeAsBoolean("advanced", true);
+        EncodingMode encodingMode = EncodingMode.getValue(
                 fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()));
+        EmbeddingMode embeddingMode = EmbeddingMode.getValue(
+                fontCfg.getAttribute("embedding-mode", EmbeddingMode.AUTO.toString()));
         EmbedFontInfo embedFontInfo
-                = new EmbedFontInfo(metricsUrl, useKerning, tripletList, embedUrl, subFont);
+            = new EmbedFontInfo(metricsUrl, useKerning, useAdvanced, tripletList, embedUrl,
+                                subFont);
         embedFontInfo.setEncodingMode(encodingMode);
+        embedFontInfo.setEmbeddingMode(embeddingMode);
+
+        boolean skipCachedFont = false;
         if (fontCache != null) {
             if (!fontCache.containsFont(embedFontInfo)) {
                 fontCache.addFont(embedFontInfo);
+            } else {
+                skipCachedFont = true;
             }
         }
 
         if (log.isDebugEnabled()) {
             String embedFile = embedFontInfo.getEmbedFile();
-            log.debug("Adding font " + (embedFile != null ? embedFile + ", " : "")
+            log.debug( ( skipCachedFont ? "Skipping (cached) font " : "Adding font " )
+                    + (embedFile != null ? embedFile + ", " : "")
                     + "metric file " + embedFontInfo.getMetricsFile());
             for (int j = 0; j < tripletList.size(); ++j) {
-                FontTriplet triplet = (FontTriplet) tripletList.get(j);
+                FontTriplet triplet = tripletList.get(j);
                 log.debug("  Font triplet "
                         + triplet.getName() + ", "
                         + triplet.getStyle() + ", "

@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,14 +19,14 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>Apache FOP: Downloading A Distribution</title>
+    <title>Apache™ FOP: Downloading A Distribution</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="dist-type">
       <title>Binary or Source?</title>
       <p>
-        Most FOP users will want to download the latest binary distribution,
+        Most Apache™ FOP users will want to download the latest binary distribution,
         which is ready to run "out of the box." However, a source distribution
         will be preferable if you fall into one of the following categories:
       </p>

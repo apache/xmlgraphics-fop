@@ -34,6 +34,8 @@ import org.apache.fop.util.ColorUtil;
  */
 public class BorderProps implements Serializable {
 
+    private static final long serialVersionUID = -886871454032189183L;
+
     /** Separate border model */
     public static final int SEPARATE = 0;
     /** Collapsing border model, for borders inside a table */
@@ -133,11 +135,13 @@ public class BorderProps implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return toString().hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -147,7 +151,8 @@ public class BorderProps implements Serializable {
             if (obj instanceof BorderProps) {
                 BorderProps other = (BorderProps)obj;
                 return (style == other.style)
-                        && color.equals(other.color)
+                        && org.apache.xmlgraphics.java2d.color.ColorUtil.isSameColor(
+                                color, other.color)
                         && width == other.width
                         && mode == other.mode
                         && radiusStart == other.radiusStart
@@ -211,6 +216,7 @@ public class BorderProps implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         StringBuffer sbuf = new StringBuffer();
         sbuf.append('(');

@@ -25,12 +25,13 @@ import java.io.InputStream;
 
 import javax.xml.transform.Source;
 
-import org.apache.batik.transcoder.wmf.WMFConstants;
-import org.apache.batik.transcoder.wmf.tosvg.WMFRecordStore;
 import org.apache.commons.io.EndianUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.batik.transcoder.wmf.WMFConstants;
+import org.apache.batik.transcoder.wmf.tosvg.WMFRecordStore;
 
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageInfo;

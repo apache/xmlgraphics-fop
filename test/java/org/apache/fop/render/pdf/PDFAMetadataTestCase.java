@@ -19,6 +19,9 @@
 
 package org.apache.fop.render.pdf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -32,14 +35,14 @@ import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFAdapter;
 import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFSchema;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test case for PDF/A metadata handling.
  */
-public class PDFAMetadataTestCase extends TestCase {
+public class PDFAMetadataTestCase {
 
+    @Test
     public void testInfoUpdate() throws Exception {
         Metadata meta = new Metadata();
         DublinCoreAdapter dc = DublinCoreSchema.getAdapter(meta);
@@ -76,6 +79,7 @@ public class PDFAMetadataTestCase extends TestCase {
         assertEquals(cal2.getTime(), info.getModDate());
     }
 
+    @Test
     public void testXMPUpdate() throws Exception {
         PDFDocument doc = new PDFDocument("SuperFOP");
         PDFInfo info = doc.getInfo();

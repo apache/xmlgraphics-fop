@@ -29,19 +29,18 @@ import org.apache.fop.fo.pagination.Region;
  * This area is the direct child of a region-viewport-area. It is cloneable
  * so the page master can make copies from the original page and regions.
  */
-public class RegionReference extends Area implements Cloneable {
+public class RegionReference extends Area {
 
-    /** Reference to the region FO. */
-    //protected Region regionFO;
+    private static final long serialVersionUID = -298980963268244238L;
+
     private int regionClass;
     private String regionName;
     private CTM ctm;
 
-
     // the list of block areas from the static flow
-    private ArrayList blocks = new ArrayList();
+    private ArrayList<Area> blocks = new ArrayList<Area>();
 
-    /** the parent RegionViewport for this object */
+    /** the parent {@link RegionViewport} for this object */
     protected RegionViewport regionViewport;
 
     /**
@@ -69,6 +68,7 @@ public class RegionReference extends Area implements Cloneable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void addChildArea(Area child) {
         blocks.add(child);
     }
@@ -107,7 +107,7 @@ public class RegionReference extends Area implements Cloneable {
      *
      * @return the list of blocks in this region
      */
-    public List getBlocks() {
+    public List<Area> getBlocks() {
         return blocks;
     }
 
@@ -134,21 +134,15 @@ public class RegionReference extends Area implements Cloneable {
         addChildArea(block);
     }
 
-    /**
-     * Clone this region.
-     * This is used when cloning the page by the page master.
-     *
-     * @return a copy of this region reference area
-     */
-    public Object clone() {
-        RegionReference rr = new RegionReference(regionClass, regionName, regionViewport);
-        rr.ctm = ctm;
-        rr.setIPD(getIPD());
-        rr.blocks = (ArrayList)blocks.clone();
+    /** {@inheritDoc} */
+    public Object clone() throws CloneNotSupportedException {
+        RegionReference rr = (RegionReference) super.clone();
+        rr.blocks = (ArrayList) blocks.clone();
         return rr;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         sb.append(" {regionName=").append(regionName);

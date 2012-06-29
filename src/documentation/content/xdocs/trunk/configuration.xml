@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP: Configuration</title>
+    <title>Apache™ FOP: Configuration</title>
     <version>$Revision$</version>
   </header>
 
@@ -27,7 +27,7 @@
   <section id="general">
     <title>Configuration File Basics</title>
     <p>
-      The FOP configuration file is an XML file containing a variety of settings that are useful 
+      The Apache™ FOP configuration file is an XML file containing a variety of settings that are useful
       for controlling FOP's behavior, and for helping it find resources that you wish it to use.
     </p>
     <p>
@@ -89,6 +89,15 @@
         </td>
         <td>disabled</td>
       </tr>
+	  <tr>
+		<td colspan="4">Relative URIs for the above three properties are evaluated relative to the base URI of the configuration file. If the configuration is provided programmatically, the base URI can be set with <code>FopFactory.setUserConfigBaseURI</code>; default is the current working directory.</td>
+	  </tr>
+	  <tr>
+		<td>hyphenation-pattern</td>
+		<td>String, attribute lang, attribute country (optional)</td>
+		<td>Register a file name for the hyphenation pattern for the mentioned language and country. Language ll and country CC must both consist of two letters.</td>
+		<td>ll_CC</td>
+	  </tr>
       <tr>
         <td>source-resolution</td>
         <td>Integer, dpi</td>
@@ -141,6 +150,21 @@
           varies. The default for this option (i.e. false) is to behave exactly like the 
           specification describes.</td>
         <td>false</td>
+      </tr>
+      <tr>
+        <td>complex-scripts</td>
+        <td>attribute disabled (optional)</td>
+        <td>
+          If present and if an attribute 'disabled' is specified with the value 'false', then
+          complex script features are disabled. The same result can be obtained on an FOP
+          per-invocation basis by specifying a '-nocs' command line option when invoking FOP.
+          When complex script features are disabled, all bidirectional processing and complex
+          character to glyph mapping processing is disabled; in addition, the loading of
+          GDEF, GSUB, and GPOS advanced typographic tables is disabled for OpenType and
+          TrueType fonts. Unless disabled by this mechanism or by use of the '-nocs' command
+          line option, complex script features will be enabled by default.
+        </td>
+        <td>n/a</td>
       </tr>
       <tr>
         <td>default-page-settings</td>
@@ -215,6 +239,9 @@
   <!-- default page-height and page-width, in case
        value is specified as auto -->
   <default-page-settings height="11in" width="8.26in"/>
+
+  <!-- Use file name nl_Bel instead of the default nl_BE -->
+  <hyphenation-pattern lang="nl" country="BE">nl_Bel</hyphenation-pattern>
   
   <!-- etc. etc..... -->
 </fop>]]></source>
@@ -254,6 +281,24 @@
       treated as zero penalty in most cases. For more details on the image loading framework,
       please consult the documentation there.
     </p>
+    <p>
+      The ImageLoaderPNG and ImageLoaderRawPNG have a hard-coded penalty of 1000 and as such the
+      ImageLoaderImageIO image loader will be selected by default when loading PNGs unless
+      the latter is disabled by awarding a INFINITE penalty to it, or one of the former two is 
+      promoted by awarding a strong negative penalty (say, -10000) to it.
+    </p>
+    <source><![CDATA[<fop version="1.0">
+  [..]
+  <image-loading>
+    <penalty value="-10000"
+      class="org.apache.xmlgraphics.image.loader.impl.ImageLoaderRawPNG"/>
+    <penalty value="INFINITE"
+      class="org.apache.xmlgraphics.image.loader.impl.ImageLoaderPNG"/>
+    <penalty value="INFINITE"
+      class="org.apache.xmlgraphics.image.loader.impl.imageio.ImageLoaderImageIO"/>
+  </image-loading>
+  <renderers....
+</fop>]]></source>
   </section>
   <section id="renderers">
     <title>Renderer configuration</title>
@@ -355,14 +400,31 @@
       <source><![CDATA[
     <renderer mime="application/pdf">
       <encryption-params>
+         <encryption-length>128</encryption-length>
          <user-password>testuserpass</user-password>
          <owner-password>testownerpass</owner-password>
          <noprint/>
          <nocopy/>
          <noedit/>
          <noannotations/>
+         <nofillinforms/>
+         <noaccesscontent/>
+         <noassembledoc/>
+         <noprinthq/>
       </encryption-params>
     </renderer>]]></source>
+     <p>
+       By default FOP produces PDF files of version 1.4, but this can be changed in order to benefit 
+       from features that appeared in newer versions of PDF. At the moment, only a few features from 
+       PDF 1.5 have been implemented, but the configuration element will accept any value between 
+       1.4 and 1.7. This is the value that will appear in the PDF header, although only features up 
+       to 1.5 will actually be used.
+      <source><![CDATA[
+      <renderer mime="application/pdf">
+        <version>1.5</version>
+        <!-- Versions 1.4, 1.5, 1.6 and 1.7 are accepted, all other values are invalid -->
+      </renderer>]]></source>
+     </p>
       
     </section>
     <section id="ps-renderer">
@@ -399,7 +461,7 @@
       <p>
         Additionally, there are certain settings that control how the renderer handles various elements.
       </p>
-<source><![CDATA[<renderer mime="application/vnd.hp-PCL">
+<source><![CDATA[<renderer mime="application/x-pcl">
   <rendering>quality</rendering>
   <text-rendering>bitmap</text-rendering>
 </renderer>]]></source>
@@ -427,6 +489,7 @@
 <source><![CDATA[<renderer mime="application/x-afp">
   <images mode="b+w" bits-per-pixel="8" native="true"/>
   <renderer-resolution>240</renderer-resolution>
+  <line-width-correction>2.5</line-width-correction>
   
   <!-- a default external resource group file -->
   <resource-group-file>resources.afp</resource-group-file>
@@ -437,6 +500,9 @@
       </p>
       <p>
         The default value for the "renderer-resolution" is 240 dpi. 
+      </p>
+      <p>
+        The default line width is device dependent and may need to be fine tuned so that the output matches the expected result. The default correction value is 2.5.
       </p>
  <!--
       <p>
@@ -491,4 +557,3 @@ information it finds. Check if FOP finds what you expect.</li>
         </section>
   </body>
 </document>
-

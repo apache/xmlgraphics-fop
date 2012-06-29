@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,12 +19,12 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Ant task</title>
+    <title>Apache™ FOP: Ant task</title>
     <version>$Revision$</version>
   </header>
   <body>
     <p>
-      Apache FOP provides an Ant task for automating the document build process.
+      Apache™ FOP provides an Ant task for automating the document build process.
     </p>
     <section id="basics">
       <title>Description</title>
@@ -234,4 +234,3 @@
     </section>
     </body>
 </document>
-

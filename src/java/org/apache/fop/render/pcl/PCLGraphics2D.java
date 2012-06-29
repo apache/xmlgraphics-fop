@@ -127,8 +127,8 @@ public class PCLGraphics2D extends AbstractGraphics2D {
 
     /** {@inheritDoc} */
     public GraphicsConfiguration getDeviceConfiguration() {
-        return GraphicsEnvironment.getLocalGraphicsEnvironment().
-                getDefaultScreenDevice().getDefaultConfiguration();
+        return GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice().getDefaultConfiguration();
     }
 
     /**

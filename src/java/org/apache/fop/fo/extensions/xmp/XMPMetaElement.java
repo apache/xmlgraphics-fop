@@ -19,8 +19,9 @@
 
 package org.apache.fop.fo.extensions.xmp;
 
-import org.apache.fop.fo.FONode;
 import org.apache.xmlgraphics.xmp.XMPConstants;
+
+import org.apache.fop.fo.FONode;
 
 /**
  * Represents the top-level "xmpmeta" element used by XMP metadata.

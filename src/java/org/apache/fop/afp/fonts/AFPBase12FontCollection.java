@@ -19,6 +19,7 @@
 
 package org.apache.fop.afp.fonts;
 
+import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
@@ -40,6 +41,15 @@ import org.apache.fop.fonts.base14.TimesRoman;
  */
 public class AFPBase12FontCollection implements FontCollection {
 
+    private final AFPEventProducer eventProducer;
+
+    /**
+     * @param eventProducer the AFP-specific event producer
+     */
+    public AFPBase12FontCollection(AFPEventProducer eventProducer) {
+        this.eventProducer = eventProducer;
+    }
+
     /** standard raster font sizes */
     private static final int[] RASTER_SIZES = {6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 30, 36};
 
@@ -52,7 +62,7 @@ public class AFPBase12FontCollection implements FontCollection {
             int size = RASTER_SIZES[i] * 1000;
             FopCharacterSet characterSet = new FopCharacterSet(
                     CharacterSet.DEFAULT_CODEPAGE, CharacterSet.DEFAULT_ENCODING,
-                    charsetName + CHARSET_REF[i], base14);
+                    charsetName + CHARSET_REF[i], base14, eventProducer);
             font.addCharacterSet(size, characterSet);
         }
     }
@@ -108,22 +118,22 @@ public class AFPBase12FontCollection implements FontCollection {
                 "Times New Roman", "TimesNewRoman", "serif", "any"};
 
         font = createReferencedRasterFont("Times Roman");
-        addCharacterSet(font, "CON200", new TimesRoman());
+        addCharacterSet(font, "C0N200", new TimesRoman());
         num = addFontProperties(fontInfo, font, timesNames,
                 Font.STYLE_NORMAL, Font.WEIGHT_NORMAL, num);
 
         font = createReferencedRasterFont("Times Roman Italic");
-        addCharacterSet(font, "CON300", new TimesItalic());
+        addCharacterSet(font, "C0N300", new TimesItalic());
         num = addFontProperties(fontInfo, font, timesNames,
                 Font.STYLE_ITALIC, Font.WEIGHT_NORMAL, num);
 
         font = createReferencedRasterFont("Times Roman Bold");
-        addCharacterSet(font, "CON400", new TimesBold());
+        addCharacterSet(font, "C0N400", new TimesBold());
         num = addFontProperties(fontInfo, font, timesNames,
                 Font.STYLE_NORMAL, Font.WEIGHT_BOLD, num);
 
         font = createReferencedRasterFont("Times Roman Italic Bold");
-        addCharacterSet(font, "CON500", new TimesBoldItalic());
+        addCharacterSet(font, "C0N500", new TimesBoldItalic());
         num = addFontProperties(fontInfo, font, timesNames,
                 Font.STYLE_ITALIC, Font.WEIGHT_BOLD, num);
 

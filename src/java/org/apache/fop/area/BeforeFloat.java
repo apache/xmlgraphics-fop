@@ -25,6 +25,9 @@ package org.apache.fop.area;
  * See fo:region-body definition in the XSL Rec for more information.
  */
 public class BeforeFloat extends BlockParent {
+
+    private static final long serialVersionUID = 4101415711488333380L;
+
     // this is an optional block area that will be rendered
     // as the separator only if there are float areas
     private Block separator = null;
@@ -54,6 +57,7 @@ public class BeforeFloat extends BlockParent {
      *
      * @return the height of the before float including separator
      */
+    @Override
     public int getBPD() {
         int h = super.getBPD();
         if (separator != null) {
@@ -63,6 +67,7 @@ public class BeforeFloat extends BlockParent {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isEmpty() {
         return true; // before floats are not yet implemented
     }

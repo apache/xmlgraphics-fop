@@ -23,11 +23,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
+import org.apache.fop.afp.AFPConstants;
+import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.AFPResourceLevel;
 import org.apache.fop.afp.AFPResourceLevelDefaults;
 import org.apache.fop.afp.fonts.AFPFont;
@@ -35,6 +38,7 @@ import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPFontInfo;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.fonts.CharacterSetBuilder;
+import org.apache.fop.afp.fonts.CharacterSetType;
 import org.apache.fop.afp.fonts.DoubleByteFont;
 import org.apache.fop.afp.fonts.OutlineFont;
 import org.apache.fop.afp.fonts.RasterFont;
@@ -61,6 +65,8 @@ import org.apache.fop.util.LogUtil;
 public class AFPRendererConfigurator extends PrintRendererConfigurator
         implements IFDocumentHandlerConfigurator {
 
+    private final AFPEventProducer eventProducer;
+
     /**
      * Default constructor
      *
@@ -68,33 +74,34 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
      */
     public AFPRendererConfigurator(FOUserAgent userAgent) {
         super(userAgent);
+        eventProducer = AFPEventProducer.Provider.get(userAgent.getEventBroadcaster());
     }
 
     private AFPFontInfo buildFont(Configuration fontCfg, String fontPath)
     throws ConfigurationException {
-
         FontManager fontManager = this.userAgent.getFactory().getFontManager();
 
         Configuration[] triple = fontCfg.getChildren("font-triplet");
-        List/*<FontTriplet>*/ tripletList = new java.util.ArrayList/*<FontTriplet>*/();
+        List<FontTriplet> tripletList = new ArrayList<FontTriplet>();
         if (triple.length == 0) {
-            log.error("Mandatory font configuration element '<font-triplet...' is missing");
+            eventProducer.fontConfigMissing(this, "<font-triplet...", fontCfg.getLocation());
             return null;
         }
-        for (int j = 0; j < triple.length; j++) {
-            int weight = FontUtil.parseCSS2FontWeight(triple[j].getAttribute("weight"));
-            FontTriplet triplet = new FontTriplet(triple[j].getAttribute("name"),
-                    triple[j].getAttribute("style"),
+        for (Configuration config : triple) {
+            int weight = FontUtil.parseCSS2FontWeight(config.getAttribute("weight"));
+            FontTriplet triplet = new FontTriplet(config.getAttribute("name"),
+                    config.getAttribute("style"),
                     weight);
             tripletList.add(triplet);
         }
 
         //build the fonts
-        Configuration afpFontCfg = fontCfg.getChild("afp-font");
-        if (afpFontCfg == null) {
-            log.error("Mandatory font configuration element '<afp-font...' is missing");
+        Configuration[] config = fontCfg.getChildren("afp-font");
+        if (config.length == 0) {
+            eventProducer.fontConfigMissing(this, "<afp-font...", fontCfg.getLocation());
             return null;
         }
+        Configuration afpFontCfg = config[0];
 
         URI baseURI = null;
         String uri = afpFontCfg.getAttribute("base-uri", fontPath);
@@ -109,7 +116,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             try {
                 baseURI = new URI(uri);
             } catch (URISyntaxException e) {
-                log.error("Invalid URI: " + e.getMessage());
+                eventProducer.invalidConfiguration(this, e);
                 return null;
             }
         }
@@ -118,24 +125,34 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                 fontManager.getFontBaseURL(),
                 baseURI);
 
-        String type = afpFontCfg.getAttribute("type");
-        if (type == null) {
-            log.error("Mandatory afp-font configuration attribute 'type=' is missing");
-            return null;
-        }
-        String codepage = afpFontCfg.getAttribute("codepage");
-        if (codepage == null) {
-            log.error("Mandatory afp-font configuration attribute 'code=' is missing");
-            return null;
-        }
-        String encoding = afpFontCfg.getAttribute("encoding");
+        AFPFont font = null;
+        try {
+            String type = afpFontCfg.getAttribute("type");
+            if (type == null) {
+                eventProducer.fontConfigMissing(this, "type attribute", fontCfg.getLocation());
+                return null;
+            }
+            String codepage = afpFontCfg.getAttribute("codepage");
+            if (codepage == null) {
+                eventProducer.fontConfigMissing(this, "codepage attribute",
+                        fontCfg.getLocation());
+                return null;
+            }
+            String encoding = afpFontCfg.getAttribute("encoding");
+            if (encoding == null) {
+                eventProducer.fontConfigMissing(this, "encoding attribute",
+                        fontCfg.getLocation());
+                return null;
+            }
 
-        if (encoding == null) {
-            log.error("Mandatory afp-font configuration attribute 'encoding=' is missing");
-            return null;
+            font = fontFromType(type, codepage, encoding, accessor, afpFontCfg);
+        } catch (ConfigurationException ce) {
+            eventProducer.invalidConfiguration(this, ce);
+        } catch (IOException ioe) {
+            eventProducer.invalidConfiguration(this, ioe);
+        } catch (IllegalArgumentException iae) {
+            eventProducer.invalidConfiguration(this, iae);
         }
-
-        AFPFont font = fontFromType(type, codepage, encoding, accessor, afpFontCfg);
 
         return font != null ? new AFPFontInfo(font, tripletList) : null;
     }
@@ -153,8 +170,8 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
      * @throws ConfigurationException
      */
     private AFPFont fontFromType(String type, String codepage, String encoding,
-            ResourceAccessor accessor, Configuration afpFontCfg)
-    throws ConfigurationException {
+            ResourceAccessor accessor, Configuration afpFontCfg) throws ConfigurationException,
+            IOException {
 
         if ("raster".equalsIgnoreCase(type)) {
 
@@ -165,32 +182,34 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
 
             Configuration[] rasters = afpFontCfg.getChildren("afp-raster-font");
             if (rasters.length == 0) {
-                log.error("Mandatory font configuration elements '<afp-raster-font...'"
-                        + " are missing at " + afpFontCfg.getLocation());
+                eventProducer.fontConfigMissing(this, "<afp-raster-font...",
+                        afpFontCfg.getLocation());
                 return null;
             }
             for (int j = 0; j < rasters.length; j++) {
                 Configuration rasterCfg = rasters[j];
 
                 String characterset = rasterCfg.getAttribute("characterset");
+
                 if (characterset == null) {
-                    log.error(
-                    "Mandatory afp-raster-font configuration attribute 'characterset=' is missing");
+                    eventProducer.fontConfigMissing(this, "characterset attribute",
+                            afpFontCfg.getLocation());
                     return null;
                 }
                 float size = rasterCfg.getAttributeAsFloat("size");
-                int sizeMpt = (int)(size * 1000);
+                int sizeMpt = (int) (size * 1000);
                 String base14 = rasterCfg.getAttribute("base14-font", null);
 
                 if (base14 != null) {
                     try {
-                        Class clazz = Class.forName("org.apache.fop.fonts.base14."
-                                + base14);
+                        Class<? extends Typeface> clazz = Class.forName(
+                                "org.apache.fop.fonts.base14." + base14).asSubclass(Typeface.class);
                         try {
-                            Typeface tf = (Typeface)clazz.newInstance();
+                            Typeface tf = clazz.newInstance();
                             font.addCharacterSet(sizeMpt,
-                                    CharacterSetBuilder.getInstance()
-                                        .build(characterset, codepage, encoding, tf));
+                                    CharacterSetBuilder.getSingleByteInstance()
+                                                       .build(characterset, codepage, encoding, tf,
+                                                               eventProducer));
                         } catch (Exception ie) {
                             String msg = "The base 14 font class " + clazz.getName()
                             + " could not be instantiated";
@@ -202,12 +221,8 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                         log.error(msg);
                     }
                 } else {
-                    try {
-                        font.addCharacterSet(sizeMpt, CharacterSetBuilder.getInstance()
-                                .build(characterset, codepage, encoding, accessor));
-                    } catch (IOException ioe) {
-                        toConfigurationException(codepage, characterset, ioe);
-                    }
+                    font.addCharacterSet(sizeMpt, CharacterSetBuilder.getSingleByteInstance()
+                                .buildSBCS(characterset, codepage, encoding, accessor, eventProducer));
                 }
             }
             return font;
@@ -215,7 +230,8 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         } else if ("outline".equalsIgnoreCase(type)) {
             String characterset = afpFontCfg.getAttribute("characterset");
             if (characterset == null) {
-                log.error("Mandatory afp-font configuration attribute 'characterset=' is missing");
+                eventProducer.fontConfigMissing(this, "characterset attribute",
+                        afpFontCfg.getLocation());
                 return null;
             }
             String name = afpFontCfg.getAttribute("name", characterset);
@@ -223,12 +239,12 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             String base14 = afpFontCfg.getAttribute("base14-font", null);
             if (base14 != null) {
                 try {
-                    Class clazz = Class.forName("org.apache.fop.fonts.base14."
-                            + base14);
+                    Class<? extends Typeface> clazz = Class.forName("org.apache.fop.fonts.base14."
+                            + base14).asSubclass(Typeface.class);
                     try {
-                        Typeface tf = (Typeface)clazz.newInstance();
-                        characterSet = CharacterSetBuilder.getInstance()
-                                        .build(characterset, codepage, encoding, tf);
+                        Typeface tf = clazz.newInstance();
+                        characterSet = CharacterSetBuilder.getSingleByteInstance()
+                                        .build(characterset, codepage, encoding, tf, eventProducer);
                     } catch (Exception ie) {
                         String msg = "The base 14 font class " + clazz.getName()
                                 + " could not be instantiated";
@@ -240,12 +256,8 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                     log.error(msg);
                 }
             } else {
-                try {
-                    characterSet = CharacterSetBuilder.getInstance().build(
-                            characterset, codepage, encoding, accessor);
-                } catch (IOException ioe) {
-                    toConfigurationException(codepage, characterset, ioe);
-                }
+                characterSet = CharacterSetBuilder.getSingleByteInstance().buildSBCS(
+                        characterset, codepage, encoding, accessor, eventProducer);
             }
             // Return new font object
             return new OutlineFont(name, characterSet);
@@ -253,17 +265,16 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         } else if ("CIDKeyed".equalsIgnoreCase(type)) {
             String characterset = afpFontCfg.getAttribute("characterset");
             if (characterset == null) {
-                log.error("Mandatory afp-font configuration attribute 'characterset=' is missing");
+                eventProducer.fontConfigMissing(this, "characterset attribute",
+                        afpFontCfg.getLocation());
                 return null;
             }
             String name = afpFontCfg.getAttribute("name", characterset);
             CharacterSet characterSet = null;
-            try {
-                characterSet = CharacterSetBuilder.getDoubleByteInstance()
-                                .build(characterset, codepage, encoding, accessor);
-            } catch (IOException ioe) {
-                toConfigurationException(codepage, characterset, ioe);
-            }
+            CharacterSetType charsetType = afpFontCfg.getAttributeAsBoolean("ebcdic-dbcs", false)
+                    ? CharacterSetType.DOUBLE_BYTE_LINE_DATA : CharacterSetType.DOUBLE_BYTE;
+            characterSet = CharacterSetBuilder.getDoubleByteInstance().buildDBCS(characterset,
+                    codepage, encoding, charsetType, accessor, eventProducer);
 
             // Create a new font object
             DoubleByteFont font = new DoubleByteFont(name, characterSet);
@@ -276,23 +287,16 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         return null;
     }
 
-    private void toConfigurationException(String codepage, String characterset, IOException ioe)
-            throws ConfigurationException {
-        String msg = "Failed to load the character set metrics " + characterset
-            + " with code page " + codepage
-            + ". I/O error: " + ioe.getMessage();
-        throw new ConfigurationException(msg, ioe);
-    }
-
     /**
      * Builds a list of AFPFontInfo objects for use with the setup() method.
      *
      * @param cfg Configuration object
+     * @param eventProducer for AFP font related events
      * @return List the newly created list of fonts
      * @throws ConfigurationException if something's wrong with the config data
      */
-    private List/*<AFPFontInfo>*/ buildFontListFromConfiguration(Configuration cfg)
-    throws FOPException, ConfigurationException {
+    private List<AFPFontInfo> buildFontListFromConfiguration(Configuration cfg,
+            AFPEventProducer eventProducer) throws FOPException, ConfigurationException {
 
         Configuration fonts = cfg.getChild("fonts");
         FontManager fontManager = this.userAgent.getFactory().getFontManager();
@@ -309,7 +313,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                     referencedFontsCfg, this.userAgent.getFactory().validateUserConfigStrictly());
         }
 
-        List/*<AFPFontInfo>*/ fontList = new java.util.ArrayList();
+        List<AFPFontInfo> fontList = new java.util.ArrayList<AFPFontInfo>();
         Configuration[] font = fonts.getChildren("font");
         final String fontPath = null;
         for (int i = 0; i < font.length; i++) {
@@ -318,9 +322,9 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                 if (log.isDebugEnabled()) {
                     log.debug("Adding font " + afi.getAFPFont().getFontName());
                 }
-                List/*<FontTriplet>*/ fontTriplets = afi.getFontTriplets();
+                List<FontTriplet> fontTriplets = afi.getFontTriplets();
                 for (int j = 0; j < fontTriplets.size(); ++j) {
-                    FontTriplet triplet = (FontTriplet) fontTriplets.get(j);
+                    FontTriplet triplet = fontTriplets.get(j);
                     if (log.isDebugEnabled()) {
                         log.debug("  Font triplet "
                                 + triplet.getName() + ", "
@@ -352,6 +356,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
      *
      * @param renderer not used
      */
+    @Override
     public void configure(Renderer renderer) {
         throw new UnsupportedOperationException();
     }
@@ -394,16 +399,59 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         boolean nativeImageSupport = imagesCfg.getAttributeAsBoolean("native", false);
         customizable.setNativeImagesSupported(nativeImageSupport);
 
+        Configuration jpegConfig = imagesCfg.getChild("jpeg");
+        boolean allowEmbedding = false;
+        float ieq = 1.0f;
+        if (jpegConfig != null) {
+            allowEmbedding = jpegConfig.getAttributeAsBoolean("allow-embedding", false);
+            String bitmapEncodingQuality = jpegConfig.getAttribute("bitmap-encoding-quality", null);
+
+            if (bitmapEncodingQuality != null) {
+                try {
+                    ieq = Float.parseFloat(bitmapEncodingQuality);
+                } catch (NumberFormatException nfe) {
+                    //ignore and leave the default above
+                }
+            }
+        }
+        customizable.canEmbedJpeg(allowEmbedding);
+        customizable.setBitmapEncodingQuality(ieq);
+
+        //FS11 and FS45 page segment wrapping
+        boolean pSeg = imagesCfg.getAttributeAsBoolean("pseg", false);
+        customizable.setWrapPSeg(pSeg);
+
+        //FS45 image forcing
+        boolean fs45 = imagesCfg.getAttributeAsBoolean("fs45", false);
+        customizable.setFS45(fs45);
+
         // shading (filled rectangles)
         Configuration shadingCfg = cfg.getChild("shading");
         AFPShadingMode shadingMode = AFPShadingMode.valueOf(
                 shadingCfg.getValue(AFPShadingMode.COLOR.getName()));
         customizable.setShadingMode(shadingMode);
 
+        // GOCA Support
+        Configuration gocaCfg = cfg.getChild("goca");
+        boolean gocaEnabled = gocaCfg.getAttributeAsBoolean(
+                "enabled", customizable.isGOCAEnabled());
+        customizable.setGOCAEnabled(gocaEnabled);
+        String gocaText = gocaCfg.getAttribute(
+                "text", customizable.isStrokeGOCAText() ? "stroke" : "default");
+        customizable.setStrokeGOCAText("stroke".equalsIgnoreCase(gocaText)
+                || "shapes".equalsIgnoreCase(gocaText));
+
         // renderer resolution
         Configuration rendererResolutionCfg = cfg.getChild("renderer-resolution", false);
         if (rendererResolutionCfg != null) {
             customizable.setResolution(rendererResolutionCfg.getValueAsInteger(240));
+        }
+
+        // renderer resolution
+        Configuration lineWidthCorrectionCfg = cfg.getChild("line-width-correction", false);
+        if (lineWidthCorrectionCfg != null) {
+            customizable.setLineWidthCorrection(lineWidthCorrectionCfg
+                    .getValueAsFloat(AFPConstants.LINE_WIDTH_CORRECTION));
         }
 
         // a default external resource group file setting
@@ -415,8 +463,8 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                 resourceGroupDest = resourceGroupFileCfg.getValue();
                 if (resourceGroupDest != null) {
                     File resourceGroupFile = new File(resourceGroupDest);
-                    resourceGroupFile.createNewFile();
-                    if (resourceGroupFile.canWrite()) {
+                    boolean created = resourceGroupFile.createNewFile();
+                    if (created && resourceGroupFile.canWrite()) {
                         customizable.setDefaultResourceGroupFilePath(resourceGroupDest);
                     } else {
                         log.warn("Unable to write to default external resource group file '"
@@ -454,27 +502,30 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
     }
 
     /** {@inheritDoc} */
+    @Override
     public void configure(IFDocumentHandler documentHandler) throws FOPException {
         Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
         if (cfg != null) {
-            AFPDocumentHandler afpDocumentHandler = (AFPDocumentHandler)documentHandler;
+            AFPDocumentHandler afpDocumentHandler = (AFPDocumentHandler) documentHandler;
             configure(afpDocumentHandler, cfg);
         }
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setupFontInfo(IFDocumentHandler documentHandler, FontInfo fontInfo)
             throws FOPException {
         FontManager fontManager = userAgent.getFactory().getFontManager();
-        List fontCollections = new java.util.ArrayList();
+        List<AFPFontCollection> fontCollections = new ArrayList<AFPFontCollection>();
 
         Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
         if (cfg != null) {
             try {
-                List fontList = buildFontListFromConfiguration(cfg);
+                List<AFPFontInfo> fontList = buildFontListFromConfiguration(cfg, eventProducer);
                 fontCollections.add(new AFPFontCollection(
                         userAgent.getEventBroadcaster(), fontList));
             } catch (ConfigurationException e) {
+                eventProducer.invalidConfiguration(this, e);
                 LogUtil.handleException(log, e,
                         userAgent.getFactory().validateUserConfigStrictly());
             }
@@ -483,7 +534,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         }
 
         fontManager.setup(fontInfo,
-                (FontCollection[])fontCollections.toArray(
+                fontCollections.toArray(
                         new FontCollection[fontCollections.size()]));
         documentHandler.setFontInfo(fontInfo);
     }

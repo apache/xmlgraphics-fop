@@ -29,7 +29,6 @@ import org.apache.xmlgraphics.util.MimeConstants;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.Factory;
-import org.apache.fop.afp.ioca.IDEStructureParameter;
 import org.apache.fop.afp.ioca.ImageSegment;
 
 /**
@@ -76,10 +75,11 @@ public class ImageObject extends AbstractDataObject {
         int dataHeightRes = imageObjectInfo.getDataWidthRes();
         ImageDataDescriptor imageDataDescriptor
             = factory.createImageDataDescriptor(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
-        if (imageObjectInfo.getBitsPerPixel() == 1) {
-            imageDataDescriptor.setFunctionSet(ImageDataDescriptor.FUNCTION_SET_FS10);
-        } else if (MimeConstants.MIME_AFP_IOCA_FS45.equals(imageObjectInfo.getMimeType())) {
+
+        if (MimeConstants.MIME_AFP_IOCA_FS45.equals(imageObjectInfo.getMimeType())) {
             imageDataDescriptor.setFunctionSet(ImageDataDescriptor.FUNCTION_SET_FS45);
+        } else if (imageObjectInfo.getBitsPerPixel() == 1) {
+            imageDataDescriptor.setFunctionSet(ImageDataDescriptor.FUNCTION_SET_FS10);
         }
         getObjectEnvironmentGroup().setDataDescriptor(imageDataDescriptor);
         getObjectEnvironmentGroup().setMapImageObject(
@@ -119,7 +119,8 @@ public class ImageObject extends AbstractDataObject {
      * Sets the image IDE color model.
      *
      * @param colorModel    the IDE color model.
-     * @deprecated Use {@link IDEStructureParameter#setColorModel(byte)} instead.
+     * @deprecated Use {@link org.apache.fop.afp.ioca.IDEStructureParameter#setColorModel(byte)}
+     * instead.
      */
     public void setIDEColorModel(byte colorModel) {
         getImageSegment().setIDEColorModel(colorModel);
@@ -128,7 +129,8 @@ public class ImageObject extends AbstractDataObject {
     /**
      * Set either additive or subtractive mode (used for ASFLAG).
      * @param subtractive true for subtractive mode, false for additive mode
-     * @deprecated Use {@link IDEStructureParameter#setSubtractive(boolean)} instead.
+     * @deprecated Use {@link org.apache.fop.afp.ioca.IDEStructureParameter#setSubtractive(boolean)}
+     * instead.
      */
     public void setSubtractive(boolean subtractive) {
         getImageSegment().setSubtractive(subtractive);

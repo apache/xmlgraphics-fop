@@ -34,7 +34,7 @@
       Table 1: basic keep with next
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red">
+      <fo:table border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -81,7 +81,7 @@
       Table 1: basic keep with previous
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red">
+      <fo:table border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -128,7 +128,7 @@
       Table 1: basic keep with next and keep with previous
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red">
+      <fo:table border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -192,7 +192,7 @@
       Table 1: basic multiple keep with next after normal row
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red">
+      <fo:table border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -324,7 +324,7 @@
       Table 1: basic multiple keep (next and previous) after normal row
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red">
+      <fo:table border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="6cm"/>
@@ -456,7 +456,7 @@
       Table 1: basic multiple keep with next after normal row with normal row in middle
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red">
+      <fo:table border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="6cm"/>

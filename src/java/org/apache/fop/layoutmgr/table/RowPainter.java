@@ -46,7 +46,6 @@ import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
-import org.apache.fop.traits.BorderProps;
 
 class RowPainter {
     private static Log log = LogFactory.getLog(RowPainter.class);
@@ -469,7 +468,7 @@ class RowPainter {
         block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
         block.setIPD(ipd);
         block.setBPD(bpd);
-        block.setXOffset(tclm.getXOffsetOfGridUnit(colIndex)
+        block.setXOffset(tclm.getXOffsetOfGridUnit(colIndex, 1)
                 + (borderStart.getRetainedWidth() / 2));
         block.setYOffset(getRowOffset(rowIndex)
                 - (borderBefore.getRetainedWidth() / 2));

@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,14 +19,14 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP: Building from Source Code</title>
+    <title>Apache™ FOP: Building from Source Code</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="build-needed">
       <title>Do You Need To Build?</title>
       <p>
-        FOP distributions are either pre-compiled binary or source.
+        Apache™ FOP distributions are either pre-compiled binary or source.
         If you are using a binary distribution, it is already built and there is no need to build it again. 
         See the <a href="../download.html">Download Instructions</a> for information about whether a 
         binary or source distribution is best for your needs.
@@ -138,4 +138,3 @@
     </section>
   </body>
 </document>
-

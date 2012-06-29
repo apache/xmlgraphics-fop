@@ -27,9 +27,11 @@ import java.util.Map;
 import org.w3c.dom.Document;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.CustomFontCollection;
+import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
@@ -41,6 +43,13 @@ import org.apache.fop.fonts.base14.Base14FontCollection;
 /** Abstract base class of "Print" type renderers.  */
 public abstract class PrintRenderer extends AbstractRenderer {
 
+    /**
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
+     */
+    public PrintRenderer(FOUserAgent userAgent) {
+        super(userAgent);
+    }
+
     /** Font configuration */
     protected FontInfo fontInfo;
 
@@ -48,13 +57,13 @@ public abstract class PrintRenderer extends AbstractRenderer {
     protected FontResolver fontResolver = null;
 
     /** list of fonts */
-    protected List/*<EmbedFontInfo>*/ embedFontInfoList = null;
+    protected List<EmbedFontInfo> embedFontInfoList = null;
 
     /**
      * Adds a font list to current list of fonts
      * @param fontList a font info list
      */
-    public void addFontList(List/*<EmbedFontInfo>*/ fontList) {
+    public void addFontList(List<EmbedFontInfo> fontList) {
         if (embedFontInfoList == null) {
             setFontList(fontList);
         } else {
@@ -65,14 +74,14 @@ public abstract class PrintRenderer extends AbstractRenderer {
     /**
      * @param embedFontInfoList list of available fonts
      */
-    public void setFontList(List/*<EmbedFontInfo>*/ embedFontInfoList) {
+    public void setFontList(List<EmbedFontInfo> embedFontInfoList) {
         this.embedFontInfoList = embedFontInfoList;
     }
 
     /**
      * @return list of available embedded fonts
      */
-    public List/*<EmbedFontInfo>*/ getFontList() {
+    public List<EmbedFontInfo> getFontList() {
         return this.embedFontInfoList;
     }
 
@@ -82,7 +91,8 @@ public abstract class PrintRenderer extends AbstractRenderer {
         FontManager fontManager = userAgent.getFactory().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(fontManager.isBase14KerningEnabled()),
-                new CustomFontCollection(getFontResolver(), getFontList())
+                new CustomFontCollection(getFontResolver(), getFontList(),
+                                         userAgent.isComplexScriptFeaturesEnabled())
         };
         fontManager.setup(getFontInfo(), fontCollections);
     }

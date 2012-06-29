@@ -19,23 +19,17 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Upgrading from an Earlier Version of Apache FOP</title>
+    <title>Upgrading from an Earlier Version of Apache™ FOP</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="important">
       <title>Important!</title>
       <p>
-        If you're planning to upgrade to the latest FOP version there are a few very important things
+        If you're planning to upgrade to the latest Apache™ FOP version there are a few very important things
         to consider:
       </p>
       <ul>
-        <li>
-          More than half of the codebase has been rewritten over the
-          last three years. With version 0.93 the code has reached
-          <strong>production level</strong>, and continues to improve with
-          version 0.94.
-        </li>
         <li>
           The API of FOP has changed considerably and is not
           backwards-compatible with versions 0.20.5 and

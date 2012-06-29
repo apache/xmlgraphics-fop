@@ -29,9 +29,11 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 import java.io.Writer;
 
-/** Specifies rtf control words.  Is the container for page attributes.
- *  Overrides okToWriteRtf.
- *  @author Christopher Scott, scottc@westinghouse.com
+/**
+ * <p>Specifies rtf control words.  Is the container for page attributes.
+ *  Overrides okToWriteRtf.</p>
+ *
+ * <p>This work was authored by Christopher Scott (scottc@westinghouse.com).</p>
  */
 
 public class RtfPage
@@ -62,7 +64,7 @@ extends RtfContainer {
     public static final String FOOTERY = "footery";
     /** constant for itap level */
     public static final String ITAP = "itap";
-    
+
     /** String array of RtfPage attributes */
     public static final String[] PAGE_ATTR = new String[]{
         PAGE_WIDTH, PAGE_HEIGHT, LANDSCAPE, MARGIN_TOP, MARGIN_BOTTOM,

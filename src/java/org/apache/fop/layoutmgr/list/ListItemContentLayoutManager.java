@@ -19,9 +19,7 @@
 
 package org.apache.fop.layoutmgr.list;
 
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -36,8 +34,8 @@ import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
+import org.apache.fop.layoutmgr.TraitSetter;
 
 /**
  * LayoutManager for a list-item-label or list-item-body FO.
@@ -46,22 +44,8 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
 
-    private int xoffset;
+    private int xOffset;
     private int itemIPD;
-
-    private static class StackingIter extends PositionIterator {
-        StackingIter(Iterator parentIter) {
-            super(parentIter);
-        }
-
-        protected LayoutManager getLM(Object nextObj) {
-            return ((Position) nextObj).getLM();
-        }
-
-        protected Position getPos(Object nextObj) {
-            return ((Position) nextObj);
-        }
-    }
 
     /**
      * Create a new Cell layout manager.
@@ -95,13 +79,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
      * @param off the x offset
      */
     public void setXOffset(int off) {
-        xoffset = off;
-    }
-
-    /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList, int alignment) {
-        //log.debug("  ListItemContentLayoutManager.getChanged>");
-        return super.getChangedKnuthElements(oldList, alignment);
+        xOffset = off;
     }
 
     /**
@@ -112,6 +90,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
      * @param parentIter the iterator of the break positions
      * @param layoutContext the layout context for adding the areas
      */
+    @Override
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
@@ -127,10 +106,10 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
 
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list;
-        LinkedList positionList = new LinkedList();
+        LinkedList<Position> positionList = new LinkedList<Position>();
         Position pos;
         while (parentIter.hasNext()) {
-            pos = (Position)parentIter.next();
+            pos = parentIter.next();
             if (pos == null) {
                 continue;
             }
@@ -156,7 +135,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
 
         addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
 
-        StackingIter childPosIter = new StackingIter(positionList.listIterator());
+        PositionIterator childPosIter = new PositionIterator(positionList.listIterator());
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // Add the block areas to Area
             lc.setFlags(LayoutContext.FIRST_AREA, childLM == firstLM);
@@ -189,12 +168,14 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
      * @param childArea the child area to get the parent for
      * @return the parent area
      */
+    @Override
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
             curBlockArea.setPositioning(Block.ABSOLUTE);
             // set position
-            curBlockArea.setXOffset(xoffset);
+            curBlockArea.setXOffset(xOffset);
+            //TODO: Check - itemIPD never set?
             curBlockArea.setIPD(itemIPD);
             //curBlockArea.setHeight();
 
@@ -215,6 +196,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
      *
      * @param childArea the child to add to the cell
      */
+    @Override
     public void addChildArea(Area childArea) {
         if (curBlockArea != null) {
             curBlockArea.addBlock((Block) childArea);
@@ -222,19 +204,21 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public KeepProperty getKeepTogetherProperty() {
         return getPartFO().getKeepTogether();
     }
 
     /** {@inheritDoc} */
+    @Override
     public Keep getKeepWithNext() {
         return Keep.KEEP_AUTO;
     }
 
     /** {@inheritDoc} */
+    @Override
     public Keep getKeepWithPrevious() {
         return Keep.KEEP_AUTO;
     }
-
 }
 

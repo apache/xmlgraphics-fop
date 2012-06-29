@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.w3c.dom.DOMImplementation;
-
 import org.xml.sax.Locator;
 
 import org.apache.commons.logging.Log;
@@ -42,18 +41,20 @@ import org.apache.fop.fo.ElementMapping.Maker;
 public class ElementMappingRegistry {
 
     /** logging instance */
-    protected Log log = LogFactory.getLog(ElementMappingRegistry.class);
+    private static final Log LOG = LogFactory.getLog(ElementMappingRegistry.class);
 
     /**
      * Table mapping element names to the makers of objects
      * representing formatting objects.
      */
-    protected Map fobjTable = new java.util.HashMap();
+    protected Map<String, Map<String, Maker>> fobjTable
+    = new java.util.HashMap<String, Map<String, Maker>>();
 
     /**
      * Map of mapped namespaces and their associated ElementMapping instances.
      */
-    protected Map namespaces = new java.util.HashMap();
+    protected Map<String, ElementMapping> namespaces
+    = new java.util.HashMap<String, ElementMapping>();
 
     /**
      * Main constructor. Adds all default element mapping as well as detects ElementMapping
@@ -70,14 +71,14 @@ public class ElementMappingRegistry {
      */
     private void setupDefaultMappings() {
         // add mappings from available services
-        Iterator providers = Service.providers(ElementMapping.class, false);
+        Iterator<String> providers = Service.providerNames(ElementMapping.class);
         if (providers != null) {
             while (providers.hasNext()) {
-                String mapping = (String)providers.next();
+                String mapping = providers.next();
                 try {
                     addElementMapping(mapping);
                 } catch (IllegalArgumentException e) {
-                    log.warn("Error while adding element mapping", e);
+                    LOG.warn("Error while adding element mapping", e);
                 }
 
             }
@@ -129,13 +130,13 @@ public class ElementMappingRegistry {
      */
     public Maker findFOMaker(String namespaceURI, String localName, Locator locator)
                 throws FOPException {
-        Map table = (Map)fobjTable.get(namespaceURI);
+        Map<String, Maker> table = fobjTable.get(namespaceURI);
         Maker fobjMaker = null;
         if (table != null) {
-            fobjMaker = (Maker)table.get(localName);
+            fobjMaker = table.get(localName);
             // try default
             if (fobjMaker == null) {
-                fobjMaker = (Maker)table.get(ElementMapping.DEFAULT);
+                fobjMaker = table.get(ElementMapping.DEFAULT);
             }
         }
 

@@ -25,7 +25,12 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.fo.Constants;
+import org.apache.fop.traits.WritingMode;
+
+import static org.apache.fop.fo.Constants.EN_LR_TB;
+import static org.apache.fop.fo.Constants.EN_RL_TB;
+import static org.apache.fop.fo.Constants.EN_TB_LR;
+import static org.apache.fop.fo.Constants.EN_TB_RL;
 
 /**
  * Describe a PDF or PostScript style coordinate transformation matrix (CTM).
@@ -34,10 +39,17 @@ import org.apache.fop.fo.Constants;
  */
 public class CTM implements Serializable {
 
-    private double a, b, c, d, e, f;
+    private static final long serialVersionUID = -8743287485623778341L;
+
+    private double a;
+    private double b;
+    private double c;
+    private double d;
+    private double e;
+    private double f;
 
     private static final CTM CTM_LRTB = new CTM(1, 0, 0, 1, 0, 0);
-    private static final CTM CTM_RLTB = new CTM(-1, 0, 0, 1, 0, 0);
+    private static final CTM CTM_RLTB = new CTM(1, 0, 0, 1, 0, 0);
     private static final CTM CTM_TBRL = new CTM(0, 1, -1, 0, 0, 0);
 
     /**
@@ -121,28 +133,25 @@ public class CTM implements Serializable {
      * Return a CTM which will transform coordinates for a particular writing-mode
      * into normalized first quandrant coordinates.
      * @param wm A writing mode constant from fo.properties.WritingMode, ie.
-     * one of LR_TB, RL_TB, TB_RL.
+     * one of LR_TB, RL_TB, TB_RL, TB_LR.
      * @param ipd The inline-progression dimension of the reference area whose
      * CTM is being set..
      * @param bpd The block-progression dimension of the reference area whose
      * CTM is being set.
      * @return a new CTM with the required transform
      */
-    public static CTM getWMctm(int wm, int ipd, int bpd) {
+    public static CTM getWMctm(WritingMode wm, int ipd, int bpd) {
         CTM wmctm;
-        switch (wm) {
-            case Constants.EN_LR_TB:
+        switch (wm.getEnumValue()) {
+            case EN_LR_TB:
                 return new CTM(CTM_LRTB);
-            case Constants.EN_RL_TB:
-                wmctm = new CTM(CTM_RLTB);
-                wmctm.e = ipd;
-                return wmctm;
-                //return  CTM_RLTB.translate(ipd, 0);
-            case Constants.EN_TB_RL:  // CJK
+            case EN_RL_TB:
+                return new CTM(CTM_RLTB);
+            case EN_TB_RL:  // CJK
+            case EN_TB_LR:  // CJK
                 wmctm = new CTM(CTM_TBRL);
                 wmctm.e = bpd;
                 return wmctm;
-                //return CTM_TBRL.translate(0, ipd);
             default:
                 return null;
         }
@@ -155,13 +164,12 @@ public class CTM implements Serializable {
      * @return CTM The result of multiplying premult * this.
      */
     public CTM multiply(CTM premult) {
-        CTM result = new CTM ((premult.a * a) + (premult.b * c),
+        return new CTM ((premult.a * a) + (premult.b * c),
                               (premult.a * b) + (premult.b * d),
                               (premult.c * a) + (premult.d * c),
                               (premult.c * b) + (premult.d * d),
                               (premult.e * a) + (premult.f * c) + e,
                               (premult.e * b) + (premult.f * d) + f);
-        return result;
     }
 
     /**
@@ -172,7 +180,8 @@ public class CTM implements Serializable {
      * @return CTM The result of rotating this CTM.
      */
     public CTM rotate(double angle) {
-        double cos, sin;
+        double cos;
+        double sin;
         if (angle == 90.0 || angle == -270.0) {
             cos = 0.0;
             sin = 1.0;
@@ -247,6 +256,7 @@ public class CTM implements Serializable {
      *
      * @return a string with the transform values
      */
+    @Override
     public String toString() {
         return "[" + a + " " + b + " " + c + " " + d + " " + e + " "
                + f + "]";
@@ -279,10 +289,11 @@ public class CTM implements Serializable {
      * @return CTM the coordinate transformation matrix (CTM)
      */
     public static CTM getCTMandRelDims(int absRefOrient,
-                                       int writingMode,
+                                       WritingMode writingMode,
                                        Rectangle2D absVPrect,
                                        FODimension reldims) {
-        int width, height;
+        int width;
+        int height;
         // We will use the absolute reference-orientation to set up the CTM.
         // The value here is relative to its ancestor reference area.
         if (absRefOrient % 180 == 0) {
@@ -330,12 +341,18 @@ public class CTM implements Serializable {
          * can set ipd and bpd appropriately based on the writing mode.
          */
 
-        if (writingMode == Constants.EN_LR_TB || writingMode == Constants.EN_RL_TB) {
-            reldims.ipd = width;
-            reldims.bpd = height;
-        } else {
+        switch ( writingMode.getEnumValue() ) {
+        case EN_TB_LR:
+        case EN_TB_RL:
             reldims.ipd = height;
             reldims.bpd = width;
+            break;
+        case EN_LR_TB:
+        case EN_RL_TB:
+        default:
+            reldims.ipd = width;
+            reldims.bpd = height;
+            break;
         }
         // Set a rectangle to be the writing-mode relative version???
         // Now transform for writing mode

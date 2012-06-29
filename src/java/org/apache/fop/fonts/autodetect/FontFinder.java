@@ -20,6 +20,7 @@
 package org.apache.fop.fonts.autodetect;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -31,12 +32,10 @@ public interface FontFinder {
     /**
      * Finds a list of font files.
      *
-     * @return list of font files. List&lt;URL&gt; in the case of the
-     *         FontFinder, and List&lt;File&gt; in the case of the
-     *         FonrDirFinders.
+     * @return list of font files.
      * @throws IOException
      *             In case of an I/O problem
      */
-    List/*<URL>*/ find() throws IOException;
+    List<URL> find() throws IOException;
 
 }

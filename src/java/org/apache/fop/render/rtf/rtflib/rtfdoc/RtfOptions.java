@@ -27,8 +27,9 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  */
 
 /**
- * Simplistic options definitions for RTF generation
- * @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+ * <p>Simplistic options definitions for RTF generation.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 public class RtfOptions {
     /**

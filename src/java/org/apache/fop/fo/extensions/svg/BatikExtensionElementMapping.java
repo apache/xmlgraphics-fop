@@ -20,12 +20,15 @@
 package org.apache.fop.fo.extensions.svg;
 
 import java.util.HashMap;
+
 import javax.xml.parsers.SAXParserFactory;
 
+import org.w3c.dom.DOMImplementation;
+
 import org.apache.batik.util.XMLResourceDescriptor;
+
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FONode;
-import org.w3c.dom.DOMImplementation;
 
 /**
  * This Element Mapping is for Batik SVG Extension elements
@@ -73,7 +76,7 @@ public class BatikExtensionElementMapping extends ElementMapping {
                 XMLResourceDescriptor.setXMLParserClassName(
                   getAParserClassName());
 
-                foObjs = new HashMap();
+                foObjs = new HashMap<String, Maker>();
                 foObjs.put("batik", new SE());
                 foObjs.put(DEFAULT, new SVGMaker());
             } catch (Throwable t) {

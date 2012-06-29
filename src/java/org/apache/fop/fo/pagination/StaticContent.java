@@ -44,7 +44,7 @@ public class StaticContent extends Flow {
         if (getFlowName() == null || getFlowName().equals("")) {
             missingPropertyError("flow-name");
         }
-        getFOEventHandler().startFlow(this);
+        getFOEventHandler().startStatic(this);
     }
 
     /**
@@ -56,7 +56,7 @@ public class StaticContent extends Flow {
         if (firstChild == null && getUserAgent().validateStrictly()) {
             missingChildElementError("(%block;)+");
         }
-        getFOEventHandler().endFlow(this);
+        getFOEventHandler().endStatic(this);
     }
 
     /**

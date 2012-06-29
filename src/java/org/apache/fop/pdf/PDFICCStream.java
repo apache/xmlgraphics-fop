@@ -49,7 +49,11 @@ public class PDFICCStream extends PDFStream {
         pdfColorSpace = alt;
     }
 
-    /** @return the ICC profile */
+    /**
+     * Returns the associated ICC profile. Note that this will return null once the
+     * ICC stream has been written to the PDF file.
+     * @return the ICC profile (or null if the stream has already been written)
+     */
     public ICC_Profile getICCProfile() {
         return this.cp;
     }
@@ -59,7 +63,8 @@ public class PDFICCStream extends PDFStream {
      * byte arrays around so much
      * {@inheritDoc}
      */
-    protected int output(java.io.OutputStream stream)
+    @Override
+    public int output(java.io.OutputStream stream)
                 throws java.io.IOException {
         int length = super.output(stream);
         this.cp = null; //Free ICC stream when it's not used anymore
@@ -67,11 +72,13 @@ public class PDFICCStream extends PDFStream {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void outputRawStreamData(OutputStream out) throws IOException {
         cp.write(out);
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void populateStreamDict(Object lengthEntry) {
         put("N", cp.getNumComponents());
         if (pdfColorSpace != null) {

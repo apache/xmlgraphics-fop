@@ -19,18 +19,12 @@
 
 package org.apache.fop.config;
 
-/*
+/**
  * this font has a missing font triplet attribute
  */
-public class FontTripletAttributeMissingTestCase extends BaseDestructiveUserConfigTestCase {
+public class FontTripletAttributeMissingTestCase extends BaseDestructiveUserConfigTest {
 
-    public FontTripletAttributeMissingTestCase(String name) {
-        super(name);
-    }
-
-    /**
-     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
-     */
+    @Override
     public String getUserConfigFilename() {
         return "test_font_tripletattribute_missing.xconf";
     }

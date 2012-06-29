@@ -31,22 +31,13 @@ import org.apache.fop.fo.properties.Property;
  */
 public class BodyStartFunction extends FunctionBase {
 
-    /**
-     * @return 0 (there are no arguments for body-start)
-     */
-    public int nbArgs() {
+    /** {@inheritDoc} */
+    public int getRequiredArgsCount() {
         return 0;
     }
 
-    /**
-     * @param args array of arguments (none are used, but this is required by
-     * the Function interface)
-     * @param pInfo PropertyInfo object to be evaluated
-     * @return numeric object containing the calculated body-start value
-     * @throws PropertyException if called from outside of an fo:list-item
-     */
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+    /** {@inheritDoc} */
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
         Numeric distance
             = pInfo.getPropertyList()
               .get(Constants.PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getNumeric();

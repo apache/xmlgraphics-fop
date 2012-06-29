@@ -37,7 +37,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 public class ImageLayout implements Constants {
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog(ImageLayout.class);
+    protected static final Log log = LogFactory.getLog(ImageLayout.class);
 
     //Input
     private GraphicsProperties props;
@@ -227,6 +227,9 @@ public class ImageLayout implements Constants {
                 adjusted.height = (int)(rat1 * size.height);
             } else if (rat1 > rat2) {
                 adjusted.width = (int)(rat2 * size.width);
+                adjusted.height = effHeight;
+            } else {
+                adjusted.width = effWidth;
                 adjusted.height = effHeight;
             }
         } else {

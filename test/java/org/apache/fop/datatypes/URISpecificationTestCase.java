@@ -19,13 +19,16 @@
 
 package org.apache.fop.datatypes;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Tests for URISpecification.
  */
-public class URISpecificationTestCase extends TestCase {
+public class URISpecificationTestCase {
 
+    @Test
     public void testGetURL() throws Exception {
         String actual;
 
@@ -42,6 +45,7 @@ public class URISpecificationTestCase extends TestCase {
         assertEquals("http://localhost/test", actual);
     }
 
+    @Test
     public void testEscapeURI() throws Exception {
         String actual;
 

@@ -22,22 +22,24 @@ package org.apache.fop.hyphenation;
 import java.io.Serializable;
 
 /**
- * This class represents a hyphen. A 'full' hyphen is made of 3 parts:
+ * <p>This class represents a hyphen. A 'full' hyphen is made of 3 parts:
  * the pre-break text, post-break text and no-break. If no line-break
  * is generated at this position, the no-break text is used, otherwise,
  * pre-break and post-break are used. Typically, pre-break is equal to
  * the hyphen character and the others are empty. However, this general
  * scheme allows support for cases in some languages where words change
  * spelling if they're split across lines, like german's 'backen' which
- * hyphenates 'bak-ken'. BTW, this comes from TeX.
+ * hyphenates 'bak-ken'. BTW, this comes from TeX.</p>
  *
- * @author Carlos Villegas <cav@uniscope.co.jp>
+ * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
 
 /**
  * Represents a hyphen.
  */
 public class Hyphen implements Serializable {
+
+    private static final long serialVersionUID = 8989909741110279085L;
 
     /** pre break string */
     public String preBreak;                                     // CSOK: VisibilityModifier

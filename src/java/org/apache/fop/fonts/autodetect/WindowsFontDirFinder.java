@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * FontFinder for native Windows platforms
  */
-public class WindowsFontDirFinder implements FontFinder {
+public class WindowsFontDirFinder implements FontDirFinder {
 
     /**
      * Attempts to read windir environment variable on windows
@@ -51,8 +51,8 @@ public class WindowsFontDirFinder implements FontFinder {
      * {@inheritDoc}
      * @return a list of detected font files
      */
-    public List find() {
-        List fontDirList = new java.util.ArrayList();
+    public List<File> find() {
+        List<File> fontDirList = new java.util.ArrayList<File>();
         String windir = null;
         try {
             windir = System.getProperty("env.windir");
@@ -67,7 +67,8 @@ public class WindowsFontDirFinder implements FontFinder {
                 // should continue if this fails
             }
         }
-        File osFontsDir = null, psFontsDir = null;
+        File osFontsDir = null;
+        File psFontsDir = null;
         if (windir != null) {
             // remove any trailing '/'
             if (windir.endsWith("/")) {

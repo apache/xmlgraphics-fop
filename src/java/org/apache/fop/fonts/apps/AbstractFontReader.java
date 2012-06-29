@@ -31,6 +31,7 @@ import javax.xml.transform.TransformerFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.util.CommandLineLogger;
 
 /**
@@ -67,7 +68,7 @@ public abstract class AbstractFontReader {
         List arguments = new java.util.ArrayList();
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
-                if ("-d".equals(args[i]) || "-q".equals(args[i])) {
+                if ("-t".equals(args[i]) || "-d".equals(args[i]) || "-q".equals(args[i])) {
                     options.put(args[i], "");
                 } else if ((i + 1) < args.length && !args[i + 1].startsWith("-")) {
                     options.put(args[i], args[i + 1]);
@@ -101,7 +102,9 @@ public abstract class AbstractFontReader {
      */
     protected static void determineLogLevel(Map options) {
         //Determine log level
-        if (options.get("-d") != null) {
+        if (options.get("-t") != null) {
+            setLogLevel("trace");
+        } else if (options.get("-d") != null) {
             setLogLevel("debug");
         } else if (options.get("-q") != null) {
             setLogLevel("error");

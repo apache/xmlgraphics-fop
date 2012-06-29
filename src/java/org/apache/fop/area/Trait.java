@@ -24,10 +24,16 @@ import java.io.Serializable;
 
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.Direction;
+import org.apache.fop.traits.WritingMode;
 import org.apache.fop.util.ColorUtil;
+
+import static org.apache.fop.fo.Constants.EN_NOREPEAT;
+import static org.apache.fop.fo.Constants.EN_REPEAT;
+import static org.apache.fop.fo.Constants.EN_REPEATX;
+import static org.apache.fop.fo.Constants.EN_REPEATY;
 
 // properties should be serialized by the holder
 /**
@@ -36,174 +42,136 @@ import org.apache.fop.util.ColorUtil;
  */
 public final class Trait implements Serializable {
 
+    private static final long serialVersionUID = 3234280285391611437L;
+
     private Trait() {
     }
 
-    /**
-     * Id reference line, not resolved.
-     * not sure if this is needed.
-     */
+    /** Id reference line, not resolved. (not sure if this is needed.) */
     //public static final Integer ID_LINK = new Integer(0);
 
     /**
      * Internal link trait.
      * Contains the PageViewport key and the PROD_ID of the target area
      */
-    public static final Integer INTERNAL_LINK = new Integer(1);
+    public static final Integer INTERNAL_LINK = 1;
 
-    /**
-     * External link. A URL link to an external resource.
-     */
-    public static final Integer EXTERNAL_LINK = new Integer(2);
+    /** * External link. A URL link to an external resource. */
+    public static final Integer EXTERNAL_LINK = 2;
 
-    /**
-     * The font triplet for the current font.
-     */
-    public static final Integer FONT = new Integer(3);
+    /** The font triplet for the current font. */
+    public static final Integer FONT = 3;
 
-    /**
-     * Font size for the current font.
-     */
-    public static final Integer FONT_SIZE = new Integer(4);
+    /** Font size for the current font. */
+    public static final Integer FONT_SIZE = 4;
 
-    /**
-     * The current color.
-     */
-    public static final Integer COLOR = new Integer(7);
+    /** The current color. */
+    public static final Integer COLOR = 7;
 
-    /**
-     * The ID of the FO that produced an area.
-     */
-    public static final Integer PROD_ID = new Integer(8);
+    /** The ID of the FO that produced an area. */
+    public static final Integer PROD_ID = 8;
 
-    /**
-     * Background trait for an area.
-     */
-    public static final Integer BACKGROUND = new Integer(9);
+    /** Background trait for an area. */
+    public static final Integer BACKGROUND = 9;
 
-    /**
-     * Underline trait used when rendering inline parent.
-     */
-    public static final Integer UNDERLINE = new Integer(10);
+    /** Underline trait used when rendering inline parent. */
+    public static final Integer UNDERLINE = 10;
 
-    /**
-     * Overline trait used when rendering inline parent.
-     */
-    public static final Integer OVERLINE = new Integer(11);
+    /** Overline trait used when rendering inline parent. */
+    public static final Integer OVERLINE = 11;
 
-    /**
-     * Linethrough trait used when rendering inline parent.
-     */
-    public static final Integer LINETHROUGH = new Integer(12);
+    /** Linethrough trait used when rendering inline parent. */
+    public static final Integer LINETHROUGH = 12;
 
-    /**
-     * Shadow offset.
-     */
+    /** Shadow offset. */
     //public static final Integer OFFSET = new Integer(13);
 
-    /**
-     * The shadow for text.
-     */
+    /** The shadow for text. */
     //public static final Integer SHADOW = new Integer(14);
 
-    /**
-     * The border start.
-     */
-    public static final Integer BORDER_START = new Integer(15);
+    /** The border start. */
+    public static final Integer BORDER_START = 15;
 
-    /**
-     * The border end.
-     */
-    public static final Integer BORDER_END = new Integer(16);
+    /** The border end. */
+    public static final Integer BORDER_END = 16;
 
-    /**
-     * The border before.
-     */
-    public static final Integer BORDER_BEFORE = new Integer(17);
+    /** The border before. */
+    public static final Integer BORDER_BEFORE = 17;
 
-    /**
-     * The border after.
-     */
-    public static final Integer BORDER_AFTER = new Integer(18);
+    /** The border after. */
+    public static final Integer BORDER_AFTER = 18;
 
-    /**
-     * The padding start.
-     */
-    public static final Integer PADDING_START = new Integer(19);
+    /** The padding start. */
+    public static final Integer PADDING_START = 19;
 
-    /**
-     * The padding end.
-     */
-    public static final Integer PADDING_END = new Integer(20);
+    /** The padding end. */
+    public static final Integer PADDING_END = 20;
 
-    /**
-     * The padding before.
-     */
-    public static final Integer PADDING_BEFORE = new Integer(21);
+    /** The padding before. */
+    public static final Integer PADDING_BEFORE = 21;
 
-    /**
-     * The padding after.
-     */
-    public static final Integer PADDING_AFTER = new Integer(22);
+    /** The padding after. */
+    public static final Integer PADDING_AFTER = 22;
 
-    /**
-     * The space start.
-     */
-    public static final Integer SPACE_START = new Integer(23);
+    /** The space start. */
+    public static final Integer SPACE_START = 23;
 
-    /**
-     * The space end.
-     */
-    public static final Integer SPACE_END  = new Integer(24);
+    /** The space end. */
+    public static final Integer SPACE_END  = 24;
 
-    /**
-     * break before
-     */
+    /** break before */
     //public static final Integer BREAK_BEFORE = new Integer(25);
 
-    /**
-     * break after
-     */
+    /** break after */
     //public static final Integer BREAK_AFTER = new Integer(26);
 
-    /**
-     * The start-indent trait.
-     */
-    public static final Integer START_INDENT = new Integer(27);
+    /** The start-indent trait. */
+    public static final Integer START_INDENT = 27;
 
-    /**
-     * The end-indent trait.
-     */
-    public static final Integer END_INDENT  = new Integer(28);
+    /** The end-indent trait. */
+    public static final Integer END_INDENT  = 28;
 
     /** The space-before trait. */
-    public static final Integer SPACE_BEFORE  = new Integer(29);
+    public static final Integer SPACE_BEFORE  = 29;
 
     /** The space-after trait. */
-    public static final Integer SPACE_AFTER  = new Integer(30);
+    public static final Integer SPACE_AFTER  = 30;
 
     /** The is-reference-area trait. */
-    public static final Integer IS_REFERENCE_AREA = new Integer(31);
+    public static final Integer IS_REFERENCE_AREA = 31;
 
     /** The is-viewport-area trait. */
-    public static final Integer IS_VIEWPORT_AREA = new Integer(32);
+    public static final Integer IS_VIEWPORT_AREA = 32;
 
     /** Blinking trait used when rendering inline parent. */
-    public static final Integer BLINK = new Integer(33);
+    public static final Integer BLINK = 33;
 
     /** Trait for color of underline decorations when rendering inline parent. */
-    public static final Integer UNDERLINE_COLOR = new Integer(34);
-    /** Trait for color of overline decorations when rendering inline parent. */
-    public static final Integer OVERLINE_COLOR = new Integer(35);
-    /** Trait for color of linethrough decorations when rendering inline parent. */
-    public static final Integer LINETHROUGH_COLOR = new Integer(36);
+    public static final Integer UNDERLINE_COLOR = 34;
 
-    /** The ptr trait. Used for accessibility   */
-    public static final Integer PTR = new Integer(37);
+    /** Trait for color of overline decorations when rendering inline parent. */
+    public static final Integer OVERLINE_COLOR = 35;
+
+    /** Trait for color of linethrough decorations when rendering inline parent. */
+    public static final Integer LINETHROUGH_COLOR = 36;
+
+    /** For navigation in the document structure. */
+    public static final Integer STRUCTURE_TREE_ELEMENT = 37;
+
+    /** writing mode trait */
+    public static final Integer WRITING_MODE = 38;
+    /** inline progression direction trait */
+    public static final Integer INLINE_PROGRESSION_DIRECTION = 39;
+    /** block progression direction trait */
+    public static final Integer BLOCK_PROGRESSION_DIRECTION = 40;
+    /** column progression direction trait */
+    public static final Integer COLUMN_PROGRESSION_DIRECTION = 41;
+    /** shift direction trait */
+    public static final Integer SHIFT_DIRECTION = 42;
 
 
     /** Maximum value used by trait keys */
-    public static final int MAX_TRAIT_KEY = 38;
+    public static final int MAX_TRAIT_KEY = 42;
 
     private static final TraitInfo[] TRAIT_INFO = new TraitInfo[MAX_TRAIT_KEY + 1];
 
@@ -226,65 +194,55 @@ public final class Trait implements Serializable {
     }
 
     private static void put(Integer key, TraitInfo info) {
-        TRAIT_INFO[key.intValue()] = info;
+        TRAIT_INFO[key] = info;
     }
 
     static {
         // Create a hashmap mapping trait code to name for external representation
         //put(ID_LINK, new TraitInfo("id-link", String.class));
-        put(PTR, new TraitInfo("ptr", String.class));
-        put(INTERNAL_LINK, new TraitInfo("internal-link", InternalLink.class));
-        put(EXTERNAL_LINK, new TraitInfo("external-link", ExternalLink.class));
-        put(FONT,         new TraitInfo("font", FontTriplet.class));
-        put(FONT_SIZE,    new TraitInfo("font-size", Integer.class));
-        put(COLOR, new TraitInfo("color", Color.class));
-        put(PROD_ID, new TraitInfo("prod-id", String.class));
-        put(BACKGROUND,   new TraitInfo("background", Background.class));
-        put(UNDERLINE,    new TraitInfo("underline-score", Boolean.class));
+        put(STRUCTURE_TREE_ELEMENT, new TraitInfo("structure-tree-element", String.class));
+        put(INTERNAL_LINK,  new TraitInfo("internal-link", InternalLink.class));
+        put(EXTERNAL_LINK,  new TraitInfo("external-link", ExternalLink.class));
+        put(FONT,           new TraitInfo("font", FontTriplet.class));
+        put(FONT_SIZE,      new TraitInfo("font-size", Integer.class));
+        put(COLOR,          new TraitInfo("color", Color.class));
+        put(PROD_ID,        new TraitInfo("prod-id", String.class));
+        put(BACKGROUND,     new TraitInfo("background", Background.class));
+        put(UNDERLINE,      new TraitInfo("underline-score", Boolean.class));
         put(UNDERLINE_COLOR, new TraitInfo("underline-score-color", Color.class));
-        put(OVERLINE,     new TraitInfo("overline-score", Boolean.class));
+        put(OVERLINE,       new TraitInfo("overline-score", Boolean.class));
         put(OVERLINE_COLOR, new TraitInfo("overline-score-color", Color.class));
-        put(LINETHROUGH,  new TraitInfo("through-score", Boolean.class));
+        put(LINETHROUGH,    new TraitInfo("through-score", Boolean.class));
         put(LINETHROUGH_COLOR, new TraitInfo("through-score-color", Color.class));
-        put(BLINK,        new TraitInfo("blink", Boolean.class));
-        //put(OFFSET, new TraitInfo("offset", Integer.class));
-        //put(SHADOW, new TraitInfo("shadow", Integer.class));
-        put(BORDER_START,
-                          new TraitInfo("border-start", BorderProps.class));
-        put(BORDER_END,
-                          new TraitInfo("border-end", BorderProps.class));
-        put(BORDER_BEFORE,
-                          new TraitInfo("border-before", BorderProps.class));
-        put(BORDER_AFTER,
-                          new TraitInfo("border-after", BorderProps.class));
-        put(PADDING_START,
-                          new TraitInfo("padding-start", Integer.class));
-        put(PADDING_END,
-                          new TraitInfo("padding-end", Integer.class));
-        put(PADDING_BEFORE,
-                          new TraitInfo("padding-before", Integer.class));
-        put(PADDING_AFTER,
-                          new TraitInfo("padding-after", Integer.class));
-        put(SPACE_START,
-                          new TraitInfo("space-start", Integer.class));
-        put(SPACE_END,
-                          new TraitInfo("space-end", Integer.class));
-        //put(BREAK_BEFORE,
-        //                  new TraitInfo("break-before", Integer.class));
-        //put(BREAK_AFTER,
-        //                  new TraitInfo("break-after", Integer.class));
-        put(START_INDENT,
-                new TraitInfo("start-indent", Integer.class));
-        put(END_INDENT,
-                new TraitInfo("end-indent", Integer.class));
-        put(SPACE_BEFORE,
-                new TraitInfo("space-before", Integer.class));
-        put(SPACE_AFTER,
-                new TraitInfo("space-after", Integer.class));
-        put(IS_REFERENCE_AREA,
-                new TraitInfo("is-reference-area", Boolean.class));
-        put(IS_VIEWPORT_AREA,
-                new TraitInfo("is-viewport-area", Boolean.class));
+        put(BLINK,          new TraitInfo("blink", Boolean.class));
+        //put(OFFSET,       new TraitInfo("offset", Integer.class));
+        //put(SHADOW,       new TraitInfo("shadow", Integer.class));
+        put(BORDER_START,   new TraitInfo("border-start", BorderProps.class));
+        put(BORDER_END,     new TraitInfo("border-end", BorderProps.class));
+        put(BORDER_BEFORE,  new TraitInfo("border-before", BorderProps.class));
+        put(BORDER_AFTER,   new TraitInfo("border-after", BorderProps.class));
+        put(PADDING_START,  new TraitInfo("padding-start", Integer.class));
+        put(PADDING_END,    new TraitInfo("padding-end", Integer.class));
+        put(PADDING_BEFORE, new TraitInfo("padding-before", Integer.class));
+        put(PADDING_AFTER,  new TraitInfo("padding-after", Integer.class));
+        put(SPACE_START,    new TraitInfo("space-start", Integer.class));
+        put(SPACE_END,      new TraitInfo("space-end", Integer.class));
+        //put(BREAK_BEFORE, new TraitInfo("break-before", Integer.class));
+        //put(BREAK_AFTER,  new TraitInfo("break-after", Integer.class));
+        put(START_INDENT,   new TraitInfo("start-indent", Integer.class));
+        put(END_INDENT,     new TraitInfo("end-indent", Integer.class));
+        put(SPACE_BEFORE,   new TraitInfo("space-before", Integer.class));
+        put(SPACE_AFTER,    new TraitInfo("space-after", Integer.class));
+        put(IS_REFERENCE_AREA,  new TraitInfo("is-reference-area", Boolean.class));
+        put(IS_VIEWPORT_AREA,   new TraitInfo("is-viewport-area", Boolean.class));
+        put(WRITING_MODE,
+                new TraitInfo("writing-mode", WritingMode.class));
+        put(INLINE_PROGRESSION_DIRECTION,
+                new TraitInfo("inline-progression-direction", Direction.class));
+        put(BLOCK_PROGRESSION_DIRECTION,
+                new TraitInfo("block-progression-direction", Direction.class));
+        put(SHIFT_DIRECTION,
+                new TraitInfo("shift-direction", Direction.class));
 
     }
 
@@ -295,7 +253,7 @@ public final class Trait implements Serializable {
      * @return the trait name
      */
     public static String getTraitName(Object traitCode) {
-        return TRAIT_INFO[((Integer)traitCode).intValue()].getName();
+        return TRAIT_INFO[(Integer)traitCode].getName();
     }
 
     /**
@@ -305,7 +263,7 @@ public final class Trait implements Serializable {
      * @return the class type for the trait
      */
     public static Class getTraitClass(Object traitCode) {
-        return TRAIT_INFO[((Integer)traitCode).intValue()].getClazz();
+        return TRAIT_INFO[(Integer)traitCode].getClazz();
     }
 
     /**
@@ -313,6 +271,8 @@ public final class Trait implements Serializable {
      * Stores PageViewport key and producer ID
      */
     public static class InternalLink implements Serializable {
+
+        private static final long serialVersionUID = -8993505060996723039L;
 
         /** The unique key of the PageViewport. */
         private String pvKey;
@@ -435,6 +395,7 @@ public final class Trait implements Serializable {
          * Return the human-friendly string for debugging.
          * {@inheritDoc}
          */
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer();
             sb.append("pvKey=").append(pvKey);
@@ -447,6 +408,8 @@ public final class Trait implements Serializable {
      * External Link trait structure
      */
     public static class ExternalLink implements Serializable {
+
+        private static final long serialVersionUID = -3720707599232620946L;
 
         private String destination;
         private boolean newWindow;
@@ -477,7 +440,7 @@ public final class Trait implements Serializable {
                 if (v.startsWith("dest=")) {
                     dest = v.substring(5);
                 } else if (v.startsWith("newWindow=")) {
-                    newWindow = Boolean.valueOf(v.substring(10)).booleanValue();
+                    newWindow = Boolean.valueOf(v.substring(10));
                 } else {
                     throw new IllegalArgumentException(
                             "Malformed trait value for Trait.ExternalLink: " + traitValue);
@@ -507,6 +470,7 @@ public final class Trait implements Serializable {
          * @return  a <code>String</code> of the form
          *          "org.apache.fop.area.Trait.ExternalLink[dest=someURL,newWindow=false]"
          */
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer(64);
             sb.append("newWindow=").append(newWindow);
@@ -520,6 +484,8 @@ public final class Trait implements Serializable {
      * Used for storing back trait information which are related.
      */
     public static class Background implements Serializable {
+
+        private static final long serialVersionUID = 8452078676273242870L;
 
         /** The background color if any. */
         private Color color = null;
@@ -645,23 +611,23 @@ public final class Trait implements Serializable {
 
         private String getRepeatString() {
             switch (getRepeat()) {
-            case Constants.EN_REPEAT: return "repeat";
-            case Constants.EN_REPEATX: return "repeat-x";
-            case Constants.EN_REPEATY: return "repeat-y";
-            case Constants.EN_NOREPEAT: return "no-repeat";
+            case EN_REPEAT: return "repeat";
+            case EN_REPEATX: return "repeat-x";
+            case EN_REPEATY: return "repeat-y";
+            case EN_NOREPEAT: return "no-repeat";
             default: throw new IllegalStateException("Illegal repeat style: " + getRepeat());
             }
         }
 
         private static int getConstantForRepeat(String repeat) {
             if ("repeat".equalsIgnoreCase(repeat)) {
-                return Constants.EN_REPEAT;
+                return EN_REPEAT;
             } else if ("repeat-x".equalsIgnoreCase(repeat)) {
-                return Constants.EN_REPEATX;
+                return EN_REPEATX;
             } else if ("repeat-y".equalsIgnoreCase(repeat)) {
-                return Constants.EN_REPEATY;
+                return EN_REPEATY;
             } else if ("no-repeat".equalsIgnoreCase(repeat)) {
-                return Constants.EN_NOREPEAT;
+                return EN_NOREPEAT;
             } else {
                 throw new IllegalStateException("Illegal repeat style: " + repeat);
             }
@@ -671,6 +637,7 @@ public final class Trait implements Serializable {
          * Return the string for debugging.
          * {@inheritDoc}
          */
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer();
             if (color != null) {

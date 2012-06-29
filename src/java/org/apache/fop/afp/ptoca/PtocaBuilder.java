@@ -26,6 +26,14 @@ import java.io.OutputStream;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
+import org.apache.xmlgraphics.java2d.color.CIELabColorSpace;
+import org.apache.xmlgraphics.java2d.color.ColorUtil;
+import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
+
+import org.apache.fop.afp.fonts.CharactersetEncoder.EncodedChars;
+import org.apache.fop.afp.modca.AxisOrientation;
+import org.apache.fop.afp.ptoca.TransparentDataControlSequence.TransparentData;
+
 /**
  * Generator class for PTOCA data structures.
  */
@@ -81,12 +89,10 @@ public abstract class PtocaBuilder implements PtocaConstants {
         baout.writeTo(out);
     }
 
-    private void write(byte[] data, int offset, int length) {
-        baout.write(data, offset, length);
-    }
-
-    private void writeByte(int data) {
-        baout.write(data);
+    private void writeBytes(int... data) {
+        for (int d : data) {
+            baout.write(d);
+        }
     }
 
     private void writeShort(int data) {
@@ -121,7 +127,7 @@ public abstract class PtocaBuilder implements PtocaConstants {
         }
 
         newControlSequence();
-        writeByte(font);
+        writeBytes(font);
         commit(chained(SCFL));
     }
 
@@ -176,45 +182,20 @@ public abstract class PtocaBuilder implements PtocaConstants {
         currentX = -1;
     }
 
-    private static final int TRANSPARENT_MAX_SIZE = 253;
-
     /**
      * The Transparent Data control sequence contains a sequence of code points
      * that are presented without a scan for embedded control sequences. If the data is larger
      * than fits in one chunk, additional chunks are automatically generated.
      *
-     * @param data The text data to add.
+     * @param encodedChars The encoded text data to add.
      * @throws IOException if an I/O error occurs
      */
-    public void addTransparentData(byte[] data) throws IOException {
-        if (data.length <= TRANSPARENT_DATA_MAX_SIZE) {
-            addTransparentDataChunk(data);
-        } else {
-            // data size greater than TRANSPARENT_MAX_SIZE, so slice
-            int numTransData = data.length / TRANSPARENT_DATA_MAX_SIZE;
-            int currIndex = 0;
-            for (int transDataCnt = 0; transDataCnt < numTransData; transDataCnt++) {
-                addTransparentDataChunk(data, currIndex, TRANSPARENT_DATA_MAX_SIZE);
-                currIndex += TRANSPARENT_DATA_MAX_SIZE;
-            }
-            int left = data.length - currIndex;
-            addTransparentDataChunk(data, currIndex, left);
+    public void addTransparentData(EncodedChars encodedChars) throws IOException {
+        for (TransparentData trn : new TransparentDataControlSequence(encodedChars)) {
+            newControlSequence();
+            trn.writeTo(baout);
+            commit(chained(TRN));
         }
-    }
-
-    private void addTransparentDataChunk(byte[] data) throws IOException {
-        addTransparentDataChunk(data, 0, data.length);
-    }
-
-    private void addTransparentDataChunk(byte[] data, int offset, int length) throws IOException {
-        if (length > TRANSPARENT_MAX_SIZE) {
-            // Check that we are not exceeding the maximum length
-            throw new IllegalArgumentException(
-                    "Transparent data is longer than " + TRANSPARENT_MAX_SIZE + " bytes");
-        }
-        newControlSequence();
-        write(data, offset, length);
-        commit(chained(TRN));
     }
 
     /**
@@ -230,7 +211,7 @@ public abstract class PtocaBuilder implements PtocaConstants {
         newControlSequence();
         writeShort(length); // Rule length
         writeShort(width); // Rule width
-        writeByte(0); // Rule width fraction is always null. enough?
+        writeBytes(0); // Rule width fraction is always null. enough?
         commit(chained(DBR));
     }
 
@@ -247,7 +228,7 @@ public abstract class PtocaBuilder implements PtocaConstants {
         newControlSequence();
         writeShort(length); // Rule length
         writeShort(width); // Rule width
-        writeByte(0); // Rule width fraction is always null. enough?
+        writeBytes(0); // Rule width fraction is always null. enough?
         commit(chained(DIR));
     }
 
@@ -268,32 +249,7 @@ public abstract class PtocaBuilder implements PtocaConstants {
             return;
         }
         newControlSequence();
-        switch (orientation) {
-        case 90:
-            writeByte(0x2D);
-            writeByte(0x00);
-            writeByte(0x5A);
-            writeByte(0x00);
-            break;
-        case 180:
-            writeByte(0x5A);
-            writeByte(0x00);
-            writeByte(0x87);
-            writeByte(0x00);
-            break;
-        case 270:
-            writeByte(0x87);
-            writeByte(0x00);
-            writeByte(0x00);
-            writeByte(0x00);
-            break;
-        default:
-            writeByte(0x00);
-            writeByte(0x00);
-            writeByte(0x2D);
-            writeByte(0x00);
-            break;
-        }
+        AxisOrientation.getRightHandedAxisOrientationFor(orientation).writeTo(baout);
         commit(chained(STO));
         this.currentOrientation = orientation;
         currentX = -1;
@@ -311,41 +267,44 @@ public abstract class PtocaBuilder implements PtocaConstants {
      * @throws IOException if an I/O error occurs
      */
     public void setExtendedTextColor(Color col) throws IOException {
-        if (col.equals(currentColor)) {
+        if (ColorUtil.isSameColor(col, currentColor)) {
             return;
         }
+        if (col instanceof ColorWithAlternatives) {
+            ColorWithAlternatives cwa = (ColorWithAlternatives)col;
+            Color alt = cwa.getFirstAlternativeOfType(ColorSpace.TYPE_CMYK);
+            if (alt != null) {
+                col = alt;
+            }
+        }
+        ColorSpace cs = col.getColorSpace();
+
         newControlSequence();
         if (col.getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
-            writeByte(0x00); // Reserved; must be zero
-            writeByte(0x04); // Color space - 0x04 = CMYK
-            writeByte(0x00); // Reserved; must be zero
-            writeByte(0x00); // Reserved; must be zero
-            writeByte(0x00); // Reserved; must be zero
-            writeByte(0x00); // Reserved; must be zero
-            writeByte(8); // Number of bits in component 1
-            writeByte(8); // Number of bits in component 2
-            writeByte(8); // Number of bits in component 3
-            writeByte(8); // Number of bits in component 4
+            // Color space - 0x04 = CMYK, all else are reserved and must be zero
+            writeBytes(0x00, 0x04, 0x00, 0x00, 0x00, 0x00);
+            writeBytes(8, 8, 8, 8); // Number of bits in component 1, 2, 3 & 4 respectively
             float[] comps = col.getColorComponents(null);
             assert comps.length == 4;
             for (int i = 0; i < 4; i++) {
                 int component = Math.round(comps[i] * 255);
-                writeByte(component);
+                writeBytes(component);
             }
+        } else if (cs instanceof CIELabColorSpace) {
+            // Color space - 0x08 = CIELAB, all else are reserved and must be zero
+            writeBytes(0x00, 0x08, 0x00, 0x00, 0x00, 0x00);
+            writeBytes(8, 8, 8, 0); // Number of bits in component 1,2,3 & 4
+            //Sadly, 16 bit components don't seem to work
+            float[] colorComponents = col.getColorComponents(null);
+            int l = Math.round(colorComponents[0] * 255f);
+            int a = Math.round(colorComponents[1] * 255f) - 128;
+            int b = Math.round(colorComponents[2] * 255f) - 128;
+            writeBytes(l, a, b); // l*, a* and b*
         } else {
-            writeByte(0x00); // Reserved; must be zero
-            writeByte(0x01); // Color space - 0x01 = RGB
-            writeByte(0x00); // Reserved; must be zero
-            writeByte(0x00); // Reserved; must be zero
-            writeByte(0x00); // Reserved; must be zero
-            writeByte(0x00); // Reserved; must be zero
-            writeByte(8); // Number of bits in component 1
-            writeByte(8); // Number of bits in component 2
-            writeByte(8); // Number of bits in component 3
-            writeByte(0); // Number of bits in component 4
-            writeByte(col.getRed()); // Red intensity
-            writeByte(col.getGreen()); // Green intensity
-            writeByte(col.getBlue()); // Blue intensity
+            // Color space - 0x01 = RGB, all else are reserved and must be zero
+            writeBytes(0x00, 0x01, 0x00, 0x00, 0x00, 0x00);
+            writeBytes(8, 8, 8, 0); // Number of bits in component 1, 2, 3 & 4 respectively
+            writeBytes(col.getRed(), col.getGreen(), col.getBlue()); // RGB intensity
         }
         commit(chained(SEC));
         this.currentColor = col;
@@ -387,7 +346,7 @@ public abstract class PtocaBuilder implements PtocaConstants {
         assert incr >= Short.MIN_VALUE && incr <= Short.MAX_VALUE;
         newControlSequence();
         writeShort(Math.abs(incr)); //Increment
-        writeByte(incr >= 0 ? 0 : 1); // Direction
+        writeBytes(incr >= 0 ? 0 : 1); // Direction
         commit(chained(SIA));
 
         this.currentInterCharacterAdjustment = incr;

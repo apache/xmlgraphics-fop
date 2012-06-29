@@ -24,17 +24,14 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
- * @author me
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * <p>Dimensioned property maker.</p>
  */
 public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
-    
+
     private int[][] extraCorresponding = null;
 
     /**
-     * Construct a dimension property maker.
+     * Instantiate a dimension property maker.
      * @param baseMaker the base property maker
      */
     public DimensionPropertyMaker(PropertyMaker baseMaker) {
@@ -43,9 +40,18 @@ public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
 
     /**
      * Set extra correspondences.
-     * @param extraCorresponding the extra correspondences
+     * @param extraCorresponding an array of four element integer arrays
      */
     public void setExtraCorresponding(int[][] extraCorresponding) {
+        if ( extraCorresponding == null ) {
+            throw new NullPointerException();
+        }
+        for ( int i = 0; i < extraCorresponding.length; i++ ) {
+            int[] eca = extraCorresponding[i];
+            if ( ( eca == null ) || ( eca.length != 4 ) ) {
+                throw new IllegalArgumentException ( "bad sub-array @ [" + i + "]" );
+            }
+        }
         this.extraCorresponding = extraCorresponding;
     }
 
@@ -76,18 +82,20 @@ public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
         }
 
         // Based on min-[width|height]
-        int wmcorr = propertyList.getWritingMode(extraCorresponding[0][0],
+        int wmcorr = propertyList.selectFromWritingMode(extraCorresponding[0][0],
                                         extraCorresponding[0][1],
-                                        extraCorresponding[0][2]);
+                                        extraCorresponding[0][2],
+                                        extraCorresponding[0][3]);
         Property subprop = propertyList.getExplicitOrShorthand(wmcorr);
         if (subprop != null) {
             baseMaker.setSubprop(p, Constants.CP_MINIMUM, subprop);
         }
 
         // Based on max-[width|height]
-        wmcorr = propertyList.getWritingMode(extraCorresponding[1][0],
+        wmcorr = propertyList.selectFromWritingMode(extraCorresponding[1][0],
                                     extraCorresponding[1][1],
-                                    extraCorresponding[1][2]);
+                                    extraCorresponding[1][2],
+                                    extraCorresponding[1][3]);
         subprop = propertyList.getExplicitOrShorthand(wmcorr);
         // TODO: Don't set when NONE.
         if (subprop != null) {

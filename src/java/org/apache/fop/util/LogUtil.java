@@ -20,6 +20,7 @@
 package org.apache.fop.util;
 
 import org.apache.commons.logging.Log;
+
 import org.apache.fop.apps.FOPException;
 
 /**

@@ -22,7 +22,7 @@ package org.apache.fop.hyphenation;
 import javax.xml.transform.Source;
 
 /**
- * This interface is used to resolve relative URIs pointing to hyphenation tree files.
+ * <p>This interface is used to resolve relative URIs pointing to hyphenation tree files.</p>
  */
 public interface HyphenationTreeResolver {
 

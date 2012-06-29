@@ -19,8 +19,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.fo.Constants;
-
 /**
  * An instance of this class represents information about a feasible
  * breaking point; it does not represent any piece of content.
@@ -43,6 +41,9 @@ public class KnuthPenalty extends KnuthElement {
 
     /** Used for flagged penalties. See Knuth algorithm. */
     public static final int FLAGGED_PENALTY = 50;
+    /** Dummy, zero-width penalty */
+    public static final KnuthPenalty DUMMY_ZERO_PENALTY
+            = new KnuthPenalty(0, 0, false, null, true);
 
     private int penalty;
     private boolean penaltyFlagged;
@@ -71,8 +72,11 @@ public class KnuthPenalty extends KnuthElement {
      * @param penalty the penalty value of this penalty
      * @param penaltyFlagged is this penalty flagged?
      * @param breakClass the break class of this penalty (one of
-     * {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link Constants#EN_PAGE},
-     * {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE})
+     *   {@link org.apache.fop.fo.Constants#EN_AUTO},
+     *   {@link org.apache.fop.fo.Constants#EN_COLUMN},
+     *   {@link org.apache.fop.fo.Constants#EN_PAGE},
+     *   {@link org.apache.fop.fo.Constants#EN_EVEN_PAGE},
+     *   {@link org.apache.fop.fo.Constants#EN_ODD_PAGE}).
      * @param pos the Position stored in this penalty
      * @param isAuxiliary is this penalty auxiliary?
      */

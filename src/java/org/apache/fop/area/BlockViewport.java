@@ -19,12 +19,17 @@
 
 package org.apache.fop.area;
 
+import java.awt.Rectangle;
+
 /**
  * A BlockViewport.
  * This is used for block level Viewport/reference pairs.
  * The block-container creates this area.
  */
-public class BlockViewport extends Block {
+public class BlockViewport extends Block implements Viewport  {
+
+    private static final long serialVersionUID = -7840580922580735157L;
+
     // clipping for this viewport
     private boolean clip = false;
     // transform if rotated or absolute
@@ -75,14 +80,18 @@ public class BlockViewport extends Block {
         clip = cl;
     }
 
-    /**
-     * Get the clipping for this viewport.
-     *
-     * @return the clipping for the viewport
-     *         true if the contents should be clipped for this viewport
-     */
-    public boolean getClip() {
+    /** {@inheritDoc} */
+    public boolean hasClip() {
         return clip;
+    }
+
+    /** {@inheritDoc} */
+    public Rectangle getClipRectangle() {
+        if (clip) {
+            return new Rectangle(getIPD(), getBPD());
+        } else {
+            return null;
+        }
     }
 }
 
