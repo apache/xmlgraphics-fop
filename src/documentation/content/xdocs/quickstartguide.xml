@@ -16,7 +16,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
     <title>Apache™ FOP: Quick Start Guide</title>
@@ -29,15 +29,15 @@
       <p>The goal of this <strong>Quick Start Guide</strong> is to help novice users get Apache FOP up and running quickly. Typically, you'll need to:</p>
       <ol>
         <li><link href="download.html">Download FOP</link></li>
-        <li><link href="1.1/compiling.html">Build FOP</link> (you can skip this step if you download the binary distribution!)</li>
-        <li><link href="1.1/configuration.html">Configure FOP</link></li>
-        <li><link href="1.1/running.html">Run FOP</link></li>
+        <li><link href="1.1rc1/compiling.html">Build FOP</link> (you can skip this step if you download the binary distribution!)</li>
+        <li><link href="1.1rc1/configuration.html">Configure FOP</link></li>
+        <li><link href="1.1rc1/running.html">Run FOP</link></li>
       </ol>
       <p>Here are some links to help you find out what FOP can do, as well as how and where to get help:</p>
       <ul>
-        <li><link href="1.1/embedding.html">Calling FOP from a Java Application</link></li>
-        <li><link href="1.1/servlets.html">Using FOP in Servlets</link></li>
-        <li><link href="1.1/anttask.html">Using FOP in an 'Ant' Build Script</link></li>
+        <li><link href="1.1rc1/embedding.html">Calling FOP from a Java Application</link></li>
+        <li><link href="1.1rc1/servlets.html">Using FOP in Servlets</link></li>
+        <li><link href="1.1rc1/anttask.html">Using FOP in an 'Ant' Build Script</link></li>
         <li><link href="compliance.html" title="FOP Compliance">XSL-FO Compliance</link> (what FOP supports and what it doesn't)</li>
         <li><link href="faq.html">FAQs</link></li>
         <li><link href="gethelp.html">Getting Help</link></li>
@@ -45,7 +45,7 @@
       </ul>
       <p>
         Once you've familiarized yourself with the basics, you can get more detailed information,
-        in the detailed FOP <link href="1.1/index.html">product documentation</link>.
+        in the detailed FOP <link href="1.1rc1/index.html">product documentation</link>.
       </p>
     </section>
     

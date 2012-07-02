@@ -32,8 +32,8 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 
 /**
- * This class extends the {@link ExtensionObj} class. It represents the "include-form-map"
- * extension in the FO tree.
+ * This class extends the {@link org.apache.fop.fo.extensions.ExtensionObj} class.
+ * It represents the "include-form-map" extension in the FO tree.
  */
 public class AFPIncludeFormMapElement extends AbstractAFPExtensionObject {
 

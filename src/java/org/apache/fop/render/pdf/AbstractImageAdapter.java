@@ -20,13 +20,16 @@
 package org.apache.fop.render.pdf;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
+import java.awt.image.IndexColorModel;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
+import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFDeviceColorSpace;
@@ -50,7 +53,11 @@ public abstract class AbstractImageAdapter implements PDFImage {
     /** the image */
     protected Image image;
 
-    private PDFICCStream pdfICCStream = null;
+    private PDFICCStream pdfICCStream;
+
+    private static final int MAX_HIVAL = 255;
+
+    private boolean multipleFiltersAllowed = true;
 
     /**
      * Creates a new PDFImage from an Image instance.
@@ -203,6 +210,68 @@ public abstract class AbstractImageAdapter implements PDFImage {
     }
 
     /**
+     * This is to be used by populateXObjectDictionary() when the image is palette based.
+     * @param dict the dictionary to fill in
+     * @param icm the image color model
+     */
+    protected void populateXObjectDictionaryForIndexColorModel(PDFDictionary dict, IndexColorModel icm) {
+        PDFArray indexed = new PDFArray(dict);
+        indexed.add(new PDFName("Indexed"));
+        if (icm.getColorSpace().getType() != ColorSpace.TYPE_RGB) {
+            log.warn("Indexed color space is not using RGB as base color space."
+                    + " The image may not be handled correctly." + " Base color space: "
+                    + icm.getColorSpace() + " Image: " + image.getInfo());
+        }
+        indexed.add(new PDFName(toPDFColorSpace(icm.getColorSpace()).getName()));
+        int c = icm.getMapSize();
+        int hival = c - 1;
+        if (hival > MAX_HIVAL) {
+            throw new UnsupportedOperationException("hival must not go beyond " + MAX_HIVAL);
+        }
+        indexed.add(Integer.valueOf(hival));
+        int[] palette = new int[c];
+        icm.getRGBs(palette);
+        ByteArrayOutputStream baout = new ByteArrayOutputStream();
+        for (int i = 0; i < c; i++) {
+            // TODO Probably doesn't work for non RGB based color spaces
+            // See log warning above
+            int entry = palette[i];
+            baout.write((entry & 0xFF0000) >> 16);
+            baout.write((entry & 0xFF00) >> 8);
+            baout.write(entry & 0xFF);
+        }
+        indexed.add(baout.toByteArray());
+
+        dict.put("ColorSpace", indexed);
+        dict.put("BitsPerComponent", icm.getPixelSize());
+
+        Integer index = getIndexOfFirstTransparentColorInPalette(icm);
+        if (index != null) {
+            PDFArray mask = new PDFArray(dict);
+            mask.add(index);
+            mask.add(index);
+            dict.put("Mask", mask);
+        }
+    }
+
+    private static Integer getIndexOfFirstTransparentColorInPalette(IndexColorModel icm) {
+        byte[] alphas = new byte[icm.getMapSize()];
+        byte[] reds = new byte[icm.getMapSize()];
+        byte[] greens = new byte[icm.getMapSize()];
+        byte[] blues = new byte[icm.getMapSize()];
+        icm.getAlphas(alphas);
+        icm.getReds(reds);
+        icm.getGreens(greens);
+        icm.getBlues(blues);
+        for (int i = 0; i < icm.getMapSize(); i++) {
+            if ((alphas[i] & 0xFF) == 0) {
+                return Integer.valueOf(i);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Converts a ColorSpace object to a PDFColorSpace object.
      * @param cs ColorSpace instance
      * @return PDFColorSpace new converted object
@@ -224,6 +293,18 @@ public abstract class AbstractImageAdapter implements PDFImage {
                 pdfCS.setColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         }
         return pdfCS;
+    }
+
+    /** {@inheritDoc} */
+    public boolean multipleFiltersAllowed() {
+        return multipleFiltersAllowed;
+    }
+
+    /**
+     * Disallows multiple filters.
+     */
+    public void disallowMultipleFilters() {
+        multipleFiltersAllowed = false;
     }
 
 }

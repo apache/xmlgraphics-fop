@@ -355,7 +355,7 @@ public class FOUserAgent {
     /**
      * Sets font base URL.
      * @param fontBaseUrl font base URL
-     * @deprecated Use {@link FontManager#setFontBaseURL(String)} instead.
+     * @deprecated Use {@link org.apache.fop.fonts.FontManager#setFontBaseURL(String)} instead.
      */
     public void setFontBaseURL(String fontBaseUrl) {
         try {
@@ -500,7 +500,8 @@ public class FOUserAgent {
     /**
      * Returns the font base URL.
      * @return the font base URL
-     * @deprecated Use {@link FontManager#getFontBaseURL()} instead. This method is not used by FOP.
+     * @deprecated Use {@link org.apache.fop.fonts.FontManager#getFontBaseURL()} instead.
+     * This method is not used by FOP.
      */
     public String getFontBaseURL() {
         String fontBase = getFactory().getFontManager().getFontBaseURL();

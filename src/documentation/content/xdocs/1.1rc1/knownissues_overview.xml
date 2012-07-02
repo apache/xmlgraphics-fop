@@ -49,7 +49,7 @@
       This section lists disabled test cases in the test suite for the FO tree tests, at the time
       of the release.
     </p>
-    <xi:include href="cocoon://knownissues-raw-fotree_1.1.xml#xpointer(/document/body/*)"/>
+    <xi:include href="cocoon://knownissues-raw-fotree_1.1rc1.xml#xpointer(/document/body/*)"/>
   </section>
   <section>
     <title>Layout Engine</title>
@@ -57,12 +57,17 @@
       This section lists disabled test cases in the test suite for the layout engine tests, at the
       time of the release.
     </p>
-    <xi:include href="cocoon://knownissues-raw-layoutengine_1.1.xml#xpointer(/document/body/*)"/>
+    <xi:include href="cocoon://knownissues-raw-layoutengine_1.1rc1.xml#xpointer(/document/body/*)"/>
   </section>
   <section>
     <title>Other known issues</title>
-    <p>This section lists other known issues.</p>
-    <xi:include href="cocoon://knownissues-raw-static_1.1.xml#xpointer(/document/body/*)"/>
+    <p>This section lists some other issues that post-date the release of FOP 1.0. For known issues that pre-date FOP 1.0, see
+      <link href="http://issues.apache.org/bugzilla/buglist.cgi?chfieldto=2010-07-20&amp;chfield=%5BBug%20creation%5D&amp;query_format=advanced&amp;chfieldfrom=2001-01-01&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;bug_status=NEEDINFO&amp;product=Fop">older bugs that remain open</link>.
+      For all open issues that post-date FOP 1.0, see
+      <link href="http://issues.apache.org/bugzilla/buglist.cgi?chfieldto=Now&amp;chfield=%5BBug%20creation%5D&amp;query_format=advanced&amp;chfieldfrom=2010-07-20&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;bug_status=NEEDINFO&amp;product=Fop">newer bugs that remain open</link>.
+    </p>
+    <!-- See <root>/known-issues.xml for the source document of this section! -->
+    <xi:include href="cocoon://knownissues-raw-static_1.1rc1.xml#xpointer(/document/body/*)"/>
   </section>
 </section>
 </body>
