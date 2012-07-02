@@ -32,7 +32,7 @@
         <fo:block-container absolute-position="absolute" width="100%" height="100%" border-top-color="silver" border-top-style="dotted" border-top-width="0.13mm">
           <fo:block/>
         </fo:block-container>
-         <fo:table space-before.optimum="1in div 12" margin-left="2in div 12" margin-top="1in div 10" font-family="sans-serif" font-size="7pt" color="green">
+         <fo:table space-before.optimum="1in div 12" margin-left="2in div 12" margin-top="1in div 10" font-family="sans-serif" font-size="7pt" color="green" table-layout="fixed" width="100%">
             <fo:table-column column-width="8in div 10 - 2in div 12"/>
             <fo:table-column border-right-style="solid" border-right-width="0.5mm" column-width="36in div 10"/>
             <fo:table-column column-width="5in div 10"/>
@@ -107,7 +107,7 @@
                      <fo:block>Från konto nr</fo:block>
                   </fo:table-cell>
                   <fo:table-cell border-bottom-style="solid" border-bottom-width="0.13mm" padding-top="6mm" display-align="after">
-                     <fo:table height="3mm">
+                     <fo:table height="3mm" table-layout="fixed" width="100%">
                         <fo:table-column border-right-style="solid" border-right-width="0.13mm" column-width="0.2in"/>
                         <fo:table-column border-right-style="solid" border-right-width="0.13mm" column-width="0.2in"/>
                         <fo:table-column border-right-style="solid" border-right-width="0.13mm" column-width="0.2in"/>
@@ -182,7 +182,7 @@
                      <fo:block color="black">16.6.2006</fo:block>
                   </fo:table-cell>
                   <fo:table-cell border-bottom-style="solid" border-bottom-width="0.5mm" padding-left="2mm" padding-top="4mm" font-size="10pt">
-                     <fo:table>
+                     <fo:table table-layout="fixed" width="100%">
                         <fo:table-column column-width="0.5cm"/>
                         <fo:table-column column-width="2cm"/>
                         <fo:table-body>
@@ -201,7 +201,7 @@
                <fo:table-row height="13in div 12 - 5mm">
                   <fo:table-cell number-columns-spanned="4" padding-left="40mm" display-align="after">
                      <fo:block>
-                        <fo:table height="5in div 12" margin-left="2.5mm" margin-right="2.5mm"><!--105-->
+                        <fo:table height="5in div 12" margin-left="2.5mm" margin-right="2.5mm" table-layout="fixed" width="100%"><!--105-->
                            <fo:table-column column-width="0.5mm"/>
                            <fo:table-column column-width="0.25mm"/>
                            <fo:table-column column-width="0.25mm"/>
@@ -950,7 +950,7 @@
    </fo:page-sequence>
    <fo:page-sequence master-reference="A4">
       <fo:static-content flow-name="xsl-region-after">
-         <fo:table space-before.optimum="1in div 12" margin-left="2in div 12" margin-top="1in div 10" font-family="sans-serif" font-size="7pt" color="green">
+         <fo:table space-before.optimum="1in div 12" margin-left="2in div 12" margin-top="1in div 10" font-family="sans-serif" font-size="7pt" color="green" table-layout="fixed" width="100%">
             <fo:table-column column-width="8in div 10 - 2in div 12"/>
             <fo:table-column border-right-style="solid" border-right-width="0.5mm" column-width="36in div 10"/>
             <fo:table-column column-width="5in div 10"/>
@@ -1025,7 +1025,7 @@
                      <fo:block>Från konto nr</fo:block>
                   </fo:table-cell>
                   <fo:table-cell border-bottom-style="solid" border-bottom-width="0.13mm" padding-top="6mm" display-align="after">
-                     <fo:table height="3mm">
+                     <fo:table height="3mm" table-layout="fixed" width="100%">
                         <fo:table-column border-right-style="solid" border-right-width="0.13mm" column-width="0.2in"/>
                         <fo:table-column border-right-style="solid" border-right-width="0.13mm" column-width="0.2in"/>
                         <fo:table-column border-right-style="solid" border-right-width="0.13mm" column-width="0.2in"/>
@@ -1100,7 +1100,7 @@
                      <fo:block color="black">16.6.2006</fo:block>
                   </fo:table-cell>
                   <fo:table-cell border-bottom-style="solid" border-bottom-width="0.5mm" padding-left="2mm" padding-top="4mm" font-size="10pt">
-                     <fo:table>
+                     <fo:table table-layout="fixed" width="100%">
                         <fo:table-column column-width="0.5cm"/>
                         <fo:table-column column-width="2cm"/>
                         <fo:table-body>

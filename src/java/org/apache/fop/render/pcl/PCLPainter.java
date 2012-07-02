@@ -47,7 +47,6 @@ import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
-import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
@@ -58,14 +57,11 @@ import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
 
 /**
- * {@link org.apache.fop.render.intermediate.IFPainter} implementation
- * that produces PCL 5.
+ * {@link org.apache.fop.render.intermediate.IFPainter} implementation that produces PCL 5.
  */
-public class PCLPainter extends AbstractIFPainter implements PCLConstants {
+public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements PCLConstants {
 
     private static final boolean DEBUG = false;
-
-    private PCLDocumentHandler parent;
 
     /** The PCL generator */
     private PCLGenerator gen;
@@ -74,7 +70,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     private int currentPrintDirection = 0;
     //private GeneralPath currentPath = null;
 
-    private Stack graphicContextStack = new Stack();
+    private Stack<GraphicContext> graphicContextStack = new Stack<GraphicContext>();
     private GraphicContext graphicContext = new GraphicContext();
 
     /**
@@ -83,24 +79,19 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
      * @param pageDefinition the page definition describing the page to be rendered
      */
     public PCLPainter(PCLDocumentHandler parent, PCLPageDefinition pageDefinition) {
-        this.parent = parent;
+        super(parent);
         this.gen = parent.getPCLGenerator();
         this.state = IFState.create();
         this.currentPageDefinition = pageDefinition;
     }
 
-    /** {@inheritDoc} */
-    public IFContext getContext() {
-        return this.parent.getContext();
-    }
-
     PCLRenderingUtil getPCLUtil() {
-        return this.parent.getPCLUtil();
+        return getDocumentHandler().getPCLUtil();
     }
 
     /** @return the target resolution */
     protected int getResolution() {
-        int resolution = (int)Math.round(getUserAgent().getTargetResolution());
+        int resolution = Math.round(getUserAgent().getTargetResolution());
         if (resolution <= 300) {
             return 300;
         } else {
@@ -223,7 +214,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                     g2d.translate(-rect.x, -rect.y);
 
                     Java2DPainter painter = new Java2DPainter(g2d,
-                            getContext(), parent.getFontInfo(), state);
+                            getContext(), getFontInfo(), state);
                     try {
                         painter.drawBorderRect(rect, top, bottom, left, right);
                     } catch (IFException e) {
@@ -258,7 +249,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                 g2d.translate(-boundingBox.x, -boundingBox.y);
 
                 Java2DPainter painter = new Java2DPainter(g2d,
-                        getContext(), parent.getFontInfo(), state);
+                        getContext(), getFontInfo(), state);
                 try {
                     painter.drawLine(start, end, width, color, style);
                 } catch (IFException e) {
@@ -315,9 +306,8 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                     state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
             //TODO Ignored: state.getFontVariant()
             //TODO Opportunity for font caching if font state is more heavily used
-            String fontKey = parent.getFontInfo().getInternalFontKey(triplet);
-            boolean pclFont = getPCLUtil().isAllTextAsBitmaps()
-                        ? false
+            String fontKey = getFontKey(triplet);
+            boolean pclFont = getPCLUtil().isAllTextAsBitmaps() ? false
                         : HardcodedFonts.setFont(gen, fontKey, state.getFontSize(), text);
             if (pclFont) {
                 drawTextNative(x, y, letterSpacing, wordSpacing, dp, text, triplet);
@@ -346,7 +336,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
         setCursorPos(x, y);
 
         float fontSize = state.getFontSize() / 1000f;
-        Font font = parent.getFontInfo().getFontInstance(triplet, state.getFontSize());
+        Font font = getFontInfo().getFontInstance(triplet, state.getFontSize());
         int l = text.length();
         int[] dx = IFUtil.convertDPToDX ( dp );
         int dxl = (dx != null ? dx.length : 0);
@@ -438,13 +428,12 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
             final int letterSpacing, final int wordSpacing, final int[][] dp,
             final String text, FontTriplet triplet) throws IFException {
         //Use Java2D to paint different fonts via bitmap
-        final Font font = parent.getFontInfo().getFontInstance(triplet, state.getFontSize());
+        final Font font = getFontInfo().getFontInstance(triplet, state.getFontSize());
 
         //for cursive fonts, so the text isn't clipped
         FontMetricsMapper mapper;
         try {
-        mapper = (FontMetricsMapper)parent.getFontInfo().getMetricsFor(
-                font.getFontName());
+            mapper = (FontMetricsMapper) getFontInfo().getMetricsFor(font.getFontName());
         } catch (Exception t) {
             throw new RuntimeException(t);
         }
@@ -475,8 +464,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                     rect = new Rectangle(x, y, 1000, -descent);
                     g2d.draw(rect);
                 }
-                Java2DPainter painter = new Java2DPainter(g2d,
-                        getContext(), parent.getFontInfo(), state);
+                Java2DPainter painter = new Java2DPainter(g2d, getContext(), getFontInfo(), state);
                 try {
                     painter.drawText(x, y, letterSpacing, wordSpacing, dp, text);
                 } catch (IFException e) {
@@ -501,7 +489,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
 
     /** Restores the last graphics state from the stack. */
     private void restoreGraphicsState() {
-        graphicContext = (GraphicContext)graphicContextStack.pop();
+        graphicContext = graphicContextStack.pop();
     }
 
     private void concatenateTransformationMatrix(AffineTransform transform) throws IOException {

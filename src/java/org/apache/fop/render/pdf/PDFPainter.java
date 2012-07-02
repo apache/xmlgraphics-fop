@@ -30,19 +30,16 @@ import java.io.IOException;
 import org.w3c.dom.Document;
 
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
-import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFStructElem;
 import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
-import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
@@ -55,9 +52,7 @@ import org.apache.fop.util.CharUtilities;
 /**
  * IFPainter implementation that produces PDF.
  */
-public class PDFPainter extends AbstractIFPainter {
-
-    private final PDFDocumentHandler documentHandler;
+public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
 
     /** The current content generator */
     protected PDFContentGenerator generator;
@@ -77,27 +72,12 @@ public class PDFPainter extends AbstractIFPainter {
      */
     public PDFPainter(PDFDocumentHandler documentHandler,
             PDFLogicalStructureHandler logicalStructureHandler) {
-        super();
-        this.documentHandler = documentHandler;
+        super(documentHandler);
         this.logicalStructureHandler = logicalStructureHandler;
-        this.generator = documentHandler.generator;
+        this.generator = documentHandler.getGenerator();
         this.borderPainter = new PDFBorderPainter(this.generator);
         this.state = IFState.create();
         accessEnabled = this.getUserAgent().isAccessibilityEnabled();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected IFContext getContext() {
-        return this.documentHandler.getContext();
-    }
-
-    PDFDocument getPDFDoc() {
-        return this.documentHandler.pdfDoc;
-    }
-
-    FontInfo getFontInfo() {
-        return this.documentHandler.getFontInfo();
     }
 
     /** {@inheritDoc} */
@@ -129,7 +109,7 @@ public class PDFPainter extends AbstractIFPainter {
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle rect)
             throws IFException {
-        PDFXObject xobject = getPDFDoc().getXObject(uri);
+        PDFXObject xobject = getDocumentHandler().getPDFDocument().getXObject(uri);
         if (xobject != null) {
             if (accessEnabled) {
                 PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
@@ -156,7 +136,7 @@ public class PDFPainter extends AbstractIFPainter {
     @Override
     protected RenderingContext createRenderingContext() {
         PDFRenderingContext pdfContext = new PDFRenderingContext(
-                getUserAgent(), generator, this.documentHandler.currentPage, getFontInfo());
+                getUserAgent(), generator, getDocumentHandler().getCurrentPage(), getFontInfo());
         pdfContext.setMarkedContentInfo(imageMCI);
         return pdfContext;
     }
@@ -317,12 +297,11 @@ public class PDFPainter extends AbstractIFPainter {
         }
     }
 
-    private void drawTextWithDX ( int x, int y, String text, FontTriplet triplet,
-                                  int letterSpacing, int wordSpacing, int[] dx ) {
-
+    private void drawTextWithDX(int x, int y, String text, FontTriplet triplet,
+            int letterSpacing, int wordSpacing, int[] dx) throws IFException {
         //TODO Ignored: state.getFontVariant()
         //TODO Opportunity for font caching if font state is more heavily used
-        String fontKey = getFontInfo().getInternalFontKey(triplet);
+        String fontKey = getFontKey(triplet);
         int sizeMillipoints = state.getFontSize();
         float fontSize = sizeMillipoints / 1000f;
 

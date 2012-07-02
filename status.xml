@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Test" dev="GA" type="fix">
+        Fix errors and warnings in example files. Add build.xml for documentation examples.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="53458" due-to="Dieter von Holten">
         Fix incorrect language and country code key generation in hyphenation tree cache.
       </action>
