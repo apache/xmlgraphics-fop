@@ -45,7 +45,6 @@ import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFConstants;
-import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
@@ -59,12 +58,11 @@ import org.apache.fop.util.XMLUtil;
 /**
  * IFPainter implementation that writes SVG.
  */
-public class SVGPainter extends AbstractIFPainter implements SVGConstants {
-
-    private AbstractSVGDocumentHandler parent;
+public class SVGPainter extends AbstractIFPainter<AbstractSVGDocumentHandler>
+        implements SVGConstants {
 
     /** The SAX content handler that receives the generated XML events. */
-    protected GenerationHelperContentHandler handler;
+    private GenerationHelperContentHandler handler;
 
     private static final int MODE_NORMAL = 0;
     private static final int MODE_TEXT = 1;
@@ -78,15 +76,9 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
      */
     public SVGPainter(AbstractSVGDocumentHandler parent,
             GenerationHelperContentHandler contentHandler) {
-        super();
-        this.parent = parent;
+        super(parent);
         this.handler = contentHandler;
         this.state = IFState.create();
-    }
-
-    /** {@inheritDoc} */
-    protected IFContext getContext() {
-        return parent.getContext();
     }
 
     /** {@inheritDoc} */

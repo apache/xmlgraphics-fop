@@ -46,6 +46,8 @@ import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.ImageHandlerUtil;
@@ -56,7 +58,7 @@ import org.apache.fop.traits.RuleStyle;
 /**
  * Abstract base class for IFPainter implementations.
  */
-public abstract class AbstractIFPainter implements IFPainter {
+public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements IFPainter {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(AbstractIFPainter.class);
@@ -67,18 +69,39 @@ public abstract class AbstractIFPainter implements IFPainter {
     /** Holds the intermediate format state */
     protected IFState state;
 
+    private final T documentHandler;
 
     /**
      * Default constructor.
      */
-    public AbstractIFPainter() {
+    public AbstractIFPainter(T documentHandler) {
+        this.documentHandler = documentHandler;
+    }
+
+    protected String getFontKey(FontTriplet triplet) throws IFException {
+        String key = getFontInfo().getInternalFontKey(triplet);
+        if (key == null) {
+            throw new IFException("The font triplet is not available: \"" + triplet + "\" "
+                    + "for the MIME type: \"" + documentHandler.getMimeType() + "\"");
+        }
+        return key;
     }
 
     /**
      * Returns the intermediate format context object.
      * @return the context object
      */
-    protected abstract IFContext getContext();
+    protected IFContext getContext() {
+        return documentHandler.getContext();
+    }
+
+    protected FontInfo getFontInfo() {
+        return documentHandler.getFontInfo();
+    }
+
+    protected T getDocumentHandler() {
+        return documentHandler;
+    }
 
     /**
      * Returns the user agent.
