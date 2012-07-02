@@ -40,7 +40,6 @@ import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
-import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.render.extensions.prepress.PageBoundaries;
 import org.apache.fop.render.extensions.prepress.PageScale;
@@ -67,31 +66,28 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     private PDFStructureTreeBuilder structureTreeBuilder;
 
     /** the PDF Document being created */
-    protected PDFDocument pdfDoc;
+    private PDFDocument pdfDoc;
 
     /**
      * Utility class which enables all sorts of features that are not directly connected to the
      * normal rendering process.
      */
-    protected PDFRenderingUtil pdfUtil;
+    private PDFRenderingUtil pdfUtil;
 
     /** the /Resources object of the PDF document being created */
-    protected PDFResources pdfResources;
+    private PDFResources pdfResources;
 
     /** The current content generator */
-    protected PDFContentGenerator generator;
-
-    /** the current annotation list to add annotations to */
-    protected PDFResourceContext currentContext;
+    private PDFContentGenerator generator;
 
     /** the current page to add annotations to */
-    protected PDFPage currentPage;
+    private PDFPage currentPage;
 
     /** the current page's PDF reference */
-    protected PageReference currentPageRef;
+    private PageReference currentPageRef;
 
     /** Used for bookmarks/outlines. */
-    protected Map<Integer, PageReference> pageReferences = new HashMap<Integer, PageReference>();
+    private Map<Integer, PageReference> pageReferences = new HashMap<Integer, PageReference>();
 
     private final PDFDocumentNavigationHandler documentNavigationHandler
             = new PDFDocumentNavigationHandler(this);
@@ -136,6 +132,22 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         return logicalStructureHandler;
     }
 
+    PDFDocument getPDFDocument() {
+        return pdfDoc;
+    }
+
+    PDFPage getCurrentPage() {
+        return currentPage;
+    }
+
+    PageReference getCurrentPageRef() {
+        return currentPageRef;
+    }
+
+    PDFContentGenerator getGenerator() {
+        return generator;
+    }
+
     /** {@inheritDoc} */
     public void startDocument() throws IFException {
         super.startDocument();
@@ -174,7 +186,6 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
             pdfResources = null;
             this.generator = null;
-            currentContext = null;
             currentPage = null;
         } catch (IOException ioe) {
             throw new IFException("I/O error in endDocument()", ioe);
