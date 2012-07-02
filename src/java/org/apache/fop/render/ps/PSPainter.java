@@ -41,7 +41,6 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
 
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.MultiByteFont;
@@ -49,7 +48,6 @@ import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
-import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
@@ -61,12 +59,11 @@ import org.apache.fop.util.HexEncoder;
 /**
  * IFPainter implementation that produces PostScript.
  */
-public class PSPainter extends AbstractIFPainter {
+public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PSPainter.class);
 
-    private PSDocumentHandler documentHandler;
     private PSBorderPainter borderPainter;
 
     private boolean inTextMode = false;
@@ -80,27 +77,13 @@ public class PSPainter extends AbstractIFPainter {
     }
 
     protected PSPainter(PSDocumentHandler documentHandler, IFState state) {
-        super();
-        this.documentHandler = documentHandler;
-        this.borderPainter = new PSBorderPainter(documentHandler.gen);
+        super(documentHandler);
+        this.borderPainter = new PSBorderPainter(getGenerator());
         this.state = state;
     }
 
-    /** {@inheritDoc} */
-    protected IFContext getContext() {
-        return this.documentHandler.getContext();
-    }
-
-    PSRenderingUtil getPSUtil() {
-        return this.documentHandler.psUtil;
-    }
-
-    FontInfo getFontInfo() {
-        return this.documentHandler.getFontInfo();
-    }
-
     private PSGenerator getGenerator() {
-        return this.documentHandler.gen;
+        return getDocumentHandler().getGenerator();
     }
 
     /** {@inheritDoc} */
@@ -168,7 +151,7 @@ public class PSPainter extends AbstractIFPainter {
     /** {@inheritDoc} */
     protected void drawImageUsingImageHandler(ImageInfo info, Rectangle rect)
             throws ImageException, IOException {
-        if (!getPSUtil().isOptimizeResources()
+        if (!getDocumentHandler().getPSUtil().isOptimizeResources()
                 || PSImageUtils.isImageInlined(info,
                         (PSRenderingContext)createRenderingContext())) {
             super.drawImageUsingImageHandler(info, rect);
@@ -177,7 +160,7 @@ public class PSPainter extends AbstractIFPainter {
                 log.debug("Image " + info + " is embedded as a form later");
             }
             //Don't load image at this time, just put a form placeholder in the stream
-            PSResource form = documentHandler.getFormForImage(info.getOriginalURI());
+            PSResource form = getDocumentHandler().getFormForImage(info.getOriginalURI());
             PSImageUtils.drawForm(form, info, rect, getGenerator());
         }
     }
@@ -246,7 +229,7 @@ public class PSPainter extends AbstractIFPainter {
         if (top != null || bottom != null || left != null || right != null) {
             try {
                 endTextObject();
-                if (getPSUtil().getRenderingMode() == PSRenderingMode.SIZE
+                if (getDocumentHandler().getPSUtil().getRenderingMode() == PSRenderingMode.SIZE
                     && hasOnlySolidBorders(top, bottom, left, right)) {
                     super.drawBorderRect(rect, top, bottom, left, right);
                 } else {
@@ -273,7 +256,7 @@ public class PSPainter extends AbstractIFPainter {
         if (fontName == null) {
             throw new NullPointerException("fontName must not be null");
         }
-        Typeface tf = (Typeface)getFontInfo().getFonts().get(fontName);
+        Typeface tf = getFontInfo().getFonts().get(fontName);
         if (tf instanceof LazyFont) {
             tf = ((LazyFont)tf).getRealFont();
         }
@@ -363,10 +346,7 @@ public class PSPainter extends AbstractIFPainter {
                     state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
             //TODO Ignored: state.getFontVariant()
             //TODO Opportunity for font caching if font state is more heavily used
-            String fontKey = getFontInfo().getInternalFontKey(triplet);
-            if (fontKey == null) {
-                throw new IFException("Font not available: " + triplet, null);
-            }
+            String fontKey = getFontKey(triplet);
             int sizeMillipoints = state.getFontSize();
 
             // This assumes that *all* CIDFonts use a /ToUnicode mapping
@@ -529,10 +509,9 @@ public class PSPainter extends AbstractIFPainter {
     }
 
     private void useFont(String key, int size) throws IOException {
-        PSFontResource res = this.documentHandler.getPSResourceForFontKey(key);
+        PSFontResource res = getDocumentHandler().getPSResourceForFontKey(key);
         PSGenerator generator = getGenerator();
         generator.useFont("/" + res.getName(), size / 1000f);
         res.notifyResourceUsageOnPage(generator.getResourceTracker());
     }
-
 }

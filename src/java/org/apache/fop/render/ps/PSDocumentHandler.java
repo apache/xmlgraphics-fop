@@ -54,6 +54,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
@@ -76,10 +77,10 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
      * Utility class which enables all sorts of features that are not directly connected to the
      * normal rendering process.
      */
-    protected PSRenderingUtil psUtil;
+    private PSRenderingUtil psUtil;
 
     /** The PostScript generator used to output the PostScript */
-    protected PSGenerator gen;
+    PSGenerator gen;
 
     /** the temporary file in case of two-pass processing */
     private File tempFile;
@@ -124,6 +125,10 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** {@inheritDoc} */
     public String getMimeType() {
         return MimeConstants.MIME_POSTSCRIPT;
+    }
+
+    PSGenerator getGenerator() {
+        return gen;
     }
 
     /** {@inheritDoc} */

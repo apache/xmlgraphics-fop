@@ -107,7 +107,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
         String key = fontInfo.getInternalFontKey(triplet);
         if (key == null) {
             //Find a default fallback font as last resort
-            triplet = new FontTriplet("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
+            triplet = FontTriplet.DEFAULT_FONT_TRIPLET;
             key = fontInfo.getInternalFontKey(triplet);
         }
         return key;
