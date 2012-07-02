@@ -1672,7 +1672,7 @@ public class TTFFile {
 
                 for (Integer unicodeKey2 : ckpx.keySet()) {
                     Integer cidKey2 = unicodeToGlyph(unicodeKey2.intValue());
-                    Integer kern = (Integer)ckpx.get(unicodeKey2);
+                    Integer kern = ckpx.get(unicodeKey2);
 
                     Iterator uniMap = mtxTab[cidKey2.intValue()].getUnicodeIndex().listIterator();
                     while (uniMap.hasNext()) {
@@ -1838,6 +1838,8 @@ public class TTFFile {
      * @throws IOException In case of an I/O problem
      */
     public final List<String> getTTCnames(FontFileReader in) throws IOException {
+        this.fontFile = in;
+
         List<String> fontNames = new ArrayList<String>();
         String tag = in.readTTFString(4);
 
