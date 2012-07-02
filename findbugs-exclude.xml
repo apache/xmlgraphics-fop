@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FindBugsFilter>
   <Match>
+    <Class name="org.apache.fop.fonts.truetype.TTFFile$1"/>
+    <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.truetype.FontFileReader"/>
+    <Method name="getAllBytes"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
     <Class name="org.apache.fop.fo.properties.FontFamilyProperty"/>
     <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
   </Match>
@@ -948,11 +957,6 @@
       <Class name="org.apache.fop.render.ps.PSFontUtils"/>
       <Method name="getInputStreamOnFont"/>
       <Bug pattern="RV_EXCEPTION_NOT_THROWN"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.hyphenation.HyphenationTreeCache"/>
-      <Method name="constructUserKey"/>
-      <Bug pattern="RV_RETURN_VALUE_IGNORED"/>
    </Match>
    <Match>
       <Class name="org.apache.fop.afp.AFPResourceLevel"/>
@@ -5161,5 +5165,42 @@
      <Class name="org.apache.fop.layoutmgr.inline.TextLayoutManager$TextAreaBuilder"/>
      <Method name="getNonEmptyLevels"/>
      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.render.pdf.AbstractImageAdapter"/>
+     <Method name="populateXObjectDictionaryForIndexColorModel"/>
+     <Bug pattern="OS_OPEN_STREAM"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.render.pdf.ImageRawPNGAdapter"/>
+     <Or>
+       <Method name="outputContents"/>
+       <Method name="setup"/>
+     </Or>
+     <Or>
+       <Bug pattern="OS_OPEN_STREAM"/>
+       <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH"/>
+     </Or>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.render.ps.ImageEncoderPNG"/>
+     <Method name="writeTo"/>
+     <Bug pattern="OS_OPEN_STREAM"/>
+   </Match>
+   <Match>
+     <Or>
+       <Class name="org.apache.fop.render.pdf.PDFImageHandlerRawPNG"/>
+       <Class name="org.apache.fop.render.ps.PSImageHandlerRawPNG"/>
+     </Or>
+     <Method name="getSupportedImageFlavors"/>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.render.ps.PSImageHandlerRawPNG"/>
+     <Or>
+       <Method name="handleImage"/>
+       <Method name="generateForm"/>
+     </Or>
+     <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
 </FindBugsFilter>

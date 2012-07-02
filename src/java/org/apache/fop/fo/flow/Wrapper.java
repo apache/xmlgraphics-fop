@@ -26,7 +26,10 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 
 /**
  * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_wrapper">
@@ -34,12 +37,12 @@ import org.apache.fop.fo.ValidationException;
  * The <code>fo:wrapper</code> object serves as a property holder for
  * its child node objects.
  */
-public class Wrapper extends FObjMixed {
-    // The value of properties relevant for fo:wrapper.
-    // End of property values
+public class Wrapper extends FObjMixed implements CommonAccessibilityHolder {
 
     // used for FO validation
     private boolean blockOrInlineItemFound = false;
+
+    private CommonAccessibility commonAccessibility;
 
     /**
      * Create a Wrapper instance that is a child of the
@@ -49,6 +52,12 @@ public class Wrapper extends FObjMixed {
      */
     public Wrapper(FONode parent) {
         super(parent);
+    }
+
+    @Override
+    public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
     }
 
     @Override
@@ -134,6 +143,10 @@ public class Wrapper extends FObjMixed {
      */
     public int getNameId() {
         return FO_WRAPPER;
+    }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     @Override

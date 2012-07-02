@@ -26,6 +26,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * Superclass for properties that have conditional lengths
@@ -192,8 +193,8 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
 
         if (obj instanceof CondLengthProperty) {
             CondLengthProperty clp = (CondLengthProperty)obj;
-            return (this.length == clp.length
-                    && this.conditionality == clp.conditionality);
+            return (CompareUtil.equal(this.length, clp.length)
+                    && CompareUtil.equal(this.conditionality, clp.conditionality));
         }
         return false;
     }

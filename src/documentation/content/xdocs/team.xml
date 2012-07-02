@@ -16,7 +16,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
     <title>Apache™ FOP: Development Team</title>
@@ -44,7 +44,7 @@
             is an XP/Agile practitioner with interests in open source content management and electronic
             document generation.  He is a UK expat now residing in Singapore.</li>
         <li id="ad"><link href="mailto:adelmelle@apache.org">Andreas Delmelle</link> (AD)</li>
-        <li id="pjfh"> <a href="mailto:phancock.at.apache.org">Peter Hancock</a>
+        <li id="pjfh"> <link href="mailto:phancock.at.apache.org">Peter Hancock</link>
           (PH) is a Java developer from England.</li>
         <li id="vh"><link href="mailto:vhennebert@apache.org">Vincent Hennebert</link>
           (VH), a Java developer from France; with an interest in typography, and in using

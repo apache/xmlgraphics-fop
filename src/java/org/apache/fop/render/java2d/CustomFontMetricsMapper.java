@@ -36,7 +36,7 @@ import org.apache.fop.fonts.Typeface;
 
 /**
  * FontMetricsMapper that delegates most methods to an underlying
- * {@link FontMetrics} instance. This class was designed to allow
+ * {@link org.apache.fop.fonts.FontMetrics} instance. This class was designed to allow
  * the underlying {@link Font} to be loaded from a
  * user-configured file not registered in the current graphics environment.
  */
