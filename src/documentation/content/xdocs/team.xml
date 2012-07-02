@@ -77,10 +77,15 @@
     <section id="contribute-active">
       <title>Active Contributors</title>
       <ul>
+	    <li id="ag">Alexios Giotis holds a Ph.D. in the optimization of turbomachinery cascades 
+          using evolutionary algorithms, neural networks and parallel processing. He is one of
+          the founding members of i-docs (software for enterprises) and he has been leading it's
+          technical design &amp; implementation based on open source libraries since it's inception. 
+          He is relying on Apache FOP for generating high volumes of documents on major banks and
+          telecom operators since FOP's 1.0 release. He lives in Athens, Greece.</li>
         <li id="gd">Georg Datterl is a software developer from Austria, currently working for 
           Geneon media solutions gmbh in Nuremberg, Germany. He needs FOP to wrestle gigabytes of 
           electronic data into thousands of printed pages.</li>
-        <li id="lm">Louis Masters</li>
         <li id="lb">Luis Bernardo</li>
       </ul>
     </section>
