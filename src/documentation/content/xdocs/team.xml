@@ -69,18 +69,18 @@
             page</fork> for some of his private projects.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">Jörg Pietschmann</link> (JP)</li>
         <li id="ps"><link href="mailto:tcho@club-internet.fr">Pascal Sancho</link> (PS)
-	        is an XML developper from Aix-en-Provence (France). He works on software solutions for 	 
-	        rendering various kind of documents on various supports, more specifically taking care 	 
-	        of PDF generation with FOP.</li> 	 
+            is an XML developper from Aix-en-Provence (France). He works on software solutions for 	 
+            rendering various kind of documents on various supports, more specifically taking care 	 
+            of PDF generation with FOP.</li> 	 
       </ul>
     </section>
     <section id="contribute-active">
       <title>Active Contributors</title>
       <ul>
-	    <li id="ag">Alexios Giotis holds a Ph.D. in the optimization of turbomachinery cascades 
+        <li id="ag">Alexios Giotis holds a Ph.D. in the optimization of turbomachinery cascades 
           using evolutionary algorithms, neural networks and parallel processing. He is one of
-          the founding members of i-docs (software for enterprises) and he has been leading it's
-          technical design &amp; implementation based on open source libraries since it's inception. 
+          the founding members of i-docs (software for enterprises) and he has been leading its
+          technical design &amp; implementation based on open source libraries since its inception. 
           He is relying on Apache FOP for generating high volumes of documents on major banks and
           telecom operators since FOP's 1.0 release. He lives in Athens, Greece.</li>
         <li id="gd">Georg Datterl is a software developer from Austria, currently working for 
