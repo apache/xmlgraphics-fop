@@ -49,6 +49,7 @@ import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFDocumentNavigationHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
+import org.apache.fop.render.pdf.PDFRendererConfig.PDFRendererConfigParser;
 import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileExtensionAttachment;
 
 /**
@@ -72,7 +73,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
      * Utility class which enables all sorts of features that are not directly connected to the
      * normal rendering process.
      */
-    private PDFRenderingUtil pdfUtil;
+    private final PDFRenderingUtil pdfUtil;
 
     /** the /Resources object of the PDF document being created */
     private PDFResources pdfResources;
@@ -95,7 +96,9 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /**
      * Default constructor.
      */
-    public PDFDocumentHandler() {
+    public PDFDocumentHandler(IFContext context) {
+        super(context);
+        this.pdfUtil = new PDFRenderingUtil(context.getUserAgent());
     }
 
     /** {@inheritDoc} */
@@ -109,14 +112,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     }
 
     /** {@inheritDoc} */
-    public void setContext(IFContext context) {
-        super.setContext(context);
-        this.pdfUtil = new PDFRenderingUtil(context.getUserAgent());
-    }
-
-    /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
-        return new PDFRendererConfigurator(getUserAgent());
+        return new PDFRendererConfigurator(getUserAgent(), new PDFRendererConfigParser());
     }
 
     /** {@inheritDoc} */
@@ -124,8 +121,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         return this.documentNavigationHandler;
     }
 
-    PDFRenderingUtil getPDFUtil() {
-        return this.pdfUtil;
+    void mergeRendererOptionsConfig(PDFRendererOptionsConfig config) {
+        pdfUtil.mergeRendererOptionsConfig(config);
     }
 
     PDFLogicalStructureHandler getLogicalStructureHandler() {

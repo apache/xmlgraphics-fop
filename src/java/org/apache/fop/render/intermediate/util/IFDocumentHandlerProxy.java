@@ -61,11 +61,6 @@ public class IFDocumentHandlerProxy implements IFDocumentHandler {
     }
 
     /** {@inheritDoc} */
-    public void setContext(IFContext context) {
-        this.delegate.setContext(context);
-    }
-
-    /** {@inheritDoc} */
     public IFContext getContext() {
         return this.delegate.getContext();
     }

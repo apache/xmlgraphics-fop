@@ -19,6 +19,7 @@
 
 package org.apache.fop.fo;
 
+import java.io.File;
 import java.io.InputStream;
 
 import javax.xml.transform.Result;
@@ -50,7 +51,7 @@ public final class FODocumentParser {
 
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 
-    private static final FopFactory FOP_FACTORY = FopFactory.newInstance();
+    private static final FopFactory FOP_FACTORY = FopFactory.newInstance(new File(".").toURI());
 
     private final FOEventHandlerFactory foEventHandlerFactory;
 

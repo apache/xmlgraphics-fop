@@ -257,7 +257,7 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
 
         BridgeContext ctx = new PSBridgeContext(ua,
                 (strokeText ? null : psInfo.fontInfo),
-                context.getUserAgent().getFactory().getImageManager(),
+                context.getUserAgent().getImageManager(),
                 context.getUserAgent().getImageSessionContext());
 
         //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)

@@ -431,8 +431,12 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
         final Font font = getFontInfo().getFontInstance(triplet, state.getFontSize());
 
         //for cursive fonts, so the text isn't clipped
-        final FontMetricsMapper mapper = (FontMetricsMapper) getFontInfo().getMetricsFor(
-                font.getFontName());
+        FontMetricsMapper mapper;
+        try {
+            mapper = (FontMetricsMapper) getFontInfo().getMetricsFor(font.getFontName());
+        } catch (Exception t) {
+            throw new RuntimeException(t);
+        }
         final int maxAscent = mapper.getMaxAscent(font.getFontSize()) / 1000;
         final int ascent = mapper.getAscender(font.getFontSize()) / 1000;
         final int descent = mapper.getDescender(font.getFontSize()) / 1000;

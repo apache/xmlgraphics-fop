@@ -83,7 +83,7 @@ public class XMLHandlerConfigurator extends AbstractRendererConfigurator {
      */
     public void configure(RendererContext context, String ns) throws FOPException {
         //Optional XML handler configuration
-        Configuration cfg = getRendererConfig(context.getRenderer());
+        Configuration cfg = userAgent.getRendererConfiguration(context.getRenderer().getMimeType());
         if (cfg != null) {
             cfg = getHandlerConfig(cfg, ns);
             if (cfg != null) {

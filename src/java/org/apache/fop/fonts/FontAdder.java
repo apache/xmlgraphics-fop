@@ -19,9 +19,11 @@
 
 package org.apache.fop.fonts;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.autodetect.FontInfoFinder;
 
 /**
@@ -29,18 +31,19 @@ import org.apache.fop.fonts.autodetect.FontInfoFinder;
  */
 public class FontAdder {
     private final FontEventListener listener;
-    private final FontResolver resolver;
+    private final InternalResourceResolver resourceResolver;
     private final FontManager manager;
 
     /**
      * Main constructor
      * @param manager a font manager
-     * @param resolver a font resolver
+     * @param resourceResolver a font resolver
      * @param listener a font event handler
      */
-    public FontAdder(FontManager manager, FontResolver resolver, FontEventListener listener) {
+    public FontAdder(FontManager manager, InternalResourceResolver resourceResolver,
+            FontEventListener listener) {
         this.manager = manager;
-        this.resolver = resolver;
+        this.resourceResolver = resourceResolver;
         this.listener = listener;
     }
 
@@ -48,14 +51,16 @@ public class FontAdder {
      * Iterates over font url list adding to font info list
      * @param fontURLList font file list
      * @param fontInfoList a configured font info list
+     * @throws URISyntaxException if a URI syntax error is found
      */
-    public void add(List<URL> fontURLList, List<EmbedFontInfo> fontInfoList) {
+    public void add(List<URL> fontURLList, List<EmbedFontInfo> fontInfoList)
+            throws URISyntaxException {
         FontCache cache = manager.getFontCache();
         FontInfoFinder finder = new FontInfoFinder();
         finder.setEventListener(listener);
 
         for (URL fontURL : fontURLList) {
-            EmbedFontInfo[] embedFontInfos = finder.find(fontURL, resolver, cache);
+            EmbedFontInfo[] embedFontInfos = finder.find(fontURL.toURI(), resourceResolver, cache);
             if (embedFontInfos == null) {
                 continue;
             }

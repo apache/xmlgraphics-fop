@@ -19,14 +19,22 @@
 
 package org.apache.fop.config;
 
-import static org.junit.Assert.fail;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.junit.Test;
+import org.xml.sax.SAXException;
+
+import static org.junit.Assert.fail;
 
 /**
  * Super class of several user config cases.
  */
 public abstract class BaseConstructiveUserConfigTest extends BaseUserConfigTest {
+
+    public BaseConstructiveUserConfigTest(InputStream confStream) throws SAXException, IOException {
+        super(confStream);
+    }
 
     /**
      * Test using a standard FOP font
@@ -35,7 +43,6 @@ public abstract class BaseConstructiveUserConfigTest extends BaseUserConfigTest 
     @Test
     public void testUserConfig() throws Exception {
         try {
-            initConfig();
             convertFO();
         } catch (Exception e) {
             // this should *not* happen!

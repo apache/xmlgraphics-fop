@@ -22,15 +22,19 @@ package org.apache.fop.fonts.type1;
 import java.awt.geom.RectangularShape;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.CodePointMapping;
 import org.apache.fop.fonts.FontLoader;
-import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
@@ -40,6 +44,8 @@ import org.apache.fop.fonts.SingleByteFont;
  */
 public class Type1FontLoader extends FontLoader {
 
+    private static final Log log = LogFactory.getLog(Type1FontLoader.class);
+
     private SingleByteFont singleFont;
 
     /**
@@ -47,12 +53,12 @@ public class Type1FontLoader extends FontLoader {
      * @param fontFileURI the URI to the PFB file of a Type 1 font
      * @param embedded indicates whether the font is embedded or referenced
      * @param useKerning indicates whether to load kerning information if available
-     * @param resolver the font resolver used to resolve URIs
+     * @param resourceResolver the font resolver used to resolve URIs
      * @throws IOException In case of an I/O error
      */
-    public Type1FontLoader(String fontFileURI, boolean embedded, boolean useKerning,
-            FontResolver resolver) throws IOException {
-        super(fontFileURI, embedded, useKerning, true, resolver);
+    public Type1FontLoader(URI fontFileURI, boolean embedded, boolean useKerning,
+            InternalResourceResolver resourceResolver) throws IOException {
+        super(fontFileURI, embedded, useKerning, true, resourceResolver);
     }
 
     private String getPFMURI(String pfbURI) {
@@ -71,16 +77,19 @@ public class Type1FontLoader extends FontLoader {
         PFMFile pfm = null;
 
         InputStream afmIn = null;
+        String fontFileStr = fontFileURI.toASCIIString();
+        String partialAfmUri = fontFileStr.substring(0, fontFileStr.length() - 4);
         String afmUri = null;
-        for (int i = 0; i < AFM_EXTENSIONS.length; i++) {
+        for (String afmExtension : AFM_EXTENSIONS) {
             try {
-                afmUri = this.fontFileURI.substring(0, this.fontFileURI.length() - 4)
-                        + AFM_EXTENSIONS[i];
-                afmIn = openFontUri(resolver, afmUri);
+                afmUri = partialAfmUri + afmExtension;
+                afmIn = resourceResolver.getResource(afmUri);
                 if (afmIn != null) {
                     break;
                 }
             } catch (IOException ioe) {
+                // Ignore, AFM probably not available under the URI
+            } catch (URISyntaxException e) {
                 // Ignore, AFM probably not available under the URI
             }
         }
@@ -93,11 +102,13 @@ public class Type1FontLoader extends FontLoader {
             }
         }
 
-        String pfmUri = getPFMURI(this.fontFileURI);
+        String pfmUri = getPFMURI(fontFileStr);
         InputStream pfmIn = null;
         try {
-            pfmIn = openFontUri(resolver, pfmUri);
+            pfmIn = resourceResolver.getResource(pfmUri);
         } catch (IOException ioe) {
+            // Ignore, PFM probably not available under the URI
+        } catch (URISyntaxException e) {
             // Ignore, PFM probably not available under the URI
         }
         if (pfmIn != null) {
@@ -126,11 +137,10 @@ public class Type1FontLoader extends FontLoader {
         if (afm == null && pfm == null) {
             throw new IllegalArgumentException("Need at least an AFM or a PFM!");
         }
-        singleFont = new SingleByteFont();
+        singleFont = new SingleByteFont(resourceResolver);
         singleFont.setFontType(FontType.TYPE1);
-        singleFont.setResolver(this.resolver);
         if (this.embedded) {
-            singleFont.setEmbedFileName(this.fontFileURI);
+            singleFont.setEmbedURI(this.fontFileURI);
         }
         returnFont = singleFont;
 

@@ -58,7 +58,7 @@
               </svg:g>
             </svg:svg>
           </fo:instream-foreign-object>text</fo:block>
-          <fo:block>text<fo:external-graphic id="eg1" src="../../resources/images/bgimg72dpi.jpg" content-height="12pt"/>text</fo:block>
+          <fo:block>text<fo:external-graphic id="eg1" src="../resources/images/bgimg72dpi.jpg" content-height="12pt"/>text</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>

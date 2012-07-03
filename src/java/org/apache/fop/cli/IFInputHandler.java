@@ -62,7 +62,7 @@ public class IFInputHandler extends InputHandler {
     public void renderTo(FOUserAgent userAgent, String outputFormat, OutputStream out)
                 throws FOPException {
         IFDocumentHandler documentHandler
-            = userAgent.getFactory().getRendererFactory().createDocumentHandler(
+            = userAgent.getRendererFactory().createDocumentHandler(
                     userAgent, outputFormat);
         try {
             documentHandler.setResult(new StreamResult(out));

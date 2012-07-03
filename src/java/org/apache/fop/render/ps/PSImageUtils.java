@@ -53,7 +53,7 @@ public class PSImageUtils extends org.apache.xmlgraphics.ps.PSImageUtils {
         }
         //Investigate choice for inline mode
         ImageFlavor[] inlineFlavors = determineSupportedImageFlavors(renderingContext);
-        ImageManager manager = renderingContext.getUserAgent().getFactory().getImageManager();
+        ImageManager manager = renderingContext.getUserAgent().getImageManager();
         ImageProviderPipeline[] inlineCandidates
             = manager.getPipelineFactory().determineCandidatePipelines(
                     info, inlineFlavors);
@@ -79,7 +79,7 @@ public class PSImageUtils extends org.apache.xmlgraphics.ps.PSImageUtils {
     private static ImageFlavor[] determineSupportedImageFlavors(RenderingContext renderingContext) {
         ImageFlavor[] inlineFlavors;
         ImageHandlerRegistry imageHandlerRegistry
-            = renderingContext.getUserAgent().getFactory().getImageHandlerRegistry();
+            = renderingContext.getUserAgent().getImageHandlerRegistry();
         inlineFlavors = imageHandlerRegistry.getSupportedFlavors(renderingContext);
         return inlineFlavors;
     }

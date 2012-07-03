@@ -78,12 +78,6 @@ import org.apache.fop.fonts.FontInfo;
 public interface IFDocumentHandler {
 
     /**
-     * Sets the intermediate format context object.
-     * @param context the context object
-     */
-    void setContext(IFContext context);
-
-    /**
      * Returns the associated intermediate format context object.
      * @return the context object
      */
@@ -274,4 +268,5 @@ public interface IFDocumentHandler {
      * @throws IFException if an error occurs while handling this event
      */
     void handleExtensionObject(Object extension) throws IFException;
+
 }

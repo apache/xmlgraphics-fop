@@ -23,7 +23,7 @@
     </p>
   </info>
   <variables>
-    <img>../../resources/images/bgimg300dpi.jpg</img>
+    <img>../resources/images/bgimg300dpi.jpg</img>
   </variables>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -108,6 +108,6 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=156960,vertical=12960" xpath="//flow/block[1]/@background"/>
+    <eval expected="color=#ffff00,url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=156960,vertical=12960" xpath="//flow/block[1]/@background"/>
   </checks>
 </testcase>

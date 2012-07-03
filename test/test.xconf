@@ -3,6 +3,7 @@
 
   <!-- Switch off font caching for the purposes of unit testing -->
   <use-cache>false</use-cache>
+  <font-base>.</font-base>
   
   <renderers>
     <renderer mime="application/pdf">
@@ -19,17 +20,13 @@
         <value>null</value>
       </filterList>
       <fonts>
-        <font metrics-url="test/resources/fonts/ttf/glb12.ttf.xml" embed-url="test/resources/fonts/ttf/glb12.ttf">
+        <font metrics-url="resources/fonts/ttf/glb12.ttf.xml" embed-url="resources/fonts/ttf/glb12.ttf">
           <font-triplet name="Gladiator" style="normal" weight="normal"/>
           <font-triplet name="Gladiator" style="normal" weight="bold"/>
         </font>
-        <font metrics-url="test/resources/fonts/ttf/glb12.ttf.ansi.xml" embed-url="test/resources/fonts/ttf/glb12.ttf">
+        <font metrics-url="resources/fonts/ttf/glb12.ttf.ansi.xml" embed-url="resources/fonts/ttf/glb12.ttf">
           <font-triplet name="Gladiator-Ansi" style="normal" weight="normal"/>
           <font-triplet name="Gladiator-Ansi" style="normal" weight="bold"/>
-        </font>
-        <font metrics-url="test/resources/fonts/ttf/glb12.ttf.ansi.xml">
-          <font-triplet name="Gladiator-Non-Embedded" style="normal" weight="normal"/>
-          <font-triplet name="Gladiator-Non-Embedded" style="normal" weight="bold"/>
         </font>
       </fonts>
     </renderer>

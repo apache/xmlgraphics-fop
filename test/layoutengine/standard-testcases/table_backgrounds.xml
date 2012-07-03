@@ -23,12 +23,12 @@
     </p>
   </info>
   <variables>
-    <table>../../resources/images/fop-logo-gray-8bit.png</table>
-    <col>../../resources/images/bgimg72dpi.jpg</col>
-    <body>../../resources/images/fop-logo-color-24bit.png</body>
-    <row>../../../examples/fo/graphics/asf-logo.png</row>
-    <headFoot>../../../examples/fo/graphics/asf-logo.png</headFoot>
-    <header>../../resources/images/box1.png</header>
+    <table>../resources/images/fop-logo-gray-8bit.png</table>
+    <col>../resources/images/bgimg72dpi.jpg</col>
+    <body>../resources/images/fop-logo-color-24bit.png</body>
+    <row>../../examples/fo/graphics/asf-logo.png</row>
+    <headFoot>../../examples/fo/graphics/asf-logo.png</headFoot>
+    <header>../resources/images/box1.png</header>
   </variables>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -157,7 +157,7 @@
   </fo>
   <checks>
     <!-- table background -->
-    <eval expected="color=#f0f0f0,url=../../resources/images/fop-logo-gray-8bit.png,repeat=no-repeat,horiz=53480,vertical=108960"
+    <eval expected="color=#f0f0f0,url=../resources/images/fop-logo-gray-8bit.png,repeat=no-repeat,horiz=53480,vertical=108960"
       xpath="//flow/block[2]/@background"/>
 
     <!-- column background, header 1.1 -->
@@ -166,7 +166,7 @@
     <eval expected="4000"   xpath="//flow/block[2]/block[1]/@top-offset"/>
     <eval expected="4000"   xpath="//flow/block[2]/block[1]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[1]/@background"
-      expected="color=#ffff00,url=../../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=54000"/>
+      expected="color=#ffff00,url=../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=54000"/>
 
     <!-- table-header background, header 1.1 -->
     <eval expected="136000" xpath="//flow/block[2]/block[2]/@ipd"/>
@@ -174,7 +174,7 @@
     <eval expected="4000"   xpath="//flow/block[2]/block[2]/@top-offset"/>
     <eval expected="4000"   xpath="//flow/block[2]/block[2]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[2]/@background"
-      expected="url=../../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=76633,vertical=5877"/>
+      expected="url=../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=76633,vertical=5877"/>
 
 
     <!-- column background, header 1.2 -->
@@ -183,7 +183,7 @@
     <eval expected="4000"   xpath="//flow/block[2]/block[4]/@top-offset"/>
     <eval expected="148000" xpath="//flow/block[2]/block[4]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[4]/@background"
-      expected="url=../../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=54000"/>
+      expected="url=../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=54000"/>
 
     <!-- table-header background, header 1.2 -->
     <eval expected="136000" xpath="//flow/block[2]/block[5]/@ipd"/>
@@ -191,7 +191,7 @@
     <eval expected="4000"   xpath="//flow/block[2]/block[5]/@top-offset"/>
     <eval expected="148000" xpath="//flow/block[2]/block[5]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[5]/@background"
-      expected="url=../../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=-67367,vertical=5877"/>
+      expected="url=../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=-67367,vertical=5877"/>
 
     <!-- header 1.2 background -->
     <eval expected="136000" xpath="//flow/block[2]/block[6]/@ipd"/>
@@ -199,7 +199,7 @@
     <eval expected="2000"   xpath="//flow/block[2]/block[6]/@top-offset"/>
     <eval expected="148000" xpath="//flow/block[2]/block[6]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[6]/@background"
-      expected="color=#ffff00,url=../../resources/images/box1.png,repeat=no-repeat,horiz=47995,vertical=4995"/>
+      expected="color=#ffff00,url=../resources/images/box1.png,repeat=no-repeat,horiz=47995,vertical=4995"/>
 
 
     <!-- column background, cell 1.2 -->
@@ -208,7 +208,7 @@
     <eval expected="60000"  xpath="//flow/block[2]/block[7]/@top-offset"/>
     <eval expected="146000" xpath="//flow/block[2]/block[7]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[7]/@background"
-      expected="url=../../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-26000,vertical=-2000"/>
+      expected="url=../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-26000,vertical=-2000"/>
 
     <!-- table-row background, cell 1.2 -->
     <eval expected="140000" xpath="//flow/block[2]/block[8]/@ipd"/>
@@ -216,7 +216,7 @@
     <eval expected="60000"  xpath="//flow/block[2]/block[8]/@top-offset"/>
     <eval expected="146000" xpath="//flow/block[2]/block[8]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[8]/@background"
-      expected="url=../../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=-65367,vertical=-9122"/>
+      expected="url=../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=-65367,vertical=-9122"/>
 
 
     <!-- column background, cell 1.1 -->
@@ -225,7 +225,7 @@
     <eval expected="62000"  xpath="//flow/block[2]/block[10]/@top-offset"/>
     <eval expected="4000"   xpath="//flow/block[2]/block[10]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[10]/@background"
-      expected="color=#ffff00,url=../../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-4000"/>
+      expected="color=#ffff00,url=../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-4000"/>
 
     <!-- table-row background, cell 1.1 -->
     <eval expected="136000" xpath="//flow/block[2]/block[11]/@ipd"/>
@@ -233,7 +233,7 @@
     <eval expected="62000"  xpath="//flow/block[2]/block[11]/@top-offset"/>
     <eval expected="4000"   xpath="//flow/block[2]/block[11]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[11]/@background"
-      expected="url=../../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=76633,vertical=-11122"/>
+      expected="url=../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=76633,vertical=-11122"/>
 
 
     <!-- column background, cell 2.2 -->
@@ -242,7 +242,7 @@
     <eval expected="86000"  xpath="//flow/block[2]/block[13]/@top-offset"/>
     <eval expected="148000" xpath="//flow/block[2]/block[13]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[13]/@background"
-      expected="url=../../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-28000"/>
+      expected="url=../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-28000"/>
 
     <!-- table-row background, cell 2.2 -->
     <eval expected="136000" xpath="//flow/block[2]/block[14]/@ipd"/>
@@ -250,7 +250,7 @@
     <eval expected="86000"  xpath="//flow/block[2]/block[14]/@top-offset"/>
     <eval expected="148000" xpath="//flow/block[2]/block[14]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[14]/@background"
-      expected="url=../../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=-67367,vertical=-11122"/>
+      expected="url=../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=-67367,vertical=-11122"/>
 
 
     <!-- column background, cell 3.1 -->
@@ -259,7 +259,7 @@
     <eval expected="110000" xpath="//flow/block[2]/block[16]/@top-offset"/>
     <eval expected="4000"   xpath="//flow/block[2]/block[16]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[16]/@background"
-      expected="color=#ffff00,url=../../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-52000"/>
+      expected="color=#ffff00,url=../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-52000"/>
 
     <!-- table-row background, cell 3.1 -->
     <eval expected="280000" xpath="//flow/block[2]/block[17]/@ipd"/>
@@ -267,7 +267,7 @@
     <eval expected="110000" xpath="//flow/block[2]/block[17]/@top-offset"/>
     <eval expected="4000"   xpath="//flow/block[2]/block[17]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[17]/@background"
-      expected="url=../../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=76633,vertical=-9122"/>
+      expected="url=../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=76633,vertical=-9122"/>
 
 
     <!-- column background, cell 4.1 -->
@@ -276,7 +276,7 @@
     <eval expected="138000" xpath="//flow/block[2]/block[19]/@top-offset"/>
     <eval expected="4000"   xpath="//flow/block[2]/block[19]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[19]/@background"
-      expected="color=#ffff00,url=../../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-80000"/>
+      expected="color=#ffff00,url=../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-80000"/>
 
     <!-- table-row background, cell 4.1 -->
     <eval expected="136000" xpath="//flow/block[2]/block[20]/@ipd"/>
@@ -284,7 +284,7 @@
     <eval expected="138000" xpath="//flow/block[2]/block[20]/@top-offset"/>
     <eval expected="4000"   xpath="//flow/block[2]/block[20]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[20]/@background"
-      expected="url=../../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=76633,vertical=-9122"/>
+      expected="url=../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=76633,vertical=-9122"/>
 
 
     <!-- column background, cell 4.2 -->
@@ -293,7 +293,7 @@
     <eval expected="136000" xpath="//flow/block[2]/block[22]/@top-offset"/>
     <eval expected="146000" xpath="//flow/block[2]/block[22]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[22]/@background"
-      expected="url=../../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-26000,vertical=-78000"/>
+      expected="url=../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-26000,vertical=-78000"/>
 
     <!-- table-row background, cell 4.2 -->
     <eval expected="140000" xpath="//flow/block[2]/block[23]/@ipd"/>
@@ -301,7 +301,7 @@
     <eval expected="136000" xpath="//flow/block[2]/block[23]/@top-offset"/>
     <eval expected="146000" xpath="//flow/block[2]/block[23]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[23]/@background"
-      expected="url=../../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=-65367,vertical=-7122"/>
+      expected="url=../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=-65367,vertical=-7122"/>
 
 
     <!-- column background, cell 5.2 -->
@@ -310,7 +310,7 @@
     <eval expected="164000" xpath="//flow/block[2]/block[25]/@top-offset"/>
     <eval expected="146000" xpath="//flow/block[2]/block[25]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[25]/@background"
-      expected="url=../../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-26000,vertical=-106000"/>
+      expected="url=../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-26000,vertical=-106000"/>
 
     <!-- table-body background, cell 5.2 -->
     <eval expected="140000" xpath="//flow/block[2]/block[26]/@ipd"/>
@@ -318,7 +318,7 @@
     <eval expected="164000" xpath="//flow/block[2]/block[26]/@top-offset"/>
     <eval expected="146000" xpath="//flow/block[2]/block[26]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[26]/@background"
-      expected="url=../../resources/images/fop-logo-color-24bit.png,repeat=no-repeat,horiz=-94513,vertical=9964"/>
+      expected="url=../resources/images/fop-logo-color-24bit.png,repeat=no-repeat,horiz=-94513,vertical=9964"/>
 
 
     <!-- column background, cell 5.1 -->
@@ -327,7 +327,7 @@
     <eval expected="166000" xpath="//flow/block[2]/block[28]/@top-offset"/>
     <eval expected="4000"   xpath="//flow/block[2]/block[28]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[28]/@background"
-      expected="color=#ffff00,url=../../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-108000"/>
+      expected="color=#ffff00,url=../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-108000"/>
 
     <!-- table-body background, cell 5.1 -->
     <eval expected="136000" xpath="//flow/block[2]/block[29]/@ipd"/>
@@ -335,7 +335,7 @@
     <eval expected="166000" xpath="//flow/block[2]/block[29]/@top-offset"/>
     <eval expected="4000"   xpath="//flow/block[2]/block[29]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[29]/@background"
-      expected="url=../../resources/images/fop-logo-color-24bit.png,repeat=no-repeat,horiz=47487,vertical=7964"/>
+      expected="url=../resources/images/fop-logo-color-24bit.png,repeat=no-repeat,horiz=47487,vertical=7964"/>
 
 
     <!-- column background, cell 6.2 -->
@@ -344,7 +344,7 @@
     <eval expected="210000" xpath="//flow/block[2]/block[31]/@top-offset"/>
     <eval expected="148000" xpath="//flow/block[2]/block[31]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[31]/@background"
-      expected="url=../../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-152000"/>
+      expected="url=../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-152000"/>
 
     <!-- table-body background, cell 6.2 -->
     <eval expected="136000" xpath="//flow/block[2]/block[32]/@ipd"/>
@@ -352,7 +352,7 @@
     <eval expected="210000" xpath="//flow/block[2]/block[32]/@top-offset"/>
     <eval expected="148000" xpath="//flow/block[2]/block[32]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[32]/@background"
-      expected="url=../../resources/images/fop-logo-color-24bit.png,repeat=no-repeat,horiz=-96513,vertical=-36036"/>
+      expected="url=../resources/images/fop-logo-color-24bit.png,repeat=no-repeat,horiz=-96513,vertical=-36036"/>
 
 
     <!-- column background, footer 1.1 -->
@@ -361,7 +361,7 @@
     <eval expected="284000" xpath="//flow/block[2]/block[34]/@top-offset"/>
     <eval expected="4000"   xpath="//flow/block[2]/block[34]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[34]/@background"
-      expected="color=#ffff00,url=../../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-226000"/>
+      expected="color=#ffff00,url=../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-226000"/>
 
     <!-- table-footer background, footer 1.1 -->
     <eval expected="136000" xpath="//flow/block[2]/block[35]/@ipd"/>
@@ -369,7 +369,7 @@
     <eval expected="284000" xpath="//flow/block[2]/block[35]/@top-offset"/>
     <eval expected="4000"   xpath="//flow/block[2]/block[35]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[35]/@background"
-      expected="url=../../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=76633,vertical=-9122"/>
+      expected="url=../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=76633,vertical=-9122"/>
 
 
     <!-- column background, footer 1.2 -->
@@ -378,7 +378,7 @@
     <eval expected="284000" xpath="//flow/block[2]/block[37]/@top-offset"/>
     <eval expected="148000" xpath="//flow/block[2]/block[37]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[37]/@background"
-      expected="url=../../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-226000"/>
+      expected="url=../resources/images/bgimg72dpi.jpg,repeat=no-repeat,horiz=-28000,vertical=-226000"/>
 
     <!-- table-footer background, footer 1.2 -->
     <eval expected="136000" xpath="//flow/block[2]/block[38]/@ipd"/>
@@ -386,7 +386,7 @@
     <eval expected="284000" xpath="//flow/block[2]/block[38]/@top-offset"/>
     <eval expected="148000" xpath="//flow/block[2]/block[38]/@left-offset"/>
     <eval                   xpath="//flow/block[2]/block[38]/@background"
-      expected="url=../../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=-67367,vertical=-9122"/>
+      expected="url=../../examples/fo/graphics/asf-logo.png,repeat=no-repeat,horiz=-67367,vertical=-9122"/>
 
   </checks>
 </testcase>

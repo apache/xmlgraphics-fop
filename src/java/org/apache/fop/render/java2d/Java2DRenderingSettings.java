@@ -53,6 +53,4 @@ public class Java2DRenderingSettings {
     public boolean hasTransparentPageBackground() {
         return this.pageBackgroundColor == null;
     }
-
-
 }

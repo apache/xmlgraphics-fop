@@ -49,7 +49,6 @@ public class MemoryEater {
 
     private SAXTransformerFactory tFactory
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
-    private FopFactory fopFactory = FopFactory.newInstance();
     private Templates replicatorTemplates;
 
     private Stats stats;
@@ -62,15 +61,17 @@ public class MemoryEater {
 
     private void eatMemory(File foFile, int runRepeats, int replicatorRepeats) throws Exception {
         stats = new Stats();
+        FopFactory fopFactory = FopFactory.newInstance(foFile.getParentFile().toURI());
         for (int i = 0; i < runRepeats; i++) {
-            eatMemory(i, foFile, replicatorRepeats);
+            eatMemory(i, foFile, replicatorRepeats, fopFactory);
             stats.progress(i, runRepeats);
         }
         stats.dumpFinalStats();
         System.out.println(stats.getGoogleChartURL());
     }
 
-    private void eatMemory(int callIndex, File foFile, int replicatorRepeats) throws Exception {
+    private void eatMemory(int callIndex, File foFile, int replicatorRepeats, FopFactory fopFactory)
+            throws Exception {
         Source src = new StreamSource(foFile);
 
         Transformer transformer = replicatorTemplates.newTransformer();
@@ -79,7 +80,6 @@ public class MemoryEater {
         OutputStream out = new NullOutputStream(); //write to /dev/nul
         try {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
-            userAgent.setBaseURL(foFile.getParentFile().toURI().toURL().toExternalForm());
             Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
             Result res = new SAXResult(fop.getDefaultHandler());
 

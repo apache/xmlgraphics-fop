@@ -8,7 +8,7 @@
   <fo:page-sequence master-reference="A4">
     <fo:flow flow-name="xsl-region-body">
       <fo:block>Hello World!</fo:block>
-      <fo:block><fo:external-graphic src="test/resources/images/bgimg300dpi.jpg"/></fo:block>
+      <fo:block><fo:external-graphic src="resources/images/bgimg300dpi.jpg"/></fo:block>
     </fo:flow>
   </fo:page-sequence>
 </fo:root>

@@ -104,8 +104,7 @@ public class IFParserTestCase extends AbstractIFTest {
 
         FOUserAgent userAgent = createUserAgent();
 
-        IFSerializer serializer = new IFSerializer();
-        serializer.setContext(new IFContext(userAgent));
+        IFSerializer serializer = new IFSerializer(new IFContext(userAgent));
         DOMResult domResult = new DOMResult();
         serializer.setResult(domResult);
 

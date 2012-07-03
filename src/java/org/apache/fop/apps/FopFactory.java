@@ -21,18 +21,12 @@ package org.apache.fop.apps;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.URIResolver;
 
 import org.xml.sax.SAXException;
 
@@ -44,13 +38,15 @@ import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.util.UnitConv;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
-import org.apache.fop.fonts.FontCache;
 import org.apache.fop.fonts.FontManager;
-import org.apache.fop.hyphenation.HyphenationTreeResolver;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.ImageHandlerRegistry;
+import org.apache.fop.render.RendererConfig;
+import org.apache.fop.render.RendererConfig.RendererConfigParser;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
 import org.apache.fop.util.ColorSpaceCache;
@@ -59,57 +55,49 @@ import org.apache.fop.util.ContentHandlerFactoryRegistry;
 /**
  * Factory class which instantiates new Fop and FOUserAgent instances. This
  * class also holds environmental information and configuration used by FOP.
- * Information that may potentially be different for each rendering run can be
+ * Information that may potentially be different for each renderingq run can be
  * found and managed in the FOUserAgent.
  */
-public class FopFactory implements ImageContext {
+public final class FopFactory implements ImageContext {
 
     /** logger instance */
     private static Log log = LogFactory.getLog(FopFactory.class);
 
     /** Factory for Renderers and FOEventHandlers */
-    private RendererFactory rendererFactory;
+    private final RendererFactory rendererFactory;
 
     /** Registry for XML handlers */
-    private XMLHandlerRegistry xmlHandlers;
+    private final XMLHandlerRegistry xmlHandlers;
 
     /** Registry for image handlers */
-    private ImageHandlerRegistry imageHandlers;
+    private final ImageHandlerRegistry imageHandlers;
 
     /** The registry for ElementMapping instances */
-    private ElementMappingRegistry elementMappingRegistry;
+    private final ElementMappingRegistry elementMappingRegistry;
 
     /** The registry for ContentHandlerFactory instance */
-    private ContentHandlerFactoryRegistry contentHandlerFactoryRegistry
-                = new ContentHandlerFactoryRegistry();
+    private final ContentHandlerFactoryRegistry contentHandlerFactoryRegistry
+            = new ContentHandlerFactoryRegistry();
 
-    /** The resolver for user-supplied hyphenation patterns */
-    private HyphenationTreeResolver hyphResolver = null;
+    private final ColorSpaceCache colorSpaceCache;
 
-    private ColorSpaceCache colorSpaceCache = null;
+    private final FopFactoryConfig config;
 
-    /** Image manager for loading and caching image objects */
-    private ImageManager imageManager;
+    private final InternalResourceResolver resolver;
 
-    /** Font manager for font substitution, autodetection and caching **/
-    private FontManager fontManager;
+    private final Map<String, RendererConfig> rendererConfig;
 
-    /** Configuration layer used to configure fop */
-    private FopFactoryConfigurator config = null;
-
-    /**
-     *  The base URL for all URL resolutions, especially for
-     *  external-graphics.
-     */
-    private String base = null;
-
-    /**
-     *  Controls if accessibility is turned on or off
-     */
-    private boolean accessibility = false;
-
-    /** The base URL for all hyphen URL resolutions. */
-    private String hyphenBase = null;
+    private FopFactory(FopFactoryConfig config) {
+        this.config = config;
+        this.resolver = ResourceResolverFactory.createInternalResourceResolver(config.getBaseURI(),
+                config.getResourceResolver());
+        this.elementMappingRegistry = new ElementMappingRegistry(this);
+        this.colorSpaceCache = new ColorSpaceCache(resolver);
+        this.rendererFactory = new RendererFactory(config.preferRenderer());
+        this.xmlHandlers = new XMLHandlerRegistry();
+        this.imageHandlers = new ImageHandlerRegistry();
+        rendererConfig = new HashMap<String, RendererConfig>();
+    }
 
     /**
      * Map of configured names of hyphenation pattern file names: ll_CC => name
@@ -121,73 +109,52 @@ public class FopFactory implements ImageContext {
      * input XSL violates that FO's content model.  This is the default
      * behavior for FOP.  However, this flag, if set, provides the user the
      * ability for FOP to halt on all content model violations if desired.
+     * Returns a new FopFactory instance that is configured using the {@link FopFactoryConfig} object.
+     *
+     * @param config the fop configuration
+     * @return the requested FopFactory instance.
      */
-    private boolean strictFOValidation = FopFactoryConfigurator.DEFAULT_STRICT_FO_VALIDATION;
-
-    /**
-     * FOP will validate the contents of the user configuration strictly
-     * (e.g. base-urls and font urls/paths).
-     */
-    private boolean strictUserConfigValidation
-        = FopFactoryConfigurator.DEFAULT_STRICT_USERCONFIG_VALIDATION;
-
-    /** Source resolution in dpi */
-    private float sourceResolution = FopFactoryConfigurator.DEFAULT_SOURCE_RESOLUTION;
-
-    /** Target resolution in dpi */
-    private float targetResolution = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
-
-    /** Page height */
-    private String pageHeight = FopFactoryConfigurator.DEFAULT_PAGE_HEIGHT;
-
-    /** Page width */
-    private String pageWidth = FopFactoryConfigurator.DEFAULT_PAGE_WIDTH;
-
-    /** Complex scripts support enabled */
-    private boolean useComplexScriptFeatures
-        = FopFactoryConfigurator.DEFAULT_COMPLEX_SCRIPT_FEATURES;
-
-    /** @see #setBreakIndentInheritanceOnReferenceAreaBoundary(boolean) */
-    private boolean breakIndentInheritanceOnReferenceAreaBoundary
-        = FopFactoryConfigurator.DEFAULT_BREAK_INDENT_INHERITANCE;
-
-    /** Optional overriding LayoutManagerMaker */
-    private LayoutManagerMaker lmMakerOverride = null;
-
-    private Set<String> ignoredNamespaces;
-
-    private FOURIResolver foURIResolver;
-
-    /**
-     * Main constructor.
-     */
-    protected FopFactory() {
-        this.config = new FopFactoryConfigurator(this);
-        this.elementMappingRegistry = new ElementMappingRegistry(this);
-        this.foURIResolver = new FOURIResolver(validateUserConfigStrictly());
-        this.fontManager = new FontManager() {
-
-            /** {@inheritDoc} */
-            @Override
-            public void setFontBaseURL(String fontBase) throws MalformedURLException {
-                super.setFontBaseURL(getFOURIResolver().checkBaseURL(fontBase));
-            }
-
-        };
-        this.colorSpaceCache = new ColorSpaceCache(foURIResolver);
-        this.imageManager = new ImageManager(this);
-        this.rendererFactory = new RendererFactory();
-        this.xmlHandlers = new XMLHandlerRegistry();
-        this.imageHandlers = new ImageHandlerRegistry();
-        this.ignoredNamespaces = new java.util.HashSet<String>();
+    public static FopFactory newInstance(FopFactoryConfig config) {
+        return new FopFactory(config);
     }
 
     /**
-     * Returns a new FopFactory instance.
+     * Returns a new FopFactory instance that is configured using the {@link FopFactoryConfig} object that
+     * is created when the fopConf is parsed.
+     *
+     * @param fopConf the fop conf configuration file to parse
+     * @return the requested FopFactory instance.
+     * @throws IOException
+     * @throws SAXException
+     */
+    public static FopFactory newInstance(File fopConf) throws SAXException, IOException {
+        return new FopConfParser(fopConf).getFopFactoryBuilder().build();
+    }
+
+    /**
+     * Returns a new FopFactory instance that is configured only by the default configuration
+     * parameters.
+     *
+     * @param baseURI the base URI to resolve resource URIs against
      * @return the requested FopFactory instance.
      */
-    public static FopFactory newInstance() {
-        return new FopFactory();
+    public static FopFactory newInstance(URI baseURI) {
+        return new FopFactoryBuilder(baseURI).build();
+    }
+
+    /**
+     * Returns a new FopFactory instance that is configured using the {@link FopFactoryConfig} object that
+     * is created when the fopConf is parsed.
+     *
+     * @param baseURI the base URI to resolve resource URIs against
+     * @param confStream the fop conf configuration stream to parse
+     * @return the requested FopFactory instance.
+     * @throws SAXException
+     * @throws IOException
+     */
+    public static FopFactory newInstance(URI baseURI, InputStream confStream) throws SAXException,
+            IOException {
+        return new FopConfParser(confStream, baseURI).getFopFactoryBuilder().build();
     }
 
     /**
@@ -198,34 +165,12 @@ public class FopFactory implements ImageContext {
      * @throws FOPException
      */
     public FOUserAgent newFOUserAgent() {
-        FOUserAgent userAgent = new FOUserAgent(this);
+        FOUserAgent userAgent = new FOUserAgent(this, resolver);
         return userAgent;
     }
 
-    /**
-     * Sets accessibility support.
-     *
-     * @param value <code>true</code> to enable accessibility, <code>false</code> otherwise
-     */
-    void setAccessibility(boolean value) {
-        this.accessibility = value;
-    }
-
-    boolean isAccessibilityEnabled() {
-        return accessibility;
-    }
-
-    /**
-     * Sets complex script support.
-     * @param value <code>true</code> to enable complex script features,
-     * <code>false</code> otherwise
-     */
-    void setComplexScriptFeaturesEnabled(boolean value) {
-        this.useComplexScriptFeatures = value;
-    }
-
     boolean isComplexScriptFeaturesEnabled() {
-        return useComplexScriptFeatures;
+        return config.isComplexScriptFeaturesEnabled();
     }
 
     /**
@@ -239,7 +184,7 @@ public class FopFactory implements ImageContext {
      * @throws FOPException when the constructor fails
      */
     public Fop newFop(String outputFormat) throws FOPException {
-        return newFop(outputFormat, newFOUserAgent());
+        return newFOUserAgent().newFop(outputFormat);
     }
 
     /**
@@ -256,7 +201,7 @@ public class FopFactory implements ImageContext {
      * @throws FOPException  when the constructor fails
      */
     public Fop newFop(String outputFormat, FOUserAgent userAgent) throws FOPException {
-        return newFop(outputFormat, userAgent, null);
+        return userAgent.newFop(outputFormat, null);
     }
 
     /**
@@ -271,7 +216,7 @@ public class FopFactory implements ImageContext {
      * @throws FOPException when the constructor fails
      */
     public Fop newFop(String outputFormat, OutputStream stream) throws FOPException {
-        return newFop(outputFormat, newFOUserAgent(), stream);
+        return newFOUserAgent().newFop(outputFormat, stream);
     }
 
     /**
@@ -290,11 +235,8 @@ public class FopFactory implements ImageContext {
      * @throws FOPException when the constructor fails
      */
     public Fop newFop(String outputFormat, FOUserAgent userAgent, OutputStream stream)
-                throws FOPException {
-        if (userAgent == null) {
-            throw new NullPointerException("The userAgent parameter must not be null!");
-        }
-        return new Fop(outputFormat, userAgent, stream);
+            throws FOPException {
+        return userAgent.newFop(outputFormat, stream);
     }
 
     /**
@@ -343,11 +285,28 @@ public class FopFactory implements ImageContext {
     }
 
     /**
-     * Returns the image manager.
-     * @return the image manager
+     * Returns the renderer configuration object for a specific renderer given the parser and
+     * configuration to read. The renderer config is cached such that the {@link Configuration} is
+     * only parsed once per renderer, per FopFactory instance.
+     *
+     * @param userAgent the user agent
+     * @param cfg the configuration to be parsed
+     * @param configCreator the parser that creates the config object
+     * @return the config object
+     * @throws FOPException when an error occurs while creating the configuration object
      */
-    public ImageManager getImageManager() {
-        return this.imageManager;
+    public RendererConfig getRendererConfig(FOUserAgent userAgent, Configuration cfg,
+            RendererConfigParser configCreator) throws FOPException {
+        RendererConfig config = rendererConfig.get(configCreator.getMimeType());
+        if (config == null) {
+            try {
+                config = configCreator.build(userAgent, cfg);
+                rendererConfig.put(configCreator.getMimeType(), config);
+            } catch (Exception e) {
+                throw new FOPException(e);
+            }
+        }
+        return config;
     }
 
     /**
@@ -359,12 +318,19 @@ public class FopFactory implements ImageContext {
     }
 
     /**
-     * Sets an explicit LayoutManagerMaker instance which overrides the one
-     * defined by the AreaTreeHandler.
-     * @param lmMaker the LayoutManagerMaker instance
+     * Returns whether accessibility is enabled.
+     * @return true if accessibility is enabled
      */
-    public void setLayoutManagerMakerOverride(LayoutManagerMaker lmMaker) {
-        this.lmMakerOverride = lmMaker;
+    boolean isAccessibilityEnabled() {
+        return config.isAccessibilityEnabled();
+    }
+
+    /**
+     * Returns the image manager.
+     * @return the image manager
+     */
+    public ImageManager getImageManager() {
+        return config.getImageManager();
     }
 
     /**
@@ -372,130 +338,12 @@ public class FopFactory implements ImageContext {
      * @return the overriding LayoutManagerMaker or null
      */
     public LayoutManagerMaker getLayoutManagerMakerOverride() {
-        return this.lmMakerOverride;
+        return config.getLayoutManagerMakerOverride();
     }
 
-    /**
-     * Sets the base URL.
-     * @param base the base URL
-     * @throws MalformedURLException if there's a problem with a file URL
-     */
-    public void setBaseURL(String base) throws MalformedURLException {
-        this.base = foURIResolver.checkBaseURL(base);
-    }
 
-    /**
-     * Returns the base URL.
-     * @return the base URL
-     */
-    public String getBaseURL() {
-        return this.base;
-    }
-
-    /**
-     * Sets the font base URL.
-     * @param fontBase font base URL
-     * @throws MalformedURLException if there's a problem with a file URL
-     * @deprecated use getFontManager().setFontBaseURL(fontBase) instead
-     */
-    @Deprecated
-    public void setFontBaseURL(String fontBase) throws MalformedURLException {
-        getFontManager().setFontBaseURL(fontBase);
-    }
-
-    /**
-     * @return the font base URL
-     * @deprecated use getFontManager().setFontBaseURL(fontBase) instead
-     */
-    @Deprecated
-    public String getFontBaseURL() {
-        return getFontManager().getFontBaseURL();
-    }
-
-    /** @return the hyphen base URL */
-    public String getHyphenBaseURL() {
-        return this.hyphenBase;
-    }
-
-    /**
-     * Sets the hyphen base URL.
-     * @param hyphenBase hythen base URL
-     * @throws MalformedURLException if there's a problem with a file URL
-     * */
-    public void setHyphenBaseURL(final String hyphenBase) throws MalformedURLException {
-        if (hyphenBase != null) {
-            setHyphenationTreeResolver(
-            new HyphenationTreeResolver() {
-                public Source resolve(String href) {
-                    return resolveURI(href, hyphenBase);
-                }
-            });
-        }
-        this.hyphenBase = foURIResolver.checkBaseURL(hyphenBase);
-    }
-
-    /**
-     * @return the hyphPatNames
-     */
-    public Map getHyphPatNames() {
-        return hyphPatNames;
-    }
-
-    /**
-     * @param hyphPatNames the hyphPatNames to set
-     */
-    public void setHyphPatNames(Map hyphPatNames) {
-        if (hyphPatNames == null) {
-            hyphPatNames = new HashMap();
-        }
-        this.hyphPatNames = hyphPatNames;
-    }
-
-    /**
-     * Sets the URI Resolver. It is used for resolving factory-level URIs like hyphenation
-     * patterns and as backup for URI resolution performed during a rendering run.
-     * @param uriResolver the new URI resolver
-     */
-    public void setURIResolver(URIResolver uriResolver) {
-        foURIResolver.setCustomURIResolver(uriResolver);
-    }
-
-    /**
-     * Returns the URI Resolver.
-     * @return the URI Resolver
-     */
-    public URIResolver getURIResolver() {
-        return foURIResolver;
-    }
-
-    /**
-     * Returns the FO URI Resolver.
-     * @return the FO URI Resolver
-     */
-    public FOURIResolver getFOURIResolver() {
-        return foURIResolver;
-    }
-
-    /** @return the HyphenationTreeResolver for resolving user-supplied hyphenation patterns. */
-    public HyphenationTreeResolver getHyphenationTreeResolver() {
-        return this.hyphResolver;
-    }
-
-    /**
-     * Sets the HyphenationTreeResolver to be used for resolving user-supplied hyphenation files.
-     * @param hyphResolver the HyphenationTreeResolver instance
-     */
-    public void setHyphenationTreeResolver(HyphenationTreeResolver hyphResolver) {
-        this.hyphResolver = hyphResolver;
-    }
-
-    /**
-     * Activates strict XSL content model validation for FOP
-     * Default is false (FOP will continue processing where it can)
-     * @param validateStrictly true to turn on strict validation
-     */
-    public void setStrictValidation(boolean validateStrictly) {
-        this.strictFOValidation = validateStrictly;
+    public Map<String, String> getHyphPatNames() {
+        return config.getHyphPatNames();
     }
 
     /**
@@ -503,7 +351,7 @@ public class FopFactory implements ImageContext {
      * @return true of strict validation turned on, false otherwise
      */
     public boolean validateStrictly() {
-        return strictFOValidation;
+        return config.validateStrictly();
     }
 
     /**
@@ -511,48 +359,12 @@ public class FopFactory implements ImageContext {
      *         boundaries (for more info, see the javadoc for the relative member variable)
      */
     public boolean isBreakIndentInheritanceOnReferenceAreaBoundary() {
-        return breakIndentInheritanceOnReferenceAreaBoundary;
+        return config.isBreakIndentInheritanceOnReferenceAreaBoundary();
     }
 
-    /**
-     * Controls whether to enable a feature that breaks indent inheritance when crossing
-     * reference area boundaries.
-     * <p>
-     * This flag controls whether FOP will enable special code that breaks property
-     * inheritance for start-indent and end-indent when the evaluation of the inherited
-     * value would cross a reference area. This is described under
-     * http://wiki.apache.org/xmlgraphics-fop/IndentInheritance as is intended to
-     * improve interoperability with commercial FO implementations and to produce
-     * results that are more in line with the expectation of unexperienced FO users.
-     * Note: Enabling this features violates the XSL specification!
-     * @param value true to enable the feature
-     */
-    public void setBreakIndentInheritanceOnReferenceAreaBoundary(boolean value) {
-        this.breakIndentInheritanceOnReferenceAreaBoundary = value;
-    }
-
-    /**
-     * @return true if kerning on base 14 fonts is enabled
-     * @deprecated use getFontManager().isBase14KerningEnabled() instead
-     */
-    @Deprecated
-    public boolean isBase14KerningEnabled() {
-        return getFontManager().isBase14KerningEnabled();
-    }
-
-    /**
-     * Controls whether kerning is activated on base 14 fonts.
-     * @param value true if kerning should be activated
-     * @deprecated use getFontManager().setBase14KerningEnabled(boolean) instead
-     */
-    @Deprecated
-    public void setBase14KerningEnabled(boolean value) {
-        getFontManager().setBase14KerningEnabled(value);
-    }
-
-    /** @return the resolution for resolution-dependant input */
+    /** @return the resolution for resolution-dependent input */
     public float getSourceResolution() {
-        return this.sourceResolution;
+        return config.getSourceResolution();
     }
 
     /**
@@ -565,22 +377,9 @@ public class FopFactory implements ImageContext {
         return UnitConv.IN2MM / getSourceResolution();
     }
 
-    /**
-     * Sets the source resolution in dpi. This value is used to interpret the pixel size
-     * of source documents like SVG images and bitmap images without resolution information.
-     * @param dpi resolution in dpi
-     */
-    public void setSourceResolution(float dpi) {
-        this.sourceResolution = dpi;
-        if (log.isDebugEnabled()) {
-            log.debug("source-resolution set to: " + sourceResolution
-                    + "dpi (px2mm=" + getSourcePixelUnitToMillimeter() + ")");
-        }
-    }
-
     /** @return the resolution for resolution-dependant output */
     public float getTargetResolution() {
-        return this.targetResolution;
+        return config.getTargetResolution();
     }
 
     /**
@@ -590,25 +389,7 @@ public class FopFactory implements ImageContext {
      * @see #getTargetResolution()
      */
     public float getTargetPixelUnitToMillimeter() {
-        return UnitConv.IN2MM / this.targetResolution;
-    }
-
-    /**
-     * Sets the source resolution in dpi. This value is used to interpret the pixel size
-     * of source documents like SVG images and bitmap images without resolution information.
-     * @param dpi resolution in dpi
-     */
-    public void setTargetResolution(float dpi) {
-        this.targetResolution = dpi;
-    }
-
-    /**
-     * Sets the source resolution in dpi. This value is used to interpret the pixel size
-     * of source documents like SVG images and bitmap images without resolution information.
-     * @param dpi resolution in dpi
-     */
-    public void setSourceResolution(int dpi) {
-        setSourceResolution((float)dpi);
+        return 25.4f / getTargetResolution();
     }
 
     /**
@@ -618,20 +399,7 @@ public class FopFactory implements ImageContext {
      * @return the page-height, as a String
      */
     public String getPageHeight() {
-        return this.pageHeight;
-    }
-
-    /**
-     * Sets the page-height to use as fallback, in case
-     * page-height="auto"
-     *
-     * @param pageHeight    page-height as a String
-     */
-    public void setPageHeight(String pageHeight) {
-        this.pageHeight = pageHeight;
-        if (log.isDebugEnabled()) {
-            log.debug("Default page-height set to: " + pageHeight);
-        }
+        return config.getPageHeight();
     }
 
     /**
@@ -641,40 +409,7 @@ public class FopFactory implements ImageContext {
      * @return the page-width, as a String
      */
     public String getPageWidth() {
-        return this.pageWidth;
-    }
-
-    /**
-     * Sets the page-width to use as fallback, in case
-     * page-width="auto"
-     *
-     * @param pageWidth    page-width as a String
-     */
-    public void setPageWidth(String pageWidth) {
-        this.pageWidth = pageWidth;
-        if (log.isDebugEnabled()) {
-            log.debug("Default page-width set to: " + pageWidth);
-        }
-    }
-
-    /**
-     * Adds a namespace to the set of ignored namespaces.
-     * If FOP encounters a namespace which it cannot handle, it issues a warning except if this
-     * namespace is in the ignored set.
-     * @param namespaceURI the namespace URI
-     */
-    public void ignoreNamespace(String namespaceURI) {
-        this.ignoredNamespaces.add(namespaceURI);
-    }
-
-    /**
-     * Adds a collection of namespaces to the set of ignored namespaces.
-     * If FOP encounters a namespace which it cannot handle, it issues a warning except if this
-     * namespace is in the ignored set.
-     * @param namespaceURIs the namespace URIs
-     */
-    public void ignoreNamespaces(Collection<String> namespaceURIs) {
-        this.ignoredNamespaces.addAll(namespaceURIs);
+        return config.getPageWidth();
     }
 
     /**
@@ -683,53 +418,15 @@ public class FopFactory implements ImageContext {
      * @return true if the namespace is ignored by FOP
      */
     public boolean isNamespaceIgnored(String namespaceURI) {
-        return this.ignoredNamespaces.contains(namespaceURI);
+        return config.isNamespaceIgnored(namespaceURI);
     }
 
     /** @return the set of namespaces that are ignored by FOP */
     public Set<String> getIgnoredNamespace() {
-        return Collections.unmodifiableSet(this.ignoredNamespaces);
+        return config.getIgnoredNamespaces();
     }
 
     //------------------------------------------- Configuration stuff
-
-    /**
-     * Set the user configuration.
-     * @param userConfigFile the configuration file
-     * @throws IOException if an I/O error occurs
-     * @throws SAXException if a parsing error occurs
-     */
-    public void setUserConfig(File userConfigFile) throws SAXException, IOException {
-        config.setUserConfig(userConfigFile);
-    }
-
-    /**
-     * Set the user configuration from an URI.
-     * @param uri the URI to the configuration file
-     * @throws IOException if an I/O error occurs
-     * @throws SAXException if a parsing error occurs
-     */
-    public void setUserConfig(String uri) throws SAXException, IOException {
-        config.setUserConfig(uri);
-    }
-
-    /**
-     * Set the user configuration.
-     * @param userConfig configuration
-     * @throws FOPException if a configuration problem occurs
-     */
-    public void setUserConfig(Configuration userConfig) throws FOPException {
-        config.setUserConfig(userConfig);
-    }
-
-    /**
-     * Set the base URI for the user configuration
-     * Useful for programmatic configurations
-     * @param baseURI the base URI
-     */
-    public void setUserConfigBaseURI(URI baseURI) {
-        config.setBaseURI(baseURI);
-    }
 
     /**
      * Get the user configuration.
@@ -741,79 +438,20 @@ public class FopFactory implements ImageContext {
 
     /**
      * Is the user configuration to be validated?
-     * @param strictUserConfigValidation strict user config validation
-     */
-    public void setStrictUserConfigValidation(boolean strictUserConfigValidation) {
-        this.strictUserConfigValidation = strictUserConfigValidation;
-        this.foURIResolver.setThrowExceptions(strictUserConfigValidation);
-    }
-
-    /**
-     * Is the user configuration to be validated?
      * @return if the user configuration should be validated
      */
     public boolean validateUserConfigStrictly() {
-        return this.strictUserConfigValidation;
+        return config.validateUserConfigStrictly();
     }
 
     //------------------------------------------- Font related stuff
-
-    /**
-     * Whether or not to cache results of font triplet detection/auto-config
-     * @param useCache use cache or not
-     * @deprecated use getFontManager().setUseCache(boolean) instead
-     */
-    @Deprecated
-    public void setUseCache(boolean useCache) {
-        getFontManager().setUseCache(useCache);
-    }
-
-    /**
-     * Cache results of font triplet detection/auto-config?
-     * @return whether this factory is uses the cache
-     * @deprecated use getFontManager().useCache() instead
-     */
-    @Deprecated
-    public boolean useCache() {
-        return getFontManager().useCache();
-    }
-
-    /**
-     * Returns the font cache instance used by this factory.
-     * @return the font cache
-     * @deprecated use getFontManager().getFontCache() instead
-     */
-    @Deprecated
-    public FontCache getFontCache() {
-        return getFontManager().getFontCache();
-    }
 
     /**
      * Returns the font manager.
      * @return the font manager
      */
     public FontManager getFontManager() {
-        return this.fontManager;
-    }
-
-    /**
-     * Attempts to resolve the given URI.
-     * Will use the configured resolver and if not successful fall back
-     * to the default resolver.
-     * @param href URI to access
-     * @param baseUri the base URI to resolve against
-     * @return A {@link javax.xml.transform.Source} object, or null if the URI
-     * cannot be resolved.
-     * @see org.apache.fop.apps.FOURIResolver
-     */
-    public Source resolveURI(String href, String baseUri) {
-        Source source = null;
-        try {
-            source = foURIResolver.resolve(href, baseUri);
-        } catch (TransformerException e) {
-            log.error("Attempt to resolve URI '" + href + "' failed: ", e);
-        }
-        return source;
+        return config.getFontManager();
     }
 
     /**
@@ -825,5 +463,4 @@ public class FopFactory implements ImageContext {
     public ColorSpaceCache getColorSpaceCache() {
         return this.colorSpaceCache;
     }
-
 }

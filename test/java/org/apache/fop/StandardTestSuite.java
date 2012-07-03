@@ -26,8 +26,6 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.apache.fop.afp.fonts.CharactersetEncoderTestCase;
 import org.apache.fop.afp.parser.MODCAParserTestCase;
 import org.apache.fop.area.ViewportTestSuite;
-import org.apache.fop.fonts.DejaVuLGCSerifTestCase;
-import org.apache.fop.fonts.FontEventProcessingTestCase;
 import org.apache.fop.fonts.truetype.GlyfTableTestCase;
 import org.apache.fop.fonts.type1.AFMParserTestCase;
 import org.apache.fop.fonts.type1.AdobeStandardEncodingTestCase;
@@ -58,7 +56,6 @@ import org.apache.fop.traits.MinOptMaxTestCase;
         PDFEncodingTestCase.class,
         PDFCMapTestCase.class,
         PDFsRGBSettingsTestCase.class,
-        DejaVuLGCSerifTestCase.class,
         RichTextFormatTestSuite.class,
         ImageLoaderTestCase.class,
         ImagePreloaderTestCase.class,
@@ -78,8 +75,8 @@ import org.apache.fop.traits.MinOptMaxTestCase;
         MinOptMaxTestCase.class,
         AdobeStandardEncodingTestCase.class,
         AFMParserTestCase.class,
-        FontEventProcessingTestCase.class,
-        org.apache.fop.render.intermediate.IFStructureTreeBuilderTestCase.class
+        org.apache.fop.render.intermediate.IFStructureTreeBuilderTestCase.class,
+        org.apache.fop.fonts.FontsTestSuite.class
 })
 public class StandardTestSuite {
 }

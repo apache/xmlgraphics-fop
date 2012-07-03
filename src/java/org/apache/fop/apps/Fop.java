@@ -66,12 +66,12 @@ public class Fop {
      * @throws FOPException if setting up the DefaultHandler fails
      */
     Fop(String outputFormat, FOUserAgent ua, OutputStream stream) throws FOPException {
+        if (ua == null) {
+            throw new FOPException("Cannot create a new Fop instance without a User Agent.");
+        }
         this.outputFormat = outputFormat;
 
         foUserAgent = ua;
-        if (foUserAgent == null) {
-            foUserAgent = FopFactory.newInstance().newFOUserAgent();
-        }
 
         this.stream = stream;
 

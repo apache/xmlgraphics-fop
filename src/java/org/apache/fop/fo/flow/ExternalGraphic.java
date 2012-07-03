@@ -75,7 +75,7 @@ public class ExternalGraphic extends AbstractGraphics {
         //Additional processing: obtain the image's intrinsic size and baseline information
         url = URISpecification.getURL(src);
         FOUserAgent userAgent = getUserAgent();
-        ImageManager manager = userAgent.getFactory().getImageManager();
+        ImageManager manager = userAgent.getImageManager();
         ImageInfo info = null;
         try {
             info = manager.getImageInfo(url, userAgent.getImageSessionContext());

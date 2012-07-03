@@ -287,7 +287,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
                 throws IOException {
         final String uri = form.getImageURI();
 
-        ImageManager manager = userAgent.getFactory().getImageManager();
+        ImageManager manager = userAgent.getImageManager();
         ImageInfo info = null;
         try {
             ImageSessionContext sessionContext = userAgent.getImageSessionContext();
@@ -299,7 +299,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
 
             ImageFlavor[] flavors;
             ImageHandlerRegistry imageHandlerRegistry
-                = userAgent.getFactory().getImageHandlerRegistry();
+                = userAgent.getImageHandlerRegistry();
             flavors = imageHandlerRegistry.getSupportedFlavors(formContext);
 
             Map hints = ImageUtil.getDefaultHints(sessionContext);

@@ -38,7 +38,6 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
-
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -48,6 +47,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.fop.render.bitmap.BitmapRendererEventProducer;
 import org.apache.fop.render.bitmap.MultiFileRenderingUtil;
 import org.apache.fop.render.intermediate.DelegatingFragmentContentHandler;
+import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.util.GenerationHelperContentHandler;
@@ -73,8 +74,8 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
     /**
      * Default constructor.
      */
-    public SVGDocumentHandler() {
-        //nop
+    public SVGDocumentHandler(IFContext context) {
+        super(context);
     }
 
     /** {@inheritDoc} */

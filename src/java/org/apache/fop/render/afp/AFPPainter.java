@@ -51,8 +51,7 @@ import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.PresentationTextObject;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
-import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
-import org.apache.fop.afp.util.ResourceAccessor;
+import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.Typeface;
@@ -204,8 +203,8 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
             //Do we need to embed an external page segment?
             if (pageSegment.getURI() != null) {
-                ResourceAccessor accessor = new DefaultFOPResourceAccessor (
-                        getUserAgent(), null, null);
+                AFPResourceAccessor accessor = new AFPResourceAccessor(
+                        getDocumentHandler().getUserAgent().getResourceResolver());
                 try {
                     URI resourceUri = new URI(pageSegment.getURI());
                     getDocumentHandler().getResourceManager().createIncludedResourceFromExternal(

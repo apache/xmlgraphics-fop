@@ -23,7 +23,7 @@ package org.apache.fop.fo.extensions.svg;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.net.URL;
+import java.net.URI;
 
 import org.w3c.dom.Element;
 
@@ -71,12 +71,10 @@ public class SVGElement extends SVGObj {
         /* if width and height are zero, get the bounds of the content. */
 
         try {
-            URL baseURL = new URL(getUserAgent().getBaseURL() == null
-                            ? new java.io.File("").toURI().toURL().toExternalForm()
-                            : getUserAgent().getBaseURL());
-            if (baseURL != null) {
+            URI baseUri = getUserAgent().getResourceResolver().getBaseURI();
+            if (baseUri != null) {
                 SVGOMDocument svgdoc = (SVGOMDocument)doc;
-                svgdoc.setURLObject(baseURL);
+                svgdoc.setURLObject(baseUri.toURL());
                 //The following line should not be called to leave FOP compatible to Batik 1.6.
                 //svgdoc.setDocumentURI(baseURL.toString());
             }

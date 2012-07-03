@@ -19,7 +19,9 @@
 
 package org.apache.fop.fonts.truetype;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Comparator;
@@ -33,6 +35,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -2013,12 +2016,14 @@ public class TTFFile {
      * @param args The command line arguments
      */
     public static void main(String[] args) {
+        InputStream stream = null;
         try {
             boolean useKerning = true;
             boolean useAdvanced = true;
             TTFFile ttfFile = new TTFFile(useKerning, useAdvanced);
 
-            FontFileReader reader = new FontFileReader(args[0]);
+            stream = new FileInputStream(args[0]);
+            FontFileReader reader = new FontFileReader(stream);
 
             String name = null;
             if (args.length >= 2) {
@@ -2031,6 +2036,8 @@ public class TTFFile {
         } catch (IOException ioe) {
             System.err.println("Problem reading font: " + ioe.toString());
             ioe.printStackTrace(System.err);
+        } finally {
+            IOUtils.closeQuietly(stream);
         }
     }
 }

@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.bitmap;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
 import org.apache.fop.render.intermediate.IFContext;
@@ -33,10 +32,8 @@ public class TIFFDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
     private static final String[] MIMES = new String[] {MimeConstants.MIME_TIFF};
 
     /** {@inheritDoc} */
-    public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
-        TIFFDocumentHandler handler = new TIFFDocumentHandler();
-        handler.setContext(new IFContext(ua));
-        return handler;
+    public IFDocumentHandler makeIFDocumentHandler(IFContext ifContext) {
+        return new TIFFDocumentHandler(ifContext);
     }
 
     /** {@inheritDoc} */

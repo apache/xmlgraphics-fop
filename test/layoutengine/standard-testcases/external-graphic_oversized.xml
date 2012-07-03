@@ -34,7 +34,7 @@
           <fo:block font-size="8pt">This first block is only to force an infinite loop if the image is not scaled down.</fo:block>
           <!-- TODO If you remove the above block, the image is placed on the page although it's too big. No warnings. -->
           <fo:block>
-            <fo:external-graphic src="../../resources/images/big-image.png" 
+            <fo:external-graphic src="../resources/images/big-image.png"
                 inline-progression-dimension.maximum="100%" block-progression-dimension.maximum="100%"
                 content-width="scale-to-fit" content-height="scale-to-fit" overflow="hidden"/>
           </fo:block>
