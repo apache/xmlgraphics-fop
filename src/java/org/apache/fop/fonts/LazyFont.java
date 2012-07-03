@@ -46,7 +46,7 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     private final boolean useKerning;
     private final boolean useAdvanced;
     private final EncodingMode encodingMode;
-    private EmbeddingMode embeddingMode;
+    private final EmbeddingMode embeddingMode;
     private final String subFontName;
     private final boolean embedded;
     private final InternalResourceResolver resourceResolver;
