@@ -80,14 +80,14 @@
         <created>2012-07-02</created>
         <revision>1.1rc1</revision>
       </Version>
-    </release
+    </release>
     <release>
       <Version>
         <name>Current release (stable)</name>
         <created>2010-07-21</created>
         <revision>1.0</revision>
       </Version>
-    </release
+    </release>
     <release>
       <Version>
         <name>Previous release (stable)</name>
