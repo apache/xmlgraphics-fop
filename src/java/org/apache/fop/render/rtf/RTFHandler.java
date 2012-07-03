@@ -97,7 +97,6 @@ import org.apache.fop.fo.properties.EnumLength;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.layoutmgr.inline.ImageLayout;
 import org.apache.fop.layoutmgr.table.ColumnSetup;
-import org.apache.fop.render.DefaultFontResolver;
 import org.apache.fop.render.RendererEventProducer;
 import org.apache.fop.render.rtf.rtflib.exceptions.RtfException;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
@@ -169,7 +168,7 @@ public class RTFHandler extends FOEventHandler {
         bDefer = true;
 
         boolean base14Kerning = false;
-        FontSetup.setup(fontInfo, null, new DefaultFontResolver(userAgent), base14Kerning);
+        FontSetup.setup(fontInfo, null, userAgent.getResourceResolver(), base14Kerning);
     }
 
     /**
@@ -1086,7 +1085,7 @@ public class RTFHandler extends FOEventHandler {
 
             //set image data
             FOUserAgent userAgent = eg.getUserAgent();
-            ImageManager manager = userAgent.getFactory().getImageManager();
+            ImageManager manager = userAgent.getImageManager();
             info = manager.getImageInfo(uri, userAgent.getImageSessionContext());
 
             putGraphic(eg, info);
@@ -1140,7 +1139,7 @@ public class RTFHandler extends FOEventHandler {
             ImageXMLDOM image = new ImageXMLDOM(info, doc, ns);
 
             FOUserAgent userAgent = ifo.getUserAgent();
-            ImageManager manager = userAgent.getFactory().getImageManager();
+            ImageManager manager = userAgent.getImageManager();
             Map hints = ImageUtil.getDefaultHints(ua.getImageSessionContext());
             Image converted = manager.convertImage(image, FLAVORS, hints);
             putGraphic(ifo, converted);
@@ -1170,7 +1169,7 @@ public class RTFHandler extends FOEventHandler {
             throws IOException {
         try {
             FOUserAgent userAgent = abstractGraphic.getUserAgent();
-            ImageManager manager = userAgent.getFactory().getImageManager();
+            ImageManager manager = userAgent.getImageManager();
             ImageSessionContext sessionContext = userAgent.getImageSessionContext();
             Map hints = ImageUtil.getDefaultHints(sessionContext);
             Image image = manager.getImage(info, FLAVORS, hints, sessionContext);
@@ -1701,7 +1700,7 @@ public class RTFHandler extends FOEventHandler {
 
             Region regionBefore = pagemaster.getRegion(Constants.FO_REGION_BEFORE);
             if (regionBefore != null) {
-                FONode staticBefore = (FONode) pageSequence.getFlowMap().get(
+                FONode staticBefore = pageSequence.getFlowMap().get(
                         regionBefore.getRegionName());
                 if (staticBefore != null) {
                     recurseFONode(staticBefore);
@@ -1709,7 +1708,7 @@ public class RTFHandler extends FOEventHandler {
             }
             Region regionAfter = pagemaster.getRegion(Constants.FO_REGION_AFTER);
             if (regionAfter != null) {
-                FONode staticAfter = (FONode) pageSequence.getFlowMap().get(
+                FONode staticAfter = pageSequence.getFlowMap().get(
                         regionAfter.getRegionName());
                 if (staticAfter != null) {
                     recurseFONode(staticAfter);

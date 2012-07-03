@@ -39,9 +39,8 @@ public class CharactersetEncoderTestCase {
 
     @Before
     public void setUp() {
-        singlebyteEncoder = CharactersetEncoder.newInstance("cp500", CharacterSetType.SINGLE_BYTE);
-        doublebyteEncoder = CharactersetEncoder.newInstance("cp937",
-                CharacterSetType.DOUBLE_BYTE_LINE_DATA);
+        singlebyteEncoder = CharacterSetType.SINGLE_BYTE.getEncoder("cp500");
+        doublebyteEncoder = CharacterSetType.DOUBLE_BYTE_LINE_DATA.getEncoder("cp937");
     }
 
     // This is just an arbitrary CJK string

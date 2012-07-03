@@ -19,6 +19,7 @@
 
 package org.apache.fop.threading;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -56,7 +57,7 @@ import org.apache.fop.render.intermediate.IFUtil;
 public class IFProcessorImpl extends AbstractLogEnabled
             implements Processor, Configurable, Initializable {
 
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private FopFactory fopFactory;
     private TransformerFactory factory = TransformerFactory.newInstance();
     private String userconfig;
     private String mime;
@@ -73,7 +74,9 @@ public class IFProcessorImpl extends AbstractLogEnabled
     public void initialize() throws Exception {
         if (this.userconfig != null) {
             getLogger().debug("Setting user config: " + userconfig);
-            fopFactory.setUserConfig(this.userconfig);
+            fopFactory = FopFactory.newInstance(new File(this.userconfig));
+        } else {
+            fopFactory = FopFactory.newInstance(new File(".").toURI());
         }
     }
 
@@ -82,7 +85,6 @@ public class IFProcessorImpl extends AbstractLogEnabled
     public void process(Source src, Templates templates, OutputStream out)
                 throws org.apache.fop.apps.FOPException, java.io.IOException, IFException {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-        foUserAgent.setBaseURL(src.getSystemId());
         try {
             URL url = new URL(src.getSystemId());
             String filename = FilenameUtils.getName(url.getPath());

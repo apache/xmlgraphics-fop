@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.fonts.CharactersetEncoder.EncodedChars;
-import org.apache.fop.afp.util.ResourceAccessor;
+import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.afp.util.StringUtils;
 
 /**
@@ -77,7 +77,7 @@ public class CharacterSet {
     protected final String name;
 
     /** The path to the installed fonts */
-    private final ResourceAccessor accessor;
+    private final AFPResourceAccessor accessor;
 
     /** The current orientation (currently only 0 is supported by FOP) */
     private final String currentOrientation = "0";
@@ -100,7 +100,7 @@ public class CharacterSet {
      * @param eventProducer for handling AFP related events
      */
     CharacterSet(String codePage, String encoding, CharacterSetType charsetType, String name,
-            ResourceAccessor accessor, AFPEventProducer eventProducer) {
+            AFPResourceAccessor accessor, AFPEventProducer eventProducer) {
         if (name.length() > MAX_NAME_LEN) {
             String msg = "Character set name '" + name + "' must be a maximum of "
                 + MAX_NAME_LEN + " characters";
@@ -115,7 +115,7 @@ public class CharacterSet {
         }
         this.codePage = codePage;
         this.encoding = encoding;
-        this.encoder = CharactersetEncoder.newInstance(encoding, charsetType);
+        this.encoder = charsetType.getEncoder(encoding);
         this.accessor = accessor;
 
         this.characterSetOrientations = new HashMap<String, CharacterSetOrientation>(4);
@@ -211,7 +211,7 @@ public class CharacterSet {
      * Returns the resource accessor to load the font resources with.
      * @return the resource accessor to load the font resources with
      */
-    public ResourceAccessor getResourceAccessor() {
+    public AFPResourceAccessor getResourceAccessor() {
         return this.accessor;
     }
 

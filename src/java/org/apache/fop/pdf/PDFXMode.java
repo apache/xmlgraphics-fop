@@ -20,12 +20,12 @@
 package org.apache.fop.pdf;
 
 /** Enum class for PDF/X modes. */
-public final class PDFXMode {
+public enum PDFXMode {
 
     /** PDF/X disabled */
-    public static final PDFXMode DISABLED = new PDFXMode("PDF/X disabled");
+    DISABLED("PDF/X disabled"),
     /** PDF/X-3:2003 enabled */
-    public static final PDFXMode PDFX_3_2003 = new PDFXMode("PDF/X-3:2003");
+    PDFX_3_2003("PDF/X-3:2003");
 
     private String name;
 
@@ -47,7 +47,7 @@ public final class PDFXMode {
      * @param s the string
      * @return the PDFAMode enum object (DISABLED will be returned if no match is found)
      */
-    public static PDFXMode valueOf(String s) {
+    public static PDFXMode getValueOf(String s) {
         if (PDFX_3_2003.getName().equalsIgnoreCase(s)) {
             return PDFX_3_2003;
         } else {

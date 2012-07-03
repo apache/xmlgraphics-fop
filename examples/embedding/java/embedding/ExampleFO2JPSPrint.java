@@ -53,7 +53,7 @@ import org.apache.fop.render.print.PageableRenderer;
 public class ExampleFO2JPSPrint {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
     private DocPrintJob createDocPrintJob() {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(

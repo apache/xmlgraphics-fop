@@ -24,6 +24,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.net.URI;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.sax.SAXResult;
@@ -56,9 +57,14 @@ import org.apache.fop.util.DefaultErrorListener;
 public class BitmapProducerJava2D extends AbstractBitmapProducer implements Configurable {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private final FopFactory fopFactory;
 
     private boolean deleteTempFiles;
+
+    public BitmapProducerJava2D(URI baseUri) {
+        super(baseUri);
+        fopFactory = FopFactory.newInstance(baseUri);
+    }
 
     /** @see org.apache.avalon.framework.configuration.Configurable */
     public void configure(Configuration cfg) throws ConfigurationException {
@@ -70,7 +76,6 @@ public class BitmapProducerJava2D extends AbstractBitmapProducer implements Conf
         try {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setTargetResolution(context.getTargetResolution());
-            userAgent.setBaseURL(src.getParentFile().toURI().toURL().toString());
 
             File outputFile = new File(context.getTargetDir(),
                     src.getName() + "." + index + ".java2d.png");

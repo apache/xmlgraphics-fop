@@ -32,4 +32,6 @@ public interface MimeConstants extends org.apache.xmlgraphics.util.MimeConstants
     String MIME_FOP_AREA_TREE   = "application/X-fop-areatree";
     /** Apache FOP's intermediate format XML */
     String MIME_FOP_IF          = "application/X-fop-intermediate-format";
+    /** Bitmap images */
+    String MIME_BITMAP          = "image/x-bitmap";
 }

@@ -29,6 +29,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.util.LogUtil;
 
 /**
@@ -234,9 +236,9 @@ public final class FontCache implements Serializable {
      */
     protected static String getCacheKey(EmbedFontInfo fontInfo) {
         if (fontInfo != null) {
-            String embedFile = fontInfo.getEmbedFile();
-            String metricsFile = fontInfo.getMetricsFile();
-            return (embedFile != null) ? embedFile : metricsFile;
+            URI embedFile = fontInfo.getEmbedURI();
+            URI metricsFile = fontInfo.getMetricsURI();
+            return (embedFile != null) ? embedFile.toASCIIString() : metricsFile.toASCIIString();
         }
         return null;
     }
@@ -318,7 +320,7 @@ public final class FontCache implements Serializable {
      * @param fontInfo
      *            font info
      */
-    public void addFont(EmbedFontInfo fontInfo) {
+    public void addFont(EmbedFontInfo fontInfo, InternalResourceResolver resourceResolver) {
         String cacheKey = getCacheKey(fontInfo);
         synchronized (changeLock) {
             CachedFontFile cachedFontFile;
@@ -329,10 +331,9 @@ public final class FontCache implements Serializable {
                 }
             } else {
                 // try and determine modified date
-                File fontFile = getFileFromUrls(new String[] {
-                        fontInfo.getEmbedFile(), fontInfo.getMetricsFile() });
-                long lastModified = (fontFile != null ? fontFile.lastModified()
-                        : -1);
+                URI fontUri = resourceResolver.resolveFromBase(fontInfo.getEmbedURI());
+                File fontFile = new File(fontUri);
+                long lastModified = fontFile.lastModified();
                 cachedFontFile = new CachedFontFile(lastModified);
                 if (log.isTraceEnabled()) {
                     log.trace("Font added to cache: " + cacheKey);
@@ -467,8 +468,9 @@ public final class FontCache implements Serializable {
      *            the URL
      * @return the last modified date/time
      */
-    public static long getLastModified(URL url) {
+    public static long getLastModified(URI uri) {
         try {
+            URL url = uri.toURL();
             URLConnection conn = url.openConnection();
             try {
                 return conn.getLastModified();

@@ -68,7 +68,8 @@ public class FontListGenerator {
         IFDocumentHandlerConfigurator configurator = documentHandler.getConfigurator();
 
         FontInfo fontInfo = new FontInfo();
-        configurator.setupFontInfo(documentHandler, fontInfo);
+        configurator.setupFontInfo(documentHandler.getMimeType(), fontInfo);
+        documentHandler.setFontInfo(fontInfo);
         return fontInfo;
     }
 

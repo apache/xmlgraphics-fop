@@ -50,7 +50,7 @@ import embedding.model.ProjectTeam;
 public class ExampleStamp {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
     /**
      * Stamps an area tree XML file and renders it to a PDF file.

@@ -20,13 +20,10 @@
 package org.apache.fop.fonts;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.List;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.FontTriplet.Matcher;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 
@@ -38,14 +35,13 @@ import org.apache.fop.fonts.substitute.FontSubstitutions;
  * font substitution, referenced fonts and similar.
  */
 public class FontManager {
-    /** Use cache (record previously detected font triplet info) */
-    public static final boolean DEFAULT_USE_CACHE = true;
 
-    /** The base URL for all font URL resolutions. */
-    private String fontBase = null;
+    /** The resource resolver */
+    private InternalResourceResolver resourceResolver;
 
-    /** Font cache to speed up auto-font configuration (null if disabled) */
-    private FontCache fontCache = null;
+    private final FontDetector fontDetector;
+
+    private FontCacheManager fontCacheManager;
 
     /** Font substitutions */
     private FontSubstitutions fontSubstitutions = null;
@@ -56,33 +52,33 @@ public class FontManager {
     /** FontTriplet matcher for fonts that shall be referenced rather than embedded. */
     private FontTriplet.Matcher referencedFontsMatcher;
 
-    /** Enables/disables the use of font caching */
-    private boolean useCache = DEFAULT_USE_CACHE;
-
     /** Provides a font cache file path **/
     private File cacheFile;
 
     /**
      * Main constructor
+     *
+     * @param resourceResolver the URI resolver
+     * @param fontDetector the font detector
+     * @param fontCacheManager the font cache manager
      */
-    public FontManager() {
+    public FontManager(InternalResourceResolver resourceResolver, FontDetector fontDetector,
+            FontCacheManager fontCacheManager) {
+        this.resourceResolver = resourceResolver;
+        this.fontDetector = fontDetector;
+        this.fontCacheManager = fontCacheManager;
     }
 
     /**
-     * Sets the font base URL.
-     * @param fontBase font base URL
-     * @throws MalformedURLException if there's a problem with a URL
+     * Sets the font resource resolver
+     * @param resourceResolver resource resolver
      */
-    public void setFontBaseURL(String fontBase) throws MalformedURLException {
-        this.fontBase = fontBase;
+    public void setResourceResolver(InternalResourceResolver resourceResolver) {
+        this.resourceResolver = resourceResolver;
     }
 
-    /**
-     * Returns the font base URL.
-     * @return the font base URL (or null if none was set)
-     */
-    public String getFontBaseURL() {
-        return this.fontBase;
+    public InternalResourceResolver getResourceResolver() {
+        return this.resourceResolver;
     }
 
     /** @return true if kerning on base 14 fonts is enabled */
@@ -130,29 +126,22 @@ public class FontManager {
      * @return the font cache file
      */
     public File getCacheFile() {
+        return getCacheFile(false);
+    }
+
+    private File getCacheFile(boolean writable) {
         if (cacheFile != null) {
-            return this.cacheFile;
+            return cacheFile;
         }
-        return FontCache.getDefaultCacheFile(false);
+        return FontCache.getDefaultCacheFile(writable);
     }
 
     /**
      * Whether or not to cache results of font triplet detection/auto-config
      * @param useCache use cache or not
      */
-    public void setUseCache(boolean useCache) {
-        this.useCache = useCache;
-        if (!useCache) {
-            this.fontCache = null;
-        }
-    }
-
-    /**
-     * Cache results of font triplet detection/auto-config?
-     * @return true if this font manager uses the cache
-     */
-    public boolean useCache() {
-        return useCache;
+    public void disableFontCache() {
+        fontCacheManager = FontCacheManagerFactory.createDisabled();
     }
 
     /**
@@ -160,19 +149,7 @@ public class FontManager {
      * @return the font cache
      */
     public FontCache getFontCache() {
-        if (fontCache == null) {
-            if (useCache) {
-                if (cacheFile != null) {
-                    fontCache = FontCache.loadFrom(cacheFile);
-                } else {
-                    fontCache = FontCache.load();
-                }
-                if (fontCache == null) {
-                    fontCache = new FontCache();
-                }
-            }
-        }
-        return fontCache;
+        return fontCacheManager.load(getCacheFile());
     }
 
     /**
@@ -181,31 +158,16 @@ public class FontManager {
      * @throws FOPException fop exception
      */
     public void saveCache() throws FOPException {
-        if (useCache) {
-            if (fontCache != null && fontCache.hasChanged()) {
-                if (cacheFile != null) {
-                    fontCache.saveTo(cacheFile);
-                } else {
-                    fontCache.save();
-                }
-            }
-        }
+        fontCacheManager.save(getCacheFile());
     }
 
     /**
      * Deletes the current FontCache file
      * @return Returns true if the font cache file was successfully deleted.
+     * @throws FOPException -
      */
-    public boolean deleteCache() {
-        boolean deleted = false;
-        if (useCache) {
-            if (cacheFile != null) {
-                deleted = cacheFile.delete();
-            } else {
-                deleted = FontCache.getDefaultCacheFile(true).delete();
-            }
-        }
-        return deleted;
+    public void deleteCache() throws FOPException {
+        fontCacheManager.delete(getCacheFile(true));
     }
 
     /**
@@ -222,34 +184,6 @@ public class FontManager {
         }
         // Make any defined substitutions in the font info
         getFontSubstitutions().adjustFontInfo(fontInfo);
-    }
-
-    /**
-     * Minimum implemenation of FontResolver.
-     */
-    public static class MinimalFontResolver implements FontResolver {
-        private boolean useComplexScriptFeatures;
-        MinimalFontResolver(boolean useComplexScriptFeatures) {
-            this.useComplexScriptFeatures = useComplexScriptFeatures;
-        }
-        /** {@inheritDoc} */
-        public Source resolve(String href) {
-            //Minimal functionality here
-            return new StreamSource(href);
-        }
-        /** {@inheritDoc} */
-        public boolean isComplexScriptFeaturesEnabled() {
-            return useComplexScriptFeatures;
-        }
-    }
-
-    /**
-     * Create minimal font resolver.
-     * @param useComplexScriptFeatures true if complex script features enabled
-     * @return a new FontResolver to be used by the font subsystem
-     */
-    public static FontResolver createMinimalFontResolver(boolean useComplexScriptFeatures) {
-        return new MinimalFontResolver ( useComplexScriptFeatures );
     }
 
     /**
@@ -296,6 +230,23 @@ public class FontManager {
                     break;
                 }
             }
+        }
+    }
+
+    /**
+     * Detect fonts from the operating system via FOPs autodetect mechanism.
+     *
+     * @param autoDetectFonts if autodetect has been enabled
+     * @param fontAdder the font adding mechanism
+     * @param strict whether to enforce strict validation
+     * @param listener the listener for font related events
+     * @param fontInfoList a list of font info objects
+     * @throws FOPException if an exception was thrown auto-detecting fonts
+     */
+    public void autoDetectFonts(boolean autoDetectFonts, FontAdder fontAdder, boolean strict,
+            FontEventListener  listener, List<EmbedFontInfo> fontInfoList) throws FOPException {
+        if (autoDetectFonts) {
+            fontDetector.detect(this, fontAdder, strict, listener, fontInfoList);
         }
     }
 }

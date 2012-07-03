@@ -132,7 +132,7 @@ public class AreaTreeParser {
      */
     public ContentHandler getContentHandler(AreaTreeModel treeModel, FOUserAgent userAgent) {
         ElementMappingRegistry elementMappingRegistry
-            = userAgent.getFactory().getElementMappingRegistry();
+            = userAgent.getElementMappingRegistry();
         return new Handler(treeModel, userAgent, elementMappingRegistry);
     }
 
@@ -292,7 +292,7 @@ public class AreaTreeParser {
                     }
                 } else {
                     ContentHandlerFactoryRegistry registry
-                            = userAgent.getFactory().getContentHandlerFactoryRegistry();
+                            = userAgent.getContentHandlerFactoryRegistry();
                     ContentHandlerFactory factory = registry.getFactory(uri);
                     if (factory != null) {
                         delegate = factory.createContentHandler();
@@ -1102,7 +1102,7 @@ public class AreaTreeParser {
                             bkg.setURL(uri);
 
                             try {
-                                ImageManager manager = userAgent.getFactory().getImageManager();
+                                ImageManager manager = userAgent.getImageManager();
                                 ImageSessionContext sessionContext
                                     = userAgent.getImageSessionContext();
                                 ImageInfo info = manager.getImageInfo(uri, sessionContext);

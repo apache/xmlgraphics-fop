@@ -19,13 +19,27 @@
 
 package org.apache.fop.config;
 
+import java.io.IOException;
+
+import org.xml.sax.SAXException;
+
+import org.apache.fop.apps.FopConfBuilder;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.PDFRendererConfBuilder;
+
 /**
  * this font has a malformed metrics-url
  */
 public class FontMetricsUrlMalformedTestCase extends BaseDestructiveUserConfigTest {
 
-    @Override
-    public String getUserConfigFilename() {
-        return "test_font_metricsurl_malformed.xconf";
+    public FontMetricsUrlMalformedTestCase() throws SAXException, IOException {
+        super(new FopConfBuilder().setStrictValidation(true)
+                                  .startRendererConfig(PDFRendererConfBuilder.class)
+                                      .startFontsConfig()
+                                          .startFont("badprotocol:test/glb12.ttf.xml", null)
+                                              .addTriplet("Gladiator", "normal", "normal")
+                                          .endFont()
+                                      .endFontConfig()
+                                  .endRendererConfig().build());
     }
 }

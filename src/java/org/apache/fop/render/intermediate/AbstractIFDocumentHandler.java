@@ -30,18 +30,15 @@ import org.apache.fop.apps.FOUserAgent;
  */
 public abstract class AbstractIFDocumentHandler implements IFDocumentHandler {
 
-    private IFContext ifContext;
+    private final IFContext ifContext;
 
     /**
      * Default constructor.
      */
-    public AbstractIFDocumentHandler() {
-    }
-
-    /** {@inheritDoc} */
-    public void setContext(IFContext context) {
+    protected AbstractIFDocumentHandler(IFContext context) {
         this.ifContext = context;
     }
+
 
     /** {@inheritDoc} */
     public IFContext getContext() {

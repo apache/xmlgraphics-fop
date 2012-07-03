@@ -63,7 +63,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
     }
 
     PDFDocument getPDFDoc() {
-        return this.documentHandler.pdfDoc;
+        return this.documentHandler.getPDFDocument();
     }
 
     /** {@inheritDoc} */
@@ -100,7 +100,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
     /** {@inheritDoc} */
     public void renderLink(Link link) throws IFException {
         Rectangle targetRect = link.getTargetRect();
-        int pageHeight = documentHandler.currentPageRef.getPageDimension().height;
+        int pageHeight = documentHandler.getCurrentPageRef().getPageDimension().height;
         Rectangle2D targetRect2D = new Rectangle2D.Double(
                 targetRect.getMinX() / 1000.0,
                 (pageHeight - targetRect.getMinY() - targetRect.getHeight()) / 1000.0,
@@ -116,7 +116,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
             if (documentHandler.getUserAgent().isAccessibilityEnabled() && structure != null) {
                 documentHandler.getLogicalStructureHandler().addLinkContentItem(pdfLink, structure);
             }
-            documentHandler.currentPage.addAnnotation(pdfLink);
+            documentHandler.getCurrentPage().addAnnotation(pdfLink);
         }
     }
 

@@ -19,6 +19,8 @@
 
 package org.apache.fop.visual;
 
+import java.net.URI;
+
 import org.apache.fop.apps.MimeConstants;
 
 /**
@@ -32,7 +34,8 @@ public class BitmapProducerPS extends AbstractPSPDFBitmapProducer {
     /**
      * Default constructor.
      */
-    public BitmapProducerPS() {
+    public BitmapProducerPS(URI baseUri) {
+        super(baseUri);
         this.targetFormat = MimeConstants.MIME_POSTSCRIPT;
     }
 

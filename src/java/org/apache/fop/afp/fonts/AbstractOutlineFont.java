@@ -32,13 +32,12 @@ public abstract class AbstractOutlineFont extends AFPFont {
     /**
      * Constructor for an outline font.
      *
-     * @param name
-     *            the name of the font
-     * @param charSet
-     *            the chracter set
+     * @param name the name of the font
+     * @param embeddable sets whether or not this font is to be embedded
+     * @param charSet the chracter set
      */
-    public AbstractOutlineFont(String name, CharacterSet charSet) {
-        super(name);
+    public AbstractOutlineFont(String name, boolean embeddable, CharacterSet charSet) {
+        super(name, embeddable);
         this.charSet = charSet;
     }
 

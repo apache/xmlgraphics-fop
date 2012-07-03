@@ -21,6 +21,7 @@ package org.apache.fop.visual;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.net.URI;
 
 import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
@@ -41,6 +42,10 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 public class ReferenceBitmapLoader extends AbstractBitmapProducer implements Configurable {
 
     private File bitmapDirectory;
+
+    public ReferenceBitmapLoader(URI baseUri) {
+        super(baseUri);
+    }
 
     /** @see org.apache.avalon.framework.configuration.Configurable */
     public void configure(Configuration cfg) throws ConfigurationException {

@@ -19,22 +19,24 @@
 
 package org.apache.fop;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.InputStream;
+
+import org.junit.Test;
 
 import org.apache.batik.transcoder.Transcoder;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.junit.Test;
+
+import static org.apache.fop.FOPTestUtils.getBaseDir;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Basic runtime test for FOP's transcoders. It is used to verify that
  * nothing obvious is broken after compiling.
  */
-public abstract class AbstractBasicTranscoderTest extends AbstractFOPTest {
+public abstract class AbstractBasicTranscoderTest {
 
     /**
      * Creates the transcoder to test.

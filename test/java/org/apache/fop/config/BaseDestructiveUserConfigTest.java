@@ -19,30 +19,28 @@
 
 package org.apache.fop.config;
 
-import static org.junit.Assert.fail;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOPException;
-import org.junit.Test;
 
 /**
  * Super class for several user configuration failure cases.
  */
 public abstract class BaseDestructiveUserConfigTest extends BaseUserConfigTest {
 
+    public BaseDestructiveUserConfigTest(InputStream confStream) throws SAXException, IOException {
+        super(confStream);
+    }
+
     /**
      * Test the user configuration failure.
      */
-    @Test
-    public void testUserConfig() {
-        try {
-            initConfig();
-            convertFO();
-            fail( getName() + ": Expected Configuration Exception" );
-        } catch (FOPException e) {
-            // this *should* happen!
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail( getName() + ": Expected FOPException but got: " + e.getMessage() );
-        }
+    @Test(expected = FOPException.class)
+    public void testUserConfig() throws Exception {
+        convertFO();
     }
 }

@@ -52,7 +52,7 @@
              <fo:block font-size="20pt">
           <fo:block margin-top="2cm">
             <fo:marker marker-class-name="marker1">
-              <fo:block>Block<fo:inline> with inline element <fo:external-graphic src="../../resources/images/img.svg" content-type="content-type:xml/svg" alignment-baseline="text-after-edge" height="1em" content-height="scale-to-fit"/> and a graphic </fo:inline>.</fo:block>
+              <fo:block>Block<fo:inline> with inline element <fo:external-graphic src="../resources/images/img.svg" content-type="content-type:xml/svg" alignment-baseline="text-after-edge" height="1em" content-height="scale-to-fit"/> and a graphic </fo:inline>.</fo:block>
             </fo:marker>
             text with the marker
           </fo:block>

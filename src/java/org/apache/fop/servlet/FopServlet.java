@@ -21,7 +21,10 @@ package org.apache.fop.servlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URL;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -42,7 +45,10 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.io.Resource;
+import org.apache.fop.apps.io.ResourceResolver;
 
 /**
  * Example servlet to generate a PDF from a servlet.
@@ -91,16 +97,27 @@ public class FopServlet extends HttpServlet {
         this.transFactory = TransformerFactory.newInstance();
         this.transFactory.setURIResolver(this.uriResolver);
         //Configure FopFactory as desired
-        this.fopFactory = FopFactory.newInstance();
-        this.fopFactory.setURIResolver(this.uriResolver);
-        configureFopFactory();
+        // TODO: Double check this behaves properly!!
+        ResourceResolver resolver = new ResourceResolver() {
+            public OutputStream getOutputStream(URI uri) throws IOException {
+                URL url = getServletContext().getResource(uri.toASCIIString());
+                return url.openConnection().getOutputStream();
+            }
+
+            public Resource getResource(URI uri) throws IOException {
+                return new Resource(getServletContext().getResourceAsStream(uri.toASCIIString()));
+            }
+        };
+        FopFactoryBuilder builder = new FopFactoryBuilder(new File(".").toURI(), resolver);
+        configureFopFactory(builder);
+        fopFactory = builder.build();
     }
 
     /**
      * This method is called right after the FopFactory is instantiated and can be overridden
      * by subclasses to perform additional configuration.
      */
-    protected void configureFopFactory() {
+    protected void configureFopFactory(FopFactoryBuilder builder) {
         //Subclass and override this method to perform additional configuration
     }
 

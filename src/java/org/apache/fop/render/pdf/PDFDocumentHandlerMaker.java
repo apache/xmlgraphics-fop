@@ -32,10 +32,10 @@ public class PDFDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
 
     private static final String[] MIMES = new String[] {MimeConstants.MIME_PDF};
 
-    /** {@inheritDoc} */
-    public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
-        PDFDocumentHandler handler = new PDFDocumentHandler();
-        handler.setContext(new IFContext(ua));
+    @Override
+    public IFDocumentHandler makeIFDocumentHandler(IFContext ifContext) {
+        PDFDocumentHandler handler = new PDFDocumentHandler(ifContext);
+        FOUserAgent ua = ifContext.getUserAgent();
         if (ua.isAccessibilityEnabled()) {
             ua.setStructureTreeEventHandler(handler.getStructureTreeEventHandler());
         }

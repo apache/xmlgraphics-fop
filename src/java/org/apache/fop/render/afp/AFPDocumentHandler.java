@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.HashMap;
+import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,13 +40,13 @@ import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.afp.modca.ResourceObject;
-import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
-import org.apache.fop.afp.util.ResourceAccessor;
+import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
+import org.apache.fop.render.afp.AFPRendererConfig.AFPRendererConfigParser;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPIncludeFormMap;
 import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
@@ -54,13 +55,14 @@ import org.apache.fop.render.afp.extensions.AFPPageSegmentElement;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.afp.extensions.ExtensionPlacement;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 
 /**
- * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation that
- * produces AFP (MO:DCA).
+ * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation that produces AFP
+ * (MO:DCA).
  */
 public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             implements AFPCustomizable {
@@ -109,8 +111,9 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /**
      * Default constructor.
      */
-    public AFPDocumentHandler() {
-        this.resourceManager = new AFPResourceManager();
+    public AFPDocumentHandler(IFContext context) {
+        super(context);
+        this.resourceManager = new AFPResourceManager(context.getUserAgent().getResourceResolver());
         this.paintingState = new AFPPaintingState();
         this.unitConv = paintingState.getUnitConverter();
     }
@@ -127,13 +130,13 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
-        return new AFPRendererConfigurator(getUserAgent());
+        return new AFPRendererConfigurator(getUserAgent(), new AFPRendererConfigParser());
     }
 
     /** {@inheritDoc} */
     @Override
     public void setDefaultFontInfo(FontInfo fontInfo) {
-        FontManager fontManager = getUserAgent().getFactory().getFontManager();
+        FontManager fontManager = getUserAgent().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
             new AFPFontCollection(getUserAgent().getEventBroadcaster(), null)
         };
@@ -391,8 +394,8 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             }
         } else if (extension instanceof AFPIncludeFormMap) {
             AFPIncludeFormMap formMap = (AFPIncludeFormMap)extension;
-            ResourceAccessor accessor = new DefaultFOPResourceAccessor(
-                    getUserAgent(), null, null);
+            AFPResourceAccessor accessor = new AFPResourceAccessor(
+                    getUserAgent().getResourceResolver());
             try {
                 getResourceManager().createIncludedResource(formMap.getName(),
                         formMap.getSrc(), accessor,
@@ -546,9 +549,8 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         return  paintingState.getFS45();
     }
 
-    /** {@inheritDoc} */
-    public void setDefaultResourceGroupFilePath(String filePath) {
-        resourceManager.setDefaultResourceGroupFilePath(filePath);
+    public void setDefaultResourceGroupUri(URI uri) {
+        resourceManager.setDefaultResourceGroupUri(uri);
     }
 
     /** {@inheritDoc} */

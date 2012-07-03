@@ -25,7 +25,7 @@
     </p>
   </info>
   <variables>
-    <img>../../resources/images/bgimg300dpi.jpg</img>
+    <img>../resources/images/bgimg300dpi.jpg</img>
   </variables>
   <fo>
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">

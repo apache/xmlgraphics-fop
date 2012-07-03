@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.util.QName;
 
-import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.fo.properties.CommonAural;
@@ -308,7 +308,7 @@ public abstract class PropertyList {
         String attributeNS;
         String attributeName;
         String attributeValue;
-        FopFactory factory = getFObj().getUserAgent().getFactory();
+        FOUserAgent userAgent = getFObj().getUserAgent();
         for (int i = 0; i < attributes.getLength(); i++) {
             /* convert all attributes with the same namespace as the fo element
              * the "xml:lang" and "xml:base" properties are special cases */
@@ -319,8 +319,8 @@ public abstract class PropertyList {
                     || "xml:lang".equals(attributeName)
                     || "xml:base".equals(attributeName)) {
                 convertAttributeToProperty(attributes, attributeName, attributeValue);
-            } else if (!factory.isNamespaceIgnored(attributeNS)) {
-                ElementMapping mapping = factory.getElementMappingRegistry().getElementMapping(
+            } else if (!userAgent.isNamespaceIgnored(attributeNS)) {
+                ElementMapping mapping = userAgent.getElementMappingRegistry().getElementMapping(
                         attributeNS);
                 QName attr = new QName(attributeNS, attributeName);
                 if (mapping != null) {

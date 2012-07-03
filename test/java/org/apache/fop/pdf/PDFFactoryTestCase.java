@@ -19,11 +19,18 @@
 
 package org.apache.fop.pdf;
 
-import static org.junit.Assert.assertEquals;
+import java.io.File;
+import java.net.URI;
 
+import org.junit.Test;
+
+import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.CIDSubset;
 import org.apache.fop.fonts.MultiByteFont;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test case for {@link PDFFactory}.
@@ -37,6 +44,10 @@ public class PDFFactoryTestCase {
     @Test
     public void testSubsetFontNamePrefix() {
         class MockedFont extends MultiByteFont {
+            public MockedFont(InternalResourceResolver resolver) {
+                super(resolver);
+            }
+
             @Override
             public int[] getWidths() {
                 return new int[] { 0 };
@@ -49,7 +60,11 @@ public class PDFFactoryTestCase {
         }
         PDFDocument doc = new PDFDocument("Test");
         PDFFactory pdfFactory = new PDFFactory(doc);
-        MockedFont font = new MockedFont();
+        URI thisURI = new File(".").toURI();
+        ResourceResolver resolver = ResourceResolverFactory.createDefaultResourceResolver();
+        InternalResourceResolver resourceResolver = ResourceResolverFactory.createInternalResourceResolver(
+                thisURI, resolver);
+        MockedFont font = new MockedFont(resourceResolver);
 
         PDFFont pdfDejaVu = pdfFactory.makeFont("DejaVu", "DejaVu", "TTF", font, font);
         assertEquals("/EAAAAA+DejaVu", pdfDejaVu.getBaseFont().toString());

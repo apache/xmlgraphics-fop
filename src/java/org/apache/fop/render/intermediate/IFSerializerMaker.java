@@ -28,9 +28,9 @@ import org.apache.fop.apps.MimeConstants;
 public class IFSerializerMaker extends AbstractIFDocumentHandlerMaker {
 
     /** {@inheritDoc} */
-    public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
-        IFSerializer handler = new IFSerializer();
-        handler.setContext(new IFContext(ua));
+    public IFDocumentHandler makeIFDocumentHandler(IFContext ifContext) {
+        IFSerializer handler = new IFSerializer(ifContext);
+        FOUserAgent ua = ifContext.getUserAgent();
         if (ua.isAccessibilityEnabled()) {
             ua.setStructureTreeEventHandler(handler.getStructureTreeEventHandler());
         }

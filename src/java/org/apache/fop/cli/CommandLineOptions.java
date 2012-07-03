@@ -39,9 +39,10 @@ import org.apache.fop.Version;
 import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopConfParser;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.fonts.FontManager;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
@@ -51,7 +52,7 @@ import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFSerializer;
-import org.apache.fop.render.pdf.PDFConfigurationConstants;
+import org.apache.fop.render.pdf.PDFEncryptionOption;
 import org.apache.fop.render.print.PagesMode;
 import org.apache.fop.render.print.PrintRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
@@ -116,12 +117,14 @@ public class CommandLineOptions {
     private Map renderingOptions = new java.util.HashMap();
     /* target resolution (for the user agent) */
     private int targetResolution = 0;
+
+    private boolean strictValidation = true;
     /* control memory-conservation policy */
     private boolean conserveMemoryPolicy = false;
     /* true if a complex script features are enabled */
     private boolean useComplexScriptFeatures = true;
 
-    private FopFactory factory = FopFactory.newInstance();
+    private FopFactory factory;
     private FOUserAgent foUserAgent;
 
     private InputHandler inputHandler;
@@ -183,9 +186,10 @@ public class CommandLineOptions {
                 addXSLTParameter("fop-output-format", getOutputFormat());
                 addXSLTParameter("fop-version", Version.getVersion());
                 foUserAgent.setConserveMemoryPolicy(conserveMemoryPolicy);
-                if (!useComplexScriptFeatures) {
-                    foUserAgent.setComplexScriptFeaturesEnabled(false);
-                }
+                // TODO: Handle this!!
+                //if (!useComplexScriptFeatures) {
+                //    foUserAgent.setComplexScriptFeaturesEnabled(false);
+                //}
             } else {
                 return false;
             }
@@ -225,9 +229,7 @@ public class CommandLineOptions {
         } else if (MimeConstants.MIME_FOP_IF.equals(outputmode)
                 && mimicRenderer != null) {
             // render from FO to Intermediate Format
-            IFSerializer serializer = new IFSerializer();
-            serializer.setContext(new IFContext(foUserAgent));
-
+            IFSerializer serializer = new IFSerializer(new IFContext(foUserAgent));
             IFDocumentHandler targetHandler
                 = foUserAgent.getRendererFactory().createDocumentHandler(
                         foUserAgent, mimicRenderer);
@@ -288,7 +290,7 @@ public class CommandLineOptions {
             } else if (args[i].equals("-d")) {
                 setLogOption("debug", "debug");
             } else if (args[i].equals("-r")) {
-                factory.setStrictValidation(false);
+                strictValidation = false;
             } else if (args[i].equals("-conserve")) {
                 conserveMemoryPolicy = true;
             } else if (args[i].equals("-flush")) {
@@ -819,15 +821,14 @@ public class CommandLineOptions {
     }
 
     private PDFEncryptionParams getPDFEncryptionParams() throws FOPException {
-        PDFEncryptionParams params = (PDFEncryptionParams)renderingOptions.get(
-                        PDFConfigurationConstants.ENCRYPTION_PARAMS);
+        PDFEncryptionParams params = (PDFEncryptionParams) renderingOptions.get(PDFEncryptionOption.ENCRYPTION_PARAMS);
         if (params == null) {
             if (!PDFEncryptionManager.checkAvailableAlgorithms()) {
                 throw new FOPException("PDF encryption requested but it is not available."
                         + " Please make sure MD5 and RC4 algorithms are available.");
             }
             params = new PDFEncryptionParams();
-            renderingOptions.put(PDFConfigurationConstants.ENCRYPTION_PARAMS, params);
+            renderingOptions.put(PDFEncryptionOption.ENCRYPTION_PARAMS, params);
         }
         return params;
     }
@@ -860,7 +861,7 @@ public class CommandLineOptions {
             throw new FOPException("You must specify a PDF profile");
         } else {
             String profile = args[i + 1];
-            PDFAMode pdfAMode = PDFAMode.valueOf(profile);
+            PDFAMode pdfAMode = PDFAMode.getValueOf(profile);
             if (pdfAMode != null && pdfAMode != PDFAMode.DISABLED) {
                 if (renderingOptions.get("pdf-a-mode") != null) {
                     throw new FOPException("PDF/A mode already set");
@@ -868,7 +869,7 @@ public class CommandLineOptions {
                 renderingOptions.put("pdf-a-mode", pdfAMode.getName());
                 return 1;
             } else {
-                PDFXMode pdfXMode = PDFXMode.valueOf(profile);
+                PDFXMode pdfXMode = PDFXMode.getValueOf(profile);
                 if (pdfXMode != null && pdfXMode != PDFXMode.DISABLED) {
                     if (renderingOptions.get("pdf-x-mode") != null) {
                         throw new FOPException("PDF/X mode already set");
@@ -1027,14 +1028,19 @@ public class CommandLineOptions {
      * @throws IOException
      */
     private void setUserConfig() throws FOPException, IOException {
+        FopFactoryBuilder fopFactoryBuilder;
         if (userConfigFile == null) {
-            return;
+            fopFactoryBuilder = new FopFactoryBuilder(new File(".").toURI());
+        } else {
+            try {
+                fopFactoryBuilder = new FopConfParser(userConfigFile).getFopFactoryBuilder();
+            } catch (SAXException e) {
+                throw new FOPException(e);
+            }
+            fopFactoryBuilder.setStrictFOValidation(strictValidation);
+            fopFactoryBuilder.setComplexScriptFeatures(useComplexScriptFeatures);
         }
-        try {
-            factory.setUserConfig(userConfigFile);
-        } catch (SAXException e) {
-            throw new FOPException(e);
-        }
+        factory = fopFactoryBuilder.build();
      }
 
     /**
@@ -1390,13 +1396,7 @@ public class CommandLineOptions {
     }
 
     private void flushCache() throws FOPException {
-        FontManager fontManager = factory.getFontManager();
-        File cacheFile = fontManager.getCacheFile();
-        if (!fontManager.deleteCache()) {
-            System.err.println("Failed to flush the font cache file '"
-                    + cacheFile + "'.");
-            System.exit(1);
-        }
+        factory.getFontManager().deleteCache();
     }
 }
 

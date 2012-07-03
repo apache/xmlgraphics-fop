@@ -92,13 +92,10 @@ public final class AFPResourceUtil {
             throws UnsupportedEncodingException {
         //The first 8 bytes of the field data represent the resource name
         byte[] nameBytes = new byte[8];
-
-        byte[] fieldData = field.getData();
-        if (fieldData.length < 8) {
-            throw new IllegalArgumentException("Field data does not contain a resource name");
-        }
-        System.arraycopy(fieldData, 0, nameBytes, 0, 8);
-        return new String(nameBytes, AFPConstants.EBCIDIC_ENCODING);
+        System.arraycopy(field.getData(), 0, nameBytes, 0, 8);
+        String asciiName;
+        asciiName = new String(nameBytes, AFPConstants.EBCIDIC_ENCODING);
+        return asciiName;
     }
 
     /**
@@ -131,13 +128,12 @@ public final class AFPResourceUtil {
     public static void copyNamedResource(String name,
             final InputStream in, final OutputStream out) throws IOException {
         final MODCAParser parser = new MODCAParser(in);
-        Collection<String> resourceNames = new java.util.HashSet<String>();
+        Collection resourceNames = new java.util.HashSet();
 
         //Find matching "Begin" field
         final UnparsedStructuredField fieldBegin;
         while (true) {
-            final UnparsedStructuredField field = parser.readNextStructuredField();
-
+            UnparsedStructuredField field = parser.readNextStructuredField();
             if (field == null) {
                 throw new IOException("Requested resource '" + name
                         + "' not found. Encountered resource names: " + resourceNames);
@@ -146,10 +142,8 @@ public final class AFPResourceUtil {
             if (field.getSfTypeCode() != TYPE_CODE_BEGIN) { //0xA8=Begin
                 continue; //Not a "Begin" field
             }
-            final String resourceName = getResourceName(field);
-
+            String resourceName = getResourceName(field);
             resourceNames.add(resourceName);
-
             if (resourceName.equals(name)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Start of requested structured field found:\n"
@@ -176,35 +170,45 @@ public final class AFPResourceUtil {
         if (wrapInResource) {
             ResourceObject resourceObject =  new ResourceObject(name) {
                 protected void writeContent(OutputStream os) throws IOException {
-                    copyNamedStructuredFields(name, fieldBegin, parser, out);
+                    copyStructuredFields(name, fieldBegin, parser, out);
                 }
             };
             resourceObject.setType(ResourceObject.TYPE_PAGE_SEGMENT);
             resourceObject.writeToStream(out);
         } else {
-            copyNamedStructuredFields(name, fieldBegin, parser, out);
+            copyStructuredFields(name, fieldBegin, parser, out);
         }
     }
 
-    private static void copyNamedStructuredFields(final String name,
-            UnparsedStructuredField fieldBegin, MODCAParser parser,
-            OutputStream out) throws IOException {
+    private static void copyStructuredFields(String name, UnparsedStructuredField fieldBegin,
+            MODCAParser parser, OutputStream out) throws IOException {
+        boolean inRequestedResource;
 
-        UnparsedStructuredField field = fieldBegin;
+        //The "Begin" field first
+        out.write(MODCAParser.CARRIAGE_CONTROL_CHAR);
+        fieldBegin.writeTo(out);
+        UnparsedStructuredField field;
 
-        while (true) {
+        //Then the rest of the fields until the corresponding "End" field
+        inRequestedResource = true;
+        do {
+            field = parser.readNextStructuredField();
             if (field == null) {
-                throw new IOException("Ending structured field not found for resource " + name);
+                break; //Unexpected EOF
+            }
+
+            if (field.getSfTypeCode() == TYPE_CODE_END) {
+                String resourceName = getResourceName(field);
+                if (resourceName.equals(name)) {
+                    inRequestedResource = false; //Signal end of loop
+                }
             }
             out.write(MODCAParser.CARRIAGE_CONTROL_CHAR);
             field.writeTo(out);
-
-            if (field.getSfTypeCode() == TYPE_CODE_END
-                    && fieldBegin.getSfCategoryCode() == field.getSfCategoryCode()
-                    && name.equals(getResourceName(field))) {
-                break;
-            }
-            field = parser.readNextStructuredField();
+        } while (inRequestedResource);
+        if (inRequestedResource) {
+            throw new IOException("Ending structured field not found for resource " + name);
         }
     }
+
 }

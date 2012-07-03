@@ -45,8 +45,9 @@ import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 
 import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.ImageHandlerUtil;
@@ -57,7 +58,7 @@ import org.apache.fop.traits.RuleStyle;
 /**
  * Abstract base class for IFPainter implementations.
  */
-public abstract class AbstractIFPainter implements IFPainter {
+public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements IFPainter {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(AbstractIFPainter.class);
@@ -68,18 +69,39 @@ public abstract class AbstractIFPainter implements IFPainter {
     /** Holds the intermediate format state */
     protected IFState state;
 
+    private final T documentHandler;
 
     /**
      * Default constructor.
      */
-    public AbstractIFPainter() {
+    public AbstractIFPainter(T documentHandler) {
+        this.documentHandler = documentHandler;
+    }
+
+    protected String getFontKey(FontTriplet triplet) throws IFException {
+        String key = getFontInfo().getInternalFontKey(triplet);
+        if (key == null) {
+            throw new IFException("The font triplet is not available: \"" + triplet + "\" "
+                    + "for the MIME type: \"" + documentHandler.getMimeType() + "\"");
+        }
+        return key;
     }
 
     /**
      * Returns the intermediate format context object.
      * @return the context object
      */
-    protected abstract IFContext getContext();
+    protected IFContext getContext() {
+        return documentHandler.getContext();
+    }
+
+    protected FontInfo getFontInfo() {
+        return documentHandler.getFontInfo();
+    }
+
+    protected T getDocumentHandler() {
+        return documentHandler;
+    }
 
     /**
      * Returns the user agent.
@@ -87,14 +109,6 @@ public abstract class AbstractIFPainter implements IFPainter {
      */
     protected FOUserAgent getUserAgent() {
         return getContext().getUserAgent();
-    }
-
-    /**
-     * Returns the FOP factory.
-     * @return the FOP factory.
-     */
-    protected FopFactory getFopFactory() {
-        return getUserAgent().getFactory();
     }
 
     private AffineTransform combine(AffineTransform[] transforms) {
@@ -131,9 +145,9 @@ public abstract class AbstractIFPainter implements IFPainter {
      */
     protected void drawImageUsingImageHandler(ImageInfo info, Rectangle rect)
                     throws ImageException, IOException {
-        ImageManager manager = getFopFactory().getImageManager();
+        ImageManager manager = getUserAgent().getImageManager();
         ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
-        ImageHandlerRegistry imageHandlerRegistry = getFopFactory().getImageHandlerRegistry();
+        ImageHandlerRegistry imageHandlerRegistry = getUserAgent().getImageHandlerRegistry();
 
         //Load and convert the image to a supported format
         RenderingContext context = createRenderingContext();
@@ -197,8 +211,8 @@ public abstract class AbstractIFPainter implements IFPainter {
     protected void drawImage(Image image, Rectangle rect,
             RenderingContext context, boolean convert, Map additionalHints)
                     throws IOException, ImageException {
-        ImageManager manager = getFopFactory().getImageManager();
-        ImageHandlerRegistry imageHandlerRegistry = getFopFactory().getImageHandlerRegistry();
+        ImageManager manager = getUserAgent().getImageManager();
+        ImageHandlerRegistry imageHandlerRegistry = getUserAgent().getImageHandlerRegistry();
 
         Image effImage;
         context.putHints(additionalHints);
@@ -236,7 +250,7 @@ public abstract class AbstractIFPainter implements IFPainter {
      * @return the ImageInfo instance or null if there has been an error.
      */
     protected ImageInfo getImageInfo(String uri) {
-        ImageManager manager = getFopFactory().getImageManager();
+        ImageManager manager = getUserAgent().getImageManager();
         try {
             ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
             return manager.getImageInfo(uri, sessionContext);
@@ -262,7 +276,7 @@ public abstract class AbstractIFPainter implements IFPainter {
      * @param rect the rectangle in which to paint the image
      */
     protected void drawImageUsingURI(String uri, Rectangle rect) {
-        ImageManager manager = getFopFactory().getImageManager();
+        ImageManager manager = getUserAgent().getImageManager();
         ImageInfo info = null;
         try {
             ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
@@ -290,7 +304,7 @@ public abstract class AbstractIFPainter implements IFPainter {
      * @param rect the rectangle in which to paint the image
      */
     protected void drawImageUsingDocument(Document doc, Rectangle rect) {
-        ImageManager manager = getFopFactory().getImageManager();
+        ImageManager manager = getUserAgent().getImageManager();
         ImageInfo info = null;
         try {
             info = manager.preloadImage(null, new DOMSource(doc));
