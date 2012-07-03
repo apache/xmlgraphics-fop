@@ -1841,6 +1841,8 @@ public class TTFFile {
      * @throws IOException In case of an I/O problem
      */
     public final List<String> getTTCnames(FontFileReader in) throws IOException {
+        this.fontFile = in;
+
         List<String> fontNames = new ArrayList<String>();
         String tag = in.readTTFString(4);
 
