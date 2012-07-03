@@ -153,10 +153,6 @@ public final class AFPRendererConfBuilder extends RendererConfBuilder {
             return AFPRendererConfBuilder.this.endImages();
         }
 
-        private ImagesBuilder setAttribute(AFPRendererOption options, String value) {
-            return setAttribute(options.getName(), value);
-        }
-
         private ImagesBuilder setAttribute(AFPRendererOption options, Object value) {
             return setAttribute(options.getName(), value);
         }
