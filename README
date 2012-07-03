@@ -126,6 +126,10 @@ Major Changes in Version 1.1rc1
   (LRE), U+202B RIGHT-TO-LEFT EMBEDDING (RLE), U+202D LEFT-TO-RIGHT OVERRIDE
   (LRO), U+202E RIGHT-TO-LEFT OVERRIDE (RLO), and U+202C POP DIRECTIONAL
   FORMATTING (PDF).
+* Added possibility to embed TrueType fonts in the PostScript output;
+* Added possibility to reduce the file size of accessible PDF outputs by using
+  Object Streams (a PDF 1.5 feature);
+* Added support for 128bit PDF encryption.
 
 A more detailed list of changes in this release is available at
 http://xmlgraphics.apache.org/fop/1.1rc1/changes_1.1rc1.html.
