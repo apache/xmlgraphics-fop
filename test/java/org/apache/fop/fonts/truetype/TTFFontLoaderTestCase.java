@@ -21,13 +21,14 @@ package org.apache.fop.fonts.truetype;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 import org.junit.Test;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.EncodingMode;
-import org.apache.fop.fonts.FontManager;
-import org.apache.fop.fonts.FontResolver;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -41,19 +42,20 @@ public class TTFFontLoaderTestCase {
     public void testUseKerning() throws IOException {
         boolean useComplexScriptFeatures = false;
         File file = new File("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
-        String absoluteFilePath = file.toURI().toURL().toExternalForm();
-        FontResolver resolver = FontManager.createMinimalFontResolver(useComplexScriptFeatures);
+        URI absoluteFilePath = file.toURI();
+        InternalResourceResolver resourceResolver = ResourceResolverFactory.createDefaultInternalResourceResolver(
+                                                                           new File(".").toURI());
         String fontName = "Deja Vu";
         boolean embedded = false;
         boolean useKerning = true;
 
         TTFFontLoader fontLoader = new TTFFontLoader(absoluteFilePath, fontName, embedded,
-                EmbeddingMode.AUTO, EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resolver);
+                EmbeddingMode.AUTO, EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resourceResolver);
         assertTrue(fontLoader.getFont().hasKerningInfo());
         useKerning = false;
 
         fontLoader = new TTFFontLoader(absoluteFilePath, fontName, embedded, EmbeddingMode.AUTO,
-                EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resolver);
+                EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resourceResolver);
         assertFalse(fontLoader.getFont().hasKerningInfo());
     }
 }

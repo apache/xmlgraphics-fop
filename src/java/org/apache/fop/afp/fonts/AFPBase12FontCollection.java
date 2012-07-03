@@ -165,9 +165,8 @@ public class AFPBase12FontCollection implements FontCollection {
     }
 
     private RasterFont createReferencedRasterFont(String fontFamily) {
-        RasterFont font = new RasterFont(fontFamily);
-        font.setEmbeddable(false); //Font is assumed to be available on the target platform
-        return font;
+        boolean embeddable = false; //Font is assumed to be available on the target platform
+        return new RasterFont(fontFamily, embeddable);
     }
 
 }

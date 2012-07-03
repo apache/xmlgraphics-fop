@@ -19,27 +19,31 @@
 
 package org.apache.fop.util;
 
+import java.awt.Color;
+import java.awt.color.ColorSpace;
+import java.io.File;
+import java.net.URI;
+
+import org.junit.Test;
+
+import org.apache.xmlgraphics.java2d.color.ColorSpaces;
+import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
+import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
+import org.apache.xmlgraphics.java2d.color.RenderingIntent;
+
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.Color;
-import java.awt.color.ColorSpace;
-import java.net.URI;
-
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
-import org.apache.xmlgraphics.java2d.color.ColorSpaces;
-import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
-import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
-import org.apache.xmlgraphics.java2d.color.RenderingIntent;
-import org.junit.Test;
-
 /**
  * Tests the ColorUtil class.
  */
 public class ColorUtilTestCase {
+    private FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
     /**
      * Test serialization to String.
@@ -105,7 +109,7 @@ public class ColorUtilTestCase {
      */
     @Test
     public void testRGB() throws Exception {
-        FopFactory fopFactory = FopFactory.newInstance();
+
         FOUserAgent ua = fopFactory.newFOUserAgent();
         Color colActual;
 
@@ -123,11 +127,10 @@ public class ColorUtilTestCase {
      */
     @Test
     public void testRGBICC() throws Exception {
-        FopFactory fopFactory = FopFactory.newInstance();
-        URI sRGBLoc = new URI(
-                "file:src/java/org/apache/fop/pdf/sRGB%20Color%20Space%20Profile.icm");
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+        URI sRGBLoc = new URI("src/java/org/apache/fop/pdf/sRGB%20Color%20Space%20Profile.icm");
         ColorSpace cs = fopFactory.getColorSpaceCache().get(
-                "sRGBAlt", null, sRGBLoc.toASCIIString(), RenderingIntent.AUTO);
+                "sRGBAlt", sRGBLoc.toASCIIString(), RenderingIntent.AUTO);
         assertNotNull("Color profile not found", cs);
 
         FOUserAgent ua = fopFactory.newFOUserAgent();
@@ -293,10 +296,10 @@ public class ColorUtilTestCase {
      */
     @Test
     public void testNamedColorProfile() throws Exception {
-        FopFactory fopFactory = FopFactory.newInstance();
-        URI ncpLoc = new URI("file:test/resources/color/ncp-example.icc");
+        FopFactory fopFactory = FopFactory.newInstance(new File("./").toURI());
+        URI ncpLoc = new URI("test/resources/color/ncp-example.icc");
         ColorSpace cs = fopFactory.getColorSpaceCache().get(
-                "NCP", null, ncpLoc.toASCIIString(), RenderingIntent.AUTO);
+                "NCP", ncpLoc.toASCIIString(), RenderingIntent.AUTO);
         assertNotNull("Color profile not found", cs);
 
         FOUserAgent ua = fopFactory.newFOUserAgent();

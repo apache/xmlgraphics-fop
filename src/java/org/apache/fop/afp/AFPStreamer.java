@@ -20,20 +20,22 @@
 package org.apache.fop.afp;
 
 import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
+import java.net.URI;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.StreamedResourceGroup;
+import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.TempResourceURIGenerator;
 
 /**
  * Manages the streaming of the AFP output
@@ -42,33 +44,30 @@ public class AFPStreamer implements Streamable {
     /** Static logging instance */
     private static final Log LOG = LogFactory.getLog(AFPStreamer.class);
 
-    private static final String AFPDATASTREAM_TEMP_FILE_PREFIX = "AFPDataStream_";
-
-    private static final int BUFFER_SIZE = 4096; // 4k writing buffer
-
     private static final String DEFAULT_EXTERNAL_RESOURCE_FILENAME = "resources.afp";
 
+    private static final TempResourceURIGenerator TEMP_URI_GENERATOR
+            = new TempResourceURIGenerator("AFPDataStream_");
 
     private final Factory factory;
 
+    private final InternalResourceResolver resourceResolver;
+
     /** A mapping of external resource destinations to resource groups */
-    private final Map/*<String,AFPExternalResourceGroup>*/pathResourceGroupMap
-        = new java.util.HashMap/*<String,AFPExternalResourceGroup>*/();
+    private final Map<URI, ResourceGroup> pathResourceGroupMap = new HashMap<URI, ResourceGroup>();
 
     private StreamedResourceGroup printFileResourceGroup;
 
     /** Sets the default resource group file path */
-    private String defaultResourceGroupFilePath = DEFAULT_EXTERNAL_RESOURCE_FILENAME;
+    private URI defaultResourceGroupUri;
 
-    private File tempFile;
+    private final URI tempUri;
 
     /** temporary document outputstream */
-    private OutputStream documentOutputStream;
+    private OutputStream tempOutputStream;
 
     /** the final outputstream */
     private OutputStream outputStream;
-
-    private RandomAccessFile documentFile;
 
     private DataStream dataStream;
 
@@ -76,9 +75,14 @@ public class AFPStreamer implements Streamable {
      * Main constructor
      *
      * @param factory a factory
+     * @param resourceResolver resource resolver
      */
-    public AFPStreamer(Factory factory) {
+    public AFPStreamer(Factory factory, InternalResourceResolver resourceResolver) {
         this.factory = factory;
+        this.resourceResolver = resourceResolver;
+        this.tempUri = TEMP_URI_GENERATOR.generate();
+        defaultResourceGroupUri = URI.create(DEFAULT_EXTERNAL_RESOURCE_FILENAME);
+
     }
 
     /**
@@ -89,11 +93,8 @@ public class AFPStreamer implements Streamable {
      * @throws IOException thrown if an I/O exception of some sort has occurred
      */
     public DataStream createDataStream(AFPPaintingState paintingState) throws IOException {
-        this.tempFile = File.createTempFile(AFPDATASTREAM_TEMP_FILE_PREFIX, null);
-        this.documentFile = new RandomAccessFile(tempFile, "rw");
-        this.documentOutputStream = new BufferedOutputStream(
-                new FileOutputStream(documentFile.getFD()));
-        this.dataStream = factory.createDataStream(paintingState, documentOutputStream);
+        this.tempOutputStream = new BufferedOutputStream(resourceResolver.getOutputStream(tempUri));
+        this.dataStream = factory.createDataStream(paintingState, tempOutputStream);
         return dataStream;
     }
 
@@ -102,8 +103,8 @@ public class AFPStreamer implements Streamable {
      *
      * @param filePath the default resource group file path
      */
-    public void setDefaultResourceGroupFilePath(String filePath) {
-        this.defaultResourceGroupFilePath = filePath;
+    public void setDefaultResourceGroupUri(URI uri) {
+        this.defaultResourceGroupUri = uri;
     }
 
     /**
@@ -118,23 +119,23 @@ public class AFPStreamer implements Streamable {
             return null;
         }
         if (level.isExternal()) {
-            String filePath = level.getExternalFilePath();
-            if (filePath == null) {
+            URI uri = level.getExternalURI();
+            if (uri == null) {
                 LOG.warn("No file path provided for external resource, using default.");
-                filePath = defaultResourceGroupFilePath;
+                uri = defaultResourceGroupUri;
             }
-            resourceGroup = (ResourceGroup)pathResourceGroupMap.get(filePath);
+            resourceGroup = pathResourceGroupMap.get(uri);
             if (resourceGroup == null) {
                 OutputStream os = null;
                 try {
-                    os = new BufferedOutputStream(new FileOutputStream(filePath));
-                } catch (FileNotFoundException fnfe) {
-                    LOG.error("Failed to create/open external resource group file '"
-                            + filePath + "'");
+                    os = new BufferedOutputStream(resourceResolver.getOutputStream(uri));
+                } catch (IOException ioe) {
+                    LOG.error("Failed to create/open external resource group for uri '"
+                            + uri + "'");
                 } finally {
                     if (os != null) {
                         resourceGroup = factory.createStreamedResourceGroup(os);
-                        pathResourceGroupMap.put(filePath, resourceGroup);
+                        pathResourceGroupMap.put(uri, resourceGroup);
                     }
                 }
             }
@@ -156,34 +157,20 @@ public class AFPStreamer implements Streamable {
      *
      * @throws IOException if an an I/O exception of some sort has occurred
      */
-        // write out any external resource groups
+    // write out any external resource groups
     public void close() throws IOException {
         Iterator it = pathResourceGroupMap.values().iterator();
         while (it.hasNext()) {
             StreamedResourceGroup resourceGroup = (StreamedResourceGroup)it.next();
             resourceGroup.close();
         }
-
         // close any open print-file resource group
         if (printFileResourceGroup != null) {
             printFileResourceGroup.close();
         }
-
         // write out document
         writeToStream(outputStream);
-
         outputStream.close();
-
-
-        if (documentOutputStream != null) {
-            documentOutputStream.close();
-        }
-
-        if (documentFile != null) {
-            documentFile.close();
-        }
-        // delete temporary file
-        tempFile.delete();
     }
 
     /**
@@ -197,28 +184,11 @@ public class AFPStreamer implements Streamable {
 
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
-//        long start = System.currentTimeMillis();
-        int len = (int)documentFile.length();
-        int numChunks = len / BUFFER_SIZE;
-        int remainingChunkSize = len % BUFFER_SIZE;
-        byte[] buffer;
-
-        documentFile.seek(0);
-        if (numChunks > 0) {
-            buffer = new byte[BUFFER_SIZE];
-            for (int i = 0; i < numChunks; i++) {
-                documentFile.read(buffer, 0, BUFFER_SIZE);
-                os.write(buffer, 0, BUFFER_SIZE);
-            }
-        } else {
-            buffer = new byte[remainingChunkSize];
-        }
-        if (remainingChunkSize > 0) {
-            documentFile.read(buffer, 0, remainingChunkSize);
-            os.write(buffer, 0, remainingChunkSize);
-        }
+        tempOutputStream.close();
+        InputStream tempInputStream = resourceResolver.getResource(tempUri);
+        IOUtils.copy(tempInputStream, os);
+        //TODO this should notify the stream provider that it is safe to delete the temp data
+        tempInputStream.close();
         os.flush();
-//        long end = System.currentTimeMillis();
-//        log.debug("writing time " + (end - start) + "ms");
     }
 }

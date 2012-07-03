@@ -26,17 +26,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-//JAXP
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
-//SAX
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
-// FOP
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -49,7 +46,7 @@ import org.apache.fop.apps.MimeConstants;
 public class ExampleFO2PDFUsingSAXParser {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
     /**
      * Converts an FO file to a PDF file using FOP

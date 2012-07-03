@@ -127,7 +127,7 @@ public class PCLImageHandlerGraphics2D implements ImageHandler {
         if (!painted) {
             //Fallback solution: Paint to a BufferedImage
             FOUserAgent ua = context.getUserAgent();
-            ImageManager imageManager = ua.getFactory().getImageManager();
+            ImageManager imageManager = ua.getImageManager();
             ImageRendered imgRend;
             try {
                 imgRend = (ImageRendered)imageManager.convertImage(

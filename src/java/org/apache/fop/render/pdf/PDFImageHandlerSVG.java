@@ -86,7 +86,7 @@ public class PDFImageHandlerSVG implements ImageHandler {
 
         BridgeContext ctx = new PDFBridgeContext(ua,
                 (strokeText ? null : pdfContext.getFontInfo()),
-                userAgent.getFactory().getImageManager(),
+                userAgent.getImageManager(),
                 userAgent.getImageSessionContext(),
                 new AffineTransform());
 

@@ -33,11 +33,11 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>BMP external-graphic 300dpi</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/bgimg300dpi.bmp"/>EOG
+            <fo:external-graphic src="../resources/images/bgimg300dpi.bmp"/>EOG
           </fo:block>
           <fo:block>BMP external-graphic 72dpi</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/bgimg72dpi.bmp"/>EOG
+            <fo:external-graphic src="../resources/images/bgimg72dpi.bmp"/>EOG
           </fo:block>
           <fo:block>EOF</fo:block>
         </fo:flow>

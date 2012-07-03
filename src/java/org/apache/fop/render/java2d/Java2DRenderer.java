@@ -58,7 +58,7 @@ import org.apache.xmlgraphics.util.UnitConv;
 import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactoryConfigurator;
+import org.apache.fop.apps.FopFactoryConfig;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Trait;
@@ -73,6 +73,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
@@ -82,6 +83,8 @@ import org.apache.fop.render.extensions.prepress.PageScale;
 import org.apache.fop.render.pdf.CTMHelper;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ColorUtil;
+
+import static org.apache.fop.render.java2d.Java2DRendererOption.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
 
 /**
  * The <code>Java2DRenderer</code> class provides the abstract technical
@@ -108,9 +111,6 @@ import org.apache.fop.util.ColorUtil;
  *
  */
 public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implements Printable {
-
-    /** Rendering Options key for the controlling the transparent page background option. */
-    public static final String JAVA2D_TRANSPARENT_PAGE_BACKGROUND = "transparent-page-background";
 
     /** The scale factor for the image size, values: ]0 ; 1] */
     protected double scaleFactor = 1;
@@ -157,7 +157,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         // MH: necessary? the caller has access to FOUserAgent
         userAgent.setRendererOverride(this); // for document regeneration
 
-        String s = (String) userAgent.getRendererOptions().get(JAVA2D_TRANSPARENT_PAGE_BACKGROUND);
+        String s = (String) userAgent.getRendererOption(JAVA2D_TRANSPARENT_PAGE_BACKGROUND);
         if (s != null) {
             this.transparentPageBackground = "true".equalsIgnoreCase(s);
         }
@@ -175,14 +175,15 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         this.fontInfo = inFontInfo;
         final Java2DFontMetrics java2DFontMetrics = new Java2DFontMetrics();
 
+        FontManager fontManager = userAgent.getFontManager();
+
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(java2DFontMetrics),
                 new InstalledFontCollection(java2DFontMetrics),
-                new ConfiguredFontCollection(getFontResolver(), getFontList(),
-                                             userAgent.isComplexScriptFeaturesEnabled())
+                new ConfiguredFontCollection(fontManager.getResourceResolver(), getFontList(),
+                        userAgent.isComplexScriptFeaturesEnabled())
         };
-        userAgent.getFactory().getFontManager().setup(
-                getFontInfo(), fontCollections);
+        fontManager.setup(getFontInfo(), fontCollections);
     }
 
     /** {@inheritDoc} */
@@ -317,7 +318,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             // set scale factor
             double scaleX = scaleFactor;
             double scaleY = scaleFactor;
-            String scale = (String) currentPageViewport.getForeignAttributes().get(
+            String scale = currentPageViewport.getForeignAttributes().get(
                     PageScale.EXT_PAGE_SCALE);
             Point2D scales = PageScale.getScale(scale);
             if (scales != null) {
@@ -326,10 +327,10 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             }
 
             scaleX = scaleX
-                * (UnitConv.IN2MM / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
+                    * (UnitConv.IN2MM / FopFactoryConfig.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
             scaleY = scaleY
-                * (UnitConv.IN2MM / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
+                    * (UnitConv.IN2MM / FopFactoryConfig.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
             int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
             int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
@@ -737,7 +738,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         //super.renderText(text);
 
         // rendering text decorations
-        Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
+        Typeface tf = fontInfo.getFonts().get(font.getFontName());
         int fontsize = text.getTraitAsInteger(Trait.FONT_SIZE);
         renderTextDecoration(tf, fontsize, text, bl, rx);
     }
@@ -918,7 +919,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         int y = currentBPPosition + (int)Math.round(pos.getY());
         uri = URISpecification.getURL(uri);
 
-        ImageManager manager = getUserAgent().getFactory().getImageManager();
+        ImageManager manager = getUserAgent().getImageManager();
         ImageInfo info = null;
         try {
             ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();

@@ -28,6 +28,7 @@ import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.AbstractXMLWritingIFDocumentHandler;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
@@ -52,6 +53,10 @@ public abstract class AbstractSVGDocumentHandler extends AbstractXMLWritingIFDoc
     private static final int MODE_TEXT = 1;
 
     private int mode = MODE_NORMAL;
+
+    public AbstractSVGDocumentHandler(IFContext context) {
+        super(context);
+    }
 
     /** {@inheritDoc} */
     protected String getMainNamespace() {

@@ -48,38 +48,6 @@ public class PFBParser {
 
     /**
      * Parses a PFB file into a PFBData object.
-     * @param url URL to load the PFB file from
-     * @return PFBData memory representation of the font
-     * @throws IOException In case of an I/O problem
-     */
-    public PFBData parsePFB(java.net.URL url) throws IOException {
-        InputStream in = url.openStream();
-        try {
-            return parsePFB(in);
-        } finally {
-            in.close();
-        }
-    }
-
-
-    /**
-     * Parses a PFB file into a PFBData object.
-     * @param pfbFile File to load the PFB file from
-     * @return PFBData memory representation of the font
-     * @throws IOException In case of an I/O problem
-     */
-    public PFBData parsePFB(java.io.File pfbFile) throws IOException {
-        InputStream in = new java.io.FileInputStream(pfbFile);
-        try {
-            return parsePFB(in);
-        } finally {
-            in.close();
-        }
-    }
-
-
-    /**
-     * Parses a PFB file into a PFBData object.
      * @param in InputStream to load the PFB file from
      * @return PFBData memory representation of the font
      * @throws IOException In case of an I/O problem
@@ -113,7 +81,6 @@ public class PFBParser {
     private void parsePCFormat(PFBData pfb, DataInputStream din) throws IOException {
         int segmentHead;
         int segmentType;
-        int bytesRead;
 
         //Read first segment
         segmentHead = din.readUnsignedByte();

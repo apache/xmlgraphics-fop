@@ -24,7 +24,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.List;
 import java.util.Vector;
 
@@ -41,7 +41,9 @@ import org.apache.tools.ant.util.GlobPatternMapper;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopConfParser;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
 
@@ -379,10 +381,10 @@ public class Fop extends Task {
 class FOPTaskStarter {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private final FopFactory fopFactory;
 
     private Fop task;
-    private String baseURL = null;
+    private URI baseUri;
 
     /**
      * logging instance
@@ -408,8 +410,21 @@ class FOPTaskStarter {
 
     FOPTaskStarter(Fop task) throws SAXException, IOException {
         this.task = task;
+        //Set base directory
+        if (task.getBasedir() != null) {
+            this.baseUri = task.getBasedir().toURI();
+        } else {
+            if (task.getFofile() != null) {
+                this.baseUri = task.getFofile().getParentFile().toURI();
+            }
+        }
         if (task.getUserconfig() != null) {
-            fopFactory.setUserConfig(task.getUserconfig());
+            FopFactoryBuilder confBuilder = new FopConfParser(
+                    task.getUserconfig()).getFopFactoryBuilder();
+            confBuilder.setBaseURI(baseUri);
+            fopFactory = confBuilder.build();
+        } else {
+            fopFactory = FopFactory.newInstance(baseUri);
         }
     }
 
@@ -488,25 +503,7 @@ class FOPTaskStarter {
     }
 
     public void run() throws FOPException {
-        //Set base directory
-        if (task.getBasedir() != null) {
-            try {
-                this.baseURL = task.getBasedir().toURI().toURL().toExternalForm();
-            } catch (MalformedURLException mfue) {
-                logger.error("Error creating base URL from base directory", mfue);
-            }
-        } else {
-            try {
-                if (task.getFofile() != null) {
-                    this.baseURL =  task.getFofile().getParentFile().toURI().toURL()
-                                      .toExternalForm();
-                }
-            } catch (MalformedURLException mfue) {
-                logger.error("Error creating base URL from XSL-FO input file", mfue);
-            }
-        }
-
-        task.log("Using base URL: " + baseURL, Project.MSG_DEBUG);
+        task.log("Using base URI: " + baseUri, Project.MSG_DEBUG);
 
         String outputFormat = normalizeOutputFormat(task.getFormat());
         String newExtension = determineExtension(outputFormat);
@@ -598,12 +595,10 @@ class FOPTaskStarter {
                 }
                 try {
                     if (task.getRelativebase()) {
-                        this.baseURL = f.getParentFile().toURI().toURL()
-                                         .toExternalForm();
+                        this.baseUri = f.getParentFile().toURI();
                     }
-                    if (this.baseURL == null) {
-                        this.baseURL = fs.getDir(task.getProject()).toURI().toURL()
-                                          .toExternalForm();
+                    if (this.baseUri == null) {
+                        this.baseUri = fs.getDir(task.getProject()).toURI();
                     }
 
                 } catch (Exception e) {
@@ -649,7 +644,6 @@ class FOPTaskStarter {
         boolean success = false;
         try {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
-            userAgent.setBaseURL(this.baseURL);
             inputHandler.renderTo(userAgent, outputFormat, out);
             success = true;
         } catch (Exception ex) {

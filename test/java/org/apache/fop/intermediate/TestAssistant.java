@@ -43,6 +43,7 @@ import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
 
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 
 /**
  * Helper class for running FOP tests.
@@ -50,11 +51,9 @@ import org.apache.fop.apps.FopFactory;
 public class TestAssistant {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
-    private FopFactory fopFactoryWithBase14Kerning = FopFactory.newInstance();
+    protected final File testDir = new File("test/layoutengine/standard-testcases");
 
-    private SAXTransformerFactory tfactory
-            = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
+    private SAXTransformerFactory tfactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
 
     private DocumentBuilderFactory domBuilderFactory;
 
@@ -65,8 +64,6 @@ public class TestAssistant {
      * Main constructor.
      */
     public TestAssistant() {
-        fopFactory.getFontManager().setBase14KerningEnabled(false);
-        fopFactoryWithBase14Kerning.getFontManager().setBase14KerningEnabled(true);
         domBuilderFactory = DocumentBuilderFactory.newInstance();
         domBuilderFactory.setNamespaceAware(true);
         domBuilderFactory.setValidating(false);
@@ -115,19 +112,13 @@ public class TestAssistant {
         return doc.getDocumentElement();
     }
 
-    public FopFactory getFopFactory(boolean base14KerningEnabled) {
-        FopFactory effFactory = (base14KerningEnabled ? fopFactoryWithBase14Kerning : fopFactory);
-        return effFactory;
-    }
-
     public FopFactory getFopFactory(Document testDoc) {
         boolean base14KerningEnabled = isBase14KerningEnabled(testDoc);
-        FopFactory effFactory = getFopFactory(base14KerningEnabled);
-
         boolean strictValidation = isStrictValidation(testDoc);
-        effFactory.setStrictValidation(strictValidation);
-
-        return effFactory;
+        FopFactoryBuilder builder = new FopFactoryBuilder(testDir.getParentFile().toURI());
+        builder.setStrictFOValidation(strictValidation);
+        builder.getFontManager().setBase14KerningEnabled(base14KerningEnabled);
+        return builder.build();
     }
 
     private boolean isBase14KerningEnabled(Document testDoc) {

@@ -36,6 +36,7 @@ import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
 import org.apache.fop.render.intermediate.EventProducingFilter;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFRenderer;
@@ -52,25 +53,19 @@ public class RendererFactory {
     private Map eventHandlerMakerMapping = new java.util.HashMap();
     private Map documentHandlerMakerMapping = new java.util.HashMap();
 
-    private boolean rendererPreferred = false;
+    private final boolean rendererPreferred;
 
     /**
      * Main constructor.
+     * @param rendererPreferred Controls whether a {@link Renderer} is preferred over a
+     * {@link IFDocumentHandler} if both are available for the same MIME type. True to prefer the
+     * {@link Renderer}, false to prefer the {@link IFDocumentHandler}.
      */
-    public RendererFactory() {
+    public RendererFactory(boolean rendererPreferred) {
         discoverRenderers();
         discoverFOEventHandlers();
         discoverDocumentHandlers();
-    }
-
-    /**
-     * Controls whether a {@link Renderer} is preferred over a {@link IFDocumentHandler} if
-     * both are available for the same MIME type.
-     * @param value true to prefer the {@link Renderer},
-     *                  false to prefer the {@link IFDocumentHandler}.
-     */
-    public void setRendererPreferred(boolean value) {
-        this.rendererPreferred = value;
+        this.rendererPreferred = rendererPreferred;
     }
 
     /**
@@ -239,7 +234,7 @@ public class RendererFactory {
      * @param mime the requested output format
      * @return the requested RendererMaker or null if none is available
      */
-    public AbstractIFDocumentHandlerMaker getDocumentHandlerMaker(String mime) {
+    private AbstractIFDocumentHandlerMaker getDocumentHandlerMaker(String mime) {
         AbstractIFDocumentHandlerMaker maker
             = (AbstractIFDocumentHandlerMaker)documentHandlerMakerMapping.get(mime);
         return maker;
@@ -299,10 +294,7 @@ public class RendererFactory {
         AbstractRendererMaker maker = getRendererMaker(outputFormat);
         if (maker != null) {
             Renderer rend = maker.makeRenderer(userAgent);
-            RendererConfigurator configurator = maker.getConfigurator(userAgent);
-            if (configurator != null) {
-                configurator.configure(rend);
-            }
+            maker.configureRenderer(userAgent, rend);
             return rend;
         } else {
             return null;
@@ -383,7 +375,10 @@ public class RendererFactory {
             throw new UnsupportedOperationException(
                 "No IF document handler for the requested format available: " + outputFormat);
         }
-        IFDocumentHandler documentHandler = maker.makeIFDocumentHandler(userAgent);
+        IFDocumentHandler documentHandler = maker.makeIFDocumentHandler(new IFContext(userAgent));
+        // TODO: do all the configuration in the makeIfDocumentHandler method, that would beam when
+        // you ask for a document handler, a configured one is returned to you. Getting it and
+        // configuring it in two steps doesn't make sense.
         IFDocumentHandlerConfigurator configurator = documentHandler.getConfigurator();
         if (configurator != null) {
             configurator.configure(documentHandler);
@@ -398,15 +393,15 @@ public class RendererFactory {
         List lst = new java.util.ArrayList();
         Iterator iter = this.rendererMakerMapping.keySet().iterator();
         while (iter.hasNext()) {
-            lst.add(((String)iter.next()));
+            lst.add(iter.next());
         }
         iter = this.eventHandlerMakerMapping.keySet().iterator();
         while (iter.hasNext()) {
-            lst.add(((String)iter.next()));
+            lst.add(iter.next());
         }
         iter = this.documentHandlerMakerMapping.keySet().iterator();
         while (iter.hasNext()) {
-            lst.add(((String)iter.next()));
+            lst.add(iter.next());
         }
         Collections.sort(lst);
         return (String[])lst.toArray(new String[lst.size()]);

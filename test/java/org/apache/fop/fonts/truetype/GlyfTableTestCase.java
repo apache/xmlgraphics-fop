@@ -20,6 +20,7 @@
 package org.apache.fop.fonts.truetype;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -55,7 +56,13 @@ public class GlyfTableTestCase {
 
     @Before
     public void setUp() throws IOException {
-        originalFontReader = new FontFileReader("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
+        FileInputStream fontStream = new FileInputStream(
+                "test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
+        try {
+            originalFontReader = new FontFileReader(fontStream);
+        } finally {
+            fontStream.close();
+        }
     }
 
     /**

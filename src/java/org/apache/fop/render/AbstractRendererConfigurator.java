@@ -19,49 +19,30 @@
 
 package org.apache.fop.render;
 
-import org.apache.avalon.framework.configuration.Configuration;
-
 import org.apache.fop.apps.FOUserAgent;
 
 /**
  * Abstract base classes for renderer-related configurator classes. This class basically just
  * provides an accessor to the specific renderer configuration object.
  */
-public abstract class AbstractRendererConfigurator extends AbstractConfigurator {
+public abstract class AbstractRendererConfigurator {
 
-    private static final String TYPE = "renderer";
+    /** fop factory configuration */
+    protected final FOUserAgent userAgent;
 
     /**
      * Default constructor
      * @param userAgent user agent
      */
     public AbstractRendererConfigurator(FOUserAgent userAgent) {
-        super(userAgent);
+        this.userAgent = userAgent;
     }
 
     /**
-     * Returns the configuration subtree for a specific renderer.
-     * @param renderer the renderer
-     * @return the requested configuration subtree, null if there's no configuration
+     * Returns the configurator type
+     * @return the configurator type
      */
-    protected Configuration getRendererConfig(Renderer renderer) {
-        return super.getConfig(renderer.getMimeType());
+    public static String getType() {
+        return "renderer";
     }
-
-    /**
-     * Returns the configuration subtree for a specific renderer.
-     * @param mimeType the MIME type of the renderer
-     * @return the requested configuration subtree, null if there's no configuration
-     */
-    protected Configuration getRendererConfig(String mimeType) {
-        return super.getConfig(mimeType);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getType() {
-        return TYPE;
-    }
-
 }

@@ -44,7 +44,7 @@ public final class Java2DUtil {
             FontInfo fontInfo, FOUserAgent userAgent) {
         Java2DFontMetrics java2DFontMetrics = new Java2DFontMetrics();
 
-        FontManager fontManager = userAgent.getFactory().getFontManager();
+        FontManager fontManager = userAgent.getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
                 new org.apache.fop.render.java2d.Base14FontCollection(java2DFontMetrics),
                 new InstalledFontCollection(java2DFontMetrics)

@@ -677,13 +677,6 @@ public class PCLGenerator {
             } finally {
                 g2d.dispose();
             }
-            /*
-            try {
-                BatchDiffer.saveAsPNG(alpha, new java.io.File("D:/out-alpha.png"));
-                BatchDiffer.saveAsPNG(mask, new java.io.File("D:/out-mask.png"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
             return mask;
         } else {
             return null;
@@ -715,7 +708,6 @@ public class PCLGenerator {
                     (int)Math.ceil(UnitConv.mpt2px(targetDim.height, effResolution)));
         }
         boolean scaled = !orgDim.equals(effDim);
-        //ImageWriterUtil.saveAsPNG(img, new java.io.File("D:/text-0-org.png"));
 
         boolean monochrome = isMonochromeImage(img);
         if (!monochrome) {

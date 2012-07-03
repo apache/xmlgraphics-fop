@@ -26,9 +26,6 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.LazyFont;
@@ -67,7 +64,7 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
     public CustomFontMetricsMapper(final CustomFont fontMetrics)
             throws FontFormatException, IOException {
         this.typeface = fontMetrics;
-        initialize(fontMetrics.getEmbedFileSource());
+        initialize(fontMetrics.getInputStream());
     }
 
     /**
@@ -78,7 +75,7 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
      * @throws FontFormatException if a bad font is loaded
      * @throws IOException if an I/O error occurs
      */
-    public CustomFontMetricsMapper(final LazyFont fontMetrics, final Source fontSource)
+    public CustomFontMetricsMapper(final LazyFont fontMetrics, final InputStream fontSource)
             throws FontFormatException, IOException {
         this.typeface = fontMetrics;
         initialize(fontSource);
@@ -88,29 +85,18 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
 
     /**
      * Loads the java.awt.Font
-     * @param source
+     * @param inStream
      * @throws FontFormatException
      * @throws IOException
      */
-    private void initialize(final Source source)
+    private void initialize(final InputStream inStream)
                 throws FontFormatException, IOException {
         int type = Font.TRUETYPE_FONT;
         if (FontType.TYPE1.equals(typeface.getFontType())) {
             type = TYPE1_FONT; //Font.TYPE1_FONT; only available in Java 1.5
         }
-
-        InputStream is = null;
-        if (source instanceof StreamSource) {
-            is = ((StreamSource) source).getInputStream();
-        } else if (source.getSystemId() != null) {
-            is = new java.net.URL(source.getSystemId()).openStream();
-        } else {
-            throw new IllegalArgumentException("No font source provided.");
-        }
-
-        this.font = Font.createFont(type, is);
-        is.close();
-
+        this.font = Font.createFont(type, inStream);
+        inStream.close();
     }
 
     /** {@inheritDoc} */

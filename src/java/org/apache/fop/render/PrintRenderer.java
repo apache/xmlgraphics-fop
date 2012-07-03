@@ -36,7 +36,6 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
-import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.base14.Base14FontCollection;
 
@@ -52,9 +51,6 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     /** Font configuration */
     protected FontInfo fontInfo;
-
-    /** Font resolver */
-    protected FontResolver fontResolver = null;
 
     /** list of fonts */
     protected List<EmbedFontInfo> embedFontInfoList = null;
@@ -88,11 +84,11 @@ public abstract class PrintRenderer extends AbstractRenderer {
     /** {@inheritDoc} */
     public void setupFontInfo(FontInfo inFontInfo) throws FOPException {
         this.fontInfo = inFontInfo;
-        FontManager fontManager = userAgent.getFactory().getFontManager();
+        FontManager fontManager = userAgent.getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(fontManager.isBase14KerningEnabled()),
-                new CustomFontCollection(getFontResolver(), getFontList(),
-                                         userAgent.isComplexScriptFeaturesEnabled())
+                new CustomFontCollection(fontManager.getResourceResolver(), getFontList(),
+                        userAgent.isComplexScriptFeaturesEnabled())
         };
         fontManager.setup(getFontInfo(), fontCollections);
     }
@@ -107,7 +103,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
         String key = fontInfo.getInternalFontKey(triplet);
         if (key == null) {
             //Find a default fallback font as last resort
-            triplet = new FontTriplet("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
+            triplet = FontTriplet.DEFAULT_FONT_TRIPLET;
             key = fontInfo.getInternalFontKey(triplet);
         }
         return key;
@@ -177,18 +173,6 @@ public abstract class PrintRenderer extends AbstractRenderer {
         RendererContext context = createRendererContext(x, y, width, height, foreignAttributes);
 
         renderXML(context, doc, ns);
-    }
-
-    /**
-     * Get FontResolver
-     *
-     * @return FontResolver
-     */
-    public FontResolver getFontResolver() {
-        if (this.fontResolver == null) {
-            this.fontResolver = new DefaultFontResolver(super.userAgent);
-        }
-        return this.fontResolver;
     }
 
     /**

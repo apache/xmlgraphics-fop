@@ -33,11 +33,11 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>SVGZ external-graphic with an intrinsic size (16ptx16pt)</fo:block>
           <fo:block>
-            <fo:external-graphic id="img-intr" src="../../resources/images/img-w-size.svgz"/>EOG
+            <fo:external-graphic id="img-intr" src="../resources/images/img-w-size.svgz"/>EOG
           </fo:block>
           <fo:block>2 inch wide SVGZ external-graphic on LHS</fo:block>
           <fo:block>
-            <fo:external-graphic id="img-scaled" src="../../resources/images/img-w-size.svgz" content-width="2in" scaling="uniform" />EOG
+            <fo:external-graphic id="img-scaled" src="../resources/images/img-w-size.svgz" content-width="2in" scaling="uniform" />EOG
           </fo:block>
           <fo:block>EOF</fo:block>
         </fo:flow>

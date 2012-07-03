@@ -146,7 +146,6 @@ public class LayoutEngineTestCase {
 
             //Setup FOP for area tree rendering
             FOUserAgent ua = effFactory.newFOUserAgent();
-            ua.setBaseURL(testFile.getParentFile().toURI().toURL().toString());
             ua.getEventBroadcaster().addEventListener(
                     new ConsoleEventListenerForTests(testFile.getName(), EventSeverity.WARN));
 
@@ -203,14 +202,12 @@ public class LayoutEngineTestCase {
             throws TransformerException {
         try {
             FOUserAgent ua = fopFactory.newFOUserAgent();
-            ua.setBaseURL(testFile.getParentFile().toURI().toURL().toExternalForm());
             ua.getEventBroadcaster().addEventListener(
                     new ConsoleEventListenerForTests(testFile.getName(), EventSeverity.WARN));
 
             IFRenderer ifRenderer = new IFRenderer(ua);
 
-            IFSerializer serializer = new IFSerializer();
-            serializer.setContext(new IFContext(ua));
+            IFSerializer serializer = new IFSerializer(new IFContext(ua));
             DOMResult result = new DOMResult();
             serializer.setResult(result);
             ifRenderer.setDocumentHandler(serializer);

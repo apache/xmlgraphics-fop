@@ -35,16 +35,18 @@ import org.apache.fop.fonts.Typeface;
 public abstract class AFPFont extends Typeface {
 
     /** The font name */
-    protected String name;
+    protected final String name;
 
-    private boolean embeddable = true;
+    private final boolean embeddable;
 
     /**
      * Constructor for the base font requires the name.
      * @param name the name of the font
+     * @param embeddable whether this font is to be embedded
      */
-    public AFPFont(String name) {
+    public AFPFont(String name, boolean embeddable) {
         this.name = name;
+        this.embeddable = embeddable;
     }
 
     /** {@inheritDoc} */
@@ -89,7 +91,7 @@ public abstract class AFPFont extends Typeface {
      * Returns the kerning map for the font.
      * @return the kerning map
      */
-    public Map getKerningInfo() {
+    public Map<Integer, Map<Integer, Integer>> getKerningInfo() {
         return null;
     }
 
@@ -99,14 +101,6 @@ public abstract class AFPFont extends Typeface {
      * @return the character set object
      */
     public abstract CharacterSet getCharacterSet(int size);
-
-    /**
-     * Controls whether this font is embeddable or not.
-     * @param value true to enable embedding, false otherwise.
-     */
-    public void setEmbeddable(boolean value) {
-        this.embeddable = value;
-    }
 
     /**
      * Indicates if this font may be embedded.

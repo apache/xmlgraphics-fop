@@ -19,11 +19,12 @@
 
 package org.apache.fop.render.bitmap;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.AbstractRendererMaker;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.render.RendererConfigurator;
+import org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererConfigParser;
 
 /**
  * RendererMaker for the TIFF Renderer.
@@ -32,24 +33,24 @@ public class TIFFRendererMaker extends AbstractRendererMaker {
 
     private static final String[] MIMES = new String[] {MimeConstants.MIME_TIFF};
 
-    /** {@inheritDoc} */
+    @Override
     public Renderer makeRenderer(FOUserAgent userAgent) {
         return new TIFFRenderer(userAgent);
     }
 
-    /** {@inheritDoc} */
-    public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
-        return new TIFFRendererConfigurator(userAgent);
-    }
-
-    /** {@inheritDoc} */
+    @Override
     public boolean needsOutputStream() {
         return true;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String[] getSupportedMimeTypes() {
         return MIMES;
+    }
+
+    @Override
+    public void configureRenderer(FOUserAgent userAgent, Renderer renderer) throws FOPException {
+        new TIFFRendererConfigurator(userAgent, new TIFFRendererConfigParser()).configure(renderer);
     }
 
 }

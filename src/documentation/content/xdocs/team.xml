@@ -58,7 +58,7 @@
           recent XML/XSL-FO convert, he has been nit-picking FAQs &amp; assorted web 
           pages since his first webmaster position @brain.com in 1996. Most 
           important creation? He's got a couple of cool kids.</li>
-        <li id="jm"><link href="mailto:jeremias@apache.org">Jeremias M�rki</link> (JM)
+        <li id="jm"><link href="mailto:jeremias@apache.org">Jeremias Märki</link> (JM)
           is an independent software engineer and consultant from Lucerne, Switzerland. He's also
           the creator of <fork href="http://barcode4j.sourceforge.net">Barcode4J</fork>. 
           See his <fork href="http://www.jeremias-maerki.ch">home page</fork> for more information
@@ -67,20 +67,25 @@
         <li id="sp"><link href="mailto:spepping@apache.org">Simon Pepping</link> (SP) came to FOP
             from the TeX/LaTeX world. See his <fork href="http://www.leverkruid.eu">home
             page</fork> for some of his private projects.</li>
-        <li id="jp"><link href="mailto:pietsch@apache.org">J�rg Pietschmann</link> (JP)</li>
+        <li id="jp"><link href="mailto:pietsch@apache.org">Jörg Pietschmann</link> (JP)</li>
         <li id="ps"><link href="mailto:tcho@club-internet.fr">Pascal Sancho</link> (PS)
-	        is an XML developper from Aix-en-Provence (France). He works on software solutions for 	 
-	        rendering various kind of documents on various supports, more specifically taking care 	 
-	        of PDF generation with FOP.</li> 	 
+            is an XML developper from Aix-en-Provence (France). He works on software solutions for 	 
+            rendering various kind of documents on various supports, more specifically taking care 	 
+            of PDF generation with FOP.</li> 	 
       </ul>
     </section>
     <section id="contribute-active">
       <title>Active Contributors</title>
       <ul>
+        <li id="ag">Alexios Giotis holds a Ph.D. in the optimization of turbomachinery cascades 
+          using evolutionary algorithms, neural networks and parallel processing. He is one of
+          the founding members of i-docs (software for enterprises) and he has been leading its
+          technical design &amp; implementation based on open source libraries since its inception. 
+          He is relying on Apache FOP for generating high volumes of documents on major banks and
+          telecom operators since FOP's 1.0 release. He lives in Athens, Greece.</li>
         <li id="gd">Georg Datterl is a software developer from Austria, currently working for 
           Geneon media solutions gmbh in Nuremberg, Germany. He needs FOP to wrestle gigabytes of 
           electronic data into thousands of printed pages.</li>
-        <li id="lm">Louis Masters</li>
         <li id="lb">Luis Bernardo</li>
       </ul>
     </section>

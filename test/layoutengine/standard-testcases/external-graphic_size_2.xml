@@ -32,18 +32,18 @@
       <fo:page-sequence master-reference="normal">
         <fo:flow flow-name="xsl-region-body">
           <fo:block>
-            <fo:external-graphic src="../../resources/images/box1.png" 
+            <fo:external-graphic src="../resources/images/box1.png" 
               overflow="hidden" background-color="yellow" id="box-org"/>
           </fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/box1.png" 
+            <fo:external-graphic src="../resources/images/box1.png"
               inline-progression-dimension="1in"
               block-progression-dimension="1in"
               content-width="scale-down-to-fit"
               content-height="scale-down-to-fit"
               text-align="center" display-align="center"
               overflow="hidden" background-color="yellow" id="box1"/>
-            <fo:external-graphic src="../../resources/images/box1.png" 
+            <fo:external-graphic src="../resources/images/box1.png"
               inline-progression-dimension="0.5in"
               block-progression-dimension="0.5in"
               content-width="scale-up-to-fit"
@@ -52,14 +52,14 @@
               overflow="hidden" background-color="yellow" id="box1a"/>
           </fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/box1.png" 
+            <fo:external-graphic src="../resources/images/box1.png"
               inline-progression-dimension="2in"
               block-progression-dimension="1in"
               content-width="scale-down-to-fit"
               content-height="scale-down-to-fit"
               text-align="center" display-align="center"
               overflow="hidden" background-color="yellow" id="box2"/>
-            <fo:external-graphic src="../../resources/images/box1.png" 
+            <fo:external-graphic src="../resources/images/box1.png"
               inline-progression-dimension="1in"
               block-progression-dimension="2in"
               content-width="scale-down-to-fit"
@@ -68,7 +68,7 @@
               overflow="hidden" background-color="yellow" id="box3"/>
           </fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/box1.png" 
+            <fo:external-graphic src="../resources/images/box1.png"
               inline-progression-dimension="0.5in"
               block-progression-dimension="0.4in"
               content-width="scale-up-to-fit"

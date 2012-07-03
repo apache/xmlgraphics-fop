@@ -33,7 +33,7 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>EPS external-graphic</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/barcode.eps"/>EOG
+            <fo:external-graphic src="../resources/images/barcode.eps"/>EOG
           </fo:block>
           <fo:block>EOF</fo:block>
         </fo:flow>

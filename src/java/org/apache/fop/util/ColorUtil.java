@@ -404,10 +404,8 @@ public final class ColorUtil {
                 if (foUserAgent != null && iccProfileSrc != null) {
                     RenderingIntent renderingIntent = RenderingIntent.AUTO;
                     //TODO connect to fo:color-profile/@rendering-intent
-                    colorSpace = foUserAgent.getFactory().getColorSpaceCache().get(
-                            iccProfileName,
-                            foUserAgent.getBaseURL(), iccProfileSrc,
-                            renderingIntent);
+                    colorSpace = foUserAgent.getColorSpaceCache().get(
+                            iccProfileName, iccProfileSrc, renderingIntent);
                 }
                 if (colorSpace != null) {
                     // ColorSpace is available
@@ -488,10 +486,8 @@ public final class ColorUtil {
                 if (foUserAgent != null && iccProfileSrc != null) {
                     RenderingIntent renderingIntent = RenderingIntent.AUTO;
                     //TODO connect to fo:color-profile/@rendering-intent
-                    colorSpace = (ICC_ColorSpace)foUserAgent.getFactory().getColorSpaceCache().get(
-                            iccProfileName,
-                            foUserAgent.getBaseURL(), iccProfileSrc,
-                            renderingIntent);
+                    colorSpace = (ICC_ColorSpace)foUserAgent.getColorSpaceCache().get(
+                            iccProfileName, iccProfileSrc, renderingIntent);
                 }
                 if (colorSpace != null) {
                     ICC_Profile profile = colorSpace.getProfile();
