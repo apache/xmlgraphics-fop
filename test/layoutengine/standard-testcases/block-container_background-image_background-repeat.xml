@@ -23,7 +23,7 @@
     </p>
   </info>
   <variables>
-    <img>../../resources/images/bgimg300dpi.jpg</img>
+    <img>../resources/images/bgimg300dpi.jpg</img>
   </variables>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
@@ -57,11 +57,11 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="color=#0000ff,url=../../resources/images/bgimg300dpi.jpg,repeat=repeat-x,horiz=0,vertical=0" xpath="//flow/block[1]/@background"/>
-    <eval expected="color=#0000ff,url=../../resources/images/bgimg300dpi.jpg,repeat=repeat-y,horiz=0,vertical=0" xpath="//flow/block[2]/@background"/>
-    <eval expected="color=#0000ff,url=../../resources/images/bgimg300dpi.jpg,repeat=repeat,horiz=0,vertical=0" xpath="//flow/block[3]/@background"/>
-    <eval expected="color=#0000ff,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=0,vertical=0" xpath="//flow/block[4]/@background"/>
-    <eval expected="color=#0000ff,url=../../resources/images/bgimg300dpi.jpg,repeat=repeat-x,horiz=0,vertical=10440" xpath="//flow/block[5]/@background"/>
-    <eval expected="color=#0000ff,url=../../resources/images/bgimg300dpi.jpg,repeat=repeat-y,horiz=47940,vertical=0" xpath="//flow/block[6]/@background"/>
+    <eval expected="color=#0000ff,url=../resources/images/bgimg300dpi.jpg,repeat=repeat-x,horiz=0,vertical=0" xpath="//flow/block[1]/@background"/>
+    <eval expected="color=#0000ff,url=../resources/images/bgimg300dpi.jpg,repeat=repeat-y,horiz=0,vertical=0" xpath="//flow/block[2]/@background"/>
+    <eval expected="color=#0000ff,url=../resources/images/bgimg300dpi.jpg,repeat=repeat,horiz=0,vertical=0" xpath="//flow/block[3]/@background"/>
+    <eval expected="color=#0000ff,url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=0,vertical=0" xpath="//flow/block[4]/@background"/>
+    <eval expected="color=#0000ff,url=../resources/images/bgimg300dpi.jpg,repeat=repeat-x,horiz=0,vertical=10440" xpath="//flow/block[5]/@background"/>
+    <eval expected="color=#0000ff,url=../resources/images/bgimg300dpi.jpg,repeat=repeat-y,horiz=47940,vertical=0" xpath="//flow/block[6]/@background"/>
   </checks>
 </testcase>

@@ -57,7 +57,7 @@ import embedding.model.ProjectTeam;
 public class ExampleConcat {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
     /**
      * Creates a sample ProjectTeam instance for this demo.

@@ -182,7 +182,7 @@ public class SVGPainter extends AbstractIFPainter<AbstractSVGDocumentHandler>
         try {
             establish(MODE_NORMAL);
 
-            ImageManager manager = getUserAgent().getFactory().getImageManager();
+            ImageManager manager = getUserAgent().getImageManager();
             ImageInfo info = null;
             try {
                 ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();

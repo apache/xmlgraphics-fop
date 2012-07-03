@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.text.MessageFormat;
 
 import javax.xml.transform.Transformer;
@@ -68,12 +69,17 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
             implements Configurable {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private final FopFactory fopFactory;
 
     private String converter;
     private boolean deleteTempFiles;
     /** the bitmap producer's target format */
     protected String targetFormat;
+
+    public AbstractPSPDFBitmapProducer(URI baseUri) {
+        super(baseUri);
+        fopFactory = FopFactory.newInstance(baseUri);
+    }
 
     /** {@inheritDoc} */
     public void configure(Configuration cfg) throws ConfigurationException {
@@ -122,7 +128,6 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
         try {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setTargetResolution(context.getTargetResolution());
-            userAgent.setBaseURL(src.getParentFile().toURI().toURL().toString());
 
             File tempOut = new File(context.getTargetDir(),
                     src.getName() + "." + index + "." + getTargetExtension());

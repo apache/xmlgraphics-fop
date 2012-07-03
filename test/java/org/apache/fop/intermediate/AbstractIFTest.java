@@ -112,8 +112,7 @@ abstract class AbstractIFTest extends AbstractIntermediateTest {
                 userAgent, getTargetMIME());
 
         //Setup painter
-        IFSerializer serializer = new IFSerializer();
-        serializer.setContext(new IFContext(userAgent));
+        IFSerializer serializer = new IFSerializer(new IFContext(userAgent));
         serializer.mimicDocumentHandler(targetHandler);
         serializer.setResult(domResult);
 

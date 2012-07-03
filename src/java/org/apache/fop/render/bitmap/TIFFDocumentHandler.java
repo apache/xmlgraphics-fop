@@ -20,6 +20,9 @@
 package org.apache.fop.render.bitmap;
 
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererConfigParser;
+import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
 /**
@@ -28,10 +31,15 @@ import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
  */
 public class TIFFDocumentHandler extends AbstractBitmapDocumentHandler {
 
+    TIFFDocumentHandler(IFContext context) {
+        super(context);
+    }
+
     /** {@inheritDoc} */
     public String getMimeType() {
         return MimeConstants.MIME_TIFF;
     }
+
 
     /** {@inheritDoc} */
     public String getDefaultExtension() {
@@ -40,7 +48,6 @@ public class TIFFDocumentHandler extends AbstractBitmapDocumentHandler {
 
     /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
-        return new TIFFRendererConfigurator(getUserAgent());
+        return new TIFFRendererConfigurator(getUserAgent(), new TIFFRendererConfigParser());
     }
-
 }

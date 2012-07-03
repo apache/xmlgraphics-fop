@@ -19,16 +19,19 @@
 
 package org.apache.fop.afp;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import org.apache.xmlgraphics.util.MimeConstants;
+
+import org.apache.fop.apps.io.ResourceResolverFactory;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test case for {@link AFPResourceManager}.
@@ -39,7 +42,8 @@ public class AFPResourceManagerTestCase {
 
     @Before
     public void setUp() throws IOException {
-        sut = new AFPResourceManager();
+        sut = new AFPResourceManager(ResourceResolverFactory.createDefaultInternalResourceResolver(
+                                                            new File(".").toURI()));
         AFPPaintingState paintingState = new AFPPaintingState();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         DataStream stream = sut.createDataStream(paintingState, outStream);

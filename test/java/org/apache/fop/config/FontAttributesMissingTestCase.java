@@ -19,13 +19,27 @@
 
 package org.apache.fop.config;
 
+import java.io.IOException;
+
+import org.xml.sax.SAXException;
+
+import org.apache.fop.apps.FopConfBuilder;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.PDFRendererConfBuilder;
+
 /**
  * this font is without a metrics-url or an embed-url
  */
 public class FontAttributesMissingTestCase extends BaseDestructiveUserConfigTest {
 
-    @Override
-    public String getUserConfigFilename() {
-        return "test_font_attributes_missing.xconf";
+    public FontAttributesMissingTestCase() throws SAXException, IOException {
+        super(new FopConfBuilder().setStrictValidation(true)
+                                  .startRendererConfig(PDFRendererConfBuilder.class)
+                                      .startFontsConfig()
+                                          .startFont(null, null)
+                                              .addTriplet("Gladiator", "normal", "normal")
+                                          .endFont()
+                                      .endFontConfig()
+                                  .endRendererConfig().build());
     }
 }

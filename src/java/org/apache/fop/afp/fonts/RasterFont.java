@@ -52,8 +52,8 @@ public class RasterFont extends AFPFont {
      * @param name
      *            the name of the font
      */
-    public RasterFont(String name) {
-        super(name);
+    public RasterFont(String name, boolean embeddable) {
+        super(name, embeddable);
     }
 
     /**
@@ -76,7 +76,7 @@ public class RasterFont extends AFPFont {
     public CharacterSet getCharacterSet(int sizeInMpt) {
 
         Integer requestedSize = Integer.valueOf(sizeInMpt);
-        CharacterSet csm = (CharacterSet) charSets.get(requestedSize);
+        CharacterSet csm = charSets.get(requestedSize);
         double sizeInPt = sizeInMpt / 1000.0;
 
         if (csm != null) {
@@ -85,7 +85,7 @@ public class RasterFont extends AFPFont {
 
         if (substitutionCharSets != null) {
             //Check first if a substitution has already been added
-            csm = (CharacterSet) substitutionCharSets.get(requestedSize);
+            csm = substitutionCharSets.get(requestedSize);
         }
 
         if (csm == null && !charSets.isEmpty()) {
@@ -95,9 +95,9 @@ public class RasterFont extends AFPFont {
             SortedMap<Integer, CharacterSet> smallerSizes = charSets.headMap(requestedSize);
             SortedMap<Integer, CharacterSet> largerSizes = charSets.tailMap(requestedSize);
             int smallerSize = smallerSizes.isEmpty() ? 0
-                    : ((Integer)smallerSizes.lastKey()).intValue();
+                    : smallerSizes.lastKey().intValue();
             int largerSize = largerSizes.isEmpty() ? Integer.MAX_VALUE
-                    : ((Integer)largerSizes.firstKey()).intValue();
+                    : largerSizes.firstKey().intValue();
 
             Integer fontSize;
             if (!smallerSizes.isEmpty()
@@ -106,7 +106,7 @@ public class RasterFont extends AFPFont {
             } else {
                 fontSize = Integer.valueOf(largerSize);
             }
-            csm = (CharacterSet) charSets.get(fontSize);
+            csm = charSets.get(fontSize);
 
             if (csm != null) {
                 // Add the substitute mapping, so subsequent calls will

@@ -28,6 +28,7 @@ import java.io.IOException;
 import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.util.MimeConstants;
 
+import org.apache.fop.afp.AFPResourceLevel.ResourceType;
 import org.apache.fop.afp.modca.triplets.MappingOptionTriplet;
 import org.apache.fop.util.bitmap.DitherUtil;
 
@@ -66,7 +67,7 @@ public class AFPDitheredRectanglePainter extends AbstractAFPPainter {
         AFPImageObjectInfo imageObjectInfo = new AFPImageObjectInfo();
         imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS10);
         //imageObjectInfo.setCreatePageSegment(true);
-        imageObjectInfo.getResourceInfo().setLevel(new AFPResourceLevel(AFPResourceLevel.INLINE));
+        imageObjectInfo.getResourceInfo().setLevel(new AFPResourceLevel(ResourceType.INLINE));
         imageObjectInfo.getResourceInfo().setImageDimension(ditherSize);
         imageObjectInfo.setBitsPerPixel(1);
         imageObjectInfo.setColor(false);

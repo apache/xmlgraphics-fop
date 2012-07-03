@@ -45,6 +45,10 @@ public abstract class AbstractXMLWritingIFDocumentHandler extends AbstractIFDocu
     /** Main SAX ContentHandler to receive the generated SAX events. */
     protected GenerationHelperContentHandler handler;
 
+    protected AbstractXMLWritingIFDocumentHandler(IFContext context) {
+        super(context);
+    }
+
     /** {@inheritDoc} */
     public void setResult(Result result) throws IFException {
         if (result instanceof SAXResult) {

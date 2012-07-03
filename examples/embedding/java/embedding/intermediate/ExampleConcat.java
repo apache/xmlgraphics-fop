@@ -58,7 +58,7 @@ import embedding.model.ProjectTeam;
 public class ExampleConcat {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
     /**
      * Creates a sample ProjectTeam instance for this demo.
@@ -95,8 +95,7 @@ public class ExampleConcat {
                 userAgent, MimeConstants.MIME_PDF);
 
         //Create the IFSerializer to write the intermediate format
-        IFSerializer ifSerializer = new IFSerializer();
-        ifSerializer.setContext(new IFContext(userAgent));
+        IFSerializer ifSerializer = new IFSerializer(new IFContext(userAgent));
 
         //Tell the IFSerializer to mimic the target format
         ifSerializer.mimicDocumentHandler(targetHandler);

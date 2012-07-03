@@ -30,7 +30,7 @@
           <fo:region-body reference-orientation="90"/>
         </fo:simple-page-master>
       </fo:layout-master-set>
-      <fox:external-document id="img1" src="../../resources/images/bgimg72dpi.png"
+      <fox:external-document id="img1" src="../resources/images/bgimg72dpi.png"
         width="5in" height="5in" text-align="center" display-align="center"/>
       <fo:page-sequence master-reference="normal" id="ps1">
         <fo:flow flow-name="xsl-region-body">
@@ -39,11 +39,11 @@
           </fo:block>
         </fo:flow>
       </fo:page-sequence>
-      <fox:external-document id="img2" src="../../resources/images/bgimg72dpi.png"
+      <fox:external-document id="img2" src="../resources/images/bgimg72dpi.png"
         width="5in" height="5in" content-width="scale-to-fit"/>
-      <fox:external-document id="img3" src="../../resources/images/bgimg72dpi.png"
+      <fox:external-document id="img3" src="../resources/images/bgimg72dpi.png"
         width="5in" height="5in" content-width="scale-down-to-fit" initial-page-number="5"/>
-      <fox:external-document id="img4" src="../../resources/images/big-image.png"
+      <fox:external-document id="img4" src="../resources/images/big-image.png"
         reference-orientation="90"/>
     </fo:root>
   </fo>

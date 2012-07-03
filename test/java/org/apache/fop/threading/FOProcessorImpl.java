@@ -19,8 +19,11 @@
 
 package org.apache.fop.threading;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.xml.transform.Result;
@@ -30,6 +33,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
+
+import org.xml.sax.SAXException;
 
 import org.apache.avalon.framework.activity.Initializable;
 import org.apache.avalon.framework.configuration.Configurable;
@@ -50,32 +55,39 @@ import org.apache.fop.apps.MimeConstants;
 public class FOProcessorImpl extends AbstractLogEnabled
             implements Processor, Configurable, Initializable {
 
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private FopFactory fopFactory;
     private TransformerFactory factory = TransformerFactory.newInstance();
-    private String userconfig;
+    private URI userconfig;
     private String mime;
     private String fileExtension;
 
     /** {@inheritDoc} */
     public void configure(Configuration configuration) throws ConfigurationException {
-        this.userconfig = configuration.getChild("userconfig").getValue(null);
-        this.mime = configuration.getChild("mime").getValue(MimeConstants.MIME_PDF);
-        this.fileExtension = configuration.getChild("extension").getValue(".pdf");
-    }
-
-    /** {@inheritDoc} */
-    public void initialize() throws Exception {
-        if (this.userconfig != null) {
-            getLogger().debug("Setting user config: " + userconfig);
-            fopFactory.setUserConfig(this.userconfig);
+        try {
+            this.userconfig = new URI(configuration.getChild("userconfig").getValue(null));
+            this.mime = configuration.getChild("mime").getValue(MimeConstants.MIME_PDF);
+            this.fileExtension = configuration.getChild("extension").getValue(".pdf");
+        } catch (URISyntaxException use) {
+            throw new RuntimeException(use);
         }
     }
 
-    /** {@inheritDoc} */
+    public void initialize() throws Exception {
+        if (this.userconfig != null) {
+            getLogger().debug("Setting user config: " + userconfig);
+            fopFactory = FopFactory.newInstance(new File(userconfig));
+        } else {
+            fopFactory = FopFactory.newInstance(new File(".").toURI());
+        }
+    }
+
+    /** {@inheritDoc} 
+     * @throws URISyntaxException 
+     * @throws SAXException */
     public void process(Source src, Templates templates, OutputStream out)
-                throws org.apache.fop.apps.FOPException, java.io.IOException {
+            throws java.io.IOException, URISyntaxException, SAXException {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-        foUserAgent.setBaseURL(src.getSystemId());
+
         try {
             URL url = new URL(src.getSystemId());
             String filename = FilenameUtils.getName(url.getPath());

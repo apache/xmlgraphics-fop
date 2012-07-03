@@ -19,23 +19,28 @@
 
 package org.apache.fop.svg;
 
+import java.io.File;
+import java.net.URI;
 import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fonts.CustomFontCollection;
-import org.apache.fop.fonts.FontCollection;
+import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
+import org.apache.fop.fonts.DefaultFontConfig;
+import org.apache.fop.fonts.DefaultFontConfigurator;
+import org.apache.fop.fonts.EmbedFontInfo;
+import org.apache.fop.fonts.FontCacheManagerFactory;
+import org.apache.fop.fonts.FontDetectorFactory;
 import org.apache.fop.fonts.FontEventListener;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontInfoConfigurator;
 import org.apache.fop.fonts.FontManager;
-import org.apache.fop.fonts.FontManagerConfigurator;
-import org.apache.fop.fonts.FontResolver;
-import org.apache.fop.fonts.base14.Base14FontCollection;
+import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.render.pdf.PDFRendererConfigurator;
+import org.apache.fop.render.pdf.PDFRendererConfig;
+import org.apache.fop.render.pdf.PDFRendererConfig.PDFRendererConfigParser;
 
 /**
  * Configurator class for PDFDocumentGraphics2D.
@@ -53,10 +58,13 @@ public class PDFDocumentGraphics2DConfigurator {
                           boolean useComplexScriptFeatures )
             throws ConfigurationException {
         PDFDocument pdfDoc = graphics.getPDFDocument();
-
-        //Filter map
-        pdfDoc.setFilterMap(
-                PDFRendererConfigurator.buildFilterMapFromConfiguration(cfg));
+        try {
+            //Filter map
+            PDFRendererConfig pdfConfig = new PDFRendererConfigParser().build(null, cfg);
+            pdfDoc.setFilterMap(pdfConfig.getConfigOptions().getFilterMap());
+        } catch (FOPException e) {
+            throw new RuntimeException(e);
+        }
 
         //Fonts
         try {
@@ -78,30 +86,28 @@ public class PDFDocumentGraphics2DConfigurator {
         throws FOPException {
         FontInfo fontInfo = new FontInfo();
         final boolean strict = false;
-        FontResolver fontResolver = FontManager.createMinimalFontResolver(useComplexScriptFeatures);
-        //TODO The following could be optimized by retaining the FontManager somewhere
-        FontManager fontManager = new FontManager();
         if (cfg != null) {
-            FontManagerConfigurator fmConfigurator = new FontManagerConfigurator(cfg);
-            fmConfigurator.configure(fontManager, strict);
-        }
+            URI thisUri = new File(".").getAbsoluteFile().toURI();
+            InternalResourceResolver resourceResolver = ResourceResolverFactory.createDefaultInternalResourceResolver(thisUri);
+            //TODO The following could be optimized by retaining the FontManager somewhere
+            FontManager fontManager = new FontManager(resourceResolver, FontDetectorFactory.createDefault(),
+                    FontCacheManagerFactory.createDefault());
 
-        List fontCollections = new java.util.ArrayList();
-        fontCollections.add(new Base14FontCollection(fontManager.isBase14KerningEnabled()));
+            //TODO Make use of fontBaseURL, font substitution and referencing configuration
+            //Requires a change to the expected configuration layout
 
-        if (cfg != null) {
-            //TODO Wire in the FontEventListener
-            FontEventListener listener = null; //new FontEventAdapter(eventBroadcaster);
-            FontInfoConfigurator fontInfoConfigurator
-                = new FontInfoConfigurator(cfg, fontManager, fontResolver, listener, strict);
-            List/*<EmbedFontInfo>*/ fontInfoList = new java.util.ArrayList/*<EmbedFontInfo>*/();
-            fontInfoConfigurator.configure(fontInfoList);
-            fontCollections.add(new CustomFontCollection(fontResolver, fontInfoList,
-                                fontResolver.isComplexScriptFeaturesEnabled()));
+            final FontEventListener listener = null;
+            DefaultFontConfig.DefaultFontConfigParser parser
+                    = new DefaultFontConfig.DefaultFontConfigParser();
+            DefaultFontConfig fontInfoConfig = parser.parse(cfg, strict);
+            DefaultFontConfigurator fontInfoConfigurator
+                    = new DefaultFontConfigurator(fontManager, listener, strict);
+            List<EmbedFontInfo> fontInfoList = fontInfoConfigurator.configure(fontInfoConfig);
+            fontManager.saveCache();
+            FontSetup.setup(fontInfo, fontInfoList, resourceResolver, useComplexScriptFeatures);
+        } else {
+            FontSetup.setup(fontInfo, useComplexScriptFeatures);
         }
-        fontManager.setup(fontInfo,
-                (FontCollection[])fontCollections.toArray(
-                        new FontCollection[fontCollections.size()]));
         return fontInfo;
     }
 

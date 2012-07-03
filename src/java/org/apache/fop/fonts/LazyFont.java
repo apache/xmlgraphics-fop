@@ -20,12 +20,9 @@
 package org.apache.fop.fonts;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.InputSource;
 
@@ -33,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.complexscripts.fonts.Positionable;
 import org.apache.fop.complexscripts.fonts.Substitutable;
 
@@ -43,49 +41,50 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
 
     private static Log log = LogFactory.getLog(LazyFont.class);
 
-    private String metricsFileName;
-    private String fontEmbedPath;
-    private boolean useKerning;
-    private boolean useAdvanced;
-    private EncodingMode encodingMode = EncodingMode.AUTO;
-    private EmbeddingMode embeddingMode = EmbeddingMode.AUTO;
-    private boolean embedded = true;
-    private String subFontName;
+    private final URI metricsURI;
+    private final URI fontEmbedURI;
+    private final boolean useKerning;
+    private final boolean useAdvanced;
+    private final EncodingMode encodingMode;
+    private EmbeddingMode embeddingMode;
+    private final String subFontName;
+    private final boolean embedded;
+    private final InternalResourceResolver resourceResolver;
 
     private boolean isMetricsLoaded;
     private Typeface realFont;
     private FontDescriptor realFontDescriptor;
 
-    private FontResolver resolver;
-
     /**
      * Main constructor
      * @param fontInfo  the font info to embed
-     * @param resolver the font resolver to handle font URIs
+     * @param resourceResolver the font resolver to handle font URIs
      */
-    public LazyFont(EmbedFontInfo fontInfo, FontResolver resolver) {
-
-        this.metricsFileName = fontInfo.getMetricsFile();
-        this.fontEmbedPath = fontInfo.getEmbedFile();
+    public LazyFont(EmbedFontInfo fontInfo, InternalResourceResolver resourceResolver,
+            boolean useComplexScripts) {
+        this.metricsURI = fontInfo.getMetricsURI();
+        this.fontEmbedURI = fontInfo.getEmbedURI();
         this.useKerning = fontInfo.getKerning();
-        if ( resolver != null ) {
-            this.useAdvanced = resolver.isComplexScriptFeaturesEnabled();
+        if (resourceResolver != null) {
+            this.useAdvanced = useComplexScripts;
         } else {
             this.useAdvanced = fontInfo.getAdvanced();
         }
-        this.encodingMode = fontInfo.getEncodingMode();
-        this.embeddingMode = fontInfo.getEmbeddingMode();
+        this.encodingMode = fontInfo.getEncodingMode() != null ? fontInfo.getEncodingMode()
+                : EncodingMode.AUTO;
+        this.embeddingMode = fontInfo.getEmbeddingMode() != null ? fontInfo.getEmbeddingMode()
+                : EmbeddingMode.AUTO;
         this.subFontName = fontInfo.getSubFontName();
         this.embedded = fontInfo.isEmbedded();
-        this.resolver = resolver;
+        this.resourceResolver = resourceResolver;
     }
 
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sbuf = new StringBuffer(super.toString());
         sbuf.append('{');
-        sbuf.append("metrics-url=" + metricsFileName);
-        sbuf.append(",embed-url=" + fontEmbedPath);
+        sbuf.append("metrics-url=" + metricsURI);
+        sbuf.append(",embed-url=" + fontEmbedURI);
         sbuf.append(",kerning=" + useKerning);
         sbuf.append(",advanced=" + useAdvanced);
         sbuf.append('}');
@@ -95,75 +94,38 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     private void load(boolean fail) {
         if (!isMetricsLoaded) {
             try {
-                if (metricsFileName != null) {
+                if (metricsURI != null) {
                     /**@todo Possible thread problem here */
                     FontReader reader = null;
-                    if (resolver != null) {
-                        Source source = resolver.resolve(metricsFileName);
-                        if (source == null) {
-                            String err
-                                = "Cannot load font: failed to create Source from metrics file "
-                                    + metricsFileName;
-                            if (fail) {
-                                throw new RuntimeException(err);
-                            } else {
-                                log.error(err);
-                            }
-                            return;
-                        }
-                        InputStream in = null;
-                        if (source instanceof StreamSource) {
-                            in = ((StreamSource) source).getInputStream();
-                        }
-                        if (in == null && source.getSystemId() != null) {
-                            in = new java.net.URL(source.getSystemId()).openStream();
-                        }
-                        if (in == null) {
-                            String err = "Cannot load font: After URI resolution, the returned"
-                                + " Source object does not contain an InputStream"
-                                + " or a valid URL (system identifier) for metrics file: "
-                                + metricsFileName;
-                            if (fail) {
-                                throw new RuntimeException(err);
-                            } else {
-                                log.error(err);
-                            }
-                            return;
-                        }
-                        InputSource src = new InputSource(in);
-                        src.setSystemId(source.getSystemId());
-                        reader = new FontReader(src);
-                    } else {
-                        reader = new FontReader(new InputSource(
-                                    new URL(metricsFileName).openStream()));
-                    }
+                    InputStream in = resourceResolver.getResource(metricsURI);
+                    InputSource src = new InputSource(in);
+                    src.setSystemId(metricsURI.toASCIIString());
+                    reader = new FontReader(src, resourceResolver);
                     reader.setKerningEnabled(useKerning);
                     reader.setAdvancedEnabled(useAdvanced);
                     if (this.embedded) {
-                        reader.setFontEmbedPath(fontEmbedPath);
+                        reader.setFontEmbedURI(fontEmbedURI);
                     }
-                    reader.setResolver(resolver);
                     realFont = reader.getFont();
                 } else {
-                    if (fontEmbedPath == null) {
+                    if (fontEmbedURI == null) {
                         throw new RuntimeException("Cannot load font. No font URIs available.");
                     }
-                    realFont = FontLoader.loadFont(fontEmbedPath, subFontName,
-                            embedded, embeddingMode, encodingMode,
-                            useKerning, useAdvanced, resolver);
+                    realFont = FontLoader.loadFont(fontEmbedURI, subFontName, embedded,
+                            embeddingMode, encodingMode, useKerning, useAdvanced, resourceResolver);
                 }
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;
                 }
             } catch (FOPException fopex) {
-                log.error("Failed to read font metrics file " + metricsFileName, fopex);
+                log.error("Failed to read font metrics file " + metricsURI, fopex);
                 if (fail) {
-                    throw new RuntimeException(fopex.getMessage());
+                    throw new RuntimeException(fopex);
                 }
             } catch (IOException ioex) {
-                log.error("Failed to read font metrics file " + metricsFileName, ioex);
+                log.error("Failed to read font metrics file " + metricsURI, ioex);
                 if (fail) {
-                    throw new RuntimeException(ioex.getMessage());
+                    throw new RuntimeException(ioex);
                 }
             }
             realFont.setEventListener(this.eventListener);

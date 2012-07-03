@@ -21,12 +21,12 @@ package org.apache.fop.render.svg;
 
 import java.awt.Dimension;
 
-import javax.xml.transform.Result;
-
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.fop.render.intermediate.IFConstants;
+import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.util.XMLUtil;
@@ -40,18 +40,8 @@ public class SVGPrintDocumentHandler extends AbstractSVGDocumentHandler {
     /**
      * Default constructor.
      */
-    public SVGPrintDocumentHandler() {
-        //nop
-    }
-
-    /**
-     * Creates a new SVGPrintPainter that sends the XML content it generates to the given
-     * SAX ContentHandler.
-     * @param result the JAXP Result object to receive the generated content
-     * @throws IFException if an error occurs setting up the output
-     */
-    public SVGPrintDocumentHandler(Result result) throws IFException {
-        setResult(result);
+    public SVGPrintDocumentHandler(IFContext context) {
+        super(context);
     }
 
     /** {@inheritDoc} */

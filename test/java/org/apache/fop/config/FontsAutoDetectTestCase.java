@@ -19,10 +19,21 @@
 
 package org.apache.fop.config;
 
+import java.io.IOException;
+
+import org.xml.sax.SAXException;
+
+import org.apache.fop.apps.FopConfBuilder;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.PDFRendererConfBuilder;
+
 public class FontsAutoDetectTestCase extends BaseConstructiveUserConfigTest {
 
-    @Override
-    public String getUserConfigFilename() {
-        return "test_fonts_autodetect.xconf";
+    public FontsAutoDetectTestCase() throws SAXException, IOException {
+        super(new FopConfBuilder().startRendererConfig(PDFRendererConfBuilder.class)
+                                      .startFontsConfig()
+                                          .addAutoDetect()
+                                      .endFontConfig()
+                                  .endRendererConfig().build());
     }
 }

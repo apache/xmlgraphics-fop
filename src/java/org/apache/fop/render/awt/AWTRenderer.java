@@ -41,7 +41,7 @@ import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactoryConfigurator;
+import org.apache.fop.apps.FopFactoryConfig;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
@@ -131,13 +131,13 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         pageWidth = (int) Math.round(bounds.getWidth() / 1000f);
         pageHeight = (int) Math.round(bounds.getHeight() / 1000f);
         double scaleX = scaleFactor
-                * (UnitConv.IN2MM / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
+                * (UnitConv.IN2MM / FopFactoryConfig.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
         double scaleY = scaleFactor
-                * (UnitConv.IN2MM / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
+                * (UnitConv.IN2MM / FopFactoryConfig.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
         if (getPageViewport(pageNum).getForeignAttributes() != null) {
-            String scale = (String) getPageViewport(pageNum).getForeignAttributes().get(
+            String scale = getPageViewport(pageNum).getForeignAttributes().get(
                     PageScale.EXT_PAGE_SCALE);
             Point2D scales = PageScale.getScale(scale);
             if (scales != null) {

@@ -22,6 +22,7 @@ package org.apache.fop.visual;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
 
 import javax.xml.transform.TransformerConfigurationException;
@@ -141,13 +142,16 @@ public class BatchDiffer {
                     throw new RuntimeException("Error setting up stylesheet");
                 }
             }
-            BitmapProducer[] producers = getProducers(cfg.getChild("producers"));
+
 
             //Set up directories
             File srcDir = new File(cfg.getChild("source-directory").getValue());
             if (!srcDir.exists()) {
                 throw new RuntimeException("source-directory does not exist: " + srcDir);
             }
+
+            BitmapProducer[] producers = getProducers(cfg.getChild("producers"), srcDir);
+
             final File targetDir = new File(cfg.getChild("target-directory").getValue());
             if (!targetDir.mkdirs() && !targetDir.exists()) {
                 throw new RuntimeException("target-directory is invalid: " + targetDir);
@@ -249,13 +253,15 @@ public class BatchDiffer {
         }
     }
 
-    private BitmapProducer[] getProducers(Configuration cfg) {
+    private BitmapProducer[] getProducers(Configuration cfg, File srcDir) {
         Configuration[] children = cfg.getChildren("producer");
         BitmapProducer[] producers = new BitmapProducer[children.length];
         for (int i = 0; i < children.length; i++) {
             try {
                 Class<?> clazz = Class.forName(children[i].getAttribute("classname"));
-                producers[i] = (BitmapProducer)clazz.newInstance();
+                Object producer = clazz.getDeclaredConstructor(URI.class)
+                                       .newInstance(srcDir.toURI());
+                producers[i] = (BitmapProducer) producer;
                 ContainerUtil.configure(producers[i], children[i]);
             } catch (Exception e) {
                 log.error("Error setting up producers", e);

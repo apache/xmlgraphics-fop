@@ -41,14 +41,6 @@ public class FontTriplet implements Comparable<FontTriplet>, Serializable {
     private transient String key;
 
     /**
-     * Creates a new font triplet (for base14 use).
-     * @param name font name
-     */
-    public FontTriplet(String name) {
-        this.name = name;
-    }
-
-    /**
      * Creates a new font triplet.
      * @param name font name
      * @param style font style (normal, italic etc.)
@@ -66,7 +58,7 @@ public class FontTriplet implements Comparable<FontTriplet>, Serializable {
      * @param priority priority of this triplet/font mapping
      */
     public FontTriplet(String name, String style, int weight, int priority) {
-        this(name);
+        this.name = name;
         this.style = style;
         this.weight = weight;
         this.priority = priority;

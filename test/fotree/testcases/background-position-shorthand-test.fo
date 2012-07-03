@@ -24,56 +24,56 @@
   </fo:layout-master-set>
   <fo:page-sequence master-reference="simpleA4">
     <fo:flow flow-name="xsl-region-body">
-      <fo:block background-image="../../resources/images/bgimg72dpi.jpg">
+      <fo:block background-image="test/resources/images/bgimg72dpi.jpg">
         <test:assert property="background-position-horizontal" expected="0mpt"/>
         <test:assert property="background-position-vertical" expected="0mpt"/>
         Test background-position shorthand: initial values
       </fo:block>
-      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+      <fo:block background-image="test/resources/images/bgimg72dpi.jpg"
                 background-position="50% 50%">
         <test:assert property="background-position-horizontal" expected="50.0%"/>
         <test:assert property="background-position-vertical" expected="50.0%"/>
         Test background-position shorthand: "50% 50%"
       </fo:block>
-      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+      <fo:block background-image="test/resources/images/bgimg72dpi.jpg"
                 background-position="2in 50%">
         <test:assert property="background-position-horizontal" expected="144000mpt"/>
         <test:assert property="background-position-vertical" expected="50.0%"/>
         Test background-position shorthand: "2in 50%"
       </fo:block>
-      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+      <fo:block background-image="test/resources/images/bgimg72dpi.jpg"
                 background-position="100%">
         <test:assert property="background-position-horizontal" expected="100.0%"/>
         <test:assert property="background-position-vertical" expected="50.0%"/>
         Test background-position shorthand: "100%"
       </fo:block>
-      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+      <fo:block background-image="test/resources/images/bgimg72dpi.jpg"
                 background-position="top center">
         <test:assert property="background-position-horizontal" expected="50.0%"/>
         <test:assert property="background-position-vertical" expected="0mpt"/>
         Test background-position shorthand: "top center"
       </fo:block>
-      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+      <fo:block background-image="test/resources/images/bgimg72dpi.jpg"
                 background-position="right bottom">
         <test:assert property="background-position-horizontal" expected="100.0%"/>
         <test:assert property="background-position-vertical" expected="100.0%"/>
         Test background-position shorthand: "right bottom"
       </fo:block>
       <fo:block background-position="right bottom">
-        <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+        <fo:block background-image="test/resources/images/bgimg72dpi.jpg"
                   background-position="inherit">
           <test:assert property="background-position-horizontal" expected="100.0%"/>
           <test:assert property="background-position-vertical" expected="100.0%"/>
           Test background-position shorthand: "inherit"
         </fo:block>
       </fo:block>
-      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+      <fo:block background-image="test/resources/images/bgimg72dpi.jpg"
                 background-position="top right">
         <test:assert property="background-position-horizontal" expected="100.0%"/>
         <test:assert property="background-position-vertical" expected="0mpt"/>
         Test background-position shorthand: "top right"
       </fo:block>
-      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+      <fo:block background-image="test/resources/images/bgimg72dpi.jpg"
                 background-position="center">
         <test:assert property="background-position-horizontal" expected="50.0%"/>
         <test:assert property="background-position-vertical" expected="50.0%"/>
