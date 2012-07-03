@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.traits.BorderProps;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -75,6 +76,13 @@ public class AbstractIFPainterTestCase {
 
             public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[][] dp,
                     String text) throws IFException {
+            }
+
+            public void clipBackground(Rectangle rect, BorderProps bpsBefore,
+                    BorderProps bpsAfter, BorderProps bpsStart,
+                    BorderProps bpsEnd) throws IFException {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException();
             }
         };
         FontInfo fontInfo = mock(FontInfo.class);
