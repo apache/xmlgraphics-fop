@@ -22,9 +22,6 @@ package org.apache.fop.render;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.io.InternalResourceResolver;
@@ -45,9 +42,6 @@ import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
  */
 public abstract class PrintRendererConfigurator extends AbstractRendererConfigurator
         implements IFDocumentHandlerConfigurator {
-
-    /** logger instance */
-    private static Log LOG = LogFactory.getLog(PrintRendererConfigurator.class);
 
     private final RendererConfigParser rendererConfigParser;
 
@@ -169,5 +163,14 @@ public abstract class PrintRendererConfigurator extends AbstractRendererConfigur
 
     private List<EmbedFontInfo> buildFontList(String mimeType) throws FOPException {
         return fontInfoConfigurator.configure(getRendererConfig(mimeType).getFontInfoConfig());
+    }
+
+    public static PrintRendererConfigurator createDefaultInstance(FOUserAgent userAgent) {
+        return new PrintRendererConfigurator(userAgent, null) {
+            @Override
+            protected List<FontCollection> getDefaultFontCollection() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 }

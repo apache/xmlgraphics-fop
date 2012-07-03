@@ -20,12 +20,11 @@
 package org.apache.fop.render.pcl;
 
 import java.io.ObjectStreamException;
-import java.io.Serializable;
 
 /**
  * Enumeration class for PCL rendering modes.
  */
-public enum PCLRenderingMode implements Serializable {
+public enum PCLRenderingMode {
     /** "Quality" rendering (mixed native and bitmap for improved quality) */
     QUALITY("quality", 1.0f),
     /** "Speed" rendering (maximum speed with native rendering, reduced visual quality) */

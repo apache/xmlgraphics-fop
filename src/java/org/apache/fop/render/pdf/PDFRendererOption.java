@@ -36,14 +36,14 @@ public enum PDFRendererOption implements RendererConfigOption {
         }
     },
     /** Rendering Options key for the PDF/A mode, default: {@link PDFAMode#DISABLED} */
-    PDF_A_MODE("pdf-a-mode", PDFAMode.DISABLED){
+    PDF_A_MODE("pdf-a-mode", PDFAMode.DISABLED) {
         @Override
         PDFAMode deserialize(String value) {
             return PDFAMode.getValueOf(value);
         }
     },
     /** Rendering Options key for the PDF/X mode, default: {@link PDFXMode#DISABLED} */
-    PDF_X_MODE("pdf-x-mode", PDFXMode.DISABLED){
+    PDF_X_MODE("pdf-x-mode", PDFXMode.DISABLED) {
         @Override
         PDFXMode deserialize(String value) {
             return PDFXMode.getValueOf(value);

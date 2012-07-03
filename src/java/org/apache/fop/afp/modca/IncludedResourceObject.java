@@ -26,9 +26,8 @@ import java.net.URI;
 
 import org.apache.commons.io.IOUtils;
 
-import org.apache.fop.afp.util.AFPResourceUtil;
 import org.apache.fop.afp.util.AFPResourceAccessor;
-
+import org.apache.fop.afp.util.AFPResourceUtil;
 
 /**
  * Encapsulates an included resource object that is loaded from an external file.

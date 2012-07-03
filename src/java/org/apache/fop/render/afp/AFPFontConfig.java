@@ -351,19 +351,10 @@ public final class AFPFontConfig implements FontConfig {
             CharacterSet characterSet = null;
             if (base14 != null) {
                 try {
-                    Class<? extends Typeface> clazz = Class.forName(
-                            "org.apache.fop.fonts.base14." + base14).asSubclass(Typeface.class);
-                    try {
-                        Typeface tf = clazz.newInstance();
-                        characterSet = CharacterSetBuilder.getSingleByteInstance()
-                                                          .build(characterset, super.codePage,
-                                                                  super.encoding,
-                                                                  tf, eventProducer);
-                    } catch (Exception ie) {
-                        String msg = "The base 14 font class " + clazz.getName()
-                                + " could not be instantiated";
-                        LOG.error(msg);
-                    }
+                    Typeface tf = getTypeFace(base14);
+                    characterSet = CharacterSetBuilder.getSingleByteInstance()
+                                                      .build(characterset, super.codePage,
+                                                              super.encoding, tf, eventProducer);
                 } catch (ClassNotFoundException cnfe) {
                     String msg = "The base 14 font class for " + characterset
                             + " could not be found";
@@ -376,6 +367,22 @@ public final class AFPFontConfig implements FontConfig {
             }
             return getFontInfo(new OutlineFont(super.name, super.embeddable, characterSet), this);
         }
+    }
+
+    private static Typeface getTypeFace(String base14Name) throws ClassNotFoundException {
+        try {
+            Class<? extends Typeface> clazz = Class.forName("org.apache.fop.fonts.base14."
+                    + base14Name).asSubclass(Typeface.class);
+            return clazz.newInstance();
+        } catch (IllegalAccessException iae) {
+            LOG.error(iae.getMessage());
+        } catch (ClassNotFoundException cnfe) {
+            LOG.error(cnfe.getMessage());
+        } catch (InstantiationException ie) {
+            LOG.error(ie.getMessage());
+        }
+        throw new ClassNotFoundException("Couldn't load file for AFP font with base14 name: "
+                + base14Name);
     }
 
     static final class RasterFontConfig extends AFPFontConfigData {
@@ -395,23 +402,19 @@ public final class AFPFontConfig implements FontConfig {
             for (RasterCharactersetData charset : charsets) {
                 if (charset.base14 != null) {
                     try {
-                        Class<? extends Typeface> clazz = Class.forName(
-                                "org.apache.fop.fonts.base14." + charset.base14).asSubclass(
-                                Typeface.class);
-                        try {
-                            Typeface tf = clazz.newInstance();
-                            rasterFont.addCharacterSet(charset.size,
-                                    CharacterSetBuilder.getSingleByteInstance().build(
-                                            charset.characterset, super.codePage, super.encoding,
-                                            tf, eventProducer));
-                        } catch (Exception ie) {
-                            String msg = "The base 14 font class " + clazz.getName()
-                                    + " could not be instantiated";
-                            LOG.error(msg);
-                        }
+                        Typeface tf = getTypeFace(charset.base14);
+                        rasterFont.addCharacterSet(charset.size,
+                                CharacterSetBuilder.getSingleByteInstance().build(
+                                        charset.characterset, super.codePage, super.encoding,
+                                        tf, eventProducer));
+
                     } catch (ClassNotFoundException cnfe) {
                         String msg = "The base 14 font class for " + charset.characterset
                                 + " could not be found";
+                        LOG.error(msg);
+                    } catch (IOException ie) {
+                        String msg = "The base 14 font class " + charset.characterset
+                                + " could not be instantiated";
                         LOG.error(msg);
                     }
                 } else {

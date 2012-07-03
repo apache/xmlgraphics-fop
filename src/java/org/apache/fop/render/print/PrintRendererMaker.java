@@ -19,12 +19,9 @@
 
 package org.apache.fop.render.print;
 
-import java.util.List;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.render.AbstractRendererMaker;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
@@ -43,13 +40,7 @@ public class PrintRendererMaker extends AbstractRendererMaker {
 
     @Override
     public void configureRenderer(FOUserAgent userAgent, Renderer renderer) throws FOPException {
-        // TODO what constructor params?
-        new PrintRendererConfigurator(userAgent, null) {
-            @Override
-            protected List<FontCollection> getDefaultFontCollection() {
-                throw new UnsupportedOperationException();
-            }
-        } .configure(renderer);
+        PrintRendererConfigurator.createDefaultInstance(userAgent).configure(renderer);
     }
 
     @Override
@@ -61,5 +52,4 @@ public class PrintRendererMaker extends AbstractRendererMaker {
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }
-
 }

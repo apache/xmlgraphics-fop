@@ -208,7 +208,7 @@ public final class AFPRendererConfig implements RendererConfig {
 
         /** {@inheritDoc} */
         public AFPRendererConfig build(FOUserAgent userAgent, Configuration cfg) throws FOPException {
-            boolean strict = userAgent != null ? userAgent.validateUserConfigStrictly() : false;
+            boolean strict = userAgent.validateUserConfigStrictly();
             AFPRendererConfig config = null;
             AFPEventProducer eventProducer = AFPEventProducer.Provider.get(userAgent.getEventBroadcaster());
             try {

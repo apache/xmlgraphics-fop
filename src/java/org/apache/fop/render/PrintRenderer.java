@@ -39,8 +39,6 @@ import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.base14.Base14FontCollection;
 
-import sun.font.FontResolver;
-
 /** Abstract base class of "Print" type renderers.  */
 public abstract class PrintRenderer extends AbstractRenderer {
 
@@ -53,9 +51,6 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     /** Font configuration */
     protected FontInfo fontInfo;
-
-    /** Font resolver */
-    protected FontResolver fontResolver = null;
 
     /** list of fonts */
     protected List<EmbedFontInfo> embedFontInfoList = null;

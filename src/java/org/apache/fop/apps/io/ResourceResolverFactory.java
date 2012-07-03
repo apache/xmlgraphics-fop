@@ -156,8 +156,11 @@ public final class ResourceResolverFactory {
 
         public OutputStream getOutputStream(String id) throws IOException {
             File file = getTempFile(id);
-            file.createNewFile();
-            return new FileOutputStream(file);
+            if (file.createNewFile()) {
+                return new FileOutputStream(file);
+            } else {
+                throw new IOException("Filed to create temporary file: " + id);
+            }
         }
     }
 
