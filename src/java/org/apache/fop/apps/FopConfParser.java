@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.xml.sax.SAXException;
@@ -39,9 +40,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.image.loader.spi.ImageImplRegistry;
 import org.apache.xmlgraphics.image.loader.util.Penalty;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
-import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.FontManagerConfigurator;
 import org.apache.fop.hyphenation.HyphenationTreeCache;
 import org.apache.fop.util.LogUtil;
@@ -233,7 +234,7 @@ public class FopConfParser {
         }
 
         // configure font manager
-        new FontManagerConfigurator(cfg, fopFactoryBuilder.getBaseUri(), resourceResolver).configure(
+        new FontManagerConfigurator(cfg, fopFactoryBuilder.getBaseURI(), resourceResolver).configure(
                 fopFactoryBuilder.getFontManager(), strict);
 
         // configure image loader framework
@@ -261,7 +262,7 @@ public class FopConfParser {
                             + " element must consist of exactly two letters ("
                             + location + ")", error);
                 }
-                lang = lang.toLowerCase();
+                lang = lang.toLowerCase(Locale.getDefault());
 
                 country = hyphPatConfig[i].getAttribute("country", null);
                 if ("".equals(country)) {
@@ -273,7 +274,7 @@ public class FopConfParser {
                                 + " element must consist of exactly two letters ("
                                 + location + ")", error);
                     }
-                    country = country.toUpperCase();
+                    country = country.toUpperCase(Locale.getDefault());
                 }
 
                 filename = hyphPatConfig[i].getValue(null);
@@ -318,7 +319,7 @@ public class FopConfParser {
                 String className = penaltyCfg.getAttribute("class");
                 String value = penaltyCfg.getAttribute("value");
                 Penalty p = null;
-                if (value.toUpperCase().startsWith("INF")) {
+                if (value.toUpperCase(Locale.getDefault()).startsWith("INF")) {
                     p = Penalty.INFINITE_PENALTY;
                 } else {
                     try {

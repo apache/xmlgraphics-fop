@@ -43,7 +43,7 @@ import org.apache.fop.util.LogUtil;
  */
 public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> {
     /** logger instance */
-    protected static Log log = LogFactory.getLog(DefaultFontConfigurator.class);
+    protected static final Log log = LogFactory.getLog(DefaultFontConfigurator.class);
 
     private final FontManager fontManager;
     private final InternalResourceResolver resourceResolver;
@@ -68,11 +68,11 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
      * Initializes font info settings from the user configuration
      * @throws FOPException if an exception occurs while processing the configuration
      */
-    public List<EmbedFontInfo> configure(FontConfig fontInfoConfig)
-            throws FOPException {
+    public List<EmbedFontInfo> configure(FontConfig fontInfoConfig) throws FOPException {
         List<EmbedFontInfo> fontInfoList = new ArrayList<EmbedFontInfo>();
-        DefaultFontConfig adobeFontInfoConfig = (DefaultFontConfig) fontInfoConfig;
-        if (adobeFontInfoConfig != null) {
+        if (fontInfoConfig != null) {
+            assert fontInfoConfig instanceof DefaultFontConfig;
+            DefaultFontConfig adobeFontInfoConfig = (DefaultFontConfig) fontInfoConfig;
             long start = 0;
             if (log.isDebugEnabled()) {
                 log.debug("Starting font configuration...");
@@ -154,14 +154,10 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
         // no font triplet info
         if (tripletList.size() == 0) {
             URI fontUri = resourceResolver.resolveFromBase(embedUri);
-            if (fontUri != null) {
-                FontInfoFinder finder = new FontInfoFinder();
-                finder.setEventListener(listener);
-                EmbedFontInfo[] infos = finder.find(fontUri, resourceResolver, fontCache);
-                return infos[0]; //When subFont is set, only one font is returned
-            } else {
-                return null;
-            }
+            FontInfoFinder finder = new FontInfoFinder();
+            finder.setEventListener(listener);
+            EmbedFontInfo[] infos = finder.find(fontUri, resourceResolver, fontCache);
+            return infos[0]; //When subFont is set, only one font is returned
         }
         EncodingMode encodingMode = EncodingMode.getValue(font.getEncodingMode());
         EmbeddingMode embeddingMode = EmbeddingMode.getValue(font.getEmbeddingMode());

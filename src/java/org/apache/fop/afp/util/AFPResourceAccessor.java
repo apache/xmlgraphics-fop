@@ -24,8 +24,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.io.InternalResourceResolver;
 
 /**
@@ -37,9 +35,10 @@ public final class AFPResourceAccessor {
     private final String baseURI;
 
     /**
-     * Constructor for resource to be accessed via the {@link FOUserAgent}. This contructor
-     * takes a base URI for resolving font resource URIs. So, if fonts need to be accessed, you can
-     * set the {@link FontManager}'s base URI instead of the one on the {@link FopFactory}.
+     * Constructor for resource to be accessed via the {@link org.apache.fop.apps.FOUserAgent}. This
+     * contructor takes a base URI for resolving font resource URIs. So, if fonts need to be
+     * accessed, you can set the {@link FontManager}'s base URI instead of the one on the
+     * {@link org.apache.fop.apps.FopFactory}.
      *
      * @param InternalResourceResolver resource resolver
      * @param baseURI the custom base URI to resolve relative URIs against (may be null)
@@ -50,7 +49,7 @@ public final class AFPResourceAccessor {
     }
 
     /**
-     * Constructor for resource to be accessed via the {@link FOUserAgent}.
+     * Constructor for resource to be accessed via the {@link org.apache.fop.apps.FOUserAgent}.
      *
      * @param InternalResourceResolver resource resolver
      */
@@ -74,5 +73,4 @@ public final class AFPResourceAccessor {
     public InputStream createInputStream(URI uri) throws IOException {
         return resourceResolver.getResource(getResourceURI(uri));
     }
-
 }

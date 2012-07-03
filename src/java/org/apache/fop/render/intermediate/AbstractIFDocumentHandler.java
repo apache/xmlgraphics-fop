@@ -21,9 +21,6 @@ package org.apache.fop.render.intermediate;
 
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.accessibility.DummyStructureTreeEventHandler;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.apps.FOUserAgent;
@@ -32,9 +29,6 @@ import org.apache.fop.apps.FOUserAgent;
  * Abstract base class for {@link IFDocumentHandler} implementations.
  */
 public abstract class AbstractIFDocumentHandler implements IFDocumentHandler {
-
-    /** logging instance */
-    private static Log log = LogFactory.getLog(AbstractIFDocumentHandler.class);
 
     private final IFContext ifContext;
 

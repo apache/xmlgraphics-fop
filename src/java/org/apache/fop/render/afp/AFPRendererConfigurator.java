@@ -46,7 +46,7 @@ import org.apache.fop.util.LogUtil;
  */
 public class AFPRendererConfigurator extends PrintRendererConfigurator implements
         IFDocumentHandlerConfigurator {
-    private static Log LOG = LogFactory.getLog(AFPRendererConfigurator.class);
+    private static Log log = LogFactory.getLog(AFPRendererConfigurator.class);
 
     private final AFPEventProducer eventProducer;
 
@@ -137,10 +137,10 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator implement
                         config.getFontInfoConfig(), mimeType));
             } catch (IOException e) {
                 eventProducer.invalidConfiguration(this, e);
-                LogUtil.handleException(LOG, e, userAgent.validateUserConfigStrictly());
+                LogUtil.handleException(log, e, userAgent.validateUserConfigStrictly());
             } catch (IllegalArgumentException iae) {
                 eventProducer.invalidConfiguration(this, iae);
-                LogUtil.handleException(LOG, iae, userAgent.validateUserConfigStrictly());
+                LogUtil.handleException(log, iae, userAgent.validateUserConfigStrictly());
             }
         }
         return new AFPFontCollection(userAgent.getEventBroadcaster(), null);

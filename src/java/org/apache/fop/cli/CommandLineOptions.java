@@ -1038,6 +1038,7 @@ public class CommandLineOptions {
                 throw new FOPException(e);
             }
             fopFactoryBuilder.setStrictFOValidation(strictValidation);
+            fopFactoryBuilder.setComplexScriptFeatures(useComplexScriptFeatures);
         }
         factory = fopFactoryBuilder.build();
      }

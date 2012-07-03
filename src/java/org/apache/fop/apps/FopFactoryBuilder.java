@@ -115,7 +115,7 @@ public final class FopFactoryBuilder {
      *
      * @return the base URI
      */
-    URI getBaseUri() {
+    URI getBaseURI() {
         return config.getBaseURI();
     }
 

@@ -38,7 +38,7 @@ import org.apache.fop.util.LogUtil;
  */
 public final class DefaultFontConfig implements FontConfig {
 
-    protected static Log log = LogFactory.getLog(DefaultFontConfig.class);
+    private static final Log log = LogFactory.getLog(DefaultFontConfig.class);
 
     private final List<Directory> directories = new ArrayList<Directory>();
 

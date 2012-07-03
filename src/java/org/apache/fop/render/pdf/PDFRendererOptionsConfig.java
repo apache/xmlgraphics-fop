@@ -46,7 +46,7 @@ public final class PDFRendererOptionsConfig {
     static {
         final EnumMap<PDFRendererOption, Object> props
         = new EnumMap<PDFRendererOption, Object>(PDFRendererOption.class);
-        for(PDFRendererOption option : PDFRendererOption.values()) {
+        for (PDFRendererOption option : PDFRendererOption.values()) {
             props.put(option, option.getDefaultValue());
         }
         DEFAULT = new PDFRendererOptionsConfig(props, null);

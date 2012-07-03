@@ -19,8 +19,6 @@
 
 package org.apache.fop.render.pdf;
 
-import org.apache.fop.pdf.PDFAMode;
-import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.render.RendererConfigOption;
 
 public enum PDFEncryptionOption implements RendererConfigOption {

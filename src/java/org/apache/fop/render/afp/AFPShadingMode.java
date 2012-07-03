@@ -20,10 +20,9 @@
 package org.apache.fop.render.afp;
 
 import java.io.ObjectStreamException;
-import java.io.Serializable;
 
 /** Enumeration of the AFP shading modes. */
-public enum AFPShadingMode implements Serializable {
+public enum AFPShadingMode {
     /** the color mode (the default) */
     COLOR("COLOR"),
     /** the dithered mode */

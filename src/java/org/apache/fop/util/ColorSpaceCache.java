@@ -98,6 +98,7 @@ public class ColorSpaceCache {
             } catch (Exception e) {
                 // Ignore exception - will be logged a bit further down
                 // (colorSpace == null case)
+                log.warn("Exception thrown resolving the color space: " + e.getMessage());
             }
 
             if (colorSpace != null) {

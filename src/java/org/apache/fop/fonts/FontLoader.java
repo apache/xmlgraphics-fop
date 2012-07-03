@@ -106,7 +106,7 @@ public abstract class FontLoader {
             loader = new Type1FontLoader(fontFileURI, embedded, useKerning, resourceResolver);
         } else {
             loader = new TTFFontLoader(fontFileURI, subFontName, embedded, embeddingMode,
-	                        encodingMode, useKerning, useAdvanced, resourceResolver);
+                    encodingMode, useKerning, useAdvanced, resourceResolver);
         }
         return loader.getFont();
     }
