@@ -341,9 +341,9 @@ public final class FopFactory implements ImageContext {
         return config.getLayoutManagerMakerOverride();
     }
 
-
-    public Map<String, String> getHyphPatNames() {
-        return config.getHyphPatNames();
+    /** @return the hyphenation pattern names */
+    public Map<String, String> getHyphenationPatternNames() {
+        return config.getHyphenationPatternNames();
     }
 
     /**

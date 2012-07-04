@@ -84,7 +84,10 @@ public final class EnvironmentalProfileFactory {
                 throw new IllegalArgumentException("Default base URI must not be null");
             }
             if (resourceResolver == null) {
-                throw new IllegalArgumentException("URI Resolver must not be null");
+                throw new IllegalArgumentException("ResourceResolver must not be null");
+            }
+            if (fontManager == null) {
+                throw new IllegalArgumentException("The FontManager must not be null");
             }
             this.defaultBaseURI = defaultBaseURI;
             this.resourceResolver = resourceResolver;

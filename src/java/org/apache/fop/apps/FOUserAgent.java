@@ -786,13 +786,14 @@ public class FOUserAgent {
         return factory.getImageHandlerRegistry();
     }
 
-    /** TODO: javadoc*/
+    /** @return the color space cache */
     public ColorSpaceCache getColorSpaceCache() {
         return factory.getColorSpaceCache();
     }
 
-    public Map<String, String> getHyphPatNames() {
-        return factory.getHyphPatNames();
+    /** @see {@link FopFactory#getHyphenationPatternNames()} */
+    public Map<String, String> getHyphenationPatternNames() {
+        return factory.getHyphenationPatternNames();
     }
 }
 

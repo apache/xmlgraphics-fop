@@ -126,5 +126,6 @@ public interface FopFactoryConfig {
 
     boolean isComplexScriptFeaturesEnabled();
 
-    Map<String, String> getHyphPatNames();
+    /** @see {@link FopFactory#getHyphenationPatternNames()} */
+    Map<String, String> getHyphenationPatternNames();
 }

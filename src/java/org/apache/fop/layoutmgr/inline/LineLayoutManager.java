@@ -1399,7 +1399,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         Hyphenation hyph = Hyphenator.hyphenate(hyphenationProperties.language.getString(),
                                hyphenationProperties.country.getString(),
                                getFObj().getUserAgent().getResourceResolver(),
-                               getFObj().getUserAgent().getHyphPatNames(),
+                               getFObj().getUserAgent().getHyphenationPatternNames(),
                                sbChars.toString(),
                                hyphenationProperties.hyphenationRemainCharacterCount.getValue(),
                                hyphenationProperties.hyphenationPushCharacterCount.getValue());
