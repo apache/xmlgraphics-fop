@@ -79,6 +79,7 @@ public class ResourceResolverFactoryTestCase {
     public void testDefaultResourceResolverGetOutput() throws Exception {
         ResourceResolver sut = ResourceResolverFactory.createDefaultResourceResolver();
         File outputFile = File.createTempFile("prefix", "suffix");
+        outputFile.deleteOnExit();
         writeDataTo(sut.getOutputStream(outputFile.toURI()));
         InputStream is = new FileInputStream(outputFile);
         try {
