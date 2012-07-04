@@ -1031,14 +1031,15 @@ public class CommandLineOptions {
         FopFactoryBuilder fopFactoryBuilder;
         if (userConfigFile == null) {
             fopFactoryBuilder = new FopFactoryBuilder(new File(".").toURI());
+            fopFactoryBuilder.setStrictFOValidation(strictValidation);
+            fopFactoryBuilder.setTargetResolution(targetResolution);
+            fopFactoryBuilder.setComplexScriptFeatures(useComplexScriptFeatures);
         } else {
             try {
                 fopFactoryBuilder = new FopConfParser(userConfigFile).getFopFactoryBuilder();
             } catch (SAXException e) {
                 throw new FOPException(e);
             }
-            fopFactoryBuilder.setStrictFOValidation(strictValidation);
-            fopFactoryBuilder.setComplexScriptFeatures(useComplexScriptFeatures);
         }
         factory = fopFactoryBuilder.build();
      }
