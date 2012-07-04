@@ -331,8 +331,6 @@ out = proc.getOutputStream();]]></source>
     <title>Limitations</title>
     <ul>
       <li>Images and SVG may not be displayed correctly. SVG support is far from being complete. No image transparency is available.</li>
-      <li>Only Type 1 fonts are supported.</li>
-      <li>Multibyte characters are not supported.</li>
       <li>PPD support is still missing.</li>
     </ul>
   </section>
