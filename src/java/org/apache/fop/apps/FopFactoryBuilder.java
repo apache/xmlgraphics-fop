@@ -452,7 +452,7 @@ public final class FopFactoryBuilder {
             return isComplexScript;
         }
 
-        public Map<String, String> getHyphPatNames() {
+        public Map<String, String> getHyphenationPatternNames() {
             return hyphPatNames;
         }
     }

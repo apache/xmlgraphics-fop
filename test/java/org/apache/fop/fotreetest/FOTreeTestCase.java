@@ -275,9 +275,8 @@ public class FOTreeTestCase {
             return delegate.isComplexScriptFeaturesEnabled();
         }
 
-        public Map<String, String> getHyphPatNames() {
-            return delegate.getHyphPatNames();
+        public Map<String, String> getHyphenationPatternNames() {
+            return delegate.getHyphenationPatternNames();
         }
     }
-
 }
