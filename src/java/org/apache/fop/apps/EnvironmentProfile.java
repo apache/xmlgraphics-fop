@@ -25,7 +25,10 @@ import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.fonts.FontManager;
 
 /**
- * The environment profile represents the restrictions and allowances that FOP is
+ * The environment profile represents the system in which FOP is invoked. Some of FOPs services rely
+ * upon features within the system, as such, the client may want to restrict access to these
+ * services. This object allows clients to control those restrictions by implementing the interfaces
+ * that the environment profile holds.
  */
 public interface EnvironmentProfile {
 
