@@ -16,17 +16,24 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
-<document>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd" [
+<!ATTLIST document
+          xmlns:xi CDATA #IMPLIED>
+<!ELEMENT xi:include EMPTY>
+<!ATTLIST xi:include
+          href CDATA #IMPLIED>
+<!ENTITY % local.sections "|xi:include">
+]>
+<document xmlns:xi="http://www.w3.org/2001/XInclude">
   <header>
     <title>Apache™ FOP News</title>
     <version>$Revision$</version>
   </header>
   <body>
     <p>
-      RSS Feed: <a href="subproject-news-feed.rss"><img src="feed-icon-14x14.png" alt="Subproject News Feed"/></a>
+      RSS Feed: <link href="subproject-news-feed.rss"><img src="feed-icon-14x14.png" alt="Subproject News Feed"/></link>
     </p>
-    <xi:include href="cocoon://subproject-news-document.xml#xpointer(/document/body/*)" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="cocoon://subproject-news-document.xml#xpointer(/document/body/*)"/>
     </body>
 </document>
 

@@ -16,13 +16,16 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE tabs PUBLIC "-//APACHE//DTD Cocoon Documentation Tab V1.1//EN"
-    "http://forrest.apache.org/dtd/tab-cocoon-v11.dtd">
-
-<tabs software="FOP" title="FOP" copyright="@year@ The Apache Software Foundation" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <tab label="Home" dir=""/>
-  <tab label="Version 1.0" dir="1.0/"/>
-  <tab label="Version 1.1rc1" dir="1.1rc1/"/>
-  <tab label="FOP Trunk" dir="trunk/"/>
-  <tab label="Development" dir="dev/"/>
-</tabs>
+<disabled-testcases>
+  <testcase>
+    <name>demo test failure</name>
+    <file>demo-test-failure.fo</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>Markers and core function evaluation</name>
+    <file>from-table-column_marker.fo</file>
+    <description>The code currently evaluates this function according to the column in which the 
+    marker appears in the source document, rather than the column it is retrieved in.</description>
+  </testcase>
+</disabled-testcases>
