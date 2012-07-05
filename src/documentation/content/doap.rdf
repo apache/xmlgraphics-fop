@@ -15,7 +15,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<?xml-stylesheet type="text/xsl" href="../xsl/p2.xsl"?>
 <rdf:RDF xml:lang="en"
          xmlns="http://usefulinc.com/ns/doap#" 
          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
@@ -80,14 +79,14 @@
         <created>2012-07-02</created>
         <revision>1.1rc1</revision>
       </Version>
-    </release
+    </release>
     <release>
       <Version>
         <name>Current release (stable)</name>
         <created>2010-07-21</created>
         <revision>1.0</revision>
       </Version>
-    </release
+    </release>
     <release>
       <Version>
         <name>Previous release (stable)</name>
