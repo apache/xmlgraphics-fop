@@ -52,7 +52,6 @@ public class ExtensionElementMapping extends ElementMapping {
         PROPERTY_ATTRIBUTES.add("disable-column-balancing");
         //These are FOP's extension properties for accessibility
         PROPERTY_ATTRIBUTES.add("alt-text");
-
         //fox:border-*-radius-*
         PROPERTY_ATTRIBUTES.add("border-before-radius-start");
         PROPERTY_ATTRIBUTES.add("border-before-radius-end");

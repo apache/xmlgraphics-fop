@@ -216,18 +216,15 @@ public class CommonBorderPaddingBackground {
             if (this == obj) {
                 return true;
             }
-            if (obj instanceof BorderInfo) {
-                BorderInfo bi = (BorderInfo)obj;
-                return (this.mColor == bi.mColor
-                        && this.mStyle == bi.mStyle
-                        && this.mWidth == bi.mWidth
-                        && this.radiusStart == bi.radiusStart
-                        && this.radiusEnd == bi.radiusEnd);
+            if (!(obj instanceof BorderInfo)) {
+                return false;
             }
-            BorderInfo other = (BorderInfo) obj;
-            return CompareUtil.equal(mColor, other.mColor)
-                    && mStyle == other.mStyle
-                    && CompareUtil.equal(mWidth, other.mWidth);
+            BorderInfo bi = (BorderInfo)obj;
+            return (this.mColor == bi.mColor
+                    && this.mStyle == bi.mStyle
+                    && this.mWidth == bi.mWidth
+                    && this.radiusStart == bi.radiusStart
+                    && this.radiusEnd == bi.radiusEnd);
         }
 
         @Override
@@ -252,12 +249,9 @@ public class CommonBorderPaddingBackground {
      * A border info with style "none". Used as a singleton, in the collapsing-border model,
      * for elements which don't specify any border on some of their sides.
      */
-    private static final BorderInfo DEFAULT_BORDER_INFO
-    = BorderInfo.getInstance(Constants.EN_NONE, new ConditionalNullLength(), null,
-            new ConditionalNullLength(), new ConditionalNullLength());
-
-
-
+    private static final BorderInfo DEFAULT_BORDER_INFO  = BorderInfo.getInstance(
+            Constants.EN_NONE, new ConditionalNullLength(), null, new ConditionalNullLength(),
+            new ConditionalNullLength());
 
     /**
      * A conditional length of value 0. Returned by the

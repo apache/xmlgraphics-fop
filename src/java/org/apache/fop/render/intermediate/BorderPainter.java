@@ -101,30 +101,33 @@ public abstract class BorderPainter {
         int width = borderRect.width;
         int height = borderRect.height;
         boolean[] b = new boolean[] {
-            (bpsTop != null), (bpsRight != null),
-            (bpsBottom != null), (bpsLeft != null)};
-        if (!b[0] && !b[1] && !b[2] && !b[3]) {
+                (bpsTop != null), (bpsRight != null),
+                (bpsBottom != null), (bpsLeft != null)};
+        if (!b[TOP] && !b[RIGHT] && !b[BOTTOM] && !b[LEFT]) {
             return;
         }
         int[] bw = new int[] {
-            (b[0] ? bpsTop.width : 0),
-            (b[1] ? bpsRight.width : 0),
-            (b[2] ? bpsBottom.width : 0),
-            (b[3] ? bpsLeft.width : 0)};
+                (b[TOP] ? bpsTop.width : 0),
+                (b[RIGHT] ? bpsRight.width : 0),
+                (b[BOTTOM] ? bpsBottom.width : 0),
+                (b[LEFT] ? bpsLeft.width : 0)};
         int[] clipw = new int[] {
-            BorderProps.getClippedWidth(bpsTop),
-            BorderProps.getClippedWidth(bpsRight),
-            BorderProps.getClippedWidth(bpsBottom),
-            BorderProps.getClippedWidth(bpsLeft)};
-        starty += clipw[0];
-        height -= clipw[0];
-        height -= clipw[2];
-        startx += clipw[3];
-        width -= clipw[3];
-        width -= clipw[1];
+                BorderProps.getClippedWidth(bpsTop),
+                BorderProps.getClippedWidth(bpsRight),
+                BorderProps.getClippedWidth(bpsBottom),
+                BorderProps.getClippedWidth(bpsLeft)};
+        starty += clipw[TOP];
+        height -= clipw[TOP];
+        height -= clipw[BOTTOM];
+        startx += clipw[LEFT];
+        width -= clipw[LEFT];
+        width -= clipw[RIGHT];
 
         boolean[] slant = new boolean[] {
-            (b[3] && b[0]), (b[0] && b[1]), (b[1] && b[2]), (b[2] && b[3])};
+                (b[LEFT] && b[TOP]),
+                (b[TOP] && b[RIGHT]),
+                (b[RIGHT] && b[BOTTOM]),
+                (b[BOTTOM] && b[LEFT])};
         if (bpsTop != null) {
             int sx1 = startx;
             int sx2 = (slant[TOP_LEFT] ? sx1 + bw[LEFT] - clipw[LEFT] : sx1);
@@ -142,10 +145,10 @@ public abstract class BorderPainter {
             int ex1a = ex1;
             if (bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
                 if (bpsLeft != null && bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
-                    sx1a -= clipw[3];
+                    sx1a -= clipw[LEFT];
                 }
                 if (bpsRight != null && bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
-                    ex1a += clipw[1];
+                    ex1a += clipw[RIGHT];
                 }
                 lineTo(sx1a, outery);
                 lineTo(ex1a, outery);
@@ -167,7 +170,6 @@ public abstract class BorderPainter {
             int outerx = startx + width + clipw[RIGHT];
             int clipx = outerx - clipw[RIGHT];
             int innerx = outerx - bw[RIGHT];
-
             saveGraphicsState();
             moveTo(clipx, sy1);
             int sy1a = sy1;
@@ -199,7 +201,6 @@ public abstract class BorderPainter {
             int outery = starty + height + clipw[BOTTOM];
             int clipy = outery - clipw[BOTTOM];
             int innery = outery - bw[BOTTOM];
-
             saveGraphicsState();
             moveTo(ex1, clipy);
             int sx1a = sx1;
@@ -231,7 +232,7 @@ public abstract class BorderPainter {
             int outerx = startx - clipw[LEFT];
             int clipx = outerx + clipw[LEFT];
             int innerx = outerx + bw[LEFT];
-
+            
             saveGraphicsState();
 
             moveTo(clipx, ey1);
@@ -286,7 +287,6 @@ public abstract class BorderPainter {
                 (b[RIGHT] ? bpsEnd.width : 0),
                 (b[BOTTOM] ? bpsAfter.width : 0),
                 (b[LEFT] ? bpsStart.width : 0)};
-
         int[] clipw = new int[] {
                 BorderProps.getClippedWidth(bpsBefore),
                 BorderProps.getClippedWidth(bpsEnd),
@@ -301,7 +301,6 @@ public abstract class BorderPainter {
         boolean[] slant = new boolean[] {
                 (b[LEFT] && b[TOP]), (b[TOP] && b[RIGHT]),
                 (b[RIGHT] && b[BOTTOM]), (b[LEFT] && b[BOTTOM])};
-
         //Determine scale factor if any adjacent elliptic corners overlap
         double esf = cornerScaleFactor(width, height, bpsBefore, bpsAfter, bpsStart, bpsEnd);
 

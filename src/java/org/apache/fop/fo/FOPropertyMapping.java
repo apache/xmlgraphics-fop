@@ -212,7 +212,6 @@ public final class FOPropertyMapping implements Constants {
         genericCondCornerRadius.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
         genericCondCornerRadius.addShorthand(generics[PR_X_BORDER_RADIUS]);
 
-
         // GenericBreak
         genericBreak = new EnumProperty.Maker(0);
         genericBreak.setInherited(false);

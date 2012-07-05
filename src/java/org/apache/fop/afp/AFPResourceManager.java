@@ -70,7 +70,6 @@ public class AFPResourceManager {
     /** Mapping of resourceInfo to AbstractCachedObject */
     private final Map<AFPResourceInfo, AbstractCachedObject> includeObjectCache
             = new java.util.HashMap<AFPResourceInfo, AbstractCachedObject>();
-
     private AFPResourceLevelDefaults resourceLevelDefaults = new AFPResourceLevelDefaults();
 
     /**
@@ -427,9 +426,7 @@ public class AFPResourceManager {
         resourceInfo.setName(resourceName);
         resourceInfo.setUri(uri.toASCIIString());
 
-        AbstractCachedObject cachedObject = (AbstractCachedObject)
-                includeObjectCache.get(resourceInfo);
-        
+        AbstractCachedObject cachedObject = (AbstractCachedObject) includeObjectCache.get(resourceInfo);
         if (cachedObject == null) {
 
             ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
@@ -457,7 +454,6 @@ public class AFPResourceManager {
                 @Override
                 protected void writeEnd(OutputStream os) throws IOException { }
             };
-
             resourceGroup.addObject(resourceObject);
             cachedObject = new CachedObject(resourceName, null);
             includeObjectCache.put(resourceInfo, cachedObject);

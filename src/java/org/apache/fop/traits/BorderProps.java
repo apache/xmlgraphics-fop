@@ -51,10 +51,9 @@ public class BorderProps implements Serializable {
     public int width;                                           // CSOK: VisibilityModifier
 
     private int radiusStart = 0;
+    
     private int radiusEnd = 0;
-
-
-
+    
     /** Border mode (one of SEPARATE, COLLAPSE_INNER and COLLAPSE_OUTER) */
     public int mode;                                            // CSOK: VisibilityModifier
 
