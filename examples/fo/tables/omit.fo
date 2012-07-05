@@ -30,7 +30,7 @@
       Table 1: with header
       </fo:block>
 
-      <fo:table table-omit-header-at-break="true">
+      <fo:table table-omit-header-at-break="true" table-layout="fixed" width="100%">
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
@@ -311,7 +311,7 @@
       Table 2: with footer
       </fo:block>
 
-      <fo:table table-omit-footer-at-break="true">
+      <fo:table table-omit-footer-at-break="true" table-layout="fixed" width="100%">
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
@@ -592,7 +592,7 @@
       Table 3: with header and footer and keeps
       </fo:block>
 
-      <fo:table table-omit-header-at-break="true" table-omit-footer-at-break="true">
+      <fo:table table-omit-header-at-break="true" table-omit-footer-at-break="true" table-layout="fixed" width="100%">
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
@@ -888,7 +888,7 @@
       Table 6: table with multiple body's
       </fo:block>
 
-      <fo:table table-omit-header-at-break="true">
+      <fo:table table-omit-header-at-break="true" table-layout="fixed" width="100%">
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
@@ -1076,7 +1076,7 @@
       Table 6: table with multiple body's
       </fo:block>
 
-      <fo:table table-omit-footer-at-break="true">
+      <fo:table table-omit-footer-at-break="true" table-layout="fixed" width="100%">
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>

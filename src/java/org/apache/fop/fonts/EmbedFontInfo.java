@@ -25,6 +25,8 @@ import java.util.List;
 
 /**
  * FontInfo contains meta information on fonts (where is the metrics file etc.)
+ * TODO: We need to remove this class and think about more intelligent design patterns
+ * (Data classes => Procedural code)
  */
 public class EmbedFontInfo implements Serializable {
 
@@ -41,6 +43,8 @@ public class EmbedFontInfo implements Serializable {
     protected boolean advanced;
     /** the requested encoding mode for the font */
     protected EncodingMode encodingMode = EncodingMode.AUTO;
+    /** the requested embedding mode for this font */
+    protected EmbeddingMode embeddingMode = EmbeddingMode.AUTO;
 
     /** the PostScript name of the font */
     protected String postScriptName = null;
@@ -149,6 +153,14 @@ public class EmbedFontInfo implements Serializable {
     }
 
     /**
+     * Returns the embedding mode for this font.
+     * @return the embedding mode.
+     */
+    public EmbeddingMode getEmbeddingMode() {
+       return embeddingMode;
+    }
+
+    /**
      * Defines whether the font is embedded or not.
      * @param value true to embed the font, false to reference it
      */
@@ -173,6 +185,17 @@ public class EmbedFontInfo implements Serializable {
             throw new NullPointerException("mode must not be null");
         }
         this.encodingMode = mode;
+    }
+
+    /**
+     * Sets the embedding mode for this font, currently not supported for Type 1 fonts.
+     * @param embeddingMode the new embedding mode.
+     */
+    public void setEmbeddingMode(EmbeddingMode embeddingMode) {
+        if (embeddingMode == null) {
+            throw new NullPointerException("embeddingMode must not be null");
+        }
+        this.embeddingMode = embeddingMode;
     }
 
     private void readObject(java.io.ObjectInputStream in)

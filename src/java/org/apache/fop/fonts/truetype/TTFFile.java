@@ -20,11 +20,18 @@
 package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +43,7 @@ import org.apache.fop.complexscripts.fonts.GlyphDefinitionTable;
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable;
 import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable;
 import org.apache.fop.complexscripts.fonts.OTFAdvancedTypographicTableReader;
+import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.FontUtil;
 
 /**
@@ -46,9 +54,99 @@ import org.apache.fop.fonts.FontUtil;
 public class TTFFile {
 
     static final byte NTABS = 24;
-    static final int NMACGLYPHS = 258;
     static final int MAX_CHAR_CODE = 255;
     static final int ENC_BUF_SIZE = 1024;
+
+    private static final String[] MAC_GLYPH_ORDERING = {
+        /* 0x000 */
+        ".notdef",          ".null",         "nonmarkingreturn", "space",
+        "exclam",           "quotedbl",      "numbersign",       "dollar",
+        "percent",          "ampersand",     "quotesingle",      "parenleft",
+        "parenright",       "asterisk",      "plus",             "comma",
+        /* 0x010 */
+        "hyphen",           "period",        "slash",            "zero",
+        "one",              "two",           "three",            "four",
+        "five",             "six",           "seven",            "eight",
+        "nine",             "colon",         "semicolon",        "less",
+        /* 0x020 */
+        "equal",            "greater",       "question",         "at",
+        "A",                "B",             "C",                "D",
+        "E",                "F",             "G",                "H",
+        "I",                "J",             "K",                "L",
+        /* 0x030 */
+        "M",                "N",             "O",                "P",
+        "Q",                "R",             "S",                "T",
+        "U",                "V",             "W",                "X",
+        "Y",                "Z",             "bracketleft",      "backslash",
+        /* 0x040 */
+        "bracketright",     "asciicircum",   "underscore",       "grave",
+        "a",                "b",             "c",                "d",
+        "e",                "f",             "g",                "h",
+        "i",                "j",             "k",                "l",
+        /* 0x050 */
+        "m",                "n",             "o",                "p",
+        "q",                "r",             "s",                "t",
+        "u",                "v",             "w",                "x",
+        "y",                "z",             "braceleft",        "bar",
+        /* 0x060 */
+        "braceright",       "asciitilde",    "Adieresis",        "Aring",
+        "Ccedilla",         "Eacute",        "Ntilde",           "Odieresis",
+        "Udieresis",        "aacute",        "agrave",           "acircumflex",
+        "adieresis",        "atilde",        "aring",            "ccedilla",
+        /* 0x070 */
+        "eacute",           "egrave",        "ecircumflex",      "edieresis",
+        "iacute",           "igrave",        "icircumflex",      "idieresis",
+        "ntilde",           "oacute",        "ograve",           "ocircumflex",
+        "odieresis",        "otilde",        "uacute",           "ugrave",
+        /* 0x080 */
+        "ucircumflex",      "udieresis",     "dagger",           "degree",
+        "cent",             "sterling",      "section",          "bullet",
+        "paragraph",        "germandbls",    "registered",       "copyright",
+        "trademark",        "acute",         "dieresis",         "notequal",
+        /* 0x090 */
+        "AE",               "Oslash",        "infinity",         "plusminus",
+        "lessequal",        "greaterequal",  "yen",              "mu",
+        "partialdiff",      "summation",     "product",          "pi",
+        "integral",         "ordfeminine",   "ordmasculine",     "Omega",
+        /* 0x0A0 */
+        "ae",               "oslash",        "questiondown",     "exclamdown",
+        "logicalnot",       "radical",       "florin",           "approxequal",
+        "Delta",            "guillemotleft", "guillemotright",   "ellipsis",
+        "nonbreakingspace", "Agrave",        "Atilde",           "Otilde",
+        /* 0x0B0 */
+        "OE",               "oe",            "endash",           "emdash",
+        "quotedblleft",     "quotedblright", "quoteleft",        "quoteright",
+        "divide",           "lozenge",       "ydieresis",        "Ydieresis",
+        "fraction",         "currency",      "guilsinglleft",    "guilsinglright",
+        /* 0x0C0 */
+        "fi",               "fl",            "daggerdbl",        "periodcentered",
+        "quotesinglbase",   "quotedblbase",  "perthousand",      "Acircumflex",
+        "Ecircumflex",      "Aacute",        "Edieresis",        "Egrave",
+        "Iacute",           "Icircumflex",   "Idieresis",        "Igrave",
+        /* 0x0D0 */
+        "Oacute",           "Ocircumflex",   "apple",            "Ograve",
+        "Uacute",           "Ucircumflex",   "Ugrave",           "dotlessi",
+        "circumflex",       "tilde",         "macron",           "breve",
+        "dotaccent",        "ring",          "cedilla",          "hungarumlaut",
+        /* 0x0E0 */
+        "ogonek",           "caron",         "Lslash",           "lslash",
+        "Scaron",           "scaron",        "Zcaron",           "zcaron",
+        "brokenbar",        "Eth",           "eth",              "Yacute",
+        "yacute",           "Thorn",         "thorn",            "minus",
+        /* 0x0F0 */
+        "multiply",         "onesuperior",   "twosuperior",      "threesuperior",
+        "onehalf",          "onequarter",    "threequarters",    "franc",
+        "Gbreve",           "gbreve",        "Idotaccent",       "Scedilla",
+        "scedilla",         "Cacute",        "cacute",           "Ccaron",
+        /* 0x100 */
+        "ccaron",           "dcroat"
+    };
+
+    /** The FontFileReader used to read this TrueType font. */
+    protected FontFileReader fontFile;
+
+    /** Set to true to get even more debug output than with level DEBUG */
+    public static final boolean TRACE_ENABLED = false;
 
     private final String encoding = "WinAnsiEncoding";    // Default encoding
 
@@ -61,33 +159,31 @@ public class TTFFile {
     /**
      * Table directory
      */
-    protected Map dirTabs;
-    private Map<Integer, Map<Integer, Integer>> kerningTab;     // for CIDs
+    protected Map<TTFTableName, TTFDirTabEntry> dirTabs;
+    private Map<Integer, Map<Integer, Integer>> kerningTab; // for CIDs
     private Map<Integer, Map<Integer, Integer>> ansiKerningTab; // For winAnsiEncoding
-    private List cmaps;
-    private Set unicodeMappings;
+    private List<CMapSegment> cmaps;
+    private Set<UnicodeMapping> unicodeMappings;
 
     private int upem;                                // unitsPerEm from "head" table
     private int nhmtx;                               // Number of horizontal metrics
-    private int postFormat;
+    private PostScriptVersion postScriptVersion;
     private int locaFormat;
     /**
      * Offset to last loca
      */
     protected long lastLoca = 0;
     private int numberOfGlyphs; // Number of glyphs in font (read from "maxp" table)
-    private int nmGlyphs;                            // Used in fixWidths - remove?
 
     /**
      * Contains glyph data
      */
     protected TTFMtxEntry[] mtxTab;                  // Contains glyph data
-    private final int[] mtxEncoded = null;
 
     private String postScriptName = "";
     private String fullName = "";
     private String notice = "";
-    private final Set familyNames = new java.util.HashSet(); //Set<String>
+    private Set<String> familyNames = new HashSet<String>();
     private String subFamilyName = "";
 
     private long italicAngle = 0;
@@ -116,12 +212,12 @@ public class TTFFile {
     private short lastChar = 0;
 
     private int[] ansiWidth;
-    private Map ansiIndex;
+    private Map<Integer, List<Integer>> ansiIndex;
 
     // internal mapping of glyph indexes to unicode indexes
     // used for quick mappings in this class
-    private final Map glyphToUnicodeMap = new java.util.HashMap();
-    private final Map unicodeToGlyphMap = new java.util.HashMap();
+    private final Map<Integer, Integer> glyphToUnicodeMap = new HashMap<Integer, Integer> ();
+    private final Map<Integer, Integer> unicodeToGlyphMap = new HashMap<Integer, Integer> ();
 
     private TTFDirTabEntry currentDirTab;
 
@@ -136,6 +232,10 @@ public class TTFFile {
      */
     protected Log log = LogFactory.getLog(TTFFile.class);
 
+    public TTFFile() {
+        this(true, false);
+    }
+
     /**
      * Constructor
      * @param useKerning true if kerning data should be loaded
@@ -147,9 +247,9 @@ public class TTFFile {
     }
 
     /**
-     * Key-value helper class
+     * Key-value helper class.
      */
-    class UnicodeMapping implements Comparable {
+    final class UnicodeMapping implements Comparable {
 
         private final int unicodeIndex;
         private final int glyphIndex;
@@ -217,28 +317,42 @@ public class TTFFile {
     }
 
     /**
+     * Version of the PostScript table (<q>post</q>) contained in this font.
+     */
+    public static enum PostScriptVersion {
+        /** PostScript table version 1.0. */
+        V1,
+        /** PostScript table version 2.0. */
+        V2,
+        /** PostScript table version 3.0. */
+        V3,
+        /** Unknown version of the PostScript table. */
+        UNKNOWN;
+    }
+
+    /**
      * Obtain directory table entry.
      * @param name (tag) of entry
      * @return a directory table entry or null if none found
      */
-    public TTFDirTabEntry getDirectoryEntry ( String name ) {
-        return (TTFDirTabEntry) dirTabs.get ( name );
+    public TTFDirTabEntry getDirectoryEntry(TTFTableName name) {
+        return dirTabs.get(name);
     }
 
     /**
      * Position inputstream to position indicated
      * in the dirtab offset + offset
      * @param in font file reader
-     * @param name (tag) of table
+     * @param tableName (tag) of table
      * @param offset from start of table
      * @return true if seek succeeded
      * @throws IOException if I/O exception occurs during seek
      */
-    public boolean seekTab(FontFileReader in, String name,
+    public boolean seekTab(FontFileReader in, TTFTableName tableName,
                   long offset) throws IOException {
-        TTFDirTabEntry dt = getDirectoryEntry ( name );
+        TTFDirTabEntry dt = dirTabs.get(tableName);
         if (dt == null) {
-            log.error("Dirtab " + name + " not found.");
+            log.error("Dirtab " + tableName.getName() + " not found.");
             return false;
         } else {
             in.seekSet(dt.getOffset() + offset);
@@ -274,12 +388,12 @@ public class TTFFile {
      * Set the unicodeIndex in the TTFMtxEntries and fills in the
      * cmaps vector.
      */
-    private boolean readCMAP(FontFileReader in) throws IOException {
+    private boolean readCMAP() throws IOException {
 
         unicodeMappings = new java.util.TreeSet();
 
-        seekTab(in, "cmap", 2);
-        int numCMap = in.readTTFUShort();    // Number of cmap subtables
+        seekTab(fontFile, TTFTableName.CMAP, 2);
+        int numCMap = fontFile.readTTFUShort();    // Number of cmap subtables
         long cmapUniOffset = 0;
         long symbolMapOffset = 0;
 
@@ -289,9 +403,9 @@ public class TTFFile {
 
         //Read offset for all tables. We are only interested in the unicode table
         for (int i = 0; i < numCMap; i++) {
-            int cmapPID = in.readTTFUShort();
-            int cmapEID = in.readTTFUShort();
-            long cmapOffset = in.readTTFULong();
+            int cmapPID = fontFile.readTTFUShort();
+            int cmapEID = fontFile.readTTFUShort();
+            long cmapOffset = fontFile.readTTFLong();
 
             if (log.isDebugEnabled()) {
                 log.debug("Platform ID: " + cmapPID + " Encoding: " + cmapEID);
@@ -306,9 +420,9 @@ public class TTFFile {
         }
 
         if (cmapUniOffset > 0) {
-            return readUnicodeCmap(in, cmapUniOffset, 1);
+            return readUnicodeCmap(cmapUniOffset, 1);
         } else if (symbolMapOffset > 0) {
-            return readUnicodeCmap(in, symbolMapOffset, 0);
+            return readUnicodeCmap(symbolMapOffset, 0);
         } else {
             log.fatal("Unsupported TrueType font: No Unicode or Symbol cmap table"
                     + " not present. Aborting");
@@ -317,26 +431,26 @@ public class TTFFile {
     }
 
     private boolean readUnicodeCmap                             // CSOK: MethodLength
-        (FontFileReader in, long cmapUniOffset, int encodingID)
+        (long cmapUniOffset, int encodingID)
             throws IOException {
         //Read CMAP table and correct mtxTab.index
         int mtxPtr = 0;
 
         // Read unicode cmap
-        seekTab(in, "cmap", cmapUniOffset);
-        int cmapFormat = in.readTTFUShort();
-        /*int cmap_length =*/ in.readTTFUShort(); //skip cmap length
+        seekTab(fontFile, TTFTableName.CMAP, cmapUniOffset);
+        int cmapFormat = fontFile.readTTFUShort();
+        /*int cmap_length =*/ fontFile.readTTFUShort(); //skip cmap length
 
         if (log.isDebugEnabled()) {
             log.debug("CMAP format: " + cmapFormat);
         }
 
         if (cmapFormat == 4) {
-            in.skip(2);    // Skip version number
-            int cmapSegCountX2 = in.readTTFUShort();
-            int cmapSearchRange = in.readTTFUShort();
-            int cmapEntrySelector = in.readTTFUShort();
-            int cmapRangeShift = in.readTTFUShort();
+            fontFile.skip(2);    // Skip version number
+            int cmapSegCountX2 = fontFile.readTTFUShort();
+            int cmapSearchRange = fontFile.readTTFUShort();
+            int cmapEntrySelector = fontFile.readTTFUShort();
+            int cmapRangeShift = fontFile.readTTFUShort();
 
             if (log.isDebugEnabled()) {
                 log.debug("segCountX2   : " + cmapSegCountX2);
@@ -352,26 +466,26 @@ public class TTFFile {
             int[] cmapRangeOffsets = new int[cmapSegCountX2 / 2];
 
             for (int i = 0; i < (cmapSegCountX2 / 2); i++) {
-                cmapEndCounts[i] = in.readTTFUShort();
+                cmapEndCounts[i] = fontFile.readTTFUShort();
             }
 
-            in.skip(2);    // Skip reservedPad
+            fontFile.skip(2);    // Skip reservedPad
 
             for (int i = 0; i < (cmapSegCountX2 / 2); i++) {
-                cmapStartCounts[i] = in.readTTFUShort();
+                cmapStartCounts[i] = fontFile.readTTFUShort();
             }
 
             for (int i = 0; i < (cmapSegCountX2 / 2); i++) {
-                cmapDeltas[i] = in.readTTFShort();
+                cmapDeltas[i] = fontFile.readTTFShort();
             }
 
             //int startRangeOffset = in.getCurrentPos();
 
             for (int i = 0; i < (cmapSegCountX2 / 2); i++) {
-                cmapRangeOffsets[i] = in.readTTFUShort();
+                cmapRangeOffsets[i] = fontFile.readTTFUShort();
             }
 
-            int glyphIdArrayOffset = in.getCurrentPos();
+            int glyphIdArrayOffset = fontFile.getCurrentPos();
 
             BitSet eightBitGlyphs = new BitSet(256);
 
@@ -413,19 +527,17 @@ public class TTFFile {
                                     + (j - cmapStartCounts[i])
                                     + (i)
                                     - cmapSegCountX2 / 2) * 2;
-                            in.seekSet(glyphOffset);
-                            glyphIdx = (in.readTTFUShort() + cmapDeltas[i])
+                            fontFile.seekSet(glyphOffset);
+                            glyphIdx = (fontFile.readTTFUShort() + cmapDeltas[i])
                                        & 0xffff;
 
                             unicodeMappings.add(new UnicodeMapping(glyphIdx, j));
                             mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
 
                             // Also add winAnsiWidth
-                            List v = (List)ansiIndex.get(new Integer(j));
+                            List<Integer> v = ansiIndex.get(new Integer(j));
                             if (v != null) {
-                                Iterator e = v.listIterator();
-                                while (e.hasNext()) {
-                                    Integer aIdx = (Integer)e.next();
+                                for (Integer aIdx : v) {
                                     ansiWidth[aIdx.intValue()]
                                         = mtxTab[glyphIdx].getWx();
 
@@ -466,11 +578,9 @@ public class TTFFile {
                             }
 
                             // Also add winAnsiWidth
-                            List v = (List)ansiIndex.get(new Integer(j));
+                            List<Integer> v = ansiIndex.get(new Integer(j));
                             if (v != null) {
-                                Iterator e = v.listIterator();
-                                while (e.hasNext()) {
-                                    Integer aIdx = (Integer)e.next();
+                                for (Integer aIdx : v) {
                                     ansiWidth[aIdx.intValue()] = mtxTab[glyphIdx].getWx();
                                 }
                             }
@@ -548,14 +658,14 @@ public class TTFFile {
         // Create an index hash to the ansiWidth
         // Can't just index the winAnsiEncoding when inserting widths
         // same char (eg bullet) is repeated more than one place
-        ansiIndex = new java.util.HashMap();
+        ansiIndex = new HashMap<Integer, List<Integer>>();
         for (int i = 32; i < Glyphs.WINANSI_ENCODING.length; i++) {
             Integer ansi = new Integer(i);
             Integer uni = new Integer(Glyphs.WINANSI_ENCODING[i]);
 
-            List v = (List)ansiIndex.get(uni);
+            List<Integer> v = ansiIndex.get(uni);
             if (v == null) {
-                v = new java.util.ArrayList();
+                v = new ArrayList<Integer>();
                 ansiIndex.put(uni, v);
             }
             v.add(ansi);
@@ -574,12 +684,12 @@ public class TTFFile {
      * @throws IOException In case of an I/O problem
      */
     public boolean readFont(FontFileReader in, String name) throws IOException {
-
+        fontFile = in;
         /*
          * Check if TrueType collection, and that the name
          * exists in the collection
          */
-        if (!checkTTC(in, name)) {
+        if (!checkTTC(name)) {
             if (name == null) {
                 throw new IllegalArgumentException(
                     "For TrueType collection you must specify which font "
@@ -590,26 +700,26 @@ public class TTFFile {
             }
         }
 
-        readDirTabs(in);
-        readFontHeader(in);
-        getNumGlyphs(in);
+        readDirTabs();
+        readFontHeader();
+        getNumGlyphs();
         if (log.isDebugEnabled()) {
             log.debug("Number of glyphs in font: " + numberOfGlyphs);
         }
-        readHorizontalHeader(in);
-        readHorizontalMetrics(in);
+        readHorizontalHeader();
+        readHorizontalMetrics();
         initAnsiWidths();
-        readPostScript(in);
-        readOS2(in);
+        readPostScript();
+        readOS2();
         determineAscDesc();
         if (!isCFF) {
-            readIndexToLocation(in);
-            readGlyf(in);
+            readIndexToLocation();
+            readGlyf();
         }
-        readName(in);
-        boolean pcltFound = readPCLT(in);
+        readName();
+        boolean pcltFound = readPCLT();
         // Read cmap table and fill in ansiwidths
-        boolean valid = readCMAP(in);
+        boolean valid = readCMAP();
         if (!valid) {
             return false;
         }
@@ -617,7 +727,7 @@ public class TTFFile {
         createCMaps();
 
         if ( useKerning ) {
-            readKerning(in);
+            readKerning();
         }
 
         // Read advanced typographic tables.
@@ -640,33 +750,47 @@ public class TTFFile {
         return true;
     }
 
-    private void createCMaps() {
-        cmaps = new java.util.ArrayList();
-        TTFCmapEntry tce = new TTFCmapEntry();
+    /**
+     * Reads a font.
+     *
+     * @param in FontFileReader to read from
+     * @param name Name to be checked for in the font file
+     * @param glyphs Map of glyphs (glyphs has old index as (Integer) key and
+     * new index as (Integer) value)
+     * @throws IOException in case of an I/O problem
+     */
+    public void readFont(FontFileReader in, String name,
+            Map<Integer, Integer> glyphs) throws IOException {
+        readFont(in, name);
+    }
 
-        Iterator e = unicodeMappings.iterator();
-        UnicodeMapping um = (UnicodeMapping)e.next();
+    private void createCMaps() {
+        cmaps = new ArrayList<CMapSegment>();
+        int unicodeStart;
+        int glyphStart;
+        int unicodeEnd;
+
+        Iterator<UnicodeMapping> e = unicodeMappings.iterator();
+        UnicodeMapping um = e.next();
         UnicodeMapping lastMapping = um;
 
-        tce.setUnicodeStart(um.getUnicodeIndex());
-        tce.setGlyphStartIndex(um.getGlyphIndex());
+        unicodeStart = um.getUnicodeIndex();
+        glyphStart = um.getGlyphIndex();
 
         while (e.hasNext()) {
-            um = (UnicodeMapping)e.next();
+            um = e.next();
             if (((lastMapping.getUnicodeIndex() + 1) != um.getUnicodeIndex())
                     || ((lastMapping.getGlyphIndex() + 1) != um.getGlyphIndex())) {
-                tce.setUnicodeEnd(lastMapping.getUnicodeIndex());
-                cmaps.add(tce);
-
-                tce = new TTFCmapEntry();
-                tce.setUnicodeStart(um.getUnicodeIndex());
-                tce.setGlyphStartIndex(um.getGlyphIndex());
+                unicodeEnd = lastMapping.getUnicodeIndex();
+                cmaps.add(new CMapSegment(unicodeStart, unicodeEnd, glyphStart));
+                unicodeStart = um.getUnicodeIndex();
+                glyphStart = um.getGlyphIndex();
             }
             lastMapping = um;
         }
 
-        tce.setUnicodeEnd(um.getUnicodeIndex());
-        cmaps.add(tce);
+        unicodeEnd = lastMapping.getUnicodeIndex();
+        cmaps.add(new CMapSegment(unicodeStart, unicodeEnd, glyphStart));
     }
 
     /**
@@ -681,11 +805,15 @@ public class TTFFile {
         }
     }
 
+    PostScriptVersion getPostScriptVersion() {
+        return postScriptVersion;
+    }
+
     /**
      * Returns the font family names of the font.
      * @return Set The family names (a Set of Strings)
      */
-    public Set getFamilyNames() {
+    public Set<String> getFamilyNames() {
         return familyNames;
     }
 
@@ -730,19 +858,30 @@ public class TTFFile {
     }
 
     /**
+     * Returns the number of bytes necessary to pad the currentPosition so that a table begins
+     * on a 4-byte boundary.
+     * @param currentPosition the position to pad.
+     * @return int the number of bytes to pad.
+     */
+    protected int getPadSize(int currentPosition) {
+        int padSize = 4 - (currentPosition % 4);
+        return padSize < 4 ? padSize : 0;
+    }
+
+    /**
      * Returns the Flags attribute of the font.
      * @return int The Flags
      */
     public int getFlags() {
         int flags = 32;    // Use Adobe Standard charset
         if (italicAngle != 0) {
-            flags = flags | 64;
+            flags |=  64;
         }
         if (isFixedPitch != 0) {
-            flags = flags | 2;
+            flags |=  2;
         }
         if (hasSerifs) {
-            flags = flags | 1;
+            flags |= 1;
         }
         return flags;
     }
@@ -780,7 +919,6 @@ public class TTFFile {
     }
 
     /**
-     * Returns the font bounding box.
      * @return int[] The font bbox
      */
     public int[] getFontBBox() {
@@ -886,11 +1024,10 @@ public class TTFFile {
      * FontFileReader and fill the global HashMap dirTabs
      * with the table name (String) as key and a TTFDirTabEntry
      * as value.
-     * @param in FontFileReader to read the table directory from
      * @throws IOException in case of an I/O problem
      */
-    protected void readDirTabs(FontFileReader in) throws IOException {
-        int sfntVersion = in.readTTFLong(); // TTF_FIXED_SIZE (4 bytes)
+    protected void readDirTabs() throws IOException {
+        int sfntVersion = fontFile.readTTFLong(); // TTF_FIXED_SIZE (4 bytes)
         switch (sfntVersion) {
         case 0x10000:
             log.debug("sfnt version: OpenType 1.0");
@@ -909,42 +1046,45 @@ public class TTFFile {
             log.debug("Unknown sfnt version: " + Integer.toHexString(sfntVersion));
             break;
         }
-        int ntabs = in.readTTFUShort();
-        in.skip(6);    // 3xTTF_USHORT_SIZE
+        int ntabs = fontFile.readTTFUShort();
+        fontFile.skip(6);    // 3xTTF_USHORT_SIZE
 
-        dirTabs = new java.util.HashMap();
+        dirTabs = new HashMap<TTFTableName, TTFDirTabEntry>();
         TTFDirTabEntry[] pd = new TTFDirTabEntry[ntabs];
         log.debug("Reading " + ntabs + " dir tables");
+
         for (int i = 0; i < ntabs; i++) {
             pd[i] = new TTFDirTabEntry();
-            dirTabs.put(pd[i].read(in), pd[i]);
+            String tableName = pd[i].read(fontFile);
+            dirTabs.put(TTFTableName.getValue(tableName), pd[i]);
         }
+        dirTabs.put(TTFTableName.TABLE_DIRECTORY,
+                new TTFDirTabEntry(0L, fontFile.getCurrentPos()));
         log.debug("dir tables: " + dirTabs.keySet());
     }
 
     /**
      * Read the "head" table, this reads the bounding box and
      * sets the upem (unitsPerEM) variable
-     * @param in FontFileReader to read the header from
      * @throws IOException in case of an I/O problem
      */
-    protected void readFontHeader(FontFileReader in) throws IOException {
-        seekTab(in, "head", 2 * 4 + 2 * 4);
-        int flags = in.readTTFUShort();
+    protected void readFontHeader() throws IOException {
+        seekTab(fontFile, TTFTableName.HEAD, 2 * 4 + 2 * 4);
+        int flags = fontFile.readTTFUShort();
         if (log.isDebugEnabled()) {
             log.debug("flags: " + flags + " - " + Integer.toString(flags, 2));
         }
-        upem = in.readTTFUShort();
+        upem = fontFile.readTTFUShort();
         if (log.isDebugEnabled()) {
             log.debug("unit per em: " + upem);
         }
 
-        in.skip(16);
+        fontFile.skip(16);
 
-        fontBBox1 = in.readTTFShort();
-        fontBBox2 = in.readTTFShort();
-        fontBBox3 = in.readTTFShort();
-        fontBBox4 = in.readTTFShort();
+        fontBBox1 = fontFile.readTTFShort();
+        fontBBox2 = fontFile.readTTFShort();
+        fontBBox3 = fontFile.readTTFShort();
+        fontBBox4 = fontFile.readTTFShort();
         if (log.isDebugEnabled()) {
             log.debug("font bbox: xMin=" + fontBBox1
                     + " yMin=" + fontBBox2
@@ -952,19 +1092,18 @@ public class TTFFile {
                     + " yMax=" + fontBBox4);
         }
 
-        in.skip(2 + 2 + 2);
+        fontFile.skip(2 + 2 + 2);
 
-        locaFormat = in.readTTFShort();
+        locaFormat = fontFile.readTTFShort();
     }
 
     /**
      * Read the number of glyphs from the "maxp" table
-     * @param in FontFileReader to read the number of glyphs from
      * @throws IOException in case of an I/O problem
      */
-    protected void getNumGlyphs(FontFileReader in) throws IOException {
-        seekTab(in, "maxp", 4);
-        numberOfGlyphs = in.readTTFUShort();
+    protected void getNumGlyphs() throws IOException {
+        seekTab(fontFile, TTFTableName.MAXP, 4);
+        numberOfGlyphs = fontFile.readTTFUShort();
     }
 
 
@@ -972,17 +1111,16 @@ public class TTFFile {
      * Read the "hhea" table to find the ascender and descender and
      * size of "hmtx" table, as a fixed size font might have only
      * one width.
-     * @param in FontFileReader to read the hhea table from
      * @throws IOException in case of an I/O problem
      */
-    protected void readHorizontalHeader(FontFileReader in)
+    protected void readHorizontalHeader()
             throws IOException {
-        seekTab(in, "hhea", 4);
-        hheaAscender = in.readTTFShort();
-        hheaDescender = in.readTTFShort();
+        seekTab(fontFile, TTFTableName.HHEA, 4);
+        hheaAscender = fontFile.readTTFShort();
+        hheaDescender = fontFile.readTTFShort();
 
-        in.skip(2 + 2 + 3 * 2 + 8 * 2);
-        nhmtx = in.readTTFUShort();
+        fontFile.skip(2 + 2 + 3 * 2 + 8 * 2);
+        nhmtx = fontFile.readTTFUShort();
 
         if (log.isDebugEnabled()) {
             log.debug("hhea.Ascender: " + formatUnitsForDebug(hheaAscender));
@@ -996,12 +1134,11 @@ public class TTFFile {
      * in the mtxTab array. If the number of metrics is less
      * than the number of glyphs (eg fixed size fonts), extend
      * the mtxTab array and fill in the missing widths
-     * @param in FontFileReader to read the hmtx table from
      * @throws IOException in case of an I/O problem
      */
-    protected void readHorizontalMetrics(FontFileReader in)
+    protected void readHorizontalMetrics()
             throws IOException {
-        seekTab(in, "hmtx", 0);
+        seekTab(fontFile, TTFTableName.HMTX, 0);
 
         int mtxSize = Math.max(numberOfGlyphs, nhmtx);
         mtxTab = new TTFMtxEntry[mtxSize];
@@ -1013,8 +1150,8 @@ public class TTFFile {
             mtxTab[i] = new TTFMtxEntry();
         }
         for (int i = 0; i < nhmtx; i++) {
-            mtxTab[i].setWx(in.readTTFUShort());
-            mtxTab[i].setLsb(in.readTTFUShort());
+            mtxTab[i].setWx(fontFile.readTTFUShort());
+            mtxTab[i].setLsb(fontFile.readTTFUShort());
 
             if (log.isTraceEnabled()) {
                 log.trace("   width[" + i + "] = "
@@ -1027,7 +1164,7 @@ public class TTFFile {
             int lastWidth = mtxTab[nhmtx - 1].getWx();
             for (int i = nhmtx; i < mtxSize; i++) {
                 mtxTab[i].setWx(lastWidth);
-                mtxTab[i].setLsb(in.readTTFUShort());
+                mtxTab[i].setLsb(fontFile.readTTFUShort());
             }
         }
     }
@@ -1037,35 +1174,37 @@ public class TTFFile {
      * Read the "post" table
      * containing the PostScript names of the glyphs.
      */
-    private void readPostScript(FontFileReader in) throws IOException {
-        seekTab(in, "post", 0);
-        postFormat = in.readTTFLong();
-        italicAngle = in.readTTFULong();
-        underlinePosition = in.readTTFShort();
-        underlineThickness = in.readTTFShort();
-        isFixedPitch = in.readTTFULong();
+    private void readPostScript() throws IOException {
+        seekTab(fontFile, TTFTableName.POST, 0);
+        int postFormat = fontFile.readTTFLong();
+        italicAngle = fontFile.readTTFULong();
+        underlinePosition = fontFile.readTTFShort();
+        underlineThickness = fontFile.readTTFShort();
+        isFixedPitch = fontFile.readTTFULong();
 
         //Skip memory usage values
-        in.skip(4 * 4);
+        fontFile.skip(4 * 4);
 
         log.debug("PostScript format: 0x" + Integer.toHexString(postFormat));
         switch (postFormat) {
         case 0x00010000:
             log.debug("PostScript format 1");
-            for (int i = 0; i < Glyphs.MAC_GLYPH_NAMES.length; i++) {
-                mtxTab[i].setName(Glyphs.MAC_GLYPH_NAMES[i]);
+            postScriptVersion = PostScriptVersion.V1;
+            for (int i = 0; i < MAC_GLYPH_ORDERING.length; i++) {
+                mtxTab[i].setName(MAC_GLYPH_ORDERING[i]);
             }
             break;
         case 0x00020000:
             log.debug("PostScript format 2");
+            postScriptVersion = PostScriptVersion.V2;
             int numGlyphStrings = 0;
 
             // Read Number of Glyphs
-            int l = in.readTTFUShort();
+            int l = fontFile.readTTFUShort();
 
             // Read indexes
             for (int i = 0; i < l; i++) {
-                mtxTab[i].setIndex(in.readTTFUShort());
+                mtxTab[i].setIndex(fontFile.readTTFUShort());
 
                 if (mtxTab[i].getIndex() > 257) {
                     //Index is not in the Macintosh standard set
@@ -1085,16 +1224,16 @@ public class TTFFile {
                         + " set. Total number of glyphs=" + l);
             }
             for (int i = 0; i < psGlyphsBuffer.length; i++) {
-                psGlyphsBuffer[i] = in.readTTFString(in.readTTFUByte());
+                psGlyphsBuffer[i] = fontFile.readTTFString(fontFile.readTTFUByte());
             }
 
             //Set glyph names
             for (int i = 0; i < l; i++) {
-                if (mtxTab[i].getIndex() < NMACGLYPHS) {
-                    mtxTab[i].setName(Glyphs.MAC_GLYPH_NAMES[mtxTab[i].getIndex()]);
+                if (mtxTab[i].getIndex() < MAC_GLYPH_ORDERING.length) {
+                    mtxTab[i].setName(MAC_GLYPH_ORDERING[mtxTab[i].getIndex()]);
                 } else {
                     if (!mtxTab[i].isIndexReserved()) {
-                        int k = mtxTab[i].getIndex() - NMACGLYPHS;
+                        int k = mtxTab[i].getIndex() - MAC_GLYPH_ORDERING.length;
 
                         if (log.isTraceEnabled()) {
                             log.trace(k + " i=" + i + " mtx=" + mtxTab.length
@@ -1110,9 +1249,11 @@ public class TTFFile {
         case 0x00030000:
             // PostScript format 3 contains no glyph names
             log.debug("PostScript format 3");
+            postScriptVersion = PostScriptVersion.V3;
             break;
         default:
             log.error("Unknown PostScript format: " + postFormat);
+            postScriptVersion = PostScriptVersion.UNKNOWN;
         }
     }
 
@@ -1120,60 +1261,60 @@ public class TTFFile {
     /**
      * Read the "OS/2" table
      */
-    private void readOS2(FontFileReader in) throws IOException {
+    private void readOS2() throws IOException {
         // Check if font is embeddable
-        TTFDirTabEntry os2Entry = getDirectoryEntry ( "OS/2" );
+        TTFDirTabEntry os2Entry = dirTabs.get(TTFTableName.OS2);
         if (os2Entry != null) {
-            seekTab(in, "OS/2", 0);
-            int version = in.readTTFUShort();
+            seekTab(fontFile, TTFTableName.OS2, 0);
+            int version = fontFile.readTTFUShort();
             if (log.isDebugEnabled()) {
                 log.debug("OS/2 table: version=" + version
                         + ", offset=" + os2Entry.getOffset() + ", len=" + os2Entry.getLength());
             }
-            in.skip(2); //xAvgCharWidth
-            this.usWeightClass = in.readTTFUShort();
+            fontFile.skip(2); //xAvgCharWidth
+            this.usWeightClass = fontFile.readTTFUShort();
 
             // usWidthClass
-            in.skip(2);
+            fontFile.skip(2);
 
-            int fsType = in.readTTFUShort();
+            int fsType = fontFile.readTTFUShort();
             if (fsType == 2) {
                 isEmbeddable = false;
             } else {
                 isEmbeddable = true;
             }
-            in.skip(11 * 2);
-            in.skip(10); //panose array
-            in.skip(4 * 4); //unicode ranges
-            in.skip(4);
-            in.skip(3 * 2);
+            fontFile.skip(11 * 2);
+            fontFile.skip(10); //panose array
+            fontFile.skip(4 * 4); //unicode ranges
+            fontFile.skip(4);
+            fontFile.skip(3 * 2);
             int v;
-            os2Ascender = in.readTTFShort(); //sTypoAscender
-            os2Descender = in.readTTFShort(); //sTypoDescender
+            os2Ascender = fontFile.readTTFShort(); //sTypoAscender
+            os2Descender = fontFile.readTTFShort(); //sTypoDescender
             if (log.isDebugEnabled()) {
                 log.debug("sTypoAscender: " + os2Ascender
                         + " -> internal " + convertTTFUnit2PDFUnit(os2Ascender));
                 log.debug("sTypoDescender: " + os2Descender
                         + " -> internal " + convertTTFUnit2PDFUnit(os2Descender));
             }
-            v = in.readTTFShort(); //sTypoLineGap
+            v = fontFile.readTTFShort(); //sTypoLineGap
             if (log.isDebugEnabled()) {
                 log.debug("sTypoLineGap: " + v);
             }
-            v = in.readTTFUShort(); //usWinAscent
+            v = fontFile.readTTFUShort(); //usWinAscent
             if (log.isDebugEnabled()) {
                 log.debug("usWinAscent: " + formatUnitsForDebug(v));
             }
-            v = in.readTTFUShort(); //usWinDescent
+            v = fontFile.readTTFUShort(); //usWinDescent
             if (log.isDebugEnabled()) {
                 log.debug("usWinDescent: " + formatUnitsForDebug(v));
             }
 
             //version 1 OS/2 table might end here
             if (os2Entry.getLength() >= 78 + (2 * 4) + (2 * 2)) {
-                in.skip(2 * 4);
-                this.os2xHeight = in.readTTFShort(); //sxHeight
-                this.os2CapHeight = in.readTTFShort(); //sCapHeight
+                fontFile.skip(2 * 4);
+                this.os2xHeight = fontFile.readTTFShort(); //sxHeight
+                this.os2CapHeight = fontFile.readTTFShort(); //sCapHeight
                 if (log.isDebugEnabled()) {
                     log.debug("sxHeight: " + this.os2xHeight);
                     log.debug("sCapHeight: " + this.os2CapHeight);
@@ -1187,42 +1328,40 @@ public class TTFFile {
 
     /**
      * Read the "loca" table.
-     * @param in FontFileReader to read from
      * @throws IOException In case of a I/O problem
      */
-    protected final void readIndexToLocation(FontFileReader in)
+    protected final void readIndexToLocation()
             throws IOException {
-        if (!seekTab(in, "loca", 0)) {
+        if (!seekTab(fontFile, TTFTableName.LOCA, 0)) {
             throw new IOException("'loca' table not found, happens when the font file doesn't"
                     + " contain TrueType outlines (trying to read an OpenType CFF font maybe?)");
         }
         for (int i = 0; i < numberOfGlyphs; i++) {
-            mtxTab[i].setOffset(locaFormat == 1 ? in.readTTFULong()
-                                 : (in.readTTFUShort() << 1));
+            mtxTab[i].setOffset(locaFormat == 1 ? fontFile.readTTFULong()
+                                 : (fontFile.readTTFUShort() << 1));
         }
-        lastLoca = (locaFormat == 1 ? in.readTTFULong()
-                    : (in.readTTFUShort() << 1));
+        lastLoca = (locaFormat == 1 ? fontFile.readTTFULong()
+                    : (fontFile.readTTFUShort() << 1));
     }
 
     /**
      * Read the "glyf" table to find the bounding boxes.
-     * @param in FontFileReader to read from
      * @throws IOException In case of a I/O problem
      */
-    private void readGlyf(FontFileReader in) throws IOException {
-        TTFDirTabEntry dirTab = getDirectoryEntry ( "glyf" );
+    private void readGlyf() throws IOException {
+        TTFDirTabEntry dirTab = dirTabs.get(TTFTableName.GLYF);
         if (dirTab == null) {
             throw new IOException("glyf table not found, cannot continue");
         }
         for (int i = 0; i < (numberOfGlyphs - 1); i++) {
             if (mtxTab[i].getOffset() != mtxTab[i + 1].getOffset()) {
-                in.seekSet(dirTab.getOffset() + mtxTab[i].getOffset());
-                in.skip(2);
+                fontFile.seekSet(dirTab.getOffset() + mtxTab[i].getOffset());
+                fontFile.skip(2);
                 final int[] bbox = {
-                    in.readTTFShort(),
-                    in.readTTFShort(),
-                    in.readTTFShort(),
-                    in.readTTFShort()};
+                    fontFile.readTTFShort(),
+                    fontFile.readTTFShort(),
+                    fontFile.readTTFShort(),
+                    fontFile.readTTFShort()};
                 mtxTab[i].setBoundingBox(bbox);
             } else {
                 mtxTab[i].setBoundingBox(mtxTab[0].getBoundingBox());
@@ -1230,17 +1369,17 @@ public class TTFFile {
         }
 
 
-        long n = dirTab.getOffset();
+        long n = (dirTabs.get(TTFTableName.GLYF)).getOffset();
         for (int i = 0; i < numberOfGlyphs; i++) {
             if ((i + 1) >= mtxTab.length
                     || mtxTab[i].getOffset() != mtxTab[i + 1].getOffset()) {
-                in.seekSet(n + mtxTab[i].getOffset());
-                in.skip(2);
+                fontFile.seekSet(n + mtxTab[i].getOffset());
+                fontFile.skip(2);
                 final int[] bbox = {
-                    in.readTTFShort(),
-                    in.readTTFShort(),
-                    in.readTTFShort(),
-                    in.readTTFShort()};
+                    fontFile.readTTFShort(),
+                    fontFile.readTTFShort(),
+                    fontFile.readTTFShort(),
+                    fontFile.readTTFShort()};
                 mtxTab[i].setBoundingBox(bbox);
             } else {
                 /**@todo Verify that this is correct, looks like a copy/paste bug (jm)*/
@@ -1261,34 +1400,33 @@ public class TTFFile {
 
     /**
      * Read the "name" table.
-     * @param in FontFileReader to read from
      * @throws IOException In case of a I/O problem
      */
-    private void readName(FontFileReader in) throws IOException {
-        seekTab(in, "name", 2);
-        int i = in.getCurrentPos();
-        int n = in.readTTFUShort();
-        int j = in.readTTFUShort() + i - 2;
+    private void readName() throws IOException {
+        seekTab(fontFile, TTFTableName.NAME, 2);
+        int i = fontFile.getCurrentPos();
+        int n = fontFile.readTTFUShort();
+        int j = fontFile.readTTFUShort() + i - 2;
         i += 2 * 2;
 
         while (n-- > 0) {
             // getLogger().debug("Iteration: " + n);
-            in.seekSet(i);
-            final int platformID = in.readTTFUShort();
-            final int encodingID = in.readTTFUShort();
-            final int languageID = in.readTTFUShort();
+            fontFile.seekSet(i);
+            final int platformID = fontFile.readTTFUShort();
+            final int encodingID = fontFile.readTTFUShort();
+            final int languageID = fontFile.readTTFUShort();
 
-            int k = in.readTTFUShort();
-            int l = in.readTTFUShort();
+            int k = fontFile.readTTFUShort();
+            int l = fontFile.readTTFUShort();
 
             if (((platformID == 1 || platformID == 3)
                     && (encodingID == 0 || encodingID == 1))) {
-                in.seekSet(j + in.readTTFUShort());
+                fontFile.seekSet(j + fontFile.readTTFUShort());
                 String txt;
                 if (platformID == 3) {
-                    txt = in.readTTFString(l, encodingID);
+                    txt = fontFile.readTTFString(l, encodingID);
                 } else {
-                    txt = in.readTTFString(l);
+                    txt = fontFile.readTTFString(l);
                 }
 
                 if (log.isDebugEnabled()) {
@@ -1332,21 +1470,20 @@ public class TTFFile {
 
     /**
      * Read the "PCLT" table to find xHeight and capHeight.
-     * @param in FontFileReader to read from
      * @throws IOException In case of a I/O problem
      */
-    private boolean readPCLT(FontFileReader in) throws IOException {
-        TTFDirTabEntry dirTab = getDirectoryEntry ( "PCLT" );
+    private boolean readPCLT() throws IOException {
+        TTFDirTabEntry dirTab = dirTabs.get(TTFTableName.PCLT);
         if (dirTab != null) {
-            in.seekSet(dirTab.getOffset() + 4 + 4 + 2);
-            xHeight = in.readTTFUShort();
+            fontFile.seekSet(dirTab.getOffset() + 4 + 4 + 2);
+            xHeight = fontFile.readTTFUShort();
             log.debug("xHeight from PCLT: " + formatUnitsForDebug(xHeight));
-            in.skip(2 * 2);
-            capHeight = in.readTTFUShort();
+            fontFile.skip(2 * 2);
+            capHeight = fontFile.readTTFUShort();
             log.debug("capHeight from PCLT: " + formatUnitsForDebug(capHeight));
-            in.skip(2 + 16 + 8 + 6 + 1 + 1);
+            fontFile.skip(2 + 16 + 8 + 6 + 1 + 1);
 
-            int serifStyle = in.readTTFUByte();
+            int serifStyle = fontFile.readTTFUByte();
             serifStyle = serifStyle >> 6;
             serifStyle = serifStyle & 3;
             if (serifStyle == 1) {
@@ -1476,19 +1613,18 @@ public class TTFFile {
     /**
      * Read the kerning table, create a table for both CIDs and
      * winAnsiEncoding.
-     * @param in FontFileReader to read from
      * @throws IOException In case of a I/O problem
      */
-    private void readKerning(FontFileReader in) throws IOException {
+    private void readKerning() throws IOException {
         // Read kerning
-        kerningTab = new java.util.HashMap();
-        ansiKerningTab = new java.util.HashMap();
-        TTFDirTabEntry dirTab = getDirectoryEntry ( "kern" );
+        kerningTab = new HashMap<Integer, Map<Integer, Integer>>();
+        ansiKerningTab = new HashMap<Integer, Map<Integer, Integer>>();
+        TTFDirTabEntry dirTab = dirTabs.get(TTFTableName.KERN);
         if (dirTab != null) {
-            seekTab(in, "kern", 2);
-            for (int n = in.readTTFUShort(); n > 0; n--) {
-                in.skip(2 * 2);
-                int k = in.readTTFUShort();
+            seekTab(fontFile, TTFTableName.KERN, 2);
+            for (int n = fontFile.readTTFUShort(); n > 0; n--) {
+                fontFile.skip(2 * 2);
+                int k = fontFile.readTTFUShort();
                 if (!((k & 1) != 0) || (k & 2) != 0 || (k & 4) != 0) {
                     return;
                 }
@@ -1496,12 +1632,12 @@ public class TTFFile {
                     continue;
                 }
 
-                k = in.readTTFUShort();
-                in.skip(3 * 2);
+                k = fontFile.readTTFUShort();
+                fontFile.skip(3 * 2);
                 while (k-- > 0) {
-                    int i = in.readTTFUShort();
-                    int j = in.readTTFUShort();
-                    int kpx = in.readTTFShort();
+                    int i = fontFile.readTTFUShort();
+                    int j = fontFile.readTTFUShort();
+                    int kpx = fontFile.readTTFShort();
                     if (kpx != 0) {
                         // CID kerning table entry, using unicode indexes
                         final Integer iObj = glyphToUnicode(i);
@@ -1515,9 +1651,9 @@ public class TTFFile {
                             log.debug("Ignoring kerning pair because Unicode index was"
                                     + " found for the second glyph " + i);
                         } else {
-                            Map adjTab = kerningTab.get(iObj);
+                            Map<Integer, Integer> adjTab = kerningTab.get(iObj);
                             if (adjTab == null) {
-                                adjTab = new java.util.HashMap();
+                                adjTab = new HashMap<Integer, Integer>();
                             }
                             adjTab.put(u2, new Integer(convertTTFUnit2PDFUnit(kpx)));
                             kerningTab.put(iObj, adjTab);
@@ -1529,16 +1665,12 @@ public class TTFFile {
             // Create winAnsiEncoded kerning table from kerningTab
             // (could probably be simplified, for now we remap back to CID indexes and
             // then to winAnsi)
-            Iterator ae = kerningTab.keySet().iterator();
-            while (ae.hasNext()) {
-                Integer unicodeKey1 = (Integer)ae.next();
+            for (Integer unicodeKey1 : kerningTab.keySet()) {
                 Integer cidKey1 = unicodeToGlyph(unicodeKey1.intValue());
-                Map<Integer, Integer> akpx = new java.util.HashMap();
-                Map ckpx = kerningTab.get(unicodeKey1);
+                Map<Integer, Integer> akpx = new HashMap<Integer, Integer>();
+                Map<Integer, Integer> ckpx = kerningTab.get(unicodeKey1);
 
-                Iterator aee = ckpx.keySet().iterator();
-                while (aee.hasNext()) {
-                    Integer unicodeKey2 = (Integer)aee.next();
+                for (Integer unicodeKey2 : ckpx.keySet()) {
                     Integer cidKey2 = unicodeToGlyph(unicodeKey2.intValue());
                     Integer kern = (Integer)ckpx.get(unicodeKey2);
 
@@ -1567,10 +1699,71 @@ public class TTFFile {
     }
 
     /**
-     * Return a List with TTFCmapEntry.
-     * @return A list of TTFCmapEntry objects
+     * Streams a font.
+     * @param ttfOut The interface for streaming TrueType tables.
+     * @exception IOException file write error
      */
-    public List getCMaps() {
+    public void stream(TTFOutputStream ttfOut) throws IOException {
+        SortedSet<Map.Entry<TTFTableName, TTFDirTabEntry>> sortedDirTabs = sortDirTabMap(dirTabs);
+        byte[] file = fontFile.getAllBytes();
+        TTFTableOutputStream tableOut = ttfOut.getTableOutputStream();
+        TTFGlyphOutputStream glyphOut = ttfOut.getGlyphOutputStream();
+        ttfOut.startFontStream();
+        for (Map.Entry<TTFTableName, TTFDirTabEntry> entry : sortedDirTabs) {
+            int offset = (int) entry.getValue().getOffset();
+            int paddedLength = (int) entry.getValue().getLength();
+            paddedLength += getPadSize(offset + paddedLength);
+            if (entry.getKey().equals(TTFTableName.GLYF)) {
+                streamGlyf(glyphOut, file, offset, paddedLength);
+            } else {
+                tableOut.streamTable(file, offset, paddedLength);
+            }
+        }
+        ttfOut.endFontStream();
+    }
+
+    private void streamGlyf(TTFGlyphOutputStream glyphOut, byte[] fontFile, int tableOffset,
+            int tableLength) throws IOException {
+        //Stream all but the last glyph
+        int glyphStart = 0;
+        int glyphEnd = 0;
+        glyphOut.startGlyphStream();
+        for (int i = 0; i < mtxTab.length - 1; i++) {
+            glyphStart = (int) mtxTab[i].getOffset() + tableOffset;
+            glyphEnd = (int) mtxTab[i + 1].getOffset() + tableOffset;
+            glyphOut.streamGlyph(fontFile, glyphStart, glyphEnd - glyphStart);
+        }
+        glyphOut.streamGlyph(fontFile, glyphEnd, (tableOffset + tableLength) - glyphEnd);
+        glyphOut.endGlyphStream();
+    }
+
+    /**
+     * Returns the order in which the tables in a TrueType font should be written to file.
+     * @param directoryTabs the map that is to be sorted.
+     * @return TTFTablesNames[] an array of table names sorted in the order they should appear in
+     * the TTF file.
+     */
+    SortedSet<Map.Entry<TTFTableName, TTFDirTabEntry>>
+                        sortDirTabMap(Map<TTFTableName, TTFDirTabEntry> directoryTabs) {
+        SortedSet<Map.Entry<TTFTableName, TTFDirTabEntry>> sortedSet
+            = new TreeSet<Map.Entry<TTFTableName, TTFDirTabEntry>>(
+                    new Comparator<Map.Entry<TTFTableName, TTFDirTabEntry>>() {
+
+            public int compare(Entry<TTFTableName, TTFDirTabEntry> o1,
+                    Entry<TTFTableName, TTFDirTabEntry> o2) {
+                return (int) (o1.getValue().getOffset() - o2.getValue().getOffset());
+            }
+        });
+        sortedSet.addAll(directoryTabs.entrySet());
+        return sortedSet;
+    }
+
+    /**
+     * Returns this font's character to glyph mapping.
+     *
+     * @return the font's cmap
+     */
+    public List<CMapSegment> getCMaps() {
         return cmaps;
     }
 
@@ -1579,24 +1772,23 @@ public class TTFFile {
      * name exists in the collection.
      * If it does, set offset in fontfile to the beginning of
      * the Table Directory for that font.
-     * @param in FontFileReader to read from
      * @param name The name to check
      * @return True if not collection or font name present, false otherwise
      * @throws IOException In case of an I/O problem
      */
-    protected final boolean checkTTC(FontFileReader in, String name) throws IOException {
-        String tag = in.readTTFString(4);
+    protected final boolean checkTTC(String name) throws IOException {
+        String tag = fontFile.readTTFString(4);
 
         if ("ttcf".equals(tag)) {
             // This is a TrueType Collection
-            in.skip(4);
+            fontFile.skip(4);
 
             // Read directory offsets
-            int numDirectories = (int)in.readTTFULong();
+            int numDirectories = (int)fontFile.readTTFULong();
             // int numDirectories=in.readTTFUShort();
             long[] dirOffsets = new long[numDirectories];
             for (int i = 0; i < numDirectories; i++) {
-                dirOffsets[i] = in.readTTFULong();
+                dirOffsets[i] = fontFile.readTTFULong();
             }
 
             log.info("This is a TrueType collection file with "
@@ -1610,10 +1802,10 @@ public class TTFFile {
             // Is found, just to show all the names
             long dirTabOffset = 0;
             for (int i = 0; (i < numDirectories); i++) {
-                in.seekSet(dirOffsets[i]);
-                readDirTabs(in);
+                fontFile.seekSet(dirOffsets[i]);
+                readDirTabs();
 
-                readName(in);
+                readName();
 
                 if (fullName.equals(name)) {
                     found = true;
@@ -1631,10 +1823,10 @@ public class TTFFile {
                 subFamilyName = "";
             }
 
-            in.seekSet(dirTabOffset);
+            fontFile.seekSet(dirTabOffset);
             return found;
         } else {
-            in.seekSet(0);
+            fontFile.seekSet(0);
             return true;
         }
     }
@@ -1646,8 +1838,7 @@ public class TTFFile {
      * @throws IOException In case of an I/O problem
      */
     public final List<String> getTTCnames(FontFileReader in) throws IOException {
-        List<String> fontNames = new java.util.ArrayList<String>();
-
+        List<String> fontNames = new ArrayList<String>();
         String tag = in.readTTFString(4);
 
         if ("ttcf".equals(tag)) {
@@ -1667,9 +1858,9 @@ public class TTFFile {
 
             for (int i = 0; (i < numDirectories); i++) {
                 in.seekSet(dirOffsets[i]);
-                readDirTabs(in);
+                readDirTabs();
 
-                readName(in);
+                readName();
 
                 log.info(fullName);
                 fontNames.add(fullName);
@@ -1695,13 +1886,13 @@ public class TTFFile {
      * doesn't matter...
      */
     private Integer[] unicodeToWinAnsi(int unicode) {
-        List ret = new java.util.ArrayList();
+        List<Integer> ret = new ArrayList<Integer>();
         for (int i = 32; i < Glyphs.WINANSI_ENCODING.length; i++) {
             if (unicode == Glyphs.WINANSI_ENCODING[i]) {
                 ret.add(new Integer(i));
             }
         }
-        return (Integer[])ret.toArray(new Integer[0]);
+        return ret.toArray(new Integer[0]);
     }
 
     /**
@@ -1744,7 +1935,7 @@ public class TTFFile {
      * @return unicode code point
      */
     private Integer glyphToUnicode(int glyphIndex) {
-        return (Integer) glyphToUnicodeMap.get(new Integer(glyphIndex));
+        return glyphToUnicodeMap.get(new Integer(glyphIndex));
     }
 
     /**
@@ -1755,12 +1946,16 @@ public class TTFFile {
      */
     private Integer unicodeToGlyph(int unicodeIndex) throws IOException {
         final Integer result
-            = (Integer) unicodeToGlyphMap.get(new Integer(unicodeIndex));
+            = unicodeToGlyphMap.get(new Integer(unicodeIndex));
         if (result == null) {
             throw new IOException(
                     "Glyph index not found for unicode value " + unicodeIndex);
         }
         return result;
+    }
+
+    String getGlyphName(int glyphIndex) {
+        return mtxTab[glyphIndex].getName();
     }
 
     /**

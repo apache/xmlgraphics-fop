@@ -19,8 +19,6 @@
 
 package org.apache.fop.fonts.truetype;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +28,8 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests {@link GlyfTable}.
@@ -141,7 +141,8 @@ public class GlyfTableTestCase {
 
     private void setupSubsetReader(Map<Integer, Integer> glyphs) throws IOException {
         TTFSubSetFile fontFile = new TTFSubSetFile();
-        byte[] subsetFont = fontFile.readFont(originalFontReader, "Deja", glyphs);
+        fontFile.readFont(originalFontReader, "Deja", glyphs);
+        byte[] subsetFont = fontFile.getFontSubset();
         InputStream intputStream = new ByteArrayInputStream(subsetFont);
         subsetReader = new FontFileReader(intputStream);
     }

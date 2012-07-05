@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,7 @@ import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentHiResBoundingBox;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
@@ -57,11 +59,13 @@ import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.render.ps.extensions.PSCommentAfter;
 import org.apache.fop.render.ps.extensions.PSCommentBefore;
+import org.apache.fop.render.ps.extensions.PSPageTrailerCodeBefore;
 import org.apache.fop.render.ps.extensions.PSSetPageDevice;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 
 /**
- * {@link IFDocumentHandler} implementation that produces PostScript.
+ * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation
+ * that produces PostScript.
  */
 public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
@@ -98,10 +102,13 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     private PSPageDeviceDictionary pageDeviceDictionary;
 
     /** This is a collection holding all document header comments */
-    private Collection[] comments = new Collection[3];
+    private Collection[] comments = new Collection[4];
     private static final int COMMENT_DOCUMENT_HEADER = 0;
     private static final int COMMENT_DOCUMENT_TRAILER = 1;
     private static final int COMMENT_PAGE_TRAILER = 2;
+    private static final int PAGE_TRAILER_CODE_BEFORE = 3;
+
+    private PSEventProducer eventProducer;
 
     /**
      * Default constructor.
@@ -122,7 +129,9 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** {@inheritDoc} */
     public void setContext(IFContext context) {
         super.setContext(context);
-        this.psUtil = new PSRenderingUtil(context.getUserAgent());
+        FOUserAgent userAgent = context.getUserAgent();
+        this.psUtil = new PSRenderingUtil(userAgent);
+        eventProducer = PSEventProducer.Provider.get(userAgent.getEventBroadcaster());
     }
 
     /** {@inheritDoc} */
@@ -141,7 +150,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         try {
             OutputStream out;
             if (psUtil.isOptimizeResources()) {
-                this.tempFile = File.createTempFile("fop", null);
+                this.tempFile = File.createTempFile("fop", ".ps");
                 out = new java.io.FileOutputStream(this.tempFile);
                 out = new java.io.BufferedOutputStream(out);
             } else {
@@ -199,7 +208,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
         PSRenderingUtil.writeSetupCodeList(gen, setupCodeList, "SetupCode");
         if (!psUtil.isOptimizeResources()) {
-            this.fontResources.addAll(PSFontUtils.writeFontDict(gen, fontInfo));
+            this.fontResources.addAll(PSFontUtils.writeFontDict(gen, fontInfo, eventProducer));
         } else {
             gen.commentln("%FOPFontSetup"); //Place-holder, will be replaced in the second pass
         }
@@ -254,8 +263,8 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         in = new java.io.BufferedInputStream(in);
         try {
             try {
-                ResourceHandler handler = new ResourceHandler(getUserAgent(), this.fontInfo,
-                        resTracker, this.formResources);
+                ResourceHandler handler = new ResourceHandler(getUserAgent(), eventProducer,
+                        this.fontInfo, resTracker, this.formResources);
                 handler.process(in, this.outputStream,
                         this.currentPageNumber, this.documentBoundingBox);
                 this.outputStream.flush();
@@ -443,8 +452,9 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** {@inheritDoc} */
     public void startPageTrailer() throws IFException {
-        super.startPageTrailer();
         try {
+            writeExtensions(PAGE_TRAILER_CODE_BEFORE);
+            super.startPageTrailer();
             gen.writeDSCComment(DSCConstants.PAGE_TRAILER);
         } catch (IOException ioe) {
             throw new IFException("I/O error in startPageTrailer()", ioe);
@@ -526,6 +536,11 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                     comments[targetCollection] = new java.util.ArrayList();
                 }
                 comments[targetCollection].add(extension);
+            } else if (extension instanceof PSPageTrailerCodeBefore) {
+                if (comments[PAGE_TRAILER_CODE_BEFORE] == null) {
+                    comments[PAGE_TRAILER_CODE_BEFORE] = new ArrayList();
+                }
+                comments[PAGE_TRAILER_CODE_BEFORE].add(extension);
             }
         } catch (IOException ioe) {
             throw new IFException("I/O error in handleExtensionObject()", ioe);
@@ -537,8 +552,8 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
      * @param key the font key ("F*")
      * @return the matching PSResource
      */
-    protected PSResource getPSResourceForFontKey(String key) {
-        return this.fontResources.getPSResourceForFontKey(key);
+    protected PSFontResource getPSResourceForFontKey(String key) {
+        return this.fontResources.getFontResourceForFontKey(key);
     }
 
     /**

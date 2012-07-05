@@ -72,7 +72,7 @@ public class CustomFontCollection implements FontCollection {
 
             List<FontTriplet> triplets = embedFontInfo.getFontTriplets();
             for (int tripletIndex = 0; tripletIndex < triplets.size(); tripletIndex++) {
-                FontTriplet triplet = (FontTriplet) triplets.get(tripletIndex);
+                FontTriplet triplet = triplets.get(tripletIndex);
                 fontInfo.addFontProperties(internalName, triplet);
             }
         }
