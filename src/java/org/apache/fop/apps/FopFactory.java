@@ -295,7 +295,7 @@ public final class FopFactory implements ImageContext {
      * @return the config object
      * @throws FOPException when an error occurs while creating the configuration object
      */
-    RendererConfig getRendererConfig(FOUserAgent userAgent, Configuration cfg,
+    synchronized RendererConfig getRendererConfig(FOUserAgent userAgent, Configuration cfg,
             RendererConfigParser configCreator) throws FOPException {
         RendererConfig config = rendererConfig.get(configCreator.getMimeType());
         if (config == null) {
