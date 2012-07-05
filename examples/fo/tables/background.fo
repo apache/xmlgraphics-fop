@@ -30,7 +30,7 @@
       Table 1: cell background
       </fo:block>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -72,7 +72,7 @@
       Table 1: row background
       </fo:block>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -152,7 +152,7 @@
       Table 1: column background
       </fo:block>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="3cm" background-color="green"/>
   <fo:table-column column-width="3cm" background-color="red"/>
   <fo:table-column column-width="3cm" background-color="blue"/>
@@ -219,7 +219,7 @@
       Table 1: column backgrounds over page
       </fo:block>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="3cm" background-color="green"/>
   <fo:table-column column-width="3cm" background-color="red"/>
   <fo:table-column column-width="3cm" background-color="blue"/>
@@ -286,7 +286,7 @@
       Table 1: body background
       </fo:block>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -323,7 +323,7 @@
   </fo:table-body>
       </fo:table>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -360,7 +360,7 @@
   </fo:table-body>
       </fo:table>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -397,7 +397,7 @@
   </fo:table-body>
       </fo:table>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -438,7 +438,7 @@
       Table 1: table background
       </fo:block>
 
-      <fo:table background-color="green" table-layout="fixed" width="100%">
+      <fo:table background-color="green">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -475,7 +475,7 @@
   </fo:table-body>
       </fo:table>
 
-      <fo:table background-color="red" table-layout="fixed" width="100%">
+      <fo:table background-color="red">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -516,7 +516,7 @@
       Table 1: combinations
       </fo:block>
 
-      <fo:table background-color="green" table-layout="fixed" width="100%">
+      <fo:table background-color="green">
   <fo:table-column column-width="2.5cm"/>
   <fo:table-column column-width="2.5cm" background-color="green"/>
   <fo:table-column column-width="2.5cm" background-color="red"/>

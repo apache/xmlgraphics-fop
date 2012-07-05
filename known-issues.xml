@@ -17,69 +17,75 @@
 -->
 <!-- $Id$ -->
 <known-issues>
-  <!-- NEED TO REVIEW ALL OF THE FOLLOWING
-  <known-issue>
-    MIF and SVG output support have not been restored, yet.
-  </known-issue>
-  <known-issue>
-    RTF output is inferior to other output formats supported by FOP.
-    For details, please see the "Output Targets" page of the release
-    you're using.
-  </known-issue>
-  <known-issue>
-    Auto table layout is not implemented, yet.
-  </known-issue>
-  <known-issue>
-    Footnotes may overlap with text of the region-body in multi-column 
-    documents.
-  </known-issue>
-  <known-issue>
-    Space resolution does not work between footnote regions.
-  </known-issue>
-  <known-issue>
-    Block containers with no height currently don't create a fence for
-    spaces as they should (they behave like a normal block).
-  </known-issue>
-  <known-issue>
-    Preserved linefeeds in fo:character are not handled correctly.
-  </known-issue>
-  <known-issue>
-    An empty block currently produces a fence for stacking constraints
-    which it shouldn't.
-  </known-issue>
-  <known-issue>
-    There are several small problems around white space handling.
-  </known-issue>
-  <known-issue>
-    Images currently don't shrink so they fit on a page when they are 
-    too big and shrinking is allowed to happen.
-  </known-issue>
-  <known-issue>
-    Inline container may not work as expected.
-  </known-issue>
-  <known-issue>
-    The letter-spacing and word-spacing properties may not work as expected.
-  </known-issue>
-  <known-issue>
-    Leaders with leader-pattern="use-content" may not work as expected.
-  </known-issue>
-  <known-issue>
-    The keep-with-previous property doesn't work inside tables and lists, yet.
-  </known-issue>
-  <known-issue>
-    If two consecutive pages don't have the same available width, the 
-    content currently isn't properly fit into the available space on
-    the new page.
-  </known-issue>
-  <known-issue>
-    Background images on page number citations are not placed correctly.
-  </known-issue>
-  <known-issue>
-    Not all FO elements can be referenced by their "id", most notably:
-    table-body, table-header, table-footer and table-row.
-  </known-issue>
-  <known-issue>
-    Border and padding conditionality are not supported on table-cells, yet.
-  </known-issue>
-  -->
+      <known-issue>
+        MIF and SVG output support have not been restored, yet.
+      </known-issue>
+      <known-issue>
+        RTF output is inferior to other output formats supported by FOP.
+        For details, please see the "Output Targets" page of the release
+        you're using.
+      </known-issue>
+      <known-issue>
+        Auto table layout is not implemented, yet.
+      </known-issue>
+      <known-issue>
+        Footnotes may overlap with text of the region-body in multi-column 
+        documents.
+      </known-issue>
+      <known-issue>
+        Space resolution does not work between footnote regions.
+      </known-issue>
+      <known-issue>
+        There's a problem involving nested block-containers and 
+        reference-orientation 180/-180 (<a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=36391">Bugzilla #36391</a>)
+      </known-issue>
+      <known-issue>
+        block-containers with no height currently don't create a fence for
+        spaces as they should (they behave like a normal block).
+      </known-issue>
+      <known-issue>
+        Preserved linefeeds in fo:character are not handled correctly.
+      </known-issue>
+      <known-issue>
+        An empty block currently produces a fence for stacking constraints
+        which it shouldn't.
+      </known-issue>
+      <known-issue>
+        There are several small problems around white space handling.
+      </known-issue>
+      <known-issue>
+        Images currently don't shrink so they fit on a page when they are 
+        too big and shrinking is allowed to happen.
+      </known-issue>
+      <known-issue>
+        inline-container may not work as expected.
+      </known-issue>
+      <known-issue>
+        letter-spacing and word-spacing properties may not work as expected.
+      </known-issue>
+      <known-issue>
+        leaders with leader-pattern="use-content" may not work as expected.
+      </known-issue>
+      <known-issue>
+        keep-with-previous doesn't work inside tables and lists, yet.
+      </known-issue>
+      <known-issue>
+        If two consecutive pages don't have the same available width, the 
+        content currently isn't properly fit into the available space on
+        the new page.
+      </known-issue>
+      <known-issue>
+        background-images on page-number-citations are not placed correctly.
+      </known-issue>
+      <known-issue>
+        Not all FO elements can be referenced by their "id", most notably:
+        table-body, table-header, table-footer and table-row.
+      </known-issue>
+      <known-issue>
+        Border and padding conditionality are not supported on table-cells, yet.
+      </known-issue>
+      <known-issue>
+        Column balancing in multi-column documents may not work as expected
+        (<a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=36356">Bugzilla #36356</a>)
+      </known-issue>
 </known-issues>

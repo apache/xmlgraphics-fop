@@ -28,7 +28,7 @@ import java.util.Arrays;
  * <p>
  * This class extends java.awt.Color class keeping track of the original color
  * property values specified by the fo user in a rgb-icc call.
- * @deprecated Replaced by {@link org.apache.xmlgraphics.java2d.color.ColorWithAlternatives}
+ * @deprecated Replaced by {@link ColorWithAlternatives}
  */
 @Deprecated
 public final class ColorExt extends Color {

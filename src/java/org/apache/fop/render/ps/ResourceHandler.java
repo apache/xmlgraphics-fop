@@ -83,8 +83,6 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
     private FOUserAgent userAgent;
     private FontInfo fontInfo;
 
-    private PSEventProducer eventProducer;
-
     private ResourceTracker resTracker;
 
     //key: URI, values PSImageFormResource
@@ -95,15 +93,13 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
     /**
      * Main constructor.
      * @param userAgent the FO user agent
-     * @param eventProducer the event producer
      * @param fontInfo the font information
      * @param resTracker the resource tracker to use
      * @param formResources Contains all forms used by this document (maintained by PSRenderer)
      */
-    public ResourceHandler(FOUserAgent userAgent, PSEventProducer eventProducer,
-            FontInfo fontInfo, ResourceTracker resTracker, Map formResources) {
+    public ResourceHandler(FOUserAgent userAgent, FontInfo fontInfo,
+            ResourceTracker resTracker, Map formResources) {
         this.userAgent = userAgent;
-        this.eventProducer = eventProducer;
         this.fontInfo = fontInfo;
         this.resTracker = resTracker;
         determineInlineForms(formResources);
@@ -226,7 +222,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
         if (fontSetupPlaceholder == null) {
             throw new DSCException("Didn't find %FOPFontSetup comment in stream");
         }
-        PSFontUtils.writeFontDict(gen, fontInfo, fontInfo.getUsedFonts(), eventProducer);
+        PSFontUtils.writeFontDict(gen, fontInfo, fontInfo.getUsedFonts());
         generateForms(globalFormResources, gen);
 
         //Skip the prolog and to the first page

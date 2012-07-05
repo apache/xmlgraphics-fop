@@ -52,7 +52,7 @@ public enum EncodingMode {
      * @param name the name of the encoding mode to look up
      * @return the encoding mode constant
      */
-    public static EncodingMode getValue(String name) {
+    public static EncodingMode getEncodingMode(String name) {
         for (EncodingMode em : EncodingMode.values()) {
             if (name.equalsIgnoreCase(em.getName())) {
                 return em;

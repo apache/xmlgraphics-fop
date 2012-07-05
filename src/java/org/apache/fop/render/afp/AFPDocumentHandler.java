@@ -58,8 +58,7 @@ import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 
 /**
- * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation that
- * produces AFP (MO:DCA).
+ * {@link IFDocumentHandler} implementation that produces AFP (MO:DCA).
  */
 public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             implements AFPCustomizable {

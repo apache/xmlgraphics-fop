@@ -34,7 +34,7 @@
       Table 1: basic break after with next
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
+      <fo:table border-width="0.5pt" border-color="red">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -81,7 +81,7 @@
       Table 2: basic break before with next
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
+      <fo:table border-width="0.5pt" border-color="red">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -128,7 +128,7 @@
       Table 3: basic break before a keep with next
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
+      <fo:table border-width="0.5pt" border-color="red">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -175,7 +175,7 @@
       Table 4: basic break after a keep with previous
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
+      <fo:table border-width="0.5pt" border-color="red">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
@@ -222,7 +222,7 @@
       Table 5: basic break after a keep with previous
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red" table-layout="fixed" width="100%">
+      <fo:table border-width="0.5pt" border-color="red">
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>
   <fo:table-column column-width="3cm"/>

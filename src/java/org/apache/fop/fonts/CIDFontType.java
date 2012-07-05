@@ -34,7 +34,7 @@ public class CIDFontType extends ValuedEnum {
     /**
      * CID Font Type 2 (based on TrueType format)
      */
-    public static final CIDFontType CIDTYPE2 = new CIDFontType("CIDFontType2", 2);
+    public static final CIDFontType CIDTYPE2 = new CIDFontType("CIDFontType2", 1);
 
 
     /**

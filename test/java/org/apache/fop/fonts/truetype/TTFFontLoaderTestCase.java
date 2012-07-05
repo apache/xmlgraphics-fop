@@ -19,18 +19,17 @@
 
 package org.apache.fop.fonts.truetype;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.junit.Test;
 
-import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontResolver;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test case for {@link TTFFontLoader}.
@@ -48,12 +47,12 @@ public class TTFFontLoaderTestCase {
         boolean useKerning = true;
 
         TTFFontLoader fontLoader = new TTFFontLoader(absoluteFilePath, fontName, embedded,
-                EmbeddingMode.AUTO, EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resolver);
+                EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resolver);
         assertTrue(fontLoader.getFont().hasKerningInfo());
         useKerning = false;
 
-        fontLoader = new TTFFontLoader(absoluteFilePath, fontName, embedded, EmbeddingMode.AUTO,
-                EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resolver);
+        fontLoader = new TTFFontLoader(absoluteFilePath, fontName, embedded, EncodingMode.AUTO,
+                useKerning, useComplexScriptFeatures, resolver);
         assertFalse(fontLoader.getFont().hasKerningInfo());
     }
 }

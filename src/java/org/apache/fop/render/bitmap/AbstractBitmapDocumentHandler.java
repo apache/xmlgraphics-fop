@@ -47,8 +47,7 @@ import org.apache.fop.render.java2d.Java2DPainter;
 import org.apache.fop.render.java2d.Java2DUtil;
 
 /**
- * Abstract {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation
- * for producing bitmap images.
+ * Abstract {@link IFDocumentHandler} implementation for producing bitmap images.
  */
 public abstract class AbstractBitmapDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 

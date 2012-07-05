@@ -31,6 +31,8 @@
           odd-or-even="even" />
         <fo:conditional-page-master-reference master-reference="right"
           odd-or-even="odd" />
+        <!-- recommended fallback procedure -->
+        <fo:conditional-page-master-reference master-reference="rest" />
       </fo:repeatable-page-master-alternatives>
     </fo:page-sequence-master>
 </fo:layout-master-set>

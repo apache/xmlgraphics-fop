@@ -45,8 +45,7 @@ import org.apache.fop.render.java2d.Java2DUtil;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 
 /**
- * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation
- * that produces PCL 5.
+ * {@link IFDocumentHandler} implementation that produces PCL 5.
  */
 public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             implements PCLConstants {

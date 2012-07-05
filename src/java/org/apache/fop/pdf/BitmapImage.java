@@ -37,8 +37,6 @@ public class BitmapImage implements PDFImage {
     private PDFColor transparent = null;
     private String key;
     private PDFDocument pdfDoc;
-    private PDFFilter pdfFilter;
-    private boolean multipleFiltersAllowed = true;
 
     /**
      * Create a bitmap image.
@@ -210,23 +208,9 @@ public class BitmapImage implements PDFImage {
      * {@inheritDoc}
      */
     public PDFFilter getPDFFilter() {
-        return pdfFilter;
-    }
-
-    public void setPDFFilter(PDFFilter pdfFilter) {
-        this.pdfFilter = pdfFilter;
-    }
-
-    /** {@inheritDoc} */
-    public boolean multipleFiltersAllowed() {
-        return multipleFiltersAllowed;
-    }
-
-    /**
-     * Disallows multiple filters.
-     */
-    public void disallowMultipleFilters() {
-        multipleFiltersAllowed = false;
+        return null;
     }
 
 }
+
+

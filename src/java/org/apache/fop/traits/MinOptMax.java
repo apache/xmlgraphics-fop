@@ -22,9 +22,8 @@ package org.apache.fop.traits;
 import java.io.Serializable;
 
 /**
- * This class holds the resolved (as mpoints) form of a
- * {@link org.apache.fop.fo.properties.LengthRangeProperty} or
- * {@link org.apache.fop.fo.properties.SpaceProperty} type property value.
+ * This class holds the resolved (as mpoints) form of a {@link LengthRangeProperty LengthRange} or
+ * {@link SpaceProperty Space} type property value.
  * <p/>
  * Instances of this class are immutable. All arithmetic methods like {@link #plus(MinOptMax) plus},
  * {@link #minus(MinOptMax) minus} or {@link #mult(int) mult} return a different instance. So it is

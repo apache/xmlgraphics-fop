@@ -59,18 +59,18 @@
     <eval expected="6672" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[1]/@ipd"/>
     <eval expected="4" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[1]/word[1]"/>
     <eval expected="3" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[1]/word[1]/@level"/>
-    <eval expected="" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[1]/word[1]/@reversed"/>
+    <true xpath="boolean(//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[1]/word[1]/@reversed)"/>
     <eval expected="6672" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[2]/@ipd"/>
     <eval expected="3" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[2]/word[1]"/>
-    <eval expected="3" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[2]/word[1]/@level"/>
-    <eval expected="" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[2]/word[1]/@reversed"/>
+    <eval expected="3" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[1]/word[1]/@level"/>
+    <true xpath="boolean(//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[1]/word[1]/@reversed)"/>
     <eval expected="6672" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[3]/@ipd"/>
     <eval expected="2" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[3]/word[1]"/>
     <eval expected="3" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[3]/word[1]/@level"/>
-    <eval expected="" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[3]/word[1]/@reversed"/>
+    <true xpath="boolean(//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[3]/word[1]/@reversed)"/>
     <eval expected="6672" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[4]/@ipd"/>
     <eval expected="1" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[4]/word[1]"/>
     <eval expected="3" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[4]/word[1]/@level"/>
-    <eval expected="" xpath="//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[4]/word[1]/@reversed"/>
+    <true xpath="boolean(//flow/block[2]/block[1]/block[1]/lineArea/inlineparent/text[4]/word[1]/@reversed)"/>
   </checks>
 </testcase>

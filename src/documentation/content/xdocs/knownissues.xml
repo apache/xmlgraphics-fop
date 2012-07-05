@@ -16,14 +16,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd" [
-<!ATTLIST document
-          xmlns:xi CDATA #IMPLIED>
-<!ELEMENT xi:include EMPTY>
-<!ATTLIST xi:include
-          href CDATA #IMPLIED>
-<!ENTITY % local.sections "|xi:include">
-]>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document xmlns:xi="http://www.w3.org/2001/XInclude">
   <header>
     <title>Apache™ FOP: Known Issues</title>
@@ -37,25 +30,27 @@
     from data in FOP's code repository (Trunk) and may not exactly represent the list of issues in
     the latest release.
   </p>
+  <note>
+    <p>
+      For additional information on known issues in Apache FOP, please have a look at the following pages, too:
+    </p>
+    <ul>
+      <li><a href="bugs.html">the bug list in Bugzilla</a></li>
+      <li><a href="http://wiki.apache.org/xmlgraphics-fop/FOPProjectTasks">the task list in the Wiki</a></li>
+    </ul>
+  </note>
   <p>
     Apache™ FOP has an extensive automated testing infrastructure. Parts of this infrastructure are several
     sets of test cases. When a test case is listed in disabled-testcases.xml it is disabled in the JUnit 
     tests during the normal build process. This indicates a problem in the current codebase. When a bug is 
     fixed or a missing feature is added the entry for the relevant test case(s) are removed.
   </p>
-  <p>
-    For additional information on known issues in Apache FOP, please have a look at the following pages, too:
-  </p>
-  <ul>
-    <li><link href="bugs.html">the bug list in Bugzilla</link></li>
-    <li><link href="http://wiki.apache.org/xmlgraphics-fop/FOPProjectTasks">the task list in the Wiki</link></li>
-  </ul>
   <section>
     <title>FO Tree</title>
     <p>
       This section lists currently disabled test cases in the test suite for the FO tree tests.
       The data for this section comes from 
-      <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/test/fotree/disabled-testcases.xml">test/fotree/disabled-testcases.xml</link>.
+      <a href="http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/test/fotree/disabled-testcases.xml">test/fotree/disabled-testcases.xml</a>.
     </p>
     <xi:include href="cocoon://knownissues-raw-fotree.xml#xpointer(/document/body/*)"/>
   </section>
@@ -64,7 +59,7 @@
     <p>
       This section lists currently disabled test cases in the test suite for the layout engine tests.
       The data for this section comes from 
-      <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/test/layoutengine/disabled-testcases.xml">test/layoutengine/disabled-testcases.xml</link>.
+      <a href="http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/test/layoutengine/disabled-testcases.xml">test/layoutengine/disabled-testcases.xml</a>.
     </p>
     <xi:include href="cocoon://knownissues-raw-layoutengine.xml#xpointer(/document/body/*)"/>
   </section>

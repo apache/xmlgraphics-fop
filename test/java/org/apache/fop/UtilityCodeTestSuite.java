@@ -28,13 +28,10 @@ import org.apache.fop.pdf.FileIDGeneratorTestCase;
 import org.apache.fop.pdf.PDFDocumentGraphics2DTestCase;
 import org.apache.fop.pdf.PDFEncryptionJCETestCase;
 import org.apache.fop.pdf.PDFFactoryTestCase;
-import org.apache.fop.pdf.PDFNumberTestCase;
-import org.apache.fop.pdf.PDFObjectTestCase;
 import org.apache.fop.traits.BorderPropsTestCase;
 import org.apache.fop.util.BitmapImageUtilTestCase;
 import org.apache.fop.util.ColorUtilTestCase;
 import org.apache.fop.util.ElementListUtilsTestCase;
-import org.apache.fop.util.HexEncoderTestCase;
 import org.apache.fop.util.XMLResourceBundleTestCase;
 
 /**
@@ -52,10 +49,7 @@ import org.apache.fop.util.XMLResourceBundleTestCase;
     PDFFactoryTestCase.class,
     PDFEncryptionJCETestCase.class,
     BitmapImageUtilTestCase.class,
-    PDFDocumentGraphics2DTestCase.class,
-    PDFNumberTestCase.class,
-    PDFObjectTestCase.class,
-    HexEncoderTestCase.class
+    PDFDocumentGraphics2DTestCase.class
 })
 public class UtilityCodeTestSuite {
 }

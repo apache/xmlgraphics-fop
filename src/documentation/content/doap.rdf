@@ -15,6 +15,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
+<?xml-stylesheet type="text/xsl" href="../xsl/p2.xsl"?>
 <rdf:RDF xml:lang="en"
          xmlns="http://usefulinc.com/ns/doap#" 
          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
@@ -75,23 +76,16 @@
     </asfext:implements>
     <release>
       <Version>
-        <name>Upcoming release (candidate)</name>
-        <created>2012-07-02</created>
-        <revision>1.1rc1</revision>
-      </Version>
-    </release>
-    <release>
-      <Version>
-        <name>Current release (stable)</name>
-        <created>2010-07-21</created>
-        <revision>1.0</revision>
-      </Version>
-    </release>
-    <release>
-      <Version>
-        <name>Previous release (stable)</name>
+        <name>Previous stable release</name>
         <created>2008-08-05</created>
         <revision>0.95</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
+        <name>Latest stable release</name>
+        <created>2010-07-21</created>
+        <revision>1.0</revision>
       </Version>
     </release>
     <repository>

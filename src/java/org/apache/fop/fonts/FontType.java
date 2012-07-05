@@ -130,9 +130,4 @@ public class FontType {
         return value;
     }
 
-    @Override
-    public String toString() {
-        return name;
-    }
-
 }

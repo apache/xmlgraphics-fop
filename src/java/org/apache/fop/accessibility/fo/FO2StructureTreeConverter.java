@@ -23,7 +23,6 @@ import java.util.Stack;
 
 import org.xml.sax.SAXException;
 
-import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.fo.DelegatingFOEventHandler;
 import org.apache.fop.fo.FOEventHandler;
@@ -58,8 +57,6 @@ import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.StaticContent;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 
 /**
  * Allows to create the structure tree of an FO document, by converting FO
@@ -358,7 +355,6 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
 
     @Override
     public void startStatic(StaticContent staticContent) {
-        handleStartArtifact(staticContent);
         converter.startStatic(staticContent);
         super.startStatic(staticContent);
     }
@@ -366,7 +362,6 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
     @Override
     public void endStatic(StaticContent statisContent) {
         converter.endStatic(statisContent);
-        handleEndArtifact(statisContent);
         super.endStatic(statisContent);
     }
 
@@ -459,7 +454,6 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
 
     @Override
     public void startWrapper(Wrapper wrapper) {
-        handleStartArtifact(wrapper);
         converter.startWrapper(wrapper);
         super.startWrapper(wrapper);
     }
@@ -467,7 +461,6 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
     @Override
     public void endWrapper(Wrapper wrapper) {
         converter.endWrapper(wrapper);
-        handleEndArtifact(wrapper);
         super.endWrapper(wrapper);
     }
 
@@ -493,24 +486,6 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
     public void endExternalDocument(ExternalDocument document) {
         converter.endExternalDocument(document);
         super.endExternalDocument(document);
-    }
-
-    private void handleStartArtifact(CommonAccessibilityHolder fobj) {
-        if (isArtifact(fobj)) {
-            converters.push(converter);
-            converter = eventSwallower;
-        }
-    }
-
-    private void handleEndArtifact(CommonAccessibilityHolder fobj) {
-        if (isArtifact(fobj)) {
-            converter = converters.pop();
-        }
-    }
-
-    private boolean isArtifact(CommonAccessibilityHolder fobj) {
-        CommonAccessibility accessibility = fobj.getCommonAccessibility();
-        return Accessibility.ROLE_ARTIFACT.equalsIgnoreCase(accessibility.getRole());
     }
 
 }

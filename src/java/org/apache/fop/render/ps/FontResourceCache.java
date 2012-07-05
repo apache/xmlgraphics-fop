@@ -42,20 +42,19 @@ class FontResourceCache {
     }
 
     /**
-     * Returns the PSFontResource for the given font key.
+     * Returns the PSResource for the given font key.
      * @param key the font key ("F*")
-     * @return the matching PSFontResource instance
+     * @return the matching PSResource
      */
-    public PSFontResource getFontResourceForFontKey(String key) {
-        PSFontResource res = null;
+    public PSResource getPSResourceForFontKey(String key) {
+        PSResource res = null;
         if (this.fontResources != null) {
-            res = (PSFontResource)this.fontResources.get(key);
+            res = (PSResource)this.fontResources.get(key);
         } else {
             this.fontResources = new java.util.HashMap();
         }
         if (res == null) {
-            res = PSFontResource.createFontResource(
-                    new PSResource(PSResource.TYPE_FONT, getPostScriptNameForFontKey(key)));
+            res = new PSResource(PSResource.TYPE_FONT, getPostScriptNameForFontKey(key));
             this.fontResources.put(key, res);
         }
         return res;
@@ -77,9 +76,9 @@ class FontResourceCache {
             throw new IllegalStateException("Font not available: " + key);
         }
         if (postFix == null) {
-            return tf.getEmbedFontName();
+            return tf.getFontName();
         } else {
-            return tf.getEmbedFontName() + postFix;
+            return tf.getFontName() + postFix;
         }
     }
 

@@ -38,10 +38,7 @@ public class PDFEmbeddedFile extends PDFStream {
         put("Params", params);
     }
 
-    /**
-     * Determine if should encode on the fly.
-     * @return true if should encode on the fly
-     */
+    /** {@inheritDoc} */
     protected boolean isEncodingOnTheFly() {
         //Acrobat doesn't like an indirect /Length object in this case,
         //but only when the embedded file is a PDF file.
