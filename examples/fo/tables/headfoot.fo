@@ -30,7 +30,7 @@
       Table 1: with header
       </fo:block>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
@@ -311,7 +311,7 @@
       Table 2: with footer
       </fo:block>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
@@ -592,7 +592,7 @@
       Table 3: with header and footer and keeps
       </fo:block>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
@@ -888,7 +888,7 @@
       Table 4: cells spanning columns
       </fo:block>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
@@ -940,7 +940,7 @@
       Table 5: cells spanning rows
       </fo:block>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="48pt"/>
   <fo:table-column column-width="48pt"/>
   <fo:table-column column-width="48pt"/>
@@ -1054,7 +1054,7 @@
       Table 6: table with header and multiple body's
       </fo:block>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
@@ -1242,7 +1242,7 @@
       Table 6: table with footer and multiple body's
       </fo:block>
 
-      <fo:table table-layout="fixed" width="100%">
+      <fo:table>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>
   <fo:table-column column-width="2cm"/>

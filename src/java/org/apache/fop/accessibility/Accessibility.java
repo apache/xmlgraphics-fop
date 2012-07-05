@@ -28,12 +28,6 @@ public final class Accessibility {
     /** Constant string for the rendering options key to enable accessibility features. */
     public static final String ACCESSIBILITY = "accessibility";
 
-    /**
-     * The value to be set on the 'role' property for the element and its descendants to
-     * be considered as artifacts.
-     */
-    public static final String ROLE_ARTIFACT = "artifact";
-
     private Accessibility() { }
 
 }

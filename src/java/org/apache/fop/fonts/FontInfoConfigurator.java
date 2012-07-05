@@ -254,16 +254,12 @@ public class FontInfoConfigurator {
 
         boolean useKerning = fontCfg.getAttributeAsBoolean("kerning", true);
         boolean useAdvanced = fontCfg.getAttributeAsBoolean("advanced", true);
-        EncodingMode encodingMode = EncodingMode.getValue(
+        EncodingMode encodingMode = EncodingMode.getEncodingMode(
                 fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()));
-        EmbeddingMode embeddingMode = EmbeddingMode.getValue(
-                fontCfg.getAttribute("embedding-mode", EmbeddingMode.AUTO.toString()));
         EmbedFontInfo embedFontInfo
             = new EmbedFontInfo(metricsUrl, useKerning, useAdvanced, tripletList, embedUrl,
                                 subFont);
         embedFontInfo.setEncodingMode(encodingMode);
-        embedFontInfo.setEmbeddingMode(embeddingMode);
-
         boolean skipCachedFont = false;
         if (fontCache != null) {
             if (!fontCache.containsFont(embedFontInfo)) {

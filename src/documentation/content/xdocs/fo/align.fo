@@ -19,18 +19,19 @@
 <fo:root font-family="Times Roman" font-size="12pt" text-align="center" xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
 <fo:layout-master-set>
-  <fo:simple-page-master
-     margin-right="1.5cm"
-     margin-left="1.5cm"
-     margin-bottom="2cm"
-     margin-top="1cm"
-     page-width="21cm"
-     page-height="29.7cm"
-     master-name="left">
-    <fo:region-body margin-top="1cm"/>
-    <fo:region-before extent="1cm"/>
-    <fo:region-after extent="1.5cm"/>
-  </fo:simple-page-master>
+    <fo:simple-page-master
+  margin-right="1.5cm"
+  margin-left="1.5cm"
+  margin-bottom="2cm"
+  margin-top="1cm"
+  page-width="21cm"
+  page-height="29.7cm"
+  master-name="left">
+      <fo:region-before extent="1cm"/>
+      <fo:region-body margin-top="1cm"/>
+      <fo:region-after extent="1.5cm"/>
+    </fo:simple-page-master>
+
 </fo:layout-master-set>
 
 <fo:page-sequence id="N2528" master-reference="left">

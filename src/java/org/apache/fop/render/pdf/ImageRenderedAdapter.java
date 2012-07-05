@@ -27,6 +27,8 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,12 +36,14 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
 import org.apache.fop.pdf.AlphaRasterImage;
+import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilter;
 import org.apache.fop.pdf.PDFFilterList;
+import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFReference;
 
 /**
@@ -158,6 +162,30 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
         return (getImage().getTransparentColor() != null);
     }
 
+    private static Integer getIndexOfFirstTransparentColorInPalette(RenderedImage image) {
+        ColorModel cm = image.getColorModel();
+        if (cm instanceof IndexColorModel) {
+            IndexColorModel icm = (IndexColorModel)cm;
+            //Identify the transparent color in the palette
+            byte[] alphas = new byte[icm.getMapSize()];
+            byte[] reds = new byte[icm.getMapSize()];
+            byte[] greens = new byte[icm.getMapSize()];
+            byte[] blues = new byte[icm.getMapSize()];
+            icm.getAlphas(alphas);
+            icm.getReds(reds);
+            icm.getGreens(greens);
+            icm.getBlues(blues);
+            for (int i = 0;
+                    i < ((IndexColorModel) cm).getMapSize();
+                    i++) {
+                if ((alphas[i] & 0xFF) == 0) {
+                    return Integer.valueOf(i);
+                }
+            }
+        }
+        return null;
+    }
+
     /** {@inheritDoc} */
     @Override
     public PDFColor getTransparentColor() {
@@ -202,13 +230,54 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
         }
     }
 
+    private static final int MAX_HIVAL = 255;
+
     /** {@inheritDoc} */
     @Override
     public void populateXObjectDictionary(PDFDictionary dict) {
         ColorModel cm = getEffectiveColorModel();
         if (cm instanceof IndexColorModel) {
-            IndexColorModel icm = (IndexColorModel) cm;
-            super.populateXObjectDictionaryForIndexColorModel(dict, icm);
+            IndexColorModel icm = (IndexColorModel)cm;
+            PDFArray indexed = new PDFArray(dict);
+            indexed.add(new PDFName("Indexed"));
+
+            if (icm.getColorSpace().getType() != ColorSpace.TYPE_RGB) {
+                log.warn("Indexed color space is not using RGB as base color space."
+                        + " The image may not be handled correctly."
+                        + " Base color space: " + icm.getColorSpace()
+                        + " Image: " + image.getInfo());
+            }
+            indexed.add(new PDFName(toPDFColorSpace(icm.getColorSpace()).getName()));
+            int c = icm.getMapSize();
+            int hival = c - 1;
+            if (hival > MAX_HIVAL) {
+                throw new UnsupportedOperationException("hival must not go beyond " + MAX_HIVAL);
+            }
+            indexed.add(Integer.valueOf(hival));
+            int[] palette = new int[c];
+            icm.getRGBs(palette);
+            ByteArrayOutputStream baout = new ByteArrayOutputStream();
+            for (int i = 0; i < c; i++) {
+                //TODO Probably doesn't work for non RGB based color spaces
+                //See log warning above
+                int entry = palette[i];
+                baout.write((entry & 0xFF0000) >> 16);
+                baout.write((entry & 0xFF00) >> 8);
+                baout.write(entry & 0xFF);
+            }
+            indexed.add(baout.toByteArray());
+            IOUtils.closeQuietly(baout);
+
+            dict.put("ColorSpace", indexed);
+            dict.put("BitsPerComponent", icm.getPixelSize());
+
+            Integer index = getIndexOfFirstTransparentColorInPalette(getImage().getRenderedImage());
+            if (index != null) {
+                PDFArray mask = new PDFArray(dict);
+                mask.add(index);
+                mask.add(index);
+                dict.put("Mask", mask);
+            }
         }
     }
 

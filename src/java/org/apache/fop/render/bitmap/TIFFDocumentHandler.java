@@ -23,8 +23,7 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
 /**
- * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation
- * that produces TIFF files.
+ * {@link IFDocumentHandler} implementation that produces TIFF files.
  */
 public class TIFFDocumentHandler extends AbstractBitmapDocumentHandler {
 

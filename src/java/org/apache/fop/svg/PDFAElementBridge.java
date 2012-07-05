@@ -64,7 +64,7 @@ public class PDFAElementBridge extends AbstractGraphicsNodeBridge {
     }
 
     /**
-     * Creates a {@link org.apache.batik.gvt.CompositeGraphicsNode}.
+     * Creates a {@link CompositeGraphicsNode}.
      * @return a new PDFANode
      */
     protected GraphicsNode instantiateGraphicsNode() {

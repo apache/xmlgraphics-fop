@@ -25,7 +25,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * This extension allows to include an AFP Page Overlay resource. It is implemented as an extension
- * attachment ({@link org.apache.fop.fo.extensions.ExtensionAttachment}).
+ * attachment ({@link ExtensionAttachment}).
  */
 public class AFPPageOverlay extends AFPExtensionAttachment {
 

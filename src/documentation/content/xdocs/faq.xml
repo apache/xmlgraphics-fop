@@ -16,7 +16,8 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.3//EN" "http://forrest.apache.org/dtd/faq-v12.dtd">
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.3//EN" "http://forrest.apache.org/dtd/faq-v13.dtd">
+
 <faqs title="FOP FAQ">
   <part id="part-general">
     <title>Apache™ FOP: General questions</title>
@@ -145,16 +146,16 @@
       <answer>
         <p>
           When it's ready and the committers have enough time to go
-          through the time-consuming process of creating a release. Version
-          1.1rc1 was released on 02 July 2012. A subsequent final
-          Version 1.1 is expected to be released within 1 to 3 months following
-          this release candidate. If you want to speed up the process, consider <link
-          href="dev/index.html#involved">contributing</link> to FOP.
-        </p>
+          through the time-consuming process of creating a release. We
+          released version 1.0 on 21 July 2010, and will release version
+          1.1 when we accumulated enough additions and bug fixes. If
+          you want to speed up the process, consider <link
+          href="dev/index.html#involved">contributing</link> to
+          FOP.</p>
       </answer>
     </faq>
     <faq id="redesign">
-      <question>Why did you redesign FOP between Versions 0.2X and 0.9X?</question>
+      <question>Why did you redesign FOP?</question>
       <answer>
         <p>The code redesign of FOP was necessary in order to be able to adress following issues:</p>
         <ul>

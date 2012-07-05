@@ -78,7 +78,7 @@ public abstract class AbstractPDFStream extends PDFObject {
      * from outside.
      */
     protected void setupFilterList() {
-        if (multipleFiltersAllowed() && !getFilterList().isInitialized()) {
+        if (!getFilterList().isInitialized()) {
             getFilterList().addDefaultFilters(
                 getDocumentSafely().getFilterMap(),
                 getDefaultFilterName());
@@ -273,11 +273,4 @@ public abstract class AbstractPDFStream extends PDFObject {
         //nop: No default implicit filters
     }
 
-    /**
-     * Whether multiple filters can be applied.
-     * @return true if multiple filters allowed
-     */
-    protected boolean multipleFiltersAllowed() {
-        return true;
-    }
 }

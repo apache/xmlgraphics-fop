@@ -64,7 +64,7 @@ public class FontReader extends DefaultHandler {
 
     private Map<Integer, Integer> currentKerning = null;
 
-    private List<CMapSegment> bfranges = null;
+    private List<BFEntry> bfranges = null;
 
     private void createFont(InputSource source) throws FOPException {
         XMLReader parser = null;
@@ -154,14 +154,12 @@ public class FontReader extends DefaultHandler {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void startDocument() {
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setDocumentLocator(Locator locator) {
         // this.locator = locator; // not used at present
     }
@@ -169,7 +167,6 @@ public class FontReader extends DefaultHandler {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes) throws SAXException {
         if (localName.equals("font-metrics")) {
@@ -201,9 +198,9 @@ public class FontReader extends DefaultHandler {
             returnFont.putKerningEntry(new Integer(attributes.getValue("kpx1")),
                                         currentKerning);
         } else if ("bfranges".equals(localName)) {
-            bfranges = new ArrayList<CMapSegment>();
+            bfranges = new ArrayList<BFEntry>();
         } else if ("bf".equals(localName)) {
-            CMapSegment entry = new CMapSegment(getInt(attributes.getValue("us")),
+            BFEntry entry = new BFEntry(getInt(attributes.getValue("us")),
                                         getInt(attributes.getValue("ue")),
                                         getInt(attributes.getValue("gi")));
             bfranges.add(entry);
@@ -239,7 +236,6 @@ public class FontReader extends DefaultHandler {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         String content = text.toString().trim();
         if ("font-name".equals(localName)) {
@@ -307,7 +303,7 @@ public class FontReader extends DefaultHandler {
             multiFont.setWidthArray(wds);
 
         } else if ("bfranges".equals(localName)) {
-            multiFont.setCMap(bfranges.toArray(new CMapSegment[0]));
+            multiFont.setBFEntries(bfranges.toArray(new BFEntry[0]));
         }
         text.setLength(0); //Reset text buffer (see characters())
     }
@@ -315,7 +311,6 @@ public class FontReader extends DefaultHandler {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void characters(char[] ch, int start, int length) {
         text.append(ch, start, length);
     }

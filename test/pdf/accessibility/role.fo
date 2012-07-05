@@ -24,8 +24,8 @@
       <fo:region-after extent="10pt"/>
     </fo:simple-page-master>
   </fo:layout-master-set>
-  <fo:page-sequence master-reference="page" language="en" country="GB" role="Art">
-    <fo:static-content flow-name="xsl-region-after" role="artifact" font-size="8pt">
+  <fo:page-sequence master-reference="page" role="Art">
+    <fo:static-content flow-name="xsl-region-after" role="NonStruct" font-size="8pt">
       <fo:block text-align="center"><fo:page-number/></fo:block>
     </fo:static-content>
     <fo:flow flow-name="xsl-region-body" role="NonStruct"  hyphenate="true" 

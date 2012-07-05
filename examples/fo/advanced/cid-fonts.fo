@@ -369,7 +369,7 @@ This font contains no embedding license restrictions
    </fo:block>
 
 </fo:wrapper>
-   <fo:table table-layout="fixed" width="100%">
+   <fo:table>
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>

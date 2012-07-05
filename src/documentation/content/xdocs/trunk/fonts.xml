@@ -493,10 +493,10 @@
           Various notes related to embedded fonts:
         </p>
         <ul>
-          <li>The font is simply embedded into the output file, it is not converted.</li>
-          <li>When FOP embeds a font in a PDF file, it adds a prefix to the fontname to ensure that 
-            the name will not match the fontname of an installed font. This is helpful with older 
-            versions of Acrobat Reader that preferred installed fonts over embedded fonts.</li>
+          <li>The PostScript renderer does not yet support TrueType fonts, but can embed Type 1 fonts.</li>
+          <li>The font is simply embedded into the PDF file, it is not converted.</li>
+          <li>When FOP embeds a font, it adds a prefix to the fontname to ensure that the name will not match the fontname of an installed font.
+            This is helpful with older versions of Acrobat Reader that preferred installed fonts over embedded fonts.</li>
           <li>When embedding PostScript fonts, the entire font is always embedded.</li>
           <li>When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a subset of the
           original font, containing only the glyphs used, is embedded in the output document.

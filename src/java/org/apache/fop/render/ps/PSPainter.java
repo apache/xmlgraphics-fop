@@ -44,7 +44,6 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
-import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.RenderingContext;
@@ -56,7 +55,6 @@ import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
-import org.apache.fop.util.HexEncoder;
 
 /**
  * IFPainter implementation that produces PostScript.
@@ -394,7 +392,7 @@ public class PSPainter extends AbstractIFPainter {
                     if (currentEncoding != encoding) {
                         if (i > 0) {
                             writeText(text, start, i - start,
-                                    letterSpacing, wordSpacing, dp, font, tf, false);
+                                    letterSpacing, wordSpacing, dp, font, tf);
                         }
                         if (encoding == 0) {
                             useFont(fontKey, sizeMillipoints);
@@ -406,18 +404,19 @@ public class PSPainter extends AbstractIFPainter {
                     }
                 }
             } else {
+                //Simple single-font painting
                 useFont(fontKey, sizeMillipoints);
             }
-            writeText(text, start, textLen - start, letterSpacing, wordSpacing, dp, font, tf,
-                    tf instanceof MultiByteFont);
+            writeText(text, start, textLen - start, letterSpacing, wordSpacing, dp, font, tf);
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawText()", ioe);
         }
     }
 
-    private void writeText(String text, int start, int len,
+    private void writeText(                                      // CSOK: ParameterNumber
+            String text, int start, int len,
             int letterSpacing, int wordSpacing, int[][] dp,
-            Font font, Typeface tf, boolean multiByte) throws IOException {
+            Font font, Typeface tf) throws IOException {
         PSGenerator generator = getGenerator();
         int end = start + len;
         int initialSize = len;
@@ -452,12 +451,8 @@ public class PSPainter extends AbstractIFPainter {
             if (dx != null && i < dxl - 1) {
                 glyphAdjust -= dx[i + 1];
             }
-            if (multiByte) {
-                accText.append(HexEncoder.encode(ch));
-            } else {
-                char codepoint = (char)(ch % 256);
-                PSGenerator.escapeChar(codepoint, accText); //add character to accumulated text
-            }
+            char codepoint = (char)(ch % 256);
+            PSGenerator.escapeChar(codepoint, accText); //add character to accumulated text
             if (glyphAdjust != 0) {
                 needTJ = true;
                 if (sb.length() == 0) {
@@ -468,8 +463,9 @@ public class PSPainter extends AbstractIFPainter {
                         sb.append(PSGenerator.LF);
                         lineStart = sb.length();
                     }
-                    lineStart = writePostScriptString(sb, accText, multiByte, lineStart);
-                    sb.append(' ');
+                    sb.append('(');
+                    sb.append(accText);
+                    sb.append(") ");
                     accText.setLength(0); //reset accumulated text
                 }
                 sb.append(Integer.toString(glyphAdjust)).append(' ');
@@ -477,10 +473,9 @@ public class PSPainter extends AbstractIFPainter {
         }
         if (needTJ) {
             if (accText.length() > 0) {
-                if ((sb.length() - lineStart + accText.length()) > 200) {
-                    sb.append(PSGenerator.LF);
-                }
-                writePostScriptString(sb, accText, multiByte);
+                sb.append('(');
+                sb.append(accText);
+                sb.append(')');
             }
             if (hasLetterSpacing) {
                 sb.append("] " + formatMptAsPt(generator, letterSpacing) + " ATJ");
@@ -488,7 +483,7 @@ public class PSPainter extends AbstractIFPainter {
                 sb.append("] TJ");
             }
         } else {
-            writePostScriptString(sb, accText, multiByte);
+            sb.append('(').append(accText).append(")");
             if (hasLetterSpacing) {
                 StringBuffer spb = new StringBuffer();
                 spb.append(formatMptAsPt(generator, letterSpacing))
@@ -502,37 +497,12 @@ public class PSPainter extends AbstractIFPainter {
         generator.writeln(sb.toString());
     }
 
-    private void writePostScriptString(StringBuffer buffer, StringBuffer string,
-            boolean multiByte) {
-        writePostScriptString(buffer, string, multiByte, 0);
-    }
-
-    private int writePostScriptString(StringBuffer buffer, StringBuffer string, boolean multiByte,
-            int lineStart) {
-        buffer.append(multiByte ? '<' : '(');
-        int l = string.length();
-        int index = 0;
-        int maxCol = 200;
-        buffer.append(string.substring(index, Math.min(index + maxCol, l)));
-        index += maxCol;
-        while (index < l) {
-            if (!multiByte) {
-                buffer.append('\\');
-            }
-            buffer.append(PSGenerator.LF);
-            lineStart = buffer.length();
-            buffer.append(string.substring(index, Math.min(index + maxCol, l)));
-            index += maxCol;
-        }
-        buffer.append(multiByte ? '>' : ')');
-        return lineStart;
-    }
-
     private void useFont(String key, int size) throws IOException {
-        PSFontResource res = this.documentHandler.getPSResourceForFontKey(key);
+        PSResource res = this.documentHandler.getPSResourceForFontKey(key);
         PSGenerator generator = getGenerator();
         generator.useFont("/" + res.getName(), size / 1000f);
-        res.notifyResourceUsageOnPage(generator.getResourceTracker());
+        generator.getResourceTracker().notifyResourceUsageOnPage(res);
     }
+
 
 }

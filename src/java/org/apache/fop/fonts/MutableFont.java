@@ -61,12 +61,6 @@ public interface MutableFont {
     void setEmbedResourceName(String name);
 
     /**
-     * Sets the embedding mode.
-     * @param embeddingMode the embedding mode
-     */
-    void setEmbeddingMode(EmbeddingMode embeddingMode);
-
-    /**
      * Sets the capital height value.
      * @param capHeight capital height
      */

@@ -18,32 +18,32 @@
 <!-- $Id$ -->
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
-<!-- defines the layout master -->
-<fo:layout-master-set>
-  <fo:simple-page-master
-     master-name="first"
-     page-height="29.7cm"
-     page-width="21cm"
-     margin-top="1cm"
-     margin-bottom="2cm"
-     margin-left="2.5cm"
-     margin-right="2.5cm">
-    <fo:region-body margin-top="1cm"/>
-    <fo:region-before extent="1cm"/>
-    <fo:region-after extent="1.5cm"/>
-  </fo:simple-page-master>
-</fo:layout-master-set>
+  <!-- defines the layout master -->
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="first"
+                           page-height="29.7cm"
+                           page-width="21cm"
+                           margin-top="1cm"
+                           margin-bottom="2cm"
+                           margin-left="2.5cm"
+                           margin-right="2.5cm">
+      <fo:region-body margin-top="1cm"/>
+      <fo:region-before extent="1cm"/>
+      <fo:region-after extent="1.5cm"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
 
-<!-- starts actual layout -->
-<fo:page-sequence master-reference="first">
+  <!-- starts actual layout -->
+  <fo:page-sequence master-reference="first">
+
 
 <fo:flow flow-name="xsl-region-body">
 
-<fo:block font-family="Helvetica" font-size="14pt">
+  <fo:block font-family="Helvetica" font-size="14pt">
 Helvetica
   </fo:block>
-<fo:block space-after.optimum="10pt" font-family="Helvetica" font-size="10pt">
-<fo:table table-layout="fixed" width="100%">
+  <fo:block space-after.optimum="10pt" font-family="Helvetica" font-size="10pt">
+<fo:table>
 <fo:table-column column-width="65pt"/>
 <fo:table-column column-width="30pt"/>
 <fo:table-column column-width="65pt"/>
@@ -303,7 +303,7 @@ Helvetica
 Times Roman
   </fo:block>
   <fo:block space-after.optimum="10pt" font-family="Times Roman" font-size="10pt">
-<fo:table table-layout="fixed" width="100%"> 
+<fo:table> 
 <fo:table-column column-width="65pt"/>
 <fo:table-column column-width="30pt"/>
 <fo:table-column column-width="65pt"/>
@@ -563,7 +563,7 @@ Times Roman
 Courier
   </fo:block>
   <fo:block space-after.optimum="10pt" font-family="Courier" font-size="10pt">
-<fo:table table-layout="fixed" width="100%">
+<fo:table>
 <fo:table-column column-width="65pt"/>
 <fo:table-column column-width="30pt"/>
 <fo:table-column column-width="65pt"/>
@@ -823,7 +823,7 @@ Courier
  ZapfDingbats:
   </fo:block>
   <fo:block space-after.optimum="10pt" font-family="ZapfDingbats" font-size="10pt">
-<fo:table table-layout="fixed" width="100%">
+<fo:table>
 <fo:table-column column-width="65pt"/>
 <fo:table-column column-width="30pt"/>
 <fo:table-column column-width="65pt"/>
@@ -1071,7 +1071,7 @@ Courier
  Symbol:
   </fo:block>
   <fo:block space-after.optimum="10pt" font-family="Symbol" font-size="10pt">
-<fo:table table-layout="fixed" width="100%">
+<fo:table>
 <fo:table-column column-width="65pt"/>
 <fo:table-column column-width="30pt"/>
 <fo:table-column column-width="65pt"/>

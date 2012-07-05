@@ -105,8 +105,6 @@
     <xsl:call-template name="copy"/>
   </xsl:template>
 
-  <xsl:template match="fo:wrapper[translate(normalize-space(@role), 'ARTIFCT', 'artifct') = 'artifact']"/>
-
 
   <!-- Discard descendants of fo:leader -->
   <xsl:template match="fo:leader"/>

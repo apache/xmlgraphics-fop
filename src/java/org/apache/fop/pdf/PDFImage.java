@@ -151,13 +151,5 @@ public interface PDFImage {
      */
     String getFilterHint();
 
-    /**
-     * Indicates whether multiple image filters are allowed; this is implemented because Adobe
-     * Reader does not like multiple FlateDecode filters applied to an image even though that
-     * allowed by the PDF spec; this is probable due to security concerns since many PDF malware
-     * exploits, like zip bombs, make use of a chain of FlateDecode filters.
-     */
-    boolean multipleFiltersAllowed();
-
 }
 

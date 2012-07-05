@@ -123,17 +123,11 @@ public abstract class FOEventHandler {
     public void endDocument() throws SAXException {
     }
 
-    /**
-     * Called upon start of root element.
-     * @param root element
-     */
+    /** {@inheritDoc} */
     public void startRoot(Root root) {
     }
 
-    /**
-     * Called upon end of root element.
-     * @param root element
-     */
+    /** {@inheritDoc} */
     public void endRoot(Root root) {
     }
 
@@ -419,9 +413,9 @@ public abstract class FOEventHandler {
 
     /**
      * Process end of a Static.
-     * @param staticContent StaticContent that is ending
+     * @param statisContent StaticContent that is ending
      */
-    public void endStatic(StaticContent staticContent) {
+    public void endStatic(StaticContent statisContent) {
     }
 
 

@@ -47,8 +47,7 @@ import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
 
 /**
- * {@link org.apache.fop.render.intermediate.IFPainter} implementation
- * that paints on a Graphics2D instance.
+ * {@link IFPainter} implementation that paints on a Graphics2D instance.
  */
 public class Java2DPainter extends AbstractIFPainter {
 

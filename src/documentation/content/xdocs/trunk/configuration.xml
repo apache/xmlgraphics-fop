@@ -281,24 +281,6 @@
       treated as zero penalty in most cases. For more details on the image loading framework,
       please consult the documentation there.
     </p>
-    <p>
-      The ImageLoaderPNG and ImageLoaderRawPNG have a hard-coded penalty of 1000 and as such the
-      ImageLoaderImageIO image loader will be selected by default when loading PNGs unless
-      the latter is disabled by awarding a INFINITE penalty to it, or one of the former two is 
-      promoted by awarding a strong negative penalty (say, -10000) to it.
-    </p>
-    <source><![CDATA[<fop version="1.0">
-  [..]
-  <image-loading>
-    <penalty value="-10000"
-      class="org.apache.xmlgraphics.image.loader.impl.ImageLoaderRawPNG"/>
-    <penalty value="INFINITE"
-      class="org.apache.xmlgraphics.image.loader.impl.ImageLoaderPNG"/>
-    <penalty value="INFINITE"
-      class="org.apache.xmlgraphics.image.loader.impl.imageio.ImageLoaderImageIO"/>
-  </image-loading>
-  <renderers....
-</fop>]]></source>
   </section>
   <section id="renderers">
     <title>Renderer configuration</title>

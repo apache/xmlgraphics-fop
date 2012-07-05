@@ -31,8 +31,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.fonts.Glyphs;
 
-import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
-
 /**
  * Generic SingleByte font
  */
@@ -50,7 +48,6 @@ public class SingleByteFont extends CustomFont {
     private List<SimpleSingleByteEncoding> additionalEncodings;
     private Map<Character, Character> alternativeCodes;
 
-    private PostScriptVersion ttPostScriptVersion;
 
     /**
      * Main constructor.
@@ -398,27 +395,6 @@ public class SingleByteFont extends CustomFont {
         public String toString() {
             return getCharacter().toString();
         }
-    }
-
-    /**
-     * Sets the version of the PostScript table stored in the TrueType font represented by
-     * this instance.
-     *
-     * @param version version of the <q>post</q> table
-     */
-    public void setTrueTypePostScriptVersion(PostScriptVersion version) {
-        ttPostScriptVersion = version;
-    }
-
-    /**
-     * Returns the version of the PostScript table stored in the TrueType font represented by
-     * this instance.
-     *
-     * @return the version of the <q>post</q> table
-     */
-    public PostScriptVersion getTrueTypePostScriptVersion() {
-        assert getFontType() == FontType.TRUETYPE;
-        return ttPostScriptVersion;
     }
 
 }

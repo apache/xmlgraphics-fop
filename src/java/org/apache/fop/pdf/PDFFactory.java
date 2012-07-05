@@ -45,7 +45,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.java2d.color.ColorUtil;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
-
 import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.fonts.CIDFont;
@@ -1675,8 +1674,8 @@ public class PDFFactory {
                         FontFileReader reader = new FontFileReader(in);
 
                         TTFSubSetFile subset = new TTFSubSetFile();
-                        subset.readFont(reader, mbfont.getTTCName(), mbfont.getUsedGlyphs());
-                        byte[] subsetFont = subset.getFontSubset();
+                        byte[] subsetFont = subset.readFont(reader,
+                                             mbfont.getTTCName(), mbfont.getUsedGlyphs());
                         // Only TrueType CID fonts are supported now
 
                         embeddedFont = new PDFTTFStream(subsetFont.length);

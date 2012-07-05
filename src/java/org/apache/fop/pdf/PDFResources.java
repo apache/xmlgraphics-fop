@@ -21,8 +21,9 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,33 +46,33 @@ public class PDFResources extends PDFDictionary {
     /**
      * /Font objects keyed by their internal name
      */
-    protected Map<String, PDFFont> fonts = new LinkedHashMap<String, PDFFont>();
+    protected Map fonts = new HashMap();
 
     /**
      * Set of XObjects
      */
-    protected Set<PDFXObject> xObjects = new LinkedHashSet<PDFXObject>();
+    protected Set xObjects = new HashSet();
 
     /**
      * Set of patterns
      */
-    protected Set<PDFPattern> patterns = new LinkedHashSet<PDFPattern>();
+    protected Set patterns = new HashSet();
 
     /**
      * Set of shadings
      */
-    protected Set<PDFShading> shadings = new LinkedHashSet<PDFShading>();
+    protected Set shadings = new HashSet();
 
     /**
      * Set of ExtGStates
      */
-    protected Set<PDFGState> gstates = new LinkedHashSet<PDFGState>();
+    protected Set gstates = new HashSet();
 
     /** Map of color spaces (key: color space name) */
-    protected Map<PDFName, PDFColorSpace> colorSpaces = new LinkedHashMap<PDFName, PDFColorSpace>();
+    protected Map colorSpaces = new HashMap();
 
     /** Map of ICC color spaces (key: ICC profile description) */
-    protected Map<String, PDFICCBasedColorSpace> iccColorSpaces = new LinkedHashMap<String, PDFICCBasedColorSpace>();
+    protected Map iccColorSpaces = new HashMap();
 
     /**
      * create a /Resources object.
@@ -167,7 +168,7 @@ public class PDFResources extends PDFDictionary {
             PDFICCBasedColorSpace icc = (PDFICCBasedColorSpace)colorSpace;
             String desc = ColorProfileUtil.getICCProfileDescription(
                     icc.getICCStream().getICCProfile());
-            this.iccColorSpaces.put(desc, icc);
+            this.iccColorSpaces.put(desc, colorSpace);
         }
     }
 
@@ -177,7 +178,7 @@ public class PDFResources extends PDFDictionary {
      * @return the requested color space or null if it wasn't found
      */
     public PDFICCBasedColorSpace getICCColorSpaceByProfileName(String desc) {
-        PDFICCBasedColorSpace cs = this.iccColorSpaces.get(desc);
+        PDFICCBasedColorSpace cs = (PDFICCBasedColorSpace)this.iccColorSpaces.get(desc);
         return cs;
     }
 
@@ -187,7 +188,7 @@ public class PDFResources extends PDFDictionary {
      * @return the requested color space or null if it wasn't found
      */
     public PDFColorSpace getColorSpace(PDFName name) {
-        PDFColorSpace cs = this.colorSpaces.get(name);
+        PDFColorSpace cs = (PDFColorSpace)this.colorSpaces.get(name);
         return cs;
     }
 
@@ -201,24 +202,28 @@ public class PDFResources extends PDFDictionary {
         if (!this.fonts.isEmpty()) {
             PDFDictionary dict = new PDFDictionary(this);
             /* construct PDF dictionary of font object references */
-            for (Map.Entry<String, PDFFont> entry : fonts.entrySet()) {
-                dict.put(entry.getKey(), entry.getValue());
+            Iterator fontIterator = this.fonts.keySet().iterator();
+            while (fontIterator.hasNext()) {
+                String fontName = (String)fontIterator.next();
+                dict.put(fontName, (PDFFont)this.fonts.get(fontName));
             }
             put("Font", dict);
         }
 
         if (!this.shadings.isEmpty()) {
             PDFDictionary dict = new PDFDictionary(this);
-            for (PDFShading shading : shadings) {
-                dict.put(shading.getName(), shading);
+            for (Iterator iter = shadings.iterator(); iter.hasNext();) {
+                PDFShading currentShading = (PDFShading)iter.next();
+                dict.put(currentShading.getName(), currentShading);
             }
             put("Shading", dict);
         }
 
         if (!this.patterns.isEmpty()) {
             PDFDictionary dict = new PDFDictionary(this);
-            for (PDFPattern pattern : patterns) {
-                dict.put(pattern.getName(), pattern);
+            for (Iterator iter = patterns.iterator(); iter.hasNext();) {
+                PDFPattern currentPattern = (PDFPattern)iter.next();
+                dict.put(currentPattern.getName(), currentPattern);
             }
             put("Pattern", dict);
         }
@@ -232,23 +237,26 @@ public class PDFResources extends PDFDictionary {
 
         if (this.xObjects != null && !this.xObjects.isEmpty()) {
             PDFDictionary dict = new PDFDictionary(this);
-            for (PDFXObject xObject : xObjects) {
-                dict.put(xObject.getName().toString(), xObject);
+            for (Iterator iter = xObjects.iterator(); iter.hasNext();) {
+                PDFXObject xobj = (PDFXObject)iter.next();
+                dict.put(xobj.getName().toString(), xobj);
             }
             put("XObject", dict);
         }
 
         if (!this.gstates.isEmpty()) {
             PDFDictionary dict = new PDFDictionary(this);
-            for (PDFGState gstate : gstates) {
-                dict.put(gstate.getName(), gstate);
+            for (Iterator iter = gstates.iterator(); iter.hasNext();) {
+                PDFGState gs = (PDFGState)iter.next();
+                dict.put(gs.getName(), gs);
             }
             put("ExtGState", dict);
         }
 
         if (!this.colorSpaces.isEmpty()) {
             PDFDictionary dict = new PDFDictionary(this);
-            for (PDFColorSpace colorSpace : colorSpaces.values()) {
+            for (Iterator iter = colorSpaces.values().iterator(); iter.hasNext();) {
+                PDFColorSpace colorSpace = (PDFColorSpace)iter.next();
                 dict.put(colorSpace.getName(), colorSpace);
             }
             put("ColorSpace", dict);

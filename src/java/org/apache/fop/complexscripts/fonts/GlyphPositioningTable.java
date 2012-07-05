@@ -1783,9 +1783,9 @@ public class GlyphPositioningTable extends GlyphTable {
          * Find device adjustment.
          * @param fontSize the font size to search for
          * @return an adjustment if font size matches an entry
+         * @asf.todo at present, assumes that 1 device unit equals one point
          */
         public int findAdjustment ( int fontSize ) {
-            // [TODO] at present, assumes that 1 device unit equals one point
             int fs = fontSize / 1000;
             if ( fs < startSize ) {
                 return 0;

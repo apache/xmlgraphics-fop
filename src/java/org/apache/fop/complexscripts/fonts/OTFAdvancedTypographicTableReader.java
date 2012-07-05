@@ -31,7 +31,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFDirTabEntry;
 import org.apache.fop.fonts.truetype.TTFFile;
-import org.apache.fop.fonts.truetype.TTFTableName;
 
 // CSOFF: AvoidNestedBlocksCheck
 // CSOFF: NoWhitespaceAfterCheck
@@ -127,7 +126,7 @@ public final class OTFAdvancedTypographicTableReader {
         return gpos;
     }
 
-    private void readLangSysTable(TTFTableName tableTag, long langSysTable, String langSysTag) throws IOException {
+    private void readLangSysTable(String tableTag, long langSysTable, String langSysTag) throws IOException {
         in.seekSet(langSysTable);
         if (log.isDebugEnabled()) {
             log.debug(tableTag + " lang sys table: " + langSysTag );
@@ -169,7 +168,7 @@ public final class OTFAdvancedTypographicTableReader {
 
     private static String defaultTag = "dflt";
 
-    private void readScriptTable(TTFTableName tableTag, long scriptTable, String scriptTag) throws IOException {
+    private void readScriptTable(String tableTag, long scriptTable, String scriptTag) throws IOException {
         in.seekSet(scriptTable);
         if (log.isDebugEnabled()) {
             log.debug(tableTag + " script table: " + scriptTag );
@@ -222,7 +221,7 @@ public final class OTFAdvancedTypographicTableReader {
         seLanguages = null;
     }
 
-    private void readScriptList(TTFTableName tableTag, long scriptList) throws IOException {
+    private void readScriptList(String tableTag, long scriptList) throws IOException {
         in.seekSet(scriptList);
         // read script record count
         int ns = in.readTTFUShort();
@@ -251,7 +250,7 @@ public final class OTFAdvancedTypographicTableReader {
         }
     }
 
-    private void readFeatureTable(TTFTableName tableTag, long featureTable, String featureTag, int featureIndex) throws IOException {
+    private void readFeatureTable(String tableTag, long featureTable, String featureTag, int featureIndex) throws IOException {
         in.seekSet(featureTable);
         if (log.isDebugEnabled()) {
             log.debug(tableTag + " feature table: " + featureTag );
@@ -279,7 +278,7 @@ public final class OTFAdvancedTypographicTableReader {
         seFeatures.put ( "f" + featureIndex, new Object[] { featureTag, lul } );
     }
 
-    private void readFeatureList(TTFTableName tableTag, long featureList) throws IOException {
+    private void readFeatureList(String tableTag, long featureList) throws IOException {
         in.seekSet(featureList);
         // read feature record count
         int nf = in.readTTFUShort();
@@ -3145,9 +3144,9 @@ public final class OTFAdvancedTypographicTableReader {
         resetATSubState();
     }
 
-    private void readLookupTable(TTFTableName tableTag, int lookupSequence, long lookupTable) throws IOException {
-        boolean isGSUB = tableTag.equals ( TTFTableName.GSUB );
-        boolean isGPOS = tableTag.equals ( TTFTableName.GPOS );
+    private void readLookupTable(String tableTag, int lookupSequence, long lookupTable) throws IOException {
+        boolean isGSUB = tableTag.equals ( "GSUB" );
+        boolean isGPOS = tableTag.equals ( "GPOS" );
         in.seekSet(lookupTable);
         // read lookup type
         int lt = in.readTTFUShort();
@@ -3198,7 +3197,7 @@ public final class OTFAdvancedTypographicTableReader {
         }
     }
 
-    private void readLookupList(TTFTableName tableTag, long lookupList) throws IOException {
+    private void readLookupList(String tableTag, long lookupList) throws IOException {
         in.seekSet(lookupList);
         // read lookup record count
         int nl = in.readTTFUShort();
@@ -3233,7 +3232,7 @@ public final class OTFAdvancedTypographicTableReader {
      * @param lookupList offset to lookup list from beginning of font file
      * @throws IOException In case of a I/O problem
      */
-    private void readCommonLayoutTables(TTFTableName tableTag, long scriptList, long featureList, long lookupList) throws IOException {
+    private void readCommonLayoutTables(String tableTag, long scriptList, long featureList, long lookupList) throws IOException {
         if ( scriptList > 0 ) {
             readScriptList ( tableTag, scriptList );
         }
@@ -3245,7 +3244,7 @@ public final class OTFAdvancedTypographicTableReader {
         }
     }
 
-    private void readGDEFClassDefTable(TTFTableName tableTag, int lookupSequence, long subtableOffset) throws IOException {
+    private void readGDEFClassDefTable(String tableTag, int lookupSequence, long subtableOffset) throws IOException {
         initATSubState();
         in.seekSet(subtableOffset);
         // subtable is a bare class definition table
@@ -3257,7 +3256,7 @@ public final class OTFAdvancedTypographicTableReader {
         resetATSubState();
     }
 
-    private void readGDEFAttachmentTable(TTFTableName tableTag, int lookupSequence, long subtableOffset) throws IOException {
+    private void readGDEFAttachmentTable(String tableTag, int lookupSequence, long subtableOffset) throws IOException {
         initATSubState();
         in.seekSet(subtableOffset);
         // read coverage offset
@@ -3275,7 +3274,7 @@ public final class OTFAdvancedTypographicTableReader {
         resetATSubState();
     }
 
-    private void readGDEFLigatureCaretTable(TTFTableName tableTag, int lookupSequence, long subtableOffset) throws IOException {
+    private void readGDEFLigatureCaretTable(String tableTag, int lookupSequence, long subtableOffset) throws IOException {
         initATSubState();
         in.seekSet(subtableOffset);
         // read coverage offset
@@ -3305,7 +3304,7 @@ public final class OTFAdvancedTypographicTableReader {
         resetATSubState();
     }
 
-    private void readGDEFMarkAttachmentTable(TTFTableName tableTag, int lookupSequence, long subtableOffset) throws IOException {
+    private void readGDEFMarkAttachmentTable(String tableTag, int lookupSequence, long subtableOffset) throws IOException {
         initATSubState();
         in.seekSet(subtableOffset);
         // subtable is a bare class definition table
@@ -3317,7 +3316,7 @@ public final class OTFAdvancedTypographicTableReader {
         resetATSubState();
     }
 
-    private void readGDEFMarkGlyphsTableFormat1(TTFTableName tableTag, int lookupSequence, long subtableOffset, int subtableFormat) throws IOException {
+    private void readGDEFMarkGlyphsTableFormat1(String tableTag, int lookupSequence, long subtableOffset, int subtableFormat) throws IOException {
         initATSubState();
         in.seekSet(subtableOffset);
         // skip over format (already known)
@@ -3351,7 +3350,7 @@ public final class OTFAdvancedTypographicTableReader {
         resetATSubState();
     }
 
-    private void readGDEFMarkGlyphsTable(TTFTableName tableTag, int lookupSequence, long subtableOffset) throws IOException {
+    private void readGDEFMarkGlyphsTable(String tableTag, int lookupSequence, long subtableOffset) throws IOException {
         in.seekSet(subtableOffset);
         // read mark set subtable format
         int sf = in.readTTFUShort();
@@ -3367,11 +3366,11 @@ public final class OTFAdvancedTypographicTableReader {
      * @throws IOException In case of a I/O problem
      */
     private void readGDEF() throws IOException {
-        TTFTableName tableTag = TTFTableName.GDEF;
+        String tableTag = "GDEF";
         // Initialize temporary state
         initATState();
         // Read glyph definition (GDEF) table
-        TTFDirTabEntry dirTab = ttf.getDirectoryEntry( tableTag );
+        TTFDirTabEntry dirTab = ttf.getDirectoryEntry ( tableTag );
         if ( gdef != null ) {
             if (log.isDebugEnabled()) {
                 log.debug(tableTag + ": ignoring duplicate table");
@@ -3440,7 +3439,7 @@ public final class OTFAdvancedTypographicTableReader {
      * @throws IOException In case of a I/O problem
      */
     private void readGSUB() throws IOException {
-        TTFTableName tableTag = TTFTableName.GSUB;
+        String tableTag = "GSUB";
         // Initialize temporary state
         initATState();
         // Read glyph substitution (GSUB) table
@@ -3477,7 +3476,7 @@ public final class OTFAdvancedTypographicTableReader {
      * @throws IOException In case of a I/O problem
      */
     private void readGPOS() throws IOException {
-        TTFTableName tableTag = TTFTableName.GPOS;
+        String tableTag = "GPOS";
         // Initialize temporary state
         initATState();
         // Read glyph positioning (GPOS) table
