@@ -75,9 +75,15 @@ public class FopConfParserTestCase {
     }
 
     @Test
-    public void testStrictUserConfigValidation() {
+    public void testStrictFOValidation() {
         builder.setStrictValidation(false);
         assertFalse(buildFactory().validateStrictly());
+    }
+
+    @Test
+    public void testStrictUserValidation() {
+        builder.setStrictConfiguration(false);
+        assertFalse(buildFactory().validateUserConfigStrictly());
     }
 
     @Test
