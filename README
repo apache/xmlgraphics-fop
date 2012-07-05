@@ -116,11 +116,16 @@ http://xmlgraphics.apache.org/fop/1.1/knownissues_overview.html.
 Major Changes in Version 1.1rc1
 -------------------------------
 
-* Added support for complex scripts (e.g. Arabic, Indic, etc).
-* Added possibility to embed TrueType fonts in the PostScript output.
-* Added possibility to reduce the file size of accessible PDF outputs by using
-  Object Streams (a PDF 1.5 feature).
-* Added support for 128bit PDF encryption.
+* Adds support for complex scripts, in particular those that require
+  either bidirectional processing or advanced typographic tables in
+  fonts (e.g., the GSUB and GPOS tables of OpenType).
+* Adds support for fo:bidi-override and (relatively) full support
+  for writing-mode='rl-tb' (or equivalent).
+* Adds support for Unicode BIDI Control characters: U+200E LEFT-TO-RIGHT
+  MARK (LRM), U+200F RIGHT-TO-LEFT MARK (RLM), U+202A LEFT-TO-RIGHT EMBEDDING
+  (LRE), U+202B RIGHT-TO-LEFT EMBEDDING (RLE), U+202D LEFT-TO-RIGHT OVERRIDE
+  (LRO), U+202E RIGHT-TO-LEFT OVERRIDE (RLO), and U+202C POP DIRECTIONAL
+  FORMATTING (PDF).
 
 A more detailed list of changes in this release is available at
 http://xmlgraphics.apache.org/fop/1.1rc1/changes_1.1rc1.html.
