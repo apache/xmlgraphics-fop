@@ -86,7 +86,7 @@
       <action context="Images" dev="GA" type="update" fixes-bug="40676" due-to="Luis Bernardo">
         Fix newly introduced findbugs warnings.
       </action>
-      <action context="Images" dev="GA" type="fix" fixes-bug="40676" due-to="Luis Bernardo, Matthias Reischenbacher">
+      <action context="Images" dev="GA" type="fix" fixes-bug="40676" due-to="Luis Bernardo, Matthias Reischenbacher" importance="high">
         Support use of ImageLoaderRawPNG decoder in order to prevent re-encoding of PNG images (and unnecssary output file bloat).
       </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="53412" due-to="Alexios Giotis">
@@ -104,7 +104,7 @@
       <action context="Renderers" dev="GA" type="fix" fixes-bug="53304,53306">
         Add version attribute to AT and IF intermediate formats. Also eliminate redundant use of reversed attribute in AT format.
       </action>
-      <action context="Renderers" dev="GA" type="fix" fixes-bug="53295" due-to="Luis Bernardo">
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="53295" due-to="Luis Bernardo" importance="high">
         Add extension to place code just before PostScript %PageTrailer.
       </action>
       <action context="Renderers" dev="GA" type="fix" fixes-bug="53294" due-to="Robert Meyer">
