@@ -173,7 +173,6 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         drawBackground(startx, starty, width, height,
                 (Trait.Background) backgroundArea.getTrait(Trait.BACKGROUND),
                 bpsBefore, bpsAfter, bpsStart, bpsEnd, backgroundArea.getBidiLevel());
-
         // TODO what is the default bg color?   Should we serialize it?
         Color bg = Color.white;
         if (backgroundTrait != null &&  backgroundTrait.getColor() != null) {
@@ -328,6 +327,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsAfter the border-after traits
      * @param bpsStart the border-start traits
      * @param bpsEnd the border-end traits
+     * @param innerBackgroundColor the background color of the block
      */
     protected void clipBackground (float startx, float starty,
             float width, float height,

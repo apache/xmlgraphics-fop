@@ -354,7 +354,6 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                         = new Area[]{new Area(), new Area(), new Area(), new Area()};
 
                 if (roundCorner[TOP_LEFT]) {
-
                     AffineTransform transform =  new AffineTransform();
                     int beforeRadius = (int)(esf * bpsBefore.getRadiusStart());
                     int startRadius = (int)(esf * bpsStart.getRadiusStart());

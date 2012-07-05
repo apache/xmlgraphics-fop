@@ -779,7 +779,6 @@ public interface Constants {
     /** Property constant - FOP proprietary prototype (in XSL-FO 2.0 Requirements) */
     int PR_X_XML_BASE = 275;
 
-
     /** Property constant FOP proprietary*/
     int PR_X_BORDER_BEFORE_RADIUS_START = 276;
 
