@@ -41,8 +41,10 @@
       OutputStream, which OutputStream to use for the results of the rendering. You can
       customize FOP's behaviour in a rendering run by supplying your own FOUserAgent
       instance. The FOUserAgent can, for example, be used to set your own document handler
-      instance (details below). Finally, you retrieve a SAX DefaultHandler instance from
-      the Fop object and use that as the SAXResult of your transformation.
+      instance (details below). Because the FOUserAgent holds FOP-run-specific configuration
+      data, it should only be used for a single run and not over multiple FOP invocations.
+      Finally, you retrieve a SAX DefaultHandler instance from the Fop object and use that
+      as the SAXResult of your transformation.
     </p>
   </section>
   <section id="API">
@@ -54,6 +56,7 @@
       clearly defined, the list of classes below are the generally agreed public API:
       <source><![CDATA[
 org.apache.fop.apps.*
+org.apache.fop.apps.io.*
 org.apache.fop.fo.FOEventHandler
 org.apache.fop.fo.ElementMappingRegistry
 org.apache.fop.fonts.FontManager
@@ -89,7 +92,8 @@ import org.apache.fop.apps.MimeConstants;
 
 // Step 1: Construct a FopFactory
 // (reuse if you plan to render multiple documents!)
-FopFactory fopFactory = FopFactory.newInstance();
+// Supply FOP with the base URI from which to resolve other URIs from
+FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
 // Step 2: Set up output stream.
 // Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
@@ -123,8 +127,10 @@ try {
     <ul>
       <li>
         <strong>Step 1:</strong> You create a new FopFactory instance. The FopFactory instance holds
-        references to configuration information and cached data. It's important to reuse this
-        instance if you plan to render multiple documents during a JVM's lifetime.
+        references to configuration information and cached data. It is important to reuse this
+        instance if you plan to render multiple documents during a JVM's lifetime. URIs used within
+        FOP runs (images in the FO, fonts in the fop conf etc...) will be resolved against the base
+        URI given here.
       </li>
       <li>
         <strong>Step 2:</strong> You set up an OutputStream that the generated document
@@ -302,38 +308,33 @@ try {
     <title>Configuring Apache FOP Programmatically</title>
     <p>
       Apache FOP provides two levels on which you can customize FOP's
-      behaviour: the FopFactory and the user agent.
+      behaviour: the FopFactoryBuilder and the user agent.
     </p>
     <section id="fop-factory">
       <title>Customizing the FopFactory</title>
       <p>
         The FopFactory holds configuration data and references to objects which are reusable over
-        multiple rendering runs. It's important to instantiate it only once (except in special
-        environments) and reuse it every time to create new FOUserAgent and Fop instances.
+        multiple rendering runs. The FopFactoryBuilder allows users to set configuration and then
+        build the FopFactory so that the FopFactory doesn't change between runs. The FopFactory performs
+        some performance expensive operations (i.e. detecting system fonts), as such it only needs to be
+        built once and cane be reused every time to create new FOUserAgent and Fop instances.
       </p>
       <p>
-        You can set all sorts of things on the FopFactory:
+        The FopFactoryBuilder can be instantiated with three objects; the base URI, the ResourceResolver
+        and the EnvironmentProfile. The base URI and the ResourceResolver are used for resolving resource
+        URIs throughout the FOP invocation. The EnvironmentProfile will be discussed further below but, in
+        short, it gives users more control over FOPs system dependent services.
+      </p>
+      <p>
+        You can set all sorts of things on the FopFactoryBuilder:
       </p>
       <ul>
-        <li>
-          <p>
-            The <strong>font base URL</strong> to use when resolving relative URLs for fonts. Example:
-          </p>
-          <source>fopFactory.getFontManager().setFontBaseURL("file:///C:/Temp/fonts");</source>
-        </li>
-        <li>
-          <p>
-            The <strong>hyphenation base URL</strong> to use when resolving relative URLs for
-            hyphenation patterns. Example:
-          </p>
-          <source>fopFactory.setHyphenBaseURL("file:///C:/Temp/hyph");</source>
-        </li>
         <li>
           <p>
             Disable <strong>strict validation</strong>. When disabled FOP is less strict about the rules
             established by the XSL-FO specification. Example:
           </p>
-          <source>fopFactory.setStrictValidation(false);</source>
+          <source>fopFactoryBuilder.setStrictFOValidation(false);</source>
         </li>
         <li>
           <p>
@@ -342,14 +343,14 @@ try {
             'false', which causes Apache FOP to behave exactly as described in the specification. To enable the
             alternative behaviour, call:
           </p>
-          <source>fopFactory.setBreakIndentInheritanceOnReferenceAreaBoundary(true);</source>
+          <source>fopFactoryBuilder.setBreakIndentInheritanceOnReferenceAreaBoundary(true);</source>
         </li>
         <li>
           <p>
             Set the <strong>source resolution</strong> for the document. This is used internally to determine the pixel
             size for SVG images and bitmap images without resolution information. Default: 72 dpi. Example:
           </p>
-          <source>fopFactory.setSourceResolution(96); // =96dpi (dots/pixels per Inch)</source>
+          <source>fopFactoryBuilder.setSourceResolution(96); // =96dpi (dots/pixels per Inch)</source>
         </li>
         <li>
           <p>
@@ -357,22 +358,21 @@ try {
             you can give the instance to the FOUserAgent. Normally, the FOP extensions can be automatically detected
             (see the documentation on extension for more info). Example:
           </p>
-          <source>fopFactory.addElementMapping(myElementMapping); // myElementMapping is a org.apache.fop.fo.ElementMapping</source>
-        </li>
-        <li>
-          <p>
-            Set a <strong>URIResolver</strong> for custom URI resolution. By supplying a JAXP URIResolver you can add
-            custom URI resolution functionality to FOP. For example, you can use
-            <a href="ext:xml.apache.org/commons/resolver">Apache XML Commons Resolver</a> to make use of XCatalogs. Example:
-          </p>
-          <source>fopFactory.setURIResolver(myResolver); // myResolver is a javax.xml.transform.URIResolver</source>
-          <note>
-            Both the FopFactory and the FOUserAgent have a method to set a URIResolver. The URIResolver on the FopFactory
-            is primarily used to resolve URIs on factory-level (hyphenation patterns, for example) and it is always used
-            if no other URIResolver (for example on the FOUserAgent) resolved the URI first.
-          </note>
+          <source>fopFactoryBuilder.addElementMapping(myElementMapping); // myElementMapping is a org.apache.fop.fo.ElementMapping</source>
         </li>
       </ul>
+      <p>
+        Once the settings on the FopFactoryBuilder had been set, you can create a FopFactory by invoking the build method:
+      </p>
+      <source>FopFactory factory = fopFactoryBuilder.build();</source>
+    </section>
+    <section id="environment-profile">
+      <title>Environment Profile</title>
+      <p>
+        The EnvironmentProfile can be used to define the limitations and restrictions of FOPs access to system resources. FOP, for example,
+        can auto-detect system fonts which users may want control over. This environment profile also holds the base URI and the
+        ResourceResolver discussed previously, since they are intrinsically bound to the environment inwhich FOP is invoked.
+      </p>
     </section>
     <section id="user-agent">
       <title>Customizing the User Agent</title>
@@ -383,7 +383,7 @@ try {
         to the factory method that will create a new Fop instance:
       </p>
       <source><![CDATA[
-  FopFactory fopFactory = FopFactory.newInstance(); // Reuse the FopFactory if possible!
+  FopFactory fopFactory = FopFactory.newInstance(...); // Reuse the FopFactory if possible!
   // do the following for each new rendering run
   FOUserAgent userAgent = fopFactory.newFOUserAgent();
   // customize userAgent
@@ -392,12 +392,6 @@ try {
         You can do all sorts of things on the user agent:
       </p>
       <ul>
-        <li>
-          <p>
-            The <strong>base URL</strong> to use when resolving relative URLs. Example:
-          </p>
-          <source>userAgent.setBaseURL("file:///C:/Temp/");</source>
-        </li>
         <li>
           <p>
             Set the <strong>producer</strong> of the document. This is metadata information that can be used for certain output formats such as PDF. The default producer is "Apache FOP". Example:
@@ -459,19 +453,6 @@ try {
           </p>
           <source>userAgent.setFOEventHandlerOverride(myFOEventHandler); // myFOEventHandler is an org.apache.fop.fo.FOEventHandler</source>
         </li>
-        <li>
-          <p>
-            Set a <strong>URIResolver</strong> for custom URI resolution. By supplying a JAXP URIResolver you can add
-            custom URI resolution functionality to FOP. For example, you can use
-            <a href="ext:xml.apache.org/commons/resolver">Apache XML Commons Resolver</a> to make use of XCatalogs. Example:
-          </p>
-          <source>userAgent.setURIResolver(myResolver); // myResolver is a javax.xml.transform.URIResolver</source>
-          <note>
-            Both the FopFactory and the FOUserAgent have a method to set a URIResolver. The URIResolver on the FOUserAgent is
-            used for resolving URIs which are document-related. If it's not set or cannot resolve a URI, the URIResolver
-            from the FopFactory is used.
-          </note>
-        </li>
       </ul>
       <note>
         You should not reuse an FOUserAgent instance between FOP rendering runs although you can. Especially
@@ -486,18 +467,20 @@ try {
       many values from an XML configuration file:
     </p>
     <source><![CDATA[
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
-
-/*..*/
-
-DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-Configuration cfg = cfgBuilder.buildFromFile(new File("C:/Temp/mycfg.xml"));
-fopFactory.setUserConfig(cfg);
-
-/* ..or.. */
-
-fopFactory.setUserConfig(new File("C:/Temp/mycfg.xml"));]]></source>
+FopFactory fopFactory = FopFactory.newInstance(new File("C:/Temp/mycfg.xml"));]]></source>
+    <p>
+      If however, you wish to override some of the configuration settings within the fop conf programmatically
+      then you can do so by using the FopConfParser. This allows the FopFactory to remain immutable and consistent
+      across multiple threads/invocations while still keeping the API flexible for the user.
+    </p>
+    <source><![CDATA[
+// Create an instance of the FopFactoryBuilder populated with config from the fop conf
+FopFactoryBuilder fopFactoryBuilder = new FopConfParser(new File("fop.xconf")).getFopFactoryBuilder();
+// Override the configuration programmatically
+fopFactoryBuilderuilder.setAccessibility(true);
+...
+// Build the FopFactory
+FopFactory factory = fopFactoryBuilder.build();]]></source>
     <p>
       The layout of the configuration file is described on the <a href="configuration.html">Configuration page</a>.
     </p>
