@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import org.apache.xmlgraphics.util.MimeConstants;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.events.EventProcessingTestCase;
 
 
@@ -49,12 +50,12 @@ public class AFPEventProcessingTestCase {
         testInvalidConfigEvent("afp-font-missing.xconf", ".fontConfigMissing");
     }
 
-    @Test
+    @Test(expected = FOPException.class)
     public void testInvalidCharactersetName() throws Exception {
         testInvalidConfigEvent("afp-invalid-characterset.xconf", ".characterSetNameInvalid");
     }
 
-    @Test
+    @Test(expected = FOPException.class)
     public void testinvalidConfig() throws Exception {
         testInvalidConfigEvent("afp-invalid-config.xconf", ".invalidConfiguration");
     }

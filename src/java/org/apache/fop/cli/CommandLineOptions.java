@@ -1040,6 +1040,12 @@ public class CommandLineOptions {
             } catch (SAXException e) {
                 throw new FOPException(e);
             }
+            if (!strictValidation) {
+                fopFactoryBuilder.setStrictFOValidation(strictValidation);
+            }
+            if (useComplexScriptFeatures) {
+                fopFactoryBuilder.setComplexScriptFeatures(useComplexScriptFeatures);
+            }
         }
         factory = fopFactoryBuilder.build();
      }
