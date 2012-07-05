@@ -62,6 +62,51 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="1.1rc1" date="02 July 2012">
+      <action context="Test" dev="GA" type="fix">
+        Fix errors and warnings in example files. Add build.xml for documentation examples.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="53458" due-to="Dieter von Holten">
+        Fix incorrect language and country code key generation in hyphenation tree cache.
+      </action>
+      <action context="Images" dev="GA" type="fix" fixes-bug="53431" due-to="Luis Bernardo">
+        Fix incorrect SVG line dash pattern with PDF output format.
+      </action>
+      <action context="Images" dev="GA" type="update" fixes-bug="40676" due-to="Luis Bernardo">
+        Fix interoperability issue with Adobe reader regarding use of multiple filters.
+      </action>
+      <action context="Code" dev="GA" type="fix">
+        Eliminate javadocs warnings.
+      </action>
+      <action context="Renderers" dev="VH" type="add" fixes-bug="52338" importance="high">
+        Added possibility to embed TrueType fonts in PostScript.
+      </action>
+      <action context="Images" dev="GA" type="update" fixes-bug="40676" due-to="Luis Bernardo">
+        Update site documentation about PNG image loading configuration and support.
+      </action>
+      <action context="Images" dev="GA" type="update" fixes-bug="40676" due-to="Luis Bernardo">
+        Fix newly introduced findbugs warnings.
+      </action>
+      <action context="Images" dev="GA" type="fix" fixes-bug="40676" due-to="Luis Bernardo, Matthias Reischenbacher">
+        Support use of ImageLoaderRawPNG decoder in order to prevent re-encoding of PNG images (and unnecssary output file bloat).
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="53412" due-to="Alexios Giotis">
+        Eliminate incorrect use of object identity which produces excessive property cache collisions.
+      </action>
+      <action context="Code" dev="GA" type="fix">
+        Eliminate javadocs warnings.
+      </action>
+      <action context="Code" dev="GA" type="update" fixes-bug="53055">
+        Update xmlgraphics common jar to reflect recent fixes in XGC.
+      </action>
+      <action context="Code" dev="GA" type="update" fixes-bug="43940" due-to="Julien Aymé">
+        Fix handling of NaN, {+,-}Infinity, and other edge cases. Submitted by Julien Aymé.
+      </action>
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="53304,53306">
+        Add version attribute to AT and IF intermediate formats. Also eliminate redundant use of reversed attribute in AT format.
+      </action>
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="53295" due-to="Luis Bernardo">
+        Add extension to place code just before PostScript %PageTrailer.
+      </action>
       <action context="Renderers" dev="GA" type="fix" fixes-bug="53294" due-to="Robert Meyer">
         Fix invalid PostScript file being created when font-size is 0.
       </action>

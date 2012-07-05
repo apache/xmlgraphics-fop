@@ -53,6 +53,7 @@ public class PSExtensionHandler extends DefaultHandler
             lastAttributes = new AttributesImpl(attributes);
             handled = false;
             if (localName.equals(PSSetupCode.ELEMENT)
+                    || localName.equals(PSPageTrailerCodeBefore.ELEMENT)
                     || localName.equals(PSSetPageDevice.ELEMENT)
                     || localName.equals(PSCommentBefore.ELEMENT)
                     || localName.equals(PSCommentAfter.ELEMENT)) {
@@ -84,6 +85,8 @@ public class PSExtensionHandler extends DefaultHandler
                 this.returnedObject = new PSCommentBefore(content.toString());
             } else if (PSCommentAfter.ELEMENT.equals(localName)) {
                 this.returnedObject = new PSCommentAfter(content.toString());
+            } else if (PSPageTrailerCodeBefore.ELEMENT.equals(localName)) {
+                this.returnedObject = new PSPageTrailerCodeBefore(content.toString());
             }
         }
         content.setLength(0); //Reset text buffer (see characters())

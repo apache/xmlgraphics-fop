@@ -79,7 +79,7 @@ public class HyphenationTreeCache {
         String userKey = null;
         if (hyphPatNames != null) {
             String key = constructLlccKey(lang, country);
-            key.replace('_', '-');
+            key = key.replace('_', '-');
             userKey = (String) hyphPatNames.get(key);
         }
         return userKey;
@@ -96,7 +96,7 @@ public class HyphenationTreeCache {
 
     /**
      * Notes a key to a hyphenation tree as missing.
-     * This is to avoid searching a second time for a hyphneation pattern file which is not
+     * This is to avoid searching a second time for a hyphenation pattern file which is not
      * available.
      * @param key the key (ex. "de_CH" or "en")
      */
@@ -109,7 +109,7 @@ public class HyphenationTreeCache {
 
     /**
      * Indicates whether a hyphenation file has been requested before but it wasn't available.
-     * This is to avoid searching a second time for a hyphneation pattern file which is not
+     * This is to avoid searching a second time for a hyphenation pattern file which is not
      * available.
      * @param key the key (ex. "de_CH" or "en")
      * @return true if the hyphenation tree is unavailable
