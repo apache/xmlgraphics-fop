@@ -20,11 +20,8 @@
 package org.apache.fop.fotreetest;
 
 import java.io.File;
-import java.net.URI;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -38,22 +35,16 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import org.apache.avalon.framework.configuration.Configuration;
-
-import org.apache.xmlgraphics.image.loader.ImageManager;
-
 import org.apache.fop.DebugHelper;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.FopFactoryConfig;
-import org.apache.fop.apps.io.ResourceResolver;
-import org.apache.fop.fonts.FontManager;
+import org.apache.fop.apps.MutableConfig;
 import org.apache.fop.fotreetest.ext.TestElementMapping;
 import org.apache.fop.layoutengine.LayoutEngineTestUtils;
 import org.apache.fop.layoutengine.TestFilesConfiguration;
-import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.util.ConsoleEventListenerForTests;
 
 /**
@@ -123,7 +114,7 @@ public class FOTreeTestCase {
                    FopFactoryConfig.DEFAULT_BREAK_INDENT_INHERITANCE);
             builder.setSourceResolution(FopFactoryConfig.DEFAULT_SOURCE_RESOLUTION);
 
-            MutableConfig mutableConfig = new MutableConfig(builder.buildConfig());
+            MutableConfig mutableConfig = new MutableConfig(builder);
 
             FopFactory fopFactory = FopFactory.newInstance(mutableConfig);
             fopFactory.addElementMapping(new TestElementMapping());
@@ -179,104 +170,6 @@ public class FOTreeTestCase {
                 fopConfig.setSourceResolution(Float.parseFloat(data));
             }
             super.processingInstruction(target, data);
-        }
-    }
-
-    private static final class MutableConfig implements FopFactoryConfig {
-
-        private final FopFactoryConfig delegate;
-
-        private boolean setBreakInheritance;
-        private float sourceResolution;
-
-        private MutableConfig(FopFactoryConfig wrappedConfig) {
-            delegate = wrappedConfig;
-            setBreakInheritance = delegate.isBreakIndentInheritanceOnReferenceAreaBoundary();
-            sourceResolution = delegate.getSourceResolution();
-        }
-
-        public boolean isAccessibilityEnabled() {
-            return delegate.isAccessibilityEnabled();
-        }
-
-        public LayoutManagerMaker getLayoutManagerMakerOverride() {
-            return delegate.getLayoutManagerMakerOverride();
-        }
-
-        public ResourceResolver getResourceResolver() {
-            return delegate.getResourceResolver();
-        }
-
-        public URI getBaseURI() {
-            return delegate.getBaseURI();
-        }
-
-        public boolean validateStrictly() {
-            return delegate.validateStrictly();
-        }
-
-        public boolean validateUserConfigStrictly() {
-            return delegate.validateUserConfigStrictly();
-        }
-
-        public boolean isBreakIndentInheritanceOnReferenceAreaBoundary() {
-            return setBreakInheritance;
-        }
-
-        public void setBreakIndentInheritanceOnReferenceAreaBoundary(boolean value) {
-            setBreakInheritance = value;
-        }
-
-        public float getSourceResolution() {
-            return sourceResolution;
-        }
-
-        public void setSourceResolution(float srcRes) {
-            sourceResolution = srcRes;
-        }
-
-        public float getTargetResolution() {
-            return delegate.getTargetResolution();
-        }
-
-        public String getPageHeight() {
-            return delegate.getPageHeight();
-        }
-
-        public String getPageWidth() {
-            return delegate.getPageWidth();
-        }
-
-        public Set<String> getIgnoredNamespaces() {
-            return delegate.getIgnoredNamespaces();
-        }
-
-        public boolean isNamespaceIgnored(String namespace) {
-            return delegate.isNamespaceIgnored(namespace);
-        }
-
-        public Configuration getUserConfig() {
-            return delegate.getUserConfig();
-        }
-
-        public boolean preferRenderer() {
-            return delegate.preferRenderer();
-        }
-
-        public FontManager getFontManager() {
-            return delegate.getFontManager();
-        }
-
-        public ImageManager getImageManager() {
-            return delegate.getImageManager();
-        }
-
-        public boolean isComplexScriptFeaturesEnabled() {
-            return delegate.isComplexScriptFeaturesEnabled();
-        }
-
-        public Map<String, String> getHyphenationPatternNames() {
-            return delegate.getHyphenationPatternNames();
         }
     }
 }
