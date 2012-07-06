@@ -68,6 +68,7 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
+import org.apache.xmlgraphics.java2d.GraphicsConfigurationWithTransparency;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -1765,7 +1766,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      */
     @Override
     public GraphicsConfiguration getDeviceConfiguration() {
-        return new PDFGraphicsConfiguration();
+        return new GraphicsConfigurationWithTransparency();
     }
 
     /**

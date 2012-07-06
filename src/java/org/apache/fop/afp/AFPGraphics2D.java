@@ -26,6 +26,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Paint;
@@ -52,13 +53,13 @@ import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
+import org.apache.xmlgraphics.java2d.GraphicsConfigurationWithTransparency;
 import org.apache.xmlgraphics.java2d.StrokingTextHandler;
 import org.apache.xmlgraphics.java2d.TextHandler;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.afp.goca.GraphicsSetLineType;
 import org.apache.fop.afp.modca.GraphicsObject;
-import org.apache.fop.afp.svg.AFPGraphicsConfiguration;
 import org.apache.fop.afp.util.CubicBezierApproximator;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.afp.AFPImageHandlerRenderedImage;
@@ -111,7 +112,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     private AFPPaintingState paintingState = null;
 
     /** AFP graphics configuration */
-    private final AFPGraphicsConfiguration graphicsConfig = new AFPGraphicsConfiguration();
+    private final GraphicsConfigurationWithTransparency graphicsConfig = new GraphicsConfigurationWithTransparency();
 
     /** The AFP FontInfo */
     private FontInfo fontInfo;
