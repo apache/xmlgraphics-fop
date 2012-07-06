@@ -730,6 +730,7 @@ public class CommandLineOptions {
                 this.useStdIn = true;
             } else {
                 fofile = new File(filename);
+                baseURI = fofile.toURI();
             }
         } else if (outputmode == null) {
             outputmode = MimeConstants.MIME_PDF;

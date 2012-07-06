@@ -37,10 +37,10 @@ public final class AFPResourceAccessor {
     /**
      * Constructor for resource to be accessed via the {@link org.apache.fop.apps.FOUserAgent}. This
      * contructor takes a base URI for resolving font resource URIs. So, if fonts need to be
-     * accessed, you can set the {@link FontManager}'s base URI instead of the one on the
-     * {@link org.apache.fop.apps.FopFactory}.
+     * accessed, you can set the {@link org.apache.fop.fonts.FontManager}'s base URI instead of the
+     * one on the {@link org.apache.fop.apps.FopFactory}.
      *
-     * @param InternalResourceResolver resource resolver
+     * @param resourceResolver the resolver of resources
      * @param baseURI the custom base URI to resolve relative URIs against (may be null)
      */
     public AFPResourceAccessor(InternalResourceResolver resourceResolver, String baseURI) {
@@ -51,7 +51,7 @@ public final class AFPResourceAccessor {
     /**
      * Constructor for resource to be accessed via the {@link org.apache.fop.apps.FOUserAgent}.
      *
-     * @param InternalResourceResolver resource resolver
+     * @param resourceResolver the resolver of resources
      */
     public AFPResourceAccessor(InternalResourceResolver resourceResolver) {
         this(resourceResolver, null);
@@ -69,7 +69,13 @@ public final class AFPResourceAccessor {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Creates an {@link InputStream} given a URI.
+     *
+     * @param uri the URI of the InputStream
+     * @return an InputStream
+     * @throws IOException if an I/O error occurs while creating the InputStream.
+     */
     public InputStream createInputStream(URI uri) throws IOException {
         return resourceResolver.getResource(getResourceURI(uri));
     }
