@@ -36,6 +36,7 @@ import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
+import org.apache.fop.render.pdf.PDFRendererConfig.PDFRendererConfigParser;
 
 /**
  * Base Print renderer configurator (mostly handles font configuration)
@@ -166,7 +167,9 @@ public abstract class PrintRendererConfigurator extends AbstractRendererConfigur
     }
 
     public static PrintRendererConfigurator createDefaultInstance(FOUserAgent userAgent) {
-        return new PrintRendererConfigurator(userAgent, null) {
+        // Since PDF is the default output is PDF, it makes sense for the default config parser
+        // to also be the PDF flavour
+        return new PrintRendererConfigurator(userAgent, new PDFRendererConfigParser()) {
             @Override
             protected List<FontCollection> getDefaultFontCollection() {
                 throw new UnsupportedOperationException();
