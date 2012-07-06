@@ -97,6 +97,17 @@ public final class FopFactoryBuilder {
      * @deprecated Exposing the {@link FopFactoryConfig} is only to maintain backwards compatibility
      */
     public FopFactoryConfig buildConfig() {
+        return buildConfiguration();
+    }
+
+    /**
+     * Builds the configuration object used by the FopFactory.
+     *
+     * @return the config for the {@link FopFactory}
+     */
+    // The {@link FopFactoryConfig} doesn't need to be exposed in the "public" API, this method
+    // should remain package private.
+    FopFactoryConfig buildConfiguration() {
         fopFactoryConfigBuilder = CompletedFopFactoryConfigBuilder.INSTANCE;
         return config;
     }
@@ -107,7 +118,7 @@ public final class FopFactoryBuilder {
      * @return the FopFactory instance
      */
     public FopFactory build() {
-        return FopFactory.newInstance(buildConfig());
+        return FopFactory.newInstance(buildConfiguration());
     }
 
     /**

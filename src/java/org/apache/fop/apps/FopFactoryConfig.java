@@ -34,6 +34,9 @@ import org.apache.fop.layoutmgr.LayoutManagerMaker;
 /**
  * The configuration data for a {@link FopFactory} instance.
  */
+// TODO: Make this interface and any implementations of this interface package private. Though
+// they are used by classes that are considered the public API, this object doesn't need to be a
+// part of the API. Why would a user care how the internal objects are passed around? They shouldn't.
 public interface FopFactoryConfig {
 
     /** Defines if FOP should use an alternative rule to determine text indents */
