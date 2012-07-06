@@ -1030,7 +1030,7 @@ public class CommandLineOptions {
     private void setUserConfig() throws FOPException, IOException {
         FopFactoryBuilder fopFactoryBuilder;
         if (userConfigFile == null) {
-            fopFactoryBuilder = new FopFactoryBuilder(new File(".").toURI());
+            fopFactoryBuilder = new FopFactoryBuilder(fofile.toURI());
             fopFactoryBuilder.setStrictFOValidation(strictValidation);
             fopFactoryBuilder.setTargetResolution(targetResolution);
             fopFactoryBuilder.setComplexScriptFeatures(useComplexScriptFeatures);
