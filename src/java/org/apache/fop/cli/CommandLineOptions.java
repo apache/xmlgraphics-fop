@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URI;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
@@ -136,6 +137,8 @@ public class CommandLineOptions {
     private String mimicRenderer = null;
 
     private boolean flushCache = false;
+
+    private URI baseURI = new File(".").toURI();
 
     /**
      * Construct a command line option object.
@@ -465,6 +468,7 @@ public class CommandLineOptions {
                 this.useStdIn = true;
             } else {
                 fofile = new File(filename);
+                baseURI = fofile.toURI();
             }
             return 1;
         }
@@ -494,6 +498,7 @@ public class CommandLineOptions {
                 this.useStdIn = true;
             } else {
                 xmlfile = new File(filename);
+                baseURI = xmlfile.toURI();
             }
             return 1;
         }
@@ -783,6 +788,7 @@ public class CommandLineOptions {
                 this.useStdIn = true;
             } else {
                 areatreefile = new File(filename);
+                baseURI = areatreefile.toURI();
             }
             return 1;
         }
@@ -799,6 +805,7 @@ public class CommandLineOptions {
                 this.useStdIn = true;
             } else {
                 iffile = new File(filename);
+                baseURI = iffile.toURI();
             }
             return 1;
         }
@@ -815,6 +822,7 @@ public class CommandLineOptions {
                 this.useStdIn = true;
             } else {
                 imagefile = new File(filename);
+                baseURI = imagefile.toURI();
             }
             return 1;
         }
@@ -1030,7 +1038,7 @@ public class CommandLineOptions {
     private void setUserConfig() throws FOPException, IOException {
         FopFactoryBuilder fopFactoryBuilder;
         if (userConfigFile == null) {
-            fopFactoryBuilder = new FopFactoryBuilder(fofile.toURI());
+            fopFactoryBuilder = new FopFactoryBuilder(baseURI);
             fopFactoryBuilder.setStrictFOValidation(strictValidation);
             fopFactoryBuilder.setTargetResolution(targetResolution);
             fopFactoryBuilder.setComplexScriptFeatures(useComplexScriptFeatures);
