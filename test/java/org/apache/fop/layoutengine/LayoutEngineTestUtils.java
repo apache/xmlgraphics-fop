@@ -51,6 +51,9 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
  */
 public final class LayoutEngineTestUtils {
 
+    /** Set this to true to get the correspondence between test number and test file. */
+    private static final boolean DEBUG = false;
+
     private LayoutEngineTestUtils() {
     }
 
@@ -157,8 +160,12 @@ public final class LayoutEngineTestUtils {
         }
 
         Collection<File[]> parametersForJUnit4 = new ArrayList<File[]>();
+        int index = 0;
         for (File f : files) {
             parametersForJUnit4.add(new File[] { f });
+            if (DEBUG) {
+                System.out.println(String.format("%3d %s", index++, f));
+            }
         }
 
         return parametersForJUnit4;

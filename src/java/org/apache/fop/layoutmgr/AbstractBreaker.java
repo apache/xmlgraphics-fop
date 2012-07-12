@@ -492,7 +492,6 @@ public abstract class AbstractBreaker {
     protected void addAreas(PageBreakingAlgorithm alg, int startPart, int partCount,
             BlockSequence originalList, BlockSequence effectiveList) {
         LayoutContext childLC;
-        // add areas
         int startElementIndex = 0;
         int endElementIndex = 0;
         int lastBreak = -1;
@@ -550,12 +549,7 @@ public abstract class AbstractBreaker {
 
             // ignore KnuthGlue and KnuthPenalty objects
             // at the beginning of the line
-            ListIterator<KnuthElement> effectiveListIterator
-                = effectiveList.listIterator(startElementIndex);
-            while (effectiveListIterator.hasNext()
-                    && !(effectiveListIterator.next()).isBox()) {
-                startElementIndex++;
-            }
+            startElementIndex = alg.par.getFirstBoxIndex(startElementIndex);
 
             if (startElementIndex <= endElementIndex) {
                 if (log.isDebugEnabled()) {
@@ -576,7 +570,9 @@ public abstract class AbstractBreaker {
                         && p < (partCount - 1)) {
                     // count the boxes whose width is not 0
                     int boxCount = 0;
-                    effectiveListIterator = effectiveList.listIterator(startElementIndex);
+                    @SuppressWarnings("unchecked")
+                    ListIterator<KnuthElement> effectiveListIterator = effectiveList
+                            .listIterator(startElementIndex);
                     while (effectiveListIterator.nextIndex() <= endElementIndex) {
                         KnuthElement tempEl = effectiveListIterator.next();
                         if (tempEl.isBox() && tempEl.getWidth() > 0) {
