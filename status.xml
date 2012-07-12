@@ -63,6 +63,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="VH" type="fix">
+        When restarting layout for the last page, discard glues and penalties at the beginning of 
+        the restarted Knuth sequence.
+      </action>
       <action context="Test" dev="GA" type="fix">
         Fix errors and warnings in example files. Add build.xml for documentation examples.
       </action>

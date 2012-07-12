@@ -330,7 +330,7 @@ public class PageBreaker extends AbstractBreaker {
             //Get page break from which we restart
             PageBreakPosition pbp = (PageBreakPosition)
                     alg.getPageBreaks().get(restartPoint - 1);
-            newStartPos = pbp.getLeafPos() + 1;
+            newStartPos = alg.par.getFirstBoxIndex(pbp.getLeafPos() + 1);
             //Handle page break right here to avoid any side-effects
             if (newStartPos > 0) {
                 handleBreakTrait(Constants.EN_PAGE);
