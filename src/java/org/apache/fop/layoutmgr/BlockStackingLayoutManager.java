@@ -383,7 +383,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @return a new child layout context
      */
     protected LayoutContext makeChildLayoutContext(LayoutContext context) {
-        LayoutContext childLC = new LayoutContext(0);
+        LayoutContext childLC = LayoutContext.newInstance();
         childLC.copyPendingMarksFrom(context);
         childLC.setStackLimitBP(context.getStackLimitBP());
         childLC.setRefIPD(referenceIPD);

@@ -63,6 +63,12 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="add" importance="high">
+        When PDF accessibility is enabled, treat repeated table headings as artifacts. This allows 
+        screen readers to read the header only once at the beginning of the table and the footer 
+        once at the end of a table. Reading the headings at every column or page break is likely to 
+        disturb the user. This follows Section 508 recommendations.
+      </action>
       <action context="Layout" dev="VH" type="fix">
         An IllegalArgumentException was thrown when break-before was used inside a list.
       </action>

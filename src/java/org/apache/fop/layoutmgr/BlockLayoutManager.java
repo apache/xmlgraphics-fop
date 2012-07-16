@@ -272,7 +272,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager implements Co
 
         LayoutManager childLM;
         LayoutManager lastLM = null;
-        LayoutContext lc = new LayoutContext(0);
+        LayoutContext lc = LayoutContext.offspringOf(layoutContext);
         lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
         // set space after in the LayoutContext for children
         if (layoutContext.getSpaceAfter() > 0) {

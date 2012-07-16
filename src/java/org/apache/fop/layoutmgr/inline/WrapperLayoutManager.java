@@ -71,7 +71,7 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
                 TraitSetter.setProducerID(helperBlock, fobj.getId());
                 parentLayoutManager.addChildArea(helperBlock);
             } else {
-                InlineArea area = getEffectiveArea();
+                InlineArea area = getEffectiveArea(context);
                 parentLayoutManager.addChildArea(area);
             }
         }

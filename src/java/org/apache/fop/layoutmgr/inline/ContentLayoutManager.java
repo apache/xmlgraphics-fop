@@ -110,7 +110,8 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
 
         int ipd = 1000000;
 
-        LayoutContext childLC = new LayoutContext(LayoutContext.NEW_AREA);
+        LayoutContext childLC = LayoutContext.newInstance();
+        childLC.setFlags(LayoutContext.NEW_AREA);
         childLC.setLeadingSpace(new SpaceSpecifier(false));
         childLC.setTrailingSpace(new SpaceSpecifier(false));
         childLC.setRefIPD(ipd);
@@ -143,7 +144,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
             middlefollow = maxtb - lineLead;
         }
 
-        LayoutContext lc = new LayoutContext(0);
+        LayoutContext lc = LayoutContext.newInstance();
 
         lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
         lc.setLeadingSpace(new SpaceSpecifier(false));
@@ -160,7 +161,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         int savedIPD = ((InlineArea)holder).getIPD();
         // set to zero the ipd adjustment ratio, to avoid spaces in the pattern
         // to be modified
-        LayoutContext childContext = new LayoutContext(context);
+        LayoutContext childContext = LayoutContext.copyOf(context);
         childContext.setIPDAdjust(0.0);
         childLM.addAreas(posIter, childContext);
         ((InlineArea)holder).setIPD(savedIPD);

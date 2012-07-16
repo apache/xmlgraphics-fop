@@ -42,7 +42,7 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         LayoutManager childLM;
         LayoutManager lastLM = null;
-        LayoutContext lc = new LayoutContext(0);
+        LayoutContext lc = LayoutContext.newInstance();
 
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list;

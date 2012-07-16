@@ -85,14 +85,13 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         text.setBaselineOffset(font.getAscender());
         TraitSetter.addFontTraits(text, font);
         text.addTrait(Trait.COLOR, fobj.getColor());
-        TraitSetter.addStructureTreeElement(text, fobj.getStructureTreeElement());
         TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
 
         return text;
     }
 
     /** {@inheritDoc} */
-    protected InlineArea getEffectiveArea() {
+    protected InlineArea getEffectiveArea(LayoutContext layoutContext) {
         TextArea baseArea = (TextArea)curArea;
         //TODO Maybe replace that with a clone() call or better, a copy constructor
         //TODO or even better: delay area creation until addAreas() stage
@@ -105,6 +104,9 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         ta.setBaselineOffset(baseArea.getBaselineOffset());
         ta.addTrait(Trait.COLOR, fobj.getColor()); //only to initialize the trait map
         ta.getTraits().putAll(baseArea.getTraits());
+        if (!layoutContext.treatAsArtifact()) {
+            TraitSetter.addStructureTreeElement(ta, fobj.getStructureTreeElement());
+        }
         updateContent(ta);
         return ta;
     }

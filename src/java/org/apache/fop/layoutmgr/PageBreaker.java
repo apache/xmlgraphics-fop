@@ -167,7 +167,7 @@ public class PageBreaker extends AbstractBreaker {
                     && ((KnuthBlockBox) element).hasAnchors()) {
                     // element represents a line with footnote citations
                     containsFootnotes = true;
-                    LayoutContext footnoteContext = new LayoutContext(context);
+                    LayoutContext footnoteContext = LayoutContext.copyOf(context);
                     footnoteContext.setStackLimitBP(context.getStackLimitBP());
                     footnoteContext.setRefIPD(pslm.getCurrentPV()
                             .getRegionReference(Constants.FO_REGION_BODY).getIPD());
@@ -473,7 +473,7 @@ public class PageBreaker extends AbstractBreaker {
 
                 SpaceResolver.performConditionalsNotification(elementList,
                         firstIndex, lastIndex, -1);
-                LayoutContext childLC = new LayoutContext(0);
+                LayoutContext childLC = LayoutContext.newInstance();
                 AreaAdditionUtil.addAreas(null,
                         new KnuthPossPosIter(elementList, firstIndex, lastIndex + 1),
                         childLC);
