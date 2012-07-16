@@ -504,8 +504,4 @@ public class BlockLayoutManager extends BlockStackingLayoutManager implements Co
         return true;
     }
 
-    public int getBreakBefore() {
-        return BreakOpportunityHelper.getBreakBefore(this);
-    }
-
 }

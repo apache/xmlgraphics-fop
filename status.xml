@@ -64,6 +64,9 @@
     -->
     <release version="FOP Trunk" date="TBD">
       <action context="Layout" dev="VH" type="fix">
+        An IllegalArgumentException was thrown when break-before was used inside a list.
+      </action>
+      <action context="Layout" dev="VH" type="fix">
         When restarting layout for the last page, discard glues and penalties at the beginning of 
         the restarted Knuth sequence.
       </action>

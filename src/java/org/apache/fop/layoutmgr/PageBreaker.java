@@ -521,7 +521,6 @@ public class PageBreaker extends AbstractBreaker {
             return;
         case Constants.EN_COLUMN:
         case Constants.EN_AUTO:
-        case Constants.EN_PAGE:
         case -1:
             PageViewport pv = curPage.getPageViewport();
 
@@ -545,6 +544,7 @@ public class PageBreaker extends AbstractBreaker {
                 /*curPage = */pslm.makeNewPage(false);
             }
             return;
+        case Constants.EN_PAGE:
         default:
             log.debug("handling break-before after page " + pslm.getCurrentPageNum()
                 + " breakVal=" + getBreakClassName(breakVal));
@@ -560,7 +560,7 @@ public class PageBreaker extends AbstractBreaker {
     }
 
     /**
-     * Check if a blank page is needed to accomodate
+     * Check if a blank page is needed to accommodate
      * desired even or odd page number.
      * @param breakVal - value of break-before or break-after trait.
      */
