@@ -506,7 +506,17 @@ public abstract class AbstractBreaker {
                 ListElement lastBreakElement = effectiveList.getElement(endElementIndex);
                 if (lastBreakElement.isPenalty()) {
                     KnuthPenalty pen = (KnuthPenalty)lastBreakElement;
-                    lastBreakClass = pen.getBreakClass();
+                    if (pen.getPenalty() == KnuthPenalty.INFINITE) {
+                        /**
+                         * That means that there was a keep.within-page="always", but that
+                         * it's OK to break at a column. TODO The break class is being
+                         * abused to implement keep.within-column and keep.within-page.
+                         * This is very misleading and must be revised.
+                         */
+                        lastBreakClass = Constants.EN_COLUMN;
+                    } else {
+                        lastBreakClass = pen.getBreakClass();
+                    }
                 } else {
                     lastBreakClass = Constants.EN_COLUMN;
                 }

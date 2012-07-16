@@ -1044,10 +1044,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
         return true;
     }
 
-    public int getBreakBefore() {
-        return BreakOpportunityHelper.getBreakBefore(this);
-    }
-
 }
 
 
