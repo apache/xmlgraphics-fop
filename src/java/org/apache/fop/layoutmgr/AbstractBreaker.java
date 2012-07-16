@@ -329,7 +329,7 @@ public abstract class AbstractBreaker {
      * @return the top-level LayoutContext
      */
     protected LayoutContext createLayoutContext() {
-        return new LayoutContext(0);
+        return LayoutContext.newInstance();
     }
 
     /**
@@ -481,6 +481,11 @@ public abstract class AbstractBreaker {
         addAreas(alg, 0, partCount, originalList, effectiveList);
     }
 
+    protected void addAreas(PageBreakingAlgorithm alg, int startPart, int partCount,
+            BlockSequence originalList, BlockSequence effectiveList) {
+        addAreas(alg, startPart, partCount, originalList, effectiveList, LayoutContext.newInstance());
+    }
+
     /**
      * Phase 3 of Knuth algorithm: Adds the areas
      * @param alg PageBreakingAlgorithm instance which determined the breaks
@@ -490,8 +495,7 @@ public abstract class AbstractBreaker {
      * @param effectiveList effective Knuth element list (after adjustments)
      */
     protected void addAreas(PageBreakingAlgorithm alg, int startPart, int partCount,
-            BlockSequence originalList, BlockSequence effectiveList) {
-        LayoutContext childLC;
+            BlockSequence originalList, BlockSequence effectiveList, final LayoutContext childLC) {
         int startElementIndex = 0;
         int endElementIndex = 0;
         int lastBreak = -1;
@@ -566,7 +570,6 @@ public abstract class AbstractBreaker {
                     log.debug("     addAreas from " + startElementIndex
                             + " to " + endElementIndex);
                 }
-                childLC = new LayoutContext(0);
                 // set the space adjustment ratio
                 childLC.setSpaceAdjust(pbp.bpdAdjust);
                 // add space before if display-align is center or bottom

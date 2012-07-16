@@ -488,7 +488,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager implements
 
         addId();
 
-        LayoutContext lc = new LayoutContext(0);
+        LayoutContext lc = LayoutContext.offspringOf(layoutContext);
         Position firstPos = null;
         Position lastPos = null;
 
