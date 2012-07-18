@@ -2311,8 +2311,8 @@
       <td><a name="fo-property-script" id="fo-property-script">script</a></td>
       <td class="extended">Extended</td>
       <td class="no">no</td>
-      <td class="no">yes</td>
-      <td class="no">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
       <td>Used with complex scripts features to override default script heuristics.</td>
     </tr>
     <tr>
