@@ -25,7 +25,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Shape;
@@ -44,6 +43,7 @@ import java.text.AttributedCharacterIterator;
 
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
+import org.apache.xmlgraphics.java2d.GraphicsConfigurationWithTransparency;
 import org.apache.xmlgraphics.util.UnitConv;
 
 /**
@@ -127,8 +127,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
 
     /** {@inheritDoc} */
     public GraphicsConfiguration getDeviceConfiguration() {
-        return GraphicsEnvironment.getLocalGraphicsEnvironment()
-                .getDefaultScreenDevice().getDefaultConfiguration();
+        return new GraphicsConfigurationWithTransparency();
     }
 
     /**
