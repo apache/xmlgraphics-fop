@@ -63,6 +63,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="MH" type="add" fixes-bug="53563" importance="low">
+        Removed a method call to the java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+        that could (in a headless environment) throw a java.awt.HeadlessException
+      </action>
       <action context="Renderers" dev="VH" type="add" importance="high">
         When PDF accessibility is enabled, treat repeated table headings as artifacts. This allows 
         screen readers to read the header only once at the beginning of the table and the footer 
