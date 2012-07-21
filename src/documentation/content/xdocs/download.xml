@@ -85,6 +85,25 @@
       <p/>
       <table>
         <tr>
+          <th colspan="2">This Candidate Release</th>
+        </tr>
+        <tr>
+          <td>Repository URL</td>
+          <td>
+            <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-1_1rc1/">
+              <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-1_1rc1/</code>
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>Web view</td>
+          <td>
+            <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-1_1rc1/">
+              <code>http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-1_1rc1/</code>
+            </link>
+          </td>
+        </tr>
+        <tr>
           <th colspan="2">Latest Stable Release</th>
         </tr>
         <tr>
@@ -109,7 +128,7 @@
         <tr>
           <td>Repository URL</td>
           <td>
-            <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_95/">
+            <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/tages/fop-0_95/">
               <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_95/</code>
             </link>
           </td>
@@ -168,9 +187,9 @@
       <title>Archive Download</title>
       <p>
         FOP Archive distributions are linked from the upper portion of the Apache FOP
-        Download Mirror Page and can be downloaded from the FOP Archives
-        <link href="http://archive.apache.org/dist/xmlgraphics/fop/binaries/">binaries</link> &amp;
-        <link href="http://archive.apache.org/dist/xmlgraphics/fop/source/">source</link> links.
+        Download Mirror Page and can be downloaded from the FOP 
+        <link href="http://archive.apache.org/dist/xmlgraphics/fop/binaries/">binaries</link> and
+        <link href="http://archive.apache.org/dist/xmlgraphics/fop/source/">source</link> archives.
       </p>
     </section>
   </body>

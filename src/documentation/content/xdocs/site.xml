@@ -29,13 +29,9 @@
     <faqs label="FAQs" href="faq.html"/>
     <maillist label="Mailing Lists" href="maillist.html"/>
     <license label="License" href="license.html"/>
-    <asf-sponsorship label="ASF Sponsorship Program" href="http://www.apache.org/foundation/sponsorship.html"/>"
-    <asf-thanks label="ASF Thanks" href="http://www.apache.org/foundation/thanks.html"/>"
-	<asf-security label="Security" href="http://www.apache.org/security/"/>
-    <!--
-    <all_site label="Full HTML" href="wholesite.html"/>
-    <all_sitePDF label="Full PDF" href="wholesite.pdf"/>
-    -->
+    <asf-sponsorship label="ASF Sponsorship Program" href="http://www.apache.org/foundation/sponsorship.html"/>
+    <asf-thanks label="ASF Thanks" href="http://www.apache.org/foundation/thanks.html"/>
+    <asf-security label="Security" href="http://www.apache.org/security/"/>
   </about>
 
   <resources label="Resources">
@@ -59,47 +55,9 @@
   -->
   
   <!--
-  BEGIN Version 0.95 documentation tab
-  -->
-  <trunk label="Apache™ FOP 0.95" href="0.95/" tab="previousversion">
-    <about label="About" href="index.html"/>
-    <release label="Release Notes" href="releaseNotes_0.95.html"/>
-    <changes label="Changes (0.95)" href="changes_0.95.html"/>
-    <changes-beta label="Changes (0.95beta)" href="changes_0.95beta.html"/>
-    <knownissues label="Known Issues" href="knownissues_overview.html"/>
-    <upgrading label="Upgrading" href="upgrading.html"/>
-    
-    <using label="Using Apache™ FOP">
-      <build label="Build" href="compiling.html"/>
-      <config label="Configure" href="configuration.html"/>
-      <run label="Run" href="running.html"/>
-      <embed label="Embed" href="embedding.html"/>
-      <servlet label="Servlets" href="servlets.html"/>
-      <ant label="Ant Task" href="anttask.html"/>
-    </using>
-
-    <features label="Features">
-      <output label="Output Targets" href="output.html"/>
-      <if label="Intermediate Format" href="intermediate.html"/>
-      <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
-      <pdfa label="PDF/A" href="pdfa.html"/>
-      <pdfx label="PDF/X" href="pdfx.html"/>
-      <graphics label="Graphics" href="graphics.html"/>
-      <fonts label="Fonts" href="fonts.html"/>
-      <hyphenation label="Hyphenation" href="hyphenation.html"/>    
-      <extensions label="Extensions" href="extensions.html"/>
-      <metadata label="Metadata" href="metadata.html"/>
-    </features>
-    
-  </trunk>
-  <!--
-  END Version 0.95 documentation tab
-  -->
-  
-  <!--
   BEGIN Version 1.0 documentation tab
   -->
-  <trunk label="Apache™ FOP 1.0" href="1.0/" tab="stableversion">
+  <trunk label="Apache™ FOP 1.0" href="1.0/" tab="previousversion">
     <about label="About" href="index.html"/>
     <release label="Release Notes" href="releaseNotes_1.0.html"/>
     <changes label="Changes (1.0)" href="changes_1.0.html"/>
@@ -107,32 +65,72 @@
     <upgrading label="Upgrading" href="upgrading.html"/>
     
     <using label="Using Apache™ FOP">
+      <ant label="Ant Task" href="anttask.html"/>
       <build label="Build" href="compiling.html"/>
       <config label="Configure" href="configuration.html"/>
-      <run label="Run" href="running.html"/>
       <embed label="Embed" href="embedding.html"/>
+      <run label="Run" href="running.html"/>
       <servlet label="Servlets" href="servlets.html"/>
-      <ant label="Ant Task" href="anttask.html"/>
     </using>
 
     <features label="Features">
+      <accessibility label="Accessibility" href="accessibility.html"/>
+      <events label="Events" href="events.html"/>
+      <extensions label="Extensions" href="extensions.html"/>
+      <fonts label="Fonts" href="fonts.html"/>
       <output label="Output Targets" href="output.html"/>
+      <graphics label="Graphics" href="graphics.html"/>
+      <hyphenation label="Hyphenation" href="hyphenation.html"/>    
       <if label="Intermediate Format" href="intermediate.html"/>
-      <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
+      <metadata label="Metadata" href="metadata.html"/>
       <pdfa label="PDF/A" href="pdfa.html"/>
       <pdfx label="PDF/X" href="pdfx.html"/>
-      <graphics label="Graphics" href="graphics.html"/>
-      <fonts label="Fonts" href="fonts.html"/>
-      <hyphenation label="Hyphenation" href="hyphenation.html"/>    
-      <extensions label="Extensions" href="extensions.html"/>
-      <events label="Events" href="events.html"/>
-      <metadata label="Metadata" href="metadata.html"/>
-      <accessibility label="Accessibility" href="accessibility.html"/>
+      <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
     </features>
     
   </trunk>
   <!--
   END Version 1.0 documentation tab
+  -->
+
+  <!--
+  BEGIN Version 1.1rc1 documentation tab
+  -->
+  <trunk label="Apache™ FOP 1.1rc1" href="1.1rc1/" tab="stableversion">
+    <about label="About" href="index.html"/>
+    <release label="Release Notes" href="releaseNotes_1.1rc1.html"/>
+    <changes label="Changes (1.1rc1)" href="changes_1.1rc1.html"/>
+    <knownissues label="Known Issues" href="knownissues_overview.html"/>
+    <upgrading label="Upgrading" href="upgrading.html"/>
+    
+    <using label="Using Apache™ FOP">
+      <ant label="Ant Task" href="anttask.html"/>
+      <build label="Build" href="compiling.html"/>
+      <config label="Configure" href="configuration.html"/>
+      <embed label="Embed" href="embedding.html"/>
+      <run label="Run" href="running.html"/>
+      <servlet label="Servlets" href="servlets.html"/>
+    </using>
+
+    <features label="Features">
+      <accessibility label="Accessibility" href="accessibility.html"/>
+      <complexscripts label="Complex Scripts" href="complexscripts.html"/>
+      <events label="Events" href="events.html"/>
+      <extensions label="Extensions" href="extensions.html"/>
+      <fonts label="Fonts" href="fonts.html"/>
+      <graphics label="Graphics" href="graphics.html"/>
+      <hyphenation label="Hyphenation" href="hyphenation.html"/>    
+      <if label="Intermediate Format" href="intermediate.html"/>
+      <metadata label="Metadata" href="metadata.html"/>
+      <output label="Output Targets" href="output.html"/>
+      <pdfa label="PDF/A" href="pdfa.html"/>
+      <pdfx label="PDF/X" href="pdfx.html"/>
+      <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
+    </features>
+    
+  </trunk>
+  <!--
+  END Version 1.1rc1 documentation tab
   -->
 
   <!--
@@ -143,20 +141,14 @@
     <upgrading label="Upgrading" href="upgrading.html"/>
     
     <using label="Using Apache™ FOP">
+      <ant label="Ant Task" href="anttask.html"/>
       <build label="Build" href="compiling.html"/>
       <config label="Configure" href="configuration.html"/>
-      <run label="Run" href="running.html"/>
       <embed label="Embed" href="embedding.html"/>
+      <run label="Run" href="running.html"/>
       <servlet label="Servlets" href="servlets.html"/>
-      <ant label="Ant Task" href="anttask.html"/>
     </using>
 
-    <!--
-        NOTA BENE NOTA BENE NOTA BENE 
-        The following features should be maintained in alphabetic order by
-        (displayed) label value.
-        NOTA BENE NOTA BENE NOTA BENE 
-    -->
     <features label="Features">
       <accessibility label="Accessibility" href="accessibility.html"/>
       <complexscripts label="Complex Scripts" href="complexscripts.html"/>
