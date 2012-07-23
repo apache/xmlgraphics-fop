@@ -462,10 +462,9 @@ public final class FontCache implements Serializable {
     }
 
     /**
-     * Retrieve the last modified date/time of a URL.
+     * Retrieve the last modified date/time of a URI.
      *
-     * @param url
-     *            the URL
+     * @param uri the URI
      * @return the last modified date/time
      */
     public static long getLastModified(URI uri) {
