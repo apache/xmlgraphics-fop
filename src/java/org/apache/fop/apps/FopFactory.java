@@ -325,46 +325,39 @@ public final class FopFactory implements ImageContext {
         return config.isAccessibilityEnabled();
     }
 
-    /**
-     * Returns the image manager.
-     * @return the image manager
-     */
+    /** @see FopFactoryConfig#getImageManager() */
     public ImageManager getImageManager() {
         return config.getImageManager();
     }
 
-    /**
-     * Returns the overriding LayoutManagerMaker instance, if any.
-     * @return the overriding LayoutManagerMaker or null
-     */
+    /** @see FopFactoryConfig#getLayoutManagerMakerOverride() */
     public LayoutManagerMaker getLayoutManagerMakerOverride() {
         return config.getLayoutManagerMakerOverride();
     }
 
-    /** @return the hyphenation pattern names */
+    /** @see FopFactoryConfig#getHyphenationPatternNames() */
     public Map<String, String> getHyphenationPatternNames() {
         return config.getHyphenationPatternNames();
     }
 
-    /**
-     * Returns whether FOP is strictly validating input XSL
-     * @return true of strict validation turned on, false otherwise
-     */
+    /** @see FopFactoryConfig#validateStrictly() */
     public boolean validateStrictly() {
         return config.validateStrictly();
     }
 
-    /**
-     * @return true if the indent inheritance should be broken when crossing reference area
-     *         boundaries (for more info, see the javadoc for the relative member variable)
-     */
+    /** @see FopFactoryConfig#isBreakIndentInheritanceOnReferenceAreaBoundary() */
     public boolean isBreakIndentInheritanceOnReferenceAreaBoundary() {
         return config.isBreakIndentInheritanceOnReferenceAreaBoundary();
     }
 
-    /** @return the resolution for resolution-dependent input */
+    /** @see FopFactoryConfig#getSourceResolution() */
     public float getSourceResolution() {
         return config.getSourceResolution();
+    }
+
+    /** @see FopFactoryConfig#getTargetResolution() */
+    public float getTargetResolution() {
+        return config.getTargetResolution();
     }
 
     /**
@@ -377,11 +370,6 @@ public final class FopFactory implements ImageContext {
         return UnitConv.IN2MM / getSourceResolution();
     }
 
-    /** @return the resolution for resolution-dependant output */
-    public float getTargetResolution() {
-        return config.getTargetResolution();
-    }
-
     /**
      * Returns the conversion factor from pixel units to millimeters. This
      * depends on the desired target resolution.
@@ -392,41 +380,25 @@ public final class FopFactory implements ImageContext {
         return 25.4f / getTargetResolution();
     }
 
-    /**
-     * Gets the default page-height to use as fallback,
-     * in case page-height="auto"
-     *
-     * @return the page-height, as a String
-     */
+    /** @see FopFactoryConfig#getPageHeight() */
     public String getPageHeight() {
         return config.getPageHeight();
     }
 
-    /**
-     * Gets the default page-width to use as fallback,
-     * in case page-width="auto"
-     *
-     * @return the page-width, as a String
-     */
+    /** @see FopFactoryConfig#getPageWidth() */
     public String getPageWidth() {
         return config.getPageWidth();
     }
 
-    /**
-     * Indicates whether a namespace URI is on the ignored list.
-     * @param namespaceURI the namespace URI
-     * @return true if the namespace is ignored by FOP
-     */
+    /** @see FopFactoryConfig#isNamespaceIgnored(String) */
     public boolean isNamespaceIgnored(String namespaceURI) {
         return config.isNamespaceIgnored(namespaceURI);
     }
 
-    /** @return the set of namespaces that are ignored by FOP */
+    /** @see FopFactoryConfig#getIgnoredNamespaces() */
     public Set<String> getIgnoredNamespace() {
         return config.getIgnoredNamespaces();
     }
-
-    //------------------------------------------- Configuration stuff
 
     /**
      * Get the user configuration.
@@ -436,20 +408,12 @@ public final class FopFactory implements ImageContext {
         return config.getUserConfig();
     }
 
-    /**
-     * Is the user configuration to be validated?
-     * @return if the user configuration should be validated
-     */
+    /** @see FopFactoryConfig#validateUserConfigStrictly() */
     public boolean validateUserConfigStrictly() {
         return config.validateUserConfigStrictly();
     }
 
-    //------------------------------------------- Font related stuff
-
-    /**
-     * Returns the font manager.
-     * @return the font manager
-     */
+    /** @see FopFactoryConfig#getFontManager() */
     public FontManager getFontManager() {
         return config.getFontManager();
     }

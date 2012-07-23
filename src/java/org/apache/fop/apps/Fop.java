@@ -52,7 +52,7 @@ public class Fop {
     private OutputStream stream = null;
 
     // FOUserAgent object to set processing options
-    private FOUserAgent foUserAgent = null;
+    private final FOUserAgent foUserAgent;
 
     // FOTreeBuilder object to maintain reference for access to results
     private FOTreeBuilder foTreeBuilder = null;
@@ -81,6 +81,10 @@ public class Fop {
     /**
      * Get the FOUserAgent instance associated with the rendering run represented by this instance.
      * @return the user agent
+     *
+     * @deprecated this getter doesn't need to exist. By virtue of the fact that the client has
+     * an instance of this object, it means they also have the {@link FOUserAgent} since this's
+     * constructor is only used in {@link FOUserAgent}
      */
     public FOUserAgent getUserAgent() {
         return foUserAgent;
