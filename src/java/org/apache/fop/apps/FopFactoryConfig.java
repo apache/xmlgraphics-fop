@@ -67,7 +67,10 @@ public interface FopFactoryConfig {
      */
     boolean isAccessibilityEnabled();
 
-    /** @see {@link FopFactory#getLayoutManagerMakerOverride()} */
+    /**
+     * Returns the overriding LayoutManagerMaker instance, if any.
+     * @return the overriding LayoutManagerMaker or null
+     */
     LayoutManagerMaker getLayoutManagerMakerOverride();
 
     /**
@@ -84,31 +87,54 @@ public interface FopFactoryConfig {
      */
     URI getBaseURI();
 
-    /** @see {@link FopFactory#validateStrictly()} */
+    /**
+     * Returns whether FOP is strictly validating input XSL
+     * @return true of strict validation turned on, false otherwise
+     */
     boolean validateStrictly();
 
-    /** @see {@link FopFactory#validateUserConfigStrictly()} */
+    /**
+     * Is the user configuration to be validated?
+     * @return if the user configuration should be validated
+     */
     boolean validateUserConfigStrictly();
 
-    /** @see {@link FopFactory#isBreakIndentInheritanceOnReferenceAreaBoundary()} */
+    /**
+     * @return true if the indent inheritance should be broken when crossing reference area
+     * boundaries (for more info, see the javadoc for the relative member variable)
+     */
     boolean isBreakIndentInheritanceOnReferenceAreaBoundary();
 
-    /** @see {@link FopFactory#getSourceResolution()} */
+    /** @return the resolution for resolution-dependent input */
     float getSourceResolution();
 
-    /** @see {@link FopFactory#getTargetResolution()} */
+    /** @return the resolution for resolution-dependent output */
     float getTargetResolution();
 
-    /** @see {@link FopFactory#getPageHeight()} */
+    /**
+     * Gets the default page-height to use as fallback,
+     * in case page-height="auto"
+     *
+     * @return the page-height, as a String
+     */
     String getPageHeight();
 
-    /** @see {@link FopFactory#getPageWidth()} */
+    /**
+     * Gets the default page-width to use as fallback,
+     * in case page-width="auto"
+     *
+     * @return the page-width, as a String
+     */
     String getPageWidth();
 
-    /** @see {@link FopFactory#getIgnoredNamespace()} */
+    /** @return the set of namespaces that are ignored by FOP */
     Set<String> getIgnoredNamespaces();
 
-    /** @see {@link FopFactory#isNamespaceIgnored(String)} */
+    /**
+     * Indicates whether a namespace URI is on the ignored list.
+     * @param namespace the namespace URI
+     * @return true if the namespace is ignored by FOP
+     */
     boolean isNamespaceIgnored(String namespace);
 
     /**
@@ -118,17 +144,23 @@ public interface FopFactoryConfig {
      */
     Configuration getUserConfig();
 
-    /** @see {@link org.apache.fop.render.RendererFactory#isRendererPreferred()} */
+    /** @see org.apache.fop.render.RendererFactory#isRendererPreferred() */
     boolean preferRenderer();
 
-    /** @see {@link FopFactory#getFontManager()} */
+    /**
+     * Returns the font manager.
+     * @return the font manager
+     */
     FontManager getFontManager();
 
-    /** @see {@link FopFactory#getImageManager()} */
+    /**
+     * Returns the image manager.
+     * @return the image manager
+     */
     ImageManager getImageManager();
 
     boolean isComplexScriptFeaturesEnabled();
 
-    /** @see {@link FopFactory#getHyphenationPatternNames()} */
+    /** @return the hyphenation pattern names */
     Map<String, String> getHyphenationPatternNames();
 }

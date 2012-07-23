@@ -166,7 +166,7 @@ public class FOUserAgent {
      * requires an output stream and you want to configure this very rendering run,
      * i.e. if you want to set some metadata like the title and author of the document
      * you want to render. In that case, create a new {@link FOUserAgent} instance
-     * using {@link #newFOUserAgent()}.
+     * using {@link org.apache.fop.apps.FopFactory#newFOUserAgent() newFOUserAgent()}.
      * <p>
      * MIME types are used to select the output format (ex. "application/pdf" for PDF). You can
      * use the constants defined in {@link MimeConstants}.
@@ -184,7 +184,7 @@ public class FOUserAgent {
      * Returns a new {@link Fop} instance. Use this factory method if you want to configure this
      * very rendering run, i.e. if you want to set some metadata like the title and author of the
      * document you want to render. In that case, create a new {@link FOUserAgent}
-     * instance using {@link #newFOUserAgent()}.
+     * instance using {@link org.apache.fop.apps.FopFactory#newFOUserAgent() newFOUserAgent()}.
      * <p>
      * MIME types are used to select the output format (ex. "application/pdf" for PDF). You can
      * use the constants defined in {@link MimeConstants}.
@@ -791,9 +791,8 @@ public class FOUserAgent {
         return factory.getColorSpaceCache();
     }
 
-    /** @see {@link FopFactory#getHyphenationPatternNames()} */
+    /** @see FopFactory#getHyphenationPatternNames() */
     public Map<String, String> getHyphenationPatternNames() {
         return factory.getHyphenationPatternNames();
     }
 }
-
