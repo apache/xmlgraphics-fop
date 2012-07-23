@@ -30,7 +30,6 @@ public final class StreamCacheFactory {
 
     /**
      * Returns an instance of a StreamCacheFactory with the requested features.
-     * @param cacheToFile True if file shall be cached using a temporary file
      * @return StreamCacheFactory the requested factory
      */
     public static StreamCacheFactory getInstance() {

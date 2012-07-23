@@ -136,7 +136,7 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
 
     /**
      * @return {@link org.apache.fop.area.inline.UnresolvedPageNumber#FIRST} or
-     * {@linkorg.apache.fop.area.inline.UnresolvedPageNumber#LAST}
+     * {@link org.apache.fop.area.inline.UnresolvedPageNumber#LAST}
      */
     protected abstract boolean getReferenceType();
 
