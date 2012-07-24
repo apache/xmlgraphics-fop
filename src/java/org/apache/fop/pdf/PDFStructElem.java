@@ -33,12 +33,16 @@ import org.apache.fop.util.LanguageTags;
  */
 public class PDFStructElem extends PDFDictionary implements StructureTreeElement, CompressedObject {
 
+    private static final PDFName TABLE = new PDFName("Table");
+
     private PDFStructElem parentElement;
 
     /**
      * Elements to be added to the kids array.
      */
     protected List<PDFObject> kids;
+
+    private List<PDFDictionary> attributes;
 
     /**
      * Creates a new structure element.
@@ -143,7 +147,19 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
     @Override
     protected void writeDictionary(OutputStream out, StringBuilder textBuffer) throws IOException {
         attachKids();
+        attachAttributes();
         super.writeDictionary(out, textBuffer);
+    }
+
+    private void attachAttributes() {
+        if (attributes != null) {
+            if (attributes.size() == 1) {
+                put("A", attributes.get(0));
+            } else {
+                PDFArray array = new PDFArray(attributes);
+                put("A", array);
+            }
+        }
     }
 
     /**
@@ -173,6 +189,24 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
             put("K", array);
         }
         return kidsAttached;
+    }
+
+    public void setTableAttributeColSpan(int colSpan) {
+        setTableAttributeRowColumnSpan("ColSpan", colSpan);
+    }
+
+    public void setTableAttributeRowSpan(int rowSpan) {
+        setTableAttributeRowColumnSpan("RowSpan", rowSpan);
+    }
+
+    private void setTableAttributeRowColumnSpan(String typeSpan, int span) {
+        PDFDictionary attribute = new PDFDictionary();
+        attribute.put("O", TABLE);
+        attribute.put(typeSpan, span);
+        if (attributes == null) {
+            attributes = new ArrayList<PDFDictionary>(2);
+        }
+        attributes.add(attribute);
     }
 
     /**

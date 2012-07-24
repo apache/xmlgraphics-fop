@@ -90,9 +90,21 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         PDFStructElem parent = ancestors.getFirst();
         String role = attributes.getValue("role");
         PDFStructElem structElem = createStructureElement(name, parent, role);
+        setSpanAttributes(structElem, attributes);
         parent.addKid(structElem);
         ancestors.addFirst(structElem);
         return structElem;
+    }
+
+    private void setSpanAttributes(PDFStructElem structElem, Attributes attributes) {
+        String columnSpan = attributes.getValue("number-columns-spanned");
+        if (columnSpan != null) {
+            structElem.setTableAttributeColSpan(Integer.parseInt(columnSpan));
+        }
+        String rowSpan = attributes.getValue("number-rows-spanned");
+        if (rowSpan != null) {
+            structElem.setTableAttributeRowSpan(Integer.parseInt(rowSpan));
+        }
     }
 
     public void endNode(String name) {

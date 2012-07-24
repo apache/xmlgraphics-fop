@@ -221,12 +221,15 @@ class StructureTreeEventTrigger extends FOEventHandler {
     @Override
     public void startCell(TableCell tc) {
         AttributesImpl attributes = new AttributesImpl();
-        int colSpan = tc.getNumberColumnsSpanned();
-        if (colSpan > 1) {
-            addNoNamespaceAttribute(attributes, "number-columns-spanned",
-                    Integer.toString(colSpan));
-        }
+        addSpanAttribute(attributes, "number-columns-spanned", tc.getNumberColumnsSpanned());
+        addSpanAttribute(attributes, "number-rows-spanned", tc.getNumberRowsSpanned());
         startElement(tc, attributes);
+    }
+
+    private void addSpanAttribute(AttributesImpl attributes, String attributeName, int span) {
+        if (span > 1) {
+            addNoNamespaceAttribute(attributes, attributeName, Integer.toString(span));
+        }
     }
 
     @Override
