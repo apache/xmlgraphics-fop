@@ -62,6 +62,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="add" fixes-bug="53596">
+        When PDF accessibility is enabled, the structure tree must contain information about the 
+        number of columns or rows spanned by a table cell.
+      </action>
       <action context="Renderers" dev="MH" type="add" fixes-bug="53563" importance="low">
         Removed a method call to the java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
         that could (in a headless environment) throw a java.awt.HeadlessException
