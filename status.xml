@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="MH" type="add" fixes-bug="53600" due-to="Robert Meyer">
+        Added an event if a glyph and its metric information does not exist in the character set
+      </action>
       <action context="Renderers" dev="VH" type="add" fixes-bug="53596">
         When PDF accessibility is enabled, the structure tree must contain information about the 
         number of columns or rows spanned by a table cell.
