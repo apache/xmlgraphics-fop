@@ -113,4 +113,13 @@ public interface AFPEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void invalidConfiguration(Object source, Exception e);
+
+    /**
+     * The characterset is missing metric information for the specified character
+     * @param source the event source
+     * @param character the character with missing metric information.
+     * @param charSet the character set containing missing metric information
+     * @event.severity WARN
+     */
+    void charactersetMissingMetrics(Object source, char character, String charSet);
 }
