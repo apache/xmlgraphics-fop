@@ -83,6 +83,15 @@ public final class ResourceResolverFactory {
         return new TempAwareResourceResolver(tempResourceResolver, defaultResourceResolver);
     }
 
+    /**
+     * This creates the builder class for binding URI schemas to implementations of
+     * {@link ResourceResolver}. This allows users to define their own URI schemas such that they
+     * have finer control over the acquisition of resources.
+     *
+     * @param defaultResolver the default resource resolver that should be used in the event that
+     * none of the other registered resolvers match the schema
+     * @return the schema aware {@link ResourceResolver} builder
+     */
     public static SchemaAwareResourceResolverBuilder createSchemaAwareResourceResolverBuilder(
             ResourceResolver defaultResolver) {
         return new SchemaAwareResourceResolverBuilderImpl(defaultResolver);
@@ -99,10 +108,12 @@ public final class ResourceResolverFactory {
                     new NormalResourceResolver());
         }
 
+        /** {@inheritDoc} */
         public Resource getResource(URI uri) throws IOException {
             return delegate.getResource(uri);
         }
 
+        /** {@inheritDoc} */
         public OutputStream getOutputStream(URI uri) throws IOException {
             return delegate.getOutputStream(uri);
         }
@@ -125,6 +136,7 @@ public final class ResourceResolverFactory {
             return TempResourceURIGenerator.isTempUri(uri);
         }
 
+        /** {@inheritDoc} */
         public Resource getResource(URI uri) throws IOException {
             if (isTempUri(uri)) {
                 return tempResourceResolver.getResource(uri.getPath());
@@ -133,6 +145,7 @@ public final class ResourceResolverFactory {
             }
         }
 
+        /** {@inheritDoc} */
         public OutputStream getOutputStream(URI uri) throws IOException {
             if (isTempUri(uri)) {
                 return tempResourceResolver.getOutputStream(uri.getPath());
@@ -140,7 +153,6 @@ public final class ResourceResolverFactory {
                 return defaultResourceResolver.getOutputStream(uri);
             }
         }
-
     }
 
     private static class DefaultTempResourceResolver implements TempResourceResolver {
@@ -150,10 +162,12 @@ public final class ResourceResolverFactory {
             return file;
         }
 
+        /** {@inheritDoc} */
         public Resource getResource(String id) throws IOException {
             return new Resource(getTempFile(id).toURI().toURL().openStream());
         }
 
+        /** {@inheritDoc} */
         public OutputStream getOutputStream(String id) throws IOException {
             File file = getTempFile(id);
             if (file.createNewFile()) {
@@ -196,19 +210,52 @@ public final class ResourceResolverFactory {
             }
         }
 
+        /** {@inheritDoc} */
         public Resource getResource(URI uri) throws IOException {
             return getResourceResolverForSchema(uri).getResource(uri);
         }
 
+        /** {@inheritDoc} */
         public OutputStream getOutputStream(URI uri) throws IOException {
             return getResourceResolverForSchema(uri).getOutputStream(uri);
         }
     }
 
+    /**
+     * Implementations of this interface will be builders for {@link ResourceResolver}, they bind
+     * URI schemas to their respective resolver. This gives users more control over the mechanisms
+     * by which URIs are resolved.
+     * <p>
+     * Here is an example of how this could be used:
+     * </p>
+     * <p><code>
+     * SchemaAwareResourceResolverBuilder builder
+     *      = ResourceResolverFactory.createSchemaAwareResourceResolverBuilder(defaultResolver);
+     * builder.registerResourceResolverForSchema("test", testResolver);
+     * builder.registerResourceResolverForSchema("anotherTest", test2Resolver);
+     * ResourceResolver resolver = builder.build();
+     * </code></p>
+     * This will result in all URIs for the form "test:///..." will be resolved using the
+     * <code>testResolver</code> object; URIs of the form "anotherTest:///..." will be resolved
+     * using <code>test2Resolver</code>; all other URIs will be resolved from the defaultResolver.
+     */
     public interface SchemaAwareResourceResolverBuilder {
 
+        /**
+         * Register a schema with its respective {@link ResourceResolver}. This resolver will be
+         * used as the only resolver for the specified schema.
+         *
+         * @param schema the schema to be used with the given resolver
+         * @param resourceResolver the resource resolver
+         */
         void registerResourceResolverForSchema(String schema, ResourceResolver resourceResolver);
 
+        /**
+         * Builds a {@link ResourceResolver} that will delegate to the respective resource resolver
+         * when a registered URI schema is given
+         *
+         * @return a resolver that delegates to the appropriate schema resolver
+         */
         ResourceResolver build();
     }
 
@@ -218,10 +265,12 @@ public final class ResourceResolverFactory {
         private static final SchemaAwareResourceResolverBuilder INSTANCE
                 = new CompletedSchemaAwareResourceResolverBuilder();
 
+        /** {@inheritDoc} */
         public ResourceResolver build() {
             throw new IllegalStateException("Resource resolver already built");
         }
 
+        /** {@inheritDoc} */
         public void registerResourceResolverForSchema(String schema,
                 ResourceResolver resourceResolver) {
             throw new IllegalStateException("Resource resolver already built");
@@ -240,11 +289,13 @@ public final class ResourceResolverFactory {
             this.defaultResolver = defaultResolver;
         }
 
+        /** {@inheritDoc} */
         public void registerResourceResolverForSchema(String schema,
                 ResourceResolver resourceResolver) {
             schemaHandlingResourceResolvers.put(schema, resourceResolver);
         }
 
+        /** {@inheritDoc} */
         public ResourceResolver build() {
             return new SchemaAwareResourceResolver(
                     Collections.unmodifiableMap(schemaHandlingResourceResolvers), defaultResolver);
@@ -261,11 +312,13 @@ public final class ResourceResolverFactory {
             this.delegate = new ActiveSchemaAwareResourceResolverBuilder(defaultResolver);
         }
 
+        /** {@inheritDoc} */
         public void registerResourceResolverForSchema(String schema,
                 ResourceResolver resourceResolver) {
             delegate.registerResourceResolverForSchema(schema, resourceResolver);
         }
 
+        /** {@inheritDoc} */
         public ResourceResolver build() {
             ResourceResolver resourceResolver = delegate.build();
             delegate = CompletedSchemaAwareResourceResolverBuilder.INSTANCE;
