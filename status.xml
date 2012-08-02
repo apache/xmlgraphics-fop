@@ -62,6 +62,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="add" fixes-bug="53639">
+        When PDF accessibility is enabled, the Scope attribute must be present in the structure tree 
+        for table header elements.
+      </action>
       <action context="Fonts" dev="MH" type="add" fixes-bug="53600" due-to="Robert Meyer">
         Added an event if a glyph and its metric information does not exist in the character set
       </action>
