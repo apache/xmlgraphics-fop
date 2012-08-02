@@ -202,7 +202,8 @@ public class PDFProfile {
             PDFDictionary markInfo = getDocument().getRoot().getMarkInfo();
             if (markInfo == null) {
                 throw new PDFConformanceException(format(
-                        "{0} requires the MarkInfo dictionary to be present", getPDFAMode()));
+                        "{0} requires that the accessibility option in the configuration file be enabled",
+                        getPDFAMode()));
             }
             if (!Boolean.TRUE.equals(markInfo.get("Marked"))) {
                 throw new PDFConformanceException(format(err,
