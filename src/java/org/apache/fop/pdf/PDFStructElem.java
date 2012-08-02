@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.fop.accessibility.StructureTreeElement;
+import org.apache.fop.pdf.StandardStructureAttributes.Table;
 import org.apache.fop.util.LanguageTags;
 
 /**
@@ -33,7 +34,7 @@ import org.apache.fop.util.LanguageTags;
  */
 public class PDFStructElem extends PDFDictionary implements StructureTreeElement, CompressedObject {
 
-    private static final PDFName TABLE = new PDFName("Table");
+    private StructureType structureType;
 
     private PDFStructElem parentElement;
 
@@ -50,12 +51,17 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
      * @param parent parent of this element
      * @param structureType the structure type of this element
      */
-    PDFStructElem(PDFObject parent, PDFName structureType) {
+    PDFStructElem(PDFObject parent, StructureType structureType) {
+        this(parent);
+        this.structureType = structureType;
+        put("S", structureType.getName());
+        setParent(parent);
+    }
+
+    private PDFStructElem(PDFObject parent) {
         if (parent instanceof PDFStructElem) {
             parentElement = (PDFStructElem) parent;
         }
-        put("S", structureType);
-        setParent(parent);
     }
 
     /**
@@ -113,8 +119,8 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
      *
      * @return the value of the S entry
      */
-    public PDFName getStructureType() {
-        return (PDFName) get("S");
+    public StructureType getStructureType() {
+        return structureType;
     }
 
     /**
@@ -201,7 +207,7 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
 
     private void setTableAttributeRowColumnSpan(String typeSpan, int span) {
         PDFDictionary attribute = new PDFDictionary();
-        attribute.put("O", TABLE);
+        attribute.put("O", Table.NAME);
         attribute.put(typeSpan, span);
         if (attributes == null) {
             attributes = new ArrayList<PDFDictionary>(2);
@@ -228,13 +234,8 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
             }
         }
 
-        /**
-         * Constructor
-         * @param parent -
-         * @param name -
-         */
-        public Placeholder(PDFObject parent, String name) {
-            super(parent, new PDFName(name));
+        public Placeholder(PDFObject parent) {
+            super(parent);
         }
     }
 

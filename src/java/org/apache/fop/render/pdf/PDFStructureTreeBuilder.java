@@ -29,17 +29,17 @@ import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.pdf.PDFFactory;
-import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFObject;
 import org.apache.fop.pdf.PDFParentTree;
 import org.apache.fop.pdf.PDFStructElem;
 import org.apache.fop.pdf.PDFStructTreeRoot;
+import org.apache.fop.pdf.StandardStructureAttributes.Table.Scope;
+import org.apache.fop.pdf.StandardStructureTypes.Table;
+import org.apache.fop.pdf.StructureType;
 
 class PDFStructureTreeBuilder implements StructureTreeEventHandler {
 
     private PDFFactory pdfFactory;
-
-    private PDFLogicalStructureHandler logicalStructureHandler;
 
     private EventBroadcaster eventBroadcaster;
 
@@ -52,11 +52,10 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     }
 
     void setLogicalStructureHandler(PDFLogicalStructureHandler logicalStructureHandler) {
-        this.logicalStructureHandler = logicalStructureHandler;
-        createRootStructureElement();
+        createRootStructureElement(logicalStructureHandler);
     }
 
-    private void createRootStructureElement() {
+    private void createRootStructureElement(PDFLogicalStructureHandler logicalStructureHandler) {
         assert rootStructureElement == null;
         PDFParentTree parentTree = logicalStructureHandler.getParentTree();
         PDFStructTreeRoot structTreeRoot = pdfFactory.getDocument().makeStructTreeRoot(parentTree);
@@ -79,8 +78,13 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     }
 
     private PDFStructElem createStructureElement(String name, PDFObject parent, String role) {
-        PDFName structureType = FOToPDFRoleMap.mapFormattingObject(name, role, parent, eventBroadcaster);
-        return pdfFactory.getDocument().makeStructureElement(structureType, parent);
+        StructureType structureType = FOToPDFRoleMap.mapFormattingObject(name, role, parent,
+                eventBroadcaster);
+        if (structureType == Table.TH) {
+            return pdfFactory.getDocument().makeStructureElement(structureType, parent, Scope.COLUMN);
+        } else {
+            return pdfFactory.getDocument().makeStructureElement(structureType, parent);
+        }
     }
 
     public void endPageSequence() {
@@ -135,7 +139,7 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         String role = attributes.getValue("role");
         PDFStructElem structElem;
         if ("#PCDATA".equals(name)) {
-            structElem = new PDFStructElem.Placeholder(parent, name);
+            structElem = new PDFStructElem.Placeholder(parent);
         } else {
             structElem = createStructureElement(name, parent, role);
         }
