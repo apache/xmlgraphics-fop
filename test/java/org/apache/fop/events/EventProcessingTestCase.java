@@ -22,6 +22,9 @@ package org.apache.fop.events;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -62,9 +65,10 @@ public class EventProcessingTestCase {
         CONFIG_BASE_DIR = base.resolve("test/config/");
 
     }
-    public void doTest(InputStream inStream, URI fopConf, String expectedEventID, String mimeType)
-            throws Exception {
-        EventChecker eventChecker = new EventChecker(expectedEventID);
+
+    public void doTest(InputStream inStream, URI fopConf, String expectedEventID, String mimeType,
+            Map<String, Object> expectedParams) throws Exception {
+        EventChecker eventChecker = new EventChecker(expectedEventID, expectedParams);
         FopFactory fopFactory;
         if (fopConf != null) {
             fopFactory = FopFactory.newInstance(new File(fopConf));
@@ -81,6 +85,19 @@ public class EventProcessingTestCase {
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
         eventChecker.end();
+
+    }
+
+    public void doTest(InputStream inStream, URI fopConf, String expectedEventID, String mimeType)
+            throws Exception {
+        Map<String, Object> noParams = Collections.emptyMap();
+        doTest(inStream, fopConf, expectedEventID, mimeType, noParams);
+    }
+
+    public void doTest(String filename, String expectedEventID, Map<String, Object> expectedParams)
+            throws Exception {
+        doTest(BASE_DIR.resolve(filename).toURL().openStream(), null, expectedEventID,
+                MimeConstants.MIME_PDF, expectedParams);
     }
 
     public void doTest(String filename, String expectedEventID) throws Exception {
@@ -132,5 +149,13 @@ public class EventProcessingTestCase {
     @Test
     public void testViewportBPDOverflow() throws Exception {
         doTest("viewport-overflow.fo", BlockLevelEventProducer.class.getName() + ".viewportBPDOverflow");
+    }
+
+    @Test
+    public void testPageOverflow() throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("page", "1");
+        doTest("region-body_overflow.fo", BlockLevelEventProducer.class.getName() + ".regionOverflow",
+                params);
     }
 }
