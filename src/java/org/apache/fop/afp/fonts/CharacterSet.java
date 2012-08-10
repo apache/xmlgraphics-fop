@@ -363,4 +363,12 @@ public class CharacterSet {
         return getCharacterSetOrientation().getEmSpaceIncrement();
     }
 
+    /**
+     * Returns the nominal character increment.
+     * @return the nominal character increment
+     */
+    public int getNominalCharIncrement() {
+        return getCharacterSetOrientation().getNominalCharIncrement();
+    }
+
 }

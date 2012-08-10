@@ -62,6 +62,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="MH" type="fix" fixes-bug="53657" due-to="Robert Meyer">
+        AFP fonts default to the nominal character increment to font metrics when glyph info
+        is missing from the characterset.
+      </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="53688">
         Wrong page number reported when a column overflows the region-body in a multi-column 
         document.
