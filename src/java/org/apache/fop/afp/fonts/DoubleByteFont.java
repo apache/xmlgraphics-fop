@@ -80,9 +80,18 @@ public class DoubleByteFont extends AbstractOutlineFont {
         }
 
         if (charWidth == -1) {
-            charWidth = inferCharWidth(character);
+            charWidth = getDefaultCharacterWidth(character);
         }
         return charWidth * size;
+    }
+
+    private int getDefaultCharacterWidth(int character) {
+        int nominalCharIncrement = charSet.getNominalCharIncrement();
+        if (nominalCharIncrement > 0) {
+            return nominalCharIncrement;
+        } else {
+            return inferCharWidth(character);
+        }
     }
 
     private int inferCharWidth(int character) {

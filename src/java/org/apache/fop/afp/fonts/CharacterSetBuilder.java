@@ -446,20 +446,15 @@ public abstract class CharacterSetBuilder {
             position++;
 
             if (position == 26) {
-
                 position = 0;
 
                 int orientation = determineOrientation(fnoData[2]);
-                //  Space Increment
-                int space = ((fnoData[8] & 0xFF ) << 8) + (fnoData[9] & 0xFF);
-                //  Em-Space Increment
-                int em = ((fnoData[14] & 0xFF ) << 8) + (fnoData[15] & 0xFF);
+                int spaceIncrement = getUBIN(fnoData, 8);
+                int emIncrement = getUBIN(fnoData, 14);
+                int nominalCharacterIncrement = getUBIN(fnoData, 20);
 
-                CharacterSetOrientation cso = new CharacterSetOrientation(orientation);
-                cso.setSpaceIncrement(space);
-                cso.setEmSpaceIncrement(em);
-                orientations.add(cso);
-
+                orientations.add(new CharacterSetOrientation(orientation, spaceIncrement,
+                        emIncrement, nominalCharacterIncrement));
             }
         }
         return orientations.toArray(EMPTY_CSO_ARRAY);
