@@ -236,9 +236,9 @@ public abstract class CharacterSetBuilder {
             CharacterSetType charsetType, AFPResourceAccessor accessor, AFPEventProducer eventProducer)
             throws IOException {
         // check for cached version of the characterset
-        String descriptor = characterSetName + "_" + encoding + "_" + codePageName;
-        CharacterSet characterSet = (CharacterSet) characterSetsCache.get(descriptor);
-
+        URI charSetURI = accessor.resolveURI(characterSetName);
+        String cacheKey = charSetURI.toASCIIString() + "_" + characterSetName + "_" + codePageName;
+        CharacterSet characterSet = (CharacterSet) characterSetsCache.get(cacheKey);
         if (characterSet != null) {
             return characterSet;
         }
@@ -257,6 +257,8 @@ public abstract class CharacterSetBuilder {
              * chracter global identifier.
              */
             Map<String, String> codePage;
+            // TODO: This could have performance implications if several threads want to use the
+            // codePagesCache to retrieve different codepages.
             synchronized (codePagesCache) {
                 codePage = codePagesCache.get(codePageName);
 
@@ -308,7 +310,7 @@ public abstract class CharacterSetBuilder {
         } finally {
             closeInputStream(inputStream);
         }
-        characterSetsCache.put(descriptor, characterSet);
+        characterSetsCache.put(cacheKey, characterSet);
         return characterSet;
     }
 
