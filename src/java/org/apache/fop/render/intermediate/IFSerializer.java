@@ -31,7 +31,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.w3c.dom.Document;
-
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -531,16 +530,16 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
             if (hasRoundedCorners(bpsBefore, bpsAfter, bpsStart, bpsEnd)) {
 
                 if (bpsBefore != null) {
-                    addAttribute(atts, "before", bpsBefore.toString());
+                    addAttribute(atts, "top", bpsBefore.toString());
                 }
                 if (bpsAfter != null) {
-                    addAttribute(atts, "after", bpsAfter.toString());
+                    addAttribute(atts, "bottom", bpsAfter.toString());
                 }
                 if (bpsStart != null) {
-                    addAttribute(atts, "start", bpsStart.toString());
+                    addAttribute(atts, "left", bpsStart.toString());
                 }
                 if (bpsEnd != null) {
-                    addAttribute(atts, "end", bpsEnd.toString());
+                    addAttribute(atts, "right", bpsEnd.toString());
                 }
             }
             handler.element(EL_CLIP_RECT, atts);
