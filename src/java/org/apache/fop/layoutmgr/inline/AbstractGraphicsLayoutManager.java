@@ -24,6 +24,7 @@ import java.awt.Rectangle;
 import java.util.List;
 
 import org.apache.fop.area.Area;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.FObj;
@@ -92,7 +93,6 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         transferForeignAttributes(viewportArea);
 
         InlineViewport vp = new InlineViewport(viewportArea, bidiLevel);
-        TraitSetter.addStructureTreeElement(vp, fobj.getStructureTreeElement());
         TraitSetter.setProducerID(vp, fobj.getId());
         vp.setIPD(imageLayout.getViewportSize().width);
         vp.setBPD(imageLayout.getViewportSize().height);
@@ -116,6 +116,21 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         InlineViewport areaCurrent = getInlineArea();
         setCurrentArea(areaCurrent);
         return super.getNextKnuthElements(context, alignment);
+    }
+
+    @Override
+    protected InlineArea getEffectiveArea(LayoutContext layoutContext) {
+        /*
+         * If an image is in a repeated table heading, then it must be treated as real
+         * content the first time and then as artifact. Therefore we cannot re-use the
+         * area, as we have to account for the likely different values of treatAsArtifact.
+         */
+        InlineArea area = curArea != null ? curArea : getInlineArea();
+        curArea = null;
+        if (!layoutContext.treatAsArtifact()) {
+            TraitSetter.addStructureTreeElement(area, ((AbstractGraphics) fobj).getStructureTreeElement());
+        }
+        return area;
     }
 
     /** {@inheritDoc} */

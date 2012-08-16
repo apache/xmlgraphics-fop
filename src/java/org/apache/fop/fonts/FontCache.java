@@ -53,7 +53,7 @@ public final class FontCache implements Serializable {
      * Serialization Version UID. Change this value if you want to make sure the
      * user's cache file is purged after an update.
      */
-    private static final long serialVersionUID = 605232520271754719L;
+    private static final long serialVersionUID = 9129238336422194339L;
 
     /** logging instance */
     private static Log log = LogFactory.getLog(FontCache.class);
@@ -65,7 +65,7 @@ public final class FontCache implements Serializable {
     private static final String DEFAULT_CACHE_FILENAME = "fop-fonts.cache";
 
     /** has this cache been changed since it was last read? */
-    private transient boolean changed = false;
+    private transient boolean changed;
 
     /** change lock */
     private final boolean[] changeLock = new boolean[1];
@@ -73,12 +73,14 @@ public final class FontCache implements Serializable {
     /**
      * master mapping of font url -> font info. This needs to be a list, since a
      * TTC file may contain more than 1 font.
+     * @serial
      */
     private Map<String, CachedFontFile> fontfileMap = null;
 
     /**
      * mapping of font url -> file modified date (for all fonts that have failed
      * to load)
+     * @serial
      */
     private Map<String, Long> failedFontMap = null;
 
@@ -139,6 +141,7 @@ public final class FontCache implements Serializable {
      *
      * @return the font cache deserialized from the file (or null if no cache
      *         file exists or if it could not be read)
+     * @deprecated use {@link #loadFrom(File)} instead
      */
     public static FontCache load() {
         return loadFrom(getDefaultCacheFile(false));
@@ -190,8 +193,8 @@ public final class FontCache implements Serializable {
     /**
      * Writes the font cache to disk.
      *
-     * @throws FOPException
-     *             fop exception
+     * @throws FOPException fop exception
+     * @deprecated use {@link #saveTo(File)} instead
      */
     public void save() throws FOPException {
         saveTo(getDefaultCacheFile(true));
@@ -462,10 +465,9 @@ public final class FontCache implements Serializable {
     }
 
     /**
-     * Retrieve the last modified date/time of a URL.
+     * Retrieve the last modified date/time of a URI.
      *
-     * @param url
-     *            the URL
+     * @param uri the URI
      * @return the last modified date/time
      */
     public static long getLastModified(URI uri) {

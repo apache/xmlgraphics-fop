@@ -151,28 +151,26 @@ public class PageProvider implements Constants {
         return this.lastReportedBPD;
     }
 
-    // Wish there were a more elegant way to do this in Java
-    private int[] getColIndexAndColCount(int index) {
-        int columnCount = 0;
-        int colIndex = startColumnOfCurrentElementList + index;
-        int pageIndex = -1;
-        do {
-            colIndex -= columnCount;
-            pageIndex++;
-            Page page = getPage(false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
-            columnCount = page.getPageViewport().getCurrentSpan().getColumnCount();
-        } while (colIndex >= columnCount);
-        return new int[] {colIndex, columnCount};
+    private static class Column {
+
+        final Page page;
+
+        final int pageIndex;
+
+        final int colIndex;
+
+        final int columnCount;
+
+        Column(Page page, int pageIndex, int colIndex, int columnCount) {
+            this.page = page;
+            this.pageIndex = pageIndex;
+            this.colIndex = colIndex;
+            this.columnCount = columnCount;
+        }
+
     }
 
-    /**
-     * Compares the IPD of the given part with the following one.
-     *
-     * @param index index of the current part
-     * @return a negative integer, zero or a positive integer as the current IPD is less
-     * than, equal to or greater than the IPD of the following part
-     */
-    public int compareIPDs(int index) {
+    private Column getColumn(int index) {
         int columnCount = 0;
         int colIndex = startColumnOfCurrentElementList + index;
         int pageIndex = -1;
@@ -183,12 +181,24 @@ public class PageProvider implements Constants {
             page = getPage(false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
             columnCount = page.getPageViewport().getCurrentSpan().getColumnCount();
         } while (colIndex >= columnCount);
-        if (colIndex + 1 < columnCount) {
+        return new Column(page, pageIndex, colIndex, columnCount);
+    }
+
+    /**
+     * Compares the IPD of the given part with the following one.
+     *
+     * @param index index of the current part
+     * @return a negative integer, zero or a positive integer as the current IPD is less
+     * than, equal to or greater than the IPD of the following part
+     */
+    public int compareIPDs(int index) {
+        Column column = getColumn(index);
+        if (column.colIndex + 1 < column.columnCount) {
             // Next part is a column on same page => same IPD
             return 0;
         } else {
-            Page nextPage = getPage(false, pageIndex + 1, RELTO_CURRENT_ELEMENT_LIST);
-            return page.getPageViewport().getBodyRegion().getIPD()
+            Page nextPage = getPage(false, column.pageIndex + 1, RELTO_CURRENT_ELEMENT_LIST);
+            return column.page.getPageViewport().getBodyRegion().getIPD()
                     - nextPage.getPageViewport().getBodyRegion().getIPD();
         }
     }
@@ -199,7 +209,7 @@ public class PageProvider implements Constants {
      * @return  {@code true} if the break starts a new page
      */
     boolean startPage(int index) {
-        return getColIndexAndColCount(index)[0] == 0;
+        return getColumn(index).colIndex == 0;
     }
 
     /**
@@ -208,8 +218,8 @@ public class PageProvider implements Constants {
      * @return  {@code true} if the break ends a page
      */
     boolean endPage(int index) {
-        int[] colIndexAndColCount = getColIndexAndColCount(index);
-        return colIndexAndColCount[0] == colIndexAndColCount[1] - 1;
+        Column column = getColumn(index);
+        return column.colIndex == column.columnCount - 1;
     }
 
     /**
@@ -219,7 +229,7 @@ public class PageProvider implements Constants {
      * @return  the number of columns
      */
     int getColumnCount(int index) {
-        return getColIndexAndColCount(index)[1];
+        return getColumn(index).columnCount;
     }
 
     /**
@@ -229,24 +239,12 @@ public class PageProvider implements Constants {
      * @return the requested part index
      */
     public int getStartingPartIndexForLastPage(int partCount) {
-        int result = 0;
-        int idx = 0;
-        int pageIndex = 0;
-        int colIndex = startColumnOfCurrentElementList;
-        Page page = getPage(
-                false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
-        while (idx < partCount) {
-            if ((colIndex >= page.getPageViewport().getCurrentSpan().getColumnCount())) {
-                colIndex = 0;
-                pageIndex++;
-                page = getPage(
-                        false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
-                result = idx;
-            }
-            colIndex++;
-            idx++;
-        }
-        return result;
+        int lastPartIndex = partCount - 1;
+        return lastPartIndex - getColumn(lastPartIndex).colIndex;
+    }
+
+    Page getPageFromColumnIndex(int columnIndex) {
+        return getColumn(columnIndex).page;
     }
 
     /**
@@ -291,7 +289,9 @@ public class PageProvider implements Constants {
                 log.trace("last page requested: " + index);
             }
         }
-        while (intIndex >= cachedPages.size()) {
+        if (intIndex > cachedPages.size()) {
+            throw new UnsupportedOperationException("Cannot handle holes in page cache");
+        } else if (intIndex == cachedPages.size()) {
             if (log.isTraceEnabled()) {
                 log.trace("Caching " + index);
             }

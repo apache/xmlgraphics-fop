@@ -112,7 +112,7 @@ class RowGroupLayoutManager {
                         spanWidth += ((TableColumn) colIter.next()).getColumnWidth().getValue(
                                 tableLM);
                     }
-                    LayoutContext childLC = new LayoutContext(0);
+                    LayoutContext childLC = LayoutContext.newInstance();
                     childLC.setStackLimitBP(context.getStackLimitBP()); //necessary?
                     childLC.setRefIPD(spanWidth);
 

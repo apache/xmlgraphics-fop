@@ -283,7 +283,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                                     , context.getAlignmentContext());
         }
 
-        childLC = new LayoutContext(context);
+        childLC = LayoutContext.copyOf(context);
         childLC.setAlignmentContext(alignmentContext);
 
         if (context.startsNewArea()) {
@@ -439,7 +439,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
 
         addId();
 
-        setChildContext(new LayoutContext(context)); // Store current value
+        setChildContext(LayoutContext.copyOf(context)); // Store current value
 
         // "Unwrap" the NonLeafPositions stored in parentIter and put
         // them in a new list.  Set lastLM to be the LayoutManager

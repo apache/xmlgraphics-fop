@@ -71,6 +71,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
 
     private TableStepper stepper;
 
+    private boolean headerIsBeingRepeated;
+
     /**
      * Main constructor
      * @param parent Parent layout manager
@@ -383,6 +385,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 }
             }
         }
+        boolean treatFooterAsArtifact = layoutContext.treatAsArtifact();
         if (lastPos instanceof TableHFPenaltyPosition) {
             TableHFPenaltyPosition penaltyPos = (TableHFPenaltyPosition)lastPos;
             LOG.debug("Break at penalty!");
@@ -393,6 +396,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             }
             if (penaltyPos.footerElements != null) {
                 footerElements = penaltyPos.footerElements;
+                treatFooterAsArtifact = true;
             }
         }
 
@@ -403,10 +407,18 @@ public class TableContentLayoutManager implements PercentBaseContext {
         }
 
         if (headerElements != null) {
+            boolean ancestorTreatAsArtifact = layoutContext.treatAsArtifact();
+            if (headerIsBeingRepeated) {
+                layoutContext.setTreatAsArtifact(true);
+            }
             //header positions for the last part are the second-to-last element and need to
             //be handled first before all other TableContentPositions
             addHeaderFooterAreas(headerElements, tableLM.getTable().getTableHeader(), painter,
                     false);
+            if (!ancestorTreatAsArtifact) {
+                headerIsBeingRepeated = true;
+            }
+            layoutContext.setTreatAsArtifact(ancestorTreatAsArtifact);
         }
 
         if (tablePositions.isEmpty()) {
@@ -419,9 +431,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
         }
 
         if (footerElements != null) {
+            boolean ancestorTreatAsArtifact = layoutContext.treatAsArtifact();
+            layoutContext.setTreatAsArtifact(treatFooterAsArtifact);
             //Positions for footers are simply added at the end
             addHeaderFooterAreas(footerElements, tableLM.getTable().getTableFooter(), painter,
                     true);
+            layoutContext.setTreatAsArtifact(ancestorTreatAsArtifact);
         }
 
         this.usedBPD += painter.getAccumulatedBPD();

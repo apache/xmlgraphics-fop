@@ -185,7 +185,7 @@ public final class PDFRendererConfig implements RendererConfig {
                         }
                         debug.append(filterList.get(j));
                     }
-                    LogUtil.handleError(LOG, debug.toString(), true);
+                    LOG.debug(debug.toString());
                 }
 
                 if (filterMap.get(type) != null) {

@@ -23,6 +23,11 @@ import java.lang.Character.UnicodeBlock;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.afp.AFPEventProducer;
+
 /**
  * Implementation of AbstractOutlineFont that supports double-byte fonts (CID Keyed font (Type 0)).
  * The width of characters that are not prescribed a width metrics in the font resource use
@@ -31,7 +36,9 @@ import java.util.Set;
  */
 public class DoubleByteFont extends AbstractOutlineFont {
 
-    //private static final Log LOG = LogFactory.getLog(DoubleByteFont.class);
+    private static final Log log = LogFactory.getLog(DoubleByteFont.class);
+
+    private final Set<Integer> charsProcessed;
 
     //See also http://unicode.org/reports/tr11/ which we've not closely looked at, yet
     //TODO the Unicode block listed here is probably not complete (ex. Hiragana, Katakana etc.)
@@ -49,9 +56,12 @@ public class DoubleByteFont extends AbstractOutlineFont {
      * @param name the name of the font
      * @param embeddable whether or not this font is embeddable
      * @param charSet the character set
+     * @param eventProducer Handles any AFP related events
      */
-    public DoubleByteFont(String name, boolean embeddable, CharacterSet charSet) {
-        super(name, embeddable, charSet);
+    public DoubleByteFont(String name, boolean embeddable, CharacterSet charSet,
+            AFPEventProducer eventProducer) {
+        super(name, embeddable, charSet, eventProducer);
+        charsProcessed = new HashSet<Integer>();
     }
 
     /** {@inheritDoc} */
@@ -60,14 +70,28 @@ public class DoubleByteFont extends AbstractOutlineFont {
         try {
             charWidth = charSet.getWidth(toUnicodeCodepoint(character));
         } catch (IllegalArgumentException e) {
+            if (!charsProcessed.contains(character)) {
+                charsProcessed.add(character);
+                getAFPEventProducer().charactersetMissingMetrics(this, (char)character,
+                        charSet.getName().trim());
+            }
             //  We shall try and handle characters that have no mapped width metric in font resource
             charWidth = -1;
         }
 
         if (charWidth == -1) {
-            charWidth = inferCharWidth(character);
+            charWidth = getDefaultCharacterWidth(character);
         }
         return charWidth * size;
+    }
+
+    private int getDefaultCharacterWidth(int character) {
+        int nominalCharIncrement = charSet.getNominalCharIncrement();
+        if (nominalCharIncrement > 0) {
+            return nominalCharIncrement;
+        } else {
+            return inferCharWidth(character);
+        }
     }
 
     private int inferCharWidth(int character) {

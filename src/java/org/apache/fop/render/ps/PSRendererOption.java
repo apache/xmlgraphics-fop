@@ -29,7 +29,7 @@ import org.apache.fop.render.RendererConfigOption;
 public enum PSRendererOption implements RendererConfigOption {
     /** Indicates whether landscape pages should be rotated, default: false */
     AUTO_ROTATE_LANDSCAPE("auto-rotate-landscape", false),
-    /** Sets the PostScript language leven, default: {@see PSGenerator#DEFAULT_LANGUAGE_LEVEL}*/
+    /** Sets the PostScript language level, default: {@link PSGenerator#DEFAULT_LANGUAGE_LEVEL} */
     LANGUAGE_LEVEL("language-level", PSGenerator.DEFAULT_LANGUAGE_LEVEL),
     /** Whether resources should be optimized in a post-processing run, default: false */
     OPTIMIZE_RESOURCES("optimize-resources", false),

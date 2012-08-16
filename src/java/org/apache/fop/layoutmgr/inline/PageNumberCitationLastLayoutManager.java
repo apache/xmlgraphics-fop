@@ -20,65 +20,36 @@
 package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Resolvable;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.fo.flow.PageNumberCitationLast;
-import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.LayoutManager;
 
 /**
- * LayoutManager for the fo:page-number-citation-last formatting object
+ * LayoutManager for the fo:page-number-citation-last formatting object.
  */
 public class PageNumberCitationLastLayoutManager extends AbstractPageNumberCitationLayoutManager {
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param node the formatting object that creates this area
      * TODO better retrieval of font info
      */
     public PageNumberCitationLastLayoutManager(PageNumberCitationLast node) {
         super(node);
-        fobj = node;
     }
 
-    /** {@inheritDoc} */
-    public InlineArea get(LayoutContext context) {
-        curArea = getPageNumberCitationLastInlineArea(parentLayoutManager);
-        return curArea;
-    }
-
-    /**
-     * if id can be resolved then simply return a word, otherwise
-     * return a resolvable area
-     */
-    private InlineArea getPageNumberCitationLastInlineArea(LayoutManager parentLM) {
-        TextArea text = null;
-        int level = getBidiLevel();
-        if (!getPSLM().associateLayoutManagerID(fobj.getRefId())) {
-            text = new UnresolvedPageNumber(fobj.getRefId(), font, UnresolvedPageNumber.LAST);
-            getPSLM().addUnresolvedArea(fobj.getRefId(), (Resolvable)text);
-            String str = "MMM"; // reserve three spaces for page number
-            int width = getStringWidth(str);
-            text.setBidiLevel(level);
-            text.setIPD(width);
-            resolved = false;
+    @Override
+    protected PageViewport getCitedPage() {
+        if (getPSLM().associateLayoutManagerID(fobj.getRefId())) {
+            return getPSLM().getLastPVWithID(fobj.getRefId());
         } else {
-            PageViewport page = getPSLM().getLastPVWithID(fobj.getRefId());
-            String str = page.getPageNumberString();
-            // get page string from parent, build area
-            text = new TextArea();
-            int width = getStringWidth(str);
-            text.setBidiLevel(level);
-            text.addWord(str, 0, level);
-            text.setIPD(width);
-            resolved = true;
+            return null;
         }
-
-        updateTextAreaTraits(text);
-
-        return text;
     }
+
+    @Override
+    protected boolean getReferenceType() {
+        return UnresolvedPageNumber.LAST;
+    }
+
 }

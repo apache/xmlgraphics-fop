@@ -27,23 +27,27 @@
   <body>
     <section>
       <title>Status</title>
-      <p>[last updated 5 July 2010]</p>
+      <p>Last updated 02 July 2012.</p>
       <p>
-        Apache™ FOP version 0.95 was released on 5 August 2008. Apache™ FOP version 1.0 was released on 21 July 2010.
+        Apache™ FOP version 1.1rc1 (candidate) was released on 02 July 2012.
       </p>
     </section>
     <section>
       <title>Development Status</title>
-
-	  <p>The FOP code base is gradually evolving, from version 0.90
-	  released on 22 November 2005, to version 1.0 released on 21 July
-	  2010. Further releases in the 1.x series may be expected.</p>
-      <p>FOP releases before version 0.90 were based on a different
-	  code base. The last release in that series was version 0.20.5,
-	  released on 18 July 2003. This series is no longer maintained.</p>
       <p>
-        If you're looking for a long-term road-map we have to disappoint you. This is Open
-        Source and we're mostly volunteers working in their free time. What we have
+        The FOP code base is gradually evolving, from Version 0.90,
+	released on 22 November 2005, to Version 1.1, expected to be released during
+        the Summer of 2012. Further releases in the 1.x series and beyond are expected.
+      </p>
+      <p>
+        FOP releases prior to version 0.90 were based on a different
+	code base. The last release in that series was version 0.20.5,
+	released on 18 July 2003. This earlier series is no longer maintained.
+      </p>
+      <p>
+        If you are looking for future release dates, keep in mind that FOP is an Open
+        Source project and we're a combination of volunteers (working in our free time) and
+        sponsored contributors (generally focusing on our sponsor's needs). What we have        
         is an idea where we want to go. How fast we get there depends on the 
         available time, on how well our ideas work out while developing and on you!
         There's a <a href="http://wiki.apache.org/xmlgraphics-fop/RoadMap">document in the Wiki</a>
@@ -82,11 +86,11 @@
           </tr>
           <tr>
             <td>PDF (Library and Renderer)</td>
-            <td>stable (SVG: stable)</td>
+            <td>stable</td>
           </tr>
           <tr>
             <td>PostScript</td>
-            <td>stable (SVG: stable with restrictions)</td>
+            <td>stable</td>
           </tr>
           <tr>
             <td>Java2D, AWT, Bitmap Renderers</td>

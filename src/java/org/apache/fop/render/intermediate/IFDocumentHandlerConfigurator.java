@@ -29,6 +29,7 @@ public interface IFDocumentHandlerConfigurator {
 
     /**
      * Configures a intermediate format document handler.
+     *
      * @param documentHandler the document handler instance
      * @throws FOPException if an error occurs while configuring the object
      */
@@ -36,10 +37,10 @@ public interface IFDocumentHandlerConfigurator {
 
     /**
      * Sets up the {@link FontInfo} object for the IFDocumentHandler.
-     * @param documentHandler the document handler instance
+     *
+     * @param mimeType the MIME type of the document handler
      * @param fontInfo the font info object to set up
      * @throws FOPException if an error occurs while configuring the object
      */
     void setupFontInfo(String mimeType, FontInfo fontInfo) throws FOPException;
-
 }

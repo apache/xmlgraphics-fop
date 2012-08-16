@@ -19,6 +19,8 @@
 
 package org.apache.fop.pdf;
 
+import org.apache.fop.pdf.StandardStructureAttributes.Table.Scope;
+
 /**
  * An abstraction that controls the mutability of the PDF version for a document.
  */
@@ -47,6 +49,8 @@ public abstract class VersionController {
      */
     public abstract void setPDFVersion(Version version);
 
+    abstract void addTableHeaderScopeAttribute(PDFStructElem th, Scope scope);
+
     @Override
     public String toString() {
         return version.toString();
@@ -66,6 +70,13 @@ public abstract class VersionController {
         @Override
         public void setPDFVersion(Version version) {
             throw new IllegalStateException("Cannot change the version of this PDF document.");
+        }
+
+        @Override
+        void addTableHeaderScopeAttribute(PDFStructElem th, Scope scope) {
+            if (super.version.compareTo(Version.V1_4) > 0) {
+                Scope.addScopeAttribute(th, scope);
+            }
         }
     }
 
@@ -90,6 +101,12 @@ public abstract class VersionController {
                 super.version = version;
                 doc.getRoot().setVersion(version);
             }
+        }
+
+        @Override
+        void addTableHeaderScopeAttribute(PDFStructElem th, Scope scope) {
+            setPDFVersion(Version.V1_5);
+            Scope.addScopeAttribute(th, scope);
         }
     }
 

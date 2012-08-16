@@ -142,12 +142,20 @@ public class FopConfParser {
             log.debug("Initializing FopFactory Configuration");
         }
 
-        // TODO: This makes this variable both strict FO and user-config validation, is that right?
-        boolean strict = false;
         // strict fo validation
         if (cfg.getChild("strict-validation", false) != null) {
             try {
-                strict = cfg.getChild("strict-validation").getValueAsBoolean();
+                boolean strict = cfg.getChild("strict-validation").getValueAsBoolean();
+                fopFactoryBuilder.setStrictFOValidation(strict);
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e, false);
+            }
+        }
+
+        boolean strict = false;
+        if (cfg.getChild("strict-configuration", false) != null) {
+            try {
+                strict = cfg.getChild("strict-configuration").getValueAsBoolean();
                 fopFactoryBuilder.setStrictUserConfigValidation(strict);
             } catch (ConfigurationException e) {
                 LogUtil.handleException(log, e, false);

@@ -60,7 +60,7 @@ public class CharacterSetOrientation {
     /**
      * The character widths in the character set (indexed using Unicode codepoints)
      */
-    private int[] charsWidths = null;
+    private int[] charsWidths;
 
     /**
      * The height of lowercase letters
@@ -77,25 +77,26 @@ public class CharacterSetOrientation {
      */
     private char lastChar;
 
-
-    /**
-     * The character set orientation
-     */
-    private int orientation = 0;
-
+    /** The character set orientation */
+    private final int orientation;
     /** space increment */
-    private int spaceIncrement;
+    private final int spaceIncrement;
     /** em space increment */
-    private int emSpaceIncrement = -1;
-
+    private final int emSpaceIncrement;
+    /** Nominal Character Increment */
+    private final int nomCharIncrement;
 
     /**
      * Constructor for the CharacterSetOrientation, the orientation is
      * expressed as the degrees rotation (i.e 0, 90, 180, 270)
      * @param orientation the character set orientation
      */
-    public CharacterSetOrientation(int orientation) {
+    public CharacterSetOrientation(int orientation, int spaceIncrement, int emSpaceIncrement,
+            int nomCharIncrement) {
         this.orientation = orientation;
+        this.spaceIncrement = spaceIncrement;
+        this.emSpaceIncrement = emSpaceIncrement;
+        this.nomCharIncrement = nomCharIncrement;
         charsWidths = new int[256];
         Arrays.fill(charsWidths, -1);
     }
@@ -284,14 +285,6 @@ public class CharacterSetOrientation {
     }
 
     /**
-     * Sets the space increment.
-     * @param value the space increment
-     */
-    public void setSpaceIncrement(int value) {
-        this.spaceIncrement = value;
-    }
-
-    /**
      * Returns the em space increment.
      * @return the em space increment
      */
@@ -300,11 +293,10 @@ public class CharacterSetOrientation {
     }
 
     /**
-     * Sets the em space increment.
-     * @param value the em space increment
+     * Returns the nominal character increment.
+     * @return the nominal character increment
      */
-    public void setEmSpaceIncrement(int value) {
-        this.emSpaceIncrement = value;
+    public int getNominalCharIncrement() {
+        return this.nomCharIncrement;
     }
-
 }

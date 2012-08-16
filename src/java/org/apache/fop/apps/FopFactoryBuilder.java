@@ -61,7 +61,7 @@ public final class FopFactoryBuilder {
     /**
      * A builder class for {@link FopFactory} which can be used for setting configuration. This is
      * a helper constructor that uses the default URI resolver implementation that FOP packages
-     * provide ({@link DefaultResourceResolver}).
+     * provide ({@link org.apache.fop.apps.io.ResourceResolverFactory.DefaultResourceResolver}).
      *
      * @param defaultBaseURI the default base URI for resolving URIs against
      */
@@ -97,6 +97,17 @@ public final class FopFactoryBuilder {
      * @deprecated Exposing the {@link FopFactoryConfig} is only to maintain backwards compatibility
      */
     public FopFactoryConfig buildConfig() {
+        return buildConfiguration();
+    }
+
+    /**
+     * Builds the configuration object used by the FopFactory.
+     *
+     * @return the config for the {@link FopFactory}
+     */
+    // The {@link FopFactoryConfig} doesn't need to be exposed in the "public" API, this method
+    // should remain package private.
+    FopFactoryConfig buildConfiguration() {
         fopFactoryConfigBuilder = CompletedFopFactoryConfigBuilder.INSTANCE;
         return config;
     }
@@ -107,7 +118,7 @@ public final class FopFactoryBuilder {
      * @return the FopFactory instance
      */
     public FopFactory build() {
-        return FopFactory.newInstance(buildConfig());
+        return FopFactory.newInstance(buildConfiguration());
     }
 
     /**
@@ -150,13 +161,12 @@ public final class FopFactoryBuilder {
 
     /**
      * Sets the {@link LayoutManagerMaker} so that users can configure how FOP creates
-     * {@link LayoutManager}s.
+     * {@link org.apache.fop.layoutmgr.LayoutManager}s.
      *
      * @param lmMaker he layout manager maker
      * @return <code>this</code>
      */
-    public FopFactoryBuilder setLayoutManagerMakerOverride(
-            LayoutManagerMaker lmMaker) {
+    public FopFactoryBuilder setLayoutManagerMakerOverride(LayoutManagerMaker lmMaker) {
         fopFactoryConfigBuilder.setLayoutManagerMakerOverride(lmMaker);
         return this;
     }
@@ -285,11 +295,10 @@ public final class FopFactoryBuilder {
     }
 
     /**
-     * Sets whether to chose a {@link Renderer} in preference to an
+     * Sets whether to chose a {@link org.apache.fop.render.Renderer} in preference to an
      * {@link org.apache.fop.render.intermediate.IFDocumentHandler}.
      *
-     * @see {@link RendererFactory}
-     * @param preferRenderer true to prefer {@link Renderer}
+     * @param preferRenderer true to prefer {@link org.apache.fop.render.Renderer}
      * @return <code>this</code>
      */
     public FopFactoryBuilder setPreferRenderer(boolean preferRenderer) {

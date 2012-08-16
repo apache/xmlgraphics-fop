@@ -34,7 +34,7 @@ import org.apache.fop.afp.util.AFPResourceUtil;
  */
 public class IncludedResourceObject extends AbstractNamedAFPObject {
 
-    private AFPResourceAccessor resourceAccessor;
+    private final AFPResourceAccessor resourceAccessor;
     private URI uri;
 
     /**

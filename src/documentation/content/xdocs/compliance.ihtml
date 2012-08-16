@@ -560,9 +560,9 @@
       <th rowspan="2">Comments</th>
     </tr>
     <tr>
-      <th align="center">0.95 (stable)</th>
       <th align="center">1.0 (stable)</th>
-      <th align="center">develop- ment</th>
+      <th align="center">1.1 (rc1)</th>
+      <th align="center">development</th>
     </tr>
 
     <tr>
@@ -883,8 +883,8 @@
       <td><a name="fo-object-bidi-override" id="fo-object-bidi-override">bidi-override</a></td>
       <td class="extended">Extended</td>
       <td class="no">no</td>
-      <td class="no">no</td>
-      <td class="no">no</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1439,7 +1439,7 @@
       "http://www.w3.org/TR/xsl/#fo_wrapper">&sect;6.13.4</a></td>
       <td><a name="fo-object-wrapper" id="fo-object-wrapper">wrapper</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
+      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td>Only works as expected with inline-level content.</td>
@@ -1491,8 +1491,8 @@
       <th rowspan="2">Comments</th>
     </tr>
     <tr>
-      <th align="center">0.95 (stable)</th>
       <th align="center">1.0 (stable)</th>
+      <th align="center">1.1 (rc1)</th>
       <th align="center">develop- ment</th>
     </tr>
 
@@ -1596,7 +1596,6 @@
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
-      <td class="na">na</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1604,7 +1603,6 @@
       "http://www.w3.org/TR/xsl/#cue-after">&sect;7.7.2</a></td>
       <td><a name="fo-property-cue-after" id="fo-property-cue-after">cue-after</a></td>
       <td class="basic">Basic</td>
-      <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
@@ -1618,7 +1616,6 @@
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
-      <td class="na">na</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1626,7 +1623,6 @@
       "http://www.w3.org/TR/xsl/#elevation">&sect;7.7.4</a></td>
       <td><a name="fo-property-elevation" id="fo-property-elevation">elevation</a></td>
       <td class="basic">Basic</td>
-      <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
@@ -1640,7 +1636,6 @@
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
-      <td class="na">na</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1648,7 +1643,6 @@
       "http://www.w3.org/TR/xsl/#pause-before">&sect;7.7.6</a></td>
       <td><a name="fo-property-pause-before" id="fo-property-pause-before">pause-before</a></td>
       <td class="basic">Basic</td>
-      <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
@@ -1662,7 +1656,6 @@
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
-      <td class="na">na</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1670,7 +1663,6 @@
       "http://www.w3.org/TR/xsl/#pitch-range">&sect;7.7.8</a></td>
       <td><a name="fo-property-pitch-range" id="fo-property-pitch-range">pitch-range</a></td>
       <td class="basic">Basic</td>
-      <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
@@ -1684,7 +1676,6 @@
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
-      <td class="na">na</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1692,7 +1683,6 @@
       "http://www.w3.org/TR/xsl/#richness">&sect;7.7.10</a></td>
       <td><a name="fo-property-richness" id="fo-property-richness">richness</a></td>
       <td class="basic">Basic</td>
-      <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
@@ -1706,7 +1696,6 @@
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
-      <td class="na">na</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1717,7 +1706,6 @@
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
-      <td class="na">na</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1725,7 +1713,6 @@
       "http://www.w3.org/TR/xsl/#speak-numeral">&sect;7.7.13</a></td>
       <td><a name="fo-property-speak-numeral" id="fo-property-speak-numeral">speak-numeral</a></td>
       <td class="basic">Basic</td>
-      <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
@@ -1740,7 +1727,6 @@
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
-      <td class="na">na</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1748,7 +1734,6 @@
       "http://www.w3.org/TR/xsl/#speech-rate">&sect;7.7.15</a></td>
       <td><a name="fo-property-speech-rate" id="fo-property-speech-rate">speech-rate</a></td>
       <td class="basic">Basic</td>
-      <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
@@ -1762,7 +1747,6 @@
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
-      <td class="na">na</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1773,7 +1757,6 @@
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
-      <td class="na">na</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1781,7 +1764,6 @@
       "http://www.w3.org/TR/xsl/#volume">&sect;7.7.18</a></td>
       <td><a name="fo-property-volume" id="fo-property-volume">volume</a></td>
       <td class="basic">Basic</td>
-      <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
@@ -2321,7 +2303,7 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td>For PDF output: Only 2-letter codes from ISO 639 are supported properly to
-          identify the natural language!</td>
+          identify the natural language! Also used with complex scripts features.</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2329,9 +2311,9 @@
       <td><a name="fo-property-script" id="fo-property-script">script</a></td>
       <td class="extended">Extended</td>
       <td class="no">no</td>
-      <td class="no">no</td>
-      <td class="no">no</td>
-      <td>&nbsp;</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>Used with complex scripts features to override default script heuristics.</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2745,7 +2727,7 @@
       "http://www.w3.org/TR/xsl/#max-height">&sect;7.15.8</a></td>
       <td><a name="fo-property-max-height" id="fo-property-max-height">max-height</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
+      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td>&nbsp;</td>
@@ -2755,7 +2737,7 @@
       "http://www.w3.org/TR/xsl/#max-width">&sect;7.15.9</a></td>
       <td><a name="fo-property-max-width" id="fo-property-max-width">max-width</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
+      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td>&nbsp;</td>
@@ -2765,7 +2747,7 @@
       "http://www.w3.org/TR/xsl/#min-height">&sect;7.15.10</a></td>
       <td><a name="fo-property-min-height" id="fo-property-min-height">min-height</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
+      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td>&nbsp;</td>
@@ -2775,7 +2757,7 @@
       "http://www.w3.org/TR/xsl/#min-width">&sect;7.15.11</a></td>
       <td><a name="fo-property-min-width" id="fo-property-min-width">min-width</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
+      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td>&nbsp;</td>
@@ -3164,7 +3146,6 @@
       <td class="partial">partial</td>
       <td>
         <ul>
-          <li>[0.95] &lt;integer&gt; values are not supported.</li>
           <li>[1.0 and later] minimal support for &lt;integer&gt; value.</li>
         </ul>
       </td>
@@ -3182,7 +3163,6 @@
         <ul>
           <li>works on all implemented block-level FOs, but not on inline-level
           FOs.</li>
-          <li>[0.95] &lt;integer&gt; values are not supported.</li>
           <li>[1.0 and later] minimal support for &lt;integer&gt; value.</li>
         </ul>
       </td>
@@ -3198,11 +3178,8 @@
       <td class="partial">partial</td>
       <td>
         <ul>
-          <li>[0.95] works on all implemented FOs, except list- and inline-level
-          FOs.</li>
           <li>[1.0 and later] works on all implemented block-level
           FOs, but not on inline-level FOs.</li>
-          <li>[0.95] &lt;integer&gt; values are not supported.</li>
           <li>[1.0 and later] minimal support for &lt;integer&gt; value.</li>
         </ul>
       </td>
@@ -3443,7 +3420,7 @@
       <td><a name="fo-property-show-destination" id=
       "fo-property-show-destination">show-destination</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
+      <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td>[1.0 and later] only has effect in PDF output, for external PDF destinations (links pointing to destinations
@@ -3670,9 +3647,9 @@
       <td><a name="fo-property-format" id="fo-property-format">format</a></td>
       <td class="basic">Basic</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td>only values '0*1', 'a', 'A', 'i', 'I' supported</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>[1.0 and earlier] only values '0*1', 'a', 'A', 'i', 'I' supported</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3681,8 +3658,8 @@
       "fo-property-grouping-separator">grouping-separator</a></td>
       <td class="extended">Extended</td>
       <td class="no">no</td>
-      <td class="no">no</td>
-      <td class="no">no</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3691,8 +3668,8 @@
       <td><a name="fo-property-grouping-size" id="fo-property-grouping-size">grouping-size</a></td>
       <td class="extended">Extended</td>
       <td class="no">no</td>
-      <td class="no">no</td>
-      <td class="no">no</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3701,8 +3678,8 @@
       <td><a name="fo-property-letter-value" id="fo-property-letter-value">letter-value</a></td>
       <td class="basic">Basic</td>
       <td class="no">no</td>
-      <td class="no">no</td>
-      <td class="no">no</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
 
@@ -3852,7 +3829,7 @@
       "http://www.w3.org/TR/xsl/#page-position">&sect;7.27.14</a></td>
       <td><a name="fo-property-page-position" id="fo-property-page-position">page-position</a></td>
       <td class="extended">Extended</td>
-      <td class="partial">partial</td>
+      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td>value "only" not supported</td>
@@ -4200,9 +4177,9 @@
       <td><a name="fo-property-writing-mode" id="fo-property-writing-mode">writing-mode</a></td>
       <td class="basic">Basic</td>
       <td class="no">no</td>
-      <td class="no">no</td>
-      <td class="no">no</td>
-      <td>&nbsp;</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>[1.1 and later] only horizontal left-to-right and right-to-left modes</td>
     </tr>
 
     <tr>
@@ -4522,7 +4499,6 @@
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
-      <td class="na">na</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4596,7 +4572,6 @@
       <td class="na">na</td>
       <td class="na">na</td>
       <td class="na">na</td>
-      <td class="na">na</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4667,11 +4642,10 @@
       <th rowspan="2">Comments</th>
     </tr>
     <tr>
-      <th align="center">0.95 (stable)</th>
       <th align="center">1.0 (stable)</th>
-      <th align="center">develop- ment</th>
+      <th align="center">1.1 (rc1)</th>
+      <th align="center">development</th>
     </tr>
-
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e5860">&sect;5.10.1</a></td>

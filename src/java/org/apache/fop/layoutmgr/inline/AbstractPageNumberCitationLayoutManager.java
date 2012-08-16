@@ -19,17 +19,18 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import org.apache.fop.area.Resolvable;
+import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.fo.flow.AbstractPageNumberCitation;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.traits.MinOptMax;
 
 /**
  * LayoutManager for the fo:page-number-citation(-last) formatting object
@@ -42,7 +43,9 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
     protected Font font;
 
     /** Indicates whether the page referred to by the citation has been resolved yet */
-    protected boolean resolved = false;
+    private boolean resolved;
+
+    private String citationString;
 
     /**
      * Constructor
@@ -78,44 +81,76 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
             );
     }
 
-    /** {@inheritDoc} */
-    public abstract InlineArea get(LayoutContext context);
+    @Override
+    protected MinOptMax getAllocationIPD(int refIPD) {
+        determineCitationString();
+        int ipd = getStringWidth(citationString);
+        return MinOptMax.getInstance(ipd);
+    }
 
-    /**
-     * {@inheritDoc}
-     *                                                                      , LayoutContext)
-     */
-    public void addAreas(PositionIterator posIter, LayoutContext context) {
-        super.addAreas(posIter, context);
-        if (!resolved) {
-            getPSLM().addUnresolvedArea(fobj.getRefId(), (Resolvable) curArea);
+    private void determineCitationString() {
+        assert citationString == null;
+        PageViewport page = getCitedPage();
+        if (page != null) {
+            resolved = true;
+            citationString = page.getPageNumberString();
+        } else {
+            resolved = false;
+            citationString = "MMM"; // Use a place holder
         }
     }
 
-    /**
-     * Updates the traits for the generated text area.
-     * @param text the text area
-     */
-    protected void updateTextAreaTraits(TextArea text) {
-        TraitSetter.setProducerID(text, fobj.getId());
-        text.setBPD(font.getAscender() - font.getDescender());
-        text.setBaselineOffset(font.getAscender());
-        TraitSetter.addFontTraits(text, font);
-        text.addTrait(Trait.COLOR, fobj.getColor());
-        TraitSetter.addStructureTreeElement(text, fobj.getStructureTreeElement());
-        TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
-    }
-
-    /**
-     * @param str string to be measured
-     * @return width (in millipoints ??) of the string
-     */
-    protected int getStringWidth(String str) {
+    private int getStringWidth(String str) {
         int width = 0;
         for (int count = 0; count < str.length(); count++) {
             width += font.getCharWidth(str.charAt(count));
         }
         return width;
+    }
+
+    protected abstract PageViewport getCitedPage();
+
+    @Override
+    protected InlineArea getEffectiveArea(LayoutContext layoutContext) {
+        InlineArea area = getPageNumberCitationArea();
+        if (!layoutContext.treatAsArtifact()) {
+            TraitSetter.addStructureTreeElement(area, fobj.getStructureTreeElement());
+        }
+        return area;
+    }
+
+    private InlineArea getPageNumberCitationArea() {
+        TextArea text;
+        if (resolved) {
+            text = new TextArea();
+            text.addWord(citationString, 0);
+        } else {
+            UnresolvedPageNumber unresolved = new UnresolvedPageNumber(fobj.getRefId(), font,
+                    getReferenceType());
+            getPSLM().addUnresolvedArea(fobj.getRefId(), unresolved);
+            text = unresolved;
+        }
+        setTraits(text);
+        return text;
+    }
+
+    /**
+     * @return {@link org.apache.fop.area.inline.UnresolvedPageNumber#FIRST} or
+     * {@link org.apache.fop.area.inline.UnresolvedPageNumber#LAST}
+     */
+    protected abstract boolean getReferenceType();
+
+    private void setTraits(TextArea text) {
+        TraitSetter.setProducerID(text, fobj.getId());
+        int bidiLevel = getBidiLevel();
+        text.setBidiLevel(bidiLevel);
+        int width = getStringWidth(citationString); // TODO: [GA] !I18N!
+        text.setIPD(width); // TODO: [GA] !I18N!
+        text.setBPD(font.getAscender() - font.getDescender());
+        text.setBaselineOffset(font.getAscender());
+        TraitSetter.addFontTraits(text, font);
+        text.addTrait(Trait.COLOR, fobj.getColor());
+        TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
     }
 
     /**
