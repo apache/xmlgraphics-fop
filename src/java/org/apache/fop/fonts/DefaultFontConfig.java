@@ -89,7 +89,7 @@ public final class DefaultFontConfig implements FontConfig {
             } else {
                 this.strict = strict;
                 this.fontInfoCfg = cfg.getChild("fonts", false);
-                instance = new DefaultFontConfig(cfg.getChild("auto-detect", false) != null);
+                instance = new DefaultFontConfig(fontInfoCfg.getChild("auto-detect", false) != null);
                 parse();
             }
         }

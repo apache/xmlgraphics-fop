@@ -113,7 +113,17 @@ public class FopConfBuilder implements FontConfigurator<FopConfBuilder> {
     /**
      * Set the &lt;strict-validation&gt; tag within the fop.xconf.
      *
-     * @param validateStrictly true to enforce strict validation
+     * @param validateStrictly true to enforce strict FO validation
+     * @return <b>this</b>
+     */
+    public FopConfBuilder setStrictConfiguration(boolean validateStrictly) {
+        return createElement("strict-configuration", String.valueOf(validateStrictly));
+    }
+
+    /**
+     * Set the &lt;strict-validation&gt; tag within the fop.xconf.
+     *
+     * @param validateStrictly true to enforce strict configuration validation
      * @return <b>this</b>
      */
     public FopConfBuilder setStrictValidation(boolean validateStrictly) {

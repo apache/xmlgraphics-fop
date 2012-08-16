@@ -532,14 +532,15 @@ public abstract class BreakingAlgorithm {
         // index of the first KnuthBox in the sequence, in case of non-centered
         // alignment. For centered alignment, we need to take into account preceding
         // penalties+glues used for the filler spaces
-        int firstBoxIndex = startIndex;
+        int previousPosition = startIndex;
         if (alignment != Constants.EN_CENTER) {
-            firstBoxIndex = par.getFirstBoxIndex(startIndex);
+            int firstBoxIndex = par.getFirstBoxIndex(startIndex);
+            previousPosition = (firstBoxIndex >= par.size()) ? startIndex : firstBoxIndex - 1;
         }
-        firstBoxIndex = (firstBoxIndex < 0) ? 0 : firstBoxIndex;
+        previousPosition = (previousPosition < 0) ? 0 : previousPosition;
 
         // create an active node representing the starting point
-        addNode(0, createNode(firstBoxIndex, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, null));
+        addNode(0, createNode(previousPosition, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, null));
         KnuthNode lastForced = getNode(0);
 
         if (log.isTraceEnabled()) {

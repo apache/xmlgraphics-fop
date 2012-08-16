@@ -17,16 +17,15 @@
 
 /* $Id$ */
 
-package org.apache.fop.config;
+package org.apache.fop.apps;
 
 import java.io.IOException;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import org.apache.fop.apps.FopConfBuilder;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.apps.PDFRendererConfBuilder;
+import org.apache.fop.config.BaseConstructiveUserConfigTest;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
 import org.apache.fop.render.pdf.PDFRendererConfig;
 
@@ -35,9 +34,9 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SingleFopConfParseTestCase extends BaseConstructiveUserConfigTest {
+public class FopFactoryTestCase extends BaseConstructiveUserConfigTest {
 
-    public SingleFopConfParseTestCase() throws SAXException, IOException {
+    public FopFactoryTestCase() throws SAXException, IOException {
         super(new FopConfBuilder().setStrictValidation(true)
                 .startRendererConfig(PDFRendererConfBuilder.class)
                 .startFontsConfig()

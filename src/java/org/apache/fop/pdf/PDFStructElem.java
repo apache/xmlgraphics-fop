@@ -26,12 +26,15 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.fop.accessibility.StructureTreeElement;
+import org.apache.fop.pdf.StandardStructureAttributes.Table;
 import org.apache.fop.util.LanguageTags;
 
 /**
  * Class representing a PDF Structure Element.
  */
 public class PDFStructElem extends PDFDictionary implements StructureTreeElement, CompressedObject {
+
+    private StructureType structureType;
 
     private PDFStructElem parentElement;
 
@@ -40,18 +43,25 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
      */
     protected List<PDFObject> kids;
 
+    private List<PDFDictionary> attributes;
+
     /**
      * Creates a new structure element.
      *
      * @param parent parent of this element
      * @param structureType the structure type of this element
      */
-    PDFStructElem(PDFObject parent, PDFName structureType) {
+    PDFStructElem(PDFObject parent, StructureType structureType) {
+        this(parent);
+        this.structureType = structureType;
+        put("S", structureType.getName());
+        setParent(parent);
+    }
+
+    private PDFStructElem(PDFObject parent) {
         if (parent instanceof PDFStructElem) {
             parentElement = (PDFStructElem) parent;
         }
-        put("S", structureType);
-        setParent(parent);
     }
 
     /**
@@ -72,9 +82,7 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
     }
 
     /**
-     * Add a kid to this structure element. This element will then add itself to
-     * its parent structure element if it has not already, and so will the
-     * parent, and so on.
+     * Adds a kid to this structure element.
      *
      * @param kid element to be added
      */
@@ -111,8 +119,8 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
      *
      * @return the value of the S entry
      */
-    public PDFName getStructureType() {
-        return (PDFName) get("S");
+    public StructureType getStructureType() {
+        return structureType;
     }
 
     /**
@@ -145,7 +153,19 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
     @Override
     protected void writeDictionary(OutputStream out, StringBuilder textBuffer) throws IOException {
         attachKids();
+        attachAttributes();
         super.writeDictionary(out, textBuffer);
+    }
+
+    private void attachAttributes() {
+        if (attributes != null) {
+            if (attributes.size() == 1) {
+                put("A", attributes.get(0));
+            } else {
+                PDFArray array = new PDFArray(attributes);
+                put("A", array);
+            }
+        }
     }
 
     /**
@@ -177,6 +197,24 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
         return kidsAttached;
     }
 
+    public void setTableAttributeColSpan(int colSpan) {
+        setTableAttributeRowColumnSpan("ColSpan", colSpan);
+    }
+
+    public void setTableAttributeRowSpan(int rowSpan) {
+        setTableAttributeRowColumnSpan("RowSpan", rowSpan);
+    }
+
+    private void setTableAttributeRowColumnSpan(String typeSpan, int span) {
+        PDFDictionary attribute = new PDFDictionary();
+        attribute.put("O", Table.NAME);
+        attribute.put(typeSpan, span);
+        if (attributes == null) {
+            attributes = new ArrayList<PDFDictionary>(2);
+        }
+        attributes.add(attribute);
+    }
+
     /**
      * Class representing a placeholder for a PDF Structure Element.
      */
@@ -196,13 +234,8 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
             }
         }
 
-        /**
-         * Constructor
-         * @param parent -
-         * @param name -
-         */
-        public Placeholder(PDFObject parent, String name) {
-            super(parent, new PDFName(name));
+        public Placeholder(PDFObject parent) {
+            super(parent);
         }
     }
 

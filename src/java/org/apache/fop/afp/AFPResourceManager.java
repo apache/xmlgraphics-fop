@@ -115,9 +115,9 @@ public class AFPResourceManager {
     }
 
     /**
-     * Sets the default resource group file path
+     * Sets the default resource group URI.
      *
-     * @param filePath the default resource group file path
+     * @param uri the default resource group URI
      */
 
     public void setDefaultResourceGroupUri(URI uri) {

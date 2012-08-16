@@ -329,8 +329,8 @@ public final class AFPFontConfig implements FontConfig {
             AFPResourceAccessor accessor = getAccessor(resourceResolver);
             CharacterSet characterSet = CharacterSetBuilder.getDoubleByteInstance().buildDBCS(
                     characterset, super.codePage, super.encoding, charsetType, accessor, eventProducer);
-            return getFontInfo(new DoubleByteFont(super.codePage, super.embeddable, characterSet),
-                    this);
+            return getFontInfo(new DoubleByteFont(super.codePage, super.embeddable, characterSet,
+                    eventProducer), this);
         }
     }
 
@@ -365,7 +365,8 @@ public final class AFPFontConfig implements FontConfig {
                 characterSet = CharacterSetBuilder.getSingleByteInstance().buildSBCS(
                         characterset, super.codePage, super.encoding, accessor, eventProducer);
             }
-            return getFontInfo(new OutlineFont(super.name, super.embeddable, characterSet), this);
+            return getFontInfo(new OutlineFont(super.name, super.embeddable, characterSet,
+                    eventProducer), this);
         }
     }
 

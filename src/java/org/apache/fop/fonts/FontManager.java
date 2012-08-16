@@ -138,7 +138,6 @@ public class FontManager {
 
     /**
      * Whether or not to cache results of font triplet detection/auto-config
-     * @param useCache use cache or not
      */
     public void disableFontCache() {
         fontCacheManager = FontCacheManagerFactory.createDisabled();
@@ -163,8 +162,7 @@ public class FontManager {
 
     /**
      * Deletes the current FontCache file
-     * @return Returns true if the font cache file was successfully deleted.
-     * @throws FOPException -
+     * @throws FOPException if an error was thrown while deleting the cache
      */
     public void deleteCache() throws FOPException {
         fontCacheManager.delete(getCacheFile(true));

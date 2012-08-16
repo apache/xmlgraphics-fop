@@ -162,7 +162,7 @@ public class FopFactoryBuilderTestCase {
             public void run() {
                 URI nonDefaultURI = URI.create("./test/");
                 defaultBuilder.setBaseURI(nonDefaultURI);
-                assertEquals(nonDefaultURI, defaultBuilder.buildConfig().getBaseURI());
+                assertEquals(nonDefaultURI, defaultBuilder.buildConfiguration().getBaseURI());
             }
         });
     }

@@ -132,7 +132,7 @@ class PDFLogicalStructureHandler {
                 ? structureTreeElement.getParentStructElem()
                 : structureTreeElement;
         pageParentTreeArray.add(parent);
-        String type = parent.getStructureType().toString();
+        String type = parent.getStructureType().getName().toString();
         int mcid = pageParentTreeArray.length() - 1;
         return new MarkedContentInfo(type, mcid, structureTreeElement);
     }

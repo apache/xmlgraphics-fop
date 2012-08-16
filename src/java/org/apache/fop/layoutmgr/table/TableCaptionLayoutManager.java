@@ -76,7 +76,7 @@ public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
             int ipd = context.getRefIPD();
             BreakPoss bp;
 
-            LayoutContext childLC = new LayoutContext(0);
+            LayoutContext childLC = LayoutContext.newInstance();
             // if line layout manager then set stack limit to ipd
             // line LM actually generates a LineArea which is a block
             childLC.setStackLimit(
@@ -141,7 +141,7 @@ public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
         /* TODO: Reimplement using Knuth approach
         LayoutManager childLM;
         int iStartPos = 0;
-        LayoutContext lc = new LayoutContext(0);
+        LayoutContext lc = LayoutContext.newInstance();
         while (parentIter.hasNext()) {
             LeafPosition lfp = (LeafPosition) parentIter.next();
             // Add the block areas to Area

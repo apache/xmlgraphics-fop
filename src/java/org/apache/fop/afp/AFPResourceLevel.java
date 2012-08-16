@@ -66,9 +66,8 @@ public class AFPResourceLevel {
         }
     }
 
-    /** the external resource group file path */
     private URI extUri = null;
-    private ResourceType resourceType;
+    private final ResourceType resourceType;
 
     /**
      * Sets the resource placement level within the AFP output
@@ -84,7 +83,7 @@ public class AFPResourceLevel {
     /**
      * Main constructor
      *
-     * @param level the resource level
+     * @param resourceType the resource type
      */
     public AFPResourceLevel(ResourceType resourceType) {
         this.resourceType = resourceType;
@@ -156,7 +155,7 @@ public class AFPResourceLevel {
     /**
      * Sets the URI of the external resource group.
      *
-     * @param filePath the URI of the external resource group
+     * @param uri the URI of the external resource group
      */
     public void setExternalUri(URI uri) {
         this.extUri = uri;

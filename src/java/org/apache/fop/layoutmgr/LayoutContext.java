@@ -33,47 +33,27 @@ import org.apache.fop.traits.WritingMode;
  * This class is used to pass information to the getNextKnuthElements()
  * method. It is set up by higher level LM and used by lower level LM.
  */
-public class LayoutContext {
+public final class LayoutContext {
 
-    /**  linebreak at line feed only flag */
-    public static final int LINEBREAK_AT_LF_ONLY = 0x01;
     /** Generated break possibility is first in a new area */
-    public static final int NEW_AREA = 0x02;
-    /**  ipd unknown flag */
-    public static final int IPD_UNKNOWN = 0x04;
-    /** Signal to a Line LM that a higher level LM may provoke a change
-     *  in the reference area, thus ref area IPD. The LineLM should return
-     *  without looking for a line break.
-     */
-    public static final int CHECK_REF_AREA = 0x08;
+    public static final int NEW_AREA = 0x01;
 
     /**
      * If this flag is set, it indicates that any break-before values other than "auto" should
      * not cause a mandatory break as this break was already handled by a parent layout manager.
      */
-    public static final int SUPPRESS_BREAK_BEFORE = 0x10;
-    /** first area flag */
-    public static final int FIRST_AREA = 0x20;
-    /** try hypenate flag */
-    public static final int TRY_HYPHENATE = 0x40;
-    /** last area flag */
-    public static final int LAST_AREA = 0x80;
-    /**  resolve leading space flag */
-    public static final int RESOLVE_LEADING_SPACE = 0x100;
+    public static final int SUPPRESS_BREAK_BEFORE = 0x02;
 
-    /**
-     * This flag indicates that there's a keep-with-next that hasn't
-     * been processed, yet.
-     */
-    //public static final int KEEP_WITH_NEXT_PENDING = 0x200;
-    /**
-     * This flag indicates that there's a keep-with-previous that hasn't
-     * been processed, yet.
-     */
-    //public static final int KEEP_WITH_PREVIOUS_PENDING = 0x400;
+    public static final int FIRST_AREA = 0x04;
 
+    public static final int LAST_AREA = 0x08;
+
+    public static final int RESOLVE_LEADING_SPACE = 0x10;
+
+    private static final int TREAT_AS_ARTIFACT = 0x20;
 
     private int flags; // Contains some set of flags defined above
+
     /**
      * Total available stacking dimension for a "galley-level" layout
      * manager in block-progression-direction. It is passed by the
@@ -145,11 +125,27 @@ public class LayoutContext {
 
     private int disableColumnBalancing;
 
+    public static LayoutContext newInstance() {
+        return new LayoutContext(0);
+    }
+
+    public static LayoutContext copyOf(LayoutContext copy) {
+        return new LayoutContext(copy);
+    }
+
     /**
-     * Copy constructor for creating child layout contexts.
-     * @param parentLC the parent layout context to copy from
+     * Returns a descendant of the given layout context. The new context is the same as
+     * what would have been created by {@link #newInstance()}, except for inheritable
+     * properties that are passed on by the parent. At the moment, the only inheritable
+     * property is the value returned by {@link #treatAsArtifact()}.
      */
-    public LayoutContext(LayoutContext parentLC) {
+    public static LayoutContext offspringOf(LayoutContext parent) {
+        LayoutContext offspring = new LayoutContext(0);
+        offspring.setTreatAsArtifact(parent.treatAsArtifact());
+        return offspring;
+    }
+
+    private LayoutContext(LayoutContext parentLC) {
         this.flags = parentLC.flags;
         this.refIPD = parentLC.refIPD;
         this.writingMode = parentLC.writingMode;
@@ -170,11 +166,7 @@ public class LayoutContext {
         this.disableColumnBalancing = parentLC.disableColumnBalancing;
     }
 
-    /**
-     * Main constructor.
-     * @param flags the initial flags
-     */
-    public LayoutContext(int flags) {
+    private LayoutContext(int flags) {
         this.flags = flags;
         this.refIPD = 0;
         stackLimitBP = MinOptMax.ZERO;
@@ -435,11 +427,6 @@ public class LayoutContext {
         return hyphContext;
     }
 
-    /** @return true if try hyphenate is set */
-    public boolean tryHyphenate() {
-        return ((this.flags & TRY_HYPHENATE) != 0);
-    }
-
     /**
      * Sets the currently applicable alignment in BP direction.
      * @param alignment one of EN_START, EN_JUSTIFY etc.
@@ -673,7 +660,6 @@ public class LayoutContext {
         + "\nIs First Area: \t" + isFirstArea()
         + "\nStarts New Area: \t" + startsNewArea()
         + "\nIs Last Area: \t" + isLastArea()
-        + "\nTry Hyphenate: \t" + tryHyphenate()
         + "\nKeeps: \t[keep-with-next=" + getKeepWithNextPending()
                 + "][keep-with-previous=" + getKeepWithPreviousPending() + "] pending"
         + "\nBreaks: \tforced [" + (breakBefore != Constants.EN_AUTO ? "break-before" : "") + "]["
@@ -697,6 +683,14 @@ public class LayoutContext {
      */
     public void setDisableColumnBalancing(int disableColumnBalancing) {
         this.disableColumnBalancing = disableColumnBalancing;
+    }
+
+    public boolean treatAsArtifact() {
+        return (flags & TREAT_AS_ARTIFACT) != 0;
+    }
+
+    public void setTreatAsArtifact(boolean treatAsArtifact) {
+        setFlags(TREAT_AS_ARTIFACT, treatAsArtifact);
     }
 }
 

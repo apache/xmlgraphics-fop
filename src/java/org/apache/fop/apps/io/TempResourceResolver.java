@@ -35,7 +35,7 @@ public interface TempResourceResolver {
      * @return the resource
      * @throws IOException if an I/O error occured during resource acquisition
      */
-    Resource getResource(String id) throws IOException;
+    Resource getResource(String uri) throws IOException;
 
     /**
      * Gets an temporary-output stream of a given URI.
@@ -44,5 +44,5 @@ public interface TempResourceResolver {
      * @return the output stream
      * @throws IOException if an I/O error occured while creating an output stream
      */
-    OutputStream getOutputStream(String id) throws IOException;
+    OutputStream getOutputStream(String uri) throws IOException;
 }
