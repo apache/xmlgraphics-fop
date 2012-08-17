@@ -536,11 +536,6 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
             }
         }
 
-        public static final String CORNER_MODE_PROPERTY = "fop.round-corners.afp";
-        public static final String MODE_SEPERATE = "seperate";
-        public static final String MODE_ALL_IN_ONE = "all-in-one";
-        public static final String MODE_DEFAULT = "all-in-one";
-
         private AFPBorderPainter delegate;
         private final AFPPainter painter;
         private final AFPDocumentHandler documentHandler;
@@ -555,50 +550,17 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
         public void drawBorders(final Rectangle borderRect,
                 final BorderProps bpsBefore, final BorderProps bpsAfter,
                 final BorderProps bpsStart, final BorderProps bpsEnd, Color innerBackgroundColor)
-                throws IFException {
-
-            if (isRoundedCornersSupported()) {
-                if (MODE_SEPERATE.equals(System.getProperty(CORNER_MODE_PROPERTY))) {
-                    try {
-                        drawRectangularBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
-                    } catch (IOException ioe) {
-                        throw new IFException("Error drawing border", ioe);
-                    }
-                    drawSeperateRoundedCorners(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd,
-                            innerBackgroundColor);
-                } else {
-                    drawRoundedCorners(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd,
-                            innerBackgroundColor);
-                }
-            } else {
-                try {
-                    drawRectangularBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
-                } catch (IOException ioe) {
-                    throw new IFException("Error drawing border", ioe);
-                }
-            }
-        }
-
-        private boolean isModeSeperate() {
-            return (MODE_SEPERATE.equals(System.getProperty(CORNER_MODE_PROPERTY, MODE_DEFAULT)));
-        }
-
-        private boolean isModeAllInOne() {
-            return (MODE_ALL_IN_ONE.equals(System.getProperty(CORNER_MODE_PROPERTY, MODE_DEFAULT)));
+                        throws IFException {
+            drawRoundedCorners(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd, innerBackgroundColor);
         }
 
         private boolean isBackgroundRequired(BorderProps bpsBefore, BorderProps bpsAfter,
                 BorderProps bpsStart, BorderProps bpsEnd) {
-
-            boolean rtn = !(isRoundedCornersSupported() && isModeAllInOne()
-                    && hasRoundedCorners(bpsBefore,  bpsAfter,
-                     bpsStart,  bpsEnd));
-            return rtn;
+            return !hasRoundedCorners(bpsBefore,  bpsAfter, bpsStart,  bpsEnd);
         }
 
         private boolean hasRoundedCorners( final BorderProps bpsBefore, final BorderProps bpsAfter,
                 final BorderProps bpsStart, final BorderProps bpsEnd) {
-
             return ((bpsStart == null ? false : bpsStart.getRadiusStart() > 0)
                         && (bpsBefore == null ? false : bpsBefore.getRadiusStart() > 0))
                 || ((bpsBefore == null ? false : bpsBefore.getRadiusEnd() > 0)
@@ -607,63 +569,6 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                         && (bpsAfter == null ? false : bpsAfter.getRadiusEnd() > 0))
                         || ((bpsAfter == null ? false : bpsAfter.getRadiusStart() > 0)
                         && (bpsStart == null ? false : bpsStart.getRadiusEnd() > 0));
-        }
-
-        private void drawSeperateRoundedCorners(final Rectangle borderRect,
-                final BorderProps bpsBefore, final BorderProps bpsAfter,
-                final BorderProps bpsStart, final BorderProps bpsEnd,
-                final Color innerBackgroundColor)
-                    throws IFException {
-
-            double esf = cornerScaleFactor(borderRect.width, borderRect.height,
-                    bpsBefore,  bpsAfter,
-                    bpsStart,  bpsEnd);
-
-            if (bpsBefore != null && bpsStart != null) {
-                int beforeRadiusStart = (int)(esf *  bpsBefore.getRadiusStart());
-                int startRadiusStart = (int)(esf *  bpsStart.getRadiusStart());
-
-                Rectangle area = new Rectangle(borderRect.x, borderRect.y,
-                        startRadiusStart,  beforeRadiusStart);
-
-                drawCorner(TOP_LEFT, area, bpsBefore, bpsStart,
-                        beforeRadiusStart, startRadiusStart, innerBackgroundColor);
-            }
-
-            if (bpsEnd != null && bpsBefore != null) {
-                int endRadiusStart = (int)(esf *  bpsEnd.getRadiusStart());
-                int beforeRadiusEnd = (int)(esf *  bpsBefore.getRadiusEnd());
-                Rectangle area = new Rectangle(borderRect.x + borderRect.width - endRadiusStart,
-                        borderRect.y, endRadiusStart,  beforeRadiusEnd);
-
-                drawCorner(TOP_RIGHT, area, bpsBefore, bpsEnd,
-                        beforeRadiusEnd, endRadiusStart, innerBackgroundColor);
-            }
-
-
-            if (bpsEnd != null && bpsAfter != null) {
-                int endRadiusEnd = (int)(esf *  bpsEnd.getRadiusEnd());
-                int afterRadiusEnd = (int)(esf *  bpsAfter.getRadiusEnd());
-
-                Rectangle area = new Rectangle(borderRect.x + borderRect.width - endRadiusEnd,
-                        borderRect.y + borderRect.height - afterRadiusEnd,
-                        endRadiusEnd,   afterRadiusEnd);
-
-                drawCorner(BOTTOM_RIGHT, area, bpsAfter, bpsEnd,
-                        afterRadiusEnd, endRadiusEnd, innerBackgroundColor);
-
-            }
-
-            if (bpsStart != null && bpsAfter != null) {
-                int startRadiusEnd = (int)(esf *  bpsStart.getRadiusEnd());
-                int afterRadiusStart = (int)(esf *  bpsAfter.getRadiusStart());
-                Rectangle area = new Rectangle(borderRect.x ,
-                        borderRect.y + borderRect.height - afterRadiusStart,
-                        startRadiusEnd, afterRadiusStart);
-
-                drawCorner(BOTTOM_LEFT, area, bpsAfter, bpsStart,
-                        afterRadiusStart, startRadiusEnd, innerBackgroundColor);
-            }
         }
 
         private void drawRoundedCorners(final Rectangle borderRect,
@@ -827,162 +732,6 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
             clip.transform(transform);
             return clip;
         }
-
-        /* TODO collect  parameters in a useful structure */
-        private void paintCorner(final Graphics2D g2d, final int beforeWidth,
-                final int startWidth, final  int beforeRadius,
-                final int startRadius, final Color innerBackgroundColor,
-                final Color beforeColor, final Color startColor) {
-
-            //Draw the before-srart corner
-            Ellipse2D.Double inner = new  Ellipse2D.Double();
-            inner.x = startWidth;
-            inner.y = beforeWidth;
-            inner.width =  2 * (startRadius - startWidth);
-            inner.height =  2 * (beforeRadius - beforeWidth);
-
-            Ellipse2D.Double outer = new  Ellipse2D.Double();
-            outer.x = 0;
-            outer.y = 0;
-            outer.width =   2 * (startRadius);
-            outer.height =  2 * (beforeRadius);
-
-            Area border = new Area(outer);
-            border.subtract(new Area(inner));
-
-            GeneralPath afterCut = new GeneralPath();
-            GeneralPath beforeCut = new GeneralPath();
-            afterCut.moveTo(0, 0);
-            beforeCut.moveTo(0, 0);
-            float borderWidthRatio = ((float)beforeWidth) / startWidth;
-            if (beforeWidth * startRadius > startWidth * beforeRadius) {
-                afterCut.lineTo(startRadius, borderWidthRatio * startRadius);
-                beforeCut.lineTo(1f / borderWidthRatio * beforeRadius, beforeRadius);
-
-                afterCut.lineTo(startRadius, 0);
-                beforeCut.lineTo(0, beforeRadius);
-            } else {
-                afterCut.lineTo(startRadius, (borderWidthRatio * startRadius));
-                beforeCut.lineTo(1f / borderWidthRatio * beforeRadius, beforeRadius);
-
-                afterCut.lineTo(startRadius, 0);
-                beforeCut.lineTo(0, beforeRadius);
-
-            }
-
-            //start
-            g2d.setColor(startColor);
-            g2d.fill(border);
-
-            //before
-            border = new Area(outer);
-            border.subtract(new Area(inner));
-            border.subtract(new Area(beforeCut));
-
-            //start
-            g2d.setColor(beforeColor);
-            g2d.fill(border);
-
-            //paint background
-            if (innerBackgroundColor == null) {
-                g2d.setColor(Color.white);
-              //  log.warn("No background color set");
-
-            } else {
-                g2d.setColor(innerBackgroundColor);
-            }
-
-            g2d.fill(inner);
-        }
-
-
-        private void drawCorner(final int corner, final Rectangle area,
-                final BorderProps before, final BorderProps start,
-                final int beforeRadius, final int startRadius, final Color innerBackground)
-                throws IFException {
-
-            if (beforeRadius > 0 && startRadius > 0) {
-                String cornerKey = makeCornerKey(corner, before, start,
-                        beforeRadius, startRadius, innerBackground);
-
-                Graphics2DImagePainter painter = null;
-
-                String name = documentHandler.getCachedRoundedCorner(cornerKey);
-
-                //  If the corner is not in the cache we construct a Graphics2DImagePainter
-                //  that paints the corner
-                if (name == null) {
-                    //Cache the name
-                    name = documentHandler.cacheRoundedCorner(cornerKey);
-
-                    // create the Graphics2DImagePainter
-                    painter = new Graphics2DImagePainter() {
-                        public void paint(Graphics2D g2d, Rectangle2D area) {
-
-                            int beforeWidth = before.width;
-                            int startWidth = start.width;
-
-                            Color beforeColor = before.color;
-                            Color startColor = start.color;
-
-                            //No transformation
-                            AffineTransform t;
-                            switch(corner) {
-                            case TOP_LEFT:
-                                //No transform required
-                                break;
-                            case TOP_RIGHT:
-                                t = new AffineTransform(-1, 0, 0, 1, startRadius, 0);
-                                g2d.transform(t);
-                                break;
-                            case BOTTOM_RIGHT:
-                                t = new AffineTransform(-1, 0, 0, -1, startRadius, beforeRadius);
-                                g2d.transform(t);
-                                break;
-                            case BOTTOM_LEFT:
-                                t = new AffineTransform(1, 0, 0, -1, 0, beforeRadius);
-                                g2d.transform(t);
-                                break;
-                            default: break;
-                            }
-
-                            paintCorner(g2d, beforeWidth, startWidth,
-                                    beforeRadius, startRadius, innerBackground,
-                                    beforeColor,  startColor);
-                        }
-
-                        public Dimension getImageSize() {
-                            return area.getSize();
-                        }
-                    };
-                }
-                paintCornersAsBitmap(painter, area, name);
-            }
-        }
-
-
-        private String makeCornerKey(int corner, BorderProps beforeProps, BorderProps startProps,
-                int beforeRadius, int startRadius, Color innerBackgroundColor) {
-
-           return hash(new StringBuffer()
-                   .append(corner)
-                   .append(":")
-                   .append(beforeRadius)
-                   .append(":")
-                   .append(startRadius)
-                   .append(":")
-                   .append(beforeProps.width)
-                   .append(":")
-                   .append(startProps.width)
-                   .append(":")
-                   .append(beforeProps.color)
-                   .append(":")
-                   .append(startProps.color)
-                   .append(":")
-                   .append(innerBackgroundColor)
-                   .toString());
-        }
-
 
         private String makeKey(Rectangle area, BorderProps beforeProps,
                 BorderProps endProps, BorderProps afterProps, BorderProps startProps,

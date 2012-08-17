@@ -48,7 +48,6 @@ import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontMetrics;
-import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.UnitConv;
 
@@ -259,13 +258,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
             saveGraphicsState();
 
-            //TODO remove this choice
-            if (BorderPainter.isRoundedCornersSupported()) {
-                clipBackground(sx, sy,  paddRectWidth, paddRectHeight,
-                        bpsTop, bpsBottom, bpsLeft,  bpsRight);
-            } else {
-                clipRect(sx, sy,  paddRectWidth, paddRectHeight);
-            }
+            clipBackground(sx, sy,  paddRectWidth, paddRectHeight, bpsTop, bpsBottom, bpsLeft, bpsRight);
 
             if (back.getColor() != null) {
                 updateColor(back.getColor(), true);

@@ -57,17 +57,8 @@ public abstract class BorderPainter {
             BorderProps bpsTop, BorderProps bpsBottom,
             BorderProps bpsLeft, BorderProps bpsRight, Color innerBackgroundColor)
                 throws IFException {
-
         try {
-            if (isRoundedCornersSupported()) {
-                drawRoundedBorders(borderRect, bpsTop, bpsBottom,
-                        bpsLeft, bpsRight);
-
-            } else {
-                drawRectangularBorders(borderRect, bpsTop, bpsBottom,
-                        bpsLeft, bpsRight);
-            }
-
+            drawRoundedBorders(borderRect, bpsTop, bpsBottom, bpsLeft, bpsRight);
         } catch (IOException ioe) {
             throw new IFException("IO error drawing borders", ioe);
         }
@@ -533,44 +524,12 @@ public abstract class BorderPainter {
 
     private double[] getCornerBorderJoinMetrics(double ellipseCenterX, double ellipseCenterY,
             double borderWidthRatio) {
-
-        //TODO decide on implementation
-        boolean invert = System.getProperty("fop.round-corners.border-invert") != null;
-        if (invert) {
-            borderWidthRatio = 1d / borderWidthRatio;
-        }
-        String cornerJoinStyle = System.getProperty("fop.round-corners.corner-join-style");
-        if ("css".equals(cornerJoinStyle)) {
-            return getCSSCornerBorderJoinMetrics(ellipseCenterX, ellipseCenterY, borderWidthRatio);
-        } else {
-            if (invert) { throw new RuntimeException("non css AND bw inverted!"); }
-            return getDefaultCornerBorderJoinMetrics(
-                    ellipseCenterX, ellipseCenterY, borderWidthRatio);
-        }
-
-    }
-
-    private double[] getCSSCornerBorderJoinMetrics(double ellipseCenterX, double ellipseCenterY,
-            double borderWidthRatio) {
-
-        double angle = Math.atan(borderWidthRatio);
-        double x = ellipseCenterX * Math.cos(Math.atan(ellipseCenterX
-                / ellipseCenterY * borderWidthRatio));
-        double y = ellipseCenterY * Math.sqrt(1d - x * x / ellipseCenterX / ellipseCenterX);
-
-        return new double[]{ellipseCenterX - x, ellipseCenterY - y, angle};
-    }
-    private double[] getDefaultCornerBorderJoinMetrics(double ellipseCenterX, double ellipseCenterY,
-            double borderWidthRatio) {
-
         double x = ellipseCenterY * ellipseCenterX * (
                 ellipseCenterY + ellipseCenterX * borderWidthRatio
                 - Math.sqrt(2d * ellipseCenterX * ellipseCenterY * borderWidthRatio)
-        )
-        / (ellipseCenterY * ellipseCenterY
+        ) / (ellipseCenterY * ellipseCenterY
                 + ellipseCenterX * ellipseCenterX * borderWidthRatio * borderWidthRatio);
         double y = borderWidthRatio * x;
-
         return new double[]{x, y, Math.atan((ellipseCenterY - y) / (ellipseCenterX - x))};
     }
 
@@ -912,13 +871,5 @@ public abstract class BorderPainter {
      * @throws IOException if an I/O error occurs
      */
     protected abstract void restoreGraphicsState() throws IOException;
-
-    /**
-     * TODO remove the System.props when rounded corners code is stable
-     * @return true iff in rounded corners mode
-     */
-    public static boolean isRoundedCornersSupported() {
-        return "true".equalsIgnoreCase(System.getProperty(ROUNDED_CORNERS, "true"));
-    }
 
 }
