@@ -428,7 +428,6 @@ public class AFPResourceManager {
 
         AbstractCachedObject cachedObject = (AbstractCachedObject) includeObjectCache.get(resourceInfo);
         if (cachedObject == null) {
-
             ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
 
             //resourceObject delegates write commands to copyNamedResource()
