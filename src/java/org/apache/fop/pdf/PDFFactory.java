@@ -1469,42 +1469,11 @@ public class PDFFactory {
     /**
      * Creates a PDFEncoding instance from a CodePointMapping instance.
      * @param encoding the code point mapping (encoding)
-     * @param fontNameHint ...
+     * @param fontName ...
      * @return the PDF Encoding dictionary (or a String with the predefined encoding)
      */
-    public Object createPDFEncoding(SingleByteEncoding encoding, String fontNameHint) {
-        SingleByteEncoding baseEncoding;
-        if (fontNameHint.indexOf("Symbol") >= 0) {
-            baseEncoding = CodePointMapping.getMapping(
-                    CodePointMapping.SYMBOL_ENCODING);
-        } else {
-            baseEncoding = CodePointMapping.getMapping(
-                    CodePointMapping.STANDARD_ENCODING);
-        }
-        PDFEncoding pdfEncoding = new PDFEncoding(baseEncoding.getName());
-        PDFEncoding.DifferencesBuilder builder
-                = pdfEncoding.createDifferencesBuilder();
-        int start = -1;
-        String[] baseNames = baseEncoding.getCharNameMap();
-        String[] charNameMap = encoding.getCharNameMap();
-        for (int i = 0, ci = charNameMap.length; i < ci; i++) {
-            String basec = baseNames[i];
-            String c = charNameMap[i];
-            if (!basec.equals(c)) {
-                if (start != i) {
-                    builder.addDifference(i);
-                    start = i;
-                }
-                builder.addName(c);
-                start++;
-            }
-        }
-        if (builder.hasDifferences()) {
-            pdfEncoding.setDifferences(builder.toPDFArray());
-            return pdfEncoding;
-        } else {
-            return baseEncoding.getName();
-        }
+    public Object createPDFEncoding(SingleByteEncoding encoding, String fontName) {
+        return PDFEncoding.createPDFEncoding(encoding, fontName);
     }
 
     /**

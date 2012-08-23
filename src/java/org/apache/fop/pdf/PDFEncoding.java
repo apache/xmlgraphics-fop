@@ -23,6 +23,9 @@ package org.apache.fop.pdf;
 import java.util.Collections;
 import java.util.Set;
 
+import org.apache.fop.fonts.CodePointMapping;
+import org.apache.fop.fonts.SingleByteEncoding;
+
 /**
  * Class representing an /Encoding object.
  *
@@ -74,12 +77,53 @@ public class PDFEncoding extends PDFDictionary {
     }
 
     /**
+     * Creates a PDFEncoding instance from a CodePointMapping instance.
+     * @param encoding the code point mapping (encoding)
+     * @param fontName ...
+     * @return the PDF Encoding dictionary (or a String with the predefined encoding)
+     */
+    static Object createPDFEncoding(SingleByteEncoding encoding, String fontName) {
+        //If encoding type is null, return null which causes /Encoding to be omitted.
+        if (encoding == null) {
+            return null;
+        }
+        String encodingName = null;
+        SingleByteEncoding baseEncoding;
+        if (fontName.indexOf("Symbol") >= 0) {
+            baseEncoding = CodePointMapping.getMapping(CodePointMapping.SYMBOL_ENCODING);
+            encodingName = baseEncoding.getName();
+        } else {
+            baseEncoding = CodePointMapping.getMapping(CodePointMapping.STANDARD_ENCODING);
+        }
+        PDFEncoding pdfEncoding = new PDFEncoding(encodingName);
+        PDFEncoding.DifferencesBuilder builder = pdfEncoding.createDifferencesBuilder();
+        PDFArray differences = builder.buildDifferencesArray(baseEncoding, encoding);
+        // TODO This method should not be returning an Object with two different outcomes
+        // resulting in subsequent `if (X instanceof Y)` statements.
+        if (differences.length() > 0) {
+            pdfEncoding.setDifferences(differences);
+            return pdfEncoding;
+        } else {
+            return encodingName;
+        }
+    }
+
+    /**
      * Indicates whether a given encoding is one of the predefined encodings.
      * @param name the encoding name (ex. "StandardEncoding")
      * @return true if it is a predefined encoding
      */
     public static boolean isPredefinedEncoding(String name) {
         return PREDEFINED_ENCODINGS.contains(name);
+    }
+
+    /**
+     * Indicates whether the given encoding type is that of standard encoding
+     * @param name The encoding name
+     * @return Returns true if it is of type standard encoding
+     */
+    static boolean hasStandardEncoding(String encodingName) {
+        return encodingName.equals(STANDARD_ENCODING);
     }
 
     /**
@@ -104,18 +148,44 @@ public class PDFEncoding extends PDFDictionary {
      */
     public class DifferencesBuilder {
 
-        private PDFArray differences = new PDFArray();
         private int currentCode = -1;
+
+        /**
+         * Creates an array containing the differences between two single-byte.
+         * font encodings.
+         * @param encoding_A The first single-byte encoding
+         * @param encoding_B The second single-byte encoding
+         * @return The PDFArray of differences between encodings
+         */
+        public PDFArray buildDifferencesArray(SingleByteEncoding encodingA,
+                SingleByteEncoding encodingB) {
+            PDFArray differences = new PDFArray();
+            int start = -1;
+            String[] baseNames = encodingA.getCharNameMap();
+            String[] charNameMap = encodingB.getCharNameMap();
+            for (int i = 0, ci = charNameMap.length; i < ci; i++) {
+                String basec = baseNames[i];
+                String c = charNameMap[i];
+                if (!basec.equals(c)) {
+                    if (start != i) {
+                        addDifference(i, differences);
+                        start = i;
+                    }
+                    addName(c, differences);
+                    start++;
+                }
+            }
+            return differences;
+        }
 
         /**
          * Start a new difference.
          * @param code the starting code index inside the encoding
          * @return this builder instance
          */
-        public DifferencesBuilder addDifference(int code) {
+        private void addDifference(int code, PDFArray differences) {
             this.currentCode = code;
-            this.differences.add(new Integer(code));
-            return this;
+            differences.add(Integer.valueOf(code));
         }
 
         /**
@@ -123,28 +193,11 @@ public class PDFEncoding extends PDFDictionary {
          * @param name the character name
          * @return this builder instance
          */
-        public DifferencesBuilder addName(String name) {
+        private void addName(String name, PDFArray differences) {
             if (this.currentCode < 0) {
                 throw new IllegalStateException("addDifference(int) must be called first");
             }
-            this.differences.add(new PDFName(name));
-            return this;
-        }
-
-        /**
-         * Indicates whether any differences have been recorded.
-         * @return true if there are differences.
-         */
-        public boolean hasDifferences() {
-            return (this.differences.length() > 0);
-        }
-
-        /**
-         * Creates and returns the PDFArray representing the Differences entry.
-         * @return the Differences entry
-         */
-        public PDFArray toPDFArray() {
-            return this.differences;
+            differences.add(new PDFName(name));
         }
     }
 
