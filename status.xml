@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="MH" type="fix" fixes-bug="53766" due-to="Robert Meyer">
+        Remove StandardEncoding as the encoding type from fonts used in the PDF renderer
+      </action>
       <action context="Fonts" dev="MH" type="fix" fixes-bug="53685">
         Cached AFP charactersets have more unique keys preventing the two characters with
         but different binaries conflicting.
