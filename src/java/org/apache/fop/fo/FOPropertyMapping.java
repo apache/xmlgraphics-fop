@@ -26,6 +26,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.flow.table.TableFObj.ColumnNumberPropertyMaker;
+import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.properties.BackgroundPositionShorthand;
 import org.apache.fop.fo.properties.BorderSpacingShorthandParser;
 import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
@@ -2267,7 +2268,7 @@ public final class FOPropertyMapping implements Constants {
         m  = new StringProperty.Maker(PR_FLOW_NAME);
         m.setInherited(false);
         m.setDefault("");
-        addPropertyMaker("flow-name", m);
+        addPropertyMaker(Flow.FLOW_NAME, m);
 
         // force-page-count
         m  = new EnumProperty.Maker(PR_FORCE_PAGE_COUNT);

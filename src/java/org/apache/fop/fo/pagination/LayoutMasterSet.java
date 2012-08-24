@@ -217,5 +217,24 @@ public class LayoutMasterSet extends FObj {
     public int getNameId() {
         return FO_LAYOUT_MASTER_SET;
     }
+
+    /**
+     * Returns the default name of the region to which the flow or static-content having
+     * the given flow-name is assigned.
+     *
+     * @param flowName the value of the flow-name property
+     * @return the default region name ("xsl-region-body", "xsl-region-before", etc.)
+     */
+    public String getDefaultRegionNameFor(String flowName) {
+        for (SimplePageMaster spm : simplePageMasters.values()) {
+            for (Region region : spm.getRegions().values()) {
+                if (region.getRegionName().equals(flowName)) {
+                    return region.getDefaultRegionName();
+                }
+            }
+        }
+        assert flowName.equals("xsl-before-float-separator") || flowName.equals("xsl-footnote-separator");
+        return flowName;
+    }
 }
 
