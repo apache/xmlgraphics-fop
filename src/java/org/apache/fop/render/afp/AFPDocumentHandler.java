@@ -318,7 +318,8 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                 case IN_PAGE_HEADER:
                     String name = aps.getName();
                     String value = aps.getValue();
-                    dataStream.createTagLogicalElement(name, value);
+                    int encoding = aps.getEncoding();
+                    dataStream.createTagLogicalElement(name, value, encoding);
                     break;
                 default:
                     throw new IFException(

@@ -374,13 +374,13 @@ public class Factory {
     /**
      * Creates a MO:DCA {@link TagLogicalElement}
      *
-     * @param name name of the element
-     * @param value value of the element
+     * @param state the attribute state for the TLE
      * @param tleSequence current start tle sequence number within stream*
      * @return a new {@link TagLogicalElement}
      */
-    public TagLogicalElement createTagLogicalElement(String name, String value, int tleSequence) {
-        TagLogicalElement tle = new TagLogicalElement(name, value, tleSequence);
+    public TagLogicalElement createTagLogicalElement(TagLogicalElement.State state,
+            int tleSequence) {
+        TagLogicalElement tle = new TagLogicalElement(state, tleSequence);
         return tle;
     }
 

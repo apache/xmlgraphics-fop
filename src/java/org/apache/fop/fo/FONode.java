@@ -38,6 +38,7 @@ import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.InternalElementMapping;
@@ -599,6 +600,22 @@ public abstract class FONode implements Cloneable {
     protected void missingPropertyError(String propertyName)
                 throws ValidationException {
         getFOValidationEventProducer().missingProperty(this, getName(), propertyName, locator);
+    }
+
+
+
+    /**
+     * Helper function to throw an error caused by an invalid property
+     *
+     * @param propertyName the name of the property.
+     * @param propertyValue the value of the property.
+     * * @param e optional property parsing exception.
+     * @throws ValidationException the validation error provoked by the method call
+     */
+    protected void invalidPropertyValueError(String propertyName, String propertyValue, Exception e)
+                throws ValidationException {
+        getFOValidationEventProducer().invalidPropertyValue(this, getName(), propertyName,
+                propertyValue,  new PropertyException(e), locator);
     }
 
     /**

@@ -144,6 +144,12 @@ public class AFPExtensionHandler extends DefaultHandler
                 if (placement != null && placement.length() > 0) {
                     pageSetupExtn.setPlacement(ExtensionPlacement.fromXMLValue(placement));
                 }
+
+                String encoding =  lastAttributes.getValue("encoding");
+                if (encoding != null && pageSetupExtn != null) {
+                    pageSetupExtn.setEncoding(Integer.parseInt(encoding));
+                }
+
                 if (content.length() > 0 && pageSetupExtn != null) {
                     pageSetupExtn.setContent(content.toString());
                     content.setLength(0); //Reset text buffer (see characters())
