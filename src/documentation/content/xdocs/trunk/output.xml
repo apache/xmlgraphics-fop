@@ -971,7 +971,8 @@ Note that the value of the encoding attribute in the example is the double-byte 
      xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
       <fo:layout-master-set>
         <fo:simple-page-master master-name="simple">
-          <afp:tag-logical-element name="The TLE Name" value="The TLE Value" />
+          <afp:tag-logical-element name="The TLE Name" value="The TLE Value"
+            encoding="500" />
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
@@ -985,7 +986,7 @@ Note that the value of the encoding attribute in the example is the double-byte 
           The tag-logical-element extension element can appear within a simple-page-master
           (page level) or it can appear as child of page-sequence (page group level).
           Multiple tag-logical-element extension elements within a simple-page-master or
-          page-sequence are allowed. The name and value attributes are mandatory.
+          page-sequence are allowed. The name and value attributes are mandatory.  The encoding attribute specifying a CCSID encoding is optional.  
         </p>
       </section>
       <section id="afp-no-operation">

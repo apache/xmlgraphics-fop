@@ -55,13 +55,11 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
     /**
      * Creates a TagLogicalElement on the page.
      *
-     * @param name
-     *            the name of the tag
-     * @param value
-     *            the value of the tag
+     * @param state
+     *              the state of the TLE
      */
-    public void createTagLogicalElement(String name, String value) {
-        TagLogicalElement tle = factory.createTagLogicalElement(name, value, tleSequence);
+    public void createTagLogicalElement(TagLogicalElement.State state) {
+        TagLogicalElement tle = factory.createTagLogicalElement(state, tleSequence);
         if (!getTagLogicalElements().contains(tle)) {
             getTagLogicalElements().add(tle);
             tleSequence++;

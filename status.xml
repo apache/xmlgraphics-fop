@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="MH" type="fix" fixes-bug="48954" due-to="PH">
+         Support for character encoding of TLEs in AFP output
+      </action>
       <action context="Renderers" dev="VH" type="fix" fixes-bug="53778">
         When PDF accessibility is enabled, the contents for the different regions must appear in the 
         proper order in the structure tree.
