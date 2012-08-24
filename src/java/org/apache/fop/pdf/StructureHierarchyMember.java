@@ -20,37 +20,18 @@
 package org.apache.fop.pdf;
 
 /**
- * Class representing a PDF /StructTreeRoot dictionary.
+ * An element in the document's structure tree. This can be either the structure tree root
+ * or a structure element.
+ *
+ * @see "Section 10.6, <q>Logical Structure</q> of the PDF Reference, 4th edition (PDF 1.5)"
  */
-public class PDFStructTreeRoot extends StructureHierarchyMember {
-
-    /**
-     * Creates a new /StructTreeRoot dictionary.
-     *
-     * @param parentTree the value of the ParenTree entry
-     */
-    PDFStructTreeRoot(PDFParentTree parentTree) {
-        put("Type", new PDFName("StructTreeRoot"));
-        put("K", new PDFArray());
-        put("ParentTree", parentTree);
-    }
-
-    /**
-     * Returns the children element of this StructTreeRoot.
-     *
-     * @return the value of the K entry
-     */
-    public PDFArray getKids() {
-        return (PDFArray)get("K");
-    }
+public abstract class StructureHierarchyMember extends PDFDictionary {
 
     /**
      * Adds the given object to the array of kids.
      *
      * @param kid an object to be added to the K entry
      */
-    @Override
-    public void addKid(PDFObject kid) {
-        getKids().add(kid);
-    }
+    public abstract void addKid(PDFObject kid);
+
 }

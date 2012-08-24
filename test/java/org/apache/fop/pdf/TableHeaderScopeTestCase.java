@@ -52,7 +52,8 @@ public class TableHeaderScopeTestCase {
         VersionController controller = mock(VersionController.class);
         PDFDocument document = new PDFDocument("Test", controller);
         document.makeStructTreeRoot(null);
-        document.makeStructureElement(Table.TH, null, scope);
+        PDFStructElem th = new PDFStructElem(null, Table.TH);
+        document.registerStructureElement(th, scope);
         verify(controller).addTableHeaderScopeAttribute(any(PDFStructElem.class), eq(scope));
     }
 

@@ -17,40 +17,32 @@
 
 /* $Id$ */
 
-package org.apache.fop.pdf;
+package org.apache.fop.render.pdf;
 
-/**
- * Class representing a PDF /StructTreeRoot dictionary.
- */
-public class PDFStructTreeRoot extends StructureHierarchyMember {
+import org.apache.fop.pdf.PDFObject;
+import org.apache.fop.pdf.PDFStructElem;
+import org.apache.fop.pdf.StructureType;
 
-    /**
-     * Creates a new /StructTreeRoot dictionary.
-     *
-     * @param parentTree the value of the ParenTree entry
-     */
-    PDFStructTreeRoot(PDFParentTree parentTree) {
-        put("Type", new PDFName("StructTreeRoot"));
-        put("K", new PDFArray());
-        put("ParentTree", parentTree);
+class TableStructElem extends PDFStructElem {
+
+    private PDFStructElem tableFooter;
+
+    public TableStructElem(PDFObject parent, StructureType structureType) {
+        super(parent, structureType);
     }
 
-    /**
-     * Returns the children element of this StructTreeRoot.
-     *
-     * @return the value of the K entry
-     */
-    public PDFArray getKids() {
-        return (PDFArray)get("K");
+    void addTableFooter(PDFStructElem footer) {
+        assert tableFooter == null;
+        tableFooter = footer;
     }
 
-    /**
-     * Adds the given object to the array of kids.
-     *
-     * @param kid an object to be added to the K entry
-     */
     @Override
-    public void addKid(PDFObject kid) {
-        getKids().add(kid);
+    protected boolean attachKids() {
+        assert !kids.isEmpty();
+        if (tableFooter != null) {
+            kids.add(tableFooter);
+        }
+        return super.attachKids();
     }
+
 }

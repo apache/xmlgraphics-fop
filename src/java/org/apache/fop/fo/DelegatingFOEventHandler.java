@@ -143,6 +143,16 @@ public abstract class DelegatingFOEventHandler extends FOEventHandler {
     }
 
     @Override
+    public void startStatic(StaticContent staticContent) {
+        delegate.startStatic(staticContent);
+    }
+
+    @Override
+    public void endStatic(StaticContent statisContent) {
+        delegate.endStatic(statisContent);
+    }
+
+    @Override
     public void startFlow(Flow fl) {
         delegate.startFlow(fl);
     }
@@ -290,16 +300,6 @@ public abstract class DelegatingFOEventHandler extends FOEventHandler {
     @Override
     public void endListBody(ListItemBody listItemBody) {
         delegate.endListBody(listItemBody);
-    }
-
-    @Override
-    public void startStatic(StaticContent staticContent) {
-        delegate.startStatic(staticContent);
-    }
-
-    @Override
-    public void endStatic(StaticContent statisContent) {
-        delegate.endStatic(statisContent);
     }
 
     @Override
