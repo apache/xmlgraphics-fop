@@ -23,14 +23,15 @@ import java.awt.image.BufferedImage;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.fop.apps.FopConfBuilder;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.apps.TIFFRendererConfBuilder;
 import org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererConfigParser;
 
-import static org.apache.fop.render.bitmap.TIFFCompressionValues.CCITT_T4;
-import static org.apache.fop.render.bitmap.TIFFCompressionValues.CCITT_T6;
-import static org.junit.Assert.assertEquals;
+import static org.apache.fop.render.bitmap.TIFFCompressionValue.CCITT_T4;
+import static org.apache.fop.render.bitmap.TIFFCompressionValue.CCITT_T6;
 
 public class TIFFRendererConfiguratorTestCase extends AbstractBitmapRendererConfiguratorTest {
 
@@ -51,7 +52,7 @@ public class TIFFRendererConfiguratorTestCase extends AbstractBitmapRendererConf
     @Test
     @Override
     public void testColorModes() throws Exception {
-        for (TIFFCompressionValues value : TIFFCompressionValues.values()) {
+        for (TIFFCompressionValue value : TIFFCompressionValue.values()) {
             parseConfig(createBuilder().setCompressionMode(value.getName()));
             if (value == CCITT_T6 || value == CCITT_T4) {
                 assertEquals(BufferedImage.TYPE_BYTE_BINARY, settings.getBufferedImageType());

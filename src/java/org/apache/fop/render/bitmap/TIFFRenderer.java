@@ -38,7 +38,6 @@ import org.apache.commons.logging.Log;
 import org.apache.xmlgraphics.image.GraphicsUtil;
 import org.apache.xmlgraphics.image.rendered.FormatRed;
 import org.apache.xmlgraphics.image.writer.ImageWriter;
-import org.apache.xmlgraphics.image.writer.ImageWriterParams;
 import org.apache.xmlgraphics.image.writer.ImageWriterRegistry;
 import org.apache.xmlgraphics.image.writer.MultiImageWriter;
 
@@ -47,9 +46,9 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
-import static org.apache.fop.render.bitmap.TIFFCompressionValues.CCITT_T4;
-import static org.apache.fop.render.bitmap.TIFFCompressionValues.CCITT_T6;
-import static org.apache.fop.render.bitmap.TIFFCompressionValues.PACKBITS;
+import static org.apache.fop.render.bitmap.TIFFCompressionValue.CCITT_T4;
+import static org.apache.fop.render.bitmap.TIFFCompressionValue.CCITT_T6;
+import static org.apache.fop.render.bitmap.TIFFCompressionValue.PACKBITS;
 
 /**
  * <p>
@@ -74,11 +73,7 @@ import static org.apache.fop.render.bitmap.TIFFCompressionValues.PACKBITS;
  */
 public class TIFFRenderer extends Java2DRenderer {
 
-    /** ImageWriter parameters */
-    private ImageWriterParams writerParams;
-
-    /** Image Type as parameter for the BufferedImage constructor (see BufferedImage.TYPE_*) */
-    private int bufferedImageType = BufferedImage.TYPE_INT_ARGB;
+    private BitmapRenderingSettings imageSettings;
 
     private OutputStream outputStream;
 
@@ -94,11 +89,11 @@ public class TIFFRenderer extends Java2DRenderer {
      */
     public TIFFRenderer(FOUserAgent userAgent) {
         super(userAgent);
-        writerParams = new ImageWriterParams();
-        writerParams.setCompressionMethod(PACKBITS.getName());
-
+        imageSettings = new BitmapRenderingSettings();
+        imageSettings.setCompressionMethod(PACKBITS.getName());
+        imageSettings.setBufferedImageType(BufferedImage.TYPE_INT_ARGB);
         int dpi = Math.round(userAgent.getTargetResolution());
-        writerParams.setResolution(dpi);
+        imageSettings.setResolution(dpi);
     }
 
     /** {@inheritDoc} */
@@ -129,7 +124,7 @@ public class TIFFRenderer extends Java2DRenderer {
                 // Write all pages/images
                 while (pageImagesItr.hasNext()) {
                     RenderedImage img = (RenderedImage) pageImagesItr.next();
-                    multiWriter.writeImage(img, writerParams);
+                    multiWriter.writeImage(img, imageSettings.getWriterParams());
                 }
             } finally {
                 multiWriter.close();
@@ -139,7 +134,7 @@ public class TIFFRenderer extends Java2DRenderer {
             if (pageImagesItr.hasNext()) {
                 renderedImage = (RenderedImage) pageImagesItr.next();
             }
-            writer.writeImage(renderedImage, outputStream, writerParams);
+            writer.writeImage(renderedImage, outputStream, imageSettings.getWriterParams());
             if (pageImagesItr.hasNext()) {
                 BitmapRendererEventProducer eventProducer
                     = BitmapRendererEventProducer.Provider.get(
@@ -156,7 +151,7 @@ public class TIFFRenderer extends Java2DRenderer {
 
     /** {@inheritDoc} */
     protected BufferedImage getBufferedImage(int bitmapWidth, int bitmapHeight) {
-        return new BufferedImage(bitmapWidth, bitmapHeight, bufferedImageType);
+        return new BufferedImage(bitmapWidth, bitmapHeight, imageSettings.getBufferedImageType());
     }
 
     /** Private inner class to lazy page rendering. */
@@ -195,7 +190,7 @@ public class TIFFRenderer extends Java2DRenderer {
                 throw new NoSuchElementException(e.getMessage());
             }
 
-            TIFFCompressionValues compression = TIFFCompressionValues.getValue(writerParams.getCompressionMethod());
+            TIFFCompressionValue compression = TIFFCompressionValue.getType(imageSettings.getCompressionMethod());
             if (compression == CCITT_T4 || compression == CCITT_T6) {
                 return pageImage;
             } else {
@@ -226,11 +221,14 @@ public class TIFFRenderer extends Java2DRenderer {
 
     /** @param bufferedImageType an image type */
     public void setBufferedImageType(int bufferedImageType) {
-        this.bufferedImageType = bufferedImageType;
+        imageSettings.setBufferedImageType(bufferedImageType);
     }
 
-    /** @return image writer parameters */
-    public ImageWriterParams getWriterParams() {
-        return writerParams;
+    /**
+     * Returns the settings for the image rendering.
+     * @return the image rendering settings
+     */
+    public BitmapRenderingSettings getRenderingSettings() {
+        return imageSettings;
     }
 }

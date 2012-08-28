@@ -47,7 +47,7 @@ public class TIFFRendererConfigParserTestCase
 
     @Test
     public void testCompression() throws Exception {
-        for (TIFFCompressionValues value : TIFFCompressionValues.values()) {
+        for (TIFFCompressionValue value : TIFFCompressionValue.values()) {
             parseConfig(createRenderer().setCompressionMode(value.getName()));
             assertEquals(value, getConfig().getCompressionType());
         }
