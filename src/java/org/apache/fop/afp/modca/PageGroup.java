@@ -36,20 +36,13 @@ import org.apache.fop.afp.Factory;
 public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
 
     /**
-     * Sequence number for TLE's.
-     */
-    private int tleSequence = 0;
-
-    /**
      * Constructor for the PageGroup.
      *
      * @param factory the resource manager
      * @param name the name of the page group
-     * @param tleSequence current start tle sequence number within stream
      */
-    public PageGroup(Factory factory, String name, int tleSequence) {
+    public PageGroup(Factory factory, String name) {
         super(factory, name);
-        this.tleSequence = tleSequence;
     }
 
     /**
@@ -59,10 +52,9 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
      *              the state of the TLE
      */
     public void createTagLogicalElement(TagLogicalElement.State state) {
-        TagLogicalElement tle = factory.createTagLogicalElement(state, tleSequence);
+        TagLogicalElement tle = factory.createTagLogicalElement(state);
         if (!getTagLogicalElements().contains(tle)) {
             getTagLogicalElements().add(tle);
-            tleSequence++;
         }
     }
 
@@ -90,10 +82,5 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
     /** {@inheritDoc} */
     public String toString() {
         return this.getName();
-    }
-
-    /** @return the TLE sequence number */
-    public int getTleSequence() {
-        return tleSequence;
     }
 }
