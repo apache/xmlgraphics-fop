@@ -37,7 +37,7 @@ import org.apache.fop.render.RendererConfigOption;
 public final class TIFFRendererConfig extends BitmapRendererConfig {
 
     public enum TIFFRendererOption implements RendererConfigOption {
-        COMPRESSION("compression", TIFFCompressionValues.PACKBITS);
+        COMPRESSION("compression", TIFFCompressionValue.PACKBITS);
 
         private final String name;
         private final Object defaultValue;
@@ -63,8 +63,8 @@ public final class TIFFRendererConfig extends BitmapRendererConfig {
         super(fontConfig);
     }
 
-    public TIFFCompressionValues getCompressionType() {
-        return (TIFFCompressionValues) params.get(TIFFRendererOption.COMPRESSION);
+    public TIFFCompressionValue getCompressionType() {
+        return (TIFFCompressionValue) params.get(TIFFRendererOption.COMPRESSION);
     }
 
     /**
@@ -92,9 +92,8 @@ public final class TIFFRendererConfig extends BitmapRendererConfig {
                     .parse(cfg, userAgent.validateStrictly()));
             super.build(config, userAgent, cfg);
             if (cfg != null) {
-            setParam(TIFFRendererOption.COMPRESSION,
-                        TIFFCompressionValues.getValue(getValue(cfg,
-                                TIFFRendererOption.COMPRESSION)));
+                setParam(TIFFRendererOption.COMPRESSION,
+                        TIFFCompressionValue.getType(getValue(cfg, TIFFRendererOption.COMPRESSION)));
             }
             return config;
         }
