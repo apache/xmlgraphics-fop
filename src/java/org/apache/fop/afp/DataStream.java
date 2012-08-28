@@ -85,9 +85,6 @@ public class DataStream {
     /** The current page */
     private AbstractPageObject currentPage = null;
 
-    /** Sequence number for TLE's.*/
-    private int tleSequence = 0;
-
     /** The MO:DCA interchange set in use (default to MO:DCA-P IS/2 set) */
     private InterchangeSet interchangeSet
     = InterchangeSet.valueOf(InterchangeSet.MODCA_PRESENTATION_INTERCHANGE_SET_2);
@@ -556,7 +553,7 @@ public class DataStream {
     public void createPageTagLogicalElement(TagLogicalElement.State[] attributes) {
         for (int i = 0; i < attributes.length; i++) {
 
-            currentPage.createTagLogicalElement(attributes[i], tleSequence++);
+            currentPage.createTagLogicalElement(attributes[i]);
         }
     }
 
@@ -586,7 +583,7 @@ public class DataStream {
         TagLogicalElement.State tleState = new  TagLogicalElement.State(name, value, encoding);
         if (currentPage != null) {
 
-            currentPage.createTagLogicalElement(tleState, tleSequence++);
+            currentPage.createTagLogicalElement(tleState);
 
         } else {
             currentPageGroup.createTagLogicalElement(tleState);
@@ -637,7 +634,7 @@ public class DataStream {
      */
     public void startPageGroup() throws IOException {
         endPageGroup();
-        this.currentPageGroup = factory.createPageGroup(tleSequence);
+        this.currentPageGroup = factory.createPageGroup();
     }
 
     /**
@@ -648,7 +645,6 @@ public class DataStream {
     public void endPageGroup() throws IOException {
         if (currentPageGroup != null) {
             currentPageGroup.endPageGroup();
-            tleSequence = currentPageGroup.getTleSequence();
             document.addPageGroup(currentPageGroup);
             currentPageGroup = null;
         }

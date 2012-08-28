@@ -214,13 +214,12 @@ public class Factory {
 
     /**
      * Creates a new MO:DCA {@link PageGroup}
-     * @param tleSequence current start tle sequence number within stream
      * @return a new {@link PageGroup}
      */
-    public PageGroup createPageGroup(int tleSequence) {
+    public PageGroup createPageGroup() {
         String name = PAGE_GROUP_NAME_PREFIX
         + StringUtils.lpad(String.valueOf(++pageGroupCount), '0', 5);
-        return new PageGroup(this, name, tleSequence);
+        return new PageGroup(this, name);
     }
 
     /**
@@ -375,12 +374,10 @@ public class Factory {
      * Creates a MO:DCA {@link TagLogicalElement}
      *
      * @param state the attribute state for the TLE
-     * @param tleSequence current start tle sequence number within stream*
      * @return a new {@link TagLogicalElement}
      */
-    public TagLogicalElement createTagLogicalElement(TagLogicalElement.State state,
-            int tleSequence) {
-        TagLogicalElement tle = new TagLogicalElement(state, tleSequence);
+    public TagLogicalElement createTagLogicalElement(TagLogicalElement.State state) {
+        TagLogicalElement tle = new TagLogicalElement(state);
         return tle;
     }
 

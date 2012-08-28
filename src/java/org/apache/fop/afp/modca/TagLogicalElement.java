@@ -53,22 +53,15 @@ public class TagLogicalElement extends AbstractTripletStructuredObject {
      * the params of the TLE
      */
     private State state;
-    /**
-     * Sequence of TLE within document
-     */
-    private int tleID;
 
     /**
      * Construct a tag logical element with the name and value specified.
      *
      * @param state the state of the tag logical element
-     * @param tleID unique identifier for TLE within AFP stream
      */
 
-    public TagLogicalElement(State state, int tleID) {
+    public TagLogicalElement(State state) {
         this.state = state;
-
-        this.tleID = tleID;
     }
 
     private void setAttributeValue(String value) {
@@ -99,7 +92,6 @@ public class TagLogicalElement extends AbstractTripletStructuredObject {
                 state.key);
         setAttributeValue(state.value);
         setEncoding(state.encoding);
-        setAttributeQualifier(tleID, 1);
 
         byte[] data = new byte[SF_HEADER_LENGTH];
         copySF(data, Type.ATTRIBUTE, Category.PROCESS_ELEMENT);

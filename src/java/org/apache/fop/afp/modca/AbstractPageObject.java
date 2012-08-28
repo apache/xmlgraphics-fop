@@ -224,10 +224,9 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      * Creates a TagLogicalElement on the page.
      *
      * @param state the state of the TLE
-     * @param tleID the id of the TLE
      */
-    public void createTagLogicalElement(TagLogicalElement.State state, int tleID) {
-        TagLogicalElement tle = new TagLogicalElement(state, tleID);
+    public void createTagLogicalElement(TagLogicalElement.State state) {
+        TagLogicalElement tle = new TagLogicalElement(state);
         List list = getTagLogicalElements();
         list.add(tle);
     }

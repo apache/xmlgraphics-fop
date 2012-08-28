@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="MH" type="fix" fixes-bug="53786">
+         Removed the Attribute Qualifier on TLEs as they aren't used.
+      </action>
       <action context="Renderers" dev="MH" type="fix" fixes-bug="48954" due-to="PH">
          Support for character encoding of TLEs in AFP output
       </action>
