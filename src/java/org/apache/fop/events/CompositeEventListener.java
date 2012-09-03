@@ -19,6 +19,7 @@
 
 package org.apache.fop.events;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ import java.util.List;
  */
 public class CompositeEventListener implements EventListener {
 
-    private List listeners = new java.util.ArrayList();
+    private List<EventListener> listeners = new ArrayList<EventListener>();
 
     /**
      * Adds an event listener to the broadcaster. It is appended to the list of previously
@@ -46,22 +47,17 @@ public class CompositeEventListener implements EventListener {
         this.listeners.remove(listener);
     }
 
-    private synchronized int getListenerCount() {
-        return this.listeners.size();
-    }
-
     /**
      * Indicates whether any listeners have been registered with the broadcaster.
      * @return true if listeners are present, false otherwise
      */
     public boolean hasEventListeners() {
-        return (getListenerCount() > 0);
+        return !listeners.isEmpty();
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc } */
     public synchronized void processEvent(Event event) {
-        for (int i = 0, c = getListenerCount(); i < c; i++) {
-            EventListener listener = (EventListener)this.listeners.get(i);
+        for (EventListener listener : listeners) {
             listener.processEvent(event);
         }
     }
