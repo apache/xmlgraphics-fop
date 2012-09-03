@@ -153,8 +153,8 @@ public class PDFEncoding extends PDFDictionary {
         /**
          * Creates an array containing the differences between two single-byte.
          * font encodings.
-         * @param encoding_A The first single-byte encoding
-         * @param encoding_B The second single-byte encoding
+         * @param encodingA The first single-byte encoding
+         * @param encodingB The second single-byte encoding
          * @return The PDFArray of differences between encodings
          */
         public PDFArray buildDifferencesArray(SingleByteEncoding encodingA,
