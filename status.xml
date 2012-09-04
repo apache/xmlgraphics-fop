@@ -62,6 +62,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="53598" due-to="Robert Meyer">
+        Always set the breakClass field to a legal value in BreakElement, so as to avoid 
+        IllegalArgumentExceptions in other parts of the code.
+      </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="45715" due-to="Luis Bernardo">
         Restored support for break-before on fo:table.
       </action>

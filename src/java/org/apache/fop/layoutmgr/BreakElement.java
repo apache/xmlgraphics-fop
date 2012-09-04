@@ -21,6 +21,8 @@ package org.apache.fop.layoutmgr;
 
 import java.util.List;
 
+import org.apache.fop.fo.Constants;
+
 /**
  * This class represents an unresolved break possibility.
  */
@@ -28,7 +30,7 @@ public class BreakElement extends UnresolvedListElement {
 
     private int penaltyWidth;
     private int penaltyValue;
-    private int breakClass = -1;
+    private int breakClass;
     private List pendingBeforeMarks;
     private List pendingAfterMarks;
 
@@ -39,7 +41,7 @@ public class BreakElement extends UnresolvedListElement {
      * @param context the layout context which contains the pending conditional elements
      */
     public BreakElement(Position position, int penaltyValue, LayoutContext context) {
-        this(position, penaltyValue, -1, context);
+        this(position, penaltyValue, Constants.EN_AUTO, context);
     }
 
     /**
@@ -80,7 +82,7 @@ public class BreakElement extends UnresolvedListElement {
         super(position);
         this.penaltyWidth = penaltyWidth;
         this.penaltyValue = penaltyValue;
-        this.breakClass = breakClass;
+        setBreakClass(breakClass);
         this.pendingBeforeMarks = context.getPendingBeforeMarks();
         this.pendingAfterMarks = context.getPendingAfterMarks();
     }
@@ -142,13 +144,24 @@ public class BreakElement extends UnresolvedListElement {
      *
      * @param breakClass one of
      *   {@link org.apache.fop.fo.Constants#EN_AUTO},
+     *   {@link org.apache.fop.fo.Constants#EN_LINE},
      *   {@link org.apache.fop.fo.Constants#EN_COLUMN},
      *   {@link org.apache.fop.fo.Constants#EN_PAGE},
      *   {@link org.apache.fop.fo.Constants#EN_EVEN_PAGE},
      *   {@link org.apache.fop.fo.Constants#EN_ODD_PAGE}.
      */
     public void setBreakClass(int breakClass) {
-        this.breakClass = breakClass;
+        switch (breakClass) {
+        case Constants.EN_AUTO:
+        case Constants.EN_LINE:
+        case Constants.EN_COLUMN:
+        case Constants.EN_PAGE:
+        case Constants.EN_EVEN_PAGE:
+        case Constants.EN_ODD_PAGE:
+            this.breakClass = breakClass;
+            break;
+        default: throw new IllegalArgumentException("Illegal value for break class: " + breakClass);
+        }
     }
 
     /** @return the pending border and padding elements at the before edge */
