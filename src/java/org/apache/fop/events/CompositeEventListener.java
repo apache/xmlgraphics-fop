@@ -51,7 +51,7 @@ public class CompositeEventListener implements EventListener {
      * Indicates whether any listeners have been registered with the broadcaster.
      * @return true if listeners are present, false otherwise
      */
-    public boolean hasEventListeners() {
+    public synchronized boolean hasEventListeners() {
         return !listeners.isEmpty();
     }
 
