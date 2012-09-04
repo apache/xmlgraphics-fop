@@ -39,6 +39,7 @@ import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
+import org.apache.fop.layoutmgr.BreakOpportunity;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
@@ -62,7 +63,7 @@ import org.apache.fop.util.BreakUtil;
  * the render background.
  */
 public class TableLayoutManager extends BlockStackingLayoutManager
-                implements ConditionalElementListener {
+                implements ConditionalElementListener, BreakOpportunity {
 
     /**
      * logging instance
