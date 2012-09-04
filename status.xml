@@ -62,6 +62,11 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="53827">
+        When an fo:block has a non-zero value for its text-indent property and is broken over two 
+        pages of different widths, then the first line on the second page is missing one word and 
+        appears indented.
+      </action>
       <action context="Renderers" dev="MH" type="fix" fixes-bug="53790">
          Prevented the TIFF configurator from overriding the Bitmap configurator unless CCITT
          compression is enabled.
