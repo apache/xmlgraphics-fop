@@ -43,17 +43,17 @@ If you are using Microsoft Outlook, this setting can be found at the "Mail Forma
         <title>Archives</title>
         <p>To review the archives, you have several options:</p>
         <ul>
-        
+
           <li>The <link href="http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-users/">Apache Mailing List archive</link> (mod_mbox archive, no full-text search, yet).</li>
           <li>The <link href="http://xmlgraphics.apache.org/mail/fop-users/">Apache Mailing List archive</link> (gzipped mbox files).</li>
           <li>The <jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">Mailing list ARChives </jump> (MARC) at the AIMS group.</li>
           <li><jump href="http://www.mail-archive.com/fop-users%40xmlgraphics.apache.org/">The Mail Archive</jump>.</li>
           <li>The <jump href="http://dir.gmane.org/gmane.text.xml.fop.user">GMANE archive</jump>.</li>
-          <li>The <jump href="http://www.nabble.com/FOP---Users-f353.html">Nabble archive</jump> (only posts after May 2005).</li>
+          <li>The <jump href="http://apache-fop.1065347.n5.nabble.com/FOP-Users-f3.html">Nabble archive</jump> (only posts after May 2005).</li>
           <li>The <jump href="http://fop-users.markmail.org/">MarkMail archive</jump>.</li>
         </ul>
         <note>
-          If you don't like mailing lists and prefer a forum-like system, have a look at 
+          If you don't like mailing lists and prefer a forum-like system, have a look at
           <jump href="http://dir.gmane.org/gmane.text.xml.fop.user">GMANE</jump> or
           <jump href="http://www.nabble.com/FOP---Users-f353.html">Nabble</jump>. They
           allow you to post to the mailing list without having to subscribe.
