@@ -26,9 +26,11 @@ import org.apache.fop.apps.TIFFRendererConfBuilder;
 import org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererConfigParser;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TIFFRendererConfigParserTestCase
-        extends AbstractBitmapRendererConfigParserTester {
+extends AbstractBitmapRendererConfigParserTester {
 
     public TIFFRendererConfigParserTestCase() {
         super(new TIFFRendererConfigParser());
@@ -51,5 +53,13 @@ public class TIFFRendererConfigParserTestCase
             parseConfig(createRenderer().setCompressionMode(value.getName()));
             assertEquals(value, getConfig().getCompressionType());
         }
+    }
+
+    @Test
+    public void testSingleStrip() throws Exception {
+        parseConfig(createRenderer().setSingleStrip(true));
+        assertTrue(getConfig().isSingleStrip());
+        parseConfig(createRenderer().setSingleStrip(false));
+        assertFalse(getConfig().isSingleStrip());
     }
 }

@@ -76,7 +76,12 @@ public class TIFFRendererConfigurator extends BitmapRendererConfigurator {
         }
     }
 
-    /** {@inheritDoc} */
+    private boolean isSingleStrip(TIFFRendererConfig config) {
+        Boolean singleRowPerStrip = config.isSingleStrip();
+        return singleRowPerStrip == null ? false : singleRowPerStrip;
+    }
+
+    @Override
     public void configure(IFDocumentHandler documentHandler) throws FOPException {
         final TIFFRendererConfig config = (TIFFRendererConfig) getRendererConfig(documentHandler);
         if (config != null) {
@@ -84,6 +89,7 @@ public class TIFFRendererConfigurator extends BitmapRendererConfigurator {
             BitmapRenderingSettings settings = tiffHandler.getSettings();
             configure(documentHandler, settings, new TIFFRendererConfigParser());
             setCompressionMethod(config.getCompressionType(), settings);
+            settings.getWriterParams().setSingleStrip(isSingleStrip(config));
         }
     }
 

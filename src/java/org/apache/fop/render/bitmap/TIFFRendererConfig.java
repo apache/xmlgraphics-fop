@@ -23,13 +23,14 @@ import java.util.EnumMap;
 
 import org.apache.avalon.framework.configuration.Configuration;
 
-import org.apache.xmlgraphics.util.MimeConstants;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.render.RendererConfigOption;
+
+import static org.apache.fop.render.bitmap.TIFFCompressionValue.PACKBITS;
 
 /**
  * The renderer configuration object for the TIFF renderer.
@@ -37,7 +38,9 @@ import org.apache.fop.render.RendererConfigOption;
 public final class TIFFRendererConfig extends BitmapRendererConfig {
 
     public enum TIFFRendererOption implements RendererConfigOption {
-        COMPRESSION("compression", TIFFCompressionValue.PACKBITS);
+        COMPRESSION("compression", PACKBITS),
+        /** option to encode one row per strip or a all rows in a single strip*/
+        SINGLE_STRIP("single-strip", Boolean.FALSE);
 
         private final String name;
         private final Object defaultValue;
@@ -68,6 +71,14 @@ public final class TIFFRendererConfig extends BitmapRendererConfig {
     }
 
     /**
+     * @return True if all rows are contained in a single strip, False each strip contains one row or null
+     * if not set.
+     */
+    public Boolean isSingleStrip() {
+        return (Boolean) params.get(TIFFRendererOption.SINGLE_STRIP);
+    }
+
+    /**
      * The TIFF renderer configuration parser.
      */
     public static final class TIFFRendererConfigParser extends BitmapRendererConfigParser {
@@ -94,6 +105,8 @@ public final class TIFFRendererConfig extends BitmapRendererConfig {
             if (cfg != null) {
                 setParam(TIFFRendererOption.COMPRESSION,
                         TIFFCompressionValue.getType(getValue(cfg, TIFFRendererOption.COMPRESSION)));
+                setParam(TIFFRendererOption.SINGLE_STRIP, Boolean.valueOf(getValue(cfg,
+                                TIFFRendererOption.SINGLE_STRIP)));
             }
             return config;
         }

@@ -1270,6 +1270,7 @@ Note that the value of the encoding attribute in the example is the double-byte 
 <source><![CDATA[<renderer mime="image/tiff">
   <transparent-page-background>true</transparent-page-background>
   <compression>CCITT T.6</compression>
+  <single-strip>true</single-strip>
   <fonts><!-- described elsewhere --></fonts>
 </renderer>]]></source>
       <p>
@@ -1303,6 +1304,10 @@ Note that the value of the encoding attribute in the example is the double-byte 
         added separately. The internal TIFF codec from XML Graphics Commons only supports PackBits,
         Deflate and JPEG compression for writing.
       </note>
+      <p>
+          The default value for the <code>"single-strip"</code> is <code>"false"</code> resulting in the RowsPerStrip Tiff Tag equal to the number of rows.
+          If set to <code>true</code> RowsPerStrip is set to 1.
+      </p>
     </section>
     <section id="bitmap-rendering-options">
       <title>Runtime Rendering Options</title>
