@@ -23,7 +23,6 @@ import java.awt.image.BufferedImage;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.apps.FopConfBuilder;
 import org.apache.fop.apps.MimeConstants;
@@ -32,6 +31,9 @@ import org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererConfigParser;
 
 import static org.apache.fop.render.bitmap.TIFFCompressionValue.CCITT_T4;
 import static org.apache.fop.render.bitmap.TIFFCompressionValue.CCITT_T6;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TIFFRendererConfiguratorTestCase extends AbstractBitmapRendererConfiguratorTest {
 
@@ -61,4 +63,13 @@ public class TIFFRendererConfiguratorTestCase extends AbstractBitmapRendererConf
             }
         }
     }
+
+    @Test
+    public void testSingleStrip() throws Exception {
+        parseConfig(createBuilder().setSingleStrip(true));
+        assertTrue(settings.getWriterParams().isSingleStrip());
+        parseConfig(createBuilder().setSingleStrip(false));
+        assertFalse(settings.getWriterParams().isSingleStrip());
+    }
+
 }

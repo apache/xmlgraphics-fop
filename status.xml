@@ -62,6 +62,11 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="PH" type="add" fixes-bug="53865" importance="low">
+        Added configuration for RowPerStrip configuration in the Tiff renderer.
+        RowsPerStrip can be configured to 1 or to the total # of rows.
+        See docs for fop.xconf configuration details.
+      </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="53598" due-to="Robert Meyer">
         Always set the breakClass field to a legal value in BreakElement, so as to avoid 
         IllegalArgumentExceptions in other parts of the code.
