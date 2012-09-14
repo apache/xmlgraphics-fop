@@ -44,9 +44,9 @@ import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
 import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.fonts.CIDFont;
-import org.apache.fop.fonts.CIDSubset;
 import org.apache.fop.fonts.CodePointMapping;
 import org.apache.fop.fonts.CustomFont;
+import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontType;
@@ -1369,23 +1369,14 @@ public class PDFFactory {
                 } else {
                     cidMetrics = (CIDFont)metrics;
                 }
-                PDFCIDSystemInfo sysInfo
-                    = new PDFCIDSystemInfo(cidMetrics.getRegistry(),
-                                         cidMetrics.getOrdering(),
-                                         cidMetrics.getSupplement());
-                PDFCIDFont cidFont = new PDFCIDFont(subsetFontName,
-                                   cidMetrics.getCIDType(),
-                                   cidMetrics.getDefaultWidth(),
-                                   getSubsetWidths(cidMetrics), sysInfo,
-                                   (PDFCIDFontDescriptor)pdfdesc);
+                PDFCIDSystemInfo sysInfo = new PDFCIDSystemInfo(cidMetrics.getRegistry(),
+                        cidMetrics.getOrdering(), cidMetrics.getSupplement());
+                PDFCIDFont cidFont = new PDFCIDFont(subsetFontName, cidMetrics.getCIDType(),
+                        cidMetrics.getDefaultWidth(), getFontWidths(cidMetrics), sysInfo,
+                        (PDFCIDFontDescriptor) pdfdesc);
                 getDocument().registerObject(cidFont);
-
-                PDFCMap cmap = new PDFToUnicodeCMap(
-                        cidMetrics.getCIDSubset().getSubsetChars(),
-                        "fop-ucs-H",
-                        new PDFCIDSystemInfo("Adobe",
-                            "Identity",
-                            0), false);
+                PDFCMap cmap = new PDFToUnicodeCMap(cidMetrics.getCIDSet().getChars(), "fop-ucs-H",
+                        new PDFCIDSystemInfo("Adobe", "Identity", 0), false);
                 getDocument().registerObject(cmap);
                 ((PDFFontType0)font).setCMAP(cmap);
                 ((PDFFontType0)font).setDescendantFonts(cidFont);
@@ -1476,23 +1467,11 @@ public class PDFFactory {
         return PDFEncoding.createPDFEncoding(encoding, fontName);
     }
 
-    /**
-     * Creates and returns a width array with the widths of all the characters in the subset.
-     * @param cidFont the font
-     * @return the width array
-     */
-    public PDFWArray getSubsetWidths(CIDFont cidFont) {
+    private PDFWArray getFontWidths(CIDFont cidFont) {
         // Create widths for reencoded chars
         PDFWArray warray = new PDFWArray();
-        int[] widths = cidFont.getWidths();
-        CIDSubset subset = cidFont.getCIDSubset();
-        int[] tmpWidth = new int[subset.getSubsetSize()];
-
-        for (int i = 0, c = subset.getSubsetSize(); i < c; i++) {
-            int nwx = Math.max(0, subset.getGlyphIndexForSubsetIndex(i));
-            tmpWidth[i] = widths[nwx];
-        }
-        warray.addEntry(0, tmpWidth);
+        int[] widths = cidFont.getCIDSet().getWidths();
+        warray.addEntry(0, widths);
         return warray;
     }
 
@@ -1560,13 +1539,13 @@ public class PDFFactory {
     }
 
     private void buildCIDSet(PDFFontDescriptor descriptor, CIDFont cidFont) {
-        BitSet cidSubset = cidFont.getCIDSubset().getGlyphIndexBitSet();
-        PDFStream cidSet = makeStream(null, true);
-        ByteArrayOutputStream baout = new ByteArrayOutputStream(cidSubset.length() / 8 + 1);
+        BitSet cidSet = cidFont.getCIDSet().getGlyphIndices();
+        PDFStream pdfStream = makeStream(null, true);
+        ByteArrayOutputStream baout = new ByteArrayOutputStream(cidSet.length() / 8 + 1);
         int value = 0;
-        for (int i = 0, c = cidSubset.length(); i < c; i++) {
+        for (int i = 0, c = cidSet.length(); i < c; i++) {
             int shift = i % 8;
-            boolean b = cidSubset.get(i);
+            boolean b = cidSet.get(i);
             if (b) {
                 value |= 1 << 7 - shift;
             }
@@ -1577,8 +1556,8 @@ public class PDFFactory {
         }
         baout.write(value);
         try {
-            cidSet.setData(baout.toByteArray());
-            descriptor.setCIDSet(cidSet);
+            pdfStream.setData(baout.toByteArray());
+            descriptor.setCIDSet(pdfStream);
         } catch (IOException ioe) {
             log.error(
                     "Failed to write CIDSet [" + cidFont + "] "
@@ -1609,14 +1588,16 @@ public class PDFFactory {
                 if (desc.getFontType() == FontType.TYPE0) {
                     MultiByteFont mbfont = (MultiByteFont) font;
                     FontFileReader reader = new FontFileReader(in);
-
-                    TTFSubSetFile subset = new TTFSubSetFile();
-                    subset.readFont(reader, mbfont.getTTCName(), mbfont.getUsedGlyphs());
-                    byte[] subsetFont = subset.getFontSubset();
-                    // Only TrueType CID fonts are supported now
-
-                    embeddedFont = new PDFTTFStream(subsetFont.length);
-                    ((PDFTTFStream) embeddedFont).setData(subsetFont, subsetFont.length);
+                    byte[] fontBytes;
+                    if (font.getEmbeddingMode() == EmbeddingMode.FULL) {
+                        fontBytes = reader.getAllBytes();
+                    } else {
+                        TTFSubSetFile ttfFile = new TTFSubSetFile();
+                        ttfFile.readFont(reader, mbfont.getTTCName(), mbfont.getUsedGlyphs());
+                        fontBytes = ttfFile.getFontSubset();
+                    }
+                    embeddedFont = new PDFTTFStream(fontBytes.length);
+                    ((PDFTTFStream) embeddedFont).setData(fontBytes, fontBytes.length);
                 } else if (desc.getFontType() == FontType.TYPE1) {
                     PFBParser parser = new PFBParser();
                     PFBData pfb = parser.parsePFB(in);
