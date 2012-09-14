@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="MH" type="add" fixes-bug="53868" importance="low" due-to="Luis Bernardo">
+        Full font embedding in PDF
+      </action>
       <action context="Renderers" dev="PH" type="add" fixes-bug="53865" importance="low">
         Added configuration for RowPerStrip configuration in the Tiff renderer.
         RowsPerStrip can be configured to 1 or to the total # of rows.

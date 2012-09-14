@@ -24,7 +24,6 @@ import org.apache.xmlgraphics.image.writer.ResolutionUnit;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererConfigParser;
 import org.apache.fop.render.intermediate.IFContext;
-import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
 /**
