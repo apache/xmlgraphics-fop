@@ -39,6 +39,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.io.TempResourceURIGenerator;
 import org.apache.xmlgraphics.java2d.Dimension2DDouble;
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.PSDictionary;
@@ -53,7 +54,6 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentHiResBoundingBox;
 
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.apps.io.TempResourceURIGenerator;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;

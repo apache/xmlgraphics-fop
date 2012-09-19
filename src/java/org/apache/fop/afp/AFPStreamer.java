@@ -32,10 +32,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.io.TempResourceURIGenerator;
+
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.StreamedResourceGroup;
 import org.apache.fop.apps.io.InternalResourceResolver;
-import org.apache.fop.apps.io.TempResourceURIGenerator;
 
 /**
  * Manages the streaming of the AFP output
