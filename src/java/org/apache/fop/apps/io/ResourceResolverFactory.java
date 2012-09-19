@@ -28,6 +28,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.xmlgraphics.io.Resource;
+import org.apache.xmlgraphics.io.ResourceResolver;
+import org.apache.xmlgraphics.io.TempResourceResolver;
+import org.apache.xmlgraphics.io.TempResourceURIGenerator;
+
 /**
  * A factory class for {@link ResourceResolver}s.
  */
@@ -70,10 +75,10 @@ public final class ResourceResolverFactory {
     }
 
     /**
-     * Creates a temporary-resource-schema aware resource resolver. Temporary resource URIs are
+     * Creates a temporary-resource-scheme aware resource resolver. Temporary resource URIs are
      * created by {@link TempResourceURIGenerator}.
      *
-     * @param tempResourceResolver the temporary-resource-schema resolver to use
+     * @param tempResourceResolver the temporary-resource-scheme resolver to use
      * @param defaultResourceResolver the default resource resolver to use
      * @return the ressource resolver
      */
@@ -84,17 +89,17 @@ public final class ResourceResolverFactory {
     }
 
     /**
-     * This creates the builder class for binding URI schemas to implementations of
-     * {@link ResourceResolver}. This allows users to define their own URI schemas such that they
+     * This creates the builder class for binding URI schemes to implementations of
+     * {@link ResourceResolver}. This allows users to define their own URI schemes such that they
      * have finer control over the acquisition of resources.
      *
      * @param defaultResolver the default resource resolver that should be used in the event that
-     * none of the other registered resolvers match the schema
-     * @return the schema aware {@link ResourceResolver} builder
+     * none of the other registered resolvers match the scheme
+     * @return the scheme aware {@link ResourceResolver} builder
      */
-    public static SchemaAwareResourceResolverBuilder createSchemaAwareResourceResolverBuilder(
+    public static SchemeAwareResourceResolverBuilder createSchemeAwareResourceResolverBuilder(
             ResourceResolver defaultResolver) {
-        return new SchemaAwareResourceResolverBuilderImpl(defaultResolver);
+        return new SchemeAwareResourceResolverBuilderImpl(defaultResolver);
     }
 
     private static final class DefaultResourceResolver implements ResourceResolver {
@@ -132,13 +137,13 @@ public final class ResourceResolverFactory {
             this.defaultResourceResolver = defaultResourceResolver;
         }
 
-        private static boolean isTempUri(URI uri) {
-            return TempResourceURIGenerator.isTempUri(uri);
+        private static boolean isTempURI(URI uri) {
+            return TempResourceURIGenerator.isTempURI(uri);
         }
 
         /** {@inheritDoc} */
         public Resource getResource(URI uri) throws IOException {
-            if (isTempUri(uri)) {
+            if (isTempURI(uri)) {
                 return tempResourceResolver.getResource(uri.getPath());
             } else {
                 return defaultResourceResolver.getResource(uri);
@@ -147,7 +152,7 @@ public final class ResourceResolverFactory {
 
         /** {@inheritDoc} */
         public OutputStream getOutputStream(URI uri) throws IOException {
-            if (isTempUri(uri)) {
+            if (isTempURI(uri)) {
                 return tempResourceResolver.getOutputStream(uri.getPath());
             } else {
                 return defaultResourceResolver.getOutputStream(uri);
@@ -188,23 +193,23 @@ public final class ResourceResolverFactory {
         }
     }
 
-    private static final class SchemaAwareResourceResolver implements ResourceResolver {
+    private static final class SchemeAwareResourceResolver implements ResourceResolver {
 
-        private final Map<String, ResourceResolver> schemaHandlingResourceResolvers;
+        private final Map<String, ResourceResolver> schemeHandlingResourceResolvers;
 
         private final ResourceResolver defaultResolver;
 
-        private SchemaAwareResourceResolver(
-                Map<String, ResourceResolver> schemaHandlingResourceResolvers,
+        private SchemeAwareResourceResolver(
+                Map<String, ResourceResolver> schemEHandlingResourceResolvers,
                 ResourceResolver defaultResolver) {
-            this.schemaHandlingResourceResolvers = schemaHandlingResourceResolvers;
+            this.schemeHandlingResourceResolvers = schemEHandlingResourceResolvers;
             this.defaultResolver = defaultResolver;
         }
 
-        private ResourceResolver getResourceResolverForSchema(URI uri) {
-            String schema = uri.getScheme();
-            if (schemaHandlingResourceResolvers.containsKey(schema)) {
-                return schemaHandlingResourceResolvers.get(schema);
+        private ResourceResolver getResourceResolverForScheme(URI uri) {
+            String scheme = uri.getScheme();
+            if (schemeHandlingResourceResolvers.containsKey(scheme)) {
+                return schemeHandlingResourceResolvers.get(scheme);
             } else {
                 return defaultResolver;
             }
@@ -212,58 +217,58 @@ public final class ResourceResolverFactory {
 
         /** {@inheritDoc} */
         public Resource getResource(URI uri) throws IOException {
-            return getResourceResolverForSchema(uri).getResource(uri);
+            return getResourceResolverForScheme(uri).getResource(uri);
         }
 
         /** {@inheritDoc} */
         public OutputStream getOutputStream(URI uri) throws IOException {
-            return getResourceResolverForSchema(uri).getOutputStream(uri);
+            return getResourceResolverForScheme(uri).getOutputStream(uri);
         }
     }
 
     /**
      * Implementations of this interface will be builders for {@link ResourceResolver}, they bind
-     * URI schemas to their respective resolver. This gives users more control over the mechanisms
+     * URI schemes to their respective resolver. This gives users more control over the mechanisms
      * by which URIs are resolved.
      * <p>
      * Here is an example of how this could be used:
      * </p>
      * <p><code>
-     * SchemaAwareResourceResolverBuilder builder
-     *      = ResourceResolverFactory.createSchemaAwareResourceResolverBuilder(defaultResolver);
-     * builder.registerResourceResolverForSchema("test", testResolver);
-     * builder.registerResourceResolverForSchema("anotherTest", test2Resolver);
+     * SchemeAwareResourceResolverBuilder builder
+     *      = ResourceResolverFactory.createSchemeAwareResourceResolverBuilder(defaultResolver);
+     * builder.registerResourceResolverForScheme("test", testResolver);
+     * builder.registerResourceResolverForScheme("anotherTest", test2Resolver);
      * ResourceResolver resolver = builder.build();
      * </code></p>
      * This will result in all URIs for the form "test:///..." will be resolved using the
      * <code>testResolver</code> object; URIs of the form "anotherTest:///..." will be resolved
      * using <code>test2Resolver</code>; all other URIs will be resolved from the defaultResolver.
      */
-    public interface SchemaAwareResourceResolverBuilder {
+    public interface SchemeAwareResourceResolverBuilder {
 
         /**
-         * Register a schema with its respective {@link ResourceResolver}. This resolver will be
-         * used as the only resolver for the specified schema.
+         * Register a scheme with its respective {@link ResourceResolver}. This resolver will be
+         * used as the only resolver for the specified scheme.
          *
-         * @param schema the schema to be used with the given resolver
+         * @param scheme the scheme to be used with the given resolver
          * @param resourceResolver the resource resolver
          */
-        void registerResourceResolverForSchema(String schema, ResourceResolver resourceResolver);
+        void registerResourceResolverForScheme(String scheme, ResourceResolver resourceResolver);
 
         /**
          * Builds a {@link ResourceResolver} that will delegate to the respective resource resolver
-         * when a registered URI schema is given
+         * when a registered URI scheme is given
          *
-         * @return a resolver that delegates to the appropriate schema resolver
+         * @return a resolver that delegates to the appropriate scheme resolver
          */
         ResourceResolver build();
     }
 
-    private static final class CompletedSchemaAwareResourceResolverBuilder
-            implements SchemaAwareResourceResolverBuilder {
+    private static final class CompletedSchemeAwareResourceResolverBuilder
+            implements SchemeAwareResourceResolverBuilder {
 
-        private static final SchemaAwareResourceResolverBuilder INSTANCE
-                = new CompletedSchemaAwareResourceResolverBuilder();
+        private static final SchemeAwareResourceResolverBuilder INSTANCE
+                = new CompletedSchemeAwareResourceResolverBuilder();
 
         /** {@inheritDoc} */
         public ResourceResolver build() {
@@ -271,59 +276,58 @@ public final class ResourceResolverFactory {
         }
 
         /** {@inheritDoc} */
-        public void registerResourceResolverForSchema(String schema,
+        public void registerResourceResolverForScheme(String scheme,
                 ResourceResolver resourceResolver) {
             throw new IllegalStateException("Resource resolver already built");
         }
     }
 
-    private static final class ActiveSchemaAwareResourceResolverBuilder
-            implements SchemaAwareResourceResolverBuilder {
+    private static final class ActiveSchemeAwareResourceResolverBuilder
+            implements SchemeAwareResourceResolverBuilder {
 
-        private final Map<String, ResourceResolver> schemaHandlingResourceResolvers
+        private final Map<String, ResourceResolver> schemeHandlingResourceResolvers
                 = new HashMap<String, ResourceResolver>();
 
         private final ResourceResolver defaultResolver;
 
-        private ActiveSchemaAwareResourceResolverBuilder(ResourceResolver defaultResolver) {
+        private ActiveSchemeAwareResourceResolverBuilder(ResourceResolver defaultResolver) {
             this.defaultResolver = defaultResolver;
         }
 
         /** {@inheritDoc} */
-        public void registerResourceResolverForSchema(String schema,
+        public void registerResourceResolverForScheme(String scheme,
                 ResourceResolver resourceResolver) {
-            schemaHandlingResourceResolvers.put(schema, resourceResolver);
+            schemeHandlingResourceResolvers.put(scheme, resourceResolver);
         }
 
         /** {@inheritDoc} */
         public ResourceResolver build() {
-            return new SchemaAwareResourceResolver(
-                    Collections.unmodifiableMap(schemaHandlingResourceResolvers), defaultResolver);
+            return new SchemeAwareResourceResolver(
+                    Collections.unmodifiableMap(schemeHandlingResourceResolvers), defaultResolver);
         }
 
     }
 
-    private static final class SchemaAwareResourceResolverBuilderImpl
-            implements SchemaAwareResourceResolverBuilder {
+    private static final class SchemeAwareResourceResolverBuilderImpl
+            implements SchemeAwareResourceResolverBuilder {
 
-        private SchemaAwareResourceResolverBuilder delegate;
+        private SchemeAwareResourceResolverBuilder delegate;
 
-        private SchemaAwareResourceResolverBuilderImpl(ResourceResolver defaultResolver) {
-            this.delegate = new ActiveSchemaAwareResourceResolverBuilder(defaultResolver);
+        private SchemeAwareResourceResolverBuilderImpl(ResourceResolver defaultResolver) {
+            this.delegate = new ActiveSchemeAwareResourceResolverBuilder(defaultResolver);
         }
 
         /** {@inheritDoc} */
-        public void registerResourceResolverForSchema(String schema,
+        public void registerResourceResolverForScheme(String scheme,
                 ResourceResolver resourceResolver) {
-            delegate.registerResourceResolverForSchema(schema, resourceResolver);
+            delegate.registerResourceResolverForScheme(scheme, resourceResolver);
         }
 
         /** {@inheritDoc} */
         public ResourceResolver build() {
             ResourceResolver resourceResolver = delegate.build();
-            delegate = CompletedSchemaAwareResourceResolverBuilder.INSTANCE;
+            delegate = CompletedSchemeAwareResourceResolverBuilder.INSTANCE;
             return resourceResolver;
         }
     }
-
 }

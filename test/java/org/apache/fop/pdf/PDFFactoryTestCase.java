@@ -26,8 +26,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+import org.apache.xmlgraphics.io.ResourceResolver;
+
 import org.apache.fop.apps.io.InternalResourceResolver;
-import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.CIDSet;
 import org.apache.fop.fonts.CIDSubset;

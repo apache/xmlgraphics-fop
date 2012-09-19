@@ -21,8 +21,12 @@ package org.apache.fop.apps;
 
 import java.net.URI;
 
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext.FallbackResolver;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext.RestrictedFallbackResolver;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext.UnrestrictedFallbackResolver;
+import org.apache.xmlgraphics.io.ResourceResolver;
+
 import org.apache.fop.apps.io.InternalResourceResolver;
-import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.FontCacheManager;
 import org.apache.fop.fonts.FontCacheManagerFactory;
@@ -51,7 +55,8 @@ public final class EnvironmentalProfileFactory {
         return new Profile(defaultBaseUri, resourceResolver,
                 createFontManager(defaultBaseUri, resourceResolver,
                         FontDetectorFactory.createDefault(),
-                        FontCacheManagerFactory.createDefault()));
+                        FontCacheManagerFactory.createDefault()),
+                new UnrestrictedFallbackResolver());
     }
 
     /**
@@ -67,7 +72,8 @@ public final class EnvironmentalProfileFactory {
         return new Profile(defaultBaseUri, resourceResolver,
                 createFontManager(defaultBaseUri, resourceResolver,
                         FontDetectorFactory.createDisabled(),
-                        FontCacheManagerFactory.createDisabled()));
+                        FontCacheManagerFactory.createDisabled()),
+                new RestrictedFallbackResolver());
     }
 
     private static final class Profile implements EnvironmentProfile {
@@ -78,8 +84,10 @@ public final class EnvironmentalProfileFactory {
 
         private final URI defaultBaseURI;
 
+        private final FallbackResolver fallbackResolver;
+
         private Profile(URI defaultBaseURI, ResourceResolver resourceResolver,
-                FontManager fontManager) {
+                FontManager fontManager, FallbackResolver fallbackResolver) {
             if (defaultBaseURI == null) {
                 throw new IllegalArgumentException("Default base URI must not be null");
             }
@@ -92,6 +100,7 @@ public final class EnvironmentalProfileFactory {
             this.defaultBaseURI = defaultBaseURI;
             this.resourceResolver = resourceResolver;
             this.fontManager = fontManager;
+            this.fallbackResolver = fallbackResolver;
         }
 
         public ResourceResolver getResourceResolver() {
@@ -104,6 +113,10 @@ public final class EnvironmentalProfileFactory {
 
         public URI getDefaultBaseURI() {
             return defaultBaseURI;
+        }
+
+        public FallbackResolver getFallbackResolver() {
+            return fallbackResolver;
         }
     }
 

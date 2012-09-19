@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.xmlgraphics.io.ResourceResolver;
+
 abstract class TestingResourceResolver implements ResourceResolver {
 
     private final Map<URI, Object> checker;

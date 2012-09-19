@@ -29,12 +29,14 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.xmlgraphics.io.Resource;
+import org.apache.xmlgraphics.io.ResourceResolver;
 import org.apache.xmlgraphics.util.uri.DataURIResolver;
 
 /**
  * This object holds the base URI from which to resolve URIs against as well as the resolver for
  * resource acquisition. It also does some URI sanitization of common URI syntactical errors. This
- * class takes in a {@link org.apache.fop.apps.io.ResourceResolver} and delegates all relevant
+ * class takes in a {@link org.apache.xmlgraphics.io.ResourceResolver} and delegates all relevant
  * URIs to it.
  */
 public class InternalResourceResolver {

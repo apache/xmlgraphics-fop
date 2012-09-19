@@ -24,8 +24,9 @@ import java.util.Set;
 import org.apache.avalon.framework.configuration.Configuration;
 
 import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext.FallbackResolver;
+import org.apache.xmlgraphics.io.ResourceResolver;
 
-import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 
@@ -129,5 +130,9 @@ public final class MutableConfig implements FopFactoryConfig {
 
     public Map<String, String> getHyphenationPatternNames() {
         return delegate.getHyphenationPatternNames();
+    }
+
+    public FallbackResolver getFallbackResolver() {
+        return delegate.getFallbackResolver();
     }
 }
