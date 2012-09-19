@@ -36,6 +36,9 @@ import org.apache.fop.fo.properties.CommonAccessibilityHolder;
  */
 public class Flow extends FObj implements CommonAccessibilityHolder {
 
+    /** The "flow-name" property name. */
+    public static final String FLOW_NAME = "flow-name";
+
     private String flowName;
 
     private CommonAccessibility commonAccessibility;
@@ -61,7 +64,7 @@ public class Flow extends FObj implements CommonAccessibilityHolder {
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         if (flowName == null || flowName.equals("")) {
-            missingPropertyError("flow-name");
+            missingPropertyError(FLOW_NAME);
         }
 
         // according to communication from Paul Grosso (XSL-List,

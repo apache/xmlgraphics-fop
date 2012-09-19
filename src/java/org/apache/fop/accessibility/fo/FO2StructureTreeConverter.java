@@ -72,8 +72,6 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
 
     private final Stack<FOEventHandler> converters = new Stack<FOEventHandler>();
 
-    private final Stack<FOEventRecorder> tableFooterRecorders = new Stack<FOEventRecorder>();
-
     private final FOEventHandler structureTreeEventTrigger;
 
     /** The descendants of some elements like fo:leader must be ignored. */
@@ -166,6 +164,20 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
     }
 
     @Override
+    public void startStatic(StaticContent staticContent) {
+        handleStartArtifact(staticContent);
+        converter.startStatic(staticContent);
+        super.startStatic(staticContent);
+    }
+
+    @Override
+    public void endStatic(StaticContent staticContent) {
+        converter.endStatic(staticContent);
+        handleEndArtifact(staticContent);
+        super.endStatic(staticContent);
+    }
+
+    @Override
     public void startFlow(Flow fl) {
         converter.startFlow(fl);
         super.startFlow(fl);
@@ -216,16 +228,11 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
     @Override
     public void startTable(Table tbl) {
         converter.startTable(tbl);
-        tableFooterRecorders.push(null);
         super.startTable(tbl);
     }
 
     @Override
     public void endTable(Table tbl) {
-        FOEventRecorder tableFooterRecorder = tableFooterRecorders.pop();
-        if (tableFooterRecorder != null) {
-            tableFooterRecorder.replay(converter);
-        }
         converter.endTable(tbl);
         super.endTable(tbl);
     }
@@ -256,8 +263,6 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
 
     @Override
     public void startFooter(TableFooter footer) {
-        converters.push(converter);
-        converter = new FOEventRecorder();
         converter.startFooter(footer);
         super.startFooter(footer);
     }
@@ -265,10 +270,6 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
     @Override
     public void endFooter(TableFooter footer) {
         converter.endFooter(footer);
-        /* Replace the dummy table footer with the real one. */
-        tableFooterRecorders.pop();
-        tableFooterRecorders.push((FOEventRecorder) converter);
-        converter = converters.pop();
         super.endFooter(footer);
     }
 
@@ -354,20 +355,6 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
     public void endListBody(ListItemBody listItemBody) {
         converter.endListBody(listItemBody);
         super.endListBody(listItemBody);
-    }
-
-    @Override
-    public void startStatic(StaticContent staticContent) {
-        handleStartArtifact(staticContent);
-        converter.startStatic(staticContent);
-        super.startStatic(staticContent);
-    }
-
-    @Override
-    public void endStatic(StaticContent statisContent) {
-        converter.endStatic(statisContent);
-        handleEndArtifact(statisContent);
-        super.endStatic(statisContent);
     }
 
     @Override

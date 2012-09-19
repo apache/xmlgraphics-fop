@@ -17,48 +17,18 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp.modca;
+package org.apache.fop.pdf;
 
 /**
- * The TagLogicalElementBean provides a bean for holding the attributes of
- * a tag logical element as key value pairs.
- * <p/>
+ * A structure type, as defined in Section 10.6.2 of the PDF Reference, fourth edition (PDF 1.5).
  */
-public class TagLogicalElementBean {
-
-    /** The key attribute */
-    private String key;
-
-    /** The value attribute */
-    private String value;
+public interface StructureType {
 
     /**
-     * Constructor for the TagLogicalElementBean.
+     * Returns the name of this structure type.
      *
-     * @param key the key attribute
-     * @param value the value attribute
+     * @return the name object identifying this structure type
      */
-    public TagLogicalElementBean(String key, String value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    /**
-     * Getter for the key attribute.
-     *
-     * @return the key
-     */
-    public String getKey() {
-        return key;
-    }
-
-    /**
-     * Getter for the value attribute.
-     *
-     * @return the value
-     */
-    public String getValue() {
-        return value;
-    }
+    PDFName getName();
 
 }

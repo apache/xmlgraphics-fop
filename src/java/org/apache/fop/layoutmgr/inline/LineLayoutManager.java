@@ -649,6 +649,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         log.trace("Restarting line breaking from index " + restartPosition.getIndex());
         int parIndex = restartPosition.getLeafPos();
         KnuthSequence paragraph = knuthParagraphs.get(parIndex);
+        if (paragraph instanceof Paragraph) {
+            ((Paragraph) paragraph).ignoreAtStart = 0;
+            isFirstInBlock = false;
+        }
         paragraph.subList(0, restartPosition.getIndex() + 1).clear();
         Iterator<KnuthElement> iter = paragraph.iterator();
         while (iter.hasNext() && !iter.next().isBox()) {

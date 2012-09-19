@@ -19,7 +19,6 @@
 
 package org.apache.fop.fonts;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -72,24 +71,10 @@ public class FontManagerConfigurator {
      * @throws FOPException if an exception occurs while processing the configuration
      */
     public void configure(FontManager fontManager, boolean strict) throws FOPException {
-        // caching (fonts)
-        if (cfg.getChild("use-cache", false) != null) {
-            try {
-                if (!cfg.getChild("use-cache").getValueAsBoolean()) {
-                    fontManager.disableFontCache();
-                } else {
-                    if (cfg.getChild("cache-file", false) != null) {
-                        fontManager.setCacheFile(new File(cfg.getChild("cache-file").getValue()));
-                    }
-                }
-            } catch (ConfigurationException mfue) {
-                LogUtil.handleException(log, mfue, true);
-            }
-        }
         if (cfg.getChild("font-base", false) != null) {
             try {
-                URI fontBase = InternalResourceResolver.getBaseURI(cfg.getChild("font-base").getValue(
-                        null));
+                URI fontBase = InternalResourceResolver.getBaseURI(cfg.getChild("font-base")
+                                                                      .getValue(null));
                 fontManager.setResourceResolver(ResourceResolverFactory.createInternalResourceResolver(
                         defaultBaseUri.resolve(fontBase), resourceResolver));
             } catch (URISyntaxException use) {
@@ -99,7 +84,21 @@ public class FontManagerConfigurator {
             fontManager.setResourceResolver(ResourceResolverFactory.createInternalResourceResolver(
                     defaultBaseUri, resourceResolver));
         }
+        // caching (fonts)
+        if (cfg.getChild("use-cache", false) != null) {
+            try {
+                if (!cfg.getChild("use-cache").getValueAsBoolean()) {
+                    fontManager.disableFontCache();
+                } else {
+                    if (cfg.getChild("cache-file", false) != null) {
 
+                        fontManager.setCacheFile(URI.create(cfg.getChild("cache-file").getValue()));
+                    }
+                }
+            } catch (ConfigurationException mfue) {
+                LogUtil.handleException(log, mfue, true);
+            }
+        }
         // [GA] permit configuration control over base14 kerning; without this,
         // there is no way for a user to enable base14 kerning other than by
         // programmatic API;

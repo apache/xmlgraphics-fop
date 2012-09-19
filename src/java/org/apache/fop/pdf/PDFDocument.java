@@ -37,6 +37,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.pdf.StandardStructureAttributes.Table.Scope;
 import org.apache.fop.pdf.xref.CrossReferenceStream;
 import org.apache.fop.pdf.xref.CrossReferenceTable;
 import org.apache.fop.pdf.xref.TrailerDictionary;
@@ -354,19 +355,20 @@ public class PDFDocument {
     }
 
     /**
-     * Creates and returns a structure element.
-     *
-     * @param structureType the structure type of the new element (value for the
-     * S entry)
-     * @param parent the parent of the new structure element in the structure
-     * hierarchy
-     * @return a dictionary of type StructElem
+     * Adds the given element to the structure tree.
      */
-    public PDFStructElem makeStructureElement(PDFName structureType, PDFObject parent) {
-        PDFStructElem structElem = new PDFStructElem(parent, structureType);
+    public void registerStructureElement(PDFStructElem structElem) {
         assignObjectNumber(structElem);
         structureTreeElements.add(structElem);
-        return structElem;
+    }
+
+    /**
+     * Assigns the given scope to the given element and adds it to the structure tree. The
+     * scope may not be added if it's not compatible with this document's PDF version.
+     */
+    public void registerStructureElement(PDFStructElem structElem, Scope scope) {
+        registerStructureElement(structElem);
+        versionController.addTableHeaderScopeAttribute(structElem, scope);
     }
 
     /**
