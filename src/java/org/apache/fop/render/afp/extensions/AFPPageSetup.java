@@ -23,6 +23,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.apache.fop.afp.modca.TagLogicalElement;
+
 /**
  * This is the pass-through value object for the AFP extension.
  */
@@ -46,6 +48,27 @@ public class AFPPageSetup extends AFPExtensionAttachment {
 
     /** defines where to place the extension in the generated file */
     protected ExtensionPlacement placement = ExtensionPlacement.DEFAULT;
+
+    /**
+     * the CCSID character set encoding
+     */
+    protected int encoding = TagLogicalElement.State.ENCODING_NONE;
+
+    /**
+     *
+     * @return CCSID character set encoding
+     */
+    public int getEncoding() {
+        return encoding;
+    }
+
+    /**
+     *
+     * @param encoding CCSID character set encoding
+     */
+    public void setEncoding(int encoding) {
+        this.encoding = encoding;
+    }
 
     /**
      * Default constructor.

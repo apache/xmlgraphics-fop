@@ -22,7 +22,7 @@ package org.apache.fop.pdf;
 /**
  * Class representing a PDF /StructTreeRoot dictionary.
  */
-public class PDFStructTreeRoot extends PDFDictionary {
+public class PDFStructTreeRoot extends StructureHierarchyMember {
 
     /**
      * Creates a new /StructTreeRoot dictionary.
@@ -49,6 +49,7 @@ public class PDFStructTreeRoot extends PDFDictionary {
      *
      * @param kid an object to be added to the K entry
      */
+    @Override
     public void addKid(PDFObject kid) {
         getKids().add(kid);
     }

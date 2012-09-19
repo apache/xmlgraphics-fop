@@ -19,6 +19,8 @@
 
 package org.apache.fop.afp.fonts;
 
+import org.apache.fop.afp.AFPEventProducer;
+
 /**
  * Default implementation of AbstractOutlineFont.
  */
@@ -29,9 +31,11 @@ public class OutlineFont extends AbstractOutlineFont {
      * @param name font's name
      * @param embeddable whether or not this font is embeddable
      * @param charSet font's character set
+     * @param eventProducer Handles any AFP related events
      */
-    public OutlineFont(String name, boolean embeddable, CharacterSet charSet) {
-        super(name, embeddable, charSet);
+    public OutlineFont(String name, boolean embeddable, CharacterSet charSet,
+            AFPEventProducer eventProducer) {
+        super(name, embeddable, charSet, eventProducer);
     }
 
 }

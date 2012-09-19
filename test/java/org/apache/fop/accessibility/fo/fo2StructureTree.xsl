@@ -50,6 +50,25 @@
     <xsl:call-template name="copy"/>
   </xsl:template>
 
+  <xsl:template match="fo:static-content/@flow-name|fo:flow/@flow-name">
+    <xsl:choose>
+      <xsl:when test=". = 'xsl-region-body' or
+        . = 'xsl-region-before' or
+        . = 'xsl-region-after' or
+        . = 'xsl-region-start' or
+        . = 'xsl-region-end' or
+        . = 'xsl-before-float-separator' or
+        . = 'xsl-footnote-separator'">
+        <xsl:copy/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="{local-name()}">
+          <xsl:value-of select="concat('xsl-', local-name(//*[@region-name = current()]))"/>
+        </xsl:attribute>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <!-- Block-level Formatting Objects -->
   <xsl:template match="fo:block|fo:block-container">
     <xsl:call-template name="copy"/>
@@ -73,15 +92,7 @@
     <xsl:call-template name="copy"/>
   </xsl:template>
 
-  <xsl:template match="fo:table">
-    <xsl:copy>
-      <xsl:apply-templates select="@*"/>
-      <xsl:apply-templates select="*[name() != 'fo:table-footer']"/>
-      <xsl:apply-templates select="fo:table-footer"/>
-    </xsl:copy>
-  </xsl:template>
-
-  <xsl:template match="fo:table-header|fo:table-footer|fo:table-body|fo:table-row|fo:table-cell">
+  <xsl:template match="fo:table|fo:table-header|fo:table-footer|fo:table-body|fo:table-row|fo:table-cell">
     <xsl:call-template name="copy"/>
   </xsl:template>
 

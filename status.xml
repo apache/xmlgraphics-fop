@@ -62,6 +62,62 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="MH" type="add" fixes-bug="53868" importance="low" due-to="Luis Bernardo">
+        Full font embedding in PDF
+      </action>
+      <action context="Renderers" dev="PH" type="add" fixes-bug="53865" importance="low">
+        Added configuration for RowPerStrip configuration in the Tiff renderer.
+        RowsPerStrip can be configured to 1 or to the total # of rows.
+        See docs for fop.xconf configuration details.
+      </action>
+      <action context="Layout" dev="VH" type="fix" fixes-bug="53598" due-to="Robert Meyer">
+        Always set the breakClass field to a legal value in BreakElement, so as to avoid 
+        IllegalArgumentExceptions in other parts of the code.
+      </action>
+      <action context="Layout" dev="VH" type="fix" fixes-bug="45715" due-to="Luis Bernardo">
+        Restored support for break-before on fo:table.
+      </action>
+      <action context="Layout" dev="VH" type="fix" fixes-bug="53827">
+        When an fo:block has a non-zero value for its text-indent property and is broken over two 
+        pages of different widths, then the first line on the second page is missing one word and 
+        appears indented.
+      </action>
+      <action context="Renderers" dev="MH" type="fix" fixes-bug="53790">
+         Prevented the TIFF configurator from overriding the Bitmap configurator unless CCITT
+         compression is enabled.
+      </action>
+      <action context="Renderers" dev="MH" type="fix" fixes-bug="53786">
+         Removed the Attribute Qualifier on TLEs as they aren't used.
+      </action>
+      <action context="Renderers" dev="MH" type="fix" fixes-bug="48954" due-to="PH">
+         Support for character encoding of TLEs in AFP output
+      </action>
+      <action context="Renderers" dev="VH" type="fix" fixes-bug="53778">
+        When PDF accessibility is enabled, the contents for the different regions must appear in the 
+        proper order in the structure tree.
+      </action>
+      <action context="Renderers" dev="MH" type="fix" fixes-bug="53766" due-to="Robert Meyer">
+        Remove StandardEncoding as the encoding type from fonts used in the PDF renderer
+      </action>
+      <action context="Fonts" dev="MH" type="fix" fixes-bug="53685">
+        Cached AFP charactersets have more unique keys preventing the two characters with
+        but different binaries conflicting.
+      </action>
+      <action context="Fonts" dev="MH" type="fix" fixes-bug="53657" due-to="Robert Meyer">
+        AFP fonts default to the nominal character increment to font metrics when glyph info
+        is missing from the characterset.
+      </action>
+      <action context="Layout" dev="VH" type="fix" fixes-bug="53688">
+        Wrong page number reported when a column overflows the region-body in a multi-column 
+        document.
+      </action>
+      <action context="Renderers" dev="VH" type="add" fixes-bug="53639">
+        When PDF accessibility is enabled, the Scope attribute must be present in the structure tree 
+        for table header elements.
+      </action>
+      <action context="Fonts" dev="MH" type="add" fixes-bug="53600" due-to="Robert Meyer">
+        Added an event if a glyph and its metric information does not exist in the character set
+      </action>
       <action context="Renderers" dev="VH" type="add" fixes-bug="53596">
         When PDF accessibility is enabled, the structure tree must contain information about the 
         number of columns or rows spanned by a table cell.

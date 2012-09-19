@@ -29,7 +29,7 @@ import org.apache.fop.apps.io.InternalResourceResolver;
 public abstract class CIDFont extends CustomFont {
 
     /** Contains the character widths for all characters in the font */
-    protected int[] width = null;
+    protected int[] width;
 
     /**
      * @param resourceResolver the URI resolver for controlling file access
@@ -69,7 +69,7 @@ public abstract class CIDFont extends CustomFont {
      * Returns the subset information for this font.
      * @return the subset information
      */
-    public abstract CIDSubset getCIDSubset();
+    public abstract CIDSet getCIDSet();
 
     // ---- Optional ----
     /**

@@ -40,7 +40,7 @@ import org.apache.fop.afp.modca.Overlay;
 import org.apache.fop.afp.modca.PageGroup;
 import org.apache.fop.afp.modca.PageObject;
 import org.apache.fop.afp.modca.ResourceGroup;
-import org.apache.fop.afp.modca.TagLogicalElementBean;
+import org.apache.fop.afp.modca.TagLogicalElement;
 import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
@@ -85,12 +85,9 @@ public class DataStream {
     /** The current page */
     private AbstractPageObject currentPage = null;
 
-    /** Sequence number for TLE's.*/
-    private int tleSequence = 0;
-
     /** The MO:DCA interchange set in use (default to MO:DCA-P IS/2 set) */
     private InterchangeSet interchangeSet
-        = InterchangeSet.valueOf(InterchangeSet.MODCA_PRESENTATION_INTERCHANGE_SET_2);
+    = InterchangeSet.valueOf(InterchangeSet.MODCA_PRESENTATION_INTERCHANGE_SET_2);
 
     private final Factory factory;
 
@@ -544,17 +541,19 @@ public class DataStream {
         currentPage.createIncludePageSegment(name, xOrigin, yOrigin, createHardPageSegments);
     }
 
+
+
     /**
      * Creates a TagLogicalElement on the current page.
      *
      * @param attributes
      *            the array of key value pairs.
      */
-    public void createPageTagLogicalElement(TagLogicalElementBean[] attributes) {
+
+    public void createPageTagLogicalElement(TagLogicalElement.State[] attributes) {
         for (int i = 0; i < attributes.length; i++) {
-            String name = attributes[i].getKey();
-            String value = attributes[i].getValue();
-            currentPage.createTagLogicalElement(name, value, tleSequence++);
+
+            currentPage.createTagLogicalElement(attributes[i]);
         }
     }
 
@@ -564,11 +563,9 @@ public class DataStream {
      * @param attributes
      *            the array of key value pairs.
      */
-    public void createPageGroupTagLogicalElement(TagLogicalElementBean[] attributes) {
+    public void createPageGroupTagLogicalElement(TagLogicalElement.State[] attributes) {
         for (int i = 0; i < attributes.length; i++) {
-            String name = attributes[i].getKey();
-            String value = attributes[i].getValue();
-            currentPageGroup.createTagLogicalElement(name, value);
+            currentPageGroup.createTagLogicalElement(attributes[i]);
         }
     }
 
@@ -579,12 +576,17 @@ public class DataStream {
      *            The tag name
      * @param value
      *            The tag value
+     * @param encoding The CCSID character set encoding
      */
-    public void createTagLogicalElement(String name, String value) {
+    public void createTagLogicalElement(String name, String value, int encoding) {
+
+        TagLogicalElement.State tleState = new  TagLogicalElement.State(name, value, encoding);
         if (currentPage != null) {
-            currentPage.createTagLogicalElement(name, value, tleSequence++);
+
+            currentPage.createTagLogicalElement(tleState);
+
         } else {
-            currentPageGroup.createTagLogicalElement(name, value);
+            currentPageGroup.createTagLogicalElement(tleState);
         }
     }
 
@@ -632,7 +634,7 @@ public class DataStream {
      */
     public void startPageGroup() throws IOException {
         endPageGroup();
-        this.currentPageGroup = factory.createPageGroup(tleSequence);
+        this.currentPageGroup = factory.createPageGroup();
     }
 
     /**
@@ -643,7 +645,6 @@ public class DataStream {
     public void endPageGroup() throws IOException {
         if (currentPageGroup != null) {
             currentPageGroup.endPageGroup();
-            tleSequence = currentPageGroup.getTleSequence();
             document.addPageGroup(currentPageGroup);
             currentPageGroup = null;
         }

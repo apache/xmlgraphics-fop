@@ -55,6 +55,7 @@ import org.apache.fop.fo.flow.table.TableFooter;
 import org.apache.fop.fo.flow.table.TableHeader;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
+import org.apache.fop.fo.pagination.LayoutMasterSet;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonAccessibilityHolder;
@@ -66,6 +67,8 @@ import org.apache.fop.util.XMLUtil;
 class StructureTreeEventTrigger extends FOEventHandler {
 
     private StructureTreeEventHandler structureTreeEventHandler;
+
+    private LayoutMasterSet layoutMasterSet;
 
     public StructureTreeEventTrigger(StructureTreeEventHandler structureTreeEventHandler) {
         this.structureTreeEventHandler = structureTreeEventHandler;
@@ -81,6 +84,9 @@ class StructureTreeEventTrigger extends FOEventHandler {
 
     @Override
     public void startPageSequence(PageSequence pageSeq) {
+        if (layoutMasterSet == null) {
+            layoutMasterSet = pageSeq.getRoot().getLayoutMasterSet();
+        }
         Locale locale = null;
         if (pageSeq.getLanguage() != null) {
             if (pageSeq.getCountry() != null) {
@@ -129,8 +135,27 @@ class StructureTreeEventTrigger extends FOEventHandler {
     }
 
     @Override
+    public void startStatic(StaticContent staticContent) {
+        AttributesImpl flowName = createFlowNameAttribute(staticContent.getFlowName());
+        startElement(staticContent, flowName);
+    }
+
+    private AttributesImpl createFlowNameAttribute(String flowName) {
+        String regionName = layoutMasterSet.getDefaultRegionNameFor(flowName);
+        AttributesImpl attribute = new AttributesImpl();
+        addNoNamespaceAttribute(attribute, Flow.FLOW_NAME, regionName);
+        return attribute;
+    }
+
+    @Override
+    public void endStatic(StaticContent staticContent) {
+        endElement(staticContent);
+    }
+
+    @Override
     public void startFlow(Flow fl) {
-        startElement(fl);
+        AttributesImpl flowName = createFlowNameAttribute(fl.getFlowName());
+        startElement(fl, flowName);
     }
 
     @Override
@@ -275,16 +300,6 @@ class StructureTreeEventTrigger extends FOEventHandler {
     @Override
     public void endListBody(ListItemBody listItemBody) {
         endElement(listItemBody);
-    }
-
-    @Override
-    public void startStatic(StaticContent staticContent) {
-        startElement(staticContent);
-    }
-
-    @Override
-    public void endStatic(StaticContent statisContent) {
-        endElement(statisContent);
     }
 
     @Override

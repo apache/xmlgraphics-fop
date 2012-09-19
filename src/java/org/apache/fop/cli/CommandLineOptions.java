@@ -43,6 +43,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopConfParser;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
+import org.apache.fop.apps.FopFactoryConfig;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionManager;
@@ -117,7 +118,7 @@ public class CommandLineOptions {
     /* rendering options (for the user agent) */
     private Map renderingOptions = new java.util.HashMap();
     /* target resolution (for the user agent) */
-    private int targetResolution = 0;
+    private float targetResolution = FopFactoryConfig.DEFAULT_TARGET_RESOLUTION;
 
     private boolean strictValidation = true;
     /* control memory-conservation policy */
@@ -138,7 +139,7 @@ public class CommandLineOptions {
 
     private boolean flushCache = false;
 
-    private URI baseURI = new File(".").toURI();
+    private URI baseURI = new File(".").getAbsoluteFile().toURI();
 
     /**
      * Construct a command line option object.
@@ -420,7 +421,7 @@ public class CommandLineOptions {
             throw new FOPException("if you use '-cache', you must specify "
               + "the name of the font cache file");
         } else {
-            factory.getFontManager().setCacheFile(new File(args[i + 1]));
+            factory.getFontManager().setCacheFile(URI.create(args[i + 1]));
             return 1;
         }
     }
@@ -468,7 +469,7 @@ public class CommandLineOptions {
                 this.useStdIn = true;
             } else {
                 fofile = new File(filename);
-                baseURI = fofile.toURI();
+                baseURI = getBaseURI(fofile);
             }
             return 1;
         }
@@ -498,10 +499,14 @@ public class CommandLineOptions {
                 this.useStdIn = true;
             } else {
                 xmlfile = new File(filename);
-                baseURI = xmlfile.toURI();
+                baseURI = getBaseURI(xmlfile);
             }
             return 1;
         }
+    }
+
+    private URI getBaseURI(File file) {
+        return file.getAbsoluteFile().getParentFile().toURI();
     }
 
     private int parseAWTOutputOption(String[] args, int i) throws FOPException {
@@ -730,7 +735,7 @@ public class CommandLineOptions {
                 this.useStdIn = true;
             } else {
                 fofile = new File(filename);
-                baseURI = fofile.toURI();
+                baseURI = getBaseURI(fofile);
             }
         } else if (outputmode == null) {
             outputmode = MimeConstants.MIME_PDF;
@@ -789,7 +794,7 @@ public class CommandLineOptions {
                 this.useStdIn = true;
             } else {
                 areatreefile = new File(filename);
-                baseURI = areatreefile.toURI();
+                baseURI = getBaseURI(areatreefile);
             }
             return 1;
         }
@@ -806,7 +811,7 @@ public class CommandLineOptions {
                 this.useStdIn = true;
             } else {
                 iffile = new File(filename);
-                baseURI = iffile.toURI();
+                baseURI = getBaseURI(iffile);
             }
             return 1;
         }
@@ -823,7 +828,7 @@ public class CommandLineOptions {
                 this.useStdIn = true;
             } else {
                 imagefile = new File(filename);
-                baseURI = imagefile.toURI();
+                baseURI = getBaseURI(imagefile);
             }
             return 1;
         }
