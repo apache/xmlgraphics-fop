@@ -38,7 +38,7 @@ public interface CIDSet {
     /**
      * Returns the Unicode value for a subset index (character selector). If there's no such
      * Unicode value, the "NOT A CHARACTER" (0xFFFF) is returned.
-     * @param subsetIndex the subset index (character selector)
+     * @param index the subset index (character selector)
      * @return the Unicode value or "NOT A CHARACTER" (0xFFFF)
      */
     char getUnicode(int index);
