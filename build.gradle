@@ -1,0 +1,270 @@
+apply plugin: 'java'
+
+// Setting up project wide variables
+project.ext {
+    name = 'Apache FOP'
+    year = '1999-2009'
+    // TODO: CHANGE THIS FOR APACHE VERSION!!!!!!
+    version = 'fop-th'
+    sourceDir = 'src/java'
+    sourceSandboxClassesDir = "src/sandbox/"
+    sourceCodegenDir = "src/codegen"
+    gensrcDir = "$buildDir/gensrc/"
+    buildClassesDir = "$buildDir/classes/main/"
+    buildSandboxClassesDir = "$buildDir/sandbox-classes/main/"
+    buildCodegenClassesDir = "$buildDir/codegen-classes"
+}
+
+loadPropertiesFrom 'build.config'
+loadPropertiesFrom 'build.local.config'
+
+jar {
+    baseName = 'fop'
+    destinationDir = buildDir
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs sourceDir, gensrcDir
+        }
+    }
+    codegen {
+        java {
+            srcDir 'src/codegen/java'
+        }
+    }
+}
+
+// Setting up dependencies
+repositories {
+    mavenCentral()
+    maven {
+        url 'http://repository.springsource.com/maven/bundles/external'
+    }
+}
+
+configurations {
+   tools
+}
+
+dependencies {
+    compile 'avalon-framework:avalon-framework-api:4.2.0',
+            'avalon-framework:avalon-framework-impl:4.2.0',
+            'javax.media.jai:com.springsource.javax.media.jai.core:1.1.3',
+            'org.apache.ant:ant:1.8.4',
+            'commons-io:commons-io:1.3.1',
+            'commons-logging:commons-logging:1.0.4',
+            'net.sf.offo:fop-hyph:1.2',
+            'xalan:serializer:2.7.1',
+            'xalan:xalan:2.7.1',
+            'xerces:xercesImpl:2.7.1',
+            'xml-apis:xml-apis:1.3.04',
+            'xml-apis:xml-apis-ext:1.3.04',
+            fileTree(dir: 'lib', includes: ['batik*.jar', 'servlet*.jar', 'xmlgraphics-commons*.jar'])
+
+   tools    'com.thoughtworks.qdox:qdox:1.12',
+            'xmlunit:xmlunit:1.3',
+            'pmd:pmd:4.3',
+            'asm:asm:3.1'
+}
+
+// This is an artefact from the legacy Ant builder, but until we have alternate mechanisms some of this
+// needs to be done.
+task init() << {
+    println """ |------------------- ${name} ${version} [${year}] ----------------
+                |See build.properties and build-local.properties for additional build settings
+                |${gradle.gradleVersion}
+                |VM: ${System.properties['java.vm.version']}, ${System.properties['java.vm.vendor']}
+                |JAVA_HOME: ${System.env.JAVA_HOME?: 'NOT SET'}
+            """.stripMargin().trim()
+    def failUnless = { msg, predicate ->
+        if (!predicate()) {
+            throw new GradleException(msg)
+        }
+    }
+
+    def isAvailable = { map, yield = {->} ->
+        def ant = new groovy.util.AntBuilder()
+        def atts = [property: 'isAvailable'] + map
+        ant.available(atts, yield)
+        Boolean.valueOf(ant.project.properties.isAvailable)
+    }
+
+    def isClassAvailable = { String className, configuration ->
+        isAvailable([classname: className]) {
+            classpath {
+                configuration.each {
+                    pathelement(location: it.toString())
+                }
+            }
+        }
+    }
+
+    failUnless("${name} requires at least Java 1.5!") {
+        return Float.valueOf(System.getProperty('java.version')[0..2]) >= 1.5
+    }
+
+    project.ext {
+        jcePresent = isClassAvailable('javax.crypto.Cipher', configurations.compile)
+        println 'JCE Support ' + (jcePresent ? 'PRESENT' : 'NOT present')
+
+        /* TODO    junitPresent = isClassAvailable('org.junit.Test', configurations.testCompile)
+        println 'JUnit Support ' + (junitPresent ? 'PRESENT' : 'NOT present - Committers are required to have JUnit working')
+        */
+    }
+}
+
+private void loadPropertiesFrom(fileName) {
+    def propFile = new File(fileName) 
+    if (propFile.file) {        
+        def conf = new ConfigSlurper().parse(propFile.toURL())
+        conf.each {k,v->
+            setProperty(k,v)
+        }
+    }
+}
+
+// Perform the creation of the auto-generated classes
+task codegen() << {
+    String outputDir = "${buildDir}/gensrc/org/apache/fop/fonts/"
+    String base14Dir = outputDir + 'base14/'
+    String srcFontsDir = "$sourceCodegenDir/fonts/"
+
+    def createFont = { String fontName, String encodingName = 'WinAnsiEncoding' ->
+        ant.xslt(in: srcFontsDir + "${fontName}",
+                 style: srcFontsDir + "font-file.xsl",
+                 out: base14Dir + "${fontName.replaceFirst('xml', 'java')}") {
+                     if (encodingName) {
+                         param(name: 'encoding', expression: encodingName)
+                     }
+                 }
+    }
+
+    new File(base14Dir).mkdirs()
+    fileTree(dir: srcFontsDir, includes: ['Helvetica*.xml', 'Times*.xml', 'Courier*.xml']).each {
+       createFont(it.getName())
+    }
+    createFont('Symbol.xml', null)
+    createFont('ZapfDingbats.xml', null)
+    ant.xslt(in: srcFontsDir + 'encodings.xml', style: srcFontsDir + 'code-point-mapping.xsl', out: outputDir + 'CodePointMapping.java');
+}
+
+task compileSandboxJava(dependsOn: compileJava) << {
+    new File(buildSandboxClassesDir).mkdirs()
+    ant.javac(destDir: buildSandboxClassesDir) {
+        src(path: sourceSandboxClassesDir)
+        patternset(includes: '**/*.java')
+        classpath {
+            pathElement(path: configurations.compile.asPath)
+            pathElement(location: buildClassesDir)
+        }
+    }
+}
+
+compileJava {
+    dependsOn init, codegen
+    doLast { tasks.compileSandboxJava.execute() }
+}
+
+task resourcegen(dependsOn: compileJava) << {
+    String codegenClassesSrc = "$sourceCodegenDir/java"
+
+    new File(buildCodegenClassesDir).mkdirs()
+    ant.javac(destdir: buildCodegenClassesDir) {
+        src(path: codegenClassesSrc)
+        patternset(includes: '**/*.java')
+        classpath { pathElement(location: buildClassesDir)
+                    pathElement(path: configurations.compile.asPath)
+                    pathElement(path: configurations.tools.asPath)
+        }
+    }
+
+    copy {
+        from(codegenClassesSrc) {
+            include '**/*.xsl'
+        }
+        into buildCodegenClassesDir
+    }
+
+    ant.taskdef(name: 'eventResourceGenerator', classname: 'org.apache.fop.tools.EventProducerCollectorTask') {
+        classpath { pathElement(location: buildClassesDir)
+                    pathElement(location: buildCodegenClassesDir)
+                    pathElement(path: configurations.compile.asPath)
+                    pathElement(path: configurations.tools.asPath)
+        }
+    }
+    ant.eventResourceGenerator(destdir: gensrcDir) {
+        fileset(dir: sourceDir, includes: '**/*.java')
+    }
+}
+
+task compileCopyResources(dependsOn: resourcegen) << {
+    String viewerResourceSourceDir = "$sourceDir/org/apache/fop/render/awt/viewer/"
+    String viewerResourceTargetDir = "$buildClassesDir/org/apache/fop/render/awt/viewer/"
+
+    copy {
+        from(sourceDir) {
+            include 'META-INF/**'
+            include '**/*.icm'
+            include '**/*.xml'
+            include '**/*.LICENSE.txt'
+            include '**/*.xsl'
+        }
+        from(gensrcDir) {
+            include '**/*.xml'
+        }
+        into buildClassesDir
+    }
+    def copyViewerClasses = { dir ->
+        new File(viewerResourceTargetDir + dir).mkdirs()
+        copy {
+            from(viewerResourceSourceDir + dir) {
+                include '**/*'
+            }
+            into viewerResourceTargetDir + dir
+        }
+    }
+    copyViewerClasses('images/')
+    copyViewerClasses('resources/')
+
+    copy {
+        from(sourceSandboxClassesDir) {
+            include 'META-INF/**'
+        }
+        into buildSandboxClassesDir
+    }
+}
+
+task compile {
+    dependsOn compileCopyResources, compileJava
+}
+
+// Handle hyphenation compilation
+task codegenHyphenationClasses(dependsOn: compile) << {
+    ant.javac(destDir: buildCodegenClassesDir) {
+        src(path: "$sourceCodegenDir/unicode/java")
+    }
+
+    ant.java(classname: 'org.apache.fop.hyphenation.UnicodeClasses', classpath: buildCodegenClassesDir, outputproperty: 'classesresult', fork: true) {
+        arg(value: "$sourceDir/org/apache/fop/hyphenation/classes.xml")
+    }
+    // Ant did some messaging here, couldn't figure out how to replicate it, I'm sure it wasn't  important... Hubris...
+}
+
+task compileHyphenation(dependsOn: compile) << {
+    new File("$buildDir/classes/hyph").mkdirs()
+
+    ant.java(classname: 'org.apache.fop.hyphenation.SerializeHyphPattern', classpath: buildClassesDir, fork: true) {
+        arg(value: 'hyph/')
+        arg(value: "$buildDir/classes/hyph/")
+        jvmarg(value: '-Xss512k')
+    }
+}
+
+task uptodateJarHyphenation(dependsOn: compileHyphenation) << {
+    ant.uptodate(property: 'jar.hyphenation.uptodate', targetfile: '$buildDir/fop-hyph.jar') {
+        srcfiles(dir: '$buildDir/classes/hyph/')
+    }
+}
+
