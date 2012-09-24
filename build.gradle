@@ -4,8 +4,8 @@ apply plugin: 'java'
 project.ext {
     name = 'Apache FOP'
     year = '1999-2009'
-    // TODO: CHANGE THIS FOR APACHE VERSION!!!!!!
-    version = 'fop-th'
+    // Not sure exactly what to put here, but since 1.1rc1 is out...
+    version = '1.2-SNAPSHOT'
     sourceDir = 'src/java'
     sourceSandboxClassesDir = "src/sandbox/"
     sourceCodegenDir = "src/codegen"
