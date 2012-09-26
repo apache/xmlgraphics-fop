@@ -785,8 +785,11 @@ public interface Constants {
      */
     int PR_X_NUMBER_CONVERSION_FEATURES = 276;
 
+    /** Scope for table header */
+    int PR_X_HEADER_COLUMN = 277;
+
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 276;
+    int PROPERTY_COUNT = 277;
 
     // compound property constants
 
