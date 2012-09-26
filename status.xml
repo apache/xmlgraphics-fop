@@ -62,6 +62,11 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="add" fixes-bug="53902">
+        Added possibility to define ‘header’ table columns (the same way as fo:table-header allows 
+        to define header rows). When accessibility is enabled, this allows to set the appropriate 
+        Scope attribute on the corresponding TH cells.
+      </action>
       <action context="Fonts" dev="MH" type="add" fixes-bug="53868" importance="low" due-to="Luis Bernardo">
         Full font embedding in PDF
       </action>
