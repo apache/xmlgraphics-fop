@@ -268,3 +268,15 @@ task uptodateJarHyphenation(dependsOn: compileHyphenation) << {
     }
 }
 
+task jarHyphenation(dependsOn: uptodateJarHyphenation) << {
+    ant.jar(jarfile: "$buildDir/fop-hyph.jar", basedir: buildClassesDir, includes: "hyph/*.hyph") {
+        delegate.manifest {
+            attribute(name: 'Implementation-Title', value: project.ext.name)
+            attribute(name: 'Implementation-Version', value: project.ext.version)
+            attribute(name: 'Implementation-Vendor', value: "The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)")
+            // TODO: the Java version is a global property in the Ant version
+            attribute(name: 'Build-Id', value: "${new Date()} (${getProperty('user.name')} [${getProperty('os.name')} ${getProperty('os.version')} ${getProperty('os.arch')}, Java ${getProperty('java.runtime.version')}, Target Java 1.5])")
+        }
+    }
+}
+
