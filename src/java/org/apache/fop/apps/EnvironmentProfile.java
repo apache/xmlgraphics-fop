@@ -21,7 +21,9 @@ package org.apache.fop.apps;
 
 import java.net.URI;
 
-import org.apache.fop.apps.io.ResourceResolver;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext.FallbackResolver;
+import org.apache.xmlgraphics.io.ResourceResolver;
+
 import org.apache.fop.fonts.FontManager;
 
 /**
@@ -52,4 +54,7 @@ public interface EnvironmentProfile {
      * @return the default base URI
      */
     URI getDefaultBaseURI();
+
+    /** @see FopFactoryConfig#getFallbackResolver() */
+    FallbackResolver getFallbackResolver();
 }

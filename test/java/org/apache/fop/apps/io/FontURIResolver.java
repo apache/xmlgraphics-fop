@@ -39,6 +39,8 @@ import org.apache.fop.apps.PDFRendererConfBuilder;
 
 import static org.junit.Assert.assertTrue;
 
+import org.apache.xmlgraphics.io.Resource;
+
 public class FontURIResolver extends BaseURIResolutionTest {
 
     public enum Event {

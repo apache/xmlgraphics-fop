@@ -131,21 +131,7 @@ public class FOUserAgent {
     /** Set of keywords applicable to this document. */
     protected String keywords = null;
 
-    private ImageSessionContext imageSessionContext = new AbstractImageSessionContext() {
-
-        public ImageContext getParentContext() {
-            return factory;
-        }
-
-        public float getTargetResolution() {
-            return FOUserAgent.this.getTargetResolution();
-        }
-
-        public Source resolveURI(String uri) {
-            return FOUserAgent.this.resolveURI(uri);
-        }
-
-    };
+    private final ImageSessionContext imageSessionContext;
 
     /**
      * Main constructor. <b>This constructor should not be called directly. Please use the
@@ -154,11 +140,25 @@ public class FOUserAgent {
      * @param resourceResolver the resolver used to acquire resources
      * @see org.apache.fop.apps.FopFactory
      */
-    FOUserAgent(FopFactory factory, InternalResourceResolver resourceResolver) {
+    FOUserAgent(final FopFactory factory, InternalResourceResolver resourceResolver) {
         this.factory = factory;
         this.resourceResolver = resourceResolver;
         setTargetResolution(factory.getTargetResolution());
         setAccessibility(factory.isAccessibilityEnabled());
+        imageSessionContext = new AbstractImageSessionContext(factory.getFallbackResolver()) {
+
+            public ImageContext getParentContext() {
+                return factory;
+            }
+
+            public float getTargetResolution() {
+                return FOUserAgent.this.getTargetResolution();
+            }
+
+            public Source resolveURI(String uri) {
+                return FOUserAgent.this.resolveURI(uri);
+            }
+        };
     }
 
     /**
