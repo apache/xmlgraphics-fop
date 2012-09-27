@@ -91,6 +91,11 @@ public class FO2StructureTreeConverterTestCase {
         testConverter("/org/apache/fop/fo/pagination/side-regions.fo");
     }
 
+    @Test
+    public void headerTableCellMustPropagateScope() throws Exception {
+        testConverter("table-header_scope.fo");
+    }
+
     private static InputStream getResource(String name) {
         return FO2StructureTreeConverterTestCase.class.getResourceAsStream(name);
     }
