@@ -2513,6 +2513,12 @@ public final class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("false");
         addPropertyMaker("table-omit-header-at-break", m);
+
+        // fox:scope
+        m = new EnumProperty.Maker(PR_X_HEADER_COLUMN);
+        m.useGeneric(genericBoolean);
+        m.setDefault("false");
+        addPropertyMaker("fox:header", m);
     }
 
     private void createWritingModeProperties() {

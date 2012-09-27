@@ -43,12 +43,15 @@ public class InternalElementMapping extends ElementMapping {
     /** The "struct-ref" attribute, to refer to a structure tree element. */
     public static final String STRUCT_REF = "struct-ref";
 
+    public static final String SCOPE = "scope";
+
     private static final Set<String> PROPERTY_ATTRIBUTES = new java.util.HashSet<String>();
 
     static {
         //These are FOP's extension properties for accessibility
         PROPERTY_ATTRIBUTES.add(STRUCT_ID);
         PROPERTY_ATTRIBUTES.add(STRUCT_REF);
+        PROPERTY_ATTRIBUTES.add(SCOPE);
     }
 
     /**

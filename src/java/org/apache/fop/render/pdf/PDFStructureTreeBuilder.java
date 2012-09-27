@@ -30,6 +30,7 @@ import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.pdf.PDFFactory;
 import org.apache.fop.pdf.PDFParentTree;
@@ -138,7 +139,7 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
             PDFStructElem structElem = createStructureElement(parent, structureType);
             setAttributes(structElem, attributes);
             addKidToParent(structElem, parent, attributes);
-            registerStructureElement(structElem, pdfFactory);
+            registerStructureElement(structElem, pdfFactory, attributes);
             return structElem;
         }
 
@@ -155,7 +156,8 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
             parent.addKid(kid);
         }
 
-        protected void registerStructureElement(PDFStructElem structureElement, PDFFactory pdfFactory) {
+        protected void registerStructureElement(PDFStructElem structureElement, PDFFactory pdfFactory,
+                Attributes attributes) {
             pdfFactory.getDocument().registerStructureElement(structureElement);
         }
 
@@ -240,22 +242,15 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         }
 
         @Override
-        protected PDFStructElem createStructureElement(StructureHierarchyMember parent,
-                StructureType structureType) {
-            PDFStructElem grandParent = ((PDFStructElem) parent).getParentStructElem();
-            //TODO What to do with cells from table-footer? Currently they are mapped on TD.
-            if (grandParent.getStructureType() == StandardStructureTypes.Table.THEAD) {
-                structureType = StandardStructureTypes.Table.TH;
-            } else {
-                structureType = StandardStructureTypes.Table.TD;
-            }
-            return super.createStructureElement(parent, structureType);
-        }
-
-        @Override
-        protected void registerStructureElement(PDFStructElem structureElement, PDFFactory pdfFactory) {
+        protected void registerStructureElement(PDFStructElem structureElement, PDFFactory pdfFactory,
+                Attributes attributes) {
             if (structureElement.getStructureType() == Table.TH) {
-                pdfFactory.getDocument().registerStructureElement(structureElement, Scope.COLUMN);
+                String scopeAttribute = attributes.getValue(InternalElementMapping.URI,
+                        InternalElementMapping.SCOPE);
+                Scope scope = (scopeAttribute == null)
+                        ? Scope.COLUMN
+                        : Scope.valueOf(scopeAttribute.toUpperCase(Locale.ENGLISH));
+                pdfFactory.getDocument().registerStructureElement(structureElement, scope);
             } else {
                 pdfFactory.getDocument().registerStructureElement(structureElement);
             }
