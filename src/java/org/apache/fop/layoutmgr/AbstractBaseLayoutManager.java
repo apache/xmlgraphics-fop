@@ -273,4 +273,11 @@ public abstract class AbstractBaseLayoutManager
         throw new UnsupportedOperationException("Not implemented");
     }
 
+    public void preserveChildrenAtEndOfLayout() {
+
+    }
+
+    public void recreateChildrenLMs() {
+
+    }
 }

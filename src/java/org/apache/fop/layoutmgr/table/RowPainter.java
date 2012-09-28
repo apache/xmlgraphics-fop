@@ -303,11 +303,16 @@ class RowPainter {
                     borderAfterWhich = ConditionalBorder.REST;
                 }
 
+                // when adding the areas for the TableCellLayoutManager this helps with the isLast trait
+                // if, say, the first cell of a row has content that fits in the page, but the content of
+                // the second cell does not fit this will assure that the isLast trait for the first cell
+                // will also be false
+                lastCellParts[i].pgu.getCellLM().setLastTrait(lastCellParts[i].isLastPart());
                 addAreasForCell(firstCellParts[i].pgu,
                         firstCellParts[i].start, lastCellParts[i].end,
                         actualRowHeight, borderBeforeWhich, borderAfterWhich,
                         lastOnPage);
-                firstCellParts[i] = null;
+                firstCellParts[i] = null; // why? what about the lastCellParts[i]?
                 Arrays.fill(firstCellOnPage, i, i + currentGU.getCell().getNumberColumnsSpanned(),
                         false);
             }

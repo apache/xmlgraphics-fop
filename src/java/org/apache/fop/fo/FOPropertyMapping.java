@@ -2178,7 +2178,8 @@ public final class FOPropertyMapping implements Constants {
         m  = new EnumProperty.Maker(PR_RETRIEVE_POSITION_WITHIN_TABLE);
         m.setInherited(false);
         m.addEnum("first-starting", getEnumProperty(EN_FIRST_STARTING, "FIRST_STARTING"));
-        m.addEnum("first-including-carryover", getEnumProperty(EN_FIC, "FIC"));
+        m.addEnum("first-including-carryover",
+                getEnumProperty(EN_FIRST_INCLUDING_CARRYOVER, "FIRST_INCLUDING_CARRYOVER"));
         m.addEnum("last-starting", getEnumProperty(EN_LAST_STARTING, "LAST_STARTING"));
         m.addEnum("last-ending", getEnumProperty(EN_LAST_ENDING, "LAST_ENDING"));
         m.setDefault("first-starting");
@@ -2189,7 +2190,7 @@ public final class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.addEnum("table", getEnumProperty(EN_TABLE, "TABLE"));
         m.addEnum("table-fragment", getEnumProperty(EN_TABLE_FRAGMENT, "TABLE_FRAGMENT"));
-        m.addEnum("page", getEnumProperty(EN_DOCUMENT, "PAGE"));
+        m.addEnum("page", getEnumProperty(EN_PAGE, "PAGE"));
         m.setDefault("table");
         addPropertyMaker("retrieve-boundary-within-table", m);
     }

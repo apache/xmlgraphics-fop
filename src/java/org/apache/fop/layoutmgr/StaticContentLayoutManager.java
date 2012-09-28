@@ -167,125 +167,22 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         return (StaticContent) fobj;
     }
 
-    private class StaticContentBreaker extends AbstractBreaker {
-        private StaticContentLayoutManager lm;
-        private int displayAlign;
-        private int ipd;
-        private int overflow = 0;
+    private class StaticContentBreaker extends LocalBreaker {
 
-        public StaticContentBreaker(StaticContentLayoutManager lm, int ipd,
-                int displayAlign) {
-            this.lm = lm;
-            this.ipd = ipd;
-            this.displayAlign = displayAlign;
+        public StaticContentBreaker(StaticContentLayoutManager lm, int ipd, int displayAlign) {
+            super(lm, ipd, displayAlign);
         }
 
         /** {@inheritDoc} */
         protected void observeElementList(List elementList) {
             String elementListID = getStaticContentFO().getFlowName();
-            String pageSequenceID = ((PageSequence)lm.getParent().getFObj()).getId();
+            String pageSequenceID = ((PageSequence) lm.getParent().getFObj()).getId();
             if (pageSequenceID != null && pageSequenceID.length() > 0) {
                 elementListID += "-" + pageSequenceID;
             }
             ElementListObserver.observe(elementList, "static-content", elementListID);
         }
 
-        /** {@inheritDoc} */
-        protected boolean isPartOverflowRecoveryActivated() {
-            //For side regions, this must be disabled because of wanted overflow.
-            return false;
-        }
-
-        public boolean isOverflow() {
-            return (this.overflow != 0);
-        }
-
-        public int getOverflowAmount() {
-            return this.overflow;
-        }
-
-        /** {@inheritDoc} */
-        protected PageBreakingLayoutListener createLayoutListener() {
-            return new PageBreakingLayoutListener() {
-
-                public void notifyOverflow(int part, int amount, FObj obj) {
-                    if (StaticContentBreaker.this.overflow == 0) {
-                        StaticContentBreaker.this.overflow = amount;
-                    }
-                }
-
-            };
-        }
-
-        protected LayoutManager getTopLevelLM() {
-            return lm;
-        }
-
-        protected LayoutContext createLayoutContext() {
-            LayoutContext lc = super.createLayoutContext();
-            lc.setRefIPD(ipd);
-            return lc;
-        }
-
-        protected List getNextKnuthElements(LayoutContext context, int alignment) {
-            LayoutManager curLM; // currently active LM
-            List returnList = new LinkedList();
-
-            while ((curLM = getChildLM()) != null) {
-                LayoutContext childLC = LayoutContext.newInstance();
-                childLC.setStackLimitBP(context.getStackLimitBP());
-                childLC.setRefIPD(context.getRefIPD());
-                childLC.setWritingMode(context.getWritingMode());
-
-                List returnedList = null;
-                //The following is a HACK! Ignore leading and trailing white space
-                boolean ignore = curLM instanceof TextLayoutManager;
-                if (!curLM.isFinished()) {
-                    returnedList = curLM.getNextKnuthElements(childLC, alignment);
-                }
-                if (returnedList != null && !ignore) {
-                    lm.wrapPositionElements(returnedList, returnList);
-                }
-            }
-            SpaceResolver.resolveElementList(returnList);
-            setFinished(true);
-            return returnList;
-        }
-
-        protected int getCurrentDisplayAlign() {
-            return displayAlign;
-        }
-
-        protected boolean hasMoreContent() {
-            return !lm.isFinished();
-        }
-
-        protected void addAreas(PositionIterator posIter, LayoutContext context) {
-            AreaAdditionUtil.addAreas(lm, posIter, context);
-        }
-
-        protected void doPhase3(PageBreakingAlgorithm alg, int partCount,
-                BlockSequence originalList, BlockSequence effectiveList) {
-            if (partCount > 1) {
-                PageBreakPosition pos = (PageBreakPosition)alg.getPageBreaks().getFirst();
-                int firstPartLength = ElementListUtils.calcContentLength(effectiveList,
-                        effectiveList.ignoreAtStart, pos.getLeafPos());
-                overflow += alg.totalWidth - firstPartLength;
-            }
-            //Rendering all parts (not just the first) at once for the case where the parts that
-            //overflow should be visible.
-            alg.removeAllPageBreaks();
-            //Directly add areas after finding the breaks
-            this.addAreas(alg, 1, originalList, effectiveList);
-        }
-
-        protected void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp) {
-            //nop for static content
-        }
-
-        protected LayoutManager getCurrentChildLM() {
-            return null; //TODO NYI
-        }
     }
 
     /**

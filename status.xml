@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="MH" type="add" fixes-bug="53924" due-to="Luis Bernardo">
+        Support for retrieve-table-markers
+      </action>
       <action context="Renderers" dev="VH" type="add" fixes-bug="53902">
         Added possibility to define ‘header’ table columns (the same way as fo:table-header allows 
         to define header rows). When accessibility is enabled, this allows to set the appropriate 

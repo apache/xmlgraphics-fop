@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +34,9 @@ import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.flow.Markers;
+import org.apache.fop.fo.flow.RetrieveTableMarker;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.properties.KeepProperty;
@@ -92,6 +96,15 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     private List columnBackgroundAreas;
 
     private Position auxiliaryPosition;
+
+    // this holds a possible list of TCLMs that needed to have their addAreas() repeated
+    private List<TableCellLayoutManager> savedTCLMs;
+    private boolean areAllTCLMsSaved;
+
+    private Markers tableMarkers;
+    private Markers tableFragmentMarkers;
+
+    private boolean hasRetrieveTableMarker;
 
     /**
      * Temporary holder of column background informations for a table-cell's area.
@@ -558,6 +571,114 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         super.reset();
         curBlockArea = null;
         tableUnit = 0.0;
+    }
+
+    /**
+     * Saves a TableCellLayoutManager for later use.
+     * 
+     * @param tclm a TableCellLayoutManager that has a RetrieveTableMarker
+     */
+    protected void saveTableHeaderTableCellLayoutManagers(TableCellLayoutManager tclm) {
+        if (savedTCLMs == null) {
+            savedTCLMs = new ArrayList<TableCellLayoutManager>();
+        }
+        if (!areAllTCLMsSaved) {
+            savedTCLMs.add(tclm);
+        }
+    }
+
+    /**
+     * Calls addAreas() for each of the saved TableCellLayoutManagers.
+     */
+    protected void repeatAddAreasForSavedTableHeaderTableCellLayoutManagers() {
+        if (savedTCLMs == null) {
+            return;
+        }
+        // if we get to this stage then we are at the footer of the table fragment; this means that no more
+        // different TCLM need to be saved (we already have all); we flag the list as being complete then
+        areAllTCLMsSaved = true;
+        for (int i = 0; i < savedTCLMs.size(); i++) {
+            TableCellLayoutManager tclm = savedTCLMs.get(i);
+            tclm.repeatAddAreas();
+        }
+    }
+
+    /**
+     * Resolves a RetrieveTableMarker by finding a qualifying Marker to which it is bound to.
+     * @param rtm the RetrieveTableMarker to be resolved
+     * @return a bound RetrieveTableMarker instance or null if no qualifying Marker found
+     */
+    public RetrieveTableMarker resolveRetrieveTableMarker(RetrieveTableMarker rtm) {
+        String name = rtm.getRetrieveClassName();
+        int originalPosition = rtm.getPosition();
+        boolean changedPosition = false;
+
+        Marker mark = null;
+        // try the primary retrieve scope area, which is the same as table-fragment
+        mark = (tableFragmentMarkers == null) ? null : tableFragmentMarkers.resolve(rtm);
+        if (mark == null && rtm.getBoundary() != Constants.EN_TABLE_FRAGMENT) {
+            rtm.changePositionTo(Constants.EN_LAST_ENDING);
+            changedPosition = true;
+            // try the page scope area
+            mark = getCurrentPV().resolveMarker(rtm);
+            if (mark == null && rtm.getBoundary() != Constants.EN_PAGE) {
+                // try the table scope area
+                mark = (tableMarkers == null) ? null : tableMarkers.resolve(rtm);
+            }
+        }
+        if (changedPosition) {
+            // so that the next time it is called looks unchanged
+            rtm.changePositionTo(originalPosition);
+        }
+        if (mark == null) {
+            log.debug("found no marker with name: " + name);
+            return null;
+        } else {
+            rtm.bindMarker(mark);
+            return rtm;
+        }
+    }
+
+    /**
+     * Register the markers for this table.
+     *
+     * @param marks the map of markers to add
+     * @param starting if the area being added is starting or ending
+     * @param isfirst if the area being added has is-first trait
+     * @param islast if the area being added has is-last trait
+     */
+    public void registerMarkers(Map<String, Marker> marks, boolean starting, boolean isfirst,
+            boolean islast) {
+        if (tableMarkers == null) {
+            tableMarkers = new Markers();
+        }
+        tableMarkers.register(marks, starting, isfirst, islast);
+        if (tableFragmentMarkers == null) {
+            tableFragmentMarkers = new Markers();
+        }
+        tableFragmentMarkers.register(marks, starting, isfirst, islast);
+    }
+
+    /**
+     * Clears the list of markers in the current table fragment. Should be called just before starting a new
+     * header (that belongs to the next table fragment).
+     */
+    protected void clearTableFragmentMarkers() {
+        tableFragmentMarkers = null;
+    }
+
+    public void flagAsHavingRetrieveTableMarker() {
+        hasRetrieveTableMarker = true;
+    }
+
+    protected void possiblyRegisterMarkersForTables(Map<String, Marker> markers, boolean isStarting,
+            boolean isFirst, boolean isLast) {
+        // note: if we allow table-footer after a table-body this check should not be made and the markers
+        // should be registered regardless because the retrieval may be done only in the footer
+        if (hasRetrieveTableMarker) {
+            registerMarkers(markers, isStarting, isFirst, isLast);
+        }
+        super.possiblyRegisterMarkersForTables(markers, isStarting, isFirst, isLast);
     }
 
 }
