@@ -226,15 +226,14 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
     public RetrieveMarker resolveRetrieveMarker(RetrieveMarker rm) {
         AreaTreeModel areaTreeModel = areaTreeHandler.getAreaTreeModel();
         String name = rm.getRetrieveClassName();
-        int pos = rm.getRetrievePosition();
         int boundary = rm.getRetrieveBoundary();
 
         // get marker from the current markers on area tree
-        Marker mark = (Marker)getCurrentPV().getMarker(name, pos);
+        Marker mark = getCurrentPV().resolveMarker(rm);
         if (mark == null && boundary != EN_PAGE) {
             // go back over pages until mark found
             // if document boundary then keep going
-            boolean doc = boundary == EN_DOCUMENT;
+            boolean doc = (boundary == EN_DOCUMENT);
             int seq = areaTreeModel.getPageSequenceCount();
             int page = areaTreeModel.getPageCount(seq) - 1;
             while (page < 0 && doc && seq > 1) {
@@ -243,7 +242,11 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
             }
             while (page >= 0) {
                 PageViewport pv = areaTreeModel.getPage(seq, page);
-                mark = (Marker)pv.getMarker(name, Constants.EN_LEWP);
+                int originalPosition = rm.getPosition();
+                rm.changePositionTo(Constants.EN_LEWP);
+                mark = (Marker) pv.resolveMarker(rm);
+                // this is probably not necessary since the RM will not be used again, but to be safe...
+                rm.changePositionTo(originalPosition);
                 if (mark != null) {
                     break;
                 }

@@ -17,6 +17,7 @@
   <message key="tooManyNodes">For "{elementName}", only one "{offendingNode}" may be declared.{{locator}}</message>
   <message key="nodeOutOfOrder">For "{elementName}", "{tooLateNode}" must be declared before "{tooEarlyNode}"!{{locator}}</message>
   <message key="invalidChild">"{offendingNode}" is not a valid child of "{elementName}"![ {ruleViolated,lookup}]{{locator}}</message>
+  <message key="notSupportedChild">"{offendingNode}" as a child of "{elementName}" is not supported yet!{{locator}}</message>
   <message key="missingChildElement">"{elementName}" is missing child elements.[ Required content model: {contentModel}]{{locator}}</message>
   <message key="missingProperty">Element "{elementName}" is missing required property "{propertyName}"!{{locator}}</message>
   <message key="idNotUnique">Property ID "{id}" (found on "{elementName}") previously used; ID values must be unique within a document!{severity,equals,EventSeverity:FATAL,, Any reference to it will be considered a reference to the first occurrence in the document.}{{locator}}</message>

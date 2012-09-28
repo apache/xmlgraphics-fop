@@ -87,7 +87,7 @@ public final class AreaAdditionUtil {
         }
 
         if (bslm != null) {
-            bslm.addMarkersToPage(
+            bslm.registerMarkers(
                     true,
                     bslm.isFirst(firstPos),
                     bslm.isLast(lastPos));
@@ -114,11 +114,10 @@ public final class AreaAdditionUtil {
         }
 
         if (bslm != null) {
-            bslm.addMarkersToPage(
+            bslm.registerMarkers(
                     false,
                     bslm.isFirst(firstPos),
                     bslm.isLast(lastPos));
-            bslm.checkEndOfLayout(lastPos);
         }
 
 

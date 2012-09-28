@@ -563,6 +563,19 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
+     * Helper function to return "not supported child" exceptions. Note that the child is valid, just not
+     * supported yet by FOP.
+     * 
+     * @param loc org.xml.sax.Locator object of the error (*not* parent node)
+     * @param nsURI namespace URI of incoming invalid node
+     * @param lName local name (i.e., no prefix) of incoming node
+     * @throws ValidationException the validation error provoked by the method call
+     */
+    protected void notSupportedChildError(Locator loc, String nsURI, String lName) throws ValidationException {
+        getFOValidationEventProducer().notSupportedChild(this, getName(), new QName(nsURI, lName), loc);
+    }
+
+    /**
      * Helper function to throw an error caused by missing mandatory child elements.
      * (e.g., <code>fo:layout-master-set</code> not having any <code>fo:page-master</code>
      *  child element.

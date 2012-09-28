@@ -136,7 +136,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager imp
             }
         }
 
-        addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
+        registerMarkers(true, isFirst(firstPos), isLast(lastPos));
 
         PositionIterator childPosIter = new PositionIterator(positionList.listIterator());
         while ((childLM = childPosIter.getNextChildLM()) != null) {
@@ -149,7 +149,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager imp
             childLM.addAreas(childPosIter, lc);
         }
 
-        addMarkersToPage(false, isFirst(firstPos), isLast(lastPos));
+        registerMarkers(false, isFirst(firstPos), isLast(lastPos));
 
         flush();
 

@@ -806,7 +806,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
 
         addId();
 
-        addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
+        registerMarkers(true, isFirst(firstPos), isLast(lastPos));
 
         if (bcpos == null) {
             // the Positions in positionList were inside the elements
@@ -826,7 +826,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
             bcpos.getBreaker().addContainedAreas(layoutContext);
         }
 
-        addMarkersToPage(false, isFirst(firstPos), isLast(lastPos));
+        registerMarkers(false, isFirst(firstPos), isLast(lastPos));
 
         TraitSetter.addSpaceBeforeAfter(viewportBlockArea, layoutContext.getSpaceAdjust(),
                 effSpaceBefore, effSpaceAfter);
