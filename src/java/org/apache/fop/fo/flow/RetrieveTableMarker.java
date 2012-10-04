@@ -32,11 +32,6 @@ import org.apache.fop.fo.PropertyList;
  */
 public class RetrieveTableMarker extends AbstractRetrieveMarker {
 
-    // The value of properties relevant for fo:retrieve-table-marker.
-    private int retrievePositionWithinTable;
-    private int retrieveBoundaryWithinTable;
-    // end property values
-
     /**
      * Create a new RetrieveTableMarker instance that is
      * a child of the given {@link FONode}.
@@ -67,10 +62,10 @@ public class RetrieveTableMarker extends AbstractRetrieveMarker {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
-        this.retrievePositionWithinTable
-                = pList.get(PR_RETRIEVE_POSITION_WITHIN_TABLE).getEnum();
-        this.retrieveBoundaryWithinTable
-                = pList.get(PR_RETRIEVE_BOUNDARY_WITHIN_TABLE).getEnum();
+        setPosition(pList.get(PR_RETRIEVE_POSITION_WITHIN_TABLE).getEnum());
+        setPositionLabel((String) pList.get(PR_RETRIEVE_POSITION_WITHIN_TABLE).getObject());
+        setBoundary(pList.get(PR_RETRIEVE_BOUNDARY_WITHIN_TABLE).getEnum());
+        setBoundaryLabel((String) pList.get(PR_RETRIEVE_BOUNDARY_WITHIN_TABLE).getObject());
     }
 
     /**
@@ -83,7 +78,7 @@ public class RetrieveTableMarker extends AbstractRetrieveMarker {
      *              {@link org.apache.fop.fo.Constants#EN_LAST_ENDING}.
      */
     public int getRetrievePositionWithinTable() {
-        return this.retrievePositionWithinTable;
+        return getPosition();
     }
 
     /**
@@ -95,7 +90,7 @@ public class RetrieveTableMarker extends AbstractRetrieveMarker {
      *              {@link org.apache.fop.fo.Constants#EN_PAGE}.
      */
     public int getRetrieveBoundaryWithinTable() {
-        return this.retrieveBoundaryWithinTable;
+        return getBoundary();
     }
 
     /** {@inheritDoc} */
@@ -110,4 +105,12 @@ public class RetrieveTableMarker extends AbstractRetrieveMarker {
     public int getNameId() {
         return FO_RETRIEVE_TABLE_MARKER;
     }
+
+    /** {@inheritDoc} */
+    public void clearChildNodes() {
+        super.clearChildNodes();
+        this.currentTextNode = null;
+        this.lastFOTextProcessed = null;
+    }
+
 }

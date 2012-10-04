@@ -26,6 +26,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.flow.table.TableFObj.ColumnNumberPropertyMaker;
+import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.properties.BackgroundPositionShorthand;
 import org.apache.fop.fo.properties.BorderSpacingShorthandParser;
 import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
@@ -2187,7 +2188,8 @@ public final class FOPropertyMapping implements Constants {
         m  = new EnumProperty.Maker(PR_RETRIEVE_POSITION_WITHIN_TABLE);
         m.setInherited(false);
         m.addEnum("first-starting", getEnumProperty(EN_FIRST_STARTING, "FIRST_STARTING"));
-        m.addEnum("first-including-carryover", getEnumProperty(EN_FIC, "FIC"));
+        m.addEnum("first-including-carryover",
+                getEnumProperty(EN_FIRST_INCLUDING_CARRYOVER, "FIRST_INCLUDING_CARRYOVER"));
         m.addEnum("last-starting", getEnumProperty(EN_LAST_STARTING, "LAST_STARTING"));
         m.addEnum("last-ending", getEnumProperty(EN_LAST_ENDING, "LAST_ENDING"));
         m.setDefault("first-starting");
@@ -2198,7 +2200,7 @@ public final class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.addEnum("table", getEnumProperty(EN_TABLE, "TABLE"));
         m.addEnum("table-fragment", getEnumProperty(EN_TABLE_FRAGMENT, "TABLE_FRAGMENT"));
-        m.addEnum("page", getEnumProperty(EN_DOCUMENT, "PAGE"));
+        m.addEnum("page", getEnumProperty(EN_PAGE, "PAGE"));
         m.setDefault("table");
         addPropertyMaker("retrieve-boundary-within-table", m);
     }
@@ -2277,7 +2279,7 @@ public final class FOPropertyMapping implements Constants {
         m  = new StringProperty.Maker(PR_FLOW_NAME);
         m.setInherited(false);
         m.setDefault("");
-        addPropertyMaker("flow-name", m);
+        addPropertyMaker(Flow.FLOW_NAME, m);
 
         // force-page-count
         m  = new EnumProperty.Maker(PR_FORCE_PAGE_COUNT);
@@ -2522,6 +2524,12 @@ public final class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("false");
         addPropertyMaker("table-omit-header-at-break", m);
+
+        // fox:scope
+        m = new EnumProperty.Maker(PR_X_HEADER_COLUMN);
+        m.useGeneric(genericBoolean);
+        m.setDefault("false");
+        addPropertyMaker("fox:header", m);
     }
 
     private void createWritingModeProperties() {

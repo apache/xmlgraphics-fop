@@ -26,8 +26,9 @@ import java.util.Set;
 import org.apache.avalon.framework.configuration.Configuration;
 
 import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext.FallbackResolver;
+import org.apache.xmlgraphics.io.ResourceResolver;
 
-import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 
@@ -163,4 +164,11 @@ public interface FopFactoryConfig {
 
     /** @return the hyphenation pattern names */
     Map<String, String> getHyphenationPatternNames();
+
+    /**
+     * Controls the mechanisms that are used in the event that {@link javax.xml.transform.Source}
+     * used for resources couldn't be read.
+     * @return the fallback resolver
+     */
+    FallbackResolver getFallbackResolver();
 }

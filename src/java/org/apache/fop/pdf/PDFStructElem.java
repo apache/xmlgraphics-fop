@@ -32,7 +32,8 @@ import org.apache.fop.util.LanguageTags;
 /**
  * Class representing a PDF Structure Element.
  */
-public class PDFStructElem extends PDFDictionary implements StructureTreeElement, CompressedObject {
+public class PDFStructElem extends StructureHierarchyMember
+        implements StructureTreeElement, CompressedObject {
 
     private StructureType structureType;
 
@@ -51,7 +52,7 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
      * @param parent parent of this element
      * @param structureType the structure type of this element
      */
-    PDFStructElem(PDFObject parent, StructureType structureType) {
+    public PDFStructElem(PDFObject parent, StructureType structureType) {
         this(parent);
         this.structureType = structureType;
         put("S", structureType.getName());
@@ -86,6 +87,7 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
      *
      * @param kid element to be added
      */
+    @Override
     public void addKid(PDFObject kid) {
         if (kids == null) {
             kids = new ArrayList<PDFObject>();

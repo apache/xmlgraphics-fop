@@ -38,6 +38,7 @@ import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImagePreloader;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.io.XmlSourceUtil;
 
 import org.apache.fop.util.UnclosableInputStream;
 
@@ -69,7 +70,7 @@ public class PreloaderWMF extends AbstractImagePreloader {
             }
         }
         if (info != null) {
-            ImageUtil.closeQuietly(src); //Image is fully read
+            XmlSourceUtil.closeQuietly(src); //Image is fully read
         }
         return info;
     }
@@ -88,7 +89,7 @@ public class PreloaderWMF extends AbstractImagePreloader {
                 ImageContext context) {
             // parse document and get the size attributes of the svg element
 
-            InputStream in = new UnclosableInputStream(ImageUtil.needInputStream(src));
+            InputStream in = new UnclosableInputStream(XmlSourceUtil.needInputStream(src));
             try {
                 in.mark(4 + 1);
 

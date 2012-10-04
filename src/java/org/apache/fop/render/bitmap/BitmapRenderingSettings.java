@@ -107,4 +107,27 @@ public class BitmapRenderingSettings extends Java2DRenderingSettings {
         return this.qualityRendering;
     }
 
+    /**
+     * Sets the compression method for the image writer.
+     * @param compressionMethod the compression method name
+     */
+    public void setCompressionMethod(String compressionMethod) {
+        writerParams.setCompressionMethod(compressionMethod);
+    }
+
+    /**
+     * Returns the compression method being used by the image writer.
+     * @return the compression method in use
+     */
+    public String getCompressionMethod() {
+        return writerParams.getCompressionMethod();
+    }
+
+    /**
+     * Sets the resolution of the output image.
+     * @param dpi the dots-per-inch of the image
+     */
+    public void setResolution(int dpi) {
+        writerParams.setResolution(dpi);
+    }
 }

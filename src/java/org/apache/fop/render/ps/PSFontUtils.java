@@ -38,7 +38,7 @@ import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 
 import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.CIDFontType;
-import org.apache.fop.fonts.CIDSubset;
+import org.apache.fop.fonts.CIDSet;
 import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbeddingMode;
@@ -457,15 +457,17 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         // TODO /FontInfo
 
         gen.write("/CIDCount ");
-        CIDSubset cidSubset = font.getCIDSubset();
-        int subsetSize = cidSubset.getSubsetSize();
-        gen.write(subsetSize);
+        CIDSet cidSet = font.getCIDSet();
+        int numberOfGlyphs = cidSet.getNumberOfGlyphs();
+        gen.write(numberOfGlyphs);
         gen.writeln(" def");
         gen.writeln("/GDBytes 2 def"); // TODO always 2?
         gen.writeln("/CIDMap [<");
         int colCount = 0;
         int lineCount = 1;
-        for (int cid = 0; cid < subsetSize; cid++) {
+        int nextBitSet = 0;
+        int previousBitSet = 0;
+        for (int cid = 0; cid < numberOfGlyphs; cid++) {
             if (colCount++ == 20) {
                 gen.newLine();
                 colCount = 1;
@@ -478,7 +480,23 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             if (font.getEmbeddingMode() != EmbeddingMode.FULL) {
                 gid = HexEncoder.encode(cid, 4);
             } else {
-                gid = HexEncoder.encode(cidSubset.getGlyphIndexForSubsetIndex(cid), 4);
+                previousBitSet = nextBitSet;
+                nextBitSet = cidSet.getGlyphIndices().nextSetBit(nextBitSet);
+                while (previousBitSet++ < nextBitSet) {
+                    // if there are gaps in the indices we pad them with zeros
+                    gen.write("0000");
+                    cid++;
+                    if (colCount++ == 20) {
+                        gen.newLine();
+                        colCount = 1;
+                        if (lineCount++ == 800) {
+                            gen.writeln("> <");
+                            lineCount = 1;
+                        }
+                    }
+                }
+                gid = HexEncoder.encode(nextBitSet, 4);
+                nextBitSet++;
             }
             gen.write(gid);
         }

@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -31,7 +33,6 @@ import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.SimplePageMaster;
-import org.junit.Test;
 
 public class PageSequenceLayoutManagerTestCase {
 

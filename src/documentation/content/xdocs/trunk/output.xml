@@ -971,7 +971,8 @@ Note that the value of the encoding attribute in the example is the double-byte 
      xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
       <fo:layout-master-set>
         <fo:simple-page-master master-name="simple">
-          <afp:tag-logical-element name="The TLE Name" value="The TLE Value" />
+          <afp:tag-logical-element name="The TLE Name" value="The TLE Value"
+            encoding="500" />
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
@@ -985,7 +986,7 @@ Note that the value of the encoding attribute in the example is the double-byte 
           The tag-logical-element extension element can appear within a simple-page-master
           (page level) or it can appear as child of page-sequence (page group level).
           Multiple tag-logical-element extension elements within a simple-page-master or
-          page-sequence are allowed. The name and value attributes are mandatory.
+          page-sequence are allowed. The name and value attributes are mandatory.  The encoding attribute specifying a CCSID encoding is optional.  
         </p>
       </section>
       <section id="afp-no-operation">
@@ -1269,6 +1270,7 @@ Note that the value of the encoding attribute in the example is the double-byte 
 <source><![CDATA[<renderer mime="image/tiff">
   <transparent-page-background>true</transparent-page-background>
   <compression>CCITT T.6</compression>
+  <single-strip>true</single-strip>
   <fonts><!-- described elsewhere --></fonts>
 </renderer>]]></source>
       <p>
@@ -1302,6 +1304,10 @@ Note that the value of the encoding attribute in the example is the double-byte 
         added separately. The internal TIFF codec from XML Graphics Commons only supports PackBits,
         Deflate and JPEG compression for writing.
       </note>
+      <p>
+          The default value for the <code>"single-strip"</code> is <code>"false"</code> resulting in the RowsPerStrip Tiff Tag equal to the number of rows.
+          If set to <code>true</code> RowsPerStrip is set to 1.
+      </p>
     </section>
     <section id="bitmap-rendering-options">
       <title>Runtime Rendering Options</title>

@@ -35,6 +35,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import org.apache.xmlgraphics.io.ResourceResolver;
+
 public class URIResolverWrapperTestCase {
 
     private static final List<String> BASE_URIS = Collections.unmodifiableList(Arrays.asList(

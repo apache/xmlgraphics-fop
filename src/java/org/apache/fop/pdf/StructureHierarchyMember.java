@@ -17,48 +17,21 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp.modca;
+package org.apache.fop.pdf;
 
 /**
- * The TagLogicalElementBean provides a bean for holding the attributes of
- * a tag logical element as key value pairs.
- * <p/>
+ * An element in the document's structure tree. This can be either the structure tree root
+ * or a structure element.
+ *
+ * @see "Section 10.6, <q>Logical Structure</q> of the PDF Reference, 4th edition (PDF 1.5)"
  */
-public class TagLogicalElementBean {
-
-    /** The key attribute */
-    private String key;
-
-    /** The value attribute */
-    private String value;
+public abstract class StructureHierarchyMember extends PDFDictionary {
 
     /**
-     * Constructor for the TagLogicalElementBean.
+     * Adds the given object to the array of kids.
      *
-     * @param key the key attribute
-     * @param value the value attribute
+     * @param kid an object to be added to the K entry
      */
-    public TagLogicalElementBean(String key, String value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    /**
-     * Getter for the key attribute.
-     *
-     * @return the key
-     */
-    public String getKey() {
-        return key;
-    }
-
-    /**
-     * Getter for the value attribute.
-     *
-     * @return the value
-     */
-    public String getValue() {
-        return value;
-    }
+    public abstract void addKid(PDFObject kid);
 
 }
