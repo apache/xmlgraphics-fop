@@ -34,11 +34,6 @@ import org.apache.fop.fo.PropertyList;
  */
 public class RetrieveMarker extends AbstractRetrieveMarker {
 
-    // The value of properties relevant for fo:retrieve-marker.
-    private int retrievePosition;
-    private int retrieveBoundary;
-    // End of property values
-
     /**
      * Create a new RetrieveMarker instance that is a
      * child of the given {@link FONode}.
@@ -70,8 +65,10 @@ public class RetrieveMarker extends AbstractRetrieveMarker {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
-        this.retrievePosition = pList.get(PR_RETRIEVE_POSITION).getEnum();
-        this.retrieveBoundary = pList.get(PR_RETRIEVE_BOUNDARY).getEnum();
+        setPosition(pList.get(PR_RETRIEVE_POSITION).getEnum());
+        setPositionLabel((String) pList.get(PR_RETRIEVE_POSITION).getObject());
+        setBoundary(pList.get(PR_RETRIEVE_BOUNDARY).getEnum());
+        setBoundaryLabel((String) pList.get(PR_RETRIEVE_BOUNDARY).getObject());
     }
 
     /**
@@ -84,19 +81,19 @@ public class RetrieveMarker extends AbstractRetrieveMarker {
      *              {@link org.apache.fop.fo.Constants#EN_LEWP}.
      */
     public int getRetrievePosition() {
-        return this.retrievePosition;
+        return getPosition();
     }
 
     /**
      * Return the value for the <code>retrieve-boundary</code>
      * property
-     * @return  the value for retrieve-boundary-within-table; one of
+     * @return  the value for retrieve-boundary; one of
      *              {@link org.apache.fop.fo.Constants#EN_PAGE},
      *              {@link org.apache.fop.fo.Constants#EN_PAGE_SEQUENCE},
      *              {@link org.apache.fop.fo.Constants#EN_DOCUMENT}.
      */
     public int getRetrieveBoundary() {
-        return this.retrieveBoundary;
+        return getBoundary();
     }
 
     /** {@inheritDoc} */

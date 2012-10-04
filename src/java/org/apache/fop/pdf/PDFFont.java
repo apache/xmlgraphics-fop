@@ -70,7 +70,7 @@ public class PDFFont extends PDFDictionary {
      * @param encoding the encoding
      */
     public void setEncoding(String encoding) {
-        if (encoding != null) {
+        if (encoding != null && !PDFEncoding.hasStandardEncoding(encoding)) {
             put("Encoding", new PDFName(encoding));
         }
     }

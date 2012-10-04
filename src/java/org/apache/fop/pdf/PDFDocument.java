@@ -355,36 +355,20 @@ public class PDFDocument {
     }
 
     /**
-     * Creates and returns a structure element.
-     *
-     * @param structureType the structure type of the new element (value for the
-     * S entry)
-     * @param parent the parent of the new structure element in the structure
-     * hierarchy
-     * @return a dictionary of type StructElem
+     * Adds the given element to the structure tree.
      */
-    public PDFStructElem makeStructureElement(StructureType structureType, PDFObject parent) {
-        PDFStructElem structElem = new PDFStructElem(parent, structureType);
+    public void registerStructureElement(PDFStructElem structElem) {
         assignObjectNumber(structElem);
         structureTreeElements.add(structElem);
-        return structElem;
     }
 
     /**
-     * Creates and returns a structure element.
-     *
-     * @param structureType the structure type of the new element (value for the
-     * S entry)
-     * @param parent the parent of the new structure element in the structure
-     * hierarchy
-     * @param scope the scope of the given table header element
-     * @return a dictionary of type StructElem
+     * Assigns the given scope to the given element and adds it to the structure tree. The
+     * scope may not be added if it's not compatible with this document's PDF version.
      */
-    public PDFStructElem makeStructureElement(StructureType structureType, PDFObject parent,
-            Scope scope) {
-        PDFStructElem structElem = makeStructureElement(structureType, parent);
+    public void registerStructureElement(PDFStructElem structElem, Scope scope) {
+        registerStructureElement(structElem);
         versionController.addTableHeaderScopeAttribute(structElem, scope);
-        return structElem;
     }
 
     /**

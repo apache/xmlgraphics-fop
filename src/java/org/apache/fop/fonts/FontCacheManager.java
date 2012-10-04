@@ -19,7 +19,7 @@
 
 package org.apache.fop.fonts;
 
-import java.io.File;
+import java.net.URI;
 
 import org.apache.fop.apps.FOPException;
 
@@ -30,24 +30,26 @@ import org.apache.fop.apps.FOPException;
 public interface FontCacheManager {
 
     /**
+     * Sets the font cache file given the URI pointing to the file.
+     * @param fontCacheURI the font cache URI
+     */
+    void setCacheFile(URI fontCacheURI);
+
+    /**
      * Loads the font cache into memory from the given file.
-     * @param file the serialized font cache
      * @return the de-serialized font cache
      */
-    FontCache load(File file);
+    FontCache load();
 
     /**
      * Serializes the font cache to file.
-     * @param file the file to serialize the font cache to
      * @throws FOPException if an error occurs serializing the font cache
      */
-    void save(File file) throws FOPException;
+    void save() throws FOPException;
 
     /**
      * Deletes the font cache from the file-system.
-     * @param file delete the serialized font cache
      * @throws FOPException if an error occurs deleting the font cache
      */
-    void delete(File file) throws FOPException;
-
+    void delete() throws FOPException;
 }

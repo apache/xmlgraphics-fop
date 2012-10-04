@@ -17,43 +17,32 @@
 
 /* $Id$ */
 
-package org.apache.fop.apps.io;
+package org.apache.fop.render.pdf;
 
-import java.io.FilterInputStream;
-import java.io.InputStream;
+import org.apache.fop.pdf.PDFObject;
+import org.apache.fop.pdf.PDFStructElem;
+import org.apache.fop.pdf.StructureType;
 
-/**
- * This class represents a resolved resource.  The type property is used by FOP to identify the resource
- *  content.
- *
- */
-public class Resource extends FilterInputStream {
+class TableStructElem extends PDFStructElem {
 
-    private final String type;
+    private PDFStructElem tableFooter;
 
-    /**
-     * @param type resource type
-     * @param inputStream input stream of the resource
-     */
-    public Resource(String type, InputStream inputStream) {
-        super(inputStream);
-        this.type = type;
+    public TableStructElem(PDFObject parent, StructureType structureType) {
+        super(parent, structureType);
     }
 
-    /**
-     * Constructs a resource of 'unknown' type.
-     *
-     * @param inputStream input stream of the resource
-     */
-    public Resource(InputStream inputStream) {
-        this("unknown", inputStream);
+    void addTableFooter(PDFStructElem footer) {
+        assert tableFooter == null;
+        tableFooter = footer;
     }
 
-    /**
-     * @return the resource type
-     */
-    public String getType() {
-        return this.type;
+    @Override
+    protected boolean attachKids() {
+        assert !kids.isEmpty();
+        if (tableFooter != null) {
+            kids.add(tableFooter);
+        }
+        return super.attachKids();
     }
 
 }

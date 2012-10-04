@@ -46,6 +46,11 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
 
     private String retrieveClassName;
 
+    private int position;
+    private String positionLabel;
+    private int boundary;
+    private String boundaryLabel;
+
     /**
      * Create a new AbstractRetrieveMarker instance that
      * is a child of the given {@link FONode}
@@ -206,4 +211,43 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
         return this.retrieveClassName;
     }
 
+    protected void setBoundaryLabel(String label) {
+        this.boundaryLabel = label;
+    }
+
+    protected void setPositionLabel(String label) {
+        this.positionLabel = label;
+    }
+
+    public String getBoundaryLabel() {
+        return this.boundaryLabel;
+    }
+
+    public String getPositionLabel() {
+        return this.positionLabel;
+    }
+
+    protected void setPosition(int position) {
+        this.position = position;
+    }
+
+    protected void setBoundary(int boundary) {
+        this.boundary = boundary;
+    }
+
+    public int getPosition() {
+        return this.position;
+    }
+
+    public int getBoundary() {
+        return this.boundary;
+    }
+
+    public abstract String getLocalName();
+
+    public abstract int getNameId();
+
+    public void changePositionTo(int position) {
+        this.position = position;
+    }
 }

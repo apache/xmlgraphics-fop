@@ -24,6 +24,7 @@ import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
@@ -44,6 +45,7 @@ public class TableColumn extends TableFObj {
     private Length columnWidth;
     private int numberColumnsRepeated;
     private int numberColumnsSpanned;
+    private boolean isHeader;
     // Unused but valid items, commented out for performance:
     //     private int visibility;
     // End of property values
@@ -120,6 +122,7 @@ public class TableColumn extends TableFObj {
         if (!this.implicitColumn) {
             this.pList = pList;
         }
+        isHeader = (pList.get(Constants.PR_X_HEADER_COLUMN).getEnum() == Constants.EN_TRUE);
     }
 
     /** {@inheritDoc} */
@@ -261,6 +264,15 @@ public class TableColumn extends TableFObj {
      */
     protected void releasePropertyList() {
         this.pList = null;
+    }
+
+    /**
+     * Returns {@code true} if this column is made of header cells.
+     *
+     * @return {@code true} if cells in this column are like TH cells in HTML
+     */
+    public boolean isHeader() {
+        return isHeader;
     }
 
 }

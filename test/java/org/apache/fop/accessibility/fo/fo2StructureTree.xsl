@@ -21,7 +21,7 @@
   xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
   xmlns:foi="http://xmlgraphics.apache.org/fop/internal">
 
-  <xsl:output method="xml" indent="no"/>
+  <xsl:output method="xml" indent="yes"/>
 
   <xsl:template name="copy">
     <xsl:copy>
@@ -50,6 +50,25 @@
     <xsl:call-template name="copy"/>
   </xsl:template>
 
+  <xsl:template match="fo:static-content/@flow-name|fo:flow/@flow-name">
+    <xsl:choose>
+      <xsl:when test=". = 'xsl-region-body' or
+        . = 'xsl-region-before' or
+        . = 'xsl-region-after' or
+        . = 'xsl-region-start' or
+        . = 'xsl-region-end' or
+        . = 'xsl-before-float-separator' or
+        . = 'xsl-footnote-separator'">
+        <xsl:copy/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="{local-name()}">
+          <xsl:value-of select="concat('xsl-', local-name(//*[@region-name = current()]))"/>
+        </xsl:attribute>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <!-- Block-level Formatting Objects -->
   <xsl:template match="fo:block|fo:block-container">
     <xsl:call-template name="copy"/>
@@ -73,16 +92,35 @@
     <xsl:call-template name="copy"/>
   </xsl:template>
 
-  <xsl:template match="fo:table">
+  <xsl:template match="fo:table|fo:table-header|fo:table-footer|fo:table-body|fo:table-row">
+    <xsl:call-template name="copy"/>
+  </xsl:template>
+
+  <xsl:template name="get.column.header">
+    <xsl:value-of select="ancestor::fo:table/fo:table-column[
+      count(preceding-sibling::fo:table-column) = count(current()/preceding-sibling::fo:table-cell)]/@fox:header"/>
+  </xsl:template>
+
+  <xsl:template match="fo:table-cell">
+    <xsl:variable name="header"><xsl:call-template name="get.column.header"/></xsl:variable>
     <xsl:copy>
-      <xsl:apply-templates select="@*"/>
-      <xsl:apply-templates select="*[name() != 'fo:table-footer']"/>
-      <xsl:apply-templates select="fo:table-footer"/>
+      <xsl:if test="$header = 'true'">
+        <xsl:attribute name="role">TH</xsl:attribute>
+        <xsl:attribute name="scope" namespace="http://xmlgraphics.apache.org/fop/internal">Row</xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="fo:table-header|fo:table-footer|fo:table-body|fo:table-row|fo:table-cell">
-    <xsl:call-template name="copy"/>
+  <xsl:template match="fo:table-header/fo:table-cell|fo:table-header/fo:table-row/fo:table-cell">
+    <xsl:variable name="header"><xsl:call-template name="get.column.header"/></xsl:variable>
+    <xsl:copy>
+      <xsl:attribute name="role">TH</xsl:attribute>
+      <xsl:if test="$header = 'true'">
+        <xsl:attribute name="scope" namespace="http://xmlgraphics.apache.org/fop/internal">Both</xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates select="@*|node()"/>
+    </xsl:copy>
   </xsl:template>
 
   <!-- Formatting Objects for Lists -->

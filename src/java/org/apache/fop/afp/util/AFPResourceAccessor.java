@@ -106,7 +106,7 @@ public final class AFPResourceAccessor {
         URI resolveURI(String uri);
     }
 
-    private final class NullBaseURIResolver implements URIResolver {
+    private static final class NullBaseURIResolver implements URIResolver {
 
         public URI resolveURI(URI uri) {
             return uri;

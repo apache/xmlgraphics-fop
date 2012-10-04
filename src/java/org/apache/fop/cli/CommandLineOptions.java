@@ -421,7 +421,7 @@ public class CommandLineOptions {
             throw new FOPException("if you use '-cache', you must specify "
               + "the name of the font cache file");
         } else {
-            factory.getFontManager().setCacheFile(new File(args[i + 1]));
+            factory.getFontManager().setCacheFile(URI.create(args[i + 1]));
             return 1;
         }
     }

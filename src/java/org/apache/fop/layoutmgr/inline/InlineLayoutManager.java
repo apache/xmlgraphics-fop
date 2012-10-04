@@ -480,7 +480,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             context.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart(), this));
         }
 
-        addMarkersToPage(
+        registerMarkers(
                 true,
                 !areaCreated,
                 lastPos == null || isLast(lastPos));
@@ -542,7 +542,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         setTraits(areaCreated, lastPos == null || !isLast(lastPos));
         parentLayoutManager.addChildArea(getCurrentArea());
 
-        addMarkersToPage(
+        registerMarkers(
                 false,
                 !areaCreated,
                 lastPos == null || isLast(lastPos));

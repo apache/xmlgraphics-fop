@@ -20,6 +20,7 @@
 package org.apache.fop.fonts;
 
 import java.io.File;
+import java.net.URI;
 
 import org.apache.fop.apps.FOPException;
 
@@ -50,11 +51,14 @@ public final class FontCacheManagerFactory {
 
     private static final class FontCacheManagerImpl implements FontCacheManager {
 
+        /** Provides a font cache file path **/
+        private File cacheFile;
+
         private FontCache fontCache;
 
-        public FontCache load(File cacheFile) {
+        public FontCache load() {
             if (fontCache == null) {
-                fontCache = FontCache.loadFrom(cacheFile);
+                fontCache = FontCache.loadFrom(getCacheFile(false));
                 if (fontCache == null) {
                     fontCache = new FontCache();
                 }
@@ -62,31 +66,46 @@ public final class FontCacheManagerFactory {
             return fontCache;
         }
 
-        public void save(File cacheFile) throws FOPException {
+        public void save() throws FOPException {
             if (fontCache != null && fontCache.hasChanged()) {
-                fontCache.saveTo(cacheFile);
+                fontCache.saveTo(getCacheFile(true));
             }
         }
 
-        public void delete(File cacheFile) throws FOPException {
-            if (!cacheFile.delete()) {
+        public void delete() throws FOPException {
+            if (!getCacheFile(true).delete()) {
                 throw new FOPException("Failed to flush the font cache file '" + cacheFile + "'.");
             }
+        }
+
+        private File getCacheFile(boolean forWriting) {
+            if (cacheFile != null) {
+                return cacheFile;
+            }
+            return FontCache.getDefaultCacheFile(forWriting);
+        }
+
+        public void setCacheFile(URI fontCacheURI) {
+            cacheFile = new File(fontCacheURI);
         }
     }
 
     private static final class DisabledFontCacheManager implements FontCacheManager {
 
-        public FontCache load(File cacheFile) {
+        public FontCache load() {
             return null;
         }
 
-        public void save(File cacheFile) throws FOPException {
+        public void save() throws FOPException {
             // nop
         }
 
-        public void delete(File cacheFile) throws FOPException {
+        public void delete() throws FOPException {
             throw new FOPException("Font Cache disabled");
+        }
+
+        public void setCacheFile(URI fontCacheURI) {
+            // nop
         }
     }
 }

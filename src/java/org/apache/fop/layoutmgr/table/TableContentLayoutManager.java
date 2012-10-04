@@ -31,9 +31,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
@@ -400,9 +402,13 @@ public class TableContentLayoutManager implements PercentBaseContext {
             }
         }
 
-        Map markers = getTableLM().getTable().getMarkers();
+        // there may be table fragment markers stored; clear them since we are starting a new fragment
+        tableLM.clearTableFragmentMarkers();
+
+        // note: markers at table level are to be retrieved by the page, not by the table itself
+        Map<String, Marker> markers = getTableLM().getTable().getMarkers();
         if (markers != null) {
-            getTableLM().getCurrentPV().addMarkers(markers,
+            getTableLM().getCurrentPV().registerMarkers(markers,
                     true, getTableLM().isFirst(firstPos), getTableLM().isLast(lastCheckPos));
         }
 
@@ -430,6 +436,10 @@ public class TableContentLayoutManager implements PercentBaseContext {
             addBodyAreas(tablePositions.iterator(), painter, footerElements == null);
         }
 
+        // if there are TCLMs saved because they have a RetrieveTableMarker, we repeat the header areas now;
+        // this can also be done after the areas for the footer are added but should be the same as here
+        tableLM.repeatAddAreasForSavedTableHeaderTableCellLayoutManagers();
+
         if (footerElements != null) {
             boolean ancestorTreatAsArtifact = layoutContext.treatAsArtifact();
             layoutContext.setTreatAsArtifact(treatFooterAsArtifact);
@@ -442,7 +452,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         this.usedBPD += painter.getAccumulatedBPD();
 
         if (markers != null) {
-            getTableLM().getCurrentPV().addMarkers(markers,
+            getTableLM().getCurrentPV().registerMarkers(markers,
                     false, getTableLM().isFirst(firstPos), getTableLM().isLast(lastCheckPos));
         }
     }
@@ -503,14 +513,20 @@ public class TableContentLayoutManager implements PercentBaseContext {
      */
     private void addTablePartAreas(List positions, RowPainter painter, TablePart body,
             boolean isFirstPos, boolean isLastPos, boolean lastInBody, boolean lastOnPage) {
-        getTableLM().getCurrentPV().addMarkers(body.getMarkers(),
+        getTableLM().getCurrentPV().registerMarkers(body.getMarkers(),
                 true, isFirstPos, isLastPos);
+        if (body instanceof TableBody) {
+            getTableLM().registerMarkers(body.getMarkers(), true, isFirstPos, isLastPos);
+        }
         painter.startTablePart(body);
         for (Iterator iter = positions.iterator(); iter.hasNext();) {
             painter.handleTableContentPosition((TableContentPosition) iter.next());
         }
-        getTableLM().getCurrentPV().addMarkers(body.getMarkers(),
+        getTableLM().getCurrentPV().registerMarkers(body.getMarkers(),
                 false, isFirstPos, isLastPos);
+        if (body instanceof TableBody) {
+            getTableLM().registerMarkers(body.getMarkers(), false, isFirstPos, isLastPos);
+        }
         painter.endTablePart(lastInBody, lastOnPage);
     }
 

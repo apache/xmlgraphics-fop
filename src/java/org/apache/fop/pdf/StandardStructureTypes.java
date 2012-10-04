@@ -111,6 +111,11 @@ public final class StandardStructureTypes {
             return name;
         }
 
+        @Override
+        public String toString() {
+            return name.toString().substring(1);
+        }
+
     }
 
     private static final Map<String, StructureType> STRUCTURE_TYPES = new HashMap<String, StructureType>();

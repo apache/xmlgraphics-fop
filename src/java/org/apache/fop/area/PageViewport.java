@@ -34,6 +34,10 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.flow.AbstractRetrieveMarker;
+import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.flow.Markers;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.traits.WritingModeTraitsGetter;
 
@@ -81,13 +85,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable {
 
     private Map<String, List<PageViewport>> pendingResolved = null;
 
-    // hashmap of markers for this page
-    // start and end are added by the fo that contains the markers
-    private Map<String, Marker> markerFirstStart = null;
-    private Map<String, Marker> markerLastStart = null;
-    private Map<String, Marker> markerFirstAny = null;
-    private Map<String, Marker> markerLastEnd = null;
-    private Map<String, Marker> markerLastAny = null;
+    private Markers pageMarkers;
 
     /**
      * logging instance
@@ -352,115 +350,23 @@ public class PageViewport extends AreaTreeObject implements Resolvable {
     }
 
     /**
-     * Add the markers for this page.
-     * Only the required markers are kept.
-     * For "first-starting-within-page" it adds the markers
-     * that are starting only if the marker class name is not
-     * already added.
-     * For "first-including-carryover" it adds any starting marker
-     * if the marker class name is not already added.
-     * For "last-starting-within-page" it adds all marks that
-     * are starting, replacing earlier markers.
-     * For "last-ending-within-page" it adds all markers that
-     * are ending, replacing earlier markers.
-     *
-     * Should this logic be placed in the Page layout manager.
+     * Register the markers for this page.
      *
      * @param marks the map of markers to add
      * @param starting if the area being added is starting or ending
      * @param isfirst if the area being added has is-first trait
      * @param islast if the area being added has is-last trait
      */
-    public void addMarkers(Map<String, Marker> marks, boolean starting,
-            boolean isfirst, boolean islast) {
-
-        if (marks == null) {
-            return;
+    public void registerMarkers(Map<String, Marker> marks, boolean starting, boolean isfirst, boolean islast) {
+        if (pageMarkers == null) {
+            pageMarkers = new Markers();
         }
-        if (log.isDebugEnabled()) {
-            log.debug("--" + marks.keySet() + ": "
-                    + (starting ? "starting" : "ending")
-                    + (isfirst ? ", first" : "")
-                    + (islast ? ", last" : ""));
-        }
-
-        // at the start of the area, register is-first and any areas
-        if (starting) {
-            if (isfirst) {
-                if (markerFirstStart == null) {
-                    markerFirstStart = new HashMap<String, Marker>();
-                }
-                if (markerFirstAny == null) {
-                    markerFirstAny = new HashMap<String, Marker>();
-                }
-                // first on page: only put in new values, leave current
-                for (String key : marks.keySet()) {
-                    if (!markerFirstStart.containsKey(key)) {
-                        markerFirstStart.put(key, marks.get(key));
-                        if (log.isTraceEnabled()) {
-                            log.trace("page " + pageNumberString + ": "
-                                    + "Adding marker " + key + " to FirstStart");
-                        }
-                    }
-                    if (!markerFirstAny.containsKey(key)) {
-                        markerFirstAny.put(key, marks.get(key));
-                        if (log.isTraceEnabled()) {
-                            log.trace("page " + pageNumberString + ": "
-                                    + "Adding marker " + key + " to FirstAny");
-                        }
-                    }
-                }
-                if (markerLastStart == null) {
-                    markerLastStart = new HashMap<String, Marker>();
-                }
-                // last on page: replace all
-                markerLastStart.putAll(marks);
-                if (log.isTraceEnabled()) {
-                    log.trace("page " + pageNumberString + ": "
-                            + "Adding all markers to LastStart");
-                }
-            } else {
-                if (markerFirstAny == null) {
-                    markerFirstAny = new HashMap<String, Marker>();
-                }
-                // first on page: only put in new values, leave current
-                for (String key : marks.keySet()) {
-                    if (!markerFirstAny.containsKey(key)) {
-                        markerFirstAny.put(key, marks.get(key));
-                        if (log.isTraceEnabled()) {
-                            log.trace("page " + pageNumberString + ": "
-                                    + "Adding marker " + key + " to FirstAny");
-                        }
-                    }
-                }
-            }
-        } else {
-            // at the end of the area, register is-last and any areas
-            if (islast) {
-                if (markerLastEnd == null) {
-                    markerLastEnd = new HashMap<String, Marker>();
-                }
-                // last on page: replace all
-                markerLastEnd.putAll(marks);
-                if (log.isTraceEnabled()) {
-                    log.trace("page " + pageNumberString + ": "
-                            + "Adding all markers to LastEnd");
-                }
-            }
-            if (markerLastAny == null) {
-                markerLastAny = new HashMap<String, Marker>();
-            }
-            // last on page: replace all
-            markerLastAny.putAll(marks);
-            if (log.isTraceEnabled()) {
-                log.trace("page " + pageNumberString + ": "
-                        + "Adding all markers to LastAny");
-            }
-        }
+        pageMarkers.register(marks, starting, isfirst, islast);
     }
 
+
     /**
-     * Get a marker from this page.
+     * Resolve a marker from this page.
      * This will retrieve a marker with the class name
      * and position.
      *
@@ -468,64 +374,17 @@ public class PageViewport extends AreaTreeObject implements Resolvable {
      * @param pos the position to retrieve
      * @return Object the marker found or null
      */
-    public Marker getMarker(String name, int pos) {
-        Marker mark = null;
-        String posName = null;
-        switch (pos) {
-            case EN_FSWP:
-                if (markerFirstStart != null) {
-                    mark = markerFirstStart.get(name);
-                    posName = "FSWP";
-                }
-                if (mark == null && markerFirstAny != null) {
-                    mark = markerFirstAny.get(name);
-                    posName = "FirstAny after " + posName;
-                }
-            break;
-            case EN_FIC:
-                if (markerFirstAny != null) {
-                    mark = markerFirstAny.get(name);
-                    posName = "FIC";
-                }
-            break;
-            case EN_LSWP:
-                if (markerLastStart != null) {
-                    mark = markerLastStart.get(name);
-                    posName = "LSWP";
-                }
-                if (mark == null && markerLastAny != null) {
-                    mark = markerLastAny.get(name);
-                    posName = "LastAny after " + posName;
-                }
-            break;
-            case EN_LEWP:
-                if (markerLastEnd != null) {
-                    mark = markerLastEnd.get(name);
-                    posName = "LEWP";
-                }
-                if (mark == null && markerLastAny != null) {
-                    mark = markerLastAny.get(name);
-                    posName = "LastAny after " + posName;
-                }
-            break;
-            default:
-                assert false;
+    public Marker resolveMarker(AbstractRetrieveMarker rm) {
+        if (pageMarkers == null) {
+            return null;
         }
-        if (log.isTraceEnabled()) {
-            log.trace("page " + pageNumberString + ": " + "Retrieving marker " + name
-                    + " at position " + posName);
-        }
-        return mark;
+        return pageMarkers.resolve(rm);
     }
 
     /** Dumps the current marker data to the logger. */
     public void dumpMarkers() {
-        if (log.isTraceEnabled()) {
-            log.trace("FirstAny: " + this.markerFirstAny);
-            log.trace("FirstStart: " + this.markerFirstStart);
-            log.trace("LastAny: " + this.markerLastAny);
-            log.trace("LastEnd: " + this.markerLastEnd);
-            log.trace("LastStart: " + this.markerLastStart);
+        if (pageMarkers != null) {
+            pageMarkers.dump();
         }
     }
 

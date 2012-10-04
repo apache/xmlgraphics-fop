@@ -19,12 +19,12 @@
 
 package org.apache.fop.fo;
 
+import java.io.IOException;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.io.IOException;
 
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageManager;
@@ -32,6 +32,9 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.events.EventBroadcaster;
+import org.apache.fop.fo.flow.table.ColumnNumberManager;
+import org.apache.fop.fo.flow.table.ColumnNumberManagerHolder;
 
 /**
  * A helper class for creating mocks of {@link FONode} and its descendants.
@@ -51,32 +54,47 @@ public final class FONodeMocks {
     public static FONode mockFONode() {
         FONode mockFONode = mock(FONode.class);
         mockGetFOEventHandler(mockFONode);
+        mockGetImageManager(mockFONode.getFOEventHandler().getUserAgent());
         return mockFONode;
     }
 
-    private static void mockGetFOEventHandler(FONode mockFONode) {
+    public static FOEventHandler mockGetFOEventHandler(FONode mockFONode) {
         FOEventHandler mockFOEventHandler = mock(FOEventHandler.class);
         mockGetUserAgent(mockFOEventHandler);
         when(mockFONode.getFOEventHandler()).thenReturn(mockFOEventHandler);
+        return mockFOEventHandler;
     }
 
-    private static void mockGetUserAgent(FOEventHandler mockFOEventHandler) {
+    public static FOUserAgent mockGetUserAgent(FOEventHandler mockFOEventHandler) {
         FOUserAgent mockFOUserAgent = mock(FOUserAgent.class);
-        mockGetImageManager(mockFOUserAgent);
         when(mockFOEventHandler.getUserAgent()).thenReturn(mockFOUserAgent);
+        return mockFOUserAgent;
     }
 
-    private static void mockGetImageManager(FOUserAgent mockFOUserAgent) {
+    public static EventBroadcaster mockGetEventBroadcaster(FOUserAgent mockFOUserAgent) {
+        EventBroadcaster mockBroadcaster = mock(EventBroadcaster.class);
+        when(mockFOUserAgent.getEventBroadcaster()).thenReturn(mockBroadcaster);
+        return mockBroadcaster;
+    }
+
+    public static ImageManager mockGetImageManager(FOUserAgent mockFOUserAgent) {
         try {
             ImageManager mockImageManager = mock(ImageManager.class);
             when(mockImageManager.getImageInfo(anyString(), any(ImageSessionContext.class)))
                     .thenReturn(null);
             when(mockFOUserAgent.getImageManager()).thenReturn(mockImageManager);
+            return mockImageManager;
         } catch (ImageException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ColumnNumberManager mockGetColumnNumberManager(ColumnNumberManagerHolder mock) {
+        ColumnNumberManager mockColumnNumberManager = mock(ColumnNumberManager.class);
+        when(mock.getColumnNumberManager()).thenReturn(mockColumnNumberManager);
+        return mockColumnNumberManager;
     }
 
 }

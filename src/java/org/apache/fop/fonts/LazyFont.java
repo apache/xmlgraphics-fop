@@ -438,6 +438,9 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      */
     public boolean isSubsetEmbedded() {
         load(true);
+        if (realFont.isMultiByte() && this.embeddingMode == EmbeddingMode.FULL) {
+            return false;
+        }
         return realFont.isMultiByte();
     }
 
