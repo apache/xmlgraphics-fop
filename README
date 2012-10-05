@@ -93,12 +93,11 @@ http://xmlgraphics.apache.org/fop/stable/running.html
   RELEASE NOTES
 ==============================================================================
 
-Version 1.1rc1
+Version 1.1
 ==============
 
-This is a candidate release of the next,  minor (dot) release of Apache FOP,
-which primarily addresses bug fixes and also adds a number of new features.
-See below for details.
+This release of Apache FOP primarily addresses bug fixes and also adds a number
+of new features. See below for details.
 
 Compliance
 ----------
@@ -113,22 +112,16 @@ Known issues
 A detailed list of known issues in this release is available at
 http://xmlgraphics.apache.org/fop/1.1/knownissues_overview.html.
 
-Major Changes in Version 1.1rc1
+Major Changes in Version 1.1
 -------------------------------
 
-* Adds support for complex scripts, in particular those that require
-  either bidirectional processing or advanced typographic tables in
-  fonts (e.g., the GSUB and GPOS tables of OpenType).
-* Adds support for fo:bidi-override and (relatively) full support
-  for writing-mode='rl-tb' (or equivalent).
-* Adds support for Unicode BIDI Control characters: U+200E LEFT-TO-RIGHT
-  MARK (LRM), U+200F RIGHT-TO-LEFT MARK (RLM), U+202A LEFT-TO-RIGHT EMBEDDING
-  (LRE), U+202B RIGHT-TO-LEFT EMBEDDING (RLE), U+202D LEFT-TO-RIGHT OVERRIDE
-  (LRO), U+202E RIGHT-TO-LEFT OVERRIDE (RLO), and U+202C POP DIRECTIONAL
-  FORMATTING (PDF).
+* Adds support for complex scripts.
+* Adds support for TTF fonts in PostScript.
+* Adds support for PDF Object Streams.
+* Adds support for PDF 128-bit encryption.
 
 A more detailed list of changes in this release is available at
-http://xmlgraphics.apache.org/fop/1.1rc1/changes_1.1rc1.html.
+http://xmlgraphics.apache.org/fop/1.1/changes_1.1.html.
 
 A more detailed list of changes in this and earlier releases is available at
 http://xmlgraphics.apache.org/fop/changes.html.

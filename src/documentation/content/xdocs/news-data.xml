@@ -17,12 +17,10 @@
 -->
 <!-- $Id$ -->
 <news>
-  <item date="2012-07-02" title="Apache™ FOP 1.1rc1 Available">
+  <item date="2012-10-15" title="Apache™ FOP 1.1 Released">
     <p>
-      This is a candidate release for an upcoming FOP Version 1.1 (stable) release.
-      release of the new FOP codebase. This release
-      contains bug fixes and new features. See
-      <a href="1.1rc1/releaseNotes_1.1rc1.html">Release Notes</a> for a list of
+      Apache™ FOP 1.1 contains bug fixes and a number of new features. See
+      <a href="1.1/releaseNotes_1.1.html">Release Notes</a> for a list of
       the most important changes.
     </p>
   </item>
