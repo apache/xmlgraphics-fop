@@ -19,18 +19,18 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache™ FOP Version 1.1rc1</title>
+    <title>Apache™ FOP Version 1.1</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="intro">
       <title>Introduction</title>
       <p>
-        This is Release Candidate 1 (rc1) of an upcoming minor (dot) release of FOP. FOP 1.1rc1 contains many bux
+        This is Release Version 1.1 Apache FOP. FOP 1.1 contains many bug
         fixes and a number of improvements, including
         important features such as support for <a href="complexscripts.html">Complex Scripts</a>
         (e.g., Arabic, Hebrew, Indic, and Southeast Asian scripts). To see what has changed since the last release,
-        please visit <a href="releaseNotes_1.1rc1.html">Release Notes</a>.
+        please visit <a href="releaseNotes_1.1.html">Release Notes</a>.
       </p>
       <p>
 	This release implements a substantial subset of the W3C XSL-FO 1.1

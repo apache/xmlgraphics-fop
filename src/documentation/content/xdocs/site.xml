@@ -94,12 +94,12 @@
   -->
 
   <!--
-  BEGIN Version 1.1rc1 documentation tab
+  BEGIN Version 1.1 documentation tab
   -->
-  <trunk label="Apache™ FOP 1.1rc1" href="1.1rc1/" tab="stableversion">
+  <trunk label="Apache™ FOP 1.1" href="1.1/" tab="stableversion">
     <about label="About" href="index.html"/>
-    <release label="Release Notes" href="releaseNotes_1.1rc1.html"/>
-    <changes label="Changes (1.1rc1)" href="changes_1.1rc1.html"/>
+    <release label="Release Notes" href="releaseNotes_1.1.html"/>
+    <changes label="Changes (1.1)" href="changes_1.1.html"/>
     <knownissues label="Known Issues" href="knownissues_overview.html"/>
     <upgrading label="Upgrading" href="upgrading.html"/>
     
@@ -130,7 +130,7 @@
     
   </trunk>
   <!--
-  END Version 1.1rc1 documentation tab
+  END Version 1.1 documentation tab
   -->
 
   <!--
