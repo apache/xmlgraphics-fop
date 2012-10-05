@@ -1250,23 +1250,110 @@ NOTE:
     <gzip zipfile="${name}-${version}-src.tar.gz" src="${name}-${version}-src.tar"/>
     <delete file="${name}-${version}-src.tar"/>
   </target>
+  <target name="release-dist" depends="dist" description="Generates the distribution package and signs the release">
+    <property name="bin.suffix" value="bin"/>
+    <input message="Passphrase for your default private key (attention: passphrase will be echoed in clear text on the display!)" addproperty="pwd"/>
+    <antcall target="md5">
+      <param name="sign.archive" value="${name}-${version}-src.zip"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${name}-${version}-src.zip"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="md5">
+      <param name="sign.archive" value="${name}-${version}-src.tar.gz"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${name}-${version}-src.tar.gz"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="md5">
+      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.zip"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.zip"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="md5">
+      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.tar.gz"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.tar.gz"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+  </target>
+  <target name="md5">
+    <property name="md5.exec" value="md5sum"/>
+    <property name="md5.options" value=""/>
+    <exec executable="${md5.exec}" output="${sign.archive}.md5">
+      <arg line="${md5.options} ${sign.archive}"/>
+    </exec>
+  </target>
+  <target name="sign-file">
+    <property name="gpg.exec" value="gpg"/>
+    <property name="gpg.options" value="--armor --detach-sign --force-v3-sigs --batch --verbose --passphrase-fd 0"/>
+    <delete file="${sign.archive}.asc"/>
+    <exec executable="${gpg.exec}" inputstring="${pwd}">
+      <arg line="${gpg.options} ${sign.archive}"/>
+    </exec>
+  </target>
 <!-- =================================================================== -->
 <!-- Maven artifacts                                                     -->
 <!-- =================================================================== -->
   <target name="maven-artifacts" depends="jar-main, jar-sources, jar-javadocs" description="Builds a Maven artifact that can be uploaded to a Maven repository">
-    <filter token="version" value="${version}"/>
+    <filter  token="version" value="${version}"/>
     <mkdir dir="${build.dir}/maven"/>
     <copy file="${basedir}/xmlgraphics-fop-pom-template.pom" tofile="${build.dir}/maven/pom.xml" filtering="true"/>
-    <copy file="${build.dir}/${name}.jar" tofile="${build.dir}/maven/${name}-${version}.jar"/>
+    <copy file="${build.dir}/${name}.jar" tofile="${build.dir}/${name}-${version}.jar"/>
+    <fileset id="bundle-files" dir="${build.dir}">
+      <patternset>
+      <include name="${name}-${version}.jar"/>
+      <include name="${name}-${version}-sources.jar"/>
+      <include name="${name}-${version}-javadoc.jar"/>
+      </patternset>
+      <patternset>
+      <include name="maven/pom.xml"/>
+      </patternset>
+    </fileset>
+    <checksum algorithm="md5">
+      <fileset refid="bundle-files"/>
+    </checksum>
+    <checksum algorithm="sha1">
+      <fileset refid="bundle-files"/>
+    </checksum>
+    <input message="Passphrase for your default private key (attention: passphrase will be echoed in clear text on the display!)" addproperty="pwd"/>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${build.dir}/${name}-${version}.jar"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${build.dir}/${name}-${version}-sources.jar"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${build.dir}/${name}-${version}-javadoc.jar"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${build.dir}/maven/pom.xml"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
     <jar jarfile="${build.dir}/${name}-${version}-bundle.jar">
       <manifest>
-        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}, Target Java ${javac.target}])"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
       </manifest>
       <fileset dir="${build.dir}">
-        <include name="${name}-${version}-sources.jar"/>
-        <include name="${name}-${version}-javadoc.jar"/>
+        <patternset>
+          <include name="${name}-${version}.jar*"/>
+          <include name="${name}-${version}-sources.jar*"/>
+          <include name="${name}-${version}-javadoc.jar*"/>
+        </patternset>
       </fileset>
-      <fileset dir="${build.dir}/maven"/>
+      <fileset dir="${build.dir}/maven">
+        <patternset>
+          <include name="pom.xml*"/>
+        </patternset>
+      </fileset>
       <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
     </jar>
     <move file="${build.dir}/${name}-${version}-bundle.jar" todir="${basedir}"/>
