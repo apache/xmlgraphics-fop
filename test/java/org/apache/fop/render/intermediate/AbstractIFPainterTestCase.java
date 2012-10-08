@@ -60,6 +60,10 @@ public class AbstractIFPainterTestCase {
             public void clipRect(Rectangle rect) throws IFException {
             }
 
+            public void clipBackground(Rectangle rect, BorderProps bpsBefore, BorderProps bpsAfter,
+                    BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+            }
+
             public void fillRect(Rectangle rect, Paint fill) throws IFException {
             }
 
@@ -78,12 +82,6 @@ public class AbstractIFPainterTestCase {
                     String text) throws IFException {
             }
 
-            public void clipBackground(Rectangle rect, BorderProps bpsBefore,
-                    BorderProps bpsAfter, BorderProps bpsStart,
-                    BorderProps bpsEnd) throws IFException {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException();
-            }
         };
         FontInfo fontInfo = mock(FontInfo.class);
         when(handler.getFontInfo()).thenReturn(fontInfo);

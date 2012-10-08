@@ -429,11 +429,12 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             moveTo(sx1, clipy);
             float sx1a = sx1;
             float ex1a = ex1;
-            if (bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsLeft != null && bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
+
+            if (isCollapseOuter(bpsTop)) {
+                if (isCollapseOuter(bpsLeft)) {
                     sx1a -= clipw[LEFT];
                 }
-                if (bpsRight != null && bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
+                if (isCollapseOuter(bpsRight)) {
                     ex1a += clipw[RIGHT];
                 }
                 lineTo(sx1a, outery);
@@ -463,11 +464,11 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             moveTo(clipx, sy1);
             float sy1a = sy1;
             float ey1a = ey1;
-            if (bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsTop != null && bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
+            if (isCollapseOuter(bpsRight)) {
+                if (isCollapseOuter(bpsTop)) {
                     sy1a -= clipw[TOP];
                 }
-                if (bpsBottom != null && bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
+                if (isCollapseOuter(bpsBottom)) {
                     ey1a += clipw[BOTTOM];
                 }
                 lineTo(outerx, sy1a);
@@ -497,11 +498,11 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             moveTo(ex1, clipy);
             float sx1a = sx1;
             float ex1a = ex1;
-            if (bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsLeft != null && bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
+            if (isCollapseOuter(bpsBottom)) {
+                if (isCollapseOuter(bpsLeft)) {
                     sx1a -= clipw[LEFT];
                 }
-                if (bpsRight != null && bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
+                if (isCollapseOuter(bpsRight)) {
                     ex1a += clipw[RIGHT];
                 }
                 lineTo(ex1a, outery);
@@ -531,11 +532,11 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             moveTo(clipx, ey1);
             float sy1a = sy1;
             float ey1a = ey1;
-            if (bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsTop != null && bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
+            if (isCollapseOuter(bpsLeft)) {
+                if (isCollapseOuter(bpsTop)) {
                     sy1a -= clipw[TOP];
                 }
-                if (bpsBottom != null && bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
+                if (isCollapseOuter(bpsBottom)) {
                     ey1a += clipw[BOTTOM];
                 }
                 lineTo(outerx, ey1a);
@@ -549,6 +550,10 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             drawBorderLine(outerx, sy1a, innerx, ey1a, false, true, bpsLeft.style, bpsLeft.color);
             restoreGraphicsState();
         }
+    }
+
+    private boolean isCollapseOuter(BorderProps bp) {
+        return bp != null && bp.isCollapseOuter();
     }
 
     /**

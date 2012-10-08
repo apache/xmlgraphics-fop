@@ -20,17 +20,15 @@
 package org.apache.fop.render.intermediate;
 
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.RuleStyle;
 
 /**
  * This is an abstract base class for handling border painting.
  */
-public abstract class BorderPainter {
+public class BorderPainter {
 
     /** TODO remove before integration*/
     public static final String ROUNDED_CORNERS = "fop.round-corners";
@@ -42,6 +40,11 @@ public abstract class BorderPainter {
      convention index of top-left, top-right, bottom-right and bottom-left border corners*/
     protected static final int TOP_LEFT = 0, TOP_RIGHT = 1, BOTTOM_RIGHT = 2, BOTTOM_LEFT = 3;
 
+    private final GraphicsPainter graphicsPainter;
+
+    public BorderPainter(GraphicsPainter graphicsPainter) {
+        this.graphicsPainter = graphicsPainter;
+    }
 
     /**
      * Draws borders.
@@ -65,7 +68,7 @@ public abstract class BorderPainter {
     }
 
     private BorderProps sanitizeBorderProps(BorderProps bps) {
-        return bps == null ? bps : bps.width == 0 ? (BorderProps)null : bps;
+        return bps == null ? bps : bps.width == 0 ? (BorderProps) null : bps;
     }
 
     /**
@@ -134,11 +137,11 @@ public abstract class BorderPainter {
 
             int sx1a = sx1;
             int ex1a = ex1;
-            if (bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsLeft != null && bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
+            if (isCollapseOuter(bpsTop)) {
+                if (isCollapseOuter(bpsLeft)) {
                     sx1a -= clipw[LEFT];
                 }
-                if (bpsRight != null && bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
+                if (isCollapseOuter(bpsRight)) {
                     ex1a += clipw[RIGHT];
                 }
                 lineTo(sx1a, outery);
@@ -165,11 +168,12 @@ public abstract class BorderPainter {
             moveTo(clipx, sy1);
             int sy1a = sy1;
             int ey1a = ey1;
-            if (bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsTop != null && bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
+
+            if (isCollapseOuter(bpsRight)) {
+                if (isCollapseOuter(bpsTop)) {
                     sy1a -= clipw[TOP];
                 }
-                if (bpsBottom != null && bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
+                if (isCollapseOuter(bpsBottom)) {
                     ey1a += clipw[BOTTOM];
                 }
                 lineTo(outerx, sy1a);
@@ -196,11 +200,11 @@ public abstract class BorderPainter {
             moveTo(ex1, clipy);
             int sx1a = sx1;
             int ex1a = ex1;
-            if (bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsLeft != null && bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
+            if (isCollapseOuter(bpsBottom)) {
+                if (isCollapseOuter(bpsLeft)) {
                     sx1a -= clipw[LEFT];
                 }
-                if (bpsRight != null && bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
+                if (isCollapseOuter(bpsRight)) {
                     ex1a += clipw[RIGHT];
                 }
                 lineTo(ex1a, outery);
@@ -230,11 +234,11 @@ public abstract class BorderPainter {
 
             int sy1a = sy1;
             int ey1a = ey1;
-            if (bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsTop != null && bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
+            if (isCollapseOuter(bpsLeft)) {
+                if (isCollapseOuter(bpsTop)) {
                     sy1a -= clipw[TOP];
                 }
-                if (bpsBottom != null && bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
+                if (isCollapseOuter(bpsBottom)) {
                     ey1a += clipw[BOTTOM];
                 }
                 lineTo(outerx, ey1a);
@@ -250,6 +254,10 @@ public abstract class BorderPainter {
         }
     }
 
+    private boolean isCollapseOuter(BorderProps bp) {
+        return bp != null && bp.isCollapseOuter();
+    }
+
     /** TODO merge with drawRectangularBorders?
      * @param borderRect the border rectangle
      * @param bpsBefore the border specification on the before side
@@ -259,266 +267,274 @@ public abstract class BorderPainter {
      * @throws IOException on io exception
      * */
     protected void drawRoundedBorders(Rectangle borderRect,
-            BorderProps bpsBefore, BorderProps bpsAfter,
-            BorderProps bpsStart, BorderProps bpsEnd) throws IOException {
-
-        bpsBefore = sanitizeBorderProps(bpsBefore);
-        bpsAfter = sanitizeBorderProps(bpsAfter);
-        bpsStart = sanitizeBorderProps(bpsStart);
-        bpsEnd = sanitizeBorderProps(bpsEnd);
-
-        boolean[] b = new boolean[] {
-                (bpsBefore != null), (bpsEnd != null),
-                (bpsAfter != null), (bpsStart != null)};
-        if (!b[TOP] && !b[RIGHT] && !b[BOTTOM] && !b[LEFT]) {
+            BorderProps beforeBorderProps, BorderProps afterBorderProps,
+            BorderProps startBorderProps, BorderProps endBorderProps) throws IOException {
+        BorderSegment before = borderSegmentForBefore(beforeBorderProps);
+        BorderSegment after = borderSegmentForAfter(afterBorderProps);
+        BorderSegment start = borderSegmentForStart(startBorderProps);
+        BorderSegment end = borderSegmentForEnd(endBorderProps);
+        if (before.getWidth() == 0 && after.getWidth() == 0 && start.getWidth() == 0 && end.getWidth() == 0) {
             return;
         }
-        int[] bw = new int[] {
-                (b[TOP] ? bpsBefore.width : 0),
-                (b[RIGHT] ? bpsEnd.width : 0),
-                (b[BOTTOM] ? bpsAfter.width : 0),
-                (b[LEFT] ? bpsStart.width : 0)};
-        int[] clipw = new int[] {
-                BorderProps.getClippedWidth(bpsBefore),
-                BorderProps.getClippedWidth(bpsEnd),
-                BorderProps.getClippedWidth(bpsAfter),
-                BorderProps.getClippedWidth(bpsStart)};
-
-        final int startx = borderRect.x + clipw[LEFT];
-        final int starty = borderRect.y + clipw[TOP];
-        final int width = borderRect.width - clipw[LEFT] - clipw[RIGHT];
-        final int height = borderRect.height - clipw[TOP] - clipw[BOTTOM];
-
-        boolean[] slant = new boolean[] {
-                (b[LEFT] && b[TOP]), (b[TOP] && b[RIGHT]),
-                (b[RIGHT] && b[BOTTOM]), (b[LEFT] && b[BOTTOM])};
+        final int startx = borderRect.x + start.getClippedWidth();
+        final int starty = borderRect.y + before.getClippedWidth();
+        final int width = borderRect.width - start.getClippedWidth() - end.getClippedWidth();
+        final int height = borderRect.height - before.getClippedWidth() - after.getClippedWidth();
         //Determine scale factor if any adjacent elliptic corners overlap
-        double esf = cornerScaleFactor(width, height, bpsBefore, bpsAfter, bpsStart, bpsEnd);
+        double cornerCorrectionFactor = calculateCornerScaleCorrection(width, height, before, after, start, end);
+        drawBorderSegment(start, before, end, 0, width, startx, starty, cornerCorrectionFactor);
+        drawBorderSegment(before, end, after, 1, height, startx + width, starty, cornerCorrectionFactor);
+        drawBorderSegment(end, after, start, 2, width, startx + width, starty + height, cornerCorrectionFactor);
+        drawBorderSegment(after, start, before, 3, height, startx, starty + height, cornerCorrectionFactor);
+    }
 
-        if (bpsBefore != null) {
+    private void drawBorderSegment(BorderSegment start, BorderSegment before, BorderSegment end,
+            int orientation, int width, int x, int y, double cornerCorrectionFactor) throws IOException {
+        if (before.getWidth() != 0) {
             //Let x increase in the START->END direction
-            final int sx2 = (slant[TOP_LEFT] ? bw[LEFT] - clipw[LEFT] : 0);
+            final int sx2 = start.getWidth() - start.getClippedWidth();
             final int ex1 =  width;
-            final int ex2 = (slant[TOP_RIGHT] ? ex1 - bw[RIGHT] + clipw[RIGHT] : ex1);
-            final int outery = -clipw[TOP];
-            final int innery = outery + bw[TOP];
-            final int clipy = outery + clipw[TOP];
-            final int ellipseSBW = bpsStart == null ? 0 : (int)(esf * bpsStart.getRadiusStart());
-            final int ellipseSBH = (int)(esf * bpsBefore.getRadiusStart());
-            final int ellipseSBX = ellipseSBW;
-            final int ellipseSBY = clipy + ellipseSBH;
-            final int ellipseBEW = bpsEnd == null ? 0 : (int)(esf * bpsEnd.getRadiusStart());
-            final int ellipseBEH = (int)(esf * bpsBefore.getRadiusEnd());
-            final int ellipseBEX = ex1 - ellipseBEW;
-            final int ellipseBEY = clipy + ellipseBEH;
-
+            final int ex2 = ex1 - end.getWidth() + end.getClippedWidth();
+            final int outery = -before.getClippedWidth();
+            final int innery = outery + before.getWidth();
+            final int ellipseSBRadiusX = (int) (cornerCorrectionFactor * start.getRadiusEnd());
+            final int ellipseSBRadiusY = (int) (cornerCorrectionFactor * before.getRadiusStart());
+            final int ellipseBERadiusX = (int) (cornerCorrectionFactor * end.getRadiusStart());
+            final int ellipseBERadiusY = (int) (cornerCorrectionFactor * before.getRadiusEnd());
             saveGraphicsState();
-            translateCoordinates(startx, starty);
-            drawBorderSegment( sx2, ex1, ex2,  outery, innery,
-                    clipw[LEFT], clipw[RIGHT],
-                    ellipseSBX, ellipseSBY, ellipseSBW, ellipseSBH,
-                    ellipseBEX, ellipseBEY, ellipseBEW, ellipseBEH,
-                    bpsBefore, bpsStart, bpsEnd
-            );
-            restoreGraphicsState();
-        }
-
-        if (bpsStart != null) {
-            //Let x increase in the AFTER->BEFORE direction
-            final int sx2 = (slant[BOTTOM_LEFT] ?  bw[BOTTOM] - clipw[BOTTOM] : 0);
-            final int ex1 = height;
-            final int ex2 = (slant[TOP_LEFT] ? ex1 - bw[TOP] + clipw[TOP] : ex1);
-            final int outery = -clipw[LEFT];
-            final int innery = outery + bw[LEFT];
-            final int clipy = outery + clipw[LEFT];
-            final int ellipseSBW = bpsAfter == null ? 0 : (int)(esf * bpsAfter.getRadiusStart());
-            final int ellipseSBH = (int)(esf * bpsStart.getRadiusEnd());
-            final int ellipseSBX = ellipseSBW;
-            final int ellipseSBY = clipy + ellipseSBH;
-            final int ellipseBEW = bpsBefore == null ? 0 : (int)(esf * bpsBefore.getRadiusStart());
-            final int ellipseBEH = (int)(esf * bpsStart.getRadiusStart());
-            final int ellipseBEX = ex1 - ellipseBEW;
-            final int ellipseBEY = clipy + ellipseBEH;
-
-            saveGraphicsState();
-            translateCoordinates(startx, starty + height);
-            rotateCoordinates(Math.PI * 3d / 2d);
-            drawBorderSegment( sx2, ex1, ex2, outery, innery,
-                    clipw[BOTTOM],  clipw[TOP],
-                    ellipseSBX, ellipseSBY, ellipseSBW, ellipseSBH,
-                    ellipseBEX, ellipseBEY, ellipseBEW, ellipseBEH,
-                    bpsStart, bpsAfter, bpsBefore
-            );
-            restoreGraphicsState();
-
-        }
-
-
-        if (bpsAfter != null) {
-            //Let x increase in the START->END direction
-            final int sx2 = (slant[BOTTOM_LEFT] ?  bw[LEFT] - clipw[LEFT] : 0);
-            final int ex1 = width;
-            final int ex2 = (slant[BOTTOM_RIGHT] ? ex1 - bw[RIGHT] + clipw[RIGHT] : ex1);
-            final int outery = -clipw[BOTTOM];
-            final int innery = outery + bw[BOTTOM];
-            final int clipy = outery + clipw[BOTTOM];
-            final int ellipseSBW = bpsStart == null ? 0 : (int)(esf * bpsStart.getRadiusEnd());
-            final int ellipseSBH =  (int)(esf * bpsAfter.getRadiusStart());
-            final int ellipseSBX = ellipseSBW;
-            final int ellipseSBY =  clipy + ellipseSBH;
-            final int ellipseBEW = bpsEnd == null ? 0 : (int)(esf * bpsEnd.getRadiusEnd());
-            final int ellipseBEH = (int)(esf * bpsAfter.getRadiusEnd());
-            final int ellipseBEX = ex1 - ellipseBEW;
-            final int ellipseBEY = clipy + ellipseBEH;
-
-            saveGraphicsState();
-            translateCoordinates(startx, starty + height);
-            scaleCoordinates(1, -1);
-            drawBorderSegment( sx2, ex1, ex2, outery, innery,
-                    clipw[LEFT], clipw[RIGHT],
-                    ellipseSBX, ellipseSBY, ellipseSBW, ellipseSBH,
-                    ellipseBEX, ellipseBEY, ellipseBEW, ellipseBEH,
-                    bpsAfter, bpsStart, bpsEnd
-            );
-            restoreGraphicsState();
-        }
-
-        if (bpsEnd != null) {
-            //Let x increase in the BEFORE-> AFTER direction
-            final int sx2 = (slant[TOP_RIGHT] ?  bw[TOP] - clipw[TOP] : 0);
-            final int ex1 = height;
-            final int ex2 = (slant[BOTTOM_RIGHT] ? ex1 - bw[BOTTOM] + clipw[BOTTOM] : ex1);
-            final int outery = -clipw[RIGHT];
-            final int innery = outery + bw[RIGHT];
-            final int clipy = outery + clipw[RIGHT];
-            final int ellipseSBW = bpsBefore == null ? 0 : (int)(esf * bpsBefore.getRadiusEnd());
-            final int ellipseSBH = (int)(esf * bpsEnd.getRadiusStart());
-            final int ellipseSBX = ellipseSBW;
-            final int ellipseSBY = clipy + ellipseSBH;
-            final int ellipseBEW = bpsAfter == null ? 0 : (int)(esf * bpsAfter.getRadiusEnd());
-            final int ellipseBEH = (int)(esf * bpsEnd.getRadiusEnd());
-            final int ellipseBEX = ex1 - ellipseBEW;
-            final int ellipseBEY = clipy + ellipseBEH;
-
-            saveGraphicsState();
-            translateCoordinates(startx + width, starty);
-            rotateCoordinates(Math.PI / 2d);
-            drawBorderSegment( sx2, ex1, ex2, outery, innery,
-                    clipw[TOP], clipw[BOTTOM],
-                    ellipseSBX, ellipseSBY, ellipseSBW, ellipseSBH,
-                    ellipseBEX, ellipseBEY, ellipseBEW, ellipseBEH,
-                    bpsEnd,  bpsBefore, bpsAfter
-            );
+            translateCoordinates(x, y);
+            if (orientation != 0) {
+                rotateCoordinates(Math.PI * orientation / 2d);
+            }
+            final int ellipseSBX = ellipseSBRadiusX;
+            final int ellipseSBY = ellipseSBRadiusY;
+            final int ellipseBEX = ex1 - ellipseBERadiusX;
+            final int ellipseBEY = ellipseBERadiusY;
+            int sx1a = 0;
+            int ex1a = ex1;
+            if (ellipseSBRadiusX != 0 && ellipseSBRadiusY != 0) {
+                final double[] joinMetrics = getCornerBorderJoinMetrics(ellipseSBRadiusX,
+                        ellipseSBRadiusY, sx2, innery);
+                final double outerJoinPointX = joinMetrics[0];
+                final double outerJoinPointY = joinMetrics[1];
+                final double sbJoinAngle = joinMetrics[2];
+                moveTo((int) outerJoinPointX, (int) outerJoinPointY);
+                arcTo(Math.PI + sbJoinAngle, Math.PI * 3 / 2,
+                        ellipseSBX, ellipseSBY, ellipseSBRadiusX, ellipseSBRadiusY);
+            }  else {
+                moveTo(0, 0);
+                if (before.isCollapseOuter()) {
+                    if (start.isCollapseOuter()) {
+                        sx1a -= start.getClippedWidth();
+                    }
+                    if (end.isCollapseOuter()) {
+                        ex1a += end.getClippedWidth();
+                    }
+                    lineTo(sx1a, outery);
+                    lineTo(ex1a, outery);
+                }
+            }
+            if (ellipseBERadiusX != 0 && ellipseBERadiusY != 0) {
+                final double[] outerJoinMetrics = getCornerBorderJoinMetrics(
+                        ellipseBERadiusX, ellipseBERadiusY,  ex1 - ex2, innery);
+                final double beJoinAngle = ex1 == ex2 ? Math.PI / 2 : Math.PI / 2 - outerJoinMetrics[2];
+                lineTo(ellipseBEX, 0);
+                arcTo(Math.PI * 3 / 2 , Math.PI * 3 / 2 + beJoinAngle,
+                        ellipseBEX, ellipseBEY, ellipseBERadiusX, ellipseBERadiusY);
+                if (ellipseBEX < ex2 && ellipseBEY > innery) {
+                    final double[] innerJoinMetrics = getCornerBorderJoinMetrics(
+                            (double) ex2 - ellipseBEX, (double) ellipseBEY - innery, ex1 - ex2, innery);
+                    final double innerJoinPointX = innerJoinMetrics[0];
+                    final double innerJoinPointY = innerJoinMetrics[1];
+                    final double beInnerJoinAngle = Math.PI / 2 - innerJoinMetrics[2];
+                    lineTo((int) (ex2 - innerJoinPointX), (int) (innerJoinPointY + innery));
+                    arcTo(beInnerJoinAngle + Math.PI * 3 / 2, Math.PI * 3 / 2,
+                            ellipseBEX, ellipseBEY, ex2 - ellipseBEX, ellipseBEY - innery);
+                } else {
+                    lineTo(ex2, innery);
+                }
+            } else {
+                lineTo(ex1, 0);
+                lineTo(ex2, innery);
+            }
+            if (ellipseSBRadiusX == 0) {
+                lineTo(sx2, innery);
+            } else {
+                if (ellipseSBX > sx2 &&  ellipseSBY > innery) {
+                    final double[] innerJoinMetrics = getCornerBorderJoinMetrics(ellipseSBRadiusX - sx2,
+                            ellipseSBRadiusY - innery, sx2, innery);
+                    final double sbInnerJoinAngle = innerJoinMetrics[2];
+                    lineTo(ellipseSBX, innery);
+                    arcTo(Math.PI * 3 / 2, sbInnerJoinAngle + Math.PI,
+                            ellipseSBX, ellipseSBY, ellipseSBX - sx2, ellipseSBY - innery);
+                } else {
+                    lineTo(sx2, innery);
+                }
+            }
+            closePath();
+            clip();
+            if (ellipseBERadiusY == 0 && ellipseSBRadiusY == 0) {
+                drawBorderLine(sx1a, outery, ex1a, innery, true, true,
+                        before.getStyle(), before.getColor());
+            } else {
+                int innerFillY = Math.max(Math.max(ellipseBEY, ellipseSBY), innery);
+                drawBorderLine(sx1a, outery, ex1a, innerFillY, true, true,
+                        before.getStyle(), before.getColor());
+            }
             restoreGraphicsState();
         }
     }
 
-    /** TODO collect parameters into useful data structures*/
-    private void drawBorderSegment(final int sx2, final int ex1, final int ex2,
-            final int outery, final int innery,
-            final int clipWidthStart, final int clipWidthEnd,
-            final int ellipseSBX, final int ellipseSBY,
-            final int ellipseSBRadiusX, final int ellipseSBRadiusY,
-            final int ellipseBEX,  final int ellipseBEY,
-            final int ellipseBERadiusX, final int ellipseBERadiusY,
-            final BorderProps bpsThis, final BorderProps bpsStart, final BorderProps bpsEnd )
-    throws IOException {
+    private static BorderSegment borderSegmentForBefore(BorderProps before) {
+        return AbstractBorderSegment.asBorderSegment(before);
+    }
 
-        int sx1a = 0;
-        int ex1a = ex1;
+    private static BorderSegment borderSegmentForAfter(BorderProps after) {
+        return AbstractBorderSegment.asFlippedBorderSegment(after);
+    }
 
+    private static BorderSegment borderSegmentForStart(BorderProps start) {
+        return AbstractBorderSegment.asFlippedBorderSegment(start);
+    }
 
-        if (ellipseSBRadiusX != 0 && ellipseSBRadiusY != 0 ) {
+    private static BorderSegment borderSegmentForEnd(BorderProps end) {
+        return AbstractBorderSegment.asBorderSegment(end);
+    }
 
-            final double[] joinMetrics = getCornerBorderJoinMetrics(ellipseSBRadiusX,
-                    ellipseSBRadiusY, (double)innery / sx2);
+    private interface BorderSegment {
 
-            final double outerJoinPointX = joinMetrics[0];
-            final double outerJoinPointY = joinMetrics[1];
-            final double sbJoinAngle = joinMetrics[2];
+        Color getColor();
 
-            moveTo((int)outerJoinPointX, (int)outerJoinPointY);
-            arcTo(Math.PI + sbJoinAngle, Math.PI * 3 / 2,
-                    ellipseSBX, ellipseSBY, ellipseSBRadiusX, ellipseSBRadiusY);
-        }  else {
+        int getStyle();
 
-            moveTo(0, 0);
+        int getWidth();
 
-            if (bpsThis.mode == BorderProps.COLLAPSE_OUTER) {
+        int getClippedWidth();
 
-                if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
-                    sx1a -= clipWidthStart;
-                }
-                if (bpsEnd != null && bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
-                    ex1a += clipWidthEnd;
-                }
+        int getRadiusStart();
 
-                lineTo(sx1a, outery);
-                lineTo(ex1a, outery);
+        int getRadiusEnd();
+
+        boolean isCollapseOuter();
+
+        boolean isSpecified();
+    }
+
+    private abstract static class AbstractBorderSegment implements BorderSegment {
+
+        private static BorderSegment asBorderSegment(BorderProps borderProps) {
+            return borderProps == null ? NullBorderSegment.INSTANCE : new WrappingBorderSegment(borderProps);
+        }
+
+        private static BorderSegment asFlippedBorderSegment(BorderProps borderProps) {
+            return borderProps == null ? NullBorderSegment.INSTANCE : new FlippedBorderSegment(borderProps);
+        }
+
+        public boolean isSpecified() {
+            return !(this instanceof NullBorderSegment);
+        }
+
+        private static class WrappingBorderSegment extends AbstractBorderSegment {
+
+            protected final BorderProps borderProps;
+
+            private final int clippedWidth;
+
+            WrappingBorderSegment(BorderProps borderProps) {
+                this.borderProps = borderProps;
+                clippedWidth = BorderProps.getClippedWidth(borderProps);
+            }
+
+            public int getStyle() {
+                return borderProps.style;
+            }
+
+            public Color getColor() {
+                return borderProps.color;
+            }
+
+            public int getWidth() {
+                return borderProps.width;
+            }
+
+            public int getClippedWidth() {
+                return clippedWidth;
+            }
+            public boolean isCollapseOuter() {
+                return borderProps.isCollapseOuter();
+            }
+
+            public int getRadiusStart() {
+                return borderProps.getRadiusStart();
+            }
+
+            public int getRadiusEnd() {
+                return borderProps.getRadiusEnd();
             }
         }
 
-        if (ellipseBERadiusX != 0 && ellipseBERadiusY != 0) {
+        private static class FlippedBorderSegment extends WrappingBorderSegment {
 
-            final double[] outerJoinMetrics = getCornerBorderJoinMetrics(
-                    ellipseBERadiusX, ellipseBERadiusY, (double)innery / (ex1 - ex2));
-            final double beJoinAngle = Math.PI / 2 - outerJoinMetrics[2];
-
-            lineTo(ellipseBEX, 0);
-            arcTo( Math.PI * 3 / 2 , Math.PI * 3 / 2 + beJoinAngle,
-                    ellipseBEX, ellipseBEY, ellipseBERadiusX, ellipseBERadiusY);
-
-            if (ellipseBEX < ex2 && ellipseBEY > innery) {
-
-                final double[] innerJoinMetrics = getCornerBorderJoinMetrics(
-                        (double)ex2 - ellipseBEX, (double)ellipseBEY - innery,
-                        (double)innery / (ex1 - ex2));
-                final double innerJoinPointX = innerJoinMetrics[0];
-                final double innerJoinPointY = innerJoinMetrics[1];
-                final double beInnerJoinAngle = Math.PI / 2 - innerJoinMetrics[2];
-
-                lineTo((int) (ex2 - innerJoinPointX), (int)(innerJoinPointY + innery));
-                arcTo(beInnerJoinAngle + Math.PI * 3 / 2, Math.PI * 3 / 2,
-                        ellipseBEX, ellipseBEY, ex2 - ellipseBEX, ellipseBEY - innery);
-            } else {
-                lineTo(ex2, innery);
+            FlippedBorderSegment(BorderProps borderProps) {
+                super(borderProps);
             }
 
-        } else {
-            lineTo(ex1, 0);
-            lineTo(ex2, innery);
-        }
+            public int getRadiusStart() {
+                return borderProps.getRadiusEnd();
+            }
 
-        if (ellipseSBRadiusX == 0) {
-            lineTo(sx2, innery);
-        } else {
-            if (ellipseSBX > sx2 &&  ellipseSBY > innery) {
-
-
-                final double[] innerJoinMetrics = getCornerBorderJoinMetrics(ellipseSBRadiusX - sx2,
-                        ellipseSBRadiusY - innery, (double)innery / sx2);
-
-                final double sbInnerJoinAngle = innerJoinMetrics[2];
-
-                lineTo(ellipseSBX, innery);
-                arcTo(Math.PI * 3 / 2, sbInnerJoinAngle + Math.PI,
-                        ellipseSBX, ellipseSBY, ellipseSBX - sx2, ellipseSBY - innery);
-            } else {
-                lineTo(sx2, innery);
+            public int getRadiusEnd() {
+                return borderProps.getRadiusStart();
             }
         }
 
-        closePath();
-        clip();
+        private static final class NullBorderSegment extends AbstractBorderSegment {
 
-        if (ellipseBERadiusY == 0 && ellipseSBRadiusY == 0) {
-            drawBorderLine(sx1a, outery, ex1a, innery, true, true,
-                    bpsThis.style, bpsThis.color);
+            public static final NullBorderSegment INSTANCE = new NullBorderSegment();
 
+            private NullBorderSegment() {
+            }
+
+            public int getWidth() {
+                return 0;
+            }
+
+            public int getClippedWidth() {
+                return 0;
+            }
+
+            public int getRadiusStart() {
+                return 0;
+            }
+
+            public int getRadiusEnd() {
+                return 0;
+            }
+
+            public boolean isCollapseOuter() {
+                return false;
+            }
+
+            public Color getColor() {
+                throw new UnsupportedOperationException();
+            }
+
+            public int getStyle() {
+                throw new UnsupportedOperationException();
+            }
+
+            public boolean isSpecified() {
+                return false;
+            }
+        }
+    }
+
+    private double[] getCornerBorderJoinMetrics(double ellipseCenterX, double ellipseCenterY, double xWidth,
+            double yWidth) {
+        if (xWidth > 0) {
+            return getCornerBorderJoinMetrics(ellipseCenterX, ellipseCenterY, yWidth / xWidth);
         } else {
-            int innerFillY = Math.max(Math.max(ellipseBEY, ellipseSBY), innery);
-            drawBorderLine(sx1a, outery, ex1a, innerFillY, true, true,
-                    bpsThis.style, bpsThis.color);
+            return new double[]{0, ellipseCenterY, 0};
         }
     }
 
@@ -527,8 +543,8 @@ public abstract class BorderPainter {
         double x = ellipseCenterY * ellipseCenterX * (
                 ellipseCenterY + ellipseCenterX * borderWidthRatio
                 - Math.sqrt(2d * ellipseCenterX * ellipseCenterY * borderWidthRatio)
-        ) / (ellipseCenterY * ellipseCenterY
-                + ellipseCenterX * ellipseCenterX * borderWidthRatio * borderWidthRatio);
+                ) / (ellipseCenterY * ellipseCenterY
+                        + ellipseCenterX * ellipseCenterX * borderWidthRatio * borderWidthRatio);
         double y = borderWidthRatio * x;
         return new double[]{x, y, Math.atan((ellipseCenterY - y) / (ellipseCenterX - x))};
     }
@@ -545,331 +561,335 @@ public abstract class BorderPainter {
     public void clipBackground(Rectangle rect,
             BorderProps bpsBefore, BorderProps bpsAfter,
             BorderProps bpsStart, BorderProps bpsEnd) throws IOException {
+        BorderSegment before = borderSegmentForBefore(bpsBefore);
+        BorderSegment after = borderSegmentForAfter(bpsAfter);
+        BorderSegment start = borderSegmentForStart(bpsStart);
+        BorderSegment end = borderSegmentForEnd(bpsEnd);
         int startx = rect.x;
         int starty = rect.y;
         int width = rect.width;
         int height = rect.height;
-
-
-        int fullWidth = width + ( bpsStart == null ? 0 : bpsStart.width )
-            + (bpsStart == null ? 0 : bpsStart.width);
-        int fullHeight = height + ( bpsBefore == null ? 0 : bpsBefore.width )
-            + (bpsAfter == null ? 0 : bpsAfter.width);
-
-        double esf = cornerScaleFactor( fullWidth,  fullHeight,   bpsBefore,  bpsAfter,
-                bpsStart,  bpsEnd);
-
-        int ellipseSS = 0;
-        int ellipseBS = 0;
-        int ellipseBE = 0;
-        int ellipseES = 0;
-        int ellipseEE = 0;
-        int ellipseAE = 0;
-        int ellipseAS = 0;
-        int ellipseSE = 0;
-
-        if (bpsBefore != null && bpsBefore.getRadiusStart() > 0
-                && bpsStart != null && bpsStart.getRadiusStart() > 0) {
-            ellipseSS = Math.max((int)(bpsStart.getRadiusStart() * esf) - bpsStart.width, 0);
-            ellipseBS = Math.max((int)(bpsBefore.getRadiusStart() * esf) - bpsBefore.width, 0);
-        }
-
-        if (bpsBefore != null && bpsBefore.getRadiusEnd() > 0
-                && bpsEnd != null && bpsEnd.getRadiusStart() > 0) {
-            ellipseBE = Math.max((int)(bpsBefore.getRadiusEnd() * esf) - bpsBefore.width, 0);
-            ellipseES = Math.max((int)(bpsEnd.getRadiusStart() * esf) - bpsEnd.width, 0);
-        }
-
-        if (bpsEnd != null && bpsEnd.getRadiusEnd() > 0
-                && bpsAfter != null && bpsAfter.getRadiusEnd() > 0) {
-            ellipseEE = Math.max((int)(bpsEnd.getRadiusEnd() * esf) - bpsEnd.width, 0);
-            ellipseAE = Math.max((int)(bpsAfter.getRadiusEnd() * esf) - bpsAfter.width, 0);
-        }
-
-        if (bpsAfter != null && bpsAfter.getRadiusStart() > 0
-                && bpsStart != null && bpsStart.getRadiusEnd() > 0) {
-            ellipseAS = Math.max((int)(bpsAfter.getRadiusStart() * esf) - bpsAfter.width, 0);
-            ellipseSE = Math.max((int)(bpsStart.getRadiusEnd() * esf) - bpsStart.width, 0);
-        }
-
-        // Draw clipping region in the order: Before->End->After->Start
-        moveTo(startx + ellipseSS, starty);
-
-        lineTo(startx + width - ellipseES, starty);
-
-        if (ellipseBE > 0 && ellipseES > 0) {
-            arcTo(Math.PI * 3 / 2, Math.PI * 2,
-                    startx + width - ellipseES, starty + ellipseBE, ellipseES, ellipseBE);
-        }
-
-        lineTo(startx + width,  starty + height - ellipseAE);
-
-        if (ellipseEE > 0 && ellipseAE > 0) {
-            arcTo(0, Math.PI / 2, startx + width - ellipseEE,
-                    starty + height - ellipseAE, ellipseEE, ellipseAE);
-        }
-
-        lineTo(startx + ellipseSE, starty + height);
-
-        if (ellipseSE > 0 && ellipseAS > 0) {
-            arcTo( Math.PI / 2, Math.PI, startx + ellipseSE,
-                    starty + height - ellipseAS, ellipseSE, ellipseAS);
-        }
-
-        lineTo( startx, starty + ellipseBS);
-
-        if (ellipseSS > 0 && ellipseBS > 0) {
-            arcTo( Math.PI, Math.PI * 3 / 2,
-                    startx +  ellipseSS, starty + ellipseBS, ellipseSS, ellipseBS);
-        }
-
+        double correctionFactor = calculateCornerCorrectionFactor(width + start.getWidth() + end.getWidth(),
+                height + before.getWidth() + after.getWidth(), bpsBefore, bpsAfter, bpsStart, bpsEnd);
+        Corner cornerBeforeEnd = Corner.createBeforeEndCorner(before, end, correctionFactor);
+        Corner cornerEndAfter = Corner.createEndAfterCorner(end, after, correctionFactor);
+        Corner cornerAfterStart = Corner.createAfterStartCorner(after, start, correctionFactor);
+        Corner cornerStartBefore = Corner.createStartBeforeCorner(start, before, correctionFactor);
+        new PathPainter(startx + cornerStartBefore.radiusX, starty)
+                .lineHorizTo(width - cornerStartBefore.radiusX - cornerBeforeEnd.radiusX)
+                .drawCorner(cornerBeforeEnd)
+                .lineVertTo(height - cornerBeforeEnd.radiusY - cornerEndAfter.radiusY)
+                .drawCorner(cornerEndAfter)
+                .lineHorizTo(cornerEndAfter.radiusX + cornerAfterStart.radiusX - width)
+                .drawCorner(cornerAfterStart)
+                .lineVertTo(cornerAfterStart.radiusY + cornerStartBefore.radiusY - height)
+                .drawCorner(cornerStartBefore);
         clip();
+    }
+
+
+
+    /**
+     * The four corners
+     *      SB - Start-Before
+     *      BE - Before-End
+     *      EA - End-After
+     *      AS - After-Start
+     *
+     * 0 --> x
+     * |
+     * v
+     * y
+     *
+     *  SB      BE
+     *    *----*
+     *    |    |
+     *    |    |
+     *    *----*
+     *  AS      EA
+     *
+     */
+    private enum CornerAngles {
+        /** The before-end angles */
+        BEFORE_END(Math.PI * 3 / 2, 0),
+        /** The end-after angles */
+        END_AFTER(0, Math.PI / 2),
+        /** The after-start angles*/
+        AFTER_START(Math.PI / 2, Math.PI),
+        /** The start-before angles */
+        START_BEFORE(Math.PI, Math.PI * 3 / 2);
+
+        /** Angle of the start of the corner arch relative to the x-axis in the counter-clockwise direction */
+        private final double start;
+
+        /** Angle of the end of the corner arch relative to the x-axis in the counter-clockwise direction */
+        private final double end;
+
+        CornerAngles(double start, double end) {
+            this.start = start;
+            this.end = end;
+        }
 
     }
 
-    /**
-     * TODO javadocs
-     * If an ellipse radii exceed the border edge length then all ellipses must be  rescaled.
-     */
-    protected double cornerScaleFactor(int width, int height,
-            BorderProps bpsBefore, BorderProps bpsAfter,
-            BorderProps bpsStart, BorderProps bpsEnd) {
-        // Ellipse scale factor
-        double esf = 1d;
+    private static final class Corner {
 
-        if (bpsBefore != null) {
-            double ellipseExtent = (bpsStart == null ? 0 :  bpsStart.getRadiusStart())
-                    + (bpsEnd == null ? 0 :  bpsEnd.getRadiusStart());
+        private static final Corner SQUARE = new Corner(0, 0, null, 0, 0, 0, 0);
 
-            if (ellipseExtent > 0) {
-                double f = width / ellipseExtent;
-                if (f < esf) {
-                    esf = f;
-                }
-            }
+        /** The radius of the elliptic corner in the x direction */
+        protected final int radiusX;
+
+        /** The radius of the elliptic corner in the y direction */
+        protected final int radiusY;
+
+        /** The start and end angles of the corner ellipse */
+        private final CornerAngles angles;
+
+        /** The offset in the x direction of the center of the ellipse relative to the starting point */
+        private final int centerX;
+
+        /** The offset in the y direction of the center of the ellipse relative to the starting point */
+        private final int centerY;
+
+        /** The value in the x direction that the corner extends relative to the starting point */
+        private final int incrementX;
+
+        /** The value in the y direction that the corner extends relative to the starting point */
+        private final int incrementY;
+
+        private Corner(int radiusX, int radiusY, CornerAngles angles, int ellipseOffsetX,
+                int ellipseOffsetY, int incrementX, int incrementY) {
+            this.radiusX = radiusX;
+            this.radiusY = radiusY;
+            this.angles = angles;
+            this.centerX = ellipseOffsetX;
+            this.centerY = ellipseOffsetY;
+            this.incrementX = incrementX;
+            this.incrementY = incrementY;
         }
 
-        if (bpsStart != null) {
-            double ellipseExtent = (bpsAfter == null ? 0 :  bpsAfter.getRadiusStart())
-                    + (bpsBefore == null ? 0 :  bpsBefore.getRadiusStart());
-
-            if (ellipseExtent > 0) {
-                double f = height / ellipseExtent;
-                if ( f < esf) {
-                    esf = f;
-                }
-            }
+        private static int extentFromRadiusStart(BorderSegment border, double correctionFactor) {
+            return extentFromRadius(border.getRadiusStart(), border, correctionFactor);
         }
 
-        if (bpsAfter != null) {
-            double ellipseExtent = (bpsStart == null ? 0 :  bpsStart.getRadiusEnd())
-                    + (bpsEnd == null ? 0 :  bpsEnd.getRadiusEnd());
-
-            if (ellipseExtent > 0) {
-                double f = width / ellipseExtent;
-                if (f < esf) {
-                    esf = f;
-                }
-            }
+        private static int extentFromRadiusEnd(BorderSegment border, double correctionFactor) {
+            return extentFromRadius(border.getRadiusEnd(), border, correctionFactor);
         }
 
-        if (bpsEnd != null) {
-            double ellipseExtent = (bpsAfter == null ? 0 :  bpsAfter.getRadiusEnd())
-                    + (bpsBefore == null ? 0 :  bpsBefore.getRadiusEnd());
-
-            if (ellipseExtent > 0) {
-                double f = height / ellipseExtent;
-                if (f < esf) {
-                    esf = f;
-                }
-            }
+        private static int extentFromRadius(int radius, BorderSegment border, double correctionFactor) {
+            return Math.max((int) (radius * correctionFactor) - border.getWidth(), 0);
         }
 
-        return esf;
-    }
-
-    /**
-     * Draws a border line.
-     * @param x1 X coordinate of the upper left corner
-     *                  of the line's bounding rectangle (in millipoints)
-     * @param y1 start Y coordinate of the upper left corner
-     *                  of the line's bounding rectangle (in millipoints)
-     * @param x2 end X coordinate of the lower right corner
-     *                  of the line's bounding rectangle (in millipoints)
-     * @param y2 end y coordinate of the lower right corner
-     *                  of the line's bounding rectangle (in millipoints)
-     * @param horz true if it is a horizontal line
-     * @param startOrBefore true if the line is the start or end edge of a border box
-     * @param style the border style
-     * @param color the border color
-     * @throws IOException if an I/O error occurs
-     */
-    protected abstract void drawBorderLine(                      // CSOK: ParameterNumber
-            int x1, int y1, int x2, int y2,
-            boolean horz, boolean startOrBefore, int style, Color color) throws IOException;
-
-    /**
-     * Draws a line/rule.
-     * @param start start point (coordinates in millipoints)
-     * @param end end point (coordinates in millipoints)
-     * @param width width of the line
-     * @param color the line color
-     * @param style the rule style
-     * @throws IOException if an I/O error occurs
-     */
-    public abstract void drawLine(Point start, Point end,
-            int width, Color color, RuleStyle style) throws IOException;
-
-    /**
-     * Moves the cursor to the given coordinate.
-     * @param x the X coordinate (in millipoints)
-     * @param y the Y coordinate (in millipoints)
-     * @throws IOException if an I/O error occurs
-     */
-    protected abstract void moveTo(int x, int y) throws IOException;
-
-    /**
-     * Draws a line from the current cursor position to the given coordinates.
-     * @param x the X coordinate (in millipoints)
-     * @param y the Y coordinate (in millipoints)
-     * @throws IOException if an I/O error occurs
-     */
-    protected abstract void lineTo(int x, int y) throws IOException;
-
-    /**
-     * Draw a cubic bezier from current position to (p3x, p3y) using the control points
-     * (p1x, p1y) and (p2x, p2y)
-     * @param p1x x coordinate of the first control point
-     * @param p1y y coordinate of the first control point
-     * @param p2x x coordinate of the second control point
-     * @param p2y y coordinate of the second control point
-     * @param p3x x coordinate of the end point
-     * @param p3y y coordinate of the end point
-     * @throws IOException if an I/O error occurs
-     */
-    protected abstract void cubicBezierTo(int p1x, int p1y, int p2x, int p2y, int p3x, int p3y)
-            throws IOException;
-
-    /**
-     * Draws an arc on the ellipse centered at (cx, cy) with width width and height height
-     * from start angle startAngle (with respect to the x-axis counter-clockwise)
-     * to the end angle endAngle.
-     * The ellipses major axis are assumed to coincide with the coordinate axis.
-     * The current position MUST coincide with the starting position on the ellipse.
-     * @param startAngle the start angle
-     * @param endAngle the end angle
-     * @param cx the x coordinate of the ellipse center
-     * @param cy the y coordinate of the ellipse center
-     * @param width the extent of the ellipse in the x direction
-     * @param height the extent of the ellipse in the y direction
-     * @throws IOException if an I/O error occurs
-     */
-    protected void arcTo(final double startAngle, final double endAngle, final int cx, final int cy,
-            final int width, final int height)
-                throws IOException {
-
-        //  Implementation follows http://www.spaceroots.org/documents/ellipse/ -
-        //      Drawing an elliptical arc using polylines, quadratic or cubic Bézier curves
-        //      L. Maisonobe, July 21, 2003
-
-        //  Scaling the coordinate system to represent the ellipse as a circle:
-        final double etaStart = Math.atan(Math.tan(startAngle) * width / height)
-                                    + quadrant(startAngle);
-        final double etaEnd = Math.atan(Math.tan(endAngle) * width / height)
-                                    + quadrant(endAngle);
-
-        final double sinStart = Math.sin(etaStart);
-        final double cosStart = Math.cos(etaStart);
-        final double sinEnd = Math.sin(etaEnd);
-        final double cosEnd = Math.cos(etaEnd);
-
-        final double p0x = cx + cosStart * width;
-        final double p0y = cy + sinStart * height;
-        final double p3x = cx + cosEnd * width;
-        final double p3y = cy + sinEnd * height;
-
-
-        double etaDiff = Math.abs(etaEnd - etaStart);
-        double tan = Math.tan((etaDiff) / 2d);
-        final double alpha = Math.sin(etaDiff) * (Math.sqrt(4d + 3d * tan * tan) - 1d) / 3d;
-
-
-        int order = etaEnd > etaStart ? 1 : -1;
-
-        // p1 = p0 + alpha*(-sin(startAngle), cos(startAngle))
-        final double p1x = p0x - alpha *  sinStart * width * order;
-        final double p1y = p0y + alpha *  cosStart * height * order;
-
-        // p1 = p3 + alpha*(sin(endAngle), -cos(endAngle))
-        final double p2x = p3x + alpha *  sinEnd * width * order;
-        final double p2y = p3y - alpha * cosEnd * height * order;
-
-        //Draw the curve in original coordinate system
-        cubicBezierTo((int)p1x, (int)p1y, (int)p2x, (int)p2y, (int)p3x, (int)p3y);
-    }
-
-    private double quadrant(double angle) {
-        if (angle <= Math.PI ) {
-            if (angle <=  Math.PI / 2d) {
-                return 0;
-            } else {
-                return Math.PI;
+        public static Corner createBeforeEndCorner(BorderSegment before, BorderSegment end,
+                double correctionFactor) {
+            int width = end.getRadiusStart();
+            int height = before.getRadiusEnd();
+            if (width == 0 || height == 0) {
+                return SQUARE;
             }
-        } else {
-            if (angle > Math.PI * 3d / 2d) {
-                return 2d * Math.PI;
-            } else {
-                return Math.PI;
+            int x = extentFromRadiusStart(end, correctionFactor);
+            int y = extentFromRadiusEnd(before, correctionFactor);
+            return new Corner(x, y, CornerAngles.BEFORE_END, 0, y, x, y);
+        }
+
+        public static Corner createEndAfterCorner(BorderSegment end, BorderSegment after,
+                double correctionFactor) {
+            int width = end.getRadiusEnd();
+            int height = after.getRadiusStart();
+            if (width == 0 || height == 0) {
+                return SQUARE;
             }
+            int x = extentFromRadiusEnd(end, correctionFactor);
+            int y = extentFromRadiusStart(after, correctionFactor);
+            return new Corner(x, y, CornerAngles.END_AFTER, -x, 0, -x, y);
+        }
+
+        public static Corner createAfterStartCorner(BorderSegment after, BorderSegment start,
+                double correctionFactor) {
+            int width = start.getRadiusStart();
+            int height = after.getRadiusEnd();
+            if (width == 0 || height == 0) {
+                return SQUARE;
+            }
+            int x = extentFromRadiusStart(start, correctionFactor);
+            int y = extentFromRadiusEnd(after, correctionFactor);
+            return new Corner(x, y, CornerAngles.AFTER_START, 0, -y, -x, -y);
+        }
+
+        public static Corner createStartBeforeCorner(BorderSegment start, BorderSegment before,
+                double correctionFactor) {
+            int width = start.getRadiusEnd();
+            int height = before.getRadiusStart();
+            if (width == 0 || height == 0) {
+                return SQUARE;
+            }
+            int x = extentFromRadiusEnd(start, correctionFactor);
+            int y = extentFromRadiusStart(before, correctionFactor);
+            return new Corner(x, y, CornerAngles.START_BEFORE, x, 0, x, -y);
         }
     }
 
     /**
-     * Rotate the coordinate frame
-     * @param angle angle in radians to rotate the coordinate frame
-     * @throws IOException if an I/O error occurs
+     * This is a helper class for constructing curves composed of move, line and arc operations.  Coordinates
+     * are relative to the terminal point of the previous operation
      */
-    protected abstract void rotateCoordinates(double angle) throws IOException;
+    private final class PathPainter {
+
+        /** Current x position */
+        private int x;
+
+        /** Current y position */
+        private int y;
+
+        PathPainter(int x, int y) throws IOException {
+            moveTo(x, y);
+        }
+
+        private void moveTo(int x, int y) throws IOException {
+            this.x += x;
+            this.y += y;
+            BorderPainter.this.moveTo(this.x, this.y);
+        }
+
+        public PathPainter lineTo(int x, int y) throws IOException {
+            this.x += x;
+            this.y += y;
+            BorderPainter.this.lineTo(this.x, this.y);
+            return this;
+        }
+
+        public PathPainter lineHorizTo(int x) throws IOException {
+            return lineTo(x, 0);
+        }
+
+        public PathPainter lineVertTo(int y) throws IOException {
+            return lineTo(0, y);
+        }
+
+        PathPainter drawCorner(Corner corner) throws IOException {
+            if (corner.radiusX == 0 && corner.radiusY == 0) {
+                return this;
+            }
+            if (corner.radiusX == 0 || corner.radiusY == 0) {
+                x += corner.incrementX;
+                y += corner.incrementY;
+                BorderPainter.this.lineTo(x, y);
+                return this;
+            }
+            BorderPainter.this.arcTo(corner.angles.start, corner.angles.end, x + corner.centerX,
+                    y + corner.centerY, corner.radiusX, corner.radiusY);
+            x += corner.incrementX;
+            y += corner.incrementY;
+            return this;
+        }
+    }
 
     /**
-     * Translate the coordinate frame
-     * @param xTranslate translation in the x direction
-     * @param yTranslate translation in the y direction
-     * @throws IOException if an I/O error occurs
+     * Calculate the correction factor to handle over-sized elliptic corner radii.
+     *
+     * @param width the border width
+     * @param height the border height
+     * @param before the before border properties
+     * @param after the after border properties
+     * @param start the start border properties
+     * @param end the end border properties
+     *
      */
-    protected abstract void translateCoordinates(int xTranslate, int yTranslate) throws IOException;
+    protected static double calculateCornerCorrectionFactor(int width, int height, BorderProps before,
+            BorderProps after, BorderProps start, BorderProps end) {
+        return calculateCornerScaleCorrection(width, height, borderSegmentForBefore(before),
+                borderSegmentForAfter(after), borderSegmentForStart(start), borderSegmentForEnd(end));
+    }
 
     /**
-     * Scale the coordinate frame
-     * @param xScale scale factor in the x direction
-     * @param yScale scale factor in the y direction
-     * @throws IOException if an I/O error occurs
+     * Calculate the scaling factor to handle over-sized elliptic corner radii.
+     *
+     * @param width the border width
+     * @param height the border height
+     * @param before the before border segment
+     * @param after the after border segment
+     * @param start the start border segment
+     * @param end the end border segment
      */
-    protected abstract void scaleCoordinates(float xScale, float yScale) throws IOException;
+    protected static double calculateCornerScaleCorrection(int width, int height, BorderSegment before,
+            BorderSegment after, BorderSegment start, BorderSegment end) {
+        return CornerScaleCorrectionCalculator.calculate(width, height, before, after, start, end);
+    }
 
+    private static final class CornerScaleCorrectionCalculator {
 
-    /**
-     * Closes the current path.
-     * @throws IOException if an I/O error occurs
-     */
-    protected abstract void closePath() throws IOException;
+        private double correctionFactor = 1;
 
-    /**
-     * Reduces the current clipping region to the current path.
-     * @throws IOException if an I/O error occurs
-     */
-    protected abstract void clip() throws IOException;
+        private CornerScaleCorrectionCalculator(int width, int height,
+                BorderSegment before, BorderSegment after,
+                BorderSegment start, BorderSegment end) {
+            calculateForSegment(width, start, before, end);
+            calculateForSegment(height, before, end, after);
+            calculateForSegment(width, end, after, start);
+            calculateForSegment(height, after, start, before);
+        }
 
-    /**
-     * Save the graphics state on the stack.
-     * @throws IOException if an I/O error occurs
-     */
-    protected abstract void saveGraphicsState() throws IOException;
+        public static double calculate(int width, int height,
+                BorderSegment before, BorderSegment after,
+                BorderSegment start, BorderSegment end) {
+            return new CornerScaleCorrectionCalculator(width, height, before, after, start, end)
+                    .correctionFactor;
+        }
 
-    /**
-     * Restore the last graphics state from the stack.
-     * @throws IOException if an I/O error occurs
-     */
-    protected abstract void restoreGraphicsState() throws IOException;
+        private void calculateForSegment(int width, BorderSegment bpsStart, BorderSegment bpsBefore,
+                BorderSegment bpsEnd) {
+            if (bpsBefore.isSpecified()) {
+                double ellipseExtent = bpsStart.getRadiusEnd() + bpsEnd.getRadiusStart();
+                if (ellipseExtent > 0) {
+                    double thisCorrectionFactor = width / ellipseExtent;
+                    if (thisCorrectionFactor < correctionFactor) {
+                        correctionFactor = thisCorrectionFactor;
+                    }
+                }
+            }
+        }
+    }
+
+    private void drawBorderLine(int x1, int y1, int x2, int y2, boolean horz, boolean startOrBefore,
+            int style, Color color) throws IOException {
+        graphicsPainter.drawBorderLine(x1, y1, x2, y2, horz, startOrBefore, style, color);
+    }
+
+    private void moveTo(int x, int y) throws IOException {
+        graphicsPainter.moveTo(x, y);
+    }
+
+    private void lineTo(int x, int y) throws IOException {
+        graphicsPainter.lineTo(x, y);
+    }
+
+    private void arcTo(final double startAngle, final double endAngle, final int cx, final int cy,
+            final int width, final int height) throws IOException {
+        graphicsPainter.arcTo(startAngle, endAngle, cx, cy, width, height);
+    }
+
+    private void rotateCoordinates(double angle) throws IOException {
+        graphicsPainter.rotateCoordinates(angle);
+    }
+
+    private void translateCoordinates(int xTranslate, int yTranslate) throws IOException {
+        graphicsPainter.translateCoordinates(xTranslate, yTranslate);
+    }
+
+    private void closePath() throws IOException {
+        graphicsPainter.closePath();
+    }
+
+    private void clip() throws IOException {
+        graphicsPainter.clip();
+    }
+
+    private void saveGraphicsState() throws IOException {
+        graphicsPainter.saveGraphicsState();
+    }
+
+    private void restoreGraphicsState() throws IOException {
+        graphicsPainter.restoreGraphicsState();
+    }
 
 }
