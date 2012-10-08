@@ -26,7 +26,7 @@
     <section id="intro">
       <title>Introduction</title>
       <p>
-        This is Release Version 1.1 Apache FOP. FOP 1.1 contains many bug
+        This is Version 1.1 of Apache FOP. FOP 1.1 contains many bug
         fixes and a number of improvements, including
         important features such as support for <a href="complexscripts.html">Complex Scripts</a>
         (e.g., Arabic, Hebrew, Indic, and Southeast Asian scripts). To see what has changed since the last release,
