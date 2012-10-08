@@ -40,6 +40,8 @@ import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
+import org.apache.fop.render.intermediate.BorderPainter;
+import org.apache.fop.render.intermediate.GraphicsPainter;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
@@ -57,7 +59,9 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
     /** The current content generator */
     protected PDFContentGenerator generator;
 
-    private final PDFBorderPainter borderPainter;
+    private final GraphicsPainter graphicsPainter;
+
+    private final BorderPainter borderPainter;
 
     private boolean accessEnabled;
 
@@ -75,7 +79,8 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         super(documentHandler);
         this.logicalStructureHandler = logicalStructureHandler;
         this.generator = documentHandler.getGenerator();
-        this.borderPainter = new PDFBorderPainter(this.generator);
+        this.graphicsPainter = new PDFGraphicsPainter(this.generator);
+        this.borderPainter = new BorderPainter(this.graphicsPainter);
         this.state = IFState.create();
         accessEnabled = this.getUserAgent().isAccessibilityEnabled();
     }
@@ -267,7 +272,11 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
         throws IFException {
         generator.endTextObject();
-        this.borderPainter.drawLine(start, end, width, color, style);
+        try {
+            this.graphicsPainter.drawLine(start, end, width, color, style);
+        } catch (IOException ioe) {
+            throw new IFException("Cannot draw line", ioe);
+        }
     }
 
     private Typeface getTypeface(String fontName) {

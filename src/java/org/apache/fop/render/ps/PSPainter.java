@@ -48,6 +48,8 @@ import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
+import org.apache.fop.render.intermediate.BorderPainter;
+import org.apache.fop.render.intermediate.GraphicsPainter;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
@@ -64,7 +66,9 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
     /** logging instance */
     private static Log log = LogFactory.getLog(PSPainter.class);
 
-    private PSBorderPainter borderPainter;
+    private final GraphicsPainter graphicsPainter;
+
+    private BorderPainter borderPainter;
 
     private boolean inTextMode = false;
 
@@ -78,7 +82,8 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
 
     protected PSPainter(PSDocumentHandler documentHandler, IFState state) {
         super(documentHandler);
-        this.borderPainter = new PSBorderPainter(getGenerator());
+        this.graphicsPainter = new PSGraphicsPainter(getGenerator());
+        this.borderPainter = new BorderPainter(graphicsPainter);
         this.state = state;
     }
 
@@ -260,7 +265,7 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                 throws IFException {
         try {
             endTextObject();
-            this.borderPainter.drawLine(start, end, width, color, style);
+            this.graphicsPainter.drawLine(start, end, width, color, style);
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawLine()", ioe);
         }

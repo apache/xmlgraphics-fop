@@ -80,19 +80,19 @@ public final class TraitSetter {
 
         addBorderTrait(area, bpProps, isNotFirst,
                 CommonBorderPaddingBackground.START,
-                BorderProps.SEPARATE, Trait.BORDER_START, context);
+                BorderProps.Mode.SEPARATE, Trait.BORDER_START, context);
 
         addBorderTrait(area, bpProps, isNotLast,
                 CommonBorderPaddingBackground.END,
-                BorderProps.SEPARATE, Trait.BORDER_END, context);
+                BorderProps.Mode.SEPARATE, Trait.BORDER_END, context);
 
         addBorderTrait(area, bpProps, false,
                 CommonBorderPaddingBackground.BEFORE,
-                BorderProps.SEPARATE, Trait.BORDER_BEFORE, context);
+                BorderProps.Mode.SEPARATE, Trait.BORDER_BEFORE, context);
 
         addBorderTrait(area, bpProps, false,
                 CommonBorderPaddingBackground.AFTER,
-                BorderProps.SEPARATE, Trait.BORDER_AFTER, context);
+                BorderProps.Mode.SEPARATE, Trait.BORDER_AFTER, context);
     }
 
     /*
@@ -104,18 +104,14 @@ public final class TraitSetter {
      */
     private static void addBorderTrait(Area area,
                                        CommonBorderPaddingBackground bpProps,
-                                       boolean bDiscard, int iSide, int mode,
-                                       Integer oTrait, PercentBaseContext context) {
+                                       boolean bDiscard, int iSide, BorderProps.Mode mode,
+                                       Integer traitCode, PercentBaseContext context) {
         int iBP = bpProps.getBorderWidth(iSide, bDiscard);
         int radiusStart = bpProps.getBorderRadiusStart(iSide, bDiscard, context);
         int radiusEnd = bpProps.getBorderRadiusEnd(iSide, bDiscard, context);
         if (iBP > 0 || radiusStart > 0 || radiusEnd > 0) {
-            BorderProps bps =  new BorderProps(bpProps.getBorderStyle(iSide),
-                    iBP, bpProps.getBorderColor(iSide),
-                    mode);
-            bps.setRadiusStart(radiusStart);
-            bps.setRadiusEnd(radiusEnd);
-            area.addTrait(oTrait, bps);
+            area.addTrait(traitCode, new BorderProps(bpProps.getBorderStyle(iSide), iBP, radiusStart, radiusEnd,
+                    bpProps.getBorderColor(iSide), mode));
         }
     }
 
@@ -273,14 +269,8 @@ public final class TraitSetter {
         int radiusStart = bordProps.getBorderRadiusStart(side, false, context);
         int radiusEnd = bordProps.getBorderRadiusEnd(side, false, context);
         if (width != 0 || radiusStart != 0 || radiusEnd != 0) {
-            BorderProps bps;
-            bps = new BorderProps(bordProps.getBorderStyle(side),
-                                  width,
-                                  bordProps.getBorderColor(side),
-                                  BorderProps.SEPARATE);
-            bps.setRadiusStart(radiusStart);
-            bps.setRadiusEnd(radiusEnd);
-            return bps;
+            return new BorderProps(bordProps.getBorderStyle(side), width, radiusStart, radiusEnd,
+                                  bordProps.getBorderColor(side), BorderProps.Mode.SEPARATE);
         } else {
             return null;
         }
@@ -290,8 +280,8 @@ public final class TraitSetter {
         assert borderInfo != null;
         int width = borderInfo.getRetainedWidth();
         if (width != 0) {
-            return new BorderProps(borderInfo.getStyle(), width, borderInfo.getColor(),
-                    (outer ? BorderProps.COLLAPSE_OUTER : BorderProps.COLLAPSE_INNER));
+            return  BorderProps.makeRectangular(borderInfo.getStyle(), width, borderInfo.getColor(),
+                    (outer ? BorderProps.Mode.COLLAPSE_OUTER : BorderProps.Mode.COLLAPSE_INNER));
         } else {
             return null;
         }
