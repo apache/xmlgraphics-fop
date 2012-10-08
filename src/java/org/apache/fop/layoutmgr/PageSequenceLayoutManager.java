@@ -99,8 +99,7 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         org.apache.fop.area.PageSequence pageSequenceAreaObject
                 = new org.apache.fop.area.PageSequence(title);
         transferExtensions(pageSequenceAreaObject);
-        pageSequenceAreaObject.setLanguage(getPageSequence().getLanguage());
-        pageSequenceAreaObject.setCountry(getPageSequence().getCountry());
+        pageSequenceAreaObject.setLocale(getPageSequence().getLocale());
         areaTreeModel.startPageSequence(pageSequenceAreaObject);
         if (log.isDebugEnabled()) {
             log.debug("Starting layout");

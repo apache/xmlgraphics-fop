@@ -20,6 +20,7 @@
 package org.apache.fop.area;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Represents a page sequence in the area tree.
@@ -28,8 +29,8 @@ public class PageSequence extends AreaTreeObject {
 
     private List<PageViewport> pages = new java.util.ArrayList<PageViewport>();
     private LineArea title;
-    private String language;
-    private String country;
+
+    private Locale locale;
 
     /**
      * Main constructor
@@ -88,43 +89,21 @@ public class PageSequence extends AreaTreeObject {
     }
 
     /**
-     * Returns the language of the page-sequence.
-     * @return the language (the value of the language property, "none" is mapped to null)
+     * Sets the locale that applies to this page-sequence.
+     *
+     * @param locale the locale to set
      */
-    public String getLanguage() {
-        return this.language;
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
     /**
-     * Sets the language that applies to this page-sequence.
-     * @param language the language to set ("none" is mapped to null)
+     * Returns the locale of this page-sequence.
+     *
+     * @return the locale, {@code null} if not set
      */
-    public void setLanguage(String language) {
-        if ("none".equals(language)) {
-            this.language = null;
-        } else {
-            this.language = language;
-        }
-    }
-
-    /**
-     * Returns the country of the page-sequence.
-     * @return the country (the value of the country property, "none" is mapped to null)
-     */
-    public String getCountry() {
-        return this.country;
-    }
-
-    /**
-     * Sets the country that applies to this page-sequence.
-     * @param country the country to set ("none" is mapped to null)
-     */
-    public void setCountry(String country) {
-        if ("none".equals(country)) {
-            this.country = null;
-        } else {
-            this.country = country;
-        }
+    public Locale getLocale() {
+        return locale;
     }
 
 }
