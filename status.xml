@@ -62,6 +62,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="add" fixes-bug="53980">
+        PDF accessibility: Store language information coming from fo:block or fo:character in the 
+        structure tree.
+      </action>
       <action context="Layout" dev="MH" type="add" fixes-bug="53924" due-to="Luis Bernardo">
         Support for retrieve-table-markers
       </action>

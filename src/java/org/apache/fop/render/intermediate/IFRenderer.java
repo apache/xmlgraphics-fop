@@ -520,24 +520,13 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 this.inPageSequence = true;
             }
             establishForeignAttributes(pageSequence.getForeignAttributes());
-            documentHandler.getContext().setLanguage(toLocale(pageSequence));
+            documentHandler.getContext().setLanguage(pageSequence.getLocale());
             documentHandler.startPageSequence(null);
             resetForeignAttributes();
             processExtensionAttachments(pageSequence);
         } catch (IFException e) {
             handleIFException(e);
         }
-    }
-
-    private Locale toLocale(PageSequence pageSequence) {
-        if (pageSequence.getLanguage() != null) {
-            if (pageSequence.getCountry() != null) {
-                return new Locale(pageSequence.getLanguage(), pageSequence.getCountry());
-            } else {
-                return new Locale(pageSequence.getLanguage());
-            }
-        }
-        return null;
     }
 
     private Metadata createDefaultDocumentMetadata() {

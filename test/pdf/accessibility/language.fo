@@ -1,0 +1,30 @@
+<?xml version="1.0" standalone="no"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
+  font-family="sans-serif">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="170pt" page-width="220pt" margin="10pt">
+      <fo:region-body display-align="center"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page" language="en" country="GB">
+    <fo:flow flow-name="xsl-region-body" line-height="10pt" font-size="8pt" space-before="5pt" 
+      space-after="5pt">
+      <fo:block>This block of text is written in the default language of the page sequence, which is 
+        British English.</fo:block>
+      <fo:block language="fr" country="FR" space-before="inherit" space-after="inherit">Ce text est 
+        écrit dans une autre langue, en l’occurence le français de France.
+        <fo:block language="en" country="US" space-before="inherit" start-indent="1em" 
+          space-after="inherit">However, this block of French text encloses a block of American 
+          English.
+          <fo:block space-before="inherit" start-indent="2em" space-after="inherit" language="en" 
+            country="US">The structure element corresponding to this block should have no language 
+            set as it is the same as on the parent block.</fo:block></fo:block>
+        Maintenant on revient au français.</fo:block>
+      <fo:block space-before="inherit">And now we are back to the English language, with a 
+        <fo:character character="F" language="fr" country="none" color="blue"/>rench 
+        character.</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

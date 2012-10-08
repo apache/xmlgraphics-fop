@@ -53,17 +53,13 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="en" xpath="/areaTree/pageSequence[1]/@language"/>
-    <true xpath="not(boolean(/areaTree/pageSequence[1]/@country))"/>
+    <eval expected="en" xpath="/areaTree/pageSequence[1]/@xml:lang"/>
 
-    <eval expected="en" xpath="/areaTree/pageSequence[2]/@language"/>
-    <eval expected="US" xpath="/areaTree/pageSequence[2]/@country"/>
+    <eval expected="en-US" xpath="/areaTree/pageSequence[2]/@xml:lang"/>
     
-    <eval expected="de" xpath="/areaTree/pageSequence[3]/@language"/>
-    <eval expected="CH" xpath="/areaTree/pageSequence[3]/@country"/>
+    <eval expected="de-CH" xpath="/areaTree/pageSequence[3]/@xml:lang"/>
     
-    <eval expected="de" xpath="/areaTree/pageSequence[4]/@language"/>
-    <true xpath="not(boolean(/areaTree/pageSequence[4]/@country))"/>
+    <eval expected="de" xpath="/areaTree/pageSequence[4]/@xml:lang"/>
   </checks>
   <if-checks xmlns:if="http://xmlgraphics.apache.org/fop/intermediate">
     <eval expected="en" xpath="//if:page-sequence[1]/@xml:lang"/>

@@ -150,9 +150,20 @@
   <xsl:template match="fo:leader"/>
 
 
-  <!-- Keep fox:alt-text and role attributes, discard everything else -->
+  <!-- Keep the relevant attributes, discard everything else -->
   <xsl:template match="@fox:alt-text|@role">
     <xsl:copy-of select="."/>
+  </xsl:template>
+
+  <xsl:template match="fo:block/@language[. != ../ancestor::*[@language][1]/@language]
+                  |fo:character/@language[. != ../ancestor::*[@language][1]/@language]">
+    <xsl:attribute name="xml:lang">
+      <xsl:value-of select="."/>
+      <xsl:if test="../@country[. != 'none']">
+        <xsl:text>-</xsl:text>
+        <xsl:value-of select="../@country"/>
+      </xsl:if>
+    </xsl:attribute>
   </xsl:template>
 
   <xsl:template match="@*"/>

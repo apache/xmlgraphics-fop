@@ -23,6 +23,8 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -42,6 +44,7 @@ import org.apache.fop.pdf.StandardStructureTypes.Grouping;
 import org.apache.fop.pdf.StandardStructureTypes.Table;
 import org.apache.fop.pdf.StructureHierarchyMember;
 import org.apache.fop.pdf.StructureType;
+import org.apache.fop.util.LanguageTags;
 import org.apache.fop.util.XMLUtil;
 
 class PDFStructureTreeBuilder implements StructureTreeEventHandler {
@@ -62,10 +65,10 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         addBuilder("static-content",            regionBuilder);
         addBuilder("flow",                      regionBuilder);
         // Block-level Formatting Objects
-        addBuilder("block",                     StandardStructureTypes.Paragraphlike.P);
+        addBuilder("block", new LanguageHolderBuilder(StandardStructureTypes.Paragraphlike.P));
         addBuilder("block-container",           StandardStructureTypes.Grouping.DIV);
         // Inline-level Formatting Objects
-        addBuilder("character",                 StandardStructureTypes.InlineLevelStructure.SPAN);
+        addBuilder("character", new LanguageHolderBuilder(StandardStructureTypes.InlineLevelStructure.SPAN));
         addBuilder("external-graphic",          new ImageBuilder());
         addBuilder("instream-foreign-object",   new ImageBuilder());
         addBuilder("inline",                    StandardStructureTypes.InlineLevelStructure.SPAN);
@@ -188,6 +191,23 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
                 Attributes attributes) {
             String flowName = attributes.getValue(Flow.FLOW_NAME);
             ((PageSequenceStructElem) parent).addContent(flowName, kid);
+        }
+
+    }
+
+    private static class LanguageHolderBuilder extends DefaultStructureElementBuilder {
+
+        LanguageHolderBuilder(StructureType structureType) {
+            super(structureType);
+        }
+
+        @Override
+        protected void setAttributes(PDFStructElem structElem, Attributes attributes) {
+            String xmlLang = attributes.getValue(XMLConstants.XML_NS_URI, "lang");
+            if (xmlLang != null) {
+                Locale locale = LanguageTags.toLocale(xmlLang);
+                structElem.setLanguage(locale);
+            }
         }
 
     }

@@ -96,6 +96,11 @@ public class FO2StructureTreeConverterTestCase {
         testConverter("table-header_scope.fo");
     }
 
+    @Test
+    public void testLanguage() throws Exception {
+        testConverter("language.fo");
+    }
+
     private static InputStream getResource(String name) {
         return FO2StructureTreeConverterTestCase.class.getResourceAsStream(name);
     }

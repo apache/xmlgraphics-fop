@@ -22,7 +22,8 @@ package org.apache.fop.accessibility.fo;
 import java.util.Locale;
 import java.util.Stack;
 
-import org.xml.sax.SAXException;
+import javax.xml.XMLConstants;
+
 import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.fop.accessibility.StructureTreeElement;
@@ -59,8 +60,11 @@ import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.LayoutMasterSet;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonAccessibilityHolder;
+import org.apache.fop.fo.properties.CommonHyphenation;
+import org.apache.fop.util.LanguageTags;
 import org.apache.fop.util.XMLUtil;
 
 /**
@@ -76,16 +80,20 @@ class StructureTreeEventTrigger extends FOEventHandler {
 
     private final Stack<Boolean> inTableHeader = new Stack<Boolean>();
 
+    private final Stack<Locale> locales = new Stack<Locale>();
+
     public StructureTreeEventTrigger(StructureTreeEventHandler structureTreeEventHandler) {
         this.structureTreeEventHandler = structureTreeEventHandler;
     }
 
     @Override
-    public void startDocument() throws SAXException {
+    public void startRoot(Root root) {
+        locales.push(root.getLocale());
     }
 
     @Override
-    public void endDocument() throws SAXException {
+    public void endRoot(Root root) {
+        locales.pop();
     }
 
     @Override
@@ -93,13 +101,11 @@ class StructureTreeEventTrigger extends FOEventHandler {
         if (layoutMasterSet == null) {
             layoutMasterSet = pageSeq.getRoot().getLayoutMasterSet();
         }
-        Locale locale = null;
-        if (pageSeq.getLanguage() != null) {
-            if (pageSeq.getCountry() != null) {
-                locale = new Locale(pageSeq.getLanguage(), pageSeq.getCountry());
-            } else {
-                locale = new Locale(pageSeq.getLanguage());
-            }
+        Locale locale = pageSeq.getLocale();
+        if (locale != null) {
+            locales.push(locale);
+        } else {
+            locales.push(locales.peek());
         }
         String role = pageSeq.getCommonAccessibility().getRole();
         structureTreeEventHandler.startPageSequence(locale, role);
@@ -108,6 +114,7 @@ class StructureTreeEventTrigger extends FOEventHandler {
     @Override
     public void endPageSequence(PageSequence pageSeq) {
         structureTreeEventHandler.endPageSequence();
+        locales.pop();
     }
 
     @Override
@@ -171,12 +178,28 @@ class StructureTreeEventTrigger extends FOEventHandler {
 
     @Override
     public void startBlock(Block bl) {
-        startElement(bl);
+        CommonHyphenation hyphProperties = bl.getCommonHyphenation();
+        AttributesImpl attributes = createLangAttribute(hyphProperties);
+        startElement(bl, attributes);
+    }
+
+    private AttributesImpl createLangAttribute(CommonHyphenation hyphProperties) {
+        Locale locale = hyphProperties.getLocale();
+        AttributesImpl attributes = new AttributesImpl();
+        if (locale == null || locale.equals(locales.peek())) {
+            locales.push(locales.peek());
+        } else {
+            locales.push(locale);
+            addAttribute(attributes, XMLConstants.XML_NS_URI, "lang", "xml",
+                    LanguageTags.toLanguageTag(locale));
+        }
+        return attributes;
     }
 
     @Override
     public void endBlock(Block bl) {
         endElement(bl);
+        locales.pop();
     }
 
     @Override
@@ -393,8 +416,10 @@ class StructureTreeEventTrigger extends FOEventHandler {
 
     @Override
     public void character(Character c) {
-        startElementWithID(c);
+        AttributesImpl attributes = createLangAttribute(c.getCommonHyphenation());
+        startElementWithID(c, attributes);
         endElement(c);
+        locales.pop();
     }
 
     @Override
@@ -409,7 +434,10 @@ class StructureTreeEventTrigger extends FOEventHandler {
     }
 
     private void startElementWithID(FONode node) {
-        AttributesImpl attributes = new AttributesImpl();
+        startElementWithID(node, new AttributesImpl());
+    }
+
+    private void startElementWithID(FONode node, AttributesImpl attributes) {
         String localName = node.getLocalName();
         if (node instanceof CommonAccessibilityHolder) {
             addRole((CommonAccessibilityHolder) node, attributes);
