@@ -59,6 +59,7 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             boolean startOrBefore, int style, Color col) {
         float w = x2 - x1;
         float h = y2 - y1;
+        float colFactor;
         switch (style) {
         case Constants.EN_DASHED:
             generator.setColor(col);
@@ -133,8 +134,7 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             break;
         case Constants.EN_GROOVE:
         case Constants.EN_RIDGE:
-        {
-            float colFactor = (style == Constants.EN_GROOVE ? 0.4f : -0.4f);
+            colFactor = (style == Constants.EN_GROOVE ? 0.4f : -0.4f);
             generator.setSolidLine();
             if (horz) {
                 Color uppercol = ColorUtil.lightenColor(col, -colFactor);
@@ -162,11 +162,9 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
                         .strokeLine(xm1 + w3 + w3, y1, xm1 + w3 + w3, y2);
             }
             break;
-        }
         case Constants.EN_INSET:
         case Constants.EN_OUTSET:
-        {
-            float colFactor = (style == Constants.EN_OUTSET ? 0.4f : -0.4f);
+            colFactor = (style == Constants.EN_OUTSET ? 0.4f : -0.4f);
             generator.setSolidLine();
             Color c = col;
             if (horz) {
@@ -183,7 +181,6 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
                         .strokeLine(xm1, y1, xm1, y2);
             }
             break;
-        }
         case Constants.EN_HIDDEN:
             break;
         default:
@@ -382,7 +379,6 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             String xS = format(xStart);
             String xE = format(xEnd);
             String yS = format(yStart);
-            String yE = format(yEnd);
             if (style == RuleStyle.GROOVE) {
                 addLine("m", xS, yS)
                         .addLine("l", xE, yS)

@@ -344,7 +344,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsStart the border traits associated with start edge
      * @param bpsEnd the border traits associated with end edge
      * @param level of bidirectional embedding
-     * @param innerBackgroundColor the background color of the block 
+     * @param innerBackgroundColor the background color of the block
      */
     protected void drawBorders(                                  // CSOK: ParameterNumber
             float startx, float starty, float width, float height,

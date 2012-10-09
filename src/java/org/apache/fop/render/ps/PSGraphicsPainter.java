@@ -31,7 +31,6 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.render.intermediate.ArcToBezierCurveTransformer;
 import org.apache.fop.render.intermediate.BezierCurvePainter;
-import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.render.intermediate.GraphicsPainter;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
@@ -89,7 +88,7 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             gen.useColor(col);
             if (horz) {
                 float unit = Math.abs(2 * h);
-                int rep = (int)(w / unit);
+                int rep = (int) (w / unit);
                 if (rep % 2 == 0) {
                     rep++;
                 }
@@ -101,7 +100,7 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
                 drawLine(gen, x1, ym, x2, ym);
             } else {
                 float unit = Math.abs(2 * w);
-                int rep = (int)(h / unit);
+                int rep = (int) (h / unit);
                 if (rep % 2 == 0) {
                     rep++;
                 }
@@ -118,7 +117,7 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             gen.useLineCap(1); //Rounded!
             if (horz) {
                 float unit = Math.abs(2 * h);
-                int rep = (int)(w / unit);
+                int rep = (int) (w / unit);
                 if (rep % 2 == 0) {
                     rep++;
                 }
@@ -129,7 +128,7 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
                 drawLine(gen, x1, ym, x2, ym);
             } else {
                 float unit = Math.abs(2 * w);
-                int rep = (int)(h / unit);
+                int rep = (int) (h / unit);
                 if (rep % 2 == 0) {
                     rep++;
                 }

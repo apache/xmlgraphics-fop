@@ -38,7 +38,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.util.CompareUtil;
 
 /**
  * Stores all common border and padding properties.

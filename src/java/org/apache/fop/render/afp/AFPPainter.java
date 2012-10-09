@@ -736,16 +736,8 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
             GeneralPath cut = new GeneralPath();
             cut.moveTo(0, 0);
-            float borderWidthRatio = ((float) beforeWidth) / startWidth;
-            if (beforeWidth * startRadius > startWidth * beforeRadius) {
-                cut.lineTo(startRadius, borderWidthRatio * startRadius);
-                cut.lineTo(startRadius, 0);
-
-            } else {
-                cut.lineTo(startRadius, borderWidthRatio * startRadius);
-                cut.lineTo(startRadius, 0);
-            }
-
+            cut.lineTo(startRadius, ((float) startRadius * beforeWidth) / startWidth);
+            cut.lineTo(startRadius, 0);
             clip.intersect(new Area(cut));
             clip.transform(transform);
             return clip;
@@ -776,16 +768,8 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
             GeneralPath cut = new GeneralPath();
             cut.moveTo(0, 0);
-            float borderWidthRatio = ((float) beforeWidth) / startWidth;
-            if (beforeWidth * startRadius > startWidth * beforeRadius) {
-                cut.lineTo(startRadius, borderWidthRatio * startRadius);
-                cut.lineTo(startRadius, 0);
-
-            } else {
-                cut.lineTo(startRadius, borderWidthRatio * startRadius);
-                cut.lineTo(startRadius, 0);
-            }
-
+            cut.lineTo(startRadius, ((float) startRadius * beforeWidth) / startWidth);
+            cut.lineTo(startRadius, 0);
             clip.subtract(new Area(cut));
             clip.transform(transform);
             return clip;
@@ -860,7 +844,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
             hints.put(ImageHandlerUtil.CONVERSION_MODE, ImageHandlerUtil.CONVERSION_MODE_BITMAP);
             hints.put("TARGET_RESOLUTION",
-                    new Integer(context.getPaintingState().getResolution()));
+                    Integer.valueOf(context.getPaintingState().getResolution()));
 
 
             try {

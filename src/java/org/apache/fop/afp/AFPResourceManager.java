@@ -242,7 +242,6 @@ public class AFPResourceManager {
     private void includeObject(AbstractNamedAFPObject namedObj, AFPDataObjectInfo dataObjectInfo) {
 
         // create the include object
-        AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
         String objectName = namedObj.getName();
 
         AbstractCachedObject cachedObject;
