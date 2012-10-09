@@ -113,7 +113,7 @@ public class PSPainterTestCase {
         BorderProps border4 = new BorderProps(style, borderWidth, radiusStart, radiusEnd, color, mode);
         try {
             psPainter.drawBorderRect(rectangle, border1, border2, border3, border4, Color.WHITE);
-            verify(psGenerator, times(16)).writeln("20.0 20.0 20.0 20.0 20.0 20.0  curveto ");
+            verify(psGenerator, times(16)).writeln("20.0 20.0 20.0 20.0 20.0 20.0 curveto ");
         } catch (Exception e) {
             fail("something broke...");
         }
