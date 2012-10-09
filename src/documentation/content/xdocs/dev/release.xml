@@ -68,6 +68,7 @@
         <li>Tag the source tree with the release ID. For example, if the release is 1.0:
           <code>svn copy https://svn.apache.org/repos/asf/xmlgraphics/fop/branches/fop-1_0 https://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-1_0</code></li>
         <li>Make a fresh checkout with the just created tag: <code>svn co https://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-1_0</code></li>
+        <li>Copy the <code>jai_core.jar</code> and <code>jai_codec.jar</code> to <code>lib</code>.</li>
         <li>Copy the hyphenation patterns jar file <code>fop-hyph.jar</code> to <code>lib</code> (e.g. from <code>http://sourceforge.net/projects/offo</code></li>
         <li>Alternatively, create a <code>build-local.properties</code> file that points to the above libraries.</li>
         <li>Run <code>build[.sh] dist</code>. Do this using Sun JDK 1.5 or later. A Forrest installation is needed.</li>
