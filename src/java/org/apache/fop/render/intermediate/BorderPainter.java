@@ -33,12 +33,31 @@ public class BorderPainter {
     /** TODO remove before integration*/
     public static final String ROUNDED_CORNERS = "fop.round-corners";
 
-    /** TODO Use a class to model border instead of an array
-     * convention index of top, bottom, right and left borders */
-    protected static final int TOP = 0, RIGHT = 1, BOTTOM = 2, LEFT = 3;
-    /** TODO Use a class to model border corners instead of an array
-     convention index of top-left, top-right, bottom-right and bottom-left border corners*/
-    protected static final int TOP_LEFT = 0, TOP_RIGHT = 1, BOTTOM_RIGHT = 2, BOTTOM_LEFT = 3;
+    // TODO Use a class to model border instead of an array
+    /** Convention index of before top */
+    protected static final int TOP = 0;
+
+    /** Convention index of right border */
+    protected static final int RIGHT = 1;
+
+    /** Convention index of bottom border */
+    protected static final int BOTTOM = 2;
+
+    /** Convention index of left border */
+    protected static final int LEFT = 3;
+
+    // TODO Use a class to model border corners instead of an array
+    /** Convention index of top-left border corners */
+    protected static final int TOP_LEFT = 0;
+
+    /** Convention index of top-right-end border corners */
+    protected static final int TOP_RIGHT = 1;
+
+    /** Convention index of bottom-right border corners */
+    protected static final int BOTTOM_RIGHT = 2;
+
+    /** Convention index of bottom-left border corners */
+    protected static final int BOTTOM_LEFT = 3;
 
     private final GraphicsPainter graphicsPainter;
 
@@ -227,7 +246,7 @@ public class BorderPainter {
             int outerx = startx - clipw[LEFT];
             int clipx = outerx + clipw[LEFT];
             int innerx = outerx + bw[LEFT];
-            
+
             saveGraphicsState();
 
             moveTo(clipx, ey1);
@@ -281,10 +300,12 @@ public class BorderPainter {
         final int width = borderRect.width - start.getClippedWidth() - end.getClippedWidth();
         final int height = borderRect.height - before.getClippedWidth() - after.getClippedWidth();
         //Determine scale factor if any adjacent elliptic corners overlap
-        double cornerCorrectionFactor = calculateCornerScaleCorrection(width, height, before, after, start, end);
+        double cornerCorrectionFactor = calculateCornerScaleCorrection(width, height, before, after, start,
+                end);
         drawBorderSegment(start, before, end, 0, width, startx, starty, cornerCorrectionFactor);
         drawBorderSegment(before, end, after, 1, height, startx + width, starty, cornerCorrectionFactor);
-        drawBorderSegment(end, after, start, 2, width, startx + width, starty + height, cornerCorrectionFactor);
+        drawBorderSegment(end, after, start, 2, width, startx + width, starty + height,
+                cornerCorrectionFactor);
         drawBorderSegment(after, start, before, 3, height, startx, starty + height, cornerCorrectionFactor);
     }
 
@@ -637,10 +658,10 @@ public class BorderPainter {
         private static final Corner SQUARE = new Corner(0, 0, null, 0, 0, 0, 0);
 
         /** The radius of the elliptic corner in the x direction */
-        protected final int radiusX;
+        private final int radiusX;
 
         /** The radius of the elliptic corner in the y direction */
-        protected final int radiusY;
+        private final int radiusY;
 
         /** The start and end angles of the corner ellipse */
         private final CornerAngles angles;

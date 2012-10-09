@@ -806,7 +806,7 @@ public interface Constants {
      * numbers.
      */
     int PR_X_NUMBER_CONVERSION_FEATURES = 285;
-    
+
     /** Scope for table header */
     int PR_X_HEADER_COLUMN = 286;
 

@@ -27,6 +27,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.fop.afp.AFPDitheredRectanglePainter;
@@ -93,8 +94,6 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     private int roundedCornerCount = 0;
 
-    /** Medium Map referenced on previous page **/
-    private String lastMediumMap;
     private static enum Location {
         ELSEWHERE, IN_DOCUMENT_HEADER, FOLLOWING_PAGE_SEQUENCE, IN_PAGE_HEADER
     }
@@ -419,7 +418,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         // Make a unique id
         StringBuffer idBuilder = new StringBuffer("RC");
 
-        String tmp = Integer.toHexString(roundedCornerCount).toUpperCase();
+        String tmp = Integer.toHexString(roundedCornerCount).toUpperCase(Locale.ENGLISH);
         if (tmp.length() > 6) {
             //Will never happen
             //log.error("Rounded corners cache capacity exceeded");

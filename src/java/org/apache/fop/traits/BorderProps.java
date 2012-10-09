@@ -34,7 +34,7 @@ import org.apache.fop.util.ColorUtil;
  */
 public class BorderProps implements Serializable {
 
-    private static final long serialVersionUID = 7053576586478548795L;
+    private static final long serialVersionUID = 8022237892391068187L;
 
     public enum Mode {
         SEPARATE("separate") {
@@ -155,7 +155,7 @@ public class BorderProps implements Serializable {
             return true;
         } else {
             if (obj instanceof BorderProps) {
-                BorderProps other = (BorderProps)obj;
+                BorderProps other = (BorderProps) obj;
                 return (style == other.style)
                         && org.apache.xmlgraphics.java2d.color.ColorUtil.isSameColor(
                                 color, other.color)
@@ -203,7 +203,7 @@ public class BorderProps implements Serializable {
         return sbuf.toString();
     }
 
-    private static class BorderPropsDeserializer {
+    private static final class BorderPropsDeserializer {
 
         private static final BorderPropsDeserializer INSTANCE = new BorderPropsDeserializer();
 
@@ -223,7 +223,7 @@ public class BorderProps implements Serializable {
                 m.find();
                 int width = Integer.parseInt(m.group());
                 Mode mode = Mode.SEPARATE;
-                if ( m.find()) {
+                if (m.find()) {
                     String ms = m.group();
                     if (Mode.COLLAPSE_INNER.value.equalsIgnoreCase(ms)) {
                         mode = Mode.COLLAPSE_INNER;

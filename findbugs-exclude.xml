@@ -4424,7 +4424,7 @@
       <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.render.java2d.Java2DBorderPainter"/>
+      <Class name="org.apache.fop.render.java2d.Java2DGraphicsPainter"/>
       <Method name="drawLine"/>
       <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
    </Match>

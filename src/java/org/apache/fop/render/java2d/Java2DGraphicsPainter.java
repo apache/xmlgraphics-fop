@@ -329,5 +329,4 @@ class Java2DGraphicsPainter implements GraphicsPainter {
         this.painter.restoreGraphicsState();
         this.currentPath = null;
     }
-
 }
