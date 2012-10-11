@@ -20,7 +20,7 @@
 <document>
   <header>
     <title>Apache™ FOP: Development Team</title>
-    <version>$Revision$</version>
+    <version>$Revision: 1364036 $</version>
   </header>
   <body>
     <p>
@@ -38,6 +38,7 @@
           involved in the creation of ISO 8879 (SGML), ISO/IEC 9541 (Font Information Interchange), 
           ISO/IEC 10179 (DSSSL), ISO/IEC 10180 (SPDL), ISO/IEC 10646 (Universal Coded Character Set), 
           and, within the W3C, on XSL-FO 1.0.</li>
+        <li id="lb"><link href="mailto:lmpmbernardo@gmail.com">Luis Bernardo</link> (LB)</li>
         <li id="cb"><link href="mailto:bowditch_chris@hotmail.com">Chris Bowditch</link> (CB)
             is a Java/VB Programmer from England.</li>
         <li id="ac"><link href="mailto:acumiskey AT apache.org">Adrian Cumiskey</link> (AC)
@@ -77,16 +78,15 @@
     <section id="contribute-active">
       <title>Active Contributors</title>
       <ul>
+        <li id="gd">Georg Datterl is a software developer from Austria, currently working for 
+          Geneon media solutions gmbh in Nuremberg, Germany. He needs FOP to wrestle gigabytes of 
+          electronic data into thousands of printed pages.</li>
         <li id="ag">Alexios Giotis holds a Ph.D. in the optimization of turbomachinery cascades 
           using evolutionary algorithms, neural networks and parallel processing. He is one of
           the founding members of i-docs (software for enterprises) and he has been leading its
           technical design &amp; implementation based on open source libraries since its inception. 
           He is relying on Apache FOP for generating high volumes of documents on major banks and
           telecom operators since FOP's 1.0 release. He lives in Athens, Greece.</li>
-        <li id="gd">Georg Datterl is a software developer from Austria, currently working for 
-          Geneon media solutions gmbh in Nuremberg, Germany. He needs FOP to wrestle gigabytes of 
-          electronic data into thousands of printed pages.</li>
-        <li id="lb">Luis Bernardo</li>
       </ul>
     </section>
     <section id="founder">
