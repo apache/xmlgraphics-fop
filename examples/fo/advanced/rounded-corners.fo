@@ -69,7 +69,7 @@
           </fo:table-row>
         </fo:table-body>
       </fo:table>
-      <fo:table border-collapse="separate" margin="40pt 0 20pt 0">
+      <fo:table border-collapse="separate" margin="40pt 0 20pt 0" break-after="page">
         <fo:table-column column-width="150pt"/>
         <fo:table-column column-width="150pt"/>
         <fo:table-column column-width="150pt"/>
@@ -115,6 +115,12 @@
           </fo:table-row>
         </fo:table-body>
       </fo:table>
+      <fo:block margin="20pt 0 40pt 0">
+          <fo:block>        </fo:block>
+        <fo:block-container margin="10 20pt 20pt 20pt">
+            <fo:block border-style="solid" border-width="10" border-color="#00f" fox:border-radius="2000pt" padding="20pt" text-align="center" margin-bottom="10pt">If border radii are specified that would produce overlapping curves (as is the case for the block containg <fo:inline font-style="italic">this</fo:inline> text), then all border radii are proportionally reduced until none of them overlap.  This is in accordance to the procedure described at http://www.w3.org/TR/css3-background/#corner-overlap.</fo:block>
+        </fo:block-container>
+      </fo:block>
     </fo:flow>
   </fo:page-sequence>
 </fo:root>
