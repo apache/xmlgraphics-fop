@@ -27,9 +27,9 @@
   <body>
     <section>
       <title>Status</title>
-      <p>Last updated 15 October 2012.</p>
+      <p>Last updated 18 October 2012.</p>
       <p>
-        Apache™ FOP Version 1.1 was released on 15 October 2012.
+        Apache™ FOP Version 1.1 was released on 18 October 2012.
       </p>
     </section>
     <section>
@@ -37,7 +37,7 @@
       <p>
         The FOP code base is gradually evolving, from Version 0.90,
 	released on 22 November 2005, to Version 1.1, released on
-        15 October 2012. Further releases in the 1.x series and beyond are expected.
+        18 October 2012. Further releases in the 1.x series and beyond are expected.
       </p>
       <p>
         FOP releases prior to version 0.90 were based on a different

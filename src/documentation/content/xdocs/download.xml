@@ -85,7 +85,7 @@
       <p/>
       <table>
         <tr>
-          <th colspan="2">This Candidate Release</th>
+          <th colspan="2">Latest Stable Release</th>
         </tr>
         <tr>
           <td>Repository URL</td>
@@ -104,7 +104,7 @@
           </td>
         </tr>
         <tr>
-          <th colspan="2">Latest Stable Release</th>
+          <th colspan="2">Previous Stable Release</th>
         </tr>
         <tr>
           <td>Repository URL</td>
@@ -119,25 +119,6 @@
           <td>
             <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-1_0/">
               <code>http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-1_0/</code>
-            </link>
-          </td>
-        </tr>
-        <tr>
-          <th colspan="2">Previous Stable Release</th>
-        </tr>
-        <tr>
-          <td>Repository URL</td>
-          <td>
-            <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/tages/fop-0_95/">
-              <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_95/</code>
-            </link>
-          </td>
-        </tr>
-        <tr>
-          <td>Web view</td>
-          <td>
-            <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-0_95/">
-              <code>http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-0_95/</code>
             </link>
           </td>
         </tr>
