@@ -20,8 +20,8 @@
 package org.apache.fop.fo.flow;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -81,16 +81,18 @@ public final class Markers {
                     firstQualifyingIsFirst = new HashMap<String, Marker>();
                 }
                 // first on scope: only put in new values, leave current
-                for (Iterator<String> iter = marks.keySet().iterator(); iter.hasNext();) {
-                    String key = iter.next();
+                Set<Map.Entry<String, Marker>> entries = marks.entrySet();
+                for (Map.Entry<String, Marker> entry : entries) {
+                    String key = entry.getKey();
+                    Marker marker = entry.getValue();
                     if (!firstQualifyingIsFirst.containsKey(key)) {
-                        firstQualifyingIsFirst.put(key, marks.get(key));
+                        firstQualifyingIsFirst.put(key, marker);
                         if (log.isTraceEnabled()) {
                             log.trace("Adding marker " + key + " to firstQualifyingIsFirst");
                         }
                     }
                     if (!firstQualifyingIsAny.containsKey(key)) {
-                        firstQualifyingIsAny.put(key, marks.get(key));
+                        firstQualifyingIsAny.put(key, marker);
                         if (log.isTraceEnabled()) {
                             log.trace("Adding marker " + key + " to firstQualifyingIsAny");
                         }
@@ -106,10 +108,12 @@ public final class Markers {
                 }
             } else {
                 // first on scope: only put in new values, leave current
-                for (Iterator<String> iter = marks.keySet().iterator(); iter.hasNext();) {
-                    String key = iter.next();
+                Set<Map.Entry<String, Marker>> entries = marks.entrySet();
+                for (Map.Entry<String, Marker> entry : entries) {
+                    String key = entry.getKey();
+                    Marker marker = entry.getValue();
                     if (!firstQualifyingIsAny.containsKey(key)) {
-                        firstQualifyingIsAny.put(key, marks.get(key));
+                        firstQualifyingIsAny.put(key, marker);
                         if (log.isTraceEnabled()) {
                             log.trace("Adding marker " + key + " to firstQualifyingIsAny");
                         }
