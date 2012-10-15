@@ -742,7 +742,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         return true;
     }
 
-    private class TableCellBreaker extends LocalBreaker {
+    private static class TableCellBreaker extends LocalBreaker {
 
         public TableCellBreaker(TableCellLayoutManager lm, int ipd, int displayAlign) {
             super(lm, ipd, displayAlign);

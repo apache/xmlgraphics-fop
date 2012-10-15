@@ -3304,6 +3304,11 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$RetrieveTableMarkerLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
       <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$WrapperLayoutManagerMaker"/>
       <Method name="make"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
