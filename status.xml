@@ -61,7 +61,7 @@
       users, i.e. when the behaviour changes and could affect the layout of existing
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
-    <release version="1.1" date="18 October 2012">
+    <release version="1.1" date="20 October 2012">
       <action context="Test" dev="GA" type="fix">
         Fix errors and warnings in example files. Add build.xml for documentation examples.
       </action>
