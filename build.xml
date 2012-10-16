@@ -58,62 +58,68 @@ list of possible build targets.
   <property file="${basedir}/build-local.properties"/>
   <property file="${basedir}/build.properties"/>
   <fileset dir="${basedir}" id="dist.bin">
-    <include name="conf/**"/>
-    <include name="examples/**"/>
+    <include name="KEYS"/>
     <include name="LICENSE"/>
     <include name="NOTICE"/>
     <include name="README"/>
-    <include name="KEYS"/>
-    <include name="status.xml"/>
+    <include name="conf/**"/>
+    <include name="examples/**"/>
+    <include name="fop"/>
     <include name="fop.bat"/>
     <include name="fop.cmd"/>
     <include name="fop.js"/>
-    <include name="fop"/>
+    <include name="status.xml"/>
   </fileset>
   <fileset dir="${basedir}" id="dist.bin.lib">
     <patternset id="dist.lib">
+      <include name="lib/README*"/>
       <include name="lib/avalon-framework*"/>
-      <include name="lib/xmlgraphics-commons*"/>
       <include name="lib/batik*"/>
       <include name="lib/commons-io*"/>
       <include name="lib/commons-logging*"/>
-      <include name="lib/README*"/>
       <include name="lib/serializer*"/>
       <include name="lib/xalan*"/>
       <include name="lib/xerces*"/>
       <include name="lib/xml-apis*"/>
+      <include name="lib/xmlgraphics-commons*"/>
     </patternset>
   </fileset>
-  <patternset id="dist.src.lib.tools">
+  <patternset id="dist.src.lib.build">
     <include name="lib/build/asm*"/>
-    <include name="lib/build/backport-util-concurrent*"/>
+    <include name="lib/build/hamcrest*"/>
     <include name="lib/build/jaxen*"/>
+    <include name="lib/build/mockito*"/>
+    <include name="lib/build/objenesis*"/>
     <include name="lib/build/pmd*"/>
     <include name="lib/build/qdox*"/>
     <include name="lib/build/xmlunit*"/>
   </patternset>
   <fileset dir="${basedir}" id="dist.src">
-    <include name="src/**"/>
-    <include name="conf/**"/>
-    <include name="hyph/hyphenation.dtd"/>
-    <include name="hyph/readme"/>
-    <patternset refid="dist.lib"/>
-    <patternset refid="dist.src.lib.tools"/>
-    <include name="lib/servlet*"/>
-    <include name="test/**"/>
-    <include name="examples/**"/>
+    <include name="KEYS"/>
     <include name="LICENSE"/>
     <include name="NOTICE"/>
     <include name="README"/>
-    <include name="KEYS"/>
-    <include name="known-issues.xml"/>
-    <include name="status.xml"/>
     <include name="build.*"/>
-    <include name="forrest.properties"/>
+    <include name="checkstyle*"/>
+    <exclude name="checkstyle-noframes.xsl"/>
+    <include name="conf/**"/>
+    <include name="examples/**"/>
+    <include name="findbugs*"/>
+    <include name="fop"/>
     <include name="fop.bat"/>
     <include name="fop.cmd"/>
     <include name="fop.js"/>
-    <include name="fop"/>
+    <include name="forrest.*"/>
+    <include name="hyph/hyphenation.dtd"/>
+    <include name="hyph/readme"/>
+    <include name="jacoco*"/>
+    <include name="known-issues.xml"/>
+    <include name="lib/servlet*"/>
+    <include name="src/**"/>
+    <include name="status.xml"/>
+    <include name="test/**"/>
+    <patternset refid="dist.lib"/>
+    <patternset refid="dist.src.lib.build"/>
   </fileset>
   <path id="libs-build-classpath">
     <fileset dir="${basedir}/lib">
