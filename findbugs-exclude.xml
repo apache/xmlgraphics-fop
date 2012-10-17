@@ -1079,6 +1079,15 @@
       <Bug pattern="DM_CONVERT_CASE"/>
    </Match>
    <Match>
+      <Class name="org.apache.fop.pdf.PDFPageLabels"/>
+      <Or>
+        <Method name="addPageLabel"/>
+        <Method name="alphabeticToArabic"/>
+        <Method name="romanToArabic"/>
+      </Or>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
       <Class name="org.apache.fop.render.bitmap.MultiFileRenderingUtil"/>
       <Method name="&lt;init&gt;"/>
       <Bug pattern="DM_CONVERT_CASE"/>
