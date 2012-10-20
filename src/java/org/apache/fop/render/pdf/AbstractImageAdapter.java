@@ -88,11 +88,12 @@ public abstract class AbstractImageAdapter implements PDFImage {
 
     /** {@inheritDoc} */
     public void setup(PDFDocument doc) {
-
         ICC_Profile prof = getEffectiveICCProfile();
         PDFDeviceColorSpace pdfCS = toPDFColorSpace(getImageColorSpace());
         if (prof != null) {
             pdfICCStream = setupColorProfile(doc, prof, pdfCS);
+        } else if (issRGB()) {
+          pdfICCStream = setupsRGBColorProfile(doc);
         }
         if (doc.getProfile().getPDFAMode().isPDFA1LevelB()) {
             if (pdfCS != null
@@ -116,6 +117,34 @@ public abstract class AbstractImageAdapter implements PDFImage {
         return image.getICCProfile();
     }
 
+    protected boolean issRGB() {
+        return false;
+    }
+
+    private static PDFICCStream getDefaultsRGBICCStream(PDFICCBasedColorSpace cs, PDFDocument doc, 
+            String profileDesc) {
+        if (cs == null) {
+            if (profileDesc == null || !profileDesc.startsWith("sRGB")) {
+                log.warn("The default sRGB profile was indicated,"
+                    + " but the profile description does not match what was expected: "
+                    + profileDesc);
+            }
+            //It's the default sRGB profile which we mapped to DefaultRGB in PDFRenderer
+            cs = (PDFICCBasedColorSpace)doc.getResources().getColorSpace(new PDFName("DefaultRGB"));
+        }
+        if (cs == null) {
+            // sRGB hasn't been set up for the PDF document
+            // so install but don't set to DefaultRGB
+            cs = PDFICCBasedColorSpace.setupsRGBColorSpace(doc);
+        }
+        return cs.getICCStream();
+    }
+
+    private static PDFICCStream setupsRGBColorProfile(PDFDocument doc) {
+        PDFICCBasedColorSpace cs = doc.getResources().getICCColorSpaceByProfileName("sRGB");
+        return getDefaultsRGBICCStream(cs, doc, "sRGB");
+    }
+
     private static PDFICCStream setupColorProfile(PDFDocument doc,
                 ICC_Profile prof, PDFDeviceColorSpace pdfCS) {
         boolean defaultsRGB = ColorProfileUtil.isDefaultsRGB(prof);
@@ -134,22 +163,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
                 pdfICCStream = cs.getICCStream();
             }
         } else {
-            if (cs == null) {
-                if (desc == null || !desc.startsWith("sRGB")) {
-                    log.warn("The default sRGB profile was indicated,"
-                            + " but the profile description does not match what was expected: "
-                            + desc);
-                }
-                //It's the default sRGB profile which we mapped to DefaultRGB in PDFRenderer
-                cs = (PDFICCBasedColorSpace)doc.getResources().getColorSpace(
-                        new PDFName("DefaultRGB"));
-            }
-            if (cs == null) {
-                // sRGB hasn't been set up for the PDF document
-                // so install but don't set to DefaultRGB
-                cs = PDFICCBasedColorSpace.setupsRGBColorSpace(doc);
-            }
-            pdfICCStream = cs.getICCStream();
+            pdfICCStream = getDefaultsRGBICCStream(cs, doc, desc);
         }
         return pdfICCStream;
     }
