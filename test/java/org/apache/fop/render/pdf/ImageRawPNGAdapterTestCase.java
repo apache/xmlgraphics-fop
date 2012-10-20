@@ -19,30 +19,37 @@
 
 package org.apache.fop.render.pdf;
 
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.IndexColorModel;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawPNG;
+import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
 import org.apache.fop.pdf.FlateFilter;
 import org.apache.fop.pdf.PDFAMode;
+import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFICCBasedColorSpace;
+import org.apache.fop.pdf.PDFICCStream;
+import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFProfile;
+import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.render.RawPNGTestUtil;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ImageRawPNGAdapterTestCase {
 
@@ -56,6 +63,7 @@ public class ImageRawPNGAdapterTestCase {
         ImageSize is = RawPNGTestUtil.getImageSize();
 
         when(irpng.getColorModel()).thenReturn(cm);
+        when(irpng.getRenderingIntent()).thenReturn(-1);
         // when(cm.hasAlpha()).thenReturn(false);
         when(doc.getProfile()).thenReturn(profile);
         when(profile.getPDFAMode()).thenReturn(PDFAMode.PDFA_1A);
@@ -75,6 +83,7 @@ public class ImageRawPNGAdapterTestCase {
         ImageSize is = RawPNGTestUtil.getImageSize();
 
         when(irpng.getColorModel()).thenReturn(cm);
+        when(irpng.getRenderingIntent()).thenReturn(-1);
         when(cm.getNumComponents()).thenReturn(3);
         // when(cm.hasAlpha()).thenReturn(false);
         when(doc.getProfile()).thenReturn(profile);
@@ -117,6 +126,7 @@ public class ImageRawPNGAdapterTestCase {
         ImageSize is = RawPNGTestUtil.getImageSize();
 
         when(irpng.getColorModel()).thenReturn(cm);
+        when(irpng.getRenderingIntent()).thenReturn(-1);
         when(cm.getNumComponents()).thenReturn(numComponents);
         // when(cm.hasAlpha()).thenReturn(false);
         when(doc.getProfile()).thenReturn(profile);
@@ -139,4 +149,55 @@ public class ImageRawPNGAdapterTestCase {
         }
     }
 
+    @Test
+    public void testPopulateXObjectDictionaryWithComponentColorModelAndsRGB() {
+        ComponentColorModel cm = mock(ComponentColorModel.class);
+        ImageRawPNG irpng = mock(ImageRawPNG.class);
+        PDFDictionary pdfDic = mock(PDFDictionary.class);
+        ImageRawPNGAdapter irpnga = new ImageRawPNGAdapter(irpng, "mock");
+
+        when(irpng.getColorModel()).thenReturn(cm);
+        when(irpng.getRenderingIntent()).thenReturn(0);
+        irpnga.populateXObjectDictionary(pdfDic);
+        verify(pdfDic).put("Intent", new PDFName("Perceptual"));
+        when(irpng.getRenderingIntent()).thenReturn(1);
+        irpnga.populateXObjectDictionary(pdfDic);
+        verify(pdfDic).put("Intent", new PDFName("RelativeColorimetric"));
+        when(irpng.getRenderingIntent()).thenReturn(2);
+        irpnga.populateXObjectDictionary(pdfDic);
+        verify(pdfDic).put("Intent", new PDFName("Saturation"));
+        when(irpng.getRenderingIntent()).thenReturn(3);
+        irpnga.populateXObjectDictionary(pdfDic);
+        verify(pdfDic).put("Intent", new PDFName("AbsoluteColorimetric"));
+    }
+
+    @Test
+    public void testRenderingIntentImpliessRGBColorProfile() {
+        ComponentColorModel cm = mock(ComponentColorModel.class);
+        ImageRawPNG irpng = mock(ImageRawPNG.class);
+        PDFDocument doc = mock(PDFDocument.class);
+        PDFProfile profile = mock(PDFProfile.class);
+        PDFResources resources = mock(PDFResources.class);
+        PDFICCBasedColorSpace cs = mock(PDFICCBasedColorSpace.class);
+        PDFICCStream stream = mock(PDFICCStream.class);
+        ICC_Profile iccprof = ICC_Profile.getInstance(ColorSpace.CS_sRGB);
+        ImageRawPNGAdapter irpnga = new ImageRawPNGAdapter(irpng, "mock");
+        ImageSize is = RawPNGTestUtil.getImageSize();
+
+        when(irpng.getColorModel()).thenReturn(cm);
+        when(irpng.getRenderingIntent()).thenReturn(0);
+        when(cm.getNumComponents()).thenReturn(3);
+        // when(cm.hasAlpha()).thenReturn(false);
+        when(doc.getProfile()).thenReturn(profile);
+        when(doc.getResources()).thenReturn(resources);
+        when(resources.getICCColorSpaceByProfileName("sRGB")).thenReturn(cs);
+        when(profile.getPDFAMode()).thenReturn(PDFAMode.PDFA_1A);
+        when(irpng.getSize()).thenReturn(is);
+        when(cs.getICCStream()).thenReturn(stream);
+        when(stream.getICCProfile()).thenReturn(iccprof);
+
+        irpnga.setup(doc);
+        PDFICCStream iccStream = irpnga.getICCStream();
+        assertTrue(ColorProfileUtil.isDefaultsRGB(iccStream.getICCProfile()));
+    }
 }
