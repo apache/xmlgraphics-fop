@@ -145,11 +145,10 @@
       <question>When is the next released planned?</question>
       <answer>
         <p>
-          When it's ready and the committers have enough time to go
-          through the time-consuming process of creating a release. Version
-          1.1rc1 was released on 02 July 2012. A subsequent final
-          Version 1.1 is expected to be released within 1 to 3 months following
-          this release candidate. If you want to speed up the process, consider <link
+          Version 1.1 of FOP was released on 20 October 2012.
+          Work on a new Version 1.2 of Apache FOP is underway at this time, with
+          no fixed date set for its release.
+          If you want to speed up the process, consider <link
           href="dev/index.html#involved">contributing</link> to FOP.
         </p>
       </answer>
