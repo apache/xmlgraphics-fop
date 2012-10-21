@@ -48,7 +48,7 @@
       <section id="env-jdk">
         <title>JDK</title>
         <p>
-          Building FOP requires a minimum Java Development Kit (JDK/SDK) of 1.4
+          Building FOP 1.1 requires a minimum Java Development Kit (JDK/SDK) of 1.5
           (A Java Runtime Environment is not sufficient).
         </p>
       </section>

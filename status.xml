@@ -20,7 +20,6 @@
 <status>
 
   <developers>
-    <!-- In alphabetical order (last name) -->
     <person name="Glenn Adams"       email="gadams@apache.org"        id="GA"/>
     <person name="Max Berger"        email="mayberger@apache.org"     id="MB"/>
     <person name="Chris Bowditch"    email="cbowditch@apache.org"     id="CB"/>
@@ -38,8 +37,6 @@
     <person name="Jeremias Märki"    email="jeremias@apache.org"      id="JM"/>
     <person name="Simon Pepping"     email="spepping@apache.org"      id="SP"/>
     <person name="the FOP committers" email="fop-dev@xmlgraphics.apache.org" id="all"/>
-    <person name="Volunteer needed"  email="general@xmlgraphics.apache.org" id="open"/>
-    <!-- See also src/documentation/content/xdocs/team.xml -->
   </developers>
 
   <contexts>
@@ -152,7 +149,7 @@
         the restarted Knuth sequence.
       </action>
     </release>
-    <release version="1.1rc1" date="02 July 2012">
+    <release version="1.1" date="20 October 2012">
       <action context="Test" dev="GA" type="fix">
         Fix errors and warnings in example files. Add build.xml for documentation examples.
       </action>

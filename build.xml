@@ -58,62 +58,68 @@ list of possible build targets.
   <property file="${basedir}/build-local.properties"/>
   <property file="${basedir}/build.properties"/>
   <fileset dir="${basedir}" id="dist.bin">
-    <include name="conf/**"/>
-    <include name="examples/**"/>
+    <include name="KEYS"/>
     <include name="LICENSE"/>
     <include name="NOTICE"/>
     <include name="README"/>
-    <include name="KEYS"/>
-    <include name="status.xml"/>
+    <include name="conf/**"/>
+    <include name="examples/**"/>
+    <include name="fop"/>
     <include name="fop.bat"/>
     <include name="fop.cmd"/>
     <include name="fop.js"/>
-    <include name="fop"/>
+    <include name="status.xml"/>
   </fileset>
   <fileset dir="${basedir}" id="dist.bin.lib">
     <patternset id="dist.lib">
+      <include name="lib/README*"/>
       <include name="lib/avalon-framework*"/>
-      <include name="lib/xmlgraphics-commons*"/>
       <include name="lib/batik*"/>
       <include name="lib/commons-io*"/>
       <include name="lib/commons-logging*"/>
-      <include name="lib/README*"/>
       <include name="lib/serializer*"/>
       <include name="lib/xalan*"/>
       <include name="lib/xerces*"/>
       <include name="lib/xml-apis*"/>
+      <include name="lib/xmlgraphics-commons*"/>
     </patternset>
   </fileset>
-  <patternset id="dist.src.lib.tools">
+  <patternset id="dist.src.lib.build">
     <include name="lib/build/asm*"/>
-    <include name="lib/build/backport-util-concurrent*"/>
+    <include name="lib/build/hamcrest*"/>
     <include name="lib/build/jaxen*"/>
+    <include name="lib/build/mockito*"/>
+    <include name="lib/build/objenesis*"/>
     <include name="lib/build/pmd*"/>
     <include name="lib/build/qdox*"/>
     <include name="lib/build/xmlunit*"/>
   </patternset>
   <fileset dir="${basedir}" id="dist.src">
-    <include name="src/**"/>
-    <include name="conf/**"/>
-    <include name="hyph/hyphenation.dtd"/>
-    <include name="hyph/readme"/>
-    <patternset refid="dist.lib"/>
-    <patternset refid="dist.src.lib.tools"/>
-    <include name="lib/servlet*"/>
-    <include name="test/**"/>
-    <include name="examples/**"/>
+    <include name="KEYS"/>
     <include name="LICENSE"/>
     <include name="NOTICE"/>
     <include name="README"/>
-    <include name="KEYS"/>
-    <include name="known-issues.xml"/>
-    <include name="status.xml"/>
     <include name="build.*"/>
-    <include name="forrest.properties"/>
+    <include name="checkstyle*"/>
+    <exclude name="checkstyle-noframes.xsl"/>
+    <include name="conf/**"/>
+    <include name="examples/**"/>
+    <include name="findbugs*"/>
+    <include name="fop"/>
     <include name="fop.bat"/>
     <include name="fop.cmd"/>
     <include name="fop.js"/>
-    <include name="fop"/>
+    <include name="forrest.*"/>
+    <include name="hyph/hyphenation.dtd"/>
+    <include name="hyph/readme"/>
+    <include name="jacoco*"/>
+    <include name="known-issues.xml"/>
+    <include name="lib/servlet*"/>
+    <include name="src/**"/>
+    <include name="status.xml"/>
+    <include name="test/**"/>
+    <patternset refid="dist.lib"/>
+    <patternset refid="dist.src.lib.build"/>
   </fileset>
   <path id="libs-build-classpath">
     <fileset dir="${basedir}/lib">
@@ -1251,23 +1257,110 @@ NOTE:
     <gzip zipfile="${name}-${version}-src.tar.gz" src="${name}-${version}-src.tar"/>
     <delete file="${name}-${version}-src.tar"/>
   </target>
+  <target name="release-dist" depends="dist" description="Generates the distribution package and signs the release">
+    <property name="bin.suffix" value="bin"/>
+    <input message="Passphrase for your default private key (attention: passphrase will be echoed in clear text on the display!)" addproperty="pwd"/>
+    <antcall target="md5">
+      <param name="sign.archive" value="${name}-${version}-src.zip"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${name}-${version}-src.zip"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="md5">
+      <param name="sign.archive" value="${name}-${version}-src.tar.gz"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${name}-${version}-src.tar.gz"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="md5">
+      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.zip"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.zip"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="md5">
+      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.tar.gz"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.tar.gz"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+  </target>
+  <target name="md5">
+    <property name="md5.exec" value="md5sum"/>
+    <property name="md5.options" value=""/>
+    <exec executable="${md5.exec}" output="${sign.archive}.md5">
+      <arg line="${md5.options} ${sign.archive}"/>
+    </exec>
+  </target>
+  <target name="sign-file">
+    <property name="gpg.exec" value="gpg"/>
+    <property name="gpg.options" value="--armor --detach-sign --force-v3-sigs --batch --verbose --passphrase-fd 0"/>
+    <delete file="${sign.archive}.asc"/>
+    <exec executable="${gpg.exec}" inputstring="${pwd}">
+      <arg line="${gpg.options} ${sign.archive}"/>
+    </exec>
+  </target>
 <!-- =================================================================== -->
 <!-- Maven artifacts                                                     -->
 <!-- =================================================================== -->
   <target name="maven-artifacts" depends="jar-main, jar-sources, jar-javadocs" description="Builds a Maven artifact that can be uploaded to a Maven repository">
-    <filter token="version" value="${version}"/>
+    <filter  token="version" value="${version}"/>
     <mkdir dir="${build.dir}/maven"/>
     <copy file="${basedir}/xmlgraphics-fop-pom-template.pom" tofile="${build.dir}/maven/pom.xml" filtering="true"/>
-    <copy file="${build.dir}/${name}.jar" tofile="${build.dir}/maven/${name}-${version}.jar"/>
+    <copy file="${build.dir}/${name}.jar" tofile="${build.dir}/${name}-${version}.jar"/>
+    <fileset id="bundle-files" dir="${build.dir}">
+      <patternset>
+      <include name="${name}-${version}.jar"/>
+      <include name="${name}-${version}-sources.jar"/>
+      <include name="${name}-${version}-javadoc.jar"/>
+      </patternset>
+      <patternset>
+      <include name="maven/pom.xml"/>
+      </patternset>
+    </fileset>
+    <checksum algorithm="md5">
+      <fileset refid="bundle-files"/>
+    </checksum>
+    <checksum algorithm="sha1">
+      <fileset refid="bundle-files"/>
+    </checksum>
+    <input message="Passphrase for your default private key (attention: passphrase will be echoed in clear text on the display!)" addproperty="pwd"/>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${build.dir}/${name}-${version}.jar"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${build.dir}/${name}-${version}-sources.jar"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${build.dir}/${name}-${version}-javadoc.jar"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${build.dir}/maven/pom.xml"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
     <jar jarfile="${build.dir}/${name}-${version}-bundle.jar">
       <manifest>
-        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}, Target Java ${javac.target}])"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
       </manifest>
       <fileset dir="${build.dir}">
-        <include name="${name}-${version}-sources.jar"/>
-        <include name="${name}-${version}-javadoc.jar"/>
+        <patternset>
+          <include name="${name}-${version}.jar*"/>
+          <include name="${name}-${version}-sources.jar*"/>
+          <include name="${name}-${version}-javadoc.jar*"/>
+        </patternset>
       </fileset>
-      <fileset dir="${build.dir}/maven"/>
+      <fileset dir="${build.dir}/maven">
+        <patternset>
+          <include name="pom.xml*"/>
+        </patternset>
+      </fileset>
       <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
     </jar>
     <move file="${build.dir}/${name}-${version}-bundle.jar" todir="${basedir}"/>
