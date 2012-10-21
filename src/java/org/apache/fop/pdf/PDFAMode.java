@@ -20,14 +20,14 @@
 package org.apache.fop.pdf;
 
 /** Enum class for PDF/A modes. */
-public final class PDFAMode {
+public enum PDFAMode {
 
     /** PDF/A disabled */
-    public static final PDFAMode DISABLED = new PDFAMode("PDF/A disabled");
+    DISABLED("PDF/A disabled"),
     /** PDF/A-1a enabled */
-    public static final PDFAMode PDFA_1A = new PDFAMode("PDF/A-1a");
+    PDFA_1A("PDF/A-1a"),
     /** PDF/A-1b enabled */
-    public static final PDFAMode PDFA_1B = new PDFAMode("PDF/A-1b");
+    PDFA_1B("PDF/A-1b");
 
     private String name;
 
@@ -66,7 +66,7 @@ public final class PDFAMode {
      * @param s the string
      * @return the PDFAMode enum object (DISABLED will be returned if no match is found)
      */
-    public static PDFAMode valueOf(String s) {
+    public static PDFAMode getValueOf(String s) {
         if (PDFA_1A.getName().equalsIgnoreCase(s)) {
             return PDFA_1A;
         } else if (PDFA_1B.getName().equalsIgnoreCase(s)) {

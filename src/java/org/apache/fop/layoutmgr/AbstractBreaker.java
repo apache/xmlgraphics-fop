@@ -329,7 +329,7 @@ public abstract class AbstractBreaker {
      * @return the top-level LayoutContext
      */
     protected LayoutContext createLayoutContext() {
-        return new LayoutContext(0);
+        return LayoutContext.newInstance();
     }
 
     /**
@@ -481,6 +481,11 @@ public abstract class AbstractBreaker {
         addAreas(alg, 0, partCount, originalList, effectiveList);
     }
 
+    protected void addAreas(PageBreakingAlgorithm alg, int startPart, int partCount,
+            BlockSequence originalList, BlockSequence effectiveList) {
+        addAreas(alg, startPart, partCount, originalList, effectiveList, LayoutContext.newInstance());
+    }
+
     /**
      * Phase 3 of Knuth algorithm: Adds the areas
      * @param alg PageBreakingAlgorithm instance which determined the breaks
@@ -490,9 +495,7 @@ public abstract class AbstractBreaker {
      * @param effectiveList effective Knuth element list (after adjustments)
      */
     protected void addAreas(PageBreakingAlgorithm alg, int startPart, int partCount,
-            BlockSequence originalList, BlockSequence effectiveList) {
-        LayoutContext childLC;
-        // add areas
+            BlockSequence originalList, BlockSequence effectiveList, final LayoutContext childLC) {
         int startElementIndex = 0;
         int endElementIndex = 0;
         int lastBreak = -1;
@@ -507,7 +510,17 @@ public abstract class AbstractBreaker {
                 ListElement lastBreakElement = effectiveList.getElement(endElementIndex);
                 if (lastBreakElement.isPenalty()) {
                     KnuthPenalty pen = (KnuthPenalty)lastBreakElement;
-                    lastBreakClass = pen.getBreakClass();
+                    if (pen.getPenalty() == KnuthPenalty.INFINITE) {
+                        /**
+                         * That means that there was a keep.within-page="always", but that
+                         * it's OK to break at a column. TODO The break class is being
+                         * abused to implement keep.within-column and keep.within-page.
+                         * This is very misleading and must be revised.
+                         */
+                        lastBreakClass = Constants.EN_COLUMN;
+                    } else {
+                        lastBreakClass = pen.getBreakClass();
+                    }
                 } else {
                     lastBreakClass = Constants.EN_COLUMN;
                 }
@@ -550,19 +563,13 @@ public abstract class AbstractBreaker {
 
             // ignore KnuthGlue and KnuthPenalty objects
             // at the beginning of the line
-            ListIterator<KnuthElement> effectiveListIterator
-                = effectiveList.listIterator(startElementIndex);
-            while (effectiveListIterator.hasNext()
-                    && !(effectiveListIterator.next()).isBox()) {
-                startElementIndex++;
-            }
+            startElementIndex = alg.par.getFirstBoxIndex(startElementIndex);
 
             if (startElementIndex <= endElementIndex) {
                 if (log.isDebugEnabled()) {
                     log.debug("     addAreas from " + startElementIndex
                             + " to " + endElementIndex);
                 }
-                childLC = new LayoutContext(0);
                 // set the space adjustment ratio
                 childLC.setSpaceAdjust(pbp.bpdAdjust);
                 // add space before if display-align is center or bottom
@@ -576,7 +583,9 @@ public abstract class AbstractBreaker {
                         && p < (partCount - 1)) {
                     // count the boxes whose width is not 0
                     int boxCount = 0;
-                    effectiveListIterator = effectiveList.listIterator(startElementIndex);
+                    @SuppressWarnings("unchecked")
+                    ListIterator<KnuthElement> effectiveListIterator = effectiveList
+                            .listIterator(startElementIndex);
                     while (effectiveListIterator.nextIndex() <= endElementIndex) {
                         KnuthElement tempEl = effectiveListIterator.next();
                         if (tempEl.isBox() && tempEl.getWidth() > 0) {

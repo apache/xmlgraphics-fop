@@ -56,7 +56,7 @@ import org.apache.fop.events.model.EventSeverity;
 public class ExampleEvents {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
     /**
      * Converts an FO file to a PDF file using FOP

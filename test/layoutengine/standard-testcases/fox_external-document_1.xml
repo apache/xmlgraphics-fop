@@ -30,7 +30,7 @@
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
-      <fox:external-document id="img" src="../../resources/images/bgimg72dpi.png"/>
+      <fox:external-document id="img" src="../resources/images/bgimg72dpi.png"/>
     </fo:root>
   </fo>
   <checks>

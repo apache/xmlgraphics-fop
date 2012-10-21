@@ -19,46 +19,55 @@
 
 package org.apache.fop.afp;
 
+import java.net.URI;
+
+import static org.apache.fop.afp.AFPResourceLevel.ResourceType.DOCUMENT;
+import static org.apache.fop.afp.AFPResourceLevel.ResourceType.EXTERNAL;
+import static org.apache.fop.afp.AFPResourceLevel.ResourceType.INLINE;
+import static org.apache.fop.afp.AFPResourceLevel.ResourceType.PAGE;
+import static org.apache.fop.afp.AFPResourceLevel.ResourceType.PAGE_GROUP;
+import static org.apache.fop.afp.AFPResourceLevel.ResourceType.PRINT_FILE;
+
 /**
  * A resource level
  */
 public class AFPResourceLevel {
+    public enum ResourceType {
+        /** directly in page **/
+        INLINE("inline"),
+        /** page level **/
+        PAGE("page"),
+        /** page group level **/
+        PAGE_GROUP("page-group"),
+        /** document level **/
+        DOCUMENT("document"),
+        /** print file level **/
+        PRINT_FILE("print-file"),
+        /** external level **/
+        EXTERNAL("external");
 
-    /** directly in page **/
-    public static final int INLINE = 0;
+        private final String name;
 
-    /** page level **/
-    public static final int PAGE = 1;
+        private ResourceType(String name) {
+            this.name = name;
+        }
 
-    /** page group level **/
-    public static final int PAGE_GROUP = 2;
+        public static ResourceType getValueOf(String levelString) {
+            for (ResourceType resType : ResourceType.values()) {
+                if (resType.name.equalsIgnoreCase(levelString)) {
+                    return resType;
+                }
+            }
+            return null;
+        }
 
-    /** document level **/
-    public static final int DOCUMENT = 3;
+        public String getName() {
+            return name;
+        }
+    }
 
-    /** print file level **/
-    public static final int PRINT_FILE = 4;
-
-    /** external level **/
-    public static final int EXTERNAL = 5;
-
-    private static final String NAME_INLINE = "inline";
-    private static final String NAME_PAGE = "page";
-    private static final String NAME_PAGE_GROUP = "page-group";
-    private static final String NAME_DOCUMENT = "document";
-    private static final String NAME_PRINT_FILE = "print-file";
-    private static final String NAME_EXTERNAL = "external";
-
-    private static final String[] NAMES = new String[] {
-        NAME_INLINE, NAME_PAGE, NAME_PAGE_GROUP, NAME_DOCUMENT, NAME_PRINT_FILE, NAME_EXTERNAL
-    };
-
-
-    /** where the resource will reside in the AFP output */
-    private int level = PRINT_FILE; // default is print-file level (images)
-
-    /** the external resource group file path */
-    private String extFilePath = null;
+    private URI extUri = null;
+    private final ResourceType resourceType;
 
     /**
      * Sets the resource placement level within the AFP output
@@ -67,36 +76,17 @@ public class AFPResourceLevel {
      * @return true if the resource level was successfully set
      */
     public static AFPResourceLevel valueOf(String levelString) {
-        if (levelString != null) {
-            levelString = levelString.toLowerCase();
-            AFPResourceLevel resourceLevel = null;
-            for (int i = 0; i < NAMES.length; i++) {
-                if (NAMES[i].equals(levelString)) {
-                    resourceLevel = new AFPResourceLevel(i);
-                    break;
-                }
-            }
-            return resourceLevel;
-        }
-        return null;
+        ResourceType resType = ResourceType.getValueOf(levelString);
+        return resType != null ? new AFPResourceLevel(resType) : null;
     }
 
     /**
      * Main constructor
      *
-     * @param level the resource level
+     * @param resourceType the resource type
      */
-    public AFPResourceLevel(int level) {
-        setLevel(level);
-    }
-
-    /**
-     * Sets the resource level
-     *
-     * @param level the resource level
-     */
-    public void setLevel(int level) {
-        this.level = level;
+    public AFPResourceLevel(ResourceType resourceType) {
+        this.resourceType = resourceType;
     }
 
     /**
@@ -105,7 +95,7 @@ public class AFPResourceLevel {
      * @return true if this is at page level
      */
     public boolean isPage() {
-       return level == PAGE;
+        return resourceType == PAGE;
     }
 
     /**
@@ -114,7 +104,7 @@ public class AFPResourceLevel {
      * @return true if this is at page group level
      */
     public boolean isPageGroup() {
-        return level == PAGE_GROUP;
+        return resourceType == PAGE_GROUP;
     }
 
     /**
@@ -123,7 +113,7 @@ public class AFPResourceLevel {
      * @return true if this is at document level
      */
     public boolean isDocument() {
-        return level == DOCUMENT;
+        return resourceType == DOCUMENT;
     }
 
     /**
@@ -132,7 +122,7 @@ public class AFPResourceLevel {
      * @return true if this is at external level
      */
     public boolean isExternal() {
-        return level == EXTERNAL;
+        return resourceType == EXTERNAL;
     }
 
     /**
@@ -141,7 +131,7 @@ public class AFPResourceLevel {
      * @return true if this is at print-file level
      */
     public boolean isPrintFile() {
-        return level == PRINT_FILE;
+        return resourceType == PRINT_FILE;
     }
 
     /**
@@ -150,30 +140,30 @@ public class AFPResourceLevel {
      * @return true if this resource level is inline
      */
     public boolean isInline() {
-        return level == INLINE;
+        return resourceType == INLINE;
     }
 
     /**
-     * Returns the destination file path of the external resource group file
+     * Returns the URI of the external resource group.
      *
-     * @return the destination file path of the external resource group file
+     * @return the destination URI of the external resource group
      */
-    public String getExternalFilePath() {
-        return this.extFilePath;
+    public URI getExternalURI() {
+        return this.extUri;
     }
 
     /**
-     * Sets the external destination of the resource
+     * Sets the URI of the external resource group.
      *
-     * @param filePath the external resource group file
+     * @param uri the URI of the external resource group
      */
-    public void setExternalFilePath(String filePath) {
-        this.extFilePath = filePath;
+    public void setExternalUri(URI uri) {
+        this.extUri = uri;
     }
 
     /** {@inheritDoc} */
     public String toString() {
-        return NAMES[level] +  (isExternal() ? ", file=" + extFilePath : "");
+        return resourceType + (isExternal() ? ", uri=" + extUri : "");
     }
 
     /** {@inheritDoc} */
@@ -186,16 +176,16 @@ public class AFPResourceLevel {
         }
 
         AFPResourceLevel rl = (AFPResourceLevel)obj;
-        return (level == rl.level)
-            && (extFilePath == rl.extFilePath
-                    || extFilePath != null && extFilePath.equals(rl.extFilePath));
+        return (resourceType == rl.resourceType)
+            && (extUri == rl.extUri
+                    || extUri != null && extUri.equals(rl.extUri));
     }
 
     /** {@inheritDoc} */
     public int hashCode() {
         int hash = 7;
-        hash = 31 * hash + level;
-        hash = 31 * hash + (null == extFilePath ? 0 : extFilePath.hashCode());
+        hash = 31 * hash + resourceType.hashCode();
+        hash = 31 * hash + (null == extUri ? 0 : extUri.hashCode());
         return hash;
     }
 }

@@ -19,28 +19,30 @@
 
 package org.apache.fop.render.bitmap;
 
-import java.awt.image.BufferedImage;
-
 import org.apache.xmlgraphics.image.writer.ImageWriterParams;
 
 import org.apache.fop.render.java2d.Java2DRenderingSettings;
 
+import static org.apache.fop.render.bitmap.BitmapRendererOption.ANTI_ALIASING;
+import static org.apache.fop.render.bitmap.BitmapRendererOption.COLOR_MODE;
+import static org.apache.fop.render.bitmap.BitmapRendererOption.RENDERING_QUALITY;
+
 /**
  * This class holds settings used when rendering to bitmaps.
  */
-public class BitmapRenderingSettings extends Java2DRenderingSettings implements TIFFConstants {
+public class BitmapRenderingSettings extends Java2DRenderingSettings {
 
     /** ImageWriter parameters */
     private ImageWriterParams writerParams;
 
     /** Image Type as parameter for the BufferedImage constructor (see BufferedImage.TYPE_*) */
-    private int bufferedImageType = BufferedImage.TYPE_INT_ARGB;
+    private int bufferedImageType = (Integer) COLOR_MODE.getDefaultValue();
 
     /** true if anti-aliasing is set */
-    private boolean antialiasing = true;
+    private boolean antialiasing = (Boolean) ANTI_ALIASING.getDefaultValue();
 
     /** true if qualityRendering is set */
-    private boolean qualityRendering = true;
+    private boolean qualityRendering = (Boolean) RENDERING_QUALITY.getDefaultValue();
 
     /**
      * Default constructor. Initializes the settings to their default values.

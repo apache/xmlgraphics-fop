@@ -188,7 +188,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         addId();
 
-        InlineArea area = getEffectiveArea();
+        InlineArea area = getEffectiveArea(context);
         if (area.getAllocIPD() > 0 || area.getAllocBPD() > 0) {
             offsetArea(area, context);
             widthAdjustArea(area, context);
@@ -211,7 +211,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * @return the effective area to be added to the area tree. Normally, this is simply "curArea"
      * but in the case of page-number(-citation) curArea is cloned, updated and returned.
      */
-    protected InlineArea getEffectiveArea() {
+    protected InlineArea getEffectiveArea(LayoutContext layoutContext) {
         return curArea;
     }
 
@@ -263,11 +263,6 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     @Override
     public List getNextKnuthElements(LayoutContext context, int alignment) {
         curArea = get(context);
-
-        if (curArea == null) {
-            setFinished(true);
-            return null;
-        }
 
         alignmentContext = makeAlignmentContext(context);
 

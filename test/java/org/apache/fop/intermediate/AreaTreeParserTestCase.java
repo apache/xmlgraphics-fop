@@ -33,6 +33,12 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.w3c.dom.Document;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.MimeConstants;
@@ -43,11 +49,6 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.layoutengine.LayoutEngineTestUtils;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.xml.XMLRenderer;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.w3c.dom.Document;
 
 /**
  * Tests the area tree parser.
@@ -65,6 +66,7 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTest {
     public static Collection<File[]> getParameters() throws IOException {
         return LayoutEngineTestUtils.getLayoutTestFiles();
     }
+
     /**
      * Constructor for the test suite that is used for each test file.
      * @param testFile the test file to run

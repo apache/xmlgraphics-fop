@@ -35,6 +35,8 @@ import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
+import org.apache.fop.layoutmgr.BreakOpportunity;
+import org.apache.fop.layoutmgr.BreakOpportunityHelper;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
@@ -56,13 +58,14 @@ import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
+import org.apache.fop.util.BreakUtil;
 
 /**
  * LayoutManager for a list-item FO.
  * The list item contains a list item label and a list item body.
  */
-public class ListItemLayoutManager extends BlockStackingLayoutManager
-                    implements ConditionalElementListener {
+public class ListItemLayoutManager extends BlockStackingLayoutManager implements ConditionalElementListener,
+        BreakOpportunity {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(ListItemLayoutManager.class);
@@ -204,6 +207,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
         // label
         childLC = makeChildLayoutContext(context);
+        childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
         label.initialize();
         labelList = label.getNextKnuthElements(childLC, alignment);
 
@@ -217,6 +221,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
         // body
         childLC = makeChildLayoutContext(context);
+        childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
         body.initialize();
         bodyList = body.getNextKnuthElements(childLC, alignment);
 
@@ -296,16 +301,23 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             //Additional penalty height from penalties in the source lists
             int additionalPenaltyHeight = 0;
             int stepPenalty = 0;
+            int breakClass = EN_AUTO;
             KnuthElement endEl = (KnuthElement)elementLists[0].get(end[0]);
             if (endEl instanceof KnuthPenalty) {
                 additionalPenaltyHeight = endEl.getWidth();
-                stepPenalty = Math.max(stepPenalty, endEl.getPenalty());
+                stepPenalty = endEl.getPenalty() == -KnuthElement.INFINITE ? -KnuthElement.INFINITE : Math
+                        .max(stepPenalty, endEl.getPenalty());
+                breakClass = BreakUtil.compareBreakClasses(breakClass,
+                        ((KnuthPenalty) endEl).getBreakClass());
             }
             endEl = (KnuthElement)elementLists[1].get(end[1]);
             if (endEl instanceof KnuthPenalty) {
                 additionalPenaltyHeight = Math.max(
                         additionalPenaltyHeight, endEl.getWidth());
-                stepPenalty = Math.max(stepPenalty, endEl.getPenalty());
+                stepPenalty = endEl.getPenalty() == -KnuthElement.INFINITE ? -KnuthElement.INFINITE : Math
+                        .max(stepPenalty, endEl.getPenalty());
+                breakClass = BreakUtil.compareBreakClasses(breakClass,
+                        ((KnuthPenalty) endEl).getBreakClass());
             }
 
             int boxHeight = step - addedBoxHeight - penaltyHeight;
@@ -343,9 +355,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                 int p = stepPenalty;
                 if (p > -KnuthElement.INFINITE) {
                     p = Math.max(p, keep.getPenalty());
+                    breakClass = keep.getContext();
                 }
-                returnList.add(new BreakElement(stepPosition, penaltyHeight, p, keep.getContext(),
-                        context));
+                returnList.add(new BreakElement(stepPosition, penaltyHeight, p, breakClass, context));
             }
         }
 
@@ -476,7 +488,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
         addId();
 
-        LayoutContext lc = new LayoutContext(0);
+        LayoutContext lc = LayoutContext.offspringOf(layoutContext);
         Position firstPos = null;
         Position lastPos = null;
 
@@ -693,6 +705,13 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         body.reset();
     }
 
+    @Override
+    public int getBreakBefore() {
+        int breakBefore = BreakOpportunityHelper.getBreakBefore(this);
+        breakBefore = BreakUtil.compareBreakClasses(breakBefore, label.getBreakBefore());
+        breakBefore = BreakUtil.compareBreakClasses(breakBefore, body.getBreakBefore());
+        return breakBefore;
+    }
 
 }
 

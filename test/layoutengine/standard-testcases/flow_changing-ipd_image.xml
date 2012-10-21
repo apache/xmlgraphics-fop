@@ -47,7 +47,7 @@
           <fo:block id="before">Block before the page break.</fo:block>
           <fo:block id="after">Block after the page break.</fo:block>
           <fo:block id="image-block"><fo:external-graphic id="image" 
-              src="../../resources/images/fop-logo-color-24bit.png"/></fo:block>
+              src="../resources/images/fop-logo-color-24bit.png"/></fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>

@@ -44,7 +44,12 @@ import org.apache.xmlgraphics.image.writer.MultiImageWriter;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.java2d.Java2DRenderer;
+
+import static org.apache.fop.render.bitmap.TIFFCompressionValues.CCITT_T4;
+import static org.apache.fop.render.bitmap.TIFFCompressionValues.CCITT_T6;
+import static org.apache.fop.render.bitmap.TIFFCompressionValues.PACKBITS;
 
 /**
  * <p>
@@ -67,7 +72,7 @@ import org.apache.fop.render.java2d.Java2DRenderer;
  * <code>org.apache.fop.render.java2D.Java2DRenderer</code> and just encode
  * rendering results into TIFF format using Batik's image codec
  */
-public class TIFFRenderer extends Java2DRenderer implements TIFFConstants {
+public class TIFFRenderer extends Java2DRenderer {
 
     /** ImageWriter parameters */
     private ImageWriterParams writerParams;
@@ -79,7 +84,7 @@ public class TIFFRenderer extends Java2DRenderer implements TIFFConstants {
 
     /** {@inheritDoc} */
     public String getMimeType() {
-        return MIME_TYPE;
+        return MimeConstants.MIME_TIFF;
     }
 
     /**
@@ -90,7 +95,7 @@ public class TIFFRenderer extends Java2DRenderer implements TIFFConstants {
     public TIFFRenderer(FOUserAgent userAgent) {
         super(userAgent);
         writerParams = new ImageWriterParams();
-        writerParams.setCompressionMethod(COMPRESSION_PACKBITS);
+        writerParams.setCompressionMethod(PACKBITS.getName());
 
         int dpi = Math.round(userAgent.getTargetResolution());
         writerParams.setResolution(dpi);
@@ -190,8 +195,8 @@ public class TIFFRenderer extends Java2DRenderer implements TIFFConstants {
                 throw new NoSuchElementException(e.getMessage());
             }
 
-            if (COMPRESSION_CCITT_T4.equalsIgnoreCase(writerParams.getCompressionMethod())
-                   || COMPRESSION_CCITT_T6.equalsIgnoreCase(writerParams.getCompressionMethod())) {
+            TIFFCompressionValues compression = TIFFCompressionValues.getValue(writerParams.getCompressionMethod());
+            if (compression == CCITT_T4 || compression == CCITT_T6) {
                 return pageImage;
             } else {
                 //Decorate the image with a packed sample model for encoding by the codec

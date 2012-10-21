@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -159,46 +160,26 @@ public abstract class KnuthSequence extends ArrayList {
                 : (ListElement) get(index);
     }
 
-    /** @return the position index of the first box in this sequence */
-    protected int getFirstBoxIndex() {
-        if (isEmpty()) {
-            return -1;
-        } else {
-            return getFirstBoxIndex(0);
-        }
-    }
-
     /**
-     * Get the position index of the first box in this sequence,
-     * starting at the given index. If there is no box after the
-     * passed {@code startIndex}, the starting index itself is returned.
-     * @param startIndex    the starting index for the lookup
-     * @return  the absolute position index of the next box element
+     * Returns the position index of the first box in this sequence, starting at the given
+     * index. If {@code startIndex} is outside the bounds of this sequence, it is
+     * returned.
+     *
+     * @param startIndex the index from which to start the lookup
+     * @return the index of the next box element, {@link #size()} if there is no such
+     * element, {@code startIndex} if {@code (startIndex < 0 || startIndex >= size())}
      */
     protected int getFirstBoxIndex(int startIndex) {
-        if (isEmpty() || startIndex < 0 || startIndex >= size()) {
-            return -1;
+        if (startIndex < 0 || startIndex >= size()) {
+            return startIndex;
         } else {
-            ListElement element = null;
-            int posIndex = startIndex;
-            int lastIndex = size();
-            while ( posIndex < lastIndex ) {
-                element = getElement(posIndex);
-                if ( !element.isBox() ) {
-                    posIndex++;
-                } else {
-                    break;
-                }
+            int boxIndex = startIndex;
+            @SuppressWarnings("unchecked")
+            Iterator<ListElement> iter = listIterator(startIndex);
+            while (iter.hasNext() && !iter.next().isBox()) {
+                boxIndex++;
             }
-            if ( posIndex != startIndex ) {
-                if ( ( element != null ) && element.isBox() ) {
-                    return posIndex - 1;
-                } else {
-                    return startIndex;
-                }
-            } else {
-                return startIndex;
-            }
+            return boxIndex;
         }
     }
 

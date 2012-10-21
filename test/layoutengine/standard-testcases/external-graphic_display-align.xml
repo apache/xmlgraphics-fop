@@ -33,23 +33,23 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>plain external-graphic</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/bgimg300dpi.jpg" block-progression-dimension="60pt" background-color="yellow"/>EOG
+            <fo:external-graphic src="../resources/images/bgimg300dpi.jpg" block-progression-dimension="60pt" background-color="yellow"/>EOG
           </fo:block>
           <fo:block>external-graphic with display-align="auto"</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/bgimg300dpi.jpg" display-align="auto" block-progression-dimension="60pt" background-color="yellow"/>EOG
+            <fo:external-graphic src="../resources/images/bgimg300dpi.jpg" display-align="auto" block-progression-dimension="60pt" background-color="yellow"/>EOG
           </fo:block>
           <fo:block>external-graphic with display-align="before"</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/bgimg300dpi.jpg" display-align="before" block-progression-dimension="60pt" background-color="yellow"/>EOG
+            <fo:external-graphic src="../resources/images/bgimg300dpi.jpg" display-align="before" block-progression-dimension="60pt" background-color="yellow"/>EOG
           </fo:block>
           <fo:block>external-graphic with display-align="center"</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/bgimg300dpi.jpg" display-align="center" block-progression-dimension="60pt" background-color="yellow"/>EOG
+            <fo:external-graphic src="../resources/images/bgimg300dpi.jpg" display-align="center" block-progression-dimension="60pt" background-color="yellow"/>EOG
           </fo:block>
           <fo:block>external-graphic with display-align="after"</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/bgimg300dpi.jpg" display-align="after" block-progression-dimension="60pt" background-color="yellow"/>EOG
+            <fo:external-graphic src="../resources/images/bgimg300dpi.jpg" display-align="after" block-progression-dimension="60pt" background-color="yellow"/>EOG
           </fo:block>
           <fo:block>EOF</fo:block>
         </fo:flow>

@@ -70,7 +70,7 @@ public class PSImageHandlerSVG implements ImageHandler {
 
         BridgeContext ctx = new PSBridgeContext(ua,
                 (strokeText ? null : psContext.getFontInfo()),
-                context.getUserAgent().getFactory().getImageManager(),
+                context.getUserAgent().getImageManager(),
                 context.getUserAgent().getImageSessionContext());
 
         //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)

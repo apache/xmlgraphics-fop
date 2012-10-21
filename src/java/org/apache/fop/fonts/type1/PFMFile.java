@@ -23,6 +23,7 @@ package org.apache.fop.fonts.type1;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -40,7 +41,7 @@ public class PFMFile {
     private String windowsName;
     private String postscriptName;
     private short dfItalic;
-    private int dfWeight;
+    //private int dfWeight;
     private short dfCharSet;
     private short dfPitchAndFamily;
     private int dfAvgWidth;
@@ -61,7 +62,7 @@ public class PFMFile {
     // Extent table
     private int[] extentTable;
 
-    private Map kerningTab = new java.util.HashMap();
+    private Map<Integer, Map<Integer, Integer>> kerningTab = new HashMap<Integer, Map<Integer, Integer>>();
 
     /**
      * logging instance
@@ -119,7 +120,7 @@ public class PFMFile {
         inStream.skip(80);
         dfItalic = inStream.readByte();
         inStream.skip(2);
-        dfWeight = inStream.readShort();
+        inStream.readShort(); // dfWeight =
         dfCharSet = inStream.readByte();
         inStream.skip(4);
         dfPitchAndFamily = inStream.readByte();
@@ -192,10 +193,10 @@ public class PFMFile {
             log.trace(i + " kerning pairs");
         }
         while (i > 0) {
-            int g1 = (int)inStream.readByte();
+            int g1 = (int) inStream.readByte();
             i--;
 
-            int g2 = (int)inStream.readByte();
+            int g2 = (int) inStream.readByte();
 
             int adj = inStream.readShort();
             if (adj > 0x8000) {
@@ -209,12 +210,12 @@ public class PFMFile {
                 log.trace("glyphs: " + glyph1 + ", " + glyph2);
             }
 
-            Map adjTab = (Map)kerningTab.get(new Integer(g1));
+            Map<Integer, Integer> adjTab = kerningTab.get(Integer.valueOf(g1));
             if (adjTab == null) {
-                adjTab = new java.util.HashMap();
+                adjTab = new HashMap<Integer, Integer>();
             }
-            adjTab.put(new Integer(g2), new Integer(adj));
-            kerningTab.put(new Integer(g1), adjTab);
+            adjTab.put(Integer.valueOf(g2), Integer.valueOf(adj));
+            kerningTab.put(Integer.valueOf(g1), adjTab);
         }
     }
 
@@ -270,7 +271,7 @@ public class PFMFile {
      *
      * @return A Map containing the kerning table
      */
-    public Map getKerning() {
+    public Map<Integer, Map<Integer, Integer>> getKerning() {
         return kerningTab;
     }
 
@@ -453,9 +454,9 @@ public class PFMFile {
     public int getStemV() {
         // Just guessing....
         if (dfItalic != 0) {
-            return (int)Math.round(dfMinWidth * 0.25);
+            return (int) Math.round(dfMinWidth * 0.25);
         } else {
-            return (int)Math.round(dfMinWidth * 0.6);
+            return (int) Math.round(dfMinWidth * 0.6);
         }
     }
 

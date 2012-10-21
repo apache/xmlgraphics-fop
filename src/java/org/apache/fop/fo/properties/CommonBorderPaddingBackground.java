@@ -374,7 +374,7 @@ public class CommonBorderPaddingBackground {
                 String uri = URISpecification.getURL(newInstance.backgroundImage);
                 FObj fobj = pList.getFObj();
                 FOUserAgent userAgent = pList.getFObj().getUserAgent();
-                ImageManager manager = userAgent.getFactory().getImageManager();
+                ImageManager manager = userAgent.getImageManager();
                 ImageSessionContext sessionContext = userAgent.getImageSessionContext();
                 ImageInfo info;
                 try {

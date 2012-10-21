@@ -27,20 +27,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-//JAXP
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Source;
-import javax.xml.transform.Result;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
 
-// FOP
 import org.apache.commons.io.IOUtils;
+
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.apps.MimeConstants;
@@ -55,8 +54,6 @@ import org.apache.fop.apps.PageSequenceResults;
 public class MultipleFO2PDF {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
-
     // JAXP TransformerFactory can be reused, too
     private TransformerFactory factory = TransformerFactory.newInstance();
 
@@ -71,6 +68,7 @@ public class MultipleFO2PDF {
      */
     public FormattingResults convertFO2PDF(File fo, File pdf)
         throws TransformerException, IOException, FOPException {
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
         OutputStream out = null;
         Fop fop;

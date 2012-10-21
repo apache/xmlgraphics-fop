@@ -23,7 +23,7 @@
     </p>
   </info>
   <variables>
-    <img>../../resources/images/bgimg300dpi.jpg</img>
+    <img>../resources/images/bgimg300dpi.jpg</img>
   </variables>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
@@ -45,8 +45,8 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=136960,vertical=136960" xpath="//regionViewport/@background"/>
-    <eval expected="url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=56960,vertical=56960" xpath="//flow/block[1]/@background"/>
-    <eval expected="url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=56960,vertical=-8640" xpath="//flow/block[1]/block[1]/block[1]/@background"/>
+    <eval expected="url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=136960,vertical=136960" xpath="//regionViewport/@background"/>
+    <eval expected="url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=56960,vertical=56960" xpath="//flow/block[1]/@background"/>
+    <eval expected="url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=56960,vertical=-8640" xpath="//flow/block[1]/block[1]/block[1]/@background"/>
   </checks>
 </testcase>

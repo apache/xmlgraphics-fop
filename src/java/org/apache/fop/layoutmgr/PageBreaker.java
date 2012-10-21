@@ -167,7 +167,7 @@ public class PageBreaker extends AbstractBreaker {
                     && ((KnuthBlockBox) element).hasAnchors()) {
                     // element represents a line with footnote citations
                     containsFootnotes = true;
-                    LayoutContext footnoteContext = new LayoutContext(context);
+                    LayoutContext footnoteContext = LayoutContext.copyOf(context);
                     footnoteContext.setStackLimitBP(context.getStackLimitBP());
                     footnoteContext.setRefIPD(pslm.getCurrentPV()
                             .getRegionReference(Constants.FO_REGION_BODY).getIPD());
@@ -330,7 +330,7 @@ public class PageBreaker extends AbstractBreaker {
             //Get page break from which we restart
             PageBreakPosition pbp = (PageBreakPosition)
                     alg.getPageBreaks().get(restartPoint - 1);
-            newStartPos = pbp.getLeafPos() + 1;
+            newStartPos = alg.par.getFirstBoxIndex(pbp.getLeafPos() + 1);
             //Handle page break right here to avoid any side-effects
             if (newStartPos > 0) {
                 handleBreakTrait(Constants.EN_PAGE);
@@ -473,7 +473,7 @@ public class PageBreaker extends AbstractBreaker {
 
                 SpaceResolver.performConditionalsNotification(elementList,
                         firstIndex, lastIndex, -1);
-                LayoutContext childLC = new LayoutContext(0);
+                LayoutContext childLC = LayoutContext.newInstance();
                 AreaAdditionUtil.addAreas(null,
                         new KnuthPossPosIter(elementList, firstIndex, lastIndex + 1),
                         childLC);
@@ -521,7 +521,6 @@ public class PageBreaker extends AbstractBreaker {
             return;
         case Constants.EN_COLUMN:
         case Constants.EN_AUTO:
-        case Constants.EN_PAGE:
         case -1:
             PageViewport pv = curPage.getPageViewport();
 
@@ -545,6 +544,7 @@ public class PageBreaker extends AbstractBreaker {
                 /*curPage = */pslm.makeNewPage(false);
             }
             return;
+        case Constants.EN_PAGE:
         default:
             log.debug("handling break-before after page " + pslm.getCurrentPageNum()
                 + " breakVal=" + getBreakClassName(breakVal));
@@ -560,7 +560,7 @@ public class PageBreaker extends AbstractBreaker {
     }
 
     /**
-     * Check if a blank page is needed to accomodate
+     * Check if a blank page is needed to accommodate
      * desired even or odd page number.
      * @param breakVal - value of break-before or break-after trait.
      */

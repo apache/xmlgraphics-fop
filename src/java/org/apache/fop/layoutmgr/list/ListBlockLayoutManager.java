@@ -141,7 +141,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
         // the list block contains areas stacked from each list item
 
         LayoutManager childLM;
-        LayoutContext lc = new LayoutContext(0);
+        LayoutContext lc = LayoutContext.offspringOf(layoutContext);
         LayoutManager firstLM = null;
         LayoutManager lastLM = null;
         Position firstPos = null;

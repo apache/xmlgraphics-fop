@@ -19,15 +19,14 @@
 
 package org.apache.fop.render.intermediate;
 
-import java.io.File;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URL;
+import java.net.URI;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import org.apache.fop.fonts.FontCollection;
@@ -49,10 +48,14 @@ public abstract class AbstractBinaryWritingIFDocumentHandler extends AbstractIFD
     /** Font configuration */
     protected FontInfo fontInfo;
 
+    public AbstractBinaryWritingIFDocumentHandler(IFContext ifContext) {
+        super(ifContext);
+    }
+
     /** {@inheritDoc} */
     public void setResult(Result result) throws IFException {
         if (result instanceof StreamResult) {
-            StreamResult streamResult = (StreamResult)result;
+            StreamResult streamResult = (StreamResult) result;
             OutputStream out = streamResult.getOutputStream();
             if (out == null) {
                 if (streamResult.getWriter() != null) {
@@ -60,21 +63,12 @@ public abstract class AbstractBinaryWritingIFDocumentHandler extends AbstractIFD
                             "FOP cannot use a Writer. Please supply an OutputStream!");
                 }
                 try {
-                    URL url = new URL(streamResult.getSystemId());
-                    File f = FileUtils.toFile(url);
-                    if (f != null) {
-                        out = new java.io.FileOutputStream(f);
-                    } else {
-                        out = url.openConnection().getOutputStream();
-                    }
+                    URI resultURI = URI.create(streamResult.getSystemId());
+                    out = new BufferedOutputStream(getUserAgent().getResourceResolver().getOutputStream(resultURI));
                 } catch (IOException ioe) {
                     throw new IFException("I/O error while opening output stream" , ioe);
                 }
-                out = new java.io.BufferedOutputStream(out);
                 this.ownOutputStream = true;
-            }
-            if (out == null) {
-                throw new IllegalArgumentException("Need a StreamResult with an OutputStream");
             }
             this.outputStream = out;
         } else {
@@ -95,7 +89,7 @@ public abstract class AbstractBinaryWritingIFDocumentHandler extends AbstractIFD
 
     /** {@inheritDoc} */
     public void setDefaultFontInfo(FontInfo fontInfo) {
-        FontManager fontManager = getUserAgent().getFactory().getFontManager();
+        FontManager fontManager = getUserAgent().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(fontManager.isBase14KerningEnabled())
         };

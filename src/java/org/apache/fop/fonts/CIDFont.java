@@ -19,6 +19,8 @@
 
 package org.apache.fop.fonts;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
+
 //Java
 
 /**
@@ -28,6 +30,13 @@ public abstract class CIDFont extends CustomFont {
 
     /** Contains the character widths for all characters in the font */
     protected int[] width = null;
+
+    /**
+     * @param resourceResolver the URI resolver for controlling file access
+     */
+    public CIDFont(InternalResourceResolver resourceResolver) {
+        super(resourceResolver);
+    }
 
     // ---- Required ----
     /**

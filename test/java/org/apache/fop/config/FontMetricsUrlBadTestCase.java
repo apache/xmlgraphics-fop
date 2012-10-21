@@ -19,13 +19,27 @@
 
 package org.apache.fop.config;
 
+import java.io.IOException;
+
+import org.xml.sax.SAXException;
+
+import org.apache.fop.apps.FopConfBuilder;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.PDFRendererConfBuilder;
+
 /**
  * this font has a metrics-url that does not exist on filesystem
  */
 public class FontMetricsUrlBadTestCase extends BaseDestructiveUserConfigTest {
 
-    @Override
-    public String getUserConfigFilename() {
-        return "test_font_metricsurl_bad.xconf";
+    public FontMetricsUrlBadTestCase() throws SAXException, IOException {
+        super(new FopConfBuilder().setStrictValidation(true)
+                                  .startRendererConfig(PDFRendererConfBuilder.class)
+                                      .startFontsConfig()
+                                          .startFont("test/doesnotexist.ttf.ansi.xml", null)
+                                              .addTriplet("Gladiator-Ansi", "normal", "normal")
+                                          .endFont()
+                                      .endFontConfig()
+                                  .endRendererConfig().build());
     }
 }

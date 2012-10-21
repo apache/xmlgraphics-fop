@@ -66,8 +66,7 @@ public class ImageHandlingTestCase extends AbstractPostScriptTest {
 
     private void innerTestJPEGImage(int level) throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();
-        PSDocumentHandler handler = new PSDocumentHandler();
-        handler.setContext(new IFContext(ua));
+        PSDocumentHandler handler = new PSDocumentHandler(new IFContext(ua));
         PSRenderingUtil psUtil = handler.getPSUtil();
         psUtil.setLanguageLevel(level);
         psUtil.setOptimizeResources(true);

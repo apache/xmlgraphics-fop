@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -69,17 +70,15 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         hyphIPD = fobj.getCommonHyphenation().getHyphIPD(font);
         borderProps = fobj.getCommonBorderPaddingBackground();
         setCommonBorderPaddingBackground(borderProps);
-        TextArea chArea = getCharacterInlineArea(fobj);
-        chArea.setBaselineOffset(font.getAscender());
-        setCurrentArea(chArea);
     }
 
-    private TextArea getCharacterInlineArea(Character node) {
+    private TextArea createCharacterArea() {
+        Character fobj = (Character) this.fobj;
         TextArea text = new TextArea();
-        char ch = node.getCharacter();
+        char ch = fobj.getCharacter();
         int ipd = font.getCharWidth(ch);
         int blockProgressionOffset = 0;
-        int level = node.getBidiLevel();
+        int level = fobj.getBidiLevel();
         if (CharUtilities.isAnySpace(ch)) {
             // add space unless it's zero-width:
             if (!CharUtilities.isZeroWidthSpace(ch)) {
@@ -90,32 +89,29 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
             int[] levels = ( level >= 0 ) ? new int[] {level} : null;
             text.addWord(String.valueOf(ch), ipd, null, levels, null, blockProgressionOffset);
         }
-        TraitSetter.setProducerID(text, node.getId());
-        TraitSetter.addTextDecoration(text, node.getTextDecoration());
-        TraitSetter.addStructureTreeElement(text, node.getStructureTreeElement());
+
+        TraitSetter.setProducerID(text, fobj.getId());
+        TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
+        text.setIPD(font.getCharWidth(fobj.getCharacter()));
+        text.setBPD(font.getAscender() - font.getDescender());
+        text.setBaselineOffset(font.getAscender());
+        TraitSetter.addFontTraits(text, font);
+        text.addTrait(Trait.COLOR, fobj.getColor());
         return text;
     }
 
-    /** {@inheritDoc} */
     @Override
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
-        MinOptMax ipd;
-        curArea = get(context);
-        KnuthSequence seq = new InlineKnuthSequence();
-
-        if (curArea == null) {
-            setFinished(true);
-            return null;
+    protected InlineArea getEffectiveArea(LayoutContext layoutContext) {
+        InlineArea area = createCharacterArea();
+        if (!layoutContext.treatAsArtifact()) {
+            TraitSetter.addStructureTreeElement(area, ((Character) fobj).getStructureTreeElement());
         }
+        return area;
+    }
 
-        Character fobj = (Character)this.fobj;
-
-        ipd = MinOptMax.getInstance(curArea.getIPD());
-
-        curArea.setBPD(font.getAscender() - font.getDescender());
-
-        TraitSetter.addFontTraits(curArea, font);
-        curArea.addTrait(Trait.COLOR, fobj.getColor());
+    /** {@inheritDoc} */
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
+        Character fobj = (Character) this.fobj;
 
         // TODO: may need some special handling for fo:character
         alignmentContext = new AlignmentContext(font
@@ -126,9 +122,11 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
                                     , fobj.getDominantBaseline()
                                     , context.getAlignmentContext());
 
+        KnuthSequence seq = new InlineKnuthSequence();
         addKnuthElementsForBorderPaddingStart(seq);
 
         // create the AreaInfo object to store the computed values
+        MinOptMax ipd = MinOptMax.getInstance(font.getCharWidth(fobj.getCharacter()));
         areaInfo = new AreaInfo((short) 0, ipd, false, alignmentContext);
 
         // node is a fo:Character
@@ -162,7 +160,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     /** {@inheritDoc} */
     @Override
     public String getWordChars(Position pos) {
-        return ((TextArea) curArea).getText();
+        return String.valueOf(((Character) fobj).getCharacter());
     }
 
     /** {@inheritDoc} */

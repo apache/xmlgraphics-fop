@@ -31,7 +31,6 @@ import org.apache.fop.afp.modca.IncludeObjectTestCase;
 @RunWith(Suite.class)
 @SuiteClasses({
         IncludeObjectTestCase.class,
-        AFPResourceUtilTestCase.class,
         AFPObjectAreaInfoTestCase.class,
         AFPPaintingStateTestCase.class
 })

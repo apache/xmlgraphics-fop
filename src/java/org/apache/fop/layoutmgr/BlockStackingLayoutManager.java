@@ -383,7 +383,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @return a new child layout context
      */
     protected LayoutContext makeChildLayoutContext(LayoutContext context) {
-        LayoutContext childLC = new LayoutContext(0);
+        LayoutContext childLC = LayoutContext.newInstance();
         childLC.copyPendingMarksFrom(context);
         childLC.setStackLimitBP(context.getStackLimitBP());
         childLC.setRefIPD(referenceIPD);
@@ -1035,7 +1035,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @return true if an element has been added due to a break-before.
      */
     protected boolean addKnuthElementsForBreakBefore(List returnList, LayoutContext context) {
-        int breakBefore = BreakOpportunityHelper.getBreakBefore(this);
+        int breakBefore = getBreakBefore();
         if (breakBefore == EN_PAGE
                 || breakBefore == EN_COLUMN
                 || breakBefore == EN_EVEN_PAGE
@@ -1047,6 +1047,17 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         } else {
             return false;
         }
+    }
+
+    /**
+     * Returns the highest priority break-before value on this layout manager or its
+     * relevant descendants.
+     *
+     * @return the break-before value (Constants.EN_*)
+     * @see BreakOpportunity#getBreakBefore()
+     */
+    public int getBreakBefore() {
+        return BreakOpportunityHelper.getBreakBefore(this);
     }
 
     /**

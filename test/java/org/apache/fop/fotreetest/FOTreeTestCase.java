@@ -39,7 +39,9 @@ import org.apache.fop.DebugHelper;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.FopFactoryConfigurator;
+import org.apache.fop.apps.FopFactoryBuilder;
+import org.apache.fop.apps.FopFactoryConfig;
+import org.apache.fop.apps.MutableConfig;
 import org.apache.fop.fotreetest.ext.TestElementMapping;
 import org.apache.fop.layoutengine.LayoutEngineTestUtils;
 import org.apache.fop.layoutengine.TestFilesConfiguration;
@@ -50,6 +52,9 @@ import org.apache.fop.util.ConsoleEventListenerForTests;
  */
 @RunWith(Parameterized.class)
 public class FOTreeTestCase {
+
+    private static final String BASE_DIR = "test/fotree/";
+    private static final String TEST_CASES = "testcases";
 
     @BeforeClass
     public static void registerElementListObservers() {
@@ -63,7 +68,7 @@ public class FOTreeTestCase {
     @Parameters
     public static Collection<File[]> getParameters() {
         TestFilesConfiguration.Builder builder = new TestFilesConfiguration.Builder();
-        builder.testDir("test/fotree")
+        builder.testDir(BASE_DIR)
                .singleProperty("fop.fotree.single")
                .startsWithProperty("fop.fotree.starts-with")
                .suffix(".fo")
@@ -75,7 +80,7 @@ public class FOTreeTestCase {
         return LayoutEngineTestUtils.getTestFiles(testConfig);
     }
 
-    private FopFactory fopFactory = FopFactory.newInstance();
+
 
     private final File testFile;
 
@@ -85,7 +90,6 @@ public class FOTreeTestCase {
      * @param testFile the FO file to test
      */
     public FOTreeTestCase(File testFile) {
-        fopFactory.addElementMapping(new TestElementMapping());
         this.testFile = testFile;
     }
 
@@ -104,21 +108,23 @@ public class FOTreeTestCase {
             spf.setValidating(false);
             SAXParser parser = spf.newSAXParser();
             XMLReader reader = parser.getXMLReader();
-
+            FopFactoryBuilder builder = new FopFactoryBuilder(new File(".").toURI());
             // Resetting values modified by processing instructions
-            fopFactory.setBreakIndentInheritanceOnReferenceAreaBoundary(
-                    FopFactoryConfigurator.DEFAULT_BREAK_INDENT_INHERITANCE);
-            fopFactory.setSourceResolution(FopFactoryConfigurator.DEFAULT_SOURCE_RESOLUTION);
+            builder.setBreakIndentInheritanceOnReferenceAreaBoundary(
+                   FopFactoryConfig.DEFAULT_BREAK_INDENT_INHERITANCE);
+            builder.setSourceResolution(FopFactoryConfig.DEFAULT_SOURCE_RESOLUTION);
 
+            MutableConfig mutableConfig = new MutableConfig(builder);
+
+            FopFactory fopFactory = FopFactory.newInstance(mutableConfig);
+            fopFactory.addElementMapping(new TestElementMapping());
             FOUserAgent ua = fopFactory.newFOUserAgent();
-            ua.setBaseURL(testFile.getParentFile().toURI().toURL().toString());
             ua.setFOEventHandlerOverride(new DummyFOEventHandler(ua));
             ua.getEventBroadcaster().addEventListener(
                     new ConsoleEventListenerForTests(testFile.getName()));
 
             // Used to set values in the user agent through processing instructions
-            reader = new PIListener(reader, ua);
-
+            reader = new PIListener(reader, mutableConfig);
             Fop fop = fopFactory.newFop(ua);
 
             reader.setContentHandler(fop.getDefaultHandler());
@@ -135,9 +141,9 @@ public class FOTreeTestCase {
             List<String> results = collector.getResults();
             if (results.size() > 0) {
                 for (int i = 0; i < results.size(); i++) {
-                    System.out.println((String) results.get(i));
+                    System.out.println(results.get(i));
                 }
-                throw new IllegalStateException((String) results.get(0));
+                throw new IllegalStateException(results.get(0));
             }
         } catch (Exception e) {
             org.apache.commons.logging.LogFactory.getLog(this.getClass()).info(
@@ -148,24 +154,22 @@ public class FOTreeTestCase {
 
     private static class PIListener extends XMLFilterImpl {
 
-        private FOUserAgent userAgent;
+        private final MutableConfig fopConfig;
 
-        public PIListener(XMLReader parent, FOUserAgent userAgent) {
+        public PIListener(XMLReader parent, MutableConfig fopConfig) {
             super(parent);
-            this.userAgent = userAgent;
+            this.fopConfig = fopConfig;
         }
 
         /** @see org.xml.sax.helpers.XMLFilterImpl */
         public void processingInstruction(String target, String data) throws SAXException {
             if ("fop-useragent-break-indent-inheritance".equals(target)) {
-                userAgent.getFactory().setBreakIndentInheritanceOnReferenceAreaBoundary(
+                fopConfig.setBreakIndentInheritanceOnReferenceAreaBoundary(
                         Boolean.valueOf(data).booleanValue());
             } else if ("fop-source-resolution".equals(target)) {
-                userAgent.getFactory().setSourceResolution(Float.parseFloat(data));
+                fopConfig.setSourceResolution(Float.parseFloat(data));
             }
             super.processingInstruction(target, data);
         }
-
     }
-
 }

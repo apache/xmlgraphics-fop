@@ -33,30 +33,30 @@
       <fo:page-sequence master-reference="normal" font-size="0" line-height="1">
         <fo:flow flow-name="xsl-region-body">
           <fo:block>
-            <fo:external-graphic id="img1" src="../../resources/images/bgimg72dpi.jpg"/>
+            <fo:external-graphic id="img1" src="../resources/images/bgimg72dpi.jpg"/>
           </fo:block>
           <fo:block>
-            <fo:external-graphic id="img2" src="../../resources/images/bgimg72dpi.jpg"
+            <fo:external-graphic id="img2" src="../resources/images/bgimg72dpi.jpg"
               inline-progression-dimension="250pt" block-progression-dimension="250pt"
               content-height="scale-to-fit" content-width="scale-to-fit"/>
           </fo:block>
           <fo:block>
-            <fo:external-graphic id="img3" src="../../resources/images/bgimg72dpi.jpg"
+            <fo:external-graphic id="img3" src="../resources/images/bgimg72dpi.jpg"
               inline-progression-dimension="250pt" block-progression-dimension="250pt"
               content-height="scale-down-to-fit" content-width="scale-down-to-fit"/>
           </fo:block>
           <fo:block>
-            <fo:external-graphic id="img4" src="../../resources/images/bgimg72dpi.jpg"
+            <fo:external-graphic id="img4" src="../resources/images/bgimg72dpi.jpg"
               inline-progression-dimension="250pt" block-progression-dimension="250pt"
               content-height="scale-up-to-fit" content-width="scale-up-to-fit"/>
           </fo:block>
           <fo:block>
-            <fo:external-graphic id="img5" src="../../resources/images/bgimg300dpi.jpg"
+            <fo:external-graphic id="img5" src="../resources/images/bgimg300dpi.jpg"
               inline-progression-dimension="250pt" block-progression-dimension="250pt"
               content-height="scale-down-to-fit" content-width="scale-down-to-fit"/>
           </fo:block>
           <fo:block>
-            <fo:external-graphic id="img6" src="../../resources/images/bgimg300dpi.jpg"
+            <fo:external-graphic id="img6" src="../resources/images/bgimg300dpi.jpg"
               inline-progression-dimension="250pt" block-progression-dimension="250pt"
               content-height="scale-up-to-fit" content-width="scale-up-to-fit"/>
           </fo:block>

@@ -23,7 +23,7 @@
     </p>
   </info>
   <variables>
-    <img>../../resources/images/bgimg300dpi.jpg</img>
+    <img>../resources/images/bgimg300dpi.jpg</img>
   </variables>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -43,7 +43,7 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=3648,vertical=21360" xpath="//flow/block[1]/lineArea/text[2]/@background"/>
-    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=-9696,vertical=-840" xpath="//flow/block[1]/lineArea/text[4]/@background"/>
+    <eval expected="color=#ffff00,url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=3648,vertical=21360" xpath="//flow/block[1]/lineArea/text[2]/@background"/>
+    <eval expected="color=#ffff00,url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=-9696,vertical=-840" xpath="//flow/block[1]/lineArea/text[4]/@background"/>
   </checks>
 </testcase>

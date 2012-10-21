@@ -36,6 +36,7 @@ import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
 import org.apache.fop.afp.AFPBorderPainter;
+import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPUnitConverter;
 import org.apache.fop.afp.AbstractAFPPainter;
@@ -50,16 +51,13 @@ import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.PresentationTextObject;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
-import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
-import org.apache.fop.afp.util.ResourceAccessor;
+import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.BorderPainter;
-import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
@@ -70,15 +68,13 @@ import org.apache.fop.util.CharUtilities;
 /**
  * IFPainter implementation that produces AFP (MO:DCA).
  */
-public class AFPPainter extends AbstractIFPainter {
+public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
     //** logging instance */
     //private static Log log = LogFactory.getLog(AFPPainter.class);
 
     private static final int X = 0;
     private static final int Y = 1;
-
-    private final AFPDocumentHandler documentHandler;
 
     /** the border painter */
     private final AFPBorderPainterAdapter borderPainter;
@@ -88,36 +84,38 @@ public class AFPPainter extends AbstractIFPainter {
     /** unit converter */
     private final AFPUnitConverter unitConv;
 
+    private final AFPEventProducer eventProducer;
+
     /**
      * Default constructor.
      * @param documentHandler the parent document handler
      */
     public AFPPainter(AFPDocumentHandler documentHandler) {
-        super();
-        this.documentHandler = documentHandler;
+        super(documentHandler);
         this.state = IFState.create();
         this.borderPainter = new AFPBorderPainterAdapter(
                 new AFPBorderPainter(getPaintingState(), getDataStream()));
         this.rectanglePainter = documentHandler.createRectanglePainter();
         this.unitConv = getPaintingState().getUnitConverter();
+        this.eventProducer = AFPEventProducer.Provider.get(getUserAgent().getEventBroadcaster());
     }
 
-    /** {@inheritDoc} */
+    private AFPPaintingState getPaintingState() {
+        return getDocumentHandler().getPaintingState();
+    }
+
+    private DataStream getDataStream() {
+        return getDocumentHandler().getDataStream();
+    }
+
     @Override
-    protected IFContext getContext() {
-        return this.documentHandler.getContext();
-    }
-
-    FontInfo getFontInfo() {
-        return this.documentHandler.getFontInfo();
-    }
-
-    AFPPaintingState getPaintingState() {
-        return this.documentHandler.getPaintingState();
-    }
-
-    DataStream getDataStream() {
-        return this.documentHandler.getDataStream();
+    public String getFontKey(FontTriplet triplet) throws IFException {
+        try {
+            return super.getFontKey(triplet);
+        } catch (IFException e) {
+            eventProducer.invalidConfiguration(null, e);
+            return super.getFontKey(FontTriplet.DEFAULT_FONT_TRIPLET);
+        }
     }
 
     /** {@inheritDoc} */
@@ -183,7 +181,7 @@ public class AFPPainter extends AbstractIFPainter {
     protected RenderingContext createRenderingContext() {
         AFPRenderingContext psContext = new AFPRenderingContext(
                 getUserAgent(),
-                documentHandler.getResourceManager(),
+                getDocumentHandler().getResourceManager(),
                 getPaintingState(),
                 getFontInfo(),
                 getContext().getForeignAttributes());
@@ -192,7 +190,7 @@ public class AFPPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle rect) throws IFException {
-        PageSegmentDescriptor pageSegment = documentHandler.getPageSegmentNameFor(uri);
+        PageSegmentDescriptor pageSegment = getDocumentHandler().getPageSegmentNameFor(uri);
 
         if (pageSegment != null) {
             float[] srcPts = {rect.x, rect.y};
@@ -205,11 +203,11 @@ public class AFPPainter extends AbstractIFPainter {
 
             //Do we need to embed an external page segment?
             if (pageSegment.getURI() != null) {
-                ResourceAccessor accessor = new DefaultFOPResourceAccessor (
-                        documentHandler.getUserAgent(), null, null);
+                AFPResourceAccessor accessor = new AFPResourceAccessor(
+                        getDocumentHandler().getUserAgent().getResourceResolver());
                 try {
                     URI resourceUri = new URI(pageSegment.getURI());
-                    documentHandler.getResourceManager().createIncludedResourceFromExternal(
+                    getDocumentHandler().getResourceManager().createIncludedResourceFromExternal(
                             pageSegment.getName(), resourceUri, accessor);
 
                 } catch (URISyntaxException urie) {
@@ -365,14 +363,10 @@ public class AFPPainter extends AbstractIFPainter {
         FontTriplet triplet = new FontTriplet(
                 state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
         //TODO Ignored: state.getFontVariant()
-        String fontKey = getFontInfo().getInternalFontKey(triplet);
-        if (fontKey == null) {
-            triplet = new FontTriplet("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            fontKey = getFontInfo().getInternalFontKey(triplet);
-        }
+        String fontKey = getFontKey(triplet);
 
         // register font as necessary
-        Map<String, Typeface> fontMetricMap = documentHandler.getFontInfo().getFonts();
+        Map<String, Typeface> fontMetricMap = getFontInfo().getFonts();
         final AFPFont afpFont = (AFPFont)fontMetricMap.get(fontKey);
         final Font font = getFontInfo().getFontInstance(triplet, fontSize);
         AFPPageFonts pageFonts = getPaintingState().getPageFonts();
@@ -386,7 +380,7 @@ public class AFPPainter extends AbstractIFPainter {
 
         if (afpFont.isEmbeddable()) {
             try {
-                documentHandler.getResourceManager().embedFont(afpFont, charSet);
+                getDocumentHandler().getResourceManager().embedFont(afpFont, charSet);
             } catch (IOException ioe) {
                 throw new IFException("Error while embedding font resources", ioe);
             }

@@ -191,7 +191,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             clm.addChildLM(lm);
             lm.initialize();
 
-            LayoutContext childContext = new LayoutContext(0);
+            LayoutContext childContext = LayoutContext.newInstance();
             childContext.setAlignmentContext(context.getAlignmentContext());
             contentList = clm.getNextKnuthElements(childContext, 0);
             int width = clm.getStackingSize();

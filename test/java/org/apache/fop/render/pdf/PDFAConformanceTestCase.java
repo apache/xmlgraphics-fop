@@ -19,18 +19,25 @@
 
 package org.apache.fop.render.pdf;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
+import java.io.IOException;
+
+import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.pdf.PDFConformanceException;
-import org.junit.Test;
+
+import static org.junit.Assert.fail;
 
 /**
  * Tests PDF/A-1 functionality.
  */
 public class PDFAConformanceTestCase extends BasePDFTest {
+
+    public PDFAConformanceTestCase() throws SAXException, IOException {
+        super(getDefaultConfFile());
+    }
 
     private File foBaseDir = new File("test/xml/pdf-a");
     private boolean dumpPDF = Boolean.getBoolean("PDFAConformanceTestCase.dumpPDF");
@@ -59,17 +66,12 @@ public class PDFAConformanceTestCase extends BasePDFTest {
      * Test exception when PDF/A-1 is enabled together with encryption.
      * @throws Exception if the test fails
      */
-    @Test
+    @Test(expected = PDFConformanceException.class)
     public void testNoEncryption() throws Exception {
         final FOUserAgent ua = getUserAgent();
         ua.getRendererOptions().put("owner-password", "mypassword"); //To enabled encryption
         File foFile = new File(foBaseDir, "minimal-pdf-a.fo");
-        try {
-            convertFO(foFile, ua, dumpPDF);
-            fail("Expected PDFConformanceException. PDF/A-1 and PDF encryption don't go together.");
-        } catch (PDFConformanceException e) {
-            //Good!
-        }
+        convertFO(foFile, ua, dumpPDF);
     }
 
     /**

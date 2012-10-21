@@ -19,21 +19,19 @@
 
 package org.apache.fop.render.java2d;
 
+import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
-
-import javax.xml.transform.Source;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
-import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontLoader;
-import org.apache.fop.fonts.FontManager;
-import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
 
@@ -44,23 +42,21 @@ public class ConfiguredFontCollection implements FontCollection {
 
     private static Log log = LogFactory.getLog(ConfiguredFontCollection.class);
 
-    private FontResolver fontResolver;
-    private List/*<EmbedFontInfo>*/ embedFontInfoList;
+    private final InternalResourceResolver resourceResolver;
+    private final List<EmbedFontInfo> embedFontInfoList;
+    private final boolean useComplexScripts;
 
     /**
      * Main constructor
-     * @param fontResolver a font resolver
+     * @param resourceResolver a font resolver
      * @param customFonts the list of custom fonts
      * @param useComplexScriptFeatures true if complex script features enabled
      */
-    public ConfiguredFontCollection(FontResolver fontResolver,
-            List/*<EmbedFontInfo>*/ customFonts, boolean useComplexScriptFeatures) {
-        this.fontResolver = fontResolver;
-        if (this.fontResolver == null) {
-            //Ensure that we have minimal font resolution capabilities
-            this.fontResolver = FontManager.createMinimalFontResolver(useComplexScriptFeatures);
-        }
+    public ConfiguredFontCollection(InternalResourceResolver resourceResolver,
+            List<EmbedFontInfo> customFonts, boolean useComplexScriptFeatures) {
+        this.resourceResolver = resourceResolver;
         this.embedFontInfoList = customFonts;
+        this.useComplexScripts = useComplexScriptFeatures;
     }
 
     /** {@inheritDoc} */
@@ -72,43 +68,37 @@ public class ConfiguredFontCollection implements FontCollection {
         }
         String internalName = null;
 
-        for (int i = 0; i < embedFontInfoList.size(); i++) {
-
-            EmbedFontInfo configFontInfo = (EmbedFontInfo) embedFontInfoList.get(i);
-            String fontFile = configFontInfo.getEmbedFile();
-            internalName = "F" + num;
-            num++;
+        for (EmbedFontInfo configFontInfo : embedFontInfoList) {
+            internalName = "F" + num++;
             try {
+                URI fontURI = configFontInfo.getEmbedURI();
                 FontMetricsMapper font = null;
-                String metricsUrl = configFontInfo.getMetricsFile();
+                URI metricsURI = configFontInfo.getMetricsURI();
                 // If the user specified an XML-based metrics file, we'll use it
                 // Otherwise, calculate metrics directly from the font file.
-                if (metricsUrl != null) {
-                    LazyFont fontMetrics = new LazyFont(configFontInfo, fontResolver);
-                    Source fontSource = fontResolver.resolve(configFontInfo.getEmbedFile());
+                if (metricsURI != null) {
+                    LazyFont fontMetrics = new LazyFont(configFontInfo, resourceResolver, useComplexScripts);
+                    InputStream fontSource = resourceResolver.getResource(fontURI);
                     font = new CustomFontMetricsMapper(fontMetrics, fontSource);
                 } else {
-                    CustomFont fontMetrics = FontLoader.loadFont(
-                            fontFile, null, true, configFontInfo.getEmbeddingMode(),
-                            EncodingMode.AUTO,
-                            configFontInfo.getKerning(),
-                            configFontInfo.getAdvanced(), fontResolver);
+                    CustomFont fontMetrics = FontLoader.loadFont(fontURI, null, true,
+                            configFontInfo.getEmbeddingMode(), configFontInfo.getEncodingMode(),
+                            configFontInfo.getKerning(), configFontInfo.getAdvanced(),
+                            resourceResolver);
                     font = new CustomFontMetricsMapper(fontMetrics);
                 }
 
                 fontInfo.addMetrics(internalName, font);
 
-                List<FontTriplet> triplets = configFontInfo.getFontTriplets();
-                for (int c = 0; c < triplets.size(); c++) {
-                    FontTriplet triplet = (FontTriplet) triplets.get(c);
-
+                for (FontTriplet triplet : configFontInfo.getFontTriplets()) {
                     if (log.isDebugEnabled()) {
                         log.debug("Registering: " + triplet + " under " + internalName);
                     }
                     fontInfo.addFontProperties(internalName, triplet);
                 }
             } catch (Exception e) {
-                log.warn("Unable to load custom font from file '" + fontFile + "'", e);
+                log.warn("Unable to load custom font from file '" + configFontInfo.getEmbedURI()
+                        + "'", e);
             }
         }
         return num;
