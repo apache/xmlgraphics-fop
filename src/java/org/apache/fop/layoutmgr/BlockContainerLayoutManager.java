@@ -193,7 +193,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
      */
     @Override
     protected LayoutContext makeChildLayoutContext(LayoutContext context) {
-        LayoutContext childLC = new LayoutContext(0);
+        LayoutContext childLC = LayoutContext.newInstance();
         childLC.setStackLimitBP(
                 context.getStackLimitBP().minus(MinOptMax.getInstance(relDims.bpd)));
         childLC.setRefIPD(relDims.ipd);
@@ -707,7 +707,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
             return curChildLM;
         }
 
-        public void addContainedAreas() {
+        public void addContainedAreas(LayoutContext layoutContext) {
             if (isEmpty()) {
                 return;
             }
@@ -715,8 +715,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
             //overflow should be visible.
             this.deferredAlg.removeAllPageBreaks();
             this.addAreas(this.deferredAlg,
+                          0,
                           this.deferredAlg.getPageBreaks().size(),
-                          this.deferredOriginalList, this.deferredEffectiveList);
+                          this.deferredOriginalList, this.deferredEffectiveList,
+                          LayoutContext.offspringOf(layoutContext));
         }
 
     }
@@ -754,7 +756,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
 
         LayoutManager childLM;
         LayoutManager lastLM = null;
-        LayoutContext lc = new LayoutContext(0);
+        LayoutContext lc = LayoutContext.offspringOf(layoutContext);
         lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
         // set space after in the LayoutContext for children
         if (layoutContext.getSpaceAfter() > 0) {
@@ -821,7 +823,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
             }
         } else {
             //Add child areas inside the reference area
-            bcpos.getBreaker().addContainedAreas();
+            bcpos.getBreaker().addContainedAreas(layoutContext);
         }
 
         addMarkersToPage(false, isFirst(firstPos), isLast(lastPos));
@@ -1042,10 +1044,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
             this.horizontalOverflow = milliPoints;
         }
         return true;
-    }
-
-    public int getBreakBefore() {
-        return BreakOpportunityHelper.getBreakBefore(this);
     }
 
 }

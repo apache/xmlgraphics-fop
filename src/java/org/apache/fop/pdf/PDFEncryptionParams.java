@@ -273,4 +273,17 @@ public class PDFEncryptionParams {
         this.encryptionLengthInBits = encryptionLength;
     }
 
+    public String toString() {
+        return "userPassword = " + userPassword + "\n"
+                + "ownerPassword = " + ownerPassword + "\n"
+                + "allowPrint = " + allowPrint + "\n"
+                + "allowCopyContent = " + allowCopyContent + "\n"
+                + "allowEditContent = " + allowEditContent + "\n"
+                + "allowEditAnnotations = " + allowEditAnnotations + "\n"
+                + "allowFillInForms  = " + allowFillInForms + "\n"
+                + "allowAccessContent = " + allowAccessContent + "\n"
+                + "allowAssembleDocument = " + allowAssembleDocument + "\n"
+                + "allowPrintHq = " + allowPrintHq;
+    }
+
 }

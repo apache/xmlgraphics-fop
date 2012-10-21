@@ -34,7 +34,7 @@
           <fo:block>normal<fo:inline><fo:page-number/></fo:inline>normal</fo:block>
           <fo:block>normal<fo:inline><fo:page-number-citation ref-id="ps1"/></fo:inline>normal</fo:block>
           <fo:block>normal<fo:inline><fo:character character="x"/></fo:inline>normal</fo:block>
-          <fo:block>normal<fo:inline><fo:external-graphic src="../../resources/images/bgimg300dpi.jpg"/></fo:inline>normal</fo:block>
+          <fo:block>normal<fo:inline><fo:external-graphic src="../resources/images/bgimg300dpi.jpg"/></fo:inline>normal</fo:block>
           <fo:block>normal<fo:inline><fo:instream-foreign-object content-width="20pt" content-height="20pt">
               <svg:svg viewBox="0 0 20 20">
                 <svg:g style="fill:red; stroke:#000000">

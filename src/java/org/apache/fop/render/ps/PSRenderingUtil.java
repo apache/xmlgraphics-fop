@@ -33,11 +33,15 @@ import org.apache.fop.render.ps.extensions.PSCommentBefore;
 import org.apache.fop.render.ps.extensions.PSExtensionAttachment;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 
+import static org.apache.fop.render.ps.PSRendererOption.AUTO_ROTATE_LANDSCAPE;
+import static org.apache.fop.render.ps.PSRendererOption.LANGUAGE_LEVEL;
+import static org.apache.fop.render.ps.PSRendererOption.OPTIMIZE_RESOURCES;
+
 /**
  * Utility class which enables all sorts of features that are not directly connected to the
  * normal rendering process.
  */
-public class PSRenderingUtil implements PSConfigurationConstants {
+public class PSRenderingUtil {
 
     private FOUserAgent userAgent;
 
@@ -64,20 +68,21 @@ public class PSRenderingUtil implements PSConfigurationConstants {
 
     PSRenderingUtil(FOUserAgent userAgent) {
         this.userAgent = userAgent;
+        //PSRendererConfig confi = userAgent.getRendererConfig(rendererConfiguration, configCreator)
         initialize();
     }
 
     private void initialize() {
         Object obj;
-        obj = userAgent.getRendererOptions().get(AUTO_ROTATE_LANDSCAPE);
+        obj = userAgent.getRendererOptions().get(AUTO_ROTATE_LANDSCAPE.getName());
         if (obj != null) {
             setAutoRotateLandscape(booleanValueOf(obj));
         }
-        obj = userAgent.getRendererOptions().get(LANGUAGE_LEVEL);
+        obj = userAgent.getRendererOptions().get(LANGUAGE_LEVEL.getName());
         if (obj != null) {
             setLanguageLevel(intValueOf(obj));
         }
-        obj = userAgent.getRendererOptions().get(OPTIMIZE_RESOURCES);
+        obj = userAgent.getRendererOptions().get(OPTIMIZE_RESOURCES.getName());
         if (obj != null) {
             setOptimizeResources(booleanValueOf(obj));
         }

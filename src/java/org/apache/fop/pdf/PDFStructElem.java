@@ -72,9 +72,7 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
     }
 
     /**
-     * Add a kid to this structure element. This element will then add itself to
-     * its parent structure element if it has not already, and so will the
-     * parent, and so on.
+     * Adds a kid to this structure element.
      *
      * @param kid element to be added
      */

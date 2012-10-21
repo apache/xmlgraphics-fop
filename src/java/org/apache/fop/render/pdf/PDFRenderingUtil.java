@@ -24,17 +24,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.EnumMap;
 import java.util.Map;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
@@ -42,6 +40,7 @@ import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 
 import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFArray;
@@ -68,11 +67,24 @@ import org.apache.fop.pdf.Version;
 import org.apache.fop.pdf.VersionController;
 import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileExtensionAttachment;
 
+import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPTION_PARAMS;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_ACCESSCONTENT;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_ANNOTATIONS;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_ASSEMBLEDOC;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_COPY_CONTENT;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_EDIT_CONTENT;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_FILLINFORMS;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_PRINT;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_PRINTHQ;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.OWNER_PASSWORD;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.USER_PASSWORD;
+
+
 /**
  * Utility class which enables all sorts of features that are not directly connected to the
  * normal rendering process.
  */
-class PDFRenderingUtil implements PDFConfigurationConstants {
+class PDFRenderingUtil {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PDFRenderingUtil.class);
@@ -80,171 +92,42 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
     private FOUserAgent userAgent;
 
     /** the PDF Document being created */
-    protected PDFDocument pdfDoc;
+    private PDFDocument pdfDoc;
 
-    /** the PDF/A mode (Default: disabled) */
-    protected PDFAMode pdfAMode = PDFAMode.DISABLED;
-
-    /** the PDF/X mode (Default: disabled) */
-    protected PDFXMode pdfXMode = PDFXMode.DISABLED;
-
-    /** the (optional) encryption parameters */
-    protected PDFEncryptionParams encryptionParams;
-
-    /** Registry of PDF filters */
-    protected Map filterMap;
+    private PDFRendererOptionsConfig rendererConfig;
 
     /** the ICC stream used as output profile by this document for PDF/A and PDF/X functionality. */
-    protected PDFICCStream outputProfile;
+    private PDFICCStream outputProfile;
+
     /** the default sRGB color space. */
-    protected PDFICCBasedColorSpace sRGBColorSpace;
-    /** controls whether the sRGB color space should be installed */
-    protected boolean disableSRGBColorSpace = false;
-
-    /** Optional URI to an output profile to be used. */
-    protected String outputProfileURI;
-
-    protected Version maxPDFVersion;
-
+    private PDFICCBasedColorSpace sRGBColorSpace;
 
     PDFRenderingUtil(FOUserAgent userAgent) {
         this.userAgent = userAgent;
         initialize();
     }
 
-    private static boolean booleanValueOf(Object obj) {
-        if (obj instanceof Boolean) {
-            return ((Boolean)obj).booleanValue();
-        } else if (obj instanceof String) {
-            return Boolean.valueOf((String)obj).booleanValue();
-        } else {
-            throw new IllegalArgumentException("Boolean or \"true\" or \"false\" expected.");
-        }
-    }
-
     private void initialize() {
-        PDFEncryptionParams params
-                = (PDFEncryptionParams)userAgent.getRendererOptions().get(ENCRYPTION_PARAMS);
-        if (params != null) {
-            this.encryptionParams = params; //overwrite if available
-        }
-        String userPassword = (String)userAgent.getRendererOptions().get(USER_PASSWORD);
-        if (userPassword != null) {
-            getEncryptionParams().setUserPassword(userPassword);
-        }
-        String ownerPassword = (String)userAgent.getRendererOptions().get(OWNER_PASSWORD);
-        if (ownerPassword != null) {
-            getEncryptionParams().setOwnerPassword(ownerPassword);
-        }
-        Object noPrint = userAgent.getRendererOptions().get(NO_PRINT);
-        if (noPrint != null) {
-            getEncryptionParams().setAllowPrint(!booleanValueOf(noPrint));
-        }
-        Object noCopyContent = userAgent.getRendererOptions().get(NO_COPY_CONTENT);
-        if (noCopyContent != null) {
-            getEncryptionParams().setAllowCopyContent(!booleanValueOf(noCopyContent));
-        }
-        Object noEditContent = userAgent.getRendererOptions().get(NO_EDIT_CONTENT);
-        if (noEditContent != null) {
-            getEncryptionParams().setAllowEditContent(!booleanValueOf(noEditContent));
-        }
-        Object noAnnotations = userAgent.getRendererOptions().get(NO_ANNOTATIONS);
-        if (noAnnotations != null) {
-            getEncryptionParams().setAllowEditAnnotations(!booleanValueOf(noAnnotations));
-        }
-        Object noFillInForms = userAgent.getRendererOptions().get(NO_FILLINFORMS);
-        if (noFillInForms != null) {
-            getEncryptionParams().setAllowFillInForms(!booleanValueOf(noFillInForms));
-        }
-        Object noAccessContent = userAgent.getRendererOptions().get(NO_ACCESSCONTENT);
-        if (noAccessContent != null) {
-            getEncryptionParams().setAllowAccessContent(!booleanValueOf(noAccessContent));
-        }
-        Object noAssembleDoc = userAgent.getRendererOptions().get(NO_ASSEMBLEDOC);
-        if (noAssembleDoc != null) {
-            getEncryptionParams().setAllowAssembleDocument(!booleanValueOf(noAssembleDoc));
-        }
-        Object noPrintHQ = userAgent.getRendererOptions().get(NO_PRINTHQ);
-        if (noPrintHQ != null) {
-            getEncryptionParams().setAllowPrintHq(!booleanValueOf(noPrintHQ));
-        }
-        String s = (String)userAgent.getRendererOptions().get(PDF_A_MODE);
-        if (s != null) {
-            this.pdfAMode = PDFAMode.valueOf(s);
-        }
-        if (this.pdfAMode.isPDFA1LevelA()) {
+        rendererConfig = PDFRendererOptionsConfig.DEFAULT.merge(createFromUserAgent(userAgent));
+        if (rendererConfig.getPDFAMode().isPDFA1LevelA()) {
             //Enable accessibility if PDF/A-1a is enabled because it requires tagged PDF.
             userAgent.getRendererOptions().put(Accessibility.ACCESSIBILITY, Boolean.TRUE);
         }
-        s = (String)userAgent.getRendererOptions().get(PDF_X_MODE);
-        if (s != null) {
-            this.pdfXMode = PDFXMode.valueOf(s);
+    }
+
+    private static  PDFRendererOptionsConfig createFromUserAgent(FOUserAgent userAgent) {
+        Map<PDFRendererOption, Object> properties
+                = new EnumMap<PDFRendererOption, Object>(PDFRendererOption.class);
+        for (PDFRendererOption option : PDFRendererOption.values()) {
+            Object value = userAgent.getRendererOption(option);
+            properties.put(option, option.parse(value));
         }
-        s = (String)userAgent.getRendererOptions().get(KEY_OUTPUT_PROFILE);
-        if (s != null) {
-            this.outputProfileURI = s;
-        }
-        Object disableSRGBColorSpace = userAgent.getRendererOptions().get(
-                KEY_DISABLE_SRGB_COLORSPACE);
-        if (disableSRGBColorSpace != null) {
-            this.disableSRGBColorSpace = booleanValueOf(disableSRGBColorSpace);
-        }
+        PDFEncryptionParams encryptionConfig = new EncryptionParamsBuilder().createParams(userAgent);
+        return new PDFRendererOptionsConfig(properties, encryptionConfig);
     }
 
-    public FOUserAgent getUserAgent() {
-        return this.userAgent;
-    }
-
-    /**
-     * Sets the PDF/A mode for the PDF renderer.
-     * @param mode the PDF/A mode
-     */
-    public void setAMode(PDFAMode mode) {
-        this.pdfAMode = mode;
-    }
-
-    /**
-     * Sets the PDF/X mode for the PDF renderer.
-     * @param mode the PDF/X mode
-     */
-    public void setXMode(PDFXMode mode) {
-        this.pdfXMode = mode;
-    }
-
-    /**
-     * Sets the output color profile for the PDF renderer.
-     * @param outputProfileURI the URI to the output color profile
-     */
-    public void setOutputProfileURI(String outputProfileURI) {
-        this.outputProfileURI = outputProfileURI;
-    }
-
-    /**
-     * Enables or disables the default sRGB color space needed for the PDF document to preserve
-     * the sRGB colors used in XSL-FO.
-     * @param disable true to disable, false to enable
-     */
-    public void setDisableSRGBColorSpace(boolean disable) {
-        this.disableSRGBColorSpace = disable;
-    }
-
-    /**
-     * Sets the filter map to be used by the PDF renderer.
-     * @param filterMap the filter map
-     */
-    public void setFilterMap(Map filterMap) {
-        this.filterMap = filterMap;
-    }
-
-    /**
-     * Gets the encryption parameters used by the PDF renderer.
-     * @return encryptionParams the encryption parameters
-     */
-    PDFEncryptionParams getEncryptionParams() {
-        if (this.encryptionParams == null) {
-            this.encryptionParams = new PDFEncryptionParams();
-        }
-        return this.encryptionParams;
+    void mergeRendererOptionsConfig(PDFRendererOptionsConfig config) {
+        rendererConfig = rendererConfig.merge(config);
     }
 
     private void updateInfo() {
@@ -258,15 +141,15 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
     }
 
     private void updatePDFProfiles() {
-        pdfDoc.getProfile().setPDFAMode(this.pdfAMode);
-        pdfDoc.getProfile().setPDFXMode(this.pdfXMode);
+        pdfDoc.getProfile().setPDFAMode(rendererConfig.getPDFAMode());
+        pdfDoc.getProfile().setPDFXMode(rendererConfig.getPDFXMode());
     }
 
     private void addsRGBColorSpace() throws IOException {
-        if (disableSRGBColorSpace) {
-            if (this.pdfAMode != PDFAMode.DISABLED
-                    || this.pdfXMode != PDFXMode.DISABLED
-                    || this.outputProfileURI != null) {
+        if (rendererConfig.getDisableSRGBColorSpace()) {
+            if (rendererConfig.getPDFAMode() != PDFAMode.DISABLED
+                    || rendererConfig.getPDFXMode() != PDFXMode.DISABLED
+                    || rendererConfig.getOutputProfileURI() != null) {
                 throw new IllegalStateException("It is not possible to disable the sRGB color"
                         + " space if PDF/A or PDF/X functionality is enabled or an"
                         + " output profile is set!");
@@ -286,17 +169,10 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         }
         ICC_Profile profile;
         InputStream in = null;
-        if (this.outputProfileURI != null) {
+        URI outputProfileUri = rendererConfig.getOutputProfileURI();
+        if (outputProfileUri != null) {
             this.outputProfile = pdfDoc.getFactory().makePDFICCStream();
-            Source src = getUserAgent().resolveURI(this.outputProfileURI);
-            if (src == null) {
-                throw new IOException("Output profile not found: " + this.outputProfileURI);
-            }
-            if (src instanceof StreamSource) {
-                in = ((StreamSource)src).getInputStream();
-            } else {
-                in = new URL(src.getSystemId()).openStream();
-            }
+            in = userAgent.getResourceResolver().getResource(rendererConfig.getOutputProfileURI());
             try {
                 profile = ColorProfileUtil.getICC_Profile(in);
             } finally {
@@ -381,7 +257,7 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         }
 
         String producer = userAgent.getProducer() != null ? userAgent.getProducer() : "";
-
+        final Version maxPDFVersion = rendererConfig.getPDFVersion();
         if (maxPDFVersion == null) {
             this.pdfDoc = new PDFDocument(producer);
         } else {
@@ -391,22 +267,24 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         }
         updateInfo();
         updatePDFProfiles();
-        pdfDoc.setFilterMap(filterMap);
+        pdfDoc.setFilterMap(rendererConfig.getFilterMap());
         pdfDoc.outputHeader(out);
 
         //Setup encryption if necessary
-        PDFEncryptionManager.setupPDFEncryption(encryptionParams, pdfDoc);
+        PDFEncryptionManager.setupPDFEncryption(rendererConfig.getEncryptionParameters(), pdfDoc);
 
         addsRGBColorSpace();
-        if (this.outputProfileURI != null) {
+        if (rendererConfig.getOutputProfileURI() != null) {
             addDefaultOutputProfile();
         }
+        PDFXMode pdfXMode = rendererConfig.getPDFXMode();
         if (pdfXMode != PDFXMode.DISABLED) {
             log.debug(pdfXMode + " is active.");
             log.warn("Note: " + pdfXMode
                     + " support is work-in-progress and not fully implemented, yet!");
             addPDFXOutputIntent();
         }
+        PDFAMode pdfAMode = rendererConfig.getPDFAMode();
         if (pdfAMode.isPDFA1LevelB()) {
             log.debug("PDF/A is active. Conformance Level: " + pdfAMode);
             addPDFA1OutputIntent();
@@ -456,8 +334,13 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         //Create embedded file
         PDFEmbeddedFile file = new PDFEmbeddedFile();
         this.pdfDoc.registerObject(file);
-        Source src = getUserAgent().resolveURI(embeddedFile.getSrc());
-        InputStream in = ImageUtil.getInputStream(src);
+        URI srcURI;
+        try {
+            srcURI = InternalResourceResolver.cleanURI(embeddedFile.getSrc());
+        } catch (URISyntaxException use) {
+            throw new RuntimeException(use);
+        }
+        InputStream in = userAgent.getResourceResolver().getResource(srcURI);
         if (in == null) {
             throw new FileNotFoundException(embeddedFile.getSrc());
         }
@@ -497,14 +380,72 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         nameArray.add(new PDFReference(fileSpec));
     }
 
-    /**
-     * Sets the PDF version of the output document. See {@link Version} for the format of
-     * <code>version</code>.
-     * @param version the PDF version
-     * @throws IllegalArgumentException if the format of version doesn't conform to that specified
-     * by {@link Version}
-     */
-    public void setPDFVersion(String version) {
-        maxPDFVersion = Version.getValueOf(version);
+    private static final class EncryptionParamsBuilder {
+        private PDFEncryptionParams params;
+
+        private EncryptionParamsBuilder() {
+        }
+
+        private PDFEncryptionParams createParams(FOUserAgent userAgent) {
+            params = (PDFEncryptionParams) userAgent.getRendererOptions().get(ENCRYPTION_PARAMS);
+            String userPassword = (String) userAgent.getRendererOption(USER_PASSWORD);
+            if (userPassword != null) {
+                getEncryptionParams().setUserPassword(userPassword);
+            }
+            String ownerPassword = (String) userAgent.getRendererOption(OWNER_PASSWORD);
+            if (ownerPassword != null) {
+                getEncryptionParams().setOwnerPassword(ownerPassword);
+            }
+            Object noPrint = userAgent.getRendererOption(NO_PRINT);
+            if (noPrint != null) {
+                getEncryptionParams().setAllowPrint(!booleanValueOf(noPrint));
+            }
+            Object noCopyContent = userAgent.getRendererOption(NO_COPY_CONTENT);
+            if (noCopyContent != null) {
+                getEncryptionParams().setAllowCopyContent(!booleanValueOf(noCopyContent));
+            }
+            Object noEditContent = userAgent.getRendererOption(NO_EDIT_CONTENT);
+            if (noEditContent != null) {
+                getEncryptionParams().setAllowEditContent(!booleanValueOf(noEditContent));
+            }
+            Object noAnnotations = userAgent.getRendererOption(NO_ANNOTATIONS);
+            if (noAnnotations != null) {
+                getEncryptionParams().setAllowEditAnnotations(!booleanValueOf(noAnnotations));
+            }
+            Object noFillInForms = userAgent.getRendererOption(NO_FILLINFORMS);
+            if (noFillInForms != null) {
+                getEncryptionParams().setAllowFillInForms(!booleanValueOf(noFillInForms));
+            }
+            Object noAccessContent = userAgent.getRendererOption(NO_ACCESSCONTENT);
+            if (noAccessContent != null) {
+                getEncryptionParams().setAllowAccessContent(!booleanValueOf(noAccessContent));
+            }
+            Object noAssembleDoc = userAgent.getRendererOption(NO_ASSEMBLEDOC);
+            if (noAssembleDoc != null) {
+                getEncryptionParams().setAllowAssembleDocument(!booleanValueOf(noAssembleDoc));
+            }
+            Object noPrintHQ = userAgent.getRendererOption(NO_PRINTHQ);
+            if (noPrintHQ != null) {
+                getEncryptionParams().setAllowPrintHq(!booleanValueOf(noPrintHQ));
+            }
+            return params;
+        }
+
+        private PDFEncryptionParams getEncryptionParams() {
+            if (params == null) {
+                params = new PDFEncryptionParams();
+            }
+            return params;
+        }
+
+        private static boolean booleanValueOf(Object obj) {
+            if (obj instanceof Boolean) {
+                return ((Boolean)obj).booleanValue();
+            } else if (obj instanceof String) {
+                return Boolean.valueOf((String)obj).booleanValue();
+            } else {
+                throw new IllegalArgumentException("Boolean or \"true\" or \"false\" expected.");
+            }
+        }
     }
 }

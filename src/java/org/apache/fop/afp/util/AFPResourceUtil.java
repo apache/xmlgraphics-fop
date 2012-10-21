@@ -56,8 +56,11 @@ import org.apache.fop.afp.parser.UnparsedStructuredField;
  */
 public final class AFPResourceUtil {
 
-    private static final byte TYPE_CODE_BEGIN = (byte)(0xA8 & 0xFF);
-    private static final byte TYPE_CODE_END = (byte)(0xA9 & 0xFF);
+    private static final byte TYPE_CODE_BEGIN = (byte) (0xA8 & 0xFF);
+
+    private static final byte TYPE_CODE_END = (byte) (0xA9 & 0xFF);
+
+    private static final byte END_FIELD_ANY_NAME = (byte) (0xFF & 0xFF);
 
     private static final Log LOG = LogFactory.getLog(AFPResourceUtil.class);
 
@@ -186,12 +189,9 @@ public final class AFPResourceUtil {
         }
     }
 
-    private static void copyNamedStructuredFields(final String name,
-            UnparsedStructuredField fieldBegin, MODCAParser parser,
-            OutputStream out) throws IOException {
-
+    private static void copyNamedStructuredFields(final String name, UnparsedStructuredField fieldBegin,
+            MODCAParser parser, OutputStream out) throws IOException {
         UnparsedStructuredField field = fieldBegin;
-
         while (true) {
             if (field == null) {
                 throw new IOException("Ending structured field not found for resource " + name);
@@ -199,12 +199,45 @@ public final class AFPResourceUtil {
             out.write(MODCAParser.CARRIAGE_CONTROL_CHAR);
             field.writeTo(out);
 
-            if (field.getSfTypeCode() == TYPE_CODE_END
-                    && fieldBegin.getSfCategoryCode() == field.getSfCategoryCode()
-                    && name.equals(getResourceName(field))) {
+            if (isEndOfStructuredField(field, fieldBegin, name)) {
                 break;
             }
             field = parser.readNextStructuredField();
         }
+    }
+
+    private static boolean isEndOfStructuredField(UnparsedStructuredField field,
+            UnparsedStructuredField fieldBegin, String name) throws UnsupportedEncodingException {
+        return fieldMatchesEndTagType(field)
+                && fieldMatchesBeginCategoryCode(field, fieldBegin)
+                && fieldHasValidName(field, name);
+    }
+
+    private static boolean fieldMatchesEndTagType(UnparsedStructuredField field) {
+        return field.getSfTypeCode() == TYPE_CODE_END;
+    }
+
+    private static boolean fieldMatchesBeginCategoryCode(UnparsedStructuredField field,
+            UnparsedStructuredField fieldBegin) {
+        return fieldBegin.getSfCategoryCode() == field.getSfCategoryCode();
+    }
+
+    /**
+     * The AFP specification states that it is valid for the end structured field to have:
+     *  - No tag name specified, which will cause it to match any existing tag type match.
+     *  - The name has FFFF as its first two bytes
+     *  - The given name matches the previous structured field name
+     */
+    private static boolean fieldHasValidName(UnparsedStructuredField field, String name)
+            throws UnsupportedEncodingException {
+        if (field.getData().length > 0) {
+            if (field.getData()[0] == field.getData()[1]
+                    && field.getData()[0] == END_FIELD_ANY_NAME) {
+                return true;
+            } else {
+                return name.equals(getResourceName(field));
+            }
+        }
+        return true;
     }
 }

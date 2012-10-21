@@ -242,7 +242,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         // Elements for the table-header/footer/body
         List contentKnuthElements;
         contentLM = new TableContentLayoutManager(this);
-        LayoutContext childLC = new LayoutContext(0);
+        LayoutContext childLC = LayoutContext.newInstance();
         /*
         childLC.setStackLimit(
               MinOptMax.subtract(context.getStackLimit(),
@@ -355,7 +355,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         // BPD of the table, i.e., height of its content; table's borders and paddings not counted
         int tableHeight = 0;
         //Body childLM;
-        LayoutContext lc = new LayoutContext(0);
+        LayoutContext lc = LayoutContext.offspringOf(layoutContext);
 
 
         lc.setRefIPD(getContentAreaIPD());

@@ -48,9 +48,6 @@ import org.apache.fop.render.intermediate.IFSerializer;
 @RunWith(Parameterized.class)
 public class IFParserTestCase extends AbstractIFTest {
 
-    /** Set this to true to get the correspondence between test number and test file. */
-    private static final boolean DEBUG = false;
-
     /**
      * Gets the parameters for this test
      *
@@ -59,19 +56,7 @@ public class IFParserTestCase extends AbstractIFTest {
      */
     @Parameters
     public static Collection<File[]> getParameters() throws IOException {
-        Collection<File[]> testFiles = LayoutEngineTestUtils.getLayoutTestFiles();
-        if (DEBUG) {
-            printFiles(testFiles);
-        }
-        return testFiles;
-    }
-
-    private static void printFiles(Collection<File[]> files) {
-        int index = 0;
-        for (File[] file : files) {
-            assert file.length == 1;
-            System.out.println(String.format("%3d %s", index++, file[0]));
-        }
+        return LayoutEngineTestUtils.getLayoutTestFiles();
     }
 
     /**
@@ -104,8 +89,7 @@ public class IFParserTestCase extends AbstractIFTest {
 
         FOUserAgent userAgent = createUserAgent();
 
-        IFSerializer serializer = new IFSerializer();
-        serializer.setContext(new IFContext(userAgent));
+        IFSerializer serializer = new IFSerializer(new IFContext(userAgent));
         DOMResult domResult = new DOMResult();
         serializer.setResult(domResult);
 

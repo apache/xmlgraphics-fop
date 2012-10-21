@@ -34,23 +34,23 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block text-align="left">2 inch wide SVG external-graphic on LHS</fo:block>
           <fo:block text-align="left">
-            <fo:external-graphic src="../../resources/images/img.svg" content-width="2in" scaling="uniform" />EOG
+            <fo:external-graphic src="../resources/images/img.svg" content-width="2in" scaling="uniform" />EOG
           </fo:block>
           <fo:block text-align="right">4 inch wide SVG external-graphic on RHS</fo:block>
           <fo:block text-align="right">
-            <fo:external-graphic src="../../resources/images/img.svg" content-width="4in" scaling="uniform" />EOG
+            <fo:external-graphic src="../resources/images/img.svg" content-width="4in" scaling="uniform" />EOG
           </fo:block>
           <fo:block text-align="center">6 inch wide SVG external-graphic in center, non-uniformly squeezed to a height of 4in.</fo:block>
           <fo:block text-align="center">
-            <fo:external-graphic src="../../resources/images/img.svg" content-width="6in" content-height="4in" scaling="non-uniform" />EOG
+            <fo:external-graphic src="../resources/images/img.svg" content-width="6in" content-height="4in" scaling="non-uniform" />EOG
           </fo:block>
           <fo:block text-align="left">SVG external-graphic with an intrinsic size (16ptx16pt)</fo:block>
           <fo:block text-align="left">
-            <fo:external-graphic src="../../resources/images/img-w-size.svg"/>EOG
+            <fo:external-graphic src="../resources/images/img-w-size.svg"/>EOG
           </fo:block>
           <fo:block text-align="left">SVG external-graphic with an intrinsic size and fox:conversion-mode="bitmap"</fo:block>
           <fo:block text-align="left">
-            <fo:external-graphic src="../../resources/images/img-w-size.svg"
+            <fo:external-graphic src="../resources/images/img-w-size.svg"
               fox:conversion-mode="bitmap"/>EOG
           </fo:block>
           <fo:block>EOF</fo:block>

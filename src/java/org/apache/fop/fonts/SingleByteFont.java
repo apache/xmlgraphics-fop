@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.fonts.Glyphs;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
 
 /**
@@ -53,15 +54,16 @@ public class SingleByteFont extends CustomFont {
     private PostScriptVersion ttPostScriptVersion;
 
     /**
-     * Main constructor.
+     * @param resourceResolver the URI resolver for controlling file access
      */
-    public SingleByteFont() {
+    public SingleByteFont(InternalResourceResolver resourceResolver) {
+        super(resourceResolver);
         setEncoding(CodePointMapping.WIN_ANSI_ENCODING);
     }
 
     /** {@inheritDoc} */
     public boolean isEmbeddable() {
-        return (!(getEmbedFileName() == null
+        return (!(getEmbedFileURI() == null
                 && getEmbedResourceName() == null));
     }
 

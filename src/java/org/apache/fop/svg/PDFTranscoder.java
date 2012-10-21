@@ -133,7 +133,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder {
             }
         } catch (Exception e) {
             throw new TranscoderException(
-                "Error while setting up PDFDocumentGraphics2D", e);
+                    "Error while setting up PDFDocumentGraphics2D", e);
         }
 
         super.transcode(document, uri, output);

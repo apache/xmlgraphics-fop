@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.complexscripts.fonts.GlyphDefinitionTable;
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable;
 import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable;
@@ -68,7 +69,8 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     /**
      * Default constructor
      */
-    public MultiByteFont() {
+    public MultiByteFont(InternalResourceResolver resourceResolver) {
+        super(resourceResolver);
         subset.setupFirstGlyph();
         setFontType(FontType.TYPE0);
     }
@@ -123,7 +125,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
 
     /** {@inheritDoc} */
     public boolean isEmbeddable() {
-        return !(getEmbedFileName() == null && getEmbedResourceName() == null);
+        return !(getEmbedFileURI() == null && getEmbedResourceName() == null);
     }
 
     public boolean isSubsetEmbedded() {
@@ -553,7 +555,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
             }
         }
         cb.flip();
-        return (CharSequence) cb;
+        return cb;
     }
 
 }

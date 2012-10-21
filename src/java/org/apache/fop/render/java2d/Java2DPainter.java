@@ -47,10 +47,10 @@ import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
 
 /**
- * {@link org.apache.fop.render.intermediate.IFPainter} implementation
- * that paints on a Graphics2D instance.
+ * {@link org.apache.fop.render.intermediate.IFPainter} implementation that paints on a Graphics2D
+ * instance.
  */
-public class Java2DPainter extends AbstractIFPainter {
+public class Java2DPainter extends AbstractIFPainter<Java2DDocumentHandler> {
 
     /** the IF context */
     protected IFContext ifContext;
@@ -62,7 +62,7 @@ public class Java2DPainter extends AbstractIFPainter {
 
     /** The current state, holds a Graphics2D and its context */
     protected Java2DGraphicsState g2dState;
-    private Stack g2dStateStack = new Stack();
+    private Stack<Java2DGraphicsState> g2dStateStack = new Stack<Java2DGraphicsState>();
 
     /**
      * Main constructor.
@@ -83,7 +83,7 @@ public class Java2DPainter extends AbstractIFPainter {
      * @param state the IF state object
      */
     public Java2DPainter(Graphics2D g2d, IFContext context, FontInfo fontInfo, IFState state) {
-        super();
+        super(new Java2DDocumentHandler());
         this.ifContext = context;
         if (state != null) {
             this.state = state.push();
@@ -256,7 +256,7 @@ public class Java2DPainter extends AbstractIFPainter {
     /** Restores the last graphics state from the stack. */
     protected void restoreGraphicsState() {
         g2dState.dispose();
-        g2dState = (Java2DGraphicsState)g2dStateStack.pop();
+        g2dState = g2dStateStack.pop();
     }
 
     private void concatenateTransformationMatrix(AffineTransform transform) throws IOException {

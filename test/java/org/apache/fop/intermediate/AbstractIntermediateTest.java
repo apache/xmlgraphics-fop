@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
@@ -139,14 +138,8 @@ public abstract class AbstractIntermediateTest {
      */
     protected FOUserAgent createUserAgent() {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        try {
-            userAgent.setBaseURL(testDir.toURI().toURL().toExternalForm());
-            userAgent.getEventBroadcaster().addEventListener(
-                    new ConsoleEventListenerForTests(testFile.getName(), EventSeverity.FATAL));
-        } catch (MalformedURLException e) {
-            // Shouldn't happen
-            throw new AssertionError();
-        }
+        userAgent.getEventBroadcaster().addEventListener(
+                new ConsoleEventListenerForTests(testFile.getName(), EventSeverity.FATAL));
         return userAgent;
     }
 

@@ -195,7 +195,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
      * @return a bridge context
      */
     public static BridgeContext createBridgeContext(FOUserAgent userAgent, AFPGraphics2D g2d) {
-        ImageManager imageManager = userAgent.getFactory().getImageManager();
+        ImageManager imageManager = userAgent.getImageManager();
 
         SVGUserAgent svgUserAgent
             = new SVGUserAgent(userAgent, new AffineTransform());

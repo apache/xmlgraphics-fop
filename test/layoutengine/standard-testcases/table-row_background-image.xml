@@ -23,7 +23,7 @@
     </p>
   </info>
   <variables>
-    <img>../../resources/images/bgimg300dpi.jpg</img>
+    <img>../resources/images/bgimg300dpi.jpg</img>
   </variables>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -82,17 +82,17 @@
   <checks>
     <eval expected="120000" xpath="//flow/block/block[4]/@ipd"/>
     <eval expected="72000" xpath="//flow/block/block[4]/@bpd"/>
-    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=156960,vertical=12960" xpath="//flow/block/block[4]/@background"/>
+    <eval expected="color=#ffff00,url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=156960,vertical=12960" xpath="//flow/block/block[4]/@background"/>
     <eval expected="" xpath="//flow/block/block[4]/@left-offset"/>
 
     <eval expected="120000" xpath="//flow/block/block[6]/@ipd"/>
     <eval expected="72000" xpath="//flow/block/block[6]/@bpd"/>
-    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=36960,vertical=12960" xpath="//flow/block/block[6]/@background"/>
+    <eval expected="color=#ffff00,url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=36960,vertical=12960" xpath="//flow/block/block[6]/@background"/>
     <eval expected="120000" xpath="//flow/block/block[6]/@left-offset"/>
 
     <eval expected="120000" xpath="//flow/block/block[8]/@ipd"/>
     <eval expected="72000" xpath="//flow/block/block[8]/@bpd"/>
-    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=-83040,vertical=12960" xpath="//flow/block/block[8]/@background"/>
+    <eval expected="color=#ffff00,url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=-83040,vertical=12960" xpath="//flow/block/block[8]/@background"/>
     <eval expected="240000" xpath="//flow/block/block[8]/@left-offset"/>
 
   </checks>

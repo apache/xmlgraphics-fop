@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.afp;
 
+import java.net.URI;
+
 import org.apache.fop.afp.AFPResourceLevelDefaults;
 
 /**
@@ -152,10 +154,10 @@ public interface AFPCustomizable {
     boolean isStrokeGOCAText();
 
     /**
-     * Sets the default resource group file path
-     * @param filePath the default resource group file path
+     * Sets the default resource group URI
+     * @param uri the default resource group URI
      */
-    void setDefaultResourceGroupFilePath(String filePath);
+    void setDefaultResourceGroupUri(URI uri);
 
     /**
      * Sets the resource level defaults. The object passed in provides information which resource

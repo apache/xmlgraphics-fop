@@ -31,20 +31,23 @@ public class AWTRendererMaker extends AbstractRendererMaker {
 
     private static final String[] MIMES = new String[] {MimeConstants.MIME_FOP_AWT_PREVIEW};
 
-
-    /** {@inheritDoc} */
+    @Override
     public Renderer makeRenderer(FOUserAgent ua) {
         return new AWTRenderer(ua);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean needsOutputStream() {
         return false;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }
 
+    @Override
+    public void configureRenderer(FOUserAgent userAgent, Renderer renderer) {
+        // No-Op
+    }
 }

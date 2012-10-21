@@ -19,123 +19,84 @@
 
 package org.apache.fop.render.bitmap;
 
-import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.avalon.framework.configuration.Configuration;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.FontCollection;
-import org.apache.fop.fonts.FontEventAdapter;
-import org.apache.fop.fonts.FontEventListener;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontManager;
-import org.apache.fop.fonts.FontResolver;
-import org.apache.fop.render.DefaultFontResolver;
+import org.apache.fop.render.RendererConfig.RendererConfigParser;
+import org.apache.fop.render.bitmap.BitmapRendererConfig.BitmapRendererConfigParser;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
-import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.java2d.Base14FontCollection;
 import org.apache.fop.render.java2d.ConfiguredFontCollection;
 import org.apache.fop.render.java2d.InstalledFontCollection;
 import org.apache.fop.render.java2d.Java2DFontMetrics;
-import org.apache.fop.render.java2d.Java2DRenderer;
 import org.apache.fop.render.java2d.Java2DRendererConfigurator;
-import org.apache.fop.util.ColorUtil;
 
 /**
  * Configurator for bitmap output.
  */
-public class BitmapRendererConfigurator extends Java2DRendererConfigurator
-            implements IFDocumentHandlerConfigurator {
+public class BitmapRendererConfigurator extends Java2DRendererConfigurator {
 
     /**
      * Default constructor
      * @param userAgent user agent
      */
-    public BitmapRendererConfigurator(FOUserAgent userAgent) {
-        super(userAgent);
+    public BitmapRendererConfigurator(FOUserAgent userAgent, RendererConfigParser rendererConfigParser) {
+        super(userAgent, rendererConfigParser);
     }
 
     // ---=== IFDocumentHandler configuration ===---
 
     /** {@inheritDoc} */
     public void configure(IFDocumentHandler documentHandler) throws FOPException {
-        super.configure(documentHandler);
-        Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
-        if (cfg != null) {
-            AbstractBitmapDocumentHandler bitmapHandler
-                = (AbstractBitmapDocumentHandler)documentHandler;
-            BitmapRenderingSettings settings = bitmapHandler.getSettings();
-
-            boolean transparent = cfg.getChild(
-                    Java2DRenderer.JAVA2D_TRANSPARENT_PAGE_BACKGROUND).getValueAsBoolean(
-                            settings.hasTransparentPageBackground());
-            if (transparent) {
-                settings.setPageBackgroundColor(null);
-            } else {
-                String background = cfg.getChild("background-color").getValue(null);
-                if (background != null) {
-                    settings.setPageBackgroundColor(
-                            ColorUtil.parseColorString(this.userAgent, background));
-                }
-            }
-
-            boolean antiAliasing = cfg.getChild("anti-aliasing").getValueAsBoolean(
-                    settings.isAntiAliasingEnabled());
-            settings.setAntiAliasing(antiAliasing);
-
-            String optimization = cfg.getChild("rendering").getValue(null);
-            if ("quality".equalsIgnoreCase(optimization)) {
-                settings.setQualityRendering(true);
-            } else if ("speed".equalsIgnoreCase(optimization)) {
-                settings.setQualityRendering(false);
-            }
-
-            String color = cfg.getChild("color-mode").getValue(null);
-            if (color != null) {
-                if ("rgba".equalsIgnoreCase(color)) {
-                    settings.setBufferedImageType(BufferedImage.TYPE_INT_ARGB);
-                } else if ("rgb".equalsIgnoreCase(color)) {
-                    settings.setBufferedImageType(BufferedImage.TYPE_INT_RGB);
-                } else if ("gray".equalsIgnoreCase(color)) {
-                    settings.setBufferedImageType(BufferedImage.TYPE_BYTE_GRAY);
-                } else if ("binary".equalsIgnoreCase(color)) {
-                    settings.setBufferedImageType(BufferedImage.TYPE_BYTE_BINARY);
-                } else if ("bi-level".equalsIgnoreCase(color)) {
-                    settings.setBufferedImageType(BufferedImage.TYPE_BYTE_BINARY);
-                } else {
-                    throw new FOPException("Invalid value for color-mode: " + color);
-                }
-            }
-        }
+        AbstractBitmapDocumentHandler bitmapHandler = (AbstractBitmapDocumentHandler) documentHandler;
+        BitmapRenderingSettings settings = bitmapHandler.getSettings();
+        configure(documentHandler, settings,
+                new BitmapRendererConfigParser(MimeConstants.MIME_BITMAP));
     }
 
-    /** {@inheritDoc} */
-    public void setupFontInfo(IFDocumentHandler documentHandler, FontInfo fontInfo)
+    void configure(IFDocumentHandler documentHandler, BitmapRenderingSettings settings,
+            BitmapRendererConfigParser parser) throws FOPException {
+        BitmapRendererConfig config = (BitmapRendererConfig) userAgent.getRendererConfig(
+                documentHandler.getMimeType(), parser);
+        configure(config, settings);
+    }
+
+    private void configure(BitmapRendererConfig config, BitmapRenderingSettings settings)
             throws FOPException {
-        final FontManager fontManager = userAgent.getFactory().getFontManager();
-
-        final Java2DFontMetrics java2DFontMetrics = new Java2DFontMetrics();
-
-        final List fontCollections = new java.util.ArrayList();
-        fontCollections.add(new Base14FontCollection(java2DFontMetrics));
-        fontCollections.add(new InstalledFontCollection(java2DFontMetrics));
-
-        Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
-        if (cfg != null) {
-            FontResolver fontResolver = new DefaultFontResolver(userAgent);
-            FontEventListener listener = new FontEventAdapter(
-                    userAgent.getEventBroadcaster());
-            List fontList = buildFontList(cfg, fontResolver, listener);
-            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList,
-                                userAgent.isComplexScriptFeaturesEnabled()));
+        if (config.hasTransparentBackround()) {
+            settings.setPageBackgroundColor(null);
+        } else if (config.getBackgroundColor() != null) {
+            settings.setPageBackgroundColor(config.getBackgroundColor());
         }
-
-        fontManager.setup(fontInfo,
-                (FontCollection[])fontCollections.toArray(
-                        new FontCollection[fontCollections.size()]));
-        documentHandler.setFontInfo(fontInfo);
+        if (config.hasAntiAliasing() != null) {
+            settings.setAntiAliasing(config.hasAntiAliasing());
+        }
+        if (config.isRenderHighQuality() != null) {
+            settings.setQualityRendering(config.isRenderHighQuality());
+        }
+        if (config.getColorMode() != null) {
+            settings.setBufferedImageType(config.getColorMode());
+        }
     }
 
+    @Override
+    protected FontCollection createCollectionFromFontList(InternalResourceResolver resourceResolver,
+            List<EmbedFontInfo> fontList) {
+        return new ConfiguredFontCollection(resourceResolver, fontList, userAgent.isComplexScriptFeaturesEnabled());
+    }
+
+    @Override
+    protected List<FontCollection> getDefaultFontCollection() {
+        final Java2DFontMetrics java2DFontMetrics = new Java2DFontMetrics();
+        final List<FontCollection> fontCollection = new ArrayList<FontCollection>();
+        fontCollection.add(new Base14FontCollection(java2DFontMetrics));
+        fontCollection.add(new InstalledFontCollection(java2DFontMetrics));
+        return fontCollection;
+    }
 }

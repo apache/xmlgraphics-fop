@@ -22,6 +22,8 @@ package org.apache.fop.render;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+
 import org.junit.Test;
 
 import org.apache.commons.io.output.NullOutputStream;
@@ -45,7 +47,7 @@ public class RendererFactoryTestCase {
 
     @Test
     public void testDocumentHandlerLevel() throws Exception {
-        FopFactory fopFactory = FopFactory.newInstance();
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         RendererFactory factory = fopFactory.getRendererFactory();
         FOUserAgent ua;
         IFDocumentHandler handler;
@@ -55,8 +57,7 @@ public class RendererFactoryTestCase {
         handler = factory.createDocumentHandler(ua, MimeConstants.MIME_PDF);
 
         ua = fopFactory.newFOUserAgent();
-        overrideHandler = new PDFDocumentHandler();
-        overrideHandler.setContext(new IFContext(ua));
+        overrideHandler = new PDFDocumentHandler(new IFContext(ua));
         ua.setDocumentHandlerOverride(overrideHandler);
         handler = factory.createDocumentHandler(ua, null);
         assertTrue(handler == overrideHandler);
@@ -72,7 +73,7 @@ public class RendererFactoryTestCase {
 
     @Test
     public void testRendererLevel() throws Exception {
-        FopFactory fopFactory = FopFactory.newInstance();
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         RendererFactory factory = fopFactory.getRendererFactory();
         FOUserAgent ua;
         Renderer renderer;
@@ -87,8 +88,7 @@ public class RendererFactoryTestCase {
 
         ua = fopFactory.newFOUserAgent();
         IFDocumentHandler overrideHandler;
-        overrideHandler = new PDFDocumentHandler();
-        overrideHandler.setContext(new IFContext(ua));
+        overrideHandler = new PDFDocumentHandler(new IFContext(ua));
         ua.setDocumentHandlerOverride(overrideHandler);
         renderer = factory.createRenderer(ua, null);
         assertTrue(renderer instanceof IFRenderer);
@@ -104,7 +104,7 @@ public class RendererFactoryTestCase {
 
     @Test
     public void testFOEventHandlerLevel() throws Exception {
-        FopFactory fopFactory = FopFactory.newInstance();
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         RendererFactory factory = fopFactory.getRendererFactory();
         FOUserAgent ua;
         FOEventHandler foEventHandler;

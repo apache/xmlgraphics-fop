@@ -33,19 +33,19 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>TIFF external-graphic 300dpi</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/bgimg300dpi.tif"/>EOG
+            <fo:external-graphic src="../resources/images/bgimg300dpi.tif"/>EOG
           </fo:block>
           <fo:block>TIFF external-graphic 72dpi</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/bgimg72dpi.tif"/>EOG
+            <fo:external-graphic src="../resources/images/bgimg72dpi.tif"/>EOG
           </fo:block>
           <fo:block>TIFF external-graphic (CCITT group 4 encoding)</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/tiff_group4.tif"/>EOG
+            <fo:external-graphic src="../resources/images/tiff_group4.tif"/>EOG
           </fo:block>
           <fo:block>TIFF external-graphic (CCITT group 4 encoding, multiple strips)</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/tiff_group4-multi-strip.tif"/>EOG
+            <fo:external-graphic src="../resources/images/tiff_group4-multi-strip.tif"/>EOG
           </fo:block>
           <fo:block>EOF</fo:block>
         </fo:flow>

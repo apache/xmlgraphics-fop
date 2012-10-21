@@ -562,6 +562,7 @@ list of possible build targets.
       <include name="org/apache/fop/accessibility/StructureTreeElement.class"/>
       <include name="org/apache/fop/apps/Fop.class"/>
       <include name="org/apache/fop/apps/FOPException.class"/>
+      <include name="org/apache/fop/apps/io/**"/>
       <include name="org/apache/fop/complexscripts/fonts/*.class"/>
       <include name="org/apache/fop/fo/Constants.class"/>
       <include name="org/apache/fop/fo/FOTreeBuilder.class"/>
@@ -584,7 +585,7 @@ list of possible build targets.
       <exclude name="org/apache/fop/render/pdf/PDFRenderer.class"/>
       <exclude name="org/apache/fop/render/pdf/PDFXMLHandler*"/>
       <include name="org/apache/fop/render/intermediate/IFDocumentHandlerConfigurator.class"/>
-      <include name="org/apache/fop/render/**Configurator**"/>
+      <include name="org/apache/fop/render/**Config**"/>
       <include name="org/apache/fop/util/AbstractPaintingState**"/>
       <include name="org/apache/fop/pdf/**"/>
     </patternset>

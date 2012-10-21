@@ -40,7 +40,7 @@ public final class AreaAdditionUtil {
     public static void addAreas(BlockStackingLayoutManager bslm,
             PositionIterator parentIter, LayoutContext layoutContext) {
         LayoutManager childLM;
-        LayoutContext lc = new LayoutContext(0);
+        LayoutContext lc = LayoutContext.offspringOf(layoutContext);
         LayoutManager firstLM = null;
         LayoutManager lastLM = null;
         Position firstPos = null;

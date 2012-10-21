@@ -19,13 +19,27 @@
 
 package org.apache.fop.config;
 
+import java.io.IOException;
+
+import org.xml.sax.SAXException;
+
+import org.apache.fop.apps.FopConfBuilder;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.PDFRendererConfBuilder;
+
 /**
  * this font has a missing font triplet attribute
  */
 public class FontTripletAttributeMissingTestCase extends BaseDestructiveUserConfigTest {
 
-    @Override
-    public String getUserConfigFilename() {
-        return "test_font_tripletattribute_missing.xconf";
+    public FontTripletAttributeMissingTestCase() throws SAXException, IOException {
+        super(new FopConfBuilder().setStrictValidation(true)
+                                  .startRendererConfig(PDFRendererConfBuilder.class)
+                                      .startFontsConfig()
+                                          .startFont(null, "test/resources/fonts/ttf/glb12.ttf")
+                                              .addTriplet("Gladiator", null, "normal")
+                                          .endFont()
+                                      .endFontConfig()
+                                  .endRendererConfig().build());
     }
 }

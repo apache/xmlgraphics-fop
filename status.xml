@@ -62,6 +62,23 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="1.1" date="20 October 2012">
+      <action context="Renderers" dev="MH" type="add" fixes-bug="53563" importance="low">
+        Removed a method call to the java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+        that could (in a headless environment) throw a java.awt.HeadlessException
+      </action>
+      <action context="Renderers" dev="VH" type="add" importance="high">
+        When PDF accessibility is enabled, treat repeated table headings as artifacts. This allows 
+        screen readers to read the header only once at the beginning of the table and the footer 
+        once at the end of a table. Reading the headings at every column or page break is likely to 
+        disturb the user. This follows Section 508 recommendations.
+      </action>
+      <action context="Layout" dev="VH" type="fix">
+        An IllegalArgumentException was thrown when break-before was used inside a list.
+      </action>
+      <action context="Layout" dev="VH" type="fix">
+        When restarting layout for the last page, discard glues and penalties at the beginning of 
+        the restarted Knuth sequence.
+      </action>
       <action context="Test" dev="GA" type="fix">
         Fix errors and warnings in example files. Add build.xml for documentation examples.
       </action>

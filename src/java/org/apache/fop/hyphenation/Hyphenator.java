@@ -20,20 +20,19 @@
 package org.apache.fop.hyphenation;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.net.URISyntaxException;
 import java.util.Map;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.InputSource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.apps.io.InternalResourceResolver;
 
 /**
  * <p>This class is the main entry point to the hyphenation package.
@@ -75,7 +74,7 @@ public final class Hyphenator {
      * @return the hyphenation tree
      */
     public static HyphenationTree getHyphenationTree(String lang,
-            String country, HyphenationTreeResolver resolver, Map hyphPatNames) {
+            String country, InternalResourceResolver resolver, Map hyphPatNames) {
         String llccKey = HyphenationTreeCache.constructLlccKey(lang, country);
         HyphenationTreeCache cache = getHyphenationTreeCache();
 
@@ -126,12 +125,12 @@ public final class Hyphenator {
      * The hyphenation trees are cached.
      * @param lang the language
      * @param country the country (may be null or "none")
-     * @param resolver resolver to find the hyphenation files
+     * @param resourceResolver resolver to find the hyphenation files
      * @param hyphPatNames the map with user-configured hyphenation pattern file names
      * @return the hyphenation tree
      */
-    private static HyphenationTree getHyphenationTree2(String lang,
-            String country, HyphenationTreeResolver resolver, Map hyphPatNames) {
+    public static HyphenationTree getHyphenationTree2(String lang,
+            String country, InternalResourceResolver resourceResolver, Map hyphPatNames) {
         String llccKey = HyphenationTreeCache.constructLlccKey(lang, country);
         HyphenationTreeCache cache = getHyphenationTreeCache();
 
@@ -147,8 +146,8 @@ public final class Hyphenator {
             key = llccKey;
         }
 
-        if (resolver != null) {
-            hTree = getUserHyphenationTree(key, resolver);
+        if (resourceResolver != null) {
+            hTree = getUserHyphenationTree(key, resourceResolver);
         }
         if (hTree == null) {
             hTree = getFopHyphenationTree(key);
@@ -230,30 +229,11 @@ public final class Hyphenator {
      * Load tree from serialized file or xml file
      * using configuration settings
      * @param key language key for the requested hyphenation file
-     * @param hyphenDir base directory to find hyphenation files in
+     * @param resourceResolver resource resolver to find the hyphenation files
      * @return the requested HypenationTree or null if it is not available
      */
     public static HyphenationTree getUserHyphenationTree(String key,
-            String hyphenDir) {
-        final File baseDir = new File(hyphenDir);
-        HyphenationTreeResolver resolver = new HyphenationTreeResolver() {
-            public Source resolve(String href) {
-                File f = new File(baseDir, href);
-                return new StreamSource(f);
-            }
-        };
-        return getUserHyphenationTree(key, resolver);
-    }
-
-    /**
-     * Load tree from serialized file or xml file
-     * using configuration settings
-     * @param key language key for the requested hyphenation file
-     * @param resolver resolver to find the hyphenation files
-     * @return the requested HypenationTree or null if it is not available
-     */
-    public static HyphenationTree getUserHyphenationTree(String key,
-            HyphenationTreeResolver resolver) {
+            InternalResourceResolver resourceResolver) {
         HyphenationTree hTree = null;
         // I use here the following convention. The file name specified in
         // the configuration is taken as the base name. First we try
@@ -262,93 +242,63 @@ public final class Hyphenator {
 
         // first try serialized object
         String name = key + ".hyp";
-        Source source = resolver.resolve(name);
-        if (source != null) {
+        try {
+            InputStream in = getHyphenationTreeStream(name, resourceResolver);
             try {
-                InputStream in = null;
-                if (source instanceof StreamSource) {
-                    in = ((StreamSource) source).getInputStream();
-                }
-                if (in == null) {
-                    if (source.getSystemId() != null) {
-                        in = new java.net.URL(source.getSystemId()).openStream();
-                    } else {
-                        throw new UnsupportedOperationException
-                            ("Cannot load hyphenation pattern file"
-                            + " with the supplied Source object: " + source);
-                    }
-                }
-                in = new BufferedInputStream(in);
-                try {
-                    hTree = readHyphenationTree(in);
-                } finally {
-                    IOUtils.closeQuietly(in);
-                }
-                return hTree;
-            } catch (IOException ioe) {
-                if (log.isDebugEnabled()) {
-                    log.debug("I/O problem while trying to load " + name, ioe);
-                }
+                hTree = readHyphenationTree(in);
+            } finally {
+                IOUtils.closeQuietly(in);
+            }
+            return hTree;
+        } catch (IOException ioe) {
+            if (log.isDebugEnabled()) {
+                log.debug("I/O problem while trying to load " + name, ioe);
             }
         }
 
         // try the raw XML file
         name = key + ".xml";
-        source = resolver.resolve(name);
-        if (source != null) {
-            hTree = new HyphenationTree();
+        hTree = new HyphenationTree();
+        try {
+            InputStream in = getHyphenationTreeStream(name, resourceResolver);
             try {
-                InputStream in = null;
-                if (source instanceof StreamSource) {
-                    in = ((StreamSource) source).getInputStream();
-                }
-                if (in == null) {
-                    if (source.getSystemId() != null) {
-                        in = new java.net.URL(source.getSystemId()).openStream();
-                    } else {
-                        throw new UnsupportedOperationException(
-                                "Cannot load hyphenation pattern file"
-                                    + " with the supplied Source object: " + source);
-                    }
-                }
-                if (!(in instanceof BufferedInputStream)) {
-                    in = new BufferedInputStream(in);
-                }
-                try {
-                    InputSource src = new InputSource(in);
-                    src.setSystemId(source.getSystemId());
-                    hTree.loadPatterns(src);
-                } finally {
-                    IOUtils.closeQuietly(in);
-                }
-                if (statisticsDump) {
-                    System.out.println("Stats: ");
-                    hTree.printStats();
-                }
-                return hTree;
-            } catch (HyphenationException ex) {
-                log.error("Can't load user patterns from XML file " + source.getSystemId()
-                        + ": " + ex.getMessage());
-                return null;
-            } catch (IOException ioe) {
-                if (log.isDebugEnabled()) {
-                    log.debug("I/O problem while trying to load " + name, ioe);
-                }
-                return null;
+                InputSource src = new InputSource(in);
+                src.setSystemId(name);
+                hTree.loadPatterns(src);
+            } finally {
+                IOUtils.closeQuietly(in);
             }
-        } else {
+            if (statisticsDump) {
+                System.out.println("Stats: ");
+                hTree.printStats();
+            }
+            return hTree;
+        } catch (HyphenationException ex) {
+            log.error("Can't load user patterns from XML file " + name + ": " + ex.getMessage());
+            return null;
+        } catch (IOException ioe) {
             if (log.isDebugEnabled()) {
-                log.debug("Could not load user hyphenation file for '" + key + "'.");
+                log.debug("I/O problem while trying to load " + name, ioe);
             }
             return null;
         }
+    }
+
+    private static InputStream getHyphenationTreeStream(String name,
+            InternalResourceResolver resourceResolver) throws IOException {
+        try {
+            return new BufferedInputStream(resourceResolver.getResource(name));
+        } catch (URISyntaxException use) {
+            log.debug("An exception was thrown while attempting to load " + name, use);
+        }
+        return null;
     }
 
     /**
      * Hyphenates a word.
      * @param lang the language
      * @param country the optional country code (may be null or "none")
-     * @param resolver resolver to find the hyphenation files
+     * @param resourceResolver resolver to find the hyphenation files
      * @param hyphPatNames the map with user-configured hyphenation pattern file names
      * @param word the word to hyphenate
      * @param leftMin the minimum number of characters before the hyphenation point
@@ -356,15 +306,12 @@ public final class Hyphenator {
      * @return the hyphenation result
      */
     public static Hyphenation hyphenate(String lang, String country,
-                                        HyphenationTreeResolver resolver,
-                                        Map hyphPatNames,
-                                        String word,
-                                        int leftMin, int rightMin) {
-        HyphenationTree hTree = getHyphenationTree(lang, country, resolver, hyphPatNames);
+            InternalResourceResolver resourceResolver, Map hyphPatNames, String word, int leftMin,
+            int rightMin) {
+        HyphenationTree hTree = getHyphenationTree(lang, country, resourceResolver, hyphPatNames);
         if (hTree == null) {
             return null;
         }
         return hTree.hyphenate(word, leftMin, rightMin);
     }
-
 }

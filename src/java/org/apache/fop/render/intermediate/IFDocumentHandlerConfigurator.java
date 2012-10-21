@@ -40,6 +40,6 @@ public interface IFDocumentHandlerConfigurator {
      * @param fontInfo the font info object to set up
      * @throws FOPException if an error occurs while configuring the object
      */
-    void setupFontInfo(IFDocumentHandler documentHandler, FontInfo fontInfo) throws FOPException;
+    void setupFontInfo(String mimeType, FontInfo fontInfo) throws FOPException;
 
 }

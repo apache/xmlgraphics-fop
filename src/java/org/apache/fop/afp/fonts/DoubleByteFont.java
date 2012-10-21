@@ -19,6 +19,8 @@
 
 package org.apache.fop.afp.fonts;
 
+import java.lang.Character.UnicodeBlock;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -33,7 +35,7 @@ public class DoubleByteFont extends AbstractOutlineFont {
 
     //See also http://unicode.org/reports/tr11/ which we've not closely looked at, yet
     //TODO the Unicode block listed here is probably not complete (ex. Hiragana, Katakana etc.)
-    private static final Set IDEOGRAPHIC = new java.util.HashSet();
+    private static final Set<UnicodeBlock> IDEOGRAPHIC = new HashSet<UnicodeBlock>();
     static {
         IDEOGRAPHIC.add(Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS);
         //IDEOGRAPHIC.add(Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT);//Java 1.5
@@ -45,10 +47,11 @@ public class DoubleByteFont extends AbstractOutlineFont {
     /**
      * Constructor for an double-byte outline font.
      * @param name the name of the font
+     * @param embeddable whether or not this font is embeddable
      * @param charSet the character set
      */
-    public DoubleByteFont(String name, CharacterSet charSet) {
-        super(name, charSet);
+    public DoubleByteFont(String name, boolean embeddable, CharacterSet charSet) {
+        super(name, embeddable, charSet);
     }
 
     /** {@inheritDoc} */

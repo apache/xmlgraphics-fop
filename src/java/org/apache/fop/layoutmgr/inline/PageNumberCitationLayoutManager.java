@@ -20,19 +20,16 @@
 package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
-import org.apache.fop.layoutmgr.LayoutContext;
 
 /**
- * LayoutManager for the fo:page-number-citation formatting object
+ * LayoutManager for the fo:page-number-citation formatting object.
  */
 public class PageNumberCitationLayoutManager extends AbstractPageNumberCitationLayoutManager {
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param node the formatting object that creates this area
      * TODO better retrieval of font info
@@ -41,42 +38,14 @@ public class PageNumberCitationLayoutManager extends AbstractPageNumberCitationL
         super(node);
     }
 
-    /** {@inheritDoc} */
-    public InlineArea get(LayoutContext context) {
-        curArea = getPageNumberCitationInlineArea();
-        return curArea;
+    @Override
+    protected PageViewport getCitedPage() {
+        return getPSLM().getFirstPVWithID(fobj.getRefId());
     }
 
-    /**
-     * if id can be resolved then simply return a word, otherwise
-     * return a resolvable area
-     *
-     * TODO: [GA] May need to run bidi algorithm and script processor
-     * on resolved page number.
-     */
-    private InlineArea getPageNumberCitationInlineArea() {
-        PageViewport page = getPSLM().getFirstPVWithID(fobj.getRefId());
-        TextArea text = null;
-        int level = getBidiLevel();
-        if (page != null) {
-            String str = page.getPageNumberString();
-            // get page string from parent, build area
-            text = new TextArea();
-            int width = getStringWidth(str);    // TODO: [GA] !I18N!
-            text.setBidiLevel(level);
-            text.addWord(str, 0, level);
-            text.setIPD(width);                 // TODO: [GA] !I18N!
-            resolved = true;
-        } else {
-            text = new UnresolvedPageNumber(fobj.getRefId(), font);
-            String str = "MMM"; // reserve three spaces for page number
-            int width = getStringWidth(str);    // TODO: [GA] !I18N!
-            text.setBidiLevel(level);
-            text.setIPD(width);                 // TODO: [GA] !I18N!
-            resolved = false;
-        }
-        updateTextAreaTraits(text);
-        return text;
+    @Override
+    protected boolean getReferenceType() {
+        return UnresolvedPageNumber.FIRST;
     }
 
 }

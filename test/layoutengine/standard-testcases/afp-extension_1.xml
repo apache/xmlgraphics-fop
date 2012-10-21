@@ -30,7 +30,7 @@
       <fo:layout-master-set>
         <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
           <afp:include-page-overlay name="O1SAMP1 "/>
-          <afp:include-page-segment name="S1ISLOGO" src="../../resources/images/bgimg300dpi.jpg"/>
+          <afp:include-page-segment name="S1ISLOGO" src="../resources/images/bgimg300dpi.jpg"/>
           <afp:tag-logical-element name="The TLE Name" value="The TLE Value"/>
           <afp:no-operation name="My NOP">insert up to 32k of character data here!</afp:no-operation>
           <fo:region-body/>
@@ -38,7 +38,7 @@
       </fo:layout-master-set>
       
       <fo:declarations>
-        <afp:include-form-map name="FORMMAP1" src="file:../../resources/afp/F1SAMPLE.afp"/>
+        <afp:include-form-map name="FORMMAP1" src="file:../resources/afp/F1SAMPLE.afp"/>
       </fo:declarations>
       
       <fo:page-sequence master-reference="normal" fox:test-ignore="this">
@@ -53,7 +53,7 @@
   </fo>
   <checks xmlns:afp="apache:fop:extensions:afp">
     <eval expected="FORMMAP1" xpath="/areaTree/extension-attachments/afp:include-form-map/@name"/>
-    <eval expected="file:../../resources/afp/F1SAMPLE.afp" xpath="/areaTree/extension-attachments/afp:include-form-map/@src"/>
+    <eval expected="file:../resources/afp/F1SAMPLE.afp" xpath="/areaTree/extension-attachments/afp:include-form-map/@src"/>
     
     <eval expected="4" xpath="count(/areaTree/pageSequence/pageViewport[@nr=1]/page/extension-attachments/child::*)"/>
     <eval expected="O1SAMP1 " xpath="/areaTree/pageSequence/pageViewport[@nr=1]/page/extension-attachments/child::*[1]/@name"/>
@@ -74,7 +74,7 @@
   <if-checks xmlns:if="http://xmlgraphics.apache.org/fop/intermediate"
         xmlns:afp="apache:fop:extensions:afp">
     <eval expected="FORMMAP1" xpath="/if:document/if:header/afp:include-form-map/@name"/>
-    <eval expected="file:../../resources/afp/F1SAMPLE.afp" xpath="/if:document/if:header/afp:include-form-map/@src"/>
+    <eval expected="file:../resources/afp/F1SAMPLE.afp" xpath="/if:document/if:header/afp:include-form-map/@src"/>
     
     <eval expected="4" xpath="count(//if:page[@name = '1']/if:page-header/child::*)"/>
     <eval expected="O1SAMP1 " xpath="//if:page[@name = '1']/if:page-header/afp:include-page-overlay[1]/@name"/>

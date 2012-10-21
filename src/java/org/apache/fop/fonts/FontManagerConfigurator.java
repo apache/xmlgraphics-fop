@@ -20,8 +20,8 @@
 package org.apache.fop.fonts;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -31,6 +31,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 import org.apache.fop.fonts.substitute.FontSubstitutionsConfigurator;
 import org.apache.fop.util.LogUtil;
@@ -45,24 +48,21 @@ public class FontManagerConfigurator {
 
     private final Configuration cfg;
 
-    private URI baseURI = null;
+    private final URI defaultBaseUri;
+
+    private final ResourceResolver resourceResolver;
 
     /**
      * Main constructor
      * @param cfg the font manager configuration object
+     * @param defaultBaseUri the default URI base to use for URI resolution
+     * @param resourceResolver the resource resolver
      */
-    public FontManagerConfigurator(Configuration cfg) {
+    public FontManagerConfigurator(Configuration cfg, URI defaultBaseUri,
+            ResourceResolver resourceResolver) {
         this.cfg = cfg;
-    }
-
-    /**
-     * Main constructor
-     * @param cfg the font manager configuration object
-     * @param baseURI the base URI of the configuration
-     */
-    public FontManagerConfigurator(Configuration cfg, URI baseURI) {
-        this.cfg = cfg;
-        this.baseURI = baseURI;
+        this.defaultBaseUri = defaultBaseUri;
+        this.resourceResolver = resourceResolver;
     }
 
     /**
@@ -75,28 +75,29 @@ public class FontManagerConfigurator {
         // caching (fonts)
         if (cfg.getChild("use-cache", false) != null) {
             try {
-                fontManager.setUseCache(cfg.getChild("use-cache").getValueAsBoolean());
-            } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, true);
-            }
-        }
-        if (cfg.getChild("cache-file", false) != null) {
-            try {
-                fontManager.setCacheFile(new File(cfg.getChild("cache-file").getValue()));
-            } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, true);
+                if (!cfg.getChild("use-cache").getValueAsBoolean()) {
+                    fontManager.disableFontCache();
+                } else {
+                    if (cfg.getChild("cache-file", false) != null) {
+                        fontManager.setCacheFile(new File(cfg.getChild("cache-file").getValue()));
+                    }
+                }
+            } catch (ConfigurationException mfue) {
+                LogUtil.handleException(log, mfue, true);
             }
         }
         if (cfg.getChild("font-base", false) != null) {
-            String path = cfg.getChild("font-base").getValue(null);
-            if (baseURI != null) {
-                path = baseURI.resolve(path).normalize().toString();
-            }
             try {
-                fontManager.setFontBaseURL(path);
-            } catch (MalformedURLException mfue) {
-                LogUtil.handleException(log, mfue, true);
+                URI fontBase = InternalResourceResolver.getBaseURI(cfg.getChild("font-base").getValue(
+                        null));
+                fontManager.setResourceResolver(ResourceResolverFactory.createInternalResourceResolver(
+                        defaultBaseUri.resolve(fontBase), resourceResolver));
+            } catch (URISyntaxException use) {
+                LogUtil.handleException(log, use, true);
             }
+        } else {
+            fontManager.setResourceResolver(ResourceResolverFactory.createInternalResourceResolver(
+                    defaultBaseUri, resourceResolver));
         }
 
         // [GA] permit configuration control over base14 kerning; without this,
@@ -114,7 +115,6 @@ public class FontManagerConfigurator {
         // global font configuration
         Configuration fontsCfg = cfg.getChild("fonts", false);
         if (fontsCfg != null) {
-
             // font substitution
             Configuration substitutionsCfg = fontsCfg.getChild("substitutions", false);
             if (substitutionsCfg != null) {
@@ -122,7 +122,6 @@ public class FontManagerConfigurator {
                 new FontSubstitutionsConfigurator(substitutionsCfg).configure(substitutions);
                 fontManager.setFontSubstitutions(substitutions);
             }
-
             // referenced fonts (fonts which are not to be embedded)
             Configuration referencedFontsCfg = fontsCfg.getChild("referenced-fonts", false);
             if (referencedFontsCfg != null) {
@@ -130,7 +129,6 @@ public class FontManagerConfigurator {
                         referencedFontsCfg, strict);
                 fontManager.setReferencedFontsMatcher(matcher);
             }
-
         }
     }
 
@@ -153,6 +151,24 @@ public class FontManagerConfigurator {
                 LogUtil.handleException(log, ce, strict);
                 continue;
             }
+        }
+        FontTriplet.Matcher orMatcher = new OrFontTripletMatcher(
+                matcherList.toArray(new FontTriplet.Matcher[matcherList.size()]));
+        return orMatcher;
+    }
+
+    /**
+     * Creates a font triplet matcher from a configuration object.
+     * @param fontFamilies the list of font families
+     * @param strict true for strict configuraton error handling
+     * @return the font matcher
+     * @throws FOPException if an error occurs while building the matcher
+     */
+    public static FontTriplet.Matcher createFontsMatcher(
+            List<String> fontFamilies, boolean strict) throws FOPException {
+        List<FontTriplet.Matcher> matcherList = new java.util.ArrayList<FontTriplet.Matcher>();
+        for (String fontFamily : fontFamilies) {
+                matcherList.add(new FontFamilyRegExFontTripletMatcher(fontFamily));
         }
         FontTriplet.Matcher orMatcher = new OrFontTripletMatcher(
                 matcherList.toArray(new FontTriplet.Matcher[matcherList.size()]));

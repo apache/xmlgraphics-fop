@@ -21,6 +21,7 @@ package org.apache.fop.tools;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -49,9 +50,6 @@ import org.apache.fop.tools.anttasks.FileCompare;
  * pdf rendering.
  */
 public class TestConverter {
-
-    // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
 
     private boolean failOnly = false;
     private String outputFormat = MimeConstants.MIME_FOP_AREA_TREE;
@@ -273,24 +271,17 @@ public class TestConverter {
         }
         try {
             File xmlFile = new File(baseDir + "/" + xml);
-            String baseURL = null;
-            try {
-                baseURL = xmlFile.getParentFile().toURI().toURL().toExternalForm();
-            } catch (Exception e) {
-                logger.error("Error setting base directory");
-            }
+            URI baseUri = xmlFile.getParentFile().toURI();
 
             InputHandler inputHandler = null;
             if (xsl == null) {
                 inputHandler = new InputHandler(xmlFile);
             } else {
-                inputHandler = new InputHandler(xmlFile,
-                                                new File(baseDir + "/"
-                                                         + xsl), null);
+                inputHandler = new InputHandler(xmlFile, new File(baseDir + "/" + xsl), null);
             }
 
+            FopFactory fopFactory = FopFactory.newInstance(baseUri);
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
-            userAgent.setBaseURL(baseURL);
 
             userAgent.getRendererOptions().put("fineDetail", new Boolean(false));
             userAgent.getRendererOptions().put("consistentOutput", new Boolean(true));

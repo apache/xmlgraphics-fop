@@ -674,7 +674,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * @param context the LayoutContext
      */
     private void collectInlineKnuthElements(LayoutContext context) {
-        LayoutContext inlineLC = new LayoutContext(context);
+        LayoutContext inlineLC = LayoutContext.copyOf(context);
 
         // convert all the text in a sequence of paragraphs made
         // of KnuthBox, KnuthGlue and KnuthPenalty objects
@@ -1396,11 +1396,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         // TextLM which generate the hyphenation buffer,
         // since these properties inherit and could be specified
         // on an inline or wrapper below the block level.
-        Hyphenation hyph
-            = Hyphenator.hyphenate(hyphenationProperties.language.getString(),
+        Hyphenation hyph = Hyphenator.hyphenate(hyphenationProperties.language.getString(),
                                hyphenationProperties.country.getString(),
-                               getFObj().getUserAgent().getFactory().getHyphenationTreeResolver(),
-                               getFObj().getUserAgent().getFactory().getHyphPatNames(),
+                               getFObj().getUserAgent().getResourceResolver(),
+                               getFObj().getUserAgent().getHyphenationPatternNames(),
                                sbChars.toString(),
                                hyphenationProperties.hyphenationRemainCharacterCount.getValue(),
                                hyphenationProperties.hyphenationPushCharacterCount.getValue());
@@ -1523,7 +1522,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         PositionIterator inlinePosIter = new KnuthPossPosIter(seq, startElementIndex,
                 endElementIndex + 1);
 
-        LayoutContext lc = new LayoutContext(0);
+        LayoutContext lc = LayoutContext.offspringOf(context);
         lc.setAlignmentContext(alignmentContext);
         lc.setSpaceAdjust(lbp.dAdjust);
         lc.setIPDAdjust(lbp.ipdAdjust);
@@ -1578,12 +1577,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
         LineArea lineArea = new LineArea();
         setCurrentArea(lineArea);
-        LayoutContext lc = new LayoutContext(0);
+        LayoutContext lc = LayoutContext.newInstance();
         lc.setAlignmentContext(alignmentContext);
         setChildContext(lc);
 
         PositionIterator childPosIter = new PositionIterator(positionList.listIterator());
-        LayoutContext blocklc = new LayoutContext(0);
+        LayoutContext blocklc = LayoutContext.offspringOf(context);
         blocklc.setLeadingSpace(new SpaceSpecifier(true));
         blocklc.setTrailingSpace(new SpaceSpecifier(false));
         blocklc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);

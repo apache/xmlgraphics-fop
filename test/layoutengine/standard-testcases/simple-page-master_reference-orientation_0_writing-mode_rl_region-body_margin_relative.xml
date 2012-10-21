@@ -23,6 +23,9 @@
       with reference orientation 0.
     </p>
   </info>
+  <variables>
+    <img>../resources/images/bgimg300dpi.jpg</img>
+  </variables>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
       <fo:layout-master-set>

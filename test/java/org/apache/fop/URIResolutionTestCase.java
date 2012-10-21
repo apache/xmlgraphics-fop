@@ -19,18 +19,16 @@
 
 package org.apache.fop;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
@@ -52,62 +50,48 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.io.Resource;
+import org.apache.fop.apps.io.ResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.render.xml.XMLRenderer;
+
+import static org.apache.fop.FOPTestUtils.getBaseDir;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests URI resolution facilities.
  */
-public class URIResolutionTestCase extends AbstractFOPTest {
+public class URIResolutionTestCase {
 
-    // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private SAXTransformerFactory tfactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
 
-    private SAXTransformerFactory tfactory
-            = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
+    private static final File BACKUP_DIR = new File(getBaseDir(), "build/test-results");
 
-    private final static File backupDir = new File(getBaseDir(), "build/test-results");
+    private static FopFactory fopFactory;
 
     @BeforeClass
     public static void makeDirs() {
-        backupDir.mkdirs();
+        BACKUP_DIR.mkdirs();
+        fopFactory = new FopFactoryBuilder(new File(".").getAbsoluteFile().toURI(),
+                new CustomURIResolver()).build();
     }
 
-    /**
-     * Test custom URI resolution with a hand-written URIResolver.
-     * @throws Exception if anything fails
-     */
+    private static File getTestDir() {
+        return new File(getBaseDir(), "test/xml/uri-testing/");
+    }
+
     @Test
-    public void testFO1a() throws Exception {
-        innerTestFO1(false);
-    }
+    public void innerTestFO1() throws Exception {
+        File foFile = new File(getTestDir(), "custom-scheme/only-scheme-specific-part.fo");
 
-    /**
-     * Test custom URI resolution with a hand-written URIResolver.
-     * @throws Exception if anything fails
-     */
-    @Test
-    public void testFO1b() throws Exception {
-        innerTestFO1(true);
-    }
-
-    private void innerTestFO1(boolean withStream) throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();
-
-        File foFile = new File(getBaseDir(), "test/xml/uri-resolution1.fo");
-
-        MyURIResolver resolver = new MyURIResolver(withStream);
-        ua.setURIResolver(resolver);
-        ua.setBaseURL(foFile.getParentFile().toURI().toURL().toString());
 
         Document doc = createAreaTree(foFile, ua);
 
-        //Check how many times the resolver was consulted
-        assertEquals("Expected resolver to do 1 successful URI resolution",
-                1, resolver.successCount);
-        assertEquals("Expected resolver to do 0 failed URI resolution",
-                0, resolver.failureCount);
-        //Additional XPath checking on the area tree
+        // XPath checking on the area tree
         assertEquals("viewport for external-graphic is missing",
                 "true", evalXPath(doc, "boolean(//flow/block[1]/lineArea/viewport)"));
         assertEquals("46080", evalXPath(doc, "//flow/block[1]/lineArea/viewport/@ipd"));
@@ -120,13 +104,9 @@ public class URIResolutionTestCase extends AbstractFOPTest {
      */
     @Test
     public void testFO2() throws Exception {
-        //TODO This will only work when we can do URI resolution inside Batik!
-        File foFile = new File(getBaseDir(), "test/xml/uri-resolution2.fo");
+        File foFile = new File(getTestDir(), "custom-scheme/only-scheme-specific-part-svg.fo");
 
         FOUserAgent ua = fopFactory.newFOUserAgent();
-        MyURIResolver resolver = new MyURIResolver(false);
-        ua.setURIResolver(resolver);
-        ua.setBaseURL(foFile.getParentFile().toURI().toURL().toString());
 
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
 
@@ -138,25 +118,20 @@ public class URIResolutionTestCase extends AbstractFOPTest {
         transformer.transform(src, res);
 
         OutputStream out = new java.io.FileOutputStream(
-                new File(backupDir, foFile.getName() + ".pdf"));
+                new File(BACKUP_DIR, foFile.getName() + ".pdf"));
         try {
             baout.writeTo(out);
         } finally {
             IOUtils.closeQuietly(out);
         }
 
-        //Check how many times the resolver was consulted
-        assertEquals("Expected resolver to do 1 successful URI resolution",
-                1, resolver.successCount);
-        assertEquals("Expected resolver to do 0 failed URI resolutions",
-                0, resolver.failureCount);
         //Test using PDF as the area tree doesn't invoke Batik so we could check
         //if the resolver is actually passed to Batik by FOP
         assertTrue("Generated PDF has zero length", baout.size() > 0);
     }
 
     private Document createAreaTree(File fo, FOUserAgent ua)
-                throws TransformerException, FOPException {
+            throws TransformerException, FOPException {
         DOMResult domres = new DOMResult();
         //Setup Transformer to convert the area tree to a DOM
         TransformerHandler athandler = tfactory.newTransformerHandler();
@@ -173,8 +148,8 @@ public class URIResolutionTestCase extends AbstractFOPTest {
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
 
-        Document doc = (Document)domres.getNode();
-        saveAreaTreeXML(doc, new File(backupDir, fo.getName() + ".at.xml"));
+        Document doc = (Document) domres.getNode();
+        saveAreaTreeXML(doc, new File(BACKUP_DIR, fo.getName() + ".at.xml"));
         return doc;
     }
 
@@ -201,48 +176,20 @@ public class URIResolutionTestCase extends AbstractFOPTest {
         transformer.transform(src, res);
     }
 
-    private class MyURIResolver implements URIResolver {
+    private static final class CustomURIResolver implements ResourceResolver {
+        private final ResourceResolver defaultImpl =  ResourceResolverFactory.createDefaultResourceResolver();
 
-        private static final String PREFIX = "funky:";
+        public Resource getResource(URI uri) throws IOException {
+            if (uri.getScheme().equals("funky") && uri.getSchemeSpecificPart().equals("myimage123")) {
+                return new Resource("", new FileInputStream("test/resources/images/bgimg300dpi.jpg"));
+            }
 
-        private boolean withStream;
-        private int successCount = 0;
-        private int failureCount = 0;
-
-        public MyURIResolver(boolean withStream) {
-            this.withStream = withStream;
+            return defaultImpl.getResource(uri);
         }
 
-        /**
-         * @see javax.xml.transform.URIResolver#resolve(java.lang.String, java.lang.String)
-         */
-        public Source resolve(String href, String base) throws TransformerException {
-            if (href.startsWith(PREFIX)) {
-                String name = href.substring(PREFIX.length());
-                if ("myimage123".equals(name)) {
-                    File image = new File(getBaseDir(), "test/resources/images/bgimg300dpi.jpg");
-                    Source src;
-                    if (withStream) {
-                        try {
-                            src = new StreamSource(new java.io.FileInputStream(image));
-                        } catch (FileNotFoundException e) {
-                            throw new TransformerException(e.getMessage(), e);
-                        }
-                    } else {
-                        src = new StreamSource(image);
-                    }
-                    successCount++;
-                    return src;
-                } else {
-                    failureCount++;
-                    throw new TransformerException("funky image not found");
-                }
-            } else {
-                failureCount++;
-                return null;
-            }
+        public OutputStream getOutputStream(URI uri) throws IOException {
+            return defaultImpl.getOutputStream(uri);
         }
 
     }
-
 }

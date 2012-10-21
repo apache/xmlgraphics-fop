@@ -31,6 +31,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.afp.AFPResourceLevel.ResourceType;
 import org.apache.fop.afp.fonts.AFPFont;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.modca.AbstractNamedAFPObject;
@@ -41,8 +42,9 @@ import org.apache.fop.afp.modca.PageSegment;
 import org.apache.fop.afp.modca.Registry;
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.ResourceObject;
+import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.afp.util.AFPResourceUtil;
-import org.apache.fop.afp.util.ResourceAccessor;
+import org.apache.fop.apps.io.InternalResourceResolver;
 
 /**
  * Manages the creation and storage of document resources
@@ -78,9 +80,9 @@ public class AFPResourceManager {
     /**
      * Main constructor
      */
-    public AFPResourceManager() {
+    public AFPResourceManager(InternalResourceResolver resourceResolver) {
         this.factory = new Factory();
-        this.streamer = new AFPStreamer(factory);
+        this.streamer = new AFPStreamer(factory, resourceResolver);
         this.dataObjectFactory = new AFPDataObjectFactory(factory);
     }
 
@@ -118,13 +120,13 @@ public class AFPResourceManager {
     }
 
     /**
-     * Sets the default resource group file path
+     * Sets the default resource group URI.
      *
-     * @param filePath the default resource group file path
+     * @param uri the default resource group URI
      */
 
-    public void setDefaultResourceGroupFilePath(String filePath) {
-        streamer.setDefaultResourceGroupFilePath(filePath);
+    public void setDefaultResourceGroupUri(URI uri) {
+        streamer.setDefaultResourceGroupUri(uri);
     }
 
     /**
@@ -257,7 +259,7 @@ public class AFPResourceManager {
         if (afpFont.isEmbeddable()) {
             //Embed fonts (char sets and code pages)
             if (charSet.getResourceAccessor() != null) {
-                ResourceAccessor accessor = charSet.getResourceAccessor();
+                AFPResourceAccessor accessor = charSet.getResourceAccessor();
                 createIncludedResource(
                         charSet.getName(), accessor,
                         ResourceObject.TYPE_FONT_CHARACTER_SET);
@@ -284,7 +286,7 @@ public class AFPResourceManager {
      * @param resourceObjectType the resource object type ({@link ResourceObject}.*)
      * @throws IOException if an I/O error occurs while loading the resource
      */
-    public void createIncludedResource(String resourceName, ResourceAccessor accessor,
+    public void createIncludedResource(String resourceName, AFPResourceAccessor accessor,
                 byte resourceObjectType) throws IOException {
         URI uri;
         try {
@@ -305,9 +307,9 @@ public class AFPResourceManager {
      * @param resourceObjectType the resource object type ({@link ResourceObject}.*)
      * @throws IOException if an I/O error occurs while loading the resource
      */
-    public void createIncludedResource(String resourceName, URI uri, ResourceAccessor accessor,
+    public void createIncludedResource(String resourceName, URI uri, AFPResourceAccessor accessor,
                 byte resourceObjectType) throws IOException {
-        AFPResourceLevel resourceLevel = new AFPResourceLevel(AFPResourceLevel.PRINT_FILE);
+        AFPResourceLevel resourceLevel = new AFPResourceLevel(ResourceType.PRINT_FILE);
 
         AFPResourceInfo resourceInfo = new AFPResourceInfo();
         resourceInfo.setLevel(resourceLevel);
@@ -343,9 +345,9 @@ public class AFPResourceManager {
      * @throws IOException if an I/O error occurs while loading the resource
      */
     public void createIncludedResourceFromExternal(final String resourceName,
-            final URI uri, final ResourceAccessor accessor) throws IOException {
+            final URI uri, final AFPResourceAccessor accessor) throws IOException {
 
-        AFPResourceLevel resourceLevel = new AFPResourceLevel(AFPResourceLevel.PRINT_FILE);
+        AFPResourceLevel resourceLevel = new AFPResourceLevel(ResourceType.PRINT_FILE);
 
         AFPResourceInfo resourceInfo = new AFPResourceInfo();
         resourceInfo.setLevel(resourceLevel);

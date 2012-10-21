@@ -19,16 +19,18 @@
 
 package org.apache.fop.fonts.truetype;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.junit.Test;
 
+import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
 
 /**
  * Class for testing org.apache.fop.fonts.truetype.TTFFile
@@ -51,11 +53,17 @@ public class TTFFileTestCase {
      */
     public TTFFileTestCase() throws IOException {
         dejavuTTFFile = new TTFFile();
-        dejavuReader = new FontFileReader("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
+        InputStream dejaStream = new FileInputStream("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
+        dejavuReader = new FontFileReader(dejaStream);
         dejavuTTFFile.readFont(dejavuReader);
+        dejaStream.close();
+
+        InputStream droidStream = new FileInputStream("test/resources/fonts/ttf/DroidSansMono.ttf");
+
         droidmonoTTFFile = new TTFFile();
-        droidmonoReader = new FontFileReader("test/resources/fonts/ttf/DroidSansMono.ttf");
+        droidmonoReader = new FontFileReader(droidStream);
         droidmonoTTFFile.readFont(droidmonoReader);
+        droidStream.close();
     }
 
     /**

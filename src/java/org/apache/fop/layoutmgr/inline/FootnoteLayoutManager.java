@@ -151,7 +151,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
         citationLM.setParent(getParent());
 
         // make the citationLM add its areas
-        LayoutContext childContext = new LayoutContext(context);
+        LayoutContext childContext = LayoutContext.copyOf(context);
         PositionIterator childPosIter = new PositionIterator(positionList.listIterator());
         LayoutManager childLM;
         while ((childLM = childPosIter.getNextChildLM()) != null) {

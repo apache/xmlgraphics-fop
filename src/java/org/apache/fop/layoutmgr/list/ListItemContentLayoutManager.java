@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr.list;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -28,9 +29,11 @@ import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.BreakOpportunity;
 import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
@@ -40,7 +43,7 @@ import org.apache.fop.layoutmgr.TraitSetter;
 /**
  * LayoutManager for a list-item-label or list-item-body FO.
  */
-public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
+public class ListItemContentLayoutManager extends BlockStackingLayoutManager implements BreakOpportunity {
 
     private Block curBlockArea;
 
@@ -98,7 +101,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
         addId();
 
         LayoutManager childLM;
-        LayoutContext lc = new LayoutContext(0);
+        LayoutContext lc = LayoutContext.offspringOf(layoutContext);
         LayoutManager firstLM = null;
         LayoutManager lastLM = null;
         Position firstPos = null;
@@ -220,5 +223,16 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
     public Keep getKeepWithPrevious() {
         return Keep.KEEP_AUTO;
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
+        List<ListElement> elements = new LinkedList<ListElement>();
+        do {
+            elements.addAll(super.getNextKnuthElements(context, alignment));
+        } while (!isFinished());
+        return elements;
+    }
+
 }
 
