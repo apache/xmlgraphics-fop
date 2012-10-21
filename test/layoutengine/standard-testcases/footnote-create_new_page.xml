@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+ license agreements. See the NOTICE file distributed with this work for additional 
+ information regarding copyright ownership. The ASF licenses this file to 
+ You under the Apache License, Version 2.0 (the "License"); you may not use 
+ this file except in compliance with the License. You may obtain a copy of 
+ the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+ by applicable law or agreed to in writing, software distributed under the 
+ License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+ OF ANY KIND, either express or implied. See the License for the specific 
+ language governing permissions and limitations under the License. -->
+<!-- $Id$ -->
+<testcase>
+ <info>
+  <p>This test checks a footnote that requires a new page.</p>
+ </info>
+ <fo>
+  <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+   font-family="serif" font-size="11pt">
+   <fo:layout-master-set>
+    <fo:simple-page-master page-height="10cm"
+     page-width="10cm" master-name="simplepage">
+     <fo:region-body region-name="body" />
+    </fo:simple-page-master>
+   </fo:layout-master-set>
+   <fo:page-sequence master-reference="simplepage">
+    <fo:flow flow-name="body">
+     <fo:block margin-top="8.0cm">
+      .... cities
+      <fo:footnote>
+       <fo:inline>(1)</fo:inline>
+       <fo:footnote-body>
+        <fo:block>1. Lisbon, Chicago, London</fo:block>
+       </fo:footnote-body>
+      </fo:footnote>
+      , veggies
+      <fo:footnote>
+       <fo:inline>(2)</fo:inline>
+       <fo:footnote-body>
+        <fo:block>2. Lettuce.</fo:block>
+        <fo:block>2. Garlic.</fo:block>
+        <fo:block>2. Potato.</fo:block>
+       </fo:footnote-body>
+      </fo:footnote>
+      , and fruits
+      <fo:footnote>
+       <fo:inline>(3)</fo:inline>
+       <fo:footnote-body>
+        <fo:block>3. Apple, Coconut, Plum, Kiwi, Canteloupe, Tomato,
+         Clementine, Grapefruit, Guava, Quincy, Lemon, Blueberry,
+         Raspberry, Pomegranate, Watermelon, Orange, Cherry, Peach,
+         Banana, Mango, Pear, Melon, Apricot, Pineapple, Strawberry,
+         Persimon, Medlar. 
+        </fo:block>
+       </fo:footnote-body>
+      </fo:footnote>
+      .
+     </fo:block>
+    </fo:flow>
+   </fo:page-sequence>
+  </fo:root>
+ </fo>
+ <checks>
+  <eval expected="1"
+   xpath="//lineArea[starts-with(., '.... cities')]/ancestor::pageViewport/@nr" />
+  <eval expected="2"
+   xpath="//lineArea[starts-with(., '2. Potato.')]/ancestor::pageViewport/@nr" />
+ </checks>
+</testcase>
