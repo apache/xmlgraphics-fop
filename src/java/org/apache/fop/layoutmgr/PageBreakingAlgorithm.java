@@ -886,8 +886,14 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         // create pages containing the remaining footnote bodies
         while (insertedFootnotesLength < totalFootnotesLength) {
             final int tmpLength = lengthList.get(footnoteListIndex);
+            // check if last footnote has already been added completely
+            if (insertedFootnotesLength == tmpLength) {
+                footnoteListIndex++;
+                footnoteElementIndex
+                    = getFootnoteList(footnoteListIndex).size() - 1;
+            }
             // try adding some more content
-            if ((tmpLength - insertedFootnotesLength) <= availableBPD) {
+            else if ((tmpLength - insertedFootnotesLength) <= availableBPD) {
                 // add a whole footnote
                 availableBPD -= tmpLength - insertedFootnotesLength;
                 insertedFootnotesLength = tmpLength;
