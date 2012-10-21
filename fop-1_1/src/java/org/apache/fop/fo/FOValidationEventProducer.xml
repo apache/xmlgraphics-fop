@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalogue xml:lang="en">
+  <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
+  <message key="rule.markerDescendantOfFlow">An fo:marker is permitted only as the descendant of an fo:flow.</message>
+  <message key="rule.retrieveMarkerDescendantOfStaticContent">An fo:retrieve-marker is permitted only as the descendant of an fo:static-content.</message>
+  <message key="rule.retrieveTableMarkerDescendantOfHeaderOrFooter">An fo:retrieve-table-marker is permitted only as the descendant of an fo:table-header or an fo:table-footer.</message>
+  <message key="rule.bidiOverrideContent">An fo:bidi-override that is a descendant of an fo:leader or of the fo:inline child of an fo:footnote may not have block-level children, unless it has a nearer ancestor that is an fo:inline-container.</message>
+  <message key="rule.inlineContent">An fo:inline that is a descendant of an fo:leader or fo:footnote may not have block-level children, unless it has a nearer ancestor that is an fo:inline-container.</message>
+  <message key="rule.childOfSPM">The element must be a child of fo:simple-page-master.</message>
+  <message key="rule.childOfDeclarations">The element must be a child of fo:declarations.</message>
+  <message key="rule.childOfSPMorDeclarations">The element must be a child of fo:declarations or fo:simple-page-master.</message>
+  <message key="rule.childOfSPMorPSorDeclarations">The element must be a child of fo:declarations, fo:simple-page-master or fo:page-sequence.</message>
+  <message key="rule.childOfInstreamForeignObjectorExternalGraphic">The element must be a child of fo:instream-foreign-object or fo:external-graphic.</message>
+  <message key="rule.childOfPageSequence">The element must be a child of fo:page-sequence.</message>
+  <message key="rule.childOfPageSequenceOrSPM">The element must be a child of fo:page-sequence or fo:simple-page-master.</message>
+  <message key="rule.wrapperInvalidChildForParent">An fo:wrapper is only permitted to have children that would be permitted for its parent.</message>
+  <message key="tooManyNodes">For "{elementName}", only one "{offendingNode}" may be declared.{{locator}}</message>
+  <message key="nodeOutOfOrder">For "{elementName}", "{tooLateNode}" must be declared before "{tooEarlyNode}"!{{locator}}</message>
+  <message key="invalidChild">"{offendingNode}" is not a valid child of "{elementName}"![ {ruleViolated,lookup}]{{locator}}</message>
+  <message key="notSupportedChild">"{offendingNode}" as a child of "{elementName}" is not supported yet!{{locator}}</message>
+  <message key="missingChildElement">"{elementName}" is missing child elements.[ Required content model: {contentModel}]{{locator}}</message>
+  <message key="missingProperty">Element "{elementName}" is missing required property "{propertyName}"!{{locator}}</message>
+  <message key="idNotUnique">Property ID "{id}" (found on "{elementName}") previously used; ID values must be unique within a document!{severity,equals,EventSeverity:FATAL,, Any reference to it will be considered a reference to the first occurrence in the document.}{{locator}}</message>
+  <message key="markerBlockContainerAbsolutePosition">Only an fo:block-container that does not generate absolutely positioned areas may have one or more fo:markers as its initial children.{{locator}}</message>
+  <message key="markerNotInitialChild">fo:marker must be an initial child: {mcname}{{locator}}</message>
+  <message key="markerNotUniqueForSameParent">fo:marker "marker-class-name" must be unique for same parent: {mcname}{{locator}}</message>
+  <message key="invalidProperty">Invalid property encountered on "{elementName}": {attr}{{locator}}</message>
+  <message key="invalidPropertyValue">Invalid property value encountered in {propName}="{propValue}"[: {e}]{{locator}}</message>
+  <message key="unimplementedFeature">The following feature isn't implemented by Apache FOP, yet: {feature} (on {elementName}){{locator}}</message>
+  <message key="missingLinkDestination">Missing attribute on {elementName}: Either external-destination or internal-destination must be specified.{{locator}}</message>
+  <message key="markerCloningFailed">Unable to clone subtree of fo:marker (marker-class-name="{markerClassName}") for fo:retrieve-marker.{{locator}}</message>
+  <message key="colorProfileNameNotUnique">Duplicate color profile profile name: {name}{{locator}}</message>
+  <message key="regionNameMappedToMultipleRegionClasses">Region-name ("{regionName}") is being mapped to multiple region-classes ({defaultRegionClass1} and {defaultRegionClass2}).{{locator}}</message>
+  <message key="masterNameNotUnique">The page master name ("{name}") must be unique across page-masters and page-sequence-masters.{{locator}}</message>
+  <message key="duplicateFlowNameInPageSequence">Duplicate flow-name "{flowName}" found within {elementName}.{{locator}}</message>
+  <message key="flowNameNotMapped">The flow-name "{flowName}" on {elementName} could not be mapped to a region-name in the layout-master-set.{{locator}}</message>
+  <message key="masterNotFound">The master-reference "{masterReference}" on {elementName} matches no simple-page-master or page-sequence-master.{{locator}}</message>
+  <message key="illegalRegionName">The region-name "{regionName}" for {elementName} is not permitted.{{locator}}</message>
+  <message key="nonZeroBorderPaddingOnRegion">Border and padding for {elementName} "{regionName}" should be '0' (See 6.4.14 in XSL 1.1); non-standard values are allowed if relaxed validation is enabled. {{locator}}</message>
+  <message key="columnCountErrorOnRegionBodyOverflowScroll">If overflow property is set to "scroll" on {elementName}, a column-count other than "1" may not be specified.{{locator}}</message>
+  <message key="invalidFORoot">First element must be the fo:root formatting object. Found {elementName} instead. Please make sure you're producing a valid XSL-FO document.</message>
+  <message key="emptyDocument">Document is empty (something might be wrong with your XSLT stylesheet).</message>
+  <message key="unknownFormattingObject">Unknown formatting object "{offendingNode}" encountered (a child of {elementName}}.{{locator}}</message>
+  <message key="altTextMissing">Alternate text is missing on {foElement}.{{locator}}</message>
+</catalogue>

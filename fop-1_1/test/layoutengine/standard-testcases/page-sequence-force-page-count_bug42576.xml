@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the force-page-count property
+      using three identical page sequences refering to the same
+      page sequence master, odd pages should be blank.
+    </p>
+  </info>
+  <variables>
+    <img>../resources/images/bgimg300dpi.jpg</img>
+  </variables>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="first" page-height="297mm" page-width="210mm" margin-top="20mm" margin-bottom="20mm" margin-left="25mm" margin-right="25mm">
+          <fo:region-body margin-bottom="20mm"/>
+          <fo:region-before region-name="header-first" extent="10mm"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="normal" page-height="297mm" page-width="210mm" margin-top="20mm" margin-bottom="20mm" margin-left="25mm" margin-right="25mm">
+          <fo:region-body margin-bottom="20mm"/>
+          <fo:region-before region-name="header-normal" extent="10mm"/>
+          <fo:region-after region-name="footer-normal" extent="10mm"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="blank" page-height="297mm" page-width="210mm" margin-top="20mm" margin-bottom="20mm" margin-left="25mm" margin-right="25mm">
+          <fo:region-body/>
+          <fo:region-before region-name="header-blank" extent="297mm"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="document">
+          <fo:single-page-master-reference master-reference="first"/>
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference blank-or-not-blank="not-blank" master-reference="normal"/>
+            <fo:conditional-page-master-reference blank-or-not-blank="blank" master-reference="blank"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="document" force-page-count="end-on-even">
+        <fo:static-content flow-name="footer-normal">
+          <fo:block text-align="center">Normal footer</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="header-first">
+          <fo:block text-align="center">FIRST PAGE OF SEQUENCE</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="header-normal">
+          <fo:block text-align="center">Normal Non-blank page</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="header-blank">
+          <fo:block space-before="100mm" text-align-last="center">
+       Intentionally left blank.</fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block break-after="page">
+       TEST PAGE 1
+     </fo:block>
+          <fo:block break-after="page">
+       TEST PAGE 2
+     </fo:block>
+          <fo:block>
+       TEST PAGE 3
+     </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="document" force-page-count="end-on-even">
+        <fo:static-content flow-name="footer-normal">
+          <fo:block text-align="center">Normal footer</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="header-first">
+          <fo:block text-align="center">FIRST PAGE OF SEQUENCE</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="header-normal">
+          <fo:block text-align="center">Normal Non-blank page</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="header-blank">
+          <fo:block space-before="100mm" text-align-last="center">
+       Intentionally left blank.</fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block break-after="page">
+       TEST PAGE 1
+     </fo:block>
+          <fo:block break-after="page">
+       TEST PAGE 2
+     </fo:block>
+          <fo:block>
+       TEST PAGE 3
+     </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="document" force-page-count="end-on-even">
+        <fo:static-content flow-name="footer-normal">
+          <fo:block text-align="center">Normal footer</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="header-first">
+          <fo:block text-align="center">FIRST PAGE OF SEQUENCE</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="header-normal">
+          <fo:block text-align="center">Normal Non-blank page</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="header-blank">
+          <fo:block space-before="100mm" text-align-last="center">
+       Intentionally left blank.</fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block break-after="page">
+       TEST PAGE 1
+     </fo:block>
+          <fo:block break-after="page">
+       TEST PAGE 2
+     </fo:block>
+          <fo:block>
+       TEST PAGE 3
+     </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="3" xpath="count(//pageSequence)"/>
+    <eval expected="3" xpath="count(//pageSequence/pageViewport[@simple-page-master-name='first'])"/>
+    <eval expected="6" xpath="count(//pageSequence/pageViewport[@simple-page-master-name='normal'])"/>
+    <eval expected="3" xpath="count(//pageSequence/pageViewport[@simple-page-master-name='blank'])"/>
+    <eval expected="1" xpath="count(//pageSequence/pageViewport[@nr=1 and @simple-page-master-name='first'])"/>
+    <eval expected="1" xpath="count(//pageSequence/pageViewport[@nr=2 and @simple-page-master-name='normal'])"/>
+    <eval expected="1" xpath="count(//pageSequence/pageViewport[@nr=3 and @simple-page-master-name='normal'])"/>
+    <eval expected="1" xpath="count(//pageSequence/pageViewport[@nr=4 and @simple-page-master-name='blank'])"/>
+    <eval expected="1" xpath="count(//pageSequence/pageViewport[@nr=5 and @simple-page-master-name='first'])"/>
+    <eval expected="1" xpath="count(//pageSequence/pageViewport[@nr=6 and @simple-page-master-name='normal'])"/>
+    <eval expected="1" xpath="count(//pageSequence/pageViewport[@nr=7 and @simple-page-master-name='normal'])"/>
+    <eval expected="1" xpath="count(//pageSequence/pageViewport[@nr=8 and @simple-page-master-name='blank'])"/>
+    <eval expected="1" xpath="count(//pageSequence/pageViewport[@nr=9 and @simple-page-master-name='first'])"/>
+    <eval expected="1" xpath="count(//pageSequence/pageViewport[@nr=10 and @simple-page-master-name='normal'])"/>
+    <eval expected="1" xpath="count(//pageSequence/pageViewport[@nr=11 and @simple-page-master-name='normal'])"/>
+    <eval expected="1" xpath="count(//pageSequence/pageViewport[@nr=12 and @simple-page-master-name='blank'])"/>
+  </checks>
+</testcase>

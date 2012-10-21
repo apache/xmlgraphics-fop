@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fop version="1.0">
+  <accessibility>true</accessibility>
+  <source-resolution>144</source-resolution>
+  <use-cache>false</use-cache>
+  <font-base>../../resources/fonts/ttf/</font-base>
+  <renderers>
+    <renderer mime="application/pdf">
+      <version>1.4</version>
+      <filterList>
+        <value>null</value>
+      </filterList>
+      <filterList type="image">
+        <value>flate</value>
+        <value>ascii-85</value>
+      </filterList>
+      <fonts>
+        <font embed-url="DejaVuLGCSerif.ttf">
+          <font-triplet name="DejaVu" style="normal" weight="normal"/>
+        </font>
+      </fonts>
+    </renderer>
+  </renderers>
+</fop>

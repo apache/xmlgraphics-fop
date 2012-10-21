@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks keep-together with integer values.
+    </p>
+    <p>
+      Widows and Orphans are disabled in this test to avoid side-effects.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" widows="0" orphans="0">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="12 * 14.4pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container keep-together.within-column="1" background-color="rgb(230,230,255)">
+            <fo:block-container keep-together.within-column="2" background-color="rgb(200,200,255)">
+              <fo:block-container keep-together.within-column="3" background-color="rgb(170,170,255)">
+                <fo:block>block1</fo:block>
+                <fo:block>block2</fo:block>
+              </fo:block-container>
+              <fo:block-container keep-together.within-column="always" background-color="rgb(0,0,255)" color="white">
+                <fo:block>block3</fo:block>
+                <fo:block>block4</fo:block>
+              </fo:block-container>
+            </fo:block-container>
+            <fo:block-container keep-together.within-column="always" background-color="rgb(0,0,255)" color="white">
+              <fo:block>block5</fo:block>
+              <fo:block>block6</fo:block>
+            </fo:block-container>
+              <fo:block-container keep-together.within-column="3" background-color="rgb(170,170,255)">
+                <fo:block-container keep-together.within-column="2" background-color="rgb(200,200,255)">
+                <fo:block>block7</fo:block>
+                <fo:block>block8</fo:block>
+                </fo:block-container>
+              </fo:block-container>
+            <fo:block-container keep-together.within-column="always" background-color="rgb(170,170,255)">
+              <fo:block-container keep-together.within-column="2" background-color="rgb(200,200,255)">
+                <fo:block>block9</fo:block>
+                <fo:block>blockA</fo:block>
+              </fo:block-container>
+            </fo:block-container>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <element-list category="breaker">
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="INF"/> <!-- 3/4 -->
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="INF"/> <!-- 5/6 -->
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="INF"/> <!-- 9/A -->
+      <box/>
+      
+      <skip>3</skip>
+    </element-list>
+    
+  </checks>
+</testcase>

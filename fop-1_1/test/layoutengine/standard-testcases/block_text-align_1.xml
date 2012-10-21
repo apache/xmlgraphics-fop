@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks text-align and text-align-last.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple" page-height="10in" page-width="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="simple">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi suscipit, risus ac congue suscipit, tortor nibh cursus mauris, quis feugiat nunc ante sit amet ante.</fo:block>
+          <fo:block text-align="start" background-color="yellow">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi suscipit, risus ac congue suscipit, tortor nibh cursus mauris, quis feugiat nunc ante sit amet ante.</fo:block>
+          <fo:block text-align="justify">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi suscipit, risus ac congue suscipit, tortor nibh cursus mauris, quis feugiat nunc ante sit amet ante.</fo:block>
+          <fo:block text-align="center" background-color="yellow">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi suscipit, risus ac congue suscipit, tortor nibh cursus mauris, quis feugiat nunc ante sit amet ante.</fo:block>
+          <fo:block text-align="end">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi suscipit, risus ac congue suscipit, tortor nibh cursus mauris, quis feugiat nunc ante sit amet ante.</fo:block>
+          <fo:block text-align="justify" text-align-last="center" background-color="yellow">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi suscipit, risus ac congue suscipit, tortor nibh cursus mauris, quis feugiat nunc ante sit amet ante.</fo:block>
+          <fo:block text-align="justify" text-align-last="end">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi suscipit, risus ac congue suscipit, tortor nibh cursus mauris, quis feugiat nunc ante sit amet ante.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- default settings for text-align -->
+    <true xpath="not(boolean(//flow/block[1]/lineArea[1]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[1]/lineArea[2]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[1]/lineArea[3]/@start-indent))"/>
+    <true xpath="//flow/block[1]/lineArea[1]/text/@ipd != //flow/block[1]/lineArea[2]/text/@ipd"/>
+    <true xpath="//flow/block[1]/lineArea[2]/text/@ipd != //flow/block[1]/lineArea[3]/text/@ipd"/>
+
+    <!-- text-align="start" -->
+    <true xpath="not(boolean(//flow/block[2]/lineArea[1]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[2]/lineArea[2]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[2]/lineArea[3]/@start-indent))"/>
+    <true xpath="//flow/block[2]/lineArea[1]/text/@ipd != //flow/block[2]/lineArea[2]/text/@ipd"/>
+    <true xpath="//flow/block[2]/lineArea[2]/text/@ipd != //flow/block[2]/lineArea[3]/text/@ipd"/>
+    
+    <!-- block 1 and 2 must have the same result -->
+    <true xpath="//flow/block[1]/lineArea[1]/text/@ipd = //flow/block[2]/lineArea[1]/text/@ipd"/>
+    <true xpath="//flow/block[1]/lineArea[2]/text/@ipd = //flow/block[2]/lineArea[2]/text/@ipd"/>
+    <true xpath="//flow/block[1]/lineArea[3]/text/@ipd = //flow/block[2]/lineArea[3]/text/@ipd"/>
+
+    <!-- text-align="justify" -->
+    <true xpath="not(boolean(//flow/block[3]/lineArea[1]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[3]/lineArea[2]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[3]/lineArea[3]/@start-indent))"/>
+    <!-- Some tolerance seems to be necessary here. Why is that exactly? -->
+    <true xpath="(360000 - //flow/block[3]/lineArea[1]/text/@ipd) &lt; 3000"/>
+    <true xpath="(360000 - //flow/block[3]/lineArea[1]/text/@ipd) &gt; -3000"/>
+    <true xpath="(360000 - //flow/block[3]/lineArea[2]/text/@ipd) &lt; 3000"/>
+    <true xpath="(360000 - //flow/block[3]/lineArea[2]/text/@ipd) &gt; -3000"/>
+    <true xpath="//flow/block[3]/lineArea[3]/text/@ipd &lt; 350000"/>
+
+    <!-- text-align="center" -->
+    <true xpath="//flow/block[4]/lineArea[1]/@start-indent &gt; 10000"/>
+    <true xpath="//flow/block[4]/lineArea[2]/@start-indent &gt; 10000"/>
+    <true xpath="//flow/block[4]/lineArea[3]/@start-indent &gt; 10000"/>
+    <!-- Some tolerance seems to be necessary here. Why is that exactly? -->
+    <true xpath="(360000 - //flow/block[4]/lineArea[1]/text/@ipd - (2 * //flow/block[4]/lineArea[1]/@start-indent)) &lt; 4000"/>
+    <true xpath="(360000 - //flow/block[4]/lineArea[1]/text/@ipd - (2 * //flow/block[4]/lineArea[1]/@start-indent)) &gt; -4000"/>
+    <true xpath="(360000 - //flow/block[4]/lineArea[2]/text/@ipd - (2 * //flow/block[4]/lineArea[2]/@start-indent)) &lt; 4000"/>
+    <true xpath="(360000 - //flow/block[4]/lineArea[2]/text/@ipd - (2 * //flow/block[4]/lineArea[2]/@start-indent)) &gt; -4000"/>
+    <true xpath="(360000 - //flow/block[4]/lineArea[3]/text/@ipd - (2 * //flow/block[4]/lineArea[3]/@start-indent)) &lt; 4000"/>
+    <true xpath="(360000 - //flow/block[4]/lineArea[3]/text/@ipd - (2 * //flow/block[4]/lineArea[3]/@start-indent)) &gt; -4000"/>
+
+    <!-- text-align="end" -->
+    <true xpath="//flow/block[5]/lineArea[1]/@start-indent &gt; 10000"/>
+    <true xpath="//flow/block[5]/lineArea[2]/@start-indent &gt; 10000"/>
+    <true xpath="//flow/block[5]/lineArea[3]/@start-indent &gt; 10000"/>
+    <!-- Some tolerance seems to be necessary here. Why is that exactly? -->
+    <true xpath="(360000 - //flow/block[5]/lineArea[1]/text/@ipd - //flow/block[5]/lineArea[1]/@start-indent) &lt; 4000"/>
+    <true xpath="(360000 - //flow/block[5]/lineArea[1]/text/@ipd - //flow/block[5]/lineArea[1]/@start-indent) &gt; -4000"/>
+    <true xpath="(360000 - //flow/block[5]/lineArea[2]/text/@ipd - //flow/block[5]/lineArea[2]/@start-indent) &lt; 4000"/>
+    <true xpath="(360000 - //flow/block[5]/lineArea[2]/text/@ipd - //flow/block[5]/lineArea[2]/@start-indent) &gt; -4000"/>
+    <true xpath="(360000 - //flow/block[5]/lineArea[3]/text/@ipd - //flow/block[5]/lineArea[3]/@start-indent) &lt; 4000"/>
+    <true xpath="(360000 - //flow/block[5]/lineArea[3]/text/@ipd - //flow/block[5]/lineArea[3]/@start-indent) &gt; -4000"/>
+
+    <!-- text-align="justify" text-align-last="center" -->
+    <true xpath="not(boolean(//flow/block[6]/lineArea[1]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[6]/lineArea[2]/@start-indent))"/>
+    <true xpath="//flow/block[6]/lineArea[3]/@start-indent &gt; 10000"/>
+    <true xpath="(360000 - //flow/block[6]/lineArea[1]/text/@ipd) &lt; 3000"/>
+    <true xpath="(360000 - //flow/block[6]/lineArea[1]/text/@ipd) &gt; -3000"/>
+    <true xpath="(360000 - //flow/block[6]/lineArea[2]/text/@ipd) &lt; 3000"/>
+    <true xpath="(360000 - //flow/block[6]/lineArea[2]/text/@ipd) &gt; -3000"/>
+    <true xpath="(360000 - //flow/block[6]/lineArea[3]/text/@ipd - (2 * //flow/block[6]/lineArea[3]/@start-indent)) &lt; 4000"/>
+    <true xpath="(360000 - //flow/block[6]/lineArea[3]/text/@ipd - (2 * //flow/block[6]/lineArea[3]/@start-indent)) &gt; -4000"/>
+
+    <!-- text-align="justify" text-align-last="end" -->
+    <true xpath="not(boolean(//flow/block[7]/lineArea[1]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[7]/lineArea[2]/@start-indent))"/>
+    <true xpath="//flow/block[7]/lineArea[3]/@start-indent &gt; 10000"/>
+    <true xpath="(360000 - //flow/block[7]/lineArea[1]/text/@ipd) &lt; 3000"/>
+    <true xpath="(360000 - //flow/block[7]/lineArea[1]/text/@ipd) &gt; -3000"/>
+    <true xpath="(360000 - //flow/block[7]/lineArea[2]/text/@ipd) &lt; 3000"/>
+    <true xpath="(360000 - //flow/block[7]/lineArea[2]/text/@ipd) &gt; -3000"/>
+    <true xpath="(360000 - //flow/block[7]/lineArea[3]/text/@ipd - //flow/block[7]/lineArea[3]/@start-indent) &lt; 4000"/>
+    <true xpath="(360000 - //flow/block[7]/lineArea[3]/text/@ipd - //flow/block[7]/lineArea[3]/@start-indent) &gt; -4000"/>
+
+    <!-- TODO Check element list -->
+  </checks>
+</testcase>

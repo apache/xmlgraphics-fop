@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks colors.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Gladiator">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body background-color="rgb-icc(100%,80%,80%,sRGB,1,0.8,0.8)" />
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:declarations>
+        <fo:color-profile src="../../src/java/org/apache/fop/pdf/sRGB Color Space Profile.icm" color-profile-name="sRGB"/>
+        <fo:color-profile src="nonexistent.icc" color-profile-name="unknown"/>
+      </fo:declarations>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block color="red">color "red"</fo:block>
+          <fo:block color="rgb(255,128,0)">color "rgb(255,128,0)"</fo:block>
+          <fo:block color="rgb(100%,50%,0%)">color "rgb(100%,50%,0%)"</fo:block>
+          <fo:block color="rgb-icc(100%,50%,0%, sRGB, 1, 0.5, 0)">color "rgb-icc(100%,50%,0%, sRGB, 1, 0.5, 0)"</fo:block>
+          <fo:block color="rgb-icc(0%,100%,0%, unknown, 1, 0.5, 0)">color "rgb-icc(0%,100%,0%, unknown, 1, 0.5, 0)"</fo:block>
+          <fo:block color="cmyk(0%,0%,20%,40%)">color "cmyk(0%,0%,20%,40%)" (Khaki)</fo:block>
+          <fo:block color="rgb-icc(153, 153, 102, #CMYK, 0, 0, 0.2, 0.4)">color "rgb-icc(153, 153, 102, #CMYK, 0, 0, 0.2, 0.4)" (Khaki)</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- Check page -->
+    <!-- Special case? rgb-icc() used before fo:declarations
+         Revert to sRGB fallback for now -->
+    <eval expected="color=#ffcccc" xpath="//regionViewport[1]/@background" />
+    <eval expected="#ff0000" xpath="//block[1]//text/@color"/>
+    <eval expected="#ff8000" xpath="//block[2]//text/@color"/>
+    <eval expected="#ff8000" xpath="//block[3]//text/@color"/>
+    <eval expected="fop-rgb-icc(1.0,0.5,0.0,sRGB,&quot;../../src/java/org/apache/fop/pdf/sRGB Color Space Profile.icm&quot;,1.0,0.5,0.0)" xpath="//block[4]//text/@color"/>
+    <eval expected="#00ff00" xpath="//block[5]//text/@color"/>
+    <eval expected="fop-rgb-icc(0.6,0.6,0.48000002,#CMYK,,0.0,0.0,0.2,0.4)" xpath="//block[6]//text/@color"/>
+    <eval expected="fop-rgb-icc(0.6,0.6,0.4,#CMYK,,0.0,0.0,0.2,0.4)" xpath="//block[7]//text/@color"/>
+  </checks>
+</testcase>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- This test verifies what happens if shorthand and normal properties are mixed. -->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:test="http://xmlgraphics.apache.org/fop/test">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="A4" page-height="29.7cm" page-width="21cm" margin="2cm">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="A4">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block border="solid 5pt"
+            border-before-width.conditionality="retain" border-after-width.conditionality="retain" 
+            padding="5pt"
+            padding-before.conditionality="retain" padding-after.conditionality="retain">
+        <test:assert property="border-before-width" expected="CondLength[1000mpt, RETAIN]"/>
+        <test:assert property="border-after-width" expected="CondLength[1000mpt, RETAIN]"/>
+        <test:assert property="padding-before" expected="CondLength[0mpt, RETAIN]"/>
+        <test:assert property="padding-after" expected="CondLength[0mpt, RETAIN]"/>
+        <!-- Discussion: see http://marc.theaimsgroup.com/?t=112607409300001&r=1&w=2 -->
+        <fo:block background-color="yellow">Hello World!</fo:block>
+        <fo:block>Hello World!</fo:block>
+        <fo:block>Hello World!</fo:block>
+        <fo:block background-color="orange">Hello World!</fo:block>
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

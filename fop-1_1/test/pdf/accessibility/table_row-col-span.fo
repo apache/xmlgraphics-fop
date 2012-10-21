@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page" page-height="320pt" page-width="420pt" margin="10pt">
+      <fo:region-body display-align="center"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:table table-layout="fixed" width="100%" border-collapse="separate" 
+        border-separation="4pt">
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell number-columns-spanned="2" background-color="orange" padding-left="1pt">
+              <fo:block>Cells 1.1 and 1.2.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>Cell 1.3.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>Cell 1.4.</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>Cell 2.1.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell number-columns-spanned="2" background-color="orange" padding-left="1pt">
+              <fo:block>Cells 2.2 and 2.3.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>Cell 2.4.</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>Cell 3.1.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>Cell 3.2.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell number-columns-spanned="2" background-color="orange" padding-left="1pt">
+              <fo:block>Cells 3.3 and 3.4.</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell number-columns-spanned="3" background-color="orange" padding-left="1pt">
+              <fo:block>Cells 4.1, 4.2 and 4.3.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>Cell 4.4.</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell number-columns-spanned="4" background-color="orange" padding-left="1pt">
+              <fo:block>Cells 5.1, 5.2, 5.3 and 5.4.</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+
+      <fo:table table-layout="fixed" width="100%" space-before="40pt" border-collapse="separate" 
+        border-separation="4pt">
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell number-rows-spanned="2" background-color="orange" padding-left="1pt">
+              <fo:block>Cells 1.1</fo:block>
+              <fo:block>and 2.1.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>Cell 1.2.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>Cell 1.3.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell number-rows-spanned="4" background-color="orange" padding-left="1pt">
+              <fo:block>Cells 1.4,</fo:block>
+              <fo:block>2.4,</fo:block>
+              <fo:block>3.4</fo:block>
+              <fo:block>and 4.4.</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell number-rows-spanned="2" background-color="orange" padding-left="1pt">
+              <fo:block>Cells 2.2</fo:block>
+              <fo:block>and 3.2.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell number-rows-spanned="3" background-color="orange" padding-left="1pt">
+              <fo:block>Cells 2.3,</fo:block>
+              <fo:block>3.3</fo:block>
+              <fo:block>and 4.3.</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>Cell 3.1.</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>Cell 4.1.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>Cell 4.2.</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+
+      <fo:table table-layout="fixed" width="100%" space-before="40pt" border-collapse="separate" 
+        border-separation="4pt">
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell number-rows-spanned="2" number-columns-spanned="3" 
+              background-color="orange" padding-left="1pt">
+              <fo:block>Cells 1.1, 1.2, 1.3</fo:block>
+              <fo:block>and 2.1, 2.2, 2.3.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>Cell 1.4.</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>Cell 2.4.</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>Cell 3.1.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>Cell 3.2.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>Cell 3.3.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>Cell 3.4.</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

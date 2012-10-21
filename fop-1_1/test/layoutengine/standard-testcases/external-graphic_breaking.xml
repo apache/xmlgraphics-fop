@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks external-graphics and the handling of linebreaks.
+      It is unclear at the moment if consecutive images without intervening white space
+      actually should have a linebreak opportunity between them or not. Fop currently
+      takes the "there is no break opportunity" view and the checks test accordingly.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>12 external-graphic elements - no space between them</fo:block>
+          <fo:block background-color="orange"><fo:external-graphic src="../resources/images/arrow_up_medium.png"/><fo:external-graphic src="../resources/images/arrow_down_medium.png"/><fo:external-graphic src="../resources/images/arrow_up_medium.png"/><fo:external-graphic src="../resources/images/arrow_down_medium.png"/><fo:external-graphic src="../resources/images/arrow_up_medium.png"/><fo:external-graphic src="../resources/images/arrow_down_medium.png"/><fo:external-graphic src="../resources/images/arrow_up_medium.png"/><fo:external-graphic src="../resources/images/arrow_down_medium.png"/><fo:external-graphic src="../resources/images/arrow_up_medium.png"/><fo:external-graphic src="../resources/images/arrow_down_medium.png"/><fo:external-graphic src="../resources/images/arrow_up_medium.png"/><fo:external-graphic src="../resources/images/arrow_down_medium.png"/></fo:block>
+          <fo:block>12 external-graphic elements - zwsp between them</fo:block>
+          <fo:block background-color="orange"><fo:external-graphic src="../resources/images/arrow_up_medium.png"/>&#x200b;<fo:external-graphic src="../resources/images/arrow_down_medium.png"/>&#x200b;<fo:external-graphic src="../resources/images/arrow_up_medium.png"/>&#x200b;<fo:external-graphic src="../resources/images/arrow_down_medium.png"/>&#x200b;<fo:external-graphic src="../resources/images/arrow_up_medium.png"/>&#x200b;<fo:external-graphic src="../resources/images/arrow_down_medium.png"/>&#x200b;<fo:external-graphic src="../resources/images/arrow_up_medium.png"/>&#x200b;<fo:external-graphic src="../resources/images/arrow_down_medium.png"/>&#x200b;<fo:external-graphic src="../resources/images/arrow_up_medium.png"/>&#x200b;<fo:external-graphic src="../resources/images/arrow_down_medium.png"/>&#x200b;<fo:external-graphic src="../resources/images/arrow_up_medium.png"/>&#x200b;<fo:external-graphic src="../resources/images/arrow_down_medium.png"/></fo:block>
+          <fo:block>12 external-graphic elements - with spaces between every 2nd</fo:block>
+          <fo:block background-color="orange">
+            <fo:external-graphic src="../resources/images/arrow_up_medium.png"/><fo:external-graphic src="../resources/images/arrow_down_medium.png"/>
+            <fo:external-graphic src="../resources/images/arrow_up_medium.png"/><fo:external-graphic src="../resources/images/arrow_down_medium.png"/>
+            <fo:external-graphic src="../resources/images/arrow_up_medium.png"/><fo:external-graphic src="../resources/images/arrow_down_medium.png"/>
+            <fo:external-graphic src="../resources/images/arrow_up_medium.png"/><fo:external-graphic src="../resources/images/arrow_down_medium.png"/>
+            <fo:external-graphic src="../resources/images/arrow_up_medium.png"/><fo:external-graphic src="../resources/images/arrow_down_medium.png"/>
+            <fo:external-graphic src="../resources/images/arrow_up_medium.png"/><fo:external-graphic src="../resources/images/arrow_down_medium.png"/>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+      <!-- 1st test - 1 overflowing line -->
+      <eval expected="1" xpath="count(//flow/block[2]/lineArea)"/>
+      <eval expected="12" xpath="count(//flow/block[2]/lineArea/viewport)"/>
+
+      <!-- 2nd test - 2 lines broken after 9th graphic -->
+      <eval expected="2" xpath="count(//flow/block[4]/lineArea)"/>
+      <eval expected="9" xpath="count(//flow/block[4]/lineArea[1]/viewport)"/>
+      <eval expected="3" xpath="count(//flow/block[4]/lineArea[2]/viewport)"/>
+
+      <!-- 3rd test - 2 lines broken after 10th graphic -->
+      <eval expected="2" xpath="count(//flow/block[6]/lineArea)"/>
+      <eval expected="8" xpath="count(//flow/block[6]/lineArea[1]/viewport)"/>
+      <eval expected="4" xpath="count(//flow/block[6]/lineArea[2]/viewport)"/>
+  </checks>
+</testcase>
