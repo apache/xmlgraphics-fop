@@ -35,9 +35,10 @@ import org.xml.sax.SAXException;
 
 import org.apache.commons.io.IOUtils;
 
+import org.apache.xmlgraphics.io.TempResourceURIGenerator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.io.TempResourceURIGenerator;
 import org.apache.fop.fonts.FontInfo;
 
 /**

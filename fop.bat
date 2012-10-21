@@ -58,7 +58,7 @@ set LIBDIR=%LOCAL_FOP_HOME%lib
 set LOCALCLASSPATH=%FOP_HYPHENATION_PATH%
 for %%l in (%LOCAL_FOP_HOME%build\*.jar %LIBDIR%\*.jar) do set LOCALCLASSPATH=!LOCALCLASSPATH!;%%l
 
-set JAVAOPTS=-Denv.windir=%WINDIR% -Djava.awt.headless=true
+set JAVAOPTS=-Denv.windir=%WINDIR%
 
 if "%JAVA_HOME%" == "" goto noJavaHome
 if not exist "%JAVA_HOME%\bin\java.exe" goto noJavaHome

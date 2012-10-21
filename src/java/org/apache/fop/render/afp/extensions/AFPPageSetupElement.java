@@ -35,6 +35,7 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
  */
 public class AFPPageSetupElement extends AbstractAFPExtensionObject {
 
+    private static final String ATT_ENCODING = "encoding";
     private static final String ATT_SRC = "src";
 
     /**
@@ -105,6 +106,16 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
             } else {
                 missingPropertyError(AFPPageSetup.ATT_VALUE);
             }
+            attr = attlist.getValue(ATT_ENCODING);
+            if (attr != null) {
+                try {
+                    pageSetup.setEncoding(Integer.parseInt(attr));
+                } catch (NumberFormatException nfe) {
+                    invalidPropertyValueError(ATT_ENCODING, attr, nfe);
+                }
+
+            }
+
         }
         String placement = attlist.getValue(AFPPageSetup.ATT_PLACEMENT);
         if (placement != null && placement.length() > 0) {

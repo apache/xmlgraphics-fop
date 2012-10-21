@@ -45,8 +45,7 @@
   </fo>
   <checks>
     <eval expected="1" xpath="count(//pageViewport)"/>
-    <eval expected="en" xpath="/areaTree/pageSequence/@language"/>
-    <true xpath="not(boolean(/areaTree/pageSequence/@country))"/>
+    <eval expected="en" xpath="/areaTree/pageSequence/@xml:lang"/>
     
     <eval expected="17230" xpath="//flow/block[1]/lineArea[1]/text[1]/@twsadjust"/>
     <eval expected="-1339" xpath="//flow/block[1]/lineArea[2]/text[1]/@twsadjust"/>

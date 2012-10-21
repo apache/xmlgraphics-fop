@@ -52,7 +52,6 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
 
     /**
      * Main constructor
-     * @param fontInfoConfig the configuration object
      * @param fontManager the font manager
      * @param listener the font event listener
      * @param strict true if an Exception should be thrown if an error is found.

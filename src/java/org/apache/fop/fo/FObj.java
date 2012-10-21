@@ -20,6 +20,7 @@
 package org.apache.fop.fo;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -35,6 +36,7 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.properties.PropertyMaker;
 
 /**
@@ -65,7 +67,7 @@ public abstract class FObj extends FONode implements Constants {
     private boolean isOutOfLineFODescendant = false;
 
     /** Markers added to this element. */
-    private Map markers = null;
+    private Map<String, Marker> markers;
 
     private int bidiLevel = -1;
 
@@ -356,7 +358,7 @@ public abstract class FObj extends FONode implements Constants {
             }
         }
         if (markers == null) {
-            markers = new java.util.HashMap();
+            markers = new HashMap<String, Marker>();
         }
         if (!markers.containsKey(mcname)) {
             markers.put(mcname, marker);
@@ -376,7 +378,7 @@ public abstract class FObj extends FONode implements Constants {
     /**
      * @return the collection of Markers attached to this object
      */
-    public Map getMarkers() {
+    public Map<String, Marker> getMarkers() {
         return markers;
     }
 
@@ -522,6 +524,11 @@ public abstract class FObj extends FONode implements Constants {
         int found = 1;
         FONode temp = getParent();
         while (temp != null) {
+            if (temp instanceof TableCell && (ancestorID == FO_TABLE_HEADER || ancestorID == FO_TABLE_FOOTER)) {
+                // note that if the retrieve-table-marker is not in a table-header/footer an exception is
+                // thrown, so no need to reset this flag in that case
+                ((TableCell) temp).flagAsHavingRetrieveTableMarker();
+            }
             if (temp.getNameId() == ancestorID) {
                 return found;
             }

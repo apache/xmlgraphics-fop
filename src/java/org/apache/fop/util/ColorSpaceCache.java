@@ -62,13 +62,11 @@ public class ColorSpaceCache {
      * If that fails null is returned.
      *
      * @param profileName the profile name
-     * @param base a base URI to resolve relative URIs
-     * @param iccProfileSrc ICC Profile source to return a ColorSpace for
+     * @param iccProfileSrc ICC Profile source to return a ColorSpace
      * @param renderingIntent overriding rendering intent
      * @return ICC ColorSpace object or null if ColorSpace could not be created
      */
-    public ColorSpace get(String profileName, String iccProfileSrc,
-            RenderingIntent renderingIntent) {
+    public ColorSpace get(String profileName, String iccProfileSrc, RenderingIntent renderingIntent) {
         String key = profileName + ":" + iccProfileSrc;
         // TODO: This stuff needs some TLC, fix it!!
         ColorSpace colorSpace = null;

@@ -1,0 +1,68 @@
+<?xml version="1.0" standalone="no"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
+  font-family="sans-serif">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="120pt" page-width="220pt" margin="10pt">
+      <fo:region-body display-align="center"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body" line-height="10pt" font-size="8pt">
+      <fo:table width="100%" table-layout="fixed">
+        <fo:table-column fox:header="true" column-width="proportional-column-width(1)"/>
+        <fo:table-column column-width="proportional-column-width(1)"/>
+        <fo:table-column column-width="proportional-column-width(1)"/>
+        <fo:table-header font-weight="bold">
+          <fo:table-row>
+            <fo:table-cell border="1pt solid black" padding-left="1pt">
+              <fo:block>Table Header</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="1pt solid black" padding-left="1pt">
+              <fo:block>Column 1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="1pt solid black" padding-left="1pt">
+              <fo:block>Column 2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-header>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell id="Row1" border="1pt solid black" padding-left="1pt" font-weight="bold">
+              <fo:block>Row 1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="1pt solid black" padding-left="1pt">
+              <fo:block>Cell 1.1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="1pt solid black" padding-left="1pt">
+              <fo:block>Cell 1.2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell border="1pt solid black" padding-left="1pt" font-weight="bold" role="TH">
+              <fo:block>Row 2</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="1pt solid black" padding-left="1pt">
+              <fo:block>Cell 2.1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="1pt solid black" padding-left="1pt">
+              <fo:block>Cell 2.2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell border="1pt solid black" padding-left="1pt" role="TD">
+              <fo:block>Non-header</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="1pt solid black" padding-left="1pt">
+              <fo:block>Cell 3.1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="1pt solid black" padding-left="1pt">
+              <fo:block>Cell 3.2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

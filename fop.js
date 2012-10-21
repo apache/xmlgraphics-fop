@@ -18,7 +18,6 @@
 
 // rpm_mode is irrelevant on Windows
 // var rpm_mode=true;
-var java_exec_args = "-Djava.awt.headless=true";
 var fop_exec_args = "";
 var no_config=false;
 var fop_exec_debug=false;
@@ -63,7 +62,6 @@ function read_args() {
  	WScript.Echo("keepopen: " + keep_open);
  	WScript.Echo("noconfig: " + no_config);
 	WScript.Echo("help: " + show_help);
- 	WScript.Echo("java arguments: " + java_exec_args);
  	WScript.Echo("fop arguments: " + fop_exec_args);
   }
 }
@@ -222,7 +220,6 @@ function get_local_classpath() {
 // Execute fop via shell.Exec
 function fop_exec() {
   var fop_exec_command = "\"" + javacmd + "\" "
-        + java_exec_args + " "
 	+ (config.Exists("JAVA_OPTS")?config.Item("JAVA_OPTS") + " ":"")
 	+ (config.Exists("LOGCHOICE")?config.Item("LOGCHOICE") + " ":"")
 	+ (config.Exists("LOGLEVEL")?config.Item("LOGLEVEL") + " ":"")
@@ -255,7 +252,6 @@ function fop_exec() {
 function fop_run() {
   var fop_exec_command = "cmd /" + (keep_open?"K":"C") + " \""
 	+ "\"" + javacmd + "\" " 
-        + java_exec_args + " "
 	+ (config.Exists("JAVA_OPTS")?config.Item("JAVA_OPTS") + " ":"")
 	+ (config.Exists("LOGCHOICE")?config.Item("LOGCHOICE") + " ":"")
 	+ (config.Exists("LOGLEVEL")?config.Item("LOGLEVEL") + " ":"")

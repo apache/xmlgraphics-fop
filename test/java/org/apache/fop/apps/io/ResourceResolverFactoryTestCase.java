@@ -36,6 +36,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import org.apache.xmlgraphics.io.Resource;
+import org.apache.xmlgraphics.io.ResourceResolver;
+import org.apache.xmlgraphics.io.TempResourceResolver;
+
 public class ResourceResolverFactoryTestCase {
 
     private static final byte[] DATA = new byte[]{(byte) 0, (byte) 1, (byte) 2};
@@ -193,10 +197,10 @@ public class ResourceResolverFactoryTestCase {
         final ResourceResolver sut;
 
         TestCreateSchemaAwareResourceResolverBuilderHelper() {
-            ResourceResolverFactory.SchemaAwareResourceResolverBuilder builder
-                    = ResourceResolverFactory.createSchemaAwareResourceResolverBuilder(
+            ResourceResolverFactory.SchemeAwareResourceResolverBuilder builder
+                    = ResourceResolverFactory.createSchemeAwareResourceResolverBuilder(
                             defaultResourceResolver);
-            builder.registerResourceResolverForSchema(SCHEMA, registedResourceResolver);
+            builder.registerResourceResolverForScheme(SCHEMA, registedResourceResolver);
             sut = builder.build();
 
         }

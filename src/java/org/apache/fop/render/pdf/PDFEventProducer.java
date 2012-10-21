@@ -59,12 +59,11 @@ public interface PDFEventProducer extends EventProducer {
      * Custom structure type is not standard as per the PDF reference.
      *
      * @param source the event source
-     * @param fo the local name of the formatting object having the custom type
      * @param type custom structure type
      * @param fallback default structure type used as a fallback
      * @event.severity WARN
      */
-    void nonStandardStructureType(Object source, String fo, String type, String fallback);
+    void nonStandardStructureType(Object source, String type, String fallback);
 
     /**
      * The encryption length must be a multiple of 8 between 40 and 128.

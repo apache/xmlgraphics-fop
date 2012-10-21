@@ -27,8 +27,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
@@ -86,6 +88,7 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.util.ColorUtil;
+import org.apache.fop.util.LanguageTags;
 import org.apache.fop.util.XMLUtil;
 
 /**
@@ -450,11 +453,9 @@ public class XMLRenderer extends AbstractXMLRenderer {
         endPageSequence();  // move this before handleDocumentExtensionAttachments() ?
         startedSequence = true;
         atts.clear();
-        if (pageSequence.getLanguage() != null) {
-            addAttribute("language", pageSequence.getLanguage());
-        }
-        if (pageSequence.getCountry() != null) {
-            addAttribute("country", pageSequence.getCountry());
+        Locale locale = pageSequence.getLocale();
+        if (locale != null) {
+            addAttribute(new QName(XMLConstants.XML_NS_URI, "xml:lang"), LanguageTags.toLanguageTag(locale));
         }
         transferForeignObjects(pageSequence);
         startElement("pageSequence", atts);

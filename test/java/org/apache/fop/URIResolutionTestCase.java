@@ -46,14 +46,15 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
 
+import org.apache.xmlgraphics.io.Resource;
+import org.apache.xmlgraphics.io.ResourceResolver;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.apps.io.Resource;
-import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.render.xml.XMLRenderer;
 

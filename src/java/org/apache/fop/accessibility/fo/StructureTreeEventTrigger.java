@@ -20,8 +20,10 @@
 package org.apache.fop.accessibility.fo;
 
 import java.util.Locale;
+import java.util.Stack;
 
-import org.xml.sax.SAXException;
+import javax.xml.XMLConstants;
+
 import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.fop.accessibility.StructureTreeElement;
@@ -30,6 +32,7 @@ import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.fo.flow.AbstractGraphics;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
@@ -55,9 +58,13 @@ import org.apache.fop.fo.flow.table.TableFooter;
 import org.apache.fop.fo.flow.table.TableHeader;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
+import org.apache.fop.fo.pagination.LayoutMasterSet;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonAccessibilityHolder;
+import org.apache.fop.fo.properties.CommonHyphenation;
+import org.apache.fop.util.LanguageTags;
 import org.apache.fop.util.XMLUtil;
 
 /**
@@ -67,27 +74,38 @@ class StructureTreeEventTrigger extends FOEventHandler {
 
     private StructureTreeEventHandler structureTreeEventHandler;
 
+    private LayoutMasterSet layoutMasterSet;
+
+    private final Stack<Table> tables = new Stack<Table>();
+
+    private final Stack<Boolean> inTableHeader = new Stack<Boolean>();
+
+    private final Stack<Locale> locales = new Stack<Locale>();
+
     public StructureTreeEventTrigger(StructureTreeEventHandler structureTreeEventHandler) {
         this.structureTreeEventHandler = structureTreeEventHandler;
     }
 
     @Override
-    public void startDocument() throws SAXException {
+    public void startRoot(Root root) {
+        locales.push(root.getLocale());
     }
 
     @Override
-    public void endDocument() throws SAXException {
+    public void endRoot(Root root) {
+        locales.pop();
     }
 
     @Override
     public void startPageSequence(PageSequence pageSeq) {
-        Locale locale = null;
-        if (pageSeq.getLanguage() != null) {
-            if (pageSeq.getCountry() != null) {
-                locale = new Locale(pageSeq.getLanguage(), pageSeq.getCountry());
-            } else {
-                locale = new Locale(pageSeq.getLanguage());
-            }
+        if (layoutMasterSet == null) {
+            layoutMasterSet = pageSeq.getRoot().getLayoutMasterSet();
+        }
+        Locale locale = pageSeq.getLocale();
+        if (locale != null) {
+            locales.push(locale);
+        } else {
+            locales.push(locales.peek());
         }
         String role = pageSeq.getCommonAccessibility().getRole();
         structureTreeEventHandler.startPageSequence(locale, role);
@@ -96,6 +114,7 @@ class StructureTreeEventTrigger extends FOEventHandler {
     @Override
     public void endPageSequence(PageSequence pageSeq) {
         structureTreeEventHandler.endPageSequence();
+        locales.pop();
     }
 
     @Override
@@ -129,8 +148,27 @@ class StructureTreeEventTrigger extends FOEventHandler {
     }
 
     @Override
+    public void startStatic(StaticContent staticContent) {
+        AttributesImpl flowName = createFlowNameAttribute(staticContent.getFlowName());
+        startElement(staticContent, flowName);
+    }
+
+    private AttributesImpl createFlowNameAttribute(String flowName) {
+        String regionName = layoutMasterSet.getDefaultRegionNameFor(flowName);
+        AttributesImpl attribute = new AttributesImpl();
+        addNoNamespaceAttribute(attribute, Flow.FLOW_NAME, regionName);
+        return attribute;
+    }
+
+    @Override
+    public void endStatic(StaticContent staticContent) {
+        endElement(staticContent);
+    }
+
+    @Override
     public void startFlow(Flow fl) {
-        startElement(fl);
+        AttributesImpl flowName = createFlowNameAttribute(fl.getFlowName());
+        startElement(fl, flowName);
     }
 
     @Override
@@ -140,12 +178,28 @@ class StructureTreeEventTrigger extends FOEventHandler {
 
     @Override
     public void startBlock(Block bl) {
-        startElement(bl);
+        CommonHyphenation hyphProperties = bl.getCommonHyphenation();
+        AttributesImpl attributes = createLangAttribute(hyphProperties);
+        startElement(bl, attributes);
+    }
+
+    private AttributesImpl createLangAttribute(CommonHyphenation hyphProperties) {
+        Locale locale = hyphProperties.getLocale();
+        AttributesImpl attributes = new AttributesImpl();
+        if (locale == null || locale.equals(locales.peek())) {
+            locales.push(locales.peek());
+        } else {
+            locales.push(locale);
+            addAttribute(attributes, XMLConstants.XML_NS_URI, "lang", "xml",
+                    LanguageTags.toLanguageTag(locale));
+        }
+        return attributes;
     }
 
     @Override
     public void endBlock(Block bl) {
         endElement(bl);
+        locales.pop();
     }
 
     @Override
@@ -170,42 +224,51 @@ class StructureTreeEventTrigger extends FOEventHandler {
 
     @Override
     public void startTable(Table tbl) {
+        tables.push(tbl);
         startElement(tbl);
     }
 
     @Override
     public void endTable(Table tbl) {
         endElement(tbl);
+        tables.pop();
     }
 
     @Override
     public void startHeader(TableHeader header) {
+        inTableHeader.push(Boolean.TRUE);
         startElement(header);
     }
 
     @Override
     public void endHeader(TableHeader header) {
         endElement(header);
+        inTableHeader.pop();
     }
 
     @Override
     public void startFooter(TableFooter footer) {
+        // TODO Shouldn't it be true?
+        inTableHeader.push(Boolean.FALSE);
         startElement(footer);
     }
 
     @Override
     public void endFooter(TableFooter footer) {
         endElement(footer);
+        inTableHeader.pop();
     }
 
     @Override
     public void startBody(TableBody body) {
+        inTableHeader.push(Boolean.FALSE);
         startElement(body);
     }
 
     @Override
     public void endBody(TableBody body) {
         endElement(body);
+        inTableHeader.pop();
     }
 
     @Override
@@ -221,12 +284,33 @@ class StructureTreeEventTrigger extends FOEventHandler {
     @Override
     public void startCell(TableCell tc) {
         AttributesImpl attributes = new AttributesImpl();
-        int colSpan = tc.getNumberColumnsSpanned();
-        if (colSpan > 1) {
-            addNoNamespaceAttribute(attributes, "number-columns-spanned",
-                    Integer.toString(colSpan));
+        addSpanAttribute(attributes, "number-columns-spanned", tc.getNumberColumnsSpanned());
+        addSpanAttribute(attributes, "number-rows-spanned", tc.getNumberRowsSpanned());
+        boolean rowHeader = inTableHeader.peek();
+        boolean columnHeader = tables.peek().getColumn(tc.getColumnNumber() - 1).isHeader();
+        if (rowHeader || columnHeader) {
+            final String th = "TH";
+            String role = tc.getCommonAccessibility().getRole();
+            /* Do not override a custom role */
+            if (role == null) {
+                role = th;
+                addNoNamespaceAttribute(attributes, "role", th);
+            }
+            if (role.equals(th)) {
+                if (columnHeader) {
+                    String scope = rowHeader ? "Both" : "Row";
+                    addAttribute(attributes, InternalElementMapping.URI, InternalElementMapping.SCOPE,
+                            InternalElementMapping.STANDARD_PREFIX, scope);
+                }
+            }
         }
         startElement(tc, attributes);
+    }
+
+    private void addSpanAttribute(AttributesImpl attributes, String attributeName, int span) {
+        if (span > 1) {
+            addNoNamespaceAttribute(attributes, attributeName, Integer.toString(span));
+        }
     }
 
     @Override
@@ -272,16 +356,6 @@ class StructureTreeEventTrigger extends FOEventHandler {
     @Override
     public void endListBody(ListItemBody listItemBody) {
         endElement(listItemBody);
-    }
-
-    @Override
-    public void startStatic(StaticContent staticContent) {
-        startElement(staticContent);
-    }
-
-    @Override
-    public void endStatic(StaticContent statisContent) {
-        endElement(statisContent);
     }
 
     @Override
@@ -342,8 +416,10 @@ class StructureTreeEventTrigger extends FOEventHandler {
 
     @Override
     public void character(Character c) {
-        startElementWithID(c);
+        AttributesImpl attributes = createLangAttribute(c.getCommonHyphenation());
+        startElementWithID(c, attributes);
         endElement(c);
+        locales.pop();
     }
 
     @Override
@@ -358,7 +434,10 @@ class StructureTreeEventTrigger extends FOEventHandler {
     }
 
     private void startElementWithID(FONode node) {
-        AttributesImpl attributes = new AttributesImpl();
+        startElementWithID(node, new AttributesImpl());
+    }
+
+    private void startElementWithID(FONode node, AttributesImpl attributes) {
         String localName = node.getLocalName();
         if (node instanceof CommonAccessibilityHolder) {
             addRole((CommonAccessibilityHolder) node, attributes);

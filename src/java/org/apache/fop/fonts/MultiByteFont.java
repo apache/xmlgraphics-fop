@@ -21,6 +21,7 @@ package org.apache.fop.fonts;
 
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
+import java.util.BitSet;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -44,13 +45,13 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     private static final Log log // CSOK: ConstantNameCheck
         = LogFactory.getLog(MultiByteFont.class);
 
-    private String ttcName = null;
+    private String ttcName;
     private String encoding = "Identity-H";
 
-    private int defaultWidth = 0;
+    private int defaultWidth;
     private CIDFontType cidType = CIDFontType.CIDTYPE2;
 
-    private CIDSubset subset = new CIDSubset();
+    private final CIDSet cidSet;
 
     /* advanced typographic support */
     private GlyphDefinitionTable gdef;
@@ -69,10 +70,15 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     /**
      * Default constructor
      */
-    public MultiByteFont(InternalResourceResolver resourceResolver) {
+    public MultiByteFont(InternalResourceResolver resourceResolver, EmbeddingMode embeddingMode) {
         super(resourceResolver);
-        subset.setupFirstGlyph();
         setFontType(FontType.TYPE0);
+        setEmbeddingMode(embeddingMode);
+        if (embeddingMode != EmbeddingMode.FULL) {
+            cidSet = new CIDSubset(this);
+        } else {
+            cidSet = new CIDFull(this);
+        }
     }
 
     /** {@inheritDoc} */
@@ -129,13 +135,16 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     public boolean isSubsetEmbedded() {
+        if (getEmbeddingMode() == EmbeddingMode.FULL) {
+            return false;
+        }
         return true;
     }
 
     /** {@inheritDoc} */
     @Override
-    public CIDSubset getCIDSubset() {
-        return this.subset;
+    public CIDSet getCIDSet() {
+        return this.cidSet;
     }
 
     /** {@inheritDoc} */
@@ -147,7 +156,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     /** {@inheritDoc} */
     public int getWidth(int i, int size) {
         if (isEmbeddable()) {
-            int glyphIndex = subset.getGlyphIndexForSubsetIndex(i);
+            int glyphIndex = cidSet.getOriginalGlyphIndex(i);
             return size * width[glyphIndex];
         } else {
             return size * width[i];
@@ -283,9 +292,39 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
             glyphIndex = findGlyphIndex(Typeface.NOT_FOUND);
         }
         if (isEmbeddable()) {
-            glyphIndex = subset.mapSubsetChar(glyphIndex, c);
+            glyphIndex = cidSet.mapChar(glyphIndex, c);
         }
-        return (char)glyphIndex;
+        return (char) glyphIndex;
+    }
+
+    protected BitSet getGlyphIndices() {
+        BitSet bitset = new BitSet();
+        bitset.set(0);
+        bitset.set(1);
+        bitset.set(2);
+        for (int i = 0; i < cmap.length; i++) {
+            int start = cmap[i].getUnicodeStart();
+            int end = cmap[i].getUnicodeEnd();
+            int glyphIndex = cmap[i].getGlyphStartIndex();
+            while (start++ < end + 1) {
+                bitset.set(glyphIndex++);
+            }
+        }
+        return bitset;
+    }
+
+    protected char[] getChars() {
+        // the width array is set when the font is built
+        char[] chars = new char[width.length];
+        for (int i = 0; i < cmap.length; i++) {
+            int start = cmap[i].getUnicodeStart();
+            int end = cmap[i].getUnicodeEnd();
+            int glyphIndex = cmap[i].getGlyphStartIndex();
+            while (start < end + 1) {
+                chars[glyphIndex++] = (char) start++;
+            }
+        }
+        return chars;
     }
 
     /** {@inheritDoc} */
@@ -331,15 +370,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * @return Map Map of used Glyphs
      */
     public Map<Integer, Integer> getUsedGlyphs() {
-        return subset.getSubsetGlyphs();
-    }
-
-    /** @return an array of the chars used */
-    public char[] getCharsUsed() {
-        if (!isEmbeddable()) {
-            return null;
-        }
-        return subset.getSubsetChars();
+        return cidSet.getGlyphs();
     }
 
     /**

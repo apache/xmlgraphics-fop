@@ -169,6 +169,8 @@ public abstract class TablePart extends TableCellContainer {
                             getUserAgent().getEventBroadcaster());
                     eventProducer.noMixRowsAndCells(this, getName(), getLocator());
                 }
+            } else if (localName.equals("retrieve-table-marker")) {
+                notSupportedChildError(loc, nsURI, localName);
             } else {
                 invalidChildError(loc, nsURI, localName);
             }

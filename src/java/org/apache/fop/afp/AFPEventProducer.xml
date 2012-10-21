@@ -8,4 +8,5 @@
   <message key="fontConfigMissing">The mandatory configuation node: '{missingConfig}' was not found at {location}.</message>
   <message key="characterSetNameInvalid">The character set given has an invalid name. [ Reason: {msg} ]</message>
   <message key="codePageNotFound">The code page for an AFP font cannot be found.[ Reason: {e}]</message>
+  <message key="charactersetMissingMetrics">Metric information is missing for the glyph `{character}` in the characterset `{charSet}`. Using space increment width.</message>
 </catalogue>

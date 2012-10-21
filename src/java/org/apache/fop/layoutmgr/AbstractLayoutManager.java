@@ -37,6 +37,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.RetrieveMarker;
+import org.apache.fop.layoutmgr.table.TableLayoutManager;
 
 /**
  * The base class for most LayoutManagers.
@@ -66,6 +67,8 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
 
     private int lastGeneratedPosition = -1;
     private int smallestPosNumberChecked = Integer.MAX_VALUE;
+
+    private boolean preserveChildrenAtEndOfLayout;
 
     /**
      * Abstract layout manager.
@@ -370,19 +373,20 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
     }
 
     /**
-     * Registers the FO's markers on the current PageViewport
+     * Registers the FO's markers on the current PageViewport, and if applicable on the parent TableLM.
      *
      * @param isStarting    boolean indicating whether the markers qualify as 'starting'
      * @param isFirst   boolean indicating whether the markers qualify as 'first'
      * @param isLast    boolean indicating whether the markers qualify as 'last'
      */
-    protected void addMarkersToPage(boolean isStarting, boolean isFirst, boolean isLast) {
+    protected void registerMarkers(boolean isStarting, boolean isFirst, boolean isLast) {
         if (this.markers != null) {
-            getCurrentPV().addMarkers(
+            getCurrentPV().registerMarkers(
                     this.markers,
                     isStarting,
                     isFirst,
                     isLast);
+            possiblyRegisterMarkersForTables(markers, isStarting, isFirst, isLast);
         }
     }
 
@@ -419,11 +423,12 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
 
             notifyEndOfLayout();
 
-            /* References to the child LMs are no longer needed
-             */
-            childLMs = null;
-            curChildLM = null;
-            childLMiter = null;
+            if (!preserveChildrenAtEndOfLayout) {
+                // References to the child LMs are no longer needed
+                childLMs = null;
+                curChildLM = null;
+                childLMiter = null;
+            }
 
             /* markers that qualify have been transferred to the page
              */
@@ -438,11 +443,19 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
                         || lm instanceof PageSequenceLayoutManager)) {
                 lm = lm.getParent();
             }
-            if (lm instanceof FlowLayoutManager) {
+            if (lm instanceof FlowLayoutManager && !preserveChildrenAtEndOfLayout) {
                 fobj.clearChildNodes();
                 fobjIter = null;
             }
         }
+    }
+
+    /*
+     * Preserves the children LMs at the end of layout. This is necessary if the layout is expected to be
+     * repeated, as when using retrieve-table-markers.
+     */
+    public void preserveChildrenAtEndOfLayout() {
+        preserveChildrenAtEndOfLayout = true;
     }
 
     /** {@inheritDoc} */
@@ -467,4 +480,34 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
         lastGeneratedPosition = -1;
     }
 
+    public void recreateChildrenLMs() {
+        childLMs = new ArrayList();
+        isFinished = false;
+        if (fobj == null) {
+            return;
+        }
+        fobjIter = fobj.getChildNodes();
+        int position = 0;
+        while (createNextChildLMs(position++)) {
+            //
+        }
+        childLMiter = new LMiter(this);
+        for (LMiter iter = new LMiter(this); iter.hasNext();) {
+            AbstractBaseLayoutManager alm = (AbstractBaseLayoutManager) iter.next();
+            alm.initialize();
+            alm.recreateChildrenLMs();
+            alm.preserveChildrenAtEndOfLayout();
+        }
+        curChildLM = getChildLM();
+    }
+
+    protected void possiblyRegisterMarkersForTables(Map<String, Marker> markers, boolean isStarting,
+            boolean isFirst, boolean isLast) {
+        LayoutManager lm = this.parentLayoutManager;
+        if (lm instanceof FlowLayoutManager || lm instanceof PageSequenceLayoutManager
+                || !(lm instanceof AbstractLayoutManager)) {
+            return;
+        }
+        ((AbstractLayoutManager) lm).possiblyRegisterMarkersForTables(markers, isStarting, isFirst, isLast);
+    }
 }

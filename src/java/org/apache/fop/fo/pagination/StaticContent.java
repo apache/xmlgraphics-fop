@@ -42,7 +42,7 @@ public class StaticContent extends Flow {
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         if (getFlowName() == null || getFlowName().equals("")) {
-            missingPropertyError("flow-name");
+            missingPropertyError(FLOW_NAME);
         }
         getFOEventHandler().startStatic(this);
     }

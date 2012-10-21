@@ -131,21 +131,7 @@ public class FOUserAgent {
     /** Set of keywords applicable to this document. */
     protected String keywords = null;
 
-    private ImageSessionContext imageSessionContext = new AbstractImageSessionContext() {
-
-        public ImageContext getParentContext() {
-            return factory;
-        }
-
-        public float getTargetResolution() {
-            return FOUserAgent.this.getTargetResolution();
-        }
-
-        public Source resolveURI(String uri) {
-            return FOUserAgent.this.resolveURI(uri);
-        }
-
-    };
+    private final ImageSessionContext imageSessionContext;
 
     /**
      * Main constructor. <b>This constructor should not be called directly. Please use the
@@ -154,11 +140,25 @@ public class FOUserAgent {
      * @param resourceResolver the resolver used to acquire resources
      * @see org.apache.fop.apps.FopFactory
      */
-    FOUserAgent(FopFactory factory, InternalResourceResolver resourceResolver) {
+    FOUserAgent(final FopFactory factory, InternalResourceResolver resourceResolver) {
         this.factory = factory;
         this.resourceResolver = resourceResolver;
         setTargetResolution(factory.getTargetResolution());
         setAccessibility(factory.isAccessibilityEnabled());
+        imageSessionContext = new AbstractImageSessionContext(factory.getFallbackResolver()) {
+
+            public ImageContext getParentContext() {
+                return factory;
+            }
+
+            public float getTargetResolution() {
+                return FOUserAgent.this.getTargetResolution();
+            }
+
+            public Source resolveURI(String uri) {
+                return FOUserAgent.this.resolveURI(uri);
+            }
+        };
     }
 
     /**
@@ -166,7 +166,7 @@ public class FOUserAgent {
      * requires an output stream and you want to configure this very rendering run,
      * i.e. if you want to set some metadata like the title and author of the document
      * you want to render. In that case, create a new {@link FOUserAgent} instance
-     * using {@link #newFOUserAgent()}.
+     * using {@link org.apache.fop.apps.FopFactory#newFOUserAgent() newFOUserAgent()}.
      * <p>
      * MIME types are used to select the output format (ex. "application/pdf" for PDF). You can
      * use the constants defined in {@link MimeConstants}.
@@ -184,7 +184,7 @@ public class FOUserAgent {
      * Returns a new {@link Fop} instance. Use this factory method if you want to configure this
      * very rendering run, i.e. if you want to set some metadata like the title and author of the
      * document you want to render. In that case, create a new {@link FOUserAgent}
-     * instance using {@link #newFOUserAgent()}.
+     * instance using {@link org.apache.fop.apps.FopFactory#newFOUserAgent() newFOUserAgent()}.
      * <p>
      * MIME types are used to select the output format (ex. "application/pdf" for PDF). You can
      * use the constants defined in {@link MimeConstants}.
@@ -791,9 +791,8 @@ public class FOUserAgent {
         return factory.getColorSpaceCache();
     }
 
-    /** @see {@link FopFactory#getHyphenationPatternNames()} */
+    /** @see FopFactory#getHyphenationPatternNames() */
     public Map<String, String> getHyphenationPatternNames() {
         return factory.getHyphenationPatternNames();
     }
 }
-

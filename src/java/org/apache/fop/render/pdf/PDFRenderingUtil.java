@@ -308,12 +308,7 @@ class PDFRenderingUtil {
             pageLabels = this.pdfDoc.getFactory().makePageLabels();
             this.pdfDoc.getRoot().setPageLabels(pageLabels);
         }
-        PDFNumsArray nums = pageLabels.getNums();
-        PDFDictionary dict = new PDFDictionary(nums);
-        dict.put("P", pageNumber);
-        //TODO If the sequence of generated page numbers were inspected, this could be
-        //expressed in a more space-efficient way
-        nums.put(pageIndex, dict);
+        pageLabels.addPageLabel(pageIndex, pageNumber);
     }
 
     /**

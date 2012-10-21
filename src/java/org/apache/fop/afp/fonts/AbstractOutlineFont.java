@@ -19,6 +19,8 @@
 
 package org.apache.fop.afp.fonts;
 
+import org.apache.fop.afp.AFPEventProducer;
+
 /**
  * A font defined as a set of lines and curves as opposed to a bitmap font. An
  * outline font can be scaled to any size and otherwise transformed more easily
@@ -29,16 +31,25 @@ public abstract class AbstractOutlineFont extends AFPFont {
     /** The character set for this font */
     protected CharacterSet charSet = null;
 
+    private final AFPEventProducer eventProducer;
+
     /**
      * Constructor for an outline font.
      *
      * @param name the name of the font
      * @param embeddable sets whether or not this font is to be embedded
      * @param charSet the chracter set
+     * @param eventProducer The object to handle any events which occur from the object.
      */
-    public AbstractOutlineFont(String name, boolean embeddable, CharacterSet charSet) {
+    public AbstractOutlineFont(String name, boolean embeddable, CharacterSet charSet,
+            AFPEventProducer eventProducer) {
         super(name, embeddable);
         this.charSet = charSet;
+        this.eventProducer = eventProducer;
+    }
+
+    AFPEventProducer getAFPEventProducer() {
+        return eventProducer;
     }
 
     /**

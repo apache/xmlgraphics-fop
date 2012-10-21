@@ -62,6 +62,8 @@ public class TableCell extends TableFObj implements CommonAccessibilityHolder {
     /** used for FO validation */
     private boolean blockItemFound = false;
 
+    private boolean hasRetrieveTableMarker;
+
     /**
      * Create a TableCell instance with the given {@link FONode}
      * as parent.
@@ -247,4 +249,11 @@ public class TableCell extends TableFObj implements CommonAccessibilityHolder {
         return FO_TABLE_CELL;
     }
 
+    public void flagAsHavingRetrieveTableMarker() {
+        hasRetrieveTableMarker = true;
+    }
+
+    public boolean hasRetrieveTableMarker() {
+        return hasRetrieveTableMarker;
+    }
 }

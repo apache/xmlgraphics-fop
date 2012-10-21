@@ -19,6 +19,9 @@
 
 package org.apache.fop.events;
 
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
@@ -28,10 +31,13 @@ class EventChecker implements EventListener {
 
     private final String expectedEventID;
 
+    private final Map<String, Object> expectedParams;
+
     private boolean eventReceived;
 
-    EventChecker(String expectedEventID) {
+    EventChecker(String expectedEventID, Map<String, Object> expectedParams) {
         this.expectedEventID = expectedEventID;
+        this.expectedParams = expectedParams;
     }
 
     public void processEvent(Event event) {
@@ -39,6 +45,9 @@ class EventChecker implements EventListener {
         String id = event.getEventID();
         if (id.equals(expectedEventID)) {
             eventReceived = true;
+            for (Map.Entry<String, Object> param : expectedParams.entrySet()) {
+                assertEquals(event.getParam(param.getKey()), param.getValue());
+            }
         }
     }
 

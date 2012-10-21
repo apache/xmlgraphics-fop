@@ -312,7 +312,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager implements Co
 
         addId();
 
-        addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
+        registerMarkers(true, isFirst(firstPos), isLast(lastPos));
 
         // the Positions in positionList were inside the elements
         // created by the LineLM
@@ -327,7 +327,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager implements Co
             childLM.addAreas(childPosIter, lc);
         }
 
-        addMarkersToPage(false, isFirst(firstPos), isLast(lastPos));
+        registerMarkers(false, isFirst(firstPos), isLast(lastPos));
 
         TraitSetter.addSpaceBeforeAfter(curBlockArea, layoutContext.getSpaceAdjust(),
                 effSpaceBefore, effSpaceAfter);
