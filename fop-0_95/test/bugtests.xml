@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE testsuite  SYSTEM "testsuite.dtd">
+<testsuite profile="Basic Conformance Tests">
+  <testcases profile="Characters">
+    <testcases profile="sizes" >
+      <test id="1" interaction="none" fo="block" xml="xml/bugtests/charwidth.fo" xsl="xsl/copy.xsl" level="basic">
+Checks the width of all the defined characters
+      </test>
+      <testresult id="1" agreement="issues">
+      </testresult>
+    </testcases>
+  </testcases>
+  <testcases profile="List Objects">
+    <testcases profile="general" >
+      <test id="log1" interaction="none" fo="list" xml="xml/bugtests/list-mountjoy.fo" xsl="xsl/copy.xsl" level="basic">
+Some lists with nested list and large list item bodies.
+      </test>
+      <testresult id="log1" agreement="full">
+      </testresult>
+      <test id="log2" interaction="none" fo="list" xml="xml/bugtests/list-nested-breaks.fo" xsl="xsl/copy.xsl" level="basic">
+Nested lists with page breaks inside list items. Used to show that it correctly places the list items and labels.
+      </test>
+      <testresult id="log2" agreement="issues">
+The break before does not put the list item label on the correct page.
+      </testresult>
+      <test id="log3" interaction="none" fo="list" xml="xml/bugtests/list-nested.fo" xsl="xsl/copy.xsl" level="basic">
+Nested lists used to show that the indentation is correct for lists inside lists.
+      </test>
+      <testresult id="log3" agreement="full">
+      </testresult>
+    </testcases>
+  </testcases>
+
+  <testcases profile="Block Objects">
+    <testcases profile="breaks" >
+      <test id="bbo1a1" interaction="none" fo="block" xml="xml/bugtests/background_color.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1a1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/background_transparent.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/block-container.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/block.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/border.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/break-before.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/color.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/external-graphic.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/font-family.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/font-size.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/font.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/header_footer.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/image.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/indent.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/inline.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/keep-with-next.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/leader.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/letter-spacing.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/line-height.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/padding.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/page-number.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/rule.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/simple-link.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/space-treatment.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/space.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/text-align.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/text-decoration.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/text-indent.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/word-spacing.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/wrap.fo" xsl="xsl/copy.xsl" level="basic">
+
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+
+    </testcases>
+
+  </testcases>
+</testsuite>
+

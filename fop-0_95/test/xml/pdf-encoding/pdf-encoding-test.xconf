@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!--
+	FOP config for PDF encoding test: disable all output filters
+	and setup a custom font
+-->
+
+<fop version="1.0">
+  <!-- Switch off font caching for the purposes of unit testing -->
+  <cache-fonts>false</cache-fonts>
+
+  <renderers>
+    <renderer mime="application/pdf">
+      <!-- disable PDF text compression -->
+		  <filterList>
+        <value>null</value>
+      </filterList>
+      <filterList type="image">
+        <value>flate</value>
+        <value>ascii-85</value>
+      </filterList>
+      
+      <!-- use a custom font to show encoding problems -->
+      <fonts>
+        <font metrics-url="test/resources/fonts/glb12.ttf.xml" embed-url="test/resources/fonts/glb12.ttf">
+          <font-triplet name="Gladiator" style="normal" weight="normal"/>
+        </font>
+      </fonts>
+    </renderer>
+  </renderers>
+</fop>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:test="http://xmlgraphics.apache.org/fop/test">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="simpleA4" page-height="29.7cm" page-width="21cm" margin-top="2cm" margin-bottom="2cm" margin-left="2cm" margin-right="2cm">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="simpleA4">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block background-image="../../resources/images/bgimg72dpi.jpg">
+        <test:assert property="background-position-horizontal" expected="0mpt"/>
+        <test:assert property="background-position-vertical" expected="0mpt"/>
+        Test background-position shorthand: initial values
+      </fo:block>
+      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+                background-position="50% 50%">
+        <test:assert property="background-position-horizontal" expected="50.0%"/>
+        <test:assert property="background-position-vertical" expected="50.0%"/>
+        Test background-position shorthand: "50% 50%"
+      </fo:block>
+      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+                background-position="2in 50%">
+        <test:assert property="background-position-horizontal" expected="144000mpt"/>
+        <test:assert property="background-position-vertical" expected="50.0%"/>
+        Test background-position shorthand: "2in 50%"
+      </fo:block>
+      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+                background-position="100%">
+        <test:assert property="background-position-horizontal" expected="100.0%"/>
+        <test:assert property="background-position-vertical" expected="50.0%"/>
+        Test background-position shorthand: "100%"
+      </fo:block>
+      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+                background-position="top center">
+        <test:assert property="background-position-horizontal" expected="50.0%"/>
+        <test:assert property="background-position-vertical" expected="0mpt"/>
+        Test background-position shorthand: "top center"
+      </fo:block>
+      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+                background-position="right bottom">
+        <test:assert property="background-position-horizontal" expected="100.0%"/>
+        <test:assert property="background-position-vertical" expected="100.0%"/>
+        Test background-position shorthand: "right bottom"
+      </fo:block>
+      <fo:block background-position="right bottom">
+        <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+                  background-position="inherit">
+          <test:assert property="background-position-horizontal" expected="100.0%"/>
+          <test:assert property="background-position-vertical" expected="100.0%"/>
+          Test background-position shorthand: "inherit"
+        </fo:block>
+      </fo:block>
+      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+                background-position="top right">
+        <test:assert property="background-position-horizontal" expected="100.0%"/>
+        <test:assert property="background-position-vertical" expected="0mpt"/>
+        Test background-position shorthand: "top right"
+      </fo:block>
+      <fo:block background-image="../../resources/images/bgimg72dpi.jpg"
+                background-position="center">
+        <test:assert property="background-position-horizontal" expected="50.0%"/>
+        <test:assert property="background-position-vertical" expected="50.0%"/>
+        Test background-position shorthand: "center"
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

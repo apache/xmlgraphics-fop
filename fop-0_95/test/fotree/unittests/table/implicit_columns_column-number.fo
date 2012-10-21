@@ -1,0 +1,240 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page" page-height="29.7cm" page-width="21cm" margin="10pt">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block space-after="10pt">Checking that the number of columns is correctly computed
+        for tables without explicit fo:table-column.</fo:block>
+
+      <fo:block space-before="10pt" space-after="2pt">Number of columns determined by the header’s
+        first row.</fo:block>
+      <fo:table table-layout="fixed" border-collapse="separate" width="200pt">
+        <fo:table-header>
+          <fo:table-cell id="h1_1.1" border="1pt solid black"><fo:block>Header 1.1</fo:block></fo:table-cell>
+          <fo:table-cell id="h1_1.2" border="1pt solid black"><fo:block>Header 1.2</fo:block></fo:table-cell>
+          <fo:table-cell id="h1_2.1" starts-row="true"
+                                     border="1pt solid black"><fo:block>Header 2.1</fo:block></fo:table-cell>
+        </fo:table-header>
+        <fo:table-footer>
+          <fo:table-cell id="f1_1.1" border="1pt solid black"><fo:block>Footer 1.1</fo:block></fo:table-cell>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-cell id="b1_1.1" border="1pt solid black"><fo:block>Cell 1.1</fo:block></fo:table-cell>
+          <fo:table-cell id="b1_2.1" starts-row="true"
+                                     border="1pt solid black"><fo:block>Cell 2.1</fo:block></fo:table-cell>
+        </fo:table-body>
+      </fo:table>
+
+      <fo:block space-before="10pt" space-after="2pt">Number of columns determined by the header’s
+        second row.</fo:block>
+      <fo:table table-layout="fixed" border-collapse="separate" width="200pt">
+        <fo:table-header>
+          <fo:table-row>
+            <fo:table-cell id="h2_1.1" border="1pt solid black"><fo:block>Header 1.1</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell id="h2_2.1" border="1pt solid black"><fo:block>Header 2.1</fo:block></fo:table-cell>
+            <fo:table-cell id="h2_2.2" border="1pt solid black"><fo:block>Header 2.2</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-header>
+        <fo:table-footer>
+          <fo:table-row>
+            <fo:table-cell id="f2_1.1" border="1pt solid black"><fo:block>Footer 1.1</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell id="b2_1.1" border="1pt solid black"><fo:block>Cell 1.1</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell id="b2_2.1" border="1pt solid black"><fo:block>Cell 2.1</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+
+      <fo:block space-before="10pt" space-after="2pt">Number of columns determined by the footer’s
+        first row.</fo:block>
+      <fo:table table-layout="fixed" border-collapse="separate" width="200pt">
+        <fo:table-header>
+          <fo:table-row>
+            <fo:table-cell id="h3_1.1" border="1pt solid black"><fo:block>Header 1.1</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell id="h3_2.1" border="1pt solid black"><fo:block>Header 2.1</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-header>
+        <fo:table-footer>
+          <fo:table-row>
+            <fo:table-cell id="f3_1.1" border="1pt solid black"><fo:block>Footer 1.1</fo:block></fo:table-cell>
+            <fo:table-cell id="f3_1.2" border="1pt solid black"><fo:block>Footer 1.2</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell id="f3_2.1" border="1pt solid black"><fo:block>Footer 2.1</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell id="b3_1.1" border="1pt solid black"><fo:block>Cell 1.1</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell id="b3_2.1" border="1pt solid black"><fo:block>Cell 2.1</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+
+      <fo:block space-before="10pt" space-after="2pt">Number of columns determined by the footer’s
+        second row.</fo:block>
+      <fo:table table-layout="fixed" border-collapse="separate" width="200pt">
+        <fo:table-header>
+          <fo:table-cell id="h4_1.1" border="1pt solid black"><fo:block>Header 1.1</fo:block></fo:table-cell>
+        </fo:table-header>
+        <fo:table-footer>
+          <fo:table-cell id="f4_1.1" border="1pt solid black"><fo:block>Footer 1.1</fo:block></fo:table-cell>
+          <fo:table-cell id="f4_2.2" starts-row="true" column-number="2"
+                                     border="1pt solid black"><fo:block>Footer 2.2</fo:block></fo:table-cell>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-cell id="b4_1.1" border="1pt solid black"><fo:block>Cell 1.1</fo:block></fo:table-cell>
+          <fo:table-cell id="b4_2.1" starts-row="true"
+                                     border="1pt solid black"><fo:block>Cell 2.1</fo:block></fo:table-cell>
+        </fo:table-body>
+      </fo:table>
+
+      <fo:block space-before="10pt" space-after="2pt">Number of columns determined by the body’s
+        first row.</fo:block>
+      <fo:table table-layout="fixed" border-collapse="separate" width="300pt">
+        <fo:table-header>
+          <fo:table-row>
+            <fo:table-cell id="h5_1.1" border="1pt solid black"><fo:block>Header 1.1</fo:block></fo:table-cell>
+            <fo:table-cell id="h5_1.2" border="1pt solid black"><fo:block>Header 1.2</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell id="h5_2.1" border="1pt solid black"><fo:block>Header 2.1</fo:block></fo:table-cell>
+            <fo:table-cell id="h5_2.2" border="1pt solid black"><fo:block>Header 2.2</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-header>
+        <fo:table-footer>
+          <fo:table-row>
+            <fo:table-cell id="f5_1.1" border="1pt solid black"><fo:block>Footer 1.1</fo:block></fo:table-cell>
+            <fo:table-cell id="f5_1.2" border="1pt solid black"><fo:block>Footer 1.2</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell id="f5_2.1" border="1pt solid black"><fo:block>Footer 2.1</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell id="b5_1.1" border="1pt solid black"><fo:block>Cell 1.1</fo:block></fo:table-cell>
+            <fo:table-cell id="b5_1.2" border="1pt solid black"><fo:block>Cell 1.2</fo:block></fo:table-cell>
+            <fo:table-cell id="b5_1.3" border="1pt solid black"><fo:block>Cell 1.3</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell id="b5_2.1" border="1pt solid black"><fo:block>Cell 2.1</fo:block></fo:table-cell>
+            <fo:table-cell id="b5_2.2" border="1pt solid black"><fo:block>Cell 2.2</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+
+      <fo:block space-before="10pt" space-after="2pt">Number of columns determined by the body’s
+        not first row.</fo:block>
+      <fo:table table-layout="fixed" border-collapse="separate" width="300pt">
+        <fo:table-header>
+          <fo:table-cell id="h6_1.1" border="1pt solid black"><fo:block>Header 1.1</fo:block></fo:table-cell>
+          <fo:table-cell id="h6_1.2" border="1pt solid black"><fo:block>Header 1.2</fo:block></fo:table-cell>
+          <fo:table-cell id="h6_2.1" starts-row="true"
+                                     border="1pt solid black"><fo:block>Header 2.1</fo:block></fo:table-cell>
+          <fo:table-cell id="h6_2.2" border="1pt solid black"><fo:block>Header 2.2</fo:block></fo:table-cell>
+        </fo:table-header>
+        <fo:table-footer>
+          <fo:table-cell id="f6_1.1" border="1pt solid black"><fo:block>Footer 1.1</fo:block></fo:table-cell>
+          <fo:table-cell id="f6_1.2" border="1pt solid black"><fo:block>Footer 1.2</fo:block></fo:table-cell>
+          <fo:table-cell id="f6_2.1" starts-row="true"
+                                     border="1pt solid black"><fo:block>Footer 2.1</fo:block></fo:table-cell>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-cell id="b6_1.1" border="1pt solid black"><fo:block>Cell 1.1</fo:block></fo:table-cell>
+          <fo:table-cell id="b6_1.2" border="1pt solid black"><fo:block>Cell 1.2</fo:block></fo:table-cell>
+          <fo:table-cell id="b6_2.1" starts-row="true"
+                                     border="1pt solid black"><fo:block>Cell 2.1</fo:block></fo:table-cell>
+          <fo:table-cell id="b6_2.2" border="1pt solid black"><fo:block>Cell 2.2</fo:block></fo:table-cell>
+          <fo:table-cell id="b6_3.1" starts-row="true" column-number="3"
+                                     border="1pt solid black"><fo:block>Cell 3.1</fo:block></fo:table-cell>
+          <fo:table-cell id="b6_3.2" border="1pt solid black"><fo:block>Cell 3.2</fo:block></fo:table-cell>
+        </fo:table-body>
+      </fo:table>
+
+      <fo:block space-before="10pt" space-after="2pt">Number of columns determined by the second
+        body.</fo:block>
+      <fo:table table-layout="fixed" border-collapse="separate" width="300pt">
+        <fo:table-header>
+          <fo:table-row>
+            <fo:table-cell id="h7_1.1" border="1pt solid black"><fo:block>Header 1.1</fo:block></fo:table-cell>
+            <fo:table-cell id="h7_1.2" border="1pt solid black"><fo:block>Header 1.2</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell id="h7_2.2" column-number="2"
+                                       border="1pt solid black"><fo:block>Header 2.2</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-header>
+        <fo:table-footer>
+          <fo:table-row>
+            <fo:table-cell id="f7_1.1" border="1pt solid black"><fo:block>Footer 1.1</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell id="f7_2.1" border="1pt solid black"><fo:block>Footer 2.1</fo:block></fo:table-cell>
+            <fo:table-cell id="f7_2.2" border="1pt solid black"><fo:block>Footer 2.2</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-cell id="b71_1.1" border="1pt solid black"><fo:block>Cell 1.1</fo:block></fo:table-cell>
+          <fo:table-cell id="b71_1.2" border="1pt solid black"><fo:block>Cell 1.2</fo:block></fo:table-cell>
+          <fo:table-cell id="b71_2.1" starts-row="true"
+                                      border="1pt solid black"><fo:block>Cell 2.1</fo:block></fo:table-cell>
+          <fo:table-cell id="b71_2.2" border="1pt solid black"><fo:block>Cell 2.2</fo:block></fo:table-cell>
+          <fo:table-cell id="b71_3.1" starts-row="true"
+                                      border="1pt solid black"><fo:block>Cell 3.1</fo:block></fo:table-cell>
+          <fo:table-cell id="b71_3.2" border="1pt solid black"><fo:block>Cell 3.2</fo:block></fo:table-cell>
+        </fo:table-body>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell id="b72_1.1" border="1pt solid blue"><fo:block>Cell 1.1</fo:block></fo:table-cell>
+            <fo:table-cell id="b72_1.2" border="1pt solid blue"><fo:block>Cell 1.2</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell id="b72_2.1" border="1pt solid blue"><fo:block>Cell 2.1</fo:block></fo:table-cell>
+            <fo:table-cell id="b72_2.2" border="1pt solid blue"><fo:block>Cell 2.2</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell id="b72_3.3" column-number="3"
+                                        border="1pt solid blue"><fo:block>Cell 3.3</fo:block></fo:table-cell>
+            <fo:table-cell id="b72_3.1" column-number="1"
+                                        border="1pt solid blue"><fo:block>Cell 3.1</fo:block></fo:table-cell>
+            <fo:table-cell id="b72_3.2" border="1pt solid blue"><fo:block>Cell 3.2</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

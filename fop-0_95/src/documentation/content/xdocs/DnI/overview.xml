@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  * Licensed to the Apache Software Foundation (ASF) under one or more
+  * contributor license agreements.  See the NOTICE file distributed with
+  * this work for additional information regarding copyright ownership.
+  * The ASF licenses this file to You under the Apache License, Version 2.0
+  * (the "License"); you may not use this file except in compliance with
+  * the License.  You may obtain a copy of the License at
+  * 
+  *      http://www.apache.org/licenses/LICENSE-2.0
+  * 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  -->
+
+<!-- $Id$ -->
+
+<!--
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                         "docbookx.dtd">
+  -->
+
+  <chapter>
+
+	<title>Overview</title>
+
+	<para>A FOP process has three stages:<orderedlist>
+		<listitem>
+		  <simpara> building the FO tree,</simpara>
+		</listitem>
+		<listitem>
+		  <simpara>building the Area tree,</simpara>
+		  <orderedlist numeration="loweralpha">
+			<listitem>
+			  <simpara>The getNextBreakPoss call tree</simpara>
+			</listitem>
+			<listitem>
+			  <simpara>The addAreas call tree</simpara>
+			</listitem>
+			<listitem>
+			  <simpara>Finishing the page</simpara>
+			</listitem>
+		  </orderedlist>
+		</listitem>
+		<listitem>
+		  <simpara>rendering the pages.</simpara>
+		</listitem>
+	  </orderedlist></para>
+
+<para>These stages are preceded by two other stages:<itemizedlist>
+		<listitem>
+		  <simpara>0. <emphasis>preparation:</emphasis> the objects for
+the FOP process are constructed; this phase may be done by FOP (apps
+package), or by the calling application;</simpara>
+		</listitem>
+		<listitem>
+		  <simpara>X. <emphasis>parsing:</emphasis> this phase is done
+by a SAX parser; FOP's own preparation stage uses a JAXP
+SAXParserFactory to call an available SAX parser.</simpara>
+		</listitem>
+	  </itemizedlist></para>
+
+	<para><emphasis>Stage 0.</emphasis> The preparation stage occurs
+before the other stages. When it is completed it starts the parsing
+stage by calling the parser's <literal>parse</literal> method.</para>
+
+	<para>The parsing stage and stages 1, 2, 3 run concurrently. Each stage
+calls into the following stage at appropriate points in its
+process. It is feasible that stages 2 and 3 will run in separate
+threads.</para>
+
+	<para><emphasis>Stage X.</emphasis> The parser now takes control.
+It parses the FO document or walks over the DOM tree. When it
+encounters XML events such as the start or end of the document, the
+start or end of an XML element, or character data, it makes a call
+back into the FO tree builder.</para>
+
+	<para><emphasis>Stage 1.</emphasis> The FO tree builder now takes
+control to create or finish the FO node for which the XML event was
+fired.  When it is done, it returns control to the parser.</para>
+
+	<para>The end events of a few XML elements invoke further actions
+of the FO tree builder. When a page-sequence FO node is finished, the
+FO tree builder notifies its tree listeners (of which there usually is
+only one, the Area tree builder) of this event. Each listener in turn
+takes control to process the page sequence.</para>
+
+	<para><emphasis>Stage 2.</emphasis> The Area tree builder (which
+is the tree listener) now takes control to lay out the page sequence
+and construct the Area tree for it. This stage is divided in three
+substages.</para>
+
+	<para><emphasis>Stage 2a.</emphasis> The (pseudo)tree of possible
+break points is created. Each node in the FO tree creates a Layout
+Manager of the appropriate type. The resulting tree of Layout Managers
+is recursed. Each Layout Manager asks each of its child Layout
+Managers in turn to return a possible break point, until all child
+Layout Managers are finished. This process is started by the Page
+Layout Manager, which is tied to the page-sequence FO node that was
+just completed in stage 1. Each time when its current child Layout
+Manager returns a possible break point, a complete (pseudo)tree of
+possible break points for a page has been collected.  The next
+substage takes control.</para>
+
+	<para><emphasis>Stage 2b.</emphasis> Now the area tree is
+created. The (pseudo)tree of possible break points and their Layout
+Managers is recursed. Each possible break point may create an area. It
+then calls the possible break points of the child LM that fall in this
+area, to create and return their area, and adds those areas to its own
+area. This process is started by the Page Layout Manager after the
+previous substage has finished. When its possible break point returns
+its area, the area tree for the flow of the page is complete.</para>
+
+	<para><emphasis>Stage 2c.</emphasis> The Page Layout Manager adds
+the static areas and hands the page to the Area tree builder, which
+adds it to the root area. The Area tree builder now inspects the set
+of complete pages, and fills in forward references to the page just
+finished. Pages which are now complete including the forward
+references contained in them, are handed over to the renderer, which
+now takes control. When the renderer returns control, the Page Layout
+Manager starts again in stage 2a to lay out the next page in the page
+sequence.</para>
+
+	<para>When all pages of this page sequence are done, this stage
+finishes, and the Area tree builder returns control to the FO tree
+builder.</para>
+
+	<para><emphasis>Stage 3.</emphasis> The renderer now takes control
+to render the finished pages. When it is done with those pages, it
+returns control to the Area tree builder.</para>
+
+	<para>This process model is FOP's default process model. It is
+completely configurable, through the objects constructed in the
+preparation stage. Stage 1 is configured by the content handler that
+is registered with the parser. Stage 2 is configured by the listeners
+that are registered with the FO tree builder. The layout process in
+stage 2 is also configured by the layout strategy that is registered
+with the Area tree builder. [It might be more appropriate to say that
+stage 2 is controlled by the tree control object. The actual Area tree
+builder is assigned by the layout strategy.] Stage 3 is configured by
+the selected renderer or output format.</para>
+
+  </chapter>
+
+<!-- Local Variables: --> 
+<!-- current-language-environment: UTF-8 -->
+<!-- coding: utf-8 --> 
+<!-- default-input-method: TeX --> 
+<!-- End: -->

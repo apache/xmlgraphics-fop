@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the PostScript extension for custom setpagedevice calls and comments.
+      The extension attachments need to show up in the area tree XML so the AreaTreeParser can fully restore the area tree.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:ps="http://xmlgraphics.apache.org/fop/postscript">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="A4" page-height="29.7cm" page-width="21cm" margin-top="1cm" margin-bottom="2cm" margin-left="2.5cm" margin-right="2.5cm">
+          <ps:ps-setpagedevice name="lower tray"><![CDATA[ << /MediaPosition 4 >> ]]></ps:ps-setpagedevice>
+          <ps:ps-comment-before>A4 before page</ps:ps-comment-before>
+          <ps:ps-comment-after>A4 after page</ps:ps-comment-after>
+          <fo:region-body/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="A4a" page-height="29.7cm" page-width="21cm" margin-top="1cm" margin-bottom="2cm" margin-left="2.5cm" margin-right="2.5cm">
+          <ps:ps-setpagedevice name="upper tray"><![CDATA[ << /MediaPosition 1 >> ]]></ps:ps-setpagedevice>
+          <ps:ps-comment-before>A4a before page 1</ps:ps-comment-before>
+          <ps:ps-comment-after>A4a after page 1</ps:ps-comment-after>
+          <ps:ps-comment-before>A4a before page 2</ps:ps-comment-before>
+          <ps:ps-comment-after>A4a after page 2</ps:ps-comment-after>
+          <fo:region-body background-color="orange"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="complex">
+      	  <fo:repeatable-page-master-reference master-reference="A4" maximum-repeats="1"/>
+      	  <fo:repeatable-page-master-reference master-reference="A4a" maximum-repeats="1"/>
+      	  <fo:repeatable-page-master-reference master-reference="A4"/>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:declarations>
+        <ps:ps-setpagedevice name="autofeed"><![CDATA[ << /ManualFeed false >> ]]></ps:ps-setpagedevice>
+        <ps:ps-comment-before>header comment 1</ps:ps-comment-before>
+        <ps:ps-comment-after>footer comment 1</ps:ps-comment-after>
+        <ps:ps-comment-before>header comment 2</ps:ps-comment-before>
+        <ps:ps-comment-after>footer comment 2</ps:ps-comment-after>
+      </fo:declarations>
+      <fo:page-sequence master-reference="complex">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Hello World!</fo:block>
+          <fo:block break-before="page"/>
+          <fo:block>Hello World!</fo:block>
+          <fo:block break-before="page"/>
+          <fo:block>Hello World!</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+  </fo:root>
+  </fo>
+  <checks>
+    <eval expected="2" xpath="count(/areaTree/child::*)"/>
+    <eval expected="1" xpath="count(/areaTree/child::pageSequence)"/>
+    <eval expected="1" xpath="count(/areaTree/child::extension-attachments)"/>
+    <eval expected="5" xpath="count(/areaTree/child::extension-attachments/child::*)"/>
+    <eval expected="autofeed"       xpath="/areaTree/extension-attachments/child::*[1]/@name"/>
+    <eval expected="header comment 1" xpath="/areaTree/extension-attachments/child::*[2]/text()"/>
+    <eval expected="footer comment 1" xpath="/areaTree/extension-attachments/child::*[3]/text()"/>
+    <eval expected="header comment 2" xpath="/areaTree/extension-attachments/child::*[4]/text()"/>
+    <eval expected="footer comment 2" xpath="/areaTree/extension-attachments/child::*[5]/text()"/>
+
+    <eval expected="3" xpath="count(/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=1]/page/extension-attachments/child::*)"/>
+    <eval expected="lower tray" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=1]/page/extension-attachments/child::*[1]/@name"/>
+    <eval expected="A4 before page" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=1]/page/extension-attachments/child::*[2]"/>
+    <eval expected="A4 after page" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=1]/page/extension-attachments/child::*[3]"/>
+
+    <eval expected="5" xpath="count(/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4a' and @nr=2]/page/extension-attachments/child::*)"/>
+    <eval expected="upper tray" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4a' and @nr=2]/page/extension-attachments/child::*[1]/@name"/>
+    <eval expected="A4a before page 1" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4a' and @nr=2]/page/extension-attachments/child::*[2]"/>
+    <eval expected="A4a after page 1" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4a' and @nr=2]/page/extension-attachments/child::*[3]"/>
+    <eval expected="A4a before page 2" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4a' and @nr=2]/page/extension-attachments/child::*[4]"/>
+    <eval expected="A4a after page 2" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4a' and @nr=2]/page/extension-attachments/child::*[5]"/>
+
+    <eval expected="3" xpath="count(/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=3]/page/extension-attachments/child::*)"/>
+    <eval expected="lower tray" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=3]/page/extension-attachments/child::*[1]/@name"/>
+    <eval expected="A4 before page" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=3]/page/extension-attachments/child::*[2]"/>
+    <eval expected="A4 after page" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=3]/page/extension-attachments/child::*[3]"/>
+  </checks>
+</testcase>

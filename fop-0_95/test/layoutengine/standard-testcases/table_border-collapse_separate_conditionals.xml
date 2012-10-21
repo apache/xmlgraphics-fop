@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that conditional paddings and borders on table-cells are handled correctly.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page" page-height="5cm" page-width="15cm" margin="1cm">
+          <fo:region-body background-color="#F0F0F0"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page" font-family="serif" font-size="8pt" line-height="10pt">
+        <fo:flow flow-name="xsl-region-body">
+
+          <!-- Table 1 -->
+          <fo:block
+            space-after.minimum="30pt"
+            space-after.optimum="40pt"
+            space-after.maximum="50pt"
+            >Before the table</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black">
+            <fo:table-column column-width="proportional-column-width(1)" number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="4pt solid blue" padding="2pt"
+                  padding-after.length="3pt"
+                  padding-after.conditionality="retain"
+                  padding-before.length="2pt"
+                  padding-before.conditionality="retain">
+                  <fo:block background-color="yellow">
+                    <fo:block>Cell 1.1</fo:block>
+                    <fo:block>Cell 1.1</fo:block>
+                    <fo:block>Cell 1.1</fo:block>
+                    <fo:block>Cell 1.1</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="4pt solid blue" padding="2pt"
+                  border-before-width.length="6pt"
+                  border-before-width.conditionality="retain"
+                  border-after-width.length="2pt"
+                  border-after-width.conditionality="retain">
+                  <fo:block background-color="yellow">
+                    <fo:block>Cell 1.2</fo:block>
+                    <fo:block>Cell 1.2</fo:block>
+                    <fo:block>Cell 1.2</fo:block>
+                    <fo:block>Cell 1.2</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <!-- Table 2 -->
+          <fo:block break-before="page"
+            space-after.minimum="20pt"
+            space-after.optimum="30pt"
+            space-after.maximum="40pt"
+            >Before the table</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black">
+            <fo:table-column column-width="proportional-column-width(1)" number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="4pt solid blue" padding="2pt"
+                  border-before-width.length="8pt"
+                  border-before-width.conditionality="retain"
+                  padding-after.length="5pt"
+                  padding-after.conditionality="retain">
+                  <fo:block background-color="yellow">
+                    <fo:block>Cell 1.1</fo:block>
+                    <fo:block>Cell 1.1</fo:block>
+                    <fo:block>Cell 1.1</fo:block>
+                    <fo:block>Cell 1.1</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="4pt solid blue" padding="2pt"
+                  border-after-width.length="6pt"
+                  border-after-width.conditionality="retain"
+                  padding-before.length="7pt"
+                  padding-before.conditionality="retain">
+                  <fo:block background-color="yellow">
+                    <fo:block>Cell 1.2</fo:block>
+                    <fo:block>Cell 1.2</fo:block>
+                    <fo:block>Cell 1.2</fo:block>
+                    <fo:block>Cell 1.2</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <!-- Table 3 -->
+          <fo:block break-before="page"
+            space-after.minimum="20pt"
+            space-after.optimum="30pt"
+            space-after.maximum="40pt"
+            >Before the table</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black" border-separation="6pt">
+            <fo:table-column column-width="proportional-column-width(1)" number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="4pt solid blue" padding="2pt"
+                  border-before-width.length="7pt"
+                  border-before-width.conditionality="retain"
+                  border-after-width.length="3pt"
+                  border-after-width.conditionality="retain"
+                  padding-before.length="5pt"
+                  padding-before.conditionality="retain"
+                  padding-after.length="1pt"
+                  padding-after.conditionality="retain">
+                  <fo:block background-color="yellow">
+                    <fo:block>Cell 1.1</fo:block>
+                    <fo:block>Cell 1.1</fo:block>
+                    <fo:block>Cell 1.1</fo:block>
+                    <fo:block>Cell 1.1</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="4pt solid blue" padding="2pt">
+                  <fo:block background-color="yellow">
+                    <fo:block>Cell 1.2</fo:block>
+                    <fo:block>Cell 1.2</fo:block>
+                    <fo:block>Cell 1.2</fo:block>
+                    <fo:block>Cell 1.2</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <!-- Table 4 -->
+          <fo:block break-before="page"
+            space-after.minimum="20pt"
+            space-after.optimum="30pt"
+            space-after.maximum="40pt"
+            >Before the table</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black" border-separation="5pt">
+            <fo:table-column column-width="proportional-column-width(1)" number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="4pt solid blue" padding="2pt"
+                  border-after-width.length="1pt"
+                  border-after-width.conditionality="retain"
+                  padding-after.length="9pt"
+                  padding-after.conditionality="retain">
+                  <fo:block background-color="yellow">
+                    <fo:block>Cell 1.1</fo:block>
+                    <fo:block>Cell 1.1</fo:block>
+                    <fo:block>Cell 1.1</fo:block>
+                    <fo:block>Cell 1.1</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="4pt solid blue" padding="2pt"
+                  border-before-width.length="10pt"
+                  border-before-width.conditionality="retain"
+                  padding-before.length="11pt"
+                  padding-before.conditionality="retain">
+                  <fo:block background-color="yellow">
+                    <fo:block>Cell 1.2</fo:block>
+                    <fo:block>Cell 1.2</fo:block>
+                    <fo:block>Cell 1.2</fo:block>
+                    <fo:block>Cell 1.2</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <!-- Table 5 -->
+          <!-- The cell on the second column finished early. Still, the conditional border-after
+          must be taken into account -->
+          <fo:block break-before="page"
+            space-after.minimum="40pt"
+            space-after.optimum="50pt"
+            space-after.maximum="60pt"
+            >Before the table</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black">
+            <fo:table-column column-width="proportional-column-width(1)" number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="2pt solid blue">
+                  <fo:block>Cell 1.1</fo:block>
+                  <fo:block>Cell 1.1</fo:block>
+                  <fo:block>Cell 1.1</fo:block>
+                  <fo:block>Cell 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="2pt solid red">
+                  <fo:block>Cell 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+
+    <!-- table 1 -->
+    <!-- before break -->
+    <eval expected="30000"                 xpath="//pageViewport[@nr='1']//flow/block[2]/@bpd"/>
+    <!-- cell 1.1 -->
+    <eval expected="21000"                 xpath="//pageViewport[@nr='1']//flow/block[2]/block[1]/@bpd"/>
+    <eval expected="30000"                 xpath="//pageViewport[@nr='1']//flow/block[2]/block[1]/@bpda"/>
+    <eval expected="(solid,#0000ff,4000)"  xpath="//pageViewport[@nr='1']//flow/block[2]/block[1]/@border-before"/>
+    <eval expected="2000"                  xpath="//pageViewport[@nr='1']//flow/block[2]/block[1]/@padding-before"/>
+    <eval expected="3000"                  xpath="//pageViewport[@nr='1']//flow/block[2]/block[1]/@padding-after"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='1']//flow/block[2]/block[1]/@border-after"/>
+    <!-- cell 1.2 -->
+    <eval expected="20000"                 xpath="//pageViewport[@nr='1']//flow/block[2]/block[2]/@bpd"/>
+    <eval expected="30000"                 xpath="//pageViewport[@nr='1']//flow/block[2]/block[2]/@bpda"/>
+    <eval expected="(solid,#0000ff,6000)"  xpath="//pageViewport[@nr='1']//flow/block[2]/block[2]/@border-before"/>
+    <eval expected="2000"                  xpath="//pageViewport[@nr='1']//flow/block[2]/block[2]/@padding-before"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='1']//flow/block[2]/block[2]/@padding-after"/>
+    <eval expected="(solid,#0000ff,2000)"  xpath="//pageViewport[@nr='1']//flow/block[2]/block[2]/@border-after"/>
+    <!-- after break -->
+    <eval expected="30000"                 xpath="//pageViewport[@nr='2']//flow/block[1]/@bpd"/>
+    <!-- cell 1.1 -->
+    <eval expected="21000"                 xpath="//pageViewport[@nr='2']//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="30000"                 xpath="//pageViewport[@nr='2']//flow/block[1]/block[1]/@bpda"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='2']//flow/block[1]/block[1]/@border-before"/>
+    <eval expected="2000"                  xpath="//pageViewport[@nr='2']//flow/block[1]/block[1]/@padding-before"/>
+    <eval expected="3000"                  xpath="//pageViewport[@nr='2']//flow/block[1]/block[1]/@padding-after"/>
+    <eval expected="(solid,#0000ff,4000)"  xpath="//pageViewport[@nr='2']//flow/block[1]/block[1]/@border-after"/>
+    <!-- cell 1.2 -->
+    <eval expected="20000"                 xpath="//pageViewport[@nr='2']//flow/block[1]/block[2]/@bpd"/>
+    <eval expected="30000"                 xpath="//pageViewport[@nr='2']//flow/block[1]/block[2]/@bpda"/>
+    <eval expected="(solid,#0000ff,6000)"  xpath="//pageViewport[@nr='2']//flow/block[1]/block[2]/@border-before"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='2']//flow/block[1]/block[2]/@padding-before"/>
+    <eval expected="2000"                  xpath="//pageViewport[@nr='2']//flow/block[1]/block[2]/@padding-after"/>
+    <eval expected="(solid,#0000ff,2000)"  xpath="//pageViewport[@nr='2']//flow/block[1]/block[2]/@border-after"/>
+
+    <!-- table 2 -->
+    <!-- before break -->
+    <eval expected="45000"                 xpath="//pageViewport[@nr='3']//flow/block[2]/@bpd"/>
+    <!-- cell 1.1 -->
+    <eval expected="30000"                 xpath="//pageViewport[@nr='3']//flow/block[2]/block[1]/@bpd"/>
+    <eval expected="45000"                 xpath="//pageViewport[@nr='3']//flow/block[2]/block[1]/@bpda"/>
+    <eval expected="(solid,#0000ff,8000)"  xpath="//pageViewport[@nr='3']//flow/block[2]/block[1]/@border-before"/>
+    <eval expected="2000"                  xpath="//pageViewport[@nr='3']//flow/block[2]/block[1]/@padding-before"/>
+    <eval expected="5000"                  xpath="//pageViewport[@nr='3']//flow/block[2]/block[1]/@padding-after"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='3']//flow/block[2]/block[1]/@border-after"/>
+    <!-- cell 1.2 -->
+    <eval expected="28000"                 xpath="//pageViewport[@nr='3']//flow/block[2]/block[2]/@bpd"/>
+    <eval expected="45000"                 xpath="//pageViewport[@nr='3']//flow/block[2]/block[2]/@bpda"/>
+    <eval expected="(solid,#0000ff,4000)"  xpath="//pageViewport[@nr='3']//flow/block[2]/block[2]/@border-before"/>
+    <eval expected="7000"                  xpath="//pageViewport[@nr='3']//flow/block[2]/block[2]/@padding-before"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='3']//flow/block[2]/block[2]/@padding-after"/>
+    <eval expected="(solid,#0000ff,6000)"  xpath="//pageViewport[@nr='3']//flow/block[2]/block[2]/@border-after"/>
+    <!-- after break -->
+    <eval expected="35000"                 xpath="//pageViewport[@nr='4']//flow/block[1]/@bpd"/>
+    <!-- cell 1.1 -->
+    <eval expected="18000"                 xpath="//pageViewport[@nr='4']//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="35000"                 xpath="//pageViewport[@nr='4']//flow/block[1]/block[1]/@bpda"/>
+    <eval expected="(solid,#0000ff,8000)"  xpath="//pageViewport[@nr='4']//flow/block[1]/block[1]/@border-before"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='4']//flow/block[1]/block[1]/@padding-before"/>
+    <eval expected="5000"                  xpath="//pageViewport[@nr='4']//flow/block[1]/block[1]/@padding-after"/>
+    <eval expected="(solid,#0000ff,4000)"  xpath="//pageViewport[@nr='4']//flow/block[1]/block[1]/@border-after"/>
+    <!-- cell 1.2 -->
+    <eval expected="20000"                 xpath="//pageViewport[@nr='4']//flow/block[1]/block[2]/@bpd"/>
+    <eval expected="35000"                 xpath="//pageViewport[@nr='4']//flow/block[1]/block[2]/@bpda"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='4']//flow/block[1]/block[2]/@border-before"/>
+    <eval expected="7000"                  xpath="//pageViewport[@nr='4']//flow/block[1]/block[2]/@padding-before"/>
+    <eval expected="2000"                  xpath="//pageViewport[@nr='4']//flow/block[1]/block[2]/@padding-after"/>
+    <eval expected="(solid,#0000ff,6000)"  xpath="//pageViewport[@nr='4']//flow/block[1]/block[2]/@border-after"/>
+
+    <!-- table 3 -->
+    <!-- before break -->
+    <eval expected="42000"                 xpath="//pageViewport[@nr='5']//flow/block[2]/@bpd"/>
+    <!-- cell 1.1 -->
+    <eval expected="20000"                 xpath="//pageViewport[@nr='5']//flow/block[2]/block[1]/@bpd"/>
+    <eval expected="36000"                 xpath="//pageViewport[@nr='5']//flow/block[2]/block[1]/@bpda"/>
+    <eval expected="(solid,#0000ff,7000)"  xpath="//pageViewport[@nr='5']//flow/block[2]/block[1]/@border-before"/>
+    <eval expected="5000"                  xpath="//pageViewport[@nr='5']//flow/block[2]/block[1]/@padding-before"/>
+    <eval expected="1000"                  xpath="//pageViewport[@nr='5']//flow/block[2]/block[1]/@padding-after"/>
+    <eval expected="(solid,#0000ff,3000)"  xpath="//pageViewport[@nr='5']//flow/block[2]/block[1]/@border-after"/>
+    <!-- cell 1.2 -->
+    <eval expected="33000"                 xpath="//pageViewport[@nr='5']//flow/block[2]/block[2]/@bpd"/>
+    <eval expected="39000"                 xpath="//pageViewport[@nr='5']//flow/block[2]/block[2]/@bpda"/>
+    <eval expected="(solid,#0000ff,4000)"  xpath="//pageViewport[@nr='5']//flow/block[2]/block[2]/@border-before"/>
+    <eval expected="2000"                  xpath="//pageViewport[@nr='5']//flow/block[2]/block[2]/@padding-before"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='5']//flow/block[2]/block[2]/@padding-after"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='5']//flow/block[2]/block[2]/@border-after"/>
+    <!-- after break -->
+    <eval expected="42000"                 xpath="//pageViewport[@nr='6']//flow/block[1]/@bpd"/>
+    <!-- cell 1.1 -->
+    <eval expected="20000"                 xpath="//pageViewport[@nr='6']//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="36000"                 xpath="//pageViewport[@nr='6']//flow/block[1]/block[1]/@bpda"/>
+    <eval expected="(solid,#0000ff,7000)"  xpath="//pageViewport[@nr='6']//flow/block[1]/block[1]/@border-before"/>
+    <eval expected="5000"                  xpath="//pageViewport[@nr='6']//flow/block[1]/block[1]/@padding-before"/>
+    <eval expected="1000"                  xpath="//pageViewport[@nr='6']//flow/block[1]/block[1]/@padding-after"/>
+    <eval expected="(solid,#0000ff,3000)"  xpath="//pageViewport[@nr='6']//flow/block[1]/block[1]/@border-after"/>
+    <!-- cell 1.2 -->
+    <eval expected="33000"                 xpath="//pageViewport[@nr='6']//flow/block[1]/block[2]/@bpd"/>
+    <eval expected="39000"                 xpath="//pageViewport[@nr='6']//flow/block[1]/block[2]/@bpda"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='6']//flow/block[1]/block[2]/@border-before"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='6']//flow/block[1]/block[2]/@padding-before"/>
+    <eval expected="2000"                  xpath="//pageViewport[@nr='6']//flow/block[1]/block[2]/@padding-after"/>
+    <eval expected="(solid,#0000ff,4000)"  xpath="//pageViewport[@nr='6']//flow/block[1]/block[2]/@border-after"/>
+
+    <!-- table 4 -->
+    <!-- before break -->
+    <eval expected="41000"                 xpath="//pageViewport[@nr='7']//flow/block[2]/@bpd"/>
+    <!-- cell 1.1 -->
+    <eval expected="20000"                 xpath="//pageViewport[@nr='7']//flow/block[2]/block[1]/@bpd"/>
+    <eval expected="36000"                 xpath="//pageViewport[@nr='7']//flow/block[2]/block[1]/@bpda"/>
+    <eval expected="(solid,#0000ff,4000)"  xpath="//pageViewport[@nr='7']//flow/block[2]/block[1]/@border-before"/>
+    <eval expected="2000"                  xpath="//pageViewport[@nr='7']//flow/block[2]/block[1]/@padding-before"/>
+    <eval expected="9000"                  xpath="//pageViewport[@nr='7']//flow/block[2]/block[1]/@padding-after"/>
+    <eval expected="(solid,#0000ff,1000)"  xpath="//pageViewport[@nr='7']//flow/block[2]/block[1]/@border-after"/>
+    <!-- cell 1.2 -->
+    <eval expected="17500"                 xpath="//pageViewport[@nr='7']//flow/block[2]/block[2]/@bpd"/>
+    <eval expected="38500"                 xpath="//pageViewport[@nr='7']//flow/block[2]/block[2]/@bpda"/>
+    <eval expected="(solid,#0000ff,10000)" xpath="//pageViewport[@nr='7']//flow/block[2]/block[2]/@border-before"/>
+    <eval expected="11000"                 xpath="//pageViewport[@nr='7']//flow/block[2]/block[2]/@padding-before"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='7']//flow/block[2]/block[2]/@padding-after"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='7']//flow/block[2]/block[2]/@border-after"/>
+    <!-- after break -->
+    <eval expected="62000"                 xpath="//pageViewport[@nr='8']//flow/block[1]/@bpd"/>
+    <!-- cell 1.1 -->
+    <eval expected="49500"                 xpath="//pageViewport[@nr='8']//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="59500"                 xpath="//pageViewport[@nr='8']//flow/block[1]/block[1]/@bpda"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='8']//flow/block[1]/block[1]/@border-before"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='8']//flow/block[1]/block[1]/@padding-before"/>
+    <eval expected="9000"                  xpath="//pageViewport[@nr='8']//flow/block[1]/block[1]/@padding-after"/>
+    <eval expected="(solid,#0000ff,1000)"  xpath="//pageViewport[@nr='8']//flow/block[1]/block[1]/@border-after"/>
+    <!-- cell 1.2 -->
+    <eval expected="30000"                 xpath="//pageViewport[@nr='8']//flow/block[1]/block[2]/@bpd"/>
+    <eval expected="57000"                 xpath="//pageViewport[@nr='8']//flow/block[1]/block[2]/@bpda"/>
+    <eval expected="(solid,#0000ff,10000)" xpath="//pageViewport[@nr='8']//flow/block[1]/block[2]/@border-before"/>
+    <eval expected="11000"                 xpath="//pageViewport[@nr='8']//flow/block[1]/block[2]/@padding-before"/>
+    <eval expected="2000"                  xpath="//pageViewport[@nr='8']//flow/block[1]/block[2]/@padding-after"/>
+    <eval expected="(solid,#0000ff,4000)"  xpath="//pageViewport[@nr='8']//flow/block[1]/block[2]/@border-after"/>
+
+    <!-- table 5 -->
+    <!-- before break -->
+    <eval expected="22000"                 xpath="//pageViewport[@nr='9']//flow/block[2]/@bpd"/>
+    <!-- cell 1.1 -->
+    <eval expected="20000"                 xpath="//pageViewport[@nr='9']//flow/block[2]/block[1]/@bpd"/>
+    <eval expected="22000"                 xpath="//pageViewport[@nr='9']//flow/block[2]/block[1]/@bpda"/>
+    <eval expected="(solid,#0000ff,2000)"  xpath="//pageViewport[@nr='9']//flow/block[2]/block[1]/@border-before"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='9']//flow/block[2]/block[1]/@border-after"/>
+    <!-- cell 1.2 -->
+    <eval expected="20000"                 xpath="//pageViewport[@nr='9']//flow/block[2]/block[2]/@bpd"/>
+    <eval expected="22000"                 xpath="//pageViewport[@nr='9']//flow/block[2]/block[2]/@bpda"/>
+    <eval expected="(solid,#ff0000,2000)"  xpath="//pageViewport[@nr='9']//flow/block[2]/block[2]/@border-before"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='9']//flow/block[2]/block[2]/@border-after"/>
+    <!-- after break -->
+    <eval expected="22000"                 xpath="//pageViewport[@nr='10']//flow/block[1]/@bpd"/>
+    <!-- cell 1.1 -->
+    <eval expected="20000"                 xpath="//pageViewport[@nr='10']//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="22000"                 xpath="//pageViewport[@nr='10']//flow/block[1]/block[1]/@bpda"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='10']//flow/block[1]/block[1]/@border-before"/>
+    <eval expected="(solid,#0000ff,2000)"  xpath="//pageViewport[@nr='10']//flow/block[1]/block[1]/@border-after"/>
+    <!-- cell 1.2 -->
+    <eval expected="20000"                 xpath="//pageViewport[@nr='10']//flow/block[1]/block[2]/@bpd"/>
+    <eval expected="22000"                 xpath="//pageViewport[@nr='10']//flow/block[1]/block[2]/@bpda"/>
+    <eval expected=""                      xpath="//pageViewport[@nr='10']//flow/block[1]/block[2]/@border-before"/>
+    <eval expected="(solid,#ff0000,2000)"  xpath="//pageViewport[@nr='10']//flow/block[1]/block[2]/@border-after"/>
+
+  </checks>
+</testcase>

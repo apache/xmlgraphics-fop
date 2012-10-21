@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  * Licensed to the Apache Software Foundation (ASF) under one or more
+  * contributor license agreements.  See the NOTICE file distributed with
+  * this work for additional information regarding copyright ownership.
+  * The ASF licenses this file to You under the Apache License, Version 2.0
+  * (the "License"); you may not use this file except in compliance with
+  * the License.  You may obtain a copy of the License at
+  * 
+  *      http://www.apache.org/licenses/LICENSE-2.0
+  * 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  -->
+
+<!-- $Id$ -->
+
+<!--
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                         "docbookx.dtd">
+  -->
+
+  <chapter>
+	<title>Phase 1: Building the FO tree</title>
+
+	<section>
+	  <title>Creating the FO nodes</title>
+
+	<para>FOP's first task is building a suitable data structure from
+the XML input, which is an XML file with formatting objects or a
+result tree with formatting objects from an XSLT transformation. One
+could call this FOP's data binding. The data structure is an FO tree,
+i.e., a tree of FONode objects. The structure of the FO tree exactly
+parallels the structure of the XML file or the corresponding DOM tree,
+but instead of XML nodes its nodes are objects of type
+<literal>org.apache.fop.fo.FONode</literal>. The FO tree is built on
+the basis of SAX parser events. The parser is responsible for parsing
+the XML document; it calls FOP's callbacks when SAX events
+occur.</para>
+
+	<para>FOP's callbacks are implemented by the
+<literal>FOTreeBuilder</literal> <literal>treebuilder</literal>
+object, which is a SAX content handler. It was constructed in the
+preparation phase, and registered with the parser as the content
+handler. It has meaningful implementations of the methods
+<literal>startDocument</literal>, <literal>endDocument</literal>,
+<literal>startElement</literal>, <literal>endElement</literal>, and
+<literal>characters</literal>.</para>
+
+	<para><literal>treebuilder</literal> delegates its
+<literal>startDocument</literal> and <literal>endDocument</literal>
+methods to its <literal>FOTreeHandler</literal> object
+<literal>foInputHandler</literal>. <literal>FOTreeHandler</literal> is
+a subclas of <literal>FOInputHandler</literal>.
+<screen>
+ treebuilder.foInputHandler = {
+    runtime: instance of java.lang.Runtime(id=635)
+    pageCount: 0
+    initialMemory: 0
+    startTime: 0
+    foTreeListeners: instance of java.util.HashSet(id=636)
+    org.apache.fop.fo.FOInputHandler.foTreeControl: instance of org.apache.fop.apps.Document(id=634)
+    org.apache.avalon.framework.logger.AbstractLogEnabled.m_logger: instance of org.apache.avalon.framework.logger.ConsoleLogger(id=342)
+}
+</screen></para>
+
+	<para>The first important task of <literal>treebuilder</literal> is
+creating a suitable FO node for each element in the XML document. This
+is done in its <literal>startElement</literal> method. Its most
+important tool in this process is its <literal>fobjTable</literal>
+object. <literal>fobjTable</literal> is a map of maps. For each
+namespace supported by FOP it contains a map of local XML element name
+to a Node maker object <literal>fobjMaker</literal>, of type
+<literal>ElementMapping.Maker</literal>. In addition to the FO
+namespace it contains makers for FOP's extensions namespace, the SVG
+namespace and Batik's extensions namespace.
+<screen>
+ treebuilder.fobjTable = "{
+  http://www.w3.org/1999/XSL/Format={
+   static-content=org.apache.fop.fo.FOElementMapping$SC@39e5b5,
+   table=org.apache.fop.fo.FOElementMapping$Ta@117f31e,
+   external-graphic=org.apache.fop.fo.FOElementMapping$EG@15a6029,
+   table-column=org.apache.fop.fo.FOElementMapping$TC@5f6303,
+   table-and-caption=org.apache.fop.fo.FOElementMapping$TAC@5d9084,
+   table-footer=org.apache.fop.fo.FOElementMapping$TB@bad8a8,
+   declarations=org.apache.fop.fo.FOElementMapping$Dec@e61fd1,
+   wrapper=org.apache.fop.fo.FOElementMapping$W@331059,
+   page-sequence=org.apache.fop.fo.FOElementMapping$PS@766a24,
+   single-page-master-reference=org.apache.fop.fo.FOElementMapping$SPMR@32784a,
+   footnote=org.apache.fop.fo.FOElementMapping$Foot@1774b9b,
+   multi-switch=org.apache.fop.fo.FOElementMapping$MS@104c575,
+   bidi-override=org.apache.fop.fo.FOElementMapping$BO@3fa5ac,
+   layout-master-set=org.apache.fop.fo.FOElementMapping$LMS@95cfbe,
+   float=org.apache.fop.fo.FOElementMapping$F@179dce4,
+   list-item=org.apache.fop.fo.FOElementMapping$LI@1950198,
+   basic-link=org.apache.fop.fo.FOElementMapping$BL@19bb25a,
+   multi-property-set=org.apache.fop.fo.FOElementMapping$MPS@da6bf4,
+   table-row=org.apache.fop.fo.FOElementMapping$TR@1e58cb8,
+   region-end=org.apache.fop.fo.FOElementMapping$RE@179935d,
+   block=org.apache.fop.fo.FOElementMapping$B@b9e45a,
+   leader=org.apache.fop.fo.FOElementMapping$L@3ef810,
+   table-header=org.apache.fop.fo.FOElementMapping$TB@100363,
+   list-item-body=org.apache.fop.fo.FOElementMapping$LIB@14e8cee,
+   multi-properties=org.apache.fop.fo.FOElementMapping$MP@67064,
+   region-after=org.apache.fop.fo.FOElementMapping$RA@bcda2d,
+   multi-case=org.apache.fop.fo.FOElementMapping$MC@97d01f,
+   block-container=org.apache.fop.fo.FOElementMapping$BC@e0a386,
+   title=org.apache.fop.fo.FOElementMapping$T@feb48,
+   retrieve-marker=org.apache.fop.fo.FOElementMapping$RM@11ff436,
+   color-profile=org.apache.fop.fo.FOElementMapping$CP@da3a1e,
+   character=org.apache.fop.fo.FOElementMapping$Ch@11dba45,
+   simple-page-master=org.apache.fop.fo.FOElementMapping$SPM@b03be0,
+   page-sequence-master=org.apache.fop.fo.FOElementMapping$PSM@2af081,
+   footnote-body=org.apache.fop.fo.FOElementMapping$FB@113a53d,
+   marker=org.apache.fop.fo.FOElementMapping$M@c5495e,
+   table-body=org.apache.fop.fo.FOElementMapping$TB@53fb57,
+   inline=org.apache.fop.fo.FOElementMapping$In@19a32e0,
+   table-cell=org.apache.fop.fo.FOElementMapping$TCell@8238f4,
+   list-block=org.apache.fop.fo.FOElementMapping$LB@16925b0,
+   region-start=org.apache.fop.fo.FOElementMapping$RS@297ffb,
+   table-caption=org.apache.fop.fo.FOElementMapping$TCaption@914f6a,
+   conditional-page-master-reference=org.apache.fop.fo.FOElementMapping$CPMR@1f4cbee,
+   list-item-label=org.apache.fop.fo.FOElementMapping$LIL@787d6a,
+   multi-toggle=org.apache.fop.fo.FOElementMapping$MT@71dc3d,
+   initial-property-set=org.apache.fop.fo.FOElementMapping$IPS@1326484,
+   repeatable-page-master-alternatives=org.apache.fop.fo.FOElementMapping$RPMA@16546ef,
+   repeatable-page-master-reference=org.apache.fop.fo.FOElementMapping$RPMR@1428ea,
+   flow=org.apache.fop.fo.FOElementMapping$Fl@18a49e0,
+   page-number=org.apache.fop.fo.FOElementMapping$PN@1f82982,
+   instream-foreign-object=org.apache.fop.fo.FOElementMapping$IFO@16d2633,
+   inline-container=org.apache.fop.fo.FOElementMapping$IC@e70e30,
+   root=org.apache.fop.fo.FOElementMapping$R@154864a,
+   region-before=org.apache.fop.fo.FOElementMapping$RBefore@3c9217,
+   region-body=org.apache.fop.fo.FOElementMapping$RB@9b42e6,
+   page-number-citation=org.apache.fop.fo.FOElementMapping$PNC@14520eb
+  },
+  http://xml.apache.org/fop/extensions={
+   bookmarks=org.apache.fop.fo.extensions.ExtensionElementMapping$B@1d7fbfb,
+   label=org.apache.fop.fo.extensions.ExtensionElementMapping$L@e020c9,
+   outline=org.apache.fop.fo.extensions.ExtensionElementMapping$O@888e6c
+  },
+  http://www.w3.org/2000/svg={
+	&lt;default&gt;=org.apache.fop.fo.extensions.svg.SVGElementMapping$SVGMaker@1742700, 
+   svg=org.apache.fop.fo.extensions.svg.SVGElementMapping$SE@acb158
+  },
+ http://xml.apache.org/batik/ext={
+   &lt;default&gt;=org.apache.fop.fo.extensions.svg.BatikExtensionElementMapping$SVGMaker@1af33d6,
+   batik=org.apache.fop.fo.extensions.svg.BatikExtensionElementMapping$SE@17431b9
+  }
+ }"
+</screen></para>
+
+	<para>The values in this map are objects of subclasses of
+<literal>ElementMapping.Maker</literal>.
+<literal>ElementMapping.Maker</literal> is a static nested class of
+<literal>ElementMapping</literal>. It has no members and a single
+object method <literal>FONode make(FONode parent)</literal>. The
+subclasses are static nested classes of
+<literal>FOElementMapping</literal>. Each subclass has its own
+implementation of the <literal>make</literal> method, and returns its
+own subclass of FONode. For example,
+<literal>FOElementMapping$R</literal> returns a
+<literal>org.apache.fop.fo.pagination.Root</literal> object.</para>
+
+	<para><literal>treebuilder</literal> delegates its
+<literal>endElement</literal> method to the node's
+<literal>end</literal> method, which allows FOP to take appropriate
+action at the end of each FO element. The only node type whose
+<literal>end</literal> method takes special action, is
+<literal>org.apache.fop.fo.pagination.PageSequence</literal>. It hands
+control to FOP's next phase, building of the area tree.</para>
+
+	</section>
+
+	<section>
+	  <title>Creating the property values</title>
+
+	  <para>Formatting objects have many attributes by which the user
+may finetune their behaviour. When the FO tree is built, the
+attributes must be converted to properties. This conversion process
+must implement XSLT's sometimes complicated rules of default values,
+inheritance, shorthand notations etc. This is one of the tasks of the
+property subsystem, which is described in its own <link
+linkend="ch.properties">chapter</link>.</para>
+
+	</section>
+  </chapter>
+
+<!-- Local Variables: --> 
+<!-- current-language-environment: UTF-8 -->
+<!-- coding: utf-8 --> 
+<!-- default-input-method: TeX --> 
+<!-- End: -->
