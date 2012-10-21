@@ -6,6 +6,7 @@
   <font-base>../../resources/fonts/ttf/</font-base>
   <renderers>
     <renderer mime="application/pdf">
+      <version>1.4</version>
       <filterList>
         <value>null</value>
       </filterList>

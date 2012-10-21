@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FONode.FONodeIterator;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.extensions.ExternalDocument;
@@ -117,7 +118,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         registerMaker(Block.class, new BlockLayoutManagerMaker());
         registerMaker(Leader.class, new LeaderLayoutManagerMaker());
         registerMaker(RetrieveMarker.class, new RetrieveMarkerLayoutManagerMaker());
-        registerMaker(RetrieveTableMarker.class, new Maker());
+        registerMaker(RetrieveTableMarker.class, new RetrieveTableMarkerLayoutManagerMaker());
         registerMaker(Character.class, new CharacterLayoutManagerMaker());
         registerMaker(ExternalGraphic.class,
                    new ExternalGraphicLayoutManagerMaker());
@@ -401,6 +402,24 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                 return;
             }
             while (baseIter.hasNext()) {
+                FONode child = (FONode) baseIter.next();
+                makeLayoutManagers(child, lms);
+            }
+        }
+    }
+
+    public class RetrieveTableMarkerLayoutManagerMaker extends Maker {
+        public void make(FONode node, List lms) {
+            FONodeIterator baseIter = node.getChildNodes();
+            if (baseIter == null) {
+                // this happens when the retrieve-table-marker cannot be resolved yet
+                RetrieveTableMarker rtm = (RetrieveTableMarker) node;
+                RetrieveTableMarkerLayoutManager rtmlm = new RetrieveTableMarkerLayoutManager(rtm);
+                lms.add(rtmlm);
+                return;
+            }
+            while (baseIter.hasNext()) {
+                // this happens when the retrieve-table-marker has been resolved
                 FONode child = (FONode) baseIter.next();
                 makeLayoutManagers(child, lms);
             }

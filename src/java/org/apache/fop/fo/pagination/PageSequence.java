@@ -19,6 +19,7 @@
 
 package org.apache.fop.fo.pagination;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
 
@@ -30,6 +31,7 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.traits.Direction;
 import org.apache.fop.traits.WritingMode;
 import org.apache.fop.traits.WritingModeTraits;
@@ -41,13 +43,11 @@ import org.apache.fop.traits.WritingModeTraitsGetter;
  */
 public class PageSequence extends AbstractPageSequence implements WritingModeTraitsGetter {
 
-    // The value of FO traits (refined properties) that apply to fo:page-sequence.
-    private String country;
-    private String language;
     private String masterReference;
     private Numeric referenceOrientation;
     private WritingModeTraits writingModeTraits;
-    // End of trait values
+
+    private Locale locale;
 
     // There doesn't seem to be anything in the spec requiring flows
     // to be in the order given, only that they map to the regions
@@ -90,8 +90,9 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
-        country = pList.get(PR_COUNTRY).getString();
-        language = pList.get(PR_LANGUAGE).getString();
+        String country = pList.get(PR_COUNTRY).getString();
+        String language = pList.get(PR_LANGUAGE).getString();
+        locale = CommonHyphenation.toLocale(language, country);
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         writingModeTraits = new WritingModeTraits
@@ -320,20 +321,8 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
         return FO_PAGE_SEQUENCE;
     }
 
-    /**
-     * Get the value of the <code>country</code> trait.
-     * @return the country trait value
-     */
-    public String getCountry() {
-        return this.country;
-    }
-
-    /**
-     * Get the value of the <code>language</code> trait.
-     * @return the language trait value
-     */
-    public String getLanguage() {
-        return this.language;
+    public Locale getLocale() {
+        return locale;
     }
 
     /**

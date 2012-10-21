@@ -193,6 +193,20 @@ public abstract class FOEventHandler {
     }
 
     /**
+     * Process start of a Static.
+     * @param staticContent StaticContent that is starting
+     */
+    public void startStatic(StaticContent staticContent) {
+    }
+
+    /**
+     * Process end of a Static.
+     * @param staticContent StaticContent that is ending
+     */
+    public void endStatic(StaticContent staticContent) {
+    }
+
+    /**
      * This method is called to indicate the start of a new fo:flow
      * or fo:static-content.
      * This method also handles fo:static-content tags, because the
@@ -408,22 +422,6 @@ public abstract class FOEventHandler {
      */
     public void endListBody(ListItemBody listItemBody) {
     }
-
-    // Static Regions
-    /**
-     * Process start of a Static.
-     * @param staticContent StaticContent that is starting
-     */
-    public void startStatic(StaticContent staticContent) {
-    }
-
-    /**
-     * Process end of a Static.
-     * @param staticContent StaticContent that is ending
-     */
-    public void endStatic(StaticContent staticContent) {
-    }
-
 
     /**
      * Process start of a Markup.

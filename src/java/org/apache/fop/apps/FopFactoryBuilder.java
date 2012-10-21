@@ -30,8 +30,9 @@ import org.apache.avalon.framework.configuration.Configuration;
 
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext.FallbackResolver;
+import org.apache.xmlgraphics.io.ResourceResolver;
 
-import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
@@ -463,6 +464,10 @@ public final class FopFactoryBuilder {
 
         public Map<String, String> getHyphenationPatternNames() {
             return hyphPatNames;
+        }
+
+        public FallbackResolver getFallbackResolver() {
+            return enviro.getFallbackResolver();
         }
     }
 

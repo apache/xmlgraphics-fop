@@ -19,7 +19,7 @@
 
 package org.apache.fop.fonts;
 
-import java.io.File;
+import java.net.URI;
 import java.util.List;
 
 import org.apache.fop.apps.FOPException;
@@ -51,9 +51,6 @@ public class FontManager {
 
     /** FontTriplet matcher for fonts that shall be referenced rather than embedded. */
     private FontTriplet.Matcher referencedFontsMatcher;
-
-    /** Provides a font cache file path **/
-    private File cacheFile;
 
     /**
      * Main constructor
@@ -115,30 +112,14 @@ public class FontManager {
 
     /**
      * Sets the font cache file
-     * @param cacheFile the font cache file
+     * @param cacheFileURI the URI of the font cache file
      */
-    public void setCacheFile(File cacheFile) {
-        this.cacheFile = cacheFile;
-    }
-
-    /**
-     * Returns the font cache file
-     * @return the font cache file
-     */
-    public File getCacheFile() {
-        return getCacheFile(false);
-    }
-
-    private File getCacheFile(boolean writable) {
-        if (cacheFile != null) {
-            return cacheFile;
-        }
-        return FontCache.getDefaultCacheFile(writable);
+    public void setCacheFile(URI cacheFileURI) {
+        fontCacheManager.setCacheFile(resourceResolver.resolveFromBase(cacheFileURI));
     }
 
     /**
      * Whether or not to cache results of font triplet detection/auto-config
-     * @param useCache use cache or not
      */
     public void disableFontCache() {
         fontCacheManager = FontCacheManagerFactory.createDisabled();
@@ -149,7 +130,7 @@ public class FontManager {
      * @return the font cache
      */
     public FontCache getFontCache() {
-        return fontCacheManager.load(getCacheFile());
+        return fontCacheManager.load();
     }
 
     /**
@@ -158,16 +139,15 @@ public class FontManager {
      * @throws FOPException fop exception
      */
     public void saveCache() throws FOPException {
-        fontCacheManager.save(getCacheFile());
+        fontCacheManager.save();
     }
 
     /**
      * Deletes the current FontCache file
-     * @return Returns true if the font cache file was successfully deleted.
-     * @throws FOPException -
+     * @throws FOPException if an error was thrown while deleting the cache
      */
     public void deleteCache() throws FOPException {
-        fontCacheManager.delete(getCacheFile(true));
+        fontCacheManager.delete();
     }
 
     /**

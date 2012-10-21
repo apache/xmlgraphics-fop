@@ -17,43 +17,18 @@
 
 /* $Id$ */
 
-package org.apache.fop.apps.io;
-
-import java.io.FilterInputStream;
-import java.io.InputStream;
+package org.apache.fop.pdf;
 
 /**
- * This class represents a resolved resource.  The type property is used by FOP to identify the resource
- *  content.
- *
+ * A structure type, as defined in Section 10.6.2 of the PDF Reference, fourth edition (PDF 1.5).
  */
-public class Resource extends FilterInputStream {
-
-    private final String type;
+public interface StructureType {
 
     /**
-     * @param type resource type
-     * @param inputStream input stream of the resource
-     */
-    public Resource(String type, InputStream inputStream) {
-        super(inputStream);
-        this.type = type;
-    }
-
-    /**
-     * Constructs a resource of 'unknown' type.
+     * Returns the name of this structure type.
      *
-     * @param inputStream input stream of the resource
+     * @return the name object identifying this structure type
      */
-    public Resource(InputStream inputStream) {
-        this("unknown", inputStream);
-    }
-
-    /**
-     * @return the resource type
-     */
-    public String getType() {
-        return this.type;
-    }
+    PDFName getName();
 
 }

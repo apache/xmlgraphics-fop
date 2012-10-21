@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.properties;
 
+import java.util.Locale;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -183,6 +185,41 @@ public final class CommonHyphenation {
     public int getHyphIPD(org.apache.fop.fonts.Font font) {
         char hyphChar = getHyphChar(font);
         return font.getCharWidth(hyphChar);
+    }
+
+    /**
+     * Creates and returns a {@link Locale} representation of the language and country.
+     *
+     * @return the language (and the country if set) represented as a locale, {@code null}
+     * if the language has not been set (i.e., has been left to its initial value of
+     * "none")
+     */
+    public Locale getLocale() {
+        return toLocale(language.getString(), country.getString());
+    }
+
+    /**
+     * Creates and returns a {@link Locale} representation of the given language, and the
+     * given country if set. The country is considered to be set if not {@code null} and
+     * not set to "none".
+     *
+     * @return the language and country represented as a locale, {@code null} if the
+     * language is null or "none" (case insensitive)
+     */
+    public static Locale toLocale(String language, String country) {
+        Locale locale = null;
+        if (isDefined(language)) {
+            if (isDefined(country)) {
+                locale = new Locale(language, country);
+            } else {
+                locale = new Locale(language);
+            }
+        }
+        return locale;
+    }
+
+    private static boolean isDefined(String property) {
+        return !(property == null || property.equalsIgnoreCase("none"));
     }
 
     /** {@inheritDoc} */

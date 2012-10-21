@@ -39,9 +39,9 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.spi.ImageImplRegistry;
 import org.apache.xmlgraphics.image.loader.util.Penalty;
+import org.apache.xmlgraphics.io.ResourceResolver;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
-import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.FontManagerConfigurator;
 import org.apache.fop.hyphenation.HyphenationTreeCache;

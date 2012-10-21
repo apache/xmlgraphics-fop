@@ -36,6 +36,7 @@ import org.apache.fop.fo.extensions.destination.Destination;
 import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAccessibilityHolder;
+import org.apache.fop.fo.properties.CommonHyphenation;
 
 /**
  * Class modeling the <a href="http://www.w3.org/TR/xsl/#fo_root">
@@ -92,17 +93,7 @@ public class Root extends FObj implements CommonAccessibilityHolder {
         mediaUsage = pList.get(PR_MEDIA_USAGE).getEnum();
         String language = pList.get(PR_LANGUAGE).getString();
         String country = pList.get(PR_COUNTRY).getString();
-        if (isLocalePropertySet(language)) {
-            if (isLocalePropertySet(country)) {
-                locale = new Locale(language, country);
-            } else {
-                locale = new Locale(language);
-            }
-        }
-    }
-
-    private boolean isLocalePropertySet(String property) {
-        return property != null && !property.equals("none");
+        locale = CommonHyphenation.toLocale(language, country);
     }
 
      /** {@inheritDoc} */

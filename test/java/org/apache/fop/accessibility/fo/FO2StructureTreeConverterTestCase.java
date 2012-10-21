@@ -19,8 +19,6 @@
 
 package org.apache.fop.accessibility.fo;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -34,7 +32,6 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.custommonkey.xmlunit.Diff;
@@ -57,9 +54,17 @@ import org.apache.fop.fotreetest.DummyFOEventHandler;
 
 public class FO2StructureTreeConverterTestCase {
 
-    private interface FOLoader {
+    private static class FOLoader {
 
-        InputStream getFoInputStream();
+        private final String resourceName;
+
+        FOLoader(String resourceName) {
+            this.resourceName = resourceName;
+        }
+
+        public InputStream getFoInputStream() {
+            return getResource(resourceName);
+        }
     }
 
     private static final String STRUCTURE_TREE_SEQUENCE_NAME = "structure-tree-sequence";
@@ -68,62 +73,40 @@ public class FO2StructureTreeConverterTestCase {
 
     @Test
     public void testCompleteDocument() throws Exception {
-        foLoader = new FOLoader() {
-            public InputStream getFoInputStream() {
-                return getResource("/org/apache/fop/fo/complete_document.fo");
-            }
-        };
-        testConverter();
+        testConverter("/org/apache/fop/fo/complete_document.fo");
     }
 
     @Test
     public void testTableFooters() throws Exception {
-        foLoader = new FOLoader() {
-            public InputStream getFoInputStream() {
-                return getResource("table-footers.fo");
-            }
-        };
-        testConverter();
-    }
-
-    @Test
-    public void testCompleteContentWrappedInTableFooter() throws Exception {
-        Source xslt = new StreamSource(getResource("wrapCompleteDocumentInTableFooter.xsl"));
-        Transformer transformer = createTransformer(xslt);
-        InputStream originalFO = getResource("/org/apache/fop/fo/complete_document.fo");
-        ByteArrayOutputStream transformedFoOutput = new ByteArrayOutputStream();
-        transformer.transform(new StreamSource(originalFO), new StreamResult(transformedFoOutput));
-        final byte[] transformedFoOutputBytes = transformedFoOutput.toByteArray();
-        foLoader = new FOLoader() {
-            public InputStream getFoInputStream() {
-                return new ByteArrayInputStream(transformedFoOutputBytes);
-            }
-        };
-        testConverter();
+        testConverter("table-footers.fo");
     }
 
     @Test
     public void testArtifact() throws Exception {
-        foLoader = new FOLoader() {
-
-            public InputStream getFoInputStream() {
-                return getResource("artifact.fo");
-            }
-        };
-        testConverter();
+        testConverter("artifact.fo");
     }
 
-    private Transformer createTransformer(Source xslt) throws TransformerFactoryConfigurationError,
-            TransformerConfigurationException {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        return transformerFactory.newTransformer(xslt);
+    @Test
+    public void testSideRegions() throws Exception {
+        testConverter("/org/apache/fop/fo/pagination/side-regions.fo");
+    }
+
+    @Test
+    public void headerTableCellMustPropagateScope() throws Exception {
+        testConverter("table-header_scope.fo");
+    }
+
+    @Test
+    public void testLanguage() throws Exception {
+        testConverter("language.fo");
     }
 
     private static InputStream getResource(String name) {
         return FO2StructureTreeConverterTestCase.class.getResourceAsStream(name);
     }
 
-    private void testConverter() throws Exception {
+    private void testConverter(String foResourceName) throws Exception {
+        foLoader = new FOLoader(foResourceName);
         DOMResult expectedStructureTree = loadExpectedStructureTree();
         DOMResult actualStructureTree = buildActualStructureTree();
         final Diff diff = createDiff(expectedStructureTree, actualStructureTree);

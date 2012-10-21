@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>This test checks the retrieve-table-marker implementation. Rather, it serves as a regression test.</p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-size="10pt" font-family="sans-serif"
+  line-height="120%">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="base-page" page-height="210mm" page-width="297mm">
+      <fo:region-body margin="15mm" column-count="3" />
+      <fo:region-before extent="15mm" />
+      <fo:region-after extent="11.4mm" />
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="base-page">
+    <fo:flow flow-name="xsl-region-body" font-family="sans-serif">
+      <fo:block>The table has two columns, State and Facts. In the rows corresponding to states in the
+        Pacific Time Zone (PST), the State and Facts table
+        cells have a marker with the value of the State. That marker is retrieved in the table header and
+        footer. All the possible boundary and positions are considered in this example.
+      </fo:block>
+      <fo:block> rbwt = retrieve-boundary-within-table; rpwt = retrieve-position-within-table; 
+        f-i-c = first-including-carryover; f-s = first-starting; l-s = last-starting; l-e = last-ending;
+        t = table; p = page; p-s = page-sequence; t-f = table-fragment.
+      </fo:block>
+      <fo:wrapper>
+        <fo:table space-before="1em" width="100%" table-layout="fixed">
+          <fo:table-column column-width="proportional-column-width(3)" />
+          <fo:table-column column-width="proportional-column-width(5)" />
+          <fo:table-header>
+            <fo:table-row>
+              <fo:table-cell padding="4pt" number-columns-spanned="2"
+                background-color="yellow">
+                <fo:block>
+                  [rbwt:t][rpwt:f-i-c](
+                  <fo:retrieve-table-marker retrieve-class-name="state"
+                    retrieve-position-within-table="first-including-carryover" retrieve-boundary-within-table="table" />
+                  )
+                </fo:block>
+                <fo:block>
+                   [rbwt:t][rpwt:f-s](
+                  <fo:retrieve-table-marker retrieve-class-name="state"
+                    retrieve-position-within-table="first-starting" retrieve-boundary-within-table="table" />
+                  )
+                </fo:block>
+                <fo:block>
+                  [rbwt:p][rpwt:f-i-c](
+                  <fo:retrieve-table-marker retrieve-class-name="state"
+                    retrieve-position-within-table="first-including-carryover" retrieve-boundary-within-table="page" />
+                  )
+                </fo:block>
+                <fo:block>
+                  [rbwt:p][rpwt:f-s](
+                  <fo:retrieve-table-marker retrieve-class-name="state"
+                    retrieve-position-within-table="first-starting" retrieve-boundary-within-table="page" />
+                  )
+                </fo:block>
+                <fo:block>
+                  [rbwt:t-f][rpwt:f-i-c](
+                  <fo:retrieve-table-marker retrieve-class-name="state"
+                    retrieve-position-within-table="first-including-carryover" retrieve-boundary-within-table="table-fragment" />
+                  )
+                </fo:block>
+                <fo:block>
+                  [rbwt:t-f][rpwt:f-s](
+                  <fo:retrieve-table-marker retrieve-class-name="state"
+                    retrieve-position-within-table="first-starting" retrieve-boundary-within-table="table-fragment" />
+                  )
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block font-weight="bold">State</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block font-weight="bold">Facts</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-header>
+          <fo:table-footer>
+            <fo:table-row>
+              <fo:table-cell padding="4pt" number-columns-spanned="2"
+                background-color="yellow">
+                <fo:block>
+                  [rbwt:t][rpwt:l-s](
+                  <fo:retrieve-table-marker retrieve-class-name="state"
+                    retrieve-position-within-table="last-starting" retrieve-boundary-within-table="table" />
+                  )
+                </fo:block>
+                <fo:block>
+                  [rbwt:t][rpwt:l-e](
+                  <fo:retrieve-table-marker retrieve-class-name="state"
+                    retrieve-position-within-table="last-ending" retrieve-boundary-within-table="table" />
+                  )
+                </fo:block>
+                <fo:block>
+                  [rbwt:p][rpwt:l-s](
+                  <fo:retrieve-table-marker retrieve-class-name="state"
+                    retrieve-position-within-table="last-starting" retrieve-boundary-within-table="page" />
+                  )
+                </fo:block>
+                <fo:block>
+                  [rbwt:p][rpwt:l-e](
+                  <fo:retrieve-table-marker retrieve-class-name="state"
+                    retrieve-position-within-table="last-ending" retrieve-boundary-within-table="page" />
+                  )
+                </fo:block>
+                <fo:block>
+                  [rbwt:t-f][rpwt:l-s](
+                  <fo:retrieve-table-marker retrieve-class-name="state"
+                    retrieve-position-within-table="last-starting" retrieve-boundary-within-table="table-fragment" />
+                  )
+                </fo:block>
+                <fo:block>
+                  [rbwt:t-f][rpwt:l-e](
+                  <fo:retrieve-table-marker retrieve-class-name="state"
+                    retrieve-position-within-table="last-ending" retrieve-boundary-within-table="table-fragment" />
+                  )
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-footer>
+          <fo:table-body>
+            <!--fo:marker marker-class-name="state">Alabama</fo:marker-->
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Alabama</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Montgomery</fo:block>
+                <fo:block>Area: 52,423 square miles</fo:block>
+                <fo:block>Population: 4,447,100</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Alaska</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Juneau</fo:block>
+                <fo:block>Area: 656,425 square miles</fo:block>
+                <fo:block>Population: 626,932</fo:block>
+                <fo:block>Time Zone: GMT -9:00</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:marker marker-class-name="state">Arizona</fo:marker>
+                <fo:block>Arizona</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:marker marker-class-name="state">Arizona</fo:marker>
+                <fo:block>Capital: Phoenix</fo:block>
+                <fo:block>Area: 114,006 square miles</fo:block>
+                <fo:block>Population: 5,130,632</fo:block>
+                <fo:block>Time Zone: PST and MST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Arkansas</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Little Rock</fo:block>
+                <fo:block>Area: 53,182 square miles</fo:block>
+                <fo:block>Population: 2,673,400</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:marker marker-class-name="state">California</fo:marker>
+                <fo:block>California</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:marker marker-class-name="state">California</fo:marker>
+                <fo:block>Capital: Sacramento</fo:block>
+                <fo:block>Area: 163,707 square miles</fo:block>
+                <fo:block>Population: 33,871,648</fo:block>
+                <fo:block>Time Zone: PST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Colorado</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Denver</fo:block>
+                <fo:block>Area: 104,100 square miles</fo:block>
+                <fo:block>Population: 4,301,261</fo:block>
+                <fo:block>Time Zone: MST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Connecticut</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Hartford</fo:block>
+                <fo:block>Area: 5,544 square miles</fo:block>
+                <fo:block>Population: 3,405,565</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Delaware</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Dover</fo:block>
+                <fo:block>Area: 1,954 square miles</fo:block>
+                <fo:block>Population: 783,600</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Florida</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Tallahassee</fo:block>
+                <fo:block>Area: 65,758 square miles</fo:block>
+                <fo:block>Population: 15,982,378</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Georgia</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Atlanta</fo:block>
+                <fo:block>Area: 59,441 square miles</fo:block>
+                <fo:block>Population: 8,186,453</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Hawaii</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Honolulu</fo:block>
+                <fo:block>Area: 10,932 square miles</fo:block>
+                <fo:block>Population: 1,211,537</fo:block>
+                <fo:block>Time Zone: GMT -11:00</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Idaho</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Boise</fo:block>
+                <fo:block>Area: 83,574 square miles</fo:block>
+                <fo:block>Population: 1,293,953</fo:block>
+                <fo:block>Time Zone: MST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Illinois</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Springfield</fo:block>
+                <fo:block>Area: 57,918 square miles</fo:block>
+                <fo:block>Population: 12,419,293</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Indiana</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Indianapolis</fo:block>
+                <fo:block>Area: 36,420 square miles</fo:block>
+                <fo:block>Population: 6,080,485</fo:block>
+                <fo:block>Time Zone: EST and CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Iowa</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Des Moines</fo:block>
+                <fo:block>Area: 56,276 square miles</fo:block>
+                <fo:block>Population: 2,926,324</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Kansas</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Topeka</fo:block>
+                <fo:block>Area: 82,282 square miles</fo:block>
+                <fo:block>Population: 2,688,418</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Kentucky</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Frankfort</fo:block>
+                <fo:block>Area: 40,411 square miles</fo:block>
+                <fo:block>Population: 4,041,769</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Louisiana</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Baton Rouge</fo:block>
+                <fo:block>Area: 51,843 square miles</fo:block>
+                <fo:block>Population: 4,468,976</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Maine</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Augusta</fo:block>
+                <fo:block>Area: 35,387 square miles</fo:block>
+                <fo:block>Population: 1,274,923</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Maryland</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Annapolis</fo:block>
+                <fo:block>Area: 12,407 square miles</fo:block>
+                <fo:block>Population: 5,296,486</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Massachusetts</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Boston</fo:block>
+                <fo:block>Area: 10,555 square miles</fo:block>
+                <fo:block>Population: 6,349,097</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Michigan</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Lansing</fo:block>
+                <fo:block>Area: 96,810 square miles</fo:block>
+                <fo:block>Population: 9,938,444</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Minnesota</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: St. Paul</fo:block>
+                <fo:block>Area: 86,943 square miles</fo:block>
+                <fo:block>Population: 4,919,479</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Mississippi</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Jackson</fo:block>
+                <fo:block>Area: 48,434 square miles</fo:block>
+                <fo:block>Population: 2,844,658</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Missouri</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Jefferson City</fo:block>
+                <fo:block>Area: 69,709 square miles</fo:block>
+                <fo:block>Population: 5,595,211</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Montana</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Helena</fo:block>
+                <fo:block>Area: 147,046 square miles</fo:block>
+                <fo:block>Population: 902,195</fo:block>
+                <fo:block>Time Zone: MST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Nebraska</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Lincoln</fo:block>
+                <fo:block>Area: XXXXXX square miles</fo:block>
+                <fo:block>Population: 77,358</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:marker marker-class-name="state">Nevada</fo:marker>
+                <fo:block>Nevada</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:marker marker-class-name="state">Nevada</fo:marker>
+                <fo:block>Capital: Carson City</fo:block>
+                <fo:block>Area: 110,567 square miles</fo:block>
+                <fo:block>Population: 1,998,257</fo:block>
+                <fo:block>Time Zone: PST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>New Hampshire</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Concord</fo:block>
+                <fo:block>Area: 9,351 square miles</fo:block>
+                <fo:block>Population: 1,235,786</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>New Jersey</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Trenton</fo:block>
+                <fo:block>Area: 8,722 square miles</fo:block>
+                <fo:block>Population: 8,414,350</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>New Mexico</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Santa Fe</fo:block>
+                <fo:block>Area: 121,593 square miles</fo:block>
+                <fo:block>Population: 1,819,046</fo:block>
+                <fo:block>Time Zone: MST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>New York</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Albany</fo:block>
+                <fo:block>Area: 54,475 square miles</fo:block>
+                <fo:block>Population: 18,976,457</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>North Carolina</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Raleigh</fo:block>
+                <fo:block>Area: 53,821 square miles</fo:block>
+                <fo:block>Population: 8,049,313</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>North Dakota</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Bismarck</fo:block>
+                <fo:block>Area: 70,704 square miles</fo:block>
+                <fo:block>Population: 642,200</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Ohio</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Columbus</fo:block>
+                <fo:block>Area: 44,828 square miles</fo:block>
+                <fo:block>Population: 11,353,140</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Oklahoma</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Oklahoma City</fo:block>
+                <fo:block>Area: 69,903 square miles</fo:block>
+                <fo:block>Population: 3,450,654</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:marker marker-class-name="state">Oregon</fo:marker>
+                <fo:block>Oregon</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:marker marker-class-name="state">Oregon</fo:marker>
+                <fo:block>Capital: Salem</fo:block>
+                <fo:block>Area: 98,386 square miles</fo:block>
+                <fo:block>Population: 3,421,399</fo:block>
+                <fo:block>Time Zone: PST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Pennsylvania</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Harrisburg</fo:block>
+                <fo:block>Area: 46,058 square miles</fo:block>
+                <fo:block>Population: 12,281,054</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Rhode Island</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Providence</fo:block>
+                <fo:block>Area: 1,045 square miles</fo:block>
+                <fo:block>Population: 1,048,319</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>South Carolina</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Columbia</fo:block>
+                <fo:block>Area: 32,007 square miles</fo:block>
+                <fo:block>Population: 4,012,012</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>South Dakota</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Pierre</fo:block>
+                <fo:block>Area: 77,121 square miles</fo:block>
+                <fo:block>Population: 754,844</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Tennessee</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Nashville</fo:block>
+                <fo:block>Area: 42,146 square miles</fo:block>
+                <fo:block>Population: 5,689,283</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Texas</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Austin</fo:block>
+                <fo:block>Area: 268,601 square miles</fo:block>
+                <fo:block>Population: 20,851,820</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Utah</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Salt Lake City</fo:block>
+                <fo:block>Area: 84,904 square miles</fo:block>
+                <fo:block>Population: 2,233,169</fo:block>
+                <fo:block>Time Zone: MST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Vermont</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Montpelier</fo:block>
+                <fo:block>Area: 9,615 square miles</fo:block>
+                <fo:block>Population: 608,827</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Virginia</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Richmond</fo:block>
+                <fo:block>Area: 42,769 square miles</fo:block>
+                <fo:block>Population: 7,078,515</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:marker marker-class-name="state">Washington</fo:marker>
+                <fo:block>Washington</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:marker marker-class-name="state">Washington</fo:marker>
+                <fo:block>Capital: Olympia</fo:block>
+                <fo:block>Area: 71,303 square miles</fo:block>
+                <fo:block>Population: 5,894,121</fo:block>
+                <fo:block>Time Zone: PST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>West Virginia</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Charleston</fo:block>
+                <fo:block>Area: 24,231 square miles</fo:block>
+                <fo:block>Population: 1,808,344</fo:block>
+                <fo:block>Time Zone: EST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Wisconsin</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Madison</fo:block>
+                <fo:block>Area: 65,503 square miles</fo:block>
+                <fo:block>Population: 5,363,675</fo:block>
+                <fo:block>Time Zone: CST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Wyoming</fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-before="4pt" padding-after="4pt">
+                <fo:block>Capital: Cheyenne</fo:block>
+                <fo:block>Area: 97,818 square miles</fo:block>
+                <fo:block>Population: 493,782</fo:block>
+                <fo:block>Time Zone: MST</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+      </fo:wrapper>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="1" xpath="//lineArea[starts-with(., '[rbwt:t-f][rpwt:f-i-c](  )')]/ancestor::pageViewport/@nr" />
+    <eval expected="2" xpath="//lineArea[starts-with(., '[rbwt:t][rpwt:f-i-c]( Nevada )')]/ancestor::pageViewport/@nr" />
+    <eval expected="2" xpath="//lineArea[starts-with(., '[rbwt:p][rpwt:f-i-c]( Nevada )')]/ancestor::pageViewport/@nr" />
+    <eval expected="3" xpath="//lineArea[starts-with(., '[rbwt:t][rpwt:f-i-c]( Oregon )')]/ancestor::pageViewport/@nr" />
+    <eval expected="[rbwt:t][rpwt:f-i-c]( California )" xpath="//pageViewport[2]/page/regionViewport[3]//flow[1]/block[1]/block[17]/block[1]/lineArea" />
+    <eval expected="[rbwt:t][rpwt:f-i-c]( Oregon )" xpath="//pageViewport[3]/page/regionViewport[3]//flow[1]/block[1]/block[15]/block[1]/lineArea" />
+    <eval expected="[rbwt:t][rpwt:f-i-c]( Washington )" xpath="//pageViewport[4]/page/regionViewport[3]//flow[1]/block[1]/block[5]/block[1]/lineArea" />
+  </checks>
+</testcase>

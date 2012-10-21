@@ -157,7 +157,7 @@ public class FontReader extends DefaultHandler {
             throws SAXException {
         if (localName.equals("font-metrics")) {
             if ("TYPE0".equals(attributes.getValue("type"))) {
-                multiFont = new MultiByteFont(resourceResolver);
+                multiFont = new MultiByteFont(resourceResolver, EmbeddingMode.AUTO);
                 returnFont = multiFont;
                 isCID = true;
                 TTFReader.checkMetricsVersion(attributes);

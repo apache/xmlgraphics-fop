@@ -37,6 +37,8 @@ import org.xml.sax.SAXException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
+import org.apache.xmlgraphics.io.ResourceResolver;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;

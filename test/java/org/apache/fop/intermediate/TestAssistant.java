@@ -42,8 +42,11 @@ import org.w3c.dom.Element;
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
 
+import org.apache.fop.apps.EnvironmentProfile;
+import org.apache.fop.apps.EnvironmentalProfileFactory;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 
 /**
  * Helper class for running FOP tests.
@@ -115,7 +118,10 @@ public class TestAssistant {
     public FopFactory getFopFactory(Document testDoc) {
         boolean base14KerningEnabled = isBase14KerningEnabled(testDoc);
         boolean strictValidation = isStrictValidation(testDoc);
-        FopFactoryBuilder builder = new FopFactoryBuilder(testDir.getParentFile().toURI());
+        EnvironmentProfile envProfile = EnvironmentalProfileFactory.createRestrictedIO(
+                testDir.getParentFile().toURI(),
+                ResourceResolverFactory.createDefaultResourceResolver());
+        FopFactoryBuilder builder = new FopFactoryBuilder(envProfile);
         builder.setStrictFOValidation(strictValidation);
         builder.getFontManager().setBase14KerningEnabled(base14KerningEnabled);
         return builder.build();

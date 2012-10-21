@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr.table;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,19 +29,24 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
+import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.flow.table.TableFooter;
+import org.apache.fop.fo.flow.table.TableHeader;
 import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
+import org.apache.fop.layoutmgr.AbstractLayoutManager;
 import org.apache.fop.layoutmgr.AreaAdditionUtil;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -49,8 +55,10 @@ import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.LocalBreaker;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.RetrieveTableMarkerLayoutManager;
 import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.BorderProps;
@@ -79,6 +87,28 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     private int totalHeight;
     private int usedBPD;
     private boolean emptyCell = true;
+    private boolean isDescendantOfTableFooter;
+    private boolean isDescendantOfTableHeader;
+    private boolean hasRetrieveTableMarker;
+
+    // place holder for the addAreas arguments
+    private boolean savedAddAreasArguments;
+    private PositionIterator savedParentIter;
+    private LayoutContext savedLayoutContext;
+    private int[] savedSpannedGridRowHeights;
+    private int savedStartRow;
+    private int savedEndRow;
+    private int savedBorderBeforeWhich;
+    private int savedBorderAfterWhich;
+    private boolean savedFirstOnPage;
+    private boolean savedLastOnPage;
+    private RowPainter savedPainter;
+    private int savedFirstRowHeight;
+    // this is set to false when the table-cell has a retrieve-table-marker and is in the table-header
+    private boolean flushArea = true;
+
+    // this information is set by the RowPainter
+    private boolean isLastTrait;
 
     /**
      * Create a new Cell layout manager.
@@ -88,6 +118,11 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     public TableCellLayoutManager(TableCell node, PrimaryGridUnit pgu) {
         super(node);
         this.primaryGridUnit = pgu;
+        this.isDescendantOfTableHeader = node.getParent().getParent() instanceof TableHeader
+                || node.getParent() instanceof TableHeader;
+        this.isDescendantOfTableFooter = node.getParent().getParent() instanceof TableFooter
+                || node.getParent() instanceof TableFooter;
+        this.hasRetrieveTableMarker = node.hasRetrieveTableMarker();
     }
 
     /** @return the table-cell FO */
@@ -246,6 +281,84 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      */
     public void setTotalHeight(int h) {
         totalHeight = h;
+    }
+
+    private void clearRetrieveTableMarkerChildNodes(List<LayoutManager> childrenLMs) {
+        if (childrenLMs == null) {
+            return;
+        }
+        int n = childrenLMs.size();
+        for (int j = 0; j < n; j++) {
+            LayoutManager lm = (LayoutManager) childrenLMs.get(j);
+            if (lm == null) {
+                return;
+            } else if (lm instanceof RetrieveTableMarkerLayoutManager) {
+                ((AbstractLayoutManager) lm).getFObj().clearChildNodes();
+            } else {
+                List<LayoutManager> lms = lm.getChildLMs();
+                clearRetrieveTableMarkerChildNodes(lms);
+            }
+        }
+    }
+
+    /**
+     * Checks whether the associated table cell of this LM is in a table header or footer.
+     * @return true if descendant of table header or footer
+     */
+    private boolean isDescendantOfTableHeaderOrFooter() {
+        return (isDescendantOfTableFooter || isDescendantOfTableHeader);
+    }
+
+    private void saveAddAreasArguments(PositionIterator parentIter, LayoutContext layoutContext,
+            int[] spannedGridRowHeights, int startRow, int endRow, int borderBeforeWhich,
+            int borderAfterWhich, boolean firstOnPage, boolean lastOnPage, RowPainter painter,
+            int firstRowHeight) {
+        // checks for savedAddAreasArguments and isDescendantOfTableHeader were already made but repeat them
+        if (savedAddAreasArguments) {
+            return;
+        }
+        if (isDescendantOfTableHeader) {
+            savedAddAreasArguments = true;
+            savedParentIter = null /* parentIter */;
+            savedLayoutContext = null /* layoutContext */;
+            savedSpannedGridRowHeights = spannedGridRowHeights;
+            savedStartRow = startRow;
+            savedEndRow = endRow;
+            savedBorderBeforeWhich = borderBeforeWhich;
+            savedBorderAfterWhich = borderAfterWhich;
+            savedFirstOnPage = firstOnPage;
+            savedLastOnPage = lastOnPage;
+            savedPainter = painter;
+            savedFirstRowHeight = firstRowHeight;
+            TableLayoutManager parentTableLayoutManager = getTableLayoutManager();
+            parentTableLayoutManager.saveTableHeaderTableCellLayoutManagers(this);
+            // this saving is done the first time the addArea() is called; since the retrieve-table-markers
+            // cannot be resolved at this time we do not want to flush the area; the area needs nevertheless
+            // be built so that space is allocated for it.
+            flushArea = false;
+        }
+    }
+
+    private TableLayoutManager getTableLayoutManager() {
+        LayoutManager parentLM = getParent();
+        while (!(parentLM instanceof TableLayoutManager)) {
+            parentLM = parentLM.getParent();
+        }
+        TableLayoutManager tlm = (TableLayoutManager) parentLM;
+        return tlm;
+    }
+
+    /**
+     * Calls the addAreas() using the original arguments.
+     */
+    protected void repeatAddAreas() {
+        if (savedAddAreasArguments) {
+            addAreas(savedParentIter, savedLayoutContext, savedSpannedGridRowHeights, savedStartRow,
+                    savedEndRow, savedBorderBeforeWhich, savedBorderAfterWhich, savedFirstOnPage,
+                    savedLastOnPage, savedPainter, savedFirstRowHeight);
+            // so that the arguments of the next table fragment header can be saved
+            savedAddAreasArguments = false;
+        }
     }
 
     /**
@@ -407,7 +520,28 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             }
         }
 
-        AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
+        if (isDescendantOfTableHeaderOrFooter()) {
+            if (hasRetrieveTableMarker) {
+                if (isDescendantOfTableHeader && !savedAddAreasArguments) {
+                    saveAddAreasArguments(parentIter, layoutContext, spannedGridRowHeights, startRow, endRow,
+                            borderBeforeWhich, borderAfterWhich, firstOnPage, lastOnPage, painter,
+                            firstRowHeight);
+                }
+                recreateChildrenLMs();
+                int displayAlign = ((TableCell) this.getFObj()).getDisplayAlign();
+                TableCellBreaker breaker = new TableCellBreaker(this, cellIPD, displayAlign);
+                breaker.doLayout(usedBPD, false);
+                // this is needed so the next time the LMs are recreated they look like the originals; this
+                // is due to the fact that during the doLayout() above the FO tree changes when the
+                // retrieve-table-markers are resolved
+                clearRetrieveTableMarkerChildNodes(getChildLMs());
+            }
+        }
+
+        // if hasRetrieveTableMarker == true the areas were already added when the re-layout was done above
+        if (!hasRetrieveTableMarker) {
+            AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
+        }
         // Re-adjust the cell's bpd as it may have been modified by the previous call
         // for some reason (?)
         curBlockArea.setBPD(cellBPD);
@@ -418,7 +552,11 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                     getTableCell().getCommonBorderPaddingBackground(), this);
         }
 
-        flush();
+        if (flushArea) {
+            flush();
+        } else {
+            flushArea = true;
+        }
 
         curBlockArea = null;
 
@@ -602,6 +740,51 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      */
     public boolean getGeneratesBlockArea() {
         return true;
+    }
+
+    private static class TableCellBreaker extends LocalBreaker {
+
+        public TableCellBreaker(TableCellLayoutManager lm, int ipd, int displayAlign) {
+            super(lm, ipd, displayAlign);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        protected void observeElementList(List elementList) {
+            String elementListID = lm.getParent().getFObj().getId() + "-" + lm.getFObj().getId();
+            ElementListObserver.observe(elementList, "table-cell", elementListID);
+        }
+
+    }
+
+    /**
+     * Registers the FO's markers on the current PageViewport and parent Table.
+     *
+     * @param isStarting    boolean indicating whether the markers qualify as 'starting'
+     * @param isFirst   boolean indicating whether the markers qualify as 'first'
+     * @param isLast    boolean indicating whether the markers qualify as 'last'
+     */
+    protected void registerMarkers(boolean isStarting, boolean isFirst, boolean isLast) {
+        Map<String, Marker> markers = getTableCell().getMarkers();
+        if (markers != null) {
+            getCurrentPV().registerMarkers(markers, isStarting, isFirst, isLast && isLastTrait);
+            if (!isDescendantOfTableHeaderOrFooter()) {
+                getTableLayoutManager().registerMarkers(markers, isStarting, isFirst, isLast && isLastTrait);
+            }
+        }
+    }
+
+    void setLastTrait(boolean isLast) {
+        isLastTrait = isLast;
+    }
+
+    /** {@inheritDoc} */
+    public void setParent(LayoutManager lm) {
+        this.parentLayoutManager = lm;
+        if (this.hasRetrieveTableMarker) {
+            this.getTableLayoutManager().flagAsHavingRetrieveTableMarker();
+        }
     }
 
 }

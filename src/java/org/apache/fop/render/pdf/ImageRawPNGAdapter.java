@@ -49,7 +49,7 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilter;
 import org.apache.fop.pdf.PDFFilterException;
 import org.apache.fop.pdf.PDFFilterList;
-import org.apache.fop.pdf.PDFICCStream;
+import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFReference;
 
 public class ImageRawPNGAdapter extends AbstractImageAdapter {
@@ -57,7 +57,11 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
     /** logging instance */
     private static Log log = LogFactory.getLog(ImageRawPNGAdapter.class);
 
-    private PDFICCStream pdfICCStream;
+    private static final PDFName RI_PERCEPTUAL = new PDFName("Perceptual");
+    private static final PDFName RI_RELATIVE_COLORIMETRIC = new PDFName("RelativeColorimetric");
+    private static final PDFName RI_SATURATION = new PDFName("Saturation");
+    private static final PDFName RI_ABSOLUTE_COLORIMETRIC = new PDFName("AbsoluteColorimetric");
+
     private PDFFilter pdfFilter;
     private String maskRef;
     private PDFReference softMask;
@@ -241,20 +245,41 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
     }
 
     /** {@inheritDoc} */
-    public PDFICCStream getICCStream() {
-        return pdfICCStream;
-    }
-
-    /** {@inheritDoc} */
     public String getFilterHint() {
         return PDFFilterList.PRECOMPRESSED_FILTER;
     }
 
     public void populateXObjectDictionary(PDFDictionary dict) {
+        int renderingIntent = ((ImageRawPNG) image).getRenderingIntent();
+        if (renderingIntent != -1) {
+            switch (renderingIntent) {
+            case 0:
+                dict.put("Intent", RI_PERCEPTUAL);
+                break;
+            case 1:
+                dict.put("Intent", RI_RELATIVE_COLORIMETRIC);
+                break;
+            case 2:
+                dict.put("Intent", RI_SATURATION);
+                break;
+            case 3:
+                dict.put("Intent", RI_ABSOLUTE_COLORIMETRIC);
+                break;
+            default:
+                // ignore
+            }
+        }
         ColorModel cm = ((ImageRawPNG) image).getColorModel();
         if (cm instanceof IndexColorModel) {
             IndexColorModel icm = (IndexColorModel) cm;
             super.populateXObjectDictionaryForIndexColorModel(dict, icm);
         }
+    }
+
+    protected boolean issRGB() {
+        if (((ImageRawPNG) image).getRenderingIntent() != -1) {
+            return true;
+        }
+        return false;
     }
 }

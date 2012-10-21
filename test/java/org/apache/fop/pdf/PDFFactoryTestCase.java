@@ -24,13 +24,16 @@ import java.net.URI;
 
 import org.junit.Test;
 
-import org.apache.fop.apps.io.InternalResourceResolver;
-import org.apache.fop.apps.io.ResourceResolver;
-import org.apache.fop.apps.io.ResourceResolverFactory;
-import org.apache.fop.fonts.CIDSubset;
-import org.apache.fop.fonts.MultiByteFont;
-
 import static org.junit.Assert.assertEquals;
+
+import org.apache.xmlgraphics.io.ResourceResolver;
+
+import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
+import org.apache.fop.fonts.CIDSet;
+import org.apache.fop.fonts.CIDSubset;
+import org.apache.fop.fonts.EmbeddingMode;
+import org.apache.fop.fonts.MultiByteFont;
 
 /**
  * Test case for {@link PDFFactory}.
@@ -45,7 +48,7 @@ public class PDFFactoryTestCase {
     public void testSubsetFontNamePrefix() {
         class MockedFont extends MultiByteFont {
             public MockedFont(InternalResourceResolver resolver) {
-                super(resolver);
+                super(resolver, EmbeddingMode.AUTO);
             }
 
             @Override
@@ -54,8 +57,8 @@ public class PDFFactoryTestCase {
             }
 
             @Override
-            public CIDSubset getCIDSubset() {
-                return new CIDSubset();
+            public CIDSet getCIDSet() {
+                return new CIDSubset(this);
             }
         }
         PDFDocument doc = new PDFDocument("Test");

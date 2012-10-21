@@ -84,7 +84,7 @@ public abstract class AbstractBitmapDocumentHandler extends AbstractBinaryWritin
         super(context);
         //Set target resolution
         int dpi = Math.round(context.getUserAgent().getTargetResolution());
-        getSettings().getWriterParams().setResolution(dpi);
+        getSettings().setResolution(dpi);
 
         Map renderingOptions = getUserAgent().getRendererOptions();
         setTargetBitmapSize((Dimension)renderingOptions.get(TARGET_BITMAP_SIZE));

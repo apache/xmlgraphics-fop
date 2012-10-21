@@ -46,10 +46,10 @@ public abstract class AbstractRendererMaker {
     public abstract String[] getSupportedMimeTypes();
 
     /**
-     * Returns a renderer config object that can be used to
-     * configure the renderer.
+     * Configures a given renderer using the appropriate configurator.
+     *
      * @param userAgent user agent
-     * @return a config object that can be used to configure the renderer
+     * @param renderer the renderer that is to be configured
      */
     public abstract void configureRenderer(FOUserAgent userAgent, Renderer renderer)
             throws FOPException;

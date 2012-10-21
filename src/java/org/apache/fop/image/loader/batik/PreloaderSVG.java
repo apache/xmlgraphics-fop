@@ -45,6 +45,7 @@ import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImagePreloader;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.io.XmlSourceUtil;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.apache.xmlgraphics.util.UnitConv;
 
@@ -79,7 +80,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
             }
         }
         if (info != null) {
-            ImageUtil.closeQuietly(src); //Image is fully read
+            XmlSourceUtil.closeQuietly(src); //Image is fully read
         }
         return info;
     }
@@ -119,7 +120,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
                     DOMSource domSrc = (DOMSource)src;
                     doc = (SVGDocument)domSrc.getNode();
                 } else {
-                    in = new UnclosableInputStream(ImageUtil.needInputStream(src));
+                    in = new UnclosableInputStream(XmlSourceUtil.needInputStream(src));
                     int length = in.available();
                     in.mark(length + 1);
                     SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(

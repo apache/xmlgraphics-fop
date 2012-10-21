@@ -100,6 +100,15 @@ public class PDFArray extends PDFObject {
     }
 
     /**
+     * Creates an array object made of the given elements.
+     *
+     * @param elements the array content
+     */
+    public PDFArray(List<?> elements) {
+        this(null, elements);
+    }
+
+    /**
      * Create the array object
      * @param parent the array's parent if any
      * @param values the actual array wrapped by this object

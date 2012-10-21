@@ -84,6 +84,7 @@ import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.ConversionUtils;
 import org.apache.fop.util.DefaultErrorListener;
+import org.apache.fop.util.LanguageTags;
 import org.apache.fop.util.XMLConstants;
 import org.apache.fop.util.XMLUtil;
 
@@ -394,10 +395,10 @@ public class AreaTreeParser {
 
             public void startElement(Attributes attributes) {
                 PageSequence pageSequence = new PageSequence(null);
-                String lang = attributes.getValue("language");
-                pageSequence.setLanguage(lang);
-                String country = attributes.getValue("country");
-                pageSequence.setCountry(country);
+                String lang = attributes.getValue(javax.xml.XMLConstants.XML_NS_URI, "lang");
+                if (lang != null) {
+                    pageSequence.setLocale(LanguageTags.toLocale(lang));
+                }
                 transferForeignObjects(attributes, pageSequence);
                 areaStack.push(pageSequence);
             }

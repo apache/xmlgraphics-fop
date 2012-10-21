@@ -24,6 +24,7 @@ import java.io.OutputStream;
 
 import org.apache.fop.afp.modca.triplets.AttributeQualifierTriplet;
 import org.apache.fop.afp.modca.triplets.AttributeValueTriplet;
+import org.apache.fop.afp.modca.triplets.EncodingTriplet;
 import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.afp.util.BinaryUtils;
 
@@ -49,40 +50,28 @@ import org.apache.fop.afp.util.BinaryUtils;
 public class TagLogicalElement extends AbstractTripletStructuredObject {
 
     /**
-     * Name of the key, used within the TLE
+     * the params of the TLE
      */
-    private String name = null;
-
-    /**
-     * Value returned by the key
-     */
-    private String value = null;
-
-    /**
-     * Sequence of TLE within document
-     */
-    private int tleID;
+    private State state;
 
     /**
      * Construct a tag logical element with the name and value specified.
      *
-     * @param name the name of the tag logical element
-     * @param value the value of the tag logical element
-     * @param tleID unique identifier for TLE within AFP stream
+     * @param state the state of the tag logical element
      */
-    public TagLogicalElement(String name, String value, int tleID) {
-        this.name = name;
-        this.value = value;
-        this.tleID = tleID;
+
+    public TagLogicalElement(State state) {
+        this.state = state;
     }
 
-    /**
-     * Sets the attribute value of this structured field
-     *
-     * @param value the attribute value
-     */
-    public void setAttributeValue(String value) {
+    private void setAttributeValue(String value) {
         addTriplet(new AttributeValueTriplet(value));
+    }
+
+    private void setEncoding(int encoding) {
+        if (encoding != State.ENCODING_NONE) {
+            addTriplet(new EncodingTriplet(encoding));
+        }
     }
 
     /**
@@ -100,9 +89,9 @@ public class TagLogicalElement extends AbstractTripletStructuredObject {
         setFullyQualifiedName(
                 FullyQualifiedNameTriplet.TYPE_ATTRIBUTE_GID,
                 FullyQualifiedNameTriplet.FORMAT_CHARSTR,
-                name);
-        setAttributeValue(value);
-        setAttributeQualifier(tleID, 1);
+                state.key);
+        setAttributeValue(state.value);
+        setEncoding(state.encoding);
 
         byte[] data = new byte[SF_HEADER_LENGTH];
         copySF(data, Type.ATTRIBUTE, Category.PROCESS_ELEMENT);
@@ -114,5 +103,52 @@ public class TagLogicalElement extends AbstractTripletStructuredObject {
         os.write(data);
 
         writeTriplets(os);
+    }
+
+    /**
+     *
+     * Holds the attribute state of a TLE
+     *
+     */
+    public static class State {
+
+        /**
+         *  value  interpreted as no encoding
+         */
+        public static final int ENCODING_NONE = -1;
+        /** The key attribute */
+        private String key;
+
+        /** The value attribute */
+        private String value;
+
+        /** The CCSID character et encoding attribute */
+        private int encoding =  ENCODING_NONE;
+
+
+        /**
+         * Constructor
+         *
+         * @param key the key attribute
+         * @param value the value attribute
+         */
+        public State(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        /**
+         *
+         * @param key the key attribute
+         * @param value the value attribute
+         * @param encoding the CCSID character set encoding attribute
+         */
+        public State(String key, String value, int encoding) {
+            this.key = key;
+            this.value = value;
+            this.encoding = encoding;
+        }
+
+
     }
 }

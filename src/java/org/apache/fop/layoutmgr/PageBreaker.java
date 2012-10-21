@@ -95,8 +95,7 @@ public class PageBreaker extends AbstractBreaker {
         return new PageBreakingLayoutListener() {
 
             public void notifyOverflow(int part, int amount, FObj obj) {
-                Page p = pageProvider.getPage(
-                            false, part, PageProvider.RELTO_CURRENT_ELEMENT_LIST);
+                Page p = pageProvider.getPageFromColumnIndex(part);
                 RegionBody body = (RegionBody)p.getSimplePageMaster().getRegion(
                         Region.FO_REGION_BODY);
                 BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(

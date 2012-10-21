@@ -90,6 +90,18 @@ public interface FOValidationEventProducer extends EventProducer {
             Locator loc) throws ValidationException;
 
     /**
+     * A valid but not yet supported child was encountered.
+     * 
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param offendingNode the offending node
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     */
+    void notSupportedChild(Object source, String elementName, QName offendingNode, Locator loc)
+            throws ValidationException;
+
+    /**
      * A required child element is missing.
      * @param source the event source
      * @param elementName the name of the context node

@@ -127,7 +127,7 @@ public class TTFFontLoader extends FontLoader {
         }
 
         if (isCid) {
-            multiFont = new MultiByteFont(resourceResolver);
+            multiFont = new MultiByteFont(resourceResolver, embeddingMode);
             returnFont = multiFont;
             multiFont.setTTCName(ttcFontName);
         } else {
