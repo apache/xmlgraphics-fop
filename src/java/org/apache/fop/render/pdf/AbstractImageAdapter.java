@@ -95,7 +95,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
         } else if (issRGB()) {
           pdfICCStream = setupsRGBColorProfile(doc);
         }
-        if (doc.getProfile().getPDFAMode().isPDFA1LevelB()) {
+        if (doc.getProfile().getPDFAMode().isPart1()) {
             if (pdfCS != null
                     && pdfCS.getColorSpace() != PDFDeviceColorSpace.DEVICE_RGB
                     && pdfCS.getColorSpace() != PDFDeviceColorSpace.DEVICE_GRAY

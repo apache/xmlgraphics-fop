@@ -57,7 +57,6 @@ import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFMetadata;
 import org.apache.fop.pdf.PDFNames;
-import org.apache.fop.pdf.PDFNumsArray;
 import org.apache.fop.pdf.PDFOutputIntent;
 import org.apache.fop.pdf.PDFPageLabels;
 import org.apache.fop.pdf.PDFReference;
@@ -109,8 +108,8 @@ class PDFRenderingUtil {
 
     private void initialize() {
         rendererConfig = PDFRendererOptionsConfig.DEFAULT.merge(createFromUserAgent(userAgent));
-        if (rendererConfig.getPDFAMode().isPDFA1LevelA()) {
-            //Enable accessibility if PDF/A-1a is enabled because it requires tagged PDF.
+        if (rendererConfig.getPDFAMode().isLevelA()) {
+            // PDF/A Level A requires tagged PDF
             userAgent.getRendererOptions().put(Accessibility.ACCESSIBILITY, Boolean.TRUE);
         }
     }
@@ -285,7 +284,7 @@ class PDFRenderingUtil {
             addPDFXOutputIntent();
         }
         PDFAMode pdfAMode = rendererConfig.getPDFAMode();
-        if (pdfAMode.isPDFA1LevelB()) {
+        if (pdfAMode.isEnabled()) {
             log.debug("PDF/A is active. Conformance Level: " + pdfAMode);
             addPDFA1OutputIntent();
         }

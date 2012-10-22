@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="add" fixes-bug="54038">
+        Added PDF/A-2 output option.
+      </action>
       <action context="Renderers" dev="VH" type="add" fixes-bug="54037">
         PDF output: Issue a warning when accessibility is enabled and language information is 
         missing.
