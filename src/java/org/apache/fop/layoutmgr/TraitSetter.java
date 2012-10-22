@@ -104,14 +104,16 @@ public final class TraitSetter {
      */
     private static void addBorderTrait(Area area,
                                        CommonBorderPaddingBackground bpProps,
-                                       boolean bDiscard, int iSide, BorderProps.Mode mode,
+
+                                       boolean discard, int side, BorderProps.Mode mode,
                                        Integer traitCode, PercentBaseContext context) {
-        int iBP = bpProps.getBorderWidth(iSide, bDiscard);
-        int radiusStart = bpProps.getBorderRadiusStart(iSide, bDiscard, context);
-        int radiusEnd = bpProps.getBorderRadiusEnd(iSide, bDiscard, context);
-        if (iBP > 0 || radiusStart > 0 || radiusEnd > 0) {
-            area.addTrait(traitCode, new BorderProps(bpProps.getBorderStyle(iSide), iBP, radiusStart, radiusEnd,
-                    bpProps.getBorderColor(iSide), mode));
+        int width = bpProps.getBorderWidth(side, discard);
+        int radiusStart = bpProps.getBorderRadiusStart(side, discard, context);
+        int radiusEnd = bpProps.getBorderRadiusEnd(side, discard, context);
+        if (width > 0 || radiusStart > 0 || radiusEnd > 0) {
+            area.addTrait(traitCode, new BorderProps(bpProps.getBorderStyle(side), width, radiusStart,
+                    radiusEnd, bpProps.getBorderColor(side), mode));
+                    
         }
     }
 

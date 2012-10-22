@@ -87,32 +87,20 @@ public class PSPainterTestCase {
         // the goal of this test is to check that the drawing of rounded corners in PS calls
         // PSGraphicsPaiter.cubicBezierTo(); the check is done by verifying that a curveto command is written
         // to the PSGenerator
-        // mock
         PSGenerator psGenerator = mock(PSGenerator.class);
         when(psGenerator.formatDouble(anyFloat())).thenReturn("20.0"); // simplify!
-        // mock
         PSRenderingUtil psRenderingUtil = mock(PSRenderingUtil.class);
-        // mock
         PSDocumentHandler psDocumentHandler = mock(PSDocumentHandler.class);
         when(psDocumentHandler.getGenerator()).thenReturn(psGenerator);
         when(psDocumentHandler.getPSUtil()).thenReturn(psRenderingUtil);
-        // real instance, no mock
         PSPainter psPainter = new PSPainter(psDocumentHandler);
         // build rectangle 200 x 50 (points, which are converted to milipoints)
         Rectangle rectangle = new Rectangle(0, 0, 200000, 50000);
         // build border properties: width 4pt, radius 30pt
-        int style = Constants.EN_SOLID;
-        BorderProps.Mode mode = BorderProps.Mode.SEPARATE;
-        Color color = Color.BLACK;
-        int borderWidth = 4000;
-        int radiusStart = 30000;
-        int radiusEnd = 30000;
-        BorderProps border1 = new BorderProps(style, borderWidth, radiusStart, radiusEnd, color, mode);
-        BorderProps border2 = new BorderProps(style, borderWidth, radiusStart, radiusEnd, color, mode);
-        BorderProps border3 = new BorderProps(style, borderWidth, radiusStart, radiusEnd, color, mode);
-        BorderProps border4 = new BorderProps(style, borderWidth, radiusStart, radiusEnd, color, mode);
+        BorderProps border = new BorderProps(Constants.EN_SOLID, 4000, 30000, 30000, Color.BLACK,
+                BorderProps.Mode.SEPARATE);
         try {
-            psPainter.drawBorderRect(rectangle, border1, border2, border3, border4, Color.WHITE);
+            psPainter.drawBorderRect(rectangle, border, border, border, border, Color.WHITE);
             verify(psGenerator, times(16)).writeln("20.0 20.0 20.0 20.0 20.0 20.0 curveto ");
         } catch (Exception e) {
             fail("something broke...");

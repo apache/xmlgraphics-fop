@@ -40,8 +40,7 @@ public class ExtensionElementMapping extends ElementMapping {
     /** The standard XML prefix for elements and attributes in this namespace. */
     public static final String STANDARD_PREFIX = "fox";
 
-    private static final Set<String> PROPERTY_ATTRIBUTES
-        = new java.util.HashSet<String>();
+    private static final Set<String> PROPERTY_ATTRIBUTES = new java.util.HashSet<String>();
 
     static {
         //These are FOP's standard extension properties (fox:*)
@@ -63,6 +62,10 @@ public class ExtensionElementMapping extends ElementMapping {
         PROPERTY_ATTRIBUTES.add("border-end-radius-before");
         PROPERTY_ATTRIBUTES.add("border-end-radius-after");
         PROPERTY_ATTRIBUTES.add("border-radius");
+        PROPERTY_ATTRIBUTES.add("border-before-start-radius");
+        PROPERTY_ATTRIBUTES.add("border-before-end-radius");
+        PROPERTY_ATTRIBUTES.add("border-after-start-radius");
+        PROPERTY_ATTRIBUTES.add("border-after-end-radius");
     }
 
     /**

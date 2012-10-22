@@ -39,8 +39,8 @@ public class BoxCornerPropShorthandParser extends GenericShorthandParser {
      * If 2 value are present the first is the corner radius in the IP direction,
      * the second in the BP direction.
      * {@inheritDoc}
-     * int, Property, PropertyMaker, PropertyList)
      */
+    @Override
     protected Property convertValueForProperty(int propId,
                                                Property property,
                                                PropertyMaker maker,

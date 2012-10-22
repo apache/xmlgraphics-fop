@@ -30,9 +30,6 @@ import org.apache.fop.traits.BorderProps;
  */
 public class BorderPainter {
 
-    /** TODO remove before integration*/
-    public static final String ROUNDED_CORNERS = "fop.round-corners";
-
     // TODO Use a class to model border instead of an array
     /** Convention index of before top */
     protected static final int TOP = 0;
@@ -318,10 +315,10 @@ public class BorderPainter {
             final int ex2 = ex1 - end.getWidth() + end.getClippedWidth();
             final int outery = -before.getClippedWidth();
             final int innery = outery + before.getWidth();
-            final int ellipseSBRadiusX = (int) (cornerCorrectionFactor * start.getRadiusEnd());
-            final int ellipseSBRadiusY = (int) (cornerCorrectionFactor * before.getRadiusStart());
-            final int ellipseBERadiusX = (int) (cornerCorrectionFactor * end.getRadiusStart());
-            final int ellipseBERadiusY = (int) (cornerCorrectionFactor * before.getRadiusEnd());
+            final int ellipseSBRadiusX = correctRadius(cornerCorrectionFactor, start.getRadiusEnd());
+            final int ellipseSBRadiusY = correctRadius(cornerCorrectionFactor, before.getRadiusStart());
+            final int ellipseBERadiusX = correctRadius(cornerCorrectionFactor, end.getRadiusStart());
+            final int ellipseBERadiusY = correctRadius(cornerCorrectionFactor, before.getRadiusEnd());
             saveGraphicsState();
             translateCoordinates(x, y);
             if (orientation != 0) {
@@ -404,6 +401,10 @@ public class BorderPainter {
             }
             restoreGraphicsState();
         }
+    }
+
+    private static int correctRadius(double cornerCorrectionFactor, int radius) {
+        return (int) (Math.round(cornerCorrectionFactor * radius));
     }
 
     private static BorderSegment borderSegmentForBefore(BorderProps before) {
