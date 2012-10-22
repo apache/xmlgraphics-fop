@@ -372,15 +372,15 @@ public class CommonBorderPaddingBackground {
                 Constants.PR_BORDER_START_STYLE,
                 Constants.PR_BORDER_START_WIDTH,
                 Constants.PR_PADDING_START,
-                Constants.PR_X_BORDER_START_RADIUS_START,
-                Constants.PR_X_BORDER_START_RADIUS_END);
+                Constants.PR_X_BORDER_START_RADIUS_BEFORE,
+                Constants.PR_X_BORDER_START_RADIUS_AFTER);
         initBorderInfo(pList, END,
                 Constants.PR_BORDER_END_COLOR,
                 Constants.PR_BORDER_END_STYLE,
                 Constants.PR_BORDER_END_WIDTH,
                 Constants.PR_PADDING_END,
-                Constants.PR_X_BORDER_END_RADIUS_START,
-                Constants.PR_X_BORDER_END_RADIUS_END);
+                Constants.PR_X_BORDER_END_RADIUS_BEFORE,
+                Constants.PR_X_BORDER_END_RADIUS_AFTER);
 
     }
 
@@ -452,15 +452,12 @@ public class CommonBorderPaddingBackground {
         padding[side] = pList.get(paddingProp).getCondLength();
         // If style = none, force width to 0, don't get Color (spec 7.7.20)
         int style = pList.get(styleProp).getEnum();
-      //  if (style != Constants.EN_NONE) {
-            FOUserAgent ua = pList.getFObj().getUserAgent();
-            setBorderInfo(BorderInfo.getInstance(style,
-                    pList.get(widthProp).getCondLength(),
-                    pList.get(colorProp).getColor(ua),
-                    pList.get(radiusStartProp).getCondLength(),
-                    pList.get(radiusEndProp).getCondLength()), side);
-      //  }
-
+        FOUserAgent ua = pList.getFObj().getUserAgent();
+        setBorderInfo(BorderInfo.getInstance(style,
+                pList.get(widthProp).getCondLength(),
+                pList.get(colorProp).getColor(ua),
+                pList.get(radiusStartProp).getCondLength(),
+                pList.get(radiusEndProp).getCondLength()), side);
     }
 
 
