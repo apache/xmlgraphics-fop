@@ -22,14 +22,24 @@ package org.apache.fop.pdf;
 /** Enum class for PDF/A modes. */
 public enum PDFAMode {
 
-    /** PDF/A disabled */
+    /** PDF/A disabled. */
     DISABLED("PDF/A disabled"),
-    /** PDF/A-1a enabled */
-    PDFA_1A("PDF/A-1a"),
-    /** PDF/A-1b enabled */
-    PDFA_1B("PDF/A-1b");
+    /** PDF/A-1a enabled. */
+    PDFA_1A(1, 'A'),
+    /** PDF/A-1b enabled. */
+    PDFA_1B(1, 'B'),
+    /** PDF/A-2a enabled. */
+    PDFA_2A(2, 'A'),
+    /** PDF/A-2b enabled. */
+    PDFA_2B(2, 'B'),
+    /** PDF/A-2u enabled. */
+    PDFA_2U(2, 'U');
 
-    private String name;
+    private final String name;
+
+    private final int part;
+
+    private final char level;
 
     /**
      * Constructor to add a new named item.
@@ -37,6 +47,14 @@ public enum PDFAMode {
      */
     private PDFAMode(String name) {
         this.name = name;
+        this.part = 0;
+        this.level = 0;
+    }
+
+    private PDFAMode(int part, char level) {
+        this.name = "PDF/A-" + part + Character.toLowerCase(level);
+        this.part = part;
+        this.level = level;
     }
 
     /** @return the name of the enum */
@@ -45,20 +63,51 @@ public enum PDFAMode {
     }
 
     /**
-     * Indicates whether this mode obeys the restrictions established by PDF/A-1a.
-     * @return true if this mode obeys the restrictions established by PDF/A-1a.
+     * Returns {@code true} if this enum corresponds to one of the available PDF/A modes.
+     *
+     * @return {@code true} if this is not DISABLED
      */
-    public boolean isPDFA1LevelA() {
-        return (this == PDFA_1A);
+    public boolean isEnabled() {
+        return this != DISABLED;
     }
 
     /**
-     * Indicates whether this mode obeys the restrictions established by PDF/A-1b.
-     * @return true if this mode obeys the restrictions established by PDF/A-1b.
+     * Returns the part of the specification this enum corresponds to.
+     *
+     * @return 1 for PDF/A-1 (ISO 19005-1), 2 for PDF/A-2 (ISO 19005-2)
      */
-    public boolean isPDFA1LevelB() {
-        return (this != DISABLED);
-        //PDF/A-1a is a superset of PDF/A-1b!
+    public int getPart() {
+        return part;
+    }
+
+    /**
+     * Returns {@code true} if this enum corresponds to PDF/A-1 (ISO 19005-1).
+     */
+    public boolean isPart1() {
+        return part == 1;
+    }
+
+    /**
+     * Returns {@code true} if this enum corresponds to PDF/A-2 (ISO 19005-2).
+     */
+    public boolean isPart2() {
+        return part == 1 || part == 2;
+    }
+
+    /**
+     * Returns the conformance level for this enum.
+     *
+     * @return 'A', 'B' or 'U'
+     */
+    public char getConformanceLevel() {
+        return level;
+    }
+
+    /**
+     * Returns {@code true} if this enum corresponds to conformance level A.
+     */
+    public boolean isLevelA() {
+        return level == 'A';
     }
 
     /**
@@ -67,13 +116,12 @@ public enum PDFAMode {
      * @return the PDFAMode enum object (DISABLED will be returned if no match is found)
      */
     public static PDFAMode getValueOf(String s) {
-        if (PDFA_1A.getName().equalsIgnoreCase(s)) {
-            return PDFA_1A;
-        } else if (PDFA_1B.getName().equalsIgnoreCase(s)) {
-            return PDFA_1B;
-        } else {
-            return DISABLED;
+        for (PDFAMode mode : values()) {
+            if (mode.name.equalsIgnoreCase(s)) {
+                return mode;
+            }
         }
+        return DISABLED;
     }
 
     /** {@inheritDoc} */

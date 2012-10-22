@@ -743,7 +743,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         //TODO Handle this in PDFColorHandler by automatically converting the color.
         //This won't work properly anyway after the redesign of ColorExt
         if (col.getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
-             if (pdfDoc.getProfile().getPDFAMode().isPDFA1LevelB()) {
+             if (pdfDoc.getProfile().getPDFAMode().isPart1()) {
                  //See PDF/A-1, ISO 19005:1:2005(E), 6.2.3.3
                  //FOP is currently restricted to DeviceRGB if PDF/A-1 is active.
                  throw new PDFConformanceException(

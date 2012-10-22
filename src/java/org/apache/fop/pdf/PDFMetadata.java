@@ -102,7 +102,7 @@ public class PDFMetadata extends PDFStream {
     /** {@inheritDoc} */
     protected void populateStreamDict(Object lengthEntry) {
         final String filterEntry = getFilterList().buildFilterDictEntries();
-        if (getDocumentSafely().getProfile().getPDFAMode().isPDFA1LevelB()
+        if (getDocumentSafely().getProfile().getPDFAMode().isPart1()
                 && filterEntry != null && filterEntry.length() > 0) {
             throw new PDFConformanceException(
                     "The Filter key is prohibited when PDF/A-1 is active");
@@ -156,14 +156,10 @@ public class PDFMetadata extends PDFStream {
 
         //PDF/A identification
         PDFAMode pdfaMode = pdfDoc.getProfile().getPDFAMode();
-        if (pdfaMode.isPDFA1LevelB()) {
+        if (pdfaMode.isEnabled()) {
             PDFAAdapter pdfa = PDFAXMPSchema.getAdapter(meta);
-            pdfa.setPart(1);
-            if (pdfaMode == PDFAMode.PDFA_1A) {
-                pdfa.setConformance("A"); //PDF/A-1a
-            } else {
-                pdfa.setConformance("B"); //PDF/A-1b
-            }
+            pdfa.setPart(pdfaMode.getPart());
+            pdfa.setConformance(String.valueOf(pdfaMode.getConformanceLevel()));
         }
 
         //XMP Basic Schema

@@ -170,7 +170,7 @@ public class PDFProfile {
      */
     public void verifyTransparencyAllowed(String context) {
         final String err = "{0} does not allow the use of transparency. ({1})";
-        if (isPDFAActive()) {
+        if (pdfAMode.isPart1()) {
             throw new PDFConformanceException(MessageFormat.format(err,
                     new Object[] {getPDFAMode(), context}));
         }
@@ -183,7 +183,7 @@ public class PDFProfile {
     /** Checks if the right PDF version is set. */
     public void verifyPDFVersion() {
         final String err = "PDF version must be 1.4 for {0}";
-        if (getPDFAMode().isPDFA1LevelB()
+        if (getPDFAMode().isPart1()
                 && !Version.V1_4.equals(getDocument().getPDFVersion())) {
             throw new PDFConformanceException(format(err, getPDFAMode()));
         }
@@ -197,7 +197,7 @@ public class PDFProfile {
      * Checks a few things required for tagged PDF.
      */
     public void verifyTaggedPDF() {
-        if (getPDFAMode().isPDFA1LevelA()) {
+        if (getPDFAMode().isLevelA()) {
             final String err = "{0} requires the {1} dictionary entry to be set";
             PDFDictionary markInfo = getDocument().getRoot().getMarkInfo();
             if (markInfo == null) {

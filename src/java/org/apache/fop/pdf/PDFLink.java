@@ -85,7 +85,7 @@ public class PDFLink extends PDFObject {
     public String toPDFString() {
         getDocumentSafely().getProfile().verifyAnnotAllowed();
         String fFlag = "";
-        if (getDocumentSafely().getProfile().getPDFAMode().isPDFA1LevelB()) {
+        if (getDocumentSafely().getProfile().getPDFAMode().isEnabled()) {
             int f = 0;
             f |= 1 << (3 - 1); //Print, bit 3
             f |= 1 << (4 - 1); //NoZoom, bit 4
