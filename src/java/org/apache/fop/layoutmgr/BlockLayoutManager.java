@@ -31,6 +31,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -381,6 +382,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager implements Co
                     startIndent, endIndent,
                     this);
 
+            curBlockArea.setLocale(getBlockFO().getCommonHyphenation().getLocale());
+            curBlockArea.setLocation(FONode.getLocatorString(getBlockFO().getLocator()));
             setCurrentArea(curBlockArea); // ??? for generic operations
         }
         return curBlockArea;

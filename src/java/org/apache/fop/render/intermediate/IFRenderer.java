@@ -965,7 +965,14 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         }
         saveBlockPosIfTargetable(block);
         pushdID(block);
+        IFContext context = documentHandler.getContext();
+        Locale oldLocale = context.getLanguage();
+        context.setLanguage(block.getLocale());
+        String oldLocation = context.getLocation();
+        context.setLocation(block.getLocation());
         super.renderBlock(block);
+        context.setLocation(oldLocation);
+        context.setLanguage(oldLocale);
         popID(block);
     }
 
