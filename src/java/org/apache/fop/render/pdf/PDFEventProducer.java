@@ -74,4 +74,13 @@ public interface PDFEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void incorrectEncryptionLength(Object source, int originalValue, int correctedValue);
+
+    /**
+     * The language of a piece of text is unknown.
+     *
+     * @param source the event source
+     * @param location location in the source FO file, if any
+     */
+    void unknownLanguage(Object source, String location);
+
 }

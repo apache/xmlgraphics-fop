@@ -51,6 +51,8 @@ public class IFContext {
 
     private String id = "";
 
+    private String location;
+
     /**
      * Main constructor.
      * @param ua the user agent
@@ -177,6 +179,25 @@ public class IFContext {
      */
     String getID() {
         return id;
+    }
+
+    /**
+     * Sets the location of the object enclosing the current content.
+     *
+     * @location the line and column location of the object in the source FO file
+     */
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    /**
+     * Returns the location of the object enclosing the current content.
+     *
+     * @return the line and column location of the object in the source FO file,
+     * {@code null} if that information is not available
+     */
+    public String getLocation() {
+        return location;
     }
 
 }

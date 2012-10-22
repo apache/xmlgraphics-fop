@@ -19,6 +19,8 @@
 
 package org.apache.fop.area;
 
+import java.util.Locale;
+
 
 // block areas hold either more block areas or line
 // areas can also be used as a block spacer
@@ -63,8 +65,9 @@ public class Block extends BlockParent {
     /** if true, allow BPD update */
     protected transient boolean allowBPDUpdate = true;
 
-    // a block with may contain the dominant styling info in
-    // terms of most lines or blocks with info
+    private Locale locale;
+
+    private String location;
 
     /**
      * Add the block to this block area.
@@ -138,6 +141,38 @@ public class Block extends BlockParent {
     public int getEndIndent() {
         Integer endIndent = (Integer)getTrait(Trait.END_INDENT);
         return (endIndent != null ? endIndent : 0);
+    }
+
+    /**
+     * Sets the language information coming from the FO that generated this area.
+     */
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
+    /**
+     * Returns the language information for the FO that generated this area.
+     */
+    public Locale getLocale() {
+        return locale;
+    }
+
+    /**
+     * Sets the location in the source XML of the FO that generated this area.
+     *
+     * @location the line and column location
+     */
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    /**
+     * Returns the location in the source XML of the FO that generated this area.
+     *
+     * @return the line and column location, {@code null} if that information is not available
+     */
+    public String getLocation() {
+        return location;
     }
 
 }

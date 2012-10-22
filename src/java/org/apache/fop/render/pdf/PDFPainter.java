@@ -26,6 +26,9 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 import org.w3c.dom.Document;
 
@@ -40,6 +43,7 @@ import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
@@ -65,6 +69,41 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
 
     private PDFLogicalStructureHandler logicalStructureHandler;
 
+    private final LanguageAvailabilityChecker languageAvailabilityChecker;
+
+    private static class LanguageAvailabilityChecker {
+
+        private final IFContext context;
+
+        private final Set<String> reportedLocations = new HashSet<String>();
+
+        LanguageAvailabilityChecker(IFContext context) {
+            this.context = context;
+        }
+
+        private void checkLanguageAvailability(String text) {
+            Locale locale = context.getLanguage();
+            if (locale == null && containsLettersOrDigits(text)) {
+                String location = context.getLocation();
+                if (!reportedLocations.contains(location)) {
+                    PDFEventProducer.Provider.get(context.getUserAgent().getEventBroadcaster())
+                            .unknownLanguage(this, location);
+                    reportedLocations.add(location);
+                }
+            }
+        }
+
+        private boolean containsLettersOrDigits(String text) {
+            for (int i = 0; i < text.length(); i++) {
+                if (Character.isLetterOrDigit(text.charAt(i))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+    }
+
     /**
      * Default constructor.
      * @param documentHandler the parent document handler
@@ -78,6 +117,9 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         this.borderPainter = new PDFBorderPainter(this.generator);
         this.state = IFState.create();
         accessEnabled = this.getUserAgent().isAccessibilityEnabled();
+        languageAvailabilityChecker = accessEnabled
+                ? new LanguageAvailabilityChecker(documentHandler.getContext())
+                : null;
     }
 
     /** {@inheritDoc} */
@@ -130,6 +172,9 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
 
     private void prepareImageMCID(PDFStructElem structElem) {
         imageMCI = logicalStructureHandler.addImageContentItem(structElem);
+        if (structElem != null) {
+            languageAvailabilityChecker.checkLanguageAvailability((String) structElem.get("Alt"));
+        }
     }
 
     /** {@inheritDoc} */
@@ -274,6 +319,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             throws IFException {
         if (accessEnabled) {
             PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
+            languageAvailabilityChecker.checkLanguageAvailability(text);
             MarkedContentInfo mci = logicalStructureHandler.addTextContentItem(structElem);
             if (generator.getTextUtil().isInTextObject()) {
                 generator.separateTextElements(mci.tag, mci.mcid);

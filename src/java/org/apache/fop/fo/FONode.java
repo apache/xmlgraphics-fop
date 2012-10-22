@@ -565,7 +565,7 @@ public abstract class FONode implements Cloneable {
     /**
      * Helper function to return "not supported child" exceptions. Note that the child is valid, just not
      * supported yet by FOP.
-     * 
+     *
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param nsURI namespace URI of incoming invalid node
      * @param lName local name (i.e., no prefix) of incoming node
@@ -663,7 +663,7 @@ public abstract class FONode implements Cloneable {
         if (loc == null) {
             return "Unknown location";
         } else {
-            return loc.getLineNumber() + "/" + loc.getColumnNumber();
+            return loc.getLineNumber() + ":" + loc.getColumnNumber();
         }
     }
 
