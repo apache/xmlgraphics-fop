@@ -154,8 +154,6 @@ public class BorderPainterTestCase {
 
         protected final BorderPainter sut;
 
-        private final T thisInstance;
-
         private final BorderPropsBuilder<T> beforeBuilder;
 
         private final BorderPropsBuilder<T> afterBuilder;
@@ -165,18 +163,19 @@ public class BorderPainterTestCase {
         private final BorderPropsBuilder<T> endBuilder;
 
         public BorderPainterTester(int xOrigin, int yOrigin, int width, int height) {
-            this.thisInstance = (T) this;
             if (width <= 0 || height <= 0) {
                 throw new IllegalArgumentException("Cannot test degenerate borders");
             }
-            beforeBuilder = new BorderPropsBuilder<T>(this.thisInstance);
-            afterBuilder = new BorderPropsBuilder<T>(this.thisInstance);
-            startBuilder = new BorderPropsBuilder<T>(this.thisInstance);
-            endBuilder = new BorderPropsBuilder<T>(this.thisInstance);
+            beforeBuilder = new BorderPropsBuilder<T>(getThis());
+            afterBuilder = new BorderPropsBuilder<T>(getThis());
+            startBuilder = new BorderPropsBuilder<T>(getThis());
+            endBuilder = new BorderPropsBuilder<T>(getThis());
             this.borderExtent = new Rectangle(xOrigin, yOrigin, width, height);
             this.graphicsPainter = mock(GraphicsPainter.class);
             this.sut = new BorderPainter(graphicsPainter);
         }
+
+        protected abstract T getThis();
 
         public BorderPropsBuilder<T> beforeBorder() {
             return beforeBuilder;
@@ -199,7 +198,7 @@ public class BorderPainterTestCase {
             endBuilder.setWidth(width);
             afterBuilder.setWidth(width);
             startBuilder.setWidth(width);
-            return thisInstance;
+            return getThis();
         }
 
         public T setCornerRadii(int radius) {
@@ -211,31 +210,31 @@ public class BorderPainterTestCase {
             setEndBefore(xRadius, yRadius);
             setEndAfter(xRadius, yRadius);
             setStartAfter(xRadius, yRadius);
-            return thisInstance;
+            return getThis();
         }
 
         public T setStartBefore(int xRadius, int yRadius) {
             startBuilder.setRadiusStart(xRadius);
             beforeBuilder.setRadiusStart(yRadius);
-            return thisInstance;
+            return getThis();
         }
 
         public T setEndBefore(int xRadius, int yRadius) {
             endBuilder.setRadiusStart(xRadius);
             beforeBuilder.setRadiusEnd(yRadius);
-            return thisInstance;
+            return getThis();
         }
 
         public T setEndAfter(int xRadius, int yRadius) {
             endBuilder.setRadiusEnd(xRadius);
             afterBuilder.setRadiusEnd(yRadius);
-            return thisInstance;
+            return getThis();
         }
 
         public T setStartAfter(int xRadius, int yRadius) {
             startBuilder.setRadiusEnd(xRadius);
             afterBuilder.setRadiusStart(yRadius);
-            return thisInstance;
+            return getThis();
         }
 
         public final void test() throws IOException {
@@ -383,7 +382,11 @@ public class BorderPainterTestCase {
             verify(graphicsPainter, times(numBorders)).closePath();
             verify(graphicsPainter, times(numBorders)).restoreGraphicsState();
             verify(graphicsPainter, times(numBorders)).clip();
+        }
 
+        @Override
+        protected DrawRectangularBordersTester getThis() {
+            return this;
         }
     }
 
@@ -460,6 +463,11 @@ public class BorderPainterTestCase {
 
         private int calcLineEnd(int xWidth, int yWidth, int xRadius, int yRadius) {
             return yWidth > yRadius ? yWidth : xWidth > 0 ? Math.max(xRadius, xWidth) : 0;
+        }
+
+        @Override
+        protected DrawRoundedBordersTester getThis() {
+            return this;
         }
 
     }
@@ -558,6 +566,11 @@ public class BorderPainterTestCase {
                             xCenter, yCenter, xRadius, yRadius);
                 }
             }
+        }
+
+        @Override
+        protected ClipBackgroundTester getThis() {
+            return this;
         }
     }
 
