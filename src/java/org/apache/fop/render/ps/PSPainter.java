@@ -48,6 +48,8 @@ import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
+import org.apache.fop.render.intermediate.BorderPainter;
+import org.apache.fop.render.intermediate.GraphicsPainter;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
@@ -64,7 +66,9 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
     /** logging instance */
     private static Log log = LogFactory.getLog(PSPainter.class);
 
-    private PSBorderPainter borderPainter;
+    private final GraphicsPainter graphicsPainter;
+
+    private BorderPainter borderPainter;
 
     private boolean inTextMode = false;
 
@@ -78,7 +82,8 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
 
     protected PSPainter(PSDocumentHandler documentHandler, IFState state) {
         super(documentHandler);
-        this.borderPainter = new PSBorderPainter(getGenerator());
+        this.graphicsPainter = new PSGraphicsPainter(getGenerator());
+        this.borderPainter = new BorderPainter(graphicsPainter);
         this.state = state;
     }
 
@@ -199,6 +204,20 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
     }
 
     /** {@inheritDoc} */
+    public void clipBackground(Rectangle rect,
+            BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+
+        try {
+            borderPainter.clipBackground(rect,
+                    bpsBefore,  bpsAfter, bpsStart,  bpsEnd);
+        } catch (IOException ioe) {
+            throw new IFException("I/O error while clipping background", ioe);
+        }
+
+    }
+
+    /** {@inheritDoc} */
     public void fillRect(Rectangle rect, Paint fill) throws IFException {
         if (fill == null) {
             return;
@@ -225,15 +244,15 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
 
     /** {@inheritDoc} */
     public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
-            BorderProps left, BorderProps right) throws IFException {
+            BorderProps left, BorderProps right, Color innerBackgroundColor) throws IFException {
         if (top != null || bottom != null || left != null || right != null) {
             try {
                 endTextObject();
                 if (getDocumentHandler().getPSUtil().getRenderingMode() == PSRenderingMode.SIZE
                     && hasOnlySolidBorders(top, bottom, left, right)) {
-                    super.drawBorderRect(rect, top, bottom, left, right);
+                    super.drawBorderRect(rect, top, bottom, left, right, innerBackgroundColor);
                 } else {
-                    this.borderPainter.drawBorders(rect, top, bottom, left, right);
+                    this.borderPainter.drawBorders(rect, top, bottom, left, right, innerBackgroundColor);
                 }
             } catch (IOException ioe) {
                 throw new IFException("I/O error in drawBorderRect()", ioe);
@@ -246,7 +265,7 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                 throws IFException {
         try {
             endTextObject();
-            this.borderPainter.drawLine(start, end, width, color, style);
+            this.graphicsPainter.drawLine(start, end, width, color, style);
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawLine()", ioe);
         }

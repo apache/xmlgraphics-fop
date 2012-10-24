@@ -330,7 +330,7 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
 
     /** {@inheritDoc} */
     public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
-            BorderProps left, BorderProps right) throws IFException {
+            BorderProps left, BorderProps right, Color innerBackgroundColor) throws IFException {
         if (top != null) {
             Rectangle b = new Rectangle(
                     rect.x, rect.y,
@@ -450,6 +450,12 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
         matrix[4] /= 1000;
         matrix[5] /= 1000;
         return new AffineTransform(matrix);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isBackgroundRequired( BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) {
+        return true;
     }
 
 }

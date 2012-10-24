@@ -32,7 +32,6 @@ import org.apache.batik.parser.AWTTransformProducer;
 
 import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.util.QName;
-import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
@@ -50,6 +49,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.util.UnitConv;
 
 /**
  * Abstract base class for renderers like PDF and PostScript where many painting operations
@@ -166,11 +166,20 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         BorderProps bpsStart = (BorderProps)borderArea.getTrait(Trait.BORDER_START);
         BorderProps bpsEnd = (BorderProps)borderArea.getTrait(Trait.BORDER_END);
 
+        Trait.Background backgroundTrait
+            = (Trait.Background)backgroundArea.getTrait(Trait.BACKGROUND);
+
         drawBackground(startx, starty, width, height,
                 (Trait.Background) backgroundArea.getTrait(Trait.BACKGROUND),
-                    bpsBefore, bpsAfter, bpsStart, bpsEnd, backgroundArea.getBidiLevel());
+                bpsBefore, bpsAfter, bpsStart, bpsEnd, backgroundArea.getBidiLevel());
+        // TODO what is the default bg color?   Should we serialize it?
+        Color bg = Color.white;
+        if (backgroundTrait != null &&  backgroundTrait.getColor() != null) {
+            bg = backgroundTrait.getColor();
+        }
+
         drawBorders(startx, starty, width, height,
-                    bpsBefore, bpsAfter, bpsStart, bpsEnd, borderArea.getBidiLevel());
+                bpsBefore, bpsAfter, bpsStart, bpsEnd, backgroundArea.getBidiLevel(), bg);
     }
 
     /**
@@ -247,14 +256,17 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                 paddRectHeight -= bpsBottom.width / 1000f;
             }
 
+            saveGraphicsState();
+
+            clipBackground(sx, sy,  paddRectWidth, paddRectHeight, bpsTop, bpsBottom, bpsLeft, bpsRight);
+
             if (back.getColor() != null) {
                 updateColor(back.getColor(), true);
                 fillRect(sx, sy, paddRectWidth, paddRectHeight);
             }
+
             if (back.getImageInfo() != null) {
                 ImageSize imageSize = back.getImageInfo().getSize();
-                saveGraphicsState();
-                clipRect(sx, sy, paddRectWidth, paddRectHeight);
                 int horzCount = (int)((paddRectWidth
                         * 1000 / imageSize.getWidthMpt()) + 1.0f);
                 int vertCount = (int)((paddRectHeight
@@ -290,10 +302,33 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                         drawImage(back.getURL(), pos);
                     }
                 }
-
-                restoreGraphicsState();
             }
+            restoreGraphicsState();
         }
+    }
+
+    /**
+     * TODO represent border related parameters in a class
+     * Clip the background to the inner border.
+     * This draws the border traits given the position and the traits.
+     *
+     * @param startx the start x position
+     * @param starty the start y position
+     * @param width the width of the area
+     * @param height the height of the area
+     * @param bpsBefore the border-before traits
+     * @param bpsAfter the border-after traits
+     * @param bpsStart the border-start traits
+     * @param bpsEnd the border-end traits
+     * @param innerBackgroundColor the background color of the block
+     */
+    protected void clipBackground (float startx, float starty,
+            float width, float height,
+            BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) {
+
+        clipRect(startx, starty, width, height);
+
     }
 
     /**
@@ -309,11 +344,12 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsStart the border traits associated with start edge
      * @param bpsEnd the border traits associated with end edge
      * @param level of bidirectional embedding
+     * @param innerBackgroundColor the background color of the block
      */
     protected void drawBorders(                                  // CSOK: ParameterNumber
             float startx, float starty, float width, float height,
             BorderProps bpsBefore, BorderProps bpsAfter,
-            BorderProps bpsStart, BorderProps bpsEnd, int level) {
+            BorderProps bpsStart, BorderProps bpsEnd, int level, Color innerBackgroundColor) {
         Rectangle2D.Float borderRect = new Rectangle2D.Float(startx, starty, width, height);
         BorderProps bpsTop = bpsBefore;
         BorderProps bpsBottom = bpsAfter;
@@ -326,7 +362,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             bpsLeft = bpsEnd;
             bpsRight = bpsStart;
         }
-        drawBorders(borderRect, bpsTop, bpsBottom, bpsLeft, bpsRight);
+        drawBorders(borderRect, bpsTop, bpsBottom, bpsLeft, bpsRight, innerBackgroundColor);
     }
 
     private static final int TOP = 0;
@@ -341,10 +377,12 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsBottom the border traits associated with bottom edge
      * @param bpsLeft the border specification on the left edge
      * @param bpsRight the border specification on the right edge
+     * @param innerBackgroundColor the background color of the block
      */
     protected void drawBorders(                                  // CSOK: MethodLength
             Rectangle2D.Float borderRect,
-            BorderProps bpsTop, BorderProps bpsBottom, BorderProps bpsLeft, BorderProps bpsRight) {
+            BorderProps bpsTop, BorderProps bpsBottom, BorderProps bpsLeft, BorderProps bpsRight,
+            Color innerBackgroundColor) {
         //TODO generalize each of the four conditions into using a parameterized drawBorder()
         boolean[] border = new boolean[] {
                 (bpsTop != null), (bpsRight != null),
@@ -391,11 +429,12 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             moveTo(sx1, clipy);
             float sx1a = sx1;
             float ex1a = ex1;
-            if (bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsLeft != null && bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
+
+            if (isCollapseOuter(bpsTop)) {
+                if (isCollapseOuter(bpsLeft)) {
                     sx1a -= clipw[LEFT];
                 }
-                if (bpsRight != null && bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
+                if (isCollapseOuter(bpsRight)) {
                     ex1a += clipw[RIGHT];
                 }
                 lineTo(sx1a, outery);
@@ -425,11 +464,11 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             moveTo(clipx, sy1);
             float sy1a = sy1;
             float ey1a = ey1;
-            if (bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsTop != null && bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
+            if (isCollapseOuter(bpsRight)) {
+                if (isCollapseOuter(bpsTop)) {
                     sy1a -= clipw[TOP];
                 }
-                if (bpsBottom != null && bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
+                if (isCollapseOuter(bpsBottom)) {
                     ey1a += clipw[BOTTOM];
                 }
                 lineTo(outerx, sy1a);
@@ -459,11 +498,11 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             moveTo(ex1, clipy);
             float sx1a = sx1;
             float ex1a = ex1;
-            if (bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsLeft != null && bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
+            if (isCollapseOuter(bpsBottom)) {
+                if (isCollapseOuter(bpsLeft)) {
                     sx1a -= clipw[LEFT];
                 }
-                if (bpsRight != null && bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
+                if (isCollapseOuter(bpsRight)) {
                     ex1a += clipw[RIGHT];
                 }
                 lineTo(ex1a, outery);
@@ -493,11 +532,11 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             moveTo(clipx, ey1);
             float sy1a = sy1;
             float ey1a = ey1;
-            if (bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsTop != null && bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
+            if (isCollapseOuter(bpsLeft)) {
+                if (isCollapseOuter(bpsTop)) {
                     sy1a -= clipw[TOP];
                 }
-                if (bpsBottom != null && bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
+                if (isCollapseOuter(bpsBottom)) {
                     ey1a += clipw[BOTTOM];
                 }
                 lineTo(outerx, ey1a);
@@ -511,6 +550,10 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             drawBorderLine(outerx, sy1a, innerx, ey1a, false, true, bpsLeft.style, bpsLeft.color);
             restoreGraphicsState();
         }
+    }
+
+    private boolean isCollapseOuter(BorderProps bp) {
+        return bp != null && bp.isCollapseOuter();
     }
 
     /**

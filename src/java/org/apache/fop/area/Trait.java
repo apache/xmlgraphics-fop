@@ -169,6 +169,7 @@ public final class Trait implements Serializable {
     /** shift direction trait */
     public static final Integer SHIFT_DIRECTION = 42;
 
+
     /** Maximum value used by trait keys */
     public static final int MAX_TRAIT_KEY = 42;
 

@@ -80,19 +80,19 @@ public final class TraitSetter {
 
         addBorderTrait(area, bpProps, isNotFirst,
                 CommonBorderPaddingBackground.START,
-                BorderProps.SEPARATE, Trait.BORDER_START);
+                BorderProps.Mode.SEPARATE, Trait.BORDER_START, context);
 
         addBorderTrait(area, bpProps, isNotLast,
                 CommonBorderPaddingBackground.END,
-                BorderProps.SEPARATE, Trait.BORDER_END);
+                BorderProps.Mode.SEPARATE, Trait.BORDER_END, context);
 
         addBorderTrait(area, bpProps, false,
                 CommonBorderPaddingBackground.BEFORE,
-                BorderProps.SEPARATE, Trait.BORDER_BEFORE);
+                BorderProps.Mode.SEPARATE, Trait.BORDER_BEFORE, context);
 
         addBorderTrait(area, bpProps, false,
                 CommonBorderPaddingBackground.AFTER,
-                BorderProps.SEPARATE, Trait.BORDER_AFTER);
+                BorderProps.Mode.SEPARATE, Trait.BORDER_AFTER, context);
     }
 
     /*
@@ -104,14 +104,16 @@ public final class TraitSetter {
      */
     private static void addBorderTrait(Area area,
                                        CommonBorderPaddingBackground bpProps,
-                                       boolean discard, int side, int mode,
-                                       Integer trait) {
-        int borderWidth = bpProps.getBorderWidth(side, discard);
-        if (borderWidth > 0) {
-            area.addTrait(trait,
-                    new BorderProps(bpProps.getBorderStyle(side),
-                            borderWidth, bpProps.getBorderColor(side),
-                            mode));
+
+                                       boolean discard, int side, BorderProps.Mode mode,
+                                       Integer traitCode, PercentBaseContext context) {
+        int width = bpProps.getBorderWidth(side, discard);
+        int radiusStart = bpProps.getBorderRadiusStart(side, discard, context);
+        int radiusEnd = bpProps.getBorderRadiusEnd(side, discard, context);
+        if (width > 0 || radiusStart > 0 || radiusEnd > 0) {
+            area.addTrait(traitCode, new BorderProps(bpProps.getBorderStyle(side), width, radiusStart,
+                    radiusEnd, bpProps.getBorderColor(side), mode));
+                    
         }
     }
 
@@ -126,19 +128,19 @@ public final class TraitSetter {
      */
     public static void addBorders(Area area, CommonBorderPaddingBackground borderProps,
                                   PercentBaseContext context) {
-        BorderProps bps = getBorderProps(borderProps, CommonBorderPaddingBackground.BEFORE);
+        BorderProps bps = getBorderProps(borderProps, CommonBorderPaddingBackground.BEFORE, context);
         if (bps != null) {
             area.addTrait(Trait.BORDER_BEFORE, bps);
         }
-        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.AFTER);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.AFTER, context);
         if (bps != null) {
             area.addTrait(Trait.BORDER_AFTER, bps);
         }
-        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.START);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.START, context);
         if (bps != null) {
             area.addTrait(Trait.BORDER_START, bps);
         }
-        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.END);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.END, context);
         if (bps != null) {
             area.addTrait(Trait.BORDER_END, bps);
         }
@@ -163,22 +165,23 @@ public final class TraitSetter {
                 boolean discardBefore, boolean discardAfter,
                 boolean discardStart, boolean discardEnd,
                 PercentBaseContext context) {
-        BorderProps bps = getBorderProps(borderProps, CommonBorderPaddingBackground.BEFORE);
+        BorderProps bps = getBorderProps(borderProps, CommonBorderPaddingBackground.BEFORE, context);
         if (bps != null && !discardBefore) {
             area.addTrait(Trait.BORDER_BEFORE, bps);
         }
-        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.AFTER);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.AFTER, context);
         if (bps != null && !discardAfter) {
             area.addTrait(Trait.BORDER_AFTER, bps);
         }
-        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.START);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.START, context);
         if (bps != null && !discardStart) {
             area.addTrait(Trait.BORDER_START, bps);
         }
-        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.END);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.END, context);
         if (bps != null && !discardEnd) {
             area.addTrait(Trait.BORDER_END, bps);
         }
+
     }
 
     /**
@@ -262,15 +265,14 @@ public final class TraitSetter {
 
     }
 
-    private static BorderProps getBorderProps(CommonBorderPaddingBackground bordProps, int side) {
+    private static BorderProps getBorderProps(CommonBorderPaddingBackground bordProps,
+            int side, PercentBaseContext context) {
         int width = bordProps.getBorderWidth(side, false);
-        if (width != 0) {
-            BorderProps bps;
-            bps = new BorderProps(bordProps.getBorderStyle(side),
-                                  width,
-                                  bordProps.getBorderColor(side),
-                                  BorderProps.SEPARATE);
-            return bps;
+        int radiusStart = bordProps.getBorderRadiusStart(side, false, context);
+        int radiusEnd = bordProps.getBorderRadiusEnd(side, false, context);
+        if (width != 0 || radiusStart != 0 || radiusEnd != 0) {
+            return new BorderProps(bordProps.getBorderStyle(side), width, radiusStart, radiusEnd,
+                                  bordProps.getBorderColor(side), BorderProps.Mode.SEPARATE);
         } else {
             return null;
         }
@@ -280,12 +282,13 @@ public final class TraitSetter {
         assert borderInfo != null;
         int width = borderInfo.getRetainedWidth();
         if (width != 0) {
-            return new BorderProps(borderInfo.getStyle(), width, borderInfo.getColor(),
-                    (outer ? BorderProps.COLLAPSE_OUTER : BorderProps.COLLAPSE_INNER));
+            return  BorderProps.makeRectangular(borderInfo.getStyle(), width, borderInfo.getColor(),
+                    (outer ? BorderProps.Mode.COLLAPSE_OUTER : BorderProps.Mode.COLLAPSE_INNER));
         } else {
             return null;
         }
     }
+
 
     /**
      * Add background to an area. This method is mainly used by table-related layout

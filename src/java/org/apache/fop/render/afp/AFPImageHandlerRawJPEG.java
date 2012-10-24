@@ -94,9 +94,9 @@ public class AFPImageHandlerRawJPEG extends AFPImageHandler implements ImageHand
         AFPPaintingState paintingState = afpContext.getPaintingState();
 
         // set resource information
-        setResourceInformation(imageObjectInfo,
+        imageObjectInfo.setResourceInfo(createResourceInformation(
                 image.getInfo().getOriginalURI(),
-                afpContext.getForeignAttributes());
+                afpContext.getForeignAttributes()));
         setDefaultResourceLevel(imageObjectInfo, afpContext.getResourceManager());
 
         // Positioning

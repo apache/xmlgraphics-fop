@@ -38,6 +38,8 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
+import org.apache.fop.render.intermediate.BorderPainter;
+import org.apache.fop.render.intermediate.GraphicsPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
@@ -58,7 +60,9 @@ public class Java2DPainter extends AbstractIFPainter<Java2DDocumentHandler> {
     /** The font information */
     protected FontInfo fontInfo;
 
-    private Java2DBorderPainter borderPainter;
+    private final GraphicsPainter graphicsPainter;
+
+    private final BorderPainter borderPainter;
 
     /** The current state, holds a Graphics2D and its context */
     protected Java2DGraphicsState g2dState;
@@ -92,7 +96,8 @@ public class Java2DPainter extends AbstractIFPainter<Java2DDocumentHandler> {
         }
         this.fontInfo = fontInfo;
         this.g2dState = new Java2DGraphicsState(g2d, fontInfo, g2d.getTransform());
-        this.borderPainter = new Java2DBorderPainter(this);
+        graphicsPainter = new Java2DGraphicsPainter(this);
+        this.borderPainter = new BorderPainter(graphicsPainter);
     }
 
     /** {@inheritDoc} */
@@ -174,6 +179,13 @@ public class Java2DPainter extends AbstractIFPainter<Java2DDocumentHandler> {
     }
 
     /** {@inheritDoc} */
+    public void clipBackground(Rectangle rect, BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+        // TODO Auto-generated method stub
+
+    }
+
+    /** {@inheritDoc} */
     public void fillRect(Rectangle rect, Paint fill) throws IFException {
         if (fill == null) {
             return;
@@ -188,19 +200,18 @@ public class Java2DPainter extends AbstractIFPainter<Java2DDocumentHandler> {
     public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
             BorderProps left, BorderProps right) throws IFException {
         if (top != null || bottom != null || left != null || right != null) {
-            try {
-                this.borderPainter.drawBorders(rect, top, bottom, left, right);
-            } catch (IOException e) {
-                //Won't happen with Java2D
-                throw new IllegalStateException("Unexpected I/O error");
-            }
+            this.borderPainter.drawBorders(rect, top, bottom, left, right, null);
         }
     }
 
     /** {@inheritDoc} */
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
             throws IFException {
-        this.borderPainter.drawLine(start, end, width, color, style);
+        try {
+            this.graphicsPainter.drawLine(start, end, width, color, style);
+        } catch (IOException ioe) {
+            throw new IFException("Unexpected error drawing line", ioe);
+        }
     }
 
     /** {@inheritDoc} */
@@ -262,5 +273,7 @@ public class Java2DPainter extends AbstractIFPainter<Java2DDocumentHandler> {
     private void concatenateTransformationMatrix(AffineTransform transform) throws IOException {
         g2dState.transform(transform);
     }
+
+
 
 }

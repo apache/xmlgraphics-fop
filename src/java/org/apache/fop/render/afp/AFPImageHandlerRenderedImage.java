@@ -111,9 +111,9 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         AFPPaintingState paintingState = afpContext.getPaintingState();
 
         // set resource information
-        setResourceInformation(imageObjectInfo,
+        imageObjectInfo.setResourceInfo(createResourceInformation(
                 image.getInfo().getOriginalURI(),
-                afpContext.getForeignAttributes());
+                afpContext.getForeignAttributes()));
         setDefaultResourceLevel(imageObjectInfo, afpContext.getResourceManager());
 
         // Positioning
@@ -201,6 +201,7 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
             ImageInfo imageInfo = imageRendered.getInfo();
             this.intrinsicSize = imageInfo.getSize();
             this.effIntrinsicSize = intrinsicSize;
+            effIntrinsicSize.setSizeInPixels(renderedImage.getWidth(), renderedImage.getHeight());
 
             AFPResourceInfo resourceInfo = imageObjectInfo.getResourceInfo();
             this.usePageSegments = useFS10 && !resourceInfo.getLevel().isInline();

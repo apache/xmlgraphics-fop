@@ -91,9 +91,11 @@ public abstract class AbstractAFPImageHandlerRawStream extends AFPImageHandler
         AFPDataObjectInfo dataObjectInfo = createDataObjectInfo();
 
         // set resource information
-        setResourceInformation(dataObjectInfo,
+
+        dataObjectInfo.setResourceInfo(createResourceInformation(
                 image.getInfo().getOriginalURI(),
-                afpContext.getForeignAttributes());
+                afpContext.getForeignAttributes()));
+
 
         // Positioning
         dataObjectInfo.setObjectAreaInfo(createObjectAreaInfo(afpContext.getPaintingState(), pos));

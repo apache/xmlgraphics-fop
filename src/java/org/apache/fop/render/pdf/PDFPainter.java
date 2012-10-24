@@ -43,6 +43,8 @@ import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
+import org.apache.fop.render.intermediate.BorderPainter;
+import org.apache.fop.render.intermediate.GraphicsPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
@@ -61,7 +63,9 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
     /** The current content generator */
     protected PDFContentGenerator generator;
 
-    private final PDFBorderPainter borderPainter;
+    private final GraphicsPainter graphicsPainter;
+
+    private final BorderPainter borderPainter;
 
     private boolean accessEnabled;
 
@@ -114,7 +118,8 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         super(documentHandler);
         this.logicalStructureHandler = logicalStructureHandler;
         this.generator = documentHandler.getGenerator();
-        this.borderPainter = new PDFBorderPainter(this.generator);
+        this.graphicsPainter = new PDFGraphicsPainter(this.generator);
+        this.borderPainter = new BorderPainter(this.graphicsPainter);
         this.state = IFState.create();
         accessEnabled = this.getUserAgent().isAccessibilityEnabled();
         languageAvailabilityChecker = accessEnabled
@@ -250,6 +255,20 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
     }
 
     /** {@inheritDoc} */
+    public void clipBackground(Rectangle rect,
+            BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+
+        try {
+            borderPainter.clipBackground(rect,
+                    bpsBefore,  bpsAfter, bpsStart,  bpsEnd);
+        } catch (IOException ioe) {
+            throw new IFException("I/O error while clipping background", ioe);
+        }
+
+    }
+
+    /** {@inheritDoc} */
     public void fillRect(Rectangle rect, Paint fill) throws IFException {
         if (fill == null) {
             return;
@@ -283,23 +302,26 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
     /** {@inheritDoc} */
     @Override
     public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
-            BorderProps left, BorderProps right) throws IFException {
+            BorderProps left, BorderProps right, Color innerBackgroundColor) throws IFException {
         if (top != null || bottom != null || left != null || right != null) {
             generator.endTextObject();
-            try {
-                this.borderPainter.drawBorders(rect, top, bottom, left, right);
-            } catch (IOException ioe) {
-                throw new IFException("I/O error while drawing borders", ioe);
-            }
+            this.borderPainter.drawBorders(rect, top, bottom, left, right, innerBackgroundColor);
         }
     }
+
+
+
 
     /** {@inheritDoc} */
     @Override
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
         throws IFException {
         generator.endTextObject();
-        this.borderPainter.drawLine(start, end, width, color, style);
+        try {
+            this.graphicsPainter.drawLine(start, end, width, color, style);
+        } catch (IOException ioe) {
+            throw new IFException("Cannot draw line", ioe);
+        }
     }
 
     private Typeface getTypeface(String fontName) {

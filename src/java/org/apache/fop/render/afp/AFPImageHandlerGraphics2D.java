@@ -85,9 +85,10 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler implements ImageH
         AFPGraphicsObjectInfo graphicsObjectInfo = (AFPGraphicsObjectInfo)createDataObjectInfo();
 
         // set resource information
-        setResourceInformation(graphicsObjectInfo,
+
+        graphicsObjectInfo.setResourceInfo(createResourceInformation(
                 image.getInfo().getOriginalURI(),
-                afpContext.getForeignAttributes());
+                afpContext.getForeignAttributes()));
 
         // Positioning
         graphicsObjectInfo.setObjectAreaInfo(

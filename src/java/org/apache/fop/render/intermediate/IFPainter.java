@@ -168,6 +168,34 @@ public interface IFPainter {
     void clipRect(Rectangle rect) throws IFException;
     //TODO clipRect() shall be considered temporary until verified with SVG and PCL
 
+
+    /**
+     * Restricts the current clipping region to the inner border.
+     * @param rect the rectangle's coordinates and extent
+     * @param bpsBefore the border segment on the before-side (top)
+     * @param bpsAfter the border segment on the after-side (bottom)
+     * @param bpsStart the border segment on the start-side (left)
+     * @param bpsEnd the border segment on the end-side (right)
+     * @throws IFException if an error occurs while handling this event
+     */
+    void clipBackground (Rectangle rect,
+            BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException;
+
+
+    /**
+     * TODO Painter-specific rounded borders logic required background drawing to be
+     * made optional.  A future refactoring of the rounded borders code should aim to make
+     * the need for this abstraction obsolete
+     * @param bpsBefore the before border
+     * @param bpsAfter the after border
+     * @param bpsStart the start border
+     * @param bpsEnd the end border
+     * @return true if and only if background drawing is required
+     */
+    boolean isBackgroundRequired(BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd);
+
     /**
      * Fills a rectangular area.
      * @param rect the rectangle's coordinates and extent
@@ -184,11 +212,12 @@ public interface IFPainter {
      * @param bottom the border segment on the bottom edge
      * @param left the border segment on the left edge
      * @param right the border segment on the right edge
+     * @param innerBackgroundColor the color of the inner background
      * @throws IFException if an error occurs while handling this event
      */
     void drawBorderRect(Rectangle rect,
             BorderProps top, BorderProps bottom,
-            BorderProps left, BorderProps right) throws IFException;
+            BorderProps left, BorderProps right, Color innerBackgroundColor) throws IFException;
 
     /**
      * Draws a line. NOTE: Currently, only horizontal lines are implemented!

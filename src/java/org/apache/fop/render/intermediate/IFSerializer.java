@@ -519,6 +519,37 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
     }
 
     /** {@inheritDoc} */
+    public void clipBackground(Rectangle rect, BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+        try {
+            AttributesImpl atts = new AttributesImpl();
+            addAttribute(atts, "x", Integer.toString(rect.x));
+            addAttribute(atts, "y", Integer.toString(rect.y));
+            addAttribute(atts, "width", Integer.toString(rect.width));
+            addAttribute(atts, "height", Integer.toString(rect.height));
+            if (hasRoundedCorners(bpsBefore, bpsAfter, bpsStart, bpsEnd)) {
+
+                if (bpsBefore != null) {
+                    addAttribute(atts, "top", bpsBefore.toString());
+                }
+                if (bpsAfter != null) {
+                    addAttribute(atts, "bottom", bpsAfter.toString());
+                }
+                if (bpsStart != null) {
+                    addAttribute(atts, "left", bpsStart.toString());
+                }
+                if (bpsEnd != null) {
+                    addAttribute(atts, "right", bpsEnd.toString());
+                }
+            }
+            handler.element(EL_CLIP_RECT, atts);
+        } catch (SAXException e) {
+            throw new IFException("SAX error in clipRect()", e);
+        }
+    }
+
+
+    /** {@inheritDoc} */
     public void fillRect(Rectangle rect, Paint fill) throws IFException {
         if (fill == null) {
             return;
@@ -536,9 +567,38 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
         }
     }
 
+    //TODO create a class representing all borders should exist
+    //with query methods like this
+    private boolean hasRoundedCorners(BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) {
+        boolean rtn = false;
+
+        if (bpsBefore != null && bpsBefore.getRadiusStart() > 0
+                && bpsStart != null && bpsStart.getRadiusStart() > 0) {
+            rtn = true;
+        }
+
+        if (bpsBefore != null && bpsBefore.getRadiusEnd() > 0
+                && bpsEnd != null && bpsEnd.getRadiusStart() > 0) {
+            rtn = true;
+        }
+
+        if (bpsEnd != null && bpsEnd.getRadiusEnd() > 0
+                && bpsAfter != null && bpsAfter.getRadiusEnd() > 0) {
+            rtn = true;
+        }
+
+        if (bpsAfter != null && bpsAfter.getRadiusStart() > 0
+                && bpsStart != null && bpsStart.getRadiusEnd() > 0) {
+            rtn = true;
+        }
+
+        return rtn;
+    }
+
     /** {@inheritDoc} */
     public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
-            BorderProps left, BorderProps right) throws IFException {
+            BorderProps left, BorderProps right, Color innerBackgroundColor) throws IFException {
         if (top == null && bottom == null && left == null && right == null) {
             return;
         }
@@ -560,6 +620,12 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
             if (right != null) {
                 addAttribute(atts, "right", right.toString());
             }
+
+            if (innerBackgroundColor != null) {
+                addAttribute(atts, "inner-background-color",
+                        ColorUtil.colorToString(innerBackgroundColor));
+            }
+
             handler.element(EL_BORDER_RECT, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in drawBorderRect()", e);
@@ -855,5 +921,11 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
         } catch (SAXException e) {
             throw new IFException("SAX error serializing object", e);
         }
+    }
+
+    /** {@inheritDoc} */
+    public boolean isBackgroundRequired(BorderProps bpsTop, BorderProps bpsBottom,
+            BorderProps bpsLeft, BorderProps bpsRight) {
+        return true;
     }
 }
