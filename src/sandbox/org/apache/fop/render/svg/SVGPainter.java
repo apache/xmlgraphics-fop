@@ -260,6 +260,13 @@ public class SVGPainter extends AbstractIFPainter<AbstractSVGDocumentHandler>
     }
 
     /** {@inheritDoc} */
+    public void clipBackground(Rectangle rect, BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+        //TODO Implement me!!!
+
+    }
+
+    /** {@inheritDoc} */
     public void fillRect(Rectangle rect, Paint fill) throws IFException {
         if (fill == null) {
             return;
@@ -398,5 +405,14 @@ public class SVGPainter extends AbstractIFPainter<AbstractSVGDocumentHandler>
                     "Don't know how to handle extension object: " + extension);
         }
     }
+
+    /** {@inheritDoc} */
+    public void fillBackground(Rectangle rect, Paint fill, BorderProps bpsBefore,
+            BorderProps bpsAfter, BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+        // Not supported in SVG
+
+    }
+
+
 
 }

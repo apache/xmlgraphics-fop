@@ -81,6 +81,7 @@
         <xs:complexType>
           <xs:attributeGroup ref="mf:rectAtts"/>
           <xs:attributeGroup ref="mf:fillAtts"/>
+          <xs:attributeGroup ref="mf:borderAtts"/>
         </xs:complexType>
       </xs:element>
       <xs:element name="line">
@@ -97,10 +98,8 @@
       <xs:element name="border-rect">
         <xs:complexType>
           <xs:attributeGroup ref="mf:rectAtts"/>
-          <xs:attribute name="left" type="mf:borderDef"/>
-          <xs:attribute name="right" type="mf:borderDef"/>
-          <xs:attribute name="top" type="mf:borderDef"/>
-          <xs:attribute name="bottom" type="mf:borderDef"/>
+          <xs:attribute name="inner-background-color" type="mf:colorType"/>
+          <xs:attributeGroup ref="mf:borderAtts"/>
         </xs:complexType>
       </xs:element>
       <xs:element name="image">
@@ -127,6 +126,12 @@
   <xs:attributeGroup name="rectAtts">
     <xs:attributeGroup ref="mf:posAtts"/>
     <xs:attributeGroup ref="mf:sizeAtts"/>
+  </xs:attributeGroup>
+   <xs:attributeGroup name="borderAtts">
+    <xs:attribute name="left" type="mf:borderDef"/>
+    <xs:attribute name="right" type="mf:borderDef"/>
+    <xs:attribute name="top" type="mf:borderDef"/>
+    <xs:attribute name="bottom" type="mf:borderDef"/>
   </xs:attributeGroup>
   <xs:attributeGroup name="fillAtts">
     <xs:attribute name="fill" type="xs:string" default="none"/>

@@ -174,6 +174,14 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
     }
 
     /** {@inheritDoc} */
+    public void clipBackground(Rectangle rect, BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+        //PCL cannot clip (only HP GL/2 can)
+        //If you need clipping support, switch to RenderingMode.BITMAP.
+
+    }
+
+    /** {@inheritDoc} */
     public void fillRect(Rectangle rect, Paint fill) throws IFException {
         if (fill == null) {
             return;
@@ -201,7 +209,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
             final BorderProps top, final BorderProps bottom,
             final BorderProps left, final BorderProps right) throws IFException {
         if (isSpeedOptimized()) {
-            super.drawBorderRect(rect, top, bottom, left, right);
+            super.drawBorderRect(rect, top, bottom, left, right, null);
             return;
         }
         if (top != null || bottom != null || left != null || right != null) {
@@ -524,5 +532,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
         Point2D transPoint = transformedPoint(x, y);
         gen.setCursorPos(transPoint.getX(), transPoint.getY());
     }
+
+
 
 }

@@ -21,23 +21,37 @@ package org.apache.fop.render.afp;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.MessageDigest;
 import java.util.Map;
 
 import org.w3c.dom.Document;
 
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPEventProducer;
+import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
+import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPUnitConverter;
 import org.apache.fop.afp.AbstractAFPPainter;
 import org.apache.fop.afp.BorderPaintingInfo;
@@ -55,9 +69,11 @@ import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.Typeface;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.BorderPainter;
+import org.apache.fop.render.intermediate.GraphicsPainter;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
@@ -70,11 +86,11 @@ import org.apache.fop.util.CharUtilities;
  */
 public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
-    //** logging instance */
-    //private static Log log = LogFactory.getLog(AFPPainter.class);
-
     private static final int X = 0;
+
     private static final int Y = 1;
+
+    private final GraphicsPainter graphicsPainter;
 
     /** the border painter */
     private final AFPBorderPainterAdapter borderPainter;
@@ -93,8 +109,9 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
     public AFPPainter(AFPDocumentHandler documentHandler) {
         super(documentHandler);
         this.state = IFState.create();
-        this.borderPainter = new AFPBorderPainterAdapter(
+        this.graphicsPainter = new AFPGraphicsPainter(
                 new AFPBorderPainter(getPaintingState(), getDataStream()));
+        this.borderPainter = new AFPBorderPainterAdapter(graphicsPainter, this, documentHandler);
         this.rectanglePainter = documentHandler.createRectanglePainter();
         this.unitConv = getPaintingState().getUnitConverter();
         this.eventProducer = AFPEventProducer.Provider.get(getUserAgent().getEventBroadcaster());
@@ -179,13 +196,13 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
     /** {@inheritDoc} */
     @Override
     protected RenderingContext createRenderingContext() {
-        AFPRenderingContext psContext = new AFPRenderingContext(
+        AFPRenderingContext renderingContext = new AFPRenderingContext(
                 getUserAgent(),
                 getDocumentHandler().getResourceManager(),
                 getPaintingState(),
                 getFontInfo(),
                 getContext().getForeignAttributes());
-        return psContext;
+        return renderingContext;
     }
 
     /** {@inheritDoc} */
@@ -224,6 +241,32 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
     }
 
     /** {@inheritDoc} */
+    protected void drawImage(Image image, Rectangle rect,
+            RenderingContext context, boolean convert, Map additionalHints)
+                    throws IOException, ImageException {
+
+
+        AFPRenderingContext afpContext = (AFPRenderingContext) context;
+
+        AFPResourceInfo resourceInfo = AFPImageHandler.createResourceInformation(
+                image.getInfo().getOriginalURI(),
+                afpContext.getForeignAttributes());
+
+        //Check if the image is cached before processing it again
+        if (afpContext.getResourceManager().isObjectCached(resourceInfo)) {
+
+            AFPObjectAreaInfo areaInfo = AFPImageHandler.createObjectAreaInfo(
+                    afpContext.getPaintingState(), rect);
+
+            afpContext.getResourceManager().includeCachedObject(resourceInfo, areaInfo);
+
+        } else {
+            super.drawImage(image, rect, context, convert, additionalHints);
+        }
+
+    }
+
+    /** {@inheritDoc} */
     public void drawImage(Document doc, Rectangle rect) throws IFException {
         drawImageUsingDocument(doc, rect);
     }
@@ -244,7 +287,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
         }
         if (rect.width != 0 && rect.height != 0) {
             if (fill instanceof Color) {
-                getPaintingState().setColor((Color)fill);
+                getPaintingState().setColor((Color) fill);
             } else {
                 throw new UnsupportedOperationException("Non-Color paints NYI");
             }
@@ -258,96 +301,576 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
-            BorderProps left, BorderProps right) throws IFException {
+            BorderProps left, BorderProps right, Color innerBackgroundColor) throws IFException {
         if (top != null || bottom != null || left != null || right != null) {
-            try {
-                this.borderPainter.drawBorders(rect, top, bottom, left, right);
-            } catch (IOException ife) {
-                throw new IFException("IO error while painting borders", ife);
-            }
+            this.borderPainter.drawBorders(rect, top, bottom, left, right, innerBackgroundColor);
         }
     }
 
-    //TODO Try to resolve the name-clash between the AFPBorderPainter in the afp package
-    //and this one. Not done for now to avoid a lot of re-implementation and code duplication.
-    private static class AFPBorderPainterAdapter extends BorderPainter {
 
-        private final AFPBorderPainter delegate;
+    private static final class AFPGraphicsPainter implements GraphicsPainter {
 
-        public AFPBorderPainterAdapter(AFPBorderPainter borderPainter) {
-            this.delegate = borderPainter;
+        private final AFPBorderPainter graphicsPainter;
+
+        private AFPGraphicsPainter(AFPBorderPainter delegate) {
+            this.graphicsPainter = delegate;
         }
 
-        @Override
-        protected void clip() throws IOException {
-            //not supported by AFP
-        }
-
-        @Override
-        protected void closePath() throws IOException {
-            //used for clipping only, so not implemented
-        }
-
-        @Override
-        protected void moveTo(int x, int y) throws IOException {
-            //used for clipping only, so not implemented
-        }
-
-        @Override
-        protected void lineTo(int x, int y) throws IOException {
-            //used for clipping only, so not implemented
-        }
-
-        @Override
-        protected void saveGraphicsState() throws IOException {
-            //used for clipping only, so not implemented
-        }
-
-        @Override
-        protected void restoreGraphicsState() throws IOException {
-            //used for clipping only, so not implemented
+        public void drawBorderLine(int x1, int y1, int x2, int y2,
+                boolean horz, boolean startOrBefore, int style, Color color)
+                        throws IOException {
+            BorderPaintingInfo borderPaintInfo = new BorderPaintingInfo(
+                    toPoints(x1), toPoints(y1), toPoints(x2), toPoints(y2),
+                    horz, style, color);
+            graphicsPainter.paint(borderPaintInfo);
         }
 
         private float toPoints(int mpt) {
             return mpt / 1000f;
         }
 
-        @Override
-        protected void drawBorderLine(                           // CSOK: ParameterNumber
-                int x1, int y1, int x2, int y2, boolean horz,
-                boolean startOrBefore, int style, Color color) throws IOException {
-            BorderPaintingInfo borderPaintInfo = new BorderPaintingInfo(
-                    toPoints(x1), toPoints(y1), toPoints(x2), toPoints(y2),
-                    horz, style, color);
-            delegate.paint(borderPaintInfo);
-        }
-
-        @Override
-        public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
-                throws IOException {
+        public void drawLine(Point start, Point end, int width,
+                Color color, RuleStyle style) throws IOException {
             if (start.y != end.y) {
                 //TODO Support arbitrary lines if necessary
-                throw new UnsupportedOperationException(
-                        "Can only deal with horizontal lines right now");
+                throw new UnsupportedOperationException("Can only deal with horizontal lines right now");
             }
-
             //Simply delegates to drawBorderLine() as AFP line painting is not very sophisticated.
             int halfWidth = width / 2;
             drawBorderLine(start.x, start.y - halfWidth, end.x, start.y + halfWidth,
                     true, true, style.getEnumValue(), color);
         }
 
+        public void moveTo(int x, int y) throws IOException {
+        }
+
+        public void lineTo(int x, int y) throws IOException {
+        }
+
+        public void arcTo(double startAngle, double endAngle, int cx, int cy,
+                int width, int height) throws IOException {
+        }
+
+        public void rotateCoordinates(double angle) throws IOException {
+            throw new UnsupportedOperationException("Cannot handle coordinate rotation");
+        }
+
+        public void translateCoordinates(int xTranslate, int yTranslate) throws IOException {
+            throw new UnsupportedOperationException("Cannot handle coordinate translation");
+        }
+
+        public void scaleCoordinates(float xScale, float yScale) throws IOException {
+            throw new UnsupportedOperationException("Cannot handle coordinate scaling");
+        }
+
+        public void closePath() throws IOException {
+        }
+
+        public void clip() throws IOException {
+        }
+
+        public void saveGraphicsState() throws IOException {
+        }
+
+        public void restoreGraphicsState() throws IOException {
+        }
+
+
+    }
+
+    //TODO Try to resolve the name-clash between the AFPBorderPainter in the afp package
+    //and this one. Not done for now to avoid a lot of re-implementation and code duplication.
+    private static class AFPBorderPainterAdapter extends BorderPainter {
+
+        private final class BorderImagePainter implements Graphics2DImagePainter {
+            private final double cornerCorrectionFactor;
+            private final Rectangle borderRect;
+            private final BorderProps bpsStart;
+            private final BorderProps bpsEnd;
+            private final BorderProps bpsBefore;
+            private final BorderProps bpsAfter;
+            private final boolean[] roundCorner;
+            private final Color innerBackgroundColor;
+
+            /* TODO represent border related parameters in a class */
+            private BorderImagePainter(double cornerCorrectionFactor, Rectangle borderRect,
+                    BorderProps bpsStart, BorderProps bpsEnd,
+                    BorderProps bpsBefore, BorderProps bpsAfter,
+                    boolean[] roundCorner, Color innerBackgroundColor) {
+                this.cornerCorrectionFactor = cornerCorrectionFactor;
+                this.borderRect = borderRect;
+                this.bpsStart = bpsStart;
+                this.bpsBefore = bpsBefore;
+                this.roundCorner = roundCorner;
+                this.bpsEnd = bpsEnd;
+                this.bpsAfter = bpsAfter;
+                this.innerBackgroundColor = innerBackgroundColor;
+            }
+
+            public void paint(Graphics2D g2d, Rectangle2D area) {
+
+                //background
+                Area background = new Area(area);
+                Area cornerRegion = new Area();
+                Area[] cornerBorder = new Area[]{new Area(), new Area(), new Area(), new Area()};
+
+                if (roundCorner[TOP_LEFT]) {
+                    AffineTransform transform =  new AffineTransform();
+                    int beforeRadius = (int)(cornerCorrectionFactor * bpsBefore.getRadiusStart());
+                    int startRadius = (int)(cornerCorrectionFactor * bpsStart.getRadiusStart());
+
+                    int beforeWidth = bpsBefore.width;
+                    int startWidth = bpsStart.width;
+                    int corner = TOP_LEFT;
+
+                    background.subtract(makeCornerClip(beforeRadius, startRadius,
+                            transform));
+
+                    Area clip = new Area(new Rectangle(0, 0, startRadius, beforeRadius));
+                    clip.transform(transform);
+                    cornerRegion.add(clip);
+
+                    cornerBorder[TOP].add(makeCornerBorderBPD(beforeRadius,
+                                    startRadius, beforeWidth, startWidth, transform));
+
+                    cornerBorder[LEFT].add(makeCornerBorderIPD(beforeRadius,
+                            startRadius, beforeWidth, startWidth, transform));
+                }
+
+                if (roundCorner[TOP_RIGHT]) {
+                    AffineTransform transform
+                            = new AffineTransform(-1, 0, 0, 1, borderRect.width, 0);
+
+                    int beforeRadius = (int)(cornerCorrectionFactor * bpsBefore.getRadiusEnd());
+                    int startRadius = (int)(cornerCorrectionFactor * bpsEnd.getRadiusStart());
+
+                    int beforeWidth = bpsBefore.width;
+                    int startWidth = bpsEnd.width;
+                    int corner = TOP_RIGHT;
+
+                    background.subtract(makeCornerClip(beforeRadius, startRadius,
+                            transform));
+
+                    Area clip = new Area(new Rectangle(0, 0, startRadius, beforeRadius));
+                    clip.transform(transform);
+                    cornerRegion.add(clip);
+
+                    cornerBorder[TOP].add(makeCornerBorderBPD(beforeRadius,
+                                    startRadius, beforeWidth, startWidth, transform));
+
+                    cornerBorder[RIGHT].add(makeCornerBorderIPD(beforeRadius,
+                            startRadius, beforeWidth, startWidth, transform));
+                }
+
+                if (roundCorner[BOTTOM_RIGHT]) {
+                    AffineTransform transform = new AffineTransform(-1, 0, 0, -1,
+                            borderRect.width, borderRect.height);
+
+                    int beforeRadius = (int)(cornerCorrectionFactor * bpsAfter.getRadiusEnd());
+                    int startRadius = (int)(cornerCorrectionFactor * bpsEnd.getRadiusEnd());
+
+                    int beforeWidth = bpsAfter.width;
+                    int startWidth = bpsEnd.width;
+                    int corner = BOTTOM_RIGHT;
+
+                    background.subtract(makeCornerClip(beforeRadius, startRadius,
+                            transform));
+
+                    Area clip = new Area(new Rectangle(0, 0, startRadius, beforeRadius));
+                    clip.transform(transform);
+                    cornerRegion.add(clip);
+
+                    cornerBorder[BOTTOM].add(makeCornerBorderBPD(beforeRadius,
+                            startRadius, beforeWidth, startWidth, transform));
+                    cornerBorder[RIGHT].add(makeCornerBorderIPD(beforeRadius,
+                            startRadius, beforeWidth, startWidth, transform));
+                }
+
+                if (roundCorner[BOTTOM_LEFT]) {
+                    AffineTransform transform
+                            = new AffineTransform(1, 0, 0, -1, 0, borderRect.height);
+
+                    int beforeRadius = (int)(cornerCorrectionFactor * bpsAfter.getRadiusStart());
+                    int startRadius = (int)(cornerCorrectionFactor * bpsStart.getRadiusEnd());
+
+                    int beforeWidth = bpsAfter.width;
+                    int startWidth = bpsStart.width;
+                    int corner = BOTTOM_LEFT;
+
+                    background.subtract(makeCornerClip(beforeRadius, startRadius,
+                            transform));
+
+                    Area clip = new Area(new Rectangle(0, 0, startRadius, beforeRadius));
+                    clip.transform(transform);
+                    cornerRegion.add(clip);
+
+                    cornerBorder[BOTTOM].add(makeCornerBorderBPD(beforeRadius,
+                                    startRadius, beforeWidth, startWidth, transform));
+                    cornerBorder[LEFT].add(makeCornerBorderIPD(beforeRadius,
+                            startRadius, beforeWidth, startWidth, transform));
+                }
+
+                g2d.setColor(innerBackgroundColor);
+                g2d.fill(background);
+
+                //paint the borders
+                //TODO refactor to repeating code into method
+                if (bpsBefore != null && bpsBefore.width > 0) {
+                    GeneralPath borderPath = new GeneralPath();
+                    borderPath.moveTo(0, 0);
+                    borderPath.lineTo(borderRect.width, 0);
+                    borderPath.lineTo(
+                            borderRect.width - (bpsEnd == null ? 0 : bpsEnd.width),
+                            bpsBefore.width);
+                    borderPath.lineTo(bpsStart == null ? 0 : bpsStart.width, bpsBefore.width);
+
+                    Area border = new Area(borderPath);
+
+                    border.subtract(cornerRegion);
+
+                    g2d.setColor(bpsBefore.color);
+                    g2d.fill(border);
+                    g2d.fill(cornerBorder[TOP]);
+                }
+
+                if (bpsEnd != null && bpsEnd.width > 0) {
+                    GeneralPath borderPath = new GeneralPath();
+                    borderPath.moveTo(borderRect.width, 0);
+                    borderPath.lineTo(borderRect.width, borderRect.height);
+                    borderPath.lineTo(
+                            borderRect.width - bpsEnd.width,
+                            borderRect.height - (bpsAfter == null ? 0 : bpsAfter.width));
+                    borderPath.lineTo(
+                            borderRect.width - bpsEnd.width,
+                            bpsBefore == null ? 0 : bpsBefore.width);
+
+                    Area border = new Area(borderPath);
+
+                    border.subtract(cornerRegion);
+
+                    g2d.setColor(bpsEnd.color);
+                    g2d.fill(border);
+                    g2d.fill(cornerBorder[RIGHT]);
+                }
+
+                if (bpsAfter != null && bpsAfter.width > 0) {
+                    GeneralPath borderPath = new GeneralPath();
+                    borderPath.moveTo(0, borderRect.height);
+                    borderPath.lineTo(borderRect.width, borderRect.height);
+                    borderPath.lineTo(
+                            borderRect.width - (bpsEnd == null ? 0 : bpsEnd.width),
+                            borderRect.height - bpsAfter.width);
+                    borderPath.lineTo(bpsStart == null ? 0 : bpsStart.width,
+                            borderRect.height - bpsAfter.width);
+                    Area border = new Area(borderPath);
+
+                    border.subtract(cornerRegion);
+
+                    g2d.setColor(bpsAfter.color);
+                    g2d.fill(border);
+                    g2d.fill(cornerBorder[BOTTOM]);
+                }
+
+                if (bpsStart != null && bpsStart.width > 0) {
+
+                    GeneralPath borderPath = new GeneralPath();
+                    borderPath.moveTo(bpsStart.width,
+                            bpsBefore == null ? 0 : bpsBefore.width);
+                    borderPath.lineTo(bpsStart.width,
+                            borderRect.height - (bpsAfter == null ? 0 : bpsAfter.width));
+                    borderPath.lineTo(0, borderRect.height);
+                    borderPath.lineTo(0, 0);
+
+                    Area border = new Area(borderPath);
+
+                    border.subtract(cornerRegion);
+
+                    g2d.setColor(bpsStart.color);
+                    g2d.fill(border);
+                    g2d.fill(cornerBorder[LEFT]);
+                }
+            }
+
+            public Dimension getImageSize() {
+                return borderRect.getSize();
+            }
+        }
+
+        private final AFPPainter painter;
+        private final AFPDocumentHandler documentHandler;
+
+        public AFPBorderPainterAdapter(GraphicsPainter graphicsPainter, AFPPainter painter,
+                AFPDocumentHandler documentHandler) {
+            super(graphicsPainter);
+            this.painter = painter;
+            this.documentHandler = documentHandler;
+        }
+
+        public void drawBorders(final Rectangle borderRect,
+                final BorderProps bpsBefore, final BorderProps bpsAfter,
+                final BorderProps bpsStart, final BorderProps bpsEnd, Color innerBackgroundColor)
+                        throws IFException {
+            drawRoundedCorners(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd, innerBackgroundColor);
+        }
+
+        private boolean isBackgroundRequired(BorderProps bpsBefore, BorderProps bpsAfter,
+                BorderProps bpsStart, BorderProps bpsEnd) {
+            return !hasRoundedCorners(bpsBefore,  bpsAfter, bpsStart,  bpsEnd);
+        }
+
+        private boolean hasRoundedCorners(final BorderProps bpsBefore, final BorderProps bpsAfter,
+                final BorderProps bpsStart, final BorderProps bpsEnd) {
+            return ((bpsStart == null ? false : bpsStart.getRadiusStart() > 0)
+                    && (bpsBefore == null ? false : bpsBefore.getRadiusStart() > 0))
+                    || ((bpsBefore == null ? false : bpsBefore.getRadiusEnd() > 0)
+                            && (bpsEnd == null ? false : bpsEnd.getRadiusStart() > 0))
+                            || ((bpsEnd == null ? false : bpsEnd.getRadiusEnd() > 0)
+                                    && (bpsAfter == null ? false : bpsAfter.getRadiusEnd() > 0))
+                                    || ((bpsAfter == null ? false : bpsAfter.getRadiusStart() > 0)
+                                            && (bpsStart == null ? false : bpsStart.getRadiusEnd() > 0));
+        }
+
+        private void drawRoundedCorners(final Rectangle borderRect,
+                final BorderProps bpsBefore, final BorderProps bpsAfter,
+                final BorderProps bpsStart, final BorderProps bpsEnd,
+                final Color innerBackgroundColor) throws IFException {
+            final double cornerCorrectionFactor = calculateCornerCorrectionFactor(borderRect.width,
+                    borderRect.height, bpsBefore,  bpsAfter, bpsStart,  bpsEnd);
+            final boolean[] roundCorner = new boolean[]{
+                    bpsBefore != null  && bpsStart != null
+                            && bpsBefore.getRadiusStart() > 0
+                            && bpsStart.getRadiusStart() > 0
+                            && isNotCollapseOuter(bpsBefore)
+                            && isNotCollapseOuter(bpsStart),
+                            bpsEnd != null && bpsBefore != null
+                            && bpsEnd.getRadiusStart() > 0
+                            && bpsBefore.getRadiusEnd() > 0
+                            && isNotCollapseOuter(bpsEnd)
+                            && isNotCollapseOuter(bpsBefore),
+                            bpsEnd != null && bpsAfter != null
+                            && bpsEnd.getRadiusEnd() > 0
+                            && bpsAfter.getRadiusEnd() > 0
+                            && isNotCollapseOuter(bpsEnd)
+                            && isNotCollapseOuter(bpsAfter),
+                            bpsStart != null && bpsAfter != null
+                            && bpsStart.getRadiusEnd() > 0
+                            && bpsAfter.getRadiusStart() > 0
+                            && isNotCollapseOuter(bpsStart)
+                            && isNotCollapseOuter(bpsAfter)
+            };
+
+            if (!roundCorner[TOP_LEFT] && !roundCorner[TOP_RIGHT]
+                    && !roundCorner[BOTTOM_RIGHT] && !roundCorner[BOTTOM_LEFT]) {
+                try {
+                    drawRectangularBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
+                } catch (IOException ioe) {
+                    throw new IFException("IO error drawing borders", ioe);
+                }
+                return;
+            }
+
+            String areaKey = makeKey(borderRect,
+                    bpsBefore, bpsEnd, bpsAfter,
+                    bpsStart, innerBackgroundColor);
+
+            Graphics2DImagePainter painter = null;
+            String name = documentHandler.getCachedRoundedCorner(areaKey);
+
+            if (name == null) {
+
+                name = documentHandler.cacheRoundedCorner(areaKey);
+
+                painter = new BorderImagePainter(cornerCorrectionFactor, borderRect,
+                        bpsStart, bpsEnd, bpsBefore, bpsAfter,
+                        roundCorner, innerBackgroundColor);
+            }
+            paintCornersAsBitmap(painter, borderRect, name);
+        }
+
+        private boolean isNotCollapseOuter(BorderProps bp) {
+            return !bp.isCollapseOuter();
+        }
+
+        private Area makeCornerClip(final int beforeRadius, final int startRadius,
+                final AffineTransform transform) {
+
+            Rectangle clipR = new Rectangle(0, 0, startRadius, beforeRadius);
+
+            Area clip = new Area(clipR);
+
+            Ellipse2D.Double e = new  Ellipse2D.Double();
+            e.x = 0;
+            e.y = 0;
+            e.width = 2 * startRadius;
+            e.height = 2 * beforeRadius;
+
+            clip.subtract(new Area(e));
+
+            clip.transform(transform);
+            return clip;
+        }
+
+
+        private Area makeCornerBorderBPD(final int beforeRadius, final int startRadius,
+                final int beforeWidth, final int startWidth, final AffineTransform transform) {
+
+            Rectangle clipR = new Rectangle(0, 0, startRadius, beforeRadius);
+
+            Ellipse2D.Double e = new  Ellipse2D.Double();
+            e.x = 0;
+            e.y = 0;
+            e.width = 2 * startRadius;
+            e.height = 2 * beforeRadius;
+
+            Ellipse2D.Double i = new  Ellipse2D.Double();
+            i.x = startWidth;
+            i.y = beforeWidth;
+            i.width = 2 * (startRadius - startWidth);
+            i.height = 2 * (beforeRadius - beforeWidth);
+
+            Area clip = new Area(e);
+            clip.subtract(new Area(i));
+            clip.intersect(new Area(clipR));
+
+            GeneralPath cut = new GeneralPath();
+            cut.moveTo(0, 0);
+            cut.lineTo(startRadius, ((float) startRadius * beforeWidth) / startWidth);
+            cut.lineTo(startRadius, 0);
+            clip.intersect(new Area(cut));
+            clip.transform(transform);
+            return clip;
+        }
+
+
+        private Area makeCornerBorderIPD(final int beforeRadius, final int startRadius,
+                final int beforeWidth, final int startWidth, final AffineTransform transform) {
+
+            Rectangle clipR = new Rectangle(0, 0, startRadius, beforeRadius);
+
+
+            Ellipse2D.Double e = new  Ellipse2D.Double();
+            e.x = 0;
+            e.y = 0;
+            e.width = 2 * startRadius;
+            e.height = 2 * beforeRadius;
+
+            Ellipse2D.Double i = new  Ellipse2D.Double();
+            i.x = startWidth;
+            i.y = beforeWidth;
+            i.width = 2 * (startRadius - startWidth);
+            i.height = 2 * (beforeRadius - beforeWidth);
+
+            Area clip = new Area(e);
+            clip.subtract(new Area(i));
+            clip.intersect(new Area(clipR));
+
+            GeneralPath cut = new GeneralPath();
+            cut.moveTo(0, 0);
+            cut.lineTo(startRadius, ((float) startRadius * beforeWidth) / startWidth);
+            cut.lineTo(startRadius, 0);
+            clip.subtract(new Area(cut));
+            clip.transform(transform);
+            return clip;
+        }
+
+        private String makeKey(Rectangle area, BorderProps beforeProps,
+                BorderProps endProps, BorderProps afterProps, BorderProps startProps,
+                Color innerBackgroundColor) {
+
+            return hash(new StringBuffer()
+                    .append(area.width)
+                    .append(":")
+                    .append(area.height)
+                    .append(":")
+                    .append(beforeProps)
+                    .append(":")
+                    .append(endProps)
+                    .append(":")
+                    .append(afterProps)
+                    .append(":")
+                    .append(startProps)
+                    .append(":")
+                    .append(innerBackgroundColor)
+                    .toString());
+        }
+
+
+        private String hash(String text) {
+
+            MessageDigest md;
+            try {
+                md = MessageDigest.getInstance("MD5");
+            } catch (Exception e) {
+                throw new RuntimeException("Internal error", e);
+            }
+
+            byte[] result = md.digest(text.getBytes());
+
+            StringBuffer sb = new StringBuffer();
+            char[] digits = {'0', '1', '2', '3', '4', '5', '6',
+                    '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+            for (int idx = 0; idx < 6; ++idx) {
+                byte b = result[idx];
+                sb.append(digits[(b & 0xf0) >> 4]);
+                sb.append(digits[b & 0x0f]);
+            }
+            return sb.toString();
+        }
+
+        private void paintCornersAsBitmap(Graphics2DImagePainter painter,
+                Rectangle boundingBox, String name) throws IFException {
+            //TODO parameters ok?
+            ImageInfo info = new ImageInfo(name, null);
+
+            ImageSize size = new ImageSize();
+            size.setSizeInMillipoints(boundingBox.width, boundingBox.height);
+
+            //Use the foreign attributes map to set image handling hints
+            Map map = new java.util.HashMap(2);
+            map.put(AFPForeignAttributeReader.RESOURCE_NAME, name);
+            map.put(AFPForeignAttributeReader.RESOURCE_LEVEL, "print-file");
+
+            AFPRenderingContext context = (AFPRenderingContext)
+                    this.painter.createRenderingContext(/*map*/);
+
+            size.setResolution(context.getPaintingState().getResolution());
+            size.calcPixelsFromSize();
+            info.setSize(size);
+            ImageGraphics2D img = new ImageGraphics2D(info, painter);
+
+            Map hints = new java.util.HashMap();
+
+            hints.put(ImageHandlerUtil.CONVERSION_MODE, ImageHandlerUtil.CONVERSION_MODE_BITMAP);
+            hints.put("TARGET_RESOLUTION",
+                    Integer.valueOf(context.getPaintingState().getResolution()));
+
+
+            try {
+                this.painter.drawImage(img, boundingBox, context, true, hints);
+            } catch (IOException ioe) {
+                throw new IFException(
+                        "I/O error while painting corner using a bitmap", ioe);
+            } catch (ImageException ie) {
+                throw new IFException(
+                        "Image error while painting corner using a bitmap", ie);
+            }
+        }
+
+        protected void arcTo(double startAngle, double endAngle, int cx, int cy, int width,
+                int height) throws IOException {
+            throw new UnsupportedOperationException("Can only deal with horizontal lines right now");
+
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
-                throws IFException {
+            throws IFException {
         try {
-            this.borderPainter.drawLine(start, end, width, color, style);
+            this.graphicsPainter.drawLine(start, end, width, color, style);
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawLine()", ioe);
         }
@@ -367,14 +890,14 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
         // register font as necessary
         Map<String, Typeface> fontMetricMap = getFontInfo().getFonts();
-        final AFPFont afpFont = (AFPFont)fontMetricMap.get(fontKey);
+        final AFPFont afpFont = (AFPFont) fontMetricMap.get(fontKey);
         final Font font = getFontInfo().getFontInstance(triplet, fontSize);
         AFPPageFonts pageFonts = getPaintingState().getPageFonts();
         AFPFontAttributes fontAttributes = pageFonts.registerFont(fontKey, afpFont, fontSize);
 
         final int fontReference = fontAttributes.getFontReference();
 
-        final int[] coords = unitConv.mpts2units(new float[] {x, y} );
+        final int[] coords = unitConv.mpts2units(new float[] {x, y});
 
         final CharacterSet charSet = afpFont.getCharacterSet(fontSize);
 
@@ -398,7 +921,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                     builder.absoluteMoveInline(p.x);
 
                     builder.setExtendedTextColor(state.getTextColor());
-                    builder.setCodedFont((byte)fontReference);
+                    builder.setCodedFont((byte) fontReference);
 
                     int l = text.length();
                     int[] dx = IFUtil.convertDPToDX ( dp );
@@ -533,4 +1056,21 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
         getPaintingState().restore();
     }
 
+
+    /** {@inheritDoc} */
+    public void clipBackground(Rectangle rect, BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+    }
+
+    /** {@inheritDoc} */
+    public boolean isBackgroundRequired(BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) {
+        return borderPainter.isBackgroundRequired(bpsBefore,  bpsAfter, bpsStart,  bpsEnd);
+    }
+
+    /** {@inheritDoc} */
+    public void fillBackground(Rectangle rect, Paint fill, BorderProps bpsBefore,
+            BorderProps bpsAfter, BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+        // not supported in AFP
+    }
 }

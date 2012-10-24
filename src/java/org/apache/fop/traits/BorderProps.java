@@ -34,47 +34,90 @@ import org.apache.fop.util.ColorUtil;
  */
 public class BorderProps implements Serializable {
 
-    private static final long serialVersionUID = -886871454032189183L;
+    private static final long serialVersionUID = 8022237892391068187L;
 
-    /** Separate border model */
-    public static final int SEPARATE = 0;
-    /** Collapsing border model, for borders inside a table */
-    public static final int COLLAPSE_INNER = 1;
-    /** Collapsing border model, for borders at the table's outer border */
-    public static final int COLLAPSE_OUTER = 2;
+    public enum Mode {
+        SEPARATE("separate") {
+            @Override
+            int getClippedWidth(BorderProps bp) {
+                return 0;
+            }
+        },
+        COLLAPSE_INNER("collapse-inner"), // for borders inside a table
+        COLLAPSE_OUTER("collapse-outer"); // for borders at the table's outer border
+
+        private final String value;
+
+        Mode(String value) {
+            this.value = value;
+        }
+
+        int getClippedWidth(BorderProps bp) {
+            return bp.width / 2;
+        };
+    }
 
     /** Border style (one of EN_*) */
-    public int style; // Enum for border style                  // CSOK: VisibilityModifier
+    public final int style; // Enum for border style            // CSOK: VisibilityModifier
     /** Border color */
-    public Color color;                                         // CSOK: VisibilityModifier
+    public final Color color;                                   // CSOK: VisibilityModifier
+
     /** Border width */
-    public int width;                                           // CSOK: VisibilityModifier
-    /** Border mode (one of SEPARATE, COLLAPSE_INNER and COLLAPSE_OUTER) */
-    public int mode;                                            // CSOK: VisibilityModifier
+    public final int width;                                           // CSOK: VisibilityModifier
+
+    private final int radiusStart;
+
+    private final int radiusEnd;
+
+    /** Border mode */
+    private final Mode mode;                                   // CSOK: VisibilityModifier
 
     /**
      * Constructs a new BorderProps instance.
      * @param style border style (one of EN_*)
      * @param width border width
+     * @param radiusStart radius of start corner in the direction perpendicular to border segment
+     * @param radiusEnd radius of end corner in the direction perpendicular to border segment
      * @param color border color
      * @param mode border mode ((one of SEPARATE, COLLAPSE_INNER and COLLAPSE_OUTER)
      */
-    public BorderProps(int style, int width, Color color, int mode) {
+    public BorderProps(int style, int width, int radiusStart, int radiusEnd, Color color, Mode mode) {
         this.style = style;
         this.width = width;
+        this.radiusStart = radiusStart;
+        this.radiusEnd = radiusEnd;
         this.color = color;
         this.mode = mode;
     }
 
     /**
-     * Constructs a new BorderProps instance.
-     * @param style border style (one of the XSL enum values for border style)
+     * Factory method for a new BorderProps instance with rectangular corners.
+     * @param style border style (one of EN_*)
      * @param width border width
      * @param color border color
      * @param mode border mode ((one of SEPARATE, COLLAPSE_INNER and COLLAPSE_OUTER)
      */
-    public BorderProps(String style, int width, Color color, int mode) {
-        this(getConstantForStyle(style), width, color, mode);
+    public static BorderProps makeRectangular(int style, int width, Color color, Mode mode) {
+        return new BorderProps(style, width, 0, 0, color, mode);
+    }
+
+    private BorderProps(String style, int width, int radiusStart, int radiusEnd, Color color, Mode mode) {
+        this(getConstantForStyle(style), width, radiusStart, radiusEnd, color, mode);
+    }
+
+    /**
+     *
+     * @return the radius of the corner adjacent to the before or start border
+     */
+    public int getRadiusStart() {
+        return radiusStart;
+    }
+
+    /**
+     * @return the radius of the corner adjacent to the after or end border
+     */
+    public int getRadiusEnd() {
+        return radiusEnd;
     }
 
     /**
@@ -82,11 +125,7 @@ public class BorderProps implements Serializable {
      * @return the effective width of the clipped part of the border
      */
     public static int getClippedWidth(BorderProps bp) {
-        if ((bp != null) && (bp.mode != SEPARATE)) {
-            return bp.width / 2;
-        } else {
-            return 0;
-        }
+        return bp == null ? 0 : bp.mode.getClippedWidth(bp);
     }
 
     private String getStyleString() {
@@ -95,6 +134,10 @@ public class BorderProps implements Serializable {
 
     private static int getConstantForStyle(String style) {
         return BorderStyle.valueOf(style).getEnumValue();
+    }
+
+    public boolean isCollapseOuter() {
+        return mode == Mode.COLLAPSE_OUTER;
     }
 
     /** {@inheritDoc} */
@@ -112,12 +155,14 @@ public class BorderProps implements Serializable {
             return true;
         } else {
             if (obj instanceof BorderProps) {
-                BorderProps other = (BorderProps)obj;
+                BorderProps other = (BorderProps) obj;
                 return (style == other.style)
                         && org.apache.xmlgraphics.java2d.color.ColorUtil.isSameColor(
                                 color, other.color)
                         && width == other.width
-                        && mode == other.mode;
+                        && mode == other.mode
+                        && radiusStart == other.radiusStart
+                        && radiusEnd == other.radiusEnd;
             }
         }
         return false;
@@ -131,60 +176,79 @@ public class BorderProps implements Serializable {
      * @return a BorderProps instance
      */
     public static BorderProps valueOf(FOUserAgent foUserAgent, String s) {
-        if (s.startsWith("(") && s.endsWith(")")) {
-            s = s.substring(1, s.length() - 1);
-            Pattern pattern = Pattern.compile("([^,\\(]+(?:\\(.*\\))?)");
-            Matcher m = pattern.matcher(s);
-            boolean found;
-            found = m.find();
-            String style = m.group();
-            found = m.find();
-            String color = m.group();
-            found = m.find();
-            int width = Integer.parseInt(m.group());
-            int mode = SEPARATE;
-            found = m.find();
-            if (found) {
-                String ms = m.group();
-                if ("collapse-inner".equalsIgnoreCase(ms)) {
-                    mode = COLLAPSE_INNER;
-                } else if ("collapse-outer".equalsIgnoreCase(ms)) {
-                    mode = COLLAPSE_OUTER;
-                }
-            }
-            Color c;
-            try {
-                c = ColorUtil.parseColorString(foUserAgent, color);
-            } catch (PropertyException e) {
-                throw new IllegalArgumentException(e.getMessage());
-            }
-
-            return new BorderProps(style, width, c, mode);
-        } else {
-            throw new IllegalArgumentException("BorderProps must be surrounded by parentheses");
-        }
+        return BorderPropsDeserializer.INSTANCE.valueOf(foUserAgent, s);
     }
-
     /** {@inheritDoc} */
     @Override
     public String toString() {
         StringBuffer sbuf = new StringBuffer();
-        sbuf.append('(');
-        sbuf.append(getStyleString());
-        sbuf.append(',');
-        sbuf.append(ColorUtil.colorToString(color));
-        sbuf.append(',');
-        sbuf.append(width);
-        if (mode != SEPARATE) {
-            sbuf.append(',');
-            if (mode == COLLAPSE_INNER) {
-                sbuf.append("collapse-inner");
-            } else {
-                sbuf.append("collapse-outer");
+        sbuf.append('(')
+                .append(getStyleString()).append(',')
+                .append(ColorUtil.colorToString(color)).append(',')
+                .append(width);
+        if (!mode.equals(Mode.SEPARATE)) {
+            sbuf.append(",").append(mode.value);
+        }
+
+        if (radiusStart != 0 || radiusEnd != 0) {
+            if (mode.equals(Mode.SEPARATE)) {
+                // Because of the corner radii properties the mode must be set
+                // so that the parameter index is consistent
+                sbuf.append(",").append(Mode.SEPARATE.value);
             }
+            sbuf.append(',').append(radiusStart)
+            .append(',').append(radiusEnd);
         }
         sbuf.append(')');
         return sbuf.toString();
+    }
+
+    private static final class BorderPropsDeserializer {
+
+        private static final BorderPropsDeserializer INSTANCE = new BorderPropsDeserializer();
+
+        private static final Pattern PATTERN = Pattern.compile("([^,\\(]+(?:\\(.*\\))?)");
+
+        private BorderPropsDeserializer() {
+        }
+
+        public BorderProps valueOf(FOUserAgent foUserAgent, String s) {
+            if (s.startsWith("(") && s.endsWith(")")) {
+                s = s.substring(1, s.length() - 1);
+                Matcher m = PATTERN.matcher(s);
+                m.find();
+                String style = m.group();
+                m.find();
+                String color = m.group();
+                m.find();
+                int width = Integer.parseInt(m.group());
+                Mode mode = Mode.SEPARATE;
+                if (m.find()) {
+                    String ms = m.group();
+                    if (Mode.COLLAPSE_INNER.value.equalsIgnoreCase(ms)) {
+                        mode = Mode.COLLAPSE_INNER;
+                    } else if (Mode.COLLAPSE_OUTER.value.equalsIgnoreCase(ms)) {
+                        mode = Mode.COLLAPSE_OUTER;
+                    }
+                }
+                Color c;
+                try {
+                    c = ColorUtil.parseColorString(foUserAgent, color);
+                } catch (PropertyException e) {
+                    throw new IllegalArgumentException(e.getMessage());
+                }
+                int startRadius = 0;
+                int endRadius = 0;
+                if (m.find()) {
+                    startRadius = Integer.parseInt(m.group());
+                    m.find();
+                    endRadius = Integer.parseInt(m.group());
+                }
+                return new BorderProps(style, width, startRadius, endRadius, c, mode);
+            } else {
+                throw new IllegalArgumentException("BorderProps must be surrounded by parentheses");
+            }
+        }
     }
 
 }

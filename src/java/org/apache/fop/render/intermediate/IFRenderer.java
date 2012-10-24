@@ -1327,10 +1327,36 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             handleIFException(ife);
         }
     }
-
+    /** {@inheritDoc} */
+    protected void clipBackground(float startx, float starty,
+            float width, float height,
+            BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) {
+        pushGroup(new IFGraphicContext.Group());
+        Rectangle rect = toMillipointRectangle(startx, starty, width, height);
+        try {
+            painter.clipBackground( rect,
+                 bpsBefore,  bpsAfter, bpsStart,  bpsEnd);
+        } catch (IFException ife) {
+            handleIFException(ife);
+        }
+    }
     /** {@inheritDoc} */
     protected void closePath() {
         throw new IllegalStateException("Not used");
+    }
+
+    /** {@inheritDoc} */
+    protected void drawBackground(float startx, float starty,
+            float width, float height,
+            Trait.Background back,
+            BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) {
+        if (painter.isBackgroundRequired(bpsBefore, bpsAfter, bpsStart, bpsEnd)) {
+            super.drawBackground(startx, starty, width, height,
+                     back,  bpsBefore,  bpsAfter,
+                     bpsStart,  bpsEnd);
+        }
     }
 
     /** {@inheritDoc} */
@@ -1338,7 +1364,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             float startx, float starty,
             float width, float height,
             BorderProps bpsBefore, BorderProps bpsAfter,
-            BorderProps bpsStart, BorderProps bpsEnd, int level) {
+            BorderProps bpsStart, BorderProps bpsEnd, int level, Color innerBackgroundColor) {
         Rectangle rect = toMillipointRectangle(startx, starty, width, height);
         try {
             BorderProps bpsTop = bpsBefore;
@@ -1352,7 +1378,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 bpsLeft = bpsEnd;
                 bpsRight = bpsStart;
             }
-            painter.drawBorderRect(rect, bpsTop, bpsBottom, bpsLeft, bpsRight);
+            painter.drawBorderRect(rect, bpsTop, bpsBottom, bpsLeft, bpsRight, innerBackgroundColor);
         } catch (IFException ife) {
             handleIFException(ife);
         }

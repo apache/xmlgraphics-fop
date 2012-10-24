@@ -16,6 +16,8 @@
  */
 package org.apache.fop.render.ps;
 
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -26,9 +28,13 @@ import org.mockito.verification.VerificationMode;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.traits.BorderProps;
 
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -75,4 +81,30 @@ public class PSPainterTestCase {
         }
         verify(gen, test).useColor(state.getTextColor());
     }
+
+    @Test
+    public void testDrawBorderRect() {
+        // the goal of this test is to check that the drawing of rounded corners in PS calls
+        // PSGraphicsPaiter.cubicBezierTo(); the check is done by verifying that a curveto command is written
+        // to the PSGenerator
+        PSGenerator psGenerator = mock(PSGenerator.class);
+        when(psGenerator.formatDouble(anyFloat())).thenReturn("20.0"); // simplify!
+        PSRenderingUtil psRenderingUtil = mock(PSRenderingUtil.class);
+        PSDocumentHandler psDocumentHandler = mock(PSDocumentHandler.class);
+        when(psDocumentHandler.getGenerator()).thenReturn(psGenerator);
+        when(psDocumentHandler.getPSUtil()).thenReturn(psRenderingUtil);
+        PSPainter psPainter = new PSPainter(psDocumentHandler);
+        // build rectangle 200 x 50 (points, which are converted to milipoints)
+        Rectangle rectangle = new Rectangle(0, 0, 200000, 50000);
+        // build border properties: width 4pt, radius 30pt
+        BorderProps border = new BorderProps(Constants.EN_SOLID, 4000, 30000, 30000, Color.BLACK,
+                BorderProps.Mode.SEPARATE);
+        try {
+            psPainter.drawBorderRect(rectangle, border, border, border, border, Color.WHITE);
+            verify(psGenerator, times(16)).writeln("20.0 20.0 20.0 20.0 20.0 20.0 curveto ");
+        } catch (Exception e) {
+            fail("something broke...");
+        }
+    }
+
 }

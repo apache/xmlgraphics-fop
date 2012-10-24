@@ -19,16 +19,17 @@
 
 package org.apache.fop.traits;
 
-import static org.junit.Assert.assertEquals;
-
 import java.awt.Color;
+
+import org.junit.Test;
 
 import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.util.ColorUtil;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the BorderProps class.
@@ -44,23 +45,38 @@ public class BorderPropsTestCase {
         Color col = new Color(1.0f, 1.0f, 0.5f, 1.0f);
         //Normalize: Avoid false alarms due to color conversion (rounding)
         col = ColorUtil.parseColorString(null, ColorUtil.colorToString(col));
-
-        BorderProps b1 = new BorderProps(Constants.EN_DOUBLE, 1250,
-                col, BorderProps.COLLAPSE_OUTER);
-        String ser = b1.toString();
-        BorderProps b2 = BorderProps.valueOf(null, ser);
-        assertEquals(b1, b2);
+        BorderProps sut = BorderProps.makeRectangular(Constants.EN_DOUBLE, 1250, col,
+                BorderProps.Mode.COLLAPSE_OUTER);
+        testSerialization(sut);
 
         float[] cmyk = new float[] {1.0f, 1.0f, 0.5f, 1.0f};
         col = DeviceCMYKColorSpace.createCMYKColor(cmyk);
         //Convert to sRGB with CMYK alternative as constructed by the cmyk() function
         float[] rgb = col.getRGBColorComponents(null);
         col = new ColorWithAlternatives(rgb[0], rgb[1], rgb[2], new Color[] {col});
-        b1 = new BorderProps(Constants.EN_INSET, 9999,
-                col, BorderProps.SEPARATE);
-        ser = b1.toString();
-        b2 = BorderProps.valueOf(null, ser);
-        assertEquals(b1, b2);
+        sut = BorderProps.makeRectangular(Constants.EN_INSET, 9999, col, BorderProps.Mode.SEPARATE);
+        testSerialization(sut);
+    }
+
+    /**
+     * Test serialization and deserialization to/from String.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testSerializationWithCornerRadii() throws Exception {
+        Color col = new Color(1.0f, 1.0f, 0.5f, 1.0f);
+        //Normalize: Avoid false alarms due to color conversion (rounding)
+        col = ColorUtil.parseColorString(null, ColorUtil.colorToString(col));
+        for(BorderProps.Mode mode : BorderProps.Mode.values()) {
+            BorderProps sut = BorderProps.makeRectangular(Constants.EN_SOLID, 10, col, mode);
+            testSerialization(sut);
+            sut = new BorderProps(Constants.EN_SOLID, 10, 4, 3, col, mode);
+            testSerialization(sut);
+        }
+    }
+
+    private void testSerialization(BorderProps borderProp) {
+        assertEquals(borderProp, BorderProps.valueOf(null, borderProp.toString()));
     }
 
 }

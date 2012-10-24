@@ -597,9 +597,9 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             blocks[i][j].addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             blocks[i][j].setPositioning(Block.ABSOLUTE);
         }
-        blocks[i][j].addTrait(side, new BorderProps(border.getStyle(),
+        blocks[i][j].addTrait(side, BorderProps.makeRectangular(border.getStyle(),
                 border.getRetainedWidth(), border.getColor(),
-                outer ? BorderProps.COLLAPSE_OUTER : BorderProps.COLLAPSE_INNER));
+                outer ? BorderProps.Mode.COLLAPSE_OUTER : BorderProps.Mode.COLLAPSE_INNER));
     }
 
     private static void adjustXOffset(Block block, int amount) {

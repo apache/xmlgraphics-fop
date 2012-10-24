@@ -778,18 +778,46 @@ public interface Constants {
     int PR_X_ALT_TEXT = 274;
     /** Property constant - FOP proprietary prototype (in XSL-FO 2.0 Requirements) */
     int PR_X_XML_BASE = 275;
+
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_BEFORE_RADIUS_START = 276;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_BEFORE_RADIUS_END = 277;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_AFTER_RADIUS_START = 278;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_AFTER_RADIUS_END = 279;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_START_RADIUS_BEFORE = 280;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_START_RADIUS_AFTER = 281;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_END_RADIUS_BEFORE = 282;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_END_RADIUS_AFTER = 283;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_RADIUS = 284;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_BEFORE_START_RADIUS = 285;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_BEFORE_END_RADIUS = 286;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_AFTER_START_RADIUS = 287;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_AFTER_END_RADIUS = 288;
+    
     /**
      * Property constant - FOP proprietary extension (see NumberConverter) used
      * to perform additional control over number conversion when generating page
      * numbers.
      */
-    int PR_X_NUMBER_CONVERSION_FEATURES = 276;
+    int PR_X_NUMBER_CONVERSION_FEATURES = 289;
 
     /** Scope for table header */
-    int PR_X_HEADER_COLUMN = 277;
+    int PR_X_HEADER_COLUMN = 290;
 
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 277;
+    int PROPERTY_COUNT = 290;
 
     // compound property constants
 

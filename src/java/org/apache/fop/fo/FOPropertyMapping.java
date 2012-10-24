@@ -30,6 +30,7 @@ import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.properties.BackgroundPositionShorthand;
 import org.apache.fop.fo.properties.BorderSpacingShorthandParser;
 import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
+import org.apache.fop.fo.properties.BoxCornerPropShorthandParser;
 import org.apache.fop.fo.properties.BoxPropShorthandParser;
 import org.apache.fop.fo.properties.CharacterProperty;
 import org.apache.fop.fo.properties.ColorProperty;
@@ -99,6 +100,7 @@ public final class FOPropertyMapping implements Constants {
     private PropertyMaker genericCondBorderWidth = null;
     private PropertyMaker genericBorderWidth = null;
     private PropertyMaker genericBorderStyle = null;
+    private PropertyMaker genericCondCornerRadius = null;
     private PropertyMaker genericBreak = null;
     private PropertyMaker genericSpace = null;
 
@@ -202,6 +204,13 @@ public final class FOPropertyMapping implements Constants {
         genericBorderStyle.addEnum("inset", getEnumProperty(EN_INSET, "INSET"));
         genericBorderStyle.addEnum("outset", getEnumProperty(EN_OUTSET, "OUTSET"));
         genericBorderStyle.setDefault("none");
+
+        // GenericCondCornerRadius
+        genericCondCornerRadius = new CondLengthProperty.Maker(0);
+        genericCondCornerRadius.useGeneric(genericCondLength);
+        genericCondCornerRadius.setInherited(false);
+        genericCondCornerRadius.getSubpropMaker(CP_LENGTH).setDefault("0pt");
+        genericCondCornerRadius.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
 
         // GenericBreak
         genericBreak = new EnumProperty.Maker(0);
@@ -2605,6 +2614,65 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("");
         addPropertyMaker("fox:alt-text", m);
 
+
+        // fox:border-*-radius-*
+        m = new CondLengthProperty.Maker(PR_X_BORDER_BEFORE_RADIUS_START);
+        m.useGeneric(genericCondCornerRadius);
+        m.addShorthand(generics[PR_X_BORDER_BEFORE_START_RADIUS]);
+        m.addShorthand(generics[PR_X_BORDER_RADIUS]);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
+        addPropertyMaker("fox:border-before-radius-start", m);
+
+        m = new CondLengthProperty.Maker(PR_X_BORDER_BEFORE_RADIUS_END);
+        m.useGeneric(genericCondCornerRadius);
+        m.addShorthand(generics[PR_X_BORDER_BEFORE_END_RADIUS]);
+        m.addShorthand(generics[PR_X_BORDER_RADIUS]);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
+        addPropertyMaker("fox:border-before-radius-end", m);
+
+        m = new CondLengthProperty.Maker(PR_X_BORDER_AFTER_RADIUS_START);
+        m.useGeneric(genericCondCornerRadius);
+        m.addShorthand(generics[PR_X_BORDER_AFTER_START_RADIUS]);
+        m.addShorthand(generics[PR_X_BORDER_RADIUS]);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
+        addPropertyMaker("fox:border-after-radius-start", m);
+
+        m = new CondLengthProperty.Maker(PR_X_BORDER_AFTER_RADIUS_END);
+        m.useGeneric(genericCondCornerRadius);
+        m.addShorthand(generics[PR_X_BORDER_AFTER_END_RADIUS]);
+        m.addShorthand(generics[PR_X_BORDER_RADIUS]);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
+        addPropertyMaker("fox:border-after-radius-end", m);
+
+        m = new CondLengthProperty.Maker(PR_X_BORDER_START_RADIUS_BEFORE);
+        m.useGeneric(genericCondCornerRadius);
+        m.addShorthand(generics[PR_X_BORDER_BEFORE_START_RADIUS]);
+        m.addShorthand(generics[PR_X_BORDER_RADIUS]);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
+        addPropertyMaker("fox:border-start-radius-before", m);
+
+        m = new CondLengthProperty.Maker(PR_X_BORDER_START_RADIUS_AFTER);
+        m.useGeneric(genericCondCornerRadius);
+        m.addShorthand(generics[PR_X_BORDER_AFTER_START_RADIUS]);
+        m.addShorthand(generics[PR_X_BORDER_RADIUS]);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
+        addPropertyMaker("fox:border-start-radius-after", m);
+
+        m = new CondLengthProperty.Maker(PR_X_BORDER_END_RADIUS_BEFORE);
+        m.useGeneric(genericCondCornerRadius);
+        m.addShorthand(generics[PR_X_BORDER_BEFORE_END_RADIUS]);
+        m.addShorthand(generics[PR_X_BORDER_RADIUS]);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
+        addPropertyMaker("fox:border-end-radius-before", m);
+
+        m = new CondLengthProperty.Maker(PR_X_BORDER_END_RADIUS_AFTER);
+        m.useGeneric(genericCondCornerRadius);
+        m.addShorthand(generics[PR_X_BORDER_AFTER_END_RADIUS]);
+        m.addShorthand(generics[PR_X_BORDER_RADIUS]);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
+        addPropertyMaker("fox:border-end-radius-after", m);
+
+
         // provisional-label-separation
         m  = new LengthProperty.Maker(PR_PROVISIONAL_LABEL_SEPARATION);
         m.setInherited(true);
@@ -2730,14 +2798,14 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("border-right", m);
 
         // border-style
-        m  = new ListProperty.Maker(PR_BORDER_STYLE);
+        m = new ListProperty.Maker(PR_BORDER_STYLE);
         m.setInherited(false);
         m.setDefault("");
         m.setDatatypeParser(new BoxPropShorthandParser());
         addPropertyMaker("border-style", m);
 
         // border-spacing
-        m  = new ListProperty.Maker(PR_BORDER_SPACING);
+        m   = new ListProperty.Maker(PR_BORDER_SPACING);
         m.setInherited(true);
         m.setDefault("0pt");
         m.setDatatypeParser(new BorderSpacingShorthandParser());
@@ -2756,6 +2824,41 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("");
         m.setDatatypeParser(new BoxPropShorthandParser());
         addPropertyMaker("border-width", m);
+
+        // fox:border-radius
+        m = new ListProperty.Maker(PR_X_BORDER_RADIUS);
+        m.setInherited(false);
+        m.setDatatypeParser(new BoxCornerPropShorthandParser());
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
+        addPropertyMaker("fox:border-radius", m);
+
+        // fox:border-before-start-radius
+        m = new ListProperty.Maker(PR_X_BORDER_BEFORE_START_RADIUS);
+        m.setInherited(false);
+        m.setDatatypeParser(new BoxCornerPropShorthandParser());
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
+        addPropertyMaker("fox:border-before-start-radius", m);
+
+        // fox:border-before-end-radius
+        m = new ListProperty.Maker(PR_X_BORDER_BEFORE_END_RADIUS);
+        m.setInherited(false);
+        m.setDatatypeParser(new BoxCornerPropShorthandParser());
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
+        addPropertyMaker("fox:border-before-end-radius", m);
+
+        // fox:border-after-start-radius
+        m = new ListProperty.Maker(PR_X_BORDER_AFTER_START_RADIUS);
+        m.setInherited(false);
+        m.setDatatypeParser(new BoxCornerPropShorthandParser());
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
+        addPropertyMaker("fox:border-after-start-radius", m);
+
+        // fox:border-after-end-radius
+        m = new ListProperty.Maker(PR_X_BORDER_AFTER_END_RADIUS);
+        m.setInherited(false);
+        m.setDatatypeParser(new BoxCornerPropShorthandParser());
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
+        addPropertyMaker("fox:border-after-end-radius", m);
 
         // cue
         m  = new ToBeImplementedProperty.Maker(PR_CUE);
