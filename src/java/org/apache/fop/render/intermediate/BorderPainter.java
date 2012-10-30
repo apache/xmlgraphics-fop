@@ -56,6 +56,11 @@ public class BorderPainter {
     /** Convention index of bottom-left border corners */
     protected static final int BOTTOM_LEFT = 3;
 
+    /** The ratio between a solid dash and the white-space in a dashed-border */
+    public static final float DASHED_BORDER_SPACE_RATIO = 0.5f;
+    /** The length of the dash as a factor of the border width i.e. 4 -> dashWidth = 4*borderWidth */
+    protected static final float DASHED_BORDER_LENGTH_FACTOR = 4.0f;
+
     private final GraphicsPainter graphicsPainter;
 
     public BorderPainter(GraphicsPainter graphicsPainter) {
@@ -272,6 +277,21 @@ public class BorderPainter {
 
     private boolean isCollapseOuter(BorderProps bp) {
         return bp != null && bp.isCollapseOuter();
+    }
+
+    /**
+     * This method calculates the length of the "dash" in a dashed border. The dash satisfies the
+     * condition that corners start on a dash and end with a dash (rather than ending with a white space).
+     * @param borderLength The length of the border.
+     * @param borderWidth The width/thickness of the border.
+     * @param dashSpaceRatio The ratio between dashes and white-space.
+     * @return returns the length of the dash such that it fits the criteria above.
+     */
+    public static float dashWidthCalculator(float borderLength, float borderWidth) {
+        float dashWidth = DASHED_BORDER_LENGTH_FACTOR * borderWidth;
+        int period = (int) ((borderLength - dashWidth) / dashWidth / (1.0f + DASHED_BORDER_SPACE_RATIO));
+        period = period < 0 ? 0 : period;
+        return borderLength / (period * (1.0f + DASHED_BORDER_SPACE_RATIO) + 1.0f);
     }
 
     /** TODO merge with drawRectangularBorders?

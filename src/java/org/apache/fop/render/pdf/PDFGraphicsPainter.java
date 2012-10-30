@@ -27,6 +27,7 @@ import java.io.IOException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.render.intermediate.ArcToBezierCurveTransformer;
 import org.apache.fop.render.intermediate.BezierCurvePainter;
+import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.render.intermediate.GraphicsPainter;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
@@ -64,25 +65,15 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
         case Constants.EN_DASHED:
             generator.setColor(col);
             if (horz) {
-                float unit = Math.abs(2 * h);
-                int rep = (int) (w / unit);
-                if (rep % 2 == 0) {
-                    rep++;
-                }
-                unit = w / rep;
+                float dashedWidth = BorderPainter.dashWidthCalculator(w, h);
                 float ym = y1 + (h / 2);
-                generator.setDashLine(unit)
+                generator.setDashLine(dashedWidth, dashedWidth * BorderPainter.DASHED_BORDER_SPACE_RATIO)
                         .setLineWidth(h)
                         .strokeLine(x1, ym, x2, ym);
             } else {
-                float unit = Math.abs(2 * w);
-                int rep = (int) (h / unit);
-                if (rep % 2 == 0) {
-                    rep++;
-                }
-                unit = h / rep;
+                float dashedWidth = BorderPainter.dashWidthCalculator(h, w);
                 float xm = x1 + (w / 2);
-                generator.setDashLine(unit)
+                generator.setDashLine(dashedWidth, dashedWidth * BorderPainter.DASHED_BORDER_SPACE_RATIO)
                         .setLineWidth(w)
                         .strokeLine(xm, y1, xm, y2);
             }

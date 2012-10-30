@@ -22,6 +22,7 @@ package org.apache.fop.afp;
 import java.awt.geom.AffineTransform;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.util.ColorUtil;
 
 /**
@@ -126,24 +127,27 @@ public class AFPBorderPainter extends AbstractAFPPainter {
             }
             break;
         case Constants.EN_DASHED:
-            int thick = lineDataInfo.getThickness() * 3;
             if (borderPaintInfo.isHorizontal()) {
-                lineDataInfo.setX2 ( lineDataInfo.getX1() + thick );
+                int dashWidth = (int) (BorderPainter.dashWidthCalculator(x2 - x1, thickness));
+                lineDataInfo.setX2 ( lineDataInfo.getX1() + dashWidth );
                 lineDataInfo.setY2 ( lineDataInfo.getY1() );
                 int ex2 = Math.round(x2);
-                while (lineDataInfo.getX1() + thick < ex2) {
+                int spaceWidth = (int) (BorderPainter.DASHED_BORDER_SPACE_RATIO * dashWidth);
+                while (lineDataInfo.getX2() < ex2) {
                     dataStream.createLine(lineDataInfo);
-                    lineDataInfo.setX1 ( lineDataInfo.getX1() + 2 * thick );
-                    lineDataInfo.setX2 ( lineDataInfo.getX1() + thick );
+                    lineDataInfo.setX1 ( lineDataInfo.getX2() + spaceWidth );
+                    lineDataInfo.setX2 ( lineDataInfo.getX1() + dashWidth );
                 }
             } else {
+                int dashWidth = (int) BorderPainter.dashWidthCalculator(y2 - y1, thickness);
                 lineDataInfo.setX2 ( lineDataInfo.getX1() );
-                lineDataInfo.setY2 ( lineDataInfo.getY1() + thick );
+                lineDataInfo.setY2 ( lineDataInfo.getY1() + dashWidth );
                 int ey2 = Math.round(y2);
-                while (lineDataInfo.getY1() + thick < ey2) {
+                int spaceWidth = (int) (BorderPainter.DASHED_BORDER_SPACE_RATIO * dashWidth);
+                while (lineDataInfo.getY2() < ey2) {
                     dataStream.createLine(lineDataInfo);
-                    lineDataInfo.setY1 ( lineDataInfo.getY1() + 2 * thick );
-                    lineDataInfo.setY2 ( lineDataInfo.getY1() + thick );
+                    lineDataInfo.setY1 ( lineDataInfo.getY2() + spaceWidth );
+                    lineDataInfo.setY2 ( lineDataInfo.getY1() + dashWidth );
                 }
             }
             break;

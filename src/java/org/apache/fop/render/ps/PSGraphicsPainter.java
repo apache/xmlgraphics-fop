@@ -31,6 +31,7 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.render.intermediate.ArcToBezierCurveTransformer;
 import org.apache.fop.render.intermediate.BezierCurvePainter;
+import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.render.intermediate.GraphicsPainter;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
@@ -87,25 +88,17 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
         case Constants.EN_DASHED:
             gen.useColor(col);
             if (horz) {
-                float unit = Math.abs(2 * h);
-                int rep = (int) (w / unit);
-                if (rep % 2 == 0) {
-                    rep++;
-                }
-                unit = w / rep;
-                gen.useDash("[" + unit + "] 0");
+                float dashWidth = BorderPainter.dashWidthCalculator(w, h);
+                gen.useDash("[" + dashWidth + " " + BorderPainter.DASHED_BORDER_SPACE_RATIO
+                        * dashWidth + "] 0");
                 gen.useLineCap(0);
                 gen.useLineWidth(h);
                 float ym = y1 + (h / 2);
                 drawLine(gen, x1, ym, x2, ym);
             } else {
-                float unit = Math.abs(2 * w);
-                int rep = (int) (h / unit);
-                if (rep % 2 == 0) {
-                    rep++;
-                }
-                unit = h / rep;
-                gen.useDash("[" + unit + "] 0");
+                float dashWidth = BorderPainter.dashWidthCalculator(h, w);
+                gen.useDash("[" + dashWidth + " " + BorderPainter.DASHED_BORDER_SPACE_RATIO
+                        * dashWidth + "] 0");
                 gen.useLineCap(0);
                 gen.useLineWidth(w);
                 float xm = x1 + (w / 2);
