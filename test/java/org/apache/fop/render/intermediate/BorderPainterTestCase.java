@@ -23,10 +23,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import org.apache.fop.fo.Constants;
-import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.BorderProps.Mode;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doThrow;
@@ -35,6 +31,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
+
+import org.apache.fop.fo.Constants;
+import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.BorderProps.Mode;
 
 public class BorderPainterTestCase {
 
