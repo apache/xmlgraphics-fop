@@ -624,6 +624,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             wordChars.append(foText.getCommonHyphenation().getHyphChar(font));
             // [TBD] expand bidi word levels, letter space adjusts, gpos adjusts
             // [TBD] [GA] problematic in bidi context... what is level of hyphen?
+            textArea.setHyphenated();
         }
 
         /**

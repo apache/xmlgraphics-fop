@@ -343,11 +343,10 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
             languageAvailabilityChecker.checkLanguageAvailability(text);
             MarkedContentInfo mci = logicalStructureHandler.addTextContentItem(structElem);
-            if (generator.getTextUtil().isInTextObject()) {
-                generator.separateTextElements(mci.tag, mci.mcid);
-            }
+            String actualText = getContext().isHyphenated() ? text.substring(0, text.length() - 1) : null;
+            generator.endTextObject();
             generator.updateColor(state.getTextColor(), true, null);
-            generator.beginTextObject(mci.tag, mci.mcid);
+            generator.beginTextObject(mci.tag, mci.mcid, actualText);
         } else {
             generator.updateColor(state.getTextColor(), true, null);
             generator.beginTextObject();

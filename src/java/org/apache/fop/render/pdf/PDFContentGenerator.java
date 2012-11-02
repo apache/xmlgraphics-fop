@@ -32,6 +32,7 @@ import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFPaintingState;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFStream;
+import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXObject;
 
@@ -171,17 +172,36 @@ public class PDFContentGenerator {
     }
 
     /**
-     * Begins a new marked content sequence (BDC or BMC). If the parameter structElemType is null,
-     * the sequenceNum is ignored and instead of a BDC with the MCID as parameter, an "Artifact"
-     * and a BMC command is generated.
-     * @param structElemType Structure Element Type
-     * @param mcid    Sequence number
+     * Begins a new marked content sequence (BDC or BMC). If {@code structElemType} is
+     * null, a BMC operator with an "Artifact" tag is generated. Otherwise, a BDC operator
+     * with {@code structElemType} as a tag is generated, and the given mcid stored in its
+     * property list.
+     *
+     * @param structElemType the type of the associated structure element
+     * @param mcid the marked content identifier
      */
     protected void beginMarkedContentSequence(String structElemType, int mcid) {
+        beginMarkedContentSequence(structElemType, mcid, null);
+    }
+
+    /**
+     * Begins a new marked content sequence (BDC or BMC). If {@code structElemType} is
+     * null, a BMC operator with an "Artifact" tag is generated. Otherwise, a BDC operator
+     * with {@code structElemType} as a tag is generated, and the given mcid and actual
+     * text are stored in its property list.
+     *
+     * @param structElemType the type of the associated structure element
+     * @param mcid the marked content identifier
+     * @param actualText the replacement text for the marked content
+     */
+    protected void beginMarkedContentSequence(String structElemType, int mcid, String actualText) {
         assert !this.inMarkedContentSequence;
         assert !this.inArtifactMode;
         if (structElemType != null) {
-            currentStream.add(structElemType + " <</MCID " + String.valueOf(mcid) + ">>\n"
+            String actualTextProperty = actualText == null ? ""
+                    : " /ActualText " + PDFText.escapeText(actualText);
+            currentStream.add(structElemType + " <</MCID " + String.valueOf(mcid)
+                    + actualTextProperty + ">>\n"
                     + "BDC\n");
         } else {
             currentStream.add("/Artifact\nBMC\n");
@@ -230,21 +250,6 @@ public class PDFContentGenerator {
         currentState.restore();
     }
 
-    /**
-     * Separates 2 text elements, ending the current marked content sequence and
-     * starting a new one.
-     *
-     * @param structElemType structure element type
-     * @param mcid sequence number
-     * @see #beginMarkedContentSequence(String, int)
-     */
-    protected void separateTextElements(String structElemType, int mcid) {
-        textutil.endTextObject();
-        endMarkedContentSequence();
-        beginMarkedContentSequence(structElemType, mcid);
-        textutil.beginTextObject();
-    }
-
     /** Indicates the beginning of a text object. */
     protected void beginTextObject() {
         if (!textutil.isInTextObject()) {
@@ -261,8 +266,21 @@ public class PDFContentGenerator {
      * @see #beginMarkedContentSequence(String, int)
      */
     protected void beginTextObject(String structElemType, int mcid) {
+        beginTextObject(structElemType, mcid, null);
+    }
+
+    /**
+     * Indicates the beginning of a marked-content text object.
+     *
+     * @param structElemType structure element type
+     * @param mcid sequence number
+     * @param actualText the replacement text for the marked content
+     * @see #beginTextObject()
+     * @see #beginMarkedContentSequence(String, int, String))
+     */
+    protected void beginTextObject(String structElemType, int mcid, String actualText) {
         if (!textutil.isInTextObject()) {
-            beginMarkedContentSequence(structElemType, mcid);
+            beginMarkedContentSequence(structElemType, mcid, actualText);
             textutil.beginTextObject();
         }
     }

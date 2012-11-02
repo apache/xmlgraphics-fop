@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="add" fixes-bug="54081">
+        PDF accessibility: properly tag hyphenated words.
+      </action>
       <action context="Code" dev="CB" type="fix" fixes-bug="48955" due-to="Peter Hancock">
         Allow AFP font codepage names to be less than 8 chars
       </action>

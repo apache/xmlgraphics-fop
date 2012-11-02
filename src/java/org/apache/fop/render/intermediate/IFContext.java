@@ -53,6 +53,8 @@ public class IFContext {
 
     private String location;
 
+    private boolean hyphenated;
+
     /**
      * Main constructor.
      * @param ua the user agent
@@ -198,6 +200,20 @@ public class IFContext {
      */
     public String getLocation() {
         return location;
+    }
+
+    /**
+     * Records that the last text in the currently processed text area is hyphenated.
+     */
+    public void setHyphenated(boolean hyphenated) {
+        this.hyphenated = hyphenated;
+    }
+
+    /**
+     * Returns {@code true} if the last text in the currently processed text area is hyphenated.
+     */
+    public boolean isHyphenated() {
+        return hyphenated;
     }
 
 }

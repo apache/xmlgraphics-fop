@@ -678,6 +678,9 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
                 }
             }
             addStructureReference(atts);
+            if (getContext().isHyphenated()) {
+                addAttribute(atts, "hyphenated", "true");
+            }
             handler.startElement(EL_TEXT, atts);
             char[] chars = text.toCharArray();
             handler.characters(chars, 0, chars.length);
