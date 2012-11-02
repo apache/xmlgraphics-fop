@@ -633,7 +633,12 @@ public class IFParser implements IFConstants {
                     dp = IFUtil.convertDXToDP ( dx );
                 }
                 establishStructureTreeElement(lastAttributes);
+                boolean isHyphenated = Boolean.valueOf(lastAttributes.getValue("hyphenated"));
+                if (isHyphenated) {
+                    documentHandler.getContext().setHyphenated(isHyphenated);
+                }
                 painter.drawText(x, y, letterSpacing, wordSpacing, dp, content.toString());
+                documentHandler.getContext().setHyphenated(false);
                 resetStructureTreeElement();
             }
 

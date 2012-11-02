@@ -68,6 +68,7 @@
               <xs:attribute name="word-spacing" type="mf:lengthType"/>
               <xs:attribute name="dx" type="mf:lengthListType"/>
               <xs:attribute name="dp" type="mf:dpListType"/>
+              <xs:attribute name="hyphenated" type="xs:boolean"/>
             </xs:extension>
           </xs:simpleContent>
         </xs:complexType>

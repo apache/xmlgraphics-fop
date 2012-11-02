@@ -1032,10 +1032,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         textUtil.flush();
         textUtil.setStartPosition(rx, bl);
         textUtil.setSpacing(text.getTextLetterSpaceAdjust(), text.getTextWordSpaceAdjust());
+        documentHandler.getContext().setHyphenated(text.isHyphenated());
         super.renderText(text);
 
         textUtil.flush();
         renderTextDecoration(tf, size, text, bl, rx);
+        documentHandler.getContext().setHyphenated(false);
         resetStructurePointer();
     }
 

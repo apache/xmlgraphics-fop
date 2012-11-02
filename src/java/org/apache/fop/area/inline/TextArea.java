@@ -30,6 +30,8 @@ public class TextArea extends AbstractTextArea {
 
     private static final long serialVersionUID = 7315900267242540809L;
 
+    private boolean isHyphenated;
+
     /**
      * Create a text inline area
      */
@@ -114,6 +116,20 @@ public class TextArea extends AbstractTextArea {
         addChildArea(spaceArea);
         spaceArea.setParentArea(this);
         updateLevel(level);
+    }
+
+    /**
+     * Records that the last word in this text area is hyphenated.
+     */
+    public void setHyphenated() {
+        this.isHyphenated = true;
+    }
+
+    /**
+     * Returns {@code true} if the last word in this area is hyphenated.
+     */
+    public boolean isHyphenated() {
+        return isHyphenated;
     }
 
     /**

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xml:lang="en-US">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="170pt" page-width="220pt" margin="10pt">
+      <fo:region-body display-align="center"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page" hyphenate="true">
+    <fo:flow flow-name="xsl-region-body" text-align="justify">
+      <fo:block-container width="140pt" start-indent="30pt">
+        <fo:block start-indent="0">Hyphenated text. Hyphenated text. Hyphenated text. Hyphenated 
+          text. Hyphenated text.</fo:block>
+      </fo:block-container>
+      <fo:block-container width="140pt" space-before="10pt" start-indent="30pt">
+        <fo:block start-indent="0">Hyphenated text with ‘special’ character. Hyphenated text with 
+          ‘special’ character.</fo:block>
+      </fo:block-container>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
