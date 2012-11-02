@@ -108,18 +108,22 @@ public class CharacterSet {
             throw new IllegalArgumentException(msg);
         }
 
-        if (name.length() < MAX_NAME_LEN) {
-            this.name = StringUtils.rpad(name, ' ', MAX_NAME_LEN);
-        } else {
-            this.name = name;
-        }
-        this.codePage = codePage;
+        // the character set name must be 8 chars long
+        this.name = padName(name);
+        // the code page name must be 8 chars long
+        this.codePage = padName(codePage);
+
         this.encoding = encoding;
         this.encoder = charsetType.getEncoder(encoding);
         this.accessor = accessor;
 
         this.characterSetOrientations = new HashMap<String, CharacterSetOrientation>(4);
     }
+
+     // right pad short names with space
+     private String padName(String name) {
+         return name.length() < MAX_NAME_LEN ? StringUtils.rpad(name, ' ', MAX_NAME_LEN) : name;
+     }
 
     /**
      * Add character set metric information for the different orientations
