@@ -37,7 +37,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.RetrieveMarker;
-import org.apache.fop.layoutmgr.table.TableLayoutManager;
 
 /**
  * The base class for most LayoutManagers.

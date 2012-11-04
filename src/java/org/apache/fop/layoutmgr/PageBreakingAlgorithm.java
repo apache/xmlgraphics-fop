@@ -891,9 +891,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 footnoteListIndex++;
                 footnoteElementIndex
                     = getFootnoteList(footnoteListIndex).size() - 1;
-            }
-            // try adding some more content
-            else if ((tmpLength - insertedFootnotesLength) <= availableBPD) {
+            } else if ((tmpLength - insertedFootnotesLength) <= availableBPD) {
+                // try adding some more content
                 // add a whole footnote
                 availableBPD -= tmpLength - insertedFootnotesLength;
                 insertedFootnotesLength = tmpLength;

@@ -56,7 +56,7 @@ public final class Markers {
      * are ending, replacing earlier markers.
      *
      * @param marks a map of markers to register
-     * @param starting whether the registration happens at the start (true) or end (false) the the area 
+     * @param starting whether the registration happens at the start (true) or end (false) the the area
      * @param isfirst whether it is the first area of the parent LM
      * @param islast whether it is the last area of the parent LM
      */

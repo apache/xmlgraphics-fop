@@ -113,7 +113,6 @@ public final class TraitSetter {
         if (width > 0 || radiusStart > 0 || radiusEnd > 0) {
             area.addTrait(traitCode, new BorderProps(bpProps.getBorderStyle(side), width, radiusStart,
                     radiusEnd, bpProps.getBorderColor(side), mode));
-                    
         }
     }
 

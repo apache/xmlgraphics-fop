@@ -91,7 +91,7 @@ public interface FOValidationEventProducer extends EventProducer {
 
     /**
      * A valid but not yet supported child was encountered.
-     * 
+     *
      * @param source the event source
      * @param elementName the name of the context node
      * @param offendingNode the offending node

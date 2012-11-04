@@ -805,7 +805,7 @@ public interface Constants {
     int PR_X_BORDER_AFTER_START_RADIUS = 287;
     /** Property constant FOP proprietary*/
     int PR_X_BORDER_AFTER_END_RADIUS = 288;
-    
+
     /**
      * Property constant - FOP proprietary extension (see NumberConverter) used
      * to perform additional control over number conversion when generating page
