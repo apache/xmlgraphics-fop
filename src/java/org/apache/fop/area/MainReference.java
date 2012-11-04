@@ -74,7 +74,7 @@ public class MainReference extends Area {
      *
      * @return the list of span areas
      */
-    public List getSpans() {
+    public List<Span> getSpans() {
         return spanAreas;
     }
 
@@ -131,7 +131,7 @@ public class MainReference extends Area {
      * @param wmtg a WM traits getter
      */
     public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
-        for ( Span s : (List<Span>) getSpans() ) {
+        for ( Span s : getSpans() ) {
             s.setWritingModeTraits ( wmtg );
         }
     }

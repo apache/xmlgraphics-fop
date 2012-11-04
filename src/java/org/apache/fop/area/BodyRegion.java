@@ -132,7 +132,7 @@ public class BodyRegion extends RegionReference {
      */
     public int getRemainingBPD() {
         int usedBPD = 0;
-        List spans = getMainReference().getSpans();
+        List<Span> spans = getMainReference().getSpans();
         int previousSpanCount = spans.size() - 1;
         for (int i = 0; i < previousSpanCount; i++) {
             usedBPD += ((Span)spans.get(i)).getHeight();
@@ -155,6 +155,7 @@ public class BodyRegion extends RegionReference {
     public Object clone() throws CloneNotSupportedException {
         BodyRegion br = (BodyRegion) super.clone();
         br.mainReference = new MainReference(br);
+        br.mainReference.setSpans(mainReference.getSpans());
         return br;
     }
 
