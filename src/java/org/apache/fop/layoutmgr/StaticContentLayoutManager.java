@@ -19,19 +19,15 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
-import org.apache.fop.layoutmgr.PageBreakingAlgorithm.PageBreakingLayoutListener;
-import org.apache.fop.layoutmgr.inline.TextLayoutManager;
 
 /**
  * LayoutManager for an fo:flow object.

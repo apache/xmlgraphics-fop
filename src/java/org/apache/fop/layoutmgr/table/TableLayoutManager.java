@@ -575,7 +575,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
     /**
      * Saves a TableCellLayoutManager for later use.
-     * 
+     *
      * @param tclm a TableCellLayoutManager that has a RetrieveTableMarker
      */
     protected void saveTableHeaderTableCellLayoutManagers(TableCellLayoutManager tclm) {

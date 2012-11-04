@@ -121,7 +121,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
         return false;
     }
 
-    private static PDFICCStream getDefaultsRGBICCStream(PDFICCBasedColorSpace cs, PDFDocument doc, 
+    private static PDFICCStream getDefaultsRGBICCStream(PDFICCBasedColorSpace cs, PDFDocument doc,
             String profileDesc) {
         if (cs == null) {
             if (profileDesc == null || !profileDesc.startsWith("sRGB")) {
