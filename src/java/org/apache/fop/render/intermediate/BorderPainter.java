@@ -58,8 +58,8 @@ public class BorderPainter {
 
     /** The ratio between a solid dash and the white-space in a dashed-border */
     public static final float DASHED_BORDER_SPACE_RATIO = 0.5f;
-    /** The length of the dash as a factor of the border width i.e. 4 -> dashWidth = 4*borderWidth */
-    protected static final float DASHED_BORDER_LENGTH_FACTOR = 4.0f;
+    /** The length of the dash as a factor of the border width i.e. 2 -> dashWidth = 2*borderWidth */
+    protected static final float DASHED_BORDER_LENGTH_FACTOR = 2.0f;
 
     private final GraphicsPainter graphicsPainter;
 
