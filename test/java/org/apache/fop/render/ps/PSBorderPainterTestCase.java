@@ -53,7 +53,7 @@ public class PSBorderPainterTestCase {
     public void testDrawBorderLine() throws Exception {
         borderPainter.drawBorderLine(0, 0, 40000, 1000, true, true,
                 Constants.EN_DASHED, Color.BLACK);
-        assertTrue(outStream.toString().contains("[4.0 2.0] 0 setdash"));
+        assertTrue(outStream.toString().contains("[2.1052632 1.0526316] 0 setdash"));
     }
 
     public void tearDown() {

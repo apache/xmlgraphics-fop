@@ -46,8 +46,8 @@ public class PDFBorderPainterTestCase {
 
     /**
      * This test will fail if either of the below statements isn't true:
-     * org.apache.fop.render.intermediate.BorderPainter.DASHED_BORDER_SPACE_RATIO = 0.5f:q
-     * org.apache.fop.render.intermediate.BorderPainter.DASHED_BORDER_LENGTH_FACTOR = 4.0f.
+     * org.apache.fop.render.intermediate.BorderPainter.DASHED_BORDER_SPACE_RATIO = 0.5f
+     * org.apache.fop.render.intermediate.BorderPainter.DASHED_BORDER_LENGTH_FACTOR = 2.0f.
      */
     @Test
     public void testDrawBorderLine() throws Exception {
@@ -56,7 +56,7 @@ public class PDFBorderPainterTestCase {
         generator.flushPDFDoc();
         OutputStream outStream = new ByteArrayOutputStream();
         outStream = generator.getStream().getBufferOutputStream();
-        assertTrue(((ByteArrayOutputStream) outStream).toString().contains("[4 2] 0 d 1 w"));
+        assertTrue(((ByteArrayOutputStream) outStream).toString().contains("[2.105263 1.052632] 0 d 1 w"));
     }
 
     public void tearDown() {
