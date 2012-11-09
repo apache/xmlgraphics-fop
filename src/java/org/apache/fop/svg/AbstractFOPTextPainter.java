@@ -336,7 +336,7 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
 
     private Font getFont(AttributedCharacterIterator aci) {
         Font[] fonts = ACIUtils.findFontsForBatikACI(aci, nativeTextHandler.getFontInfo());
-        return fonts[0];
+        return fonts == null ? null : fonts[0];
     }
 
     private float getStringWidth(String str, Font font) {
@@ -360,6 +360,9 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
     }
 
     private boolean hasUnsupportedGlyphs(String str, Font font) {
+         if (font == null) {
+            return true;
+         }
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
             if (!((c == ' ') || (c == '\n') || (c == '\r') || (c == '\t'))) {

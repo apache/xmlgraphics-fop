@@ -59,6 +59,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="MH" type="add" fixes-bug="54120">
+        Created a simple mechanism to avoid NPEs when AWT fonts are requested from Batik
+        for AFP output.
+      </action>
       <action context="Renderers" dev="VH" type="add" fixes-bug="54081">
         PDF accessibility: properly tag hyphenated words.
       </action>
