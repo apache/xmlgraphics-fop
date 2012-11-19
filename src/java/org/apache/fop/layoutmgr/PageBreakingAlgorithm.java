@@ -1108,6 +1108,19 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     }
 
+    @Override
+    protected KnuthNode recoverFromOverflow() {
+        if (compareIPDs(getLastTooLong().line - 1) != 0) {
+            /**
+             * If the IPD of the next page changes, disable the recovery mechanism as the
+             * inline content has to be re-laid out according to the new IPD anyway.
+             */
+            return getLastTooLong();
+        } else {
+            return super.recoverFromOverflow();
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     protected int getIPDdifference() {

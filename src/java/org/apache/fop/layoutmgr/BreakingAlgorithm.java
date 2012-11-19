@@ -460,6 +460,10 @@ public abstract class BreakingAlgorithm {
         return this.partOverflowRecoveryActivated;
     }
 
+    protected KnuthNode getLastTooLong() {
+        return lastTooLong;
+    }
+
     /**
      * Empty method, hook for subclasses. Called before determining the optimal
      * breakpoints corresponding to a given active node.
