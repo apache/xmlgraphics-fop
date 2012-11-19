@@ -59,6 +59,11 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="fix" fixes-bug="54169" due-to="Robert Meyer">
+        Split the parent tree (the number tree corresponding to the ParentTree entry in the 
+        structure tree root) to avoid reaching the internal limits of Acrobat Pro, that would 
+        otherwise split it at the wrong place when saving the document.
+      </action>
       <action context="Fonts" dev="MH" type="add" fixes-bug="54120">
         Created a simple mechanism to avoid NPEs when AWT fonts are requested from Batik
         for AFP output.

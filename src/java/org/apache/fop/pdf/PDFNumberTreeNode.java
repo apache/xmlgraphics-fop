@@ -49,7 +49,7 @@ public class PDFNumberTreeNode extends PDFDictionary {
      * @return the Kids array
      */
     public PDFArray getKids() {
-        return (PDFArray)get(KIDS);
+        return (PDFArray) get(KIDS);
     }
 
     /**
@@ -65,7 +65,12 @@ public class PDFNumberTreeNode extends PDFDictionary {
      * @return the Nums array
      */
     public PDFNumsArray getNums() {
-        return (PDFNumsArray)get(NUMS);
+        PDFNumsArray nums = (PDFNumsArray) get(NUMS);
+        if (nums == null) {
+            nums = new PDFNumsArray(this);
+            setNums(nums);
+        }
+        return nums;
     }
 
     /**
@@ -83,7 +88,7 @@ public class PDFNumberTreeNode extends PDFDictionary {
      */
     public Integer getLowerLimit() {
         PDFArray limits = prepareLimitsArray();
-        return (Integer)limits.get(0);
+        return (Integer) limits.get(0);
     }
 
     /**
@@ -101,12 +106,25 @@ public class PDFNumberTreeNode extends PDFDictionary {
      */
     public Integer getUpperLimit() {
         PDFArray limits = prepareLimitsArray();
-        return (Integer)limits.get(1);
+        return (Integer) limits.get(1);
+    }
+
+    /**
+     * Adds a number and object to the nums array and increases the
+     * upper limit should it be required.
+     * @param num The unique number identifying the object in the array
+     * @param object The object being added
+     */
+    protected void addToNums(int num, Object object) {
+        getNums().put(num, object);
+        if (getUpperLimit() < num) {
+            setUpperLimit(num);
+        }
     }
 
 
     private PDFArray prepareLimitsArray() {
-        PDFArray limits = (PDFArray)get(LIMITS);
+        PDFArray limits = (PDFArray) get(LIMITS);
         if (limits == null) {
             limits = new PDFArray(this, new Object[2]);
             put(LIMITS, limits);
