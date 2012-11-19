@@ -24,18 +24,44 @@ package org.apache.fop.pdf;
  */
 public class PDFParentTree extends PDFNumberTreeNode {
 
-    /**
-     * Returns the number tree corresponding to this parent tree.
-     *
-     * @return the number tree
-     */
-    public PDFNumsArray getNums() {
-        PDFNumsArray nums = super.getNums();
-        if (nums == null) {
-            nums = new PDFNumsArray(this);
-            setNums(nums);
+    private static final int MAX_NUMS_ARRAY_SIZE = 50;
+
+    public PDFParentTree() {
+        put("Kids", new PDFArray());
+    }
+
+    @Override
+    public void addToNums(int num, Object object) {
+        int arrayIndex = num / MAX_NUMS_ARRAY_SIZE;
+        setNumOfKidsArrays(arrayIndex + 1);
+        insertItemToNumsArray(arrayIndex, num, object);
+    }
+
+    private void setNumOfKidsArrays(int numKids) {
+        for (int i = getKids().length(); i < numKids; i++) {
+            PDFNumberTreeNode newArray = new PDFNumberTreeNode();
+            newArray.setNums(new PDFNumsArray(newArray));
+            newArray.setLowerLimit(i * MAX_NUMS_ARRAY_SIZE);
+            newArray.setUpperLimit(i * MAX_NUMS_ARRAY_SIZE);
+            addKid(newArray);
         }
-        return nums;
+    }
+
+    /**
+     * Registers a child object and adds it to the Kids array.
+     * @param kid The child PDF object to be added
+     */
+    private void addKid(PDFObject kid) {
+        assert getDocument() != null;
+        getDocument().assignObjectNumber(kid);
+        getDocument().addTrailerObject(kid);
+        ((PDFArray) get("Kids")).add(kid);
+    }
+
+    private void insertItemToNumsArray(int array, int num, Object object) {
+        assert getKids().get(array) instanceof PDFNumberTreeNode;
+        PDFNumberTreeNode numsArray = (PDFNumberTreeNode) getKids().get(array);
+        numsArray.addToNums(num, object);
     }
 }
 

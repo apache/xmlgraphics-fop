@@ -124,7 +124,7 @@ class PDFLogicalStructureHandler {
         // being output to the PDF.
         // This should really be handled by PDFNumsArray
         pdfDoc.registerObject(pageParentTreeArray);
-        parentTree.getNums().put(currentPage.getStructParents(), pageParentTreeArray);
+        parentTree.addToNums(currentPage.getStructParents(), pageParentTreeArray);
     }
 
     private MarkedContentInfo addToParentTree(PDFStructElem structureTreeElement) {
@@ -198,7 +198,7 @@ class PDFLogicalStructureHandler {
         contentItem.put("Type", OBJR);
         contentItem.put("Pg", this.currentPage);
         contentItem.put("Obj", link);
-        parentTree.getNums().put(structParent, structureTreeElement);
+        parentTree.addToNums(structParent, structureTreeElement);
         structureTreeElement.addKid(contentItem);
     }
 

@@ -57,20 +57,6 @@ public class PDFPageLabels extends PDFNumberTreeNode {
     }
 
     /**
-     * Returns the Nums object
-     * @return the Nums object (an empty PDFNumsArray for the "/Nums" entry is created
-     *       if it doesn't exist)
-     */
-    public PDFNumsArray getNums() {
-        PDFNumsArray nums = super.getNums();
-        if (nums == null) {
-            nums = new PDFNumsArray(this);
-            setNums(nums);
-        }
-        return nums;
-    }
-
-    /**
      * Adds a new entry, if necessary, to the /PageLabels dictionary.
      * @param index the page index (0 for page 1)
      * @param pageLabel the page number as a string
