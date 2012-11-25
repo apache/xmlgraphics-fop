@@ -23,6 +23,8 @@ import java.util.EnumMap;
 
 import org.apache.avalon.framework.configuration.Configuration;
 
+import org.apache.xmlgraphics.image.writer.Endianness;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -40,7 +42,9 @@ public final class TIFFRendererConfig extends BitmapRendererConfig {
     public enum TIFFRendererOption implements RendererConfigOption {
         COMPRESSION("compression", PACKBITS),
         /** option to encode one row per strip or a all rows in a single strip*/
-        SINGLE_STRIP("single-strip", Boolean.FALSE);
+        SINGLE_STRIP("single-strip", Boolean.FALSE),
+        /** option to determine whether to use little or big endian encoding */
+        ENDIANNESS("endianness", Endianness.DEFAULT);
 
         private final String name;
         private final Object defaultValue;
@@ -79,6 +83,13 @@ public final class TIFFRendererConfig extends BitmapRendererConfig {
     }
 
     /**
+     * @return returns an object to determine whether little or big endian encoding is used
+     */
+    public Endianness getEndianness() {
+        return (Endianness) params.get(TIFFRendererOption.ENDIANNESS);
+    }
+
+    /**
      * The TIFF renderer configuration parser.
      */
     public static final class TIFFRendererConfigParser extends BitmapRendererConfigParser {
@@ -107,6 +118,8 @@ public final class TIFFRendererConfig extends BitmapRendererConfig {
                         TIFFCompressionValue.getType(getValue(cfg, TIFFRendererOption.COMPRESSION)));
                 setParam(TIFFRendererOption.SINGLE_STRIP, Boolean.valueOf(getValue(cfg,
                                 TIFFRendererOption.SINGLE_STRIP)));
+                setParam(TIFFRendererOption.ENDIANNESS,
+                        Endianness.getEndianType(getValue(cfg, TIFFRendererOption.ENDIANNESS)));
             }
             return config;
         }

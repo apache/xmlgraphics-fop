@@ -19,8 +19,6 @@
 
 package org.apache.fop.render.bitmap;
 
-import org.apache.xmlgraphics.image.writer.ResolutionUnit;
-
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererConfigParser;
 import org.apache.fop.render.intermediate.IFContext;
@@ -34,7 +32,6 @@ public class TIFFDocumentHandler extends AbstractBitmapDocumentHandler {
 
     TIFFDocumentHandler(IFContext context) {
         super(context);
-        getSettings().getWriterParams().setResolutionUnit(ResolutionUnit.CENTIMETER);
     }
 
     /** {@inheritDoc} */

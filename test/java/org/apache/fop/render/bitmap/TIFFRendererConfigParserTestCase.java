@@ -21,6 +21,8 @@ package org.apache.fop.render.bitmap;
 
 import org.junit.Test;
 
+import org.apache.xmlgraphics.image.writer.Endianness;
+
 import org.apache.fop.apps.FopConfBuilder;
 import org.apache.fop.apps.TIFFRendererConfBuilder;
 import org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererConfigParser;
@@ -61,5 +63,13 @@ extends AbstractBitmapRendererConfigParserTester {
         assertTrue(getConfig().isSingleStrip());
         parseConfig(createRenderer().setSingleStrip(false));
         assertFalse(getConfig().isSingleStrip());
+    }
+
+    @Test
+    public void testEndianness() throws Exception {
+        for (Endianness value : Endianness.values()) {
+            parseConfig(createRenderer().setEndianness(value.toString()));
+            assertEquals(value, getConfig().getEndianness());
+        }
     }
 }
