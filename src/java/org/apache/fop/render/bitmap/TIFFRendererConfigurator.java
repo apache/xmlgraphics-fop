@@ -22,6 +22,8 @@ package org.apache.fop.render.bitmap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.image.writer.Endianness;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.Renderer;
@@ -81,6 +83,11 @@ public class TIFFRendererConfigurator extends BitmapRendererConfigurator {
         return singleRowPerStrip == null ? false : singleRowPerStrip;
     }
 
+    private Endianness getEndianness(TIFFRendererConfig config) {
+        Endianness endianMode = config.getEndianness();
+        return endianMode == null ? Endianness.DEFAULT : endianMode;
+    }
+
     @Override
     public void configure(IFDocumentHandler documentHandler) throws FOPException {
         final TIFFRendererConfig config = (TIFFRendererConfig) getRendererConfig(documentHandler);
@@ -90,6 +97,7 @@ public class TIFFRendererConfigurator extends BitmapRendererConfigurator {
             configure(documentHandler, settings, new TIFFRendererConfigParser());
             setCompressionMethod(config.getCompressionType(), settings);
             settings.getWriterParams().setSingleStrip(isSingleStrip(config));
+            settings.getWriterParams().setEndianness(getEndianness(config));
         }
     }
 

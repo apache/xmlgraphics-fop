@@ -20,6 +20,7 @@
 package org.apache.fop.apps;
 
 import static org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererOption.COMPRESSION;
+import static org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererOption.ENDIANNESS;
 import static org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererOption.SINGLE_STRIP;
 public class TIFFRendererConfBuilder extends BitmapRendererConfBuilder {
 
@@ -34,6 +35,11 @@ public class TIFFRendererConfBuilder extends BitmapRendererConfBuilder {
 
     public TIFFRendererConfBuilder setSingleStrip(boolean single) {
         createTextElement(SINGLE_STRIP, String.valueOf(single));
+        return this;
+    }
+
+    public TIFFRendererConfBuilder setEndianness(String endianness) {
+        createTextElement(ENDIANNESS, endianness);
         return this;
     }
 }

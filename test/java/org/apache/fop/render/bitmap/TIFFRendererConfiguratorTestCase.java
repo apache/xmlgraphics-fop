@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
 
 import org.junit.Test;
 
+import org.apache.xmlgraphics.image.writer.Endianness;
 
 import org.apache.fop.apps.FopConfBuilder;
 import org.apache.fop.apps.MimeConstants;
@@ -70,6 +71,14 @@ public class TIFFRendererConfiguratorTestCase extends AbstractBitmapRendererConf
         assertTrue(settings.getWriterParams().isSingleStrip());
         parseConfig(createBuilder().setSingleStrip(false));
         assertFalse(settings.getWriterParams().isSingleStrip());
+    }
+
+    @Test
+    public void testEndianness() throws Exception {
+        for (Endianness value : Endianness.values()) {
+            parseConfig(createBuilder().setEndianness(value.toString()));
+            assertEquals(value, settings.getWriterParams().getEndianness());
+        }
     }
 
 }
