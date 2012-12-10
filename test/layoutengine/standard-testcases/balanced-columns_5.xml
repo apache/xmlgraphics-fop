@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks column balancing with different row heights
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+      <fo:layout-master-set>
+        <fo:simple-page-master margin-right="1cm" margin-left="1cm" margin-bottom="0.3cm" margin-top="1cm" page-width="21cm" page-height="29.7cm" master-name="all">
+          <fo:region-body column-count="4" margin-left="0cm" margin-bottom="1cm"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="all">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column column-width="proportional-column-width(1)" />
+            <fo:table-header>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block>header</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+            <fo:table-footer>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block>footer</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-footer>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block font-size="36">1</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block font-size="12">2</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block font-size="12">3</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block font-size="12">4</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block font-size="6">5</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block font-size="6">6</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block font-size="12">7</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block font-size="12">8</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block font-size="12">9</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block span="all">spanning</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="4" xpath="//span[1]/flow[2]/block[1]/block[4]/block[1]/block[1]/lineArea[1]/text[1]/word[1]"/>
+    <eval expected="7" xpath="//span[1]/flow[3]/block[1]/block[4]/block[1]/block[1]/lineArea[1]/text[1]/word[1]"/>
+    <eval expected="8" xpath="//span[1]/flow[4]/block[1]/block[2]/block[1]/block[1]/lineArea[1]/text[1]/word[1]"/>
+  </checks>
+</testcase>
