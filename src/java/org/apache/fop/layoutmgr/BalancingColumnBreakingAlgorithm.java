@@ -19,8 +19,10 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.fop.traits.MinOptMax;
 
@@ -30,36 +32,10 @@ import org.apache.fop.traits.MinOptMax;
  */
 public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
 
-    private static final Log LOG = LogFactory.getLog(BalancingColumnBreakingAlgorithm.class);
-
     private int columnCount;
-    private int fullLen;
-    private int idealPartLen;
+    private List<Integer> idealBreaks;
 
-    /**
-     * Construct a balancing column breaking algorithm.
-     * @param topLevelLM the top level layout manager
-     * @param pageProvider the page provider
-     * @param layoutListener the layout listener
-     * @param alignment     alignment of the paragraph/page. One of
-     *   {@link org.apache.fop.fo.Constants#EN_START},
-     *   {@link org.apache.fop.fo.Constants#EN_JUSTIFY},
-     *   {@link org.apache.fop.fo.Constants#EN_CENTER},
-     *   {@link org.apache.fop.fo.Constants#EN_END}.
-     *   For pages, {@link org.apache.fop.fo.Constants#EN_BEFORE} and
-     *   {@link org.apache.fop.fo.Constants#EN_AFTER}
-     *   are mapped to the corresponding inline properties,
-     *   {@link org.apache.fop.fo.Constants#EN_START} and
-     *   {@link org.apache.fop.fo.Constants#EN_END}.
-     * @param alignmentLast alignment of the paragraph's last line
-     * @param footnoteSeparatorLength length of footnote separator
-     * @param partOverflowRecovery  {@code true} if too long elements should be moved to
-     *                              the next line/part
-     * @param columnCount number of columns
-     * @see PageBreakingAlgorithm
-     */
-    public BalancingColumnBreakingAlgorithm(                     // CSOK: ParameterNumber
-            LayoutManager topLevelLM,
+    public BalancingColumnBreakingAlgorithm(LayoutManager topLevelLM,
             PageProvider pageProvider,
             PageBreakingLayoutListener layoutListener,
             int alignment, int alignmentLast,
@@ -76,56 +52,212 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
     /** {@inheritDoc} */
     protected double computeDemerits(KnuthNode activeNode,
             KnuthElement element, int fitnessClass, double r) {
-        double dem = super.computeDemerits(activeNode, element, fitnessClass, r);
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("original demerit=" + dem + " " + totalWidth
-                    + " line=" + activeNode.line + "/" + columnCount
-                    + " pos=" + activeNode.position + "/" + (par.size() - 1));
+        double demerits = Double.MAX_VALUE;
+        if (idealBreaks == null) {
+            idealBreaks = calculateIdealBreaks(activeNode.position);
         }
-        int remParts = columnCount - activeNode.line;
-        int curPos = par.indexOf(element);
-        if (fullLen == 0) {
-            fullLen = ElementListUtils.calcContentLength(par, activeNode.position, par.size() - 1);
-            this.idealPartLen = (fullLen / columnCount);
+        LinkedList<Integer> curPossibility = getPossibilityTrail(activeNode);
+        boolean notIdeal = false;
+        int idealDemerit = columnCount + 1 - curPossibility.size();
+        if (curPossibility.size() > idealBreaks.size()) {
+            return demerits;
         }
-        int partLen = ElementListUtils.calcContentLength(par, activeNode.position, curPos - 1);
-        int restLen = ElementListUtils.calcContentLength(par, curPos - 1, par.size() - 1);
-        int avgRestLen = 0;
-        if (remParts > 0) {
-            avgRestLen = restLen / remParts;
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("remaining parts: " + remParts + " rest len: " + restLen
-                    + " avg=" + avgRestLen);
-        }
-        double balance = (idealPartLen - partLen) / 1000f;
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("balance=" + balance);
-        }
-        double absBalance = Math.abs(balance);
-        dem = absBalance;
-        //Step 1: This does the rough balancing
-        if (columnCount > 2) {
-            if (balance > 0) {
-                //shorter parts are less desired than longer ones
-                dem = dem * 1.2f;
-            }
-        } else {
-            if (balance < 0) {
-                //shorter parts are less desired than longer ones
-                dem = dem * 1.2f;
+        for (int breakPos = 0; breakPos < curPossibility.size(); breakPos++) {
+            if (curPossibility.get(breakPos) != 0 && curPossibility.get(breakPos)
+                    != idealBreaks.get(breakPos)) {
+                notIdeal = true;
+                break;
             }
         }
-        //Step 2: This helps keep the trailing parts shorter than the previous ones
-        dem += (avgRestLen) / 1000f;
+        if (!notIdeal) {
+            demerits = idealDemerit;
+        }
+        return demerits;
+    }
 
-        if (activeNode.line >= columnCount) {
-            //We don't want more columns than available
-            dem = Double.MAX_VALUE;
+    private List<Integer> calculateIdealBreaks(int startPos) {
+        List<ColumnContent> previousPreviousBreaks = null;
+        List<ColumnContent> previousBreaks = null;
+        List<ColumnContent> breaks = new ArrayList<ColumnContent>();
+        breaks.add(new ColumnContent(startPos, par.size() - 1));
+        do {
+            previousPreviousBreaks = previousBreaks;
+            previousBreaks = breaks;
+            breaks = getInitialBreaks(startPos, getAverageColumnLength(breaks));
+        } while (!breaks.equals(previousBreaks) && !breaks.equals(previousPreviousBreaks));
+        breaks = sortElementsForBreaks(breaks);
+        return getElementIdBreaks(breaks, startPos);
+    }
+
+    private static final class ColumnContent {
+
+        public final int startIndex;
+
+        public final int endIndex;
+
+        ColumnContent(int startIndex, int endIndex) {
+            this.startIndex = startIndex;
+            this.endIndex = endIndex;
         }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("effective dem=" + dem + " " + totalWidth);
+
+        @Override
+        public int hashCode() {
+            return startIndex << 16 | endIndex;
         }
-        return dem;
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof ColumnContent)) {
+                return false;
+            } else {
+                ColumnContent other = (ColumnContent) obj;
+                return other.startIndex == startIndex && other.endIndex == endIndex;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return startIndex + "-" + endIndex;
+        }
+
+    }
+
+    private int getAverageColumnLength(List<ColumnContent> columns) {
+        int totalLength = 0;
+        for (ColumnContent col : columns) {
+            totalLength += calcContentLength(par, col.startIndex, col.endIndex);
+        }
+        return totalLength / columnCount;
+    }
+
+    private List<ColumnContent> getInitialBreaks(int startIndex, int averageColLength) {
+        List<ColumnContent> initialColumns = new ArrayList<ColumnContent>();
+        int colStartIndex = startIndex;
+        int totalLength = 0;
+        int idealBreakLength = averageColLength;
+        int previousBreakLength = 0;
+        int prevBreakIndex = startIndex;
+        boolean prevIsBox = false;
+        int colNumber = 1;
+        for (int i = startIndex; i < par.size(); i++) {
+            KnuthElement element = (KnuthElement) par.get(i);
+            if (isLegalBreak(i, prevIsBox)) {
+                int breakLength = totalLength
+                        + (element instanceof KnuthPenalty ? element.getWidth() : 0);
+                if (breakLength > idealBreakLength && colNumber < columnCount) {
+                    int breakIndex;
+                    if (breakLength - idealBreakLength > idealBreakLength - previousBreakLength) {
+                        breakIndex = prevBreakIndex;
+                        totalLength = previousBreakLength;
+                    } else {
+                        breakIndex = element instanceof KnuthPenalty ? i : i - 1;
+                        totalLength = breakLength;
+                    }
+                    initialColumns.add(new ColumnContent(colStartIndex, breakIndex));
+                    i = getNextStartIndex(breakIndex);
+                    colStartIndex = i--;
+                    colNumber++;
+                    idealBreakLength += averageColLength;
+                } else {
+                    previousBreakLength = breakLength;
+                    prevBreakIndex = element instanceof KnuthPenalty ? i : i - 1;
+                    prevIsBox = false;
+                }
+            } else {
+                totalLength += element instanceof KnuthPenalty ? 0 : element.getWidth();
+                prevIsBox = element instanceof KnuthBox;
+            }
+        }
+        assert initialColumns.size() == columnCount - 1;
+        initialColumns.add(new ColumnContent(colStartIndex, par.size() - 1));
+        return initialColumns;
+    }
+
+    private int getNextStartIndex(int breakIndex) {
+        int startIndex = breakIndex;
+        @SuppressWarnings("unchecked")
+        Iterator<KnuthElement> iter = par.listIterator(breakIndex);
+        while (iter.hasNext() && !(iter.next() instanceof KnuthBox)) {
+            startIndex++;
+        }
+        return startIndex;
+    }
+
+    private List<ColumnContent> sortElementsForBreaks(List<ColumnContent> breaks) {
+        boolean changes;
+        /* Relax factor to make balancing more visually appealing as in some cases
+         * strict balancing would lead to ragged column endings. */
+        int fFactor = 4000;
+        do {
+            changes = false;
+            ColumnContent curColumn = breaks.get(breaks.size() - 1);
+            int curColLength = calcContentLength(par, curColumn.startIndex, curColumn.endIndex);
+            for (int colIndex = (breaks.size() - 1); colIndex > 0; colIndex--) {
+                ColumnContent prevColumn = breaks.get(colIndex - 1);
+                int prevColLength = calcContentLength(par, prevColumn.startIndex, prevColumn.endIndex);
+                if (prevColLength < curColLength) {
+                    int newBreakIndex = curColumn.startIndex;
+                    boolean prevIsBox = true;
+                    while (newBreakIndex <= curColumn.endIndex && !(isLegalBreak(newBreakIndex, prevIsBox))) {
+                        newBreakIndex++;
+                        prevIsBox = par.get(newBreakIndex) instanceof KnuthBox;
+                    }
+                    if (newBreakIndex < curColumn.endIndex) {
+                        if (prevIsBox) {
+                            newBreakIndex--;
+                        }
+                        int newStartIndex = getNextStartIndex(newBreakIndex);
+                        int newPrevColLength = calcContentLength(par, prevColumn.startIndex, newBreakIndex);
+                        if (newPrevColLength <= fFactor + curColLength) {
+                            prevColumn = new ColumnContent(prevColumn.startIndex, newBreakIndex);
+                            breaks.set(colIndex - 1, prevColumn);
+                            breaks.set(colIndex, new ColumnContent(newStartIndex, curColumn.endIndex));
+                            prevColLength = calcContentLength(par, prevColumn.startIndex, newBreakIndex);
+                            changes = true;
+                        }
+                    }
+                }
+                curColLength = prevColLength;
+                curColumn = prevColumn;
+            }
+        } while (changes);
+        return breaks;
+    }
+
+    private boolean isLegalBreak(int index, boolean prevIsBox) {
+        KnuthElement element = (KnuthElement) par.get(index);
+        return element instanceof KnuthPenalty && element.getPenalty() < KnuthPenalty.INFINITE
+                || prevIsBox && element instanceof KnuthGlue;
+    }
+
+    private int calcContentLength(KnuthSequence par, int startIndex, int endIndex) {
+        return ElementListUtils.calcContentLength(par, startIndex, endIndex) + getPenaltyWidth(endIndex);
+    }
+
+    private int getPenaltyWidth(int index) {
+        KnuthElement element = (KnuthElement) par.get(index);
+        return element instanceof KnuthPenalty ? element.getWidth() : 0;
+    }
+
+    private List<Integer> getElementIdBreaks(List<ColumnContent> breaks, int startPos) {
+        List<Integer> elementIdBreaks = new ArrayList<Integer>();
+        elementIdBreaks.add(startPos);
+        for (ColumnContent column : breaks) {
+            if (breaks.get(breaks.size() - 1).equals(column)) {
+                continue;
+            }
+            elementIdBreaks.add(column.endIndex);
+        }
+        return elementIdBreaks;
+    }
+
+    private LinkedList<Integer> getPossibilityTrail(KnuthNode activeNode) {
+        LinkedList<Integer> trail = new LinkedList<Integer>();
+        KnuthNode previous = activeNode;
+        do {
+            trail.addFirst(previous.position);
+            previous = previous.previous;
+        } while (previous != null);
+        return trail;
     }
 }
