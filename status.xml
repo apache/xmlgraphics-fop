@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="PH" type="fix" fixes-bug="FOP-2171" due-to="Simon Steiner">
+       Missing Glyph in Postscript using DejaVuSans.
+      </action>
       <action context="Renderers" dev="VH" type="fix" fixes-bug="54169" due-to="Robert Meyer">
         Split the parent tree (the number tree corresponding to the ParentTree entry in the 
         structure tree root) to avoid reaching the internal limits of Acrobat Pro, that would 

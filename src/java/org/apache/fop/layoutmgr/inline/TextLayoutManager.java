@@ -884,6 +884,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             if (ch == CharUtilities.SPACE
                     && foText.getWhitespaceTreatment() == Constants.EN_PRESERVE
                     || ch == CharUtilities.NBSPACE) {
+                final Font font = FontSelector.selectFontForCharacterInText(ch,
+                        this.foText, this);
+                font.mapChar(ch);
                 // preserved space or non-breaking space:
                 // create the AreaInfo object
                 areaInfo = new AreaInfo(nextStart, nextStart + 1, 1, 0, wordSpaceIPD, false, true,
