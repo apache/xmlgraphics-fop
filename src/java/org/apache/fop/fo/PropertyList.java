@@ -20,6 +20,11 @@
 package org.apache.fop.fo;
 
 // Java
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.xml.sax.Attributes;
 
 import org.apache.commons.logging.Log;
@@ -27,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
@@ -54,6 +60,8 @@ public abstract class PropertyList {
     private FObj fobj = null;
 
     private static Log log = LogFactory.getLog(PropertyList.class);
+
+    private final UnknownPropertyHandler unknownPropertyHandler = new UnknownPropertyHandler();
 
     /**
      * Basic constructor.
@@ -85,6 +93,25 @@ public abstract class PropertyList {
     }
 
     /**
+     * Adds an unknown property value to the property list so that if
+     * necessary, a warning can be displayed.
+     * @param propertyValue The unknown property value
+     * @param output The output of the property to validate
+     * @param property The original property containing the full value
+     */
+    public void validatePropertyValue(String propertyValue, Property output, Property property) {
+        unknownPropertyHandler.validatePropertyValue(propertyValue, output, property);
+    }
+
+    /**
+     * Gets the current list of unknown property values
+     * @return The set containing the list of unknown property values
+     */
+    public Map<String, Property> getUnknownPropertyValues() {
+        return unknownPropertyHandler.getUnknownPropertyValues();
+    }
+
+    /**
      * @return the FObj object attached to the parentPropetyList
      */
     public PropertyList getParentPropertyList() {
@@ -105,6 +132,36 @@ public abstract class PropertyList {
             p = getShorthand(propId);
         }
         return p;
+    }
+
+    /**
+     * A class to handle unknown shorthand property values e.g. border="solit 1pt"
+     */
+    private static class UnknownPropertyHandler {
+
+        /**
+         * A list of unknown properties identified by the value and property in which its featured
+         */
+        private Map<String, Property> unknownPropertyValues = new HashMap<String, Property>();
+
+        /**
+         * A list of known properties which have already been processed
+         */
+        private Set<Property> knownProperties = new HashSet<Property>();
+
+        void validatePropertyValue(String propertyValue, Property output, Property property) {
+            if (!knownProperties.contains(property) && output == null) {
+                if (propertyValue != null) {
+                    unknownPropertyValues.put(propertyValue, property);
+                }
+            } else {
+                knownProperties.add(property);
+            }
+        }
+
+        Map<String, Property> getUnknownPropertyValues() {
+            return unknownPropertyValues;
+        }
     }
 
     /**
@@ -355,6 +412,27 @@ public abstract class PropertyList {
         return !(propId == -1
                 || (subpropId == -1
                 && findSubPropertyName(propertyName) != null));
+    }
+
+    public Property getPropertyForAttribute(Attributes attributes, String attributeName, String attributeValue)
+            throws FOPException {
+        if (attributeValue != null) {
+            if (attributeName.startsWith("xmlns:") || "xmlns".equals(attributeName)) {
+                return null;
+            }
+            String basePropertyName = findBasePropertyName(attributeName);
+            String subPropertyName = findSubPropertyName(attributeName);
+
+            int propId = FOPropertyMapping.getPropertyId(basePropertyName);
+            int subpropId = FOPropertyMapping.getSubPropertyId(subPropertyName);
+
+            if (propId == -1 || (subpropId == -1 && subPropertyName != null)) {
+                return null;
+            }
+
+            return getExplicit(propId);
+        }
+        return null;
     }
 
     /**
