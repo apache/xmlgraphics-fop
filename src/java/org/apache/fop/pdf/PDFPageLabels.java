@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
  */
 public class PDFPageLabels extends PDFNumberTreeNode {
 
-    // TODO: maybe merge these constants with similar ones in PageNumberGenerator
     private static final int DECIMAL = 1; // '0*1'
     private static final int LOWER_ALPHA = 2; // 'a'
     private static final int UPPER_ALPHA = 3; // 'A'
@@ -34,11 +33,11 @@ public class PDFPageLabels extends PDFNumberTreeNode {
     private static final int UPPER_ROMAN = 5; // 'I'
     private static final int PREFIX = 6;
 
-    private static final PDFName S_D = new PDFName("D");
-    private static final PDFName S_UR = new PDFName("R");
-    private static final PDFName S_LR = new PDFName("r");
-    private static final PDFName S_UA = new PDFName("A");
-    private static final PDFName S_LA = new PDFName("a");
+    private static final PDFName S_DECIMAL = new PDFName("D");
+    private static final PDFName S_UPPER_ROMAN = new PDFName("R");
+    private static final PDFName S_LOWER_ROMAN = new PDFName("r");
+    private static final PDFName S_UPPER_ALPHA = new PDFName("A");
+    private static final PDFName S_LOWER_ALPHA = new PDFName("a");
 
     private static final Pattern MATCH_DECIMAL = Pattern.compile("\\d+");
     private static final Pattern MATCH_ROMAN = Pattern.compile(
@@ -63,7 +62,7 @@ public class PDFPageLabels extends PDFNumberTreeNode {
      */
     public void addPageLabel(int index, String pageLabel) {
         boolean addNewPageLabel = false;
-        String padding = "000000";
+        String padding = "00000000";
         int currentPageNumber = 0;
         int currentPageLabelType = 0;
         String currentZeroPaddingPrefix = "";
@@ -72,10 +71,10 @@ public class PDFPageLabels extends PDFNumberTreeNode {
             currentPageLabelType = DECIMAL;
             currentPageNumber = Integer.parseInt(pageLabel);
             int zeroPadding = 0;
-            if (pageLabel.startsWith("0")) {
-                while (pageLabel.charAt(zeroPadding) == '0') {
+            if (pageLabel.charAt(zeroPadding) == '0') {
+                do {
                     zeroPadding++;
-                }
+                } while (pageLabel.charAt(zeroPadding) == '0');
                 currentZeroPaddingPrefix = padding.substring(0, zeroPadding);
                 if (currentZeroPaddingPrefix.length() != lastZeroPaddingPrefix.length()) {
                     addNewPageLabel = true;
@@ -93,12 +92,13 @@ public class PDFPageLabels extends PDFNumberTreeNode {
             }
             currentPageNumber = romanToArabic(pageLabel);
         } else if (MATCH_LETTER.matcher(pageLabel).matches()) {
-            if (pageLabel.toLowerCase().equals(pageLabel)) {
+            char c = pageLabel.charAt(0);
+            if (c > 'Z') {
                 currentPageLabelType = LOWER_ALPHA;
             } else {
                 currentPageLabelType = UPPER_ALPHA;
             }
-            currentPageNumber = alphabeticToArabic(pageLabel);
+            currentPageNumber = alphabeticToArabic(c);
         } else {
             // alphabetic numbering in XSL_FO and labelling in PDF are different after AA (AB versus BB)
             // we will use the /P (prefix) label in that case
@@ -122,22 +122,22 @@ public class PDFPageLabels extends PDFNumberTreeNode {
             default:
                 switch (currentPageLabelType) {
                 case DECIMAL:
-                    pdfName = S_D;
+                    pdfName = S_DECIMAL;
                     if (currentZeroPaddingPrefix.length() != 0) {
                         dict.put("P", currentZeroPaddingPrefix);
                     }
                     break;
                 case LOWER_ROMAN:
-                    pdfName = S_LR;
+                    pdfName = S_LOWER_ROMAN;
                     break;
                 case UPPER_ROMAN:
-                    pdfName = S_UR;
+                    pdfName = S_UPPER_ROMAN;
                     break;
                 case LOWER_ALPHA:
-                    pdfName = S_LA;
+                    pdfName = S_LOWER_ALPHA;
                     break;
                 case UPPER_ALPHA:
-                    pdfName = S_UA;
+                    pdfName = S_UPPER_ALPHA;
                     break;
                 default:
                 }
@@ -195,14 +195,8 @@ public class PDFPageLabels extends PDFNumberTreeNode {
         return arabic;
     }
 
-    private int alphabeticToArabic(String alpha) {
-        int arabic = 0;
-        if (alpha.length() > 1) {
-            // this should never happen
-            return arabic;
-        }
-        String lowerAlpha = alpha.toLowerCase();
-        arabic = (lowerAlpha.charAt(0) - 'a' + 1);
+    private int alphabeticToArabic(char c) {
+        int arabic = Character.toLowerCase(c) - 'a' + 1;
         return arabic;
     }
 }
