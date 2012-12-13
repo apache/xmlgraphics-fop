@@ -37,6 +37,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.table.TableCell;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 
 /**
@@ -125,6 +126,33 @@ public abstract class FObj extends FONode implements Constants {
         if (!inMarker() || "marker".equals(elementName)) {
             bind(pList);
         }
+        warnOnUnknownProperties(attlist, elementName, pList);
+    }
+
+    private void warnOnUnknownProperties(Attributes attlist, String objName, PropertyList propertyList)
+            throws FOPException {
+        Map<String, Property> unknowns = propertyList.getUnknownPropertyValues();
+        for (String propertyValue : unknowns.keySet()) {
+            FOValidationEventProducer producer = FOValidationEventProducer.Provider.get(getUserAgent()
+                    .getEventBroadcaster());
+            producer.invalidPropertyValue(this, objName,
+                    getAttributeNameForValue(attlist, unknowns.get(propertyValue), propertyList),
+                    propertyValue, null,
+                    getLocator());
+        }
+    }
+
+    private String getAttributeNameForValue(Attributes attList, Property value, PropertyList propertyList)
+            throws FOPException {
+        for (int i = 0; i < attList.getLength(); i++) {
+            String attributeName = attList.getQName(i);
+            String attributeValue = attList.getValue(i);
+            Property prop = propertyList.getPropertyForAttribute(attList, attributeName, attributeValue);
+            if (prop.equals(value)) {
+                return attributeName;
+            }
+        }
+        return "unknown";
     }
 
     /**
