@@ -59,6 +59,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="CB" type="fix" fixes-bug="FOP-2173" due-to="Simon Steiner">
+        Invalid Postscript created if more than 255 characters in a custom font are used within 
+        SVG when generating Postscript
+      </action>
       <action context="Code" dev="PH" type="fix" fixes-bug="37114" due-to="Robert Meyer">
         Implementation of changes necessary to warn of invalid property values.
       </action>
