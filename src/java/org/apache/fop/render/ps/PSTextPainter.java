@@ -269,6 +269,13 @@ public class PSTextPainter extends NativeTextPainter {
             this.gen = gen;
         }
 
+        public boolean isMultiByte(Font f) {
+            FontMetrics metrics = f.getFontMetrics();
+            boolean multiByte = metrics instanceof MultiByteFont || metrics instanceof LazyFont
+                    && ((LazyFont) metrics).getRealFont() instanceof MultiByteFont;
+            return multiByte;
+        }
+
         public Font selectFontForChar(char ch) {
             for (int i = 0, c = fonts.length; i < c; i++) {
                 if (fonts[i].hasChar(ch)) {
@@ -290,18 +297,21 @@ public class PSTextPainter extends NativeTextPainter {
         }
 
         public boolean isFontChanging(Font f, char mapped) {
-            if (f != getCurrentFont()) {
-                return true;
-            }
-            if (mapped / 256 != getCurrentFontEncoding()) {
-                return true;
+            // this is only applicable for single byte fonts
+            if (!isMultiByte(f)) {
+                if (f != getCurrentFont()) {
+                    return true;
+                }
+                if (mapped / 256 != getCurrentFontEncoding()) {
+                    return true;
+                }
             }
             return false; //Font is the same
         }
 
         public void selectFont(Font f, char mapped) throws IOException {
             int encoding = mapped / 256;
-            String postfix = (encoding == 0 ? null : Integer.toString(encoding));
+            String postfix = (!isMultiByte(f) && encoding > 0 ? Integer.toString(encoding) : null);
             PSFontResource res = getResourceForFont(f, postfix);
             gen.useFont("/" + res.getName(), f.getFontSize() / 1000f);
             res.notifyResourceUsageOnPage(gen.getResourceTracker());
@@ -430,10 +440,7 @@ public class PSTextPainter extends NativeTextPainter {
             textUtil.setCurrentFont(f, mapped);
             applyColor(paint, gen);
 
-            FontMetrics metrics = f.getFontMetrics();
-            boolean multiByte = metrics instanceof MultiByteFont
-                    || metrics instanceof LazyFont
-                            && ((LazyFont) metrics).getRealFont() instanceof MultiByteFont;
+            boolean multiByte = textUtil.isMultiByte(f);
             StringBuffer sb = new StringBuffer();
             sb.append(multiByte ? '<' : '(');
             for (int i = 0, c = this.currentChars.length(); i < c; i++) {
@@ -531,9 +538,9 @@ public class PSTextPainter extends NativeTextPainter {
                         || metrics instanceof LazyFont
                                 && ((LazyFont) metrics).getRealFont() instanceof MultiByteFont;
                 if (multiByte) {
-                    gen.write('<');
+                    gen.write("<");
                     gen.write(HexEncoder.encode(mapped));
-                    gen.write('>');
+                    gen.write(">");
                 } else {
                     char codepoint = (char)(mapped % 256);
                     gen.write("(" + codepoint + ")");
