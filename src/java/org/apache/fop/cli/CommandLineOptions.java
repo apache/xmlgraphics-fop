@@ -1057,7 +1057,8 @@ public class CommandLineOptions {
             if (!strictValidation) {
                 fopFactoryBuilder.setStrictFOValidation(strictValidation);
             }
-            if (useComplexScriptFeatures) {
+            if (!useComplexScriptFeatures) {
+                // note: by default cs is enabled so we need to disable it
                 fopFactoryBuilder.setComplexScriptFeatures(useComplexScriptFeatures);
             }
         }
