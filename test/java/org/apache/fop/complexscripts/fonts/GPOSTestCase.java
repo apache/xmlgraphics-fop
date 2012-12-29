@@ -298,7 +298,7 @@ public class GPOSTestCase implements ScriptContextTester, GlyphContextTester {
                 {
                     new String[] { "zain", "fatha", "kafinitial" },
                     new int[][] {
-                        { 0, 0, 0, 0 }, { 0, 250, 0, 0 }, { 0, 0, 0, 0 }
+                        { 0, 250, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }
                     }
                 },
           },

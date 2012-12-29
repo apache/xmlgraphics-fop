@@ -448,18 +448,13 @@ public class GlyphProcessingState {
     private int[] getGlyphsForward ( int start, int count, GlyphTester ignoreTester, int[] glyphs, int[] counts ) throws IndexOutOfBoundsException {
         int counted = 0;
         int ignored = 0;
-        for ( int i = start, n = indexLast, k = 0; i < n; i++ ) {
+        for ( int i = start, n = indexLast; ( i < n ) && ( counted < count ); i++ ) {
             int gi = getGlyph ( i - index );
             if ( gi == 65535 ) {
                 ignored++;
             } else {
                 if ( ( ignoreTester == null ) || ! ignoreTester.test ( gi, getLookupFlags() ) ) {
-                    if ( k < count ) {
-                        glyphs [ k++ ] = gi;
-                        counted++;
-                    } else {
-                        break;
-                    }
+                    glyphs [ counted++ ] = gi;
                 } else {
                     ignored++;
                 }
@@ -475,18 +470,13 @@ public class GlyphProcessingState {
     private int[] getGlyphsReverse ( int start, int count, GlyphTester ignoreTester, int[] glyphs, int[] counts ) throws IndexOutOfBoundsException {
         int counted = 0;
         int ignored = 0;
-        for ( int i = start, k = 0; i >= 0; i-- ) {
+        for ( int i = start; ( i >= 0 ) && ( counted < count ); i-- ) {
             int gi = getGlyph ( i - index );
             if ( gi == 65535 ) {
                 ignored++;
             } else {
                 if ( ( ignoreTester == null ) || ! ignoreTester.test ( gi, getLookupFlags() ) ) {
-                    if ( k < count ) {
-                        glyphs [ k++ ] = gi;
-                        counted++;
-                    } else {
-                        break;
-                    }
+                    glyphs [ counted++ ] = gi;
                 } else {
                     ignored++;
                 }
@@ -557,6 +547,41 @@ public class GlyphProcessingState {
      */
     public int[] getIgnoredGlyphs ( int offset, int count ) throws IndexOutOfBoundsException {
         return getIgnoredGlyphs ( offset, count, offset < 0, ignoreDefault, null, null );
+    }
+
+    /**
+     * Determine if glyph at specified offset from current position is ignored. If <code>offset</code> is
+     * negative, then test in reverse order.
+     * @param offset from current position
+     * @param ignoreTester glyph tester to use to determine which glyphs are ignored (or null, in which case none are ignored)
+     * @return true if glyph is ignored
+     * @throws IndexOutOfBoundsException if offset results in an
+     * invalid index into input glyph sequence
+     */
+    public boolean isIgnoredGlyph ( int offset, GlyphTester ignoreTester ) throws IndexOutOfBoundsException {
+        return ( ignoreTester != null ) && ignoreTester.test ( getGlyph ( offset ), getLookupFlags() );
+    }
+
+    /**
+     * Determine if glyph at specified offset from current position is ignored. If <code>offset</code> is
+     * negative, then test in reverse order.
+     * @param offset from current position
+     * @return true if glyph is ignored
+     * @throws IndexOutOfBoundsException if offset results in an
+     * invalid index into input glyph sequence
+     */
+    public boolean isIgnoredGlyph ( int offset ) throws IndexOutOfBoundsException {
+        return isIgnoredGlyph ( offset, ignoreDefault );
+    }
+
+    /**
+     * Determine if glyph at current position is ignored.
+     * @return true if glyph is ignored
+     * @throws IndexOutOfBoundsException if offset results in an
+     * invalid index into input glyph sequence
+     */
+    public boolean isIgnoredGlyph() throws IndexOutOfBoundsException {
+        return isIgnoredGlyph ( getPosition() );
     }
 
     /**

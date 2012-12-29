@@ -408,19 +408,42 @@ public class GlyphPositioningTable extends GlyphTable {
                     if ( ( iga != null ) && ( iga.length == 2 ) ) {
                         PairValues pv = getPairValues ( ci, iga[0], iga[1] );
                         if ( pv != null ) {
+                            int offset = 0;
+                            int offsetLast = counts[0] + counts[1];
+                            // skip any ignored glyphs prior to first non-ignored glyph
+                            for ( ; offset < offsetLast; ++offset ) {
+                                if ( ! ps.isIgnoredGlyph ( offset ) ) {
+                                    break;
+                                } else {
+                                    ps.consume(1);
+                                }
+                            }
+                            // adjust first non-ignored glyph if first value isn't null
                             Value v1 = pv.getValue1();
                             if ( v1 != null ) {
-                                if ( ps.adjust(v1, 0) ) {
+                                if ( ps.adjust(v1, offset) ) {
                                     ps.setAdjusted ( true );
                                 }
+                                ps.consume(1);          // consume first non-ignored glyph
+                                ++offset;
                             }
+                            // skip any ignored glyphs prior to second non-ignored glyph
+                            for ( ; offset < offsetLast; ++offset ) {
+                                if ( ! ps.isIgnoredGlyph ( offset ) ) {
+                                    break;
+                                } else {
+                                    ps.consume(1);
+                                }
+                            }
+                            // adjust second non-ignored glyph if second value isn't null
                             Value v2 = pv.getValue2();
                             if ( v2 != null ) {
-                                if ( ps.adjust(v2, 1) ) {
+                                if ( ps.adjust(v2, offset) ) {
                                     ps.setAdjusted ( true );
                                 }
+                                ps.consume(1);          // consume second non-ignored glyph
+                                ++offset;
                             }
-                            ps.consume ( counts[0] + counts[1] );
                             applied = true;
                         }
                     }
