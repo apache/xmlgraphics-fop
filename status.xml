@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="GA" type="fix" fixes-bug="FOP-2160" due-to="Robert Meyer">
+        Fix NPE when rl writing mode is used in certain contexts.
+      </action>
       <action context="Layout" dev="GA" type="fix" fixes-bug="FOP-2178">
         Fix incomplete kerning when complex script features are enabled.
       </action>

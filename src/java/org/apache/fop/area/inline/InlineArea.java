@@ -137,6 +137,14 @@ public class InlineArea extends Area {
     }
 
     /**
+     * Sets the adjustment information from an existing object
+     * @param adjustingInfo the existing adjustment object
+     */
+    public void setAdjustingInfo(InlineAdjustingInfo adjustingInfo) {
+        this.adjustingInfo = adjustingInfo;
+    }
+
+    /**
      * Modify the adjustment value in the adjustment information object
      * @param adjustment the new adjustment value
      */
