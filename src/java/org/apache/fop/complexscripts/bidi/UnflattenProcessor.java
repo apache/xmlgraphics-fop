@@ -279,6 +279,7 @@ class UnflattenProcessor {
         assert f != null;
         fc.setIPD ( f.getIPD() );
         fc.setUnitWidth ( f.getUnitWidth() );
+        fc.setAdjustingInfo( f.getAdjustingInfo() );
     }
     private InlineParent generateInlineContainer0 ( InlineParent i ) {
         InlineParent ic = new InlineParent();
