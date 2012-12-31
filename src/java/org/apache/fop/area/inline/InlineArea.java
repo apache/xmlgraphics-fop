@@ -278,7 +278,7 @@ public class InlineArea extends Area {
             storedIPDVariation += ipdVariation;
         }
     }
-    
+
     /**
      * Returns the offset that this area would have if its offset and size were taking
      * children areas into account. The bpd of an inline area is taken from its nominal
