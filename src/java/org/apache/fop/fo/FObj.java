@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -132,12 +133,13 @@ public abstract class FObj extends FONode implements Constants {
     private void warnOnUnknownProperties(Attributes attlist, String objName, PropertyList propertyList)
             throws FOPException {
         Map<String, Property> unknowns = propertyList.getUnknownPropertyValues();
-        for (String propertyValue : unknowns.keySet()) {
+        for (Entry<String, Property> value : unknowns.entrySet()) {
+            String unknownProperty = value.getKey();
             FOValidationEventProducer producer = FOValidationEventProducer.Provider.get(getUserAgent()
                     .getEventBroadcaster());
             producer.invalidPropertyValue(this, objName,
-                    getAttributeNameForValue(attlist, unknowns.get(propertyValue), propertyList),
-                    propertyValue, null,
+                    getAttributeNameForValue(attlist, unknowns.get(unknownProperty), propertyList),
+                    unknownProperty, null,
                     getLocator());
         }
     }

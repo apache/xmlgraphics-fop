@@ -19,10 +19,9 @@
 
 package org.apache.fop.area.inline;
 
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.lang.Math;
 
 import org.apache.fop.area.Area;
 
@@ -41,10 +40,10 @@ public class InlineParent extends InlineArea {
 
     /** Controls whether the IPD is automatically adjusted based on the area's children. */
     protected transient boolean autoSize;
-    
+
     /** The offset of the <q>beforest</q> child area of this area. */
     protected int minChildOffset;
-    
+
     /**
      * The offset of the <q>afterest</q> child area of this area. Offset from the
      * before-edge of this area's content-rectangle and the after-edge of the child area's

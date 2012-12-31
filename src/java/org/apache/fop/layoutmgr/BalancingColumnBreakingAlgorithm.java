@@ -63,8 +63,8 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
             return demerits;
         }
         for (int breakPos = 0; breakPos < curPossibility.size(); breakPos++) {
-            if (curPossibility.get(breakPos) != 0 &&
-                    !curPossibility.get(breakPos).equals(idealBreaks.get(breakPos))) {
+            if (curPossibility.get(breakPos) != 0
+                    && !curPossibility.get(breakPos).equals(idealBreaks.get(breakPos))) {
                 notIdeal = true;
                 break;
             }

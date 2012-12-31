@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="FOP-2179" due-to="Robert Meyer">
+        Fix checkstyle and findbugs warnings.
+      </action>
       <action context="Layout" dev="GA" type="fix" fixes-bug="FOP-2160" due-to="Robert Meyer">
         Fix NPE when rl writing mode is used in certain contexts.
       </action>
