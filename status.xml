@@ -59,6 +59,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="CB" type="fix" fixes-bug="FOP-2174" due-to="Robert Meyer">
+        When using SVG drawings, if no content-width and content-height is specified, 72 will
+        be used instead of the source-resolution option. 
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="FOP-2179" due-to="Robert Meyer">
         Fix checkstyle and findbugs warnings.
       </action>
