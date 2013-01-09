@@ -981,6 +981,21 @@ public class TTFFile {
     }
 
     /**
+     * Returns an array (xMin, yMin, xMax, yMax) for a glyph.
+     *
+     * @param glyphIndex the index of the glyph
+     * @return int[] Array defining bounding box.
+     */
+    public int[] getBBox(int glyphIndex) {
+        int[] bboxInTTFUnits = mtxTab[glyphIndex].getBoundingBox();
+        int[] bbox = new int[4];
+        for (int i = 0; i < 4; i++) {
+            bbox[i] = (int) convertTTFUnit2PDFUnit(bboxInTTFUnits[i]);
+        }
+        return bbox;
+    }
+
+    /**
      * Returns the width of a given character.
      * @param idx Index of the character
      * @return int Standard width

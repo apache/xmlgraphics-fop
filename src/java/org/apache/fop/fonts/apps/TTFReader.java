@@ -408,6 +408,11 @@ public class TTFReader extends AbstractFontReader {
         for (int i = 0; i < wx.length; i++) {
             Element wxel = doc.createElement("wx");
             wxel.setAttribute("w", String.valueOf(wx[i]));
+            int[] bbox = ttf.getBBox(i);
+            wxel.setAttribute("xMin", String.valueOf(bbox[0]));
+            wxel.setAttribute("yMin", String.valueOf(bbox[1]));
+            wxel.setAttribute("xMax", String.valueOf(bbox[2]));
+            wxel.setAttribute("yMax", String.valueOf(bbox[3]));
             el.appendChild(wxel);
         }
     }
