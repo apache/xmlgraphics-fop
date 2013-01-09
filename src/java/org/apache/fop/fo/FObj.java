@@ -133,13 +133,11 @@ public abstract class FObj extends FONode implements Constants {
     private void warnOnUnknownProperties(Attributes attlist, String objName, PropertyList propertyList)
             throws FOPException {
         Map<String, Property> unknowns = propertyList.getUnknownPropertyValues();
-        for (Entry<String, Property> value : unknowns.entrySet()) {
-            String unknownProperty = value.getKey();
+        for (Entry<String, Property> entry : unknowns.entrySet()) {
             FOValidationEventProducer producer = FOValidationEventProducer.Provider.get(getUserAgent()
                     .getEventBroadcaster());
-            producer.invalidPropertyValue(this, objName,
-                    getAttributeNameForValue(attlist, unknowns.get(unknownProperty), propertyList),
-                    unknownProperty, null,
+            producer.warnOnInvalidPropertyValue(this, objName,
+                    getAttributeNameForValue(attlist, entry.getValue(), propertyList), entry.getKey(), null,
                     getLocator());
         }
     }
