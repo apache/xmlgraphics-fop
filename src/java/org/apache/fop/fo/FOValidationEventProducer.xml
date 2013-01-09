@@ -26,6 +26,7 @@
   <message key="markerNotUniqueForSameParent">fo:marker "marker-class-name" must be unique for same parent: {mcname}{{locator}}</message>
   <message key="invalidProperty">Invalid property encountered on "{elementName}": {attr}{{locator}}</message>
   <message key="invalidPropertyValue">Invalid property value encountered in {propName}="{propValue}"[: {e}]{{locator}}</message>
+  <message key="warnOnInvalidPropertyValue">Invalid property value encountered in {propName}="{propValue}"[: {e}]{{locator}}</message>  
   <message key="unimplementedFeature">The following feature isn't implemented by Apache FOP, yet: {feature} (on {elementName}){{locator}}</message>
   <message key="missingLinkDestination">Missing attribute on {elementName}: Either external-destination or internal-destination must be specified.{{locator}}</message>
   <message key="markerCloningFailed">Unable to clone subtree of fo:marker (marker-class-name="{markerClassName}") for fo:retrieve-marker.{{locator}}</message>

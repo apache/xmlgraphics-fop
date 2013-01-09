@@ -221,6 +221,20 @@ public interface FOValidationEventProducer extends EventProducer {
             Locator loc);
 
     /**
+     * An invalid property value was encountered.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param propName the property name
+     * @param propValue the property value
+     * @param e the property exception caused by the invalid value
+     * @param loc the location of the error or null
+     * @event.severity WARN
+     */
+    void warnOnInvalidPropertyValue(Object source, String elementName,
+            String propName, String propValue, PropertyException e,
+            Locator loc);
+
+    /**
      * A feature is not supported, yet.
      * @param source the event source
      * @param elementName the name of the context node
