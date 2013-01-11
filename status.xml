@@ -59,7 +59,7 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
-      <action context="Fonts" dev="PH" type="add" fixes-bug="FOP-1069" due-to="Alexey Neyman">
+      <action context="Fonts" dev="PH" type="add" fixes-bug="FOP-2180" due-to="Alexey Neyman">
        TTFReader: Output bounding box information for glyphs. 
       </action>
       <action context="Code" dev="PH" type="fix" fixes-bug="FOP-1069" due-to="Robert Meyer">
