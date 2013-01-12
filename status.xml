@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="FOP-2184" due-to="Luis Bernardo">
+       Optimize inefficient position adjustment array allocation in non-CS path.
+      </action>
       <action context="Fonts" dev="PH" type="add" fixes-bug="FOP-2180" due-to="Alexey Neyman">
        TTFReader: Output bounding box information for glyphs. 
       </action>
