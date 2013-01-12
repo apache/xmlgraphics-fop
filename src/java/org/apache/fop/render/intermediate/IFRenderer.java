@@ -1048,11 +1048,15 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         int[][] dp = word.getGlyphPositionAdjustments();
         if ( dp == null ) {
-            dp = IFUtil.convertDXToDP ( word.getLetterAdjustArray() );
+            renderTextWithAdjustments(s, word.getLetterAdjustArray(), word.isReversed(),
+                    font, (AbstractTextArea)word.getParentArea());
+        } else if ( IFUtil.isDPOnlyDX ( dp ) ) {
+            renderTextWithAdjustments(s, IFUtil.convertDPToDX ( dp ), word.isReversed(),
+                    font, (AbstractTextArea)word.getParentArea());
+        } else {
+            renderTextWithAdjustments(s, dp, word.isReversed(),
+                    font, (AbstractTextArea)word.getParentArea());
         }
-
-        renderText(s, dp, word.isReversed(),
-                font, (AbstractTextArea)word.getParentArea());
 
         super.renderWord(word);
     }
@@ -1063,7 +1067,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         String s = space.getSpace();
 
         AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
-        renderText(s, null, false, font, textArea);
+        renderTextWithAdjustments(s, (int[]) null, false, font, textArea);
 
         if (textUtil.combined && space.isAdjustable()) {
             //Used for justified text, for example
@@ -1074,17 +1078,6 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             }
         }
         super.renderSpace(space);
-    }
-
-    private void renderText(String s,
-                              int[][] dp, boolean reversed,
-                              Font font, AbstractTextArea parentArea) {
-        if ( ( dp == null ) || IFUtil.isDPOnlyDX ( dp ) ) {
-            int[] dx = IFUtil.convertDPToDX ( dp );
-            renderTextWithAdjustments ( s, dx, reversed, font, parentArea );
-        } else {
-            renderTextWithAdjustments ( s, dp, reversed, font, parentArea );
-        }
     }
 
     /**
@@ -1154,12 +1147,14 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         }
 
         void adjust(int dx) {
-            adjust ( new int[] {
-                    dx,                         // xPlaAdjust
-                    0,                          // yPlaAdjust
-                    dx,                         // xAdvAdjust
-                    0                           // yAdvAdjust
-                } );
+            if (dx != 0) {
+                adjust ( new int[] {
+                        dx,                         // xPlaAdjust
+                        0,                          // yPlaAdjust
+                        dx,                         // xAdvAdjust
+                        0                           // yAdvAdjust
+                    } );
+            }
         }
 
         void adjust(int[] pa) {
