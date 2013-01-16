@@ -162,7 +162,6 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
         assert st != null;
         updateSubtableState ( st );
         boolean applied = st.substitute ( this );
-        resetSubtableState();
         return applied;
     }
 

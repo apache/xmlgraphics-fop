@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="FOP-2186">
+       Optimize inefficient glyph processing state update operations in CS path.
+      </action>
       <action context="Renderers" dev="GA" type="fix" fixes-bug="FOP-2184" due-to="Luis Bernardo">
        Optimize inefficient position adjustment array allocation in non-CS path.
       </action>

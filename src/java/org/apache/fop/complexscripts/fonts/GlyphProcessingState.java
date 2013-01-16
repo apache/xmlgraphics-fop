@@ -72,6 +72,8 @@ public class GlyphProcessingState {
     protected GlyphTester ignoreMark;
     /** default ignore glyph tester */
     protected GlyphTester ignoreDefault;
+    /** current subtable */
+    private GlyphSubtable subtable;
 
     /**
      * Construct glyph processing state.
@@ -181,18 +183,12 @@ public class GlyphProcessingState {
      * @param st glyph subtable to use for update
      */
     public void updateSubtableState ( GlyphSubtable st ) {
-        setGDEF ( st.getGDEF() );
-        setLookupFlags ( st.getFlags() );
-        setIgnoreDefault ( getIgnoreTester ( getLookupFlags() ) );
-    }
-
-    /**
-     * Reset glyph subtable specific state.
-     */
-    public void resetSubtableState() {
-        setGDEF ( null );
-        setLookupFlags ( 0 );
-        setIgnoreDefault ( null );
+        if ( this.subtable != st ) {
+            setGDEF ( st.getGDEF() );
+            setLookupFlags ( st.getFlags() );
+            setIgnoreDefault ( getIgnoreTester ( getLookupFlags() ) );
+            this.subtable = st;
+        }
     }
 
     /**
