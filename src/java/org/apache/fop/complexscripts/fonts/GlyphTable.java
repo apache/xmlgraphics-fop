@@ -435,7 +435,8 @@ public class GlyphTable {
      */
     public static class LookupTable implements Comparable {
 
-        private final String id;                                // lookup identifiers
+        private final String id;                                // lookup identifier
+        private final int idOrdinal;                            // parsed lookup identifier ordinal
         private final List/*<GlyphSubtable>*/ subtables;        // list of subtables
         private boolean doesSub;                                // performs substitutions
         private boolean doesPos;                                // performs positioning
@@ -461,7 +462,9 @@ public class GlyphTable {
         public LookupTable ( String id, List/*<GlyphSubtable>*/ subtables ) {
             assert id != null;
             assert id.length() != 0;
+            assert id.startsWith ( "lu" );
             this.id = id;
+            this.idOrdinal = Integer.parseInt ( id.substring ( 2 ) );
             this.subtables = new LinkedList/*<GlyphSubtable>*/();
             if ( subtables != null ) {
                 for ( Iterator it = subtables.iterator(); it.hasNext(); ) {
@@ -469,11 +472,6 @@ public class GlyphTable {
                     addSubtable ( st );
                 }
             }
-        }
-
-        /** @return the identifier */
-        public String getId() {
-            return id;
         }
 
         /** @return the subtables as an array */
@@ -664,7 +662,7 @@ public class GlyphTable {
 
         /** {@inheritDoc} */
         public int hashCode() {
-            return id.hashCode();
+            return idOrdinal;
         }
 
         /**
@@ -675,7 +673,7 @@ public class GlyphTable {
         public boolean equals ( Object o ) {
             if ( o instanceof LookupTable ) {
                 LookupTable lt = (LookupTable) o;
-                return id.equals ( lt.id );
+                return idOrdinal == lt.idOrdinal;
             } else {
                 return false;
             }
@@ -691,10 +689,8 @@ public class GlyphTable {
         public int compareTo ( Object o ) {
             if ( o instanceof LookupTable ) {
                 LookupTable lt = (LookupTable) o;
-                assert id.startsWith ( "lu" );
-                int i = Integer.parseInt ( id.substring ( 2 ) );
-                assert lt.id.startsWith ( "lu" );
-                int j = Integer.parseInt ( lt.id.substring ( 2 ) );
+                int i = idOrdinal;
+                int j = lt.idOrdinal;
                 if ( i < j ) {
                     return -1;
                 } else if ( i > j ) {
