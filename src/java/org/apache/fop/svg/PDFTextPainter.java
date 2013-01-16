@@ -90,9 +90,11 @@ class PDFTextPainter extends NativeTextPainter {
         final PDFGraphics2D pdf = (PDFGraphics2D)g2d;
 
         PDFTextUtil textUtil = new PDFTextUtil(pdf.fontInfo) {
-            @Override
             protected void write(String code) {
                 pdf.currentStream.write(code);
+            }
+            protected void write(StringBuffer code) {
+                pdf.currentStream.append(code);
             }
         };
 

@@ -70,15 +70,26 @@ public abstract class PDFTextUtil {
      */
     protected abstract void write(String code);
 
+    /**
+     * Writes PDF code.
+     * @param code the PDF code to write
+     */
+    protected abstract void write(StringBuffer code);
+
     private void writeAffineTransform(AffineTransform at, StringBuffer sb) {
         double[] lt = new double[6];
         at.getMatrix(lt);
-        sb.append(PDFNumber.doubleOut(lt[0], DEC)).append(" ");
-        sb.append(PDFNumber.doubleOut(lt[1], DEC)).append(" ");
-        sb.append(PDFNumber.doubleOut(lt[2], DEC)).append(" ");
-        sb.append(PDFNumber.doubleOut(lt[3], DEC)).append(" ");
-        sb.append(PDFNumber.doubleOut(lt[4], DEC)).append(" ");
-        sb.append(PDFNumber.doubleOut(lt[5], DEC));
+        PDFNumber.doubleOut(lt[0], DEC, sb);
+        sb.append(' ');
+        PDFNumber.doubleOut(lt[1], DEC, sb);
+        sb.append(' ');
+        PDFNumber.doubleOut(lt[2], DEC, sb);
+        sb.append(' ');
+        PDFNumber.doubleOut(lt[3], DEC, sb);
+        sb.append(' ');
+        PDFNumber.doubleOut(lt[4], DEC, sb);
+        sb.append(' ');
+        PDFNumber.doubleOut(lt[5], DEC, sb);
     }
 
     private static void writeChar(char ch, StringBuffer sb, boolean multibyte) {
@@ -90,14 +101,14 @@ public abstract class PDFTextUtil {
                 case '(':
                 case ')':
                 case '\\':
-                    sb.append("\\");
+                    sb.append('\\');
                     break;
                 default:
                 }
                 sb.append(ch);
             }
         } else {
-            sb.append(PDFText.toUnicodeHex(ch));
+            PDFText.toUnicodeHex(ch, sb);
         }
     }
 
@@ -160,7 +171,7 @@ public abstract class PDFTextUtil {
             StringBuffer sb = new StringBuffer();
             writeAffineTransform(at, sb);
             sb.append(" cm\n");
-            write(sb.toString());
+            write(sb);
         }
     }
 
@@ -171,8 +182,13 @@ public abstract class PDFTextUtil {
      */
     public void writeTf(String fontName, double fontSize) {
         checkInTextObject();
-        write("/" + fontName + " " + PDFNumber.doubleOut(fontSize) + " Tf\n");
-
+        StringBuffer sb = new StringBuffer();
+        sb.append('/');
+        sb.append(fontName);
+        sb.append(' ');
+        PDFNumber.doubleOut(fontSize,6,sb);
+        sb.append(" Tf\n");
+        write(sb);
         this.startText = useMultiByte ? "<" : "(";
         this.endText = useMultiByte ? ">" : ")";
     }
@@ -237,7 +253,7 @@ public abstract class PDFTextUtil {
         StringBuffer sb = new StringBuffer();
         writeAffineTransform(localTransform, sb);
         sb.append(" Tm ");
-        write(sb.toString());
+        write(sb);
     }
 
     /**
@@ -249,7 +265,7 @@ public abstract class PDFTextUtil {
             bufTJ = new StringBuffer();
         }
         if (bufTJ.length() == 0) {
-            bufTJ.append("[");
+            bufTJ.append('[');
             bufTJ.append(startText);
         }
         writeChar(codepoint, bufTJ);
@@ -277,13 +293,13 @@ public abstract class PDFTextUtil {
             bufTJ = new StringBuffer();
         }
         if (bufTJ.length() == 0) {
-            bufTJ.append("[");
+            bufTJ.append('[');
         } else {
             bufTJ.append(endText);
-            bufTJ.append(" ");
+            bufTJ.append(' ');
         }
-        bufTJ.append(PDFNumber.doubleOut(adjust, DEC - 4));
-        bufTJ.append(" ");
+        PDFNumber.doubleOut(adjust, DEC - 4, bufTJ);
+        bufTJ.append(' ');
         bufTJ.append(startText);
     }
 
@@ -293,8 +309,9 @@ public abstract class PDFTextUtil {
      */
     public void writeTJ() {
         if (isInString()) {
-            bufTJ.append(endText).append("] TJ\n");
-            write(bufTJ.toString());
+            bufTJ.append(endText);
+            bufTJ.append("] TJ\n");
+            write(bufTJ);
             bufTJ.setLength(0);
         }
     }
@@ -310,11 +327,11 @@ public abstract class PDFTextUtil {
      */
     public void writeTd ( double x, double y ) {
         StringBuffer sb = new StringBuffer();
-        sb.append(PDFNumber.doubleOut(x, DEC));
+        PDFNumber.doubleOut(x, DEC, sb);
         sb.append(' ');
-        sb.append(PDFNumber.doubleOut(y, DEC));
-        sb.append ( " Td\n" );
-        write ( sb.toString() );
+        PDFNumber.doubleOut(y, DEC, sb);
+        sb.append(" Td\n");
+        write(sb);
     }
 
     /**
@@ -323,11 +340,11 @@ public abstract class PDFTextUtil {
      */
     public void writeTj ( char ch ) {
         StringBuffer sb = new StringBuffer();
-        sb.append ( '<' );
-        writeChar ( ch, sb, true );
-        sb.append ( '>' );
-        sb.append ( " Tj\n" );
-        write ( sb.toString() );
+        sb.append('<');
+        writeChar(ch, sb, true);
+        sb.append('>');
+        sb.append(" Tj\n");
+        write(sb);
     }
 
 }
