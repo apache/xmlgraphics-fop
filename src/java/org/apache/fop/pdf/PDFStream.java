@@ -40,6 +40,7 @@ public class PDFStream extends AbstractPDFStream {
     protected StreamCache data;
 
     private transient Writer streamWriter;
+    private transient char[] charBuffer;
 
     /**
      * Create an empty stream object
@@ -83,6 +84,34 @@ public class PDFStream extends AbstractPDFStream {
     public void add(String s) {
         try {
             this.streamWriter.write(s);
+        } catch (IOException ex) {
+            //TODO throw the exception and catch it elsewhere
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Append data to the stream
+     *
+     * @param sb the string buffer of PDF to add
+     */
+    public void add(StringBuffer sb) {
+        try {
+            int nHave = sb.length();
+            if (charBuffer == null) {
+                charBuffer = new char [ nHave * 2 ];
+            } else {
+                int nAvail = charBuffer.length;
+                if (nAvail < nHave) {
+                    int nAlloc = nAvail;
+                    while (nAlloc < nHave) {
+                        nAlloc *= 2;
+                    }
+                    charBuffer = new char [ nAlloc ];
+                }
+            }
+            sb.getChars(0, nHave, charBuffer, 0);
+            this.streamWriter.write(charBuffer, 0, nHave);
         } catch (IOException ex) {
             //TODO throw the exception and catch it elsewhere
             ex.printStackTrace();

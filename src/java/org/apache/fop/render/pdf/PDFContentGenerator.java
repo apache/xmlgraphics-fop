@@ -80,6 +80,9 @@ public class PDFContentGenerator {
             protected void write(String code) {
                 currentStream.add(code);
             }
+            protected void write(StringBuffer code) {
+                currentStream.add(code);
+            }
         };
 
         this.currentState = new PDFPaintingState();

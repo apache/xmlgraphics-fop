@@ -206,6 +206,18 @@ public class PDFText extends PDFObject {
     }
 
     /**
+     * Convert a char to a multibyte hex representation appending to string buffer.
+     * Since Java always stores strings in UTF-16, we don't have to do any conversion.
+     * @param c character to encode
+     * @param sb the string buffer to append output
+     */
+    public static final void toUnicodeHex(char c, StringBuffer sb) {
+        for (int i = 0; i < 4; ++i) {
+            sb.append(DIGITS[(c >> (12-4*i)) & 0x0F]);
+        }
+    }
+
+    /**
      * Escaped a String as described in section 4.4 in the PDF 1.3 specs.
      * @param s String to escape
      * @return String the escaped String

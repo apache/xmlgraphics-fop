@@ -83,6 +83,24 @@ public class PDFNumber extends PDFObject {
         return buf.toString();
     }
 
+    /**
+     * Append a double value to a string buffer suitable for PDF.
+     * In this method it is possible to set the maximum
+     * number of decimal places to output.
+     *
+     * @param doubleDown the Double value
+     * @param dec the number of decimal places to output
+     * @param buf the string buffer to which double is formatted (appended)
+     * @return the string buffer
+     */
+    public static StringBuffer doubleOut(double doubleDown, int dec, StringBuffer buf) {
+        if (dec < 0 || dec > 16) {
+            throw new IllegalArgumentException("Parameter dec must be between 1 and 16");
+        }
+        DoubleFormatUtil.formatDouble(doubleDown, dec, dec, buf);
+        return buf;
+    }
+
     /** {@inheritDoc} */
     protected String toPDFString() {
         if (getNumber() == null) {
