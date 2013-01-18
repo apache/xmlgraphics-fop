@@ -21,6 +21,7 @@ package org.apache.fop.complexscripts.fonts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -73,6 +74,9 @@ public class GlyphTable {
     // map from lookup identifiers to lookup tables
     private Map/*<String,LookupTable>*/ lookupTables;
 
+    // cache for lookups matching
+    private Map/*<LookupSpec,Map<LookupSpec,List<LookupTable>>>*/ matchedLookups;
+
     // if true, then prevent further subtable addition
     private boolean frozen;
 
@@ -90,6 +94,7 @@ public class GlyphTable {
             this.gdef = gdef;
             this.lookups = lookups;
             this.lookupTables = new LinkedHashMap/*<String,List<LookupTable>>*/();
+            this.matchedLookups = new HashMap/*<LookupSpec,Map<LookupSpec,List<LookupTable>>>*/();
         }
     }
 
@@ -212,11 +217,16 @@ public class GlyphTable {
      * @return a (possibly empty) map from matching lookup specifications to lists of corresponding lookup tables
      */
     public Map/*<LookupSpec,List<LookupTable>>*/ matchLookups ( String script, String language, String feature ) {
-        List/*<LookupSpec>*/ lsl = matchLookupSpecs ( script, language, feature );
-        Map lm = new LinkedHashMap();
-        for ( Iterator it = lsl.iterator(); it.hasNext(); ) {
-            LookupSpec ls = (LookupSpec) it.next();
-            lm.put ( ls, findLookupTables ( ls ) );
+        LookupSpec lsm = new LookupSpec ( script, language, feature, true, true );
+        Map/*<LookupSpec,List<LookupTable>>*/ lm = (Map/*<LookupSpec,List<LookupTable>>*/) matchedLookups.get ( lsm );
+        if ( lm == null ) {
+            lm = new LinkedHashMap();
+            List/*<LookupSpec>*/ lsl = matchLookupSpecs ( script, language, feature );
+            for ( Iterator it = lsl.iterator(); it.hasNext(); ) {
+                LookupSpec ls = (LookupSpec) it.next();
+                lm.put ( ls, findLookupTables ( ls ) );
+            }
+            matchedLookups.put ( lsm, lm );
         }
         return lm;
     }
@@ -337,23 +347,34 @@ public class GlyphTable {
          * @param feature a feature identifier
          */
         public LookupSpec ( String script, String language, String feature ) {
-            if ( ( script == null ) || ( script.length() == 0 ) ) {
+            this ( script, language, feature, false, false );
+        }
+
+        /**
+         * Instantiate lookup spec.
+         * @param script a script identifier
+         * @param language a language identifier
+         * @param feature a feature identifier
+         * @param permitEmpty if true the permit empty script, language, or feature
+         * @param permitWildcard if true the permit wildcard script, language, or feature
+         */
+        LookupSpec ( String script, String language, String feature, boolean permitEmpty, boolean permitWildcard ) {
+            if ( ( script == null ) || ( ! permitEmpty && ( script.length() == 0 ) ) ) {
                 throw new AdvancedTypographicTableFormatException ( "script must be non-empty string" );
-            } else if ( ( language == null ) || ( language.length() == 0 ) ) {
+            } else if ( ( language == null ) || ( ! permitEmpty && ( language.length() == 0 ) ) ) {
                 throw new AdvancedTypographicTableFormatException ( "language must be non-empty string" );
-            } else if ( ( feature == null ) || ( feature.length() == 0 ) ) {
+            } else if ( ( feature == null ) || ( ! permitEmpty && ( feature.length() == 0 ) ) ) {
                 throw new AdvancedTypographicTableFormatException ( "feature must be non-empty string" );
-            } else if ( script.equals("*") ) {
+            } else if ( ! permitWildcard && script.equals("*") ) {
                 throw new AdvancedTypographicTableFormatException ( "script must not be wildcard" );
-            } else if ( language.equals("*") ) {
+            } else if ( ! permitWildcard && language.equals("*") ) {
                 throw new AdvancedTypographicTableFormatException ( "language must not be wildcard" );
-            } else if ( feature.equals("*") ) {
+            } else if ( ! permitWildcard && feature.equals("*") ) {
                 throw new AdvancedTypographicTableFormatException ( "feature must not be wildcard" );
-            } else {
-                this.script = script.trim();
-                this.language = language.trim();
-                this.feature = feature.trim();
             }
+            this.script = script.trim();
+            this.language = language.trim();
+            this.feature = feature.trim();
         }
 
         /** @return script identifier */

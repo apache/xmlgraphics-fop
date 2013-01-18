@@ -76,6 +76,12 @@ public class GlyphProcessingState {
     private GlyphSubtable subtable;
 
     /**
+     * Construct default (reset) glyph processing state.
+     */
+    public GlyphProcessingState() {
+    }
+
+    /**
      * Construct glyph processing state.
      * @param gs input glyph sequence
      * @param script script identifier
@@ -104,6 +110,35 @@ public class GlyphProcessingState {
     protected GlyphProcessingState ( GlyphProcessingState s ) {
         this ( new GlyphSequence ( s.igs ), s.script, s.language, s.feature, s.sct );
         setPosition ( s.index );
+    }
+
+    /**
+     * Reset glyph processing state.
+     * @param gs input glyph sequence
+     * @param script script identifier
+     * @param language language identifier
+     * @param feature feature identifier
+     * @param sct script context tester (or null)
+     */
+    protected GlyphProcessingState reset ( GlyphSequence gs, String script, String language, String feature, ScriptContextTester sct ) {
+        this.gdef = null;
+        this.script = script;
+        this.language = language;
+        this.feature = feature;
+        this.igs = gs;
+        this.index = 0;
+        this.indexLast = gs.getGlyphCount();
+        this.consumed = 0;
+        this.lookupFlags = 0;
+        this.classMatchSet = 0;
+        this.sct = sct;
+        this.gct = ( sct != null ) ? sct.getTester ( feature ) : null;
+        this.ignoreBase = new GlyphTester() { public boolean test(int gi, int flags) { return isIgnoredBase(gi, flags); } };
+        this.ignoreLigature = new GlyphTester() { public boolean test(int gi, int flags) { return isIgnoredLigature(gi, flags); } };
+        this.ignoreMark = new GlyphTester() { public boolean test(int gi, int flags) { return isIgnoredMark(gi, flags); } };
+        this.ignoreDefault = null;
+        this.subtable = null;
+        return this;
     }
 
     /**

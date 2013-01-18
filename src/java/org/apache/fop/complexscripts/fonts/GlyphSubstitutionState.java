@@ -48,6 +48,12 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
     private boolean predications;
 
     /**
+     * Construct default (reset) glyph substitution state.
+     */
+    public GlyphSubstitutionState() {
+    }
+
+    /**
      * Construct glyph substitution state.
      * @param gs input glyph sequence
      * @param script script identifier
@@ -71,6 +77,23 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
         super ( ss );
         this.ogb = IntBuffer.allocate ( indexLast );
         this.oal = new ArrayList ( indexLast );
+    }
+
+    /**
+     * Reset glyph substitution state.
+     * @param gs input glyph sequence
+     * @param script script identifier
+     * @param language language identifier
+     * @param feature feature identifier
+     * @param sct script context tester (or null)
+     */
+    public GlyphSubstitutionState reset ( GlyphSequence gs, String script, String language, String feature, ScriptContextTester sct ) {
+        super.reset ( gs, script, language, feature, sct );
+        this.alternatesIndex = null;
+        this.ogb = IntBuffer.allocate ( gs.getGlyphCount() );
+        this.oal = new ArrayList ( gs.getGlyphCount() );
+        this.predications = gs.getPredications();
+        return this;
     }
 
     /**

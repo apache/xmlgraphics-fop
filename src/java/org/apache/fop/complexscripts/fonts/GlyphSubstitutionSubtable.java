@@ -33,6 +33,8 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
  */
 public abstract class GlyphSubstitutionSubtable extends GlyphSubtable implements GlyphSubstitution {
 
+    private static final GlyphSubstitutionState state = new GlyphSubstitutionState();
+
     /**
      * Instantiate a <code>GlyphSubstitutionSubtable</code>.
      * @param id subtable identifier
@@ -119,7 +121,9 @@ public abstract class GlyphSubstitutionSubtable extends GlyphSubtable implements
      * @return output glyph sequence
      */
     public static final GlyphSequence substitute ( GlyphSequence gs, String script, String language, String feature, GlyphSubstitutionSubtable[] sta, ScriptContextTester sct ) {
-        return substitute ( new GlyphSubstitutionState ( gs, script, language, feature, sct ), sta, -1 );
+        synchronized ( state ) {
+            return substitute ( state.reset ( gs, script, language, feature, sct ), sta, -1 );
+        }
     }
 
 }

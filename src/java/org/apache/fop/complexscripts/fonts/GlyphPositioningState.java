@@ -44,6 +44,12 @@ public class GlyphPositioningState extends GlyphProcessingState {
     private boolean adjusted;
 
     /**
+     * Construct default (reset) glyph positioning state.
+     */
+    public GlyphPositioningState() {
+    }
+
+    /**
      * Construct glyph positioning state.
      * @param gs input glyph sequence
      * @param script script identifier
@@ -71,6 +77,26 @@ public class GlyphPositioningState extends GlyphProcessingState {
         this.fontSize = ps.fontSize;
         this.widths = ps.widths;
         this.adjustments = ps.adjustments;
+    }
+
+    /**
+     * Reset glyph positioning state.
+     * @param gs input glyph sequence
+     * @param script script identifier
+     * @param language language identifier
+     * @param feature feature identifier
+     * @param fontSize font size (in micropoints)
+     * @param widths array of design advancements (in glyph index order)
+     * @param adjustments positioning adjustments to which positioning is applied
+     * @param sct script context tester (or null)
+     */
+    public GlyphPositioningState reset ( GlyphSequence gs, String script, String language, String feature, int fontSize, int[] widths, int[][] adjustments, ScriptContextTester sct ) {
+        super.reset ( gs, script, language, feature, sct );
+        this.fontSize = fontSize;
+        this.widths = widths;
+        this.adjustments = adjustments;
+        this.adjusted = false;
+        return this;
     }
 
     /**
