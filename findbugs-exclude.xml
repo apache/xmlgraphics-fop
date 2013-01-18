@@ -4842,6 +4842,11 @@
      <Bug pattern="EI_EXPOSE_REP2"/>
    </Match>
    <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningState"/>
+     <Method name="reset"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
      <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningTable$DeviceTable"/>
      <Method name="getDeltas"/>
      <Bug pattern="EI_EXPOSE_REP"/>
