@@ -38,6 +38,10 @@ import java.util.List;
 import org.apache.batik.gvt.font.GVTGlyphVector;
 import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.text.TextSpanLayout;
+
+import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
+import org.apache.xmlgraphics.ps.PSGenerator;
+
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontMetrics;
@@ -46,8 +50,6 @@ import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.svg.NativeTextPainter;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.HexEncoder;
-import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
-import org.apache.xmlgraphics.ps.PSGenerator;
 
 /**
  * Renders the attributed character iterator of a {@link org.apache.batik.gvt.TextNode TextNode}.

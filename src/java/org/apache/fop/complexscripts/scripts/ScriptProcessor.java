@@ -33,7 +33,9 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 
 // CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
+// CSOFF: NoWhitespaceAfterCheck
 // CSOFF: ParameterNumberCheck
+// CSOFF: SimplifyBooleanReturnCheck
 
 /**
  * <p>Abstract script processor base class for which an implementation of the substitution and positioning methods

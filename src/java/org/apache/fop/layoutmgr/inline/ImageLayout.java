@@ -179,13 +179,13 @@ public class ImageLayout implements Constants {
         //Adjust viewport if not explicit
         if (ipd == -1) {
             ipd = constrainExtent(cwidth,
-                    props.getInlineProgressionDimension(), (foundNonAuto) ?
-                            props.getContentWidth() : new DefaultLength());
+                    props.getInlineProgressionDimension(), (foundNonAuto)
+                            ? props.getContentWidth() : new DefaultLength());
         }
         if (bpd == -1) {
             bpd = constrainExtent(cheight,
-                    props.getBlockProgressionDimension(), (foundNonAuto) ?
-                            props.getContentHeight() : new DefaultLength());
+                    props.getBlockProgressionDimension(), (foundNonAuto)
+                            ? props.getContentHeight() : new DefaultLength());
         }
 
         this.clip = false;

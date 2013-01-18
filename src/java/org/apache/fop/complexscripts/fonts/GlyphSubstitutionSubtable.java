@@ -33,7 +33,7 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
  */
 public abstract class GlyphSubstitutionSubtable extends GlyphSubtable implements GlyphSubstitution {
 
-    private static final GlyphSubstitutionState state = new GlyphSubstitutionState();
+    private static final GlyphSubstitutionState state = new GlyphSubstitutionState();   // CSOK: ConstantName
 
     /**
      * Instantiate a <code>GlyphSubstitutionSubtable</code>.

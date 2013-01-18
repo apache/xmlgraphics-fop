@@ -186,7 +186,7 @@ public abstract class PDFTextUtil {
         sb.append('/');
         sb.append(fontName);
         sb.append(' ');
-        PDFNumber.doubleOut(fontSize,6,sb);
+        PDFNumber.doubleOut(fontSize, 6, sb);
         sb.append(" Tf\n");
         write(sb);
         this.startText = useMultiByte ? "<" : "(";
