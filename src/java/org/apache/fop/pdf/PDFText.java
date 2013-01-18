@@ -213,7 +213,7 @@ public class PDFText extends PDFObject {
      */
     public static final void toUnicodeHex(char c, StringBuffer sb) {
         for (int i = 0; i < 4; ++i) {
-            sb.append(DIGITS[(c >> (12-4*i)) & 0x0F]);
+            sb.append(DIGITS[(c >> (12 - 4 * i)) & 0x0F]);
         }
     }
 

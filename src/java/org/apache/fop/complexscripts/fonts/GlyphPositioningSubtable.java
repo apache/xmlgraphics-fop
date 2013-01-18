@@ -34,7 +34,7 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
  */
 public abstract class GlyphPositioningSubtable extends GlyphSubtable implements GlyphPositioning {
 
-    private static final GlyphPositioningState state = new GlyphPositioningState();
+    private static final GlyphPositioningState state = new GlyphPositioningState();   // CSOK: ConstantName
 
     /**
      * Instantiate a <code>GlyphPositioningSubtable</code>.
