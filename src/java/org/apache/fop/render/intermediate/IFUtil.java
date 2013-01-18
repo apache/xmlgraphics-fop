@@ -217,7 +217,9 @@ public final class IFUtil {
         if ( dp != null ) {
             dx = new int [ count ];
             for ( int i = 0, n = count; i < n; i++ ) {
-                dx [ i ] = dp [ i ] [ 0 ];      // xPlaAdjust[i]
+                if ( dp [ i ] != null ) {
+                    dx [ i ] = dp [ i ] [ 0 ];      // xPlaAdjust[i]
+                }
             }
         } else {
             dx = null;
@@ -330,7 +332,7 @@ public final class IFUtil {
         } else {
             for ( int i = 0, n = dp.length; i < n; i++ ) {
                 int[] pa = dp[i];
-                if ( pa[0] != pa[2] ) {
+                if ( ( pa != null ) && ( pa[0] != pa[2] ) ) {
                     return false;
                 }
             }
@@ -369,12 +371,15 @@ public final class IFUtil {
         if ( ( dp == null ) || ( offset > dp.length ) || ( ( offset + count ) > dp.length ) ) {
             throw new IllegalArgumentException();
         } else {
-            int[][] dpNew = new int [ count ] [ 4 ];
+            int[][] dpNew = new int [ count ] [];
             for ( int i = 0, n = count; i < n; i++ ) {
-                int[] paDst = dpNew [ i ];
                 int[] paSrc = dp [ i + offset ];
-                for ( int k = 0; k < 4; k++ ) {
-                    paDst [ k ] = paSrc [ k ];
+                if ( paSrc != null ) {
+                    int[] paDst = new int [ 4 ];
+                    for ( int k = 0; k < 4; k++ ) {
+                        paDst [ k ] = paSrc [ k ];
+                    }
+                    dpNew [ i ] = paDst;
                 }
             }
             return dpNew;

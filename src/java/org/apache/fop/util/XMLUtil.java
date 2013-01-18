@@ -194,14 +194,18 @@ public final class XMLUtil implements XMLConstants {
         sb.append ( na );
         for ( int i = 0; i < na; i++ ) {
             int[] pa = dp [ i ];
-            for ( int k = 0; k < 4; k++ ) {
-                int a = pa [ k ];
-                if ( a != 0 ) {
-                    encodeNextAdjustment ( sb, nz, a );
-                    nz = 0;
-                } else {
-                    nz++;
+            if ( pa != null ) {
+                for ( int k = 0; k < 4; k++ ) {
+                    int a = pa [ k ];
+                    if ( a != 0 ) {
+                        encodeNextAdjustment ( sb, nz, a );
+                        nz = 0;
+                    } else {
+                        nz++;
+                    }
                 }
+            } else {
+                nz += 4;
             }
         }
         encodeNextAdjustment ( sb, nz, 0 );

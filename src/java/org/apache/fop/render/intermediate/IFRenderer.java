@@ -27,7 +27,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -1133,8 +1132,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     private class TextUtil {
         private static final int INITIAL_BUFFER_SIZE = 16;
-        private int[][] dp = new int[INITIAL_BUFFER_SIZE][4];
-        // private int lastDPPos = 0; // TBD - not yet used
+        private int[][] dp = new int[INITIAL_BUFFER_SIZE][];
         private final StringBuffer text = new StringBuffer();
         private int startx;
         private int starty;
@@ -1163,16 +1161,15 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 if (idx > dp.length - 1) {
                     int newSize = Math.max(dp.length, idx + 1) + INITIAL_BUFFER_SIZE;
                     int[][] newDP = new int[newSize][];
-                    // reuse prior PA[0]...PA[dp.length-1]
+                    // reuse prior DP[0]...DP[dp.length-1]
                     System.arraycopy(dp, 0, newDP, 0, dp.length);
-                    // populate new PA[dp.length]...PA[newDP.length-1]
-                    for ( int i = dp.length, n = newDP.length; i < n; i++ ) {
-                        newDP[i] = new int[4];
-                    }
+                    // switch to new DP, leaving DP[dp.length]...DP[newDP.length-1] unpopulated
                     dp = newDP;
                 }
+                if ( dp[idx - 1] == null ) {
+                    dp[idx - 1] = new int[4];
+                }
                 IFUtil.adjustPA ( dp[idx - 1], pa );
-                // lastDPPos = idx;
             }
         }
 
@@ -1180,9 +1177,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             if (text.length() > 0) {
                 text.setLength(0);
                 for ( int i = 0, n = dp.length; i < n; i++ ) {
-                    Arrays.fill(dp[i], 0);
+                    dp[i] = null;
                 }
-                // lastDPPos = 0;
             }
         }
 
@@ -1230,7 +1226,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 int i  = ( tl < pl ) ? tl : pl;
                 while ( i > 0 ) {
                     int[] pa = dp [ i - 1 ];
-                    if ( !IFUtil.isPAIdentity ( pa ) ) {
+                    if ( ( pa != null ) && !IFUtil.isPAIdentity ( pa ) ) {
                         break;
                     } else {
                         i--;
