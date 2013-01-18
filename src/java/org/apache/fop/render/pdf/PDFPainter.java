@@ -445,7 +445,6 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             int         fs              = state.getFontSize();
             float       fsPoints        = fs / 1000f;
             Font        f               = getFontInfo().getFontInstance(triplet, fs);
-            // String      fn              = f.getFontName();
             PDFTextUtil tu              = generator.getTextUtil();
             double      xc              = 0f;
             double      yc              = 0f;
@@ -457,7 +456,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             generator.updateCharacterSpacing ( letterSpacing / 1000f );
             for ( int i = 0, n = text.length(); i < n; i++ ) {
                 char    ch              = text.charAt ( i );
-                int[]   pa              = ( i < dp.length ) ? dp [ i ] : paZero;
+                int[]   pa              = ( ( i >= dp.length ) || ( dp[i] == null ) ) ? paZero : dp[i];
                 double  xo              = xc + pa[0];
                 double  yo              = yc + pa[1];
                 double  xa              = f.getCharWidth(ch) + maybeWordOffsetX ( wox, ch, null );
