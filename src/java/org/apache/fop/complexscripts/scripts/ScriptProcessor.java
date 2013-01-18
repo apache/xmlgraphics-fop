@@ -19,6 +19,7 @@
 
 package org.apache.fop.complexscripts.scripts;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +45,8 @@ public abstract class ScriptProcessor {
 
     private final String script;
 
+    private final Map/*<AssembledLookupsKey,GlyphTable.UseSpec[]>*/ assembledLookups;
+
     private static Map<String, ScriptProcessor> processors = new HashMap<String, ScriptProcessor>();
 
     /**
@@ -55,6 +58,7 @@ public abstract class ScriptProcessor {
             throw new IllegalArgumentException ( "script must be non-empty string" );
         } else {
             this.script = script;
+            this.assembledLookups = new HashMap/*<AssembledLookupsKey,GlyphTable.UseSpec[]>*/();
         }
     }
 
@@ -201,7 +205,22 @@ public abstract class ScriptProcessor {
      * @return ordered array of assembled lookup table use specifications
      */
     public final GlyphTable.UseSpec[] assembleLookups ( GlyphTable table, String[] features, Map/*<LookupSpec,List<LookupTable>>*/ lookups ) {
-        return table.assembleLookups ( features, lookups );
+        AssembledLookupsKey key = new AssembledLookupsKey ( table, features, lookups );
+        GlyphTable.UseSpec[] usa;
+        if ( ( usa = assembledLookupsGet ( key ) ) != null ) {
+            return usa;
+        } else {
+            return assembledLookupsPut ( key, table.assembleLookups ( features, lookups ) );
+        }
+    }
+
+    private GlyphTable.UseSpec[] assembledLookupsGet ( AssembledLookupsKey key ) {
+        return (GlyphTable.UseSpec[]) assembledLookups.get ( key );
+    }
+
+    private GlyphTable.UseSpec[]  assembledLookupsPut ( AssembledLookupsKey key, GlyphTable.UseSpec[] usa ) {
+        assembledLookups.put ( key, usa );
+        return usa;
     }
 
     /**
@@ -230,6 +249,47 @@ public abstract class ScriptProcessor {
             sp = new DefaultScriptProcessor ( script );
         }
         return sp;
+    }
+
+    private static class AssembledLookupsKey {
+
+        private final GlyphTable table;
+        private final String[] features;
+        private final Map/*<LookupSpec,List<LookupTable>>*/ lookups;
+
+        AssembledLookupsKey ( GlyphTable table, String[] features, Map/*<LookupSpec,List<LookupTable>>*/ lookups ) {
+            this.table = table;
+            this.features = features;
+            this.lookups = lookups;
+        }
+
+        /** {@inheritDoc} */
+        public int hashCode() {
+            int hc = 0;
+            hc =  7 * hc + ( hc ^ table.hashCode() );
+            hc = 11 * hc + ( hc ^ Arrays.hashCode ( features ) );
+            hc = 17 * hc + ( hc ^ lookups.hashCode() );
+            return hc;
+        }
+
+        /** {@inheritDoc} */
+        public boolean equals ( Object o ) {
+            if ( o instanceof AssembledLookupsKey ) {
+                AssembledLookupsKey k = (AssembledLookupsKey) o;
+                if ( ! table.equals ( k.table ) ) {
+                    return false;
+                } else if ( ! Arrays.equals ( features, k.features ) ) {
+                    return false;
+                } else if ( ! lookups.equals ( k.lookups ) ) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        }
+
     }
 
 }
