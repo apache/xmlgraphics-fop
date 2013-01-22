@@ -564,6 +564,7 @@ list of possible build targets.
       <include name="org/apache/fop/apps/FOPException.class"/>
       <include name="org/apache/fop/apps/io/**"/>
       <include name="org/apache/fop/complexscripts/fonts/*.class"/>
+      <include name="org/apache/fop/complexscripts/util/GlyphTester.class"/>
       <include name="org/apache/fop/fo/Constants.class"/>
       <include name="org/apache/fop/fo/FOTreeBuilder.class"/>
       <include name="org/apache/fop/area/AreaTreeControl*"/>

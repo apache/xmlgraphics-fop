@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="FOP-2197">
+       Missing GlyphTester class in transcoder archives.
+      </action>
       <action context="Fonts" dev="GA" type="fix" fixes-bug="FOP-2195">
        Use sparse arrays for position adjustments.
       </action>
