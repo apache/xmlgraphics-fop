@@ -885,19 +885,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
         // create pages containing the remaining footnote bodies
         while (insertedFootnotesLength < totalFootnotesLength) {
-            final int tmpLength = lengthList.get(footnoteListIndex);
-            // check if last footnote has already been added completely
-            if (insertedFootnotesLength == tmpLength) {
-                footnoteListIndex++;
-                footnoteElementIndex
-                    = getFootnoteList(footnoteListIndex).size() - 1;
-            } else if ((tmpLength - insertedFootnotesLength) <= availableBPD) {
-                // try adding some more content
-                // add a whole footnote
-                availableBPD -= tmpLength - insertedFootnotesLength;
-                insertedFootnotesLength = tmpLength;
-                footnoteElementIndex
-                    = getFootnoteList(footnoteListIndex).size() - 1;
+            if (totalFootnotesLength - insertedFootnotesLength <= availableBPD) {
+                // All the remaining footnotes fit
+                insertedFootnotesLength = totalFootnotesLength;
+                footnoteListIndex = lengthList.size() - 1;
+                footnoteElementIndex = getFootnoteList(footnoteListIndex).size() - 1;
             } else if ((split = getFootnoteSplit                // CSOK: InnerAssignment
                         (footnoteListIndex, footnoteElementIndex,
                          insertedFootnotesLength, availableBPD, true)) > 0) {

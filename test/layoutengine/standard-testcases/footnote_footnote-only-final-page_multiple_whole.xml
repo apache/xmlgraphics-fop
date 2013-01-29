@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+ license agreements. See the NOTICE file distributed with this work for additional 
+ information regarding copyright ownership. The ASF licenses this file to 
+ You under the Apache License, Version 2.0 (the "License"); you may not use 
+ this file except in compliance with the License. You may obtain a copy of 
+ the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+ by applicable law or agreed to in writing, software distributed under the 
+ License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+ OF ANY KIND, either express or implied. See the License for the specific 
+ language governing permissions and limitations under the License. -->
+<!-- $Id$ -->
+<testcase>
+ <info>
+  <p>When a footnote-only final page must be created, check the case where the final page starts on 
+    a footnote that must be split over several pages.</p>
+ </info>
+ <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="120pt" page-width="220pt" margin="10pt">
+      <fo:region-body background-color="#F0F0F0"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="small"
+      page-height="120pt" page-width="220pt" margin="10pt">
+      <fo:region-body margin-top="45pt" margin-bottom="45pt" background-color="#F0F0F0"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="pages">
+      <fo:single-page-master-reference master-reference="page"/>
+      <fo:single-page-master-reference master-reference="small"/>
+      <fo:repeatable-page-master-reference master-reference="page"/>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+
+  <fo:page-sequence master-reference="pages">
+    <fo:flow flow-name="xsl-region-body" text-align="justify" font-size="8pt" line-height="10pt">
+      <fo:block space-before="50pt" space-before.conditionality="retain">Foonote call <fo:footnote>
+          <fo:inline>1</fo:inline>
+          <fo:footnote-body>
+            <fo:block>
+              <fo:block>Footnote 1</fo:block>
+            </fo:block>
+          </fo:footnote-body>
+          </fo:footnote>, <fo:footnote>
+          <fo:inline>2</fo:inline>
+          <fo:footnote-body>
+            <fo:block>
+              <fo:block>Footnote 2.1</fo:block>
+              <fo:block>Footnote 2.2</fo:block>
+              <fo:block>Footnote 2.3</fo:block>
+            </fo:block>
+          </fo:footnote-body>
+          </fo:footnote>, and <fo:footnote>
+          <fo:inline>3</fo:inline>
+          <fo:footnote-body>
+            <fo:block>
+              <fo:block>Footnote 3.1</fo:block>
+              <fo:block>Footnote 3.2</fo:block>
+              <fo:block>Footnote 3.3</fo:block>
+            </fo:block>
+          </fo:footnote-body>
+      </fo:footnote>.</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+ </fo>
+ <checks>
+   <eval expected="2"      xpath="count(//pageViewport[1]//footnote/block)"/>
+   <eval expected="3"      xpath="count(//pageViewport[1]//footnote/block[2]/block)"/>
+   <eval expected="Footnote 2.1" xpath="//pageViewport[1]//footnote/block[2]/block[1]"/>
+   <eval expected="Footnote 2.2" xpath="//pageViewport[1]//footnote/block[2]/block[2]"/>
+   <eval expected="Footnote 2.3" xpath="//pageViewport[1]//footnote/block[2]/block[3]"/>
+   <eval expected="1"      xpath="count(//pageViewport[2]//footnote/block)"/>
+   <eval expected="1"      xpath="count(//pageViewport[2]//footnote/block/block)"/>
+   <eval expected="Footnote 3.1" xpath="//pageViewport[2]//footnote/block/block"/>
+   <eval expected="1"      xpath="count(//pageViewport[3]//footnote/block)"/>
+   <eval expected="2"      xpath="count(//pageViewport[3]//footnote/block/block)"/>
+   <eval expected="Footnote 3.2" xpath="//pageViewport[3]//footnote/block/block[1]"/>
+   <eval expected="Footnote 3.3" xpath="//pageViewport[3]//footnote/block/block[2]"/>
+ </checks>
+</testcase>
