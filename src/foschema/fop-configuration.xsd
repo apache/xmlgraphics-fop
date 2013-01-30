@@ -48,7 +48,7 @@
             <xsd:attribute name="height" type="xsd:string"></xsd:attribute>
           </xsd:complexType>
         </xsd:element>
-        <xsd:element name="complex-scripts" minOccurs="0"
+        <xsd:element name="complex-scripts" minOccurs="0">
           <xsd:complexType>
             <xsd:attribute name="disabled" type="xsd:boolean"/>
           </xsd:complexType>
@@ -111,7 +111,7 @@
           </xsd:element>
           <xsd:element name="output-profile" type="xsd:string" minOccurs="0">
             <xsd:annotation>
-              <xsd:documentation>Output color profile used by the PDF renderer. Specifies a 
+              <xsd:documentation>Output color profile used by the PDF renderer. Specifies a
               filename to an ICC file.</xsd:documentation>
             </xsd:annotation>
           </xsd:element>
@@ -123,13 +123,13 @@
           </xsd:annotation>
           <xsd:element name="auto-rotate-landscape" type="xsd:boolean" default="false" minOccurs="0">
             <xsd:annotation>
-              <xsd:documentation>When set to "true" a landscape page is automatically 
+              <xsd:documentation>When set to "true" a landscape page is automatically
                 rotated and specified as a landscape page in PostScript.</xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="language-level" default="3" minOccurs="0">
             <xsd:annotation>
-              <xsd:documentation>Specifies the PostScript language level to use when 
+              <xsd:documentation>Specifies the PostScript language level to use when
                 generating PostScript code.
                 language-level is used by the PostScript renderer,
                 MIME type application/postscript.</xsd:documentation>
@@ -143,8 +143,8 @@
           </xsd:element>
           <xsd:element name="optimize-resources" type="xsd:boolean" default="false" minOccurs="0">
             <xsd:annotation>
-              <xsd:documentation>When set to "true" PostScript resources are optimized by making a 
-                second pass over the PostScript file (rewriting it). Optimized means that no duplicate 
+              <xsd:documentation>When set to "true" PostScript resources are optimized by making a
+                second pass over the PostScript file (rewriting it). Optimized means that no duplicate
                 images are written to the stream and only used fonts are added to the PostScript file.</xsd:documentation>
             </xsd:annotation>
           </xsd:element>

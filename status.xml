@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="PS" type="fix" fixes-bug="FOP-2203" due-to="Will May">
+       XML syntax error in XSD.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="FOP-2197">
        Missing GlyphTester class in transcoder archives.
       </action>
@@ -84,14 +87,14 @@
        Optimize inefficient position adjustment array allocation in non-CS path.
       </action>
       <action context="Fonts" dev="PH" type="add" fixes-bug="FOP-2180" due-to="Alexey Neyman">
-       TTFReader: Output bounding box information for glyphs. 
+       TTFReader: Output bounding box information for glyphs.
       </action>
       <action context="Code" dev="PH" type="fix" fixes-bug="FOP-1069" due-to="Robert Meyer">
         Warn instead or error on invalid property values.
       </action>
       <action context="Layout" dev="CB" type="fix" fixes-bug="FOP-2174" due-to="Robert Meyer">
         When using SVG drawings, if no content-width and content-height is specified, 72 will
-        be used instead of the source-resolution option. 
+        be used instead of the source-resolution option.
       </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="FOP-2179" due-to="Robert Meyer">
         Fix checkstyle and findbugs warnings.
@@ -103,7 +106,7 @@
         Fix incomplete kerning when complex script features are enabled.
       </action>
       <action context="Renderers" dev="CB" type="fix" fixes-bug="FOP-2173" due-to="Simon Steiner">
-        Invalid Postscript created if more than 255 characters in a custom font are used within 
+        Invalid Postscript created if more than 255 characters in a custom font are used within
         SVG when generating Postscript
       </action>
       <action context="Code" dev="PH" type="fix" fixes-bug="37114" due-to="Robert Meyer">
@@ -113,8 +116,8 @@
        Missing Glyph in Postscript using DejaVuSans.
       </action>
       <action context="Renderers" dev="VH" type="fix" fixes-bug="54169" due-to="Robert Meyer">
-        Split the parent tree (the number tree corresponding to the ParentTree entry in the 
-        structure tree root) to avoid reaching the internal limits of Acrobat Pro, that would 
+        Split the parent tree (the number tree corresponding to the ParentTree entry in the
+        structure tree root) to avoid reaching the internal limits of Acrobat Pro, that would
         otherwise split it at the wrong place when saving the document.
       </action>
       <action context="Fonts" dev="MH" type="add" fixes-bug="54120">
@@ -140,19 +143,19 @@
         Added PDF/A-2 output option.
       </action>
       <action context="Renderers" dev="VH" type="add" fixes-bug="54037">
-        PDF output: Issue a warning when accessibility is enabled and language information is 
+        PDF output: Issue a warning when accessibility is enabled and language information is
         missing.
       </action>
       <action context="Renderers" dev="VH" type="add" fixes-bug="53980">
-        PDF accessibility: Store language information coming from fo:block or fo:character in the 
+        PDF accessibility: Store language information coming from fo:block or fo:character in the
         structure tree.
       </action>
       <action context="Layout" dev="MH" type="add" fixes-bug="53924" due-to="Luis Bernardo">
         Support for retrieve-table-markers
       </action>
       <action context="Renderers" dev="VH" type="add" fixes-bug="53902">
-        Added possibility to define ‘header’ table columns (the same way as fo:table-header allows 
-        to define header rows). When accessibility is enabled, this allows to set the appropriate 
+        Added possibility to define ‘header’ table columns (the same way as fo:table-header allows
+        to define header rows). When accessibility is enabled, this allows to set the appropriate
         Scope attribute on the corresponding TH cells.
       </action>
       <action context="Fonts" dev="MH" type="add" fixes-bug="53868" importance="low" due-to="Luis Bernardo">
@@ -164,15 +167,15 @@
         See docs for fop.xconf configuration details.
       </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="53598" due-to="Robert Meyer">
-        Always set the breakClass field to a legal value in BreakElement, so as to avoid 
+        Always set the breakClass field to a legal value in BreakElement, so as to avoid
         IllegalArgumentExceptions in other parts of the code.
       </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="45715" due-to="Luis Bernardo">
         Restored support for break-before on fo:table.
       </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="53827">
-        When an fo:block has a non-zero value for its text-indent property and is broken over two 
-        pages of different widths, then the first line on the second page is missing one word and 
+        When an fo:block has a non-zero value for its text-indent property and is broken over two
+        pages of different widths, then the first line on the second page is missing one word and
         appears indented.
       </action>
       <action context="Renderers" dev="MH" type="fix" fixes-bug="53790">
@@ -186,7 +189,7 @@
          Support for character encoding of TLEs in AFP output
       </action>
       <action context="Renderers" dev="VH" type="fix" fixes-bug="53778">
-        When PDF accessibility is enabled, the contents for the different regions must appear in the 
+        When PDF accessibility is enabled, the contents for the different regions must appear in the
         proper order in the structure tree.
       </action>
       <action context="Renderers" dev="MH" type="fix" fixes-bug="53766" due-to="Robert Meyer">
@@ -201,18 +204,18 @@
         is missing from the characterset.
       </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="53688">
-        Wrong page number reported when a column overflows the region-body in a multi-column 
+        Wrong page number reported when a column overflows the region-body in a multi-column
         document.
       </action>
       <action context="Renderers" dev="VH" type="add" fixes-bug="53639">
-        When PDF accessibility is enabled, the Scope attribute must be present in the structure tree 
+        When PDF accessibility is enabled, the Scope attribute must be present in the structure tree
         for table header elements.
       </action>
       <action context="Fonts" dev="MH" type="add" fixes-bug="53600" due-to="Robert Meyer">
         Added an event if a glyph and its metric information does not exist in the character set
       </action>
       <action context="Renderers" dev="VH" type="add" fixes-bug="53596">
-        When PDF accessibility is enabled, the structure tree must contain information about the 
+        When PDF accessibility is enabled, the structure tree must contain information about the
         number of columns or rows spanned by a table cell.
       </action>
       <action context="Renderers" dev="MH" type="add" fixes-bug="53563" importance="low">
@@ -220,16 +223,16 @@
         that could (in a headless environment) throw a java.awt.HeadlessException
       </action>
       <action context="Renderers" dev="VH" type="add" importance="high">
-        When PDF accessibility is enabled, treat repeated table headings as artifacts. This allows 
-        screen readers to read the header only once at the beginning of the table and the footer 
-        once at the end of a table. Reading the headings at every column or page break is likely to 
+        When PDF accessibility is enabled, treat repeated table headings as artifacts. This allows
+        screen readers to read the header only once at the beginning of the table and the footer
+        once at the end of a table. Reading the headings at every column or page break is likely to
         disturb the user. This follows Section 508 recommendations.
       </action>
       <action context="Layout" dev="VH" type="fix">
         An IllegalArgumentException was thrown when break-before was used inside a list.
       </action>
       <action context="Layout" dev="VH" type="fix">
-        When restarting layout for the last page, discard glues and penalties at the beginning of 
+        When restarting layout for the last page, discard glues and penalties at the beginning of
         the restarted Knuth sequence.
       </action>
     </release>
@@ -286,12 +289,12 @@
         Update FAQ and New Bug documentation.
       </action>
       <action context="Code" dev="VH" type="add">
-        Added support for the role property on fo:page-sequence, fo:flow and fo:static-content. This 
-        allows to change the mapping of those FOs to PDF structure types when enabling 
+        Added support for the role property on fo:page-sequence, fo:flow and fo:static-content. This
+        allows to change the mapping of those FOs to PDF structure types when enabling
         accessibility.
       </action>
       <action context="Renderers" dev="VH" type="fix" due-to="Martin Koegler">
-        Stop outputting the Type entry for structure elements in order to create a smaller PDF 
+        Stop outputting the Type entry for structure elements in order to create a smaller PDF
         ouptut when accessibility is enabled.
       </action>
       <action context="Config" dev="GA" type="fix" fixes-bug="52144" due-to="Luis Bernardo">
@@ -390,7 +393,7 @@
       </action>
       <action context="Code" dev="MH" type="fix">
         Bug in AFP font metrics that performed integer arithmetic when it should have been
-	double arithemetic.
+  double arithemetic.
       </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="49754" due-to="Simon Pepping">
         Bring clone() in line with the recommendations in Object.clone().
@@ -439,8 +442,8 @@
       </action>
       <!-- the following is also due to Vincent Hennebert, but due to a bug in forrest is not included here to prevent duplicate listing in contributors list -->
       <action context="Code" dev="VH" type="add" importance="high" due-to="Peter Hancock">
-        Added support for PDF Object Streams. When accessibility is enabled and PDF version 1.5 
-        selected, the structure tree will be stored in object streams in order to reduce the size of 
+        Added support for PDF Object Streams. When accessibility is enabled and PDF version 1.5
+        selected, the structure tree will be stored in object streams in order to reduce the size of
         the final PDF.
       </action>
       <action context="Code" dev="VH" type="fix" fixes-bug="46962" due-to="Alexios Giotis">
@@ -474,7 +477,7 @@
         Improvements of the Accessibility features.
       </action>
       <action context="Code" dev="CB" type="add" fixes-bug="52416" due-to="Luis Bernardo">
-        Suppress unnecessary "font not found warnings" when generating AFP with raster fonts 
+        Suppress unnecessary "font not found warnings" when generating AFP with raster fonts
       </action>
       <action context="Code" dev="CB" type="add" fixes-bug="51209" due-to="Luis Bernardo">
         SVG text in AFP creates miscoded GOCA text
@@ -484,7 +487,7 @@
       </action>
       <action context="Code" dev="CB" type="add" fixes-bug="51664" due-to="Mehdi Houshmand">
         Tagged PDF performance improvement plus tests
-      </action>	
+      </action>
       <action context="Code" dev="MH" type="add" fixes-bug="52197">
         Improved AdobeStandardEncoding support in AFM files for type1 fonts
       </action>
@@ -492,11 +495,11 @@
         Added ant script to get JaCoCo code coverage.
       </action>
       <action context="Code" dev="VH" type="add" fixes-bug="52136" due-to="Mehdi Houshmand">
-        Added to build file JUnit target that uses a regex to run all of the test cases. This 
+        Added to build file JUnit target that uses a regex to run all of the test cases. This
         reduces the risk that some of them are omitted when building FOP.
       </action>
       <action context="Code" dev="PH" type="add" fixes-bug="52089" due-to="Mehdi Houshmand" importance="high">
-        Allow JPEG images to be embedded in an AFP document as is, without being decoded and 
+        Allow JPEG images to be embedded in an AFP document as is, without being decoded and
         encoded.
       </action>
       <action context="Code" dev="PH" type="add" fixes-bug="52010" due-to="Mehdi Houshmand">
@@ -536,14 +539,14 @@
         unique instance for per thread.
       </action>
       <action context="Renderers" dev="PH" type="fix">
-        Fixed a bug in AFP where an ArrayOutofBoundsException is throwqn when embedding a Page 
+        Fixed a bug in AFP where an ArrayOutofBoundsException is throwqn when embedding a Page
         Segment.
       </action>
       <action context="Renderers" dev="VH" type="add" due-to="Michael Rubin" importance="high">
         Added support for 128bit encryption in PDF output.
       </action>
       <action context="Renderers" dev="PH" type="fix">
-        Fixed a bug in AFP where the object area axes of an Include Object was incorrectly set when 
+        Fixed a bug in AFP where the object area axes of an Include Object was incorrectly set when
         rotated by 180. </action>
       <action context="Fonts" dev="JM" type="fix" fixes-bug="51596" due-to="Mehdi Houshmand">
         Fixed a bug in TTF subsetting where a composite glyph could get
@@ -567,10 +570,10 @@
         Fixed io exception in MODCAParser caused by the improper use of mark() and reset() on the
         MODCA data input stream.  Added unit test. </action>
       <action context="Fonts" dev="JM" type="fix" fixes-bug="51144" due-to="Mehdi Houshmand">
-        Removed invalid entries in ToUnicode table of CID subset fonts. 
+        Removed invalid entries in ToUnicode table of CID subset fonts.
       </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="50899" due-to="Glenn Adams">
-        Fixed mapping of font weights between CSS values and TextAttribute.WEIGHT_*. 
+        Fixed mapping of font weights between CSS values and TextAttribute.WEIGHT_*.
       </action>
       <action context="Renderers" dev="JM" type="fix">
         AFP GOCA: fonts were not embedded from within AFPGraphics2D.
@@ -598,11 +601,11 @@
         lead to graphics state changes in some implementations.
       </action>
       <action context="Renderers" dev="CB" type="fix" fixes-bug="51010" due-to="Max Aster">
-        Bugzilla 51010: Bookmarks create useless lines in RTF 
-      </action>	
+        Bugzilla 51010: Bookmarks create useless lines in RTF
+      </action>
       <action context="Renderers" dev="CB" type="fix" fixes-bug="51008" due-to="Max Aster">
         Bugzilla 51008: page-number-citation-last does not work in RTF
-      </action>	
+      </action>
       <action context="Renderers" dev="VH" type="add">
         Added id element to intermediate format to track the origin of content.
       </action>
@@ -611,11 +614,11 @@
         due to white-space handling.
       </action>
       <action context="Renderers" dev="AD" type="fix" fixes-bug="50987" due-to="Martin Koegler">
-        Bugzilla 50987: Fixed an issue in PDF output where a link was added to the parent tree 
+        Bugzilla 50987: Fixed an issue in PDF output where a link was added to the parent tree
         instead of the related structure element.
       </action>
       <action context="Renderers" dev="AD" type="fix" fixes-bug="50986" due-to="Martin Koegler">
-        Bugzilla 50986: Fixed an issue where invalid PDF page content was generated due to 
+        Bugzilla 50986: Fixed an issue where invalid PDF page content was generated due to
         incorrect ET/EMC sequences.
       </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="50593">
@@ -627,7 +630,7 @@
         no longer reset after forced breaks.
       </action>
       <action context="Layout" dev="VH" type="fix" fixex-bug="50763" importance="high">
-        Implemented non-standard behavior for basic-link areas, such that they take into account the 
+        Implemented non-standard behavior for basic-link areas, such that they take into account the
         heights of their descendants areas.
       </action>
       <action context="Layout" dev="VH" type="fix" importance="high">
@@ -675,7 +678,7 @@
         is significantly large.
       </action>
       <action context="Config" dev="SP" type="fix">
-	Fix for relative URIs in the configuration file (base, font-base, hyphenation-base) are evaluated relative to the base URI of the configuration file.
+  Fix for relative URIs in the configuration file (base, font-base, hyphenation-base) are evaluated relative to the base URI of the configuration file.
       </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="49848" importance="high">
         Fix for correct behavior of keep-together.within-line in case there are nested inlines
@@ -711,7 +714,7 @@
         Fixed retrieval of available BPD for cases spanning columns and multiple pages with differing page masters.
       </action>
       <action context="Renderers" dev="VH" type="remove">
-        Removed old Renderer implementations for those output formats that have a version based on 
+        Removed old Renderer implementations for those output formats that have a version based on
         the new DocumentHandler architecture available (AFP, PCL, PDF, PS).
       </action>
       <action context="Fonts" dev="AC" type="fix" importance="high">
@@ -755,21 +758,21 @@
       <action context="Renderers" dev="JM" type="add" fixes-bug="48567" due-to="Peter Hancock">
         Initial support for CID-keyed double-byte fonts (Type 0) in AFP output.
       </action>
-	  <action context="API" dev="SP" type="add">Added a command-line option '-catalog' to use a catalog resolver for the XML and XSLT files</action>
+    <action context="API" dev="SP" type="add">Added a command-line option '-catalog' to use a catalog resolver for the XML and XSLT files</action>
       <action context="Layout" dev="SP" type="add">Implement internal character classes if the hyphenation pattern file does not contain them</action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="46486">
-        Bugfix: having a special page-master for the last page caused loss of content when normal 
+        Bugfix: having a special page-master for the last page caused loss of content when normal
         blocks were mixed with blocks spanning all columns.
       </action>
       <action context="Renderers" dev="VH" type="add">
         Added possibility to customize PDF tagging via the ‘role’ property.
       </action>
       <action context="Renderers" dev="CB" type="fix" fixes-bug="48237" due-to="Peter Hancock">
-        Bugfix: AFP Renderer: Respect image color settings for svg 
-      </action>	  
-	  <action context="Renderers" dev="CB" type="fix" fixes-bug="48376" due-to="Venkat Reddy">
+        Bugfix: AFP Renderer: Respect image color settings for svg
+      </action>
+    <action context="Renderers" dev="CB" type="fix" fixes-bug="48376" due-to="Venkat Reddy">
         Bugfix: AFP Renderer: Page Overlays not generated when using Intermediate Format
-      </action>	  
+      </action>
       <action context="Renderers" dev="CB" type="fix" fixes-bug="48456">
         Bugfix: AFP Renderer: Underline is incorrectly placed when reference-orientation != 0
       </action>
@@ -779,7 +782,7 @@
       <action context="Fonts" dev="JM" type="add">
         Added support for TrueType fonts with symbol character maps (like "Wingdings" and "Symbol").
         Character for these fonts are usually found in the 0xF020 to 0xF0FF range
-        (a Unicode private use area). 
+        (a Unicode private use area).
       </action>
       <action context="Fonts" dev="JM" type="fix">
         Bugfix: Font selection fallbacks did not work in some cases (ex. bold+italic to normal)
@@ -794,15 +797,15 @@
         Bugfix in AFP output: rounding error when computing the CMYK components of a color.
       </action>
       <action context="Code" dev="VH" type="fix" fixes-bug="48167" due-to="Venkat Reddy">
-        Bugfix: when #CMYK pseudo-profile was used in the rgb-icc() function, always the fallback 
+        Bugfix: when #CMYK pseudo-profile was used in the rgb-icc() function, always the fallback
         RGB colors were used instead.
       </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="48082">
-        Bugfix: value of conditional space not always taken into account in the calculation of a 
+        Bugfix: value of conditional space not always taken into account in the calculation of a
         table’s height.
       </action>
       <action context="Renderers" dev="JM,VH" type="add" fixes-bug="46705" due-to="Jost Klopfstein">
-        Added basic accessibility and Tagged PDF support. 
+        Added basic accessibility and Tagged PDF support.
       </action>
       <action context="Renderers" dev="JM" type="add">
         Added support for encoding CMYK bitmap images (IOCA FS45) and TIFF images as embedded objects.
@@ -838,7 +841,7 @@
         on the rgb-icc() function.
       </action>
       <action context="Layout" dev="VH" type="add" importance="high">
-        Added limited support for pages of different inline-progression-dimensions within a 
+        Added limited support for pages of different inline-progression-dimensions within a
         page-sequence.
       </action>
       <action context="Layout" dev="AD" type="add" fixes-bug="46905">
