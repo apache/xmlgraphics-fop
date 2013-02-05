@@ -59,7 +59,12 @@ public final class FOPProcSet extends PSProcSet {
         gen.writeln("  {");
         gen.writeln("    dup type /stringtype eq");
         gen.writeln("    { show }"); //normal text show
-        gen.writeln("    { neg 1000 div 0 rmoveto }"); //negative X movement
+        gen.writeln("    {");
+        gen.writeln("      dup type /arraytype eq");
+        gen.writeln("      { aload pop neg 1000 div exch 1000 div rmoveto }");
+        gen.writeln("      { neg 1000 div 0 rmoveto }");
+        gen.writeln("      ifelse");
+        gen.writeln("    }");
         gen.writeln("    ifelse");
         gen.writeln("  } forall");
         gen.writeln("} bd");
