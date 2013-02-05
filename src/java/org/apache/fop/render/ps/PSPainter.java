@@ -52,7 +52,6 @@ import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.render.intermediate.GraphicsPainter;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
-import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
@@ -378,6 +377,10 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
 
             useFont(fontKey, sizeMillipoints);
 
+            if (dp != null && dp[0] != null) {
+                x += dp[0][0];
+                y -= dp[0][1];
+            }
             generator.writeln("1 0 0 -1 " + formatMptAsPt(generator, x)
                     + " " + formatMptAsPt(generator, y) + " Tm");
 
@@ -428,28 +431,34 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
         int lineStart = 0;
         StringBuffer accText = new StringBuffer(initialSize);
         StringBuffer sb = new StringBuffer(initialSize);
-        int[] dx = IFUtil.convertDPToDX ( dp );
-        int dxl = (dx != null ? dx.length : 0);
         for (int i = start; i < end; i++) {
             char orgChar = text.charAt(i);
             char ch;
             int cw;
-            int glyphAdjust = 0;
+            int xGlyphAdjust = 0;
+            int yGlyphAdjust = 0;
             if (CharUtilities.isFixedWidthSpace(orgChar)) {
                 //Fixed width space are rendered as spaces so copy/paste works in a reader
                 ch = font.mapChar(CharUtilities.SPACE);
                 cw = font.getCharWidth(orgChar);
-                glyphAdjust = font.getCharWidth(ch) - cw;
+                xGlyphAdjust = font.getCharWidth(ch) - cw;
             } else {
                 if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
-                    glyphAdjust -= wordSpacing;
+                    xGlyphAdjust -= wordSpacing;
                 }
                 ch = font.mapChar(orgChar);
-                cw = font.getCharWidth(orgChar);
+                cw = font.getCharWidth(orgChar); // this is never used?
             }
 
-            if (dx != null && i < dxl - 1) {
-                glyphAdjust -= dx[i + 1];
+            if (dp != null && i < dp.length && dp[i] != null) {
+                // get x advancement adjust
+                xGlyphAdjust -= dp[i][2] - dp[i][0];
+                yGlyphAdjust += dp[i][3] - dp[i][1];
+            }
+            if (dp != null && i < dp.length - 1 && dp[i + 1] != null) {
+                // get x placement adjust for next glyph
+                xGlyphAdjust -= dp[i + 1][0];
+                yGlyphAdjust += dp[i + 1][1];
             }
             if (multiByte) {
                 accText.append(HexEncoder.encode(ch));
@@ -457,7 +466,7 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                 char codepoint = (char)(ch % 256);
                 PSGenerator.escapeChar(codepoint, accText); //add character to accumulated text
             }
-            if (glyphAdjust != 0) {
+            if (xGlyphAdjust != 0 || yGlyphAdjust != 0) {
                 needTJ = true;
                 if (sb.length() == 0) {
                     sb.append('['); //Need to start TJ
@@ -471,7 +480,13 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                     sb.append(' ');
                     accText.setLength(0); //reset accumulated text
                 }
-                sb.append(Integer.toString(glyphAdjust)).append(' ');
+                if (yGlyphAdjust == 0) {
+                    sb.append(Integer.toString(xGlyphAdjust)).append(' ');
+                } else {
+                    sb.append('[');
+                    sb.append(Integer.toString(yGlyphAdjust)).append(' ');
+                    sb.append(Integer.toString(xGlyphAdjust)).append(']').append(' ');
+                }
             }
         }
         if (needTJ) {
