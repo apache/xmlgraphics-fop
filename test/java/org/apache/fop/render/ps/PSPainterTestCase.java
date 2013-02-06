@@ -20,26 +20,35 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.verification.VerificationMode;
 
-import org.apache.xmlgraphics.ps.PSGenerator;
-
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.Constants;
-import org.apache.fop.render.intermediate.IFContext;
-import org.apache.fop.render.intermediate.IFState;
-import org.apache.fop.traits.BorderProps;
-
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyFloat;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.apache.xmlgraphics.ps.PSGenerator;
+
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.Typeface;
+import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.traits.BorderProps;
 
 public class PSPainterTestCase {
 
@@ -107,4 +116,49 @@ public class PSPainterTestCase {
         }
     }
 
+    @Test
+    public void testDrawText() {
+        int fontSize = 12000;
+        String fontName = "MockFont";
+        PSGenerator psGenerator = mock(PSGenerator.class);
+        PSRenderingUtil psRenderingUtil = mock(PSRenderingUtil.class);
+        PSDocumentHandler psDocumentHandler = mock(PSDocumentHandler.class);
+        FontInfo fontInfo = mock(FontInfo.class);
+        PSFontResource psFontResource = mock(PSFontResource.class);
+        MultiByteFont multiByteFont = mock(MultiByteFont.class);
+        Font font = mock(Font.class);
+        when(psDocumentHandler.getGenerator()).thenReturn(psGenerator);
+        when(psDocumentHandler.getPSUtil()).thenReturn(psRenderingUtil);
+        when(psDocumentHandler.getFontInfo()).thenReturn(fontInfo);
+        when(psDocumentHandler.getPSResourceForFontKey(fontName)).thenReturn(psFontResource);
+        when(fontInfo.getInternalFontKey(any(FontTriplet.class))).thenReturn(fontName);
+        when(fontInfo.getFontInstance(any(FontTriplet.class), anyInt())).thenReturn(font);
+        Map<String, Typeface> fonts = new HashMap<String, Typeface>();
+        fonts.put(fontName, multiByteFont);
+        when(fontInfo.getFonts()).thenReturn(fonts);
+
+        IFState ifState = IFState.create();
+        ifState.setFontSize(fontSize);
+
+        PSPainter psPainter = new PSPainter(psDocumentHandler, ifState);
+
+        int x = 100000;
+        int y = 100000;
+        int letterSpacing = 0;
+        int wordSpacing = 0;
+        int dp[][] = {{100, 100, 0, 0}, null, null, {200, 200, -100, -100}};
+        double X = (x + dp[0][0]) / 1000.0;
+        double Y = (y - dp[0][1]) / 1000.0;
+        when(psGenerator.formatDouble(X)).thenReturn("100.100");
+        when(psGenerator.formatDouble(Y)).thenReturn("99.900");
+        String text = "Hello Mock!";
+        try {
+            psPainter.drawText(x, y, letterSpacing, wordSpacing, dp, text);
+            verify(psGenerator).writeln("1 0 0 -1 100.100 99.900 Tm");
+            verify(psGenerator).writeln("[<0000> [-100 100] <00000000> [200 -200] <0000> [-300 300] "
+                            + "<0000000000000000000000000000>] TJ");
+        } catch (Exception e) {
+            fail("something broke...");
+        }
+    }
 }
