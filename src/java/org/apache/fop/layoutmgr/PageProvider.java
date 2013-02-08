@@ -339,4 +339,14 @@ public class PageProvider implements Constants {
         return page;
     }
 
+    /**
+     * Indicates whether the column/page at the given index is on the first page of the page sequence.
+     *
+     * @return {@code true} if the given part is on the first page of the sequence
+     */
+    boolean isOnFirstPage(int partIndex) {
+        Column column = getColumn(partIndex);
+        return startPageOfCurrentElementList + column.pageIndex == startPageOfPageSequence;
+    }
+
 }
