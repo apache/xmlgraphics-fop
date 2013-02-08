@@ -210,4 +210,13 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         return forcedLastPageNum;
     }
 
+    /**
+     * Indicates whether the column/page at the given index is on the first page of this page sequence.
+     *
+     * @return {@code true} if the given part is on the first page of the sequence
+     */
+    boolean isOnFirstPage(int partIndex) {
+        return pageProvider.isOnFirstPage(partIndex);
+    }
+
 }

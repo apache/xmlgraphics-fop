@@ -298,7 +298,8 @@ public class PageBreaker extends AbstractBreaker {
             return;
         }
 
-        boolean lastPageMasterDefined = pslm.getPageSequence().hasPagePositionLast();
+        boolean lastPageMasterDefined = pslm.getPageSequence().hasPagePositionLast()
+                || pslm.getPageSequence().hasPagePositionOnly() && pslm.isOnFirstPage(partCount - 1);
         if (!hasMoreContent()) {
             //last part is reached
             if (lastPageMasterDefined) {
