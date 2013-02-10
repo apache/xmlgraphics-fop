@@ -169,9 +169,6 @@ list of possible build targets.
   <property name="src.sandbox.dir" value="${src.dir}/sandbox"/>
   <property name="src.viewer.resources.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/resources"/>
   <property name="src.viewer.images.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/images"/>
-  <!--
-  <property name="xdocs.dir" value="${src.dir}/documentation/content/xdocs"/>
-  -->
   <property name="fo.examples.dir" value="${basedir}/examples/fo/basic"/>
   <property name="fo.examples.userconfig" value="conf/fop.xconf"/>
   <property name="fo.examples.include" value="**/*.fo"/>
@@ -1177,23 +1174,8 @@ NOTE:
 <!-- =================================================================== -->
   <target name="reports" depends="checkstyle, pmd, cpd, findbugs" description="Runs all configured code quality reports"/>
 <!-- =================================================================== -->
-<!-- Creates the documentation                                           -->
+<!-- Creates the documentation - (CL20130210 moved to ASF-CMS)           -->
 <!-- =================================================================== -->
-
-<!-- CL20130209 **BEGIN SKIP DOCUMENTATION GENERATION - CMS-DOCS-ONLY! ** -->
-<!--
-  <target name="docs" description="Generates documentation">
-    <echo message="Building documentation with Forrest..."/>
-    <echo message="FORREST_HOME = ${env.FORREST_HOME}"/>
-    <echo message="Make sure you have a proper Forrest installation (see http://forrest.apache.org/)"/>
-    <condition property="forrest.call" value="forrest.bat" else="forrest">
-      <os family="windows"/>
-    </condition>
-    <exec executable="${env.FORREST_HOME}/bin/${forrest.call}"/>
-  </target>
--->
-<!-- CL20130209 ***END* SKIP DOCUMENTATION GENERATION - CMS-DOCS-ONLY! ** -->
-
 <!-- =================================================================== -->
 <!-- Creates the distribution                                            -->
 <!-- =================================================================== -->
@@ -1217,7 +1199,6 @@ NOTE:
     <delete file="${java.io.tmpdir}/jai-1_1_3-lib.zip" />
     <property name="jai.present" value="true"/>
   </target>
-  <!-- <target name="dist-bin" depends="all,javadocs,docs"> --><!-- CL20130209 -->
   <target name="dist-bin" depends="all,javadocs">
     <echo message="Building the binary distribution files (zip,tar)"/>
     <mkdir dir="${dist.bin.result.dir}"/>
@@ -1225,12 +1206,6 @@ NOTE:
       <fileset refid="dist.bin"/>
       <fileset refid="dist.bin.lib"/>
     </copy>
-    <!-- CL20130209 -->
-    <!--
-    <copy todir="${dist.bin.result.dir}/docs">
-      <fileset dir="${build.dir}/site"/>
-    </copy>
-    -->
     <copy todir="${dist.bin.result.dir}/javadocs">
       <fileset dir="${build.javadocs.dir}"/>
     </copy>
@@ -1556,49 +1531,6 @@ NOTE:
       <fileset dir="${basedir}" includes="${name}-bundle.jar"/>
     </delete>
   </target>
-  <!-- CL20130209 -->
-  <!--
-  <target name="validate-xdocs" description="Validate the xdocs. Point schemas.dir to Forrest's 'schemas' directory.">
-    <property name="schemas.dir" value="../xml-forrest/main/webapp/resources/schema"/>
-    <xmlvalidate failonerror="no">
-      <fileset dir="${xdocs.dir}">
-        <include name="**.xml"/>
-        <exclude name="**/site.xml"/>
-        <exclude name="**/news-data.xml"/>
-      </fileset>
-      <xmlcatalog>
-        <entity publicId="-//APACHE//DTD Compliance V1.0//EN" location="src/documentation/resources/schema/dtd/compliance-v10.dtd"/>
-        <entity publicId="-//APACHE//DTD Documentation V1.1//EN" location="${schemas.dir}/dtd/document-v11.dtd"/>
-        <entity publicId="-//APACHE//DTD Documentation V1.3//EN" location="${schemas.dir}/dtd/document-v13.dtd"/>
-        <entity publicId="-//APACHE//DTD Specification V1.1//EN" location="${schemas.dir}/dtd/specification-v11.dtd"/>
-        <entity publicId="-//APACHE//DTD FAQ V1.1//EN" location="${schemas.dir}/dtd/faq-v11.dtd"/>
-        <entity publicId="-//APACHE//DTD FAQ V1.3//EN" location="${schemas.dir}/dtd/faq-v13.dtd"/>
-        <entity publicId="-//APACHE//DTD Changes V1.1//EN" location="${schemas.dir}/dtd/changes-v11.dtd"/>
-        <entity publicId="-//APACHE//DTD Todo V1.1//EN" location="${schemas.dir}/dtd/todo-v11.dtd"/>
-        <entity publicId="-//APACHE//DTD Cocoon Documentation Book V1.0//EN" location="${schemas.dir}/dtd/book-cocoon-v10.dtd"/>
-        <entity publicId="-//APACHE//DTD Cocoon Documentation Tab V1.0//EN" location="${schemas.dir}/dtd/tab-cocoon-v10.dtd"/>
-        <entity publicId="-//APACHE//DTD How-to V1.0//EN" location="${schemas.dir}/dtd/howto-v10.dtd"/>
-        <entity publicId="-//APACHE//DTD Gump Descriptor V1.0//EN" location="${schemas.dir}/dtd/xgump-draft.dtd"/>
-        <entity publicId="-//APACHE//DTD JavaDoc V1.0//EN" location="${schemas.dir}/dtd/javadoc-v04draft.dtd"/>
-        <entity publicId="-//APACHE//DTD Contributors V1.0//EN" location="${schemas.dir}/dtd/contributors-v10.dtd"/>
-        <entity publicId="-//Outerthought//DTD Libre Configuration V0.1//EN" location="${schemas.dir}/dtd/libre-v01.dtd"/>
-        <entity publicId="-//APACHE//ENTITIES Documentation V1.1//EN" location="${schemas.dir}/dtd/document-v11.mod"/>
-        <entity publicId="-//APACHE//ENTITIES FAQ V1.1//EN" location="${schemas.dir}/dtd/faq-v11.mod"/>
-        <entity publicId="-//APACHE//ENTITIES Todo V1.1//EN" location="${schemas.dir}/dtd/todo-v11.mod"/>
-        <entity publicId="-//APACHE//ENTITIES Common Elements V1.0//EN" location="${schemas.dir}/dtd/common-elems-v10.mod"/>
-        <entity publicId="-//APACHE//ENTITIES Common Character Entity Sets V1.0//EN" location="${schemas.dir}/dtd/common-charents-v10.mod"/>
-        <entity publicId="ISO 8879-1986//ENTITIES Added Latin 1//EN//XML" location="${schemas.dir}/entity/ISOlat1.pen"/>
-        <entity publicId="ISO 9573-15:1993//ENTITIES Greek Letters//EN//XML" location="${schemas.dir}/entity/ISOgrk1.pen"/>
-        <entity publicId="ISO 8879:1986//ENTITIES Publishing//EN//XML" location="${schemas.dir}/entity/ISOpub.pen"/>
-        <entity publicId="ISO 8879:1986//ENTITIES General Technical//EN//XML" location="${schemas.dir}/entity/ISOtech.pen"/>
-        <entity publicId="ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML" location="${schemas.dir}/entity/ISOnum.pen"/>
-        <entity publicId="ISO 8879:1986//ENTITIES Diacritical Marks//EN//XML" location="${schemas.dir}/entity/ISOdia.pen"/>
-        <entity publicId="ISO 8879:1986//ENTITIES Added Latin 1//EN//XML" location="${schemas.dir}/entity/ISOlat1.pen"/>
-      </xmlcatalog>
-    </xmlvalidate>
-  </target>
-  -->
-
 <!-- =================================================================== -->
 <!-- Local targets                                                       -->
 <!-- =================================================================== -->
