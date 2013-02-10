@@ -169,7 +169,9 @@ list of possible build targets.
   <property name="src.sandbox.dir" value="${src.dir}/sandbox"/>
   <property name="src.viewer.resources.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/resources"/>
   <property name="src.viewer.images.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/images"/>
+  <!--
   <property name="xdocs.dir" value="${src.dir}/documentation/content/xdocs"/>
+  -->
   <property name="fo.examples.dir" value="${basedir}/examples/fo/basic"/>
   <property name="fo.examples.userconfig" value="conf/fop.xconf"/>
   <property name="fo.examples.include" value="**/*.fo"/>
@@ -1177,6 +1179,9 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Creates the documentation                                           -->
 <!-- =================================================================== -->
+
+<!-- CL20130209 **BEGIN SKIP DOCUMENTATION GENERATION - CMS-DOCS-ONLY! ** -->
+<!--
   <target name="docs" description="Generates documentation">
     <echo message="Building documentation with Forrest..."/>
     <echo message="FORREST_HOME = ${env.FORREST_HOME}"/>
@@ -1186,6 +1191,9 @@ NOTE:
     </condition>
     <exec executable="${env.FORREST_HOME}/bin/${forrest.call}"/>
   </target>
+-->
+<!-- CL20130209 ***END* SKIP DOCUMENTATION GENERATION - CMS-DOCS-ONLY! ** -->
+
 <!-- =================================================================== -->
 <!-- Creates the distribution                                            -->
 <!-- =================================================================== -->
@@ -1209,16 +1217,20 @@ NOTE:
     <delete file="${java.io.tmpdir}/jai-1_1_3-lib.zip" />
     <property name="jai.present" value="true"/>
   </target>
-  <target name="dist-bin" depends="all,javadocs,docs">
+  <!-- <target name="dist-bin" depends="all,javadocs,docs"> --><!-- CL20130209 -->
+  <target name="dist-bin" depends="all,javadocs">
     <echo message="Building the binary distribution files (zip,tar)"/>
     <mkdir dir="${dist.bin.result.dir}"/>
     <copy todir="${dist.bin.result.dir}">
       <fileset refid="dist.bin"/>
       <fileset refid="dist.bin.lib"/>
     </copy>
+    <!-- CL20130209 -->
+    <!--
     <copy todir="${dist.bin.result.dir}/docs">
       <fileset dir="${build.dir}/site"/>
     </copy>
+    -->
     <copy todir="${dist.bin.result.dir}/javadocs">
       <fileset dir="${build.javadocs.dir}"/>
     </copy>
@@ -1544,6 +1556,8 @@ NOTE:
       <fileset dir="${basedir}" includes="${name}-bundle.jar"/>
     </delete>
   </target>
+  <!-- CL20130209 -->
+  <!--
   <target name="validate-xdocs" description="Validate the xdocs. Point schemas.dir to Forrest's 'schemas' directory.">
     <property name="schemas.dir" value="../xml-forrest/main/webapp/resources/schema"/>
     <xmlvalidate failonerror="no">
@@ -1583,6 +1597,7 @@ NOTE:
       </xmlcatalog>
     </xmlvalidate>
   </target>
+  -->
 
 <!-- =================================================================== -->
 <!-- Local targets                                                       -->
