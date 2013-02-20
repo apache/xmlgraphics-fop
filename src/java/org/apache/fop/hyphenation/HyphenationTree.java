@@ -30,7 +30,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import org.xml.sax.InputSource;
 
@@ -321,7 +323,109 @@ public class HyphenationTree extends TernaryTree
     public Hyphenation hyphenate(String word, int remainCharCount,
                                  int pushCharCount) {
         char[] w = word.toCharArray();
-        return hyphenate(w, 0, w.length, remainCharCount, pushCharCount);
+        if (isMultiPartWord(w, w.length)) {
+            List<char[]> words = splitOnNonCharacters(w);
+            return new Hyphenation(new String(w),
+                    getHyphPointsForWords(words, remainCharCount, pushCharCount));
+        } else {
+            return hyphenate(w, 0, w.length, remainCharCount, pushCharCount);
+        }
+    }
+
+    private boolean isMultiPartWord(char[] w, int len) {
+        int wordParts = 0;
+        for (int i = 0; i < len; i++) {
+            char[] c = new char[2];
+            c[0] = w[i];
+            int nc = classmap.find(c, 0);
+            if (nc > 0) {
+                if (wordParts > 1) {
+                    return true;
+                }
+                wordParts = 1;
+            } else {
+                if (wordParts == 1) {
+                    wordParts++;
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<char[]> splitOnNonCharacters(char[] word) {
+        List<Integer> breakPoints = getNonLetterBreaks(word);
+        if (breakPoints.size() == 0) {
+            return Collections.emptyList();
+        }
+        List<char[]> words = new ArrayList<char[]>();
+        for (int ibreak = 0; ibreak < breakPoints.size(); ibreak++) {
+            char[] newWord = getWordFromCharArray(word, ((ibreak == 0)
+                    ? 0 : breakPoints.get(ibreak - 1)), breakPoints.get(ibreak));
+            words.add(newWord);
+        }
+        if (word.length - breakPoints.get(breakPoints.size() - 1) - 1 > 1) {
+            char[] newWord = getWordFromCharArray(word, breakPoints.get(breakPoints.size() - 1),
+                    word.length);
+            words.add(newWord);
+        }
+        return words;
+    }
+
+    private List<Integer> getNonLetterBreaks(char[] word) {
+        char[] c = new char[2];
+        List<Integer> breakPoints = new ArrayList<Integer>();
+        boolean foundLetter = false;
+        for (int i = 0; i < word.length; i++) {
+            c[0] = word[i];
+            if (classmap.find(c, 0) < 0) {
+                if (foundLetter) {
+                    breakPoints.add(i);
+                }
+            } else {
+                foundLetter = true;
+            }
+        }
+        return breakPoints;
+    }
+
+    private char[] getWordFromCharArray(char[] word, int startIndex, int endIndex) {
+        char[] newWord = new char[endIndex - ((startIndex == 0) ? startIndex : startIndex + 1)];
+        int iChar = 0;
+        for (int i = (startIndex == 0) ? 0 : startIndex + 1; i < endIndex; i++) {
+            newWord[iChar++] = word[i];
+        }
+        return newWord;
+    }
+
+    private int[] getHyphPointsForWords(List<char[]> nonLetterWords, int remainCharCount,
+            int pushCharCount) {
+        int[] breaks = new int[0];
+        for (int iNonLetterWord = 0; iNonLetterWord < nonLetterWords.size(); iNonLetterWord++) {
+            char[] nonLetterWord = nonLetterWords.get(iNonLetterWord);
+            Hyphenation curHyph = hyphenate(nonLetterWord, 0, nonLetterWord.length,
+                    remainCharCount, pushCharCount);
+            if (curHyph == null) {
+                continue;
+            }
+            int[] combined = new int[breaks.length + curHyph.getHyphenationPoints().length];
+            int[] hyphPoints = curHyph.getHyphenationPoints();
+            int foreWordsSize = calcForeWordsSize(nonLetterWords, iNonLetterWord);
+            for (int i = 0; i < hyphPoints.length; i++) {
+                hyphPoints[i] += foreWordsSize;
+            }
+            System.arraycopy(breaks, 0, combined, 0, breaks.length);
+            System.arraycopy(hyphPoints, 0, combined, breaks.length, hyphPoints.length);
+            breaks = combined;
+        }
+        return breaks;
+    }
+
+    private int calcForeWordsSize(List<char[]> nonLetterWords, int iNonLetterWord) {
+        int result = 0;
+        for (int i = 0; i < iNonLetterWord; i++) {
+            result += nonLetterWords.get(i).length + 1;
+        }
+        return result;
     }
 
     /**
@@ -389,6 +493,7 @@ public class HyphenationTree extends TernaryTree
                 }
             }
         }
+
         len = iLength;
         if (len < (remainCharCount + pushCharCount)) {
             // word is too short to be hyphenated
