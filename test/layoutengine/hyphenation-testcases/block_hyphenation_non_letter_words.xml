@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      Check to ensure correct hyphenation with uppercase and non-letter characters
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" language="en">
+        <fo:layout-master-set>
+            <fo:simple-page-master master-name="page" 
+               page-height="6cm" page-width="4cm">
+                <fo:region-body margin="5pt"/>
+            </fo:simple-page-master>
+        </fo:layout-master-set>
+       <fo:page-sequence master-reference="page" border="1pt solid orange"
+          hyphenate="true" font-size="9pt"
+          hyphenation-character="-"
+          hyphenation-push-character-count="2"
+          hyphenation-remain-character-count="2">
+            <fo:flow flow-name="xsl-region-body">
+               <fo:block border=".5pt dotted gray">1. The quick brown fox jumps over the lazy dog.</fo:block>
+               <fo:block border=".5pt dotted gray" space-before=".25em"
+                  >2. fill fill fill fill fill fill expected</fo:block>
+               <fo:block border=".5pt dotted gray" space-before=".25em"
+                  >3. fill fill fill fill fill fill _expected_</fo:block>
+               <fo:block border=".5pt dotted gray" space-before=".25em" 
+                  >4. fill fill fill fill fill fill SUCCESS</fo:block>
+               <fo:block border=".5pt dotted gray" space-before=".25em" 
+                  >5. fill fill fill fill fill fill _SUCCESS_</fo:block>
+               <fo:block border=".5pt dotted gray" space-before=".25em" 
+                  >6. fill fill fill fill OCF_SUCCESS</fo:block>
+               <fo:block border=".5pt dotted gray" space-before=".25em" 
+                  >6. fill fill fill TEST_CHICKEN_LONGISH_MULTIPLE_LINE_HYPHEN</fo:block>
+            </fo:flow>
+        </fo:page-sequence>
+    </fo:root>    
+  </fo>
+  <checks>
+    <eval expected="OCF_SUC-" xpath="//pageViewport[1]/page[1]/regionViewport[1]/regionBody[1]/mainReference[1]/span[1]/flow[1]/block[6]/lineArea[1]/text[1]/word[6]"/>
+    <eval expected="TEST_CHICK-" xpath="//pageViewport[2]/page[1]/regionViewport[1]/regionBody[1]/mainReference[1]/span[1]/flow[1]/block[1]/lineArea[1]/text[1]/word[5]"/>
+    <eval expected="EN_LONGISH_MULTI-" xpath="//pageViewport[2]/page[1]/regionViewport[1]/regionBody[1]/mainReference[1]/span[1]/flow[1]/block[1]/lineArea[2]/text[1]/word[1]"/>
+  </checks>
+</testcase>
