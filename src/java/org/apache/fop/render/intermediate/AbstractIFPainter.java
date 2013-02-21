@@ -155,9 +155,16 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
         context.putHints(hints);
 
         ImageFlavor[] flavors = imageHandlerRegistry.getSupportedFlavors(context);
+        info.getCustomObjects().put("warningincustomobject", true);
         org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                     info, flavors,
                     hints, sessionContext);
+
+        if (info.getCustomObjects().get("warning") != null) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageWarning(this, (String)info.getCustomObjects().get("warning"));
+        }
 
         try {
             drawImage(img, rect, context);

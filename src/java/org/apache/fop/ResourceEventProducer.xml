@@ -20,6 +20,7 @@
   <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
   <message key="imageNotFound">Image not found.[ URI: {uri}.]{{locator}}</message>
   <message key="imageError">Image not available.[ URI: {uri}.] Reason:[ {reason}][ {e}]{{locator}}</message>
+  <message key="imageWarning">Image warning.[ URI: {uri}.] Reason:[ {message}][ {e}]{{locator}}</message>
   <message key="imageIOError">I/O error while loading image.[ URI: {uri}.][ Reason: {ioe}]{{locator}}</message>
   <message key="ifoNoIntrinsicSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
   <message key="uriError">Error while handling URI: {uri}. Reason: {e}{{locator}}</message>
