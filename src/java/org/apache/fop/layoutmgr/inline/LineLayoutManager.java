@@ -349,7 +349,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 endIndent = difference > 0 ? difference : 0;
                 break;
             case Constants.EN_END:
-                startIndent = difference > 0 ? difference : 0;
+                startIndent = difference;
                 endIndent = 0;
                 break;
             case Constants.EN_CENTER:
