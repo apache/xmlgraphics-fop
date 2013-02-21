@@ -152,4 +152,12 @@ public interface ResourceEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void catalogResolverNotCreated(Object source, String message);
+
+    /**
+     * Warning in an image.
+     * @param source the event source
+     * @param message warning
+     * @event.severity WARN
+     */
+    void imageWarning(Object source, String message);
 }
