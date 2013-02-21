@@ -160,8 +160,8 @@ public class ImageLayout implements Constants {
         }
         boolean foundNonAuto = (lenWidth.getEnum() != EN_AUTO || lenHeight.getEnum() != EN_AUTO);
         if (!foundNonAuto) {
-            cwidth = intrinsicSize.width / (sourceResolution / UnitConv.IN2PT);
-            cheight = intrinsicSize.height / (sourceResolution / UnitConv.IN2PT);
+            cwidth = (int)(intrinsicSize.width / ((float)sourceResolution / (float)UnitConv.IN2PT));
+            cheight = (int)(intrinsicSize.height / ((float)sourceResolution / (float)UnitConv.IN2PT));
         }
 
         Dimension constrainedIntrinsicSize;
