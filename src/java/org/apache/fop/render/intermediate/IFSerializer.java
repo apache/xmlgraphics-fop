@@ -294,7 +294,10 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "index", Integer.toString(index));
             addAttribute(atts, "name", name);
-            addAttribute(atts, "page-master-name", pageMasterName);
+            if (pageMasterName != null) {
+                //fox:external-document doesn't have a page-master
+                addAttribute(atts, "page-master-name", pageMasterName);
+            }
             addAttribute(atts, "width", Integer.toString(size.width));
             addAttribute(atts, "height", Integer.toString(size.height));
             addForeignAttributes(atts);
