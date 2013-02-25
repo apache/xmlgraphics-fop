@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="CB" type="fix" fixes-bug="FOP-2215" due-to="Simon Steiner">
+       NullPointerException when generating IF with fox:external-document 
+      </action>	
       <action context="Renderers" dev="GA" type="add" fixes-bug="FOP-2206" due-to="Luis Bernardo">
        Add support for CS placement and escapement data in PS renderer.
       </action>
