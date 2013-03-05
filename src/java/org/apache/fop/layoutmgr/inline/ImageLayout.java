@@ -25,14 +25,10 @@ import java.awt.Rectangle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.xmlgraphics.util.UnitConv;
-
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.GraphicsProperties;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.flow.AbstractGraphics;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**
@@ -102,9 +98,9 @@ public class ImageLayout implements Constants {
         boolean constrainIntrinsicSize = false;
         int cwidth = -1;
         int cheight = -1;
-        Length lenWidth = props.getContentWidth();
-        if (lenWidth.getEnum() != EN_AUTO) {
-            switch (lenWidth.getEnum()) {
+        len = props.getContentWidth();
+        if (len.getEnum() != EN_AUTO) {
+            switch (len.getEnum()) {
             case EN_SCALE_TO_FIT:
                 if (ipd != -1) {
                     cwidth = ipd;
@@ -124,12 +120,12 @@ public class ImageLayout implements Constants {
                 constrainIntrinsicSize = true;
                 break;
             default:
-                cwidth = lenWidth.getValue(percentBaseContext);
+                cwidth = len.getValue(percentBaseContext);
             }
         }
-        Length lenHeight = props.getContentHeight();
-        if (lenHeight.getEnum() != EN_AUTO) {
-            switch (lenHeight.getEnum()) {
+        len = props.getContentHeight();
+        if (len.getEnum() != EN_AUTO) {
+            switch (len.getEnum()) {
             case EN_SCALE_TO_FIT:
                 if (bpd != -1) {
                     cheight = bpd;
@@ -149,19 +145,8 @@ public class ImageLayout implements Constants {
                 constrainIntrinsicSize = true;
                 break;
             default:
-                cheight = lenHeight.getValue(percentBaseContext);
+                cheight = len.getValue(percentBaseContext);
             }
-        }
-
-        //If no content-width or height is specified, adjust dimensions based upon the source resolution
-        int sourceResolution = 72;
-        if (props instanceof AbstractGraphics) {
-            sourceResolution = (int) ((AbstractGraphics)props).getUserAgent().getSourceResolution();
-        }
-        boolean foundNonAuto = (lenWidth.getEnum() != EN_AUTO || lenHeight.getEnum() != EN_AUTO);
-        if (!foundNonAuto) {
-            cwidth = (int)(intrinsicSize.width / ((float)sourceResolution / (float)UnitConv.IN2PT));
-            cheight = (int)(intrinsicSize.height / ((float)sourceResolution / (float)UnitConv.IN2PT));
         }
 
         Dimension constrainedIntrinsicSize;
@@ -179,13 +164,11 @@ public class ImageLayout implements Constants {
         //Adjust viewport if not explicit
         if (ipd == -1) {
             ipd = constrainExtent(cwidth,
-                    props.getInlineProgressionDimension(), (foundNonAuto)
-                            ? props.getContentWidth() : new DefaultLength());
+                    props.getInlineProgressionDimension(), props.getContentWidth());
         }
         if (bpd == -1) {
             bpd = constrainExtent(cheight,
-                    props.getBlockProgressionDimension(), (foundNonAuto)
-                            ? props.getContentHeight() : new DefaultLength());
+                    props.getBlockProgressionDimension(), props.getContentHeight());
         }
 
         this.clip = false;
@@ -206,36 +189,6 @@ public class ImageLayout implements Constants {
         //Build calculation results
         this.viewportSize.setSize(ipd, bpd);
         this.placement = new Rectangle(xoffset, yoffset, cwidth, cheight);
-    }
-
-    private static class DefaultLength implements Length {
-        public double getNumericValue() throws PropertyException {
-            return 0;
-        }
-
-        public double getNumericValue(PercentBaseContext context) throws PropertyException {
-            return 0;
-        }
-
-        public int getDimension() {
-            return 0;
-        }
-
-        public boolean isAbsolute() {
-            return false;
-        }
-
-        public int getEnum() {
-            return 0;
-        }
-
-        public int getValue() {
-            return 0;
-        }
-
-        public int getValue(PercentBaseContext context) {
-            return 0;
-        }
     }
 
     private int constrainExtent(int extent, LengthRangeProperty range, Length contextExtent) {
