@@ -128,23 +128,23 @@ public class AFPBorderPainter extends AbstractAFPPainter {
             break;
         case Constants.EN_DASHED:
             if (borderPaintInfo.isHorizontal()) {
-                int dashWidth = (int) (BorderPainter.dashWidthCalculator(x2 - x1, thickness));
+                int dashWidth = (int) unitConv.pt2units(BorderPainter.dashWidthCalculator(w, h));
                 lineDataInfo.setX2 ( lineDataInfo.getX1() + dashWidth );
                 lineDataInfo.setY2 ( lineDataInfo.getY1() );
                 int ex2 = Math.round(x2);
                 int spaceWidth = (int) (BorderPainter.DASHED_BORDER_SPACE_RATIO * dashWidth);
-                while (lineDataInfo.getX2() < ex2) {
+                while (lineDataInfo.getX2() <= ex2) {
                     dataStream.createLine(lineDataInfo);
                     lineDataInfo.setX1 ( lineDataInfo.getX2() + spaceWidth );
                     lineDataInfo.setX2 ( lineDataInfo.getX1() + dashWidth );
                 }
             } else {
-                int dashWidth = (int) BorderPainter.dashWidthCalculator(y2 - y1, thickness);
+                int dashWidth = (int) unitConv.pt2units(BorderPainter.dashWidthCalculator(h, w));
                 lineDataInfo.setX2 ( lineDataInfo.getX1() );
                 lineDataInfo.setY2 ( lineDataInfo.getY1() + dashWidth );
                 int ey2 = Math.round(y2);
                 int spaceWidth = (int) (BorderPainter.DASHED_BORDER_SPACE_RATIO * dashWidth);
-                while (lineDataInfo.getY2() < ey2) {
+                while (lineDataInfo.getY2() <= ey2) {
                     dataStream.createLine(lineDataInfo);
                     lineDataInfo.setY1 ( lineDataInfo.getY2() + spaceWidth );
                     lineDataInfo.setY2 ( lineDataInfo.getY1() + dashWidth );

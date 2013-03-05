@@ -56,7 +56,7 @@ public class PDFBorderPainterTestCase {
         generator.flushPDFDoc();
         OutputStream outStream = new ByteArrayOutputStream();
         outStream = generator.getStream().getBufferOutputStream();
-        assertTrue(((ByteArrayOutputStream) outStream).toString().contains("[2.105263 1.052632] 0 d 1 w"));
+        assertTrue(((ByteArrayOutputStream) outStream).toString().contains("[7.272727 3.636364] 0 d 1 w"));
     }
 
     public void tearDown() {
