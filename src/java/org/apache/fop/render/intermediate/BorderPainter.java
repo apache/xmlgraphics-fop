@@ -289,6 +289,9 @@ public class BorderPainter {
      */
     public static float dashWidthCalculator(float borderLength, float borderWidth) {
         float dashWidth = DASHED_BORDER_LENGTH_FACTOR * borderWidth;
+        if (borderWidth < 3) {
+            dashWidth = (DASHED_BORDER_LENGTH_FACTOR * 3) * borderWidth;
+        }
         int period = (int) ((borderLength - dashWidth) / dashWidth / (1.0f + DASHED_BORDER_SPACE_RATIO));
         period = period < 0 ? 0 : period;
         return borderLength / (period * (1.0f + DASHED_BORDER_SPACE_RATIO) + 1.0f);

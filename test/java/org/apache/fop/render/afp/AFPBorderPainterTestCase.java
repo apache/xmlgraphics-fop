@@ -17,31 +17,37 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.ps;
-
-import java.awt.Color;
-import java.io.ByteArrayOutputStream;
-
-import org.junit.Before;
-import org.junit.Test;
+package org.apache.fop.render.afp;
 
 import static org.junit.Assert.assertTrue;
 
-import org.apache.xmlgraphics.ps.PSGenerator;
+import java.awt.Color;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 
+import org.apache.fop.afp.AFPBorderPainter;
+import org.apache.fop.afp.AFPLineDataInfo;
+import org.apache.fop.afp.AFPPaintingState;
+import org.apache.fop.afp.BorderPaintingInfo;
+import org.apache.fop.afp.DataStream;
+import org.apache.fop.afp.Factory;
 import org.apache.fop.fo.Constants;
+import org.junit.Before;
+import org.junit.Test;
 
-public class PSBorderPainterTestCase {
-
-    private PSGenerator generator;
+public class AFPBorderPainterTestCase {
     private ByteArrayOutputStream outStream;
-    private PSGraphicsPainter borderPainter;
+    private AFPBorderPainter borderPainter;
+    private DataStream ds;
+    private AFPLineDataInfo line;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         outStream = new ByteArrayOutputStream();
-        generator = new PSGenerator(outStream);
-        borderPainter = new PSGraphicsPainter(generator);
+        ds = new MyDataStream(new Factory(), null, outStream);
+        ds.startDocument();
+        ds.startPage(1000, 1000, 90, 72, 72);
+        borderPainter = new AFPBorderPainter(new AFPPaintingState(), ds);
     }
 
     /**
@@ -51,13 +57,20 @@ public class PSBorderPainterTestCase {
      */
     @Test
     public void testDrawBorderLine() throws Exception {
-        borderPainter.drawBorderLine(0, 0, 40000, 1000, true, true,
+        BorderPaintingInfo paintInfo = new BorderPaintingInfo(0f, 0f, 1000f, 1000f, true,
                 Constants.EN_DASHED, Color.BLACK);
-        assertTrue(outStream.toString().contains("[7.2727275 3.6363637] 0 setdash"));
+        borderPainter.paint(paintInfo);
+        ds.endDocument();
+        assertTrue(line.getX1() == 4999 && line.getX2() == 8332);
     }
-
-    public void tearDown() {
-        generator = null;
-        outStream = null;
+    
+    class MyDataStream extends DataStream {
+        public MyDataStream(Factory factory, AFPPaintingState paintingState, OutputStream outputStream) {
+            super(factory, paintingState, outputStream);
+        }
+        
+        public void createLine(AFPLineDataInfo lineDataInfo) {
+            line = lineDataInfo;
+        }
     }
 }
