@@ -145,7 +145,8 @@ public class SVGElement extends SVGObj {
         Point2D p2d = getSize(fontSize, svgRoot, getUserAgent().getSourcePixelUnitToMillimeter());
         e.setSVGContext(null);
 
-        return p2d;
+        double pixelToPoint = 72d / getUserAgent().getSourceResolution();
+        return new Point2D.Double(p2d.getX() * pixelToPoint, p2d.getY() * pixelToPoint);
     }
 
     /**

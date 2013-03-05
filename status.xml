@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="CB" type="fix" fixes-bug="FOP-2217" due-to="Robert Meyer">
+        Image scaling change was adversely affecting other image types 
+      </action>
       <action context="Renderers" dev="CB" type="fix" fixes-bug="FOP-2214" due-to="Simon Steiner">
         Thin dashed border look like dots
       </action>	
