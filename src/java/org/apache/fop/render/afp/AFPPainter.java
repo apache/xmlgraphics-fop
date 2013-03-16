@@ -415,7 +415,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                 Area background = new Area(area);
                 Area cornerRegion = new Area();
                 Area[] cornerBorder = new Area[]{new Area(), new Area(), new Area(), new Area()};
-
+                Area[] clip = new Area[4];
                 if (roundCorner[TOP_LEFT]) {
                     AffineTransform transform =  new AffineTransform();
                     int beforeRadius = (int)(cornerCorrectionFactor * bpsBefore.getRadiusStart());
@@ -428,9 +428,9 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                     background.subtract(makeCornerClip(beforeRadius, startRadius,
                             transform));
 
-                    Area clip = new Area(new Rectangle(0, 0, startRadius, beforeRadius));
-                    clip.transform(transform);
-                    cornerRegion.add(clip);
+                    clip[TOP_LEFT] = new Area(new Rectangle(0, 0, startRadius, beforeRadius));
+                    clip[TOP_LEFT].transform(transform);
+                    cornerRegion.add(clip[TOP_LEFT]);
 
                     cornerBorder[TOP].add(makeCornerBorderBPD(beforeRadius,
                                     startRadius, beforeWidth, startWidth, transform));
@@ -453,9 +453,9 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                     background.subtract(makeCornerClip(beforeRadius, startRadius,
                             transform));
 
-                    Area clip = new Area(new Rectangle(0, 0, startRadius, beforeRadius));
-                    clip.transform(transform);
-                    cornerRegion.add(clip);
+                    clip[TOP_RIGHT] = new Area(new Rectangle(0, 0, startRadius, beforeRadius));
+                    clip[TOP_RIGHT].transform(transform);
+                    cornerRegion.add(clip[TOP_RIGHT]);
 
                     cornerBorder[TOP].add(makeCornerBorderBPD(beforeRadius,
                                     startRadius, beforeWidth, startWidth, transform));
@@ -478,9 +478,9 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                     background.subtract(makeCornerClip(beforeRadius, startRadius,
                             transform));
 
-                    Area clip = new Area(new Rectangle(0, 0, startRadius, beforeRadius));
-                    clip.transform(transform);
-                    cornerRegion.add(clip);
+                    clip[BOTTOM_RIGHT] = new Area(new Rectangle(0, 0, startRadius, beforeRadius));
+                    clip[BOTTOM_RIGHT].transform(transform);
+                    cornerRegion.add(clip[BOTTOM_RIGHT]);
 
                     cornerBorder[BOTTOM].add(makeCornerBorderBPD(beforeRadius,
                             startRadius, beforeWidth, startWidth, transform));
@@ -502,9 +502,9 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                     background.subtract(makeCornerClip(beforeRadius, startRadius,
                             transform));
 
-                    Area clip = new Area(new Rectangle(0, 0, startRadius, beforeRadius));
-                    clip.transform(transform);
-                    cornerRegion.add(clip);
+                    clip[BOTTOM_LEFT] = new Area(new Rectangle(0, 0, startRadius, beforeRadius));
+                    clip[BOTTOM_LEFT].transform(transform);
+                    cornerRegion.add(clip[BOTTOM_LEFT]);
 
                     cornerBorder[BOTTOM].add(makeCornerBorderBPD(beforeRadius,
                                     startRadius, beforeWidth, startWidth, transform));
@@ -528,7 +528,12 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
                     Area border = new Area(borderPath);
 
-                    border.subtract(cornerRegion);
+                    if (clip[TOP_LEFT] != null) {
+                        border.subtract(clip[TOP_LEFT]);
+                    }
+                    if (clip[TOP_RIGHT] != null) {
+                        border.subtract(clip[TOP_RIGHT]);
+                    }
 
                     g2d.setColor(bpsBefore.color);
                     g2d.fill(border);
@@ -548,7 +553,12 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
                     Area border = new Area(borderPath);
 
-                    border.subtract(cornerRegion);
+                    if (clip[BOTTOM_RIGHT] != null) {
+                        border.subtract(clip[BOTTOM_RIGHT]);
+                    }
+                    if (clip[TOP_RIGHT] != null) {
+                        border.subtract(clip[TOP_RIGHT]);
+                    }
 
                     g2d.setColor(bpsEnd.color);
                     g2d.fill(border);
@@ -565,9 +575,12 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                     borderPath.lineTo(bpsStart == null ? 0 : bpsStart.width,
                             borderRect.height - bpsAfter.width);
                     Area border = new Area(borderPath);
-
-                    border.subtract(cornerRegion);
-
+                    if (clip[BOTTOM_LEFT] != null) {
+                        border.subtract(clip[BOTTOM_LEFT]);
+                    }
+                    if (clip[BOTTOM_RIGHT] != null) {
+                        border.subtract(clip[BOTTOM_RIGHT]);
+                    }
                     g2d.setColor(bpsAfter.color);
                     g2d.fill(border);
                     g2d.fill(cornerBorder[BOTTOM]);
@@ -585,8 +598,12 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
                     Area border = new Area(borderPath);
 
-                    border.subtract(cornerRegion);
-
+                    if (clip[BOTTOM_LEFT] != null) {
+                        border.subtract(clip[BOTTOM_LEFT]);
+                    }
+                    if (clip[TOP_LEFT] != null) {
+                        border.subtract(clip[TOP_LEFT]);
+                    }
                     g2d.setColor(bpsStart.color);
                     g2d.fill(border);
                     g2d.fill(cornerBorder[LEFT]);
