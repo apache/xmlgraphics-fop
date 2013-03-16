@@ -59,11 +59,12 @@ public interface InlineLevelEventProducer extends EventProducer {
     /**
      * A line overflows.
      * @param source the event source
+     * @param elementName the formatting object
      * @param line the number number
      * @param overflowLength the length by which the content overflows the available space (in mpt)
      * @param loc the location of the error or null
      * @event.severity WARN
      */
-    void lineOverflows(Object source, int line, int overflowLength, Locator loc);
+    void lineOverflows(Object source, String elementName, int line, int overflowLength, Locator loc);
 
 }

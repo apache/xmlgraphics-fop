@@ -1040,6 +1040,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
 
     /** {@inheritDoc} */
     public boolean handleOverflow(int milliPoints) {
+        if (width.getEnum() == EN_AUTO) {
+            return false;
+        }
         if (milliPoints > this.horizontalOverflow) {
             this.horizontalOverflow = milliPoints;
         }
