@@ -305,6 +305,7 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
         for (char c = aci.first(); c != CharacterIterator.DONE; c = aci.next()) {
             sb.append(c);
         }
+        aci.first();
         return sb.toString();
     }
 
