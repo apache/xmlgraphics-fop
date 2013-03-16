@@ -61,6 +61,7 @@ public class PDFContentGenerator {
 
     private boolean inMarkedContentSequence;
     private boolean inArtifactMode;
+    private AffineTransform transform;
 
     /**
      * Main constructor. Creates a new PDF stream and additional helper classes for text painting
@@ -87,6 +88,10 @@ public class PDFContentGenerator {
 
         this.currentState = new PDFPaintingState();
         this.colorHandler = new PDFColorHandler(document.getResources());
+    }
+
+    public AffineTransform getAffineTransform() {
+        return transform;
     }
 
     /**
@@ -303,6 +308,7 @@ public class PDFContentGenerator {
      * @param transform the transformation matrix (in points)
      */
     public void concatenate(AffineTransform transform) {
+        this.transform = transform;
         if (!transform.isIdentity()) {
             currentState.concatenate(transform);
             currentStream.add(CTMHelper.toPDFString(transform, false) + " cm\n");
