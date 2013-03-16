@@ -403,7 +403,8 @@ public class HyphenationTree extends TernaryTree
         for (int iNonLetterWord = 0; iNonLetterWord < nonLetterWords.size(); iNonLetterWord++) {
             char[] nonLetterWord = nonLetterWords.get(iNonLetterWord);
             Hyphenation curHyph = hyphenate(nonLetterWord, 0, nonLetterWord.length,
-                    remainCharCount, pushCharCount);
+                    (iNonLetterWord == 0) ? remainCharCount : 1,
+                    (iNonLetterWord == nonLetterWords.size() - 1) ? pushCharCount : 1);
             if (curHyph == null) {
                 continue;
             }
