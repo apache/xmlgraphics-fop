@@ -41,14 +41,16 @@
                   >2. fill fill fill fill fill fill expected</fo:block>
                <fo:block border=".5pt dotted gray" space-before=".25em"
                   >3. fill fill fill fill fill fill _expected_</fo:block>
-               <fo:block border=".5pt dotted gray" space-before=".25em" 
+               <fo:block border=".5pt dotted gray" space-before=".25em"
                   >4. fill fill fill fill fill fill SUCCESS</fo:block>
-               <fo:block border=".5pt dotted gray" space-before=".25em" 
+               <fo:block border=".5pt dotted gray" space-before=".25em"
                   >5. fill fill fill fill fill fill _SUCCESS_</fo:block>
-               <fo:block border=".5pt dotted gray" space-before=".25em" 
+               <fo:block border=".5pt dotted gray" space-before=".25em"
                   >6. fill fill fill fill OCF_SUCCESS</fo:block>
-               <fo:block border=".5pt dotted gray" space-before=".25em" 
-                  >6. fill fill fill TEST_CHICKEN_LONGISH_MULTIPLE_LINE_HYPHEN</fo:block>
+               <fo:block border=".5pt dotted gray" space-before=".25em"
+                  >7. fill fill fill TEST_CHICKEN_LONGISH_MULTIPLE_LINE_HYPHEN</fo:block>
+               <fo:block border=".5pt dotted gray" space-before=".25em"
+                  >8. fill fill fill EGOS_EGOS_EGOS_EGOS_EGOS</fo:block>
             </fo:flow>
         </fo:page-sequence>
     </fo:root>    
@@ -57,5 +59,6 @@
     <eval expected="OCF_SUC-" xpath="//pageViewport[1]/page[1]/regionViewport[1]/regionBody[1]/mainReference[1]/span[1]/flow[1]/block[6]/lineArea[1]/text[1]/word[6]"/>
     <eval expected="TEST_CHICK-" xpath="//pageViewport[2]/page[1]/regionViewport[1]/regionBody[1]/mainReference[1]/span[1]/flow[1]/block[1]/lineArea[1]/text[1]/word[5]"/>
     <eval expected="EN_LONGISH_MULTI-" xpath="//pageViewport[2]/page[1]/regionViewport[1]/regionBody[1]/mainReference[1]/span[1]/flow[1]/block[1]/lineArea[2]/text[1]/word[1]"/>
+    <eval expected="GOS_EGOS_EGOS_E-" xpath="//pageViewport[2]/page[1]/regionViewport[1]/regionBody[1]/mainReference[1]/span[1]/flow[1]/block[2]/lineArea[2]/text[1]/word[1]" />
   </checks>
 </testcase>
