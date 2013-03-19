@@ -34,6 +34,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
@@ -466,6 +468,10 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
             handler.element(EL_IMAGE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startGroup()", e);
+        } finally {
+            ImageSessionContext session = getUserAgent().getImageSessionContext();
+            ImageManager imageManager = getUserAgent().getImageManager();
+            imageManager.closeImage(uri, session);
         }
     }
 
