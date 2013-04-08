@@ -191,13 +191,13 @@ public class Leader extends InlineLevel {
     }
 
     @Override
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startLeader(this);
     }
 
     @Override
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endLeader(this);
     }

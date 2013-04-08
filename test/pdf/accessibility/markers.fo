@@ -1,0 +1,169 @@
+<?xml version="1.0" standalone="no"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" xml:lang="en-GB">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="200pt" page-width="280pt" margin="10pt">
+      <fo:region-body/>
+      <fo:region-after extent="100pt" display-align="after"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:static-content flow-name="xsl-region-after" line-height="10pt" font-size="8pt">
+      <fo:block>Retrieving the marker:</fo:block>
+      <fo:retrieve-marker retrieve-class-name="marker"/>
+      <fo:block>Marker retrieved.</fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block><fo:marker marker-class-name="marker">
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-header>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block-container>
+                    <fo:block>Inside a block-container.</fo:block>
+                  </fo:block-container>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>A character: <fo:character character="c" color="blue"/>.</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block text-align="center"><fo:instream-foreign-object fox:alt-text="Nice 
+                      circles." width="30pt" overflow="hidden" display-align="center" 
+                      content-width="30pt">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="319" height="286.6">
+                        <g style="fill-opacity:0.7; stroke:black; stroke-width:3"
+                          transform="translate(0, 286.6) scale(1, -1) translate(100, 100)">
+                          <circle cx="50"  cy="86.6" r="80" style="fill:red;"/>
+                          <circle cx="0"   cy="0"    r="80" style="fill:green;"/>
+                          <circle cx="100" cy="0"    r="80" style="fill:blue;"/>
+                        </g>
+                      </svg>
+                  </fo:instream-foreign-object></fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block text-align-last="justify">Lead<fo:leader leader-pattern="dots" 
+                      leader-length.minimum="0" leader-length.optimum="100%"/>er.</fo:block>
+                  <fo:block>Page <fo:page-number/>.</fo:block>
+                  <fo:block-container absolute-position="absolute" width="35pt" height="10pt" top="20pt" 
+                    right="2pt" color="purple" text-align="right">
+                    <fo:block>Absolute.</fo:block>
+                  </fo:block-container>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>1.2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>1.3</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>1.4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>2.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>2.2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>2.3</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>2.4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+      </fo:table></fo:marker>Text in the region-body.</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+
+  <fo:page-sequence master-reference="page">
+    <fo:static-content flow-name="xsl-region-after" line-height="10pt" font-size="8pt" 
+      role="artifact">
+      <fo:block>This whole page footer should neither appear in the structure tree nor be read out 
+        loud.</fo:block>
+      <fo:block>Retrieving the marker:</fo:block>
+      <fo:retrieve-marker retrieve-class-name="marker"/>
+      <fo:block>Marker retrieved.</fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block><fo:marker marker-class-name="marker">
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-header>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block-container>
+                    <fo:block>Inside a block-container.</fo:block>
+                  </fo:block-container>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>A character: <fo:character character="c" color="blue"/>.</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block text-align="center"><fo:instream-foreign-object fox:alt-text="Nice 
+                      circles." width="30pt" overflow="hidden" display-align="center" 
+                      content-width="30pt">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="319" height="286.6">
+                        <g style="fill-opacity:0.7; stroke:black; stroke-width:3"
+                          transform="translate(0, 286.6) scale(1, -1) translate(100, 100)">
+                          <circle cx="50"  cy="86.6" r="80" style="fill:red;"/>
+                          <circle cx="0"   cy="0"    r="80" style="fill:green;"/>
+                          <circle cx="100" cy="0"    r="80" style="fill:blue;"/>
+                        </g>
+                      </svg>
+                  </fo:instream-foreign-object></fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block text-align-last="justify">Lead<fo:leader leader-pattern="dots" 
+                      leader-length.minimum="0" leader-length.optimum="100%"/>er.</fo:block>
+                  <fo:block>Page <fo:page-number/>.</fo:block>
+                  <fo:block-container absolute-position="absolute" width="35pt" height="10pt" top="20pt" 
+                    right="2pt" color="purple" text-align="right">
+                    <fo:block>Absolute.</fo:block>
+                  </fo:block-container>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>1.2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>1.3</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>1.4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>2.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>2.2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>2.3</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>2.4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+      </fo:table></fo:marker>Text in the region-body.</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

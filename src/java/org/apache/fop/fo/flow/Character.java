@@ -116,7 +116,7 @@ public class Character extends FObj implements StructureTreeElementHolder {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().character(this);
     }
@@ -217,7 +217,7 @@ public class Character extends FObj implements StructureTreeElementHolder {
         this.structureTreeElement = structureTreeElement;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public StructureTreeElement getStructureTreeElement() {
         return structureTreeElement;
     }

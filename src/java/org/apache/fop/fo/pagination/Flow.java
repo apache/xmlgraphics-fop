@@ -62,7 +62,7 @@ public class Flow extends FObj implements CommonAccessibilityHolder {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         if (flowName == null || flowName.equals("")) {
             missingPropertyError(FLOW_NAME);
         }
@@ -88,7 +88,7 @@ public class Flow extends FObj implements CommonAccessibilityHolder {
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (!blockItemFound) {
             missingChildElementError("marker* (%block;)+");
         }

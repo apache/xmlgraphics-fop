@@ -83,7 +83,7 @@ public class Marker extends FObjMixed {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() {
+    public void startOfNode() {
         FOTreeBuilderContext builderContext = getBuilderContext();
         // Push a new property list maker which will make MarkerPropertyLists.
         savePropertyListMaker = builderContext.getPropertyListMaker();
@@ -97,7 +97,7 @@ public class Marker extends FObjMixed {
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         super.endOfNode();
         // Pop the MarkerPropertyList maker.
         getBuilderContext().setPropertyListMaker(savePropertyListMaker);

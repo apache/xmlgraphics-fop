@@ -102,7 +102,7 @@ public class Bookmark extends FObj implements CommonAccessibilityHolder {
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (bookmarkTitle == null) {
            missingChildElementError("(bookmark-title, bookmark*)");
         }

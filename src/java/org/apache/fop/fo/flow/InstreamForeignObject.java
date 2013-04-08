@@ -60,7 +60,7 @@ public class InstreamForeignObject extends AbstractGraphics {
     }
 
     @Override
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startInstreamForeignObject(this);
     }
@@ -71,7 +71,7 @@ public class InstreamForeignObject extends AbstractGraphics {
      * the end of the instream-foreign-object.
      * {@inheritDoc}
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("one (1) non-XSL namespace child");
         }

@@ -68,6 +68,18 @@ public class RetrieveTableMarker extends AbstractRetrieveMarker {
         setBoundaryLabel((String) pList.get(PR_RETRIEVE_BOUNDARY_WITHIN_TABLE).getObject());
     }
 
+    @Override
+    public void startOfNode() throws FOPException {
+        super.startOfNode();
+        getFOEventHandler().startRetrieveTableMarker(this);
+    }
+
+    @Override
+    public void endOfNode() throws FOPException {
+        super.endOfNode();
+        getFOEventHandler().endRetrieveTableMarker(this);
+    }
+
     /**
      * Return the value for the <code>retrieve-position-within-table</code>
      * property
@@ -111,6 +123,11 @@ public class RetrieveTableMarker extends AbstractRetrieveMarker {
         super.clearChildNodes();
         this.currentTextNode = null;
         this.lastFOTextProcessed = null;
+    }
+
+    @Override
+    protected void restoreFOEventHandlerState() {
+        getFOEventHandler().restoreState(this);
     }
 
 }

@@ -40,7 +40,7 @@ public class StaticContent extends Flow {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         if (getFlowName() == null || getFlowName().equals("")) {
             missingPropertyError(FLOW_NAME);
         }
@@ -52,7 +52,7 @@ public class StaticContent extends Flow {
      * FOEventHandler that we are at the end of the flow.
      * {@inheritDoc}
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (firstChild == null && getUserAgent().validateStrictly()) {
             missingChildElementError("(%block;)+");
         }

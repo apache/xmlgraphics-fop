@@ -62,14 +62,14 @@ public class LayoutMasterSet extends FObj {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         getRoot().setLayoutMasterSet(this);
         simplePageMasters = new java.util.HashMap<String, SimplePageMaster>();
         pageSequenceMasters = new java.util.HashMap<String, PageSequenceMaster>();
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("(simple-page-master|page-sequence-master)+");
         }

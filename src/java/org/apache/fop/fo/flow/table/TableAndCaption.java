@@ -87,7 +87,7 @@ public class TableAndCaption extends FObj implements CommonAccessibilityHolder {
      * FOEventHandler that we are at the end of the flow.
      * {@inheritDoc}
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (!tableFound) {
             missingChildElementError("marker* table-caption? table");
         }

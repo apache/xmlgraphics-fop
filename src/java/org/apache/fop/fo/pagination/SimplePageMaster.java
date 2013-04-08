@@ -89,7 +89,7 @@ public class SimplePageMaster extends FObj {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         LayoutMasterSet layoutMasterSet = (LayoutMasterSet) parent;
 
         if (masterName == null) {
@@ -103,7 +103,7 @@ public class SimplePageMaster extends FObj {
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (!hasRegionBody) {
             missingChildElementError(
                     "(region-body, region-before?, region-after?, region-start?, region-end?)");

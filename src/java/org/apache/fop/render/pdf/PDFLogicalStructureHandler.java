@@ -128,9 +128,10 @@ class PDFLogicalStructureHandler {
     }
 
     private MarkedContentInfo addToParentTree(PDFStructElem structureTreeElement) {
-        PDFStructElem parent = (structureTreeElement instanceof PDFStructElem.Placeholder)
-                ? structureTreeElement.getParentStructElem()
-                : structureTreeElement;
+        PDFStructElem parent = structureTreeElement;
+        while (parent instanceof PDFStructElem.Placeholder) {
+            parent = parent.getParentStructElem();
+        }
         pageParentTreeArray.add(parent);
         String type = parent.getStructureType().getName().toString();
         int mcid = pageParentTreeArray.length() - 1;

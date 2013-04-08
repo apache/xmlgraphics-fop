@@ -321,7 +321,8 @@ public class FOTreeBuilder extends DefaultHandler {
             // fo:characters can potentially be removed during
             // white-space handling.
             // Do not notify the FOEventHandler.
-            if (currentFObj.getNameId() != Constants.FO_CHARACTER) {
+            if (currentFObj.getNameId() != Constants.FO_CHARACTER
+                    && (!builderContext.inMarker() || currentFObj.getNameId() == Constants.FO_MARKER)) {
                 currentFObj.startOfNode();
             }
         }
@@ -343,7 +344,8 @@ public class FOTreeBuilder extends DefaultHandler {
             // fo:characters can potentially be removed during
             // white-space handling.
             // Do not notify the FOEventHandler.
-            if (currentFObj.getNameId() != Constants.FO_CHARACTER) {
+            if (currentFObj.getNameId() != Constants.FO_CHARACTER
+                    && (!builderContext.inMarker() || currentFObj.getNameId() == Constants.FO_MARKER)) {
                 currentFObj.endOfNode();
             }
 

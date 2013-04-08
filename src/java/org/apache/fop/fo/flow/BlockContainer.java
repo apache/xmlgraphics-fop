@@ -103,7 +103,7 @@ public class BlockContainer extends FObj implements BreakPropertySet, WritingMod
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startBlockContainer(this);
     }
@@ -138,7 +138,7 @@ public class BlockContainer extends FObj implements BreakPropertySet, WritingMod
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (!blockItemFound) {
             missingChildElementError("marker* (%block;)+");
         }

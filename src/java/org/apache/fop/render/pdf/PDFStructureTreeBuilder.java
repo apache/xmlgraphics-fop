@@ -96,8 +96,11 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         addBuilder("float",                     StandardStructureTypes.Grouping.DIV);
         addBuilder("footnote",                  StandardStructureTypes.InlineLevelStructure.NOTE);
         addBuilder("footnote-body",             StandardStructureTypes.Grouping.SECT);
+        // Other Formatting Objects
         addBuilder("wrapper",                   StandardStructureTypes.InlineLevelStructure.SPAN);
         addBuilder("marker",                    StandardStructureTypes.Grouping.PRIVATE);
+        addBuilder("retrieve-marker",           new PlaceholderBuilder());
+        addBuilder("retrieve-table-marker",     new PlaceholderBuilder());
 
         addBuilder("#PCDATA", new PlaceholderBuilder());
     }
@@ -354,9 +357,9 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     public void endPageSequence() {
     }
 
-    public StructureTreeElement startNode(String name, Attributes attributes) {
-        PDFStructElem parent = ancestors.getFirst();
-        PDFStructElem structElem = createStructureElement(name, parent, attributes,
+    public StructureTreeElement startNode(String name, Attributes attributes, StructureTreeElement parent) {
+        PDFStructElem parentElem = parent == null ? ancestors.getFirst() : (PDFStructElem) parent;
+        PDFStructElem structElem = createStructureElement(name, parentElem, attributes,
                 pdfFactory, eventBroadcaster);
         ancestors.addFirst(structElem);
         return structElem;
@@ -366,12 +369,12 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         ancestors.removeFirst();
     }
 
-    public StructureTreeElement startImageNode(String name, Attributes attributes) {
-        return startNode(name, attributes);
+    public StructureTreeElement startImageNode(String name, Attributes attributes, StructureTreeElement parent) {
+        return startNode(name, attributes, parent);
     }
 
-    public StructureTreeElement startReferencedNode(String name, Attributes attributes) {
-        return startNode(name, attributes);
+    public StructureTreeElement startReferencedNode(String name, Attributes attributes, StructureTreeElement parent) {
+        return startNode(name, attributes, parent);
     }
 
 }

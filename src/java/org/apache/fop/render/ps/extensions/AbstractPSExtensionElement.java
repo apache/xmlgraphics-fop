@@ -97,7 +97,7 @@ public abstract class AbstractPSExtensionElement extends FONode {
      * @see org.apache.fop.fo.FONode#endOfNode()
      * @throws FOPException if there's a problem during processing
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         super.endOfNode();
         String s = ((PSExtensionAttachment)getExtensionAttachment()).getContent();
         if (s == null || s.length() == 0) {

@@ -71,6 +71,18 @@ public class RetrieveMarker extends AbstractRetrieveMarker {
         setBoundaryLabel((String) pList.get(PR_RETRIEVE_BOUNDARY).getObject());
     }
 
+    @Override
+    public void startOfNode() throws FOPException {
+        super.startOfNode();
+        getFOEventHandler().startRetrieveMarker(this);
+    }
+
+    @Override
+    public void endOfNode() throws FOPException {
+        super.endOfNode();
+        getFOEventHandler().endRetrieveMarker(this);
+    }
+
     /**
      * Return the value for the <code>retrieve-position</code>
      * property
@@ -108,4 +120,10 @@ public class RetrieveMarker extends AbstractRetrieveMarker {
     public int getNameId() {
         return FO_RETRIEVE_MARKER;
     }
+
+    @Override
+    protected void restoreFOEventHandlerState() {
+        getFOEventHandler().restoreState(this);
+    }
+
 }

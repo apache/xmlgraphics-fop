@@ -41,6 +41,8 @@ import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.PageNumberCitationLast;
+import org.apache.fop.fo.flow.RetrieveMarker;
+import org.apache.fop.fo.flow.RetrieveTableMarker;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
@@ -532,6 +534,56 @@ public abstract class FOEventHandler {
      * @param wrapper wrapper that is ending
      */
     public void endWrapper(Wrapper wrapper) {
+    }
+
+    /**
+     * Process the start of a retrieve-marker.
+     *
+     * @param retrieveMarker the retrieve-marker that is starting
+     */
+    public void startRetrieveMarker(RetrieveMarker retrieveMarker) {
+    }
+
+
+    /**
+     * Process the ending of a retrieve-marker.
+     *
+     * @param retrieveMarker the retrieve-marker that is ending
+     */
+    public void endRetrieveMarker(RetrieveMarker retrieveMarker) {
+    }
+
+    /**
+     * Restore the state of this event handler as it was when the given fo:retrieve-marker
+     * element was processed. This method is called at marker retrieval time, so that
+     * events for the marker descendants are fired within the proper context.
+     * <p>The default implementation of this method does nothing.</p>
+     *
+     * @param retrieveMarker the fo:retrieve-marker element that is retrieving markers
+     */
+    public void restoreState(RetrieveMarker retrieveMarker) {
+    }
+
+    /**
+     * Process the start of a retrieve-table-marker.
+     *
+     * @param retrieveTableMarker the retrieve-table-marker that is starting
+     */
+    public void startRetrieveTableMarker(RetrieveTableMarker retrieveTableMarker) {
+    }
+
+    /**
+     * Process the ending of a retrieve-table-marker.
+     *
+     * @param retrieveTableMarker the retrieve-table-marker that is ending
+     */
+    public void endRetrieveTableMarker(RetrieveTableMarker retrieveTableMarker) {
+    }
+
+    /**
+     * See {@link #restoreState(RetrieveMarker)}.
+     */
+    public void restoreState(RetrieveTableMarker retrieveTableMarker) {
     }
 
     /**

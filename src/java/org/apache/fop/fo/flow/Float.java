@@ -74,7 +74,7 @@ public class Float extends FObj {
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("(%block;)+");
         }

@@ -97,12 +97,12 @@ public class Root extends FObj implements CommonAccessibilityHolder {
     }
 
      /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         foEventHandler.startRoot(this);
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (!pageSequenceFound || layoutMasterSet == null) {
             missingChildElementError("(layout-master-set, declarations?, "
                 + "bookmark-tree?, (page-sequence|fox:external-document)+)");

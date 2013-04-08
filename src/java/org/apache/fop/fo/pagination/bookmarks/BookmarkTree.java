@@ -56,7 +56,7 @@ public class BookmarkTree extends FObj {
     }
 
     /** {@inheritDoc} */
-        protected void endOfNode() throws FOPException {
+        public void endOfNode() throws FOPException {
         if (bookmarks == null) {
            missingChildElementError("(fo:bookmark+)");
         }

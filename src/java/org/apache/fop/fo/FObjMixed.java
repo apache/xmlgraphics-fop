@@ -49,6 +49,16 @@ public abstract class FObjMixed extends FObj {
         super(parent);
     }
 
+    @Override
+    public FONode clone(FONode parent, boolean removeChildren) throws FOPException {
+        flushText();
+        FObjMixed clone = (FObjMixed) super.clone(parent, removeChildren);
+        if (removeChildren) {
+            clone.currentTextNode = null;
+        }
+        return clone;
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void characters(char[] data, int start, int length,
@@ -66,7 +76,7 @@ public abstract class FObjMixed extends FObj {
 
     /** {@inheritDoc} */
     @Override
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
 
         super.endOfNode();
         if (!inMarker() || getNameId() == FO_MARKER) {

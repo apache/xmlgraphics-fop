@@ -42,13 +42,13 @@ public class PageNumberCitationLast extends AbstractPageNumberCitation {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startPageNumberCitationLast(this);
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endPageNumberCitationLast(this);
     }

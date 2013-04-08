@@ -79,14 +79,14 @@ public class PageSequenceMaster extends FObj {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         subSequenceSpecifiers = new java.util.ArrayList<SubSequenceSpecifier>();
         layoutMasterSet = parent.getRoot().getLayoutMasterSet();
         layoutMasterSet.addPageSequenceMaster(masterName, this);
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("(single-page-master-reference|"
                     + "repeatable-page-master-reference|repeatable-page-master-alternatives)+");

@@ -57,7 +57,7 @@ public class AFPPageOverlayElement extends AbstractAFPExtensionObject {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(getLocalName())) {
             if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER

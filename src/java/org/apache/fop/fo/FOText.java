@@ -193,7 +193,7 @@ public class FOText extends FONode implements CharSequence {
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if ( charBuffer != null ) {
             charBuffer.rewind();
         }
@@ -726,7 +726,7 @@ public class FOText extends FONode implements CharSequence {
         this.structureTreeElement = structureTreeElement;
     }
 
-    /** @return the structure tree element. */
+    @Override
     public StructureTreeElement getStructureTreeElement() {
         return structureTreeElement;
     }

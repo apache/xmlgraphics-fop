@@ -75,7 +75,7 @@ public class Declarations extends FObj {
      * a hashmap of color profiles and a list of extension attachments.
      * @throws FOPException if there's a problem during processing
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (firstChild != null) {
             for (FONodeIterator iter = getChildNodes(); iter.hasNext();) {
                 FONode node = iter.nextNode();

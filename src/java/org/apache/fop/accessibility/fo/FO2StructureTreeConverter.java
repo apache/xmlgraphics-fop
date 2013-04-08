@@ -19,6 +19,8 @@
 
 package org.apache.fop.accessibility.fo;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 import org.xml.sax.SAXException;
@@ -29,6 +31,7 @@ import org.apache.fop.fo.DelegatingFOEventHandler;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.extensions.ExternalDocument;
+import org.apache.fop.fo.flow.AbstractRetrieveMarker;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
@@ -46,6 +49,8 @@ import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.PageNumberCitationLast;
+import org.apache.fop.fo.flow.RetrieveMarker;
+import org.apache.fop.fo.flow.RetrieveTableMarker;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
@@ -70,13 +75,29 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
     /** The top of the {@link converters} stack. */
     private FOEventHandler converter;
 
-    private final Stack<FOEventHandler> converters = new Stack<FOEventHandler>();
+    private Stack<FOEventHandler> converters = new Stack<FOEventHandler>();
 
-    private final FOEventHandler structureTreeEventTrigger;
+    private final StructureTreeEventTrigger structureTreeEventTrigger;
 
     /** The descendants of some elements like fo:leader must be ignored. */
     private final FOEventHandler eventSwallower = new FOEventHandler() {
     };
+
+    private final Map<AbstractRetrieveMarker, State> states = new HashMap<AbstractRetrieveMarker, State>();
+
+    private static final class State {
+
+        private final FOEventHandler converter;
+
+        private final Stack<FOEventHandler> converters;
+
+        @SuppressWarnings("unchecked")
+        State(FO2StructureTreeConverter o) {
+            this.converter = o.converter;
+            this.converters = (Stack<FOEventHandler>) o.converters.clone();
+        }
+
+    }
 
     /**
      * Creates a new instance.
@@ -456,6 +477,57 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
         converter.endWrapper(wrapper);
         handleEndArtifact(wrapper);
         super.endWrapper(wrapper);
+    }
+
+    @Override
+    public void startRetrieveMarker(RetrieveMarker retrieveMarker) {
+        converter.startRetrieveMarker(retrieveMarker);
+        saveState(retrieveMarker);
+        super.startRetrieveMarker(retrieveMarker);
+    }
+
+    private void saveState(AbstractRetrieveMarker retrieveMarker) {
+        states.put(retrieveMarker, new State(this));
+    }
+
+    @Override
+    public void endRetrieveMarker(RetrieveMarker retrieveMarker) {
+        converter.endRetrieveMarker(retrieveMarker);
+        super.endRetrieveMarker(retrieveMarker);
+    }
+
+    @Override
+    public void restoreState(RetrieveMarker retrieveMarker) {
+        restoreRetrieveMarkerState(retrieveMarker);
+        converter.restoreState(retrieveMarker);
+        super.restoreState(retrieveMarker);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void restoreRetrieveMarkerState(AbstractRetrieveMarker retrieveMarker) {
+        State state = states.get(retrieveMarker);
+        this.converter = state.converter;
+        this.converters = (Stack<FOEventHandler>) state.converters.clone();
+    }
+
+    @Override
+    public void startRetrieveTableMarker(RetrieveTableMarker retrieveTableMarker) {
+        converter.startRetrieveTableMarker(retrieveTableMarker);
+        saveState(retrieveTableMarker);
+        super.startRetrieveTableMarker(retrieveTableMarker);
+    }
+
+    @Override
+    public void endRetrieveTableMarker(RetrieveTableMarker retrieveTableMarker) {
+        converter.endRetrieveTableMarker(retrieveTableMarker);
+        super.endRetrieveTableMarker(retrieveTableMarker);
+    }
+
+    @Override
+    public void restoreState(RetrieveTableMarker retrieveTableMarker) {
+        restoreRetrieveMarkerState(retrieveTableMarker);
+        converter.restoreState(retrieveTableMarker);
+        super.restoreState(retrieveTableMarker);
     }
 
     @Override

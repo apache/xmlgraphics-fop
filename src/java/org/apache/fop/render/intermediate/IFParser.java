@@ -163,25 +163,15 @@ public class IFParser implements IFConstants {
         private Map<String, StructureTreeElement> structureTreeElements
                 = new HashMap<String, StructureTreeElement>();
 
-        private final class StructureTreeHandler extends DefaultHandler {
+        private class StructureTreeHandler extends DefaultHandler {
 
-            private final Locale pageSequenceLanguage;
+            protected final StructureTreeEventHandler structureTreeEventHandler;
 
-            private final StructureTreeEventHandler structureTreeEventHandler;
-
-            private StructureTreeHandler(StructureTreeEventHandler structureTreeEventHandler,
-                    Locale pageSequenceLanguage) throws SAXException {
-                this.pageSequenceLanguage = pageSequenceLanguage;
+            StructureTreeHandler(StructureTreeEventHandler structureTreeEventHandler) {
                 this.structureTreeEventHandler = structureTreeEventHandler;
             }
 
             void startStructureTree(String type) {
-                structureTreeEventHandler.startPageSequence(pageSequenceLanguage, type);
-            }
-
-            public void endDocument() throws SAXException {
-                startIFElement(EL_PAGE_SEQUENCE, pageSequenceAttributes);
-                pageSequenceAttributes = null;
             }
 
             @Override
@@ -191,18 +181,19 @@ public class IFParser implements IFConstants {
                     if (localName.equals("marked-content")) {
                         localName = "#PCDATA";
                     }
+                    StructureTreeElement parent = getStructureTreeElement(attributes);
                     String structID = attributes.getValue(InternalElementMapping.URI,
                             InternalElementMapping.STRUCT_ID);
                     if (structID == null) {
-                        structureTreeEventHandler.startNode(localName, attributes);
+                        structureTreeEventHandler.startNode(localName, attributes, parent);
                     } else if (localName.equals("external-graphic")
                             || localName.equals("instream-foreign-object")) {
                         StructureTreeElement structureTreeElement
-                                = structureTreeEventHandler.startImageNode(localName, attributes);
+                                = structureTreeEventHandler.startImageNode(localName, attributes, parent);
                         structureTreeElements.put(structID, structureTreeElement);
                     } else {
                         StructureTreeElement structureTreeElement = structureTreeEventHandler
-                                    .startReferencedNode(localName, attributes);
+                                    .startReferencedNode(localName, attributes, parent);
                         structureTreeElements.put(structID, structureTreeElement);
                     }
                 }
@@ -215,6 +206,28 @@ public class IFParser implements IFConstants {
                     structureTreeEventHandler.endNode(localName);
                 }
             }
+        }
+
+        private class MainStructureTreeHandler extends StructureTreeHandler {
+
+            private final Locale pageSequenceLanguage;
+
+            MainStructureTreeHandler(StructureTreeEventHandler structureTreeEventHandler,
+                    Locale pageSequenceLanguage) throws SAXException {
+                super(structureTreeEventHandler);
+                this.pageSequenceLanguage = pageSequenceLanguage;
+            }
+
+            @Override
+            void startStructureTree(String type) {
+                structureTreeEventHandler.startPageSequence(pageSequenceLanguage, type);
+            }
+
+            public void endDocument() throws SAXException {
+                startIFElement(EL_PAGE_SEQUENCE, pageSequenceAttributes);
+                pageSequenceAttributes = null;
+            }
+
         }
 
         public Handler(IFDocumentHandler documentHandler, FOUserAgent userAgent,
@@ -264,7 +277,7 @@ public class IFParser implements IFConstants {
                     if (localName.equals(EL_PAGE_SEQUENCE) && userAgent.isAccessibilityEnabled()) {
                         pageSequenceAttributes = new AttributesImpl(attributes);
                         Locale language = getLanguage(attributes);
-                        structureTreeHandler = new StructureTreeHandler(
+                        structureTreeHandler = new MainStructureTreeHandler(
                                 userAgent.getStructureTreeEventHandler(), language);
 
                     } else if (localName.equals(EL_STRUCTURE_TREE)) {
@@ -520,6 +533,7 @@ public class IFParser implements IFConstants {
 
             public void startElement(Attributes attributes) throws IFException {
                 documentHandler.startPageHeader();
+                structureTreeHandler = new StructureTreeHandler(userAgent.getStructureTreeEventHandler());
             }
 
             public void endElement() throws IFException {
@@ -842,12 +856,19 @@ public class IFParser implements IFConstants {
         }
 
         private void establishStructureTreeElement(Attributes attributes) {
-            String structRef = attributes.getValue(InternalElementMapping.URI,
-                    InternalElementMapping.STRUCT_REF);
+            StructureTreeElement element = getStructureTreeElement(attributes);
+            if (element != null) {
+                documentHandler.getContext().setStructureTreeElement(element);
+            }
+        }
+
+        private StructureTreeElement getStructureTreeElement(Attributes attributes) {
+            String structRef = attributes.getValue(InternalElementMapping.URI, InternalElementMapping.STRUCT_REF);
             if (structRef != null && structRef.length() > 0) {
                 assert structureTreeElements.containsKey(structRef);
-                StructureTreeElement structureTreeElement = structureTreeElements.get(structRef);
-                documentHandler.getContext().setStructureTreeElement(structureTreeElement);
+                return structureTreeElements.get(structRef);
+            } else {
+                return null;
             }
         }
 

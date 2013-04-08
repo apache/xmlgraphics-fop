@@ -43,9 +43,11 @@ public interface StructureTreeEventHandler {
      *
      * @param name the name of the structure tree node
      * @param attributes the node properties
+     * @param parent the parent of the node. May be null, in which case the parent node is
+     * the node corresponding to the previous call to this method
      * @return the corresponding structure tree element
      */
-    StructureTreeElement startNode(String name, Attributes attributes);
+    StructureTreeElement startNode(String name, Attributes attributes, StructureTreeElement parent);
 
     /**
      * Ends a structure tree node.
@@ -59,9 +61,11 @@ public interface StructureTreeEventHandler {
      *
      * @param name the name of the structure tree node
      * @param attributes the node properties
+     * @param parent the parent of the node. May be null, in which case the parent node is
+     * the node corresponding to the previous call to this method
      * @return the corresponding structure tree element
      */
-    StructureTreeElement startImageNode(String name, Attributes attributes);
+    StructureTreeElement startImageNode(String name, Attributes attributes, StructureTreeElement parent);
 
     /**
      * Starts a node that can be referenced by other nodes. This is usually a
@@ -69,9 +73,11 @@ public interface StructureTreeEventHandler {
      *
      * @param name the name of the structure tree node
      * @param attributes the node properties
+     * @param parent the parent of the node. May be null, in which case the parent node is
+     * the node corresponding to the previous call to this method
      * @return the corresponding structure tree element
      */
-    StructureTreeElement startReferencedNode(String name, Attributes attributes);
+    StructureTreeElement startReferencedNode(String name, Attributes attributes, StructureTreeElement parent);
 
     /**
      * Ends a page sequence structure tree node.

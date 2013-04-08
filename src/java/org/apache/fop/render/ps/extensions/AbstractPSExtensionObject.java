@@ -86,7 +86,7 @@ public abstract class AbstractPSExtensionObject extends FONode {
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         super.endOfNode();
         String s = setupCode.getContent();
         if (s == null || s.length() == 0) {

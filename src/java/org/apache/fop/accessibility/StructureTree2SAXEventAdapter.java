@@ -87,7 +87,7 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
     }
 
     /** {@inheritDoc} */
-    public StructureTreeElement startNode(String name, Attributes attributes) {
+    public StructureTreeElement startNode(String name, Attributes attributes, StructureTreeElement parent) {
         try {
             if (name.equals("#PCDATA")) {
                 name = "marked-content";
@@ -115,13 +115,13 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
     }
 
     /** {@inheritDoc} */
-    public StructureTreeElement startImageNode(String name, Attributes attributes) {
-        return startNode(name, attributes);
+    public StructureTreeElement startImageNode(String name, Attributes attributes, StructureTreeElement parent) {
+        return startNode(name, attributes, null);
     }
 
     /** {@inheritDoc} */
-    public StructureTreeElement startReferencedNode(String name, Attributes attributes) {
-        return startNode(name, attributes);
+    public StructureTreeElement startReferencedNode(String name, Attributes attributes, StructureTreeElement parent) {
+        return startNode(name, attributes, null);
     }
 
 }
