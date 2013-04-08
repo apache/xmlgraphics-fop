@@ -49,7 +49,7 @@ public class PSSetPageDeviceElement extends AbstractPSExtensionElement {
      * @throws FOPException if there's a problem during processing
      * @see org.apache.fop.fo.FONode#startOfNode()
      */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         if ( !((parent.getNameId() == Constants.FO_DECLARATIONS)
                 || (parent.getNameId() == Constants.FO_SIMPLE_PAGE_MASTER)) ) {

@@ -54,7 +54,7 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
 
     /** {@inheritDoc} */
     @Override
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(getLocalName())) {
             if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER

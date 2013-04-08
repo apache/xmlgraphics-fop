@@ -56,7 +56,7 @@ public class Footnote extends FObj implements CommonAccessibilityHolder {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         getFOEventHandler().startFootnote(this);
     }
 
@@ -66,7 +66,7 @@ public class Footnote extends FObj implements CommonAccessibilityHolder {
      *
      * {@inheritDoc}
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         super.endOfNode();
         if (footnoteCitation == null || footnoteBody == null) {
             missingChildElementError("(inline,footnote-body)");

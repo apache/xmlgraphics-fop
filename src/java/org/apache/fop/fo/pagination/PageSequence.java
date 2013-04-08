@@ -103,7 +103,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         flowMap = new java.util.HashMap<String, FONode>();
 
@@ -121,7 +121,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (mainFlow == null) {
            missingChildElementError("(title?,static-content*,flow)");
         }

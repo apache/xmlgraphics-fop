@@ -96,7 +96,7 @@ public class TableCell extends TableFObj implements CommonAccessibilityHolder {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startCell(this);
     }
@@ -106,7 +106,7 @@ public class TableCell extends TableFObj implements CommonAccessibilityHolder {
      * FOEventHandler that we are at the end of the table-cell.
      * {@inheritDoc}
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endCell(this);
     }

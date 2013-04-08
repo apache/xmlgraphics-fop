@@ -64,7 +64,7 @@ public class MultiSwitch extends FObj {
 
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("(multi-case+)");
         }

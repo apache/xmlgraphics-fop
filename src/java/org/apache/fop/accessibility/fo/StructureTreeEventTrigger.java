@@ -19,7 +19,9 @@
 
 package org.apache.fop.accessibility.fo;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Stack;
 
 import javax.xml.XMLConstants;
@@ -34,6 +36,7 @@ import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.fo.flow.AbstractGraphics;
+import org.apache.fop.fo.flow.AbstractRetrieveMarker;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
@@ -50,6 +53,8 @@ import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.PageNumberCitationLast;
+import org.apache.fop.fo.flow.RetrieveMarker;
+import org.apache.fop.fo.flow.RetrieveTableMarker;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
@@ -76,11 +81,30 @@ class StructureTreeEventTrigger extends FOEventHandler {
 
     private LayoutMasterSet layoutMasterSet;
 
-    private final Stack<Table> tables = new Stack<Table>();
+    private Stack<Table> tables = new Stack<Table>();
 
-    private final Stack<Boolean> inTableHeader = new Stack<Boolean>();
+    private Stack<Boolean> inTableHeader = new Stack<Boolean>();
 
-    private final Stack<Locale> locales = new Stack<Locale>();
+    private Stack<Locale> locales = new Stack<Locale>();
+
+    private final Map<AbstractRetrieveMarker, State> states = new HashMap<AbstractRetrieveMarker, State>();
+
+    private static final class State {
+
+        private final Stack<Table> tables;
+
+        private final Stack<Boolean> inTableHeader;
+
+        private final Stack<Locale> locales;
+
+        @SuppressWarnings("unchecked")
+        State(StructureTreeEventTrigger o) {
+            this.tables = (Stack<Table>) o.tables.clone();
+            this.inTableHeader = (Stack<Boolean>) o.inTableHeader.clone();
+            this.locales = (Stack<Locale>) o.locales.clone();
+        }
+
+    }
 
     public StructureTreeEventTrigger(StructureTreeEventHandler structureTreeEventHandler) {
         this.structureTreeEventHandler = structureTreeEventHandler;
@@ -415,6 +439,50 @@ class StructureTreeEventTrigger extends FOEventHandler {
     }
 
     @Override
+    public void startRetrieveMarker(RetrieveMarker retrieveMarker) {
+        startElementWithID(retrieveMarker);
+        saveState(retrieveMarker);
+    }
+
+    void saveState(AbstractRetrieveMarker retrieveMarker) {
+        states.put(retrieveMarker, new State(this));
+    }
+
+    @Override
+    public void endRetrieveMarker(RetrieveMarker retrieveMarker) {
+        endElement(retrieveMarker);
+    }
+
+    @Override
+    public void restoreState(RetrieveMarker retrieveMarker) {
+        restoreRetrieveMarkerState(retrieveMarker);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void restoreRetrieveMarkerState(AbstractRetrieveMarker retrieveMarker) {
+        State state = states.get(retrieveMarker);
+        tables = (Stack<Table>) state.tables.clone();
+        inTableHeader = (Stack<Boolean>) state.inTableHeader.clone();
+        locales = (Stack<Locale>) state.locales.clone();
+    }
+
+    @Override
+    public void startRetrieveTableMarker(RetrieveTableMarker retrieveTableMarker) {
+        startElementWithID(retrieveTableMarker);
+        saveState(retrieveTableMarker);
+    }
+
+    @Override
+    public void endRetrieveTableMarker(RetrieveTableMarker retrieveTableMarker) {
+        endElement(retrieveTableMarker);
+    }
+
+    @Override
+    public void restoreState(RetrieveTableMarker retrieveTableMarker) {
+        restoreRetrieveMarkerState(retrieveTableMarker);
+    }
+
+    @Override
     public void character(Character c) {
         AttributesImpl attributes = createLangAttribute(c.getCommonHyphenation());
         startElementWithID(c, attributes);
@@ -429,8 +497,8 @@ class StructureTreeEventTrigger extends FOEventHandler {
     }
 
 
-    private void startElement(FONode node) {
-        startElement(node, new AttributesImpl());
+    private StructureTreeElement startElement(FONode node) {
+        return startElement(node, new AttributesImpl());
     }
 
     private void startElementWithID(FONode node) {
@@ -443,7 +511,8 @@ class StructureTreeEventTrigger extends FOEventHandler {
             addRole((CommonAccessibilityHolder) node, attributes);
         }
         node.setStructureTreeElement(
-                structureTreeEventHandler.startReferencedNode(localName, attributes));
+                structureTreeEventHandler.startReferencedNode(localName, attributes,
+                        node.getParent().getStructureTreeElement()));
     }
 
     private void startElementWithIDAndAltText(AbstractGraphics node) {
@@ -453,7 +522,8 @@ class StructureTreeEventTrigger extends FOEventHandler {
         addAttribute(attributes, ExtensionElementMapping.URI, "alt-text",
                 ExtensionElementMapping.STANDARD_PREFIX, node.getAltText());
         node.setStructureTreeElement(
-                structureTreeEventHandler.startImageNode(localName, attributes));
+                structureTreeEventHandler.startImageNode(localName, attributes,
+                        node.getParent().getStructureTreeElement()));
     }
 
     private StructureTreeElement startElement(FONode node, AttributesImpl attributes) {
@@ -461,7 +531,8 @@ class StructureTreeEventTrigger extends FOEventHandler {
         if (node instanceof CommonAccessibilityHolder) {
             addRole((CommonAccessibilityHolder) node, attributes);
         }
-        return structureTreeEventHandler.startNode(localName, attributes);
+        return structureTreeEventHandler.startNode(localName, attributes,
+                node.getParent().getStructureTreeElement());
     }
 
     private void addNoNamespaceAttribute(AttributesImpl attributes, String name, String value) {

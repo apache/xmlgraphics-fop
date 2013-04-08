@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 import org.xml.sax.Locator;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
@@ -50,6 +51,8 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
     private String positionLabel;
     private int boundary;
     private String boundaryLabel;
+
+    private StructureTreeElement structureTreeElement;
 
     /**
      * Create a new AbstractRetrieveMarker instance that
@@ -86,6 +89,16 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
         this.propertyList = pList.getParentPropertyList();
     }
 
+    @Override
+    public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
+        this.structureTreeElement = structureTreeElement;
+    }
+
+    @Override
+    public StructureTreeElement getStructureTreeElement() {
+        return structureTreeElement;
+    }
+
     private PropertyList createPropertyListFor(FObj fo, PropertyList parent) {
         return getBuilderContext().getPropertyListMaker().make(fo, parent);
     }
@@ -108,6 +121,7 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
                         pList,
                         newPropertyList);
                 addChildTo(newChild, newParent);
+                newChild.startOfNode();
                 switch ( newChild.getNameId() ) {
                 case FO_TABLE:
                     Table t = (Table) child;
@@ -132,17 +146,22 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
                                     newChild, marker, newPropertyList);
                     break;
                 }
+                newChild.endOfNode();
             } else if (child instanceof FOText) {
                 FOText ft = (FOText) newChild;
                 ft.bind(parentPropertyList);
                 addChildTo(newChild, newParent);
+                if (newParent instanceof AbstractRetrieveMarker) {
+                    /*
+                     * Otherwise the parent of newChild is a cloned FObjMixed that will
+                     * call this FOText's endOfNode when its own endOfNode method is
+                     * called.
+                     */
+                    newChild.endOfNode();
+                }
             } else if (child instanceof XMLObj) {
                 addChildTo(newChild, newParent);
             }
-
-            // trigger end-of-node white-space handling
-            // and finalization for table-FOs
-            newChild.finalizeNode();
         }
     }
 
@@ -191,6 +210,7 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
         }
         if (marker.getChildNodes() != null) {
             try {
+                restoreFOEventHandlerState();
                 cloneFromMarker(marker);
             } catch (FOPException exc) {
                 getFOValidationEventProducer().markerCloningFailed(this,
@@ -200,6 +220,8 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
             log.debug("Empty marker retrieved...");
         }
     }
+
+    protected abstract void restoreFOEventHandlerState();
 
     /**
      * Return the value for the <code>retrieve-class-name</code>

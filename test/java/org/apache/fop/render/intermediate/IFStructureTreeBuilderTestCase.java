@@ -90,7 +90,7 @@ public class IFStructureTreeBuilderTestCase {
         final ContentHandler handler = mock(ContentHandler.class);
 
         sut.startPageSequence(null, null);
-        sut.startNode(nodeName, createSimpleAttributes(attributes));
+        sut.startNode(nodeName, createSimpleAttributes(attributes), null);
         sut.endPageSequence();
 
         sut.replayEventsForPageSequence(handler, 0);

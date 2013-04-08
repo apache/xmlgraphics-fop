@@ -61,7 +61,7 @@ public class Destination extends FONode {
     /**
      * {@inheritDoc}
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         root.addDestination(this);
     }
 

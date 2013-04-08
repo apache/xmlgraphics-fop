@@ -160,7 +160,7 @@ public abstract class AbstractPageNumberCitation extends FObj
         this.structureTreeElement = structureTreeElement;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public StructureTreeElement getStructureTreeElement() {
         return structureTreeElement;
     }

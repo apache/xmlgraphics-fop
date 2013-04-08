@@ -234,7 +234,7 @@ public abstract class AbstractGraphics extends FObj
         this.structureTreeElement = structureTreeElement;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public StructureTreeElement getStructureTreeElement() {
         return structureTreeElement;
     }

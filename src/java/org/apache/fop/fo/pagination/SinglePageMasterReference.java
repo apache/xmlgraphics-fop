@@ -71,7 +71,7 @@ public class SinglePageMasterReference extends FObj
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
         pageSequenceMaster.addSubsequenceSpecifier(this);
     }

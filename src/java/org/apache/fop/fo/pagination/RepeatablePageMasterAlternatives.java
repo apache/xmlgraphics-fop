@@ -68,7 +68,7 @@ public class RepeatablePageMasterAlternatives extends FObj
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         conditionalPageMasterRefs = new java.util.ArrayList<ConditionalPageMasterReference>();
 
         assert parent.getName().equals("fo:page-sequence-master"); //Validation by the parent
@@ -77,7 +77,7 @@ public class RepeatablePageMasterAlternatives extends FObj
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (firstChild == null) {
            missingChildElementError("(conditional-page-master-reference+)");
         }

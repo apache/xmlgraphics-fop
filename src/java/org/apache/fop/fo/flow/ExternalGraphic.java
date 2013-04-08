@@ -104,7 +104,7 @@ public class ExternalGraphic extends AbstractGraphics {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().image(this);
     }

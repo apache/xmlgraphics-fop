@@ -89,7 +89,7 @@ public class ListBlock extends FObj implements BreakPropertySet, CommonAccessibi
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startList(this);
     }
@@ -100,7 +100,7 @@ public class ListBlock extends FObj implements BreakPropertySet, CommonAccessibi
      * of the list-block.
      * {@inheritDoc}
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (!hasListItem) {
             missingChildElementError("marker* (list-item)+");
         }

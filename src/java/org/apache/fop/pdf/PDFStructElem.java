@@ -37,7 +37,7 @@ public class PDFStructElem extends StructureHierarchyMember
 
     private StructureType structureType;
 
-    private PDFStructElem parentElement;
+    protected PDFStructElem parentElement;
 
     /**
      * Elements to be added to the kids array.
@@ -231,6 +231,9 @@ public class PDFStructElem extends StructureHierarchyMember
                         textBuffer.append(' ');
                     }
                     Object obj = kids.get(i);
+                    if (obj instanceof PDFStructElem) {
+                        ((PDFStructElem) obj).setParent(parentElement);
+                    }
                     formatObject(obj, out, textBuffer);
                 }
             }

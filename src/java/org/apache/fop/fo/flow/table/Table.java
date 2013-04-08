@@ -179,7 +179,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startTable(this);
     }
@@ -238,7 +238,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endTable(this);
     }

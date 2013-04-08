@@ -40,7 +40,7 @@ public class PSSetupCodeElement extends AbstractPSExtensionObject {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         if (parent.getNameId() != Constants.FO_DECLARATIONS) {
             invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),

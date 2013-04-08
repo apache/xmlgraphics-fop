@@ -78,7 +78,7 @@ public class TableCaption extends FObj implements CommonAccessibilityHolder {
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("marker* (%block;)");
         }

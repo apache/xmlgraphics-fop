@@ -86,7 +86,7 @@ public class ExternalDocument extends AbstractPageSequence implements GraphicsPr
      * @throws FOPException in case of processing exception
      * @see org.apache.fop.fo.FONode#startOfNode()
      */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startExternalDocument(this);
     }
@@ -95,7 +95,7 @@ public class ExternalDocument extends AbstractPageSequence implements GraphicsPr
      * @throws FOPException in case of processing exception
      * @see org.apache.fop.fo.FONode#endOfNode()
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         getFOEventHandler().endExternalDocument(this);
         super.endOfNode();
     }

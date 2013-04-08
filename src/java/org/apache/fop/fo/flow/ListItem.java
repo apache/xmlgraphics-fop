@@ -83,13 +83,13 @@ public class ListItem extends FObj implements BreakPropertySet, CommonAccessibil
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startListItem(this);
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (label == null || body == null) {
             missingChildElementError("marker* (list-item-label,list-item-body)");
         }

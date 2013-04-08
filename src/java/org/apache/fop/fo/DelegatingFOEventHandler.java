@@ -41,6 +41,8 @@ import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.PageNumberCitationLast;
+import org.apache.fop.fo.flow.RetrieveMarker;
+import org.apache.fop.fo.flow.RetrieveTableMarker;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
@@ -380,6 +382,36 @@ public abstract class DelegatingFOEventHandler extends FOEventHandler {
     @Override
     public void endWrapper(Wrapper wrapper) {
         delegate.endWrapper(wrapper);
+    }
+
+    @Override
+    public void startRetrieveMarker(RetrieveMarker retrieveMarker) {
+        delegate.startRetrieveMarker(retrieveMarker);
+    }
+
+    @Override
+    public void endRetrieveMarker(RetrieveMarker retrieveMarker) {
+        delegate.endRetrieveMarker(retrieveMarker);
+    }
+
+    @Override
+    public void restoreState(RetrieveMarker retrieveMarker) {
+        delegate.restoreState(retrieveMarker);
+    }
+
+    @Override
+    public void startRetrieveTableMarker(RetrieveTableMarker retrieveTableMarker) {
+        delegate.startRetrieveTableMarker(retrieveTableMarker);
+    }
+
+    @Override
+    public void endRetrieveTableMarker(RetrieveTableMarker retrieveTableMarker) {
+        delegate.endRetrieveTableMarker(retrieveTableMarker);
+    }
+
+    @Override
+    public void restoreState(RetrieveTableMarker retrieveTableMarker) {
+        delegate.restoreState(retrieveTableMarker);
     }
 
     @Override

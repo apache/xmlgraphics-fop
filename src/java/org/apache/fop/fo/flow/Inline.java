@@ -69,7 +69,7 @@ public class Inline extends InlineLevel {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
        super.startOfNode();
 
        /* Check to see if this node can have block-level children.
@@ -94,7 +94,7 @@ public class Inline extends InlineLevel {
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endInline(this);
     }

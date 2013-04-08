@@ -83,7 +83,7 @@ public abstract class AbstractListItemPart extends FObj implements CommonAccessi
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (!this.blockItemFound) {
             String contentModel = "marker* (%block;)+";
             getFOValidationEventProducer().missingChildElement(this, getName(),

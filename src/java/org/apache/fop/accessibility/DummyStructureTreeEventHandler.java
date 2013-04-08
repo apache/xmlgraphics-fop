@@ -42,7 +42,7 @@ public final class DummyStructureTreeEventHandler implements StructureTreeEventH
     }
 
     /** {@inheritDoc} */
-    public StructureTreeElement startNode(String name, Attributes attributes) {
+    public StructureTreeElement startNode(String name, Attributes attributes, StructureTreeElement parent) {
         return null;
     }
 
@@ -51,12 +51,12 @@ public final class DummyStructureTreeEventHandler implements StructureTreeEventH
     }
 
     /** {@inheritDoc} */
-    public StructureTreeElement startImageNode(String name, Attributes attributes) {
+    public StructureTreeElement startImageNode(String name, Attributes attributes, StructureTreeElement parent) {
         return null;
     }
 
     /** {@inheritDoc} */
-    public StructureTreeElement startReferencedNode(String name, Attributes attributes) {
+    public StructureTreeElement startReferencedNode(String name, Attributes attributes, StructureTreeElement parent) {
         return null;
     }
 

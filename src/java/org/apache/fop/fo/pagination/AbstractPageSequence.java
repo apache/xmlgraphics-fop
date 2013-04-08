@@ -82,7 +82,7 @@ public abstract class AbstractPageSequence extends FObj implements CommonAccessi
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         this.pageNumberGenerator = new PageNumberGenerator(
                 format, groupingSeparator, groupingSize, letterValue,
                 numberConversionFeatures, language, country);

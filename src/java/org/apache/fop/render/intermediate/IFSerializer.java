@@ -314,6 +314,9 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
     public void startPageHeader() throws IFException {
         try {
             handler.startElement(EL_PAGE_HEADER);
+            if (this.getUserAgent().isAccessibilityEnabled()) {
+                structureTreeBuilder.replayEventsForRetrievedMarkers(handler);
+            }
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageHeader()", e);
         }

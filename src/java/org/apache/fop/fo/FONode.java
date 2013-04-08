@@ -311,7 +311,7 @@ public abstract class FONode implements Cloneable {
      *
      * @throws FOPException if there's a problem during processing
      */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         // do nothing by default
    }
 
@@ -327,7 +327,7 @@ public abstract class FONode implements Cloneable {
      *
      * @throws FOPException if there's a problem during processing
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         this.finalizeNode();
     }
 
@@ -1091,6 +1091,15 @@ public abstract class FONode implements Cloneable {
      */
     public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Returns the structure tree element associated to this object.
+     *
+     * @return the structure tree element
+     */
+    public StructureTreeElement getStructureTreeElement() {
+        return null;
     }
 
 }

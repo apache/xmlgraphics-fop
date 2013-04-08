@@ -179,7 +179,7 @@ public abstract class FObj extends FONode implements Constants {
      * {@inheritDoc}
      * @throws FOPException FOP Exception
      */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         if (id != null) {
             checkId(id);
         }

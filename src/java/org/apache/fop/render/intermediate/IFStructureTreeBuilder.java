@@ -33,6 +33,7 @@ import org.apache.fop.accessibility.StructureTree2SAXEventAdapter;
 import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.fo.extensions.InternalElementMapping;
+import org.apache.fop.util.XMLConstants;
 import org.apache.fop.util.XMLUtil;
 
 /**
@@ -176,6 +177,8 @@ final class IFStructureTreeBuilder implements StructureTreeEventHandler {
     private final List<SAXEventRecorder> pageSequenceEventRecorders
             = new ArrayList<SAXEventRecorder>();
 
+    private SAXEventRecorder retrievedMarkersEventRecorder;
+
     private int idCounter;
 
     /**
@@ -189,6 +192,16 @@ final class IFStructureTreeBuilder implements StructureTreeEventHandler {
         pageSequenceEventRecorders.get(pageSequenceIndex).replay(handler);
     }
 
+    public void replayEventsForRetrievedMarkers(ContentHandler handler) throws SAXException {
+        if (!retrievedMarkersEventRecorder.events.isEmpty()) {
+            delegate = StructureTree2SAXEventAdapter.newInstance(handler);
+            delegate.startPageSequence(null, null);
+            retrievedMarkersEventRecorder.replay(handler);
+            delegate.endPageSequence();
+            prepareRetrievedMarkersEventRecorder();
+        }
+    }
+
     public void startPageSequence(Locale locale, String role) {
         SAXEventRecorder eventRecorder = new SAXEventRecorder();
         pageSequenceEventRecorders.add(eventRecorder);
@@ -198,28 +211,51 @@ final class IFStructureTreeBuilder implements StructureTreeEventHandler {
 
     public void endPageSequence() {
          delegate.endPageSequence();
+         prepareRetrievedMarkersEventRecorder();
     }
 
-    public StructureTreeElement startNode(String name, Attributes attributes) {
-        delegate.startNode(name, attributes);
+    private void prepareRetrievedMarkersEventRecorder() {
+        SAXEventRecorder eventRecorder = new SAXEventRecorder();
+        retrievedMarkersEventRecorder = eventRecorder;
+        delegate = StructureTree2SAXEventAdapter.newInstance(eventRecorder);
+    }
+
+    public StructureTreeElement startNode(String name, Attributes attributes, StructureTreeElement parent) {
+        if (parent != null) {
+            attributes = addParentAttribute(new AttributesImpl(attributes), parent);
+        }
+        delegate.startNode(name, attributes, null);
         return new IFStructureTreeElement();
+    }
+
+    private AttributesImpl addParentAttribute(AttributesImpl attributes, StructureTreeElement parent) {
+        if (parent != null) {
+            attributes.addAttribute(InternalElementMapping.URI,
+                    InternalElementMapping.STRUCT_REF,
+                    InternalElementMapping.STANDARD_PREFIX + ":" + InternalElementMapping.STRUCT_REF,
+                    XMLConstants.CDATA,
+                    ((IFStructureTreeElement) parent).getId());
+        }
+        return attributes;
     }
 
     public void endNode(String name) {
         delegate.endNode(name);
     }
 
-    public StructureTreeElement startImageNode(String name, Attributes attributes) {
+    public StructureTreeElement startImageNode(String name, Attributes attributes, StructureTreeElement parent) {
         String id = getNextID();
         AttributesImpl atts = addIDAttribute(attributes, id);
-        delegate.startImageNode(name, atts);
+        addParentAttribute(atts, parent);
+        delegate.startImageNode(name, atts, null);
         return new IFStructureTreeElement(id);
     }
 
-    public StructureTreeElement startReferencedNode(String name, Attributes attributes) {
+    public StructureTreeElement startReferencedNode(String name, Attributes attributes, StructureTreeElement parent) {
         String id = getNextID();
         AttributesImpl atts = addIDAttribute(attributes, id);
-        delegate.startReferencedNode(name, atts);
+        addParentAttribute(atts, parent);
+        delegate.startReferencedNode(name, atts, null);
         return new IFStructureTreeElement(id);
     }
 

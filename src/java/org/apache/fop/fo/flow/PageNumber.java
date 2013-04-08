@@ -106,13 +106,13 @@ public class PageNumber extends FObj
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startPageNumber(this);
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         getFOEventHandler().endPageNumber(this);
     }
 
@@ -182,7 +182,7 @@ public class PageNumber extends FObj
         this.structureTreeElement = structureTreeElement;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public StructureTreeElement getStructureTreeElement() {
         return structureTreeElement;
     }

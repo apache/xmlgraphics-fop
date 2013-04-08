@@ -140,13 +140,13 @@ public class Block extends FObjMixed implements BreakPropertySet,
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startBlock(this);
     }
 
     /** {@inheritDoc} */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endBlock(this);
     }

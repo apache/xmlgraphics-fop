@@ -72,7 +72,7 @@ public class ConditionalPageMasterReference extends FObj {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         getConcreteParent().addConditionalPageMasterReference(this);
     }
 
