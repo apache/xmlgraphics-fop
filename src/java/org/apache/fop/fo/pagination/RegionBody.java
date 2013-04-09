@@ -115,7 +115,7 @@ public class RegionBody extends Region {
         int start;
         int end;
         // [TBD] WRITING MODE ALERT
-        switch ( getWritingMode().getEnumValue() ) {
+        switch (getWritingMode().getEnumValue()) {
         case Constants.EN_RL_TB:
             start = commonMarginBlock.marginRight.getValue(pageWidthContext);
             end = commonMarginBlock.marginLeft.getValue(pageWidthContext);

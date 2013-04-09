@@ -193,16 +193,16 @@ public class Span extends Area {
      * @param wmtg a WM traits getter
      */
     public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
-        switch ( wmtg.getColumnProgressionDirection().getEnumValue() ) {
+        switch (wmtg.getColumnProgressionDirection().getEnumValue()) {
         case Constants.EN_RL:
             setBidiLevel(1);
-            for ( Iterator<NormalFlow> it = flowAreas.iterator(); it.hasNext();) {
+            for (Iterator<NormalFlow> it = flowAreas.iterator(); it.hasNext();) {
                 it.next().setBidiLevel(1);
             }
             break;
         default:
             resetBidiLevel();
-            for ( Iterator<NormalFlow> it = flowAreas.iterator(); it.hasNext();) {
+            for (Iterator<NormalFlow> it = flowAreas.iterator(); it.hasNext();) {
                 it.next().resetBidiLevel();
             }
             break;

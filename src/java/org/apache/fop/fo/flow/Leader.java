@@ -116,12 +116,12 @@ public class Leader extends InlineLevel {
     protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
         if (FO_URI.equals(nsURI)) {
-            if ( localName.equals("leader")
+            if (localName.equals("leader")
                  || localName.equals("inline-container")
                  || localName.equals("block-container")
                  || localName.equals("float")
                  || localName.equals("marker")
-                 || !isInlineItem(nsURI, localName) ) {
+                 || !isInlineItem(nsURI, localName)) {
                 invalidChildError(loc, nsURI, localName);
             }
         }
@@ -203,12 +203,12 @@ public class Leader extends InlineLevel {
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
-        if ( currentRange != null ) {
-            if ( leaderPattern == EN_USECONTENT ) {
-                ranges = super.collectDelimitedTextRanges ( ranges, currentRange );
+    protected Stack collectDelimitedTextRanges (Stack ranges, DelimitedTextRange currentRange) {
+        if (currentRange != null) {
+            if (leaderPattern == EN_USECONTENT) {
+                ranges = super.collectDelimitedTextRanges (ranges, currentRange);
             } else {
-                currentRange.append ( CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this );
+                currentRange.append (CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this);
             }
         }
         return ranges;

@@ -43,13 +43,13 @@ public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
      * @param extraCorresponding an array of four element integer arrays
      */
     public void setExtraCorresponding(int[][] extraCorresponding) {
-        if ( extraCorresponding == null ) {
+        if (extraCorresponding == null) {
             throw new NullPointerException();
         }
-        for ( int i = 0; i < extraCorresponding.length; i++ ) {
+        for (int i = 0; i < extraCorresponding.length; i++) {
             int[] eca = extraCorresponding[i];
-            if ( ( eca == null ) || ( eca.length != 4 ) ) {
-                throw new IllegalArgumentException ( "bad sub-array @ [" + i + "]" );
+            if ((eca == null) || (eca.length != 4)) {
+                throw new IllegalArgumentException ("bad sub-array @ [" + i + "]");
             }
         }
         this.extraCorresponding = extraCorresponding;

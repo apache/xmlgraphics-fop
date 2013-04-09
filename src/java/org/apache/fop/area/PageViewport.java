@@ -519,7 +519,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable {
      * @param wmtg a WM traits getter
      */
     public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
-        if ( page != null ) {
+        if (page != null) {
             page.setWritingModeTraits(wmtg);
         }
     }

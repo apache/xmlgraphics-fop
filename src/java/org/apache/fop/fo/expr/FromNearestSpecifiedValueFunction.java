@@ -42,10 +42,10 @@ public class FromNearestSpecifiedValueFunction extends FunctionBase {
     @Override
     /** {@inheritDoc} */
     public Property getOptionalArgDefault(int index, PropertyInfo pi) throws PropertyException {
-        if ( index == 0 ) {
-            return getPropertyName ( pi );
+        if (index == 0) {
+            return getPropertyName (pi);
         } else {
-            return super.getOptionalArgDefault ( index, pi );
+            return super.getOptionalArgDefault (index, pi);
         }
     }
 

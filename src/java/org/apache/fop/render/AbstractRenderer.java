@@ -410,10 +410,10 @@ public abstract class AbstractRenderer
         for (int count = 0; count < spans.size(); count++) {
             span = (Span) spans.get(count);
             int level = span.getBidiLevel();
-            if ( level < 0 ) {
+            if (level < 0) {
                 level = 0;
             }
-            if ( ( level & 1 ) == 1 ) {
+            if ((level & 1) == 1) {
                 currentIPPosition += span.getIPD();
                 currentIPPosition += mr.getColumnGap();
             }
@@ -421,12 +421,12 @@ public abstract class AbstractRenderer
                 NormalFlow flow = span.getNormalFlow(c);
                 if (flow != null) {
                     currentBPPosition = saveSpanBPPos;
-                    if ( ( level & 1 ) == 1 ) {
+                    if ((level & 1) == 1) {
                         currentIPPosition -= flow.getIPD();
                         currentIPPosition -= mr.getColumnGap();
                     }
                     renderFlow(flow);
-                    if ( ( level & 1 ) == 0 ) {
+                    if ((level & 1) == 0) {
                         currentIPPosition += flow.getIPD();
                         currentIPPosition += mr.getColumnGap();
                     }
@@ -550,9 +550,9 @@ public abstract class AbstractRenderer
                 // a line area is rendered from the top left position
                 // of the line, each inline object is offset from there
                 LineArea line = (LineArea) obj;
-                if ( parent != null ) {
+                if (parent != null) {
                     int level = parent.getBidiLevel();
-                    if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+                    if ((level == -1) || ((level & 1) == 0)) {
                         currentIPPosition += parent.getStartIndent();
                     } else {
                         currentIPPosition += parent.getEndIndent();
@@ -622,16 +622,16 @@ public abstract class AbstractRenderer
         int saveBP = currentBPPosition;
         currentBPPosition += line.getSpaceBefore();
         int bl = line.getBidiLevel();
-        if ( bl >= 0 ) {
-            if ( ( bl & 1 ) == 0 ) {
+        if (bl >= 0) {
+            if ((bl & 1) == 0) {
                 currentIPPosition += line.getStartIndent();
             } else {
                 currentIPPosition += line.getEndIndent();
                 // if line's content overflows line area, then
                 // ensure that overflow is drawn (extends)
                 // outside of left side of line area
-                int overflow = computeInlinesOverflow ( line );
-                if ( overflow > 0 ) {
+                int overflow = computeInlinesOverflow (line);
+                if (overflow > 0) {
                     currentIPPosition -= overflow;
                 }
             }
@@ -645,7 +645,7 @@ public abstract class AbstractRenderer
         currentBPPosition = saveBP;
     }
 
-    private int computeInlinesOverflow ( LineArea line ) {
+    private int computeInlinesOverflow (LineArea line) {
         List children = line.getInlineAreas();
         int ipdConsumed = 0;
         for (int i = 0, l = children.size(); i < l; i++) {
@@ -755,7 +755,7 @@ public abstract class AbstractRenderer
         // it is right-to-left, then adjust starting ip position in order to
         // align children to starting (right) edge of filled area
         int ipAdjust;
-        if ( ( ip instanceof FilledArea ) && ( ( level & 1 ) != 0 ) ) {
+        if ((ip instanceof FilledArea) && ((level & 1) != 0)) {
             int ipdChildren = 0;
             for (int i = 0, l = children.size(); i < l; i++) {
                 InlineArea inline = (InlineArea) children.get(i);
@@ -766,11 +766,11 @@ public abstract class AbstractRenderer
             ipAdjust = 0;
         }
         // perform inline position adjustments
-        if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+        if ((level == -1) || ((level & 1) == 0)) {
             currentIPPosition += ip.getBorderAndPaddingWidthStart();
         } else {
             currentIPPosition += ip.getBorderAndPaddingWidthEnd();
-            if ( ipAdjust > 0 ) {
+            if (ipAdjust > 0) {
                 currentIPPosition += ipAdjust;
             }
         }
@@ -791,7 +791,7 @@ public abstract class AbstractRenderer
     protected void renderInlineBlockParent(InlineBlockParent ibp) {
         int level = ibp.getBidiLevel();
         renderInlineAreaBackAndBorders(ibp);
-        if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+        if ((level == -1) || ((level & 1) == 0)) {
             currentIPPosition += ibp.getBorderAndPaddingWidthStart();
         } else {
             currentIPPosition += ibp.getBorderAndPaddingWidthEnd();

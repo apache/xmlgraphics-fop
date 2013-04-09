@@ -81,12 +81,12 @@ public final class PropertyCache<T> {
             useCache = Boolean.valueOf(
                     System.getProperty("org.apache.fop.fo.properties.use-cache", "true"))
                     .booleanValue();
-        } catch ( SecurityException e ) {
+        } catch (SecurityException e) {
             useCache = true;
             LOG.info("Unable to access org.apache.fop.fo.properties.use-cache"
                    + " due to security restriction; defaulting to 'true'.");
         }
-        if ( useCache ) {
+        if (useCache) {
             this.map = new ConcurrentHashMap<Integer, WeakReference<T>>();
             this.putCounter = new AtomicInteger();
             this.cleanupLock = new ReentrantLock();

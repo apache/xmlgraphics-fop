@@ -159,7 +159,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
                     }
                 }
                 if (len == 1) {
-                    gen.writeText("," + gen.formatDouble2(da[0] * 100 / patternLen ));
+                    gen.writeText("," + gen.formatDouble2(da[0] * 100 / patternLen));
 
                 }
                 gen.writeText(";");

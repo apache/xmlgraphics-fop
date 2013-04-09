@@ -89,14 +89,14 @@ public class GlyphProcessingState {
      * @param feature feature identifier
      * @param sct script context tester (or null)
      */
-    protected GlyphProcessingState ( GlyphSequence gs, String script, String language, String feature, ScriptContextTester sct ) {
+    protected GlyphProcessingState (GlyphSequence gs, String script, String language, String feature, ScriptContextTester sct) {
         this.script = script;
         this.language = language;
         this.feature = feature;
         this.igs = gs;
         this.indexLast = gs.getGlyphCount();
         this.sct = sct;
-        this.gct = ( sct != null ) ? sct.getTester ( feature ) : null;
+        this.gct = (sct != null) ? sct.getTester (feature) : null;
         this.ignoreBase = new GlyphTester() { public boolean test(int gi, int flags) { return isIgnoredBase(gi, flags); } };
         this.ignoreLigature = new GlyphTester() { public boolean test(int gi, int flags) { return isIgnoredLigature(gi, flags); } };
         this.ignoreMark = new GlyphTester() { public boolean test(int gi, int flags) { return isIgnoredMark(gi, flags); } };
@@ -107,9 +107,9 @@ public class GlyphProcessingState {
      * except as follows: input glyph sequence is copied deep except for its characters array.
      * @param s existing processing state to copy from
      */
-    protected GlyphProcessingState ( GlyphProcessingState s ) {
-        this ( new GlyphSequence ( s.igs ), s.script, s.language, s.feature, s.sct );
-        setPosition ( s.index );
+    protected GlyphProcessingState (GlyphProcessingState s) {
+        this (new GlyphSequence (s.igs), s.script, s.language, s.feature, s.sct);
+        setPosition (s.index);
     }
 
     /**
@@ -120,7 +120,7 @@ public class GlyphProcessingState {
      * @param feature feature identifier
      * @param sct script context tester (or null)
      */
-    protected GlyphProcessingState reset ( GlyphSequence gs, String script, String language, String feature, ScriptContextTester sct ) {
+    protected GlyphProcessingState reset (GlyphSequence gs, String script, String language, String feature, ScriptContextTester sct) {
         this.gdef = null;
         this.script = script;
         this.language = language;
@@ -132,7 +132,7 @@ public class GlyphProcessingState {
         this.lookupFlags = 0;
         this.classMatchSet = 0;
         this.sct = sct;
-        this.gct = ( sct != null ) ? sct.getTester ( feature ) : null;
+        this.gct = (sct != null) ? sct.getTester (feature) : null;
         this.ignoreBase = new GlyphTester() { public boolean test(int gi, int flags) { return isIgnoredBase(gi, flags); } };
         this.ignoreLigature = new GlyphTester() { public boolean test(int gi, int flags) { return isIgnoredLigature(gi, flags); } };
         this.ignoreMark = new GlyphTester() { public boolean test(int gi, int flags) { return isIgnoredMark(gi, flags); } };
@@ -145,10 +145,10 @@ public class GlyphProcessingState {
      * Set governing glyph definition table.
      * @param gdef glyph definition table (or null, to unset)
      */
-    public void setGDEF ( GlyphDefinitionTable gdef ) {
-        if ( this.gdef == null ) {
+    public void setGDEF (GlyphDefinitionTable gdef) {
+        if (this.gdef == null) {
             this.gdef = gdef;
-        } else if ( gdef == null ) {
+        } else if (gdef == null) {
             this.gdef = null;
         }
     }
@@ -165,10 +165,10 @@ public class GlyphProcessingState {
      * Set governing lookup flags
      * @param flags lookup flags (or zero, to unset)
      */
-    public void setLookupFlags ( int flags ) {
-        if ( this.lookupFlags == 0 ) {
+    public void setLookupFlags (int flags) {
+        if (this.lookupFlags == 0) {
             this.lookupFlags = flags;
-        } else if ( flags == 0 ) {
+        } else if (flags == 0) {
             this.lookupFlags = 0;
         }
     }
@@ -186,7 +186,7 @@ public class GlyphProcessingState {
      * @param gi glyph index that may be used to determine which match set applies
      * @return class match set (zero may indicate unset or no set)
      */
-    public int getClassMatchSet ( int gi ) {
+    public int getClassMatchSet (int gi) {
         return 0;
     }
 
@@ -194,10 +194,10 @@ public class GlyphProcessingState {
      * Set default ignore tester.
      * @param ignoreDefault glyph tester (or null, to unset)
      */
-    public void setIgnoreDefault ( GlyphTester ignoreDefault ) {
-        if ( this.ignoreDefault == null ) {
+    public void setIgnoreDefault (GlyphTester ignoreDefault) {
+        if (this.ignoreDefault == null) {
             this.ignoreDefault = ignoreDefault;
-        } else if ( ignoreDefault == null ) {
+        } else if (ignoreDefault == null) {
             this.ignoreDefault = null;
         }
     }
@@ -217,11 +217,11 @@ public class GlyphProcessingState {
      * this state is to be reset.
      * @param st glyph subtable to use for update
      */
-    public void updateSubtableState ( GlyphSubtable st ) {
-        if ( this.subtable != st ) {
-            setGDEF ( st.getGDEF() );
-            setLookupFlags ( st.getFlags() );
-            setIgnoreDefault ( getIgnoreTester ( getLookupFlags() ) );
+    public void updateSubtableState (GlyphSubtable st) {
+        if (this.subtable != st) {
+            setGDEF (st.getGDEF());
+            setLookupFlags (st.getFlags());
+            setIgnoreDefault (getIgnoreTester (getLookupFlags()));
             this.subtable = st;
         }
     }
@@ -240,8 +240,8 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if index is less than zero
      * or exceeds last valid position
      */
-    public void setPosition ( int index ) throws IndexOutOfBoundsException {
-        if ( ( index >= 0 ) && ( index <= indexLast ) ) {
+    public void setPosition (int index) throws IndexOutOfBoundsException {
+        if ((index >= 0) && (index <= indexLast)) {
             this.index =  index;
         } else {
             throw new IndexOutOfBoundsException();
@@ -262,7 +262,7 @@ public class GlyphProcessingState {
      * @return true if one or more glyph remains
      */
     public boolean hasNext() {
-        return hasNext ( 1 );
+        return hasNext (1);
     }
 
     /**
@@ -271,8 +271,8 @@ public class GlyphProcessingState {
      * @param count of glyphs to test
      * @return true if at least <code>count</code> glyphs are available
      */
-    public boolean hasNext ( int count ) {
-        return ( index + count ) <= indexLast;
+    public boolean hasNext (int count) {
+        return (index + count) <= indexLast;
     }
 
     /**
@@ -283,14 +283,14 @@ public class GlyphProcessingState {
      * @return the new (updated) position index
      */
     public int next() {
-        if ( index < indexLast ) {
+        if (index < indexLast) {
             // force consumption of at least one input glyph
-            if ( consumed == 0 ) {
+            if (consumed == 0) {
                 consumed = 1;
             }
             index += consumed;
             consumed = 0;
-            if ( index > indexLast ) {
+            if (index > indexLast) {
                 index = indexLast;
             }
         }
@@ -303,7 +303,7 @@ public class GlyphProcessingState {
      * @return true if one or more glyph remains
      */
     public boolean hasPrev() {
-        return hasPrev ( 1 );
+        return hasPrev (1);
     }
 
     /**
@@ -312,8 +312,8 @@ public class GlyphProcessingState {
      * @param count of glyphs to test
      * @return true if at least <code>count</code> glyphs are available
      */
-    public boolean hasPrev ( int count ) {
-        return ( index - count ) >= 0;
+    public boolean hasPrev (int count) {
+        return (index - count) >= 0;
     }
 
     /**
@@ -325,14 +325,14 @@ public class GlyphProcessingState {
      * @return the new (updated) position index
      */
     public int prev() {
-        if ( index > 0 ) {
+        if (index > 0) {
             // force consumption of at least one input glyph
-            if ( consumed == 0 ) {
+            if (consumed == 0) {
                 consumed = 1;
             }
             index -= consumed;
             consumed = 0;
-            if ( index < 0 ) {
+            if (index < 0) {
                 index = 0;
             }
         }
@@ -348,8 +348,8 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if count would cause consumption
      * to exceed count of glyphs in input glyph sequence
      */
-    public int consume ( int count ) throws IndexOutOfBoundsException {
-        if ( ( consumed + count ) <= indexLast ) {
+    public int consume (int count) throws IndexOutOfBoundsException {
+        if ((consumed + count) <= indexLast) {
             consumed += count;
             return consumed;
         } else {
@@ -379,12 +379,12 @@ public class GlyphProcessingState {
      * @return glyph at specified offset from current position
      * @throws IndexOutOfBoundsException if no glyph available at offset
      */
-    public int getGlyph ( int offset ) throws IndexOutOfBoundsException {
+    public int getGlyph (int offset) throws IndexOutOfBoundsException {
         int i = index + offset;
-        if ( ( i >= 0 ) && ( i < indexLast ) ) {
-            return igs.getGlyph ( i );
+        if ((i >= 0) && (i < indexLast)) {
+            return igs.getGlyph (i);
         } else {
-            throw new IndexOutOfBoundsException ( "attempting index at " + i );
+            throw new IndexOutOfBoundsException ("attempting index at " + i);
         }
     }
 
@@ -394,7 +394,7 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if no glyph available
      */
     public int getGlyph() throws IndexOutOfBoundsException {
-        return getGlyph ( 0 );
+        return getGlyph (0);
     }
 
     /**
@@ -403,12 +403,12 @@ public class GlyphProcessingState {
      * @param glyph to set at specified offset from current position
      * @throws IndexOutOfBoundsException if specified offset is not valid position
      */
-    public void setGlyph ( int offset, int glyph ) throws IndexOutOfBoundsException {
+    public void setGlyph (int offset, int glyph) throws IndexOutOfBoundsException {
         int i = index + offset;
-        if ( ( i >= 0 ) && ( i < indexLast ) ) {
-            igs.setGlyph ( i, glyph );
+        if ((i >= 0) && (i < indexLast)) {
+            igs.setGlyph (i, glyph);
         } else {
-            throw new IndexOutOfBoundsException ( "attempting index at " + i );
+            throw new IndexOutOfBoundsException ("attempting index at " + i);
         }
     }
 
@@ -418,12 +418,12 @@ public class GlyphProcessingState {
      * @return character association of glyph at current position
      * @throws IndexOutOfBoundsException if offset results in an invalid index into input glyph sequence
      */
-    public GlyphSequence.CharAssociation getAssociation ( int offset ) throws IndexOutOfBoundsException {
+    public GlyphSequence.CharAssociation getAssociation (int offset) throws IndexOutOfBoundsException {
         int i = index + offset;
-        if ( ( i >= 0 ) && ( i < indexLast ) ) {
-            return igs.getAssociation ( i );
+        if ((i >= 0) && (i < indexLast)) {
+            return igs.getAssociation (i);
         } else {
-            throw new IndexOutOfBoundsException ( "attempting index at " + i );
+            throw new IndexOutOfBoundsException ("attempting index at " + i);
         }
     }
 
@@ -433,7 +433,7 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if no glyph available
      */
     public GlyphSequence.CharAssociation getAssociation() throws IndexOutOfBoundsException {
-        return getAssociation ( 0 );
+        return getAssociation (0);
     }
 
     /**
@@ -452,68 +452,68 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public int[] getGlyphs ( int offset, int count, boolean reverseOrder, GlyphTester ignoreTester, int[] glyphs, int[] counts ) throws IndexOutOfBoundsException {
-        if ( count < 0 ) {
-            count = getGlyphsAvailable ( offset, reverseOrder, ignoreTester ) [ 0 ];
+    public int[] getGlyphs (int offset, int count, boolean reverseOrder, GlyphTester ignoreTester, int[] glyphs, int[] counts) throws IndexOutOfBoundsException {
+        if (count < 0) {
+            count = getGlyphsAvailable (offset, reverseOrder, ignoreTester) [ 0 ];
         }
         int start = index + offset;
-        if ( start < 0 ) {
-            throw new IndexOutOfBoundsException ( "will attempt index at " + start );
-        } else if ( ! reverseOrder && ( ( start + count ) > indexLast ) ) {
-            throw new IndexOutOfBoundsException ( "will attempt index at " + ( start + count ) );
-        } else if ( reverseOrder && ( ( start + 1 ) < count ) ) {
-            throw new IndexOutOfBoundsException ( "will attempt index at " + ( start - count ) );
+        if (start < 0) {
+            throw new IndexOutOfBoundsException ("will attempt index at " + start);
+        } else if (! reverseOrder && ((start + count) > indexLast)) {
+            throw new IndexOutOfBoundsException ("will attempt index at " + (start + count));
+        } else if (reverseOrder && ((start + 1) < count)) {
+            throw new IndexOutOfBoundsException ("will attempt index at " + (start - count));
         }
-        if ( glyphs == null ) {
+        if (glyphs == null) {
             glyphs = new int [ count ];
-        } else if ( glyphs.length != count ) {
-            throw new IllegalArgumentException ( "glyphs array is non-null, but its length (" + glyphs.length + "), is not equal to count (" + count + ")" );
+        } else if (glyphs.length != count) {
+            throw new IllegalArgumentException ("glyphs array is non-null, but its length (" + glyphs.length + "), is not equal to count (" + count + ")");
         }
-        if ( ! reverseOrder ) {
-            return getGlyphsForward ( start, count, ignoreTester, glyphs, counts );
+        if (! reverseOrder) {
+            return getGlyphsForward (start, count, ignoreTester, glyphs, counts);
         } else {
-            return getGlyphsReverse ( start, count, ignoreTester, glyphs, counts );
+            return getGlyphsReverse (start, count, ignoreTester, glyphs, counts);
         }
     }
 
-    private int[] getGlyphsForward ( int start, int count, GlyphTester ignoreTester, int[] glyphs, int[] counts ) throws IndexOutOfBoundsException {
+    private int[] getGlyphsForward (int start, int count, GlyphTester ignoreTester, int[] glyphs, int[] counts) throws IndexOutOfBoundsException {
         int counted = 0;
         int ignored = 0;
-        for ( int i = start, n = indexLast; ( i < n ) && ( counted < count ); i++ ) {
-            int gi = getGlyph ( i - index );
-            if ( gi == 65535 ) {
+        for (int i = start, n = indexLast; (i < n) && (counted < count); i++) {
+            int gi = getGlyph (i - index);
+            if (gi == 65535) {
                 ignored++;
             } else {
-                if ( ( ignoreTester == null ) || ! ignoreTester.test ( gi, getLookupFlags() ) ) {
+                if ((ignoreTester == null) || ! ignoreTester.test (gi, getLookupFlags())) {
                     glyphs [ counted++ ] = gi;
                 } else {
                     ignored++;
                 }
             }
         }
-        if ( ( counts != null ) && ( counts.length > 1 ) ) {
+        if ((counts != null) && (counts.length > 1)) {
             counts[0] = counted;
             counts[1] = ignored;
         }
         return glyphs;
     }
 
-    private int[] getGlyphsReverse ( int start, int count, GlyphTester ignoreTester, int[] glyphs, int[] counts ) throws IndexOutOfBoundsException {
+    private int[] getGlyphsReverse (int start, int count, GlyphTester ignoreTester, int[] glyphs, int[] counts) throws IndexOutOfBoundsException {
         int counted = 0;
         int ignored = 0;
-        for ( int i = start; ( i >= 0 ) && ( counted < count ); i-- ) {
-            int gi = getGlyph ( i - index );
-            if ( gi == 65535 ) {
+        for (int i = start; (i >= 0) && (counted < count); i--) {
+            int gi = getGlyph (i - index);
+            if (gi == 65535) {
                 ignored++;
             } else {
-                if ( ( ignoreTester == null ) || ! ignoreTester.test ( gi, getLookupFlags() ) ) {
+                if ((ignoreTester == null) || ! ignoreTester.test (gi, getLookupFlags())) {
                     glyphs [ counted++ ] = gi;
                 } else {
                     ignored++;
                 }
             }
         }
-        if ( ( counts != null ) && ( counts.length > 1 ) ) {
+        if ((counts != null) && (counts.length > 1)) {
             counts[0] = counted;
             counts[1] = ignored;
         }
@@ -534,8 +534,8 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public int[] getGlyphs ( int offset, int count, int[] glyphs, int[] counts ) throws IndexOutOfBoundsException {
-        return getGlyphs ( offset, count, offset < 0, ignoreDefault, glyphs, counts );
+    public int[] getGlyphs (int offset, int count, int[] glyphs, int[] counts) throws IndexOutOfBoundsException {
+        return getGlyphs (offset, count, offset < 0, ignoreDefault, glyphs, counts);
     }
 
     /**
@@ -544,7 +544,7 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if no glyph available
      */
     public int[] getGlyphs() throws IndexOutOfBoundsException {
-        return getGlyphs ( 0, indexLast - index, false, null, null, null );
+        return getGlyphs (0, indexLast - index, false, null, null, null);
     }
 
     /**
@@ -563,8 +563,8 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public int[] getIgnoredGlyphs ( int offset, int count, boolean reverseOrder, GlyphTester ignoreTester, int[] glyphs, int[] counts ) throws IndexOutOfBoundsException {
-        return getGlyphs ( offset, count, reverseOrder, new NotGlyphTester ( ignoreTester ), glyphs, counts );
+    public int[] getIgnoredGlyphs (int offset, int count, boolean reverseOrder, GlyphTester ignoreTester, int[] glyphs, int[] counts) throws IndexOutOfBoundsException {
+        return getGlyphs (offset, count, reverseOrder, new NotGlyphTester (ignoreTester), glyphs, counts);
     }
 
     /**
@@ -576,8 +576,8 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public int[] getIgnoredGlyphs ( int offset, int count ) throws IndexOutOfBoundsException {
-        return getIgnoredGlyphs ( offset, count, offset < 0, ignoreDefault, null, null );
+    public int[] getIgnoredGlyphs (int offset, int count) throws IndexOutOfBoundsException {
+        return getIgnoredGlyphs (offset, count, offset < 0, ignoreDefault, null, null);
     }
 
     /**
@@ -589,8 +589,8 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset results in an
      * invalid index into input glyph sequence
      */
-    public boolean isIgnoredGlyph ( int offset, GlyphTester ignoreTester ) throws IndexOutOfBoundsException {
-        return ( ignoreTester != null ) && ignoreTester.test ( getGlyph ( offset ), getLookupFlags() );
+    public boolean isIgnoredGlyph (int offset, GlyphTester ignoreTester) throws IndexOutOfBoundsException {
+        return (ignoreTester != null) && ignoreTester.test (getGlyph (offset), getLookupFlags());
     }
 
     /**
@@ -601,8 +601,8 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset results in an
      * invalid index into input glyph sequence
      */
-    public boolean isIgnoredGlyph ( int offset ) throws IndexOutOfBoundsException {
-        return isIgnoredGlyph ( offset, ignoreDefault );
+    public boolean isIgnoredGlyph (int offset) throws IndexOutOfBoundsException {
+        return isIgnoredGlyph (offset, ignoreDefault);
     }
 
     /**
@@ -612,7 +612,7 @@ public class GlyphProcessingState {
      * invalid index into input glyph sequence
      */
     public boolean isIgnoredGlyph() throws IndexOutOfBoundsException {
-        return isIgnoredGlyph ( getPosition() );
+        return isIgnoredGlyph (getPosition());
     }
 
     /**
@@ -625,29 +625,29 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public int[] getGlyphsAvailable ( int offset, boolean reverseOrder, GlyphTester ignoreTester ) throws IndexOutOfBoundsException {
+    public int[] getGlyphsAvailable (int offset, boolean reverseOrder, GlyphTester ignoreTester) throws IndexOutOfBoundsException {
         int start = index + offset;
-        if ( ( start < 0 ) || ( start > indexLast ) ) {
+        if ((start < 0) || (start > indexLast)) {
             return new int[] { 0, 0 };
-        } else if ( ! reverseOrder ) {
-            return getGlyphsAvailableForward ( start, ignoreTester );
+        } else if (! reverseOrder) {
+            return getGlyphsAvailableForward (start, ignoreTester);
         } else {
-            return getGlyphsAvailableReverse ( start, ignoreTester );
+            return getGlyphsAvailableReverse (start, ignoreTester);
         }
     }
 
-    private int[] getGlyphsAvailableForward ( int start, GlyphTester ignoreTester ) throws IndexOutOfBoundsException {
+    private int[] getGlyphsAvailableForward (int start, GlyphTester ignoreTester) throws IndexOutOfBoundsException {
         int counted = 0;
         int ignored = 0;
-        if ( ignoreTester == null ) {
+        if (ignoreTester == null) {
             counted = indexLast - start;
         } else {
-            for ( int i = start, n = indexLast; i < n; i++ ) {
-                int gi = getGlyph ( i - index );
-                if ( gi == 65535 ) {
+            for (int i = start, n = indexLast; i < n; i++) {
+                int gi = getGlyph (i - index);
+                if (gi == 65535) {
                     ignored++;
                 } else {
-                    if ( ignoreTester.test ( gi, getLookupFlags() ) ) {
+                    if (ignoreTester.test (gi, getLookupFlags())) {
                         ignored++;
                     } else {
                         counted++;
@@ -658,18 +658,18 @@ public class GlyphProcessingState {
         return new int[] { counted, ignored };
     }
 
-    private int[] getGlyphsAvailableReverse ( int start, GlyphTester ignoreTester ) throws IndexOutOfBoundsException {
+    private int[] getGlyphsAvailableReverse (int start, GlyphTester ignoreTester) throws IndexOutOfBoundsException {
         int counted = 0;
         int ignored = 0;
-        if ( ignoreTester == null ) {
+        if (ignoreTester == null) {
             counted = start + 1;
         } else {
-            for ( int i = start; i >= 0; i-- ) {
-                int gi = getGlyph ( i - index );
-                if ( gi == 65535 ) {
+            for (int i = start; i >= 0; i--) {
+                int gi = getGlyph (i - index);
+                if (gi == 65535) {
                     ignored++;
                 } else {
-                    if ( ignoreTester.test ( gi, getLookupFlags() ) ) {
+                    if (ignoreTester.test (gi, getLookupFlags())) {
                         ignored++;
                     } else {
                         counted++;
@@ -690,8 +690,8 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public int[] getGlyphsAvailable ( int offset, boolean reverseOrder ) throws IndexOutOfBoundsException {
-        return getGlyphsAvailable ( offset, reverseOrder, ignoreDefault );
+    public int[] getGlyphsAvailable (int offset, boolean reverseOrder) throws IndexOutOfBoundsException {
+        return getGlyphsAvailable (offset, reverseOrder, ignoreDefault);
     }
 
     /**
@@ -703,8 +703,8 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public int[] getGlyphsAvailable ( int offset ) throws IndexOutOfBoundsException {
-        return getGlyphsAvailable ( offset, offset < 0 );
+    public int[] getGlyphsAvailable (int offset) throws IndexOutOfBoundsException {
+        return getGlyphsAvailable (offset, offset < 0);
     }
 
     /**
@@ -723,43 +723,43 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public GlyphSequence.CharAssociation[] getAssociations ( int offset, int count, boolean reverseOrder, GlyphTester ignoreTester, GlyphSequence.CharAssociation[] associations, int[] counts )
+    public GlyphSequence.CharAssociation[] getAssociations (int offset, int count, boolean reverseOrder, GlyphTester ignoreTester, GlyphSequence.CharAssociation[] associations, int[] counts)
         throws IndexOutOfBoundsException {
-        if ( count < 0 ) {
-            count = getGlyphsAvailable ( offset, reverseOrder, ignoreTester ) [ 0 ];
+        if (count < 0) {
+            count = getGlyphsAvailable (offset, reverseOrder, ignoreTester) [ 0 ];
         }
         int start = index + offset;
-        if ( start < 0 ) {
-            throw new IndexOutOfBoundsException ( "will attempt index at " + start );
-        } else if ( ! reverseOrder && ( ( start + count ) > indexLast ) ) {
-            throw new IndexOutOfBoundsException ( "will attempt index at " + ( start + count ) );
-        } else if ( reverseOrder && ( ( start + 1 ) < count ) ) {
-            throw new IndexOutOfBoundsException ( "will attempt index at " + ( start - count ) );
+        if (start < 0) {
+            throw new IndexOutOfBoundsException ("will attempt index at " + start);
+        } else if (! reverseOrder && ((start + count) > indexLast)) {
+            throw new IndexOutOfBoundsException ("will attempt index at " + (start + count));
+        } else if (reverseOrder && ((start + 1) < count)) {
+            throw new IndexOutOfBoundsException ("will attempt index at " + (start - count));
         }
-        if ( associations == null ) {
+        if (associations == null) {
             associations = new GlyphSequence.CharAssociation [ count ];
-        } else if ( associations.length != count ) {
-            throw new IllegalArgumentException ( "associations array is non-null, but its length (" + associations.length + "), is not equal to count (" + count + ")" );
+        } else if (associations.length != count) {
+            throw new IllegalArgumentException ("associations array is non-null, but its length (" + associations.length + "), is not equal to count (" + count + ")");
         }
-        if ( ! reverseOrder ) {
-            return getAssociationsForward ( start, count, ignoreTester, associations, counts );
+        if (! reverseOrder) {
+            return getAssociationsForward (start, count, ignoreTester, associations, counts);
         } else {
-            return getAssociationsReverse ( start, count, ignoreTester, associations, counts );
+            return getAssociationsReverse (start, count, ignoreTester, associations, counts);
         }
     }
 
-    private GlyphSequence.CharAssociation[] getAssociationsForward ( int start, int count, GlyphTester ignoreTester, GlyphSequence.CharAssociation[] associations, int[] counts )
+    private GlyphSequence.CharAssociation[] getAssociationsForward (int start, int count, GlyphTester ignoreTester, GlyphSequence.CharAssociation[] associations, int[] counts)
         throws IndexOutOfBoundsException {
         int counted = 0;
         int ignored = 0;
-        for ( int i = start, n = indexLast, k = 0; i < n; i++ ) {
-            int gi = getGlyph ( i - index );
-            if ( gi == 65535 ) {
+        for (int i = start, n = indexLast, k = 0; i < n; i++) {
+            int gi = getGlyph (i - index);
+            if (gi == 65535) {
                 ignored++;
             } else {
-                if ( ( ignoreTester == null ) || ! ignoreTester.test ( gi, getLookupFlags() ) ) {
-                    if ( k < count ) {
-                        associations [ k++ ] = getAssociation ( i - index );
+                if ((ignoreTester == null) || ! ignoreTester.test (gi, getLookupFlags())) {
+                    if (k < count) {
+                        associations [ k++ ] = getAssociation (i - index);
                         counted++;
                     } else {
                         break;
@@ -769,25 +769,25 @@ public class GlyphProcessingState {
                 }
             }
         }
-        if ( ( counts != null ) && ( counts.length > 1 ) ) {
+        if ((counts != null) && (counts.length > 1)) {
             counts[0] = counted;
             counts[1] = ignored;
         }
         return associations;
     }
 
-    private GlyphSequence.CharAssociation[] getAssociationsReverse ( int start, int count, GlyphTester ignoreTester, GlyphSequence.CharAssociation[] associations, int[] counts )
+    private GlyphSequence.CharAssociation[] getAssociationsReverse (int start, int count, GlyphTester ignoreTester, GlyphSequence.CharAssociation[] associations, int[] counts)
         throws IndexOutOfBoundsException {
         int counted = 0;
         int ignored = 0;
-        for ( int i = start, k = 0; i >= 0; i-- ) {
-            int gi = getGlyph ( i - index );
-            if ( gi == 65535 ) {
+        for (int i = start, k = 0; i >= 0; i--) {
+            int gi = getGlyph (i - index);
+            if (gi == 65535) {
                 ignored++;
             } else {
-                if ( ( ignoreTester == null ) || ! ignoreTester.test ( gi, getLookupFlags() ) ) {
-                    if ( k < count ) {
-                        associations [ k++ ] = getAssociation ( i - index );
+                if ((ignoreTester == null) || ! ignoreTester.test (gi, getLookupFlags())) {
+                    if (k < count) {
+                        associations [ k++ ] = getAssociation (i - index);
                         counted++;
                     } else {
                         break;
@@ -797,7 +797,7 @@ public class GlyphProcessingState {
                 }
             }
         }
-        if ( ( counts != null ) && ( counts.length > 1 ) ) {
+        if ((counts != null) && (counts.length > 1)) {
             counts[0] = counted;
             counts[1] = ignored;
         }
@@ -814,8 +814,8 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public GlyphSequence.CharAssociation[] getAssociations ( int offset, int count ) throws IndexOutOfBoundsException {
-        return getAssociations ( offset, count, offset < 0, ignoreDefault, null, null );
+    public GlyphSequence.CharAssociation[] getAssociations (int offset, int count) throws IndexOutOfBoundsException {
+        return getAssociations (offset, count, offset < 0, ignoreDefault, null, null);
     }
 
     /**
@@ -834,9 +834,9 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public GlyphSequence.CharAssociation[] getIgnoredAssociations ( int offset, int count, boolean reverseOrder, GlyphTester ignoreTester, GlyphSequence.CharAssociation[] associations, int[] counts )
+    public GlyphSequence.CharAssociation[] getIgnoredAssociations (int offset, int count, boolean reverseOrder, GlyphTester ignoreTester, GlyphSequence.CharAssociation[] associations, int[] counts)
         throws IndexOutOfBoundsException {
-        return getAssociations ( offset, count, reverseOrder, new NotGlyphTester ( ignoreTester ), associations, counts );
+        return getAssociations (offset, count, reverseOrder, new NotGlyphTester (ignoreTester), associations, counts);
     }
 
     /**
@@ -849,8 +849,8 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public GlyphSequence.CharAssociation[] getIgnoredAssociations ( int offset, int count ) throws IndexOutOfBoundsException {
-        return getIgnoredAssociations ( offset, count, offset < 0, ignoreDefault, null, null );
+    public GlyphSequence.CharAssociation[] getIgnoredAssociations (int offset, int count) throws IndexOutOfBoundsException {
+        return getIgnoredAssociations (offset, count, offset < 0, ignoreDefault, null, null);
     }
 
     /**
@@ -866,44 +866,44 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public boolean replaceInput ( int offset, int count, GlyphSequence gs, int gsOffset, int gsCount ) throws IndexOutOfBoundsException {
-        int nig = ( igs != null ) ? igs.getGlyphCount() : 0;
+    public boolean replaceInput (int offset, int count, GlyphSequence gs, int gsOffset, int gsCount) throws IndexOutOfBoundsException {
+        int nig = (igs != null) ? igs.getGlyphCount() : 0;
         int position = getPosition() + offset;
-        if ( position < 0 ) {
+        if (position < 0) {
             position = 0;
-        } else if ( position > nig ) {
+        } else if (position > nig) {
             position = nig;
         }
-        if ( ( count < 0 ) || ( ( position + count ) > nig ) ) {
+        if ((count < 0) || ((position + count) > nig)) {
             count = nig - position;
         }
-        int nrg = ( gs != null ) ? gs.getGlyphCount() : 0;
-        if ( gsOffset < 0 ) {
+        int nrg = (gs != null) ? gs.getGlyphCount() : 0;
+        if (gsOffset < 0) {
             gsOffset = 0;
-        } else if ( gsOffset > nrg ) {
+        } else if (gsOffset > nrg) {
             gsOffset = nrg;
         }
-        if ( ( gsCount < 0 ) || ( ( gsOffset + gsCount ) > nrg ) ) {
+        if ((gsCount < 0) || ((gsOffset + gsCount) > nrg)) {
             gsCount = nrg - gsOffset;
         }
         int ng = nig + gsCount - count;
-        IntBuffer gb = IntBuffer.allocate ( ng );
-        List al = new ArrayList ( ng );
-        for ( int i = 0, n = position; i < n; i++ ) {
-            gb.put ( igs.getGlyph ( i ) );
-            al.add ( igs.getAssociation ( i ) );
+        IntBuffer gb = IntBuffer.allocate (ng);
+        List al = new ArrayList (ng);
+        for (int i = 0, n = position; i < n; i++) {
+            gb.put (igs.getGlyph (i));
+            al.add (igs.getAssociation (i));
         }
-        for ( int i = gsOffset, n = gsOffset + gsCount; i < n; i++ ) {
-            gb.put ( gs.getGlyph ( i ) );
-            al.add ( gs.getAssociation ( i ) );
+        for (int i = gsOffset, n = gsOffset + gsCount; i < n; i++) {
+            gb.put (gs.getGlyph (i));
+            al.add (gs.getAssociation (i));
         }
-        for ( int i = position + count, n = nig; i < n; i++ ) {
-            gb.put ( igs.getGlyph ( i ) );
-            al.add ( igs.getAssociation ( i ) );
+        for (int i = position + count, n = nig; i < n; i++) {
+            gb.put (igs.getGlyph (i));
+            al.add (igs.getAssociation (i));
         }
         gb.flip();
-        if ( igs.compareGlyphs ( gb ) != 0 ) {
-            this.igs = new GlyphSequence ( igs.getCharacters(), gb, al );
+        if (igs.compareGlyphs (gb) != 0) {
+            this.igs = new GlyphSequence (igs.getCharacters(), gb, al);
             this.indexLast = gb.limit();
             return true;
         } else {
@@ -921,8 +921,8 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public boolean replaceInput ( int offset, int count, GlyphSequence gs ) throws IndexOutOfBoundsException {
-        return replaceInput ( offset, count, gs, 0, gs.getGlyphCount() );
+    public boolean replaceInput (int offset, int count, GlyphSequence gs) throws IndexOutOfBoundsException {
+        return replaceInput (offset, count, gs, 0, gs.getGlyphCount());
     }
 
     /**
@@ -935,16 +935,16 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public int erase ( int offset, int[] glyphs ) throws IndexOutOfBoundsException {
+    public int erase (int offset, int[] glyphs) throws IndexOutOfBoundsException {
         int start = index + offset;
-        if ( ( start < 0 ) || ( start > indexLast ) ) {
-            throw new IndexOutOfBoundsException ( "will attempt index at " + start );
+        if ((start < 0) || (start > indexLast)) {
+            throw new IndexOutOfBoundsException ("will attempt index at " + start);
         } else {
             int erased = 0;
-            for ( int i = start - index, n = indexLast - start; i < n; i++ ) {
-                int gi = getGlyph ( i );
-                if ( gi == glyphs [ erased ] ) {
-                    setGlyph ( i, 65535 );
+            for (int i = start - index, n = indexLast - start; i < n; i++) {
+                int gi = getGlyph (i);
+                if (gi == glyphs [ erased ]) {
+                    setGlyph (i, 65535);
                     erased++;
                 }
             }
@@ -959,10 +959,10 @@ public class GlyphProcessingState {
      * true for the current input sequence context
      */
     public boolean maybeApplicable() {
-        if ( gct == null ) {
+        if (gct == null) {
             return true;
         } else {
-            return gct.test ( script, language, feature, igs, index, getLookupFlags() );
+            return gct.test (script, language, feature, igs, index, getLookupFlags());
         }
     }
 
@@ -979,9 +979,9 @@ public class GlyphProcessingState {
      * @param gi glyph index to test
      * @return true if glyph definition table records glyph as a base glyph; otherwise, false
      */
-    public boolean isBase ( int gi ) {
-        if ( gdef != null ) {
-            return gdef.isGlyphClass ( gi, GlyphDefinitionTable.GLYPH_CLASS_BASE );
+    public boolean isBase (int gi) {
+        if (gdef != null) {
+            return gdef.isGlyphClass (gi, GlyphDefinitionTable.GLYPH_CLASS_BASE);
         } else {
             return false;
         }
@@ -994,8 +994,8 @@ public class GlyphProcessingState {
      * @param flags that apply to lookup in scope
      * @return true if glyph definition table records glyph as a base glyph; otherwise, false
      */
-    public boolean isIgnoredBase ( int gi, int flags ) {
-        return ( ( flags & GlyphSubtable.LF_IGNORE_BASE ) != 0 ) && isBase ( gi );
+    public boolean isIgnoredBase (int gi, int flags) {
+        return ((flags & GlyphSubtable.LF_IGNORE_BASE) != 0) && isBase (gi);
     }
 
     /**
@@ -1004,9 +1004,9 @@ public class GlyphProcessingState {
      * @param gi glyph index to test
      * @return true if glyph definition table records glyph as a ligature glyph; otherwise, false
      */
-    public boolean isLigature ( int gi ) {
-        if ( gdef != null ) {
-            return gdef.isGlyphClass ( gi, GlyphDefinitionTable.GLYPH_CLASS_LIGATURE );
+    public boolean isLigature (int gi) {
+        if (gdef != null) {
+            return gdef.isGlyphClass (gi, GlyphDefinitionTable.GLYPH_CLASS_LIGATURE);
         } else {
             return false;
         }
@@ -1019,8 +1019,8 @@ public class GlyphProcessingState {
      * @param flags that apply to lookup in scope
      * @return true if glyph definition table records glyph as a ligature glyph; otherwise, false
      */
-    public boolean isIgnoredLigature ( int gi, int flags ) {
-        return ( ( flags & GlyphSubtable.LF_IGNORE_LIGATURE ) != 0 ) && isLigature ( gi );
+    public boolean isIgnoredLigature (int gi, int flags) {
+        return ((flags & GlyphSubtable.LF_IGNORE_LIGATURE) != 0) && isLigature (gi);
     }
 
     /**
@@ -1029,9 +1029,9 @@ public class GlyphProcessingState {
      * @param gi glyph index to test
      * @return true if glyph definition table records glyph as a mark glyph; otherwise, false
      */
-    public boolean isMark ( int gi ) {
-        if ( gdef != null ) {
-            return gdef.isGlyphClass ( gi, GlyphDefinitionTable.GLYPH_CLASS_MARK );
+    public boolean isMark (int gi) {
+        if (gdef != null) {
+            return gdef.isGlyphClass (gi, GlyphDefinitionTable.GLYPH_CLASS_MARK);
         } else {
             return false;
         }
@@ -1044,13 +1044,13 @@ public class GlyphProcessingState {
      * @param flags that apply to lookup in scope
      * @return true if glyph definition table records glyph as a ligature glyph; otherwise, false
      */
-    public boolean isIgnoredMark ( int gi, int flags ) {
-        if ( ( flags & GlyphSubtable.LF_IGNORE_MARK ) != 0 ) {
-            return isMark ( gi );
-        } else if ( ( flags & GlyphSubtable.LF_MARK_ATTACHMENT_TYPE ) != 0 ) {
-            int lac = ( flags & GlyphSubtable.LF_MARK_ATTACHMENT_TYPE ) >> 8;
-            int gac = gdef.getMarkAttachClass ( gi );
-            return ( gac != lac );
+    public boolean isIgnoredMark (int gi, int flags) {
+        if ((flags & GlyphSubtable.LF_IGNORE_MARK) != 0) {
+            return isMark (gi);
+        } else if ((flags & GlyphSubtable.LF_MARK_ATTACHMENT_TYPE) != 0) {
+            int lac = (flags & GlyphSubtable.LF_MARK_ATTACHMENT_TYPE) >> 8;
+            int gac = gdef.getMarkAttachClass (gi);
+            return (gac != lac);
         } else {
             return false;
         }
@@ -1061,26 +1061,26 @@ public class GlyphProcessingState {
      * @param flags lookup flags
      * @return a glyph tester
      */
-    public GlyphTester getIgnoreTester ( int flags ) {
-        if ( ( flags & GlyphSubtable.LF_IGNORE_BASE ) != 0 ) {
-            if ( ( flags & (GlyphSubtable.LF_IGNORE_LIGATURE | GlyphSubtable.LF_IGNORE_MARK) ) == 0 ) {
+    public GlyphTester getIgnoreTester (int flags) {
+        if ((flags & GlyphSubtable.LF_IGNORE_BASE) != 0) {
+            if ((flags & (GlyphSubtable.LF_IGNORE_LIGATURE | GlyphSubtable.LF_IGNORE_MARK)) == 0) {
                 return ignoreBase;
             } else {
-                return getCombinedIgnoreTester ( flags );
+                return getCombinedIgnoreTester (flags);
             }
         }
-        if ( ( flags & GlyphSubtable.LF_IGNORE_LIGATURE ) != 0 ) {
-            if ( ( flags & (GlyphSubtable.LF_IGNORE_BASE | GlyphSubtable.LF_IGNORE_MARK) ) == 0 ) {
+        if ((flags & GlyphSubtable.LF_IGNORE_LIGATURE) != 0) {
+            if ((flags & (GlyphSubtable.LF_IGNORE_BASE | GlyphSubtable.LF_IGNORE_MARK)) == 0) {
                 return ignoreLigature;
             } else {
-                return getCombinedIgnoreTester ( flags );
+                return getCombinedIgnoreTester (flags);
             }
         }
-        if ( ( flags & GlyphSubtable.LF_IGNORE_MARK ) != 0 ) {
-            if ( ( flags & (GlyphSubtable.LF_IGNORE_BASE | GlyphSubtable.LF_IGNORE_LIGATURE) ) == 0 ) {
+        if ((flags & GlyphSubtable.LF_IGNORE_MARK) != 0) {
+            if ((flags & (GlyphSubtable.LF_IGNORE_BASE | GlyphSubtable.LF_IGNORE_LIGATURE)) == 0) {
                 return ignoreMark;
             } else {
-                return getCombinedIgnoreTester ( flags );
+                return getCombinedIgnoreTester (flags);
             }
         }
         return null;
@@ -1091,19 +1091,19 @@ public class GlyphProcessingState {
      * @param flags lookup flags
      * @return a glyph tester
      */
-    public GlyphTester getCombinedIgnoreTester ( int flags ) {
+    public GlyphTester getCombinedIgnoreTester (int flags) {
         GlyphTester[] gta = new GlyphTester [ 3 ];
         int ngt = 0;
-        if ( ( flags & GlyphSubtable.LF_IGNORE_BASE ) != 0 ) {
+        if ((flags & GlyphSubtable.LF_IGNORE_BASE) != 0) {
             gta [ ngt++ ] = ignoreBase;
         }
-        if ( ( flags & GlyphSubtable.LF_IGNORE_LIGATURE ) != 0 ) {
+        if ((flags & GlyphSubtable.LF_IGNORE_LIGATURE) != 0) {
             gta [ ngt++ ] = ignoreLigature;
         }
-        if ( ( flags & GlyphSubtable.LF_IGNORE_MARK ) != 0 ) {
+        if ((flags & GlyphSubtable.LF_IGNORE_MARK) != 0) {
             gta [ ngt++ ] = ignoreMark;
         }
-        return getCombinedOrTester ( gta, ngt );
+        return getCombinedOrTester (gta, ngt);
     }
 
     /**
@@ -1112,9 +1112,9 @@ public class GlyphProcessingState {
      * @param ngt number of glyph testers present in specified array
      * @return a combined OR glyph tester
      */
-    public GlyphTester getCombinedOrTester ( GlyphTester[] gta, int ngt ) {
-        if ( ngt > 0 ) {
-            return new CombinedOrGlyphTester ( gta, ngt );
+    public GlyphTester getCombinedOrTester (GlyphTester[] gta, int ngt) {
+        if (ngt > 0) {
+            return new CombinedOrGlyphTester (gta, ngt);
         } else {
             return null;
         }
@@ -1126,9 +1126,9 @@ public class GlyphProcessingState {
      * @param ngt number of glyph testers present in specified array
      * @return a combined AND glyph tester
      */
-    public GlyphTester getCombinedAndTester ( GlyphTester[] gta, int ngt ) {
-        if ( ngt > 0 ) {
-            return new CombinedAndGlyphTester ( gta, ngt );
+    public GlyphTester getCombinedAndTester (GlyphTester[] gta, int ngt) {
+        if (ngt > 0) {
+            return new CombinedAndGlyphTester (gta, ngt);
         } else {
             return null;
         }
@@ -1138,16 +1138,16 @@ public class GlyphProcessingState {
     private static class CombinedOrGlyphTester implements GlyphTester {
         private GlyphTester[] gta;
         private int ngt;
-        CombinedOrGlyphTester ( GlyphTester[] gta, int ngt ) {
+        CombinedOrGlyphTester (GlyphTester[] gta, int ngt) {
             this.gta = gta;
             this.ngt = ngt;
         }
         /** {@inheritDoc} */
-        public boolean test ( int gi, int flags ) {
-            for ( int i = 0, n = ngt; i < n; i++ ) {
+        public boolean test (int gi, int flags) {
+            for (int i = 0, n = ngt; i < n; i++) {
                 GlyphTester gt = gta [ i ];
-                if ( gt != null ) {
-                    if ( gt.test ( gi, flags ) ) {
+                if (gt != null) {
+                    if (gt.test (gi, flags)) {
                         return true;
                     }
                 }
@@ -1160,16 +1160,16 @@ public class GlyphProcessingState {
     private static class CombinedAndGlyphTester implements GlyphTester {
         private GlyphTester[] gta;
         private int ngt;
-        CombinedAndGlyphTester ( GlyphTester[] gta, int ngt ) {
+        CombinedAndGlyphTester (GlyphTester[] gta, int ngt) {
             this.gta = gta;
             this.ngt = ngt;
         }
         /** {@inheritDoc} */
-        public boolean test ( int gi, int flags ) {
-            for ( int i = 0, n = ngt; i < n; i++ ) {
+        public boolean test (int gi, int flags) {
+            for (int i = 0, n = ngt; i < n; i++) {
                 GlyphTester gt = gta [ i ];
-                if ( gt != null ) {
-                    if ( ! gt.test ( gi, flags ) ) {
+                if (gt != null) {
+                    if (! gt.test (gi, flags)) {
                         return false;
                     }
                 }
@@ -1181,13 +1181,13 @@ public class GlyphProcessingState {
     /** NOT glyph tester */
     private static class NotGlyphTester implements GlyphTester {
         private GlyphTester gt;
-        NotGlyphTester ( GlyphTester gt ) {
+        NotGlyphTester (GlyphTester gt) {
             this.gt = gt;
         }
         /** {@inheritDoc} */
-        public boolean test ( int gi, int flags ) {
-            if ( gt != null ) {
-                if ( gt.test ( gi, flags ) ) {
+        public boolean test (int gi, int flags) {
+            if (gt != null) {
+                if (gt.test (gi, flags)) {
                     return false;
                 }
             }

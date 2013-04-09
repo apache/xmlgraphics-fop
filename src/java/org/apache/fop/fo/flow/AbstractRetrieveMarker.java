@@ -122,7 +122,7 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
                         newPropertyList);
                 addChildTo(newChild, newParent);
                 newChild.startOfNode();
-                switch ( newChild.getNameId() ) {
+                switch (newChild.getNameId()) {
                 case FO_TABLE:
                     Table t = (Table) child;
                     cloneSubtree(t.getColumns().iterator(),

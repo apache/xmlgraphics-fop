@@ -34,6 +34,6 @@ public interface GlyphDefinition {
      * @param gi a glyph index
      * @return true if some (unspecified) definition is available for the specified glyph
      */
-    boolean hasDefinition ( int gi );
+    boolean hasDefinition (int gi);
 
 }

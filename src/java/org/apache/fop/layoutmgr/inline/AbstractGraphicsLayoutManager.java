@@ -78,7 +78,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         placement.y += beforeBPD;
 
         //Determine extra IPD from borders and padding
-        if ( ( bidiLevel == -1 ) || ( ( bidiLevel & 1 ) == 0 ) ) {
+        if ((bidiLevel == -1) || ((bidiLevel & 1) == 0)) {
             int startIPD = borderProps.getPadding(CommonBorderPaddingBackground.START, false, this);
             startIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.START, false);
             placement.x += startIPD;

@@ -43,8 +43,8 @@ public abstract class GlyphSubstitutionSubtable extends GlyphSubtable implements
      * @param format subtable format
      * @param coverage subtable coverage table
      */
-    protected GlyphSubstitutionSubtable ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage ) {
-        super ( id, sequence, flags, format, coverage );
+    protected GlyphSubstitutionSubtable (String id, int sequence, int flags, int format, GlyphCoverageTable coverage) {
+        super (id, sequence, flags, format, coverage);
     }
 
     /** {@inheritDoc} */
@@ -54,11 +54,11 @@ public abstract class GlyphSubstitutionSubtable extends GlyphSubtable implements
 
     /** {@inheritDoc} */
     public String getTypeName() {
-        return GlyphSubstitutionTable.getLookupTypeName ( getType() );
+        return GlyphSubstitutionTable.getLookupTypeName (getType());
     }
 
     /** {@inheritDoc} */
-    public boolean isCompatible ( GlyphSubtable subtable ) {
+    public boolean isCompatible (GlyphSubtable subtable) {
         return subtable instanceof GlyphSubstitutionSubtable;
     }
 
@@ -68,7 +68,7 @@ public abstract class GlyphSubstitutionSubtable extends GlyphSubtable implements
     }
 
     /** {@inheritDoc} */
-    public boolean substitute ( GlyphSubstitutionState ss ) {
+    public boolean substitute (GlyphSubstitutionState ss) {
         return false;
     }
 
@@ -85,24 +85,24 @@ public abstract class GlyphSubstitutionSubtable extends GlyphSubtable implements
      * @param sequenceIndex if non negative, then apply subtables only at specified sequence index
      * @return output glyph sequence
      */
-    public static final GlyphSequence substitute ( GlyphSubstitutionState ss, GlyphSubstitutionSubtable[] sta, int sequenceIndex ) {
+    public static final GlyphSequence substitute (GlyphSubstitutionState ss, GlyphSubstitutionSubtable[] sta, int sequenceIndex) {
         int sequenceStart = ss.getPosition();
         boolean appliedOneShot = false;
-        while ( ss.hasNext() ) {
+        while (ss.hasNext()) {
             boolean applied = false;
-            if ( ! appliedOneShot && ss.maybeApplicable() ) {
-                for ( int i = 0, n = sta.length; ! applied && ( i < n ); i++ ) {
-                    if ( sequenceIndex < 0 ) {
-                        applied = ss.apply ( sta [ i ] );
-                    } else if ( ss.getPosition() == ( sequenceStart + sequenceIndex ) ) {
-                        applied = ss.apply ( sta [ i ] );
-                        if ( applied ) {
+            if (! appliedOneShot && ss.maybeApplicable()) {
+                for (int i = 0, n = sta.length; ! applied && (i < n); i++) {
+                    if (sequenceIndex < 0) {
+                        applied = ss.apply (sta [ i ]);
+                    } else if (ss.getPosition() == (sequenceStart + sequenceIndex)) {
+                        applied = ss.apply (sta [ i ]);
+                        if (applied) {
                             appliedOneShot = true;
                         }
                     }
                 }
             }
-            if ( ! applied || ! ss.didConsume() ) {
+            if (! applied || ! ss.didConsume()) {
                 ss.applyDefault();
             }
             ss.next();
@@ -120,9 +120,9 @@ public abstract class GlyphSubstitutionSubtable extends GlyphSubtable implements
      * @param sct script context tester
      * @return output glyph sequence
      */
-    public static final GlyphSequence substitute ( GlyphSequence gs, String script, String language, String feature, GlyphSubstitutionSubtable[] sta, ScriptContextTester sct ) {
-        synchronized ( state ) {
-            return substitute ( state.reset ( gs, script, language, feature, sct ), sta, -1 );
+    public static final GlyphSequence substitute (GlyphSequence gs, String script, String language, String feature, GlyphSubstitutionSubtable[] sta, ScriptContextTester sct) {
+        synchronized (state) {
+            return substitute (state.reset (gs, script, language, feature, sct), sta, -1);
         }
     }
 

@@ -55,7 +55,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
      * @param paddingCorresponding the corresping propids.
      */
     public void setPaddingCorresponding(int[] paddingCorresponding) {
-        if ( ( paddingCorresponding == null ) || ( paddingCorresponding.length != 4 ) ) {
+        if ((paddingCorresponding == null) || (paddingCorresponding.length != 4)) {
             throw new IllegalArgumentException();
         }
         this.paddingCorresponding = paddingCorresponding;
@@ -66,7 +66,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
      * @param borderWidthCorresponding the corresping propids.
      */
     public void setBorderWidthCorresponding(int[] borderWidthCorresponding) {
-        if ( ( borderWidthCorresponding == null ) || ( borderWidthCorresponding.length != 4 ) ) {
+        if ((borderWidthCorresponding == null) || (borderWidthCorresponding.length != 4)) {
             throw new IllegalArgumentException();
         }
         this.borderWidthCorresponding = borderWidthCorresponding;
@@ -215,7 +215,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         PropertyList pList = getWMPropertyList(propertyList);
         if (pList != null) {
             int wmcorr = pList.selectFromWritingMode
-                ( corresponding[0], corresponding[1], corresponding[2], corresponding[3] );
+                (corresponding[0], corresponding[1], corresponding[2], corresponding[3]);
             return propertyList.get(wmcorr);
         } else {
             return null;

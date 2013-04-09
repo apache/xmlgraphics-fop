@@ -351,12 +351,12 @@ public class MIFHandler extends FOEventHandler {
     }
 
     public void character(Character c) {
-        appendCharacters ( new String ( new char[] {c.getCharacter()} ) );
+        appendCharacters (new String (new char[] {c.getCharacter()}));
     }
 
     /** {@inheritDoc} */
     public void characters(FOText foText) {
-        appendCharacters ( foText.getCharSequence().toString() );
+        appendCharacters (foText.getCharSequence().toString());
     }
 
     /** {@inheritDoc} */
@@ -367,7 +367,7 @@ public class MIFHandler extends FOEventHandler {
     public void endPageNumber(PageNumber pagenum) {
     }
 
-    private void appendCharacters ( String str ) {
+    private void appendCharacters (String str) {
         if (para != null) {
             str = str.trim();
             // break into nice length chunks

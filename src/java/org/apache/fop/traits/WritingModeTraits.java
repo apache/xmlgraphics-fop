@@ -36,15 +36,15 @@ public class WritingModeTraits implements WritingModeTraitsSetter {
      * Default writing mode traits constructor.
      */
     public WritingModeTraits() {
-        this ( WritingMode.LR_TB );
+        this (WritingMode.LR_TB);
     }
 
     /**
      * Construct writing mode traits using the specified writing mode.
      * @param writingMode a writing mode traits object
      */
-    public WritingModeTraits ( WritingMode writingMode ) {
-        assignWritingModeTraits ( writingMode );
+    public WritingModeTraits (WritingMode writingMode) {
+        assignWritingModeTraits (writingMode);
     }
 
     /**
@@ -57,7 +57,7 @@ public class WritingModeTraits implements WritingModeTraitsSetter {
     /**
      * @param direction the "inline-progression-direction" trait.
      */
-    public void setInlineProgressionDirection ( Direction direction ) {
+    public void setInlineProgressionDirection (Direction direction) {
         this.inlineProgressionDirection = direction;
     }
 
@@ -71,7 +71,7 @@ public class WritingModeTraits implements WritingModeTraitsSetter {
     /**
      * @param direction the "block-progression-direction" trait.
      */
-    public void setBlockProgressionDirection ( Direction direction ) {
+    public void setBlockProgressionDirection (Direction direction) {
         this.blockProgressionDirection = direction;
     }
 
@@ -85,7 +85,7 @@ public class WritingModeTraits implements WritingModeTraitsSetter {
     /**
      * @param direction the "column-progression-direction" trait.
      */
-    public void setColumnProgressionDirection ( Direction direction ) {
+    public void setColumnProgressionDirection (Direction direction) {
         this.columnProgressionDirection = direction;
     }
 
@@ -99,7 +99,7 @@ public class WritingModeTraits implements WritingModeTraitsSetter {
     /**
      * @param direction the "row-progression-direction" trait.
      */
-    public void setRowProgressionDirection ( Direction direction ) {
+    public void setRowProgressionDirection (Direction direction) {
         this.rowProgressionDirection = direction;
     }
 
@@ -113,7 +113,7 @@ public class WritingModeTraits implements WritingModeTraitsSetter {
     /**
      * @param direction the "shift-direction" trait.
      */
-    public void setShiftDirection ( Direction direction ) {
+    public void setShiftDirection (Direction direction) {
         this.shiftDirection = direction;
     }
 
@@ -127,15 +127,15 @@ public class WritingModeTraits implements WritingModeTraitsSetter {
     /**
      * @param writingMode the "writing-mode" trait.
      */
-    public void setWritingMode ( WritingMode writingMode ) {
+    public void setWritingMode (WritingMode writingMode) {
         this.writingMode = writingMode;
     }
 
     /**
      * @param writingMode the "writing-mode" trait.
      */
-    public void assignWritingModeTraits ( WritingMode writingMode ) {
-        writingMode.assignWritingModeTraits ( this );
+    public void assignWritingModeTraits (WritingMode writingMode) {
+        writingMode.assignWritingModeTraits (this);
     }
 
     /**
@@ -145,9 +145,9 @@ public class WritingModeTraits implements WritingModeTraitsSetter {
      * @return the applicable writing mode traits getter, or null if none applies
      */
     public static WritingModeTraitsGetter
-        getWritingModeTraitsGetter ( org.apache.fop.fo.FONode fn ) {
-        for ( org.apache.fop.fo.FONode n = fn; n != null; n = n.getParent() ) {
-            if ( n instanceof WritingModeTraitsGetter ) {
+        getWritingModeTraitsGetter (org.apache.fop.fo.FONode fn) {
+        for (org.apache.fop.fo.FONode n = fn; n != null; n = n.getParent()) {
+            if (n instanceof WritingModeTraitsGetter) {
                 return (WritingModeTraitsGetter) n;
             }
         }

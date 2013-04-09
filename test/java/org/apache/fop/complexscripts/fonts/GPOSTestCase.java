@@ -319,53 +319,53 @@ public class GPOSTestCase implements ScriptContextTester, GlyphContextTester {
 
     @Test
     public void testGPOSSingle() throws Exception {
-        performPositioning ( ltSingle );
+        performPositioning (ltSingle);
     }
 
     @Test
     public void testGPOSPair() throws Exception {
-        performPositioning ( ltPair );
+        performPositioning (ltPair);
     }
 
     @Test
     public void testGPOSCursive() throws Exception {
-        performPositioning ( ltCursive );
+        performPositioning (ltCursive);
     }
 
     @Test
     public void testGPOSMarkToBase() throws Exception {
-        performPositioning ( ltMarkToBase );
+        performPositioning (ltMarkToBase);
     }
 
     @Test
     public void testGPOSMarkToLigature() throws Exception {
-        performPositioning ( ltMarkToLigature );
+        performPositioning (ltMarkToLigature);
     }
 
     @Test
     public void testGPOSMarkToMark() throws Exception {
-        performPositioning ( ltMarkToMark );
+        performPositioning (ltMarkToMark);
     }
 
     @Test
     public void testGPOSContextual() throws Exception {
-        performPositioning ( ltContextual );
+        performPositioning (ltContextual);
     }
 
     @Test
     public void testGPOSChainedContextual() throws Exception {
-        performPositioning ( ltChainedContextual );
+        performPositioning (ltChainedContextual);
     }
 
     /**
      * Perform positioning on all test data in test specification TS.
      * @param ts test specification
      */
-    private void performPositioning ( Object[][] ts ) {
+    private void performPositioning (Object[][] ts) {
         assert ts.length > 0;
         Object[] tp = ts[0];
-        for ( int i = 1; i < ts.length; i++ ) {
-            performPositioning ( tp, ts[i] );
+        for (int i = 1; i < ts.length; i++) {
+            performPositioning (tp, ts[i]);
         }
     }
 
@@ -374,44 +374,44 @@ public class GPOSTestCase implements ScriptContextTester, GlyphContextTester {
      * @param tp test parameters
      * @param td test data
      */
-    private void performPositioning ( Object[] tp, Object[] td ) {
+    private void performPositioning (Object[] tp, Object[] td) {
         assert tp.length > 0;
-        if ( td.length > 5 ) {
+        if (td.length > 5) {
             String fid = (String) td[0];
             String lid = (String) td[1];
             String script = (String) td[2];
             String language = (String) td[3];
             String feature = (String) td[4];
-            TTXFile tf = findTTX ( fid );
-            assertTrue ( tf != null );
+            TTXFile tf = findTTX (fid);
+            assertTrue (tf != null);
             GlyphPositioningTable gpos = tf.getGPOS();
-            assertTrue ( gpos != null );
-            GlyphPositioningSubtable[] sta = findGPOSSubtables ( gpos, script, language, feature, lid );
-            assertTrue ( sta != null );
-            assertTrue ( sta.length > 0 );
-            ScriptContextTester sct = findScriptContextTester ( script, language, feature );
+            assertTrue (gpos != null);
+            GlyphPositioningSubtable[] sta = findGPOSSubtables (gpos, script, language, feature, lid);
+            assertTrue (sta != null);
+            assertTrue (sta.length > 0);
+            ScriptContextTester sct = findScriptContextTester (script, language, feature);
             Object[][] tia = (Object[][]) td[5];                // test instance array
-            for ( Object[] ti : tia ) {                         // test instance
-                if ( ti != null ) {
-                    if ( ti.length > 0 ) {                      // must have at least input glyphs
+            for (Object[] ti : tia) {                         // test instance
+                if (ti != null) {
+                    if (ti.length > 0) {                      // must have at least input glyphs
                         String[] igia = (String[]) ti[0];       // input glyph id array
                         int[][] ogpa = (int[][]) ti[1];         // output glyph positioning array
-                        GlyphSequence igs = tf.getGlyphSequence ( igia );
+                        GlyphSequence igs = tf.getGlyphSequence (igia);
                         int[] widths = tf.getWidths();
                         int[][] tgpa = new int [ igia.length ] [ 4 ];
-                        boolean adjusted = GlyphPositioningSubtable.position ( igs, script, language, feature, 1000, sta, widths, tgpa, sct );
-                        assertTrue ( adjusted );
-                        assertSamePositions ( ogpa, tgpa );
+                        boolean adjusted = GlyphPositioningSubtable.position (igs, script, language, feature, 1000, sta, widths, tgpa, sct);
+                        assertTrue (adjusted);
+                        assertSamePositions (ogpa, tgpa);
                     }
                 }
             }
         }
     }
 
-    private String findTTXPath ( String fid ) {
-        for ( String[] fs : ttxFonts ) {
-            if ( ( fs != null ) && ( fs.length > 1 ) ) {
-                if ( fs[0].equals ( fid ) ) {
+    private String findTTXPath (String fid) {
+        for (String[] fs : ttxFonts) {
+            if ((fs != null) && (fs.length > 1)) {
+                if (fs[0].equals (fid)) {
                     return ttxFilesRoot + File.separator + fs[1];
                 }
             }
@@ -419,54 +419,54 @@ public class GPOSTestCase implements ScriptContextTester, GlyphContextTester {
         return null;
     }
 
-    private TTXFile findTTX ( String fid ) {
-        String pn = findTTXPath ( fid );
-        assertTrue ( pn != null );
+    private TTXFile findTTX (String fid) {
+        String pn = findTTXPath (fid);
+        assertTrue (pn != null);
         try {
-            TTXFile tf = TTXFile.getFromCache ( pn );
+            TTXFile tf = TTXFile.getFromCache (pn);
             return tf;
-        } catch ( Exception e ) {
-            fail ( e.getMessage() );
+        } catch (Exception e) {
+            fail (e.getMessage());
             return null;
         }
     }
 
-    private GlyphPositioningSubtable[] findGPOSSubtables ( GlyphPositioningTable gpos, String script, String language, String feature, String lid ) {
-        LookupTable lt = gpos.getLookupTable ( lid );
-        if ( lt != null ) {
+    private GlyphPositioningSubtable[] findGPOSSubtables (GlyphPositioningTable gpos, String script, String language, String feature, String lid) {
+        LookupTable lt = gpos.getLookupTable (lid);
+        if (lt != null) {
             return (GlyphPositioningSubtable[]) lt.getSubtables();
         } else {
             return null;
         }
     }
 
-    private ScriptContextTester findScriptContextTester ( String script, String language, String feature ) {
+    private ScriptContextTester findScriptContextTester (String script, String language, String feature) {
         return this;
     }
 
-    public GlyphContextTester getTester ( String feature ) {
+    public GlyphContextTester getTester (String feature) {
         return this;
     }
 
-    public boolean test ( String script, String language, String feature, GlyphSequence gs, int index, int flags ) {
+    public boolean test (String script, String language, String feature, GlyphSequence gs, int index, int flags) {
         return true;
     }
 
-    private void assertSamePositions ( int[][] pa1, int[][] pa2 ) {
-        assertNotNull ( pa1 );
-        assertNotNull ( pa2 );
-        assertEquals ( "unequal adjustment count", pa1.length, pa2.length );
-        for ( int i = 0; i < pa1.length; i++ ) {
+    private void assertSamePositions (int[][] pa1, int[][] pa2) {
+        assertNotNull (pa1);
+        assertNotNull (pa2);
+        assertEquals ("unequal adjustment count", pa1.length, pa2.length);
+        for (int i = 0; i < pa1.length; i++) {
             int[] a1 = pa1 [ i ];
             int[] a2 = pa2 [ i ];
-            assertNotNull ( a1 );
-            assertNotNull ( a2 );
-            assertEquals ( "bad adjustment array length", 4, a1.length );
-            assertEquals ( "bad adjustment array length", 4, a2.length );
-            for ( int k = 0; k < a1.length; k++ ) {
+            assertNotNull (a1);
+            assertNotNull (a2);
+            assertEquals ("bad adjustment array length", 4, a1.length);
+            assertEquals ("bad adjustment array length", 4, a2.length);
+            for (int k = 0; k < a1.length; k++) {
                 int p1 = a1[k];
                 int p2 = a2[k];
-                assertEquals ( "bad adjustment", p1, p2 );
+                assertEquals ("bad adjustment", p1, p2);
             }
         }
     }

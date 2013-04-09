@@ -678,9 +678,9 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
                 addAttribute(atts, "word-spacing", Integer.toString(wordSpacing));
             }
             if (dp != null) {
-                if ( IFUtil.isDPIdentity(dp) ) {
+                if (IFUtil.isDPIdentity(dp)) {
                     // don't add dx or dp attribute
-                } else if ( IFUtil.isDPOnlyDX(dp) ) {
+                } else if (IFUtil.isDPOnlyDX(dp)) {
                     // add dx attribute only
                     int[] dx = IFUtil.convertDPToDX(dp);
                     addAttribute(atts, "dx", IFUtil.toString(dx));

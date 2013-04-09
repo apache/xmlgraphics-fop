@@ -79,7 +79,7 @@ class PropertyTokenizer {
         currentTokenValue = null;
         currentTokenStartIndex = exprIndex;
         boolean bSawDecimal;
-        while ( true ) {
+        while (true) {
             if (exprIndex >= exprLength) {
                 currentToken = TOK_EOF;
                 return;
@@ -254,8 +254,8 @@ class PropertyTokenizer {
     }
 
     private void scanRestOfName() {
-        while ( ++exprIndex < exprLength ) {
-            if ( !isNameChar ( expr.charAt ( exprIndex ) ) ) {
+        while (++exprIndex < exprLength) {
+            if (!isNameChar (expr.charAt (exprIndex))) {
                 break;
             }
         }

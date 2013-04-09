@@ -214,7 +214,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
             return null;
         }
         List<LayoutManager> newLMs = new ArrayList<LayoutManager>(size);
-        while (fobjIter.hasNext() && newLMs.size() < size ) {
+        while (fobjIter.hasNext() && newLMs.size() < size) {
             Object theobj = fobjIter.next();
             if (theobj instanceof FONode) {
                 FONode foNode = (FONode) theobj;

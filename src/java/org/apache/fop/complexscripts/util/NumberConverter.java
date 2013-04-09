@@ -115,15 +115,15 @@ public class NumberConverter {
      * @param country (may be null or empty, which is treated as null)
      * @throws IllegalArgumentException if format is not a valid UTF-16 string (e.g., has unpaired surrogate)
      */
-    public NumberConverter ( String format, int groupingSeparator, int groupingSize, int letterValue, String features, String language, String country )
+    public NumberConverter (String format, int groupingSeparator, int groupingSize, int letterValue, String features, String language, String country)
         throws IllegalArgumentException {
         this.groupingSeparator = groupingSeparator;
         this.groupingSize = groupingSize;
         this.letterValue = letterValue;
         this.features = features;
-        this.language = ( language != null ) ? language.toLowerCase() : null;
-        this.country = ( country != null ) ? country.toLowerCase() : null;
-        parseFormatTokens ( format );
+        this.language = (language != null) ? language.toLowerCase() : null;
+        this.country = (country != null) ? country.toLowerCase() : null;
+        parseFormatTokens (format);
     }
 
     /**
@@ -131,10 +131,10 @@ public class NumberConverter {
      * @param number number to conver
      * @return string representing converted number
      */
-    public String convert ( long number ) {
+    public String convert (long number) {
         List<Long> numbers = new ArrayList<Long>();
-        numbers.add ( number );
-        return convert ( numbers );
+        numbers.add (number);
+        return convert (numbers);
     }
 
     /**
@@ -142,62 +142,62 @@ public class NumberConverter {
      * @param numbers list of numbers to convert
      * @return string representing converted list of numbers
      */
-    public String convert ( List<Long> numbers ) {
+    public String convert (List<Long> numbers) {
         List<Integer> scalars = new ArrayList<Integer>();
-        if ( prefix != null ) {
-            appendScalars ( scalars, prefix );
+        if (prefix != null) {
+            appendScalars (scalars, prefix);
         }
-        convertNumbers ( scalars, numbers );
-        if ( suffix != null ) {
-            appendScalars ( scalars, suffix );
+        convertNumbers (scalars, numbers);
+        if (suffix != null) {
+            appendScalars (scalars, suffix);
         }
-        return scalarsToString ( scalars );
+        return scalarsToString (scalars);
     }
 
-    private void parseFormatTokens ( String format ) throws IllegalArgumentException {
+    private void parseFormatTokens (String format) throws IllegalArgumentException {
         List<Integer[]> tokens = new ArrayList<Integer[]>();
         List<Integer[]> separators = new ArrayList<Integer[]>();
-        if ( ( format == null ) || ( format.length() == 0 ) ) {
+        if ((format == null) || (format.length() == 0)) {
             format = "1";
         }
         int tokenType = TOKEN_NONE;
         List<Integer> token = new ArrayList<Integer>();
-        Integer[] ca = UTF32.toUTF32 ( format, 0, true );
-        for ( int i = 0, n = ca.length; i < n; i++ ) {
+        Integer[] ca = UTF32.toUTF32 (format, 0, true);
+        for (int i = 0, n = ca.length; i < n; i++) {
             int c = ca[i];
-            int tokenTypeNew = isAlphaNumeric ( c ) ? TOKEN_ALPHANUMERIC : TOKEN_NONALPHANUMERIC;
-            if ( tokenTypeNew != tokenType ) {
-                if ( token.size() > 0 ) {
-                    if ( tokenType == TOKEN_ALPHANUMERIC ) {
-                        tokens.add ( token.toArray ( new Integer [ token.size() ]  ) );
+            int tokenTypeNew = isAlphaNumeric (c) ? TOKEN_ALPHANUMERIC : TOKEN_NONALPHANUMERIC;
+            if (tokenTypeNew != tokenType) {
+                if (token.size() > 0) {
+                    if (tokenType == TOKEN_ALPHANUMERIC) {
+                        tokens.add (token.toArray (new Integer [ token.size() ]));
                     } else {
-                        separators.add ( token.toArray ( new Integer [ token.size() ]  ) );
+                        separators.add (token.toArray (new Integer [ token.size() ]));
                     }
                     token.clear();
                 }
                 tokenType = tokenTypeNew;
             }
-            token.add ( c );
+            token.add (c);
         }
-        if ( token.size() > 0 ) {
-            if ( tokenType == TOKEN_ALPHANUMERIC ) {
-                tokens.add ( token.toArray ( new Integer [ token.size() ]  ) );
+        if (token.size() > 0) {
+            if (tokenType == TOKEN_ALPHANUMERIC) {
+                tokens.add (token.toArray (new Integer [ token.size() ]));
             } else {
-                separators.add ( token.toArray ( new Integer [ token.size() ]  ) );
+                separators.add (token.toArray (new Integer [ token.size() ]));
             }
         }
-        if ( ! separators.isEmpty() ) {
-            this.prefix = separators.remove ( 0 );
+        if (! separators.isEmpty()) {
+            this.prefix = separators.remove (0);
         }
-        if ( ! separators.isEmpty() ) {
-            this.suffix = separators.remove ( separators.size() - 1 );
+        if (! separators.isEmpty()) {
+            this.suffix = separators.remove (separators.size() - 1);
         }
-        this.separators = separators.toArray ( new Integer [ separators.size() ] [] );
-        this.tokens = tokens.toArray ( new Integer [ tokens.size() ] [] );
+        this.separators = separators.toArray (new Integer [ separators.size() ] []);
+        this.tokens = tokens.toArray (new Integer [ tokens.size() ] []);
     }
 
-    private static boolean isAlphaNumeric ( int c ) {
-        switch ( Character.getType ( c ) ) {
+    private static boolean isAlphaNumeric (int c) {
+        switch (Character.getType (c)) {
         case Character.DECIMAL_DIGIT_NUMBER:    // Nd
         case Character.LETTER_NUMBER:           // Nl
         case Character.OTHER_NUMBER:            // No
@@ -212,19 +212,19 @@ public class NumberConverter {
         }
     }
 
-    private void convertNumbers ( List<Integer> scalars, List<Long> numbers ) {
+    private void convertNumbers (List<Integer> scalars, List<Long> numbers) {
         Integer[] tknLast = DEFAULT_TOKEN;
         int   tknIndex = 0;
         int   tknCount = tokens.length;
         int   sepIndex = 0;
         int   sepCount = separators.length;
         int   numIndex = 0;
-        for ( Long number : numbers ) {
+        for (Long number : numbers) {
             Integer[] sep = null;
             Integer[] tkn;
-            if ( tknIndex < tknCount ) {
-                if ( numIndex > 0 ) {
-                    if ( sepIndex < sepCount ) {
+            if (tknIndex < tknCount) {
+                if (numIndex > 0) {
+                    if (sepIndex < sepCount) {
                         sep = separators [ sepIndex++ ];
                     } else {
                         sep = DEFAULT_SEPARATOR;
@@ -234,40 +234,40 @@ public class NumberConverter {
             } else {
                 tkn = tknLast;
             }
-            appendScalars ( scalars, convertNumber ( number, sep, tkn ) );
+            appendScalars (scalars, convertNumber (number, sep, tkn));
             tknLast = tkn;
             numIndex++;
         }
     }
 
-    private Integer[] convertNumber ( long number, Integer[] separator, Integer[] token ) {
+    private Integer[] convertNumber (long number, Integer[] separator, Integer[] token) {
         List<Integer> sl = new ArrayList<Integer>();
-        if ( separator != null ) {
-            appendScalars ( sl, separator );
+        if (separator != null) {
+            appendScalars (sl, separator);
         }
-        if ( token != null ) {
-            appendScalars ( sl, formatNumber ( number, token ) );
+        if (token != null) {
+            appendScalars (sl, formatNumber (number, token));
         }
-        return sl.toArray ( new Integer [ sl.size() ] );
+        return sl.toArray (new Integer [ sl.size() ]);
     }
 
-    private Integer[] formatNumber ( long number, Integer[] token ) {
+    private Integer[] formatNumber (long number, Integer[] token) {
         Integer[] fn = null;
         assert token.length > 0;
-        if ( number < 0 ) {
-            throw new IllegalArgumentException ( "number must be non-negative" );
-        } else if ( token.length == 1 ) {
+        if (number < 0) {
+            throw new IllegalArgumentException ("number must be non-negative");
+        } else if (token.length == 1) {
             int s = token[0].intValue();
-            switch ( s ) {
+            switch (s) {
             case (int) '1':
                 {
-                    fn = formatNumberAsDecimal ( number, (int) '1', 1 );
+                    fn = formatNumberAsDecimal (number, (int) '1', 1);
                     break;
                 }
             case (int) 'W':
             case (int) 'w':
                 {
-                    fn = formatNumberAsWord ( number, ( s == (int) 'W' ) ? Character.UPPERCASE_LETTER : Character.LOWERCASE_LETTER );
+                    fn = formatNumberAsWord (number, (s == (int) 'W') ? Character.UPPERCASE_LETTER : Character.LOWERCASE_LETTER);
                     break;
                 }
             case (int) 'A': // handled as numeric sequence
@@ -276,28 +276,28 @@ public class NumberConverter {
             case (int) 'i': // handled as numeric special
             default:
                 {
-                    if ( isStartOfDecimalSequence ( s ) ) {
-                        fn = formatNumberAsDecimal ( number, s, 1 );
-                    } else if ( isStartOfAlphabeticSequence ( s ) ) {
-                        fn = formatNumberAsSequence ( number, s, getSequenceBase ( s ), null );
-                    } else if ( isStartOfNumericSpecial ( s ) ) {
-                        fn = formatNumberAsSpecial ( number, s );
+                    if (isStartOfDecimalSequence (s)) {
+                        fn = formatNumberAsDecimal (number, s, 1);
+                    } else if (isStartOfAlphabeticSequence (s)) {
+                        fn = formatNumberAsSequence (number, s, getSequenceBase (s), null);
+                    } else if (isStartOfNumericSpecial (s)) {
+                        fn = formatNumberAsSpecial (number, s);
                     } else {
                         fn = null;
                     }
                     break;
                 }
             }
-        } else if ( ( token.length == 2 ) && ( token[0] == (int) 'W' ) && ( token[1] == (int) 'w' ) ) {
-            fn = formatNumberAsWord ( number, Character.TITLECASE_LETTER );
-        } else if ( isPaddedOne ( token ) ) {
+        } else if ((token.length == 2) && (token[0] == (int) 'W') && (token[1] == (int) 'w')) {
+            fn = formatNumberAsWord (number, Character.TITLECASE_LETTER);
+        } else if (isPaddedOne (token)) {
             int s = token [ token.length - 1 ].intValue();
-            fn = formatNumberAsDecimal ( number, s, token.length );
+            fn = formatNumberAsDecimal (number, s, token.length);
         } else {
-            throw new IllegalArgumentException ( "invalid format token: \"" + UTF32.fromUTF32 ( token ) + "\"" );
+            throw new IllegalArgumentException ("invalid format token: \"" + UTF32.fromUTF32 (token) + "\"");
         }
-        if ( fn == null ) {
-            fn = formatNumber ( number, DEFAULT_TOKEN );
+        if (fn == null) {
+            fn = formatNumber (number, DEFAULT_TOKEN);
         }
         assert fn != null;
         return fn;
@@ -311,40 +311,40 @@ public class NumberConverter {
      * @param width non-negative integer denoting field width of number, possible including padding
      * @return formatted number as array of unicode scalars
      */
-    private Integer[] formatNumberAsDecimal ( long number, int one, int width ) {
-        assert Character.getNumericValue ( one ) == 1;
-        assert Character.getNumericValue ( one - 1 ) == 0;
-        assert Character.getNumericValue ( one + 8 ) == 9;
+    private Integer[] formatNumberAsDecimal (long number, int one, int width) {
+        assert Character.getNumericValue (one) == 1;
+        assert Character.getNumericValue (one - 1) == 0;
+        assert Character.getNumericValue (one + 8) == 9;
         List<Integer> sl = new ArrayList<Integer>();
         int zero = one - 1;
-        while ( number > 0 ) {
+        while (number > 0) {
             long digit = number % 10;
-            sl.add ( 0, zero + (int) digit );
+            sl.add (0, zero + (int) digit);
             number = number / 10;
         }
-        while ( width > sl.size() ) {
-            sl.add ( 0, zero );
+        while (width > sl.size()) {
+            sl.add (0, zero);
         }
-        if ( ( groupingSize != 0 ) && ( groupingSeparator != 0 ) ) {
-            sl = performGrouping ( sl, groupingSize, groupingSeparator );
+        if ((groupingSize != 0) && (groupingSeparator != 0)) {
+            sl = performGrouping (sl, groupingSize, groupingSeparator);
         }
-        return sl.toArray ( new Integer [ sl.size() ] );
+        return sl.toArray (new Integer [ sl.size() ]);
     }
 
-    private static List<Integer> performGrouping ( List<Integer> sl, int groupingSize, int groupingSeparator ) {
+    private static List<Integer> performGrouping (List<Integer> sl, int groupingSize, int groupingSeparator) {
         assert groupingSize > 0;
         assert groupingSeparator != 0;
-        if ( sl.size() > groupingSize ) {
+        if (sl.size() > groupingSize) {
             List<Integer> gl = new ArrayList<Integer>();
-            for ( int i = 0, n = sl.size(), g = 0; i < n; i++ ) {
+            for (int i = 0, n = sl.size(), g = 0; i < n; i++) {
                 int k = n - i - 1;
-                if ( g == groupingSize ) {
-                    gl.add ( 0, groupingSeparator );
+                if (g == groupingSize) {
+                    gl.add (0, groupingSeparator);
                     g = 1;
                 } else {
                     g++;
                 }
-                gl.add ( 0, sl.get ( k ) );
+                gl.add (0, sl.get (k));
             }
             return gl;
         } else {
@@ -362,21 +362,21 @@ public class NumberConverter {
      * @param map if non-null, then maps sequences indices to unicode scalars
      * @return formatted number as array of unicode scalars
      */
-    private Integer[] formatNumberAsSequence ( long number, int one, int base, int[] map ) {
+    private Integer[] formatNumberAsSequence (long number, int one, int base, int[] map) {
         assert base > 1;
-        assert ( map == null ) || ( map.length >= base );
+        assert (map == null) || (map.length >= base);
         List<Integer> sl = new ArrayList<Integer>();
-        if ( number == 0 ) {
+        if (number == 0) {
             return null;
         } else {
             long n = number;
-            while ( n > 0 ) {
-                int d = (int) ( ( n - 1 ) % (long) base );
-                int s = ( map != null ) ? map [ d ] : ( one + d );
-                sl.add ( 0, s );
-                n = ( n - 1 ) / base;
+            while (n > 0) {
+                int d = (int) ((n - 1) % (long) base);
+                int s = (map != null) ? map [ d ] : (one + d);
+                sl.add (0, s);
+                n = (n - 1) / base;
             }
-            return sl.toArray ( new Integer [ sl.size() ] );
+            return sl.toArray (new Integer [ sl.size() ]);
         }
     }
 
@@ -386,10 +386,10 @@ public class NumberConverter {
      * @param one unicode scalar value denoting start of system (numeric value 1)
      * @return formatted number as array of unicode scalars
      */
-    private Integer[] formatNumberAsSpecial ( long number, int one ) {
-        SpecialNumberFormatter f = getSpecialFormatter ( one, letterValue, features, language, country );
-        if ( f != null ) {
-            return f.format ( number, one, letterValue, features, language, country );
+    private Integer[] formatNumberAsSpecial (long number, int one) {
+        SpecialNumberFormatter f = getSpecialFormatter (one, letterValue, features, language, country);
+        if (f != null) {
+            return f.format (number, one, letterValue, features, language, country);
         } else {
             return null;
         }
@@ -404,27 +404,27 @@ public class NumberConverter {
      * @param caseType unicode character type for case conversion
      * @return formatted number as array of unicode scalars
      */
-    private Integer[] formatNumberAsWord ( long number, int caseType ) {
+    private Integer[] formatNumberAsWord (long number, int caseType) {
         SpecialNumberFormatter f = null;
-        if ( isLanguage ( "eng" ) ) {
-            f = new EnglishNumberAsWordFormatter ( caseType );
-        } else if ( isLanguage ( "spa" ) ) {
-            f = new SpanishNumberAsWordFormatter ( caseType );
-        } else if ( isLanguage ( "fra" ) ) {
-            f = new FrenchNumberAsWordFormatter ( caseType );
+        if (isLanguage ("eng")) {
+            f = new EnglishNumberAsWordFormatter (caseType);
+        } else if (isLanguage ("spa")) {
+            f = new SpanishNumberAsWordFormatter (caseType);
+        } else if (isLanguage ("fra")) {
+            f = new FrenchNumberAsWordFormatter (caseType);
         } else {
-            f = new EnglishNumberAsWordFormatter ( caseType );
+            f = new EnglishNumberAsWordFormatter (caseType);
         }
-        return f.format ( number, 0, letterValue, features, language, country );
+        return f.format (number, 0, letterValue, features, language, country);
     }
 
-    private boolean isLanguage ( String iso3Code ) {
-        if ( language == null ) {
+    private boolean isLanguage (String iso3Code) {
+        if (language == null) {
             return false;
-        } else if ( language.equals ( iso3Code ) ) {
+        } else if (language.equals (iso3Code)) {
             return true;
         } else {
-            return isSameLanguage ( iso3Code, language );
+            return isSameLanguage (iso3Code, language);
         }
     }
 
@@ -434,12 +434,12 @@ public class NumberConverter {
         { "spa", "es" },
     };
 
-    private static boolean isSameLanguage ( String i3c, String lc ) {
-        for ( String[] el : equivalentLanguages ) {
+    private static boolean isSameLanguage (String i3c, String lc) {
+        for (String[] el : equivalentLanguages) {
             assert el.length >= 2;
-            if ( el[0].equals ( i3c ) ) {
-                for ( int i = 0, n = el.length; i < n; i++ ) {
-                    if ( el[i].equals ( lc ) ) {
+            if (el[0].equals (i3c)) {
+                for (int i = 0, n = el.length; i < n; i++) {
+                    if (el[i].equals (lc)) {
                         return true;
                     }
                 }
@@ -449,17 +449,17 @@ public class NumberConverter {
         return false;
     }
 
-    private static boolean hasFeature ( String features, String feature ) {
-        if ( features != null ) {
+    private static boolean hasFeature (String features, String feature) {
+        if (features != null) {
             assert feature != null;
             assert feature.length() != 0;
             String[] fa = features.split(",");
-            for ( String f : fa ) {
+            for (String f : fa) {
                 String[] fp = f.split("=");
                 assert fp.length > 0;
                 String   fn = fp[0];
-                String   fv = ( fp.length > 1 ) ? fp[1] : "";
-                if ( fn.equals ( feature ) ) {
+                String   fv = (fp.length > 1) ? fp[1] : "";
+                if (fn.equals (feature)) {
                     return true;
                 }
             }
@@ -487,23 +487,23 @@ public class NumberConverter {
     }
     */
 
-    private static void appendScalars ( List<Integer> scalars, Integer[] sa ) {
-        for ( Integer s : sa ) {
-            scalars.add ( s );
+    private static void appendScalars (List<Integer> scalars, Integer[] sa) {
+        for (Integer s : sa) {
+            scalars.add (s);
         }
     }
 
-    private static String scalarsToString ( List<Integer> scalars ) {
-        Integer[] sa = scalars.toArray ( new Integer [ scalars.size() ] );
-        return UTF32.fromUTF32 ( sa );
+    private static String scalarsToString (List<Integer> scalars) {
+        Integer[] sa = scalars.toArray (new Integer [ scalars.size() ]);
+        return UTF32.fromUTF32 (sa);
     }
 
-    private static boolean isPaddedOne ( Integer[] token ) {
-        if ( getDecimalValue ( token [ token.length - 1 ] ) != 1 ) {
+    private static boolean isPaddedOne (Integer[] token) {
+        if (getDecimalValue (token [ token.length - 1 ]) != 1) {
             return false;
         } else {
-            for ( int i = 0, n = token.length - 1; i < n; i++ ) {
-                if ( getDecimalValue ( token [ i ] ) != 0 ) {
+            for (int i = 0, n = token.length - 1; i < n; i++) {
+                if (getDecimalValue (token [ i ]) != 0) {
                     return false;
                 }
             }
@@ -511,19 +511,19 @@ public class NumberConverter {
         }
     }
 
-    private static int getDecimalValue ( Integer scalar ) {
+    private static int getDecimalValue (Integer scalar) {
         int s = scalar.intValue();
-        if ( Character.getType ( s ) == Character.DECIMAL_DIGIT_NUMBER ) {
-            return Character.getNumericValue ( s );
+        if (Character.getType (s) == Character.DECIMAL_DIGIT_NUMBER) {
+            return Character.getNumericValue (s);
         } else {
             return -1;
         }
     }
 
-    private static boolean isStartOfDecimalSequence ( int s ) {
-        return ( Character.getNumericValue ( s ) == 1 )
-            && ( Character.getNumericValue ( s - 1 ) == 0 )
-            && ( Character.getNumericValue ( s + 8 ) == 9 );
+    private static boolean isStartOfDecimalSequence (int s) {
+        return (Character.getNumericValue (s) == 1)
+            && (Character.getNumericValue (s - 1) == 0)
+            && (Character.getNumericValue (s + 8) == 9);
     }
 
     private static int[][] supportedAlphabeticSequences = {
@@ -531,20 +531,20 @@ public class NumberConverter {
         { 'a', 26 },            // a...z
     };
 
-    private static boolean isStartOfAlphabeticSequence ( int s ) {
-        for ( int[] ss : supportedAlphabeticSequences ) {
+    private static boolean isStartOfAlphabeticSequence (int s) {
+        for (int[] ss : supportedAlphabeticSequences) {
             assert ss.length >= 2;
-            if ( ss[0] == s ) {
+            if (ss[0] == s) {
                 return true;
             }
         }
         return false;
     }
 
-    private static int getSequenceBase ( int s ) {
-        for ( int[] ss : supportedAlphabeticSequences ) {
+    private static int getSequenceBase (int s) {
+        for (int[] ss : supportedAlphabeticSequences) {
             assert ss.length >= 2;
-            if ( ss[0] == s ) {
+            if (ss[0] == s) {
                 return ss[1];
             }
         }
@@ -566,60 +566,60 @@ public class NumberConverter {
         { '\u30A4' },           // kana - katakana (iroha)
     };
 
-    private static boolean isStartOfNumericSpecial ( int s ) {
-        for ( int[] ss : supportedSpecials ) {
+    private static boolean isStartOfNumericSpecial (int s) {
+        for (int[] ss : supportedSpecials) {
             assert ss.length >= 1;
-            if ( ss[0] == s ) {
+            if (ss[0] == s) {
                 return true;
             }
         }
         return false;
     }
 
-    private SpecialNumberFormatter getSpecialFormatter ( int one, int letterValue, String features, String language, String country ) {
-        if ( one == (int) 'I' ) {
+    private SpecialNumberFormatter getSpecialFormatter (int one, int letterValue, String features, String language, String country) {
+        if (one == (int) 'I') {
             return new RomanNumeralsFormatter();
-        } else if ( one == (int) 'i' ) {
+        } else if (one == (int) 'i') {
             return new RomanNumeralsFormatter();
-        } else if ( one == (int) '\u0391' ) {
+        } else if (one == (int) '\u0391') {
             return new IsopsephryNumeralsFormatter();
-        } else if ( one == (int) '\u03B1' ) {
+        } else if (one == (int) '\u03B1') {
             return new IsopsephryNumeralsFormatter();
-        } else if ( one == (int) '\u05D0' ) {
+        } else if (one == (int) '\u05D0') {
             return new GematriaNumeralsFormatter();
-        } else if ( one == (int) '\u0623' ) {
+        } else if (one == (int) '\u0623') {
             return new ArabicNumeralsFormatter();
-        } else if ( one == (int) '\u0627' ) {
+        } else if (one == (int) '\u0627') {
             return new ArabicNumeralsFormatter();
-        } else if ( one == (int) '\u0E01' ) {
+        } else if (one == (int) '\u0E01') {
             return new ThaiNumeralsFormatter();
-        } else if ( one == (int) '\u3042' ) {
+        } else if (one == (int) '\u3042') {
             return new KanaNumeralsFormatter();
-        } else if ( one == (int) '\u3044' ) {
+        } else if (one == (int) '\u3044') {
             return new KanaNumeralsFormatter();
-        } else if ( one == (int) '\u30A2' ) {
+        } else if (one == (int) '\u30A2') {
             return new KanaNumeralsFormatter();
-        } else if ( one == (int) '\u30A4' ) {
+        } else if (one == (int) '\u30A4') {
             return new KanaNumeralsFormatter();
         } else {
             return null;
         }
     }
 
-    private static Integer[] toUpperCase ( Integer[] sa ) {
+    private static Integer[] toUpperCase (Integer[] sa) {
         assert sa != null;
-        for ( int i = 0, n = sa.length; i < n; i++ ) {
+        for (int i = 0, n = sa.length; i < n; i++) {
             Integer s = sa [ i ];
-            sa [ i ] = Character.toUpperCase ( s );
+            sa [ i ] = Character.toUpperCase (s);
         }
         return sa;
     }
 
-    private static Integer[] toLowerCase ( Integer[] sa ) {
+    private static Integer[] toLowerCase (Integer[] sa) {
         assert sa != null;
-        for ( int i = 0, n = sa.length; i < n; i++ ) {
+        for (int i = 0, n = sa.length; i < n; i++) {
             Integer s = sa [ i ];
-            sa [ i ] = Character.toLowerCase ( s );
+            sa [ i ] = Character.toLowerCase (s);
         }
         return sa;
     }
@@ -634,27 +634,27 @@ public class NumberConverter {
     }
     */
 
-    private static List<String> convertWordCase ( List<String> words, int caseType ) {
+    private static List<String> convertWordCase (List<String> words, int caseType) {
         List<String> wl = new ArrayList<String>();
-        for ( String w : words ) {
-            wl.add ( convertWordCase ( w, caseType ) );
+        for (String w : words) {
+            wl.add (convertWordCase (w, caseType));
         }
         return wl;
     }
 
-    private static String convertWordCase ( String word, int caseType ) {
-        if ( caseType == Character.UPPERCASE_LETTER ) {
+    private static String convertWordCase (String word, int caseType) {
+        if (caseType == Character.UPPERCASE_LETTER) {
             return word.toUpperCase();
-        } else if ( caseType == Character.LOWERCASE_LETTER ) {
+        } else if (caseType == Character.LOWERCASE_LETTER) {
             return word.toLowerCase();
-        } else if ( caseType == Character.TITLECASE_LETTER ) {
+        } else if (caseType == Character.TITLECASE_LETTER) {
             StringBuffer sb = new StringBuffer();
-            for ( int i = 0, n = word.length(); i < n; i++ ) {
-                String s = word.substring ( i, i + 1 );
-                if ( i == 0 ) {
-                    sb.append ( s.toUpperCase() );
+            for (int i = 0, n = word.length(); i < n; i++) {
+                String s = word.substring (i, i + 1);
+                if (i == 0) {
+                    sb.append (s.toUpperCase());
                 } else {
-                    sb.append ( s.toLowerCase() );
+                    sb.append (s.toLowerCase());
                 }
             }
             return sb.toString();
@@ -663,13 +663,13 @@ public class NumberConverter {
         }
     }
 
-    private static String joinWords ( List<String> words, String separator ) {
+    private static String joinWords (List<String> words, String separator) {
         StringBuffer sb = new StringBuffer();
-        for ( String w : words ) {
-            if ( sb.length() > 0 ) {
-                sb.append ( separator );
+        for (String w : words) {
+            if (sb.length() > 0) {
+                sb.append (separator);
             }
-            sb.append ( w );
+            sb.append (w);
         }
         return sb.toString();
     }
@@ -688,7 +688,7 @@ public class NumberConverter {
          * @param country denotes applicable country
          * @return formatted number as array of unicode scalars
          */
-        Integer[] format ( long number, int one, int letterValue, String features, String language, String country );
+        Integer[] format (long number, int one, int letterValue, String features, String language, String country);
     }
 
     /**
@@ -704,98 +704,98 @@ public class NumberConverter {
     private static String[] englishWordOthersOrd = { "hundredth", "thousandth", "millionth", "billionth" };
     private static class EnglishNumberAsWordFormatter implements SpecialNumberFormatter {
         private int caseType = Character.UPPERCASE_LETTER;
-        EnglishNumberAsWordFormatter ( int caseType ) {
+        EnglishNumberAsWordFormatter (int caseType) {
             this.caseType = caseType;
         }
-        public Integer[] format ( long number, int one, int letterValue, String features, String language, String country ) {
+        public Integer[] format (long number, int one, int letterValue, String features, String language, String country) {
             List<String> wl = new ArrayList<String>();
-            if ( number >= 1000000000000L ) {
+            if (number >= 1000000000000L) {
                 return null;
             } else {
-                boolean ordinal = hasFeature ( features, "ordinal" );
-                if ( number == 0 ) {
-                    wl.add ( englishWordOnes [ 0 ] );
-                } else if ( ordinal && ( number < 10 ) ) {
-                    wl.add ( englishWordOnesOrd [ (int) number ] );
+                boolean ordinal = hasFeature (features, "ordinal");
+                if (number == 0) {
+                    wl.add (englishWordOnes [ 0 ]);
+                } else if (ordinal && (number < 10)) {
+                    wl.add (englishWordOnesOrd [ (int) number ]);
                 } else {
-                    int ones = (int) ( number % 1000 );
-                    int thousands = (int) ( ( number / 1000 ) % 1000 );
-                    int millions = (int) ( ( number / 1000000 ) % 1000 );
-                    int billions = (int) ( ( number / 1000000000 ) % 1000 );
-                    if ( billions > 0 ) {
-                        wl = formatOnesInThousand ( wl, billions );
-                        if ( ordinal && ( ( number % 1000000000 ) == 0 ) ) {
-                            wl.add ( englishWordOthersOrd[3] );
+                    int ones = (int) (number % 1000);
+                    int thousands = (int) ((number / 1000) % 1000);
+                    int millions = (int) ((number / 1000000) % 1000);
+                    int billions = (int) ((number / 1000000000) % 1000);
+                    if (billions > 0) {
+                        wl = formatOnesInThousand (wl, billions);
+                        if (ordinal && ((number % 1000000000) == 0)) {
+                            wl.add (englishWordOthersOrd[3]);
                         } else {
-                            wl.add ( englishWordOthers[3] );
+                            wl.add (englishWordOthers[3]);
                         }
                     }
-                    if ( millions > 0 ) {
-                        wl = formatOnesInThousand ( wl, millions );
-                        if ( ordinal && ( ( number % 1000000 ) == 0 ) ) {
-                            wl.add ( englishWordOthersOrd[2] );
+                    if (millions > 0) {
+                        wl = formatOnesInThousand (wl, millions);
+                        if (ordinal && ((number % 1000000) == 0)) {
+                            wl.add (englishWordOthersOrd[2]);
                         } else {
-                            wl.add ( englishWordOthers[2] );
+                            wl.add (englishWordOthers[2]);
                         }
                     }
-                    if ( thousands > 0 ) {
-                        wl = formatOnesInThousand ( wl, thousands );
-                        if ( ordinal && ( ( number % 1000 ) == 0 ) ) {
-                            wl.add ( englishWordOthersOrd[1] );
+                    if (thousands > 0) {
+                        wl = formatOnesInThousand (wl, thousands);
+                        if (ordinal && ((number % 1000) == 0)) {
+                            wl.add (englishWordOthersOrd[1]);
                         } else {
-                            wl.add ( englishWordOthers[1] );
+                            wl.add (englishWordOthers[1]);
                         }
                     }
-                    if ( ones > 0 ) {
-                        wl = formatOnesInThousand ( wl, ones, ordinal );
+                    if (ones > 0) {
+                        wl = formatOnesInThousand (wl, ones, ordinal);
                     }
                 }
-                wl = convertWordCase ( wl, caseType );
-                return UTF32.toUTF32 ( joinWords ( wl, " " ), 0, true );
+                wl = convertWordCase (wl, caseType);
+                return UTF32.toUTF32 (joinWords (wl, " "), 0, true);
             }
         }
-        private List<String> formatOnesInThousand ( List<String> wl, int number ) {
-            return formatOnesInThousand ( wl, number, false );
+        private List<String> formatOnesInThousand (List<String> wl, int number) {
+            return formatOnesInThousand (wl, number, false);
         }
-        private List<String> formatOnesInThousand ( List<String> wl, int number, boolean ordinal ) {
+        private List<String> formatOnesInThousand (List<String> wl, int number, boolean ordinal) {
             assert number < 1000;
             int ones = number % 10;
-            int tens = ( number / 10 ) % 10;
-            int hundreds = ( number / 100 ) % 10;
-            if ( hundreds > 0 ) {
-                wl.add ( englishWordOnes [ hundreds ] );
-                if ( ordinal && ( ( number % 100 ) == 0 ) ) {
-                    wl.add ( englishWordOthersOrd[0] );
+            int tens = (number / 10) % 10;
+            int hundreds = (number / 100) % 10;
+            if (hundreds > 0) {
+                wl.add (englishWordOnes [ hundreds ]);
+                if (ordinal && ((number % 100) == 0)) {
+                    wl.add (englishWordOthersOrd[0]);
                 } else {
-                    wl.add ( englishWordOthers[0] );
+                    wl.add (englishWordOthers[0]);
                 }
             }
-            if ( tens > 0 ) {
-                if ( tens == 1 ) {
-                    if ( ordinal ) {
-                        wl.add ( englishWordTeensOrd [ ones ] );
+            if (tens > 0) {
+                if (tens == 1) {
+                    if (ordinal) {
+                        wl.add (englishWordTeensOrd [ ones ]);
                     } else {
-                        wl.add ( englishWordTeens [ ones ] );
+                        wl.add (englishWordTeens [ ones ]);
                     }
                 } else {
-                    if ( ordinal && ( ones == 0 ) ) {
-                        wl.add ( englishWordTensOrd [ tens ] );
+                    if (ordinal && (ones == 0)) {
+                        wl.add (englishWordTensOrd [ tens ]);
                     } else {
-                        wl.add ( englishWordTens [ tens ] );
+                        wl.add (englishWordTens [ tens ]);
                     }
-                    if ( ones > 0 ) {
-                        if ( ordinal ) {
-                            wl.add ( englishWordOnesOrd [ ones ] );
+                    if (ones > 0) {
+                        if (ordinal) {
+                            wl.add (englishWordOnesOrd [ ones ]);
                         } else {
-                            wl.add ( englishWordOnes [ ones ] );
+                            wl.add (englishWordOnes [ ones ]);
                         }
                     }
                 }
-            } else if ( ones > 0 ) {
-                if ( ordinal ) {
-                    wl.add ( englishWordOnesOrd [ ones ] );
+            } else if (ones > 0) {
+                if (ordinal) {
+                    wl.add (englishWordOnesOrd [ ones ]);
                 } else {
-                    wl.add ( englishWordOnes [ ones ] );
+                    wl.add (englishWordOnes [ ones ]);
                 }
             }
             return wl;
@@ -813,122 +813,122 @@ public class NumberConverter {
     private static String[] frenchWordOnesOrdFemale = { "premi\u00e8re", "deuxi\u00e8me", "troisi\u00e8me", "quatri\u00e8me", "cinqui\u00e8me", "sixi\u00e8me", "septi\u00e8me", "huiti\u00e8me", "neuvi\u00e8me", "dixi\u00e8me" };
     private static class FrenchNumberAsWordFormatter implements SpecialNumberFormatter {
         private int caseType = Character.UPPERCASE_LETTER;
-        FrenchNumberAsWordFormatter ( int caseType ) {
+        FrenchNumberAsWordFormatter (int caseType) {
             this.caseType = caseType;
         }
-        public Integer[] format ( long number, int one, int letterValue, String features, String language, String country ) {
+        public Integer[] format (long number, int one, int letterValue, String features, String language, String country) {
             List<String> wl = new ArrayList<String>();
-            if ( number >= 1000000000000L ) {
+            if (number >= 1000000000000L) {
                 return null;
             } else {
-                boolean ordinal = hasFeature ( features, "ordinal" );
-                if ( number == 0 ) {
-                    wl.add ( frenchWordOnes [ 0 ] );
-                } else if ( ordinal && ( number <= 10 ) ) {
-                    boolean female = hasFeature ( features, "female" );
-                    if ( female ) {
-                        wl.add ( frenchWordOnesOrdFemale [ (int) number ] );
+                boolean ordinal = hasFeature (features, "ordinal");
+                if (number == 0) {
+                    wl.add (frenchWordOnes [ 0 ]);
+                } else if (ordinal && (number <= 10)) {
+                    boolean female = hasFeature (features, "female");
+                    if (female) {
+                        wl.add (frenchWordOnesOrdFemale [ (int) number ]);
                     } else {
-                        wl.add ( frenchWordOnesOrdMale [ (int) number ] );
+                        wl.add (frenchWordOnesOrdMale [ (int) number ]);
                     }
                 } else {
-                    int ones = (int) ( number % 1000 );
-                    int thousands = (int) ( ( number / 1000 ) % 1000 );
-                    int millions = (int) ( ( number / 1000000 ) % 1000 );
-                    int billions = (int) ( ( number / 1000000000 ) % 1000 );
-                    if ( billions > 0 ) {
-                        wl = formatOnesInThousand ( wl, billions );
-                        if ( billions == 1 ) {
-                            wl.add ( frenchWordOthers[5] );
+                    int ones = (int) (number % 1000);
+                    int thousands = (int) ((number / 1000) % 1000);
+                    int millions = (int) ((number / 1000000) % 1000);
+                    int billions = (int) ((number / 1000000000) % 1000);
+                    if (billions > 0) {
+                        wl = formatOnesInThousand (wl, billions);
+                        if (billions == 1) {
+                            wl.add (frenchWordOthers[5]);
                         } else {
-                            wl.add ( frenchWordOthers[6] );
+                            wl.add (frenchWordOthers[6]);
                         }
                     }
-                    if ( millions > 0 ) {
-                        wl = formatOnesInThousand ( wl, millions );
-                        if ( millions == 1 ) {
-                            wl.add ( frenchWordOthers[3] );
+                    if (millions > 0) {
+                        wl = formatOnesInThousand (wl, millions);
+                        if (millions == 1) {
+                            wl.add (frenchWordOthers[3]);
                         } else {
-                            wl.add ( frenchWordOthers[4] );
+                            wl.add (frenchWordOthers[4]);
                         }
                     }
-                    if ( thousands > 0 ) {
-                        if ( thousands > 1 ) {
-                            wl = formatOnesInThousand ( wl, thousands );
+                    if (thousands > 0) {
+                        if (thousands > 1) {
+                            wl = formatOnesInThousand (wl, thousands);
                         }
-                        wl.add ( frenchWordOthers[2] );
+                        wl.add (frenchWordOthers[2]);
                     }
-                    if ( ones > 0 ) {
-                        wl = formatOnesInThousand ( wl, ones );
+                    if (ones > 0) {
+                        wl = formatOnesInThousand (wl, ones);
                     }
                 }
-                wl = convertWordCase ( wl, caseType );
-                return UTF32.toUTF32 ( joinWords ( wl, " " ), 0, true );
+                wl = convertWordCase (wl, caseType);
+                return UTF32.toUTF32 (joinWords (wl, " "), 0, true);
             }
         }
-        private List<String> formatOnesInThousand ( List<String> wl, int number ) {
+        private List<String> formatOnesInThousand (List<String> wl, int number) {
             assert number < 1000;
             int ones = number % 10;
-            int tens = ( number / 10 ) % 10;
-            int hundreds = ( number / 100 ) % 10;
-            if ( hundreds > 0 ) {
-                if ( hundreds > 1 ) {
-                    wl.add ( frenchWordOnes [ hundreds ] );
+            int tens = (number / 10) % 10;
+            int hundreds = (number / 100) % 10;
+            if (hundreds > 0) {
+                if (hundreds > 1) {
+                    wl.add (frenchWordOnes [ hundreds ]);
                 }
-                if ( ( hundreds > 1 ) && ( tens == 0 ) && ( ones == 0 ) ) {
-                    wl.add ( frenchWordOthers[1] );
+                if ((hundreds > 1) && (tens == 0) && (ones == 0)) {
+                    wl.add (frenchWordOthers[1]);
                 } else {
-                    wl.add ( frenchWordOthers[0] );
+                    wl.add (frenchWordOthers[0]);
                 }
             }
-            if ( tens > 0 ) {
-                if ( tens == 1 ) {
-                    wl.add ( frenchWordTeens [ ones ] );
-                } else if ( tens < 7 ) {
-                    if ( ones == 1 ) {
-                        wl.add ( frenchWordTens [ tens ] );
-                        wl.add ( "et" );
-                        wl.add ( frenchWordOnes [ ones ] );
+            if (tens > 0) {
+                if (tens == 1) {
+                    wl.add (frenchWordTeens [ ones ]);
+                } else if (tens < 7) {
+                    if (ones == 1) {
+                        wl.add (frenchWordTens [ tens ]);
+                        wl.add ("et");
+                        wl.add (frenchWordOnes [ ones ]);
                     } else {
                         StringBuffer sb = new StringBuffer();
-                        sb.append ( frenchWordTens [ tens ] );
-                        if ( ones > 0 ) {
-                            sb.append ( '-' );
-                            sb.append ( frenchWordOnes [ ones ] );
+                        sb.append (frenchWordTens [ tens ]);
+                        if (ones > 0) {
+                            sb.append ('-');
+                            sb.append (frenchWordOnes [ ones ]);
                         }
-                        wl.add ( sb.toString() );
+                        wl.add (sb.toString());
                     }
-                } else if ( tens == 7 ) {
-                    if ( ones == 1 ) {
-                        wl.add ( frenchWordTens [ 6 ] );
-                        wl.add ( "et" );
-                        wl.add ( frenchWordTeens [ ones ] );
+                } else if (tens == 7) {
+                    if (ones == 1) {
+                        wl.add (frenchWordTens [ 6 ]);
+                        wl.add ("et");
+                        wl.add (frenchWordTeens [ ones ]);
                     } else {
                         StringBuffer sb = new StringBuffer();
-                        sb.append ( frenchWordTens [ 6 ] );
-                        sb.append ( '-' );
-                        sb.append ( frenchWordTeens [ ones ] );
-                        wl.add ( sb.toString() );
+                        sb.append (frenchWordTens [ 6 ]);
+                        sb.append ('-');
+                        sb.append (frenchWordTeens [ ones ]);
+                        wl.add (sb.toString());
                     }
-                } else if ( tens == 8 ) {
+                } else if (tens == 8) {
                     StringBuffer sb = new StringBuffer();
-                    sb.append ( frenchWordTens [ tens ] );
-                    if ( ones > 0 ) {
-                        sb.append ( '-' );
-                        sb.append ( frenchWordOnes [ ones ] );
+                    sb.append (frenchWordTens [ tens ]);
+                    if (ones > 0) {
+                        sb.append ('-');
+                        sb.append (frenchWordOnes [ ones ]);
                     } else {
-                        sb.append ( 's' );
+                        sb.append ('s');
                     }
-                    wl.add ( sb.toString() );
-                } else if ( tens == 9 ) {
+                    wl.add (sb.toString());
+                } else if (tens == 9) {
                     StringBuffer sb = new StringBuffer();
-                    sb.append ( frenchWordTens [ 8 ] );
-                    sb.append ( '-' );
-                    sb.append ( frenchWordTeens [ ones ] );
-                    wl.add ( sb.toString() );
+                    sb.append (frenchWordTens [ 8 ]);
+                    sb.append ('-');
+                    sb.append (frenchWordTeens [ ones ]);
+                    wl.add (sb.toString());
                 }
-            } else if ( ones > 0 ) {
-                wl.add ( frenchWordOnes [ ones ] );
+            } else if (ones > 0) {
+                wl.add (frenchWordOnes [ ones ]);
             }
             return wl;
         }
@@ -947,88 +947,88 @@ public class NumberConverter {
     private static String[] spanishWordOnesOrdFemale = { "ninguna", "primera", "segunda", "tercera", "cuarta", "quinta", "sexta", "s\u00e9ptima", "octava", "noventa", "d\u00e9cima" };
     private static class SpanishNumberAsWordFormatter implements SpecialNumberFormatter {
         private int caseType = Character.UPPERCASE_LETTER;
-        SpanishNumberAsWordFormatter ( int caseType ) {
+        SpanishNumberAsWordFormatter (int caseType) {
             this.caseType = caseType;
         }
-        public Integer[] format ( long number, int one, int letterValue, String features, String language, String country ) {
+        public Integer[] format (long number, int one, int letterValue, String features, String language, String country) {
             List<String> wl = new ArrayList<String>();
-            if ( number >= 1000000000000L ) {
+            if (number >= 1000000000000L) {
                 return null;
             } else {
-                boolean ordinal = hasFeature ( features, "ordinal" );
-                if ( number == 0 ) {
-                    wl.add ( spanishWordOnes [ 0 ] );
-                } else if ( ordinal && ( number <= 10 ) ) {
-                    boolean female = hasFeature ( features, "female" );
-                    if ( female ) {
-                        wl.add ( spanishWordOnesOrdFemale [ (int) number ] );
+                boolean ordinal = hasFeature (features, "ordinal");
+                if (number == 0) {
+                    wl.add (spanishWordOnes [ 0 ]);
+                } else if (ordinal && (number <= 10)) {
+                    boolean female = hasFeature (features, "female");
+                    if (female) {
+                        wl.add (spanishWordOnesOrdFemale [ (int) number ]);
                     } else {
-                        wl.add ( spanishWordOnesOrdMale [ (int) number ] );
+                        wl.add (spanishWordOnesOrdMale [ (int) number ]);
                     }
                 } else {
-                    int ones = (int) ( number % 1000 );
-                    int thousands = (int) ( ( number / 1000 ) % 1000 );
-                    int millions = (int) ( ( number / 1000000 ) % 1000 );
-                    int billions = (int) ( ( number / 1000000000 ) % 1000 );
-                    if ( billions > 0 ) {
-                        if ( billions > 1 ) {
-                            wl = formatOnesInThousand ( wl, billions );
+                    int ones = (int) (number % 1000);
+                    int thousands = (int) ((number / 1000) % 1000);
+                    int millions = (int) ((number / 1000000) % 1000);
+                    int billions = (int) ((number / 1000000000) % 1000);
+                    if (billions > 0) {
+                        if (billions > 1) {
+                            wl = formatOnesInThousand (wl, billions);
                         }
-                        wl.add ( spanishWordOthers[2] );
-                        wl.add ( spanishWordOthers[4] );
+                        wl.add (spanishWordOthers[2]);
+                        wl.add (spanishWordOthers[4]);
                     }
-                    if ( millions > 0 ) {
-                        if ( millions == 1 ) {
-                            wl.add ( spanishWordOthers[0] );
+                    if (millions > 0) {
+                        if (millions == 1) {
+                            wl.add (spanishWordOthers[0]);
                         } else {
-                            wl = formatOnesInThousand ( wl, millions );
+                            wl = formatOnesInThousand (wl, millions);
                         }
-                        if ( millions > 1 ) {
-                            wl.add ( spanishWordOthers[4] );
+                        if (millions > 1) {
+                            wl.add (spanishWordOthers[4]);
                         } else {
-                            wl.add ( spanishWordOthers[3] );
+                            wl.add (spanishWordOthers[3]);
                         }
                     }
-                    if ( thousands > 0 ) {
-                        if ( thousands > 1 ) {
-                            wl = formatOnesInThousand ( wl, thousands );
+                    if (thousands > 0) {
+                        if (thousands > 1) {
+                            wl = formatOnesInThousand (wl, thousands);
                         }
-                        wl.add ( spanishWordOthers[2] );
+                        wl.add (spanishWordOthers[2]);
                     }
-                    if ( ones > 0 ) {
-                        wl = formatOnesInThousand ( wl, ones );
+                    if (ones > 0) {
+                        wl = formatOnesInThousand (wl, ones);
                     }
                 }
-                wl = convertWordCase ( wl, caseType );
-                return UTF32.toUTF32 ( joinWords ( wl, " " ), 0, true );
+                wl = convertWordCase (wl, caseType);
+                return UTF32.toUTF32 (joinWords (wl, " "), 0, true);
             }
         }
-        private List<String> formatOnesInThousand ( List<String> wl, int number ) {
+        private List<String> formatOnesInThousand (List<String> wl, int number) {
             assert number < 1000;
             int ones = number % 10;
-            int tens = ( number / 10 ) % 10;
-            int hundreds = ( number / 100 ) % 10;
-            if ( hundreds > 0 ) {
-                if ( ( hundreds == 1 ) && ( tens == 0 ) && ( ones == 0 ) ) {
-                    wl.add ( spanishWordOthers[1] );
+            int tens = (number / 10) % 10;
+            int hundreds = (number / 100) % 10;
+            if (hundreds > 0) {
+                if ((hundreds == 1) && (tens == 0) && (ones == 0)) {
+                    wl.add (spanishWordOthers[1]);
                 } else {
-                    wl.add ( spanishWordHundreds [ hundreds ] );
+                    wl.add (spanishWordHundreds [ hundreds ]);
                 }
             }
-            if ( tens > 0 ) {
-                if ( tens == 1 ) {
-                    wl.add ( spanishWordTeens [ ones ] );
-                } else if ( tens == 2 ) {
-                    wl.add ( spanishWordTweens [ ones ] );
+            if (tens > 0) {
+                if (tens == 1) {
+                    wl.add (spanishWordTeens [ ones ]);
+                } else if (tens == 2) {
+                    wl.add (spanishWordTweens [ ones ]);
                 } else {
-                    wl.add ( spanishWordTens [ tens ] );
-                    if ( ones > 0 ) {
-                        wl.add ( "y" );
-                        wl.add ( spanishWordOnes [ ones ] );
+                    wl.add (spanishWordTens [ tens ]);
+                    if (ones > 0) {
+                        wl.add ("y");
+                        wl.add (spanishWordOnes [ ones ]);
                     }
                 }
-            } else if ( ones > 0 ) {
-                wl.add ( spanishWordOnes [ ones ] );
+            } else if (ones > 0) {
+                wl.add (spanishWordOnes [ ones ]);
             }
             return wl;
         }
@@ -1150,40 +1150,40 @@ public class NumberConverter {
         "\u2160"
     };
     private static class RomanNumeralsFormatter implements SpecialNumberFormatter {
-        public Integer[] format ( long number, int one, int letterValue, String features, String language, String country ) {
+        public Integer[] format (long number, int one, int letterValue, String features, String language, String country) {
             List<Integer> sl = new ArrayList<Integer>();
-            if ( number == 0 ) {
+            if (number == 0) {
                 return null;
             } else {
                 String[] forms;
                 int maxNumber;
-                if ( hasFeature ( features, "unicode-number-forms" ) ) {
+                if (hasFeature (features, "unicode-number-forms")) {
                     forms = romanNumberForms;
                     maxNumber = 199999;
-                } else if ( hasFeature ( features, "large" ) ) {
+                } else if (hasFeature (features, "large")) {
                     forms = romanLargeForms;
                     maxNumber = 199999;
                 } else {
                     forms = romanStandardForms;
                     maxNumber = 4999;
                 }
-                if ( number > maxNumber ) {
+                if (number > maxNumber) {
                     return null;
                 } else {
-                    while ( number > 0 ) {
-                        for ( int i = 0, n = romanMapping.length; i < n; i++ ) {
+                    while (number > 0) {
+                        for (int i = 0, n = romanMapping.length; i < n; i++) {
                             int d = romanMapping [ i ];
-                            if ( ( number >= d ) && ( forms [ i ] != null ) ) {
-                                appendScalars ( sl, UTF32.toUTF32 ( forms [ i ], 0, true ) );
+                            if ((number >= d) && (forms [ i ] != null)) {
+                                appendScalars (sl, UTF32.toUTF32 (forms [ i ], 0, true));
                                 number = number - d;
                                 break;
                             }
                         }
                     }
-                    if ( one == (int) 'I' ) {
-                        return toUpperCase ( sl.toArray ( new Integer [ sl.size() ] ) );
-                    } else if ( one == (int) 'i' ) {
-                        return toLowerCase ( sl.toArray ( new Integer [ sl.size() ] ) );
+                    if (one == (int) 'I') {
+                        return toUpperCase (sl.toArray (new Integer [ sl.size() ]));
+                    } else if (one == (int) 'i') {
+                        return toLowerCase (sl.toArray (new Integer [ sl.size() ]));
                     } else {
                         return null;
                     }
@@ -1196,7 +1196,7 @@ public class NumberConverter {
      * Isopsephry (Greek) Numerals
      */
     private static class IsopsephryNumeralsFormatter implements SpecialNumberFormatter {
-        public Integer[] format ( long number, int one, int letterValue, String features, String language, String country ) {
+        public Integer[] format (long number, int one, int letterValue, String features, String language, String country) {
             return null;
         }
     }
@@ -1237,15 +1237,15 @@ public class NumberConverter {
         0x05E5, // FINAL TSADHI
     };
     private class GematriaNumeralsFormatter implements SpecialNumberFormatter {
-        public Integer[] format ( long number, int one, int letterValue, String features, String language, String country ) {
-            if ( one == 0x05D0 ) {
-                if ( letterValue == LETTER_VALUE_ALPHABETIC ) {
-                    return formatNumberAsSequence ( number, one, hebrewGematriaAlphabeticMap.length, hebrewGematriaAlphabeticMap );
-                } else if ( letterValue == LETTER_VALUE_TRADITIONAL ) {
-                    if ( ( number == 0 ) || ( number > 1999 ) ) {
+        public Integer[] format (long number, int one, int letterValue, String features, String language, String country) {
+            if (one == 0x05D0) {
+                if (letterValue == LETTER_VALUE_ALPHABETIC) {
+                    return formatNumberAsSequence (number, one, hebrewGematriaAlphabeticMap.length, hebrewGematriaAlphabeticMap);
+                } else if (letterValue == LETTER_VALUE_TRADITIONAL) {
+                    if ((number == 0) || (number > 1999)) {
                         return null;
                     } else {
-                        return formatAsGematriaNumber ( number, features, language, country );
+                        return formatAsGematriaNumber (number, features, language, country);
                     }
                 } else {
                     return null;
@@ -1254,7 +1254,7 @@ public class NumberConverter {
                 return null;
             }
         }
-        private Integer[] formatAsGematriaNumber ( long number, String features, String language, String country ) {
+        private Integer[] formatAsGematriaNumber (long number, String features, String language, String country) {
             List<Integer> sl = new ArrayList<Integer>();
             assert hebrewGematriaAlphabeticMap.length == 27;
             assert hebrewGematriaAlphabeticMap[0] == 0x05D0;  // ALEF
@@ -1262,48 +1262,48 @@ public class NumberConverter {
             assert number != 0;
             assert number < 2000;
             int[] map = hebrewGematriaAlphabeticMap;
-            int thousands = (int) ( ( number / 1000 ) % 10 );
-            int hundreds = (int) ( ( number / 100 ) % 10 );
-            int tens = (int) ( ( number / 10 ) % 10 );
-            int ones = (int) ( ( number / 1 ) % 10 );
-            if ( thousands > 0 ) {
-                sl.add ( map [ 0 + ( thousands - 1 ) ] );
-                sl.add ( 0x05F3 );
+            int thousands = (int) ((number / 1000) % 10);
+            int hundreds = (int) ((number / 100) % 10);
+            int tens = (int) ((number / 10) % 10);
+            int ones = (int) ((number / 1) % 10);
+            if (thousands > 0) {
+                sl.add (map [ 0 + (thousands - 1) ]);
+                sl.add (0x05F3);
             }
-            if ( hundreds > 0 ) {
+            if (hundreds > 0) {
                 assert hundreds < 10;
-                if ( hundreds < 5 ) {
-                    sl.add ( map [ 18 + ( hundreds - 1 ) ] );
-                } else if ( hundreds < 9 ) {
-                    sl.add ( map [ 18 + ( 4 - 1 ) ] );
-                    sl.add ( 0x05F4 );
-                    sl.add ( map [ 18 + ( hundreds - 5 ) ] );
-                } else if ( hundreds == 9 ) {
-                    sl.add ( map [ 18 + ( 4 - 1 ) ] );
-                    sl.add ( map [ 18 + ( 4 - 1 ) ] );
-                    sl.add ( 0x05F4 );
-                    sl.add ( map [ 18 + ( hundreds - 9 ) ] );
+                if (hundreds < 5) {
+                    sl.add (map [ 18 + (hundreds - 1) ]);
+                } else if (hundreds < 9) {
+                    sl.add (map [ 18 + (4 - 1) ]);
+                    sl.add (0x05F4);
+                    sl.add (map [ 18 + (hundreds - 5) ]);
+                } else if (hundreds == 9) {
+                    sl.add (map [ 18 + (4 - 1) ]);
+                    sl.add (map [ 18 + (4 - 1) ]);
+                    sl.add (0x05F4);
+                    sl.add (map [ 18 + (hundreds - 9) ]);
                 }
             }
-            if ( number == 15 ) {
-                sl.add ( map [ 9 - 1] );
-                sl.add ( 0x05F4 );
-                sl.add ( map [ 6 - 1] );
-            } else if ( number == 16 ) {
-                sl.add ( map [ 9 - 1 ] );
-                sl.add ( 0x05F4 );
-                sl.add ( map [ 7 - 1 ] );
+            if (number == 15) {
+                sl.add (map [ 9 - 1]);
+                sl.add (0x05F4);
+                sl.add (map [ 6 - 1]);
+            } else if (number == 16) {
+                sl.add (map [ 9 - 1 ]);
+                sl.add (0x05F4);
+                sl.add (map [ 7 - 1 ]);
             } else {
-                if ( tens > 0 ) {
+                if (tens > 0) {
                     assert tens < 10;
-                    sl.add ( map [ 9 + ( tens - 1 ) ] );
+                    sl.add (map [ 9 + (tens - 1) ]);
                 }
-                if ( ones > 0 ) {
+                if (ones > 0) {
                     assert ones < 10;
-                    sl.add ( map [ 0 + ( ones - 1 ) ] );
+                    sl.add (map [ 0 + (ones - 1) ]);
                 }
             }
-            return sl.toArray ( new Integer [ sl.size() ] );
+            return sl.toArray (new Integer [ sl.size() ]);
         }
     }
 
@@ -1375,28 +1375,28 @@ public class NumberConverter {
         0x0649, // ALEF MAQSURA
     };
     private class ArabicNumeralsFormatter implements SpecialNumberFormatter {
-        public Integer[] format ( long number, int one, int letterValue, String features, String language, String country ) {
-            if ( one == 0x0627 ) {
+        public Integer[] format (long number, int one, int letterValue, String features, String language, String country) {
+            if (one == 0x0627) {
                 int[] map;
-                if ( letterValue == LETTER_VALUE_TRADITIONAL ) {
+                if (letterValue == LETTER_VALUE_TRADITIONAL) {
                     map = arabicAbjadiAlphabeticMap;
-                } else if ( letterValue == LETTER_VALUE_ALPHABETIC ) {
+                } else if (letterValue == LETTER_VALUE_ALPHABETIC) {
                     map = arabicHijaiAlphabeticMap;
                 } else {
                     map = arabicAbjadiAlphabeticMap;
                 }
-                return formatNumberAsSequence ( number, one, map.length, map );
-            } else if ( one == 0x0623 ) {
-                if ( ( number == 0 ) || ( number > 1999 ) ) {
+                return formatNumberAsSequence (number, one, map.length, map);
+            } else if (one == 0x0623) {
+                if ((number == 0) || (number > 1999)) {
                     return null;
                 } else {
-                    return formatAsAbjadiNumber ( number, features, language, country );
+                    return formatAsAbjadiNumber (number, features, language, country);
                 }
             } else {
                 return null;
             }
         }
-        private Integer[] formatAsAbjadiNumber ( long number, String features, String language, String country ) {
+        private Integer[] formatAsAbjadiNumber (long number, String features, String language, String country) {
             List<Integer> sl = new ArrayList<Integer>();
             assert arabicAbjadiAlphabeticMap.length == 28;
             assert arabicAbjadiAlphabeticMap[0] == 0x0623;  // ALEF WITH HAMZA ABOVE
@@ -1404,27 +1404,27 @@ public class NumberConverter {
             assert number != 0;
             assert number < 2000;
             int[] map = arabicAbjadiAlphabeticMap;
-            int thousands = (int) ( ( number / 1000 ) % 10 );
-            int hundreds = (int) ( ( number / 100 ) % 10 );
-            int tens = (int) ( ( number / 10 ) % 10 );
-            int ones = (int) ( ( number / 1 ) % 10 );
-            if ( thousands > 0 ) {
+            int thousands = (int) ((number / 1000) % 10);
+            int hundreds = (int) ((number / 100) % 10);
+            int tens = (int) ((number / 10) % 10);
+            int ones = (int) ((number / 1) % 10);
+            if (thousands > 0) {
                 assert thousands < 2;
-                sl.add ( map [ 27 + ( thousands - 1 ) ] );
+                sl.add (map [ 27 + (thousands - 1) ]);
             }
-            if ( hundreds > 0 ) {
+            if (hundreds > 0) {
                 assert thousands < 10;
-                sl.add ( map [ 18 + ( hundreds - 1 ) ] );
+                sl.add (map [ 18 + (hundreds - 1) ]);
             }
-            if ( tens > 0 ) {
+            if (tens > 0) {
                 assert tens < 10;
-                sl.add ( map [ 9 + ( tens - 1 ) ] );
+                sl.add (map [ 9 + (tens - 1) ]);
             }
-            if ( ones > 0 ) {
+            if (ones > 0) {
                 assert ones < 10;
-                sl.add ( map [ 0 + ( ones - 1 ) ] );
+                sl.add (map [ 0 + (ones - 1) ]);
             }
-            return sl.toArray ( new Integer [ sl.size() ] );
+            return sl.toArray (new Integer [ sl.size() ]);
         }
     }
 
@@ -1532,11 +1532,11 @@ public class NumberConverter {
         0x30F3, // N
     };
     private class KanaNumeralsFormatter implements SpecialNumberFormatter {
-        public Integer[] format ( long number, int one, int letterValue, String features, String language, String country ) {
-            if ( ( one == 0x3042 ) && ( letterValue == LETTER_VALUE_ALPHABETIC ) ) {
-                return formatNumberAsSequence ( number, one, hiraganaGojuonAlphabeticMap.length, hiraganaGojuonAlphabeticMap );
-            } else if ( ( one == 0x30A2 ) && ( letterValue == LETTER_VALUE_ALPHABETIC ) ) {
-                return formatNumberAsSequence ( number, one, katakanaGojuonAlphabeticMap.length, katakanaGojuonAlphabeticMap );
+        public Integer[] format (long number, int one, int letterValue, String features, String language, String country) {
+            if ((one == 0x3042) && (letterValue == LETTER_VALUE_ALPHABETIC)) {
+                return formatNumberAsSequence (number, one, hiraganaGojuonAlphabeticMap.length, hiraganaGojuonAlphabeticMap);
+            } else if ((one == 0x30A2) && (letterValue == LETTER_VALUE_ALPHABETIC)) {
+                return formatNumberAsSequence (number, one, katakanaGojuonAlphabeticMap.length, katakanaGojuonAlphabeticMap);
             } else {
                 return null;
             }
@@ -1595,9 +1595,9 @@ public class NumberConverter {
         0x0E2E,
     };
     private class ThaiNumeralsFormatter implements SpecialNumberFormatter {
-        public Integer[] format ( long number, int one, int letterValue, String features, String language, String country ) {
-            if ( ( one == 0x0E01 ) && ( letterValue == LETTER_VALUE_ALPHABETIC ) ) {
-                return formatNumberAsSequence ( number, one, thaiAlphabeticMap.length, thaiAlphabeticMap );
+        public Integer[] format (long number, int one, int letterValue, String features, String language, String country) {
+            if ((one == 0x0E01) && (letterValue == LETTER_VALUE_ALPHABETIC)) {
+                return formatNumberAsSequence (number, one, thaiAlphabeticMap.length, thaiAlphabeticMap);
             } else {
                 return null;
             }

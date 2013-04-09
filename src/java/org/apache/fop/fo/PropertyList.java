@@ -302,7 +302,7 @@ public abstract class PropertyList {
             propID = -1;
                 break;
             }
-        } catch ( PropertyException e ) {
+        } catch (PropertyException e) {
             propID = -1;
         }
         return propID;
@@ -311,7 +311,7 @@ public abstract class PropertyList {
     private String addAttributeToList(Attributes attributes,
                                     String attributeName) throws ValidationException {
         String attributeValue = attributes.getValue(attributeName);
-        if ( attributeValue != null ) {
+        if (attributeValue != null) {
             convertAttributeToProperty(attributes, attributeName, attributeValue);
         }
         return attributeValue;

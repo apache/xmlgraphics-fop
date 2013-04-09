@@ -46,7 +46,7 @@ public class RtfParagraphBreak extends RtfElement {
      * @throws IOException for I/O problems
      */
     protected void writeRtfContent() throws IOException {
-        if (controlWord != null ) {
+        if (controlWord != null) {
             writeControlWord(controlWord);
         }
     }
@@ -57,7 +57,7 @@ public class RtfParagraphBreak extends RtfElement {
      * @return boolean
      */
     public boolean canHide() {
-        return this.controlWord.equals ( DEFAULT_PARAGRAPH );
+        return this.controlWord.equals (DEFAULT_PARAGRAPH);
     }
 
     /**

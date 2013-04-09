@@ -150,7 +150,7 @@ public class Wrapper extends FObjMixed implements CommonAccessibilityHolder {
     }
 
     @Override
-    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+    public boolean isDelimitedTextRangeBoundary (int boundary) {
         return false;
     }
 

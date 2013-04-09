@@ -153,7 +153,7 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      * {@inheritDoc}
      */
     public char mapChar(char c) {
-        if ( !isMetricsLoaded ) {
+        if (!isMetricsLoaded) {
             load(true);
         }
         return realFont.mapChar(c);
@@ -171,7 +171,7 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      * {@inheritDoc}
      */
     public boolean hasChar(char c) {
-        if ( !isMetricsLoaded ) {
+        if (!isMetricsLoaded) {
             load(true);
         }
         return realFont.hasChar(c);
@@ -254,7 +254,7 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      * {@inheritDoc}
      */
     public int getWidth(int i, int size) {
-        if ( !isMetricsLoaded ) {
+        if (!isMetricsLoaded) {
             load(true);
         }
         return realFont.getWidth(i, size);
@@ -366,7 +366,7 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      */
     public boolean performsSubstitution() {
         load(true);
-        if ( realFontDescriptor instanceof Substitutable ) {
+        if (realFontDescriptor instanceof Substitutable) {
             return ((Substitutable)realFontDescriptor).performsSubstitution();
         } else {
             return false;
@@ -376,9 +376,9 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     /**
      * {@inheritDoc}
      */
-    public CharSequence performSubstitution ( CharSequence cs, String script, String language ) {
+    public CharSequence performSubstitution (CharSequence cs, String script, String language) {
         load(true);
-        if ( realFontDescriptor instanceof Substitutable ) {
+        if (realFontDescriptor instanceof Substitutable) {
             return ((Substitutable)realFontDescriptor).performSubstitution(cs, script, language);
         } else {
             return cs;
@@ -389,11 +389,11 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      * {@inheritDoc}
      */
     public CharSequence reorderCombiningMarks
-        ( CharSequence cs, int[][] gpa, String script, String language ) {
-        if ( !isMetricsLoaded ) {
+        (CharSequence cs, int[][] gpa, String script, String language) {
+        if (!isMetricsLoaded) {
             load(true);
         }
-        if ( realFontDescriptor instanceof Substitutable ) {
+        if (realFontDescriptor instanceof Substitutable) {
             return ((Substitutable)realFontDescriptor)
                 .reorderCombiningMarks(cs, gpa, script, language);
         } else {
@@ -405,10 +405,10 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      * {@inheritDoc}
      */
     public boolean performsPositioning() {
-        if ( !isMetricsLoaded ) {
+        if (!isMetricsLoaded) {
             load(true);
         }
-        if ( realFontDescriptor instanceof Positionable ) {
+        if (realFontDescriptor instanceof Positionable) {
             return ((Positionable)realFontDescriptor).performsPositioning();
         } else {
             return false;
@@ -419,11 +419,11 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      * {@inheritDoc}
      */
     public int[][]
-        performPositioning ( CharSequence cs, String script, String language, int fontSize ) {
-        if ( !isMetricsLoaded ) {
+        performPositioning (CharSequence cs, String script, String language, int fontSize) {
+        if (!isMetricsLoaded) {
             load(true);
         }
-        if ( realFontDescriptor instanceof Positionable ) {
+        if (realFontDescriptor instanceof Positionable) {
             return ((Positionable)realFontDescriptor)
                 .performPositioning(cs, script, language, fontSize);
         } else {
@@ -435,11 +435,11 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      * {@inheritDoc}
      */
     public int[][]
-        performPositioning ( CharSequence cs, String script, String language ) {
-        if ( !isMetricsLoaded ) {
+        performPositioning (CharSequence cs, String script, String language) {
+        if (!isMetricsLoaded) {
             load(true);
         }
-        if ( realFontDescriptor instanceof Positionable ) {
+        if (realFontDescriptor instanceof Positionable) {
             return ((Positionable)realFontDescriptor)
                 .performPositioning(cs, script, language);
         } else {

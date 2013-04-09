@@ -73,12 +73,12 @@ public abstract class GlyphSubtable implements Comparable {
      * @param format subtable format
      * @param mapping subtable mapping table
      */
-    protected GlyphSubtable ( String lookupId, int sequence, int flags, int format, GlyphMappingTable mapping )
+    protected GlyphSubtable (String lookupId, int sequence, int flags, int format, GlyphMappingTable mapping)
     {
-        if ( ( lookupId == null ) || ( lookupId.length() == 0 ) ) {
-            throw new AdvancedTypographicTableFormatException ( "invalid lookup identifier, must be non-empty string" );
-        } else if ( mapping == null ) {
-            throw new AdvancedTypographicTableFormatException ( "invalid mapping table, must not be null" );
+        if ((lookupId == null) || (lookupId.length() == 0)) {
+            throw new AdvancedTypographicTableFormatException ("invalid lookup identifier, must be non-empty string");
+        } else if (mapping == null) {
+            throw new AdvancedTypographicTableFormatException ("invalid mapping table, must not be null");
         } else {
             this.lookupId = lookupId;
             this.sequence = sequence;
@@ -109,7 +109,7 @@ public abstract class GlyphSubtable implements Comparable {
      * @return true if specified subtable is compatible with this glyph subtable, where by compatible
      * is meant that they share the same lookup type
      */
-    public abstract boolean isCompatible ( GlyphSubtable subtable );
+    public abstract boolean isCompatible (GlyphSubtable subtable);
 
     /** @return true if subtable uses reverse scanning of glyph sequence, meaning from the last glyph
      * in a glyph sequence to the first glyph
@@ -134,7 +134,7 @@ public abstract class GlyphSubtable implements Comparable {
     /** @return this subtable's governing glyph definition table or null if none available */
     public GlyphDefinitionTable getGDEF() {
         GlyphTable gt = getTable();
-        if ( gt != null ) {
+        if (gt != null) {
             return gt.getGlyphDefinitions();
         } else {
             return null;
@@ -143,7 +143,7 @@ public abstract class GlyphSubtable implements Comparable {
 
     /** @return this subtable's coverage mapping or null if mapping is not a coverage mapping */
     public GlyphCoverageMapping getCoverage() {
-        if ( mapping instanceof GlyphCoverageMapping ) {
+        if (mapping instanceof GlyphCoverageMapping) {
             return (GlyphCoverageMapping) mapping;
         } else {
             return null;
@@ -152,7 +152,7 @@ public abstract class GlyphSubtable implements Comparable {
 
     /** @return this subtable's class mapping or null if mapping is not a class mapping */
     public GlyphClassMapping getClasses() {
-        if ( mapping instanceof GlyphClassMapping ) {
+        if (mapping instanceof GlyphClassMapping) {
             return (GlyphClassMapping) mapping;
         } else {
             return null;
@@ -165,7 +165,7 @@ public abstract class GlyphSubtable implements Comparable {
     /** @return this subtable's parent table (or null if undefined) */
     public synchronized GlyphTable getTable() {
         WeakReference r = this.table;
-        return ( r != null ) ? (GlyphTable) r.get() : null;
+        return (r != null) ? (GlyphTable) r.get() : null;
     }
 
     /**
@@ -175,17 +175,17 @@ public abstract class GlyphSubtable implements Comparable {
      * @param table the table or null
      * @throws IllegalStateException if table is already set to non-null
      */
-    public synchronized void setTable ( GlyphTable table ) throws IllegalStateException {
+    public synchronized void setTable (GlyphTable table) throws IllegalStateException {
         WeakReference r = this.table;
-        if ( table == null ) {
+        if (table == null) {
             this.table = null;
-            if ( r != null ) {
+            if (r != null) {
                 r.clear();
             }
-        } else if ( r == null ) {
-            this.table = new WeakReference ( table );
+        } else if (r == null) {
+            this.table = new WeakReference (table);
         } else {
-            throw new IllegalStateException ( "table already set" );
+            throw new IllegalStateException ("table already set");
         }
     }
 
@@ -193,7 +193,7 @@ public abstract class GlyphSubtable implements Comparable {
      * Resolve references to lookup tables, e.g., in RuleLookup, to the lookup tables themselves.
      * @param lookupTables map from lookup table identifers, e.g. "lu4", to lookup tables
      */
-    public void resolveLookupReferences ( Map/*<String,GlyphTable.LookupTable>*/ lookupTables ) {
+    public void resolveLookupReferences (Map/*<String,GlyphTable.LookupTable>*/ lookupTables) {
     }
 
     /**
@@ -201,9 +201,9 @@ public abstract class GlyphSubtable implements Comparable {
      * @param gid glyph id
      * @return the corresponding coverage index of the specified glyph id
      */
-    public int getCoverageIndex ( int gid ) {
-        if ( mapping instanceof GlyphCoverageMapping ) {
-            return ( (GlyphCoverageMapping) mapping ) .getCoverageIndex ( gid );
+    public int getCoverageIndex (int gid) {
+        if (mapping instanceof GlyphCoverageMapping) {
+            return ((GlyphCoverageMapping) mapping) .getCoverageIndex (gid);
         } else {
             return -1;
         }
@@ -214,8 +214,8 @@ public abstract class GlyphSubtable implements Comparable {
      * @return the corresponding coverage index of the specified glyph id
      */
     public int getCoverageSize() {
-        if ( mapping instanceof GlyphCoverageMapping ) {
-            return ( (GlyphCoverageMapping) mapping ) .getCoverageSize();
+        if (mapping instanceof GlyphCoverageMapping) {
+            return ((GlyphCoverageMapping) mapping) .getCoverageSize();
         } else {
             return 0;
         }
@@ -224,7 +224,7 @@ public abstract class GlyphSubtable implements Comparable {
     /** {@inheritDoc} */
     public int hashCode() {
         int hc = sequence;
-        hc = ( hc * 3 ) + ( lookupId.hashCode() ^ hc );
+        hc = (hc * 3) + (lookupId.hashCode() ^ hc);
         return hc;
     }
 
@@ -233,10 +233,10 @@ public abstract class GlyphSubtable implements Comparable {
      * @return true if the lookup identifier and the sequence number of the specified subtable is the same
      * as the lookup identifier and sequence number of this subtable
      */
-    public boolean equals ( Object o ) {
-        if ( o instanceof GlyphSubtable ) {
+    public boolean equals (Object o) {
+        if (o instanceof GlyphSubtable) {
             GlyphSubtable st = (GlyphSubtable) o;
-            return lookupId.equals ( st.lookupId ) && ( sequence == st.sequence );
+            return lookupId.equals (st.lookupId) && (sequence == st.sequence);
         } else {
             return false;
         }
@@ -247,14 +247,14 @@ public abstract class GlyphSubtable implements Comparable {
      * @return the result of comparing the lookup identifier and the sequence number of the specified subtable with
      * the lookup identifier and sequence number of this subtable
      */
-    public int compareTo ( Object o ) {
+    public int compareTo (Object o) {
         int d;
-        if ( o instanceof GlyphSubtable ) {
+        if (o instanceof GlyphSubtable) {
             GlyphSubtable st = (GlyphSubtable) o;
-            if ( ( d = lookupId.compareTo ( st.lookupId ) ) == 0 ) {
-                if ( sequence < st.sequence ) {
+            if ((d = lookupId.compareTo (st.lookupId)) == 0) {
+                if (sequence < st.sequence) {
                     d = -1;
-                } else if ( sequence > st.sequence ) {
+                } else if (sequence > st.sequence) {
                     d = 1;
                 }
             }
@@ -269,12 +269,12 @@ public abstract class GlyphSubtable implements Comparable {
      * @param subtables array of glyph subtables
      * @return true if any of the specified subtables uses reverse scanning.
      */
-    public static boolean usesReverseScan ( GlyphSubtable[] subtables ) {
-        if ( ( subtables == null ) || ( subtables.length == 0 ) ) {
+    public static boolean usesReverseScan (GlyphSubtable[] subtables) {
+        if ((subtables == null) || (subtables.length == 0)) {
             return false;
         } else {
-            for ( int i = 0, n = subtables.length; i < n; i++ ) {
-                if ( subtables[i].usesReverseScan() ) {
+            for (int i = 0, n = subtables.length; i < n; i++) {
+                if (subtables[i].usesReverseScan()) {
                     return true;
                 }
             }
@@ -288,27 +288,27 @@ public abstract class GlyphSubtable implements Comparable {
      * @return consistent flags
      * @throws IllegalStateException if inconsistent flags
      */
-    public static int getFlags ( GlyphSubtable[] subtables ) throws IllegalStateException {
-        if ( ( subtables == null ) || ( subtables.length == 0 ) ) {
+    public static int getFlags (GlyphSubtable[] subtables) throws IllegalStateException {
+        if ((subtables == null) || (subtables.length == 0)) {
             return 0;
         } else {
             int flags = 0;
             // obtain first non-zero value of flags in array of subtables
-            for ( int i = 0, n = subtables.length; i < n; i++ ) {
+            for (int i = 0, n = subtables.length; i < n; i++) {
                 int f = subtables[i].getFlags();
-                if ( flags == 0 ) {
+                if (flags == 0) {
                     flags = f;
                     break;
                 }
             }
             // enforce flag consistency
-            for ( int i = 0, n = subtables.length; i < n; i++ ) {
+            for (int i = 0, n = subtables.length; i < n; i++) {
                 int f = subtables[i].getFlags();
-                if ( f != flags ) {
-                    throw new IllegalStateException ( "inconsistent lookup flags " + f + ", expected " + flags );
+                if (f != flags) {
+                    throw new IllegalStateException ("inconsistent lookup flags " + f + ", expected " + flags);
                 }
             }
-            return flags | ( usesReverseScan ( subtables ) ? LF_INTERNAL_USE_REVERSE_SCAN : 0 );
+            return flags | (usesReverseScan (subtables) ? LF_INTERNAL_USE_REVERSE_SCAN : 0);
         }
     }
 

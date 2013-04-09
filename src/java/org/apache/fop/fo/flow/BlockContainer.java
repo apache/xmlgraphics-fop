@@ -98,7 +98,7 @@ public class BlockContainer extends FObj implements BreakPropertySet, WritingMod
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         span = pList.get(PR_SPAN).getEnum();
         writingModeTraits = new WritingModeTraits
-            ( WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()) );
+            (WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()));
         disableColumnBalancing = pList.get(PR_X_DISABLE_COLUMN_BALANCING).getEnum();
     }
 

@@ -38,8 +38,8 @@ public abstract class GlyphDefinitionSubtable extends GlyphSubtable implements G
      * @param format subtable format
      * @param mapping subtable coverage table
      */
-    protected GlyphDefinitionSubtable ( String id, int sequence, int flags, int format, GlyphMappingTable mapping ) {
-        super ( id, sequence, flags, format, mapping );
+    protected GlyphDefinitionSubtable (String id, int sequence, int flags, int format, GlyphMappingTable mapping) {
+        super (id, sequence, flags, format, mapping);
     }
 
     /** {@inheritDoc} */
@@ -49,7 +49,7 @@ public abstract class GlyphDefinitionSubtable extends GlyphSubtable implements G
 
     /** {@inheritDoc} */
     public String getTypeName() {
-        return GlyphDefinitionTable.getLookupTypeName ( getType() );
+        return GlyphDefinitionTable.getLookupTypeName (getType());
     }
 
     /** {@inheritDoc} */
@@ -58,16 +58,16 @@ public abstract class GlyphDefinitionSubtable extends GlyphSubtable implements G
     }
 
     /** {@inheritDoc} */
-    public boolean hasDefinition ( int gi ) {
+    public boolean hasDefinition (int gi) {
         GlyphCoverageMapping cvm;
-        if ( ( cvm = getCoverage() ) != null ) {
-            if ( cvm.getCoverageIndex ( gi ) >= 0 ) {
+        if ((cvm = getCoverage()) != null) {
+            if (cvm.getCoverageIndex (gi) >= 0) {
                 return true;
             }
         }
         GlyphClassMapping clm;
-        if ( ( clm = getClasses() ) != null ) {
-            if ( clm.getClassIndex ( gi, 0 ) >= 0 ) {
+        if ((clm = getClasses()) != null) {
+            if (clm.getClassIndex (gi, 0) >= 0) {
                 return true;
             }
         }

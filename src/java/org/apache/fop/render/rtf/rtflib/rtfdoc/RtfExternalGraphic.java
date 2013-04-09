@@ -475,12 +475,12 @@ public class RtfExternalGraphic extends RtfElement {
             int i = 0;
 
             i = ImageUtil.getIntFromByteArray(imagedata, 151, 4, false);
-            if (i != 0 ) {
+            if (i != 0) {
                 width = i;
             }
 
             i = ImageUtil.getIntFromByteArray(imagedata, 155, 4, false);
-            if (i != 0 ) {
+            if (i != 0) {
                 height = i;
             }
 

@@ -234,7 +234,7 @@ public class Factory {
     public ActiveEnvironmentGroup createActiveEnvironmentGroup(
             int width, int height, int widthRes, int heightRes) {
         String name = ACTIVE_ENVIRONMENT_GROUP_NAME_PREFIX
-        + StringUtils.lpad(String.valueOf(++activeEnvironmentGroupCount ), '0', 5);
+        + StringUtils.lpad(String.valueOf(++activeEnvironmentGroupCount), '0', 5);
         return new ActiveEnvironmentGroup(this, name, width, height, widthRes, heightRes);
     }
 

@@ -57,7 +57,7 @@ public class RegionBefore extends RegionBA {
         PercentBaseContext neighbourContext;
         Rectangle vpRect;
         // [TBD] WRITING MODE ALERT
-        switch ( getWritingMode().getEnumValue() ) {
+        switch (getWritingMode().getEnumValue()) {
         case Constants.EN_TB_LR:
         case Constants.EN_TB_RL:
             neighbourContext = pageHeightContext;

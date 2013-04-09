@@ -420,7 +420,7 @@ public abstract class AbstractBreaker {
                 alg.setConstantLineWidth(flowBPD);
                 int optimalPageCount = alg.findBreakingPoints(effectiveList, 1, true,
                         BreakingAlgorithm.ALL_BREAKS);
-                if ( Math.abs ( alg.getIPDdifference() ) > 1 ) {
+                if (Math.abs (alg.getIPDdifference()) > 1) {
                     addAreas(alg, optimalPageCount, blockList, effectiveList);
                     // *** redo Phase 1 ***
                     log.trace("IPD changes after page " + optimalPageCount);
@@ -911,7 +911,7 @@ public abstract class AbstractBreaker {
             KnuthElement firstElement;
             while (sequenceIterator.hasNext()) {
                 firstElement = sequenceIterator.next();
-                if ( !firstElement.isBox() ) {
+                if (!firstElement.isBox()) {
                     log.debug("PLM> ignoring glue or penalty element "
                               + "at the beginning of the sequence");
                     if (firstElement.isGlue()) {

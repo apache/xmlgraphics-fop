@@ -131,8 +131,8 @@ public class MainReference extends Area {
      * @param wmtg a WM traits getter
      */
     public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
-        for ( Span s : getSpans() ) {
-            s.setWritingModeTraits ( wmtg );
+        for (Span s : getSpans()) {
+            s.setWritingModeTraits (wmtg);
         }
     }
 

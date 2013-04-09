@@ -77,7 +77,7 @@ public class ColumnNumberManager {
         for (int i = 0; i < pendingSpans.size(); i++) {
             pSpan = (PendingSpan) pendingSpans.get(i);
             if (pSpan != null) {
-                if ( pSpan.decrRowsLeft() == 0 ) {
+                if (pSpan.decrRowsLeft() == 0) {
                     pendingSpans.set(i, null);
                 } else {
                     usedColumnIndices.set(i);

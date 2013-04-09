@@ -53,7 +53,7 @@ public class RegionAfter extends RegionBA {
         Rectangle vpRect;
 
         // [TBD] WRITING MODE ALERT
-        switch ( getWritingMode().getEnumValue() ) {
+        switch (getWritingMode().getEnumValue()) {
         case Constants.EN_TB_LR:
         case Constants.EN_TB_RL:
             neighbourContext = pageHeightContext;

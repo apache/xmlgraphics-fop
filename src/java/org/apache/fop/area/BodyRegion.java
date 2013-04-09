@@ -146,8 +146,8 @@ public class BodyRegion extends RegionReference {
      * @param wmtg a WM traits getter
      */
     public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
-        if ( getMainReference() != null ) {
-            getMainReference().setWritingModeTraits ( wmtg );
+        if (getMainReference() != null) {
+            getMainReference().setWritingModeTraits (wmtg);
         }
     }
 

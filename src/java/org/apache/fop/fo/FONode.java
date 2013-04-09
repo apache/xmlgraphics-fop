@@ -438,8 +438,8 @@ public abstract class FONode implements Cloneable {
      * with the unabbreviated URI otherwise.
      */
     public static String getNodeString(String namespaceURI, String localName) {
-        String prefix = getNodePrefix ( namespaceURI );
-        if ( prefix != null ) {
+        String prefix = getNodePrefix (namespaceURI);
+        if (prefix != null) {
             return prefix + ":" + localName;
         } else {
             return "(Namespace URI: \"" + namespaceURI + "\", "
@@ -552,9 +552,9 @@ public abstract class FONode implements Cloneable {
     protected void invalidChildError(Locator loc, String parentName, String nsURI, String lName,
                 String ruleViolated)
                 throws ValidationException {
-        String prefix = getNodePrefix ( nsURI );
+        String prefix = getNodePrefix (nsURI);
         QName qn; // qualified name of offending node
-        if ( prefix != null ) {
+        if (prefix != null) {
             qn = new QName(nsURI, prefix, lName);
         } else {
             qn = new QName(nsURI, lName);
@@ -926,7 +926,7 @@ public abstract class FONode implements Cloneable {
      * @return true if indicated boundary (or boundaries) constitute a delimited text range
      * boundary.
      */
-    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+    public boolean isDelimitedTextRangeBoundary (int boundary) {
         return true;
     }
 
@@ -936,23 +936,23 @@ public abstract class FONode implements Cloneable {
      * @param ranges a stack of delimited text ranges
      * @return the (possibly) updated stack of delimited text ranges
      */
-    public Stack collectDelimitedTextRanges ( Stack ranges ) {
+    public Stack collectDelimitedTextRanges (Stack ranges) {
         // if boundary before, then push new range
-        if ( isRangeBoundaryBefore() ) {
-            maybeNewRange ( ranges );
+        if (isRangeBoundaryBefore()) {
+            maybeNewRange (ranges);
         }
         // get current range, if one exists
         DelimitedTextRange currentRange;
-        if ( ranges.size() > 0 ) {
+        if (ranges.size() > 0) {
             currentRange = (DelimitedTextRange) ranges.peek();
         } else {
             currentRange = null;
         }
         // proceses this node
-        ranges = collectDelimitedTextRanges ( ranges, currentRange );
+        ranges = collectDelimitedTextRanges (ranges, currentRange);
         // if boundary after, then push new range
-        if ( isRangeBoundaryAfter() ) {
-            maybeNewRange ( ranges );
+        if (isRangeBoundaryAfter()) {
+            maybeNewRange (ranges);
         }
         return ranges;
     }
@@ -965,9 +965,9 @@ public abstract class FONode implements Cloneable {
      * @param currentRange the current range or null (if none)
      * @return the (possibly) updated stack of delimited text ranges
      */
-    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
-        for ( Iterator it = getChildNodes(); ( it != null ) && it.hasNext();) {
-            ranges = ( (FONode) it.next() ).collectDelimitedTextRanges ( ranges );
+    protected Stack collectDelimitedTextRanges (Stack ranges, DelimitedTextRange currentRange) {
+        for (Iterator it = getChildNodes(); (it != null) && it.hasNext();) {
+            ranges = ((FONode) it.next()).collectDelimitedTextRanges (ranges);
         }
         return ranges;
     }
@@ -992,23 +992,23 @@ public abstract class FONode implements Cloneable {
      * @param ranges stack of delimited text ranges
      * @return new range (if constructed and pushed onto stack) or current range (if any) or null
      */
-    private DelimitedTextRange maybeNewRange ( Stack ranges ) {
+    private DelimitedTextRange maybeNewRange (Stack ranges) {
         DelimitedTextRange rCur = null; // current range (top of range stack)
         DelimitedTextRange rNew = null; // new range to be pushed onto range stack
-        if ( ranges.empty() ) {
-            if ( isBidiRangeBlockItem() ) {
+        if (ranges.empty()) {
+            if (isBidiRangeBlockItem()) {
                 rNew = new DelimitedTextRange(this);
             }
         } else {
             rCur = (DelimitedTextRange) ranges.peek();
-            if ( rCur != null ) {
-                if ( !rCur.isEmpty() || !isSelfOrDescendent ( rCur.getNode(), this ) ) {
+            if (rCur != null) {
+                if (!rCur.isEmpty() || !isSelfOrDescendent (rCur.getNode(), this)) {
                     rNew = new DelimitedTextRange(this);
                 }
             }
         }
-        if ( rNew != null ) {
-            ranges.push ( rNew );
+        if (rNew != null) {
+            ranges.push (rNew);
         } else {
             rNew = rCur;
         }
@@ -1016,19 +1016,19 @@ public abstract class FONode implements Cloneable {
     }
 
     private boolean isRangeBoundaryBefore() {
-        return isDelimitedTextRangeBoundary ( Constants.EN_BEFORE );
+        return isDelimitedTextRangeBoundary (Constants.EN_BEFORE);
     }
 
     private boolean isRangeBoundaryAfter() {
-        return isDelimitedTextRangeBoundary ( Constants.EN_AFTER );
+        return isDelimitedTextRangeBoundary (Constants.EN_AFTER);
     }
 
     /**
      * Determine if node N2 is the same or a descendent of node N1.
      */
-    private static boolean isSelfOrDescendent ( FONode n1, FONode n2 ) {
-        for ( FONode n = n2; n != null; n = n.getParent() ) {
-            if ( n == n1 ) {
+    private static boolean isSelfOrDescendent (FONode n1, FONode n2) {
+        for (FONode n = n2; n != null; n = n.getParent()) {
+            if (n == n1) {
                 return true;
             }
         }

@@ -1046,11 +1046,11 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         String s = word.getWord();
 
         int[][] dp = word.getGlyphPositionAdjustments();
-        if ( dp == null ) {
+        if (dp == null) {
             renderTextWithAdjustments(s, word.getLetterAdjustArray(), word.isReversed(),
                     font, (AbstractTextArea)word.getParentArea());
-        } else if ( IFUtil.isDPOnlyDX ( dp ) ) {
-            renderTextWithAdjustments(s, IFUtil.convertDPToDX ( dp ), word.isReversed(),
+        } else if (IFUtil.isDPOnlyDX (dp)) {
+            renderTextWithAdjustments(s, IFUtil.convertDPToDX (dp), word.isReversed(),
                     font, (AbstractTextArea)word.getParentArea());
         } else {
             renderTextWithAdjustments(s, dp, word.isReversed(),
@@ -1122,10 +1122,10 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                               int[][] dp, boolean reversed,
                               Font font, AbstractTextArea parentArea) {
         assert !textUtil.combined;
-        for ( int i = 0, n = s.length(); i < n; i++ ) {
-            textUtil.addChar ( s.charAt ( i ) );
-            if ( dp != null ) {
-                textUtil.adjust ( dp[i] );
+        for (int i = 0, n = s.length(); i < n; i++) {
+            textUtil.addChar (s.charAt (i));
+            if (dp != null) {
+                textUtil.adjust (dp[i]);
             }
         }
     }
@@ -1146,17 +1146,17 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         void adjust(int dx) {
             if (dx != 0) {
-                adjust ( new int[] {
+                adjust (new int[] {
                         dx,                         // xPlaAdjust
                         0,                          // yPlaAdjust
                         dx,                         // xAdvAdjust
                         0                           // yAdvAdjust
-                    } );
+                    });
             }
         }
 
         void adjust(int[] pa) {
-            if ( !IFUtil.isPAIdentity ( pa ) ) {
+            if (!IFUtil.isPAIdentity (pa)) {
                 int idx = text.length();
                 if (idx > dp.length - 1) {
                     int newSize = Math.max(dp.length, idx + 1) + INITIAL_BUFFER_SIZE;
@@ -1166,17 +1166,17 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                     // switch to new DP, leaving DP[dp.length]...DP[newDP.length-1] unpopulated
                     dp = newDP;
                 }
-                if ( dp[idx - 1] == null ) {
+                if (dp[idx - 1] == null) {
                     dp[idx - 1] = new int[4];
                 }
-                IFUtil.adjustPA ( dp[idx - 1], pa );
+                IFUtil.adjustPA (dp[idx - 1], pa);
             }
         }
 
         void reset() {
             if (text.length() > 0) {
                 text.setLength(0);
-                for ( int i = 0, n = dp.length; i < n; i++ ) {
+                for (int i = 0, n = dp.length; i < n; i++) {
                     dp[i] = null;
                 }
             }
@@ -1197,10 +1197,10 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 try {
                     if (combined) {
                         painter.drawText(startx, starty, 0, 0,
-                                         trimAdjustments ( dp, text.length() ), text.toString());
+                                         trimAdjustments (dp, text.length()), text.toString());
                     } else {
                         painter.drawText(startx, starty, tls, tws,
-                                         trimAdjustments ( dp, text.length() ), text.toString());
+                                         trimAdjustments (dp, text.length()), text.toString());
                     }
                 } catch (IFException e) {
                     handleIFException(e);
@@ -1219,23 +1219,23 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
          * no greater than text length, and the last entry has a non-zero
          * adjustment.
          */
-        private int[][] trimAdjustments ( int[][] dp, int textLength ) {
-            if ( dp != null ) {
+        private int[][] trimAdjustments (int[][] dp, int textLength) {
+            if (dp != null) {
                 int tl = textLength;
                 int pl = dp.length;
-                int i  = ( tl < pl ) ? tl : pl;
-                while ( i > 0 ) {
+                int i  = (tl < pl) ? tl : pl;
+                while (i > 0) {
                     int[] pa = dp [ i - 1 ];
-                    if ( ( pa != null ) && !IFUtil.isPAIdentity ( pa ) ) {
+                    if ((pa != null) && !IFUtil.isPAIdentity (pa)) {
                         break;
                     } else {
                         i--;
                     }
                 }
-                if ( i == 0 ) {
+                if (i == 0) {
                     dp = null;
-                } else if ( i < pl ) {
-                    dp = IFUtil.copyDP ( dp, 0, i );
+                } else if (i < pl) {
+                    dp = IFUtil.copyDP (dp, 0, i);
                 }
             }
             return dp;
@@ -1328,7 +1328,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         pushGroup(new IFGraphicContext.Group());
         Rectangle rect = toMillipointRectangle(startx, starty, width, height);
         try {
-            painter.clipBackground( rect,
+            painter.clipBackground(rect,
                  bpsBefore,  bpsAfter, bpsStart,  bpsEnd);
         } catch (IFException ife) {
             handleIFException(ife);
@@ -1353,8 +1353,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    protected void drawBorders(                                  // CSOK: ParameterNumber
-            float startx, float starty,
+    protected void drawBorders(float startx, float starty,
             float width, float height,
             BorderProps bpsBefore, BorderProps bpsAfter,
             BorderProps bpsStart, BorderProps bpsEnd, int level, Color innerBackgroundColor) {
@@ -1364,7 +1363,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             BorderProps bpsBottom = bpsAfter;
             BorderProps bpsLeft;
             BorderProps bpsRight;
-            if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+            if ((level == -1) || ((level & 1) == 0)) {
                 bpsLeft = bpsStart;
                 bpsRight = bpsEnd;
             } else {
@@ -1378,8 +1377,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    protected void drawBorderLine(                               // CSOK: ParameterNumber
-            float x1, float y1, float x2, float y2, boolean horz,
+    protected void drawBorderLine(float x1, float y1, float x2, float y2, boolean horz,
             boolean startOrBefore, int style, Color col) {
         //Simplified implementation that is only used by renderTextDecoration()
         //drawBorders() is overridden and uses the Painter's high-level method drawBorderRect()

@@ -140,72 +140,72 @@ public final class GenerateBidiClass {
         String line;
         int lineNumber = 0;
         TreeSet intervals = new TreeSet();
-        while ( ( line = b.readLine() ) != null ) {
+        while ((line = b.readLine()) != null) {
             lineNumber++;
-            if ( line.startsWith("#") ) {
+            if (line.startsWith("#")) {
                 continue;
-            } else if ( line.length() == 0 ) {
+            } else if (line.length() == 0) {
                 continue;
             } else {
-                if ( line.indexOf ( "#" ) != -1 ) {
-                    line = ( line.split ( "#" ) ) [ 0 ];
+                if (line.indexOf ("#") != -1) {
+                    line = (line.split ("#")) [ 0 ];
                 }
-                String[] fa = line.split ( ";" );
-                if ( fa.length == 2 ) {
-                    int[] interval = parseInterval ( fa[0].trim() );
-                    byte bidiClass = (byte) parseBidiClass ( fa[1].trim() );
-                    if ( interval[1] == interval[0] ) { // singleton
+                String[] fa = line.split (";");
+                if (fa.length == 2) {
+                    int[] interval = parseInterval (fa[0].trim());
+                    byte bidiClass = (byte) parseBidiClass (fa[1].trim());
+                    if (interval[1] == interval[0]) { // singleton
                         int c = interval[0];
-                        if ( c <= 0x00FF ) {
-                            if ( bcL1 [ c - 0x0000 ] == 0 ) {
+                        if (c <= 0x00FF) {
+                            if (bcL1 [ c - 0x0000 ] == 0) {
                                 bcL1 [ c - 0x0000 ] = bidiClass;
                             } else {
-                                throw new Exception ( "duplicate singleton entry: " + c );
+                                throw new Exception ("duplicate singleton entry: " + c);
                             }
-                        } else if ( ( c >= 0x0590 ) && ( c <= 0x06FF ) ) {
-                            if ( bcR1 [ c - 0x0590 ] == 0 ) {
+                        } else if ((c >= 0x0590) && (c <= 0x06FF)) {
+                            if (bcR1 [ c - 0x0590 ] == 0) {
                                 bcR1 [ c - 0x0590 ] = bidiClass;
                             } else {
-                                throw new Exception ( "duplicate singleton entry: " + c );
+                                throw new Exception ("duplicate singleton entry: " + c);
                             }
                         } else {
-                            addInterval ( intervals, c, c, bidiClass );
+                            addInterval (intervals, c, c, bidiClass);
                         }
                     } else {                            // non-singleton
                         int s = interval[0];
                         int e = interval[1];            // inclusive
-                        if ( s <= 0x00FF ) {
-                            for ( int i = s; i <= e; i++ ) {
-                                if ( i <= 0x00FF ) {
-                                    if ( bcL1 [ i - 0x0000 ] == 0 ) {
+                        if (s <= 0x00FF) {
+                            for (int i = s; i <= e; i++) {
+                                if (i <= 0x00FF) {
+                                    if (bcL1 [ i - 0x0000 ] == 0) {
                                         bcL1 [ i - 0x0000 ] = bidiClass;
                                     } else {
-                                        throw new Exception ( "duplicate singleton entry: " + i );
+                                        throw new Exception ("duplicate singleton entry: " + i);
                                     }
                                 } else {
-                                    addInterval ( intervals, i, e, bidiClass );
+                                    addInterval (intervals, i, e, bidiClass);
                                     break;
                                 }
                             }
-                        } else if ( ( s >= 0x0590 ) && ( s <= 0x06FF ) ) {
-                            for ( int i = s; i <= e; i++ ) {
-                                if ( i <= 0x06FF ) {
-                                    if ( bcR1 [ i - 0x0590 ] == 0 ) {
+                        } else if ((s >= 0x0590) && (s <= 0x06FF)) {
+                            for (int i = s; i <= e; i++) {
+                                if (i <= 0x06FF) {
+                                    if (bcR1 [ i - 0x0590 ] == 0) {
                                         bcR1 [ i - 0x0590 ] = bidiClass;
                                     } else {
-                                        throw new Exception ( "duplicate singleton entry: " + i );
+                                        throw new Exception ("duplicate singleton entry: " + i);
                                     }
                                 } else {
-                                    addInterval ( intervals, i, e, bidiClass );
+                                    addInterval (intervals, i, e, bidiClass);
                                     break;
                                 }
                             }
                         } else {
-                            addInterval ( intervals, s, e, bidiClass );
+                            addInterval (intervals, s, e, bidiClass);
                         }
                     }
                 } else {
-                    throw new Exception ( "bad syntax, line(" + lineNumber + "): " + line );
+                    throw new Exception ("bad syntax, line(" + lineNumber + "): " + line);
                 }
             }
         }
@@ -215,7 +215,7 @@ public final class GenerateBidiClass {
         bcS1 = new int [ niv ];
         bcE1 = new int [ niv ];
         bcC1 = new byte [ niv ];
-        for ( Iterator it = intervals.iterator(); it.hasNext(); ivIndex++ ) {
+        for (Iterator it = intervals.iterator(); it.hasNext(); ivIndex++) {
             Interval iv = (Interval) it.next();
             bcS1[ivIndex] = iv.start;
             bcE1[ivIndex] = iv.end;
@@ -225,219 +225,219 @@ public final class GenerateBidiClass {
         test();
     }
 
-    private static int[] parseInterval ( String interval ) throws Exception {
+    private static int[] parseInterval (String interval) throws Exception {
         int s;
         int e;
         String[] fa = interval.split("\\.\\.");
-        if ( fa.length == 1 ) {
-            s = Integer.parseInt ( fa[0], 16 );
+        if (fa.length == 1) {
+            s = Integer.parseInt (fa[0], 16);
             e = s;
-        } else if ( fa.length == 2 ) {
-            s = Integer.parseInt ( fa[0], 16 );
-            e = Integer.parseInt ( fa[1], 16 );
+        } else if (fa.length == 2) {
+            s = Integer.parseInt (fa[0], 16);
+            e = Integer.parseInt (fa[1], 16);
         } else {
-            throw new Exception ( "bad interval syntax: " + interval );
+            throw new Exception ("bad interval syntax: " + interval);
         }
-        if ( e < s ) {
-            throw new Exception ( "bad interval, start must be less than or equal to end: " + interval );
+        if (e < s) {
+            throw new Exception ("bad interval, start must be less than or equal to end: " + interval);
         }
         return new int[] {s, e};
     }
 
-    private static int parseBidiClass ( String bidiClass ) {
+    private static int parseBidiClass (String bidiClass) {
         int bc = 0;
-        if ( "L".equals ( bidiClass ) ) {
+        if ("L".equals (bidiClass)) {
             bc = BidiConstants.L;
-        } else if ( "LRE".equals ( bidiClass ) ) {
+        } else if ("LRE".equals (bidiClass)) {
             bc = BidiConstants.LRE;
-        } else if ( "LRO".equals ( bidiClass ) ) {
+        } else if ("LRO".equals (bidiClass)) {
             bc = BidiConstants.LRO;
-        } else if ( "R".equals ( bidiClass ) ) {
+        } else if ("R".equals (bidiClass)) {
             bc = BidiConstants.R;
-        } else if ( "AL".equals ( bidiClass ) ) {
+        } else if ("AL".equals (bidiClass)) {
             bc = BidiConstants.AL;
-        } else if ( "RLE".equals ( bidiClass ) ) {
+        } else if ("RLE".equals (bidiClass)) {
             bc = BidiConstants.RLE;
-        } else if ( "RLO".equals ( bidiClass ) ) {
+        } else if ("RLO".equals (bidiClass)) {
             bc = BidiConstants.RLO;
-        } else if ( "PDF".equals ( bidiClass ) ) {
+        } else if ("PDF".equals (bidiClass)) {
             bc = BidiConstants.PDF;
-        } else if ( "EN".equals ( bidiClass ) ) {
+        } else if ("EN".equals (bidiClass)) {
             bc = BidiConstants.EN;
-        } else if ( "ES".equals ( bidiClass ) ) {
+        } else if ("ES".equals (bidiClass)) {
             bc = BidiConstants.ES;
-        } else if ( "ET".equals ( bidiClass ) ) {
+        } else if ("ET".equals (bidiClass)) {
             bc = BidiConstants.ET;
-        } else if ( "AN".equals ( bidiClass ) ) {
+        } else if ("AN".equals (bidiClass)) {
             bc = BidiConstants.AN;
-        } else if ( "CS".equals ( bidiClass ) ) {
+        } else if ("CS".equals (bidiClass)) {
             bc = BidiConstants.CS;
-        } else if ( "NSM".equals ( bidiClass ) ) {
+        } else if ("NSM".equals (bidiClass)) {
             bc = BidiConstants.NSM;
-        } else if ( "BN".equals ( bidiClass ) ) {
+        } else if ("BN".equals (bidiClass)) {
             bc = BidiConstants.BN;
-        } else if ( "B".equals ( bidiClass ) ) {
+        } else if ("B".equals (bidiClass)) {
             bc = BidiConstants.B;
-        } else if ( "S".equals ( bidiClass ) ) {
+        } else if ("S".equals (bidiClass)) {
             bc = BidiConstants.S;
-        } else if ( "WS".equals ( bidiClass ) ) {
+        } else if ("WS".equals (bidiClass)) {
             bc = BidiConstants.WS;
-        } else if ( "ON".equals ( bidiClass ) ) {
+        } else if ("ON".equals (bidiClass)) {
             bc = BidiConstants.ON;
         } else {
-            throw new IllegalArgumentException ( "unknown bidi class: " + bidiClass );
+            throw new IllegalArgumentException ("unknown bidi class: " + bidiClass);
         }
         return bc;
     }
 
-    private static void addInterval ( SortedSet intervals, int start, int end, int bidiClass ) {
-        intervals.add ( new Interval ( start, end, bidiClass ) );
+    private static void addInterval (SortedSet intervals, int start, int end, int bidiClass) {
+        intervals.add (new Interval (start, end, bidiClass));
     }
 
-    private static void dumpData ( PrintWriter out ) {
+    private static void dumpData (PrintWriter out) {
         boolean first;
         StringBuffer sb = new StringBuffer();
 
         // bcL1
         first = true;
         sb.setLength(0);
-        out.println ( "private static byte[] bcL1 = {" );
-        for ( int i = 0; i < bcL1.length; i++ ) {
-            if ( ! first ) {
-                sb.append ( "," );
+        out.println ("private static byte[] bcL1 = {");
+        for (int i = 0; i < bcL1.length; i++) {
+            if (! first) {
+                sb.append (",");
             } else {
                 first = false;
             }
-            sb.append ( bcL1[i] );
-            if ( sb.length() > 120 ) {
+            sb.append (bcL1[i]);
+            if (sb.length() > 120) {
                 sb.append(',');
                 out.println(sb);
                 first = true;
                 sb.setLength(0);
             }
         }
-        if ( sb.length() > 0 ) {
+        if (sb.length() > 0) {
             out.println(sb);
         }
-        out.println ( "};" );
+        out.println ("};");
         out.println();
 
         // bcR1
         first = true;
         sb.setLength(0);
-        out.println ( "private static byte[] bcR1 = {" );
-        for ( int i = 0; i < bcR1.length; i++ ) {
-            if ( ! first ) {
-                sb.append ( "," );
+        out.println ("private static byte[] bcR1 = {");
+        for (int i = 0; i < bcR1.length; i++) {
+            if (! first) {
+                sb.append (",");
             } else {
                 first = false;
             }
-            sb.append ( bcR1[i] );
-            if ( sb.length() > 120 ) {
+            sb.append (bcR1[i]);
+            if (sb.length() > 120) {
                 sb.append(',');
                 out.println(sb);
                 first = true;
                 sb.setLength(0);
             }
         }
-        if ( sb.length() > 0 ) {
+        if (sb.length() > 0) {
             out.println(sb);
         }
-        out.println ( "};" );
+        out.println ("};");
         out.println();
 
         // bcS1
         first = true;
         sb.setLength(0);
-        out.println ( "private static int[] bcS1 = {" );
-        for ( int i = 0; i < bcS1.length; i++ ) {
-            if ( ! first ) {
-                sb.append ( "," );
+        out.println ("private static int[] bcS1 = {");
+        for (int i = 0; i < bcS1.length; i++) {
+            if (! first) {
+                sb.append (",");
             } else {
                 first = false;
             }
-            sb.append ( bcS1[i] );
-            if ( sb.length() > 120 ) {
+            sb.append (bcS1[i]);
+            if (sb.length() > 120) {
                 sb.append(',');
                 out.println(sb);
                 first = true;
                 sb.setLength(0);
             }
         }
-        if ( sb.length() > 0 ) {
+        if (sb.length() > 0) {
             out.println(sb);
         }
-        out.println ( "};" );
+        out.println ("};");
         out.println();
 
         // bcE1
         first = true;
         sb.setLength(0);
-        out.println ( "private static int[] bcE1 = {" );
-        for ( int i = 0; i < bcE1.length; i++ ) {
-            if ( ! first ) {
-                sb.append ( "," );
+        out.println ("private static int[] bcE1 = {");
+        for (int i = 0; i < bcE1.length; i++) {
+            if (! first) {
+                sb.append (",");
             } else {
                 first = false;
             }
-            sb.append ( bcE1[i] );
-            if ( sb.length() > 120 ) {
+            sb.append (bcE1[i]);
+            if (sb.length() > 120) {
                 sb.append(',');
                 out.println(sb);
                 first = true;
                 sb.setLength(0);
             }
         }
-        if ( sb.length() > 0 ) {
+        if (sb.length() > 0) {
             out.println(sb);
         }
-        out.println ( "};" );
+        out.println ("};");
         out.println();
 
         // bcC1
         first = true;
         sb.setLength(0);
-        out.println ( "private static byte[] bcC1 = {" );
-        for ( int i = 0; i < bcC1.length; i++ ) {
-            if ( ! first ) {
-                sb.append ( "," );
+        out.println ("private static byte[] bcC1 = {");
+        for (int i = 0; i < bcC1.length; i++) {
+            if (! first) {
+                sb.append (",");
             } else {
                 first = false;
             }
-            sb.append ( bcC1[i] );
-            if ( sb.length() > 120 ) {
+            sb.append (bcC1[i]);
+            if (sb.length() > 120) {
                 sb.append(',');
                 out.println(sb);
                 first = true;
                 sb.setLength(0);
             }
         }
-        if ( sb.length() > 0 ) {
+        if (sb.length() > 0) {
             out.println(sb);
         }
-        out.println ( "};" );
+        out.println ("};");
         out.println();
     }
 
-    private static int getBidiClass ( int ch ) {
-        if ( ch <= 0x00FF ) {
+    private static int getBidiClass (int ch) {
+        if (ch <= 0x00FF) {
             return bcL1 [ ch - 0x0000 ];
-        } else if ( ( ch >= 0x0590 ) && ( ch <= 0x06FF ) ) {
+        } else if ((ch >= 0x0590) && (ch <= 0x06FF)) {
             return bcR1 [ ch - 0x0590 ];
         } else {
-            return getBidiClass ( ch, bcS1, bcE1, bcC1 );
+            return getBidiClass (ch, bcS1, bcE1, bcC1);
         }
     }
 
-    private static int getBidiClass ( int ch, int[] sa, int[] ea, byte[] ca ) {
-        int k = Arrays.binarySearch ( sa, ch );
-        if ( k >= 0 ) {
+    private static int getBidiClass (int ch, int[] sa, int[] ea, byte[] ca) {
+        int k = Arrays.binarySearch (sa, ch);
+        if (k >= 0) {
             return ca [ k ];
         } else {
-            k = - ( k + 1 );
-            if ( k == 0 ) {
+            k = - (k + 1);
+            if (k == 0) {
                 return BidiConstants.L;
-            } else if ( ch <= ea [ k - 1 ] ) {
+            } else if (ch <= ea [ k - 1 ]) {
                 return ca [ k - 1 ];
             } else {
                 return BidiConstants.L;
@@ -495,12 +495,12 @@ public final class GenerateBidiClass {
     };
 
     private static void test() throws Exception {
-        for ( int i = 0, n = testData.length / 2; i < n; i++ ) {
+        for (int i = 0, n = testData.length / 2; i < n; i++) {
             int ch = testData [ i * 2 + 0 ];
             int tc = testData [ i * 2 + 1 ];
-            int bc = getBidiClass ( ch );
-            if ( bc != tc ) {
-                throw new Exception ( "test mapping failed for character (0x" + Integer.toHexString(ch) + "): expected " + tc + ", got " + bc );
+            int bc = getBidiClass (ch);
+            if (bc != tc) {
+                throw new Exception ("test mapping failed for character (0x" + Integer.toHexString(ch) + "): expected " + tc + ", got " + bc);
             }
         }
     }
@@ -548,20 +548,20 @@ public final class GenerateBidiClass {
         int start;                                              // CSOK: VisibilityModifier
         int end;                                                // CSOK: VisibilityModifier
         int bidiClass;                                          // CSOK: VisibilityModifier
-        Interval ( int start, int end, int bidiClass ) {
+        Interval (int start, int end, int bidiClass) {
             this.start = start;
             this.end = end;
             this.bidiClass = bidiClass;
         }
-        public int compareTo ( Object o ) {
+        public int compareTo (Object o) {
             Interval iv = (Interval) o;
-            if ( start < iv.start ) {
+            if (start < iv.start) {
                 return -1;
-            } else if ( start > iv.start ) {
+            } else if (start > iv.start) {
                 return 1;
-            } else if ( end < iv.end ) {
+            } else if (end < iv.end) {
                 return -1;
-            } else if ( end > iv.end ) {
+            } else if (end > iv.end) {
                 return 1;
             } else {
                 return 0;

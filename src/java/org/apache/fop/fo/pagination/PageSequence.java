@@ -96,7 +96,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         writingModeTraits = new WritingModeTraits
-            ( WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()) );
+            (WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()));
         if (masterReference == null || masterReference.equals("")) {
             missingPropertyError("master-reference");
         }
@@ -330,7 +330,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
      * @return the reference orientation trait value
      */
     public int getReferenceOrientation() {
-        if ( referenceOrientation != null ) {
+        if (referenceOrientation != null) {
             return referenceOrientation.getValue();
         } else {
             return 0;
@@ -341,7 +341,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
      * {@inheritDoc}
      */
     public Direction getInlineProgressionDirection() {
-        if ( writingModeTraits != null ) {
+        if (writingModeTraits != null) {
             return writingModeTraits.getInlineProgressionDirection();
         } else {
             return Direction.LR;
@@ -352,7 +352,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
      * {@inheritDoc}
      */
     public Direction getBlockProgressionDirection() {
-        if ( writingModeTraits != null ) {
+        if (writingModeTraits != null) {
             return writingModeTraits.getBlockProgressionDirection();
         } else {
             return Direction.TB;
@@ -363,7 +363,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
      * {@inheritDoc}
      */
     public Direction getColumnProgressionDirection() {
-        if ( writingModeTraits != null ) {
+        if (writingModeTraits != null) {
             return writingModeTraits.getColumnProgressionDirection();
         } else {
             return Direction.LR;
@@ -374,7 +374,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
      * {@inheritDoc}
      */
     public Direction getRowProgressionDirection() {
-        if ( writingModeTraits != null ) {
+        if (writingModeTraits != null) {
             return writingModeTraits.getRowProgressionDirection();
         } else {
             return Direction.TB;
@@ -385,7 +385,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
      * {@inheritDoc}
      */
     public Direction getShiftDirection() {
-        if ( writingModeTraits != null ) {
+        if (writingModeTraits != null) {
             return writingModeTraits.getShiftDirection();
         } else {
             return Direction.TB;
@@ -396,7 +396,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
      * {@inheritDoc}
      */
     public WritingMode getWritingMode() {
-        if ( writingModeTraits != null ) {
+        if (writingModeTraits != null) {
             return writingModeTraits.getWritingMode();
         } else {
             return WritingMode.LR_TB;
@@ -405,20 +405,20 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
 
 
     @Override
-    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
+    protected Stack collectDelimitedTextRanges (Stack ranges, DelimitedTextRange currentRange) {
         // collect ranges from static content flows
         Map<String, FONode> flows = getFlowMap();
-        if ( flows != null ) {
-            for ( FONode fn : flows.values() ) {
-                if ( fn instanceof StaticContent ) {
-                    ranges = ( (StaticContent) fn ).collectDelimitedTextRanges ( ranges );
+        if (flows != null) {
+            for (FONode fn : flows.values()) {
+                if (fn instanceof StaticContent) {
+                    ranges = ((StaticContent) fn).collectDelimitedTextRanges (ranges);
                 }
             }
         }
         // collect ranges in main flow
         Flow main = getMainFlow();
-        if ( main != null ) {
-            ranges = main.collectDelimitedTextRanges ( ranges );
+        if (main != null) {
+            ranges = main.collectDelimitedTextRanges (ranges);
         }
         return ranges;
     }

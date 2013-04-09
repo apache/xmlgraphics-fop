@@ -35,9 +35,9 @@ public abstract class FunctionBase implements Function {
 
     /** {@inheritDoc} */
     public Property getOptionalArgDefault(int index, PropertyInfo pi) throws PropertyException {
-        if ( index >= getOptionalArgsCount() ) {
-            PropertyException e = new PropertyException ( new IndexOutOfBoundsException ( "illegal optional argument index" ) );
-            e.setPropertyInfo ( pi );
+        if (index >= getOptionalArgsCount()) {
+            PropertyException e = new PropertyException (new IndexOutOfBoundsException ("illegal optional argument index"));
+            e.setPropertyInfo (pi);
             throw e;
         } else {
             return null;
@@ -58,7 +58,7 @@ public abstract class FunctionBase implements Function {
      * @param pi property information instance that applies to property being evaluated
      * @return string property whose value is name of property being evaluated
      */
-    protected final Property getPropertyName ( PropertyInfo pi ) {
-        return StringProperty.getInstance ( pi.getPropertyMaker().getName() );
+    protected final Property getPropertyName (PropertyInfo pi) {
+        return StringProperty.getInstance (pi.getPropertyMaker().getName());
     }
 }

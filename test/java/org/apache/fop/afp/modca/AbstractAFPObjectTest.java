@@ -45,7 +45,7 @@ public abstract class AbstractAFPObjectTest<S extends AbstractAFPObject> {
     }
 
     protected final void setSut(S sut) {
-        if ( this.sut == null) {
+        if (this.sut == null) {
             this.sut = sut;
         }
     }

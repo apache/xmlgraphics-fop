@@ -608,14 +608,14 @@ public abstract class FObj extends FONode implements Constants {
      */
     public void setBidiLevel(int bidiLevel) {
         assert bidiLevel >= 0;
-        if ( bidiLevel >= 0 ) {
-            if ( ( this.bidiLevel < 0 ) || ( bidiLevel < this.bidiLevel ) ) {
+        if (bidiLevel >= 0) {
+            if ((this.bidiLevel < 0) || (bidiLevel < this.bidiLevel)) {
                 this.bidiLevel = bidiLevel;
-                if ( parent != null ) {
+                if (parent != null) {
                     FObj foParent = (FObj) parent;
                     int parentBidiLevel = foParent.getBidiLevel();
-                    if ( ( parentBidiLevel < 0 ) || ( bidiLevel < parentBidiLevel ) ) {
-                        foParent.setBidiLevel ( bidiLevel );
+                    if ((parentBidiLevel < 0) || (bidiLevel < parentBidiLevel)) {
+                        foParent.setBidiLevel (bidiLevel);
                     }
                 }
             }
@@ -639,10 +639,10 @@ public abstract class FObj extends FONode implements Constants {
      * any ancestor
      */
     public int getBidiLevelRecursive() {
-        for ( FONode fn = this; fn != null; fn = fn.getParent() ) {
-            if ( fn instanceof FObj ) {
-                int level = ( (FObj) fn).getBidiLevel();
-                if ( level >= 0 ) {
+        for (FONode fn = this; fn != null; fn = fn.getParent()) {
+            if (fn instanceof FObj) {
+                int level = ((FObj) fn).getBidiLevel();
+                if (level >= 0) {
                     return level;
                 }
             }

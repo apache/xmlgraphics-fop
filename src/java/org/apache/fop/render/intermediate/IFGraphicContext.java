@@ -57,7 +57,7 @@ public class IFGraphicContext extends GraphicContext {
      * {@inheritDoc}
      */
     public Object clone() {
-        return new IFGraphicContext ( this );
+        return new IFGraphicContext (this);
     }
 
     /** @param group a group */

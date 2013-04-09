@@ -40,8 +40,7 @@ public class PDFFontDescriptor extends PDFDictionary {
      * @param italicAngle the angle of the vertical dominant strokes
      * @param stemV the width of the dominant vertical stems of glyphs
      */
-    public PDFFontDescriptor(                                    // CSOK: ParameterNumber
-            String basefont, int ascent,
+    public PDFFontDescriptor(String basefont, int ascent,
             int descent, int capHeight, int flags,
             PDFRectangle fontBBox, int italicAngle,
             int stemV) {

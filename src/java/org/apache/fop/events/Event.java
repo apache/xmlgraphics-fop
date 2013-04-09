@@ -50,7 +50,7 @@ public class Event extends EventObject {
      */
     public Event(Object source, String eventID, EventSeverity severity, Map<String, Object> params)
     {
-        this ( source, eventID, severity, Locale.getDefault(), params );
+        this (source, eventID, severity, Locale.getDefault(), params);
     }
 
     /**

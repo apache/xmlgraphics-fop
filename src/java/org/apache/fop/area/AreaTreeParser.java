@@ -798,8 +798,8 @@ public class AreaTreeParser {
                     = XMLUtil.getAttributeAsPositionAdjustments(lastAttributes, "position-adjust");
                 content.flip();
                 WordArea word = new WordArea
-                    ( offset, level, content.toString().trim(), letterAdjust,
-                      null, gposAdjustments, reversed );
+                    (offset, level, content.toString().trim(), letterAdjust,
+                      null, gposAdjustments, reversed);
                 AbstractTextArea text = getCurrentText();
                 word.setParentArea(text);
                 text.addChildArea(word);
@@ -851,7 +851,7 @@ public class AreaTreeParser {
                 setTraits(attributes, leader, SUBSET_COLOR);
                 setTraits(attributes, leader, SUBSET_FONT);
                 leader.setBlockProgressionOffset
-                    ( XMLUtil.getAttributeAsInt(attributes, "offset", 0) );
+                    (XMLUtil.getAttributeAsInt(attributes, "offset", 0));
                 String ruleStyle = attributes.getValue("ruleStyle");
                 if (ruleStyle != null) {
                     leader.setRuleStyle(ruleStyle);
@@ -876,7 +876,7 @@ public class AreaTreeParser {
                 viewport.setContentPosition(XMLUtil.getAttributeAsRectangle2D(attributes, "pos"));
                 viewport.setClip(XMLUtil.getAttributeAsBoolean(attributes, "clip", false));
                 viewport.setBlockProgressionOffset
-                    ( XMLUtil.getAttributeAsInt(attributes, "offset", 0) );
+                    (XMLUtil.getAttributeAsInt(attributes, "offset", 0));
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(viewport);
                 areaStack.push(viewport);

@@ -31,6 +31,6 @@ public interface ScriptContextTester {
      * @param feature a feature identifier
      * @return a glyph context tester or null if none available for the specified feature
      */
-    GlyphContextTester getTester ( String feature );
+    GlyphContextTester getTester (String feature);
 
 }

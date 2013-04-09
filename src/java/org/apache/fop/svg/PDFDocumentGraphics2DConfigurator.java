@@ -55,7 +55,7 @@ public class PDFDocumentGraphics2DConfigurator {
      * @throws ConfigurationException if an error occurs while configuring the object
      */
     public void configure(PDFDocumentGraphics2D graphics, Configuration cfg,
-                          boolean useComplexScriptFeatures )
+                          boolean useComplexScriptFeatures)
             throws ConfigurationException {
         PDFDocument pdfDoc = graphics.getPDFDocument();
         try {

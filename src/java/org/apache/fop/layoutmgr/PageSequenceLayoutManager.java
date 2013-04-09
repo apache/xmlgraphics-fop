@@ -80,7 +80,7 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         initialize();
 
         // perform step 5.8 of refinement process (Unicode BIDI Processing)
-        if ( areaTreeHandler.isComplexScriptFeaturesEnabled() ) {
+        if (areaTreeHandler.isComplexScriptFeaturesEnabled()) {
             BidiResolver.resolveInlineDirectionality(getPageSequence());
         }
 
@@ -198,13 +198,13 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
      */
     protected int getForcedLastPageNum(final int lastPageNum) {
         int forcedLastPageNum = lastPageNum;
-        if (  lastPageNum % 2 != 0
-                && ( getPageSequence().getForcePageCount() ==  Constants.EN_EVEN
-                 || getPageSequence().getForcePageCount() ==  Constants.EN_END_ON_EVEN )) {
+        if (lastPageNum % 2 != 0
+                && (getPageSequence().getForcePageCount() ==  Constants.EN_EVEN
+                 || getPageSequence().getForcePageCount() ==  Constants.EN_END_ON_EVEN)) {
             forcedLastPageNum++;
-        } else if ( lastPageNum % 2 == 0 && (
+        } else if (lastPageNum % 2 == 0 && (
                 getPageSequence().getForcePageCount() ==  Constants.EN_ODD
-                ||  getPageSequence().getForcePageCount() ==  Constants.EN_END_ON_ODD )) {
+                ||  getPageSequence().getForcePageCount() ==  Constants.EN_END_ON_ODD)) {
             forcedLastPageNum++;
         }
         return forcedLastPageNum;

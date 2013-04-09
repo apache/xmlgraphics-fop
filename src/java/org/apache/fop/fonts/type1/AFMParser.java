@@ -326,11 +326,11 @@ public class AFMParser {
             try {
                 Method mth = c.getMethod(method, argType);
                 mth.invoke(target, value);
-            } catch ( NoSuchMethodException e ) {
+            } catch (NoSuchMethodException e) {
                 throw new RuntimeException("Bean error: " + e.getMessage(), e);
-            } catch ( IllegalAccessException e ) {
+            } catch (IllegalAccessException e) {
                 throw new RuntimeException("Bean error: " + e.getMessage(), e);
-            } catch ( InvocationTargetException e ) {
+            } catch (InvocationTargetException e) {
                 throw new RuntimeException("Bean error: " + e.getMessage(), e);
             }
         }
@@ -452,11 +452,11 @@ public class AFMParser {
             try {
                 Method mth = c.getMethod(method, boolean.class);
                 mth.invoke(target, b);
-            } catch ( NoSuchMethodException e ) {
+            } catch (NoSuchMethodException e) {
                 throw new RuntimeException("Bean error: " + e.getMessage(), e);
-            } catch ( IllegalAccessException e ) {
+            } catch (IllegalAccessException e) {
                 throw new RuntimeException("Bean error: " + e.getMessage(), e);
-            } catch ( InvocationTargetException e ) {
+            } catch (InvocationTargetException e) {
                 throw new RuntimeException("Bean error: " + e.getMessage(), e);
             }
         }

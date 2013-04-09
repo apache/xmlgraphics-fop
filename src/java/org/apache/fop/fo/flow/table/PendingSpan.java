@@ -48,7 +48,7 @@ class PendingSpan {
      * @return number of rows spanned after decrementing
      */
     public int decrRowsLeft() {
-        if ( rowsLeft > 0 ) {
+        if (rowsLeft > 0) {
             return --rowsLeft;
         } else {
             return 0;
