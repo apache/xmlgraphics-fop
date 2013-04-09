@@ -120,8 +120,7 @@ public final class ColorExt extends Color {
      *            ICC color values
      * @return the requested color object
      */
-    public static ColorExt createFromSvgIccColor(                // CSOK: ParameterNumber
-            float red, float green,
+    public static ColorExt createFromSvgIccColor(float red, float green,
             float blue, float opacity, String profileName, String profileHref,
             ColorSpace profileCS, float[] colorValues) {
         //TODO this method is not referenced by FOP, can it be deleted?

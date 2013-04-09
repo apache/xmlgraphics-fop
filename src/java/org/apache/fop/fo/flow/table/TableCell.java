@@ -118,7 +118,7 @@ public class TableCell extends TableFObj implements CommonAccessibilityHolder {
             missingChildElementError("marker* (%block;)+", true);
         }
         if ((startsRow() || endsRow())
-                && getParent().getNameId() == FO_TABLE_ROW ) {
+                && getParent().getNameId() == FO_TABLE_ROW) {
             TableEventProducer eventProducer = TableEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.startEndRowUnderTableRowWarning(this, getLocator());

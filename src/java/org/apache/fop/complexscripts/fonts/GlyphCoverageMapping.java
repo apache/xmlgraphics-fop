@@ -42,6 +42,6 @@ public interface GlyphCoverageMapping {
      * @param gid glyph identifier (code)
      * @return non-negative glyph coverage index or -1 if glyph identifiers is not mapped by table
      */
-    int getCoverageIndex ( int gid );
+    int getCoverageIndex (int gid);
 
 }

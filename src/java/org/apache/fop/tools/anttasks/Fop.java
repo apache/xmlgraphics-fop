@@ -527,11 +527,11 @@ class FOPTaskStarter {
                 // OR output file doesn't exist OR
                 // output file is older than input file
                 if (task.getForce() || !outf.exists()
-                    || (task.getFofile().lastModified() > outf.lastModified() )) {
+                    || (task.getFofile().lastModified() > outf.lastModified())) {
                     render(task.getFofile(), outf, outputFormat);
                     actioncount++;
                 } else if (outf.exists()
-                        && (task.getFofile().lastModified() <= outf.lastModified() )) {
+                        && (task.getFofile().lastModified() <= outf.lastModified())) {
                     skippedcount++;
                 }
             }
@@ -609,14 +609,14 @@ class FOPTaskStarter {
                 // OR output file doesn't exist OR
                 // output file is older than input file
                 if (task.getForce() || !outf.exists()
-                    || (f.lastModified() > outf.lastModified() )) {
+                    || (f.lastModified() > outf.lastModified())) {
                     if (xsltFile != null) {
                         render(f, xsltFile, outf, outputFormat);
                     } else {
                         render(f, outf, outputFormat);
                     }
                     actioncount++;
-                } else if (outf.exists() && (f.lastModified() <= outf.lastModified() )) {
+                } else if (outf.exists() && (f.lastModified() <= outf.lastModified())) {
                     skippedcount++;
                 }
             }

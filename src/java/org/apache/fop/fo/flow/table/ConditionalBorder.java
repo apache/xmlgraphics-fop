@@ -75,10 +75,10 @@ public class ConditionalBorder {
      */
     ConditionalBorder(BorderSpecification borderSpecification,
             CollapsingBorderModel collapsingBorderModel) {
-        this ( borderSpecification, borderSpecification,
+        this (borderSpecification, borderSpecification,
                borderSpecification.getBorderInfo().getWidth().isDiscard()
                  ? BorderSpecification.getDefaultBorder() : borderSpecification,
-               collapsingBorderModel );
+               collapsingBorderModel);
     }
 
     /**

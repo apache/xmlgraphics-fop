@@ -1521,15 +1521,15 @@ public class RTFHandler extends FOEventHandler {
     private void invokeDeferredEvent(FONode foNode, boolean bStart) { // CSOK: MethodLength
         if (foNode instanceof PageSequence) {
             if (bStart) {
-                startPageSequence( (PageSequence) foNode);
+                startPageSequence((PageSequence) foNode);
             } else {
-                endPageSequence( (PageSequence) foNode);
+                endPageSequence((PageSequence) foNode);
             }
         } else if (foNode instanceof Flow) {
             if (bStart) {
-                startFlow( (Flow) foNode);
+                startFlow((Flow) foNode);
             } else {
-                endFlow( (Flow) foNode);
+                endFlow((Flow) foNode);
             }
         } else if (foNode instanceof StaticContent) {
             if (bStart) {
@@ -1539,36 +1539,36 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof ExternalGraphic) {
             if (bStart) {
-                image( (ExternalGraphic) foNode );
+                image((ExternalGraphic) foNode);
             }
         } else if (foNode instanceof InstreamForeignObject) {
             if (bStart) {
-                endInstreamForeignObject( (InstreamForeignObject) foNode );
+                endInstreamForeignObject((InstreamForeignObject) foNode);
             }
         } else if (foNode instanceof Block) {
             if (bStart) {
-                startBlock( (Block) foNode);
+                startBlock((Block) foNode);
             } else {
-                endBlock( (Block) foNode);
+                endBlock((Block) foNode);
             }
         } else if (foNode instanceof BlockContainer) {
             if (bStart) {
-                startBlockContainer( (BlockContainer) foNode);
+                startBlockContainer((BlockContainer) foNode);
             } else {
-                endBlockContainer( (BlockContainer) foNode);
+                endBlockContainer((BlockContainer) foNode);
             }
         } else if (foNode instanceof BasicLink) {
             //BasicLink must be placed before Inline
             if (bStart) {
-                startLink( (BasicLink) foNode);
+                startLink((BasicLink) foNode);
             } else {
                 endLink(null);
             }
         } else if (foNode instanceof Inline) {
             if (bStart) {
-                startInline( (Inline) foNode);
+                startInline((Inline) foNode);
             } else {
-                endInline( (Inline) foNode);
+                endInline((Inline) foNode);
             }
         } else if (foNode instanceof FOText) {
             if (bStart) {
@@ -1582,27 +1582,27 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof PageNumber) {
             if (bStart) {
-                startPageNumber( (PageNumber) foNode);
+                startPageNumber((PageNumber) foNode);
             } else {
-                endPageNumber( (PageNumber) foNode);
+                endPageNumber((PageNumber) foNode);
             }
         } else if (foNode instanceof Footnote) {
             if (bStart) {
-                startFootnote( (Footnote) foNode);
+                startFootnote((Footnote) foNode);
             } else {
-                endFootnote( (Footnote) foNode);
+                endFootnote((Footnote) foNode);
             }
         } else if (foNode instanceof FootnoteBody) {
             if (bStart) {
-                startFootnoteBody( (FootnoteBody) foNode);
+                startFootnoteBody((FootnoteBody) foNode);
             } else {
-                endFootnoteBody( (FootnoteBody) foNode);
+                endFootnoteBody((FootnoteBody) foNode);
             }
         } else if (foNode instanceof ListBlock) {
             if (bStart) {
-                startList( (ListBlock) foNode);
+                startList((ListBlock) foNode);
             } else {
-                endList( (ListBlock) foNode);
+                endList((ListBlock) foNode);
             }
         } else if (foNode instanceof ListItemBody) {
             if (bStart) {
@@ -1612,9 +1612,9 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof ListItem) {
             if (bStart) {
-                startListItem( (ListItem) foNode);
+                startListItem((ListItem) foNode);
             } else {
-                endListItem( (ListItem) foNode);
+                endListItem((ListItem) foNode);
             }
         } else if (foNode instanceof ListItemLabel) {
             if (bStart) {
@@ -1624,45 +1624,45 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof Table) {
             if (bStart) {
-                startTable( (Table) foNode);
+                startTable((Table) foNode);
             } else {
-                endTable( (Table) foNode);
+                endTable((Table) foNode);
             }
         } else if (foNode instanceof TableHeader) {
             if (bStart) {
-                startHeader( (TableHeader) foNode);
+                startHeader((TableHeader) foNode);
             } else {
-                endHeader( (TableHeader) foNode);
+                endHeader((TableHeader) foNode);
             }
         } else if (foNode instanceof TableFooter) {
             if (bStart) {
-                startFooter( (TableFooter) foNode);
+                startFooter((TableFooter) foNode);
             } else {
-                endFooter( (TableFooter) foNode);
+                endFooter((TableFooter) foNode);
             }
         } else if (foNode instanceof TableBody) {
             if (bStart) {
-                startBody( (TableBody) foNode);
+                startBody((TableBody) foNode);
             } else {
-                endBody( (TableBody) foNode);
+                endBody((TableBody) foNode);
             }
         } else if (foNode instanceof TableColumn) {
             if (bStart) {
-                startColumn( (TableColumn) foNode);
+                startColumn((TableColumn) foNode);
             } else {
-                endColumn( (TableColumn) foNode);
+                endColumn((TableColumn) foNode);
             }
         } else if (foNode instanceof TableRow) {
             if (bStart) {
-                startRow( (TableRow) foNode);
+                startRow((TableRow) foNode);
             } else {
-                endRow( (TableRow) foNode);
+                endRow((TableRow) foNode);
             }
         } else if (foNode instanceof TableCell) {
             if (bStart) {
-                startCell( (TableCell) foNode);
+                startCell((TableCell) foNode);
             } else {
-                endCell( (TableCell) foNode);
+                endCell((TableCell) foNode);
             }
         } else if (foNode instanceof Leader) {
             if (bStart) {
@@ -1716,7 +1716,7 @@ public class RTFHandler extends FOEventHandler {
             }
 
 
-            recurseFONode( pageSequence.getMainFlow() );
+            recurseFONode(pageSequence.getMainFlow());
         } else if (foNode instanceof Table) {
             Table table = (Table) foNode;
 
@@ -1726,7 +1726,7 @@ public class RTFHandler extends FOEventHandler {
               prepareTable(table);
 
               for (Iterator it = table.getColumns().iterator(); it.hasNext();) {
-                  recurseFONode( (FONode) it.next() );
+                  recurseFONode((FONode) it.next());
               }
             } else {
                 //TODO Implement implicit column setup handling!
@@ -1737,17 +1737,17 @@ public class RTFHandler extends FOEventHandler {
 
             //recurse table-header
             if (table.getTableHeader() != null) {
-                recurseFONode( table.getTableHeader() );
+                recurseFONode(table.getTableHeader());
             }
 
             //recurse table-footer
             if (table.getTableFooter() != null) {
-                recurseFONode( table.getTableFooter() );
+                recurseFONode(table.getTableFooter());
             }
 
             if (foNode.getChildNodes() != null) {
                 for (Iterator it = foNode.getChildNodes(); it.hasNext();) {
-                    recurseFONode( (FONode) it.next() );
+                    recurseFONode((FONode) it.next());
                 }
             }
         } else if (foNode instanceof ListItem) {

@@ -248,7 +248,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     public static class BidiOverrideLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
         public void make(FONode node, List lms) {
-            if ( node instanceof BidiOverride ) {
+            if (node instanceof BidiOverride) {
                 lms.add(new BidiLayoutManager((BidiOverride) node));
             }
         }

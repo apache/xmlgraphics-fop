@@ -817,7 +817,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
     protected void renderWord(WordArea word) {
         atts.clear();
         int offset = word.getBlockProgressionOffset();
-        if ( offset != 0 ) {
+        if (offset != 0) {
             addAttribute("offset", offset);
         }
         int[] letterAdjust = word.getLetterAdjustArray();
@@ -852,7 +852,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
     protected void renderSpace(SpaceArea space) {
         atts.clear();
         int offset = space.getBlockProgressionOffset();
-        if ( offset != 0 ) {
+        if (offset != 0) {
             addAttribute("offset", offset);
         }
         maybeAddLevelAttribute(space);
@@ -914,22 +914,22 @@ public class XMLRenderer extends AbstractXMLRenderer {
         return XML_MIME_TYPE;
     }
 
-    private void maybeAddLevelAttribute ( Area a ) {
+    private void maybeAddLevelAttribute (Area a) {
         int level = a.getBidiLevel();
-        if ( level >= 0 ) {
-            addAttribute ( "level", level );
+        if (level >= 0) {
+            addAttribute ("level", level);
         }
     }
 
-    private void maybeAddPositionAdjustAttribute ( WordArea w ) {
+    private void maybeAddPositionAdjustAttribute (WordArea w) {
         int[][] adjustments = w.getGlyphPositionAdjustments();
-        if ( adjustments != null ) {
-            addAttribute ( "position-adjust", XMLUtil.encodePositionAdjustments ( adjustments ) );
+        if (adjustments != null) {
+            addAttribute ("position-adjust", XMLUtil.encodePositionAdjustments (adjustments));
         }
     }
 
-    private void maybeAddReversedAttribute ( WordArea w, String text ) {
-        if ( w.isReversed() && ( text.length() > 1 )  ) {
+    private void maybeAddReversedAttribute (WordArea w, String text) {
+        if (w.isReversed() && (text.length() > 1)) {
             addAttribute("reversed", "true");
         }
     }

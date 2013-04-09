@@ -241,25 +241,25 @@ private static byte[] bcC1 = {
  * @param ch a unicode scalar value
  * @return bidi class
  */
-public static int getBidiClass ( int ch ) {
-  if ( ch <= 0x00FF ) {
+public static int getBidiClass (int ch) {
+  if (ch <= 0x00FF) {
     return bcL1 [ ch - 0x0000 ];
-  } else if ( ( ch >= 0x0590 ) && ( ch <= 0x06FF ) ) {
+  } else if ((ch >= 0x0590) && (ch <= 0x06FF)) {
     return bcR1 [ ch - 0x0590 ];
   } else {
-    return getBidiClass ( ch, bcS1, bcE1, bcC1 );
+    return getBidiClass (ch, bcS1, bcE1, bcC1);
   }
 }
 
-private static int getBidiClass ( int ch, int[] sa, int[] ea, byte[] ca ) {
-  int k = Arrays.binarySearch ( sa, ch );
-  if ( k >= 0 ) {
+private static int getBidiClass (int ch, int[] sa, int[] ea, byte[] ca) {
+  int k = Arrays.binarySearch (sa, ch);
+  if (k >= 0) {
     return ca [ k ];
   } else {
-    k = - ( k + 1 );
-    if ( k == 0 ) {
+    k = - (k + 1);
+    if (k == 0) {
       return BidiConstants.L;
-    } else if ( ch <= ea [ k - 1 ] ) {
+    } else if (ch <= ea [ k - 1 ]) {
       return ca [ k - 1 ];
     } else {
       return BidiConstants.L;

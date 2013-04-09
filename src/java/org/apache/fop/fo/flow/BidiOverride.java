@@ -97,27 +97,27 @@ public class BidiOverride extends Inline {
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
+    protected Stack collectDelimitedTextRanges (Stack ranges, DelimitedTextRange currentRange) {
         char pfx = 0;
         char sfx = 0;
         int unicodeBidi = getUnicodeBidi();
         int direction = getDirection();
-        if ( unicodeBidi == Constants.EN_BIDI_OVERRIDE ) {
-            pfx = ( direction == Constants.EN_RTL ) ? CharUtilities.RLO : CharUtilities.LRO;
+        if (unicodeBidi == Constants.EN_BIDI_OVERRIDE) {
+            pfx = (direction == Constants.EN_RTL) ? CharUtilities.RLO : CharUtilities.LRO;
             sfx = CharUtilities.PDF;
-        } else if ( unicodeBidi == Constants.EN_EMBED ) {
-            pfx = ( direction == Constants.EN_RTL ) ? CharUtilities.RLE : CharUtilities.LRE;
+        } else if (unicodeBidi == Constants.EN_EMBED) {
+            pfx = (direction == Constants.EN_RTL) ? CharUtilities.RLE : CharUtilities.LRE;
             sfx = CharUtilities.PDF;
         }
-        if ( currentRange != null ) {
-            if ( pfx != 0 ) {
-                currentRange.append ( pfx, this );
+        if (currentRange != null) {
+            if (pfx != 0) {
+                currentRange.append (pfx, this);
             }
-            for ( Iterator it = getChildNodes(); ( it != null ) && it.hasNext();) {
-                ranges = ( (FONode) it.next() ).collectDelimitedTextRanges ( ranges );
+            for (Iterator it = getChildNodes(); (it != null) && it.hasNext();) {
+                ranges = ((FONode) it.next()).collectDelimitedTextRanges (ranges);
             }
-            if ( sfx != 0 ) {
-                currentRange.append ( sfx, this );
+            if (sfx != 0) {
+                currentRange.append (sfx, this);
             }
         }
         return ranges;

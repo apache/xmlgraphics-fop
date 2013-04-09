@@ -58,7 +58,7 @@ public class BasicLinkArea extends InlineParent {
      * @param resolver the link resolver that will resolve this basic link or null
      */
     public void setResolver(LinkResolver resolver) {
-        assert ( resolver == null ) || ( this.resolver == null );
+        assert (resolver == null) || (this.resolver == null);
         this.resolver = resolver;
     }
 

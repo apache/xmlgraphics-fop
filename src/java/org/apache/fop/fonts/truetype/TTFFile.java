@@ -244,7 +244,7 @@ public class TTFFile {
      * @param useKerning true if kerning data should be loaded
      * @param useAdvanced true if advanced typographic tables should be loaded
      */
-    public TTFFile ( boolean useKerning, boolean useAdvanced ) {
+    public TTFFile (boolean useKerning, boolean useAdvanced) {
         this.useKerning = useKerning;
         this.useAdvanced = useAdvanced;
     }
@@ -284,18 +284,18 @@ public class TTFFile {
         /** {@inheritDoc} */
         public int hashCode() {
             int hc = unicodeIndex;
-            hc = 19 * hc + ( hc ^ glyphIndex );
+            hc = 19 * hc + (hc ^ glyphIndex);
             return hc;
         }
 
         /** {@inheritDoc} */
-        public boolean equals ( Object o ) {
-            if ( o instanceof UnicodeMapping ) {
+        public boolean equals (Object o) {
+            if (o instanceof UnicodeMapping) {
                 UnicodeMapping m = (UnicodeMapping) o;
-                if ( unicodeIndex != m.unicodeIndex ) {
+                if (unicodeIndex != m.unicodeIndex) {
                     return false;
                 } else {
-                    return ( glyphIndex == m.glyphIndex );
+                    return (glyphIndex == m.glyphIndex);
                 }
             } else {
                 return false;
@@ -303,12 +303,12 @@ public class TTFFile {
         }
 
         /** {@inheritDoc} */
-        public int compareTo ( Object o ) {
-            if ( o instanceof UnicodeMapping ) {
+        public int compareTo (Object o) {
+            if (o instanceof UnicodeMapping) {
                 UnicodeMapping m = (UnicodeMapping) o;
-                if ( unicodeIndex > m.unicodeIndex ) {
+                if (unicodeIndex > m.unicodeIndex) {
                     return 1;
-                } else if ( unicodeIndex < m.unicodeIndex ) {
+                } else if (unicodeIndex < m.unicodeIndex) {
                     return -1;
                 } else {
                     return 0;
@@ -729,18 +729,18 @@ public class TTFFile {
         // Create cmaps for bfentries
         createCMaps();
 
-        if ( useKerning ) {
+        if (useKerning) {
             readKerning();
         }
 
         // Read advanced typographic tables.
-        if ( useAdvanced ) {
+        if (useAdvanced) {
             try {
                 OTFAdvancedTypographicTableReader atr
-                    = new OTFAdvancedTypographicTableReader ( this, in );
+                    = new OTFAdvancedTypographicTableReader (this, in);
                 atr.readAll();
                 this.advancedTableReader = atr;
-            } catch ( AdvancedTypographicTableFormatException e ) {
+            } catch (AdvancedTypographicTableFormatException e) {
                 log.warn (
                     "Encountered format constraint violation in advanced (typographic) table (AT) "
                     + "in font '" + getFullName() + "', ignoring AT data: "
@@ -1983,7 +1983,7 @@ public class TTFFile {
      * @return true if advanced (typographic) table is present
      */
     public boolean hasAdvancedTable() {
-        if (  advancedTableReader != null ) {
+        if (advancedTableReader != null) {
             return  advancedTableReader.hasAdvancedTable();
         } else {
             return false;
@@ -1995,7 +1995,7 @@ public class TTFFile {
      * @return the GDEF table
      */
     public GlyphDefinitionTable getGDEF() {
-        if (  advancedTableReader != null ) {
+        if (advancedTableReader != null) {
             return  advancedTableReader.getGDEF();
         } else {
             return null;
@@ -2007,7 +2007,7 @@ public class TTFFile {
      * @return the GSUB table
      */
     public GlyphSubstitutionTable getGSUB() {
-        if (  advancedTableReader != null ) {
+        if (advancedTableReader != null) {
             return  advancedTableReader.getGSUB();
         } else {
             return null;
@@ -2019,7 +2019,7 @@ public class TTFFile {
      * @return the GPOS table
      */
     public GlyphPositioningTable getGPOS() {
-        if (  advancedTableReader != null ) {
+        if (advancedTableReader != null) {
             return  advancedTableReader.getGPOS();
         } else {
             return null;

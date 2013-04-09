@@ -184,7 +184,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
     private void updateTargetLocation(PDFGoTo pdfGoTo, GoToXYAction action)
       throws IFException {
         PageReference pageRef = this.documentHandler.getPageReference(action.getPageIndex());
-        if ( pageRef == null ) {
+        if (pageRef == null) {
             throw new
                 IFException("Can't resolve page reference @ index: " + action.getPageIndex(), null);
         } else {

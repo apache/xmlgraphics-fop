@@ -69,7 +69,7 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
             res.resolveIDRef(idref, pslm.getFirstPVWithID(idref));
             if (!res.isResolved()) {
                 pslm.addUnresolvedArea(idref, res);
-                if ( area instanceof BasicLinkArea ) {
+                if (area instanceof BasicLinkArea) {
                     // establish back-pointer from BasicLinkArea to LinkResolver to
                     // handle inline area unflattening during line bidi reordering;
                     // needed to create internal link trait on synthesized basic link area

@@ -63,7 +63,7 @@ public abstract class CollapsingBorderModel {
                 }
                 return collapse;
             case Constants.EN_COLLAPSE_WITH_PRECEDENCE:
-                throw new UnsupportedOperationException ( "collapse-with-precedence not yet supported" );
+                throw new UnsupportedOperationException ("collapse-with-precedence not yet supported");
             default:
                 throw new IllegalArgumentException("Illegal border-collapse mode.");
         }

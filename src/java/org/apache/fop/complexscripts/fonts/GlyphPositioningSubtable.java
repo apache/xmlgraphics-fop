@@ -44,8 +44,8 @@ public abstract class GlyphPositioningSubtable extends GlyphSubtable implements 
      * @param format subtable format
      * @param coverage subtable coverage table
      */
-    protected GlyphPositioningSubtable ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage ) {
-        super ( id, sequence, flags, format, coverage );
+    protected GlyphPositioningSubtable (String id, int sequence, int flags, int format, GlyphCoverageTable coverage) {
+        super (id, sequence, flags, format, coverage);
     }
 
     /** {@inheritDoc} */
@@ -55,11 +55,11 @@ public abstract class GlyphPositioningSubtable extends GlyphSubtable implements 
 
     /** {@inheritDoc} */
     public String getTypeName() {
-        return GlyphPositioningTable.getLookupTypeName ( getType() );
+        return GlyphPositioningTable.getLookupTypeName (getType());
     }
 
     /** {@inheritDoc} */
-    public boolean isCompatible ( GlyphSubtable subtable ) {
+    public boolean isCompatible (GlyphSubtable subtable) {
         return subtable instanceof GlyphPositioningSubtable;
     }
 
@@ -69,7 +69,7 @@ public abstract class GlyphPositioningSubtable extends GlyphSubtable implements 
     }
 
     /** {@inheritDoc} */
-    public boolean position ( GlyphPositioningState ps ) {
+    public boolean position (GlyphPositioningState ps) {
         return false;
     }
 
@@ -85,24 +85,24 @@ public abstract class GlyphPositioningSubtable extends GlyphSubtable implements 
      * @param sequenceIndex if non negative, then apply subtables only at specified sequence index
      * @return true if a non-zero adjustment occurred
      */
-    public static final boolean position ( GlyphPositioningState ps, GlyphPositioningSubtable[] sta, int sequenceIndex ) {
+    public static final boolean position (GlyphPositioningState ps, GlyphPositioningSubtable[] sta, int sequenceIndex) {
         int sequenceStart = ps.getPosition();
         boolean appliedOneShot = false;
-        while ( ps.hasNext() ) {
+        while (ps.hasNext()) {
             boolean applied = false;
-            if ( ! appliedOneShot && ps.maybeApplicable() ) {
-                for ( int i = 0, n = sta.length; ! applied && ( i < n ); i++ ) {
-                    if ( sequenceIndex < 0 ) {
-                        applied = ps.apply ( sta [ i ] );
-                    } else if ( ps.getPosition() == ( sequenceStart + sequenceIndex ) ) {
-                        applied = ps.apply ( sta [ i ] );
-                        if ( applied ) {
+            if (! appliedOneShot && ps.maybeApplicable()) {
+                for (int i = 0, n = sta.length; ! applied && (i < n); i++) {
+                    if (sequenceIndex < 0) {
+                        applied = ps.apply (sta [ i ]);
+                    } else if (ps.getPosition() == (sequenceStart + sequenceIndex)) {
+                        applied = ps.apply (sta [ i ]);
+                        if (applied) {
                             appliedOneShot = true;
                         }
                     }
                 }
             }
-            if ( ! applied || ! ps.didConsume() ) {
+            if (! applied || ! ps.didConsume()) {
                 ps.applyDefault();
             }
             ps.next();
@@ -123,9 +123,9 @@ public abstract class GlyphPositioningSubtable extends GlyphSubtable implements 
      * @param sct script context tester
      * @return true if a non-zero adjustment occurred
      */
-    public static final boolean position ( GlyphSequence gs, String script, String language, String feature, int fontSize, GlyphPositioningSubtable[] sta, int[] widths, int[][] adjustments, ScriptContextTester sct ) {
-        synchronized ( state ) {
-            return position ( state.reset ( gs, script, language, feature, fontSize, widths, adjustments, sct ), sta, -1 );
+    public static final boolean position (GlyphSequence gs, String script, String language, String feature, int fontSize, GlyphPositioningSubtable[] sta, int[] widths, int[][] adjustments, ScriptContextTester sct) {
+        synchronized (state) {
+            return position (state.reset (gs, script, language, feature, fontSize, widths, adjustments, sct), sta, -1);
         }
     }
 

@@ -85,11 +85,11 @@ public class GlyphTable {
      * @param gdef glyph definition table that applies
      * @param lookups map from lookup specs to lookup tables
      */
-    public GlyphTable ( GlyphTable gdef, Map/*<LookupSpec,List<String>>*/ lookups ) {
-        if ( ( gdef != null ) && ! ( gdef instanceof GlyphDefinitionTable ) ) {
-            throw new AdvancedTypographicTableFormatException ( "bad glyph definition table" );
-        } else if ( lookups == null ) {
-            throw new AdvancedTypographicTableFormatException ( "lookups must be non-null map" );
+    public GlyphTable (GlyphTable gdef, Map/*<LookupSpec,List<String>>*/ lookups) {
+        if ((gdef != null) && ! (gdef instanceof GlyphDefinitionTable)) {
+            throw new AdvancedTypographicTableFormatException ("bad glyph definition table");
+        } else if (lookups == null) {
+            throw new AdvancedTypographicTableFormatException ("lookups must be non-null map");
         } else {
             this.gdef = gdef;
             this.lookups = lookups;
@@ -111,7 +111,7 @@ public class GlyphTable {
      * @return (possibly empty) list of all lookup specifications
      */
     public List/*<LookupSpec>*/ getLookups() {
-        return matchLookupSpecs ( "*", "*", "*" );
+        return matchLookupSpecs ("*", "*", "*");
     }
 
     /**
@@ -120,11 +120,11 @@ public class GlyphTable {
      * @return (possibly empty) ordered list of all lookup tables
      */
     public List/*<LookupTable>*/ getLookupTables() {
-        TreeSet/*<String>*/ lids = new TreeSet/*<String>*/ ( lookupTables.keySet() );
-        List/*<LookupTable>*/ ltl = new ArrayList/*<LookupTable>*/ ( lids.size() );
-        for ( Iterator it = lids.iterator(); it.hasNext(); ) {
+        TreeSet/*<String>*/ lids = new TreeSet/*<String>*/ (lookupTables.keySet());
+        List/*<LookupTable>*/ ltl = new ArrayList/*<LookupTable>*/ (lids.size());
+        for (Iterator it = lids.iterator(); it.hasNext(); ) {
             String lid = (String) it.next();
-            ltl.add ( lookupTables.get ( lid ) );
+            ltl.add (lookupTables.get (lid));
         }
         return ltl;
     }
@@ -135,29 +135,29 @@ public class GlyphTable {
      * @param lid lookup id
      * @return table associated with lookup id or null if none
      */
-    public LookupTable getLookupTable ( String lid ) {
-        return (LookupTable) lookupTables.get ( lid );
+    public LookupTable getLookupTable (String lid) {
+        return (LookupTable) lookupTables.get (lid);
     }
 
     /**
      * Add a subtable.
      * @param subtable a (non-null) glyph subtable
      */
-    protected void addSubtable ( GlyphSubtable subtable ) {
+    protected void addSubtable (GlyphSubtable subtable) {
         // ensure table is not frozen
-        if ( frozen ) {
-            throw new IllegalStateException ( "glyph table is frozen, subtable addition prohibited" );
+        if (frozen) {
+            throw new IllegalStateException ("glyph table is frozen, subtable addition prohibited");
         }
         // set subtable's table reference to this table
-        subtable.setTable ( this );
+        subtable.setTable (this);
         // add subtable to this table's subtable collection
         String lid = subtable.getLookupId();
-        if ( lookupTables.containsKey ( lid ) ) {
-            LookupTable lt = (LookupTable) lookupTables.get ( lid );
-            lt.addSubtable ( subtable );
+        if (lookupTables.containsKey (lid)) {
+            LookupTable lt = (LookupTable) lookupTables.get (lid);
+            lt.addSubtable (subtable);
         } else {
-            LookupTable lt = new LookupTable ( lid, subtable );
-            lookupTables.put ( lid, lt );
+            LookupTable lt = new LookupTable (lid, subtable);
+            lookupTables.put (lid, lt);
         }
     }
 
@@ -166,10 +166,10 @@ public class GlyphTable {
      * create resulting cached state.
      */
     protected void freezeSubtables() {
-        if ( ! frozen ) {
-            for ( Iterator it = lookupTables.values().iterator(); it.hasNext(); ) {
+        if (! frozen) {
+            for (Iterator it = lookupTables.values().iterator(); it.hasNext(); ) {
                 LookupTable lt = (LookupTable) it.next();
-                lt.freezeSubtables ( lookupTables );
+                lt.freezeSubtables (lookupTables);
             }
             frozen = true;
         }
@@ -183,27 +183,27 @@ public class GlyphTable {
      * @param feature a feature identifier
      * @return a (possibly empty) array of matching lookup specifications
      */
-    public List/*<LookupSpec>*/ matchLookupSpecs ( String script, String language, String feature ) {
+    public List/*<LookupSpec>*/ matchLookupSpecs (String script, String language, String feature) {
         Set/*<LookupSpec>*/ keys = lookups.keySet();
         List/*<LookupSpec>*/ matches = new ArrayList/*<LookupSpec>*/();
-        for ( Iterator it = keys.iterator(); it.hasNext();) {
+        for (Iterator it = keys.iterator(); it.hasNext();) {
             LookupSpec ls = (LookupSpec) it.next();
-            if ( ! "*".equals(script) ) {
-                if ( ! ls.getScript().equals ( script ) ) {
+            if (! "*".equals(script)) {
+                if (! ls.getScript().equals (script)) {
                     continue;
                 }
             }
-            if ( ! "*".equals(language) ) {
-                if ( ! ls.getLanguage().equals ( language ) ) {
+            if (! "*".equals(language)) {
+                if (! ls.getLanguage().equals (language)) {
                     continue;
                 }
             }
-            if ( ! "*".equals(feature) ) {
-                if ( ! ls.getFeature().equals ( feature ) ) {
+            if (! "*".equals(feature)) {
+                if (! ls.getFeature().equals (feature)) {
                     continue;
                 }
             }
-            matches.add ( ls );
+            matches.add (ls);
         }
         return matches;
     }
@@ -216,17 +216,17 @@ public class GlyphTable {
      * @param feature a feature identifier
      * @return a (possibly empty) map from matching lookup specifications to lists of corresponding lookup tables
      */
-    public Map/*<LookupSpec,List<LookupTable>>*/ matchLookups ( String script, String language, String feature ) {
-        LookupSpec lsm = new LookupSpec ( script, language, feature, true, true );
-        Map/*<LookupSpec,List<LookupTable>>*/ lm = (Map/*<LookupSpec,List<LookupTable>>*/) matchedLookups.get ( lsm );
-        if ( lm == null ) {
+    public Map/*<LookupSpec,List<LookupTable>>*/ matchLookups (String script, String language, String feature) {
+        LookupSpec lsm = new LookupSpec (script, language, feature, true, true);
+        Map/*<LookupSpec,List<LookupTable>>*/ lm = (Map/*<LookupSpec,List<LookupTable>>*/) matchedLookups.get (lsm);
+        if (lm == null) {
             lm = new LinkedHashMap();
-            List/*<LookupSpec>*/ lsl = matchLookupSpecs ( script, language, feature );
-            for ( Iterator it = lsl.iterator(); it.hasNext(); ) {
+            List/*<LookupSpec>*/ lsl = matchLookupSpecs (script, language, feature);
+            for (Iterator it = lsl.iterator(); it.hasNext(); ) {
                 LookupSpec ls = (LookupSpec) it.next();
-                lm.put ( ls, findLookupTables ( ls ) );
+                lm.put (ls, findLookupTables (ls));
             }
-            matchedLookups.put ( lsm, lm );
+            matchedLookups.put (lsm, lm);
         }
         return lm;
     }
@@ -236,19 +236,19 @@ public class GlyphTable {
      * @param ls a (non-null) lookup specification
      * @return a (possibly empty) ordered list of lookup tables whose corresponding lookup specifications match the specified lookup spec
      */
-    public List/*<LookupTable>*/ findLookupTables ( LookupSpec ls ) {
+    public List/*<LookupTable>*/ findLookupTables (LookupSpec ls) {
         TreeSet/*<LookupTable>*/ lts = new TreeSet/*<LookupTable>*/();
         List/*<String>*/ ids;
-        if ( ( ids = (List/*<String>*/) lookups.get ( ls ) ) != null ) {
-            for ( Iterator it = ids.iterator(); it.hasNext();) {
+        if ((ids = (List/*<String>*/) lookups.get (ls)) != null) {
+            for (Iterator it = ids.iterator(); it.hasNext();) {
                 String lid = (String) it.next();
                 LookupTable lt;
-                if ( ( lt = (LookupTable) lookupTables.get ( lid ) ) != null ) {
-                    lts.add ( lt );
+                if ((lt = (LookupTable) lookupTables.get (lid)) != null) {
+                    lts.add (lt);
                 }
             }
         }
-        return new ArrayList/*<LookupTable>*/ ( lts );
+        return new ArrayList/*<LookupTable>*/ (lts);
     }
 
     /**
@@ -258,25 +258,25 @@ public class GlyphTable {
      * @param lookups a mapping from lookup specifications to lists of look tables from which to select lookup tables according to the specified features
      * @return ordered array of assembled lookup table use specifications
      */
-    public UseSpec[] assembleLookups ( String[] features, Map/*<LookupSpec,List<LookupTable>>*/ lookups ) {
+    public UseSpec[] assembleLookups (String[] features, Map/*<LookupSpec,List<LookupTable>>*/ lookups) {
         TreeSet/*<UseSpec>*/ uss = new TreeSet/*<UseSpec>*/();
-        for ( int i = 0, n = features.length; i < n; i++ ) {
+        for (int i = 0, n = features.length; i < n; i++) {
             String feature = features[i];
-            for ( Iterator it = lookups.entrySet().iterator(); it.hasNext(); ) {
+            for (Iterator it = lookups.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry/*<LookupSpec,List<LookupTable>>*/ e = (Map.Entry/*<LookupSpec,List<LookupTable>>*/) it.next();
                 LookupSpec ls = (LookupSpec) e.getKey();
-                if ( ls.getFeature().equals ( feature ) ) {
+                if (ls.getFeature().equals (feature)) {
                     List/*<LookupTable>*/ ltl = (List/*<LookupTable>*/) e.getValue();
-                    if ( ltl != null ) {
-                        for ( Iterator ltit = ltl.iterator(); ltit.hasNext(); ) {
+                    if (ltl != null) {
+                        for (Iterator ltit = ltl.iterator(); ltit.hasNext(); ) {
                             LookupTable lt = (LookupTable) ltit.next();
-                            uss.add ( new UseSpec ( lt, feature ) );
+                            uss.add (new UseSpec (lt, feature));
                         }
                     }
                 }
             }
         }
-        return (UseSpec[]) uss.toArray ( new UseSpec [ uss.size() ] );
+        return (UseSpec[]) uss.toArray (new UseSpec [ uss.size() ]);
     }
 
     /** {@inheritDoc} */
@@ -296,18 +296,18 @@ public class GlyphTable {
      * @param name of table type to map to type value
      * @return glyph table type (as an integer constant)
      */
-    public static int getTableTypeFromName ( String name ) {
+    public static int getTableTypeFromName (String name) {
         int t;
         String s = name.toLowerCase();
-        if ( "gsub".equals ( s ) ) {
+        if ("gsub".equals (s)) {
             t = GLYPH_TABLE_TYPE_SUBSTITUTION;
-        } else if ( "gpos".equals ( s ) ) {
+        } else if ("gpos".equals (s)) {
             t = GLYPH_TABLE_TYPE_POSITIONING;
-        } else if ( "jstf".equals ( s ) ) {
+        } else if ("jstf".equals (s)) {
             t = GLYPH_TABLE_TYPE_JUSTIFICATION;
-        } else if ( "base".equals ( s ) ) {
+        } else if ("base".equals (s)) {
             t = GLYPH_TABLE_TYPE_BASELINE;
-        } else if ( "gdef".equals ( s ) ) {
+        } else if ("gdef".equals (s)) {
             t = GLYPH_TABLE_TYPE_DEFINITION;
         } else {
             t = -1;
@@ -320,12 +320,12 @@ public class GlyphTable {
      * @param rsa array of rule sets
      * @param lookupTables map from lookup table identifers, e.g. "lu4", to lookup tables
      */
-    public static void resolveLookupReferences ( RuleSet[] rsa, Map/*<String,LookupTable>*/ lookupTables ) {
-        if ( ( rsa != null ) && ( lookupTables != null ) ) {
-            for ( int i = 0, n = rsa.length; i < n; i++ ) {
+    public static void resolveLookupReferences (RuleSet[] rsa, Map/*<String,LookupTable>*/ lookupTables) {
+        if ((rsa != null) && (lookupTables != null)) {
+            for (int i = 0, n = rsa.length; i < n; i++) {
                 RuleSet rs = rsa [ i ];
-                if ( rs != null ) {
-                    rs.resolveLookupReferences ( lookupTables );
+                if (rs != null) {
+                    rs.resolveLookupReferences (lookupTables);
                 }
             }
         }
@@ -346,8 +346,8 @@ public class GlyphTable {
          * @param language a language identifier
          * @param feature a feature identifier
          */
-        public LookupSpec ( String script, String language, String feature ) {
-            this ( script, language, feature, false, false );
+        public LookupSpec (String script, String language, String feature) {
+            this (script, language, feature, false, false);
         }
 
         /**
@@ -358,19 +358,19 @@ public class GlyphTable {
          * @param permitEmpty if true the permit empty script, language, or feature
          * @param permitWildcard if true the permit wildcard script, language, or feature
          */
-        LookupSpec ( String script, String language, String feature, boolean permitEmpty, boolean permitWildcard ) {
-            if ( ( script == null ) || ( ! permitEmpty && ( script.length() == 0 ) ) ) {
-                throw new AdvancedTypographicTableFormatException ( "script must be non-empty string" );
-            } else if ( ( language == null ) || ( ! permitEmpty && ( language.length() == 0 ) ) ) {
-                throw new AdvancedTypographicTableFormatException ( "language must be non-empty string" );
-            } else if ( ( feature == null ) || ( ! permitEmpty && ( feature.length() == 0 ) ) ) {
-                throw new AdvancedTypographicTableFormatException ( "feature must be non-empty string" );
-            } else if ( ! permitWildcard && script.equals("*") ) {
-                throw new AdvancedTypographicTableFormatException ( "script must not be wildcard" );
-            } else if ( ! permitWildcard && language.equals("*") ) {
-                throw new AdvancedTypographicTableFormatException ( "language must not be wildcard" );
-            } else if ( ! permitWildcard && feature.equals("*") ) {
-                throw new AdvancedTypographicTableFormatException ( "feature must not be wildcard" );
+        LookupSpec (String script, String language, String feature, boolean permitEmpty, boolean permitWildcard) {
+            if ((script == null) || (! permitEmpty && (script.length() == 0))) {
+                throw new AdvancedTypographicTableFormatException ("script must be non-empty string");
+            } else if ((language == null) || (! permitEmpty && (language.length() == 0))) {
+                throw new AdvancedTypographicTableFormatException ("language must be non-empty string");
+            } else if ((feature == null) || (! permitEmpty && (feature.length() == 0))) {
+                throw new AdvancedTypographicTableFormatException ("feature must be non-empty string");
+            } else if (! permitWildcard && script.equals("*")) {
+                throw new AdvancedTypographicTableFormatException ("script must not be wildcard");
+            } else if (! permitWildcard && language.equals("*")) {
+                throw new AdvancedTypographicTableFormatException ("language must not be wildcard");
+            } else if (! permitWildcard && feature.equals("*")) {
+                throw new AdvancedTypographicTableFormatException ("feature must not be wildcard");
             }
             this.script = script.trim();
             this.language = language.trim();
@@ -395,21 +395,21 @@ public class GlyphTable {
         /** {@inheritDoc} */
         public int hashCode() {
             int hc = 0;
-            hc =  7 * hc + ( hc ^ script.hashCode() );
-            hc = 11 * hc + ( hc ^ language.hashCode() );
-            hc = 17 * hc + ( hc ^ feature.hashCode() );
+            hc =  7 * hc + (hc ^ script.hashCode());
+            hc = 11 * hc + (hc ^ language.hashCode());
+            hc = 17 * hc + (hc ^ feature.hashCode());
             return hc;
         }
 
         /** {@inheritDoc} */
-        public boolean equals ( Object o ) {
-            if ( o instanceof LookupSpec ) {
+        public boolean equals (Object o) {
+            if (o instanceof LookupSpec) {
                 LookupSpec l = (LookupSpec) o;
-                if ( ! l.script.equals ( script ) ) {
+                if (! l.script.equals (script)) {
                     return false;
-                } else if ( ! l.language.equals ( language ) ) {
+                } else if (! l.language.equals (language)) {
                     return false;
-                } else if ( ! l.feature.equals ( feature ) ) {
+                } else if (! l.feature.equals (feature)) {
                     return false;
                 } else {
                     return true;
@@ -420,13 +420,13 @@ public class GlyphTable {
         }
 
         /** {@inheritDoc} */
-        public int compareTo ( Object o ) {
+        public int compareTo (Object o) {
             int d;
-            if ( o instanceof LookupSpec ) {
+            if (o instanceof LookupSpec) {
                 LookupSpec ls = (LookupSpec) o;
-                if ( ( d = script.compareTo ( ls.script ) ) == 0 ) {
-                    if ( ( d = language.compareTo ( ls.language ) ) == 0 ) {
-                        if ( ( d = feature.compareTo ( ls.feature ) ) == 0 ) {
+                if ((d = script.compareTo (ls.script)) == 0) {
+                    if ((d = language.compareTo (ls.language)) == 0) {
+                        if ((d = feature.compareTo (ls.feature)) == 0) {
                             d = 0;
                         }
                     }
@@ -471,8 +471,8 @@ public class GlyphTable {
          * @param id the lookup table's identifier
          * @param subtable an initial subtable (or null)
          */
-        public LookupTable ( String id, GlyphSubtable subtable ) {
-            this ( id, makeSingleton ( subtable ) );
+        public LookupTable (String id, GlyphSubtable subtable) {
+            this (id, makeSingleton (subtable));
         }
 
         /**
@@ -480,30 +480,30 @@ public class GlyphTable {
          * @param id the lookup table's identifier
          * @param subtables a pre-poplated list of subtables or null
          */
-        public LookupTable ( String id, List/*<GlyphSubtable>*/ subtables ) {
+        public LookupTable (String id, List/*<GlyphSubtable>*/ subtables) {
             assert id != null;
             assert id.length() != 0;
-            assert id.startsWith ( "lu" );
+            assert id.startsWith ("lu");
             this.id = id;
-            this.idOrdinal = Integer.parseInt ( id.substring ( 2 ) );
+            this.idOrdinal = Integer.parseInt (id.substring (2));
             this.subtables = new LinkedList/*<GlyphSubtable>*/();
-            if ( subtables != null ) {
-                for ( Iterator it = subtables.iterator(); it.hasNext(); ) {
+            if (subtables != null) {
+                for (Iterator it = subtables.iterator(); it.hasNext(); ) {
                     GlyphSubtable st = (GlyphSubtable) it.next();
-                    addSubtable ( st );
+                    addSubtable (st);
                 }
             }
         }
 
         /** @return the subtables as an array */
         public GlyphSubtable[] getSubtables() {
-            if ( frozen ) {
-                return ( subtablesArray != null ) ? subtablesArray : subtablesArrayEmpty;
+            if (frozen) {
+                return (subtablesArray != null) ? subtablesArray : subtablesArrayEmpty;
             } else {
-                if ( doesSub ) {
-                    return (GlyphSubtable[]) subtables.toArray ( new GlyphSubstitutionSubtable [ subtables.size() ] );
-                } else if ( doesPos ) {
-                    return (GlyphSubtable[]) subtables.toArray ( new GlyphPositioningSubtable [ subtables.size() ] );
+                if (doesSub) {
+                    return (GlyphSubtable[]) subtables.toArray (new GlyphSubstitutionSubtable [ subtables.size() ]);
+                } else if (doesPos) {
+                    return (GlyphSubtable[]) subtables.toArray (new GlyphPositioningSubtable [ subtables.size() ]);
                 } else {
                     return null;
                 }
@@ -516,59 +516,59 @@ public class GlyphTable {
          * @param subtable to add
          * @return true if subtable was not already present, otherwise false
          */
-        public boolean addSubtable ( GlyphSubtable subtable ) {
+        public boolean addSubtable (GlyphSubtable subtable) {
             boolean added = false;
             // ensure table is not frozen
-            if ( frozen ) {
-                throw new IllegalStateException ( "glyph table is frozen, subtable addition prohibited" );
+            if (frozen) {
+                throw new IllegalStateException ("glyph table is frozen, subtable addition prohibited");
             }
             // validate subtable to ensure consistency with current subtables
-            validateSubtable ( subtable );
+            validateSubtable (subtable);
             // insert subtable into ordered list
-            for ( ListIterator/*<GlyphSubtable>*/ lit = subtables.listIterator(0); lit.hasNext(); ) {
+            for (ListIterator/*<GlyphSubtable>*/ lit = subtables.listIterator(0); lit.hasNext(); ) {
                 GlyphSubtable st = (GlyphSubtable) lit.next();
                 int d;
-                if ( ( d = subtable.compareTo ( st ) ) < 0 ) {
+                if ((d = subtable.compareTo (st)) < 0) {
                     // insert within list
-                    lit.set ( subtable );
-                    lit.add ( st );
+                    lit.set (subtable);
+                    lit.add (st);
                     added = true;
-                } else if ( d == 0 ) {
+                } else if (d == 0) {
                     // duplicate entry is ignored
                     added = false;
                     subtable = null;
                 }
             }
             // append at end of list
-            if ( ! added && ( subtable != null ) ) {
-                subtables.add ( subtable );
+            if (! added && (subtable != null)) {
+                subtables.add (subtable);
                 added = true;
             }
             return added;
         }
 
-        private void validateSubtable ( GlyphSubtable subtable ) {
-            if ( subtable == null ) {
-                throw new AdvancedTypographicTableFormatException ( "subtable must be non-null" );
+        private void validateSubtable (GlyphSubtable subtable) {
+            if (subtable == null) {
+                throw new AdvancedTypographicTableFormatException ("subtable must be non-null");
             }
-            if ( subtable instanceof GlyphSubstitutionSubtable ) {
-                if ( doesPos ) {
-                    throw new AdvancedTypographicTableFormatException ( "subtable must be positioning subtable, but is: " + subtable );
+            if (subtable instanceof GlyphSubstitutionSubtable) {
+                if (doesPos) {
+                    throw new AdvancedTypographicTableFormatException ("subtable must be positioning subtable, but is: " + subtable);
                 } else {
                     doesSub = true;
                 }
             }
-            if ( subtable instanceof GlyphPositioningSubtable ) {
-                if ( doesSub ) {
-                    throw new AdvancedTypographicTableFormatException ( "subtable must be substitution subtable, but is: " + subtable );
+            if (subtable instanceof GlyphPositioningSubtable) {
+                if (doesSub) {
+                    throw new AdvancedTypographicTableFormatException ("subtable must be substitution subtable, but is: " + subtable);
                 } else {
                     doesPos = true;
                 }
             }
-            if ( subtables.size() > 0 ) {
+            if (subtables.size() > 0) {
                 GlyphSubtable st = (GlyphSubtable) subtables.get(0);
-                if ( ! st.isCompatible ( subtable ) ) {
-                    throw new AdvancedTypographicTableFormatException ( "subtable " + subtable + " is not compatible with subtable " + st );
+                if (! st.isCompatible (subtable)) {
+                    throw new AdvancedTypographicTableFormatException ("subtable " + subtable + " is not compatible with subtable " + st);
                 }
             }
         }
@@ -579,21 +579,21 @@ public class GlyphTable {
          * lookup tables that appear in this lookup table's subtables.
          * @param lookupTables map from lookup table identifers, e.g. "lu4", to lookup tables
          */
-        public void freezeSubtables ( Map/*<String,LookupTable>*/ lookupTables ) {
-            if ( ! frozen ) {
+        public void freezeSubtables (Map/*<String,LookupTable>*/ lookupTables) {
+            if (! frozen) {
                 GlyphSubtable[] sta = getSubtables();
-                resolveLookupReferences ( sta, lookupTables );
+                resolveLookupReferences (sta, lookupTables);
                 this.subtablesArray = sta;
                 this.frozen = true;
             }
         }
 
-        private void resolveLookupReferences ( GlyphSubtable[] subtables, Map/*<String,LookupTable>*/ lookupTables ) {
-            if ( subtables != null ) {
-                for ( int i = 0, n = subtables.length; i < n; i++ ) {
+        private void resolveLookupReferences (GlyphSubtable[] subtables, Map/*<String,LookupTable>*/ lookupTables) {
+            if (subtables != null) {
+                for (int i = 0, n = subtables.length; i < n; i++) {
                     GlyphSubtable st = subtables [ i ];
-                    if ( st != null ) {
-                        st.resolveLookupReferences ( lookupTables );
+                    if (st != null) {
+                        st.resolveLookupReferences (lookupTables);
                     }
                 }
             }
@@ -616,9 +616,9 @@ public class GlyphTable {
          * @param sct a script specific context tester (or null)
          * @return the substituted (output) glyph sequence
          */
-        public GlyphSequence substitute ( GlyphSequence gs, String script, String language, String feature, ScriptContextTester sct ) {
-            if ( performsSubstitution() ) {
-                return GlyphSubstitutionSubtable.substitute ( gs, script, language, feature, (GlyphSubstitutionSubtable[]) subtablesArray, sct );
+        public GlyphSequence substitute (GlyphSequence gs, String script, String language, String feature, ScriptContextTester sct) {
+            if (performsSubstitution()) {
+                return GlyphSubstitutionSubtable.substitute (gs, script, language, feature, (GlyphSubstitutionSubtable[]) subtablesArray, sct);
             } else {
                 return gs;
             }
@@ -630,9 +630,9 @@ public class GlyphTable {
          * @param sequenceIndex if non negative, then apply subtables only at specified sequence index
          * @return the substituted (output) glyph sequence
          */
-        public GlyphSequence substitute ( GlyphSubstitutionState ss, int sequenceIndex ) {
-            if ( performsSubstitution() ) {
-                return GlyphSubstitutionSubtable.substitute ( ss, (GlyphSubstitutionSubtable[]) subtablesArray, sequenceIndex );
+        public GlyphSequence substitute (GlyphSubstitutionState ss, int sequenceIndex) {
+            if (performsSubstitution()) {
+                return GlyphSubstitutionSubtable.substitute (ss, (GlyphSubstitutionSubtable[]) subtablesArray, sequenceIndex);
             } else {
                 return ss.getInput();
             }
@@ -659,9 +659,9 @@ public class GlyphTable {
          * @param sct a script specific context tester (or null)
          * @return true if some adjustment is not zero; otherwise, false
          */
-        public boolean position ( GlyphSequence gs, String script, String language, String feature, int fontSize, int[] widths, int[][] adjustments, ScriptContextTester sct ) {
-            if ( performsPositioning() ) {
-                return GlyphPositioningSubtable.position ( gs, script, language, feature, fontSize, (GlyphPositioningSubtable[]) subtablesArray, widths, adjustments, sct );
+        public boolean position (GlyphSequence gs, String script, String language, String feature, int fontSize, int[] widths, int[][] adjustments, ScriptContextTester sct) {
+            if (performsPositioning()) {
+                return GlyphPositioningSubtable.position (gs, script, language, feature, fontSize, (GlyphPositioningSubtable[]) subtablesArray, widths, adjustments, sct);
             } else {
                 return false;
             }
@@ -673,9 +673,9 @@ public class GlyphTable {
          * @param sequenceIndex if non negative, then apply subtables only at specified sequence index
          * @return true if some adjustment is not zero; otherwise, false
          */
-        public boolean position ( GlyphPositioningState ps, int sequenceIndex ) {
-            if ( performsPositioning() ) {
-                return GlyphPositioningSubtable.position ( ps, (GlyphPositioningSubtable[]) subtablesArray, sequenceIndex );
+        public boolean position (GlyphPositioningState ps, int sequenceIndex) {
+            if (performsPositioning()) {
+                return GlyphPositioningSubtable.position (ps, (GlyphPositioningSubtable[]) subtablesArray, sequenceIndex);
             } else {
                 return false;
             }
@@ -691,8 +691,8 @@ public class GlyphTable {
          * @return true if identifier of the specified lookup table is the same
          * as the identifier of this lookup table
          */
-        public boolean equals ( Object o ) {
-            if ( o instanceof LookupTable ) {
+        public boolean equals (Object o) {
+            if (o instanceof LookupTable) {
                 LookupTable lt = (LookupTable) o;
                 return idOrdinal == lt.idOrdinal;
             } else {
@@ -707,14 +707,14 @@ public class GlyphTable {
          * "lu(DIGIT)+", with comparison based on numerical ordering of numbers expressed by
          * (DIGIT)+.
          */
-        public int compareTo ( Object o ) {
-            if ( o instanceof LookupTable ) {
+        public int compareTo (Object o) {
+            if (o instanceof LookupTable) {
                 LookupTable lt = (LookupTable) o;
                 int i = idOrdinal;
                 int j = lt.idOrdinal;
-                if ( i < j ) {
+                if (i < j) {
                     return -1;
-                } else if ( i > j ) {
+                } else if (i > j) {
                     return 1;
                 } else {
                     return 0;
@@ -727,19 +727,19 @@ public class GlyphTable {
         /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer();
-            sb.append ( "{ " );
-            sb.append ( "id = " + id );
-            sb.append ( ", subtables = " + subtables );
-            sb.append ( " }" );
+            sb.append ("{ ");
+            sb.append ("id = " + id);
+            sb.append (", subtables = " + subtables);
+            sb.append (" }");
             return sb.toString();
         }
 
-        private static List/*<GlyphSubtable>*/ makeSingleton ( GlyphSubtable subtable ) {
-            if ( subtable == null ) {
+        private static List/*<GlyphSubtable>*/ makeSingleton (GlyphSubtable subtable) {
+            if (subtable == null) {
                 return null;
             } else {
-                List/*<GlyphSubtable>*/ stl = new ArrayList/*<GlyphSubtable>*/ ( 1 );
-                stl.add ( subtable );
+                List/*<GlyphSubtable>*/ stl = new ArrayList/*<GlyphSubtable>*/ (1);
+                stl.add (subtable);
                 return stl;
             }
         }
@@ -762,7 +762,7 @@ public class GlyphTable {
          * @param lookupTable a glyph lookup table
          * @param feature a feature that caused lookup table selection
          */
-        public UseSpec ( LookupTable lookupTable, String feature ) {
+        public UseSpec (LookupTable lookupTable, String feature) {
             this.lookupTable = lookupTable;
             this.feature = feature;
         }
@@ -785,8 +785,8 @@ public class GlyphTable {
          * @param sct a script specific context tester (or null)
          * @return the substituted (output) glyph sequence
          */
-        public GlyphSequence substitute ( GlyphSequence gs, String script, String language, ScriptContextTester sct ) {
-            return lookupTable.substitute ( gs, script, language, feature, sct );
+        public GlyphSequence substitute (GlyphSequence gs, String script, String language, ScriptContextTester sct) {
+            return lookupTable.substitute (gs, script, language, feature, sct);
         }
 
         /**
@@ -801,8 +801,8 @@ public class GlyphTable {
          * @param sct a script specific context tester (or null)
          * @return true if some adjustment is not zero; otherwise, false
          */
-        public boolean position ( GlyphSequence gs, String script, String language, int fontSize, int[] widths, int[][] adjustments, ScriptContextTester sct ) {
-            return lookupTable.position ( gs, script, language, feature, fontSize, widths, adjustments, sct );
+        public boolean position (GlyphSequence gs, String script, String language, int fontSize, int[] widths, int[][] adjustments, ScriptContextTester sct) {
+            return lookupTable.position (gs, script, language, feature, fontSize, widths, adjustments, sct);
         }
 
         /** {@inheritDoc} */
@@ -811,20 +811,20 @@ public class GlyphTable {
         }
 
         /** {@inheritDoc} */
-        public boolean equals ( Object o ) {
-            if ( o instanceof UseSpec ) {
+        public boolean equals (Object o) {
+            if (o instanceof UseSpec) {
                 UseSpec u = (UseSpec) o;
-                return lookupTable.equals ( u.lookupTable );
+                return lookupTable.equals (u.lookupTable);
             } else {
                 return false;
             }
         }
 
         /** {@inheritDoc} */
-        public int compareTo ( Object o ) {
-            if ( o instanceof UseSpec ) {
+        public int compareTo (Object o) {
+            if (o instanceof UseSpec) {
                 UseSpec u = (UseSpec) o;
-                return lookupTable.compareTo ( u.lookupTable );
+                return lookupTable.compareTo (u.lookupTable);
             } else {
                 return -1;
             }
@@ -847,7 +847,7 @@ public class GlyphTable {
          * @param sequenceIndex the index into the input sequence
          * @param lookupIndex the lookup table index
          */
-        public RuleLookup ( int sequenceIndex, int lookupIndex ) {
+        public RuleLookup (int sequenceIndex, int lookupIndex) {
             this.sequenceIndex = sequenceIndex;
             this.lookupIndex = lookupIndex;
             this.lookup = null;
@@ -872,14 +872,14 @@ public class GlyphTable {
          * Resolve references to lookup tables.
          * @param lookupTables map from lookup table identifers, e.g. "lu4", to lookup tables
          */
-        public void resolveLookupReferences ( Map/*<String,LookupTable>*/ lookupTables ) {
-            if ( lookupTables != null ) {
-                String lid = "lu" + Integer.toString ( lookupIndex );
-                LookupTable lt = (LookupTable) lookupTables.get ( lid );
-                if ( lt != null ) {
+        public void resolveLookupReferences (Map/*<String,LookupTable>*/ lookupTables) {
+            if (lookupTables != null) {
+                String lid = "lu" + Integer.toString (lookupIndex);
+                LookupTable lt = (LookupTable) lookupTables.get (lid);
+                if (lt != null) {
                     this.lookup = lt;
                 } else {
-                    log.warn ( "unable to resolve glyph lookup table reference '" + lid + "' amongst lookup tables: " + lookupTables.values() );
+                    log.warn ("unable to resolve glyph lookup table reference '" + lid + "' amongst lookup tables: " + lookupTables.values());
                 }
             }
         }
@@ -904,7 +904,7 @@ public class GlyphTable {
          * @param lookups the rule's lookups
          * @param inputSequenceLength the number of glyphs in the input sequence for this rule
          */
-        protected Rule ( RuleLookup[] lookups, int inputSequenceLength ) {
+        protected Rule (RuleLookup[] lookups, int inputSequenceLength) {
             assert lookups != null;
             this.lookups = lookups;
             this.inputSequenceLength = inputSequenceLength;
@@ -924,12 +924,12 @@ public class GlyphTable {
          * Resolve references to lookup tables, e.g., in RuleLookup, to the lookup tables themselves.
          * @param lookupTables map from lookup table identifers, e.g. "lu4", to lookup tables
          */
-        public void resolveLookupReferences ( Map/*<String,LookupTable>*/ lookupTables ) {
-            if ( lookups != null ) {
-                for ( int i = 0, n = lookups.length; i < n; i++ ) {
+        public void resolveLookupReferences (Map/*<String,LookupTable>*/ lookupTables) {
+            if (lookups != null) {
+                for (int i = 0, n = lookups.length; i < n; i++) {
                     RuleLookup l = lookups [ i ];
-                    if ( l != null ) {
-                        l.resolveLookupReferences ( lookupTables );
+                    if (l != null) {
+                        l.resolveLookupReferences (lookupTables);
                     }
                 }
             }
@@ -937,7 +937,7 @@ public class GlyphTable {
 
         /** {@inheritDoc} */
         public String toString() {
-            return "{ lookups = " + Arrays.toString ( lookups ) + ", inputSequenceLength = " + inputSequenceLength + " }";
+            return "{ lookups = " + Arrays.toString (lookups) + ", inputSequenceLength = " + inputSequenceLength + " }";
         }
 
     }
@@ -956,8 +956,8 @@ public class GlyphTable {
          * @param inputSequenceLength number of glyphs constituting input sequence (to be consumed)
          * @param glyphs the rule's glyph sequence to match, starting with second glyph in sequence
          */
-        public GlyphSequenceRule ( RuleLookup[] lookups, int inputSequenceLength, int[] glyphs ) {
-            super ( lookups, inputSequenceLength );
+        public GlyphSequenceRule (RuleLookup[] lookups, int inputSequenceLength, int[] glyphs) {
+            super (lookups, inputSequenceLength);
             assert glyphs != null;
             this.glyphs = glyphs;
         }
@@ -976,20 +976,20 @@ public class GlyphTable {
          * @param firstGlyph to fill in first glyph entry
          * @return the glyphs augmented by first glyph
          */
-        public int[] getGlyphs ( int firstGlyph ) {
+        public int[] getGlyphs (int firstGlyph) {
             int[] ga = new int [ glyphs.length + 1 ];
             ga [ 0 ] = firstGlyph;
-            System.arraycopy ( glyphs, 0, ga, 1, glyphs.length );
+            System.arraycopy (glyphs, 0, ga, 1, glyphs.length);
             return ga;
         }
 
         /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer();
-            sb.append ( "{ " );
-            sb.append ( "lookups = " + Arrays.toString ( getLookups() ) );
-            sb.append ( ", glyphs = " + Arrays.toString ( glyphs ) );
-            sb.append ( " }" );
+            sb.append ("{ ");
+            sb.append ("lookups = " + Arrays.toString (getLookups()));
+            sb.append (", glyphs = " + Arrays.toString (glyphs));
+            sb.append (" }");
             return sb.toString();
         }
 
@@ -1009,8 +1009,8 @@ public class GlyphTable {
          * @param inputSequenceLength number of glyphs constituting input sequence (to be consumed)
          * @param classes the rule's glyph class sequence to match, starting with second glyph in sequence
          */
-        public ClassSequenceRule ( RuleLookup[] lookups, int inputSequenceLength, int[] classes ) {
-            super ( lookups, inputSequenceLength );
+        public ClassSequenceRule (RuleLookup[] lookups, int inputSequenceLength, int[] classes) {
+            super (lookups, inputSequenceLength);
             assert classes != null;
             this.classes = classes;
         }
@@ -1029,20 +1029,20 @@ public class GlyphTable {
          * @param firstClass to fill in first class entry
          * @return the classes augmented by first class
          */
-        public int[] getClasses ( int firstClass ) {
+        public int[] getClasses (int firstClass) {
             int[] ca = new int [ classes.length + 1 ];
             ca [ 0 ] = firstClass;
-            System.arraycopy ( classes, 0, ca, 1, classes.length );
+            System.arraycopy (classes, 0, ca, 1, classes.length);
             return ca;
         }
 
         /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer();
-            sb.append ( "{ " );
-            sb.append ( "lookups = " + Arrays.toString ( getLookups() ) );
-            sb.append ( ", classes = " + Arrays.toString( classes ) );
-            sb.append ( " }" );
+            sb.append ("{ ");
+            sb.append ("lookups = " + Arrays.toString (getLookups()));
+            sb.append (", classes = " + Arrays.toString(classes));
+            sb.append (" }");
             return sb.toString();
         }
 
@@ -1062,8 +1062,8 @@ public class GlyphTable {
          * @param inputSequenceLength number of glyphs constituting input sequence (to be consumed)
          * @param coverages the rule's glyph coverage sequence to match, starting with first glyph in sequence
          */
-        public CoverageSequenceRule ( RuleLookup[] lookups, int inputSequenceLength, GlyphCoverageTable[] coverages ) {
-            super ( lookups, inputSequenceLength );
+        public CoverageSequenceRule (RuleLookup[] lookups, int inputSequenceLength, GlyphCoverageTable[] coverages) {
+            super (lookups, inputSequenceLength);
             assert coverages != null;
             this.coverages = coverages;
         }
@@ -1076,10 +1076,10 @@ public class GlyphTable {
         /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer();
-            sb.append ( "{ " );
-            sb.append ( "lookups = " + Arrays.toString ( getLookups() ) );
-            sb.append ( ", coverages = " + Arrays.toString( coverages ) );
-            sb.append ( " }" );
+            sb.append ("{ ");
+            sb.append ("lookups = " + Arrays.toString (getLookups()));
+            sb.append (", coverages = " + Arrays.toString(coverages));
+            sb.append (" }");
             return sb.toString();
         }
 
@@ -1102,8 +1102,8 @@ public class GlyphTable {
          * @param backtrackGlyphs the rule's backtrack glyph sequence to match, starting with first glyph in sequence
          * @param lookaheadGlyphs the rule's lookahead glyph sequence to match, starting with first glyph in sequence
          */
-        public ChainedGlyphSequenceRule ( RuleLookup[] lookups, int inputSequenceLength, int[] glyphs, int[] backtrackGlyphs, int[] lookaheadGlyphs ) {
-            super ( lookups, inputSequenceLength, glyphs );
+        public ChainedGlyphSequenceRule (RuleLookup[] lookups, int inputSequenceLength, int[] glyphs, int[] backtrackGlyphs, int[] lookaheadGlyphs) {
+            super (lookups, inputSequenceLength, glyphs);
             assert backtrackGlyphs != null;
             assert lookaheadGlyphs != null;
             this.backtrackGlyphs = backtrackGlyphs;
@@ -1123,12 +1123,12 @@ public class GlyphTable {
         /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer();
-            sb.append ( "{ " );
-            sb.append ( "lookups = " + Arrays.toString ( getLookups() ) );
-            sb.append ( ", glyphs = " + Arrays.toString ( getGlyphs() ) );
-            sb.append ( ", backtrackGlyphs = " + Arrays.toString ( backtrackGlyphs ) );
-            sb.append ( ", lookaheadGlyphs = " + Arrays.toString ( lookaheadGlyphs ) );
-            sb.append ( " }" );
+            sb.append ("{ ");
+            sb.append ("lookups = " + Arrays.toString (getLookups()));
+            sb.append (", glyphs = " + Arrays.toString (getGlyphs()));
+            sb.append (", backtrackGlyphs = " + Arrays.toString (backtrackGlyphs));
+            sb.append (", lookaheadGlyphs = " + Arrays.toString (lookaheadGlyphs));
+            sb.append (" }");
             return sb.toString();
         }
 
@@ -1151,8 +1151,8 @@ public class GlyphTable {
          * @param backtrackClasses the rule's backtrack glyph class sequence to match, starting with first glyph in sequence
          * @param lookaheadClasses the rule's lookahead glyph class sequence to match, starting with first glyph in sequence
          */
-        public ChainedClassSequenceRule ( RuleLookup[] lookups, int inputSequenceLength, int[] classes, int[] backtrackClasses, int[] lookaheadClasses ) {
-            super ( lookups, inputSequenceLength, classes );
+        public ChainedClassSequenceRule (RuleLookup[] lookups, int inputSequenceLength, int[] classes, int[] backtrackClasses, int[] lookaheadClasses) {
+            super (lookups, inputSequenceLength, classes);
             assert backtrackClasses != null;
             assert lookaheadClasses != null;
             this.backtrackClasses = backtrackClasses;
@@ -1172,12 +1172,12 @@ public class GlyphTable {
         /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer();
-            sb.append ( "{ " );
-            sb.append ( "lookups = " + Arrays.toString ( getLookups() ) );
-            sb.append ( ", classes = " + Arrays.toString ( getClasses() ) );
-            sb.append ( ", backtrackClasses = " + Arrays.toString ( backtrackClasses ) );
-            sb.append ( ", lookaheadClasses = " + Arrays.toString ( lookaheadClasses ) );
-            sb.append ( " }" );
+            sb.append ("{ ");
+            sb.append ("lookups = " + Arrays.toString (getLookups()));
+            sb.append (", classes = " + Arrays.toString (getClasses()));
+            sb.append (", backtrackClasses = " + Arrays.toString (backtrackClasses));
+            sb.append (", lookaheadClasses = " + Arrays.toString (lookaheadClasses));
+            sb.append (" }");
             return sb.toString();
         }
 
@@ -1200,8 +1200,8 @@ public class GlyphTable {
          * @param backtrackCoverages the rule's backtrack glyph class sequence to match, starting with first glyph in sequence
          * @param lookaheadCoverages the rule's lookahead glyph class sequence to match, starting with first glyph in sequence
          */
-        public ChainedCoverageSequenceRule ( RuleLookup[] lookups, int inputSequenceLength, GlyphCoverageTable[] coverages, GlyphCoverageTable[] backtrackCoverages, GlyphCoverageTable[] lookaheadCoverages ) {
-            super ( lookups, inputSequenceLength, coverages );
+        public ChainedCoverageSequenceRule (RuleLookup[] lookups, int inputSequenceLength, GlyphCoverageTable[] coverages, GlyphCoverageTable[] backtrackCoverages, GlyphCoverageTable[] lookaheadCoverages) {
+            super (lookups, inputSequenceLength, coverages);
             assert backtrackCoverages != null;
             assert lookaheadCoverages != null;
             this.backtrackCoverages = backtrackCoverages;
@@ -1221,12 +1221,12 @@ public class GlyphTable {
         /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer();
-            sb.append ( "{ " );
-            sb.append ( "lookups = " + Arrays.toString ( getLookups() ) );
-            sb.append ( ", coverages = " + Arrays.toString ( getCoverages() ) );
-            sb.append ( ", backtrackCoverages = " + Arrays.toString ( backtrackCoverages ) );
-            sb.append ( ", lookaheadCoverages = " + Arrays.toString ( lookaheadCoverages ) );
-            sb.append ( " }" );
+            sb.append ("{ ");
+            sb.append ("lookups = " + Arrays.toString (getLookups()));
+            sb.append (", coverages = " + Arrays.toString (getCoverages()));
+            sb.append (", backtrackCoverages = " + Arrays.toString (backtrackCoverages));
+            sb.append (", lookaheadCoverages = " + Arrays.toString (lookaheadCoverages));
+            sb.append (" }");
             return sb.toString();
         }
 
@@ -1245,10 +1245,10 @@ public class GlyphTable {
          * @param rules the rules
          * @throws AdvancedTypographicTableFormatException if rules or some element of rules is null
          */
-        public RuleSet ( Rule[] rules ) throws AdvancedTypographicTableFormatException {
+        public RuleSet (Rule[] rules) throws AdvancedTypographicTableFormatException {
             // enforce rules array instance
-            if ( rules == null ) {
-                throw new AdvancedTypographicTableFormatException ( "rules[] is null" );
+            if (rules == null) {
+                throw new AdvancedTypographicTableFormatException ("rules[] is null");
             }
             this.rules = rules;
         }
@@ -1262,12 +1262,12 @@ public class GlyphTable {
          * Resolve references to lookup tables, e.g., in RuleLookup, to the lookup tables themselves.
          * @param lookupTables map from lookup table identifers, e.g. "lu4", to lookup tables
          */
-        public void resolveLookupReferences ( Map/*<String,LookupTable>*/ lookupTables ) {
-            if ( rules != null ) {
-                for ( int i = 0, n = rules.length; i < n; i++ ) {
+        public void resolveLookupReferences (Map/*<String,LookupTable>*/ lookupTables) {
+            if (rules != null) {
+                for (int i = 0, n = rules.length; i < n; i++) {
                     Rule r = rules [ i ];
-                    if ( r != null ) {
-                        r.resolveLookupReferences ( lookupTables );
+                    if (r != null) {
+                        r.resolveLookupReferences (lookupTables);
                     }
                 }
             }
@@ -1275,7 +1275,7 @@ public class GlyphTable {
 
         /** {@inheritDoc} */
         public String toString() {
-            return "{ rules = " + Arrays.toString ( rules ) + " }";
+            return "{ rules = " + Arrays.toString (rules) + " }";
         }
 
     }
@@ -1291,22 +1291,22 @@ public class GlyphTable {
          * @param rules the rules
          * @throws AdvancedTypographicTableFormatException if some rule[i] is not an instance of rule[0]
          */
-        public HomogeneousRuleSet ( Rule[] rules ) throws AdvancedTypographicTableFormatException {
-            super ( rules );
+        public HomogeneousRuleSet (Rule[] rules) throws AdvancedTypographicTableFormatException {
+            super (rules);
             // find first non-null rule
             Rule r0 = null;
-            for ( int i = 1, n = rules.length; ( r0 == null ) && ( i < n ); i++ ) {
-                if ( rules[i] != null ) {
+            for (int i = 1, n = rules.length; (r0 == null) && (i < n); i++) {
+                if (rules[i] != null) {
                     r0 = rules[i];
                 }
             }
             // enforce rule instance homogeneity
-            if ( r0 != null ) {
+            if (r0 != null) {
                 Class c = r0.getClass();
-                for ( int i = 1, n = rules.length; i < n; i++ ) {
+                for (int i = 1, n = rules.length; i < n; i++) {
                     Rule r = rules[i];
-                    if ( ( r != null ) && ! c.isInstance ( r ) ) {
-                        throw new AdvancedTypographicTableFormatException ( "rules[" + i + "] is not an instance of " + c.getName() );
+                    if ((r != null) && ! c.isInstance (r)) {
+                        throw new AdvancedTypographicTableFormatException ("rules[" + i + "] is not an instance of " + c.getName());
                     }
                 }
             }

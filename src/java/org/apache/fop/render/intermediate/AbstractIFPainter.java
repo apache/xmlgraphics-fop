@@ -460,7 +460,7 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
     }
 
     /** {@inheritDoc} */
-    public boolean isBackgroundRequired( BorderProps bpsBefore, BorderProps bpsAfter,
+    public boolean isBackgroundRequired(BorderProps bpsBefore, BorderProps bpsAfter,
             BorderProps bpsStart, BorderProps bpsEnd) {
         return true;
     }

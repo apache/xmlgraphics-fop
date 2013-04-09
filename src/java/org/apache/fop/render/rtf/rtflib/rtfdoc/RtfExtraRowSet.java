@@ -107,8 +107,8 @@ public class RtfExtraRowSet extends RtfContainer {
 
         public int hashCode() {
             int hc = super.hashCode();
-            hc ^= ( hc * 11 ) + xOffset;
-            hc ^= ( hc * 19 ) + rowIndex;
+            hc ^= (hc * 11) + xOffset;
+            hc ^= (hc * 19) + rowIndex;
             return hc;
         }
 

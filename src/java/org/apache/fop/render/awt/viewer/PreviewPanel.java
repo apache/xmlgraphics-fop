@@ -399,7 +399,7 @@ public class PreviewPanel extends JPanel {
                 int value = +e.getValue();
                 int min = a.getMinimum();
                 int max = a.getMaximum();
-                int page = ( (renderer.getNumberOfPages() * value) / (max - min) );
+                int page = ((renderer.getNumberOfPages() * value) / (max - min));
                 if (page != currentPage) {
                     int oldPage = currentPage;
                     currentPage = page;

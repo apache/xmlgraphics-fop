@@ -86,7 +86,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
                               blockProgressionOffset, level);
             }
         } else {
-            int[] levels = ( level >= 0 ) ? new int[] {level} : null;
+            int[] levels = (level >= 0) ? new int[] {level} : null;
             text.addWord(String.valueOf(ch), ipd, null, levels, null, blockProgressionOffset);
         }
 

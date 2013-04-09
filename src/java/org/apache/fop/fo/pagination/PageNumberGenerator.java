@@ -49,8 +49,8 @@ public class PageNumberGenerator {
      * @param language (may be null or empty, which is treated as null)
      * @param country (may be null or empty, which is treated as null)
      */
-    public PageNumberGenerator ( String format, int groupingSeparator, int groupingSize, int letterValue, String features, String language, String country ) {
-        this.converter = new NumberConverter ( format, groupingSeparator, groupingSize, letterValue, features, language, country );
+    public PageNumberGenerator (String format, int groupingSeparator, int groupingSize, int letterValue, String features, String language, String country) {
+        this.converter = new NumberConverter (format, groupingSeparator, groupingSize, letterValue, features, language, country);
     }
 
     /**
@@ -58,8 +58,8 @@ public class PageNumberGenerator {
      * @param number page number to format
      * @return the formatted page number as a String
      */
-    public String makeFormattedPageNumber ( int number ) {
-        return converter.convert ( number );
+    public String makeFormattedPageNumber (int number) {
+        return converter.convert (number);
     }
 
 }

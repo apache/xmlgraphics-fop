@@ -28,43 +28,43 @@ public interface WritingModeTraitsSetter extends WritingModeTraitsGetter {
      * Set value of inline-progression-direction trait.
      * @param direction the "inline-progression-direction" trait
      */
-    void setInlineProgressionDirection ( Direction direction );
+    void setInlineProgressionDirection (Direction direction);
 
     /**
      * Set value of block-progression-direction trait.
      * @param direction the "block-progression-direction" trait
      */
-    void setBlockProgressionDirection ( Direction direction );
+    void setBlockProgressionDirection (Direction direction);
 
     /**
      * Set value of column-progression-direction trait.
      * @param direction the "column-progression-direction" trait
      */
-    void setColumnProgressionDirection ( Direction direction );
+    void setColumnProgressionDirection (Direction direction);
 
     /**
      * Set value of row-progression-direction trait.
      * @param direction the "row-progression-direction" trait
      */
-    void setRowProgressionDirection ( Direction direction );
+    void setRowProgressionDirection (Direction direction);
 
     /**
      * Set value of shift-direction trait.
      * @param direction the "shift-direction" trait
      */
-    void setShiftDirection ( Direction direction );
+    void setShiftDirection (Direction direction);
 
     /**
      * Set value of writing-mode trait.
      * @param writingMode the "writing-mode" trait
      */
-    void setWritingMode ( WritingMode writingMode );
+    void setWritingMode (WritingMode writingMode);
 
     /**
      * Collectivelly assign values to all writing mode traits based upon a specific
      * writing mode.
      * @param writingMode the "writing-mode" trait
      */
-    void assignWritingModeTraits ( WritingMode writingMode );
+    void assignWritingModeTraits (WritingMode writingMode);
 
 }

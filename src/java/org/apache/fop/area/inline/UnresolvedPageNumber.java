@@ -162,9 +162,9 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
      * @return modified list of inline runs, having appended new run
      */
     @Override
-    public List collectInlineRuns ( List runs ) {
+    public List collectInlineRuns (List runs) {
         assert runs != null;
-        runs.add ( new InlineRun ( this, new int[] {getBidiLevel()}) );
+        runs.add (new InlineRun (this, new int[] {getBidiLevel()}));
         return runs;
     }
 }

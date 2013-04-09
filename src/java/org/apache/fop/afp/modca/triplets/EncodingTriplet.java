@@ -35,7 +35,7 @@ public class EncodingTriplet extends AbstractTriplet {
     /**
      * @param encoding the CCSID character set encoding
      */
-    public EncodingTriplet( int encoding) {
+    public EncodingTriplet(int encoding) {
         super(CODED_GRAPHIC_CHARACTER_SET_GLOBAL_IDENTIFIER);
         this.encoding = encoding;
     }

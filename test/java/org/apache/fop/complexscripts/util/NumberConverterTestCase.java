@@ -1329,10 +1329,10 @@ public class NumberConverterTestCase {
      */
     @Test
     public void testFormatDecimal() throws Exception {
-        performConversions ( formatDecimal );
-        performConversions ( formatDecimalPadded );
-        performConversions ( formatDecimalGrouped );
-        performConversions ( formatDecimalGroupedPadded );
+        performConversions (formatDecimal);
+        performConversions (formatDecimalPadded);
+        performConversions (formatDecimalGrouped);
+        performConversions (formatDecimalGroupedPadded);
     }
 
     /**
@@ -1341,10 +1341,10 @@ public class NumberConverterTestCase {
      */
     @Test
     public void testFormatDecimalArabic() throws Exception {
-        performConversions ( formatDecimalArabic );
-        performConversions ( formatDecimalArabicPadded );
-        performConversions ( formatDecimalArabicGrouped );
-        performConversions ( formatDecimalArabicGroupedPadded );
+        performConversions (formatDecimalArabic);
+        performConversions (formatDecimalArabicPadded);
+        performConversions (formatDecimalArabicGrouped);
+        performConversions (formatDecimalArabicGroupedPadded);
     }
 
     /**
@@ -1353,8 +1353,8 @@ public class NumberConverterTestCase {
      */
     @Test
     public void testFormatDecimalThai() throws Exception {
-        performConversions ( formatDecimalThai );
-        performConversions ( formatDecimalThaiPadded );
+        performConversions (formatDecimalThai);
+        performConversions (formatDecimalThaiPadded);
     }
 
     /**
@@ -1363,12 +1363,12 @@ public class NumberConverterTestCase {
      */
     @Test
     public void testFormatRoman() throws Exception {
-        performConversions ( formatRomanLower );
-        performConversions ( formatRomanUpper );
-        performConversions ( formatRomanLargeLower );
-        performConversions ( formatRomanLargeUpper );
-        performConversions ( formatRomanNumberFormsLower );
-        performConversions ( formatRomanNumberFormsUpper );
+        performConversions (formatRomanLower);
+        performConversions (formatRomanUpper);
+        performConversions (formatRomanLargeLower);
+        performConversions (formatRomanLargeUpper);
+        performConversions (formatRomanNumberFormsLower);
+        performConversions (formatRomanNumberFormsUpper);
     }
 
     /**
@@ -1377,8 +1377,8 @@ public class NumberConverterTestCase {
      */
     @Test
     public void testAlphabeticLatin() throws Exception {
-        performConversions ( formatAlphabeticLatinLower );
-        performConversions ( formatAlphabeticLatinUpper );
+        performConversions (formatAlphabeticLatinLower);
+        performConversions (formatAlphabeticLatinUpper);
     }
 
     /**
@@ -1387,8 +1387,8 @@ public class NumberConverterTestCase {
      */
     @Test
     public void testAlphabeticArabic() throws Exception {
-        performConversions ( formatAlphabeticArabicHijai );
-        performConversions ( formatAlphabeticArabicAbjadi );
+        performConversions (formatAlphabeticArabicHijai);
+        performConversions (formatAlphabeticArabicAbjadi);
     }
 
     /**
@@ -1397,7 +1397,7 @@ public class NumberConverterTestCase {
      */
     @Test
     public void testAlphabeticHebrew() throws Exception {
-        performConversions ( formatAlphabeticHebrew );
+        performConversions (formatAlphabeticHebrew);
     }
 
     /**
@@ -1406,7 +1406,7 @@ public class NumberConverterTestCase {
      */
     @Test
     public void testAlphabeticThai() throws Exception {
-        performConversions ( formatAlphabeticThai );
+        performConversions (formatAlphabeticThai);
     }
 
     /**
@@ -1415,7 +1415,7 @@ public class NumberConverterTestCase {
      */
     @Test
     public void testNumeralArabic() throws Exception {
-        performConversions ( formatNumeralArabicAbjadi );
+        performConversions (formatNumeralArabicAbjadi);
     }
 
     /**
@@ -1424,7 +1424,7 @@ public class NumberConverterTestCase {
      */
     @Test
     public void testNumeralHebrew() throws Exception {
-        performConversions ( formatNumeralHebrewGematria );
+        performConversions (formatNumeralHebrewGematria);
     }
 
     /**
@@ -1433,9 +1433,9 @@ public class NumberConverterTestCase {
      */
     @Test
     public void testWordEnglish() throws Exception {
-        performConversions ( formatWordEnglishLower );
-        performConversions ( formatWordEnglishUpper );
-        performConversions ( formatWordEnglishTitle );
+        performConversions (formatWordEnglishLower);
+        performConversions (formatWordEnglishUpper);
+        performConversions (formatWordEnglishTitle);
     }
 
     /**
@@ -1444,9 +1444,9 @@ public class NumberConverterTestCase {
      */
     @Test
     public void testWordSpanish() throws Exception {
-        performConversions ( formatWordSpanishLower );
-        performConversions ( formatWordSpanishUpper );
-        performConversions ( formatWordSpanishTitle );
+        performConversions (formatWordSpanishLower);
+        performConversions (formatWordSpanishUpper);
+        performConversions (formatWordSpanishTitle);
     }
 
     /**
@@ -1455,16 +1455,16 @@ public class NumberConverterTestCase {
      */
     @Test
     public void testWordFrench() throws Exception {
-        performConversions ( formatWordFrenchLower );
-        performConversions ( formatWordFrenchUpper );
-        performConversions ( formatWordFrenchTitle );
+        performConversions (formatWordFrenchLower);
+        performConversions (formatWordFrenchUpper);
+        performConversions (formatWordFrenchTitle);
     }
 
     /**
      * Perform conversions according to test specification.
      * @param ts test specification
      */
-    private void performConversions ( String[][] ts ) {
+    private void performConversions (String[][] ts) {
         assert ts != null;
         assert ts.length >= 2;
         String[] args = ts[0];
@@ -1473,9 +1473,9 @@ public class NumberConverterTestCase {
         String format = args[0];
         assert format.length() > 0;
         char groupingSeparator;
-        if ( args.length > 1 ) {
+        if (args.length > 1) {
             String s = args[1];
-            if ( ( s != null ) && ( s.length() > 0 ) ) {
+            if ((s != null) && (s.length() > 0)) {
                 groupingSeparator = s.charAt(0);
             } else {
                 groupingSeparator = 0;
@@ -1484,10 +1484,10 @@ public class NumberConverterTestCase {
             groupingSeparator = 0;
         }
         int groupingSize;
-        if ( args.length > 2 ) {
+        if (args.length > 2) {
             String s = args[2];
-            if ( ( s != null ) && ( s.length() > 0 ) ) {
-                groupingSize = Integer.parseInt ( s );
+            if ((s != null) && (s.length() > 0)) {
+                groupingSize = Integer.parseInt (s);
             } else {
                 groupingSize = 0;
             }
@@ -1495,13 +1495,13 @@ public class NumberConverterTestCase {
             groupingSize = 0;
         }
         int letterValue;
-        if ( args.length > 3 ) {
+        if (args.length > 3) {
             String s = args[3];
-            if ( ( s != null ) && ( s.length() > 0 ) ) {
+            if ((s != null) && (s.length() > 0)) {
                 s = s.toLowerCase();
-                if ( s.equals("alphabetic") ) {
+                if (s.equals("alphabetic")) {
                     letterValue = NumberConverter.LETTER_VALUE_ALPHABETIC;
-                } else if ( s.equals("traditional") ) {
+                } else if (s.equals("traditional")) {
                     letterValue = NumberConverter.LETTER_VALUE_TRADITIONAL;
                 } else {
                     letterValue = 0;
@@ -1513,9 +1513,9 @@ public class NumberConverterTestCase {
             letterValue = 0;
         }
         String features;
-        if ( args.length > 4 ) {
+        if (args.length > 4) {
             String s = args[4];
-            if ( ( s != null ) && ( s.length() > 0 ) ) {
+            if ((s != null) && (s.length() > 0)) {
                 features = s;
             } else {
                 features = null;
@@ -1524,9 +1524,9 @@ public class NumberConverterTestCase {
             features = null;
         }
         String language;
-        if ( args.length > 5 ) {
+        if (args.length > 5) {
             String s = args[5];
-            if ( ( s != null ) && ( s.length() > 0 ) ) {
+            if ((s != null) && (s.length() > 0)) {
                 language = s;
             } else {
                 language = null;
@@ -1535,9 +1535,9 @@ public class NumberConverterTestCase {
             language = null;
         }
         String country;
-        if ( args.length > 6 ) {
+        if (args.length > 6) {
             String s = args[6];
-            if ( ( s != null ) && ( s.length() > 0 ) ) {
+            if ((s != null) && (s.length() > 0)) {
                 country = s;
             } else {
                 country = null;
@@ -1545,19 +1545,19 @@ public class NumberConverterTestCase {
         } else {
             country = null;
         }
-        NumberConverter nc = new NumberConverter ( format, groupingSeparator, groupingSize, letterValue, features, language, country );
-        for ( int i = 1, nt = ts.length; i < nt; i++ ) {
+        NumberConverter nc = new NumberConverter (format, groupingSeparator, groupingSize, letterValue, features, language, country);
+        for (int i = 1, nt = ts.length; i < nt; i++) {
             String[] sa = ts[i];
             assert sa != null;
             assert sa.length >= 2;
             List<Long> numbers = new ArrayList<Long>();
-            for ( int k = 0, nn = sa.length - 1; k < nn; k++ ) {
+            for (int k = 0, nn = sa.length - 1; k < nn; k++) {
                 String s = sa[k];
-                numbers.add ( Long.valueOf ( s ) );
+                numbers.add (Long.valueOf (s));
             }
             String expected = sa [ sa.length - 1 ];
-            String actual = nc.convert ( numbers );
-            assertEquals ( expected, actual );
+            String actual = nc.convert (numbers);
+            assertEquals (expected, actual);
         }
     }
 

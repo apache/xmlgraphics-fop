@@ -55,13 +55,13 @@ public final class WritingMode extends TraitEnum {
      * writing mode traits setter.
      * @param wms a writing mode traits setter
      */
-    public void assignWritingModeTraits ( WritingModeTraitsSetter wms ) {
+    public void assignWritingModeTraits (WritingModeTraitsSetter wms) {
         Direction inlineProgressionDirection;
         Direction blockProgressionDirection;
         Direction columnProgressionDirection;
         Direction rowProgressionDirection;
         Direction shiftDirection;
-        switch ( getEnumValue() ) {
+        switch (getEnumValue()) {
         case Constants.EN_RL_TB:
             inlineProgressionDirection = Direction.RL;
             blockProgressionDirection = Direction.TB;
@@ -92,12 +92,12 @@ public final class WritingMode extends TraitEnum {
             shiftDirection = Direction.BT;
             break;
         }
-        wms.setInlineProgressionDirection ( inlineProgressionDirection );
-        wms.setBlockProgressionDirection ( blockProgressionDirection );
-        wms.setColumnProgressionDirection ( columnProgressionDirection );
-        wms.setRowProgressionDirection ( rowProgressionDirection );
-        wms.setShiftDirection ( shiftDirection );
-        wms.setWritingMode ( this );
+        wms.setInlineProgressionDirection (inlineProgressionDirection);
+        wms.setBlockProgressionDirection (blockProgressionDirection);
+        wms.setColumnProgressionDirection (columnProgressionDirection);
+        wms.setRowProgressionDirection (rowProgressionDirection);
+        wms.setShiftDirection (shiftDirection);
+        wms.setWritingMode (this);
     }
 
     /**
@@ -105,7 +105,7 @@ public final class WritingMode extends TraitEnum {
      * @return true if horizontal
      */
     public boolean isHorizontal() {
-        switch ( getEnumValue() ) {
+        switch (getEnumValue()) {
         case Constants.EN_LR_TB:
         case Constants.EN_RL_TB:
             return true;

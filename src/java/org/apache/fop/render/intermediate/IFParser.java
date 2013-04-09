@@ -643,8 +643,8 @@ public class IFParser implements IFConstants {
                 int[][] dp = XMLUtil.getAttributeAsPositionAdjustments(lastAttributes, "dp");
                 // if only DX present, then convert DX to DP; otherwise use only DP,
                 // effectively ignoring DX
-                if ( ( dp == null ) && ( dx != null ) ) {
-                    dp = IFUtil.convertDXToDP ( dx );
+                if ((dp == null) && (dx != null)) {
+                    dp = IFUtil.convertDXToDP (dx);
                 }
                 establishStructureTreeElement(lastAttributes);
                 boolean isHyphenated = Boolean.valueOf(lastAttributes.getValue("hyphenated"));

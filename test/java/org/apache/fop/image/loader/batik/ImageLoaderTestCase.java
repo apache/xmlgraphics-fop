@@ -216,7 +216,7 @@ public class ImageLoaderTestCase {
         assertEquals(400000, info.getSize().getHeightMpt());
         Raster raster = renImg.getData();
         // This pixel is white
-        int[] pixel1 = raster.getPixel(1, 1, (int[] )null);
+        int[] pixel1 = raster.getPixel(1, 1, (int[])null);
         // This pixel is from the embedded JPG and is not white
         int[] pixel80 = raster.getPixel(80, 80, (int[]) null);
         assertEquals(pixel1.length, pixel80.length);

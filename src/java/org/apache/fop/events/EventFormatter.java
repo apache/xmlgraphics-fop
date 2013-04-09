@@ -47,15 +47,15 @@ public final class EventFormatter {
         //utility class
     }
 
-    private static ResourceBundle getBundle ( String groupID, Locale locale ) {
+    private static ResourceBundle getBundle (String groupID, Locale locale) {
         ResourceBundle bundle;
-        String baseName = ( groupID != null ) ? groupID : EventFormatter.class.getName();
+        String baseName = (groupID != null) ? groupID : EventFormatter.class.getName();
         try {
             ClassLoader classLoader = EventFormatter.class.getClassLoader();
-            bundle = XMLResourceBundle.getXMLBundle ( baseName, locale, classLoader );
-        } catch ( MissingResourceException e ) {
-            if ( log.isTraceEnabled() ) {
-                log.trace ( "No XMLResourceBundle for " + baseName + " available." );
+            bundle = XMLResourceBundle.getXMLBundle (baseName, locale, classLoader);
+        } catch (MissingResourceException e) {
+            if (log.isTraceEnabled()) {
+                log.trace ("No XMLResourceBundle for " + baseName + " available.");
             }
             bundle = null;
         }
@@ -67,8 +67,8 @@ public final class EventFormatter {
      * @param event the event
      * @return the formatted message
      */
-    public static String format ( Event event ) {
-        return format ( event, event.getLocale() );
+    public static String format (Event event) {
+        return format (event, event.getLocale());
     }
 
     /**
@@ -78,19 +78,19 @@ public final class EventFormatter {
      * @return the formatted message
      */
     public static String format(Event event, Locale locale) {
-        return format ( event, getBundle ( event.getEventGroupID(), locale ) );
+        return format (event, getBundle (event.getEventGroupID(), locale));
     }
 
-    private static String format ( Event event, ResourceBundle bundle ) {
+    private static String format (Event event, ResourceBundle bundle) {
         assert event != null;
         String key = event.getEventKey();
         String template;
-        if ( bundle != null ) {
-            template = bundle.getString ( key );
+        if (bundle != null) {
+            template = bundle.getString (key);
         } else {
             template = "Missing bundle. Can't lookup event key: '" + key + "'.";
         }
-        return format ( event, processIncludes ( template, bundle ) );
+        return format (event, processIncludes (template, bundle));
     }
 
     private static String processIncludes(String template, ResourceBundle bundle) {
@@ -109,7 +109,7 @@ public final class EventFormatter {
     private static int processIncludesInner(CharSequence template, StringBuffer sb,
             ResourceBundle bundle) {
         int replacements = 0;
-        if ( bundle != null ) {
+        if (bundle != null) {
             Matcher m = INCLUDES_PATTERN.matcher(template);
             while (m.find()) {
                 String include = m.group();
@@ -154,8 +154,8 @@ public final class EventFormatter {
         public void write(StringBuffer sb, Map params) {
             String groupID = (String) params.get("groupID");
             Locale locale = (Locale) params.get("locale");
-            ResourceBundle bundle = getBundle ( groupID, locale );
-            if ( bundle != null ) {
+            ResourceBundle bundle = getBundle (groupID, locale);
+            if (bundle != null) {
                 sb.append(bundle.getString(getKey(params)));
             }
         }

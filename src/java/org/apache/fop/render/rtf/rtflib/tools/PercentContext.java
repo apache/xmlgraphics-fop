@@ -63,7 +63,7 @@ public class PercentContext implements PercentBaseContext {
 
         // Special handler for TableColumn width specifications, needs to be
         // relative to the parent!
-        if ( ( fobj instanceof TableColumn ) && ( fobj.getParent() instanceof FObj ) ) {
+        if ((fobj instanceof TableColumn) && (fobj.getParent() instanceof FObj)) {
             fobj = (FObj) fobj.getParent();
         }
 

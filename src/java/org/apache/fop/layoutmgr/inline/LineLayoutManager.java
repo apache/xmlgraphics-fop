@@ -120,8 +120,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private final int spaceAfter;
         private final int baseline;
 
-        LineBreakPosition(                                       // CSOK: ParameterNumber
-                LayoutManager lm, int index, int startIndex, int breakIndex,
+        LineBreakPosition(LayoutManager lm, int index, int startIndex, int breakIndex,
                 int shrink, int stretch, int diff, double ipdA, double adjust, int si,
                 int ei, int lh, int lw, int sb, int sa, int bl) {
             super(lm, breakIndex);
@@ -311,8 +310,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private final int follow;
         private static final double MAX_DEMERITS = 10e6;
 
-        public LineBreakingAlgorithm(                            // CSOK: ParameterNumber
-                int pageAlign, int textAlign, int textAlignLast, int indent, int fillerWidth,
+        public LineBreakingAlgorithm(int pageAlign, int textAlign, int textAlignLast, int indent, int fillerWidth,
                 int lh, int ld, int fl, boolean first, int maxFlagCount, LineLayoutManager llm) {
             super(textAlign, textAlignLast, first, false, maxFlagCount);
             pageAlignment = pageAlign;
@@ -343,7 +341,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             int difference = bestActiveNode.difference;
             int textAlign = (bestActiveNode.line < total) ? alignment : alignmentLast;
 
-            switch ( textAlign ) {
+            switch (textAlign) {
             case Constants.EN_START:
                 startIndent = 0;
                 endIndent = difference > 0 ? difference : 0;
@@ -425,10 +423,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             activePossibility = -1;
         }
 
-        private LineBreakPosition makeLineBreakPosition(         // CSOK: ParameterNumber
-                KnuthSequence par, int firstElementIndex, int lastElementIndex, int availableShrink,
-                int availableStretch, int difference, double ratio, int startIndent,
-                int endIndent) {
+        private LineBreakPosition makeLineBreakPosition(KnuthSequence par, int firstElementIndex, int lastElementIndex,
+                int availableShrink, int availableStretch, int difference, double ratio,
+                int startIndent, int endIndent) {
             // line height calculation - spaceBefore may differ from spaceAfter
             // by 1mpt due to rounding
             int spaceBefore = (lineHeight - lead - follow) / 2;
@@ -453,7 +450,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                      j <= lastElementIndex;
                      j++) {
                     KnuthElement element = (KnuthElement) inlineIterator.next();
-                    if (element instanceof KnuthInlineBox ) {
+                    if (element instanceof KnuthInlineBox) {
                         AlignmentContext ac = ((KnuthInlineBox) element).getAlignmentContext();
                         if (ac != null && lastAC != ac) {
                             if (!ac.usesInitialBaselineTable()
@@ -1555,8 +1552,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             lineArea.setBPD(lineArea.getBPD() + context.getSpaceAfter());
         }
         lineArea.finish();
-        if ( lineArea.getBidiLevel() >= 0 ) {
-            BidiResolver.reorder ( lineArea );
+        if (lineArea.getBidiLevel() >= 0) {
+            BidiResolver.reorder (lineArea);
         }
         parentLayoutManager.addChildArea(lineArea);
     }
@@ -1607,8 +1604,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             blocklc.setTrailingSpace(new SpaceSpecifier(false));
         }
         lineArea.updateExtentsFromChildren();
-        if ( lineArea.getBidiLevel() >= 0 ) {
-            BidiResolver.reorder ( lineArea );
+        if (lineArea.getBidiLevel() >= 0) {
+            BidiResolver.reorder (lineArea);
         }
         parentLayoutManager.addChildArea(lineArea);
     }

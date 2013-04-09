@@ -370,10 +370,10 @@ public final class PropertyParser extends PropertyTokenizer {
             while (true) {
                 Property p = parseAdditiveExpr();
                 int i = args.size();
-                if ( ( i < numReq ) || ( ( i - numReq ) < numOpt ) || hasVar ) {
-                    args.add ( p );
+                if ((i < numReq) || ((i - numReq) < numOpt) || hasVar) {
+                    args.add (p);
                 } else {
-                    throw new PropertyException ( "Unexpected function argument at index " + i );
+                    throw new PropertyException ("Unexpected function argument at index " + i);
                 }
                 // ignore extra args
                 if (currentToken != TOK_COMMA) {
@@ -384,16 +384,16 @@ public final class PropertyParser extends PropertyTokenizer {
             expectRpar();
         }
         int numArgs = args.size();
-        if ( numArgs < numReq ) {
+        if (numArgs < numReq) {
             throw new PropertyException("Expected " + numReq + " required arguments, but only " + numArgs + " specified");
         } else {
-            for ( int i = 0; i < numOpt; i++ ) {
-                if ( args.size() < ( numReq + i + 1 ) ) {
-                    args.add ( function.getOptionalArgDefault ( i, propInfo ) );
+            for (int i = 0; i < numOpt; i++) {
+                if (args.size() < (numReq + i + 1)) {
+                    args.add (function.getOptionalArgDefault (i, propInfo));
                 }
             }
         }
-        return (Property[]) args.toArray ( new Property [ args.size() ] );
+        return (Property[]) args.toArray (new Property [ args.size() ]);
     }
 
     /**

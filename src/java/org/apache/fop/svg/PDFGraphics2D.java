@@ -1135,8 +1135,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                         val = line[x];
                         mask[maskIdx++] = (byte)(val >>> 24);
                         rgb[rgbIdx++]   = (byte)((val >> 16) & 0x0FF);
-                        rgb[rgbIdx++]   = (byte)((val >> 8 ) & 0x0FF);
-                        rgb[rgbIdx++]   = (byte)((val      ) & 0x0FF);
+                        rgb[rgbIdx++]   = (byte)((val >> 8) & 0x0FF);
+                        rgb[rgbIdx++]   = (byte)(val & 0x0FF);
                     }
                 }
             } else {
@@ -1146,8 +1146,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                     for (x = 0; x < devW; x++) {
                         val = line[x];
                         rgb[rgbIdx++]  = (byte)((val >> 16) & 0x0FF);
-                        rgb[rgbIdx++]  = (byte)((val >> 8 ) & 0x0FF);
-                        rgb[rgbIdx++]  = (byte)((val      ) & 0x0FF);
+                        rgb[rgbIdx++]  = (byte)((val >> 8) & 0x0FF);
+                        rgb[rgbIdx++]  = (byte)(val & 0x0FF);
                     }
                 }
             }

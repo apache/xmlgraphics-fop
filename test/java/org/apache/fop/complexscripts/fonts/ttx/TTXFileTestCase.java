@@ -39,12 +39,12 @@ public class TTXFileTestCase {
 
     @Test
     public void testTTXFiles() throws Exception {
-        for ( String tfn : ttxFiles ) {
+        for (String tfn : ttxFiles) {
             try {
-                TTXFile tf = TTXFile.getFromCache ( ttxFilesRoot + File.separator + tfn );
-                assertTrue ( tf != null );
-            } catch ( Exception e ) {
-                fail ( e.getMessage() );
+                TTXFile tf = TTXFile.getFromCache (ttxFilesRoot + File.separator + tfn);
+                assertTrue (tf != null);
+            } catch (Exception e) {
+                fail (e.getMessage());
             }
         }
     }

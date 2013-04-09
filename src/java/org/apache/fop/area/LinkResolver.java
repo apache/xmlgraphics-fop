@@ -80,7 +80,7 @@ public class LinkResolver implements Resolvable, Serializable {
     public void resolveIDRef(String id, PageViewport pv) {
         if (idRef.equals(id) && pv != null) {
             resolved = true;
-            if ( area != null ) {
+            if (area != null) {
                 Trait.InternalLink iLink = new Trait.InternalLink(pv.getKey(), idRef);
                 area.addTrait(Trait.INTERNAL_LINK, iLink);
                 area = null; // break circular reference from basic link area to this resolver
@@ -95,17 +95,17 @@ public class LinkResolver implements Resolvable, Serializable {
      * @param dependent resolvable
      */
     public void addDependent(Resolvable dependent) {
-        if ( dependents == null ) {
+        if (dependents == null) {
             dependents = new ArrayList<Resolvable>();
         }
         dependents.add(dependent);
     }
 
     private void resolveDependents(String id, PageViewport pv) {
-        if ( dependents != null ) {
+        if (dependents != null) {
             List<PageViewport> pages = new ArrayList<PageViewport>();
             pages.add(pv);
-            for ( Resolvable r : dependents ) {
+            for (Resolvable r : dependents) {
                 r.resolveIDRef(id, pages);
             }
         }

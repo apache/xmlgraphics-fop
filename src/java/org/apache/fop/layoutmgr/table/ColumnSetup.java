@@ -59,7 +59,7 @@ public class ColumnSetup {
     public ColumnSetup(Table table) {
         assert table != null;
         this.table = table;
-        this.wmTraits = WritingModeTraits.getWritingModeTraitsGetter ( table );
+        this.wmTraits = WritingModeTraits.getWritingModeTraitsGetter (table);
         prepareColumns();
         initializeColumnWidths();
     }
@@ -251,7 +251,7 @@ public class ColumnSetup {
      */
     public int getXOffset(int col, int nrColSpan, PercentBaseContext context) {
         // TODO handle vertical WMs [GA]
-        if ( (wmTraits != null) && (wmTraits.getColumnProgressionDirection() == Direction.RL) ) {
+        if ((wmTraits != null) && (wmTraits.getColumnProgressionDirection() == Direction.RL)) {
             return getXOffsetRTL(col, nrColSpan, context);
         } else {
             return getXOffsetLTR(col, context);

@@ -201,14 +201,14 @@ public abstract class AbstractPageNumberCitation extends FObj
     }
 
     @Override
-    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+    public boolean isDelimitedTextRangeBoundary (int boundary) {
         return false;
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
-        if ( currentRange != null ) {
-            currentRange.append ( CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this );
+    protected Stack collectDelimitedTextRanges (Stack ranges, DelimitedTextRange currentRange) {
+        if (currentRange != null) {
+            currentRange.append (CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this);
         }
         return ranges;
     }

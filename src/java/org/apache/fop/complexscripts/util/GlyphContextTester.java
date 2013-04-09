@@ -38,6 +38,6 @@ public interface GlyphContextTester {
      * @param flags that apply to lookup in scope
      * @return true if test is satisfied
      */
-    boolean test ( String script, String language, String feature, GlyphSequence gs, int index, int flags );
+    boolean test (String script, String language, String feature, GlyphSequence gs, int index, int flags);
 
 }

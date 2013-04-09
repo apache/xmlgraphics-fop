@@ -57,7 +57,7 @@ public final class Direction extends TraitEnum {
      * @return true if vertical
      */
     public boolean isVertical() {
-        return ( getEnumValue() == Constants.EN_TB ) || ( getEnumValue() == Constants.EN_BT );
+        return (getEnumValue() == Constants.EN_TB) || (getEnumValue() == Constants.EN_BT);
     }
 
     /**
@@ -65,7 +65,7 @@ public final class Direction extends TraitEnum {
      * @return true if horizontal
      */
     public boolean isHorizontal() {
-        return ( getEnumValue() == Constants.EN_LR ) || ( getEnumValue() == Constants.EN_RL );
+        return (getEnumValue() == Constants.EN_LR) || (getEnumValue() == Constants.EN_RL);
     }
 
     /**

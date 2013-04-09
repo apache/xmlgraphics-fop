@@ -114,15 +114,15 @@ public class FOText extends FONode implements CharSequence {
             PropertyList list, Locator locator) throws FOPException {
         if (charBuffer == null) {
             // buffer not yet initialized, do so now
-            int newLength = ( length < 16 ) ? 16 : length;
+            int newLength = (length < 16) ? 16 : length;
             charBuffer = CharBuffer.allocate(newLength);
         } else {
             // allocate a larger buffer, and transfer contents
             int requires = charBuffer.position() + length;
             int capacity = charBuffer.capacity();
-            if ( requires > capacity ) {
+            if (requires > capacity) {
                 int newCapacity = capacity * 2;
-                if ( requires > newCapacity ) {
+                if (requires > newCapacity) {
                     newCapacity = requires;
                 }
                 CharBuffer newBuffer = CharBuffer.allocate(newCapacity);
@@ -194,7 +194,7 @@ public class FOText extends FONode implements CharSequence {
 
     /** {@inheritDoc} */
     public void endOfNode() throws FOPException {
-        if ( charBuffer != null ) {
+        if (charBuffer != null) {
             charBuffer.rewind();
         }
         super.endOfNode();
@@ -664,7 +664,7 @@ public class FOText extends FONode implements CharSequence {
 
     /** {@inheritDoc} */
     public String toString() {
-        if ( charBuffer == null ) {
+        if (charBuffer == null) {
             return "";
         } else {
             CharBuffer cb = charBuffer.duplicate();
@@ -717,7 +717,7 @@ public class FOText extends FONode implements CharSequence {
     }
 
     @Override
-    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+    public boolean isDelimitedTextRangeBoundary (int boundary) {
         return false;
     }
 
@@ -737,16 +737,16 @@ public class FOText extends FONode implements CharSequence {
      * @param start the starting index of interval
      * @param end the ending index of interval
      */
-    public void setBidiLevel ( int level, int start, int end ) {
-        if ( start < end ) {
-            if ( bidiLevels == null ) {
+    public void setBidiLevel (int level, int start, int end) {
+        if (start < end) {
+            if (bidiLevels == null) {
                 bidiLevels = new int [ length() ];
             }
-            for ( int i = start, n = end; i < n; i++ ) {
+            for (int i = start, n = end; i < n; i++) {
                 bidiLevels [ i ] = level;
             }
-            if ( parent != null ) {
-                ( (FObj) parent ).setBidiLevel ( level );
+            if (parent != null) {
+                ((FObj) parent).setBidiLevel (level);
             }
         } else {
             assert start < end;
@@ -771,12 +771,12 @@ public class FOText extends FONode implements CharSequence {
      * @return a (possibly empty) array of bidi levels or null
      * in case no bidi levels have been assigned
      */
-    public int[] getBidiLevels ( int start, int end ) {
-        if ( this.bidiLevels != null ) {
+    public int[] getBidiLevels (int start, int end) {
+        if (this.bidiLevels != null) {
             assert start <= end;
             int n = end - start;
             int[] bidiLevels = new int [ n ];
-            for ( int i = 0; i < n; i++ ) {
+            for (int i = 0; i < n; i++) {
                 bidiLevels[i] = this.bidiLevels [ start + i ];
             }
             return bidiLevels;
@@ -794,10 +794,10 @@ public class FOText extends FONode implements CharSequence {
      * @throws IndexOutOfBoundsException if position is not non-negative integer
      * or is greater than or equal to length
      */
-    public int bidiLevelAt ( int position ) throws IndexOutOfBoundsException {
-        if ( ( position < 0 ) || ( position >= length() ) ) {
+    public int bidiLevelAt (int position) throws IndexOutOfBoundsException {
+        if ((position < 0) || (position >= length())) {
             throw new IndexOutOfBoundsException();
-        } else if ( bidiLevels != null ) {
+        } else if (bidiLevels != null) {
             return bidiLevels [ position ];
         } else {
             return -1;
@@ -810,11 +810,11 @@ public class FOText extends FONode implements CharSequence {
      * @param end index in character buffer
      * @param mappedChars sequence of character codes denoting substituted characters
      */
-    public void addMapping ( int start, int end, CharSequence mappedChars ) {
-        if ( mappings == null ) {
+    public void addMapping (int start, int end, CharSequence mappedChars) {
+        if (mappings == null) {
             mappings = new java.util.HashMap();
         }
-        mappings.put ( new MapRange ( start, end ), mappedChars.toString() );
+        mappings.put (new MapRange (start, end), mappedChars.toString());
     }
 
     /**
@@ -824,8 +824,8 @@ public class FOText extends FONode implements CharSequence {
      * @return true if a mapping exist such that the mapping's interval is coincident to
      * [start,end)
      */
-    public boolean hasMapping ( int start, int end ) {
-        return ( mappings != null ) && ( mappings.containsKey ( new MapRange ( start, end ) ) );
+    public boolean hasMapping (int start, int end) {
+        return (mappings != null) && (mappings.containsKey (new MapRange (start, end)));
     }
 
     /**
@@ -835,9 +835,9 @@ public class FOText extends FONode implements CharSequence {
      * @return a string of characters representing the mapping over the interval
      * [start,end)
      */
-    public String getMapping ( int start, int end ) {
-        if ( mappings != null ) {
-            return (String) mappings.get ( new MapRange ( start, end ) );
+    public String getMapping (int start, int end) {
+        if (mappings != null) {
+            return (String) mappings.get (new MapRange (start, end));
         } else {
             return null;
         }
@@ -849,9 +849,9 @@ public class FOText extends FONode implements CharSequence {
      * @param end index in character buffer
      * @return the length of the mapping (if present) or zero
      */
-    public int getMappingLength ( int start, int end ) {
-        if ( mappings != null ) {
-            return ( (String) mappings.get ( new MapRange ( start, end ) ) ) .length();
+    public int getMappingLength (int start, int end) {
+        if (mappings != null) {
+            return ((String) mappings.get (new MapRange (start, end))) .length();
         } else {
             return 0;
         }
@@ -864,37 +864,37 @@ public class FOText extends FONode implements CharSequence {
      * @return a (possibly empty) array of bidi levels or null
      * in case no bidi levels have been assigned
      */
-    public int[] getMappingBidiLevels ( int start, int end ) {
-        if ( hasMapping ( start, end ) ) {
+    public int[] getMappingBidiLevels (int start, int end) {
+        if (hasMapping (start, end)) {
             int   nc = end - start;
-            int   nm = getMappingLength ( start, end );
-            int[] la = getBidiLevels ( start, end );
-            if ( la == null ) {
+            int   nm = getMappingLength (start, end);
+            int[] la = getBidiLevels (start, end);
+            if (la == null) {
                 return null;
-            } else if ( nm == nc ) {            // mapping is same length as mapped range
+            } else if (nm == nc) {            // mapping is same length as mapped range
                 return la;
-            } else if ( nm > nc ) {             // mapping is longer than mapped range
+            } else if (nm > nc) {             // mapping is longer than mapped range
                 int[] ma = new int [ nm ];
-                System.arraycopy ( la, 0, ma, 0, la.length );
-                for ( int i = la.length,
-                          n = ma.length, l = ( i > 0 ) ? la [ i - 1 ] : 0; i < n; i++ ) {
+                System.arraycopy (la, 0, ma, 0, la.length);
+                for (int i = la.length,
+                          n = ma.length, l = (i > 0) ? la [ i - 1 ] : 0; i < n; i++) {
                     ma [ i ] = l;
                 }
                 return ma;
             } else {                            // mapping is shorter than mapped range
                 int[] ma = new int [ nm ];
-                System.arraycopy ( la, 0, ma, 0, ma.length );
+                System.arraycopy (la, 0, ma, 0, ma.length);
                 return ma;
             }
         } else {
-            return getBidiLevels ( start, end );
+            return getBidiLevels (start, end);
         }
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
-        if ( currentRange != null ) {
-            currentRange.append ( charIterator(), this );
+    protected Stack collectDelimitedTextRanges (Stack ranges, DelimitedTextRange currentRange) {
+        if (currentRange != null) {
+            currentRange.append (charIterator(), this);
         }
         return ranges;
     }
@@ -907,12 +907,12 @@ public class FOText extends FONode implements CharSequence {
             this.end = end;
         }
         public int hashCode() {
-            return ( start * 31 ) + end;
+            return (start * 31) + end;
         }
-        public boolean equals ( Object o ) {
-            if ( o instanceof MapRange ) {
+        public boolean equals (Object o) {
+            if (o instanceof MapRange) {
                 MapRange r = (MapRange) o;
-                return ( r.start == start ) && ( r.end == end );
+                return (r.start == start) && (r.end == end);
             } else {
                 return false;
             }

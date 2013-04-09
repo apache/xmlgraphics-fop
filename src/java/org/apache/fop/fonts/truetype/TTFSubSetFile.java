@@ -62,7 +62,7 @@ public class TTFSubSetFile extends TTFFile {
      * @param useKerning true if kerning data should be loaded
      * @param useAdvanced true if advanced typographic tables should be loaded
      */
-    public TTFSubSetFile ( boolean useKerning, boolean useAdvanced ) {
+    public TTFSubSetFile (boolean useKerning, boolean useAdvanced) {
         super(useKerning, useAdvanced);
     }
 

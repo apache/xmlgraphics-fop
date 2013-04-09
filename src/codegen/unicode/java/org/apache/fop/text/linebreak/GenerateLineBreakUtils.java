@@ -83,7 +83,7 @@ public final class GenerateLineBreakUtils {
      * @param outFileName Name of the output file.
      * @throws Exception in case anything goes wrong.
      */
-    private static void convertLineBreakProperties( // CSOK: MethodLength
+    private static void convertLineBreakProperties(// CSOK: MethodLength
         String lineBreakFileName,
         String propertyValueFileName,
         String breakPairFileName,

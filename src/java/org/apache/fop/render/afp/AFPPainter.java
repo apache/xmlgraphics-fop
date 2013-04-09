@@ -894,8 +894,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
     }
 
     /** {@inheritDoc} */
-    public void drawText(                                        // CSOK: MethodLength
-            int x, int y, final int letterSpacing, final int wordSpacing,
+    public void drawText(int x, int y, final int letterSpacing, final int wordSpacing,
             final int[][] dp, final String text) throws IFException {
         final int fontSize = this.state.getFontSize();
         getPaintingState().setFontSize(fontSize);
@@ -941,7 +940,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                     builder.setCodedFont((byte) fontReference);
 
                     int l = text.length();
-                    int[] dx = IFUtil.convertDPToDX ( dp );
+                    int[] dx = IFUtil.convertDPToDX (dp);
                     int dxl = (dx != null ? dx.length : 0);
                     StringBuffer sb = new StringBuffer();
 

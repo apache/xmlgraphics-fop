@@ -113,7 +113,7 @@ public abstract class InlineLevel extends FObjMixed implements CommonAccessibili
     }
 
     @Override
-    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+    public boolean isDelimitedTextRangeBoundary (int boundary) {
         return false;
     }
 

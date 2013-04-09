@@ -56,8 +56,7 @@ public class PDFCIDFont extends PDFObject {
      * @param supplement Supplement number
      * @param descriptor CID font descriptor
      */
-    public PDFCIDFont(                                           // CSOK: ParameterNumber
-            String basefont, CIDFontType cidtype, int dw,
+    public PDFCIDFont(String basefont, CIDFontType cidtype, int dw,
             int[] w, String registry, String ordering,
             int supplement, PDFCIDFontDescriptor descriptor) {
 

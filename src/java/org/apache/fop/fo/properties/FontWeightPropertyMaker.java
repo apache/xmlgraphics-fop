@@ -49,7 +49,7 @@ public class FontWeightPropertyMaker extends EnumProperty.Maker {
         } else {
             String pValue = checkValueKeywords(value);
             Property newProp = checkEnumValues(pValue);
-            int enumValue = ( newProp != null ) ? newProp.getEnum() : -1;
+            int enumValue = (newProp != null) ? newProp.getEnum() : -1;
             if (enumValue == Constants.EN_BOLDER || enumValue == Constants.EN_LIGHTER) {
                 /* check for relative enum values, compute in relation to parent */
                 Property parentProp = pList.getInherited(Constants.PR_FONT_WEIGHT);

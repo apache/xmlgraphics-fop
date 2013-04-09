@@ -341,7 +341,7 @@ public class CTM implements Serializable {
          * can set ipd and bpd appropriately based on the writing mode.
          */
 
-        switch ( writingMode.getEnumValue() ) {
+        switch (writingMode.getEnumValue()) {
         case EN_TB_LR:
         case EN_TB_RL:
             reldims.ipd = height;

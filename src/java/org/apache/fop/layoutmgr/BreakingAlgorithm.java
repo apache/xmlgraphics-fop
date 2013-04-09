@@ -285,8 +285,7 @@ public abstract class BreakingAlgorithm {
          * @param totalDemerits a real number
          * @param previous a node
          */
-        public KnuthNode(                                        // CSOK: ParameterNumber
-                int position, int line, int fitness,
+        public KnuthNode(int position, int line, int fitness,
                 int totalWidth, int totalStretch, int totalShrink,
                 double adjustRatio, int availableShrink, int availableStretch,
                 int difference, double totalDemerits, KnuthNode previous) {
@@ -686,8 +685,7 @@ public abstract class BreakingAlgorithm {
      * @param previous active node for the preceding breakpoint
      * @return a new node
      */
-    protected KnuthNode createNode(                              // CSOK: ParameterNumber
-            int position, int line, int fitness,
+    protected KnuthNode createNode(int position, int line, int fitness,
             int totalWidth, int totalStretch, int totalShrink,
             double adjustRatio, int availableShrink, int availableStretch,
             int difference, double totalDemerits, KnuthNode previous) {

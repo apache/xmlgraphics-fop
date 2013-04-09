@@ -52,7 +52,7 @@ public class RegionEnd extends RegionSE {
         PercentBaseContext neighbourContext;
         Rectangle vpRect;
         // [TBD] WRITING MODE ALERT
-        switch ( getWritingMode().getEnumValue() ) {
+        switch (getWritingMode().getEnumValue()) {
         case Constants.EN_RL_TB:
             neighbourContext = pageHeightContext;
             vpRect = new Rectangle(0, 0, getExtent().getValue(pageWidthContext), reldims.bpd);

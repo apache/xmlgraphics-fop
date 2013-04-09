@@ -77,23 +77,23 @@ public class DTDEntityResolver implements EntityResolver {
     throws IOException {
 
         URL resource = null;
-        if ( AFP_DTD_1_2_ID.equals(publicId) ) {
-            resource = getResource( AFP_DTD_1_2_RESOURCE );
-        } else if ( AFP_DTD_1_1_ID.equals(publicId) ) {
-            resource = getResource( AFP_DTD_1_1_RESOURCE );
-        } else if ( AFP_DTD_1_0_ID.equals(publicId) ) {
+        if (AFP_DTD_1_2_ID.equals(publicId)) {
+            resource = getResource(AFP_DTD_1_2_RESOURCE);
+        } else if (AFP_DTD_1_1_ID.equals(publicId)) {
+            resource = getResource(AFP_DTD_1_1_RESOURCE);
+        } else if (AFP_DTD_1_0_ID.equals(publicId)) {
             throw new FontRuntimeException(
-                "The AFP Installed Font Definition 1.0 DTD is not longer supported" );
-        } else if (systemId != null && systemId.indexOf("afp-fonts.dtd") >= 0 ) {
+                "The AFP Installed Font Definition 1.0 DTD is not longer supported");
+        } else if (systemId != null && systemId.indexOf("afp-fonts.dtd") >= 0) {
             throw new FontRuntimeException(
-                "The AFP Installed Font Definition DTD must be specified using the public id" );
+                "The AFP Installed Font Definition DTD must be specified using the public id");
         } else {
             return null;
         }
 
-        InputSource inputSource = new InputSource( resource.openStream() );
-        inputSource.setPublicId( publicId );
-        inputSource.setSystemId( systemId );
+        InputSource inputSource = new InputSource(resource.openStream());
+        inputSource.setPublicId(publicId);
+        inputSource.setSystemId(systemId);
 
         return inputSource;
     }
@@ -111,10 +111,10 @@ public class DTDEntityResolver implements EntityResolver {
             cl = ClassLoader.getSystemClassLoader();
         }
 
-        URL resource = cl.getResource( resourcePath );
+        URL resource = cl.getResource(resourcePath);
         if (resource == null) {
-            throw new FontRuntimeException( "Resource " + resourcePath
-                    + "could not be found on the classpath" );
+            throw new FontRuntimeException("Resource " + resourcePath
+                    + "could not be found on the classpath");
         }
 
         return resource;

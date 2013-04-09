@@ -40,7 +40,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.java2d.color.ColorUtil;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
-
 import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.fonts.CIDFont;
@@ -295,8 +294,7 @@ public class PDFFactory {
      * It should be 0 as this is the constructor for sampled functions.
      * @return the PDF function that was created
      */
-    public PDFFunction makeFunction(                             // CSOK: ParameterNumber
-            int theFunctionType, List theDomain,
+    public PDFFunction makeFunction(int theFunctionType, List theDomain,
             List theRange, List theSize,
             int theBitsPerSample, int theOrder,
             List theEncode, List theDecode,
@@ -469,8 +467,7 @@ public class PDFFactory {
      * @param theFunction The PDF Function that maps an (x,y) location to a color
      * @return the PDF shading that was created
      */
-    public PDFShading makeShading(                               // CSOK: ParameterNumber
-            PDFResourceContext res, int theShadingType,
+    public PDFShading makeShading(PDFResourceContext res, int theShadingType,
             PDFDeviceColorSpace theColorSpace,
             List theBackground, List theBBox,
             boolean theAntiAlias, List theDomain,
@@ -522,8 +519,7 @@ public class PDFFactory {
      * The default is [false, false]
      * @return the PDF shading that was created
      */
-    public PDFShading makeShading(                               // CSOK: ParameterNumber
-            PDFResourceContext res, int theShadingType,
+    public PDFShading makeShading(PDFResourceContext res, int theShadingType,
             PDFDeviceColorSpace theColorSpace,
             List theBackground, List theBBox,
             boolean theAntiAlias, List theCoords,
@@ -576,8 +572,7 @@ public class PDFFactory {
      * @param theFunction the PDFFunction
      * @return the PDF shading that was created
      */
-    public PDFShading makeShading(                               // CSOK: ParameterNumber
-            PDFResourceContext res, int theShadingType,
+    public PDFShading makeShading(PDFResourceContext res, int theShadingType,
             PDFDeviceColorSpace theColorSpace,
             List theBackground, List theBBox,
             boolean theAntiAlias,
@@ -632,8 +627,7 @@ public class PDFFactory {
      * @param theFunction The PDFFunction that's mapped on to this shape
      * @return the PDF shading that was created
      */
-    public PDFShading makeShading(                               // CSOK: ParameterNumber
-            PDFResourceContext res, int theShadingType,
+    public PDFShading makeShading(PDFResourceContext res, int theShadingType,
             PDFDeviceColorSpace theColorSpace,
             List theBackground, List theBBox,
             boolean theAntiAlias,
@@ -683,8 +677,7 @@ public class PDFFactory {
      * @param thePatternDataStream The stream of pattern data to be tiled.
      * @return the PDF pattern that was created
      */
-    public PDFPattern makePattern(                               // CSOK: ParameterNumber
-            PDFResourceContext res, int thePatternType,    // 1
+    public PDFPattern makePattern(PDFResourceContext res, int thePatternType,
             PDFResources theResources, int thePaintType, int theTilingType,
             List theBBox, double theXStep,
             double theYStep, List theMatrix,

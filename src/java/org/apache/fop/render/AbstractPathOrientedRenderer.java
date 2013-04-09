@@ -85,7 +85,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         float height = block.getBPD() / 1000f;
 
         int level = block.getBidiLevel();
-        if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+        if ((level == -1) || ((level & 1) == 0)) {
             startx += block.getStartIndent() / 1000f;
             startx -= borderPaddingStart;
         } else {
@@ -118,7 +118,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         // adjust the current position according to region borders and padding
         currentBPPosition = referenceArea.getBorderAndPaddingWidthBefore();
         int level = region.getBidiLevel();
-        if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+        if ((level == -1) || ((level & 1) == 0)) {
             currentIPPosition = referenceArea.getBorderAndPaddingWidthStart();
         } else {
             currentIPPosition = referenceArea.getBorderAndPaddingWidthEnd();
@@ -198,15 +198,14 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsEnd the border-end traits
      * @param level of bidirectional embedding
      */
-    protected void drawBackground(                               // CSOK: ParameterNumber
-            float startx, float starty, float width, float height, Trait.Background back,
+    protected void drawBackground(float startx, float starty, float width, float height, Trait.Background back,
             BorderProps bpsBefore, BorderProps bpsAfter,
             BorderProps bpsStart, BorderProps bpsEnd, int level) {
         BorderProps bpsTop = bpsBefore;
         BorderProps bpsBottom = bpsAfter;
         BorderProps bpsLeft;
         BorderProps bpsRight;
-        if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+        if ((level == -1) || ((level & 1) == 0)) {
             bpsLeft = bpsStart;
             bpsRight = bpsEnd;
         } else {
@@ -230,8 +229,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsLeft the border specification on the left edge
      * @param bpsRight the border specification on the right edge
      */
-    protected void drawBackground(                               // CSOK: ParameterNumber
-            float startx, float starty, float width, float height, Trait.Background back,
+    protected void drawBackground(float startx, float starty, float width, float height, Trait.Background back,
             BorderProps bpsTop, BorderProps bpsBottom,
             BorderProps bpsLeft, BorderProps bpsRight) {
         if (back != null) {
@@ -347,8 +345,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param level of bidirectional embedding
      * @param innerBackgroundColor the background color of the block
      */
-    protected void drawBorders(                                  // CSOK: ParameterNumber
-            float startx, float starty, float width, float height,
+    protected void drawBorders(float startx, float starty, float width, float height,
             BorderProps bpsBefore, BorderProps bpsAfter,
             BorderProps bpsStart, BorderProps bpsEnd, int level, Color innerBackgroundColor) {
         Rectangle2D.Float borderRect = new Rectangle2D.Float(startx, starty, width, height);
@@ -356,7 +353,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         BorderProps bpsBottom = bpsAfter;
         BorderProps bpsLeft;
         BorderProps bpsRight;
-        if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+        if ((level == -1) || ((level & 1) == 0)) {
             bpsLeft = bpsStart;
             bpsRight = bpsEnd;
         } else {
@@ -380,8 +377,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsRight the border specification on the right edge
      * @param innerBackgroundColor the background color of the block
      */
-    protected void drawBorders(                                  // CSOK: MethodLength
-            Rectangle2D.Float borderRect,
+    protected void drawBorders(Rectangle2D.Float borderRect,
             BorderProps bpsTop, BorderProps bpsBottom, BorderProps bpsLeft, BorderProps bpsRight,
             Color innerBackgroundColor) {
         //TODO generalize each of the four conditions into using a parameterized drawBorder()
@@ -616,7 +612,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             int borderPaddingEnd = bv.getBorderAndPaddingWidthEnd();
 
             //"left/"top" (bv.getX/YOffset()) specify the position of the content rectangle
-            if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+            if ((level == -1) || ((level & 1) == 0)) {
                 positionTransform.translate(-borderPaddingStart, -borderPaddingBefore);
             } else {
                 positionTransform.translate(-borderPaddingEnd, -borderPaddingBefore);
@@ -648,7 +644,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
             //Shift to content rectangle after border painting
             AffineTransform contentRectTransform = new AffineTransform();
-            if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+            if ((level == -1) || ((level & 1) == 0)) {
                 contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
             } else {
                 contentRectTransform.translate(borderPaddingEnd, borderPaddingBefore);
@@ -820,7 +816,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
         if (viewport.hasClip()) {
             saveGraphicsState();
-            if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+            if ((level == -1) || ((level & 1) == 0)) {
                 clipRect(x + borderPaddingStart, y + borderPaddingBefore, width, height);
             } else {
                 clipRect(x + borderPaddingEnd, y + borderPaddingBefore, width, height);
@@ -978,8 +974,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param style the border style (one of Constants.EN_DASHED etc.)
      * @param col the color for the border segment
      */
-    protected abstract void drawBorderLine(                      // CSOK: ParameterNumber
-            float x1, float y1, float x2, float y2, boolean horz,
+    protected abstract void drawBorderLine(float x1, float y1, float x2, float y2, boolean horz,
             boolean startOrBefore, int style, Color col);
 
     /** {@inheritDoc} */

@@ -51,8 +51,8 @@ public class PSSetPageDeviceElement extends AbstractPSExtensionElement {
      */
     public void startOfNode() throws FOPException {
         super.startOfNode();
-        if ( !((parent.getNameId() == Constants.FO_DECLARATIONS)
-                || (parent.getNameId() == Constants.FO_SIMPLE_PAGE_MASTER)) ) {
+        if (!((parent.getNameId() == Constants.FO_DECLARATIONS)
+                || (parent.getNameId() == Constants.FO_SIMPLE_PAGE_MASTER))) {
             invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
                     "rule.childOfSPMorDeclarations");
         }

@@ -116,8 +116,7 @@ public class PDFPattern extends PDFPathPaint {
      * @param theXUID Optional vector of Integers that uniquely identify the pattern
      * @param thePatternDataStream The stream of pattern data to be tiled.
      */
-    public PDFPattern(                                           // CSOK: ParameterNumber
-            PDFResources theResources, int thePatternType,    // 1
+    public PDFPattern(PDFResources theResources, int thePatternType,
             int thePaintType, int theTilingType, List theBBox,
             double theXStep, double theYStep,
             List theMatrix, List theXUID,

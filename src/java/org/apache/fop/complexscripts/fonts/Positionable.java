@@ -44,7 +44,7 @@ public interface Positionable {
      * @return array (sequence) of 4-tuples of placement [PX,PY] and advance [AX,AY] adjustments, in that order,
      * with one 4-tuple for each element of glyph sequence, or null if no non-zero adjustment applies
      */
-    int[][] performPositioning ( CharSequence cs, String script, String language, int fontSize );
+    int[][] performPositioning (CharSequence cs, String script, String language, int fontSize);
 
     /**
      * Perform glyph positioning using an implied font size.
@@ -54,6 +54,6 @@ public interface Positionable {
      * @return array (sequence) of 4-tuples of placement [PX,PY] and advance [AX,AY] adjustments, in that order,
      * with one 4-tuple for each element of glyph sequence, or null if no non-zero adjustment applies
      */
-    int[][] performPositioning ( CharSequence cs, String script, String language );
+    int[][] performPositioning (CharSequence cs, String script, String language);
 
 }

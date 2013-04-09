@@ -212,12 +212,12 @@ public final class IFUtil {
      * @return if <code>dp</code> is not null, then an array of adjustments to the current
      * x position prior to rendering individual glyphs; otherwise, null
      */
-    public static int[] convertDPToDX ( int[][] dp, int count ) {
+    public static int[] convertDPToDX (int[][] dp, int count) {
         int[] dx;
-        if ( dp != null ) {
+        if (dp != null) {
             dx = new int [ count ];
-            for ( int i = 0, n = count; i < n; i++ ) {
-                if ( dp [ i ] != null ) {
+            for (int i = 0, n = count; i < n; i++) {
+                if (dp [ i ] != null) {
                     dx [ i ] = dp [ i ] [ 0 ];      // xPlaAdjust[i]
                 }
             }
@@ -236,8 +236,8 @@ public final class IFUtil {
      * @return if <code>dp</code> is not null, then an array of adjustments to the current
      * x position prior to rendering individual glyphs; otherwise, null
      */
-    public static int[] convertDPToDX ( int[][] dp ) {
-        return convertDPToDX ( dp, ( dp != null ) ? dp.length : 0 );
+    public static int[] convertDPToDX (int[][] dp) {
+        return convertDPToDX (dp, (dp != null) ? dp.length : 0);
     }
 
     /**
@@ -250,11 +250,11 @@ public final class IFUtil {
      * @return if <code>dx</code> is not null, then an array of 4-tuples, expressing [X,Y]
      * placment adjustments and [X,Y] advancement adjustments, in that order; otherwise, null
      */
-    public static int[][] convertDXToDP ( int[] dx, int count ) {
+    public static int[][] convertDXToDP (int[] dx, int count) {
         int[][] dp;
-        if ( dx != null ) {
+        if (dx != null) {
             dp = new int [ count ] [ 4 ];
-            for ( int i = 0, n = count; i < n; i++ ) {
+            for (int i = 0, n = count; i < n; i++) {
                 int[] pa = dp [ i ];
                 int   d  = dx [ i ];
                 pa [ 0 ] = d;                   // xPlaAdjust[i]
@@ -275,8 +275,8 @@ public final class IFUtil {
      * @return if <code>dx</code> is not null, then an array of 4-tuples, expressing [X,Y]
      * placment adjustments and [X,Y] advancement adjustments, in that order; otherwise, null
      */
-    public static int[][] convertDXToDP ( int[] dx ) {
-        return convertDXToDP ( dx, ( dx != null ) ? dx.length : 0 );
+    public static int[][] convertDXToDP (int[] dx) {
+        return convertDXToDP (dx, (dx != null) ? dx.length : 0);
     }
 
     /**
@@ -284,12 +284,12 @@ public final class IFUtil {
      * @param pa a 4-tuple, expressing [X,Y] placment and [X,Y] advance adjuustments (may be null)
      * @return true if <code>dp</code> is null or contains no non-zero adjustment
      */
-    public static boolean isPAIdentity ( int[] pa ) {
-        if ( pa == null ) {
+    public static boolean isPAIdentity (int[] pa) {
+        if (pa == null) {
             return true;
         } else {
-            for ( int k = 0; k < 4; k++ ) {
-                if ( pa[k] != 0 ) {
+            for (int k = 0; k < 4; k++) {
+                if (pa[k] != 0) {
                     return false;
                 }
             }
@@ -303,12 +303,12 @@ public final class IFUtil {
      * adjustments and [X,Y] advancement adjustments, in that order (may be null)
      * @return true if <code>dp</code> is null or contains no non-zero adjustment
      */
-    public static boolean isDPIdentity ( int[][] dp ) {
-        if ( dp == null ) {
+    public static boolean isDPIdentity (int[][] dp) {
+        if (dp == null) {
             return true;
         } else {
-            for ( int i = 0, n = dp.length; i < n; i++ ) {
-                if ( !isPAIdentity ( dp[i] ) ) {
+            for (int i = 0, n = dp.length; i < n; i++) {
+                if (!isPAIdentity (dp[i])) {
                     return false;
                 }
             }
@@ -326,13 +326,13 @@ public final class IFUtil {
      * @return true if <code>dp</code> is not null and contains only xPlaAdjust
      * and xAdvAdjust values consistent with the output of {@link #convertDPToDX}.
      */
-    public static boolean isDPOnlyDX ( int[][] dp ) {
-        if ( dp == null ) {
+    public static boolean isDPOnlyDX (int[][] dp) {
+        if (dp == null) {
             return false;
         } else {
-            for ( int i = 0, n = dp.length; i < n; i++ ) {
+            for (int i = 0, n = dp.length; i < n; i++) {
                 int[] pa = dp[i];
-                if ( ( pa != null ) && ( pa[0] != pa[2] ) ) {
+                if ((pa != null) && (pa[0] != pa[2])) {
                     return false;
                 }
             }
@@ -348,11 +348,11 @@ public final class IFUtil {
      * @param paSrc a 4-tuple, expressing [X,Y] placment
      * and [X,Y] advance adjuustments (may be null)
      */
-    public static void adjustPA ( int[] paDst, int[] paSrc ) {
-        if ( ( paDst != null ) && ( paSrc != null ) ) {
+    public static void adjustPA (int[] paDst, int[] paSrc) {
+        if ((paDst != null) && (paSrc != null)) {
             assert paDst.length == 4;
             assert paSrc.length == 4;
-            for ( int i = 0; i < 4; i++ ) {
+            for (int i = 0; i < 4; i++) {
                 paDst[i] += paSrc[i];
             }
         }
@@ -367,16 +367,16 @@ public final class IFUtil {
      * @return a deep copy of the count position adjustment entries start at
      * offset
      */
-    public static int[][] copyDP ( int[][] dp, int offset, int count ) {
-        if ( ( dp == null ) || ( offset > dp.length ) || ( ( offset + count ) > dp.length ) ) {
+    public static int[][] copyDP (int[][] dp, int offset, int count) {
+        if ((dp == null) || (offset > dp.length) || ((offset + count) > dp.length)) {
             throw new IllegalArgumentException();
         } else {
             int[][] dpNew = new int [ count ] [];
-            for ( int i = 0, n = count; i < n; i++ ) {
+            for (int i = 0, n = count; i < n; i++) {
                 int[] paSrc = dp [ i + offset ];
-                if ( paSrc != null ) {
+                if (paSrc != null) {
                     int[] paDst = new int [ 4 ];
-                    for ( int k = 0; k < 4; k++ ) {
+                    for (int k = 0; k < 4; k++) {
                         paDst [ k ] = paSrc [ k ];
                     }
                     dpNew [ i ] = paDst;

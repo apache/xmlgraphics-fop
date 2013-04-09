@@ -33,24 +33,24 @@ public class BidiClassTestCase {
     public void testBidiClasses() throws Exception {
         String tdPfx = BidiTestData.TD_PFX;
         int tdCount = BidiTestData.TD_CNT;
-        for ( int i = 0; i < tdCount; i++ ) {
-            int[] da = BidiTestData.readTestData ( tdPfx, i );
-            if ( da != null ) {
-                testBidiClass ( da );
+        for (int i = 0; i < tdCount; i++) {
+            int[] da = BidiTestData.readTestData (tdPfx, i);
+            if (da != null) {
+                testBidiClass (da);
             } else {
-                fail ( "unable to read bidi test data for resource at index " + i );
+                fail ("unable to read bidi test data for resource at index " + i);
             }
         }
     }
 
-    private void testBidiClass ( int[] da ) throws Exception {
+    private void testBidiClass (int[] da) throws Exception {
         int bc = da[0];
-        for ( int i = 1, n = da.length; i < n; i += 2 ) {
+        for (int i = 1, n = da.length; i < n; i += 2) {
             int s = da[i+0];
             int e = da[i+1];
-            for ( int c = s; c < e; c++ ) {
-                int cbc = BidiClass.getBidiClass ( c );
-                assertEquals ( "bad bidi class for CH(" + CharUtilities.format ( c ) + ")", bc, cbc );
+            for (int c = s; c < e; c++) {
+                int cbc = BidiClass.getBidiClass (c);
+                assertEquals ("bad bidi class for CH(" + CharUtilities.format (c) + ")", bc, cbc);
             }
         }
     }

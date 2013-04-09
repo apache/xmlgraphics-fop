@@ -201,7 +201,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         generator.add(format(rect.width) + " 0 0 "
                           + format(-rect.height) + " "
                           + format(rect.x) + " "
-                          + format(rect.y + rect.height )
+                          + format(rect.y + rect.height)
                           + " cm " + xobj.getName() + " Do\n");
         generator.restoreGraphicsState();
     }
@@ -215,7 +215,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         generator.add(format(rect.width) + " 0 0 "
                           + format(-rect.height) + " "
                           + format(rect.x) + " "
-                          + format(rect.y + rect.height )
+                          + format(rect.y + rect.height)
                           + " cm " + xobj.getName() + " Do\n");
         generator.restoreGraphicsStateAccess();
     }
@@ -355,12 +355,12 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         FontTriplet triplet = new FontTriplet(
                 state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
 
-        if ( ( dp == null ) || IFUtil.isDPOnlyDX ( dp ) ) {
-            drawTextWithDX ( x, y, text, triplet, letterSpacing,
-                             wordSpacing, IFUtil.convertDPToDX ( dp ) );
+        if ((dp == null) || IFUtil.isDPOnlyDX (dp)) {
+            drawTextWithDX (x, y, text, triplet, letterSpacing,
+                             wordSpacing, IFUtil.convertDPToDX (dp));
         } else {
-            drawTextWithDP ( x, y, text, triplet, letterSpacing,
-                             wordSpacing, dp );
+            drawTextWithDP (x, y, text, triplet, letterSpacing,
+                             wordSpacing, dp);
         }
     }
 
@@ -434,14 +434,14 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
 
     private static int[] paZero = new int[4];
 
-    private void drawTextWithDP ( int x, int y, String text, FontTriplet triplet,
-                                  int letterSpacing, int wordSpacing, int[][] dp ) {
+    private void drawTextWithDP (int x, int y, String text, FontTriplet triplet,
+                                  int letterSpacing, int wordSpacing, int[][] dp) {
         assert text != null;
         assert triplet != null;
         assert dp != null;
         String          fk              = getFontInfo().getInternalFontKey(triplet);
         Typeface        tf              = getTypeface(fk);
-        if ( tf.isMultiByte() ) {
+        if (tf.isMultiByte()) {
             int         fs              = state.getFontSize();
             float       fsPoints        = fs / 1000f;
             Font        f               = getFontInfo().getFontInstance(triplet, fs);
@@ -451,20 +451,20 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             double      xoLast          = 0f;
             double      yoLast          = 0f;
             double      wox             = wordSpacing;
-            tu.writeTextMatrix ( new AffineTransform ( 1, 0, 0, -1, x / 1000f, y / 1000f ) );
-            tu.updateTf ( fk, fsPoints, true );
-            generator.updateCharacterSpacing ( letterSpacing / 1000f );
-            for ( int i = 0, n = text.length(); i < n; i++ ) {
-                char    ch              = text.charAt ( i );
-                int[]   pa              = ( ( i >= dp.length ) || ( dp[i] == null ) ) ? paZero : dp[i];
+            tu.writeTextMatrix (new AffineTransform (1, 0, 0, -1, x / 1000f, y / 1000f));
+            tu.updateTf (fk, fsPoints, true);
+            generator.updateCharacterSpacing (letterSpacing / 1000f);
+            for (int i = 0, n = text.length(); i < n; i++) {
+                char    ch              = text.charAt (i);
+                int[]   pa              = ((i >= dp.length) || (dp[i] == null)) ? paZero : dp[i];
                 double  xo              = xc + pa[0];
                 double  yo              = yc + pa[1];
-                double  xa              = f.getCharWidth(ch) + maybeWordOffsetX ( wox, ch, null );
+                double  xa              = f.getCharWidth(ch) + maybeWordOffsetX (wox, ch, null);
                 double  ya              = 0;
-                double  xd              = ( xo - xoLast ) / 1000f;
-                double  yd              = ( yo - yoLast ) / 1000f;
-                tu.writeTd ( xd, yd );
-                tu.writeTj ( f.mapChar ( ch ) );
+                double  xd              = (xo - xoLast) / 1000f;
+                double  yd              = (yo - yoLast) / 1000f;
+                tu.writeTd (xd, yd);
+                tu.writeTj (f.mapChar (ch));
                 xc += xa + pa[2];
                 yc += ya + pa[3];
                 xoLast = xo;
@@ -473,10 +473,10 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         }
     }
 
-    private double maybeWordOffsetX ( double wox, char ch, Direction dir ) {
-        if ( ( wox != 0 )
-             && CharUtilities.isAdjustableSpace ( ch )
-             && ( ( dir == null ) || dir.isHorizontal() ) ) {
+    private double maybeWordOffsetX (double wox, char ch, Direction dir) {
+        if ((wox != 0)
+             && CharUtilities.isAdjustableSpace (ch)
+             && ((dir == null) || dir.isHorizontal())) {
             return wox;
         } else {
             return 0;
