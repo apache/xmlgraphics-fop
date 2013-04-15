@@ -132,6 +132,23 @@ public interface BlockLevelEventProducer extends EventProducer {
             Locator loc) throws LayoutException;
 
     /**
+     * Contents overflow a static region viewport.
+     * @param source the event source
+     * @param elementName the formatting object
+     * @param page the page number/name where the overflow happened
+     * @param amount the amount by which the contents overflow (in mpt)
+     * @param clip true if the content will be clipped
+     * @param canRecover indicates whether FOP can recover from this problem and continue working
+     * @param loc the location of the error or null
+     * @throws LayoutException the layout error provoked by the method call
+     * @event.severity FATAL
+     */
+    void staticRegionOverflow(Object source, String elementName,
+            String page,
+            int amount, boolean clip, boolean canRecover,
+            Locator loc) throws LayoutException;
+
+    /**
      * Indicates that FOP doesn't support flows that are not mapped to region-body, yet.
      * @param source the event source
      * @param flowName the flow name

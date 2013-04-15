@@ -22,9 +22,10 @@
   <message key="tableFixedAutoWidthNotSupported">table-layout="fixed" and width="auto", but auto-layout not supported =&gt; assuming width="100%".{{locator}}</message>
   <message key="objectTooWide">The extent in inline-progression-direction (width) of a {elementName} is bigger than the available space ({effIPD}mpt &gt; {maxIPD}mpt).{{locator}}</message>
   <message key="overconstrainedAdjustEndIndent">An {elementName} {{locator}} is wider than the available room in inline-progression-dimension. Adjusting end-indent based on overconstrained geometry rules (XSL 1.1, ch. 5.3.4)</message>
-  <message key="viewportIPDOverflow">The contents of {elementName} exceed its 'width' value by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
-  <message key="viewportBPDOverflow">The contents of {elementName} exceed its 'height' value by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
-  <message key="regionOverflow">The contents of {elementName} on page {page} exceed its 'extent' value by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
+  <message key="viewportIPDOverflow">Content overflows the viewport of an {elementName} in inline-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
+  <message key="viewportBPDOverflow">Content overflows the viewport of an {elementName} in block-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
+  <message key="staticRegionOverflow">The contents of {elementName} on page {page} exceed its 'extent' value by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
+  <message key="regionOverflow">The contents of {elementName} on page {page} exceed its viewport by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
   <message key="flowNotMappingToRegionBody">Flow "{flowName}" does not map to the region-body in page-master "{masterName}". FOP presently does not support this.{{locator}}</message>
   <message key="pageSequenceMasterExhausted">Subsequences exhausted in page-sequence-master "{pageSequenceMasterName}", {canRecover,if,using previous subsequence,cannot recover}.{{locator}}</message>
   <message key="missingSubsequencesInPageSequenceMaster">No subsequences in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
