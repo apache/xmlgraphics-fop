@@ -147,7 +147,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                 boolean canRecover = (regionFO.getOverflow() != EN_ERROR_IF_OVERFLOW);
                 boolean needClip = (regionFO.getOverflow() == Constants.EN_HIDDEN
                         || regionFO.getOverflow() == Constants.EN_ERROR_IF_OVERFLOW);
-                eventProducer.regionOverflow(this, regionFO.getName(),
+                eventProducer.staticRegionOverflow(this, regionFO.getName(),
                         page,
                         breaker.getOverflowAmount(), needClip, canRecover,
                         getStaticContentFO().getLocator());
