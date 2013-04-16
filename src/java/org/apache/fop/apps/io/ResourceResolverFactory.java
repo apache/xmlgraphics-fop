@@ -21,12 +21,15 @@ package org.apache.fop.apps.io;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.xmlgraphics.io.Resource;
 import org.apache.xmlgraphics.io.ResourceResolver;
@@ -161,24 +164,57 @@ public final class ResourceResolverFactory {
     }
 
     private static class DefaultTempResourceResolver implements TempResourceResolver {
-        private static File getTempFile(String path) throws IOException {
-            File file = new File(System.getProperty("java.io.tmpdir"), path);
-            file.deleteOnExit();
-            return file;
+
+        private final ConcurrentHashMap<String, File> tempFiles = new ConcurrentHashMap<String, File>();
+
+        private File getTempFile(String uri) throws IllegalStateException {
+            File tempFile = tempFiles.remove(uri);
+            if (tempFile == null) {
+                throw new IllegalStateException(uri + " was never created or has been deleted");
+            }
+            return tempFile;
+        }
+
+        private File createTempFile(String path) throws IOException {
+            File tempFile = File.createTempFile(path, ".fop.tmp");
+            File oldFile = tempFiles.put(path, tempFile);
+            if (oldFile != null) {
+                String errorMsg = oldFile.getAbsolutePath() + " has been already created for " + path;
+                boolean newTempDeleted = tempFile.delete();
+                if (!newTempDeleted) {
+                    errorMsg += ". " + tempFile.getAbsolutePath() + " was not deleted.";
+                }
+                throw new IOException(errorMsg);
+            }
+            return tempFile;
         }
 
         /** {@inheritDoc} */
         public Resource getResource(String id) throws IOException {
-            return new Resource(getTempFile(id).toURI().toURL().openStream());
+            return new Resource(new FileDeletingInputStream(getTempFile(id)));
         }
 
         /** {@inheritDoc} */
         public OutputStream getOutputStream(String id) throws IOException {
-            File file = getTempFile(id);
-            if (file.createNewFile()) {
-                return new FileOutputStream(file);
-            } else {
-                throw new IOException("Filed to create temporary file: " + id);
+            return new FileOutputStream(createTempFile(id));
+        }
+    }
+
+    private static class FileDeletingInputStream extends FilterInputStream {
+
+        private final File file;
+
+        protected FileDeletingInputStream(File file) throws MalformedURLException, IOException {
+            super(file.toURI().toURL().openStream());
+            this.file = file;
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                super.close();
+            } finally {
+                file.delete();
             }
         }
     }
