@@ -142,15 +142,23 @@ public class RelativeNumericProperty extends Property implements Length {
      * Return the resolved (calculated) value of the expression.
      * {@inheritDoc}
      */
-    public double getNumericValue() throws PropertyException {
-        return getResolved(null).getNumericValue(null);
+    public double getNumericValue() {
+        try {
+            return getResolved(null).getNumericValue(null);
+        } catch (PropertyException pe) {
+            throw new RuntimeException(pe);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public double getNumericValue(PercentBaseContext context) throws PropertyException {
-        return getResolved(context).getNumericValue(context);
+    public double getNumericValue(PercentBaseContext context) {
+        try {
+            return getResolved(context).getNumericValue(context);
+        } catch (PropertyException pe) {
+            throw new RuntimeException(pe);
+        }
     }
 
     /**
@@ -193,24 +201,14 @@ public class RelativeNumericProperty extends Property implements Length {
      * {@inheritDoc}
      */
     public int getValue() {
-        try {
-            return (int) getNumericValue();
-        } catch (PropertyException exc) {
-            log.error(exc);
-        }
-        return 0;
+        return (int) getNumericValue();
     }
 
     /**
      * {@inheritDoc}
      */
     public int getValue(PercentBaseContext context) {
-        try {
-            return (int) getNumericValue(context);
-        } catch (PropertyException exc) {
-            log.error(exc);
-        }
-        return 0;
+        return (int) getNumericValue(context);
     }
 
     /**

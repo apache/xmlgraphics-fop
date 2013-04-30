@@ -21,7 +21,6 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBaseContext;
-import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.util.CompareUtil;
 
 /**
@@ -104,7 +103,7 @@ public final class EnumNumber extends Property implements Numeric {
      * {@inheritDoc}
      * logs an error, because it's not supposed to be called
      */
-    public double getNumericValue(PercentBaseContext context) throws PropertyException {
+    public double getNumericValue(PercentBaseContext context) {
         log.error("getNumericValue() called on " + enumProperty + " number");
         return 0;
     }

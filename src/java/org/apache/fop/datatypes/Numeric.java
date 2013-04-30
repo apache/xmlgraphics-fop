@@ -19,8 +19,6 @@
 
 package org.apache.fop.datatypes;
 
-import org.apache.fop.fo.expr.PropertyException;
-
 /**
  * An interface for classes that can participate in numeric operations.
  * All the numeric operation (+, -, *, ...) are expressed in terms of
@@ -39,7 +37,7 @@ public interface Numeric {
      * @return the computed value.
      * @throws PropertyException if a property exception occurs
      */
-    double getNumericValue() throws PropertyException;
+    double getNumericValue();
 
     /**
      * Return the value of this Numeric
@@ -47,7 +45,7 @@ public interface Numeric {
      * @return the computed value.
      * @throws PropertyException if a property exception occurs
      */
-    double getNumericValue(PercentBaseContext context) throws PropertyException;
+    double getNumericValue(PercentBaseContext context);
 
     /**
      * Return the dimension of this numeric. Plain numbers has a dimension of
