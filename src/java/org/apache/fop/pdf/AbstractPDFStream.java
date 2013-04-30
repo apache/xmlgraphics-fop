@@ -52,6 +52,7 @@ public abstract class AbstractPDFStream extends PDFObject {
 
     protected AbstractPDFStream(PDFDictionary dictionary, boolean encodeOnTheFly) {
         this.dictionary = dictionary;
+        dictionary.setParent(this);
         this.encodeOnTheFly = encodeOnTheFly;
     }
 
