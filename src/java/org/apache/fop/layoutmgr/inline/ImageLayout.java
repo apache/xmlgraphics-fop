@@ -75,12 +75,11 @@ public class ImageLayout implements Constants {
 
         len = props.getBlockProgressionDimension().getOptimum(percentBaseContext).getLength();
         if (len.getEnum() != EN_AUTO) {
-            bpd = len.getValue(percentBaseContext);
+            bpd = evaluateLength(len, intrinsicSize.height);
         }
         len = props.getBlockProgressionDimension().getMinimum(percentBaseContext).getLength();
         if (bpd == -1 && len.getEnum() != EN_AUTO) {
-            //Establish minimum viewport size
-            bpd = len.getValue(percentBaseContext);
+            bpd = evaluateLength(len, intrinsicSize.height);
         }
 
         len = props.getInlineProgressionDimension().getOptimum(percentBaseContext).getLength();
@@ -197,14 +196,14 @@ public class ImageLayout implements Constants {
         Length len;
         len = range.getMaximum(percentBaseContext).getLength();
         if (len.getEnum() != EN_AUTO) {
-            int max = len.getValue(percentBaseContext);
+            int max = evaluateLength(len);
             if (max != -1 && mayScaleDown) {
                 extent = Math.min(extent, max);
             }
         }
         len = range.getMinimum(percentBaseContext).getLength();
         if (len.getEnum() != EN_AUTO) {
-            int min = len.getValue(percentBaseContext);
+            int min = evaluateLength(len);
             if (min != -1 && mayScaleUp) {
                 extent = Math.max(extent, min);
             }
@@ -364,4 +363,13 @@ public class ImageLayout implements Constants {
         return this.clip;
     }
 
+    private int evaluateLength(Length length, int referenceValue) {
+        double numericValue = length.getNumericValue(percentBaseContext);
+        int bpd = numericValue < 0 ? referenceValue : (int) Math.round(numericValue);
+        return bpd;
+    }
+
+    private int evaluateLength(Length length) {
+        return evaluateLength(length, -1);
+    }
 }
