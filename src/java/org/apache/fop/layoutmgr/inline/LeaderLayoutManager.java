@@ -126,19 +126,19 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             } else {
                 leaderArea = new Space();
                 if (level >= 0) {
-                    leaderArea.setBidiLevel (level);
+                    leaderArea.setBidiLevel(level);
                 }
             }
             leaderArea.setBPD(fobj.getRuleThickness().getValue(this));
             leaderArea.addTrait(Trait.COLOR, fobj.getColor());
             if (level >= 0) {
-                leaderArea.setBidiLevel (level);
+                leaderArea.setBidiLevel(level);
             }
         } else if (fobj.getLeaderPattern() == EN_SPACE) {
             leaderArea = new Space();
             leaderArea.setBPD(fobj.getRuleThickness().getValue(this));
             if (level >= 0) {
-                leaderArea.setBidiLevel (level);
+                leaderArea.setBidiLevel(level);
             }
         } else if (fobj.getLeaderPattern() == EN_DOTS) {
             TextArea t = new TextArea();
@@ -157,7 +157,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                 spacer = new Space();
                 spacer.setIPD(widthLeaderPattern - width);
                 if (level >= 0) {
-                    spacer.setBidiLevel (level);
+                    spacer.setBidiLevel(level);
                 }
                 width = widthLeaderPattern;
             }
@@ -201,7 +201,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                     spacer = new Space();
                     spacer.setIPD(fobj.getLeaderPatternWidth().getValue(this) - width);
                     if (level >= 0) {
-                        spacer.setBidiLevel (level);
+                        spacer.setBidiLevel(level);
                     }
                     width = fobj.getLeaderPatternWidth().getValue(this);
                 }
@@ -214,7 +214,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                 //Content collapsed to nothing, so use a space
                 leaderArea = new Space();
                 leaderArea.setBPD(fobj.getRuleThickness().getValue(this));
-                leaderArea.setBidiLevel (fobj.getBidiLevelRecursive());
+                leaderArea.setBidiLevel(fobj.getBidiLevelRecursive());
             }
         }
         TraitSetter.setProducerID(leaderArea, fobj.getId());

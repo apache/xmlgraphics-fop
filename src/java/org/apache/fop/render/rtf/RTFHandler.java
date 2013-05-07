@@ -295,8 +295,8 @@ public class RTFHandler extends FOEventHandler {
                     attr.set(RtfBefore.HEADER);
 
                     final IRtfBeforeContainer contBefore
-                        = (IRtfBeforeContainer)builderContext.getContainer
-                                (IRtfBeforeContainer.class, true, this);
+                        = (IRtfBeforeContainer)builderContext.getContainer(
+                                IRtfBeforeContainer.class, true, this);
                     contBefore.newBefore(attr);
                 }
 
@@ -307,8 +307,8 @@ public class RTFHandler extends FOEventHandler {
                     attr.set(RtfAfter.FOOTER);
 
                     final IRtfAfterContainer contAfter
-                        = (IRtfAfterContainer)builderContext.getContainer
-                                (IRtfAfterContainer.class, true, this);
+                        = (IRtfAfterContainer)builderContext.getContainer(
+                                IRtfAfterContainer.class, true, this);
                     contAfter.newAfter(attr);
                 }
                 handled = true;

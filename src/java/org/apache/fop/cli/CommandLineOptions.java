@@ -904,7 +904,7 @@ public class CommandLineOptions {
         }
     }
 
-    private void setLogOption (String option, String level) {
+    private void setLogOption(String option, String level) {
         if (log instanceof CommandLineLogger
             || System.getProperty("org.apache.commons.logging.Log") == null) {
             setLogLevel(level);

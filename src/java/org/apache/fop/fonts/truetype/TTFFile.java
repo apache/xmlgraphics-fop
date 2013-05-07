@@ -219,8 +219,8 @@ public class TTFFile {
 
     // internal mapping of glyph indexes to unicode indexes
     // used for quick mappings in this class
-    private final Map<Integer, Integer> glyphToUnicodeMap = new HashMap<Integer, Integer> ();
-    private final Map<Integer, Integer> unicodeToGlyphMap = new HashMap<Integer, Integer> ();
+    private final Map<Integer, Integer> glyphToUnicodeMap = new HashMap<Integer, Integer>();
+    private final Map<Integer, Integer> unicodeToGlyphMap = new HashMap<Integer, Integer>();
 
     private TTFDirTabEntry currentDirTab;
 
@@ -244,7 +244,7 @@ public class TTFFile {
      * @param useKerning true if kerning data should be loaded
      * @param useAdvanced true if advanced typographic tables should be loaded
      */
-    public TTFFile (boolean useKerning, boolean useAdvanced) {
+    public TTFFile(boolean useKerning, boolean useAdvanced) {
         this.useKerning = useKerning;
         this.useAdvanced = useAdvanced;
     }
@@ -289,7 +289,7 @@ public class TTFFile {
         }
 
         /** {@inheritDoc} */
-        public boolean equals (Object o) {
+        public boolean equals(Object o) {
             if (o instanceof UnicodeMapping) {
                 UnicodeMapping m = (UnicodeMapping) o;
                 if (unicodeIndex != m.unicodeIndex) {
@@ -303,7 +303,7 @@ public class TTFFile {
         }
 
         /** {@inheritDoc} */
-        public int compareTo (Object o) {
+        public int compareTo(Object o) {
             if (o instanceof UnicodeMapping) {
                 UnicodeMapping m = (UnicodeMapping) o;
                 if (unicodeIndex > m.unicodeIndex) {
@@ -433,8 +433,8 @@ public class TTFFile {
         }
     }
 
-    private boolean readUnicodeCmap                             // CSOK: MethodLength
-        (long cmapUniOffset, int encodingID)
+    private boolean readUnicodeCmap(
+        long cmapUniOffset, int encodingID)
             throws IOException {
         //Read CMAP table and correct mtxTab.index
         int mtxPtr = 0;
@@ -737,11 +737,11 @@ public class TTFFile {
         if (useAdvanced) {
             try {
                 OTFAdvancedTypographicTableReader atr
-                    = new OTFAdvancedTypographicTableReader (this, in);
+                    = new OTFAdvancedTypographicTableReader(this, in);
                 atr.readAll();
                 this.advancedTableReader = atr;
             } catch (AdvancedTypographicTableFormatException e) {
-                log.warn (
+                log.warn(
                     "Encountered format constraint violation in advanced (typographic) table (AT) "
                     + "in font '" + getFullName() + "', ignoring AT data: "
                     + e.getMessage()

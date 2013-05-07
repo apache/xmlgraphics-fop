@@ -254,14 +254,14 @@ public abstract class AbstractGraphics extends FObj
     public abstract Length getIntrinsicAlignmentAdjust();
 
     @Override
-    public boolean isDelimitedTextRangeBoundary (int boundary) {
+    public boolean isDelimitedTextRangeBoundary(int boundary) {
         return false;
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges (Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
         if (currentRange != null) {
-            currentRange.append (CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this);
+            currentRange.append(CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this);
         }
         return ranges;
     }

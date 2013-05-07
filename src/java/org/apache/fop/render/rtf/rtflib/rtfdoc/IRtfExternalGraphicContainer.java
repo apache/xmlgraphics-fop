@@ -38,5 +38,5 @@ public interface IRtfExternalGraphicContainer {
      * @return RtfExternalGraphic for the new image
      * @exception IOException On error
      */
-    RtfExternalGraphic newImage () throws IOException;
+    RtfExternalGraphic newImage() throws IOException;
 }

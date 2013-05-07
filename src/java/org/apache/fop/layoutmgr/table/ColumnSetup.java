@@ -59,7 +59,7 @@ public class ColumnSetup {
     public ColumnSetup(Table table) {
         assert table != null;
         this.table = table;
-        this.wmTraits = WritingModeTraits.getWritingModeTraitsGetter (table);
+        this.wmTraits = WritingModeTraits.getWritingModeTraitsGetter(table);
         prepareColumns();
         initializeColumnWidths();
     }

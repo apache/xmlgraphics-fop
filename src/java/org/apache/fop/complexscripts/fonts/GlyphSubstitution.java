@@ -37,6 +37,6 @@ public interface GlyphSubstitution {
      * @return true if the glyph subtable was applied, meaning that the current context matches the
      * associated input context glyph coverage table
      */
-    boolean substitute (GlyphSubstitutionState ss);
+    boolean substitute(GlyphSubstitutionState ss);
 
 }

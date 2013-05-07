@@ -195,7 +195,7 @@ implements
     protected void writeRtfSuffix() throws IOException {
         // write suffix /sect only if this section is not last section (see bug #51484)
         List siblings = parent.getChildren();
-        if ((siblings.indexOf (this) + 1) < siblings.size()) {
+        if ((siblings.indexOf(this) + 1) < siblings.size()) {
             writeControlWord("sect");
         }
     }

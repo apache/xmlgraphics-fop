@@ -40,7 +40,7 @@ public interface IrtfTemplateContainer {
      * @return new Template object
      * @exception IOException on error
      */
-    RtfTemplate newTemplate (String str, RtfAttributes attr) throws IOException;
+    RtfTemplate newTemplate(String str, RtfAttributes attr) throws IOException;
 
 
 }

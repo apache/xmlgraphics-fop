@@ -1503,7 +1503,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("fox:block-progression-unit", l);
     }
 
-    private Property calcWritingModeDependent (int pv, int wm) {
+    private Property calcWritingModeDependent(int pv, int wm) {
         if (pv == EN_LEFT) {
             if (wm == Constants.EN_LR_TB) {
                 pv = EN_START;
@@ -1521,14 +1521,14 @@ public final class FOPropertyMapping implements Constants {
                 pv = EN_END;
             }
         }
-        return makeWritingModeDependentEnum (pv);
+        return makeWritingModeDependentEnum(pv);
     }
 
-    private Property makeWritingModeDependentEnum (int pv) {
+    private Property makeWritingModeDependentEnum(int pv) {
         if (pv == EN_START) {
-            return getEnumProperty (EN_START, "START");
+            return getEnumProperty(EN_START, "START");
         } else if (pv == EN_END) {
-            return getEnumProperty (EN_END, "END");
+            return getEnumProperty(EN_END, "END");
         } else {
             return null;
         }
@@ -1626,8 +1626,8 @@ public final class FOPropertyMapping implements Constants {
                 if (p != null) {
                     int pv = p.getEnum();
                     if ((pv == EN_LEFT) || (pv == EN_RIGHT)) {
-                        p = calcWritingModeDependent
-                            (pv, propertyList.get(Constants.PR_WRITING_MODE).getEnum());
+                        p = calcWritingModeDependent(
+                            pv, propertyList.get(Constants.PR_WRITING_MODE).getEnum());
                     }
                 }
                 return p;
@@ -1676,11 +1676,11 @@ public final class FOPropertyMapping implements Constants {
                 } else if (correspondingValue == EN_CENTER) {
                     return getEnumProperty(EN_CENTER, "CENTER");
                 } else if (correspondingValue == EN_LEFT) {
-                    return calcWritingModeDependent
-                        (EN_LEFT, propertyList.get(Constants.PR_WRITING_MODE).getEnum());
+                    return calcWritingModeDependent(
+                        EN_LEFT, propertyList.get(Constants.PR_WRITING_MODE).getEnum());
                 } else if (correspondingValue == EN_RIGHT) {
-                    return calcWritingModeDependent
-                        (EN_RIGHT, propertyList.get(Constants.PR_WRITING_MODE).getEnum());
+                    return calcWritingModeDependent(
+                        EN_RIGHT, propertyList.get(Constants.PR_WRITING_MODE).getEnum());
                 } else {
                     return null;
                 }

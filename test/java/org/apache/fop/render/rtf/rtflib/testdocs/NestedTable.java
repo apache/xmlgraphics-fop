@@ -78,8 +78,8 @@ class NestedTable extends TestDocument {
         // second row contains nested table
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText
-                    ("cell 1,0, width 40mm, to the left of nested table.");
+            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText(
+                    "cell 1,0, width 40mm, to the left of nested table.");
 
             final RtfTableCell c = r.newTableCell(80 * MM_TO_TWIPS);
             c.newParagraph().newText("cell 1,1, width 80mm, this text is "
@@ -88,17 +88,17 @@ class NestedTable extends TestDocument {
             fillNestedTable(c.newTable(new DummyTableColumnsInfo()), 1);
             c.newParagraph().newText("AFTER NESTED TABLE");
 
-            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText
-                    ("cell 1,2, width 40mm, to the right of nested table.");
+            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText(
+                    "cell 1,2, width 40mm, to the right of nested table.");
         }
 
         // third row, normal
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText
-                    ("cell 2,0, width 80mm, this row has two cells.");
-            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText
-                    ("cell 2,1, width 80mm, last cell.");
+            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText(
+                    "cell 2,0, width 80mm, this row has two cells.");
+            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText(
+                    "cell 2,1, width 80mm, last cell.");
         }
 
     }
@@ -118,8 +118,8 @@ class NestedTable extends TestDocument {
         // second row contains nested table
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText
-                    ("cell 1,0, width 40mm, to the left of nested tables.");
+            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText(
+                    "cell 1,0, width 40mm, to the left of nested tables.");
 
             final RtfTableCell c = r.newTableCell(80 * MM_TO_TWIPS);
             c.newParagraph().newText("cell 1,1, width 80mm, this text is "
@@ -130,17 +130,17 @@ class NestedTable extends TestDocument {
             fillNestedTable(c.newTable(new DummyTableColumnsInfo()), 3);
             c.newParagraph().newText("AFTER");
 
-            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText
-                    ("cell 1,2, width 40mm, to the right of nested table.");
+            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText(
+                    "cell 1,2, width 40mm, to the right of nested table.");
         }
 
         // third row, normal
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText
-                    ("cell 2,0, width 80mm, this row has two cells.");
-            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText
-                    ("cell 2,1, width 80mm, last cell.");
+            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText(
+                    "cell 2,0, width 80mm, this row has two cells.");
+            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText(
+                    "cell 2,1, width 80mm, last cell.");
         }
     }
 
@@ -162,8 +162,8 @@ class NestedTable extends TestDocument {
         // second row contains nested table
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText
-                    ("cell 1,0, width 40mm, to the left of nested tables.");
+            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText(
+                    "cell 1,0, width 40mm, to the left of nested tables.");
 
             final RtfTableCell c = r.newTableCell(80 * MM_TO_TWIPS);
             c.newParagraph().newText("cell 1,1, width 80mm, this text is "
@@ -174,17 +174,17 @@ class NestedTable extends TestDocument {
             fillNestedTable(c.newTable(new DummyTableColumnsInfo()), 6);
             c.newParagraph().newText("AFTER");
 
-            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText
-                    ("cell 1,2, width 40mm, to the right of nested table.");
+            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText(
+                    "cell 1,2, width 40mm, to the right of nested table.");
         }
 
         // third row, normal
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText
-                    ("cell 2,0, width 80mm, this row has two cells.");
-            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText
-                    ("cell 2,1, width 80mm, last cell.");
+            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText(
+                    "cell 2,0, width 80mm, this row has two cells.");
+            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText(
+                    "cell 2,1, width 80mm, last cell.");
         }
     }
 

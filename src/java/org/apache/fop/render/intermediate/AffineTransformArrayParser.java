@@ -135,14 +135,14 @@ public class AffineTransformArrayParser implements TransformListHandler {
 
     /** {@inheritDoc} */
     public void skewX(float skx) throws ParseException {
-        this.transforms.add
-            (AffineTransform.getShearInstance(Math.tan(Math.toRadians(skx)), 0));
+        this.transforms.add(
+            AffineTransform.getShearInstance(Math.tan(Math.toRadians(skx)), 0));
     }
 
     /** {@inheritDoc} */
     public void skewY(float sky) throws ParseException {
-        this.transforms.add
-            (AffineTransform.getShearInstance(0, Math.tan(Math.toRadians(sky))));
+        this.transforms.add(
+            AffineTransform.getShearInstance(0, Math.tan(Math.toRadians(sky))));
     }
 
     /** {@inheritDoc} */

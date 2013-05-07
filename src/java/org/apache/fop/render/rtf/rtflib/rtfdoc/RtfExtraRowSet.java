@@ -313,7 +313,7 @@ public class RtfExtraRowSet extends RtfContainer {
       *
       * @param parentITableColumnsInfo table context to set
       */
-     public void setParentITableColumnsInfo (ITableColumnsInfo parentITableColumnsInfo) {
+     public void setParentITableColumnsInfo(ITableColumnsInfo parentITableColumnsInfo) {
        this.parentITableColumnsInfo = parentITableColumnsInfo;
      }
      /** - end - */

@@ -125,7 +125,7 @@ public final class GenerateBidiTestData {
         out.println("    private BidiTestData() {");
         out.println("    }");
         out.println();
-        dumpData (out, outFileName);
+        dumpData(out, outFileName);
         out.println("    public static final int NUM_TEST_SEQUENCES = " + numTestSpecs + ";");
         out.println();
         out.println("    public static int[] readTestData ( String prefix, int index ) {");
@@ -179,91 +179,91 @@ public final class GenerateBidiTestData {
             } else if (line.startsWith("#")) {
                 continue;
             } else {
-                parseTypeProperties (line, sm, im);
+                parseTypeProperties(line, sm, im);
             }
         }
         // extract type data list
-        List tdl = processTypeData (sm, im, new ArrayList());
+        List tdl = processTypeData(sm, im, new ArrayList());
         // dump instrumentation
         if (verbose) {
             System.out.println();
             System.out.println("Read type ranges : " + numTypeRanges);
             System.out.println("Read lines       : " + lineNumber);
         }
-        td = (int[][]) tdl.toArray (new int [ tdl.size() ] []);
+        td = (int[][]) tdl.toArray(new int [ tdl.size() ] []);
     }
 
-    private static void parseTypeProperties (String line, Map/*<Integer,List>*/ sm, Map/*<String,int[3]>*/ im) {
+    private static void parseTypeProperties(String line, Map/*<Integer,List>*/ sm, Map/*<String,int[3]>*/ im) {
         String[] sa = line.split(";");
         if (sa.length >= 5) {
-            int uc = Integer.parseInt (sa[0], 16);
-            int bc = parseBidiClassAny (sa[4]);
+            int uc = Integer.parseInt(sa[0], 16);
+            int bc = parseBidiClassAny(sa[4]);
             if (bc >= 0) {
                 String ucName = sa[1];
-                if (isBlockStart (ucName)) {
-                    String ucBlock = getBlockName (ucName);
-                    if (! im.containsKey (ucBlock)) {
-                        im.put (ucBlock, new int[] { uc, -1, bc });
+                if (isBlockStart(ucName)) {
+                    String ucBlock = getBlockName(ucName);
+                    if (! im.containsKey(ucBlock)) {
+                        im.put(ucBlock, new int[] { uc, -1, bc });
                     } else {
-                        throw new IllegalArgumentException ("duplicate start of block '" + ucBlock + "' at entry: " + line);
+                        throw new IllegalArgumentException("duplicate start of block '" + ucBlock + "' at entry: " + line);
                     }
-                } else if (isBlockEnd (ucName)) {
-                    String ucBlock = getBlockName (ucName);
-                    if (im.containsKey (ucBlock)) {
-                        int[] ba = (int[]) im.get (ucBlock);
+                } else if (isBlockEnd(ucName)) {
+                    String ucBlock = getBlockName(ucName);
+                    if (im.containsKey(ucBlock)) {
+                        int[] ba = (int[]) im.get(ucBlock);
                         assert ba.length == 3;
                         if (ba[1] < 0) {
                             ba[1] = uc;
                         } else {
-                            throw new IllegalArgumentException ("duplicate end of block '" + ucBlock + "' at entry: " + line);
+                            throw new IllegalArgumentException("duplicate end of block '" + ucBlock + "' at entry: " + line);
                         }
                     } else {
-                        throw new IllegalArgumentException ("missing start of block '" + ucBlock + "' at entry: " + line);
+                        throw new IllegalArgumentException("missing start of block '" + ucBlock + "' at entry: " + line);
                     }
                 } else {
-                    Integer k = Integer.valueOf (bc);
+                    Integer k = Integer.valueOf(bc);
                     List sl;
-                    if (! sm.containsKey (k)) {
+                    if (! sm.containsKey(k)) {
                         sl = new ArrayList();
-                        sm.put (k, sl);
+                        sm.put(k, sl);
                     } else {
-                        sl = (List) sm.get (k);
+                        sl = (List) sm.get(k);
                     }
                     assert sl != null;
-                    sl.add (Integer.valueOf (uc));
+                    sl.add(Integer.valueOf(uc));
                 }
             } else {
-                throw new IllegalArgumentException ("invalid bidi class '" + sa[4] + "' at entry: " + line);
+                throw new IllegalArgumentException("invalid bidi class '" + sa[4] + "' at entry: " + line);
             }
         } else {
-            throw new IllegalArgumentException ("invalid unicode character database entry: " + line);
+            throw new IllegalArgumentException("invalid unicode character database entry: " + line);
         }
     }
 
-    private static boolean isBlockStart (String s) {
+    private static boolean isBlockStart(String s) {
         return s.startsWith("<") && s.endsWith("First>");
     }
 
-    private static boolean isBlockEnd (String s) {
+    private static boolean isBlockEnd(String s) {
         return s.startsWith("<") && s.endsWith("Last>");
     }
 
-    private static String getBlockName (String s) {
-        String[] sa = s.substring (1, s.length() - 1).split(",");
+    private static String getBlockName(String s) {
+        String[] sa = s.substring(1, s.length() - 1).split(",");
         assert (sa != null) && (sa.length > 0);
         return sa[0].trim();
     }
 
-    private static List processTypeData (Map/*<Integer,List>*/ sm, Map/*<String,int[3]>*/ im, List tdl) {
+    private static List processTypeData(Map/*<Integer,List>*/ sm, Map/*<String,int[3]>*/ im, List tdl) {
         for (int i = BidiConstants.FIRST, k = BidiConstants.LAST; i <= k; i++) {
             Map/*<Integer,Integer>*/ rm = new TreeMap/*<Integer,Integer>*/();
             // populate intervals from singleton map
-            List sl = (List) sm.get (Integer.valueOf (i));
+            List sl = (List) sm.get(Integer.valueOf(i));
             if (sl != null) {
                 for (Iterator it = sl.iterator(); it.hasNext(); ) {
                     Integer s = (Integer) it.next();
                     int uc = s.intValue();
-                    rm.put (Integer.valueOf (uc), Integer.valueOf (uc + 1));
+                    rm.put(Integer.valueOf(uc), Integer.valueOf(uc + 1));
                 }
             }
             // populate intervals from (block) interval map
@@ -272,16 +272,16 @@ public final class GenerateBidiTestData {
                     int[] ba = (int[]) it.next();
                     assert (ba != null) && (ba.length > 2);
                     if (ba[2] == i) {
-                        rm.put (Integer.valueOf (ba[0]), Integer.valueOf (ba[1] + 1));
+                        rm.put(Integer.valueOf(ba[0]), Integer.valueOf(ba[1] + 1));
                     }
                 }
             }
-            tdl.add (createTypeData (i, extractRanges (rm)));
+            tdl.add(createTypeData(i, extractRanges(rm)));
         }
         return tdl;
     }
 
-    private static List extractRanges (Map/*<Integer,Integer>*/ rm) {
+    private static List extractRanges(Map/*<Integer,Integer>*/ rm) {
         List ranges = new ArrayList();
         int sLast = 0;
         int eLast = 0;
@@ -291,7 +291,7 @@ public final class GenerateBidiTestData {
             int e = ((Integer) me.getValue()).intValue();
             if (s > eLast) {
                 if (eLast > sLast) {
-                    ranges.add (new int[] { sLast, eLast });
+                    ranges.add(new int[] { sLast, eLast });
                     if (verbose) {
                         if ((++numTypeRanges % 10) == 0) {
                             System.out.print("#");
@@ -305,7 +305,7 @@ public final class GenerateBidiTestData {
             }
         }
         if (eLast > sLast) {
-            ranges.add (new int[] { sLast, eLast });
+            ranges.add(new int[] { sLast, eLast });
             if (verbose) {
                 if ((++numTypeRanges % 10) == 0) {
                     System.out.print("#");
@@ -337,19 +337,19 @@ public final class GenerateBidiTestData {
                 continue;
             } else if (line.startsWith(PFX_TYPE) && ! ignoreDeprecatedTypeData) {
                 List lines = new ArrayList();
-                if ((n = readType (line, b, lines)) < 0) {
+                if ((n = readType(line, b, lines)) < 0) {
                     break;
                 } else {
                     lineNumber += n;
-                    tdl.add (parseType (lines));
+                    tdl.add(parseType(lines));
                 }
             } else if (line.startsWith(PFX_LEVELS)) {
                 List lines = new ArrayList();
-                if ((n = readLevels (line, b, lines)) < 0) {
+                if ((n = readLevels(line, b, lines)) < 0) {
                     break;
                 } else {
                     lineNumber += n;
-                    ldl.add (parseLevels (lines));
+                    ldl.add(parseLevels(lines));
                 }
             }
         }
@@ -364,27 +364,27 @@ public final class GenerateBidiTestData {
             System.out.println("Read lines       : " + lineNumber);
         }
         if (! ignoreDeprecatedTypeData) {
-            td = (int[][]) tdl.toArray (new int [ tdl.size() ] []);
+            td = (int[][]) tdl.toArray(new int [ tdl.size() ] []);
         }
-        ld = (int[][]) ldl.toArray (new int [ ldl.size() ] []);
+        ld = (int[][]) ldl.toArray(new int [ ldl.size() ] []);
     }
 
-    private static int readType (String line, BufferedReader b, List lines) throws IOException {
-        lines.add (line);
+    private static int readType(String line, BufferedReader b, List lines) throws IOException {
+        lines.add(line);
         return 0;
     }
 
-    private static int readLevels (String line, BufferedReader b, List lines) throws IOException {
+    private static int readLevels(String line, BufferedReader b, List lines) throws IOException {
         boolean done = false;
         int n = 0;
-        lines.add (line);
+        lines.add(line);
         while (! done) {
-            switch (testPrefix (b, PFX_LEVELS)) {
+            switch (testPrefix(b, PFX_LEVELS)) {
             case 0:     // within current levels
                 if ((line = b.readLine()) != null) {
                     n++;
                     if ((line.length() > 0) && ! line.startsWith("#")) {
-                        lines.add (line);
+                        lines.add(line);
                     }
                 } else {
                     done = true;
@@ -400,16 +400,16 @@ public final class GenerateBidiTestData {
         return n;
     }
 
-    private static int testPrefix (BufferedReader b, String pfx) throws IOException {
+    private static int testPrefix(BufferedReader b, String pfx) throws IOException {
         int rv = 0;
         int pfxLen = pfx.length();
-        b.mark (pfxLen);
+        b.mark(pfxLen);
         for (int i = 0, n = pfxLen; i < n; i++) {
             int c = b.read();
             if (c < 0) {
                 rv = -1;
                 break;
-            } else if (c != pfx.charAt (i)) {
+            } else if (c != pfx.charAt(i)) {
                 rv = 0;
                 break;
             } else {
@@ -420,25 +420,25 @@ public final class GenerateBidiTestData {
         return rv;
     }
 
-    private static int[] parseType (List lines) {
+    private static int[] parseType(List lines) {
         if ((lines != null) && (lines.size() >= 1)) {
             String line = (String) lines.get(0);
             if (line.startsWith(PFX_TYPE)) {
                 // @Type: BIDI_CLASS ':' LWSP CHARACTER_CLASS
-                String[] sa = line.split (":");
+                String[] sa = line.split(":");
                 if (sa.length == 3) {
                     String bcs = sa[1].trim();
                     String crs = sa[2].trim();
-                    int bc = parseBidiClass (bcs);
-                    List rl = parseCharacterRanges (crs);
-                    return createTypeData (bc, rl);
+                    int bc = parseBidiClass(bcs);
+                    List rl = parseCharacterRanges(crs);
+                    return createTypeData(bc, rl);
                 }
             }
         }
         return null;
     }
 
-    private static int[] createTypeData (int bc, List ranges) {
+    private static int[] createTypeData(int bc, List ranges) {
         int[] data = new int [ 1 + (2 * ranges.size()) ];
         int k = 0;
         data [ k++ ] = bc;
@@ -450,102 +450,102 @@ public final class GenerateBidiTestData {
         return data;
     }
 
-    private static int parseBidiClass (String bidiClass) {
+    private static int parseBidiClass(String bidiClass) {
         int bc = 0;
-        if ("L".equals (bidiClass)) {
+        if ("L".equals(bidiClass)) {
             bc = BidiConstants.L;
-        } else if ("LRE".equals (bidiClass)) {
+        } else if ("LRE".equals(bidiClass)) {
             bc = BidiConstants.LRE;
-        } else if ("LRO".equals (bidiClass)) {
+        } else if ("LRO".equals(bidiClass)) {
             bc = BidiConstants.LRO;
-        } else if ("R".equals (bidiClass)) {
+        } else if ("R".equals(bidiClass)) {
             bc = BidiConstants.R;
-        } else if ("AL".equals (bidiClass)) {
+        } else if ("AL".equals(bidiClass)) {
             bc = BidiConstants.AL;
-        } else if ("RLE".equals (bidiClass)) {
+        } else if ("RLE".equals(bidiClass)) {
             bc = BidiConstants.RLE;
-        } else if ("RLO".equals (bidiClass)) {
+        } else if ("RLO".equals(bidiClass)) {
             bc = BidiConstants.RLO;
-        } else if ("PDF".equals (bidiClass)) {
+        } else if ("PDF".equals(bidiClass)) {
             bc = BidiConstants.PDF;
-        } else if ("EN".equals (bidiClass)) {
+        } else if ("EN".equals(bidiClass)) {
             bc = BidiConstants.EN;
-        } else if ("ES".equals (bidiClass)) {
+        } else if ("ES".equals(bidiClass)) {
             bc = BidiConstants.ES;
-        } else if ("ET".equals (bidiClass)) {
+        } else if ("ET".equals(bidiClass)) {
             bc = BidiConstants.ET;
-        } else if ("AN".equals (bidiClass)) {
+        } else if ("AN".equals(bidiClass)) {
             bc = BidiConstants.AN;
-        } else if ("CS".equals (bidiClass)) {
+        } else if ("CS".equals(bidiClass)) {
             bc = BidiConstants.CS;
-        } else if ("NSM".equals (bidiClass)) {
+        } else if ("NSM".equals(bidiClass)) {
             bc = BidiConstants.NSM;
-        } else if ("BN".equals (bidiClass)) {
+        } else if ("BN".equals(bidiClass)) {
             bc = BidiConstants.BN;
-        } else if ("B".equals (bidiClass)) {
+        } else if ("B".equals(bidiClass)) {
             bc = BidiConstants.B;
-        } else if ("S".equals (bidiClass)) {
+        } else if ("S".equals(bidiClass)) {
             bc = BidiConstants.S;
-        } else if ("WS".equals (bidiClass)) {
+        } else if ("WS".equals(bidiClass)) {
             bc = BidiConstants.WS;
-        } else if ("ON".equals (bidiClass)) {
+        } else if ("ON".equals(bidiClass)) {
             bc = BidiConstants.ON;
         } else {
-            throw new IllegalArgumentException ("unknown bidi class: " + bidiClass);
+            throw new IllegalArgumentException("unknown bidi class: " + bidiClass);
         }
         return bc;
     }
 
-    private static int parseBidiClassAny (String bidiClass) {
+    private static int parseBidiClassAny(String bidiClass) {
         try {
-            return parseBidiClass (bidiClass);
+            return parseBidiClass(bidiClass);
         } catch (IllegalArgumentException e) {
             return -1;
         }
     }
 
-    private static List parseCharacterRanges (String charRanges) {
+    private static List parseCharacterRanges(String charRanges) {
         List ranges = new ArrayList();
-        CharacterIterator ci = new StringCharacterIterator (charRanges);
+        CharacterIterator ci = new StringCharacterIterator(charRanges);
         // read initial list delimiter
-        skipSpace (ci);
-        if (! readStartOfList (ci)) {
-            badRangeSpec ("missing initial list delimiter", charRanges);
+        skipSpace(ci);
+        if (! readStartOfList(ci)) {
+            badRangeSpec("missing initial list delimiter", charRanges);
         }
         // read negation token if present
         boolean negated = false;
-        skipSpace (ci);
-        if (maybeReadNext (ci, '^')) {
+        skipSpace(ci);
+        if (maybeReadNext(ci, '^')) {
             negated = true;
         }
         // read item
         int[] r;
-        skipSpace (ci);
-        if ((r = maybeReadItem (ci)) != null) {
-            ranges.add (r);
+        skipSpace(ci);
+        if ((r = maybeReadItem(ci)) != null) {
+            ranges.add(r);
             if (verbose) {
                 if ((++numTypeRanges % 10) == 0) {
                     System.out.print("#");
                 }
             }
         } else {
-            badRangeSpec ("must contain at least one item", charRanges);
+            badRangeSpec("must contain at least one item", charRanges);
         }
         // read more items if present
         boolean more = true;
         while (more) {
             // read separator if present
             String s;
-            skipSpace (ci);
-            if ((s = maybeReadSeparator (ci)) != null) {
+            skipSpace(ci);
+            if ((s = maybeReadSeparator(ci)) != null) {
                 if ((s.length() != 0) && ! s.equals("||")) {
-                    badRangeSpec ("invalid item separator \"" + s + "\"", charRanges);
+                    badRangeSpec("invalid item separator \"" + s + "\"", charRanges);
                 }
             }
             // read item
-            skipSpace (ci);
-            if ((r = maybeReadItem (ci)) != null) {
-                ranges.add (r);
+            skipSpace(ci);
+            if ((r = maybeReadItem(ci)) != null) {
+                ranges.add(r);
                 if (verbose) {
                     if ((++numTypeRanges % 10) == 0) {
                         System.out.print("#");
@@ -556,31 +556,31 @@ public final class GenerateBidiTestData {
             }
         }
         // read terminating list delimiter
-        skipSpace (ci);
-        if (! readEndOfList (ci)) {
-            badRangeSpec ("missing terminating list delimiter", charRanges);
+        skipSpace(ci);
+        if (! readEndOfList(ci)) {
+            badRangeSpec("missing terminating list delimiter", charRanges);
         }
-        if (! atEnd (ci)) {
-            badRangeSpec ("extraneous content prior to end of line", ci);
+        if (! atEnd(ci)) {
+            badRangeSpec("extraneous content prior to end of line", ci);
         }
         if (negated) {
-            ranges = complementRanges (ranges);
+            ranges = complementRanges(ranges);
         }
-        return removeSurrogates (ranges);
+        return removeSurrogates(ranges);
     }
 
-    private static boolean atEnd (CharacterIterator ci) {
+    private static boolean atEnd(CharacterIterator ci) {
         return ci.getIndex() >= ci.getEndIndex();
     }
 
-    private static boolean readStartOfList (CharacterIterator ci) {
-        return maybeReadNext (ci, '[');
+    private static boolean readStartOfList(CharacterIterator ci) {
+        return maybeReadNext(ci, '[');
     }
 
-    private static void skipSpace (CharacterIterator ci) {
-        while (! atEnd (ci)) {
+    private static void skipSpace(CharacterIterator ci) {
+        while (! atEnd(ci)) {
             char c = ci.current();
-            if (! Character.isWhitespace (c)) {
+            if (! Character.isWhitespace(c)) {
                 break;
             } else {
                 ci.next();
@@ -588,8 +588,8 @@ public final class GenerateBidiTestData {
         }
     }
 
-    private static boolean maybeReadNext (CharacterIterator ci, char next) {
-        while (! atEnd (ci)) {
+    private static boolean maybeReadNext(CharacterIterator ci, char next) {
+        while (! atEnd(ci)) {
             char c = ci.current();
             if (c == next) {
                 ci.next();
@@ -601,20 +601,20 @@ public final class GenerateBidiTestData {
         return false;
     }
 
-    private static int[] maybeReadItem (CharacterIterator ci) {
+    private static int[] maybeReadItem(CharacterIterator ci) {
         // read first code point
         int p1 = -1;
-        skipSpace (ci);
-        if ((p1 = maybeReadCodePoint (ci)) < 0) {
+        skipSpace(ci);
+        if ((p1 = maybeReadCodePoint(ci)) < 0) {
             return null;
         }
         // read second code point if present
         int p2 = -1;
-        skipSpace (ci);
-        if (maybeReadNext (ci, '-')) {
-            skipSpace (ci);
-            if ((p2 = maybeReadCodePoint (ci)) < 0) {
-                badRangeSpec ("incomplete item range, requires second item", ci);
+        skipSpace(ci);
+        if (maybeReadNext(ci, '-')) {
+            skipSpace(ci);
+            if ((p2 = maybeReadCodePoint(ci)) < 0) {
+                badRangeSpec("incomplete item range, requires second item", ci);
             }
         }
         if (p2 < 0) {
@@ -622,31 +622,31 @@ public final class GenerateBidiTestData {
         } else if (p1 <= p2) {
             return new int[] { p1, p2 + 1 };    // convert to half open interval [ P1, P2+2 )
         } else {
-            badRangeSpec ("invalid item range, second item must be greater than or equal to first item", ci);
+            badRangeSpec("invalid item range, second item must be greater than or equal to first item", ci);
             return null;
         }
     }
 
-    private static int maybeReadCodePoint (CharacterIterator ci) {
-        if (maybeReadNext (ci, '\\')) {
-            if (maybeReadNext (ci, 'u')) {
-                String s = maybeReadHexDigits (ci, 4);
+    private static int maybeReadCodePoint(CharacterIterator ci) {
+        if (maybeReadNext(ci, '\\')) {
+            if (maybeReadNext(ci, 'u')) {
+                String s = maybeReadHexDigits(ci, 4);
                 if (s != null) {
-                    return Integer.parseInt (s, 16);
+                    return Integer.parseInt(s, 16);
                 } else {
-                    badRangeSpec ("incomplete escaped code point, requires 4 hex digits", ci);
+                    badRangeSpec("incomplete escaped code point, requires 4 hex digits", ci);
                 }
-            } else if (maybeReadNext (ci, 'U')) {
-                String s = maybeReadHexDigits (ci, 8);
+            } else if (maybeReadNext(ci, 'U')) {
+                String s = maybeReadHexDigits(ci, 8);
                 if (s != null) {
-                    return Integer.parseInt (s, 16);
+                    return Integer.parseInt(s, 16);
                 } else {
-                    badRangeSpec ("incomplete escaped code point, requires 8 hex digits", ci);
+                    badRangeSpec("incomplete escaped code point, requires 8 hex digits", ci);
                 }
             } else {
                 char c = ci.current();
                 if (c == CharacterIterator.DONE) {
-                    badRangeSpec ("incomplete escaped code point", ci);
+                    badRangeSpec("incomplete escaped code point", ci);
                 } else {
                     ci.next();
                     return (int) c;
@@ -664,14 +664,14 @@ public final class GenerateBidiTestData {
         return -1;
     }
 
-    private static String maybeReadHexDigits (CharacterIterator ci, int numDigits) {
+    private static String maybeReadHexDigits(CharacterIterator ci, int numDigits) {
         StringBuffer sb = new StringBuffer();
         while ((numDigits < 0) || (sb.length() < numDigits)) {
             char c = ci.current();
             if (c != CharacterIterator.DONE) {
-                if (isHexDigit (c)) {
+                if (isHexDigit(c)) {
                     ci.next();
-                    sb.append (c);
+                    sb.append(c);
                 } else {
                     break;
                 }
@@ -686,13 +686,13 @@ public final class GenerateBidiTestData {
         }
     }
 
-    private static boolean isHexDigit (char c) {
+    private static boolean isHexDigit(char c) {
         return ((c >= '0') && (c <= '9')) || ((c >= 'a') && (c <= 'f')) || ((c >= 'A') && (c <= 'F'));
     }
 
-    private static String maybeReadSeparator (CharacterIterator ci) {
-        if (maybeReadNext (ci, '|')) {
-            if (maybeReadNext (ci, '|')) {
+    private static String maybeReadSeparator(CharacterIterator ci) {
+        if (maybeReadNext(ci, '|')) {
+            if (maybeReadNext(ci, '|')) {
                 return "||";
             } else {
                 return "|";
@@ -702,47 +702,47 @@ public final class GenerateBidiTestData {
         }
     }
 
-    private static boolean readEndOfList (CharacterIterator ci) {
-        return maybeReadNext (ci, ']');
+    private static boolean readEndOfList(CharacterIterator ci) {
+        return maybeReadNext(ci, ']');
     }
 
-    private static List complementRanges (List ranges) {
+    private static List complementRanges(List ranges) {
         Map/*<Integer,Integer>*/ rm = new TreeMap/*<Integer,Integer>*/();
         for (Iterator it = ranges.iterator(); it.hasNext(); ) {
             int[] r = (int[]) it.next();
-            rm.put (Integer.valueOf (r[0]), Integer.valueOf (r[1]));
+            rm.put(Integer.valueOf(r[0]), Integer.valueOf(r[1]));
         }
         // add complement ranges save last
         int s;
         int e;
         int cs = 0;
-        List compRanges = new ArrayList (rm.size() + 1);
+        List compRanges = new ArrayList(rm.size() + 1);
         for (Iterator it = rm.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry/*<Integer,Integer>*/ me = (Map.Entry/*<Integer,Integer>*/) it.next();
             s = ((Integer) me.getKey()).intValue();
             e = ((Integer) me.getValue()).intValue();
             if (s > cs) {
-                compRanges.add (new int[] { cs, s });
+                compRanges.add(new int[] { cs, s });
             }
             cs = e;
         }
         // add trailing complement range
         if (cs < 0x110000) {
-            compRanges.add (new int[] { cs, 0x110000 });
+            compRanges.add(new int[] { cs, 0x110000 });
         }
         return compRanges;
     }
 
     private static final int[] SURROGATES = new int[] { 0xD800, 0xE000 };
 
-    private static List removeSurrogates (List ranges) {
-        List rsl = new ArrayList (ranges.size());
+    private static List removeSurrogates(List ranges) {
+        List rsl = new ArrayList(ranges.size());
         for (Iterator it = ranges.iterator(); it.hasNext(); ) {
             int[] r = (int[]) it.next();
-            if (intersectsRange (r, SURROGATES)) {
-                rsl.addAll (removeRange (r, SURROGATES));
+            if (intersectsRange(r, SURROGATES)) {
+                rsl.addAll(removeRange(r, SURROGATES));
             } else {
-                rsl.add (r);
+                rsl.add(r);
             }
         }
         return rsl;
@@ -751,7 +751,7 @@ public final class GenerateBidiTestData {
     /**
      * Determine if range r2 intersects with range r1.
      */
-    private static boolean intersectsRange (int[] r1, int[] r2) {
+    private static boolean intersectsRange(int[] r1, int[] r2) {
         if (r1[1] <= r2[0]) {                                 // r1 precedes r2 or abuts r2 on right
             return false;
         } else if (r1[0] >= r2[1]) {                          // r2 precedes r1 or abuts r1 on left
@@ -771,42 +771,42 @@ public final class GenerateBidiTestData {
      * Remove range r2 from range r1, leaving zero, one, or two
      * remaining ranges.
      */
-    private static List removeRange (int[] r1, int[] r2) {
+    private static List removeRange(int[] r1, int[] r2) {
         List rl = new ArrayList();
         if (r1[1] <= r2[0]) {                                 // r1 precedes r2 or abuts r2 on right
-            rl.add (r1);
+            rl.add(r1);
         } else if (r1[0] >= r2[1]) {                          // r2 precedes r1 or abuts r1 on left
-            rl.add (r1);
+            rl.add(r1);
         } else if ((r1[0] < r2[0]) && (r1[1] > r2[1])) {  // r1 encloses r2
-            rl.add (new int[] { r1[0], r2[0] });
-            rl.add (new int[] { r2[1], r1[1] });
+            rl.add(new int[] { r1[0], r2[0] });
+            rl.add(new int[] { r2[1], r1[1] });
         } else if (r1[0] < r2[0]) {                           // r1 precedes and overlaps r2
-            rl.add (new int[] { r1[0], r2[0] });
+            rl.add(new int[] { r1[0], r2[0] });
         } else if (r2[1] < r1[1]) {                           // r2 precedes and overlaps r1
-            rl.add (new int[] { r2[1], r1[1] });
+            rl.add(new int[] { r2[1], r1[1] });
         }
         return rl;
     }
 
-    private static void badRangeSpec (String reason, String charRanges) throws IllegalArgumentException {
+    private static void badRangeSpec(String reason, String charRanges) throws IllegalArgumentException {
         if (verbose) {
             System.out.println();
         }
-        throw new IllegalArgumentException ("bad range specification: " + reason + ": \"" + charRanges + "\"");
+        throw new IllegalArgumentException("bad range specification: " + reason + ": \"" + charRanges + "\"");
     }
 
-    private static void badRangeSpec (String reason, CharacterIterator ci) throws IllegalArgumentException {
+    private static void badRangeSpec(String reason, CharacterIterator ci) throws IllegalArgumentException {
         if (verbose) {
             System.out.println();
         }
-        throw new IllegalArgumentException ("bad range specification: " + reason + ": starting at \"" + remainder (ci) + "\"");
+        throw new IllegalArgumentException("bad range specification: " + reason + ": starting at \"" + remainder(ci) + "\"");
     }
 
-    private static String remainder (CharacterIterator ci) {
+    private static String remainder(CharacterIterator ci) {
         StringBuffer sb = new StringBuffer();
         for (char c; (c = ci.current()) != CharacterIterator.DONE; ) {
             ci.next();
-            sb.append (c);
+            sb.append(c);
         }
         return sb.toString();
     }
@@ -818,7 +818,7 @@ public final class GenerateBidiTestData {
      * REORDER_SPEC \n
      * ( TEST_SPEC \n )+
      */
-    private static int[] parseLevels (List lines) {
+    private static int[] parseLevels(List lines) {
         int[] la = null;        // levels array
         int[] ra = null;        // reorder array
         List tal = new ArrayList();
@@ -827,48 +827,48 @@ public final class GenerateBidiTestData {
                 String line = (String) it.next();
                 if (line.startsWith(PFX_LEVELS)) {
                     if (la == null) {
-                        la = parseLevelSpec (line);
+                        la = parseLevelSpec(line);
                         if (verbose) {
                             if ((++numLevelSpecs % 10) == 0) {
                                 System.out.print("&");
                             }
                         }
                     } else {
-                        throw new IllegalArgumentException ("redundant levels array: \"" + line + "\"");
+                        throw new IllegalArgumentException("redundant levels array: \"" + line + "\"");
                     }
                 } else if (line.startsWith(PFX_REORDER)) {
                     if (la == null) {
-                        throw new IllegalArgumentException ("missing levels array before: \"" + line + "\"");
+                        throw new IllegalArgumentException("missing levels array before: \"" + line + "\"");
                     } else if (ra == null) {
-                        ra = parseReorderSpec (line, la);
+                        ra = parseReorderSpec(line, la);
                     } else {
-                        throw new IllegalArgumentException ("redundant reorder array: \"" + line + "\"");
+                        throw new IllegalArgumentException("redundant reorder array: \"" + line + "\"");
                     }
                 } else if ((la != null) && (ra != null)) {
-                    int[] ta = parseTestSpec (line, la);
+                    int[] ta = parseTestSpec(line, la);
                     if (ta != null) {
                         if (verbose) {
                             if ((++numTestSpecs % 100) == 0) {
                                 System.out.print("!");
                             }
                         }
-                        tal.add (ta);
+                        tal.add(ta);
                     }
                 } else if (la == null) {
-                    throw new IllegalArgumentException ("missing levels array before: \"" + line + "\"");
+                    throw new IllegalArgumentException("missing levels array before: \"" + line + "\"");
                 } else if (ra == null) {
-                    throw new IllegalArgumentException ("missing reorder array before: \"" + line + "\"");
+                    throw new IllegalArgumentException("missing reorder array before: \"" + line + "\"");
                 }
             }
         }
         if ((la != null) && (ra != null)) {
-            return createLevelData (la, ra, tal);
+            return createLevelData(la, ra, tal);
         } else {
             return null;
         }
     }
 
-    private static int[] createLevelData (int[] la, int[] ra, List tal) {
+    private static int[] createLevelData(int[] la, int[] ra, List tal) {
         int nl = la.length;
         int[] data = new int [ 1 + nl * 2 + ((nl + 1) * tal.size()) ];
         int k = 0;
@@ -883,13 +883,13 @@ public final class GenerateBidiTestData {
         for (Iterator it = tal.iterator(); it.hasNext(); ) {
             int[] ta = (int[]) it.next();
             if (ta == null) {
-                throw new IllegalStateException ("null test array");
+                throw new IllegalStateException("null test array");
             } else if (ta.length == (nl + 1)) {
                 for (int i = 0, n = ta.length; i < n; i++) {
                     data [ k++ ] = ta [ i ];
                 }
             } else {
-                throw new IllegalStateException ("test array length error, expected " + (nl + 1) + " entries, got " + ta.length + " entries");
+                throw new IllegalStateException("test array length error, expected " + (nl + 1) + " entries, got " + ta.length + " entries");
             }
         }
         assert k == data.length;
@@ -901,42 +901,42 @@ public final class GenerateBidiTestData {
      *
      * @Levels: ( LWSP ( NUMBER | 'x' ) )+
      */
-    private static int[] parseLevelSpec (String line) {
-        CharacterIterator ci = new StringCharacterIterator (line);
+    private static int[] parseLevelSpec(String line) {
+        CharacterIterator ci = new StringCharacterIterator(line);
         List ll = new ArrayList();
         // read prefix
-        skipSpace (ci);
-        if (! maybeReadToken (ci, PFX_LEVELS)) {
-            badLevelSpec ("missing prefix \"" + PFX_LEVELS + "\"", ci);
+        skipSpace(ci);
+        if (! maybeReadToken(ci, PFX_LEVELS)) {
+            badLevelSpec("missing prefix \"" + PFX_LEVELS + "\"", ci);
         }
         // read level values
         boolean more = true;
         while (more) {
             Integer l;
-            skipSpace (ci);
-            if ((l = maybeReadInteger (ci)) != null) {
-                ll.add (l);
-            } else if (maybeReadToken (ci, "x")) {
-                ll.add (Integer.valueOf (-1));
+            skipSpace(ci);
+            if ((l = maybeReadInteger(ci)) != null) {
+                ll.add(l);
+            } else if (maybeReadToken(ci, "x")) {
+                ll.add(Integer.valueOf(-1));
             } else {
                 more = false;
             }
         }
         // read to end of line
-        skipSpace (ci);
-        if (! atEnd (ci)) {
-            badLevelSpec ("extraneous content prior to end of line", ci);
+        skipSpace(ci);
+        if (! atEnd(ci)) {
+            badLevelSpec("extraneous content prior to end of line", ci);
         }
         if (ll.size() == 0) {
-            badLevelSpec ("must have at least one level value", ci);
+            badLevelSpec("must have at least one level value", ci);
         }
-        return createLevelsArray (ll);
+        return createLevelsArray(ll);
     }
 
-    private static Integer maybeReadInteger (CharacterIterator ci) {
+    private static Integer maybeReadInteger(CharacterIterator ci) {
         // read optional minus sign if present
         boolean negative;
-        if (maybeReadNext (ci, '-')) {
+        if (maybeReadNext(ci, '-')) {
             negative = true;
         } else {
             negative = false;
@@ -945,9 +945,9 @@ public final class GenerateBidiTestData {
         StringBuffer sb = new StringBuffer();
         while (true) {
             char c = ci.current();
-            if ((c != CharacterIterator.DONE) && isDigit (c)) {
+            if ((c != CharacterIterator.DONE) && isDigit(c)) {
                 ci.next();
-                sb.append (c);
+                sb.append(c);
             } else {
                 break;
             }
@@ -955,40 +955,40 @@ public final class GenerateBidiTestData {
         if (sb.length() == 0) {
             return null;
         } else {
-            int value = Integer.parseInt (sb.toString());
+            int value = Integer.parseInt(sb.toString());
             if (negative) {
                 value = -value;
             }
-            return Integer.valueOf (value);
+            return Integer.valueOf(value);
         }
     }
 
-    private static boolean isDigit (char c) {
+    private static boolean isDigit(char c) {
         return ((c >= '0') && (c <= '9'));
     }
 
-    private static boolean maybeReadToken (CharacterIterator ci, String s) {
+    private static boolean maybeReadToken(CharacterIterator ci, String s) {
         int startIndex = ci.getIndex();
         for (int i = 0, n = s.length(); i < n; i++) {
-            char c = s.charAt (i);
+            char c = s.charAt(i);
             if (ci.current() == c) {
                 ci.next();
             } else {
-                ci.setIndex (startIndex);
+                ci.setIndex(startIndex);
                 return false;
             }
         }
         return true;
     }
 
-    private static void badLevelSpec (String reason, CharacterIterator ci) throws IllegalArgumentException {
+    private static void badLevelSpec(String reason, CharacterIterator ci) throws IllegalArgumentException {
         if (verbose) {
             System.out.println();
         }
-        throw new IllegalArgumentException ("bad level specification: " + reason + ": starting at \"" + remainder (ci) + "\"");
+        throw new IllegalArgumentException("bad level specification: " + reason + ": starting at \"" + remainder(ci) + "\"");
     }
 
-    private static int[] createLevelsArray (List levels) {
+    private static int[] createLevelsArray(List levels) {
         int[] la = new int [ levels.size() ];
         int k = 0;
         for (Iterator it = levels.iterator(); it.hasNext(); ) {
@@ -1002,41 +1002,41 @@ public final class GenerateBidiTestData {
      *
      * @Reorder: ( LWSP NUMBER )*
      */
-    private static int[] parseReorderSpec (String line, int[] levels) {
-        CharacterIterator ci = new StringCharacterIterator (line);
+    private static int[] parseReorderSpec(String line, int[] levels) {
+        CharacterIterator ci = new StringCharacterIterator(line);
         List rl = new ArrayList();
         // read prefix
-        skipSpace (ci);
-        if (! maybeReadToken (ci, PFX_REORDER)) {
-            badReorderSpec ("missing prefix \"" + PFX_REORDER + "\"", ci);
+        skipSpace(ci);
+        if (! maybeReadToken(ci, PFX_REORDER)) {
+            badReorderSpec("missing prefix \"" + PFX_REORDER + "\"", ci);
         }
         // read reorder values
         boolean more = true;
         while (more) {
-            skipSpace (ci);
+            skipSpace(ci);
             Integer l;
-            if ((l = maybeReadInteger (ci)) != null) {
-                rl.add (l);
+            if ((l = maybeReadInteger(ci)) != null) {
+                rl.add(l);
             } else {
                 more = false;
             }
         }
         // read to end of line
-        skipSpace (ci);
-        if (! atEnd (ci)) {
-            badReorderSpec ("extraneous content prior to end of line", ci);
+        skipSpace(ci);
+        if (! atEnd(ci)) {
+            badReorderSpec("extraneous content prior to end of line", ci);
         }
-        return createReorderArray (rl, levels);
+        return createReorderArray(rl, levels);
     }
 
-    private static void badReorderSpec (String reason, CharacterIterator ci) throws IllegalArgumentException {
+    private static void badReorderSpec(String reason, CharacterIterator ci) throws IllegalArgumentException {
         if (verbose) {
             System.out.println();
         }
-        throw new IllegalArgumentException ("bad reorder specification: " + reason + ": starting at \"" + remainder (ci) + "\"");
+        throw new IllegalArgumentException("bad reorder specification: " + reason + ": starting at \"" + remainder(ci) + "\"");
     }
 
-    private static int[] createReorderArray (List reorders, int[] levels) {
+    private static int[] createReorderArray(List reorders, int[] levels) {
         int nr = reorders.size();
         int nl = levels.length;
         if (nr <= nl) {
@@ -1053,7 +1053,7 @@ public final class GenerateBidiTestData {
             }
             return ra;
         } else {
-            throw new IllegalArgumentException ("excessive number of reorder array entries, expected no more than " + nl + ", but got " + nr + " entries");
+            throw new IllegalArgumentException("excessive number of reorder array entries, expected no more than " + nl + ", but got " + nr + " entries");
         }
     }
 
@@ -1062,37 +1062,37 @@ public final class GenerateBidiTestData {
      *
      * BIDI_CLASS ( LWSP BIDI_CLASS )+ ';' LWSP NUMBER
      */
-    private static int[] parseTestSpec (String line, int[] levels) {
-        CharacterIterator ci = new StringCharacterIterator (line);
+    private static int[] parseTestSpec(String line, int[] levels) {
+        CharacterIterator ci = new StringCharacterIterator(line);
         List cl = new ArrayList();
         // read bidi class identifier sequence
-        while (! atEnd (ci) && ! maybeReadNext (ci, ';')) {
-            skipSpace (ci);
+        while (! atEnd(ci) && ! maybeReadNext(ci, ';')) {
+            skipSpace(ci);
             int bc;
-            if ((bc = maybeReadBidiClass (ci)) >= 0) {
-                cl.add (Integer.valueOf (bc));
+            if ((bc = maybeReadBidiClass(ci)) >= 0) {
+                cl.add(Integer.valueOf(bc));
             } else {
                 break;
             }
         }
         // read bit set
-        skipSpace (ci);
+        skipSpace(ci);
         String s;
         int bs = 0;
-        if ((s = maybeReadHexDigits (ci, -1)) != null) {
-            bs = Integer.parseInt (s, 16);
+        if ((s = maybeReadHexDigits(ci, -1)) != null) {
+            bs = Integer.parseInt(s, 16);
         } else {
-            badTestSpec ("missing bit set", ci);
+            badTestSpec("missing bit set", ci);
         }
         // read to end of line
-        skipSpace (ci);
-        if (! atEnd (ci)) {
-            badTestSpec ("extraneous content prior to end of line", ci);
+        skipSpace(ci);
+        if (! atEnd(ci)) {
+            badTestSpec("extraneous content prior to end of line", ci);
         }
-        return createTestArray (cl, bs, levels);
+        return createTestArray(cl, bs, levels);
     }
 
-    private static String maybeReadIdentifier (CharacterIterator ci) {
+    private static String maybeReadIdentifier(CharacterIterator ci) {
         // read keyword chars ([A-Z])
         StringBuffer sb = new StringBuffer();
         while (true) {
@@ -1100,16 +1100,16 @@ public final class GenerateBidiTestData {
             if (c == CharacterIterator.DONE) {
                 break;
             } else if (sb.length() == 0) {
-                if (Character.isUnicodeIdentifierStart (c)) {
+                if (Character.isUnicodeIdentifierStart(c)) {
                     ci.next();
-                    sb.append (c);
+                    sb.append(c);
                 } else {
                     break;
                 }
             } else {
-                if (Character.isUnicodeIdentifierPart (c)) {
+                if (Character.isUnicodeIdentifierPart(c)) {
                     ci.next();
-                    sb.append (c);
+                    sb.append(c);
                 } else {
                     break;
                 }
@@ -1122,31 +1122,31 @@ public final class GenerateBidiTestData {
         }
     }
 
-    private static int maybeReadBidiClass (CharacterIterator ci) {
+    private static int maybeReadBidiClass(CharacterIterator ci) {
         int bc = -1;
         int i = ci.getIndex();
         String s;
-        if ((s = maybeReadIdentifier (ci)) != null) {
+        if ((s = maybeReadIdentifier(ci)) != null) {
             try {
-                bc = parseBidiClass (s);
+                bc = parseBidiClass(s);
             } catch (IllegalArgumentException e) {
                 throw e;
             }
         }
         if (bc < 0) {
-            ci.setIndex (i);
+            ci.setIndex(i);
         }
         return bc;
     }
 
-    private static void badTestSpec (String reason, CharacterIterator ci) throws IllegalArgumentException {
+    private static void badTestSpec(String reason, CharacterIterator ci) throws IllegalArgumentException {
         if (verbose) {
             System.out.println();
         }
-        throw new IllegalArgumentException ("bad test specification: " + reason + ": starting at \"" + remainder (ci) + "\"");
+        throw new IllegalArgumentException("bad test specification: " + reason + ": starting at \"" + remainder(ci) + "\"");
     }
 
-    private static int[] createTestArray (List classes, int bitset, int[] levels) {
+    private static int[] createTestArray(List classes, int bitset, int[] levels) {
         int nc = classes.size();
         if (nc <= levels.length) {
             int[] ta = new int [ 1 + nc ];
@@ -1157,7 +1157,7 @@ public final class GenerateBidiTestData {
             }
             return ta;
         } else {
-            throw new IllegalArgumentException ("excessive number of test array entries, expected no more than " + levels.length + ", but got " + nc + " entries");
+            throw new IllegalArgumentException("excessive number of test array entries, expected no more than " + levels.length + ", but got " + nc + " entries");
         }
     }
 
@@ -1166,42 +1166,42 @@ public final class GenerateBidiTestData {
      * @param out - bidi test data java class file print writer
      * @param outFileName - (full path) name of bidi test data java class file
      */
-    private static void dumpData (PrintWriter out, String outFileName) throws IOException {
-        File f = new File (outFileName);
+    private static void dumpData(PrintWriter out, String outFileName) throws IOException {
+        File f = new File(outFileName);
         File p = f.getParentFile();
         if (td != null) {
             String pfxTD = "TD";
-            dumpResourcesDescriptor (out, pfxTD, td.length);
-            dumpResourcesData (p, f.getName(), pfxTD, td);
+            dumpResourcesDescriptor(out, pfxTD, td.length);
+            dumpResourcesData(p, f.getName(), pfxTD, td);
         }
         if (ld != null) {
             String pfxTD = "LD";
-            dumpResourcesDescriptor (out, pfxTD, ld.length);
-            dumpResourcesData (p, f.getName(), pfxTD, ld);
+            dumpResourcesDescriptor(out, pfxTD, ld.length);
+            dumpResourcesData(p, f.getName(), pfxTD, ld);
         }
     }
 
-    private static void dumpResourcesDescriptor (PrintWriter out, String prefix, int numResources) {
-        out.println ("    public static final String " + prefix + "_PFX = \"" + prefix + "\";");
-        out.println ("    public static final int " + prefix + "_CNT = " + numResources + ";");
+    private static void dumpResourcesDescriptor(PrintWriter out, String prefix, int numResources) {
+        out.println("    public static final String " + prefix + "_PFX = \"" + prefix + "\";");
+        out.println("    public static final int " + prefix + "_CNT = " + numResources + ";");
         out.println("");
     }
 
-    private static void dumpResourcesData (File btcDir, String btcName, String prefix, int[][] data) throws IOException {
-        String btdName = extractDataFileName (btcName);
+    private static void dumpResourcesData(File btcDir, String btcName, String prefix, int[][] data) throws IOException {
+        String btdName = extractDataFileName(btcName);
         for (int i = 0, n = data.length; i < n; i++) {
-            File f = new File (btcDir, btdName + "$" + prefix + i + ".ser");
-            ObjectOutputStream os = new ObjectOutputStream (new FileOutputStream (f));
-            os.writeObject (data[i]);
+            File f = new File(btcDir, btdName + "$" + prefix + i + ".ser");
+            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(f));
+            os.writeObject(data[i]);
             os.close();
         }
     }
 
     private static final String JAVA_EXT = ".java";
 
-    private static String extractDataFileName (String btcName) {
-        if (btcName.endsWith (JAVA_EXT)) {
-            return btcName.substring (0, btcName.length() - JAVA_EXT.length());
+    private static String extractDataFileName(String btcName) {
+        if (btcName.endsWith(JAVA_EXT)) {
+            return btcName.substring(0, btcName.length() - JAVA_EXT.length());
         } else {
             return btcName;
         }

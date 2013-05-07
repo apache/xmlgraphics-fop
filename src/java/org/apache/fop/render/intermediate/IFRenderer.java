@@ -1049,8 +1049,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         if (dp == null) {
             renderTextWithAdjustments(s, word.getLetterAdjustArray(), word.isReversed(),
                     font, (AbstractTextArea)word.getParentArea());
-        } else if (IFUtil.isDPOnlyDX (dp)) {
-            renderTextWithAdjustments(s, IFUtil.convertDPToDX (dp), word.isReversed(),
+        } else if (IFUtil.isDPOnlyDX(dp)) {
+            renderTextWithAdjustments(s, IFUtil.convertDPToDX(dp), word.isReversed(),
                     font, (AbstractTextArea)word.getParentArea());
         } else {
             renderTextWithAdjustments(s, dp, word.isReversed(),
@@ -1123,9 +1123,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                               Font font, AbstractTextArea parentArea) {
         assert !textUtil.combined;
         for (int i = 0, n = s.length(); i < n; i++) {
-            textUtil.addChar (s.charAt (i));
+            textUtil.addChar(s.charAt(i));
             if (dp != null) {
-                textUtil.adjust (dp[i]);
+                textUtil.adjust(dp[i]);
             }
         }
     }
@@ -1146,7 +1146,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         void adjust(int dx) {
             if (dx != 0) {
-                adjust (new int[] {
+                adjust(new int[] {
                         dx,                         // xPlaAdjust
                         0,                          // yPlaAdjust
                         dx,                         // xAdvAdjust
@@ -1156,7 +1156,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         }
 
         void adjust(int[] pa) {
-            if (!IFUtil.isPAIdentity (pa)) {
+            if (!IFUtil.isPAIdentity(pa)) {
                 int idx = text.length();
                 if (idx > dp.length - 1) {
                     int newSize = Math.max(dp.length, idx + 1) + INITIAL_BUFFER_SIZE;
@@ -1169,7 +1169,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 if (dp[idx - 1] == null) {
                     dp[idx - 1] = new int[4];
                 }
-                IFUtil.adjustPA (dp[idx - 1], pa);
+                IFUtil.adjustPA(dp[idx - 1], pa);
             }
         }
 
@@ -1197,10 +1197,10 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 try {
                     if (combined) {
                         painter.drawText(startx, starty, 0, 0,
-                                         trimAdjustments (dp, text.length()), text.toString());
+                                         trimAdjustments(dp, text.length()), text.toString());
                     } else {
                         painter.drawText(startx, starty, tls, tws,
-                                         trimAdjustments (dp, text.length()), text.toString());
+                                         trimAdjustments(dp, text.length()), text.toString());
                     }
                 } catch (IFException e) {
                     handleIFException(e);
@@ -1219,14 +1219,14 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
          * no greater than text length, and the last entry has a non-zero
          * adjustment.
          */
-        private int[][] trimAdjustments (int[][] dp, int textLength) {
+        private int[][] trimAdjustments(int[][] dp, int textLength) {
             if (dp != null) {
                 int tl = textLength;
                 int pl = dp.length;
                 int i  = (tl < pl) ? tl : pl;
                 while (i > 0) {
                     int[] pa = dp [ i - 1 ];
-                    if ((pa != null) && !IFUtil.isPAIdentity (pa)) {
+                    if ((pa != null) && !IFUtil.isPAIdentity(pa)) {
                         break;
                     } else {
                         i--;
@@ -1235,7 +1235,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 if (i == 0) {
                     dp = null;
                 } else if (i < pl) {
-                    dp = IFUtil.copyDP (dp, 0, i);
+                    dp = IFUtil.copyDP(dp, 0, i);
                 }
             }
             return dp;

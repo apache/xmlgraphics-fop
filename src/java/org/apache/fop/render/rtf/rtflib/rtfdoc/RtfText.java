@@ -272,7 +272,7 @@ public class RtfText extends RtfElement {
      * @return true    If m_text is null\n
      *         false   m_text is set
      */
-    public boolean isEmpty () {
+    public boolean isEmpty() {
         return text == null || text.trim().length() == 0;
     }
 
@@ -284,9 +284,9 @@ public class RtfText extends RtfElement {
      * @return true    If m_text is character 160\n
      *         false   m_text is not a nbsp
      */
-    public boolean isNbsp () {
-        if (!isEmpty ()) {
-            if (text.trim ().length () == 1 && text.charAt (0) == CHAR_NBSP) {
+    public boolean isNbsp() {
+        if (!isEmpty()) {
+            if (text.trim().length() == 1 && text.charAt(0) == CHAR_NBSP) {
                 return true;
             }
         }

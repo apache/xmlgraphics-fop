@@ -201,7 +201,7 @@ public class PageNumber extends FObj
     }
 
     @Override
-    public boolean isDelimitedTextRangeBoundary (int boundary) {
+    public boolean isDelimitedTextRangeBoundary(int boundary) {
         return false;
     }
 

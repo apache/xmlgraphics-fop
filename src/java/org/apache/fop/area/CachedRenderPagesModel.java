@@ -64,7 +64,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
      * @param stream OutputStream
      * @throws FOPException if the renderer cannot be properly initialized
      */
-    public CachedRenderPagesModel (FOUserAgent userAgent, String outputFormat,
+    public CachedRenderPagesModel(FOUserAgent userAgent, String outputFormat,
             FontInfo fontInfo, OutputStream stream) throws FOPException {
         super(userAgent, outputFormat, fontInfo, stream);
         tempBaseURI = TEMP_URI_GENERATOR.generate();

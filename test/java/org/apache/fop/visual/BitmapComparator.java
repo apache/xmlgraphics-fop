@@ -83,8 +83,8 @@ public class BitmapComparator {
         int [] refPix = null;
         int [] genPix = null;
         for (y = 0; y < h; y++) {
-            refPix = refWR.getPixels  (0, y, w, 1, refPix);
-            genPix = genWR.getPixels  (0, y, w, 1, genPix);
+            refPix = refWR.getPixels (0, y, w, 1, refPix);
+            genPix = genWR.getPixels (0, y, w, 1, genPix);
             for (i = 0; i < refPix.length; i++) {
                 // val = ((genPix[i] - refPix[i]) * 5) + 128;
                 val = ((refPix[i] - genPix[i]) * 10) + 128;

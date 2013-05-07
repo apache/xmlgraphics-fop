@@ -52,28 +52,28 @@ public class ParagraphAlignment extends TestDocument {
      */
     protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws java.io.IOException
     {
-        RtfAttributes attr = new RtfAttributes ();
+        RtfAttributes attr = new RtfAttributes();
         attr.set(RtfText.ALIGN_CENTER);
-        RtfParagraph p = sect.newParagraph (attr);
+        RtfParagraph p = sect.newParagraph(attr);
         p.newLineBreak();
         p.newLineBreak();
-        p.newText ("Centered title");
+        p.newText("Centered title");
         p.newLineBreak();
         p.close();
 
-        attr = new RtfAttributes ();
+        attr = new RtfAttributes();
         attr.set(RtfText.ALIGN_LEFT);
-        p = sect.newParagraph (attr);
+        p = sect.newParagraph(attr);
         p.newLineBreak();
-        p.newText ("This is the left aligned text.");
+        p.newText("This is the left aligned text.");
         p.newLineBreak();
         p.close();
 
-        attr = new RtfAttributes ();
+        attr = new RtfAttributes();
         attr.set(RtfText.ALIGN_RIGHT);
-        p = sect.newParagraph (attr);
+        p = sect.newParagraph(attr);
         p.newLineBreak();
-        p.newText ("This is the right aligned text.");
+        p.newText("This is the right aligned text.");
         p.newLineBreak();
         p.close();
     }

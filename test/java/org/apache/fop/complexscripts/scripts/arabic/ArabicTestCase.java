@@ -54,58 +54,58 @@ public class ArabicTestCase implements ArabicTestConstants {
     public void testArabicWordForms() {
         for (String sfn : srcFiles) {
             try {
-                processWordForms (new File (datFilesDir));
+                processWordForms(new File(datFilesDir));
             } catch (Exception e) {
-                fail (e.getMessage());
+                fail(e.getMessage());
             }
         }
     }
 
-    private void processWordForms (File dfd) {
-        String[] files = listWordFormFiles (dfd);
+    private void processWordForms(File dfd) {
+        String[] files = listWordFormFiles(dfd);
         for (String fn : files) {
-            File dff = new File (dfd, fn);
-            processWordForms (dff.getAbsolutePath());
+            File dff = new File(dfd, fn);
+            processWordForms(dff.getAbsolutePath());
         }
     }
 
-    private String[] listWordFormFiles (File dfd) {
-        return dfd.list (new FilenameFilter() {
-                public boolean accept (File f, String name) {
-                    return hasPrefixFrom (name, srcFiles) && hasExtension (name, WF_FILE_DAT_EXT);
+    private String[] listWordFormFiles(File dfd) {
+        return dfd.list(new FilenameFilter() {
+                public boolean accept(File f, String name) {
+                    return hasPrefixFrom(name, srcFiles) && hasExtension(name, WF_FILE_DAT_EXT);
                 }
-                private boolean hasPrefixFrom (String name, String[] prefixes) {
+                private boolean hasPrefixFrom(String name, String[] prefixes) {
                     for (String p : prefixes) {
-                        if (name.startsWith (p)) {
+                        if (name.startsWith(p)) {
                             return true;
                         }
                     }
                     return false;
                 }
-                private boolean hasExtension (String name, String extension) {
-                    return name.endsWith ("." + extension);
+                private boolean hasExtension(String name, String extension) {
+                    return name.endsWith("." + extension);
                 }
             });
     }
 
-    private void processWordForms (String dpn) {
+    private void processWordForms(String dpn) {
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream (dpn);
+            fis = new FileInputStream(dpn);
             if (fis != null) {
-                ObjectInputStream ois = new ObjectInputStream (fis);
+                ObjectInputStream ois = new ObjectInputStream(fis);
                 List<Object[]> data = (List<Object[]>) ois.readObject();
                 if (data != null) {
-                    processWordForms (data);
+                    processWordForms(data);
                 }
                 ois.close();
             }
         } catch (FileNotFoundException e) {
-            throw new RuntimeException (e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
         } catch (IOException e) {
-            throw new RuntimeException (e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException (e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
         } finally {
             if (fis != null) {
                 try { fis.close(); } catch (Exception e) {}
@@ -113,7 +113,7 @@ public class ArabicTestCase implements ArabicTestConstants {
         }
     }
 
-    private void processWordForms (List<Object[]> data) {
+    private void processWordForms(List<Object[]> data) {
         assert data != null;
         assert data.size() > 0;
         String script = null;
@@ -129,14 +129,14 @@ public class ArabicTestCase implements ArabicTestConstants {
                 script = (String) d[0];
                 language = (String) d[1];
                 tfn = (String) d[3];
-                tf = TTXFile.getFromCache (ttxFontsDir + File.separator + tfn);
-                assertTrue (tf != null);
+                tf = TTXFile.getFromCache(ttxFontsDir + File.separator + tfn);
+                assertTrue(tf != null);
                 gsub = tf.getGSUB();
-                assertTrue (gsub != null);
+                assertTrue(gsub != null);
                 gpos = tf.getGPOS();
-                assertTrue (gpos != null);
+                assertTrue(gpos != null);
                 widths = tf.getWidths();
-                assertTrue (widths != null);
+                assertTrue(widths != null);
             } else {
                 assert tf != null;
                 assert gsub != null;
@@ -147,48 +147,48 @@ public class ArabicTestCase implements ArabicTestConstants {
                 int[] iga = (int[]) d[1];
                 int[] oga = (int[]) d[2];
                 int[][] paa = (int[][]) d[3];
-                GlyphSequence tigs = tf.mapCharsToGlyphs (wf);
-                assertSameGlyphs (iga, getGlyphs (tigs), "input glyphs", wf, tfn);
-                GlyphSequence togs = gsub.substitute (tigs, script, language);
-                assertSameGlyphs (oga, getGlyphs (togs), "output glyphs", wf, tfn);
+                GlyphSequence tigs = tf.mapCharsToGlyphs(wf);
+                assertSameGlyphs(iga, getGlyphs(tigs), "input glyphs", wf, tfn);
+                GlyphSequence togs = gsub.substitute(tigs, script, language);
+                assertSameGlyphs(oga, getGlyphs(togs), "output glyphs", wf, tfn);
                 int[][] tpaa = new int [ togs.getGlyphCount() ] [ 4 ];
-                if (gpos.position (togs, script, language, 1000, widths, tpaa)) {
-                    assertSameAdjustments (paa, tpaa, wf, tfn);
+                if (gpos.position(togs, script, language, 1000, widths, tpaa)) {
+                    assertSameAdjustments(paa, tpaa, wf, tfn);
                 } else if (paa != null) {
-                    assertEquals ("unequal adjustment count, word form(" + wf + "), font (" + tfn + ")", paa.length, 0);
+                    assertEquals("unequal adjustment count, word form(" + wf + "), font (" + tfn + ")", paa.length, 0);
                 }
             }
         }
     }
 
-    private void assertSameGlyphs (int[] expected, int[] actual, String label, String wf, String tfn) {
-        assertEquals (label + ": unequal glyph count, word form(" + wf + "), font (" + tfn + ")", expected.length, actual.length);
+    private void assertSameGlyphs(int[] expected, int[] actual, String label, String wf, String tfn) {
+        assertEquals(label + ": unequal glyph count, word form(" + wf + "), font (" + tfn + ")", expected.length, actual.length);
         for (int i = 0, n = expected.length; i < n; i++) {
             int e = expected[i];
             int a = actual[i];
-            assertEquals (label + ": unequal glyphs[" + i + "], word form(" + wf + "), font (" + tfn + ")", e, a);
+            assertEquals(label + ": unequal glyphs[" + i + "], word form(" + wf + "), font (" + tfn + ")", e, a);
         }
     }
 
-    private void assertSameAdjustments (int[][] expected, int[][] actual, String wf, String tfn) {
-        assertEquals ("unequal adjustment count, word form(" + wf + "), font (" + tfn + ")", expected.length, actual.length);
+    private void assertSameAdjustments(int[][] expected, int[][] actual, String wf, String tfn) {
+        assertEquals("unequal adjustment count, word form(" + wf + "), font (" + tfn + ")", expected.length, actual.length);
         for (int i = 0, n = expected.length; i < n; i++) {
             int[] ea = expected[i];
             int[] aa = actual[i];
-            assertEquals ("bad adjustments length, word form(" + wf + "), font (" + tfn + ")", ea.length, aa.length);
+            assertEquals("bad adjustments length, word form(" + wf + "), font (" + tfn + ")", ea.length, aa.length);
             for (int k = 0; k < 4; k++) {
                 int e = ea[k];
                 int a = aa[k];
-                assertEquals ("unequal adjustment[" + i + "][" + k + "], word form(" + wf + "), font (" + tfn + ")", e, a);
+                assertEquals("unequal adjustment[" + i + "][" + k + "], word form(" + wf + "), font (" + tfn + ")", e, a);
             }
         }
     }
 
-    private static int[] getGlyphs (GlyphSequence gs) {
+    private static int[] getGlyphs(GlyphSequence gs) {
         IntBuffer gb = gs.getGlyphs();
         int[] ga = new int [ gb.limit() ];
         gb.rewind();
-        gb.get (ga);
+        gb.get(ga);
         return ga;
     }
 

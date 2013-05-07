@@ -66,15 +66,15 @@ public class WordArea extends InlineArea {
      * @param gposAdjustments array of general position adjustments or null if none apply
      * @param reversed true if word is known to be reversed at construction time
      */
-    public WordArea
-        (int blockProgressionOffset, int level, String word, int[] letterAdjust, int[] levels,
+    public WordArea(
+        int blockProgressionOffset, int level, String word, int[] letterAdjust, int[] levels,
           int[][] gposAdjustments, boolean reversed) {
-        super (blockProgressionOffset, level);
+        super(blockProgressionOffset, level);
         int length = (word != null) ? word.length() : 0;
         this.word = word;
-        this.letterAdjust = maybeAdjustLength (letterAdjust, length);
-        this.levels = maybePopulateLevels (levels, level, length);
-        this.gposAdjustments = maybeAdjustLength (gposAdjustments, length);
+        this.letterAdjust = maybeAdjustLength(letterAdjust, length);
+        this.levels = maybePopulateLevels(levels, level, length);
+        this.gposAdjustments = maybeAdjustLength(gposAdjustments, length);
         this.reversed = reversed;
     }
 
@@ -88,8 +88,8 @@ public class WordArea extends InlineArea {
      * in case word area is heterogenously leveled
      * @param gposAdjustments array of general position adjustments or null if none apply
      */
-    public WordArea
-        (int blockProgressionOffset, int level, String word, int[] letterAdjust, int[] levels,
+    public WordArea(
+        int blockProgressionOffset, int level, String word, int[] letterAdjust, int[] levels,
           int[][] gposAdjustments) {
         this (blockProgressionOffset, level, word, letterAdjust, levels, gposAdjustments, false);
     }
@@ -120,7 +120,7 @@ public class WordArea extends InlineArea {
      * @return a (possibly null) array of per-character (glyph) levels over the specified
      * sequence
      */
-    public int[] getBidiLevels (int start, int end) {
+    public int[] getBidiLevels(int start, int end) {
         assert start <= end;
         if (this.levels != null) {
             int n = end - start;
@@ -141,7 +141,7 @@ public class WordArea extends InlineArea {
      * level
      * @return a resolved bidirectional level or, if not specified, then -1
      */
-    public int bidiLevelAt (int position) {
+    public int bidiLevelAt(int position) {
         if (position > word.length()) {
             throw new IndexOutOfBoundsException();
         } else if (levels != null) {
@@ -152,15 +152,15 @@ public class WordArea extends InlineArea {
     }
 
     @Override
-    public List collectInlineRuns (List runs) {
+    public List collectInlineRuns(List runs) {
         assert runs != null;
         InlineRun r;
         if (getBidiLevels() != null) {
-            r = new InlineRun (this, getBidiLevels());
+            r = new InlineRun(this, getBidiLevels());
         } else {
-            r = new InlineRun (this, -1, word.length());
+            r = new InlineRun(this, -1, word.length());
         }
-        runs.add (r);
+        runs.add(r);
         return runs;
     }
 
@@ -180,7 +180,7 @@ public class WordArea extends InlineArea {
      * level
      * @return an array of adjustments or null if none applies
      */
-    public int[] glyphPositionAdjustmentsAt (int position) {
+    public int[] glyphPositionAdjustmentsAt(int position) {
         if (position > word.length()) {
             throw new IndexOutOfBoundsException();
         } else if (gposAdjustments != null) {
@@ -195,18 +195,18 @@ public class WordArea extends InlineArea {
      * adjustments.</p>
      * @param mirror if true, then perform mirroring if mirrorred characters
      */
-    public void reverse (boolean mirror) {
+    public void reverse(boolean mirror) {
         if (word.length() > 0) {
-            word = ((new StringBuffer (word)) .reverse()) .toString();
+            word = ((new StringBuffer(word)) .reverse()) .toString();
             if (levels != null) {
-                reverse (levels);
+                reverse(levels);
             }
             if (gposAdjustments != null) {
-                reverse (gposAdjustments);
+                reverse(gposAdjustments);
             }
             reversed = !reversed;
             if (mirror) {
-                word = CharMirror.mirror (word);
+                word = CharMirror.mirror(word);
             }
         }
     }
@@ -216,7 +216,7 @@ public class WordArea extends InlineArea {
      */
     public void mirror() {
         if (word.length() > 0) {
-            word = CharMirror.mirror (word);
+            word = CharMirror.mirror(word);
         }
     }
 
@@ -236,7 +236,7 @@ public class WordArea extends InlineArea {
      * If int[] array is not of specified length, then create
      * a new copy of the first length entries.
      */
-    private static int[] maybeAdjustLength (int[] ia, int length) {
+    private static int[] maybeAdjustLength(int[] ia, int length) {
         if (ia != null) {
             if (ia.length == length) {
                 return ia;
@@ -260,7 +260,7 @@ public class WordArea extends InlineArea {
      * If int[][] matrix is not of specified length, then create
      * a new shallow copy of the first length entries.
      */
-    private static int[][] maybeAdjustLength (int[][] im, int length) {
+    private static int[][] maybeAdjustLength(int[][] im, int length) {
         if (im != null) {
             if (im.length == length) {
                 return im;
@@ -280,15 +280,15 @@ public class WordArea extends InlineArea {
         }
     }
 
-    private static int[] maybePopulateLevels (int[] levels, int level, int count) {
+    private static int[] maybePopulateLevels(int[] levels, int level, int count) {
         if ((levels == null) && (level >= 0)) {
             levels = new int[count];
-            Arrays.fill (levels, level);
+            Arrays.fill(levels, level);
         }
-        return maybeAdjustLength (levels, count);
+        return maybeAdjustLength(levels, count);
     }
 
-    private static void reverse (int[] a) {
+    private static void reverse(int[] a) {
         for (int i = 0, n = a.length, m = n / 2; i < m; i++) {
             int k = n - i - 1;
             int t = a [ k ];
@@ -297,7 +297,7 @@ public class WordArea extends InlineArea {
         }
     }
 
-    private static void reverse (int[][] aa) {
+    private static void reverse(int[][] aa) {
         for (int i = 0, n = aa.length, m = n / 2; i < m; i++) {
             int k = n - i - 1;
             int[] t = aa [ k ];

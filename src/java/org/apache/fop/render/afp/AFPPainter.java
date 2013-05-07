@@ -940,7 +940,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                     builder.setCodedFont((byte) fontReference);
 
                     int l = text.length();
-                    int[] dx = IFUtil.convertDPToDX (dp);
+                    int[] dx = IFUtil.convertDPToDX(dp);
                     int dxl = (dx != null ? dx.length : 0);
                     StringBuffer sb = new StringBuffer();
 

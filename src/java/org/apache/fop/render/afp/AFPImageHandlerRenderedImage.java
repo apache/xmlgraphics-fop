@@ -237,8 +237,8 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
             objectAreaInfo.setHeightRes(resolution);
         }
 
-        private AFPDataObjectInfo encodeImage
-            (AFPImageObjectInfo imageObjectInfo,
+        private AFPDataObjectInfo encodeImage(
+            AFPImageObjectInfo imageObjectInfo,
              AFPPaintingState paintingState)
                 throws IOException {
 

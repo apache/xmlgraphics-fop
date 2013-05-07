@@ -97,7 +97,7 @@ public class RegionBody extends Region {
     }
 
     /** {@inheritDoc} */
-    public Rectangle getViewportRectangle (FODimension reldims) {
+    public Rectangle getViewportRectangle(FODimension reldims) {
         /* Special rules apply to resolving margins in the page context.
          * Contrary to normal margins in this case top and bottom margin
          * are resolved relative to the height. In the property subsystem

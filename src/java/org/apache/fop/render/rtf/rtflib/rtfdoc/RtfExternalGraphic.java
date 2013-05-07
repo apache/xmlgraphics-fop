@@ -301,7 +301,7 @@ public class RtfExternalGraphic extends RtfElement {
      * @throws IOException for I/O problems
      */
     public RtfExternalGraphic(RtfContainer container, Writer writer) throws IOException {
-        super (container, writer);
+        super(container, writer);
     }
 
     /**
@@ -314,7 +314,7 @@ public class RtfExternalGraphic extends RtfElement {
      */
     public RtfExternalGraphic(RtfContainer container, Writer writer,
     RtfAttributes attributes) throws IOException {
-        super (container, writer, attributes);
+        super(container, writer, attributes);
     }
 
 
@@ -443,7 +443,7 @@ public class RtfExternalGraphic extends RtfElement {
         writeGroupMark(false);
     }
 
-    private void computeImageSize () {
+    private void computeImageSize() {
         if (imageformat.getType() == ImageConstants.I_PNG) {
             width = ImageUtil.getIntFromByteArray(imagedata, 16, 4, true);
             height = ImageUtil.getIntFromByteArray(imagedata, 20, 4, true);
@@ -487,7 +487,7 @@ public class RtfExternalGraphic extends RtfElement {
         }
     }
 
-    private void writeSizeInfo () throws IOException {
+    private void writeSizeInfo() throws IOException {
         // Set image size
         if (width != -1) {
             writeControlWord("picw" + width);
@@ -641,10 +641,10 @@ public class RtfExternalGraphic extends RtfElement {
     public void setURL(String urlString) throws IOException {
         URL tmpUrl = null;
         try {
-            tmpUrl = new URL (urlString);
+            tmpUrl = new URL(urlString);
         } catch (MalformedURLException e) {
             try {
-                tmpUrl = new File (urlString).toURI().toURL ();
+                tmpUrl = new File(urlString).toURI().toURL();
             } catch (MalformedURLException ee) {
                 throw new ExternalGraphicException("The attribute 'src' of "
                         + "<fo:external-graphic> has a invalid value: '"
@@ -658,7 +658,7 @@ public class RtfExternalGraphic extends RtfElement {
      * Gets  the compression rate for the image in percent.
      * @return Compression rate
      */
-    public int getCompressionRate () {
+    public int getCompressionRate() {
         return graphicCompressionRate;
     }
 
@@ -668,7 +668,7 @@ public class RtfExternalGraphic extends RtfElement {
      * @param percent Compression rate
      * @return true if the compression rate is valid (0..100), false if invalid
      */
-    public boolean setCompressionRate (int percent) {
+    public boolean setCompressionRate(int percent) {
         if (percent < 1 || percent > 100) {
             return false;
         }

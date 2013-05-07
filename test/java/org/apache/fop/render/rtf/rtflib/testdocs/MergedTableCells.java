@@ -111,8 +111,8 @@ class MergedTableCells extends TestDocument {
         // fifth row, just one cell
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(160 * MM_TO_TWIPS).newParagraph().newText
-                    ("cell 4,0, width 160mm, only cell in this row");
+            r.newTableCell(160 * MM_TO_TWIPS).newParagraph().newText(
+                    "cell 4,0, width 160mm, only cell in this row");
         }
     }
 }

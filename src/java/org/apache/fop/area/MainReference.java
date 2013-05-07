@@ -132,7 +132,7 @@ public class MainReference extends Area {
      */
     public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
         for (Span s : getSpans()) {
-            s.setWritingModeTraits (wmtg);
+            s.setWritingModeTraits(wmtg);
         }
     }
 

@@ -164,15 +164,15 @@ public class SVGElement extends SVGObj {
         if (str.length() == 0) {
             str = "100%";
         }
-        float width = UnitProcessor.svgHorizontalLengthToUserSpace
-            (str, SVGConstants.SVG_WIDTH_ATTRIBUTE, ctx);
+        float width = UnitProcessor.svgHorizontalLengthToUserSpace(
+            str, SVGConstants.SVG_WIDTH_ATTRIBUTE, ctx);
 
         str = svgRoot.getAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE);
         if (str.length() == 0) {
             str = "100%";
         }
-        float height = UnitProcessor.svgVerticalLengthToUserSpace
-            (str, SVGConstants.SVG_HEIGHT_ATTRIBUTE, ctx);
+        float height = UnitProcessor.svgVerticalLengthToUserSpace(
+            str, SVGConstants.SVG_HEIGHT_ATTRIBUTE, ctx);
         return new Point2D.Float(width, height);
     }
 

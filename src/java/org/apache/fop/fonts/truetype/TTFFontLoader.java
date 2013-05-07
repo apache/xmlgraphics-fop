@@ -240,12 +240,12 @@ public class TTFFontLoader extends FontLoader {
     /**
      * Copy advanced typographic information.
      */
-    private void copyAdvanced (TTFFile ttf) {
+    private void copyAdvanced(TTFFile ttf) {
         if (returnFont instanceof MultiByteFont) {
             MultiByteFont mbf = (MultiByteFont) returnFont;
-            mbf.setGDEF (ttf.getGDEF());
-            mbf.setGSUB (ttf.getGSUB());
-            mbf.setGPOS (ttf.getGPOS());
+            mbf.setGDEF(ttf.getGDEF());
+            mbf.setGSUB(ttf.getGSUB());
+            mbf.setGPOS(ttf.getGPOS());
         }
     }
 

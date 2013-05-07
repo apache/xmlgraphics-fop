@@ -987,8 +987,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     }
                     startIndex = endIndex + 1;
                     LineBreakPosition lbp = (LineBreakPosition) llPoss.getChosenPosition(i);
-                    returnList.add(new KnuthBlockBox
-                                   (lbp.lineHeight + lbp.spaceBefore + lbp.spaceAfter,
+                    returnList.add(new KnuthBlockBox(
+                                   lbp.lineHeight + lbp.spaceBefore + lbp.spaceAfter,
                                     footnoteList, lbp, false));
                 }
             }
@@ -1353,8 +1353,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 .applyChanges(par.subList(fromIndex + elementsAdded,
                                               toIndex + elementsAdded))) {
                 // insert the new KnuthElements
-                List newElements = currUpdate.inlineLM.getChangedKnuthElements
-                    (par.subList(fromIndex + elementsAdded,
+                List newElements = currUpdate.inlineLM.getChangedKnuthElements(
+                    par.subList(fromIndex + elementsAdded,
                                      toIndex + elementsAdded),
                      /*flaggedPenalty,*/ effectiveAlignment);
                 // remove the old elements
@@ -1553,7 +1553,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
         lineArea.finish();
         if (lineArea.getBidiLevel() >= 0) {
-            BidiResolver.reorder (lineArea);
+            BidiResolver.reorder(lineArea);
         }
         parentLayoutManager.addChildArea(lineArea);
     }
@@ -1605,7 +1605,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
         lineArea.updateExtentsFromChildren();
         if (lineArea.getBidiLevel() >= 0) {
-            BidiResolver.reorder (lineArea);
+            BidiResolver.reorder(lineArea);
         }
         parentLayoutManager.addChildArea(lineArea);
     }

@@ -213,7 +213,7 @@ public class Font implements Substitutable, Positionable {
         } else if ((ch2 >= 0xD800) && (ch2 <= 0xE000)) {
             return 0;
         } else {
-            return getKernValue ((char) ch1, (char) ch2);
+            return getKernValue((char) ch1, (char) ch2);
         }
     }
 
@@ -367,7 +367,7 @@ public class Font implements Substitutable, Positionable {
      */
     public int getCharWidth(int c) {
         if (c < 0x10000) {
-            return getCharWidth ((char) c);
+            return getCharWidth((char) c);
         } else {
             // TODO !BMP
             return -1;
@@ -404,20 +404,20 @@ public class Font implements Substitutable, Positionable {
     }
 
     /** {@inheritDoc} */
-    public CharSequence performSubstitution (CharSequence cs, String script, String language) {
+    public CharSequence performSubstitution(CharSequence cs, String script, String language) {
         if (metric instanceof Substitutable) {
             Substitutable s = (Substitutable) metric;
-            return s.performSubstitution (cs, script, language);
+            return s.performSubstitution(cs, script, language);
         } else {
             throw new UnsupportedOperationException();
         }
     }
 
     /** {@inheritDoc} */
-    public CharSequence reorderCombiningMarks (CharSequence cs, int[][] gpa, String script, String language) {
+    public CharSequence reorderCombiningMarks(CharSequence cs, int[][] gpa, String script, String language) {
         if (metric instanceof Substitutable) {
             Substitutable s = (Substitutable) metric;
-            return s.reorderCombiningMarks (cs, gpa, script, language);
+            return s.reorderCombiningMarks(cs, gpa, script, language);
         } else {
             throw new UnsupportedOperationException();
         }
@@ -434,18 +434,18 @@ public class Font implements Substitutable, Positionable {
     }
 
     /** {@inheritDoc} */
-    public int[][] performPositioning (CharSequence cs, String script, String language, int fontSize) {
+    public int[][] performPositioning(CharSequence cs, String script, String language, int fontSize) {
         if (metric instanceof Positionable) {
             Positionable p = (Positionable) metric;
-            return p.performPositioning (cs, script, language, fontSize);
+            return p.performPositioning(cs, script, language, fontSize);
         } else {
             throw new UnsupportedOperationException();
         }
     }
 
     /** {@inheritDoc} */
-    public int[][] performPositioning (CharSequence cs, String script, String language) {
-        return performPositioning (cs, script, language, fontSize);
+    public int[][] performPositioning(CharSequence cs, String script, String language) {
+        return performPositioning(cs, script, language, fontSize);
     }
 
 }

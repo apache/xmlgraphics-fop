@@ -184,7 +184,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
                 ls.setIPD(iAdjust);
                 int level = parentArea.getBidiLevel();
                 if (level >= 0) {
-                    ls.setBidiLevel (level);
+                    ls.setBidiLevel(level);
                 }
                 parentArea.addChildArea(ls);
             }
@@ -349,26 +349,26 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
 
             if (currLM != prevLM || !oldListIterator.hasNext()) {
                 if (oldListIterator.hasNext()) {
-                    returnedList.addAll
-                        (prevLM.getChangedKnuthElements
-                         (oldList.subList(fromIndex, oldListIterator.previousIndex()),
+                    returnedList.addAll(
+                        prevLM.getChangedKnuthElements(
+                         oldList.subList(fromIndex, oldListIterator.previousIndex()),
                           alignment, depth));
                     prevLM = currLM;
                     fromIndex = oldListIterator.previousIndex();
                 } else if (currLM == prevLM) {
-                    returnedList.addAll
-                        (prevLM.getChangedKnuthElements
-                         (oldList.subList(fromIndex, oldList.size()),
+                    returnedList.addAll(
+                        prevLM.getChangedKnuthElements(
+                         oldList.subList(fromIndex, oldList.size()),
                           alignment, depth));
                 } else {
-                    returnedList.addAll
-                        (prevLM.getChangedKnuthElements
-                         (oldList.subList(fromIndex, oldListIterator.previousIndex()),
+                    returnedList.addAll(
+                        prevLM.getChangedKnuthElements(
+                         oldList.subList(fromIndex, oldListIterator.previousIndex()),
                           alignment, depth));
                     if (currLM != null) {
-                        returnedList.addAll
-                            (currLM.getChangedKnuthElements
-                             (oldList.subList(oldListIterator.previousIndex(), oldList.size()),
+                        returnedList.addAll(
+                            currLM.getChangedKnuthElements(
+                             oldList.subList(oldListIterator.previousIndex(), oldList.size()),
                               alignment, depth));
                     }
                 }
@@ -380,8 +380,8 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
         ListIterator listIter = returnedList.listIterator();
         while (listIter.hasNext()) {
             returnedElement = (KnuthElement) listIter.next();
-            returnedElement.setPosition
-                (notifyPos(new NonLeafPosition(this, returnedElement.getPosition())));
+            returnedElement.setPosition(
+                notifyPos(new NonLeafPosition(this, returnedElement.getPosition())));
             returnList.add(returnedElement);
         }
 

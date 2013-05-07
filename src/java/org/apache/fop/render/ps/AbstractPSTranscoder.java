@@ -144,11 +144,11 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
             graphics.setViewportDimension(width, height);
 
             if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
-                graphics.setBackgroundColor
-                    ((Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
+                graphics.setBackgroundColor(
+                    (Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
         }
-            graphics.setGraphicContext
-                (new org.apache.xmlgraphics.java2d.GraphicContext());
+            graphics.setGraphicContext(
+                new org.apache.xmlgraphics.java2d.GraphicContext());
             graphics.setTransform(curTxf);
 
             this.root.paint(graphics);

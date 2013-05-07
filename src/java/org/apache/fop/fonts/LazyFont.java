@@ -376,7 +376,7 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     /**
      * {@inheritDoc}
      */
-    public CharSequence performSubstitution (CharSequence cs, String script, String language) {
+    public CharSequence performSubstitution(CharSequence cs, String script, String language) {
         load(true);
         if (realFontDescriptor instanceof Substitutable) {
             return ((Substitutable)realFontDescriptor).performSubstitution(cs, script, language);
@@ -388,8 +388,8 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     /**
      * {@inheritDoc}
      */
-    public CharSequence reorderCombiningMarks
-        (CharSequence cs, int[][] gpa, String script, String language) {
+    public CharSequence reorderCombiningMarks(
+        CharSequence cs, int[][] gpa, String script, String language) {
         if (!isMetricsLoaded) {
             load(true);
         }
@@ -419,7 +419,7 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      * {@inheritDoc}
      */
     public int[][]
-        performPositioning (CharSequence cs, String script, String language, int fontSize) {
+        performPositioning(CharSequence cs, String script, String language, int fontSize) {
         if (!isMetricsLoaded) {
             load(true);
         }
@@ -435,7 +435,7 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      * {@inheritDoc}
      */
     public int[][]
-        performPositioning (CharSequence cs, String script, String language) {
+        performPositioning(CharSequence cs, String script, String language) {
         if (!isMetricsLoaded) {
             load(true);
         }

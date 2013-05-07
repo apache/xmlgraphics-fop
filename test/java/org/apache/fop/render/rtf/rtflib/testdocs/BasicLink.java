@@ -57,22 +57,22 @@ public class BasicLink extends TestDocument {
      * @throws IOException for I/O Errors
      */
     protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws IOException {
-        RtfParagraph p = sect.newParagraph ();
+        RtfParagraph p = sect.newParagraph();
         p.newLineBreak();
         p.newLineBreak();
         p.newLineBreak();
-        p.newText ("external link: ");
-        RtfHyperLink link = p.newHyperLink ("click here to go to the hompage", null);
-        link.setExternalURL ("http://www.skynamics.com");
+        p.newText("external link: ");
+        RtfHyperLink link = p.newHyperLink("click here to go to the hompage", null);
+        link.setExternalURL("http://www.skynamics.com");
         p.close();
 
-        p = sect.newParagraph ();
+        p = sect.newParagraph();
         p.newLineBreak();
-        p.newText ("here we will demonstrate internal link to a bookmark");
+        p.newText("here we will demonstrate internal link to a bookmark");
         p.newLineBreak();
-        p.newText ("internal link: ");
-        link = p.newHyperLink ("click here to go to the bookmark", null);
-        link.setInternalURL ("testBookmark");
+        p.newText("internal link: ");
+        link = p.newHyperLink("click here to go to the bookmark", null);
+        link.setInternalURL("testBookmark");
         p.close();
 
         p = sect.newParagraph();

@@ -32,6 +32,6 @@ public interface GlyphTester {
      * @param flags that apply to lookup in scope
      * @return true if test is satisfied
      */
-    boolean test (int gi, int flags);
+    boolean test(int gi, int flags);
 
 }

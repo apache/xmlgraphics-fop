@@ -115,8 +115,8 @@ public abstract class AbstractPageNumberCitation extends FObj
     }
 
     /** {@inheritDoc} */
-    public void processNode
-        (String elementName, Locator locator, Attributes attlist, PropertyList pList)
+    public void processNode(
+        String elementName, Locator locator, Attributes attlist, PropertyList pList)
         throws FOPException {
         super.processNode(elementName, locator, attlist, pList);
         if (!inMarker() && (refId == null || "".equals(refId))) {
@@ -201,14 +201,14 @@ public abstract class AbstractPageNumberCitation extends FObj
     }
 
     @Override
-    public boolean isDelimitedTextRangeBoundary (int boundary) {
+    public boolean isDelimitedTextRangeBoundary(int boundary) {
         return false;
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges (Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
         if (currentRange != null) {
-            currentRange.append (CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this);
+            currentRange.append(CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this);
         }
         return ranges;
     }

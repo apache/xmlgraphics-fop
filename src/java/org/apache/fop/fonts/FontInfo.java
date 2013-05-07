@@ -590,7 +590,7 @@ public class FontInfo {
      * @return A list of matching font triplets
      */
     public List<FontTriplet> getTripletsFor(String fontName) {
-        List<FontTriplet> foundTriplets = new ArrayList<FontTriplet> ();
+        List<FontTriplet> foundTriplets = new ArrayList<FontTriplet>();
         for (Map.Entry<FontTriplet, String> tripletEntry : triplets.entrySet()) {
             if (fontName.equals((tripletEntry.getValue()))) {
                 foundTriplets.add(tripletEntry.getKey());

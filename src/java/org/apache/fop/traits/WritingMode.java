@@ -55,7 +55,7 @@ public final class WritingMode extends TraitEnum {
      * writing mode traits setter.
      * @param wms a writing mode traits setter
      */
-    public void assignWritingModeTraits (WritingModeTraitsSetter wms) {
+    public void assignWritingModeTraits(WritingModeTraitsSetter wms) {
         Direction inlineProgressionDirection;
         Direction blockProgressionDirection;
         Direction columnProgressionDirection;
@@ -92,12 +92,12 @@ public final class WritingMode extends TraitEnum {
             shiftDirection = Direction.BT;
             break;
         }
-        wms.setInlineProgressionDirection (inlineProgressionDirection);
-        wms.setBlockProgressionDirection (blockProgressionDirection);
-        wms.setColumnProgressionDirection (columnProgressionDirection);
-        wms.setRowProgressionDirection (rowProgressionDirection);
-        wms.setShiftDirection (shiftDirection);
-        wms.setWritingMode (this);
+        wms.setInlineProgressionDirection(inlineProgressionDirection);
+        wms.setBlockProgressionDirection(blockProgressionDirection);
+        wms.setColumnProgressionDirection(columnProgressionDirection);
+        wms.setRowProgressionDirection(rowProgressionDirection);
+        wms.setShiftDirection(shiftDirection);
+        wms.setWritingMode(this);
     }
 
     /**

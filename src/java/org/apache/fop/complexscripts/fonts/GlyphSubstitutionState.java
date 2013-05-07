@@ -61,10 +61,10 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * @param feature feature identifier
      * @param sct script context tester (or null)
      */
-    public GlyphSubstitutionState (GlyphSequence gs, String script, String language, String feature, ScriptContextTester sct) {
-        super (gs, script, language, feature, sct);
-        this.ogb = IntBuffer.allocate (gs.getGlyphCount());
-        this.oal = new ArrayList (gs.getGlyphCount());
+    public GlyphSubstitutionState(GlyphSequence gs, String script, String language, String feature, ScriptContextTester sct) {
+        super(gs, script, language, feature, sct);
+        this.ogb = IntBuffer.allocate(gs.getGlyphCount());
+        this.oal = new ArrayList(gs.getGlyphCount());
         this.predications = gs.getPredications();
     }
 
@@ -73,10 +73,10 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * except as follows: input glyph sequence is copied deep except for its characters array.
      * @param ss existing positioning state to copy from
      */
-    public GlyphSubstitutionState (GlyphSubstitutionState ss) {
-        super (ss);
-        this.ogb = IntBuffer.allocate (indexLast);
-        this.oal = new ArrayList (indexLast);
+    public GlyphSubstitutionState(GlyphSubstitutionState ss) {
+        super(ss);
+        this.ogb = IntBuffer.allocate(indexLast);
+        this.oal = new ArrayList(indexLast);
     }
 
     /**
@@ -87,11 +87,11 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * @param feature feature identifier
      * @param sct script context tester (or null)
      */
-    public GlyphSubstitutionState reset (GlyphSequence gs, String script, String language, String feature, ScriptContextTester sct) {
-        super.reset (gs, script, language, feature, sct);
+    public GlyphSubstitutionState reset(GlyphSequence gs, String script, String language, String feature, ScriptContextTester sct) {
+        super.reset(gs, script, language, feature, sct);
         this.alternatesIndex = null;
-        this.ogb = IntBuffer.allocate (gs.getGlyphCount());
-        this.oal = new ArrayList (gs.getGlyphCount());
+        this.ogb = IntBuffer.allocate(gs.getGlyphCount());
+        this.oal = new ArrayList(gs.getGlyphCount());
         this.predications = gs.getPredications();
         return this;
     }
@@ -100,7 +100,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * Set alternates indices.
      * @param alternates array of alternates indices ordered by coverage index
      */
-    public void setAlternates (int[] alternates) {
+    public void setAlternates(int[] alternates) {
         this.alternatesIndex = alternates;
     }
 
@@ -113,7 +113,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * @param ci coverage index
      * @return an alternates index
      */
-    public int getAlternatesIndex (int ci) {
+    public int getAlternatesIndex(int ci) {
         if (alternatesIndex == null) {
             return 0;
         } else if ((ci < 0) || (ci > alternatesIndex.length)) {
@@ -129,15 +129,15 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * @param a character association that applies to glyph
      * @param predication a predication value to add to association A if predications enabled
      */
-    public void putGlyph (int glyph, GlyphSequence.CharAssociation a, Object predication) {
+    public void putGlyph(int glyph, GlyphSequence.CharAssociation a, Object predication) {
         if (! ogb.hasRemaining()) {
-            ogb = growBuffer (ogb);
+            ogb = growBuffer(ogb);
         }
-        ogb.put (glyph);
+        ogb.put(glyph);
         if (predications && (predication != null)) {
-            a.setPredication (feature, predication);
+            a.setPredication(feature, predication);
         }
-        oal.add (a);
+        oal.add(a);
     }
 
     /**
@@ -146,12 +146,12 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * @param associations array of character associations that apply to glyphs
      * @param predication optional predicaion object to be associated with glyphs' associations
      */
-    public void putGlyphs (int[] glyphs, GlyphSequence.CharAssociation[] associations, Object predication) {
+    public void putGlyphs(int[] glyphs, GlyphSequence.CharAssociation[] associations, Object predication) {
         assert glyphs != null;
         assert associations != null;
         assert associations.length >= glyphs.length;
         for (int i = 0, n = glyphs.length; i < n; i++) {
-            putGlyph (glyphs [ i ], associations [ i ], predication);
+            putGlyph(glyphs [ i ], associations [ i ], predication);
         }
     }
 
@@ -163,9 +163,9 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
     public GlyphSequence getOutput() {
         int position = ogb.position();
         if (position > 0) {
-            ogb.limit (position);
+            ogb.limit(position);
             ogb.rewind();
-            return new GlyphSequence (igs.getCharacters(), ogb, oal);
+            return new GlyphSequence(igs.getCharacters(), ogb, oal);
         } else {
             return igs;
         }
@@ -181,10 +181,10 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * @return true if subtable applied, or false if it did not (e.g., its
      * input coverage table did not match current input context)
      */
-    public boolean apply (GlyphSubstitutionSubtable st) {
+    public boolean apply(GlyphSubstitutionSubtable st) {
         assert st != null;
-        updateSubtableState (st);
-        boolean applied = st.substitute (this);
+        updateSubtableState(st);
+        boolean applied = st.substitute(this);
         return applied;
     }
 
@@ -198,7 +198,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * the lookups are to apply, and to be consumed once the application has finished
      * @return true if lookups are non-null and non-empty; otherwise, false
      */
-    public boolean apply (GlyphTable.RuleLookup[] lookups, int nig) {
+    public boolean apply(GlyphTable.RuleLookup[] lookups, int nig) {
         // int nbg = index;
         int nlg = indexLast - (index + nig);
         int nog = 0;
@@ -210,20 +210,20 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
                     GlyphTable.LookupTable lt = l.getLookup();
                     if (lt != null) {
                         // perform substitution on a copy of previous state
-                        GlyphSubstitutionState ss = new GlyphSubstitutionState (this);
+                        GlyphSubstitutionState ss = new GlyphSubstitutionState(this);
                         // apply lookup table substitutions
-                        GlyphSequence gs = lt.substitute (ss, l.getSequenceIndex());
+                        GlyphSequence gs = lt.substitute(ss, l.getSequenceIndex());
                         // replace current input sequence starting at current position with result
-                        if (replaceInput (0, -1, gs)) {
+                        if (replaceInput(0, -1, gs)) {
                             nog = gs.getGlyphCount() - nlg;
                         }
                     }
                 }
             }
             // output glyphs and associations
-            putGlyphs (getGlyphs (0, nog, false, null, null, null), getAssociations (0, nog, false, null, null, null), null);
+            putGlyphs(getGlyphs(0, nog, false, null, null, null), getAssociations(0, nog, false, null, null, null), null);
             // consume replaced input glyphs
-            consume (nog);
+            consume(nog);
             return true;
         } else {
             return false;
@@ -238,16 +238,16 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
         super.applyDefault();
         int gi = getGlyph();
         if (gi != 65535) {
-            putGlyph (gi, getAssociation(), null);
+            putGlyph(gi, getAssociation(), null);
         }
     }
 
-    private static IntBuffer growBuffer (IntBuffer ib) {
+    private static IntBuffer growBuffer(IntBuffer ib) {
         int capacity = ib.capacity();
         int capacityNew = capacity * 2;
-        IntBuffer ibNew = IntBuffer.allocate (capacityNew);
+        IntBuffer ibNew = IntBuffer.allocate(capacityNew);
         ib.rewind();
-        return ibNew.put (ib);
+        return ibNew.put(ib);
     }
 
 }

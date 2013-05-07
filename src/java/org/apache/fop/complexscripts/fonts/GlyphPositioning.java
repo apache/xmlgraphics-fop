@@ -39,6 +39,6 @@ public interface GlyphPositioning {
      * adjustment occurred; it only means that no further glyph subtables for the current lookup table
      * should be applied.
      */
-    boolean position (GlyphPositioningState ps);
+    boolean position(GlyphPositioningState ps);
 
 }

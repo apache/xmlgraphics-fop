@@ -91,8 +91,8 @@ public class AFPBorderPainter extends AbstractAFPPainter {
         AFPLineDataInfo lineDataInfo = new AFPLineDataInfo();
         lineDataInfo.setColor(borderPaintInfo.getColor());
         lineDataInfo.setRotation(paintingState.getRotation());
-        lineDataInfo.setX1 (Math.round(x1));
-        lineDataInfo.setY1 (Math.round(y1));
+        lineDataInfo.setX1(Math.round(x1));
+        lineDataInfo.setY1(Math.round(y1));
         float thickness;
         if (borderPaintInfo.isHorizontal()) {
             thickness = y2 - y1;
@@ -107,68 +107,68 @@ public class AFPBorderPainter extends AbstractAFPPainter {
             int thickness3 = (int)Math.floor(thickness / 3f);
             lineDataInfo.setThickness(thickness3);
             if (borderPaintInfo.isHorizontal()) {
-                lineDataInfo.setX2 (Math.round(x2));
-                lineDataInfo.setY2 (lineDataInfo.getY1());
+                lineDataInfo.setX2(Math.round(x2));
+                lineDataInfo.setY2(lineDataInfo.getY1());
                 dataStream.createLine(lineDataInfo);
                 int distance = thickness3 * 2;
                 lineDataInfo = new AFPLineDataInfo(lineDataInfo);
-                lineDataInfo.setY1 (lineDataInfo.getY1() + distance);
-                lineDataInfo.setY2 (lineDataInfo.getY2() + distance);
+                lineDataInfo.setY1(lineDataInfo.getY1() + distance);
+                lineDataInfo.setY2(lineDataInfo.getY2() + distance);
                 dataStream.createLine(lineDataInfo);
             } else {
-                lineDataInfo.setX2 (lineDataInfo.getX1());
-                lineDataInfo.setY2 (Math.round(y2));
+                lineDataInfo.setX2(lineDataInfo.getX1());
+                lineDataInfo.setY2(Math.round(y2));
                 dataStream.createLine(lineDataInfo);
                 int distance = thickness3 * 2;
                 lineDataInfo = new AFPLineDataInfo(lineDataInfo);
-                lineDataInfo.setX1 (lineDataInfo.getX1() + distance);
-                lineDataInfo.setX2 (lineDataInfo.getX2() + distance);
+                lineDataInfo.setX1(lineDataInfo.getX1() + distance);
+                lineDataInfo.setX2(lineDataInfo.getX2() + distance);
                 dataStream.createLine(lineDataInfo);
             }
             break;
         case Constants.EN_DASHED:
             if (borderPaintInfo.isHorizontal()) {
                 int dashWidth = (int) unitConv.pt2units(BorderPainter.dashWidthCalculator(w, h));
-                lineDataInfo.setX2 (lineDataInfo.getX1() + dashWidth);
-                lineDataInfo.setY2 (lineDataInfo.getY1());
+                lineDataInfo.setX2(lineDataInfo.getX1() + dashWidth);
+                lineDataInfo.setY2(lineDataInfo.getY1());
                 int ex2 = Math.round(x2);
                 int spaceWidth = (int) (BorderPainter.DASHED_BORDER_SPACE_RATIO * dashWidth);
                 while (lineDataInfo.getX2() <= ex2) {
                     dataStream.createLine(lineDataInfo);
-                    lineDataInfo.setX1 (lineDataInfo.getX2() + spaceWidth);
-                    lineDataInfo.setX2 (lineDataInfo.getX1() + dashWidth);
+                    lineDataInfo.setX1(lineDataInfo.getX2() + spaceWidth);
+                    lineDataInfo.setX2(lineDataInfo.getX1() + dashWidth);
                 }
             } else {
                 int dashWidth = (int) unitConv.pt2units(BorderPainter.dashWidthCalculator(h, w));
-                lineDataInfo.setX2 (lineDataInfo.getX1());
-                lineDataInfo.setY2 (lineDataInfo.getY1() + dashWidth);
+                lineDataInfo.setX2(lineDataInfo.getX1());
+                lineDataInfo.setY2(lineDataInfo.getY1() + dashWidth);
                 int ey2 = Math.round(y2);
                 int spaceWidth = (int) (BorderPainter.DASHED_BORDER_SPACE_RATIO * dashWidth);
                 while (lineDataInfo.getY2() <= ey2) {
                     dataStream.createLine(lineDataInfo);
-                    lineDataInfo.setY1 (lineDataInfo.getY2() + spaceWidth);
-                    lineDataInfo.setY2 (lineDataInfo.getY1() + dashWidth);
+                    lineDataInfo.setY1(lineDataInfo.getY2() + spaceWidth);
+                    lineDataInfo.setY2(lineDataInfo.getY1() + dashWidth);
                 }
             }
             break;
         case Constants.EN_DOTTED:
             if (borderPaintInfo.isHorizontal()) {
-                lineDataInfo.setX2 (lineDataInfo.getX1() + lineDataInfo.getThickness());
-                lineDataInfo.setY2 (lineDataInfo.getY1());
+                lineDataInfo.setX2(lineDataInfo.getX1() + lineDataInfo.getThickness());
+                lineDataInfo.setY2(lineDataInfo.getY1());
                 int ex2 = Math.round(x2);
                 while (lineDataInfo.getX1() + lineDataInfo.getThickness() < ex2) {
                     dataStream.createLine(lineDataInfo);
-                    lineDataInfo.setX1 (lineDataInfo.getX1() + 3 * lineDataInfo.getThickness());
-                    lineDataInfo.setX2 (lineDataInfo.getX1() + lineDataInfo.getThickness());
+                    lineDataInfo.setX1(lineDataInfo.getX1() + 3 * lineDataInfo.getThickness());
+                    lineDataInfo.setX2(lineDataInfo.getX1() + lineDataInfo.getThickness());
                 }
             } else {
-                lineDataInfo.setX2 (lineDataInfo.getX1());
-                lineDataInfo.setY2 (lineDataInfo.getY1() + lineDataInfo.getThickness());
+                lineDataInfo.setX2(lineDataInfo.getX1());
+                lineDataInfo.setY2(lineDataInfo.getY1() + lineDataInfo.getThickness());
                 int ey2 = Math.round(y2);
                 while (lineDataInfo.getY1() + lineDataInfo.getThickness() < ey2) {
                     dataStream.createLine(lineDataInfo);
-                    lineDataInfo.setY1 (lineDataInfo.getY1() + 3 * lineDataInfo.getThickness());
-                    lineDataInfo.setY2 (lineDataInfo.getY1() + lineDataInfo.getThickness());
+                    lineDataInfo.setY1(lineDataInfo.getY1() + 3 * lineDataInfo.getThickness());
+                    lineDataInfo.setY2(lineDataInfo.getY1() + lineDataInfo.getThickness());
                 }
             }
             break;
@@ -176,25 +176,25 @@ public class AFPBorderPainter extends AbstractAFPPainter {
         case Constants.EN_RIDGE:
             //TODO
             int yNew;
-            lineDataInfo.setX2 (Math.round(x2));
+            lineDataInfo.setX2(Math.round(x2));
             float colFactor = (borderPaintInfo.getStyle() == Constants.EN_GROOVE ? 0.4f : -0.4f);
             float h3 = (y2 - y1) / 3;
-            lineDataInfo.setColor
-                (ColorUtil.lightenColor(borderPaintInfo.getColor(), -colFactor));
-            lineDataInfo.setThickness (Math.round(h3));
+            lineDataInfo.setColor(
+                ColorUtil.lightenColor(borderPaintInfo.getColor(), -colFactor));
+            lineDataInfo.setThickness(Math.round(h3));
             yNew = Math.round(y1);
-            lineDataInfo.setY1 (yNew);
-            lineDataInfo.setY2 (yNew);
+            lineDataInfo.setY1(yNew);
+            lineDataInfo.setY2(yNew);
             dataStream.createLine(lineDataInfo);
-            lineDataInfo.setColor (borderPaintInfo.getColor());
+            lineDataInfo.setColor(borderPaintInfo.getColor());
             yNew = Math.round(y1 + h3);
-            lineDataInfo.setY1 (yNew);
-            lineDataInfo.setY2 (yNew);
+            lineDataInfo.setY1(yNew);
+            lineDataInfo.setY2(yNew);
             dataStream.createLine(lineDataInfo);
-            lineDataInfo.setColor (ColorUtil.lightenColor(borderPaintInfo.getColor(), colFactor));
+            lineDataInfo.setColor(ColorUtil.lightenColor(borderPaintInfo.getColor(), colFactor));
             yNew = Math.round(y1 + h3 + h3);
-            lineDataInfo.setY1 (yNew);
-            lineDataInfo.setY2 (yNew);
+            lineDataInfo.setY1(yNew);
+            lineDataInfo.setY2(yNew);
             dataStream.createLine(lineDataInfo);
             break;
         case Constants.EN_HIDDEN:
@@ -204,11 +204,11 @@ public class AFPBorderPainter extends AbstractAFPPainter {
         case Constants.EN_SOLID:
         default:
             if (borderPaintInfo.isHorizontal()) {
-                lineDataInfo.setX2 (Math.round(x2));
-                lineDataInfo.setY2 (lineDataInfo.getY1());
+                lineDataInfo.setX2(Math.round(x2));
+                lineDataInfo.setY2(lineDataInfo.getY1());
             } else {
-                lineDataInfo.setX2 (lineDataInfo.getX1());
-                lineDataInfo.setY2 (Math.round(y2));
+                lineDataInfo.setX2(lineDataInfo.getX1());
+                lineDataInfo.setY2(Math.round(y2));
             }
             dataStream.createLine(lineDataInfo);
         }

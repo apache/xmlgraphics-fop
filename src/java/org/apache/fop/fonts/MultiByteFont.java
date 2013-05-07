@@ -197,13 +197,13 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * Add a private use mapping {PU,GI} to the existing character map.
      * N.B. Does not insert in order, merely appends to end of existing map.
      */
-    private synchronized void addPrivateUseMapping (int pu, int gi) {
-        assert findGlyphIndex (pu) == SingleByteEncoding.NOT_FOUND_CODE_POINT;
+    private synchronized void addPrivateUseMapping(int pu, int gi) {
+        assert findGlyphIndex(pu) == SingleByteEncoding.NOT_FOUND_CODE_POINT;
         CMapSegment[] oldCmap = cmap;
         int cmapLength = oldCmap.length;
         CMapSegment[] newCmap = new CMapSegment [ cmapLength + 1 ];
-        System.arraycopy (oldCmap, 0, newCmap, 0, cmapLength);
-        newCmap [ cmapLength ] = new CMapSegment (pu, pu, gi);
+        System.arraycopy(oldCmap, 0, newCmap, 0, cmapLength);
+        newCmap [ cmapLength ] = new CMapSegment(pu, pu, gi);
         cmap = newCmap;
     }
 
@@ -219,22 +219,22 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * @param gi glyph index
      * @returns unicode scalar value
      */
-    private int createPrivateUseMapping (int gi) {
+    private int createPrivateUseMapping(int gi) {
         while ((nextPrivateUse < 0xF900)
                 && (findGlyphIndex(nextPrivateUse) != SingleByteEncoding.NOT_FOUND_CODE_POINT)) {
             nextPrivateUse++;
         }
         if (nextPrivateUse < 0xF900) {
             int pu = nextPrivateUse;
-            addPrivateUseMapping (pu, gi);
+            addPrivateUseMapping(pu, gi);
             if (firstPrivate == 0) {
                 firstPrivate = pu;
             }
             lastPrivate = pu;
             numMapped++;
             if (log.isDebugEnabled()) {
-                log.debug ("Create private use mapping from "
-                            + CharUtilities.format (pu)
+                log.debug("Create private use mapping from "
+                            + CharUtilities.format(pu)
                             + " to glyph index " + gi
                             + " in font '" + getFullName() + "'");
             }
@@ -245,7 +245,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
             }
             lastUnmapped = gi;
             numUnmapped++;
-            log.warn ("Exhausted private use area: unable to map "
+            log.warn("Exhausted private use area: unable to map "
                        + numUnmapped + " glyphs in glyph index range ["
                        + firstUnmapped + "," + lastUnmapped
                        + "] (inclusive) of font '" + getFullName() + "'");
@@ -260,7 +260,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * @returns unicode scalar value
      */
     // [TBD] - needs optimization, i.e., change from linear search to binary search
-    private int findCharacterFromGlyphIndex (int gi, boolean augment) {
+    private int findCharacterFromGlyphIndex(int gi, boolean augment) {
         int cc = 0;
         for (int i = 0, n = cmap.length; i < n; i++) {
             CMapSegment segment = cmap [ i ];
@@ -272,13 +272,13 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
             }
         }
         if ((cc == 0) && augment) {
-            cc = createPrivateUseMapping (gi);
+            cc = createPrivateUseMapping(gi);
         }
         return cc;
     }
 
-    private int findCharacterFromGlyphIndex (int gi) {
-        return findCharacterFromGlyphIndex (gi, true);
+    private int findCharacterFromGlyphIndex(int gi) {
+        return findCharacterFromGlyphIndex(gi, true);
     }
 
 
@@ -377,11 +377,11 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * Establishes the glyph definition table.
      * @param gdef the glyph definition table to be used by this font
      */
-    public void setGDEF (GlyphDefinitionTable gdef) {
+    public void setGDEF(GlyphDefinitionTable gdef) {
         if ((this.gdef == null) || (gdef == null)) {
             this.gdef = gdef;
         } else {
-            throw new IllegalStateException ("font already associated with GDEF table");
+            throw new IllegalStateException("font already associated with GDEF table");
         }
     }
 
@@ -397,11 +397,11 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * Establishes the glyph substitution table.
      * @param gsub the glyph substitution table to be used by this font
      */
-    public void setGSUB (GlyphSubstitutionTable gsub) {
+    public void setGSUB(GlyphSubstitutionTable gsub) {
         if ((this.gsub == null) || (gsub == null)) {
             this.gsub = gsub;
         } else {
-            throw new IllegalStateException ("font already associated with GSUB table");
+            throw new IllegalStateException("font already associated with GSUB table");
         }
     }
 
@@ -417,11 +417,11 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * Establishes the glyph positioning table.
      * @param gpos the glyph positioning table to be used by this font
      */
-    public void setGPOS (GlyphPositioningTable gpos) {
+    public void setGPOS(GlyphPositioningTable gpos) {
         if ((this.gpos == null) || (gpos == null)) {
             this.gpos = gpos;
         } else {
-            throw new IllegalStateException ("font already associated with GPOS table");
+            throw new IllegalStateException("font already associated with GPOS table");
         }
     }
 
@@ -439,11 +439,11 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /** {@inheritDoc} */
-    public CharSequence performSubstitution (CharSequence cs, String script, String language) {
+    public CharSequence performSubstitution(CharSequence cs, String script, String language) {
         if (gsub != null) {
-            GlyphSequence igs = mapCharsToGlyphs (cs);
-            GlyphSequence ogs = gsub.substitute (igs, script, language);
-            CharSequence ocs = mapGlyphsToChars (ogs);
+            GlyphSequence igs = mapCharsToGlyphs(cs);
+            GlyphSequence ogs = gsub.substitute(igs, script, language);
+            CharSequence ocs = mapGlyphsToChars(ogs);
             return ocs;
         } else {
             return cs;
@@ -451,12 +451,12 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /** {@inheritDoc} */
-    public CharSequence reorderCombiningMarks
-        (CharSequence cs, int[][] gpa, String script, String language) {
+    public CharSequence reorderCombiningMarks(
+        CharSequence cs, int[][] gpa, String script, String language) {
         if (gdef != null) {
-            GlyphSequence igs = mapCharsToGlyphs (cs);
-            GlyphSequence ogs = gdef.reorderCombiningMarks (igs, gpa, script, language);
-            CharSequence ocs = mapGlyphsToChars (ogs);
+            GlyphSequence igs = mapCharsToGlyphs(cs);
+            GlyphSequence ogs = gdef.reorderCombiningMarks(igs, gpa, script, language);
+            CharSequence ocs = mapGlyphsToChars(ogs);
             return ocs;
         } else {
             return cs;
@@ -470,12 +470,12 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
 
     /** {@inheritDoc} */
     public int[][]
-        performPositioning (CharSequence cs, String script, String language, int fontSize) {
+        performPositioning(CharSequence cs, String script, String language, int fontSize) {
         if (gpos != null) {
-            GlyphSequence gs = mapCharsToGlyphs (cs);
+            GlyphSequence gs = mapCharsToGlyphs(cs);
             int[][] adjustments = new int [ gs.getGlyphCount() ] [ 4 ];
-            if (gpos.position (gs, script, language, fontSize, this.width, adjustments)) {
-                return scaleAdjustments (adjustments, fontSize);
+            if (gpos.position(gs, script, language, fontSize, this.width, adjustments)) {
+                return scaleAdjustments(adjustments, fontSize);
             } else {
                 return null;
             }
@@ -485,12 +485,12 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /** {@inheritDoc} */
-    public int[][] performPositioning (CharSequence cs, String script, String language) {
+    public int[][] performPositioning(CharSequence cs, String script, String language) {
         throw new UnsupportedOperationException();
     }
 
 
-    private int[][] scaleAdjustments (int[][] adjustments, int fontSize) {
+    private int[][] scaleAdjustments(int[][] adjustments, int fontSize) {
         if (adjustments != null) {
             for (int i = 0, n = adjustments.length; i < n; i++) {
                 int[] gpa = adjustments [ i ];
@@ -511,46 +511,46 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * @param cs a CharSequence containing UTF-16 encoded Unicode characters
      * @returns a CharSequence containing glyph indices
      */
-    private GlyphSequence mapCharsToGlyphs (CharSequence cs) {
-        IntBuffer cb = IntBuffer.allocate (cs.length());
-        IntBuffer gb = IntBuffer.allocate (cs.length());
+    private GlyphSequence mapCharsToGlyphs(CharSequence cs) {
+        IntBuffer cb = IntBuffer.allocate(cs.length());
+        IntBuffer gb = IntBuffer.allocate(cs.length());
         int gi;
-        int giMissing = findGlyphIndex (Typeface.NOT_FOUND);
+        int giMissing = findGlyphIndex(Typeface.NOT_FOUND);
         for (int i = 0, n = cs.length(); i < n; i++) {
-            int cc = cs.charAt (i);
+            int cc = cs.charAt(i);
             if ((cc >= 0xD800) && (cc < 0xDC00)) {
                 if ((i + 1) < n) {
                     int sh = cc;
-                    int sl = cs.charAt (++i);
+                    int sl = cs.charAt(++i);
                     if ((sl >= 0xDC00) && (sl < 0xE000)) {
                         cc = 0x10000 + ((sh - 0xD800) << 10) + ((sl - 0xDC00) << 0);
                     } else {
-                        throw new IllegalArgumentException
-                            ("ill-formed UTF-16 sequence, "
+                        throw new IllegalArgumentException(
+                            "ill-formed UTF-16 sequence, "
                                + "contains isolated high surrogate at index " + i);
                     }
                 } else {
-                    throw new IllegalArgumentException
-                        ("ill-formed UTF-16 sequence, "
+                    throw new IllegalArgumentException(
+                        "ill-formed UTF-16 sequence, "
                           + "contains isolated high surrogate at end of sequence");
                 }
             } else if ((cc >= 0xDC00) && (cc < 0xE000)) {
-                throw new IllegalArgumentException
-                    ("ill-formed UTF-16 sequence, "
+                throw new IllegalArgumentException(
+                    "ill-formed UTF-16 sequence, "
                       + "contains isolated low surrogate at index " + i);
             }
             notifyMapOperation();
-            gi = findGlyphIndex (cc);
+            gi = findGlyphIndex(cc);
             if (gi == SingleByteEncoding.NOT_FOUND_CODE_POINT) {
-                warnMissingGlyph ((char) cc);
+                warnMissingGlyph((char) cc);
                 gi = giMissing;
             }
-            cb.put (cc);
-            gb.put (gi);
+            cb.put(cc);
+            gb.put(gi);
         }
         cb.flip();
         gb.flip();
-        return new GlyphSequence (cb, gb, null);
+        return new GlyphSequence(cb, gb, null);
     }
 
     /**
@@ -559,13 +559,13 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * @param gs a GlyphSequence containing glyph indices
      * @returns a CharSequence containing UTF-16 encoded Unicode characters
      */
-    private CharSequence mapGlyphsToChars (GlyphSequence gs) {
+    private CharSequence mapGlyphsToChars(GlyphSequence gs) {
         int ng = gs.getGlyphCount();
-        CharBuffer cb = CharBuffer.allocate (ng);
+        CharBuffer cb = CharBuffer.allocate(ng);
         int ccMissing = Typeface.NOT_FOUND;
         for (int i = 0, n = ng; i < n; i++) {
-            int gi = gs.getGlyph (i);
-            int cc = findCharacterFromGlyphIndex (gi);
+            int gi = gs.getGlyph(i);
+            int cc = findCharacterFromGlyphIndex(gi);
             if ((cc == 0) || (cc > 0x10FFFF)) {
                 cc = ccMissing;
                 log.warn("Unable to map glyph index " + gi
@@ -579,10 +579,10 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
                 cc -= 0x10000;
                 sh = ((cc >> 10) & 0x3FF) + 0xD800;
                 sl = ((cc >>  0) & 0x3FF) + 0xDC00;
-                cb.put ((char) sh);
-                cb.put ((char) sl);
+                cb.put((char) sh);
+                cb.put((char) sl);
             } else {
-                cb.put ((char) cc);
+                cb.put((char) cc);
             }
         }
         cb.flip();

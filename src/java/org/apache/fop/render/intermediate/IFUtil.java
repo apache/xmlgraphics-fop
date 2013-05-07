@@ -212,7 +212,7 @@ public final class IFUtil {
      * @return if <code>dp</code> is not null, then an array of adjustments to the current
      * x position prior to rendering individual glyphs; otherwise, null
      */
-    public static int[] convertDPToDX (int[][] dp, int count) {
+    public static int[] convertDPToDX(int[][] dp, int count) {
         int[] dx;
         if (dp != null) {
             dx = new int [ count ];
@@ -236,8 +236,8 @@ public final class IFUtil {
      * @return if <code>dp</code> is not null, then an array of adjustments to the current
      * x position prior to rendering individual glyphs; otherwise, null
      */
-    public static int[] convertDPToDX (int[][] dp) {
-        return convertDPToDX (dp, (dp != null) ? dp.length : 0);
+    public static int[] convertDPToDX(int[][] dp) {
+        return convertDPToDX(dp, (dp != null) ? dp.length : 0);
     }
 
     /**
@@ -250,7 +250,7 @@ public final class IFUtil {
      * @return if <code>dx</code> is not null, then an array of 4-tuples, expressing [X,Y]
      * placment adjustments and [X,Y] advancement adjustments, in that order; otherwise, null
      */
-    public static int[][] convertDXToDP (int[] dx, int count) {
+    public static int[][] convertDXToDP(int[] dx, int count) {
         int[][] dp;
         if (dx != null) {
             dp = new int [ count ] [ 4 ];
@@ -275,8 +275,8 @@ public final class IFUtil {
      * @return if <code>dx</code> is not null, then an array of 4-tuples, expressing [X,Y]
      * placment adjustments and [X,Y] advancement adjustments, in that order; otherwise, null
      */
-    public static int[][] convertDXToDP (int[] dx) {
-        return convertDXToDP (dx, (dx != null) ? dx.length : 0);
+    public static int[][] convertDXToDP(int[] dx) {
+        return convertDXToDP(dx, (dx != null) ? dx.length : 0);
     }
 
     /**
@@ -284,7 +284,7 @@ public final class IFUtil {
      * @param pa a 4-tuple, expressing [X,Y] placment and [X,Y] advance adjuustments (may be null)
      * @return true if <code>dp</code> is null or contains no non-zero adjustment
      */
-    public static boolean isPAIdentity (int[] pa) {
+    public static boolean isPAIdentity(int[] pa) {
         if (pa == null) {
             return true;
         } else {
@@ -303,12 +303,12 @@ public final class IFUtil {
      * adjustments and [X,Y] advancement adjustments, in that order (may be null)
      * @return true if <code>dp</code> is null or contains no non-zero adjustment
      */
-    public static boolean isDPIdentity (int[][] dp) {
+    public static boolean isDPIdentity(int[][] dp) {
         if (dp == null) {
             return true;
         } else {
             for (int i = 0, n = dp.length; i < n; i++) {
-                if (!isPAIdentity (dp[i])) {
+                if (!isPAIdentity(dp[i])) {
                     return false;
                 }
             }
@@ -326,7 +326,7 @@ public final class IFUtil {
      * @return true if <code>dp</code> is not null and contains only xPlaAdjust
      * and xAdvAdjust values consistent with the output of {@link #convertDPToDX}.
      */
-    public static boolean isDPOnlyDX (int[][] dp) {
+    public static boolean isDPOnlyDX(int[][] dp) {
         if (dp == null) {
             return false;
         } else {
@@ -348,7 +348,7 @@ public final class IFUtil {
      * @param paSrc a 4-tuple, expressing [X,Y] placment
      * and [X,Y] advance adjuustments (may be null)
      */
-    public static void adjustPA (int[] paDst, int[] paSrc) {
+    public static void adjustPA(int[] paDst, int[] paSrc) {
         if ((paDst != null) && (paSrc != null)) {
             assert paDst.length == 4;
             assert paSrc.length == 4;
@@ -367,7 +367,7 @@ public final class IFUtil {
      * @return a deep copy of the count position adjustment entries start at
      * offset
      */
-    public static int[][] copyDP (int[][] dp, int offset, int count) {
+    public static int[][] copyDP(int[][] dp, int offset, int count) {
         if ((dp == null) || (offset > dp.length) || ((offset + count) > dp.length)) {
             throw new IllegalArgumentException();
         } else {

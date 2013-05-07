@@ -225,7 +225,7 @@ public class Area extends AreaTreeObject implements Serializable {
      *
      * @param bidiLevel the bidirectional embedding level
      */
-    public void setBidiLevel (int bidiLevel) {
+    public void setBidiLevel(int bidiLevel) {
         this.bidiLevel = bidiLevel;
     }
 
@@ -412,7 +412,7 @@ public class Area extends AreaTreeObject implements Serializable {
      *
      * @param traits the map of traits
      */
-    public void setTraits (Map traits) {
+    public void setTraits(Map traits) {
         if (traits != null) {
             this.traits = new TreeMap<Integer, Object>(traits);
         } else {

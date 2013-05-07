@@ -41,7 +41,7 @@ public final class ImageUtil {
     /**
      * Private constructor.
      */
-    private ImageUtil () {
+    private ImageUtil() {
     }
 
 
@@ -57,14 +57,14 @@ public final class ImageUtil {
      * @return -1      There is no digit
      *         number  The digits as integer
      */
-    public static int getInt (String value) {
-        String retString = new String ();
-        StringBuffer s = new StringBuffer (value);
-        int len = s.length ();
+    public static int getInt(String value) {
+        String retString = new String();
+        StringBuffer s = new StringBuffer(value);
+        int len = s.length();
 
         for (int i = 0; i < len; i++) {
-            if (Character.isDigit (s.charAt (i))) {
-                retString += s.charAt (i);
+            if (Character.isDigit(s.charAt(i))) {
+                retString += s.charAt(i);
             } else {
                 //for example "600.0pt" has to be exited,
                 //when the dot is reached.
@@ -72,10 +72,10 @@ public final class ImageUtil {
             }
         }
 
-        if (retString.length () == 0) {
+        if (retString.length() == 0) {
             return -1;
         } else {
-            return Integer.parseInt (retString);
+            return Integer.parseInt(retString);
         }
     }
 
@@ -87,8 +87,8 @@ public final class ImageUtil {
      * @return true    The string contains a % value
      *         false   Other string
      */
-    public static boolean isPercent (String value) {
-        if (value.endsWith ("%")) {
+    public static boolean isPercent(String value) {
+        if (value.endsWith("%")) {
             return true;
 
         }
@@ -107,7 +107,7 @@ public final class ImageUtil {
      * @return true    If equal
      *         false   If different
      */
-    public static boolean compareHexValues (byte[] pattern, byte[] data, int searchAt,
+    public static boolean compareHexValues(byte[] pattern, byte[] data, int searchAt,
                                             boolean searchForward) {
         if (searchAt >= data.length) {
             return false;
@@ -155,7 +155,7 @@ public final class ImageUtil {
      *
      * @return integer
      */
-    public static int getIntFromByteArray (byte[] data, int startAt, int length,
+    public static int getIntFromByteArray(byte[] data, int startAt, int length,
                                            boolean searchForward) {
         int bit = 8;
         int bitMoving = length * bit;

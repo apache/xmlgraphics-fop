@@ -106,8 +106,8 @@ public class PreviewDialog extends JFrame implements StatusListener {
      * @param renderable the Renderable instance that is used to reload/re-render a document
      *                   after modifications.
      */
-    public PreviewDialog                                        // CSOK: MethodLength
-        (FOUserAgent foUserAgent, Renderable renderable) {
+    public PreviewDialog(
+        FOUserAgent foUserAgent, Renderable renderable) {
         renderer = (AWTRenderer) foUserAgent.getRendererOverride();
         this.foUserAgent = foUserAgent;
         this.configuredTargetResolution = this.foUserAgent.getTargetResolution();

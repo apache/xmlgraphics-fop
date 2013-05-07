@@ -88,13 +88,13 @@ public class TextArea extends AbstractTextArea {
      * @param gposAdjustments array of general position adjustments or null if none apply
      * @param blockProgressionOffset the offset for the next area
      */
-    public void addWord
-        (String word, int ipd, int[] letterAdjust, int[] levels,
+    public void addWord(
+        String word, int ipd, int[] letterAdjust, int[] levels,
           int[][] gposAdjustments, int blockProgressionOffset) {
-        int minWordLevel = findMinLevel (levels);
-        WordArea wordArea = new WordArea
-            (blockProgressionOffset, minWordLevel, word, letterAdjust, levels, gposAdjustments);
-        wordArea.setIPD (ipd);
+        int minWordLevel = findMinLevel(levels);
+        WordArea wordArea = new WordArea(
+            blockProgressionOffset, minWordLevel, word, letterAdjust, levels, gposAdjustments);
+        wordArea.setIPD(ipd);
         addChildArea(wordArea);
         wordArea.setParentArea(this);
         updateLevel(minWordLevel);
@@ -109,10 +109,10 @@ public class TextArea extends AbstractTextArea {
      * @param adjustable is this space adjustable?
      * @param level resolved bidirection level of space character
      */
-    public void addSpace
-        (char space, int ipd, boolean adjustable, int blockProgressionOffset, int level) {
+    public void addSpace(
+        char space, int ipd, boolean adjustable, int blockProgressionOffset, int level) {
         SpaceArea spaceArea = new SpaceArea(blockProgressionOffset, level, space, adjustable);
-        spaceArea.setIPD (ipd);
+        spaceArea.setIPD(ipd);
         addChildArea(spaceArea);
         spaceArea.setParentArea(this);
         updateLevel(level);
@@ -167,20 +167,20 @@ public class TextArea extends AbstractTextArea {
         return sb.toString();
     }
 
-    private void updateLevel (int newLevel) {
+    private void updateLevel(int newLevel) {
         if (newLevel >= 0) {
             int curLevel = getBidiLevel();
             if (curLevel >= 0) {
                 if (newLevel < curLevel) {
-                    setBidiLevel (newLevel);
+                    setBidiLevel(newLevel);
                 }
             } else {
-                setBidiLevel (newLevel);
+                setBidiLevel(newLevel);
             }
         }
     }
 
-    private static int findMinLevel (int[] levels) {
+    private static int findMinLevel(int[] levels) {
         if (levels != null) {
             int lMin = Integer.MAX_VALUE;
             for (int i = 0, n = levels.length; i < n; i++) {
@@ -199,10 +199,10 @@ public class TextArea extends AbstractTextArea {
         }
     }
 
-    private int[] makeLevels (int level, int count) {
+    private int[] makeLevels(int level, int count) {
         if (level >= 0) {
             int[] levels = new int [ count ];
-            Arrays.fill (levels, level);
+            Arrays.fill(levels, level);
             return levels;
         } else {
             return null;

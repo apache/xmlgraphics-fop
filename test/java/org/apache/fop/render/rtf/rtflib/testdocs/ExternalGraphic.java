@@ -48,65 +48,65 @@ class ExternalGraphic extends TestDocument {
     /**
      * Default constructor.
      */
-    public ExternalGraphic () {
+    public ExternalGraphic() {
 
     }
     /** generate the body of the test document */
-    protected void generateDocument (RtfDocumentArea rda, RtfSection sect) throws IOException {
-        RtfParagraph p = sect.newParagraph ();
+    protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws IOException {
+        RtfParagraph p = sect.newParagraph();
         p.newLineBreak();
         p.newLineBreak();
         p.newLineBreak();
-        p.newText ("EMF image with 150 % height");
+        p.newText("EMF image with 150 % height");
         p.newLineBreak();
-        RtfExternalGraphic imageA = p.newImage ();
-        imageA.setURL (file + "emf");
-        imageA.setHeight ("150%");
-        p.newLineBreak();
-        p.close();
-
-        p = sect.newParagraph();
-        p.newLineBreak();
-        p.newText ("PNG image with 150 % width");
-        p.newLineBreak();
-        RtfExternalGraphic imageB = sect.newImage ();
-        imageB.setURL (file + "png");
-        imageB.setWidth ("150%");
+        RtfExternalGraphic imageA = p.newImage();
+        imageA.setURL(file + "emf");
+        imageA.setHeight("150%");
         p.newLineBreak();
         p.close();
 
         p = sect.newParagraph();
         p.newLineBreak();
+        p.newText("PNG image with 150 % width");
         p.newLineBreak();
-        p.newText ("JPG image with width = 200px and height = 20 px");
-        p.newLineBreak();
-        RtfExternalGraphic imageC = sect.newImage ();
-        imageC.setURL (file + "jpg");
-        imageC.setWidth ("200");
-        imageC.setHeight ("20");
+        RtfExternalGraphic imageB = sect.newImage();
+        imageB.setURL(file + "png");
+        imageB.setWidth("150%");
         p.newLineBreak();
         p.close();
 
         p = sect.newParagraph();
         p.newLineBreak();
         p.newLineBreak();
-        p.newText ("GIF image with width = 200px and scaling = 'uniform', that means the image "
+        p.newText("JPG image with width = 200px and height = 20 px");
+        p.newLineBreak();
+        RtfExternalGraphic imageC = sect.newImage();
+        imageC.setURL(file + "jpg");
+        imageC.setWidth("200");
+        imageC.setHeight("20");
+        p.newLineBreak();
+        p.close();
+
+        p = sect.newParagraph();
+        p.newLineBreak();
+        p.newLineBreak();
+        p.newText("GIF image with width = 200px and scaling = 'uniform', that means the image "
                 + "size will adjusted automatically");
         p.newLineBreak();
-        RtfExternalGraphic imageD = sect.newImage ();
-        imageD.setURL (file + "gif");
-        imageD.setWidth ("200");
-        imageD.setScaling ("uniform");
+        RtfExternalGraphic imageD = sect.newImage();
+        imageD.setURL(file + "gif");
+        imageD.setWidth("200");
+        imageD.setScaling("uniform");
         p.newLineBreak();
         p.close();
 
         p = sect.newParagraph();
         p.newLineBreak();
         p.newLineBreak();
-        p.newText ("GIF image");
+        p.newText("GIF image");
         p.newLineBreak();
-        RtfExternalGraphic imageE = sect.newImage ();
-        imageE.setURL (file + "gif");
+        RtfExternalGraphic imageE = sect.newImage();
+        imageE.setURL(file + "gif");
         p.newLineBreak();
         p.close();
 

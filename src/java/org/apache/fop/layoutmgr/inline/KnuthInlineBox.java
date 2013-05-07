@@ -39,8 +39,8 @@ public class KnuthInlineBox extends KnuthBox {
      * @param pos              the Position stored in this box
      * @param auxiliary        is this box auxiliary?
      */
-    public KnuthInlineBox
-        (int width, AlignmentContext alignmentContext, Position pos, boolean auxiliary) {
+    public KnuthInlineBox(
+        int width, AlignmentContext alignmentContext, Position pos, boolean auxiliary) {
         super(width, pos, auxiliary);
         this.alignmentContext = alignmentContext;
     }

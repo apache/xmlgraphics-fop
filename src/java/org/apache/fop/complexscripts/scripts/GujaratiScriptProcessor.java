@@ -42,8 +42,8 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
     /** logging instance */
     private static final Log log = LogFactory.getLog(GujaratiScriptProcessor.class);                                  // CSOK: ConstantNameCheck
 
-    GujaratiScriptProcessor (String script) {
-        super (script);
+    GujaratiScriptProcessor(String script) {
+        super(script);
     }
 
     @Override
@@ -53,12 +53,12 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
 
     @Override
     // find rightmost pre-base matra
-    protected int findPreBaseMatra (GlyphSequence gs) {
+    protected int findPreBaseMatra(GlyphSequence gs) {
         int   ng = gs.getGlyphCount();
         int   lk = -1;
         for (int i = ng; i > 0; i--) {
             int k = i - 1;
-            if (containsPreBaseMatra (gs, k)) {
+            if (containsPreBaseMatra(gs, k)) {
                 lk = k;
                 break;
             }
@@ -68,13 +68,13 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
 
     @Override
     // find leftmost pre-base matra target, starting from source
-    protected int findPreBaseMatraTarget (GlyphSequence gs, int source) {
+    protected int findPreBaseMatraTarget(GlyphSequence gs, int source) {
         int   ng = gs.getGlyphCount();
         int   lk = -1;
         for (int i = (source < ng) ? source : ng; i > 0; i--) {
             int k = i - 1;
-            if (containsConsonant (gs, k)) {
-                if (containsHalfConsonant (gs, k)) {
+            if (containsConsonant(gs, k)) {
+                if (containsHalfConsonant(gs, k)) {
                     lk = k;
                 } else if (lk == -1) {
                     lk = k;
@@ -86,39 +86,39 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         return lk;
     }
 
-    private static boolean containsPreBaseMatra (GlyphSequence gs, int k) {
-        GlyphSequence.CharAssociation a = gs.getAssociation (k);
-        int[] ca = gs.getCharacterArray (false);
+    private static boolean containsPreBaseMatra(GlyphSequence gs, int k) {
+        GlyphSequence.CharAssociation a = gs.getAssociation(k);
+        int[] ca = gs.getCharacterArray(false);
         for (int i = a.getStart(), e = a.getEnd(); i < e; i++) {
-            if (isPreM (ca [ i ])) {
+            if (isPreM(ca [ i ])) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean containsConsonant (GlyphSequence gs, int k) {
-        GlyphSequence.CharAssociation a = gs.getAssociation (k);
-        int[] ca = gs.getCharacterArray (false);
+    private static boolean containsConsonant(GlyphSequence gs, int k) {
+        GlyphSequence.CharAssociation a = gs.getAssociation(k);
+        int[] ca = gs.getCharacterArray(false);
         for (int i = a.getStart(), e = a.getEnd(); i < e; i++) {
-            if (isC (ca [ i ])) {
+            if (isC(ca [ i ])) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean containsHalfConsonant (GlyphSequence gs, int k) {
-        Boolean half = (Boolean) gs.getAssociation (k) . getPredication ("half");
+    private static boolean containsHalfConsonant(GlyphSequence gs, int k) {
+        Boolean half = (Boolean) gs.getAssociation(k) . getPredication("half");
         return (half != null) ? half.booleanValue() : false;
     }
 
     @Override
-    protected int findReph (GlyphSequence gs) {
+    protected int findReph(GlyphSequence gs) {
         int   ng = gs.getGlyphCount();
         int   li = -1;
         for (int i = 0; i < ng; i++) {
-            if (containsReph (gs, i)) {
+            if (containsReph(gs, i)) {
                 li = i;
                 break;
             }
@@ -127,14 +127,14 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
     }
 
     @Override
-    protected int findRephTarget (GlyphSequence gs, int source) {
+    protected int findRephTarget(GlyphSequence gs, int source) {
         int   ng = gs.getGlyphCount();
         int   c1 = -1;
         int   c2 = -1;
         // first candidate target is after first non-half consonant
         for (int i = 0; i < ng; i++) {
-            if ((i != source) && containsConsonant (gs, i)) {
-                if (! containsHalfConsonant (gs, i)) {
+            if ((i != source) && containsConsonant(gs, i)) {
+                if (! containsHalfConsonant(gs, i)) {
                     c1 = i + 1;
                     break;
                 }
@@ -142,9 +142,9 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         }
         // second candidate target is after last non-prebase matra after first candidate or before first syllable or vedic mark
         for (int i = (c1 >= 0) ? c1 : 0; i < ng; i++) {
-            if (containsMatra (gs, i) && ! containsPreBaseMatra (gs, i)) {
+            if (containsMatra(gs, i) && ! containsPreBaseMatra(gs, i)) {
                 c2 = i + 1;
-            } else if (containsOtherMark (gs, i)) {
+            } else if (containsOtherMark(gs, i)) {
                 c2 = i;
                 break;
             }
@@ -158,27 +158,27 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         }
     }
 
-    private static boolean containsReph (GlyphSequence gs, int k) {
-        Boolean rphf = (Boolean) gs.getAssociation (k) . getPredication ("rphf");
+    private static boolean containsReph(GlyphSequence gs, int k) {
+        Boolean rphf = (Boolean) gs.getAssociation(k) . getPredication("rphf");
         return (rphf != null) ? rphf.booleanValue() : false;
     }
 
-    private static boolean containsMatra (GlyphSequence gs, int k) {
-        GlyphSequence.CharAssociation a = gs.getAssociation (k);
-        int[] ca = gs.getCharacterArray (false);
+    private static boolean containsMatra(GlyphSequence gs, int k) {
+        GlyphSequence.CharAssociation a = gs.getAssociation(k);
+        int[] ca = gs.getCharacterArray(false);
         for (int i = a.getStart(), e = a.getEnd(); i < e; i++) {
-            if (isM (ca [ i ])) {
+            if (isM(ca [ i ])) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean containsOtherMark (GlyphSequence gs, int k) {
-        GlyphSequence.CharAssociation a = gs.getAssociation (k);
-        int[] ca = gs.getCharacterArray (false);
+    private static boolean containsOtherMark(GlyphSequence gs, int k) {
+        GlyphSequence.CharAssociation a = gs.getAssociation(k);
+        int[] ca = gs.getCharacterArray(false);
         for (int i = a.getStart(), e = a.getEnd(); i < e; i++) {
-            switch (typeOf (ca [ i ])) {
+            switch (typeOf(ca [ i ])) {
             case C_T:   // tone (e.g., udatta, anudatta)
             case C_A:   // accent (e.g., acute, grave)
             case C_O:   // other (e.g., candrabindu, anusvara, visarga, etc)
@@ -191,18 +191,18 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
     }
 
     private static class GujaratiSyllabizer extends DefaultSyllabizer {
-        GujaratiSyllabizer (String script, String language) {
-            super (script, language);
+        GujaratiSyllabizer(String script, String language) {
+            super(script, language);
         }
         @Override
         // | C ...
-        protected int findStartOfSyllable (int[] ca, int s, int e) {
+        protected int findStartOfSyllable(int[] ca, int s, int e) {
             if ((s < 0) || (s >= e)) {
                 return -1;
             } else {
                 while (s < e) {
                     int c = ca [ s ];
-                    if (isC (c)) {
+                    if (isC(c)) {
                         break;
                     } else {
                         s++;
@@ -213,7 +213,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         }
         @Override
         // D* L? | ...
-        protected int findEndOfSyllable (int[] ca, int s, int e) {
+        protected int findEndOfSyllable(int[] ca, int s, int e) {
             if ((s < 0) || (s >= e)) {
                 return -1;
             } else {
@@ -221,12 +221,12 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
                 int nl = 0;
                 int i;
                 // consume dead consonants
-                while ((i = isDeadConsonant (ca, s, e)) > s) {
+                while ((i = isDeadConsonant(ca, s, e)) > s) {
                     s = i;
                     nd++;
                 }
                 // consume zero or one live consonant
-                if ((i = isLiveConsonant (ca, s, e)) > s) {
+                if ((i = isLiveConsonant(ca, s, e)) > s) {
                     s = i;
                     nl++;
                 }
@@ -234,7 +234,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
             }
         }
         // D := ( C N? H )?
-        private int isDeadConsonant (int[] ca, int s, int e) {
+        private int isDeadConsonant(int[] ca, int s, int e) {
             if (s < 0) {
                 return -1;
             } else {
@@ -246,7 +246,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
                     // C
                     if ((s + i) < e) {
                         c = ca [ s + i ];
-                        if (isC (c)) {
+                        if (isC(c)) {
                             i++;
                             nc++;
                         } else {
@@ -256,14 +256,14 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
                     // N?
                     if ((s + i) < e) {
                         c = ca [ s + 1 ];
-                        if (isN (c)) {
+                        if (isN(c)) {
                             i++;
                         }
                     }
                     // H
                     if ((s + i) < e) {
                         c = ca [ s + i ];
-                        if (isH (c)) {
+                        if (isH(c)) {
                             i++;
                             nh++;
                         } else {
@@ -275,7 +275,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
             }
         }
         // L := ( (C|V) N? X* )?; where X = ( MATRA | ACCENT MARK | TONE MARK | OTHER MARK )
-        private int isLiveConsonant (int[] ca, int s, int e) {
+        private int isLiveConsonant(int[] ca, int s, int e) {
             if (s < 0) {
                 return -1;
             } else {
@@ -288,10 +288,10 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
                     // C
                     if ((s + i) < e) {
                         c = ca [ s + i ];
-                        if (isC (c)) {
+                        if (isC(c)) {
                             i++;
                             nc++;
-                        } else if (isV (c)) {
+                        } else if (isV(c)) {
                             i++;
                             nv++;
                         } else {
@@ -301,14 +301,14 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
                     // N?
                     if ((s + i) < e) {
                         c = ca [ s + i ];
-                        if (isN (c)) {
+                        if (isN(c)) {
                             i++;
                         }
                     }
                     // X*
                     while ((s + i) < e) {
                         c = ca [ s + i ];
-                        if (isX (c)) {
+                        if (isX(c)) {
                             i++;
                             nx++;
                         } else {
@@ -320,7 +320,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
                 if (nx == 0) {
                     if ((s + i) < e) {
                         c = ca [ s + i ];
-                        if (isH (c)) {
+                        if (isH(c)) {
                             if (nc > 0) {
                                 nc--;
                             } else if (nv > 0) {
@@ -493,7 +493,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         }
     }
     static boolean isType(int c, int t) {
-        return typeOf (c) == t;
+        return typeOf(c) == t;
     }
     static boolean hasFlag(int c, int f) {
         if ((c >= ccaStart) && (c < ccaEnd)) {
@@ -524,7 +524,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         return isType(c,C_M) && hasFlag(c,C_PRE);
     }
     static boolean isX(int c) {
-        switch (typeOf (c)) {
+        switch (typeOf(c)) {
         case C_M: // matra (combining vowel)
         case C_A: // accent mark
         case C_T: // tone mark

@@ -64,7 +64,7 @@ public class RenderPagesModel extends AreaTreeModel {
      * @param stream OutputStream
      * @throws FOPException if the renderer cannot be properly initialized
      */
-    public RenderPagesModel (FOUserAgent userAgent, String outputFormat,
+    public RenderPagesModel(FOUserAgent userAgent, String outputFormat,
         FontInfo fontInfo, OutputStream stream) throws FOPException {
 
         super();

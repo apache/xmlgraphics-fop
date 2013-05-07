@@ -255,7 +255,7 @@ class PropertyTokenizer {
 
     private void scanRestOfName() {
         while (++exprIndex < exprLength) {
-            if (!isNameChar (expr.charAt (exprIndex))) {
+            if (!isNameChar(expr.charAt(exprIndex))) {
                 break;
             }
         }

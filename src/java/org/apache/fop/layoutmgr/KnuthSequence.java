@@ -126,8 +126,8 @@ public abstract class KnuthSequence extends ArrayList {
         ListElement element;
         while (listIter.hasNext()) {
             element = (ListElement) listIter.next();
-            element.setPosition
-            (lm.notifyPos(new NonLeafPosition(lm, element.getPosition())));
+            element.setPosition(
+            lm.notifyPos(new NonLeafPosition(lm, element.getPosition())));
         }
     }
 

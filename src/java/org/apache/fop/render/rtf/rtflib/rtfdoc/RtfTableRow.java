@@ -96,7 +96,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
     public RtfTableCell newTableCellMergedVertically(int cellWidth,
            RtfAttributes attrs) throws IOException {
         highestCell++;
-        cell = new RtfTableCell (this, writer, cellWidth, attrs, highestCell);
+        cell = new RtfTableCell(this, writer, cellWidth, attrs, highestCell);
         cell.setVMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
         return cell;
     }
@@ -110,7 +110,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
      * @throws IOException for I/O problems
      * @throws FOPException if attributes cannot be cloned
      */
-    public RtfTableCell newTableCellMergedHorizontally (int cellWidth,
+    public RtfTableCell newTableCellMergedHorizontally(int cellWidth,
            RtfAttributes attrs) throws IOException, FOPException {
         highestCell++;
         // Added by Normand Masse

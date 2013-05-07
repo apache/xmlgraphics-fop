@@ -95,8 +95,8 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
         locale = CommonHyphenation.toLocale(language, country);
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
-        writingModeTraits = new WritingModeTraits
-            (WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()));
+        writingModeTraits = new WritingModeTraits(
+            WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()));
         if (masterReference == null || masterReference.equals("")) {
             missingPropertyError("master-reference");
         }
@@ -263,8 +263,8 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
      * @return the SimplePageMaster to use for this page
      * @throws PageProductionException if there's a problem determining the page master
      */
-    public SimplePageMaster getNextSimplePageMaster
-        (int page, boolean isFirstPage, boolean isLastPage, boolean isBlank)
+    public SimplePageMaster getNextSimplePageMaster(
+        int page, boolean isFirstPage, boolean isLastPage, boolean isBlank)
         throws PageProductionException {
 
         if (pageSequenceMaster == null) {
@@ -405,20 +405,20 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
 
 
     @Override
-    protected Stack collectDelimitedTextRanges (Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
         // collect ranges from static content flows
         Map<String, FONode> flows = getFlowMap();
         if (flows != null) {
             for (FONode fn : flows.values()) {
                 if (fn instanceof StaticContent) {
-                    ranges = ((StaticContent) fn).collectDelimitedTextRanges (ranges);
+                    ranges = ((StaticContent) fn).collectDelimitedTextRanges(ranges);
                 }
             }
         }
         // collect ranges in main flow
         Flow main = getMainFlow();
         if (main != null) {
-            ranges = main.collectDelimitedTextRanges (ranges);
+            ranges = main.collectDelimitedTextRanges(ranges);
         }
         return ranges;
     }

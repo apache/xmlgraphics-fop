@@ -65,15 +65,15 @@ public class GlyphSequence implements Cloneable {
      * @param associations a (possibly null) array of glyph to character associations
      * @param predications true if predications are enabled
      */
-    public GlyphSequence (IntBuffer characters, IntBuffer glyphs, List associations, boolean predications) {
+    public GlyphSequence(IntBuffer characters, IntBuffer glyphs, List associations, boolean predications) {
         if (characters == null) {
-            characters = IntBuffer.allocate (DEFAULT_CHARS_CAPACITY);
+            characters = IntBuffer.allocate(DEFAULT_CHARS_CAPACITY);
         }
         if (glyphs == null) {
-            glyphs = IntBuffer.allocate (characters.capacity());
+            glyphs = IntBuffer.allocate(characters.capacity());
         }
         if (associations == null) {
-            associations = makeIdentityAssociations (characters.limit(), glyphs.limit());
+            associations = makeIdentityAssociations(characters.limit(), glyphs.limit());
         }
         this.characters = characters;
         this.glyphs = glyphs;
@@ -91,7 +91,7 @@ public class GlyphSequence implements Cloneable {
      * @param glyphs a (possibly null) buffer of glyphs
      * @param associations a (possibly null) array of glyph to character associations
      */
-    public GlyphSequence (IntBuffer characters, IntBuffer glyphs, List associations) {
+    public GlyphSequence(IntBuffer characters, IntBuffer glyphs, List associations) {
         this (characters, glyphs, associations, false);
     }
 
@@ -101,8 +101,8 @@ public class GlyphSequence implements Cloneable {
      * of glyphs buffer and association list.
      * @param gs an existing glyph sequence
      */
-    public GlyphSequence (GlyphSequence gs) {
-        this (gs.characters.duplicate(), copyBuffer (gs.glyphs), copyAssociations (gs.associations), gs.predications);
+    public GlyphSequence(GlyphSequence gs) {
+        this (gs.characters.duplicate(), copyBuffer(gs.glyphs), copyAssociations(gs.associations), gs.predications);
     }
 
     /**
@@ -119,8 +119,8 @@ public class GlyphSequence implements Cloneable {
      * @param ial input association list
      * @param lal lookahead association list
      */
-    public GlyphSequence (GlyphSequence gs, int[] bga, int[] iga, int[] lga, CharAssociation[] bal, CharAssociation[] ial, CharAssociation[] lal) {
-        this (gs.characters.duplicate(), concatGlyphs (bga, iga, lga), concatAssociations (bal, ial, lal), gs.predications);
+    public GlyphSequence(GlyphSequence gs, int[] bga, int[] iga, int[] lga, CharAssociation[] bal, CharAssociation[] ial, CharAssociation[] lal) {
+        this (gs.characters.duplicate(), concatGlyphs(bga, iga, lga), concatAssociations(bal, ial, lal), gs.predications);
     }
 
     /**
@@ -141,9 +141,9 @@ public class GlyphSequence implements Cloneable {
      * @param copy true if to return a newly instantiated array of characters
      * @return array of characters
      */
-    public int[] getCharacterArray (boolean copy) {
+    public int[] getCharacterArray(boolean copy) {
         if (copy) {
-            return toArray (characters);
+            return toArray(characters);
         } else {
             return characters.array();
         }
@@ -165,8 +165,8 @@ public class GlyphSequence implements Cloneable {
      * @throws IndexOutOfBoundsException if index is less than zero
      * or exceeds last valid position
      */
-    public int getGlyph (int index) throws IndexOutOfBoundsException {
-        return glyphs.get (index);
+    public int getGlyph(int index) throws IndexOutOfBoundsException {
+        return glyphs.get(index);
     }
 
     /**
@@ -176,11 +176,11 @@ public class GlyphSequence implements Cloneable {
      * @throws IndexOutOfBoundsException if index is greater or equal to
      * the limit of the underlying glyph buffer
      */
-    public void setGlyph (int index, int gi) throws IndexOutOfBoundsException {
+    public void setGlyph(int index, int gi) throws IndexOutOfBoundsException {
         if (gi > 65535) {
             gi = 65535;
         }
-        glyphs.put (index, gi);
+        glyphs.put(index, gi);
     }
 
     /**
@@ -200,7 +200,7 @@ public class GlyphSequence implements Cloneable {
      * indicating all avaialble glyphs starting at offset
      * @return glyph array
      */
-    public int[] getGlyphs (int offset, int count) {
+    public int[] getGlyphs(int offset, int count) {
         int ng = getGlyphCount();
         if (offset < 0) {
             offset = 0;
@@ -213,7 +213,7 @@ public class GlyphSequence implements Cloneable {
         int[] ga = new int [ count ];
         for (int i = offset, n = offset + count, k = 0; i < n; i++) {
             if (k < ga.length) {
-                ga [ k++ ] = glyphs.get (i);
+                ga [ k++ ] = glyphs.get(i);
             }
         }
         return ga;
@@ -229,9 +229,9 @@ public class GlyphSequence implements Cloneable {
      * @param copy true if to return a newly instantiated array of glyphs
      * @return array of glyphs
      */
-    public int[] getGlyphArray (boolean copy) {
+    public int[] getGlyphArray(boolean copy) {
         if (copy) {
-            return toArray (glyphs);
+            return toArray(glyphs);
         } else {
             return glyphs.array();
         }
@@ -253,8 +253,8 @@ public class GlyphSequence implements Cloneable {
      * @throws IndexOutOfBoundsException if index is less than zero
      * or exceeds last valid position
      */
-    public CharAssociation getAssociation (int index) throws IndexOutOfBoundsException {
-        return (CharAssociation) associations.get (index);
+    public CharAssociation getAssociation(int index) throws IndexOutOfBoundsException {
+        return (CharAssociation) associations.get(index);
     }
 
     /**
@@ -272,7 +272,7 @@ public class GlyphSequence implements Cloneable {
      * indicating all avaialble associations starting at offset
      * @return associations
      */
-    public CharAssociation[] getAssociations (int offset, int count) {
+    public CharAssociation[] getAssociations(int offset, int count) {
         int ng = getGlyphCount();
         if (offset < 0) {
             offset = 0;
@@ -285,7 +285,7 @@ public class GlyphSequence implements Cloneable {
         CharAssociation[] aa = new CharAssociation [ count ];
         for (int i = offset, n = offset + count, k = 0; i < n; i++) {
             if (k < aa.length) {
-                aa [ k++ ] = (CharAssociation) associations.get (i);
+                aa [ k++ ] = (CharAssociation) associations.get(i);
             }
         }
         return aa;
@@ -295,7 +295,7 @@ public class GlyphSequence implements Cloneable {
      * Enable or disable predications.
      * @param enable true if predications are to be enabled; otherwise false to disable
      */
-    public void setPredications (boolean enable) {
+    public void setPredications(boolean enable) {
         this.predications = enable;
     }
 
@@ -313,11 +313,11 @@ public class GlyphSequence implements Cloneable {
      * @param key predication key
      * @param value predication value
      */
-    public void setPredication (int offset, String key, Object value) {
+    public void setPredication(int offset, String key, Object value) {
         if (predications) {
-            CharAssociation[] aa = getAssociations (offset, 1);
+            CharAssociation[] aa = getAssociations(offset, 1);
             CharAssociation   ca = aa[0];
-            ca.setPredication (key, value);
+            ca.setPredication(key, value);
         }
     }
 
@@ -327,11 +327,11 @@ public class GlyphSequence implements Cloneable {
      * @param key predication key
      * @return predication KEY at OFFSET or null if none exists
      */
-    public Object getPredication (int offset, String key) {
+    public Object getPredication(int offset, String key) {
         if (predications) {
-            CharAssociation[] aa = getAssociations (offset, 1);
+            CharAssociation[] aa = getAssociations(offset, 1);
             CharAssociation   ca = aa[0];
-            return ca.getPredication (key);
+            return ca.getPredication(key);
         } else {
             return null;
         }
@@ -343,12 +343,12 @@ public class GlyphSequence implements Cloneable {
      * @return zero if glyphs are the same, otherwise returns 1 or -1 according to whether this glyph sequence's
      * glyphs are lexicographically greater or lesser than the glyphs in the specified string buffer
      */
-    public int compareGlyphs (IntBuffer gb) {
+    public int compareGlyphs(IntBuffer gb) {
         int ng = getGlyphCount();
         for (int i = 0, n = gb.limit(); i < n; i++) {
             if (i < ng) {
-                int g1 = glyphs.get (i);
-                int g2 = gb.get (i);
+                int g1 = glyphs.get(i);
+                int g2 = gb.get(i);
                 if (g1 > g2) {
                     return 1;
                 } else if (g1 < g2) {
@@ -365,9 +365,9 @@ public class GlyphSequence implements Cloneable {
     public Object clone() {
         try {
             GlyphSequence gs = (GlyphSequence) super.clone();
-            gs.characters = copyBuffer (characters);
-            gs.glyphs = copyBuffer (glyphs);
-            gs.associations = copyAssociations (associations);
+            gs.characters = copyBuffer(characters);
+            gs.glyphs = copyBuffer(glyphs);
+            gs.associations = copyAssociations(associations);
             return gs;
         } catch (CloneNotSupportedException e) {
             return null;
@@ -377,15 +377,15 @@ public class GlyphSequence implements Cloneable {
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append ('{');
-        sb.append ("chars = [");
-        sb.append (characters);
-        sb.append ("], glyphs = [");
-        sb.append (glyphs);
-        sb.append ("], associations = [");
-        sb.append (associations);
-        sb.append ("]");
-        sb.append ('}');
+        sb.append('{');
+        sb.append("chars = [");
+        sb.append(characters);
+        sb.append("], glyphs = [");
+        sb.append(glyphs);
+        sb.append("], associations = [");
+        sb.append(associations);
+        sb.append("]");
+        sb.append('}');
         return sb.toString();
     }
 
@@ -395,7 +395,7 @@ public class GlyphSequence implements Cloneable {
      * @param ga2 second glyph array
      * @return true if arrays are botth null or both non-null and have identical elements
      */
-    public static boolean sameGlyphs (int[] ga1, int[] ga2) {
+    public static boolean sameGlyphs(int[] ga1, int[] ga2) {
         if (ga1 == ga2) {
             return true;
         } else if ((ga1 == null) || (ga2 == null)) {
@@ -419,7 +419,7 @@ public class GlyphSequence implements Cloneable {
      * @param lga lookahead glyph array
      * @return new integer buffer containing concatenated glyphs
      */
-    public static IntBuffer concatGlyphs (int[] bga, int[] iga, int[] lga) {
+    public static IntBuffer concatGlyphs(int[] bga, int[] iga, int[] lga) {
         int ng = 0;
         if (bga != null) {
             ng += bga.length;
@@ -430,15 +430,15 @@ public class GlyphSequence implements Cloneable {
         if (lga != null) {
             ng += lga.length;
         }
-        IntBuffer gb = IntBuffer.allocate (ng);
+        IntBuffer gb = IntBuffer.allocate(ng);
         if (bga != null) {
-            gb.put (bga);
+            gb.put(bga);
         }
         if (iga != null) {
-            gb.put (iga);
+            gb.put(iga);
         }
         if (lga != null) {
-            gb.put (lga);
+            gb.put(lga);
         }
         gb.flip();
         return gb;
@@ -451,7 +451,7 @@ public class GlyphSequence implements Cloneable {
      * @param laa lookahead association array
      * @return new list containing concatenated associations
      */
-    public static List concatAssociations (CharAssociation[] baa, CharAssociation[] iaa, CharAssociation[] laa) {
+    public static List concatAssociations(CharAssociation[] baa, CharAssociation[] iaa, CharAssociation[] laa) {
         int na = 0;
         if (baa != null) {
             na += baa.length;
@@ -463,20 +463,20 @@ public class GlyphSequence implements Cloneable {
             na += laa.length;
         }
         if (na > 0) {
-            List gl = new ArrayList (na);
+            List gl = new ArrayList(na);
             if (baa != null) {
                 for (int i = 0; i < baa.length; i++) {
-                    gl.add (baa[i]);
+                    gl.add(baa[i]);
                 }
             }
             if (iaa != null) {
                 for (int i = 0; i < iaa.length; i++) {
-                    gl.add (iaa[i]);
+                    gl.add(iaa[i]);
                 }
             }
             if (laa != null) {
                 for (int i = 0; i < laa.length; i++) {
-                    gl.add (laa[i]);
+                    gl.add(laa[i]);
                 }
             }
             return gl;
@@ -491,7 +491,7 @@ public class GlyphSequence implements Cloneable {
      * @param sa array of glyph sequences, whose glyph arrays and association lists are to be concatenated
      * @return new glyph sequence referring to character array of GS and concatenated glyphs and associations of SA
      */
-    public static GlyphSequence join (GlyphSequence gs, GlyphSequence[] sa) {
+    public static GlyphSequence join(GlyphSequence gs, GlyphSequence[] sa) {
         assert sa != null;
         int tg = 0;
         int ta = 0;
@@ -507,14 +507,14 @@ public class GlyphSequence implements Cloneable {
             tg += ng;
             ta += na;
         }
-        IntBuffer uga = IntBuffer.allocate (tg);
-        ArrayList ual = new ArrayList (ta);
+        IntBuffer uga = IntBuffer.allocate(tg);
+        ArrayList ual = new ArrayList(ta);
         for (int i = 0, n = sa.length; i < n; i++) {
             GlyphSequence s = sa [ i ];
-            uga.put (s.getGlyphs());
-            ual.addAll (s.getAssociations());
+            uga.put(s.getGlyphs());
+            ual.addAll(s.getAssociations());
         }
-        return new GlyphSequence (gs.getCharacters(), uga, ual, gs.getPredications());
+        return new GlyphSequence(gs.getCharacters(), uga, ual, gs.getPredications());
     }
 
     /**
@@ -525,12 +525,12 @@ public class GlyphSequence implements Cloneable {
      * @param target index to which source sub-sequence is to be moved
      * @return reordered sequence (or original if no reordering performed)
      */
-    public static GlyphSequence reorder (GlyphSequence gs, int source, int count, int target) {
+    public static GlyphSequence reorder(GlyphSequence gs, int source, int count, int target) {
         if (source != target) {
             int   ng  = gs.getGlyphCount();
-            int[] ga  = gs.getGlyphArray (false);
+            int[] ga  = gs.getGlyphArray(false);
             int[] nga = new int [ ng ];
-            GlyphSequence.CharAssociation[] aa  = gs.getAssociations (0, ng);
+            GlyphSequence.CharAssociation[] aa  = gs.getAssociations(0, ng);
             GlyphSequence.CharAssociation[] naa = new GlyphSequence.CharAssociation [ ng ];
             if (source < target) {
                 int t = 0;
@@ -569,49 +569,49 @@ public class GlyphSequence implements Cloneable {
                     naa[t] = aa[s];
                 }
             }
-            return new GlyphSequence (gs, null, nga, null, null, naa, null);
+            return new GlyphSequence(gs, null, nga, null, null, naa, null);
         } else {
             return gs;
         }
     }
 
-    private static int[] toArray (IntBuffer ib) {
+    private static int[] toArray(IntBuffer ib) {
         if (ib != null) {
             int n = ib.limit();
             int[] ia = new int[n];
-            ib.get (ia, 0, n);
+            ib.get(ia, 0, n);
             return ia;
         } else {
             return new int[0];
         }
     }
 
-    private static List makeIdentityAssociations (int numChars, int numGlyphs) {
+    private static List makeIdentityAssociations(int numChars, int numGlyphs) {
         int nc = numChars;
         int ng = numGlyphs;
-        List av = new ArrayList (ng);
+        List av = new ArrayList(ng);
         for (int i = 0, n = ng; i < n; i++) {
             int k = (i > nc) ? nc : i;
-            av.add (new CharAssociation (i, (k == nc) ? 0 : 1));
+            av.add(new CharAssociation(i, (k == nc) ? 0 : 1));
         }
         return av;
     }
 
-    private static IntBuffer copyBuffer (IntBuffer ib) {
+    private static IntBuffer copyBuffer(IntBuffer ib) {
         if (ib != null) {
             int[] ia = new int [ ib.capacity() ];
             int   p  = ib.position();
             int   l  = ib.limit();
-            System.arraycopy (ib.array(), 0, ia, 0, ia.length);
-            return IntBuffer.wrap (ia, p, l - p);
+            System.arraycopy(ib.array(), 0, ia, 0, ia.length);
+            return IntBuffer.wrap(ia, p, l - p);
         } else {
             return null;
         }
     }
 
-    private static List copyAssociations (List ca) {
+    private static List copyAssociations(List ca) {
         if (ca != null) {
-            return new ArrayList (ca);
+            return new ArrayList(ca);
         } else {
             return ca;
         }
@@ -645,7 +645,7 @@ public class GlyphSequence implements Cloneable {
         private static volatile Map<String,PredicationMerger> predicationMergers;
 
         interface PredicationMerger {
-            Object merge (String key, Object v1, Object v2);
+            Object merge(String key, Object v1, Object v2);
         }
 
         /**
@@ -656,7 +656,7 @@ public class GlyphSequence implements Cloneable {
          * members of array are sub-interval starts, and odd members are sub-interval
          * ends (exclusive)
          */
-        public CharAssociation (int offset, int count, int[] subIntervals) {
+        public CharAssociation(int offset, int count, int[] subIntervals) {
             this.offset = offset;
             this.count = count;
             this.subIntervals = ((subIntervals != null) && (subIntervals.length > 2)) ? subIntervals : null;
@@ -667,7 +667,7 @@ public class GlyphSequence implements Cloneable {
          * @param offset into array of UTF-16 code elements (in associated CharSequence)
          * @param count of UTF-16 character code elements (in associated CharSequence)
          */
-        public CharAssociation (int offset, int count) {
+        public CharAssociation(int offset, int count) {
             this (offset, count, null);
         }
 
@@ -677,8 +677,8 @@ public class GlyphSequence implements Cloneable {
          * members of array are sub-interval starts, and odd members are sub-interval
          * ends (exclusive)
          */
-        public CharAssociation (int[] subIntervals) {
-            this (getSubIntervalsStart (subIntervals), getSubIntervalsLength (subIntervals), subIntervals);
+        public CharAssociation(int[] subIntervals) {
+            this (getSubIntervalsStart(subIntervals), getSubIntervalsLength(subIntervals), subIntervals);
         }
 
         /** @return offset (start of association interval) */
@@ -721,7 +721,7 @@ public class GlyphSequence implements Cloneable {
          * @param count length of interval
          * @return true if this association is contained within [offset,offset+count)
          */
-        public boolean contained (int offset, int count) {
+        public boolean contained(int offset, int count) {
             int s = offset;
             int e = offset + count;
             if (! isDisjoint()) {
@@ -746,12 +746,12 @@ public class GlyphSequence implements Cloneable {
          * @param key predication key
          * @param value predication value
          */
-        public void setPredication (String key, Object value) {
+        public void setPredication(String key, Object value) {
             if (predications == null) {
                 predications = new HashMap<String,Object>();
             }
             if (predications != null) {
-                predications.put (key, value);
+                predications.put(key, value);
             }
         }
 
@@ -760,9 +760,9 @@ public class GlyphSequence implements Cloneable {
          * @param key predication key
          * @return predication KEY at OFFSET or null if none exists
          */
-        public Object getPredication (String key) {
+        public Object getPredication(String key) {
             if (predications != null) {
-                return predications.get (key);
+                return predications.get(key);
             } else {
                 return null;
             }
@@ -773,17 +773,17 @@ public class GlyphSequence implements Cloneable {
          * @param key predication key
          * @param value predication value
          */
-        public void mergePredication (String key, Object value) {
+        public void mergePredication(String key, Object value) {
             if (predications == null) {
                 predications = new HashMap<String,Object>();
             }
             if (predications != null) {
-                if (predications.containsKey (key)) {
-                    Object v1 = predications.get (key);
+                if (predications.containsKey(key)) {
+                    Object v1 = predications.get(key);
                     Object v2 = value;
-                    predications.put (key, mergePredicationValues (key, v1, v2));
+                    predications.put(key, mergePredicationValues(key, v1, v2));
                 } else {
-                    predications.put (key, value);
+                    predications.put(key, value);
                 }
             }
         }
@@ -796,10 +796,10 @@ public class GlyphSequence implements Cloneable {
          * @param v2 second (to be merged) predication value
          * @return merged value
          */
-        public static Object mergePredicationValues (String key, Object v1, Object v2) {
-            PredicationMerger pm = getPredicationMerger (key);
+        public static Object mergePredicationValues(String key, Object v1, Object v2) {
+            PredicationMerger pm = getPredicationMerger(key);
             if (pm != null) {
-                return pm.merge (key, v1, v2);
+                return pm.merge(key, v1, v2);
             } else if (v2 != null) {
                 return v2;
             } else {
@@ -811,10 +811,10 @@ public class GlyphSequence implements Cloneable {
          * Merge predications from another CA.
          * @param ca from which to merge
          */
-        public void mergePredications (CharAssociation ca) {
+        public void mergePredications(CharAssociation ca) {
             if (ca.predications != null) {
                 for (Map.Entry<String,Object> e : ca.predications.entrySet()) {
-                    mergePredication (e.getKey(), e.getValue());
+                    mergePredication(e.getKey(), e.getValue());
                 }
             }
         }
@@ -824,7 +824,7 @@ public class GlyphSequence implements Cloneable {
             try {
                 CharAssociation ca = (CharAssociation) super.clone();
                 if (predications != null) {
-                    ca.predications = new HashMap<String,Object> (predications);
+                    ca.predications = new HashMap<String,Object>(predications);
                 }
                 return ca;
             } catch (CloneNotSupportedException e) {
@@ -837,12 +837,12 @@ public class GlyphSequence implements Cloneable {
          * @param key for predication merger
          * @param pm predication merger
          */
-        public static void setPredicationMerger (String key, PredicationMerger pm) {
+        public static void setPredicationMerger(String key, PredicationMerger pm) {
             if (predicationMergers == null) {
                 predicationMergers = new HashMap<String,PredicationMerger>();
             }
             if (predicationMergers != null) {
-                predicationMergers.put (key, pm);
+                predicationMergers.put(key, pm);
             }
         }
 
@@ -851,9 +851,9 @@ public class GlyphSequence implements Cloneable {
          * @param key for predication merger
          * @return predication merger or null if none exists
          */
-        public static PredicationMerger getPredicationMerger (String key) {
+        public static PredicationMerger getPredicationMerger(String key) {
             if (predicationMergers != null) {
-                return predicationMergers.get (key);
+                return predicationMergers.get(key);
             } else {
                 return null;
             }
@@ -865,7 +865,7 @@ public class GlyphSequence implements Cloneable {
          * @param repeat count
          * @return array of replicated associations
          */
-        public static CharAssociation[] replicate (CharAssociation a, int repeat) {
+        public static CharAssociation[] replicate(CharAssociation a, int repeat) {
             CharAssociation[] aa = new CharAssociation [ repeat ];
             for (int i = 0, n = aa.length; i < n; i++) {
                 aa [ i ] = (CharAssociation) a.clone();
@@ -879,30 +879,30 @@ public class GlyphSequence implements Cloneable {
          * @param aa array of associations to join
          * @return (possibly disjoint) association containing joined associations
          */
-        public static CharAssociation join (CharAssociation[] aa) {
+        public static CharAssociation join(CharAssociation[] aa) {
             CharAssociation ca;
             // extract sorted intervals
-            int[] ia = extractIntervals (aa);
+            int[] ia = extractIntervals(aa);
             if ((ia == null) || (ia.length == 0)) {
-                ca = new CharAssociation (0, 0);
+                ca = new CharAssociation(0, 0);
             } else if (ia.length == 2) {
                 int s = ia[0];
                 int e = ia[1];
-                ca = new CharAssociation (s, e - s);
+                ca = new CharAssociation(s, e - s);
             } else {
-                ca = new CharAssociation (mergeIntervals (ia));
+                ca = new CharAssociation(mergeIntervals(ia));
             }
-            return mergePredicates (ca, aa);
+            return mergePredicates(ca, aa);
         }
 
-        private static CharAssociation mergePredicates (CharAssociation ca, CharAssociation[] aa) {
+        private static CharAssociation mergePredicates(CharAssociation ca, CharAssociation[] aa) {
             for (CharAssociation a : aa) {
-                ca.mergePredications (a);
+                ca.mergePredications(a);
             }
             return ca;
         }
 
-        private static int getSubIntervalsStart (int[] ia) {
+        private static int getSubIntervalsStart(int[] ia) {
             int us = Integer.MAX_VALUE;
             int ue = Integer.MIN_VALUE;
             if (ia != null) {
@@ -926,7 +926,7 @@ public class GlyphSequence implements Cloneable {
             return us;
         }
 
-        private static int getSubIntervalsLength (int[] ia) {
+        private static int getSubIntervalsLength(int[] ia) {
             int us = Integer.MAX_VALUE;
             int ue = Integer.MIN_VALUE;
             if (ia != null) {
@@ -953,7 +953,7 @@ public class GlyphSequence implements Cloneable {
         /**
          * Extract sorted sub-intervals.
          */
-        private static int[] extractIntervals (CharAssociation[] aa) {
+        private static int[] extractIntervals(CharAssociation[] aa) {
             int ni = 0;
             for (int i = 0, n = aa.length; i < n; i++) {
                 CharAssociation a = aa [ i ];
@@ -980,7 +980,7 @@ public class GlyphSequence implements Cloneable {
                     k++;
                 }
             }
-            return sortIntervals (sa, ea);
+            return sortIntervals(sa, ea);
         }
 
         private static final int[] sortIncrements16                                                             // CSOK: ConstantNameCheck
@@ -992,7 +992,7 @@ public class GlyphSequence implements Cloneable {
         /**
          * Sort sub-intervals using modified Shell Sort.
          */
-        private static int[] sortIntervals (int[] sa, int[] ea) {
+        private static int[] sortIntervals(int[] sa, int[] ea) {
             assert sa != null;
             assert ea != null;
             assert sa.length == ea.length;
@@ -1030,7 +1030,7 @@ public class GlyphSequence implements Cloneable {
         /**
          * Merge overlapping and abutting sub-intervals.
          */
-        private static int[] mergeIntervals (int[] ia) {
+        private static int[] mergeIntervals(int[] ia) {
             int ni = ia.length;
             int i;
             int n;

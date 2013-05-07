@@ -60,15 +60,15 @@ public class RtfBookmark extends RtfElement {
      * @param writer a <code>Writer</code> value
      * @param bookmark Name of the bookmark
      */
-    RtfBookmark (RtfContainer parent, Writer writer, String bookmark) throws IOException {
-        super (parent, writer);
+    RtfBookmark(RtfContainer parent, Writer writer, String bookmark) throws IOException {
+        super(parent, writer);
 
-        int now = bookmark.length ();
+        int now = bookmark.length();
 
-        this.bookmark = bookmark.substring (0,
+        this.bookmark = bookmark.substring(0,
                 now < MAX_BOOKMARK_LENGTH ? now : MAX_BOOKMARK_LENGTH);
-        this.bookmark = this.bookmark.replace ('.', REPLACE_CHARACTER);
-        this.bookmark = this.bookmark.replace (' ', REPLACE_CHARACTER);
+        this.bookmark = this.bookmark.replace('.', REPLACE_CHARACTER);
+        this.bookmark = this.bookmark.replace(' ', REPLACE_CHARACTER);
     }
 
 
@@ -81,8 +81,8 @@ public class RtfBookmark extends RtfElement {
      *
      * @throws IOException On Error
      */
-    public void writeRtfPrefix () throws IOException {
-        startBookmark ();
+    public void writeRtfPrefix() throws IOException {
+        startBookmark();
     }
 
     /**
@@ -90,7 +90,7 @@ public class RtfBookmark extends RtfElement {
      *
      * @exception IOException On error
      */
-    public void writeRtfContent () throws IOException {
+    public void writeRtfContent() throws IOException {
 //        this.getRtfFile ().getLog ().logInfo ("Write bookmark '" + bookmark + "'.");
         // No content to write
     }
@@ -100,8 +100,8 @@ public class RtfBookmark extends RtfElement {
      *
      * @throws IOException On Error
      */
-    public void writeRtfSuffix () throws IOException {
-        endBookmark ();
+    public void writeRtfSuffix() throws IOException {
+        endBookmark();
     }
 
 
@@ -114,10 +114,10 @@ public class RtfBookmark extends RtfElement {
      *
      * @throws IOException On error
      */
-    private void startBookmark () throws IOException {
+    private void startBookmark() throws IOException {
 
         // {\*\bkmkstart test}
-        writeRtfBookmark ("bkmkstart");
+        writeRtfBookmark("bkmkstart");
     }
 
     /**
@@ -125,10 +125,10 @@ public class RtfBookmark extends RtfElement {
      *
      * @throws IOException On error
      */
-    private void endBookmark () throws IOException {
+    private void endBookmark() throws IOException {
 
         // {\*\bkmkend test}
-        writeRtfBookmark ("bkmkend");
+        writeRtfBookmark("bkmkend");
     }
 
     /**
@@ -138,19 +138,19 @@ public class RtfBookmark extends RtfElement {
      *
      * @throws IOException On error
      */
-    private void writeRtfBookmark (String tag) throws IOException {
+    private void writeRtfBookmark(String tag) throws IOException {
         if (bookmark == null) {
             return;
 
         }
 
-        this.writeGroupMark (true);
+        this.writeGroupMark(true);
 
         //changed. Now using writeStarControlWord
-        this.writeStarControlWord (tag);
+        this.writeStarControlWord(tag);
 
-        writer.write (bookmark);
-        this.writeGroupMark (false);
+        writer.write(bookmark);
+        this.writeGroupMark(false);
     }
 
         /**

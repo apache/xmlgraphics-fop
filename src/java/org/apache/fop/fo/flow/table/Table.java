@@ -138,8 +138,8 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
         tableLayout = pList.get(PR_TABLE_LAYOUT).getEnum();
         tableOmitFooterAtBreak = pList.get(PR_TABLE_OMIT_FOOTER_AT_BREAK).getEnum();
         tableOmitHeaderAtBreak = pList.get(PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum();
-        writingModeTraits = new WritingModeTraits
-            (WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()));
+        writingModeTraits = new WritingModeTraits(
+            WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()));
 
         //Bind extension properties
         widowContentLimit = pList.get(PR_X_WIDOW_CONTENT_LIMIT).getLength();
@@ -602,20 +602,20 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges (Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
         // header sub-tree
         TableHeader header = getTableHeader();
         if (header != null) {
-            ranges = header.collectDelimitedTextRanges (ranges);
+            ranges = header.collectDelimitedTextRanges(ranges);
         }
         // footer sub-tree
         TableFooter footer = getTableFooter();
         if (footer != null) {
-            ranges = footer.collectDelimitedTextRanges (ranges);
+            ranges = footer.collectDelimitedTextRanges(ranges);
         }
         // body sub-tree
         for (Iterator it = getChildNodes(); (it != null) && it.hasNext();) {
-            ranges = ((FONode) it.next()).collectDelimitedTextRanges (ranges);
+            ranges = ((FONode) it.next()).collectDelimitedTextRanges(ranges);
         }
         return ranges;
     }

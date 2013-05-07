@@ -95,8 +95,8 @@ public class InlineContainer extends FObj {
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         overflow = pList.get(PR_OVERFLOW).getEnum();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
-        writingModeTraits = new WritingModeTraits
-            (WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()));
+        writingModeTraits = new WritingModeTraits(
+            WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()));
     }
 
     /**
@@ -252,7 +252,7 @@ public class InlineContainer extends FObj {
     }
 
     @Override
-    public boolean isDelimitedTextRangeBoundary (int boundary) {
+    public boolean isDelimitedTextRangeBoundary(int boundary) {
         return false;
     }
 

@@ -615,7 +615,7 @@ public abstract class FObj extends FONode implements Constants {
                     FObj foParent = (FObj) parent;
                     int parentBidiLevel = foParent.getBidiLevel();
                     if ((parentBidiLevel < 0) || (bidiLevel < parentBidiLevel)) {
-                        foParent.setBidiLevel (bidiLevel);
+                        foParent.setBidiLevel(bidiLevel);
                     }
                 }
             }

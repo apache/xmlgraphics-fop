@@ -48,8 +48,8 @@ class SimpleTable extends TestDocument {
     protected void generateDocument(RtfDocumentArea rda, RtfSection sect)
     throws IOException {
         final RtfTable tbl = sect.newTable(new DummyTableColumnsInfo());
-        tbl.newTableRow().newTableCell(C1W * INCH_TO_TWIPS).newParagraph().newText
-                ("Here's a table row with just one cell, width " + C1W + "''");
+        tbl.newTableRow().newTableCell(C1W * INCH_TO_TWIPS).newParagraph().newText(
+                "Here's a table row with just one cell, width " + C1W + "''");
 
         for (int row = 0; row < MAX_ROW; row++) {
             final RtfTableRow r = tbl.newTableRow();

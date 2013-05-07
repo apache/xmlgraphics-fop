@@ -52,7 +52,7 @@ public class RtfPageNumberCitation extends RtfContainer {
     private String id = null;
 
     /** Create an RTF page number citation as a child of given container with default attributes */
-    RtfPageNumberCitation (RtfContainer parent, Writer w, String id)
+    RtfPageNumberCitation(RtfContainer parent, Writer w, String id)
             throws IOException {
         super(parent, w);
         this.id = id;
@@ -60,7 +60,7 @@ public class RtfPageNumberCitation extends RtfContainer {
 
     /** Create an RTF page number citation as a child of given
      *    paragraph, copying its attributes */
-    RtfPageNumberCitation (RtfParagraph parent, Writer w, String id)
+    RtfPageNumberCitation(RtfParagraph parent, Writer w, String id)
             throws IOException {
         // add the attributes ant text attributes of the parent paragraph
         super((RtfContainer)parent, w, parent.attrib);
