@@ -346,7 +346,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
         float fontSize = state.getFontSize() / 1000f;
         Font font = getFontInfo().getFontInstance(triplet, state.getFontSize());
         int l = text.length();
-        int[] dx = IFUtil.convertDPToDX (dp);
+        int[] dx = IFUtil.convertDPToDX(dp);
         int dxl = (dx != null ? dx.length : 0);
 
         StringBuffer sb = new StringBuffer(Math.max(16, l));
@@ -402,7 +402,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
                 0, maxAscent - descent + 2 * safetyMargin);
 
         int l = text.length();
-        int[] dx = IFUtil.convertDPToDX (dp);
+        int[] dx = IFUtil.convertDPToDX(dp);
         int dxl = (dx != null ? dx.length : 0);
 
         if (dx != null && dxl > 0 && dx[0] != 0) {

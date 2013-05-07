@@ -49,27 +49,27 @@ public class RtfAttributes implements Cloneable {
      *        instance
      * @return this object, for chaining calls
      */
-    public RtfAttributes set (RtfAttributes attrs) {
+    public RtfAttributes set(RtfAttributes attrs) {
         if (attrs != null) {
-            Iterator it = attrs.nameIterator ();
-            while (it.hasNext ()) {
-                String name = (String) it.next ();
+            Iterator it = attrs.nameIterator();
+            while (it.hasNext()) {
+                String name = (String) it.next();
                 if (attrs.getValue(name) instanceof Integer) {
-                    Integer value = (Integer)attrs.getValue (name);
+                    Integer value = (Integer)attrs.getValue(name);
                     if (value == null) {
-                        set (name);
+                        set(name);
                     }  else {
-                        set (name, value.intValue ());
+                        set(name, value.intValue());
                     }
                 } else if (attrs.getValue(name) instanceof String) {
-                    String value = (String)attrs.getValue (name);
+                    String value = (String)attrs.getValue(name);
                     if (value == null) {
-                        set (name);
+                        set(name);
                     } else {
-                        set (name, value);
+                        set(name, value);
                     }
                 } else {
-                        set (name);
+                        set(name);
                 }
 
 

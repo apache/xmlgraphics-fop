@@ -55,9 +55,9 @@ public abstract class ScriptProcessor {
      * Instantiate a script processor.
      * @param script a script identifier
      */
-    protected ScriptProcessor (String script) {
+    protected ScriptProcessor(String script) {
         if ((script == null) || (script.length() == 0)) {
-            throw new IllegalArgumentException ("script must be non-empty string");
+            throw new IllegalArgumentException("script must be non-empty string");
         } else {
             this.script = script;
             this.assembledLookups = new HashMap/*<AssembledLookupsKey,GlyphTable.UseSpec[]>*/();
@@ -98,8 +98,8 @@ public abstract class ScriptProcessor {
      * @param lookups a mapping from lookup specifications to glyph subtables to use for substitution processing
      * @return the substituted (output) glyph sequence
      */
-    public final GlyphSequence substitute (GlyphSubstitutionTable gsub, GlyphSequence gs, String script, String language, Map/*<LookupSpec,List<LookupTable>>>*/ lookups) {
-        return substitute (gs, script, language, assembleLookups (gsub, getSubstitutionFeatures(), lookups), getSubstitutionContextTester());
+    public final GlyphSequence substitute(GlyphSubstitutionTable gsub, GlyphSequence gs, String script, String language, Map/*<LookupSpec,List<LookupTable>>>*/ lookups) {
+        return substitute(gs, script, language, assembleLookups(gsub, getSubstitutionFeatures(), lookups), getSubstitutionContextTester());
     }
 
     /**
@@ -111,11 +111,11 @@ public abstract class ScriptProcessor {
      * @param sct a script specific context tester (or null)
      * @return the substituted (output) glyph sequence
      */
-    public GlyphSequence substitute (GlyphSequence gs, String script, String language, GlyphTable.UseSpec[] usa, ScriptContextTester sct) {
+    public GlyphSequence substitute(GlyphSequence gs, String script, String language, GlyphTable.UseSpec[] usa, ScriptContextTester sct) {
         assert usa != null;
         for (int i = 0, n = usa.length; i < n; i++) {
             GlyphTable.UseSpec us = usa [ i ];
-            gs = us.substitute (gs, script, language, sct);
+            gs = us.substitute(gs, script, language, sct);
         }
         return gs;
     }
@@ -132,7 +132,7 @@ public abstract class ScriptProcessor {
      * @param language a language identifier
      * @return the reordered (output) glyph sequence
      */
-    public GlyphSequence reorderCombiningMarks (GlyphDefinitionTable gdef, GlyphSequence gs, int[][] gpa, String script, String language) {
+    public GlyphSequence reorderCombiningMarks(GlyphDefinitionTable gdef, GlyphSequence gs, int[][] gpa, String script, String language) {
         return gs;
     }
 
@@ -169,8 +169,8 @@ public abstract class ScriptProcessor {
      * with one 4-tuple for each element of glyph sequence
      * @return true if some adjustment is not zero; otherwise, false
      */
-    public final boolean position (GlyphPositioningTable gpos, GlyphSequence gs, String script, String language, int fontSize, Map/*<LookupSpec,List<LookupTable>>*/ lookups, int[] widths, int[][] adjustments) {
-        return position (gs, script, language, fontSize, assembleLookups (gpos, getPositioningFeatures(), lookups), widths, adjustments, getPositioningContextTester());
+    public final boolean position(GlyphPositioningTable gpos, GlyphSequence gs, String script, String language, int fontSize, Map/*<LookupSpec,List<LookupTable>>*/ lookups, int[] widths, int[][] adjustments) {
+        return position(gs, script, language, fontSize, assembleLookups(gpos, getPositioningFeatures(), lookups), widths, adjustments, getPositioningContextTester());
     }
 
     /**
@@ -186,12 +186,12 @@ public abstract class ScriptProcessor {
      * @param sct a script specific context tester (or null)
      * @return true if some adjustment is not zero; otherwise, false
      */
-    public boolean position (GlyphSequence gs, String script, String language, int fontSize, GlyphTable.UseSpec[] usa, int[] widths, int[][] adjustments, ScriptContextTester sct) {
+    public boolean position(GlyphSequence gs, String script, String language, int fontSize, GlyphTable.UseSpec[] usa, int[] widths, int[][] adjustments, ScriptContextTester sct) {
         assert usa != null;
         boolean adjusted = false;
         for (int i = 0, n = usa.length; i < n; i++) {
             GlyphTable.UseSpec us = usa [ i ];
-            if (us.position (gs, script, language, fontSize, widths, adjustments, sct)) {
+            if (us.position(gs, script, language, fontSize, widths, adjustments, sct)) {
                 adjusted = true;
             }
         }
@@ -206,22 +206,22 @@ public abstract class ScriptProcessor {
      * @param lookups a mapping from lookup specifications to lists of look tables from which to select lookup tables according to the specified features
      * @return ordered array of assembled lookup table use specifications
      */
-    public final GlyphTable.UseSpec[] assembleLookups (GlyphTable table, String[] features, Map/*<LookupSpec,List<LookupTable>>*/ lookups) {
-        AssembledLookupsKey key = new AssembledLookupsKey (table, features, lookups);
+    public final GlyphTable.UseSpec[] assembleLookups(GlyphTable table, String[] features, Map/*<LookupSpec,List<LookupTable>>*/ lookups) {
+        AssembledLookupsKey key = new AssembledLookupsKey(table, features, lookups);
         GlyphTable.UseSpec[] usa;
-        if ((usa = assembledLookupsGet (key)) != null) {
+        if ((usa = assembledLookupsGet(key)) != null) {
             return usa;
         } else {
-            return assembledLookupsPut (key, table.assembleLookups (features, lookups));
+            return assembledLookupsPut(key, table.assembleLookups(features, lookups));
         }
     }
 
-    private GlyphTable.UseSpec[] assembledLookupsGet (AssembledLookupsKey key) {
-        return (GlyphTable.UseSpec[]) assembledLookups.get (key);
+    private GlyphTable.UseSpec[] assembledLookupsGet(AssembledLookupsKey key) {
+        return (GlyphTable.UseSpec[]) assembledLookups.get(key);
     }
 
-    private GlyphTable.UseSpec[]  assembledLookupsPut (AssembledLookupsKey key, GlyphTable.UseSpec[] usa) {
-        assembledLookups.put (key, usa);
+    private GlyphTable.UseSpec[]  assembledLookupsPut(AssembledLookupsKey key, GlyphTable.UseSpec[] usa) {
+        assembledLookups.put(key, usa);
         return usa;
     }
 
@@ -230,25 +230,25 @@ public abstract class ScriptProcessor {
      * @param script a script identifier
      * @return a script processor instance or null if none found
      */
-    public static synchronized ScriptProcessor getInstance (String script) {
+    public static synchronized ScriptProcessor getInstance(String script) {
         ScriptProcessor sp = null;
         assert processors != null;
-        if ((sp = processors.get (script)) == null) {
-            processors.put (script, sp = createProcessor (script));
+        if ((sp = processors.get(script)) == null) {
+            processors.put(script, sp = createProcessor(script));
         }
         return sp;
     }
 
     // [TBD] - rework to provide more configurable binding between script name and script processor constructor
-    private static ScriptProcessor createProcessor (String script) {
+    private static ScriptProcessor createProcessor(String script) {
         ScriptProcessor sp = null;
-        int sc = CharScript.scriptCodeFromTag (script);
+        int sc = CharScript.scriptCodeFromTag(script);
         if (sc == CharScript.SCRIPT_ARABIC) {
-            sp = new ArabicScriptProcessor (script);
-        } else if (CharScript.isIndicScript (sc)) {
-            sp = IndicScriptProcessor.makeProcessor (script);
+            sp = new ArabicScriptProcessor(script);
+        } else if (CharScript.isIndicScript(sc)) {
+            sp = IndicScriptProcessor.makeProcessor(script);
         } else {
-            sp = new DefaultScriptProcessor (script);
+            sp = new DefaultScriptProcessor(script);
         }
         return sp;
     }
@@ -259,7 +259,7 @@ public abstract class ScriptProcessor {
         private final String[] features;
         private final Map/*<LookupSpec,List<LookupTable>>*/ lookups;
 
-        AssembledLookupsKey (GlyphTable table, String[] features, Map/*<LookupSpec,List<LookupTable>>*/ lookups) {
+        AssembledLookupsKey(GlyphTable table, String[] features, Map/*<LookupSpec,List<LookupTable>>*/ lookups) {
             this.table = table;
             this.features = features;
             this.lookups = lookups;
@@ -269,20 +269,20 @@ public abstract class ScriptProcessor {
         public int hashCode() {
             int hc = 0;
             hc =  7 * hc + (hc ^ table.hashCode());
-            hc = 11 * hc + (hc ^ Arrays.hashCode (features));
+            hc = 11 * hc + (hc ^ Arrays.hashCode(features));
             hc = 17 * hc + (hc ^ lookups.hashCode());
             return hc;
         }
 
         /** {@inheritDoc} */
-        public boolean equals (Object o) {
+        public boolean equals(Object o) {
             if (o instanceof AssembledLookupsKey) {
                 AssembledLookupsKey k = (AssembledLookupsKey) o;
-                if (! table.equals (k.table)) {
+                if (! table.equals(k.table)) {
                     return false;
-                } else if (! Arrays.equals (features, k.features)) {
+                } else if (! Arrays.equals(features, k.features)) {
                     return false;
-                } else if (! lookups.equals (k.lookups)) {
+                } else if (! lookups.equals(k.lookups)) {
                     return false;
                 } else {
                     return true;

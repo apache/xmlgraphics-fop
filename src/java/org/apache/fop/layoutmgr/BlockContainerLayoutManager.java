@@ -856,7 +856,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
             viewportBlockArea = new BlockViewport(allowBPDUpdate);
             viewportBlockArea.addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
             if (level >= 0) {
-                viewportBlockArea.setBidiLevel (level);
+                viewportBlockArea.setBidiLevel(level);
             }
             viewportBlockArea.setIPD(getContentAreaIPD());
             if (allowBPDUpdate) {
@@ -893,7 +893,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
             referenceArea = new Block();
             referenceArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             if (level >= 0) {
-                referenceArea.setBidiLevel (level);
+                referenceArea.setBidiLevel(level);
             }
             TraitSetter.setProducerID(referenceArea, getBlockContainerFO().getId());
 

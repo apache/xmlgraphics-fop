@@ -114,7 +114,7 @@ public class InlineArea extends Area {
      * @param blockProgressionOffset a block progression offset or zero
      * @param bidiLevel a resolved bidi level or -1
      */
-    protected InlineArea (int blockProgressionOffset, int bidiLevel) {
+    protected InlineArea(int blockProgressionOffset, int bidiLevel) {
         this.blockProgressionOffset = blockProgressionOffset;
         setBidiLevel(bidiLevel);
     }
@@ -311,9 +311,9 @@ public class InlineArea extends Area {
      * @param runs current list of inline runs
      * @return modified list of inline runs, having appended new run
      */
-    public List collectInlineRuns (List runs) {
+    public List collectInlineRuns(List runs) {
         assert runs != null;
-        runs.add (new InlineRun (this, new int[] {getBidiLevel()}));
+        runs.add(new InlineRun(this, new int[] {getBidiLevel()}));
         return runs;
     }
 
@@ -322,8 +322,8 @@ public class InlineArea extends Area {
      * @param ia inline area to test
      * @return true if specified inline area is an ancestor or same as this area
      */
-    public boolean isAncestorOrSelf (InlineArea ia) {
-        return (ia == this) || isAncestor (ia);
+    public boolean isAncestorOrSelf(InlineArea ia) {
+        return (ia == this) || isAncestor(ia);
     }
 
     /**
@@ -331,7 +331,7 @@ public class InlineArea extends Area {
      * @param ia inline area to test
      * @return true if specified inline area is an ancestor of this area
      */
-    public boolean isAncestor (InlineArea ia) {
+    public boolean isAncestor(InlineArea ia) {
         for (Area p = getParentArea(); p != null;) {
             if (p == ia) {
                 return true;

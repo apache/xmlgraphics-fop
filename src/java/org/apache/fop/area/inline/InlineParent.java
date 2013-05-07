@@ -64,7 +64,7 @@ public class InlineParent extends InlineArea {
         if (autoSize) {
             increaseIPD(childArea.getAllocIPD());
         }
-        updateLevel (childArea.getBidiLevel());
+        updateLevel(childArea.getBidiLevel());
         int childOffset = childArea.getVirtualOffset();
         minChildOffset = Math.min(minChildOffset, childOffset);
         maxAfterEdge = Math.max(maxAfterEdge, childOffset + childArea.getVirtualBPD());
@@ -114,10 +114,10 @@ public class InlineParent extends InlineArea {
     }
 
     @Override
-    public List collectInlineRuns (List runs) {
+    public List collectInlineRuns(List runs) {
         for (Iterator<InlineArea> it = getChildAreas().iterator(); it.hasNext();) {
             InlineArea ia = it.next();
-            runs = ia.collectInlineRuns (runs);
+            runs = ia.collectInlineRuns(runs);
         }
         return runs;
     }
@@ -132,15 +132,15 @@ public class InlineParent extends InlineArea {
         }
     }
 
-    private void updateLevel (int newLevel) {
+    private void updateLevel(int newLevel) {
         if (newLevel >= 0) {
             int curLevel = getBidiLevel();
             if (curLevel >= 0) {
                 if (newLevel < curLevel) {
-                    setBidiLevel (newLevel);
+                    setBidiLevel(newLevel);
                 }
             } else {
-                setBidiLevel (newLevel);
+                setBidiLevel(newLevel);
             }
         }
     }

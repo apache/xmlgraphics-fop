@@ -630,7 +630,7 @@ public abstract class AbstractRenderer
                 // if line's content overflows line area, then
                 // ensure that overflow is drawn (extends)
                 // outside of left side of line area
-                int overflow = computeInlinesOverflow (line);
+                int overflow = computeInlinesOverflow(line);
                 if (overflow > 0) {
                     currentIPPosition -= overflow;
                 }
@@ -645,7 +645,7 @@ public abstract class AbstractRenderer
         currentBPPosition = saveBP;
     }
 
-    private int computeInlinesOverflow (LineArea line) {
+    private int computeInlinesOverflow(LineArea line) {
         List children = line.getInlineAreas();
         int ipdConsumed = 0;
         for (int i = 0, l = children.size(); i < l; i++) {

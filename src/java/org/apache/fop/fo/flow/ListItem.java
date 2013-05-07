@@ -206,14 +206,14 @@ public class ListItem extends FObj implements BreakPropertySet, CommonAccessibil
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges (Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
         ListItemLabel label = getLabel();
         if (label != null) {
-            ranges = label.collectDelimitedTextRanges (ranges);
+            ranges = label.collectDelimitedTextRanges(ranges);
         }
         ListItemBody body = getBody();
         if (body != null) {
-            ranges = body.collectDelimitedTextRanges (ranges);
+            ranges = body.collectDelimitedTextRanges(ranges);
         }
         return ranges;
     }

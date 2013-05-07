@@ -168,16 +168,16 @@ public class PDFTranscoder extends AbstractFOPTranscoder {
             graphics.setSVGDimension(width, height);
 
             if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
-                graphics.setBackgroundColor
-                    ((Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
+                graphics.setBackgroundColor(
+                    (Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
             }
-            graphics.setGraphicContext
-                (new org.apache.xmlgraphics.java2d.GraphicContext());
+            graphics.setGraphicContext(
+                new org.apache.xmlgraphics.java2d.GraphicContext());
             graphics.preparePainting();
 
             graphics.transform(curTxf);
-            graphics.setRenderingHint
-                (RenderingHintsKeyExt.KEY_TRANSCODING,
+            graphics.setRenderingHint(
+                RenderingHintsKeyExt.KEY_TRANSCODING,
                  RenderingHintsKeyExt.VALUE_TRANSCODING_VECTOR);
 
             this.root.paint(graphics);

@@ -195,8 +195,8 @@ public class GraphicsObject extends AbstractDataObject {
      * @param lineWidth the line width multiplier
      */
     public void setLineWidth(float lineWidth) {
-        float epsilon = Float.intBitsToFloat (0x00800000); // Float.MIN_NORMAL (JDK1.6)
-        if (Math.abs (graphicsState.lineWidth - lineWidth) > epsilon) {
+        float epsilon = Float.intBitsToFloat(0x00800000); // Float.MIN_NORMAL (JDK1.6)
+        if (Math.abs(graphicsState.lineWidth - lineWidth) > epsilon) {
             addObject(new GraphicsSetFractionalLineWidth(lineWidth));
             graphicsState.lineWidth = lineWidth;
         }

@@ -178,7 +178,7 @@ public interface IFPainter {
      * @param bpsEnd the border segment on the end-side (right)
      * @throws IFException if an error occurs while handling this event
      */
-    void clipBackground (Rectangle rect,
+    void clipBackground(Rectangle rect,
             BorderProps bpsBefore, BorderProps bpsAfter,
             BorderProps bpsStart, BorderProps bpsEnd) throws IFException;
 

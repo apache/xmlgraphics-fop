@@ -66,10 +66,10 @@ implements IRtfTextContainer,
      * @param attr a <code>RtfAttributes</code> value
      * @throws IOException for I/O problems
      */
-    public RtfHyperLink (IRtfTextContainer parent, Writer writer, String str, RtfAttributes attr)
+    public RtfHyperLink(IRtfTextContainer parent, Writer writer, String str, RtfAttributes attr)
         throws IOException {
-        super ((RtfContainer) parent, writer, attr);
-        new RtfText (this, writer, str, attr);
+        super((RtfContainer) parent, writer, attr);
+        new RtfText(this, writer, str, attr);
     }
 
     /**
@@ -80,9 +80,9 @@ implements IRtfTextContainer,
      * @param attr a <code>RtfAttributes</code> value
      * @throws IOException for I/O problems
      */
-    public RtfHyperLink (RtfTextrun parent, Writer writer, RtfAttributes attr)
+    public RtfHyperLink(RtfTextrun parent, Writer writer, RtfAttributes attr)
         throws IOException {
-        super ((RtfContainer) parent, writer, attr);
+        super((RtfContainer) parent, writer, attr);
     }
 
 
@@ -95,22 +95,22 @@ implements IRtfTextContainer,
      *
      * @exception IOException On error
      */
-    public void writeRtfPrefix () throws IOException {
-        super.writeGroupMark (true);
-        super.writeControlWord ("field");
+    public void writeRtfPrefix() throws IOException {
+        super.writeGroupMark(true);
+        super.writeControlWord("field");
 
-        super.writeGroupMark (true);
-        super.writeStarControlWord ("fldinst");
+        super.writeGroupMark(true);
+        super.writeStarControlWord("fldinst");
 
-        writer.write ("HYPERLINK \"" + url + "\" ");
-        super.writeGroupMark (false);
+        writer.write("HYPERLINK \"" + url + "\" ");
+        super.writeGroupMark(false);
 
-        super.writeGroupMark (true);
-        super.writeControlWord ("fldrslt");
+        super.writeGroupMark(true);
+        super.writeControlWord("fldrslt");
 
         // start a group for this paragraph and write our own attributes if needed
-        if (attrib != null && attrib.isSet ("cs")) {
-            writeGroupMark (true);
+        if (attrib != null && attrib.isSet("cs")) {
+            writeGroupMark(true);
             writeAttributes(attrib, new String [] {"cs"});
         }
     }
@@ -120,12 +120,12 @@ implements IRtfTextContainer,
      *
      * @exception IOException On error
      */
-    public void writeRtfSuffix () throws IOException {
-        if (attrib != null && attrib.isSet ("cs")) {
-            writeGroupMark (false);
+    public void writeRtfSuffix() throws IOException {
+        if (attrib != null && attrib.isSet("cs")) {
+            writeGroupMark(false);
         }
-        super.writeGroupMark (false);
-        super.writeGroupMark (false);
+        super.writeGroupMark(false);
+        super.writeGroupMark(false);
     }
 
 
@@ -139,8 +139,8 @@ implements IRtfTextContainer,
      * @throws IOException for I/O problems
      * @return new RtfText object
      */
-    public RtfText newText (String str) throws IOException {
-        return newText (str, null);
+    public RtfText newText(String str) throws IOException {
+        return newText(str, null);
     }
 
     /**
@@ -150,9 +150,9 @@ implements IRtfTextContainer,
      * @throws IOException for I/O problems
      * @return the new RtfText object
      */
-    public RtfText newText (String str, RtfAttributes attr) throws IOException {
-        closeAll ();
-        mText = new RtfText (this, writer, str, attr);
+    public RtfText newText(String str, RtfAttributes attr) throws IOException {
+        closeAll();
+        mText = new RtfText(this, writer, str, attr);
         return mText;
     }
 
@@ -166,7 +166,7 @@ implements IRtfTextContainer,
             return null;
         }
         try {
-            return (RtfAttributes) this.attrib.clone ();
+            return (RtfAttributes) this.attrib.clone();
         } catch (CloneNotSupportedException e) {
             throw new FOPException(e);
         }
@@ -177,8 +177,8 @@ implements IRtfTextContainer,
      * add a line break
      * @throws IOException for I/O problems
      */
-    public void newLineBreak () throws IOException {
-        new RtfLineBreak (this, writer);
+    public void newLineBreak() throws IOException {
+        new RtfLineBreak(this, writer);
     }
 
 
@@ -186,13 +186,13 @@ implements IRtfTextContainer,
     // @@ Common container methods
     //////////////////////////////////////////////////
 
-    private void closeCurrentText () throws IOException {
+    private void closeCurrentText() throws IOException {
         if (mText != null) {
-            mText.close ();
+            mText.close();
         }
     }
 
-    private void closeAll () throws IOException {
+    private void closeAll() throws IOException {
         closeCurrentText();
     }
 
@@ -206,7 +206,7 @@ implements IRtfTextContainer,
      *
      * @param url Link url like "http://..."
      */
-    public void setExternalURL (String url) {
+    public void setExternalURL(String url) {
         this.url = url;
     }
 
@@ -215,19 +215,19 @@ implements IRtfTextContainer,
      *
      * @param jumpTo Name of the text mark
      */
-    public void setInternalURL (String jumpTo) {
-        int now = jumpTo.length ();
+    public void setInternalURL(String jumpTo) {
+        int now = jumpTo.length();
         int max = RtfBookmark.MAX_BOOKMARK_LENGTH;
-        this.url = "#" + jumpTo.substring (0, now > max ? max : now);
-        this.url = this.url.replace ('.', RtfBookmark.REPLACE_CHARACTER);
-        this.url = this.url.replace (' ', RtfBookmark.REPLACE_CHARACTER);
+        this.url = "#" + jumpTo.substring(0, now > max ? max : now);
+        this.url = this.url.replace('.', RtfBookmark.REPLACE_CHARACTER);
+        this.url = this.url.replace(' ', RtfBookmark.REPLACE_CHARACTER);
     }
 
     /**
      *
      * @return false (always)
      */
-    public boolean isEmpty () {
+    public boolean isEmpty() {
         return false;
     }
 

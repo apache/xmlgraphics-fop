@@ -49,8 +49,8 @@ public class DefaultScriptProcessor extends ScriptProcessor {
         "mkmk"                                                  // mark to mark positioning
     };
 
-    DefaultScriptProcessor (String script) {
-        super (script);
+    DefaultScriptProcessor(String script) {
+        super(script);
     }
 
     @Override
@@ -79,20 +79,20 @@ public class DefaultScriptProcessor extends ScriptProcessor {
 
     @Override
     /** {@inheritDoc} */
-    public GlyphSequence reorderCombiningMarks (GlyphDefinitionTable gdef, GlyphSequence gs, int[][] gpa, String script, String language) {
+    public GlyphSequence reorderCombiningMarks(GlyphDefinitionTable gdef, GlyphSequence gs, int[][] gpa, String script, String language) {
         int   ng  = gs.getGlyphCount();
-        int[] ga  = gs.getGlyphArray (false);
+        int[] ga  = gs.getGlyphArray(false);
         int   nm  = 0;
         // count combining marks
         for (int i = 0; i < ng; i++) {
             int gid = ga [ i ];
-            if (gdef.isGlyphClass (gid, GlyphDefinitionTable.GLYPH_CLASS_MARK)) {
+            if (gdef.isGlyphClass(gid, GlyphDefinitionTable.GLYPH_CLASS_MARK)) {
                 nm++;
             }
         }
         // only reorder if there is at least one mark and at least one non-mark glyph
         if ((nm > 0) && ((ng - nm) > 0)) {
-            GlyphSequence.CharAssociation[] aa = gs.getAssociations (0, -1);
+            GlyphSequence.CharAssociation[] aa = gs.getAssociations(0, -1);
             int[] nga = new int [ ng ];
             int[][] npa = (gpa != null) ? new int [ ng ][] : null;
             GlyphSequence.CharAssociation[] naa = new GlyphSequence.CharAssociation [ ng ];
@@ -104,7 +104,7 @@ public class DefaultScriptProcessor extends ScriptProcessor {
                 int gid = ga [ i ];
                 int[] pa = (gpa != null) ? gpa [ i ] : null;
                 GlyphSequence.CharAssociation ca = aa [ i ];
-                if (gdef.isGlyphClass (gid, GlyphDefinitionTable.GLYPH_CLASS_MARK)) {
+                if (gdef.isGlyphClass(gid, GlyphDefinitionTable.GLYPH_CLASS_MARK)) {
                     nga [ k ] = gid;
                     naa [ k ] = ca;
                     if (npa != null) {
@@ -140,9 +140,9 @@ public class DefaultScriptProcessor extends ScriptProcessor {
             }
             assert k == ng;
             if (npa != null) {
-                System.arraycopy (npa, 0, gpa, 0, ng);
+                System.arraycopy(npa, 0, gpa, 0, ng);
             }
-            return new GlyphSequence (gs, null, nga, null, null, naa, null);
+            return new GlyphSequence(gs, null, nga, null, null, naa, null);
         } else {
             return gs;
         }

@@ -288,7 +288,7 @@ public class ImageLayout implements Constants {
      * @param cwidth the calculated content width of the object
      * @return the X offset
      */
-    public int computeXOffset (int ipd, int cwidth) {
+    public int computeXOffset(int ipd, int cwidth) {
         int xoffset = 0;
         switch (props.getTextAlign()) {
             case EN_CENTER:

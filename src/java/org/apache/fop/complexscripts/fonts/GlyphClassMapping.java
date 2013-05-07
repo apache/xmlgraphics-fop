@@ -35,7 +35,7 @@ public interface GlyphClassMapping {
      * @param set for coverage set based class mappings, indicates set index, otherwise ignored
      * @return size of class table
      */
-    int getClassSize (int set);
+    int getClassSize(int set);
 
     /**
      * Map glyph identifier (code) to coverge index. Returns -1 if glyph identifier is not in the domain of
@@ -44,6 +44,6 @@ public interface GlyphClassMapping {
      * @param set for coverage set based class mappings, indicates set index, otherwise ignored
      * @return non-negative glyph class index or -1 if glyph identifiers is not mapped by table
      */
-    int getClassIndex (int gid, int set);
+    int getClassIndex(int gid, int set);
 
 }

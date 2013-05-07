@@ -85,8 +85,8 @@ public class TextDecorationMaker extends ListProperty.Maker {
                 case Constants.EN_BLINK:
                 case Constants.EN_NO_BLINK:
                     if (none) {
-                        throw new PropertyException
-                                ("'none' specified, no additional values allowed");
+                        throw new PropertyException(
+                                "'none' specified, no additional values allowed");
                     }
                     switch (enumValue) {
                         case Constants.EN_UNDERLINE:

@@ -186,19 +186,19 @@ public final class XMLUtil implements XMLConstants {
      * @param paCount the number of entries to encode from adjustments array
      * @return the encoded value
      */
-    public static String encodePositionAdjustments (int[][] dp, int paCount) {
+    public static String encodePositionAdjustments(int[][] dp, int paCount) {
         assert dp != null;
         StringBuffer sb = new StringBuffer();
         int na = paCount;
         int nz = 0;
-        sb.append (na);
+        sb.append(na);
         for (int i = 0; i < na; i++) {
             int[] pa = dp [ i ];
             if (pa != null) {
                 for (int k = 0; k < 4; k++) {
                     int a = pa [ k ];
                     if (a != 0) {
-                        encodeNextAdjustment (sb, nz, a);
+                        encodeNextAdjustment(sb, nz, a);
                         nz = 0;
                     } else {
                         nz++;
@@ -208,7 +208,7 @@ public final class XMLUtil implements XMLConstants {
                 nz += 4;
             }
         }
-        encodeNextAdjustment (sb, nz, 0);
+        encodeNextAdjustment(sb, nz, 0);
         return sb.toString();
     }
 
@@ -223,32 +223,32 @@ public final class XMLUtil implements XMLConstants {
      * @param dp the adjustments array
      * @return the encoded value
      */
-    public static String encodePositionAdjustments (int[][] dp) {
+    public static String encodePositionAdjustments(int[][] dp) {
         assert dp != null;
-        return encodePositionAdjustments (dp, dp.length);
+        return encodePositionAdjustments(dp, dp.length);
     }
 
-    private static void encodeNextAdjustment (StringBuffer sb, int nz, int a) {
-        encodeZeroes (sb, nz);
-        encodeAdjustment (sb, a);
+    private static void encodeNextAdjustment(StringBuffer sb, int nz, int a) {
+        encodeZeroes(sb, nz);
+        encodeAdjustment(sb, a);
     }
 
-    private static void encodeZeroes (StringBuffer sb, int nz) {
+    private static void encodeZeroes(StringBuffer sb, int nz) {
         if (nz > 0) {
-            sb.append (' ');
+            sb.append(' ');
             if (nz == 1) {
-                sb.append ('0');
+                sb.append('0');
             } else {
-                sb.append ('Z');
-                sb.append (nz);
+                sb.append('Z');
+                sb.append(nz);
             }
         }
     }
 
-    private static void encodeAdjustment (StringBuffer sb, int a) {
+    private static void encodeAdjustment(StringBuffer sb, int a) {
         if (a != 0) {
-            sb.append (' ');
-            sb.append (a);
+            sb.append(' ');
+            sb.append(a);
         }
     }
 
@@ -258,21 +258,21 @@ public final class XMLUtil implements XMLConstants {
      * @param value the encoded value
      * @return the position adjustments array
      */
-    public static int[][] decodePositionAdjustments (String value) {
+    public static int[][] decodePositionAdjustments(String value) {
         int[][] dp = null;
         if (value != null) {
-            String[] sa = value.split ("\\s");
+            String[] sa = value.split("\\s");
             if (sa != null) {
                 if (sa.length > 0) {
-                    int na = Integer.parseInt (sa[0]);
+                    int na = Integer.parseInt(sa[0]);
                     dp = new int [ na ] [ 4 ];
                     for (int i = 1, n = sa.length, k = 0; i < n; i++) {
                         String s = sa [ i ];
                         if (s.charAt(0) == 'Z') {
-                            int nz = Integer.parseInt (s.substring (1));
+                            int nz = Integer.parseInt(s.substring(1));
                             k += nz;
                         } else {
-                            dp [ k / 4 ] [ k % 4 ] = Integer.parseInt (s);
+                            dp [ k / 4 ] [ k % 4 ] = Integer.parseInt(s);
                             k += 1;
                         }
                     }

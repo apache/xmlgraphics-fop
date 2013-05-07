@@ -257,8 +257,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
 
     /** {@inheritDoc} */
     @Override                                                   // CSOK: MethodLength
-    public List getNextKnuthElements
-        (LayoutContext context, int alignment) {
+    public List getNextKnuthElements(
+        LayoutContext context, int alignment) {
         LayoutManager curLM;
 
         // the list returned by child LM

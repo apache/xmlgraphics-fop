@@ -56,11 +56,11 @@ public final class RtfFontManager {
     /**
      * Constructor.
      */
-    private RtfFontManager () {
-        fontTable = new Vector ();
-        fontIndex = new Hashtable ();
+    private RtfFontManager() {
+        fontTable = new Vector();
+        fontIndex = new Hashtable();
 
-        init ();
+        init();
     }
 
     /**
@@ -68,9 +68,9 @@ public final class RtfFontManager {
      *
      * @return The instance of RtfFontManager
      */
-    public static RtfFontManager getInstance () {
+    public static RtfFontManager getInstance() {
         if (instance == null) {
-            instance = new RtfFontManager ();
+            instance = new RtfFontManager();
         }
 
         return instance;
@@ -84,13 +84,13 @@ public final class RtfFontManager {
     /**
      * Initialize the font table.
      */
-    private void init () {
+    private void init() {
 
 //        getFontNumber ("Helvetica");
         //Chanded by R.Marra default font Arial
-        getFontNumber ("Arial");
-        getFontNumber ("Symbol"); // used by RtfListItem.java
-        getFontNumber ("Times New Roman");
+        getFontNumber("Arial");
+        getFontNumber("Symbol"); // used by RtfListItem.java
+        getFontNumber("Times New Roman");
 
 /*
         {\\f0\\fswiss Helv;}
@@ -116,13 +116,13 @@ public final class RtfFontManager {
      *
      * @return The number of the font in the table
      */
-    public int getFontNumber (String family) {
+    public int getFontNumber(String family) {
 
         Object o = fontIndex.get(getFontKey(family));
         int retVal;
 
         if (o == null) {
-            addFont (family);
+            addFont(family);
 
             retVal = fontTable.size() - 1;
         } else {
@@ -139,8 +139,8 @@ public final class RtfFontManager {
      *
      * @throws IOException On error
      */
-    public void writeFonts (RtfHeader header) throws IOException {
-        if (fontTable == null || fontTable.size () == 0) {
+    public void writeFonts(RtfHeader header) throws IOException {
+        if (fontTable == null || fontTable.size() == 0) {
             return;
         }
 
@@ -148,13 +148,13 @@ public final class RtfFontManager {
         header.writeGroupMark(true);
         header.writeControlWord("fonttbl");
 
-        int len = fontTable.size ();
+        int len = fontTable.size();
 
         for (int i = 0; i < len; i++) {
             header.writeGroupMark(true);
             header.newLine();
             header.write("\\f" + i);
-            header.write(" " + (String) fontTable.elementAt (i));
+            header.write(" " + (String) fontTable.elementAt(i));
             header.write(";");
             header.writeGroupMark(false);
         }

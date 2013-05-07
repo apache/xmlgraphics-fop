@@ -420,7 +420,7 @@ public abstract class AbstractBreaker {
                 alg.setConstantLineWidth(flowBPD);
                 int optimalPageCount = alg.findBreakingPoints(effectiveList, 1, true,
                         BreakingAlgorithm.ALL_BREAKS);
-                if (Math.abs (alg.getIPDdifference()) > 1) {
+                if (Math.abs(alg.getIPDdifference()) > 1) {
                     addAreas(alg, optimalPageCount, blockList, effectiveList);
                     // *** redo Phase 1 ***
                     log.trace("IPD changes after page " + optimalPageCount);
@@ -878,8 +878,8 @@ public abstract class AbstractBreaker {
      * @param availableBPD the available BPD
      * @return the effective list
      */
-    private BlockSequence justifyBoxes                          // CSOK: MethodLength
-        (BlockSequence blockList, PageBreakingAlgorithm alg, int availableBPD) {
+    private BlockSequence justifyBoxes(
+        BlockSequence blockList, PageBreakingAlgorithm alg, int availableBPD) {
         int optimalPageCount;
         alg.setConstantLineWidth(availableBPD);
         optimalPageCount = alg.findBreakingPoints(blockList, /*availableBPD,*/
@@ -1061,8 +1061,8 @@ public abstract class AbstractBreaker {
                         + " / " + difference);
             }
             int newAdjust = ((BlockLevelLayoutManager) blockSpace.getLayoutManager())
-                .negotiateBPDAdjustment
-                (((int) ((float) partial * difference / total)) - adjustedDiff, blockSpace);
+                .negotiateBPDAdjustment(
+                ((int) ((float) partial * difference / total)) - adjustedDiff, blockSpace);
             adjustedDiff += newAdjust;
         }
         return adjustedDiff;
@@ -1086,8 +1086,8 @@ public abstract class AbstractBreaker {
             KnuthGlue line = lineListIterator.next();
             partial += (difference > 0 ? line.getStretch() : line.getShrink());
             int newAdjust = ((BlockLevelLayoutManager) line.getLayoutManager())
-                .negotiateBPDAdjustment
-                (((int) ((float) partial * difference / total)) - adjustedDiff, line);
+                .negotiateBPDAdjustment(
+                ((int) ((float) partial * difference / total)) - adjustedDiff, line);
             adjustedDiff += newAdjust;
         }
         return adjustedDiff;

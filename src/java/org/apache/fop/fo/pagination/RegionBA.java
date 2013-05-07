@@ -71,8 +71,8 @@ public abstract class RegionBA extends SideRegion {
      * @param wm writing mode
      * @param siblingContext the context to use to resolve extent on siblings
      */
-    protected void adjustIPD
-        (Rectangle vpRefRect, WritingMode wm, PercentBaseContext siblingContext) {
+    protected void adjustIPD(
+        Rectangle vpRefRect, WritingMode wm, PercentBaseContext siblingContext) {
         int offset = 0;
         RegionStart start = (RegionStart) getSiblingRegion(FO_REGION_START);
         if (start != null) {

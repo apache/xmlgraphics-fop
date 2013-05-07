@@ -169,8 +169,8 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         return objectAreaInfo;
     }
 
-    private AFPGraphicsObjectInfo createGraphicsObjectInfo
-        (AFPPaintingState paintingState, Graphics2DImagePainter painter,
+    private AFPGraphicsObjectInfo createGraphicsObjectInfo(
+        AFPPaintingState paintingState, Graphics2DImagePainter painter,
             FOUserAgent userAgent, AFPResourceInfo resourceInfo, AFPGraphics2D g2d) {
         AFPGraphicsObjectInfo graphicsObjectInfo = new AFPGraphicsObjectInfo();
 

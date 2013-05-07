@@ -94,11 +94,11 @@ public class RtfTable extends RtfContainer {
         RtfAttributes attr = null;
         if (attrib != null) {
             try {
-                attr = (RtfAttributes) attrib.clone ();
+                attr = (RtfAttributes) attrib.clone();
             } catch (CloneNotSupportedException e) {
                 throw new FOPException(e);
             }
-            attr.set (attrs);
+            attr.set(attrs);
         } else {
             attr = attrs;
         }

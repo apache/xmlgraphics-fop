@@ -68,8 +68,8 @@ public abstract class AbstractFOPImageElementBridge extends SVGImageElementBridg
      * @return a new graphics node
      */
     @Override
-    protected GraphicsNode createImageGraphicsNode
-                (BridgeContext ctx, Element imageElement, ParsedURL purl) {
+    protected GraphicsNode createImageGraphicsNode(
+                BridgeContext ctx, Element imageElement, ParsedURL purl) {
         AbstractFOPBridgeContext bridgeCtx = (AbstractFOPBridgeContext)ctx;
 
         ImageManager manager = bridgeCtx.getImageManager();
@@ -138,8 +138,8 @@ public abstract class AbstractFOPImageElementBridge extends SVGImageElementBridg
      * @return the newly created graphics node
      * @see org.apache.batik.bridge.SVGImageElementBridge#createGraphicsNode(BridgeContext, Element)
      */
-    protected GraphicsNode superCreateGraphicsNode
-            (BridgeContext ctx, Element imageElement, ParsedURL purl) {
+    protected GraphicsNode superCreateGraphicsNode(
+            BridgeContext ctx, Element imageElement, ParsedURL purl) {
         return super.createImageGraphicsNode(ctx, imageElement, purl);
     }
 

@@ -44,7 +44,7 @@ public class SpaceArea extends InlineArea {
      * @param bidiLevel the bidirectional embedding level (or -1 if not defined)
      */
     public SpaceArea(int blockProgressionOffset, int bidiLevel, char space, boolean adjustable) {
-        super (blockProgressionOffset, bidiLevel);
+        super(blockProgressionOffset, bidiLevel);
         this.space = space;
         this.isAdjustable = adjustable;
     }

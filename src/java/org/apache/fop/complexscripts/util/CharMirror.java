@@ -36,10 +36,10 @@ public final class CharMirror {
      * @param s a string whose characters are to be mirrored
      * @return the resulting string
      */
-    public static String mirror (String s) {
-        StringBuffer sb = new StringBuffer (s);
+    public static String mirror(String s) {
+        StringBuffer sb = new StringBuffer(s);
         for (int i = 0, n = sb.length(); i < n; i++) {
-            sb.setCharAt (i, (char) mirror (sb.charAt (i)));
+            sb.setCharAt(i, (char) mirror(sb.charAt(i)));
         }
         return sb.toString();
     }
@@ -704,8 +704,8 @@ public final class CharMirror {
         0xFF62
     };
 
-    private static int mirror (int c) {
-        int i = Arrays.binarySearch (mirroredCharacters, c);
+    private static int mirror(int c) {
+        int i = Arrays.binarySearch(mirroredCharacters, c);
         if (i < 0) {
             return c;
         } else {

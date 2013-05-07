@@ -3056,33 +3056,33 @@ public class GDEFTestCase {
 
     @Test
     public void testGDEFGlyphClass() throws Exception {
-        performLookups (ltGlyphClass);
+        performLookups(ltGlyphClass);
     }
 
     @Test
     public void testGDEFAttachmentPoint() throws Exception {
-        performLookups (ltAttachmentPoint);
+        performLookups(ltAttachmentPoint);
     }
 
     @Test
     public void testGDEFLigatureCaret() throws Exception {
-        performLookups (ltLigatureCaret);
+        performLookups(ltLigatureCaret);
     }
 
     @Test
     public void testGDEFMarkAttachment() throws Exception {
-        performLookups (ltMarkAttachment);
+        performLookups(ltMarkAttachment);
     }
 
     /**
      * Perform lookups on all test data in test specification TS.
      * @param ts test specification
      */
-    private void performLookups (Object[][] ts) {
+    private void performLookups(Object[][] ts) {
         assert ts.length > 0;
         Object[] tp = ts[0];
         for (int i = 1; i < ts.length; i++) {
-            performLookups (tp, ts[i]);
+            performLookups(tp, ts[i]);
         }
     }
 
@@ -3091,37 +3091,37 @@ public class GDEFTestCase {
      * @param tp test parameters
      * @param td test data
      */
-    private void performLookups (Object[] tp, Object[] td) {
+    private void performLookups(Object[] tp, Object[] td) {
         assert tp.length > 0;
         if (td.length > 1) {
             String fid = (String) td[0];
             String lid = (String) td[1];
-            TTXFile tf = findTTX (fid);
-            assertTrue (tf != null);
+            TTXFile tf = findTTX(fid);
+            assertTrue(tf != null);
             GlyphDefinitionTable gdef = tf.getGDEF();
-            assertTrue (gdef != null);
+            assertTrue(gdef != null);
             String[][] tia = (String[][]) td[2];
             switch ((int) ((Integer) tp[0])) {
             case GlyphDefinitionTable.GDEF_LOOKUP_TYPE_GLYPH_CLASS:
-                performGlyphClassLookups (tf, lid, tia);
+                performGlyphClassLookups(tf, lid, tia);
                 break;
             case GlyphDefinitionTable.GDEF_LOOKUP_TYPE_ATTACHMENT_POINT:
-                performAttachmentPointLookups (tf, lid, tia);
+                performAttachmentPointLookups(tf, lid, tia);
                 break;
             case GlyphDefinitionTable.GDEF_LOOKUP_TYPE_LIGATURE_CARET:
-                performLigatureCaretLookups (tf, lid, tia);
+                performLigatureCaretLookups(tf, lid, tia);
                 break;
             case GlyphDefinitionTable.GDEF_LOOKUP_TYPE_MARK_ATTACHMENT:
-                performMarkAttachmentLookups (tf, lid, tia);
+                performMarkAttachmentLookups(tf, lid, tia);
                 break;
             default:
-                assertTrue ("bad lookup type", false);
+                assertTrue("bad lookup type", false);
                 break;
             }
         }
     }
 
-    private void performGlyphClassLookups (TTXFile tf, String lid, String[][] tia) {
+    private void performGlyphClassLookups(TTXFile tf, String lid, String[][] tia) {
         GlyphDefinitionTable gdef = tf.getGDEF();
         assert gdef != null;
         for (String[] ti : tia) {
@@ -3131,30 +3131,30 @@ public class GDEFTestCase {
             assert gn != null;
             String cn = ti[1];
             assert cn != null;
-            int g = tf.getGlyph (gn);
-            assertTrue (g >= 0);
-            int oc = Integer.parseInt (cn);
-            int tc = gdef.getGlyphClass (g);
-            assertEquals ("bad glyph class for glyph \'" + gn + "\', gid(" + g + ")", oc, tc);
+            int g = tf.getGlyph(gn);
+            assertTrue(g >= 0);
+            int oc = Integer.parseInt(cn);
+            int tc = gdef.getGlyphClass(g);
+            assertEquals("bad glyph class for glyph \'" + gn + "\', gid(" + g + ")", oc, tc);
         }
     }
 
-    private void performAttachmentPointLookups (TTXFile tf, String lid, String[][] tia) {
+    private void performAttachmentPointLookups(TTXFile tf, String lid, String[][] tia) {
         // not yet supported by GDEF or test TTX files
     }
 
-    private void performLigatureCaretLookups (TTXFile tf, String lid, String[][] tia) {
+    private void performLigatureCaretLookups(TTXFile tf, String lid, String[][] tia) {
         // not yet supported by GDEF or test TTX files
     }
 
-    private void performMarkAttachmentLookups (TTXFile tf, String lid, String[][] tia) {
+    private void performMarkAttachmentLookups(TTXFile tf, String lid, String[][] tia) {
         // not yet supported by GDEF or test TTX files
     }
 
-    private String findTTXPath (String fid) {
+    private String findTTXPath(String fid) {
         for (String[] fs : ttxFonts) {
             if ((fs != null) && (fs.length > 1)) {
-                if (fs[0].equals (fid)) {
+                if (fs[0].equals(fid)) {
                     return ttxFilesRoot + File.separator + fs[1];
                 }
             }
@@ -3162,14 +3162,14 @@ public class GDEFTestCase {
         return null;
     }
 
-    private TTXFile findTTX (String fid) {
-        String pn = findTTXPath (fid);
-        assertTrue (pn != null);
+    private TTXFile findTTX(String fid) {
+        String pn = findTTXPath(fid);
+        assertTrue(pn != null);
         try {
-            TTXFile tf = TTXFile.getFromCache (pn);
+            TTXFile tf = TTXFile.getFromCache(pn);
             return tf;
         } catch (Exception e) {
-            fail (e.getMessage());
+            fail(e.getMessage());
             return null;
         }
     }

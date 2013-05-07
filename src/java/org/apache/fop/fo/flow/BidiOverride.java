@@ -97,7 +97,7 @@ public class BidiOverride extends Inline {
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges (Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
         char pfx = 0;
         char sfx = 0;
         int unicodeBidi = getUnicodeBidi();
@@ -111,13 +111,13 @@ public class BidiOverride extends Inline {
         }
         if (currentRange != null) {
             if (pfx != 0) {
-                currentRange.append (pfx, this);
+                currentRange.append(pfx, this);
             }
             for (Iterator it = getChildNodes(); (it != null) && it.hasNext();) {
-                ranges = ((FONode) it.next()).collectDelimitedTextRanges (ranges);
+                ranges = ((FONode) it.next()).collectDelimitedTextRanges(ranges);
             }
             if (sfx != 0) {
-                currentRange.append (sfx, this);
+                currentRange.append(sfx, this);
             }
         }
         return ranges;

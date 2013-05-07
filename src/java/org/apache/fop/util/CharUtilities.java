@@ -118,7 +118,7 @@ public class CharUtilities {
      * @param c character to inspect
      * @return the determined character class
      */
-    public static int classOf (int c) {
+    public static int classOf(int c) {
         switch (c) {
             case CODE_EOT:
                 return EOT;
@@ -141,7 +141,7 @@ public class CharUtilities {
      * @param c character to inspect
      * @return True if the character is a normal space
      */
-    public static boolean isBreakableSpace (int c) {
+    public static boolean isBreakableSpace(int c) {
         return (c == SPACE || isFixedWidthSpace(c));
     }
 
@@ -150,7 +150,7 @@ public class CharUtilities {
      * @param c the character to check
      * @return true if the character is a zero-width space
      */
-    public static boolean isZeroWidthSpace (int c) {
+    public static boolean isZeroWidthSpace(int c) {
         return c == ZERO_WIDTH_SPACE           // 200Bh
             || c == WORD_JOINER                // 2060h
             || c == ZERO_WIDTH_NOBREAK_SPACE;  // FEFFh (also used as BOM)
@@ -161,7 +161,7 @@ public class CharUtilities {
      * @param c the character to check
      * @return true if the character has a fixed-width
      */
-    public static boolean isFixedWidthSpace (int c) {
+    public static boolean isFixedWidthSpace(int c) {
         return (c >= '\u2000' && c <= '\u200B')
                 || c == '\u3000';
 //      c == '\u2000'                   // en quad
@@ -185,7 +185,7 @@ public class CharUtilities {
      * @param c character to check
      * @return True if the character is a nbsp
      */
-    public static boolean isNonBreakableSpace (int c) {
+    public static boolean isNonBreakableSpace(int c) {
         return
             (c == NBSPACE       // no-break space
             || c == '\u202F'    // narrow no-break space
@@ -200,7 +200,7 @@ public class CharUtilities {
      * @param c character to check
      * @return True if the character is adjustable
      */
-    public static boolean isAdjustableSpace (int c) {
+    public static boolean isAdjustableSpace(int c) {
         //TODO: are there other kinds of adjustable spaces?
         return
             (c == '\u0020'    // normal space
@@ -212,7 +212,7 @@ public class CharUtilities {
      * @param c character to check
      * @return True if the character represents any kind of space
      */
-    public static boolean isAnySpace (int c) {
+    public static boolean isAnySpace(int c) {
         return (isBreakableSpace(c) || isNonBreakableSpace(c));
     }
 
@@ -221,7 +221,7 @@ public class CharUtilities {
      * @param c the character
      * @return true if the character is "Alphabetic"
      */
-    public static boolean isAlphabetic (int c) {
+    public static boolean isAlphabetic(int c) {
         //http://www.unicode.org/Public/UNIDATA/UCD.html#Alphabetic
         //Generated from: Other_Alphabetic + Lu + Ll + Lt + Lm + Lo + Nl
         int generalCategory = Character.getType((char)c);
@@ -245,7 +245,7 @@ public class CharUtilities {
      * @param c    the character to check
      * @return  true if the character represents an explicit break
      */
-    public static boolean isExplicitBreak (int c) {
+    public static boolean isExplicitBreak(int c) {
         return (c == LINEFEED_CHAR
             || c == CARRIAGE_RETURN
             || c == NEXT_LINE
@@ -259,7 +259,7 @@ public class CharUtilities {
      * @param c a unicode scalar value
      * @return a string representing a numeric character reference
      */
-    public static String charToNCRef (int c) {
+    public static String charToNCRef(int c) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0, nDigits = (c > 0xFFFF) ? 6 : 4; i < nDigits; i++, c >>= 4) {
             int d = c & 0xF;
@@ -269,7 +269,7 @@ public class CharUtilities {
             } else {
                 hd = (char) ((int) 'A' + (d - 10));
             }
-            sb.append (hd);
+            sb.append(hd);
         }
         return "&#x" + sb.reverse() + ";";
     }
@@ -280,23 +280,23 @@ public class CharUtilities {
      * @return a string representing a sequence of numeric character reference or
      * ASCII characters
      */
-    public static String toNCRefs (String s) {
+    public static String toNCRefs(String s) {
         StringBuffer sb = new StringBuffer();
         if (s != null) {
             for (int i = 0; i < s.length(); i++) {
                 char c = s.charAt(i);
                 if ((c >= 32) && (c < 127)) {
                     if (c == '<') {
-                        sb.append ("&lt;");
+                        sb.append("&lt;");
                     } else if (c == '>') {
-                        sb.append ("&gt;");
+                        sb.append("&gt;");
                     } else if (c == '&') {
-                        sb.append ("&amp;");
+                        sb.append("&amp;");
                     } else {
-                        sb.append (c);
+                        sb.append(c);
                     }
                 } else {
-                    sb.append (charToNCRef (c));
+                    sb.append(charToNCRef(c));
                 }
             }
         }
@@ -310,12 +310,12 @@ public class CharUtilities {
      * @param pad character to use for padding
      * @return padded string
      */
-    public static String padLeft (String s, int width, char pad) {
+    public static String padLeft(String s, int width, char pad) {
         StringBuffer sb = new StringBuffer();
         for (int i = s.length(); i < width; i++) {
             sb.append(pad);
         }
-        sb.append (s);
+        sb.append(s);
         return sb.toString();
     }
 
@@ -325,9 +325,9 @@ public class CharUtilities {
      * @param c character code
      * @return formatted character string
      */
-    public static String format (int c) {
+    public static String format(int c) {
         if (c < 1114112) {
-            return "0x" + padLeft (Integer.toString (c, 16), (c < 65536) ? 4 : 6, '0');
+            return "0x" + padLeft(Integer.toString(c, 16), (c < 65536) ? 4 : 6, '0');
         } else {
             return "!NOT A CHARACTER!";
         }
@@ -339,7 +339,7 @@ public class CharUtilities {
      * @param cs2 second character sequence
      * @return true if both sequences have same length and same character sequence
      */
-    public static boolean isSameSequence (CharSequence cs1, CharSequence cs2) {
+    public static boolean isSameSequence(CharSequence cs1, CharSequence cs2) {
         assert cs1 != null;
         assert cs2 != null;
         if (cs1.length() != cs2.length()) {

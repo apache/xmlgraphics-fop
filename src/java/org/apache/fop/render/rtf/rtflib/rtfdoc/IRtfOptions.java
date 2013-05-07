@@ -34,11 +34,11 @@ public interface IRtfOptions {
      * Sets  the compression rate for the external graphic in percent.
      * @param percent Compression rate
      */
-    void setRtfExternalGraphicCompressionRate (int percent);
+    void setRtfExternalGraphicCompressionRate(int percent);
 
     /**
      * Gets  the compression rate for the external graphic in percent.
      * @return Compression rate
      */
-    int getRtfExternalGraphicCompressionRate ();
+    int getRtfExternalGraphicCompressionRate();
 }

@@ -41,5 +41,5 @@ public interface IRtfHyperLinkContainer extends IRtfTextContainer {
      * @exception IOException on error
      * @return new Hyperlink object
      */
-    RtfHyperLink newHyperLink (String str, RtfAttributes attr) throws IOException;
+    RtfHyperLink newHyperLink(String str, RtfAttributes attr) throws IOException;
 }

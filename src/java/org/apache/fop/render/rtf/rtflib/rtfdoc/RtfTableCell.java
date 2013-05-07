@@ -220,12 +220,12 @@ public class RtfTableCell
          * Added by Boris POUDEROUS on 2002/06/26
          */
         // Cell background color processing :
-        writeAttributes (attrib, ITableAttributes.CELL_COLOR);
+        writeAttributes(attrib, ITableAttributes.CELL_COLOR);
         /** - end - */
 
-        writeAttributes (attrib, ITableAttributes.ATTRIB_CELL_PADDING);
-        writeAttributes (attrib, ITableAttributes.CELL_BORDER);
-        writeAttributes (attrib, IBorderAttributes.BORDERS);
+        writeAttributes(attrib, ITableAttributes.ATTRIB_CELL_PADDING);
+        writeAttributes(attrib, ITableAttributes.CELL_BORDER);
+        writeAttributes(attrib, IBorderAttributes.BORDERS);
 
         // determine cell width
         int iCurrentWidth = this.cellWidth;
@@ -270,7 +270,7 @@ public class RtfTableCell
         } else {
             writeControlWord("trql");
         }
-        writeAttributes (attrib, ITableAttributes.CELL_VERT_ALIGN);
+        writeAttributes(attrib, ITableAttributes.CELL_VERT_ALIGN);
 
         writeControlWord("cellx" + xPos);
 

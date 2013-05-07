@@ -113,7 +113,7 @@ public abstract class PDFTextUtil {
     }
 
     private void writeChar(char ch, StringBuffer sb) {
-        writeChar (ch, sb, useMultiByte);
+        writeChar(ch, sb, useMultiByte);
     }
 
     private void checkInTextObject() {
@@ -325,7 +325,7 @@ public abstract class PDFTextUtil {
      * @param x coordinate
      * @param y coordinate
      */
-    public void writeTd (double x, double y) {
+    public void writeTd(double x, double y) {
         StringBuffer sb = new StringBuffer();
         PDFNumber.doubleOut(x, DEC, sb);
         sb.append(' ');
@@ -338,7 +338,7 @@ public abstract class PDFTextUtil {
      * Writes a "Tj" command with specified character code.
      * @param ch character code to write
      */
-    public void writeTj (char ch) {
+    public void writeTj(char ch) {
         StringBuffer sb = new StringBuffer();
         sb.append('<');
         writeChar(ch, sb, true);

@@ -179,8 +179,8 @@ public final class UnicodeClasses {
         }
         String scheme = unidata.getScheme();
         if (scheme == null || !(scheme.equals("file") || scheme.equals("http"))) {
-            throw new FileNotFoundException
-            ("URI with file or http scheme required for UNIDATA input directory");
+            throw new FileNotFoundException(
+            "URI with file or http scheme required for UNIDATA input directory");
         }
 
         File f = new File(outfilePath);

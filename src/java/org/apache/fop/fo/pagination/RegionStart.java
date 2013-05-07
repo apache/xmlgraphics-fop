@@ -43,7 +43,7 @@ public class RegionStart extends RegionSE {
     }
 
     /** {@inheritDoc} */
-    public Rectangle getViewportRectangle (FODimension reldims) {
+    public Rectangle getViewportRectangle(FODimension reldims) {
         /* Special rules apply to resolving extent as values are resolved relative
          * to the page size and reference orientation.
          */

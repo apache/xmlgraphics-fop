@@ -234,7 +234,7 @@ public class Java2DPainter extends AbstractIFPainter<Java2DDocumentHandler> {
         Point2D cursor = new Point2D.Float(0, 0);
 
         int l = text.length();
-        int[] dx = IFUtil.convertDPToDX (dp);
+        int[] dx = IFUtil.convertDPToDX(dp);
         int dxl = (dx != null ? dx.length : 0);
 
         if (dx != null && dxl > 0 && dx[0] != 0) {

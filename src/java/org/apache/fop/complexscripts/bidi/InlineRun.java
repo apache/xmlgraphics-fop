@@ -57,12 +57,12 @@ public class InlineRun {
      * @param inline which generated this inline run
      * @param levels levels array
      */
-    public InlineRun (InlineArea inline, int[] levels) {
+    public InlineRun(InlineArea inline, int[] levels) {
         assert inline != null;
         assert levels != null;
         this.inline = inline;
         this.levels = levels;
-        setMinMax (levels);
+        setMinMax(levels);
     }
     /**
      * Alternate constructor.
@@ -70,8 +70,8 @@ public class InlineRun {
      * @param level for each index
      * @param count of indices
      */
-    public InlineRun (InlineArea inline, int level, int count) {
-        this (inline, makeLevels (level, count));
+    public InlineRun(InlineArea inline, int level, int count) {
+        this (inline, makeLevels(level, count));
     }
     /**
      * Obtain inline area that generated this inline run.
@@ -94,7 +94,7 @@ public class InlineRun {
     public int getMaxLevel() {
         return maxLevel;
     }
-    private void setMinMax (int[] levels) {
+    private void setMinMax(int[] levels) {
         int mn = Integer.MAX_VALUE;
         int mx = Integer.MIN_VALUE;
         if ((levels != null) && (levels.length > 0)) {
@@ -138,7 +138,7 @@ public class InlineRun {
                 }
             }
             if (s < e) {
-                runs.add (new InlineRun (inline, l, e - s));
+                runs.add(new InlineRun(inline, l, e - s));
             }
             i = e;
         }
@@ -149,7 +149,7 @@ public class InlineRun {
      * Update a min/max array to correspond with this run's min/max values.
      * @param mm reference to min/max array
      */
-    public void updateMinMax (int[] mm) {
+    public void updateMinMax(int[] mm) {
         if (minLevel < mm[0]) {
             mm[0] = minLevel;
         }
@@ -175,13 +175,13 @@ public class InlineRun {
      * reversal.
      * @param mirror if true then also mirror characters
      */
-    public void maybeReverseWord (boolean mirror) {
+    public void maybeReverseWord(boolean mirror) {
         if (inline instanceof WordArea) {
             WordArea w = (WordArea) inline;
             // if not already reversed, then reverse now
             if (! w.isReversed()) {
                 if ((reversals & 1) != 0) {
-                    w.reverse (mirror);
+                    w.reverse(mirror);
                 } else if (mirror && maybeNeedsMirroring()) {
                     w.mirror();
                 }
@@ -189,7 +189,7 @@ public class InlineRun {
         }
     }
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if (o instanceof InlineRun) {
             InlineRun ir = (InlineRun) o;
             if (ir.inline != inline) {
@@ -254,21 +254,21 @@ public class InlineRun {
         } else {
             c = '?';
         }
-        sb.append (c);
-        sb.append ("\', levels = \'");
-        sb.append (generateLevels (levels));
-        sb.append ("\', min = ");
-        sb.append (minLevel);
-        sb.append (", max = ");
-        sb.append (maxLevel);
-        sb.append (", reversals = ");
-        sb.append (reversals);
-        sb.append (", content = <");
-        sb.append (CharUtilities.toNCRefs (content));
-        sb.append ("> }");
+        sb.append(c);
+        sb.append("\', levels = \'");
+        sb.append(generateLevels(levels));
+        sb.append("\', min = ");
+        sb.append(minLevel);
+        sb.append(", max = ");
+        sb.append(maxLevel);
+        sb.append(", reversals = ");
+        sb.append(reversals);
+        sb.append(", content = <");
+        sb.append(CharUtilities.toNCRefs(content));
+        sb.append("> }");
         return sb.toString();
     }
-    private String generateLevels (int[] levels) {
+    private String generateLevels(int[] levels) {
         StringBuffer lb = new StringBuffer();
         int maxLevel = -1;
         int numLevels = levels.length;
@@ -283,7 +283,7 @@ public class InlineRun {
         } else if (maxLevel < 10) {
             // use string of decimal digits
             for (int i = 0; i < numLevels; i++) {
-                lb.append ((char) ('0' + levels [ i ]));
+                lb.append((char) ('0' + levels [ i ]));
             }
         } else {
             // use comma separated list
@@ -294,14 +294,14 @@ public class InlineRun {
                 } else {
                     lb.append(',');
                 }
-                lb.append (levels [ i ]);
+                lb.append(levels [ i ]);
             }
         }
         return lb.toString();
     }
-    private static int[] makeLevels (int level, int count) {
+    private static int[] makeLevels(int level, int count) {
         int[] levels = new int [ count ];
-        Arrays.fill (levels, level);
+        Arrays.fill(levels, level);
         return levels;
     }
 }

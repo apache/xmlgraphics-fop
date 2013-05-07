@@ -289,8 +289,8 @@ public final class AFPInfo {
      */
     public AFPGraphics2D createGraphics2D(boolean textAsShapes) {
         AFPGraphics2D g2d
-            = new AFPGraphics2D
-            (textAsShapes, paintingState, resourceManager, resourceInfo, fontInfo);
+            = new AFPGraphics2D(
+            textAsShapes, paintingState, resourceManager, resourceInfo, fontInfo);
         g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
         return g2d;
     }

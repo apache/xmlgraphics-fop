@@ -29,7 +29,7 @@ public class DestinationComparator implements java.util.Comparator {
   }*/
 
     /** {@inheritDoc} */
-    public int compare (Object obj1, Object obj2) {
+    public int compare(Object obj1, Object obj2) {
         if (obj1 instanceof PDFDestination && obj2 instanceof PDFDestination) {
             PDFDestination dest1 = (PDFDestination)obj1;
             PDFDestination dest2 = (PDFDestination)obj2;

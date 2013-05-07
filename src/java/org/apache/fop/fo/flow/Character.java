@@ -236,14 +236,14 @@ public class Character extends FObj implements StructureTreeElementHolder {
     }
 
     @Override
-    public boolean isDelimitedTextRangeBoundary (int boundary) {
+    public boolean isDelimitedTextRangeBoundary(int boundary) {
         return false;
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges (Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
         if (currentRange != null) {
-            currentRange.append (charIterator(), this);
+            currentRange.append(charIterator(), this);
         }
         return ranges;
     }

@@ -214,8 +214,8 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
                 throws PropertyException {
         PropertyList pList = getWMPropertyList(propertyList);
         if (pList != null) {
-            int wmcorr = pList.selectFromWritingMode
-                (corresponding[0], corresponding[1], corresponding[2], corresponding[3]);
+            int wmcorr = pList.selectFromWritingMode(
+                corresponding[0], corresponding[1], corresponding[2], corresponding[3]);
             return propertyList.get(wmcorr);
         } else {
             return null;

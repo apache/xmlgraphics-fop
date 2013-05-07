@@ -947,8 +947,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             PDFDeviceColorSpace colSpace;
             colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
-            PDFPattern myPat = pdfDoc.getFactory().makeGradient
-                (resourceContext, true, colSpace,
+            PDFPattern myPat = pdfDoc.getFactory().makeGradient(
+                resourceContext, true, colSpace,
                  someColors, theBounds, theCoords, theMatrix);
 
             currentStream.write(myPat.getColorSpaceOut(fill));
@@ -1100,14 +1100,14 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         int devH = devBounds.height;
 
         ColorSpace rgbCS = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-        ColorModel rgbCM = new DirectColorModel
-            (rgbCS, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000,
+        ColorModel rgbCM = new DirectColorModel(
+            rgbCS, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000,
              false, DataBuffer.TYPE_BYTE);
 
         PaintContext pctx = paint.createContext(rgbCM, devBounds, usrBounds,
                                                 at, getRenderingHints());
-        PDFXObject imageInfo = pdfDoc.getXObject
-            ("TempImage:" + pctx.toString());
+        PDFXObject imageInfo = pdfDoc.getXObject(
+            "TempImage:" + pctx.toString());
         if (imageInfo != null) {
             resourceContext.getPDFResources().addXObject(imageInfo);
         } else {
@@ -1116,8 +1116,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             wr = wr.createWritableTranslatedChild(0, 0);
 
             ColorModel pcm = pctx.getColorModel();
-            BufferedImage bi = new BufferedImage
-                (pcm, wr, pcm.isAlphaPremultiplied(), null);
+            BufferedImage bi = new BufferedImage(
+                pcm, wr, pcm.isAlphaPremultiplied(), null);
             final byte[] rgb  = new byte[devW * devH * 3];
             final int[]  line = new int[devW];
             final byte[] mask;
@@ -1154,8 +1154,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
             String maskRef = null;
             if (mask != null) {
-                BitmapImage fopimg = new BitmapImage
-                    ("TempImageMask:" + pctx.toString(), devW, devH, mask, null);
+                BitmapImage fopimg = new BitmapImage(
+                    "TempImageMask:" + pctx.toString(), devW, devH, mask, null);
                 fopimg.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
                 PDFImageXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
                 maskRef = xobj.referencePDF();

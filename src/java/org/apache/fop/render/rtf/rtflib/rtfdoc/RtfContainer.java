@@ -142,7 +142,7 @@ public class RtfContainer extends RtfElement {
      * @param list list of child objects
      * @return true if process succeeded
      */
-    public boolean setChildren (List list) {
+    public boolean setChildren(List list) {
       if (list instanceof LinkedList) {
           this.children = (LinkedList) list;
           return true;

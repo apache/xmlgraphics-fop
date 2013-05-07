@@ -147,7 +147,7 @@ public class BodyRegion extends RegionReference {
      */
     public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
         if (getMainReference() != null) {
-            getMainReference().setWritingModeTraits (wmtg);
+            getMainReference().setWritingModeTraits(wmtg);
         }
     }
 

@@ -515,11 +515,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                     footnoteListIndex = footnotesList.size() - 1;
                     footnoteElementIndex
                         = getFootnoteList(footnoteListIndex).size() - 1;
-                } else if (((canDeferOldFN = canDeferOldFootnotes // CSOK: InnerAssignment
-                             (pageNode, elementIndex))
+                } else if (((canDeferOldFN = canDeferOldFootnotes(// CSOK: InnerAssignment
+                             pageNode, elementIndex))
                             || newFootnotes)
-                           && (footnoteSplit = getFootnoteSplit // CSOK: InnerAssignment
-                               (pageNode, getLineWidth(activeNode.line) - actualWidth,
+                           && (footnoteSplit = getFootnoteSplit(// CSOK: InnerAssignment
+                               pageNode, getLineWidth(activeNode.line) - actualWidth,
                                 canDeferOldFN)) > 0) {
                     // it is allowed to break or even defer footnotes if either:
                     //  - there are new footnotes in the last piece of content, and
@@ -890,8 +890,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 insertedFootnotesLength = totalFootnotesLength;
                 footnoteListIndex = lengthList.size() - 1;
                 footnoteElementIndex = getFootnoteList(footnoteListIndex).size() - 1;
-            } else if ((split = getFootnoteSplit                // CSOK: InnerAssignment
-                        (footnoteListIndex, footnoteElementIndex,
+            } else if ((split = getFootnoteSplit(// CSOK: InnerAssignment
+                        footnoteListIndex, footnoteElementIndex,
                          insertedFootnotesLength, availableBPD, true)) > 0) {
                 // add a piece of a footnote
                 availableBPD -= split;

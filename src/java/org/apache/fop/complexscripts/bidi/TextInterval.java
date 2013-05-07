@@ -42,10 +42,10 @@ class TextInterval {
     private int start;              // starting index within delimited text range
     private int end;                // ending index within delimited text range
     private int level;              // resolved level or default (-1)
-    TextInterval (FONode fn, int start, int end) {
+    TextInterval(FONode fn, int start, int end) {
         this (fn, start, start, end, -1);
     }
-    TextInterval (FONode fn, int textStart, int start, int end, int level) {
+    TextInterval(FONode fn, int textStart, int start, int end, int level) {
         this.fn = fn;
         this.textStart = textStart;
         this.start = start;
@@ -67,7 +67,7 @@ class TextInterval {
     int getLevel() {
         return level;
     }
-    void setLevel (int level) {
+    void setLevel(int level) {
         this.level = level;
     }
     public int length() {
@@ -77,25 +77,25 @@ class TextInterval {
         if (fn instanceof FOText) {
             return ((FOText) fn) .getCharSequence() .toString();
         } else if (fn instanceof Character) {
-            return new String (new char[] {((Character) fn) .getCharacter()});
+            return new String(new char[] {((Character) fn) .getCharacter()});
         } else {
             return null;
         }
     }
     public void assignTextLevels() {
         if (fn instanceof FOText) {
-            ((FOText) fn) .setBidiLevel (level, start - textStart, end - textStart);
+            ((FOText) fn) .setBidiLevel(level, start - textStart, end - textStart);
         } else if (fn instanceof Character) {
-            ((Character) fn) .setBidiLevel (level);
+            ((Character) fn) .setBidiLevel(level);
         } else if (fn instanceof AbstractPageNumberCitation) {
-            ((AbstractPageNumberCitation) fn) .setBidiLevel (level);
+            ((AbstractPageNumberCitation) fn) .setBidiLevel(level);
         } else if (fn instanceof AbstractGraphics) {
-            ((AbstractGraphics) fn) .setBidiLevel (level);
+            ((AbstractGraphics) fn) .setBidiLevel(level);
         } else if (fn instanceof Leader) {
-            ((Leader) fn) .setBidiLevel (level);
+            ((Leader) fn) .setBidiLevel(level);
         }
     }
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if (o instanceof TextInterval) {
             TextInterval ti = (TextInterval) o;
             if (ti.getNode() != fn) {
@@ -135,8 +135,8 @@ class TextInterval {
         } else {
             c = '?';
         }
-        sb.append (c);
-        sb.append ("[" + start + "," + end + "][" + textStart + "](" + level + ")");
+        sb.append(c);
+        sb.append("[" + start + "," + end + "][" + textStart + "](" + level + ")");
         return sb.toString();
     }
 }

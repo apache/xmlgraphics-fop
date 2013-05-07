@@ -60,8 +60,8 @@ public class GlyphPositioningState extends GlyphProcessingState {
      * @param adjustments positioning adjustments to which positioning is applied
      * @param sct script context tester (or null)
      */
-    public GlyphPositioningState (GlyphSequence gs, String script, String language, String feature, int fontSize, int[] widths, int[][] adjustments, ScriptContextTester sct) {
-        super (gs, script, language, feature, sct);
+    public GlyphPositioningState(GlyphSequence gs, String script, String language, String feature, int fontSize, int[] widths, int[][] adjustments, ScriptContextTester sct) {
+        super(gs, script, language, feature, sct);
         this.fontSize = fontSize;
         this.widths = widths;
         this.adjustments = adjustments;
@@ -72,8 +72,8 @@ public class GlyphPositioningState extends GlyphProcessingState {
      * except as follows: input glyph sequence is copied deep except for its characters array.
      * @param ps existing positioning state to copy from
      */
-    public GlyphPositioningState (GlyphPositioningState ps) {
-        super (ps);
+    public GlyphPositioningState(GlyphPositioningState ps) {
+        super(ps);
         this.fontSize = ps.fontSize;
         this.widths = ps.widths;
         this.adjustments = ps.adjustments;
@@ -90,8 +90,8 @@ public class GlyphPositioningState extends GlyphProcessingState {
      * @param adjustments positioning adjustments to which positioning is applied
      * @param sct script context tester (or null)
      */
-    public GlyphPositioningState reset (GlyphSequence gs, String script, String language, String feature, int fontSize, int[] widths, int[][] adjustments, ScriptContextTester sct) {
-        super.reset (gs, script, language, feature, sct);
+    public GlyphPositioningState reset(GlyphSequence gs, String script, String language, String feature, int fontSize, int[] widths, int[][] adjustments, ScriptContextTester sct) {
+        super.reset(gs, script, language, feature, sct);
         this.fontSize = fontSize;
         this.widths = widths;
         this.adjustments = adjustments;
@@ -104,7 +104,7 @@ public class GlyphPositioningState extends GlyphProcessingState {
      * @param gi glyph index
      * @return design advancement, or zero if glyph index is not present
      */
-    public int getWidth (int gi) {
+    public int getWidth(int gi) {
         if ((widths != null) && (gi < widths.length)) {
             return widths [ gi ];
         } else {
@@ -117,8 +117,8 @@ public class GlyphPositioningState extends GlyphProcessingState {
      * @param v value containing adjustments
      * @return true if a non-zero adjustment was made
      */
-    public boolean adjust (GlyphPositioningTable.Value v) {
-        return adjust (v, 0);
+    public boolean adjust(GlyphPositioningTable.Value v) {
+        return adjust(v, 0);
     }
 
     /**
@@ -127,10 +127,10 @@ public class GlyphPositioningState extends GlyphProcessingState {
      * @param offset from current position index
      * @return true if a non-zero adjustment was made
      */
-    public boolean adjust (GlyphPositioningTable.Value v, int offset) {
+    public boolean adjust(GlyphPositioningTable.Value v, int offset) {
         assert v != null;
         if ((index + offset) < indexLast) {
-            return v.adjust (adjustments [ index + offset ], fontSize);
+            return v.adjust(adjustments [ index + offset ], fontSize);
         } else {
             throw new IndexOutOfBoundsException();
         }
@@ -141,7 +141,7 @@ public class GlyphPositioningState extends GlyphProcessingState {
      * @return array of adjustments (int[4]) at current position
      */
     public int[] getAdjustment() {
-        return getAdjustment (0);
+        return getAdjustment(0);
     }
 
     /**
@@ -150,7 +150,7 @@ public class GlyphPositioningState extends GlyphProcessingState {
      * @return array of adjustments (int[4]) at specified offset
      * @throws IndexOutOfBoundsException if offset is invalid
      */
-    public int[] getAdjustment (int offset) throws IndexOutOfBoundsException {
+    public int[] getAdjustment(int offset) throws IndexOutOfBoundsException {
         if ((index + offset) < indexLast) {
             return adjustments [ index + offset ];
         } else {
@@ -165,10 +165,10 @@ public class GlyphPositioningState extends GlyphProcessingState {
      * @return true if subtable applied, or false if it did not (e.g., its
      * input coverage table did not match current input context)
      */
-    public boolean apply (GlyphPositioningSubtable st) {
+    public boolean apply(GlyphPositioningSubtable st) {
         assert st != null;
-        updateSubtableState (st);
-        boolean applied = st.position (this);
+        updateSubtableState(st);
+        boolean applied = st.position(this);
         return applied;
     }
 
@@ -182,7 +182,7 @@ public class GlyphPositioningState extends GlyphProcessingState {
      * the lookups are to apply, and to be consumed once the application has finished
      * @return true if lookups are non-null and non-empty; otherwise, false
      */
-    public boolean apply (GlyphTable.RuleLookup[] lookups, int nig) {
+    public boolean apply(GlyphTable.RuleLookup[] lookups, int nig) {
         if ((lookups != null) && (lookups.length > 0)) {
             // apply each rule lookup to extracted input glyph array
             for (int i = 0, n = lookups.length; i < n; i++) {
@@ -191,15 +191,15 @@ public class GlyphPositioningState extends GlyphProcessingState {
                     GlyphTable.LookupTable lt = l.getLookup();
                     if (lt != null) {
                         // perform positioning on a copy of previous state
-                        GlyphPositioningState ps = new GlyphPositioningState (this);
+                        GlyphPositioningState ps = new GlyphPositioningState(this);
                         // apply lookup table positioning
-                        if (lt.position (ps, l.getSequenceIndex())) {
-                            setAdjusted (true);
+                        if (lt.position(ps, l.getSequenceIndex())) {
+                            setAdjusted(true);
                         }
                     }
                 }
             }
-            consume (nig);
+            consume(nig);
             return true;
         } else {
             return false;
@@ -218,7 +218,7 @@ public class GlyphPositioningState extends GlyphProcessingState {
      * @param adjusted true if to set adjusted state, otherwise false to
      * clear adjusted state
      */
-    public void setAdjusted (boolean adjusted) {
+    public void setAdjusted(boolean adjusted) {
         this.adjusted = adjusted;
     }
 

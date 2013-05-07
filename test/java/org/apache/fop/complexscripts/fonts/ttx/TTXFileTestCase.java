@@ -41,10 +41,10 @@ public class TTXFileTestCase {
     public void testTTXFiles() throws Exception {
         for (String tfn : ttxFiles) {
             try {
-                TTXFile tf = TTXFile.getFromCache (ttxFilesRoot + File.separator + tfn);
-                assertTrue (tf != null);
+                TTXFile tf = TTXFile.getFromCache(ttxFilesRoot + File.separator + tfn);
+                assertTrue(tf != null);
             } catch (Exception e) {
-                fail (e.getMessage());
+                fail(e.getMessage());
             }
         }
     }

@@ -68,7 +68,7 @@ public final class OTFAdvancedTypographicTableReader {
      * @param ttf parent font file reader (must be non-null)
      * @param in font file reader (must be non-null)
      */
-    public OTFAdvancedTypographicTableReader (TTFFile ttf, FontFileReader in) {
+    public OTFAdvancedTypographicTableReader(TTFFile ttf, FontFileReader in) {
         assert ttf != null;
         assert in != null;
         this.ttf = ttf;
@@ -89,7 +89,7 @@ public final class OTFAdvancedTypographicTableReader {
             throw e;
         } catch (IOException e) {
             resetATStateAll();
-            throw new AdvancedTypographicTableFormatException (e.getMessage(), e);
+            throw new AdvancedTypographicTableFormatException(e.getMessage(), e);
         } finally {
             resetATState();
         }
@@ -159,12 +159,12 @@ public final class OTFAdvancedTypographicTableReader {
                 log.debug(tableTag + " lang sys table non-required feature index: " + fi);
             }
             fia[i] = fi;
-            fl.add ("f" + fi);
+            fl.add("f" + fi);
         }
         if (seLanguages == null) {
             seLanguages = new java.util.LinkedHashMap();
         }
-        seLanguages.put (langSysTag, new Object[] { rfi, fl });
+        seLanguages.put(langSysTag, new Object[] { rfi, fl });
     }
 
     private static String defaultTag = "dflt";
@@ -203,22 +203,22 @@ public final class OTFAdvancedTypographicTableReader {
                     dl = 0;
                     dt = lt;
                 }
-                ll.add (lt);
+                ll.add(lt);
             }
             // read non-default language system tables
             for (int i = 0, n = nl; i < n; i++) {
-                readLangSysTable (tableTag, scriptTable + loa [ i ], lta [ i ]);
+                readLangSysTable(tableTag, scriptTable + loa [ i ], lta [ i ]);
             }
         }
         // read default language system table (if specified)
         if (dl > 0) {
-            readLangSysTable (tableTag, scriptTable + dl, dt);
+            readLangSysTable(tableTag, scriptTable + dl, dt);
         } else if (dt != null) {
             if (log.isDebugEnabled()) {
                 log.debug(tableTag + " lang sys default: " + dt);
             }
         }
-        seScripts.put (scriptTag, new Object[] { dt, ll, seLanguages });
+        seScripts.put(scriptTag, new Object[] { dt, ll, seLanguages });
         seLanguages = null;
     }
 
@@ -246,7 +246,7 @@ public final class OTFAdvancedTypographicTableReader {
             // read script tables
             for (int i = 0, n = ns; i < n; i++) {
                 seLanguages = null;
-                readScriptTable (tableTag, scriptList + soa [ i ], sta [ i ]);
+                readScriptTable(tableTag, scriptList + soa [ i ], sta [ i ]);
             }
         }
     }
@@ -274,9 +274,9 @@ public final class OTFAdvancedTypographicTableReader {
                 log.debug(tableTag + " feature table lookup index: " + li);
             }
             lia[i] = li;
-            lul.add ("lu" + li);
+            lul.add("lu" + li);
         }
-        seFeatures.put ("f" + featureIndex, new Object[] { featureTag, lul });
+        seFeatures.put("f" + featureIndex, new Object[] { featureTag, lul });
     }
 
     private void readFeatureList(TTFTableName tableTag, long featureList) throws IOException {
@@ -305,7 +305,7 @@ public final class OTFAdvancedTypographicTableReader {
                 if (log.isDebugEnabled()) {
                     log.debug(tableTag + " feature index: " + i);
                 }
-                readFeatureTable (tableTag, featureList + foa [ i ], fta [ i ], i);
+                readFeatureTable(tableTag, featureList + foa [ i ], fta [ i ], i);
             }
         }
     }
@@ -317,7 +317,7 @@ public final class OTFAdvancedTypographicTableReader {
         static final int MARK_ATTACHMENT                = 4;
         private GDEFLookupType() {
         }
-        public static int getSubtableType (int lt) {
+        public static int getSubtableType(int lt) {
             int st;
             switch (lt) {
             case GDEFLookupType.GLYPH_CLASS:
@@ -372,7 +372,7 @@ public final class OTFAdvancedTypographicTableReader {
         static final int REVERSE_CHAINED_SINGLE         = 8;
         private GSUBLookupType() {
         }
-        public static int getSubtableType (int lt) {
+        public static int getSubtableType(int lt) {
             int st;
             switch (lt) {
             case GSUBLookupType.SINGLE:
@@ -506,44 +506,44 @@ public final class OTFAdvancedTypographicTableReader {
                 if (first) {
                     first = false;
                 } else {
-                    sb.append ('|');
+                    sb.append('|');
                 }
-                sb.append ("RightToLeft");
+                sb.append("RightToLeft");
             }
             if ((flags & IGNORE_BASE_GLYPHS) != 0) {
                 if (first) {
                     first = false;
                 } else {
-                    sb.append ('|');
+                    sb.append('|');
                 }
-                sb.append ("IgnoreBaseGlyphs");
+                sb.append("IgnoreBaseGlyphs");
             }
             if ((flags & IGNORE_LIGATURE) != 0) {
                 if (first) {
                     first = false;
                 } else {
-                    sb.append ('|');
+                    sb.append('|');
                 }
-                sb.append ("IgnoreLigature");
+                sb.append("IgnoreLigature");
             }
             if ((flags & IGNORE_MARKS) != 0) {
                 if (first) {
                     first = false;
                 } else {
-                    sb.append ('|');
+                    sb.append('|');
                 }
-                sb.append ("IgnoreMarks");
+                sb.append("IgnoreMarks");
             }
             if ((flags & USE_MARK_FILTERING_SET) != 0) {
                 if (first) {
                     first = false;
                 } else {
-                    sb.append ('|');
+                    sb.append('|');
                 }
-                sb.append ("UseMarkFilteringSet");
+                sb.append("UseMarkFilteringSet");
             }
             if (sb.length() == 0) {
-                sb.append ('-');
+                sb.append('-');
             }
             return sb.toString();
         }
@@ -553,27 +553,27 @@ public final class OTFAdvancedTypographicTableReader {
         List entries = new java.util.ArrayList();
         in.seekSet(tableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read glyph count
         int ng = in.readTTFUShort();
         int[] ga = new int[ng];
         for (int i = 0, n = ng; i < n; i++) {
             int g = in.readTTFUShort();
             ga[i] = g;
-            entries.add (Integer.valueOf(g));
+            entries.add(Integer.valueOf(g));
         }
         // dump info if debugging
         if (log.isDebugEnabled()) {
             log.debug(label + " glyphs: " + toString(ga));
         }
-        return GlyphCoverageTable.createCoverageTable (entries);
+        return GlyphCoverageTable.createCoverageTable(entries);
     }
 
     private GlyphCoverageTable readCoverageTableFormat2(String label, long tableOffset, int coverageFormat) throws IOException {
         List entries = new java.util.ArrayList();
         in.seekSet(tableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read range record count
         int nr = in.readTTFUShort();
         for (int i = 0, n = nr; i < n; i++) {
@@ -587,9 +587,9 @@ public final class OTFAdvancedTypographicTableReader {
             if (log.isDebugEnabled()) {
                 log.debug(label + " range[" + i + "]: [" + s + "," + e + "]: " + m);
             }
-            entries.add (new GlyphCoverageTable.MappingRange (s, e, m));
+            entries.add(new GlyphCoverageTable.MappingRange(s, e, m));
         }
-        return GlyphCoverageTable.createCoverageTable (entries);
+        return GlyphCoverageTable.createCoverageTable(entries);
     }
 
     private GlyphCoverageTable readCoverageTable(String label, long tableOffset) throws IOException {
@@ -599,13 +599,13 @@ public final class OTFAdvancedTypographicTableReader {
         // read coverage table format
         int cf = in.readTTFUShort();
         if (cf == 1) {
-            gct = readCoverageTableFormat1 (label, tableOffset, cf);
+            gct = readCoverageTableFormat1(label, tableOffset, cf);
         } else if (cf == 2) {
-            gct = readCoverageTableFormat2 (label, tableOffset, cf);
+            gct = readCoverageTableFormat2(label, tableOffset, cf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported coverage table format: " + cf);
+            throw new AdvancedTypographicTableFormatException("unsupported coverage table format: " + cf);
         }
-        in.seekSet (cp);
+        in.seekSet(cp);
         return gct;
     }
 
@@ -613,10 +613,10 @@ public final class OTFAdvancedTypographicTableReader {
         List entries = new java.util.ArrayList();
         in.seekSet(tableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read start glyph
         int sg = in.readTTFUShort();
-        entries.add (Integer.valueOf(sg));
+        entries.add(Integer.valueOf(sg));
         // read glyph count
         int ng = in.readTTFUShort();
         // read glyph classes
@@ -624,20 +624,20 @@ public final class OTFAdvancedTypographicTableReader {
         for (int i = 0, n = ng; i < n; i++) {
             int gc = in.readTTFUShort();
             ca[i] = gc;
-            entries.add (Integer.valueOf(gc));
+            entries.add(Integer.valueOf(gc));
         }
         // dump info if debugging
         if (log.isDebugEnabled()) {
             log.debug(label + " glyph classes: " + toString(ca));
         }
-        return GlyphClassTable.createClassTable (entries);
+        return GlyphClassTable.createClassTable(entries);
     }
 
     private GlyphClassTable readClassDefTableFormat2(String label, long tableOffset, int classFormat) throws IOException {
         List entries = new java.util.ArrayList();
         in.seekSet(tableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read range record count
         int nr = in.readTTFUShort();
         for (int i = 0, n = nr; i < n; i++) {
@@ -651,9 +651,9 @@ public final class OTFAdvancedTypographicTableReader {
             if (log.isDebugEnabled()) {
                 log.debug(label + " range[" + i + "]: [" + s + "," + e + "]: " + m);
             }
-            entries.add (new GlyphClassTable.MappingRange (s, e, m));
+            entries.add(new GlyphClassTable.MappingRange(s, e, m));
         }
-        return GlyphClassTable.createClassTable (entries);
+        return GlyphClassTable.createClassTable(entries);
     }
 
     private GlyphClassTable readClassDefTable(String label, long tableOffset) throws IOException {
@@ -663,13 +663,13 @@ public final class OTFAdvancedTypographicTableReader {
         // read class table format
         int cf = in.readTTFUShort();
         if (cf == 1) {
-            gct = readClassDefTableFormat1 (label, tableOffset, cf);
+            gct = readClassDefTableFormat1(label, tableOffset, cf);
         } else if (cf == 2) {
-            gct = readClassDefTableFormat2 (label, tableOffset, cf);
+            gct = readClassDefTableFormat2(label, tableOffset, cf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported class definition table format: " + cf);
+            throw new AdvancedTypographicTableFormatException("unsupported class definition table format: " + cf);
         }
-        in.seekSet (cp);
+        in.seekSet(cp);
         return gct;
     }
 
@@ -677,7 +677,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read delta glyph
@@ -689,15 +689,15 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " single substitution delta: " + dg);
         }
         // read coverage table
-        seMapping = readCoverageTable (tableTag + " single substitution coverage", subtableOffset + co);
-        seEntries.add (Integer.valueOf (dg));
+        seMapping = readCoverageTable(tableTag + " single substitution coverage", subtableOffset + co);
+        seEntries.add(Integer.valueOf(dg));
     }
 
     private void readSingleSubTableFormat2(int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read glyph count
@@ -709,7 +709,7 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " single substitution glyph count: " + ng);
         }
         // read coverage table
-        seMapping = readCoverageTable (tableTag + " single substitution coverage", subtableOffset + co);
+        seMapping = readCoverageTable(tableTag + " single substitution coverage", subtableOffset + co);
         // read glyph substitutions
         int[] gsa = new int[ng];
         for (int i = 0, n = ng; i < n; i++) {
@@ -718,7 +718,7 @@ public final class OTFAdvancedTypographicTableReader {
                 log.debug(tableTag + " single substitution glyph[" + i + "]: " + gs);
             }
             gsa[i] = gs;
-            seEntries.add (Integer.valueOf (gs));
+            seEntries.add(Integer.valueOf(gs));
         }
     }
 
@@ -727,11 +727,11 @@ public final class OTFAdvancedTypographicTableReader {
         // read substitution subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readSingleSubTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readSingleSubTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else if (sf == 2) {
-            readSingleSubTableFormat2 (lookupType, lookupFlags, subtableOffset, sf);
+            readSingleSubTableFormat2(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported single substitution subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported single substitution subtable format: " + sf);
         }
         return sf;
     }
@@ -740,7 +740,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read sequence count
@@ -752,7 +752,7 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " multiple substitution sequence count: " + ns);
         }
         // read coverage table
-        seMapping = readCoverageTable (tableTag + " multiple substitution coverage", subtableOffset + co);
+        seMapping = readCoverageTable(tableTag + " multiple substitution coverage", subtableOffset + co);
         // read sequence table offsets
         int[] soa = new int[ns];
         for (int i = 0, n = ns; i < n; i++) {
@@ -775,11 +775,11 @@ public final class OTFAdvancedTypographicTableReader {
                 ga = null;
             }
             if (log.isDebugEnabled()) {
-                log.debug(tableTag + " multiple substitution sequence[" + i + "]: " + toString (ga));
+                log.debug(tableTag + " multiple substitution sequence[" + i + "]: " + toString(ga));
             }
             gsa [ i ] = ga;
         }
-        seEntries.add (gsa);
+        seEntries.add(gsa);
     }
 
     private int readMultipleSubTable(int lookupType, int lookupFlags, long subtableOffset) throws IOException {
@@ -787,9 +787,9 @@ public final class OTFAdvancedTypographicTableReader {
         // read substitution subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readMultipleSubTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readMultipleSubTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported multiple substitution subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported multiple substitution subtable format: " + sf);
         }
         return sf;
     }
@@ -798,7 +798,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read alternate set count
@@ -810,7 +810,7 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " alternate substitution alternate set count: " + ns);
         }
         // read coverage table
-        seMapping = readCoverageTable (tableTag + " alternate substitution coverage", subtableOffset + co);
+        seMapping = readCoverageTable(tableTag + " alternate substitution coverage", subtableOffset + co);
         // read alternate set table offsets
         int[] soa = new int[ns];
         for (int i = 0, n = ns; i < n; i++) {
@@ -828,9 +828,9 @@ public final class OTFAdvancedTypographicTableReader {
                 ga[j] = gs;
             }
             if (log.isDebugEnabled()) {
-                log.debug(tableTag + " alternate substitution alternate set[" + i + "]: " + toString (ga));
+                log.debug(tableTag + " alternate substitution alternate set[" + i + "]: " + toString(ga));
             }
-            seEntries.add (ga);
+            seEntries.add(ga);
         }
     }
 
@@ -839,9 +839,9 @@ public final class OTFAdvancedTypographicTableReader {
         // read substitution subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readAlternateSubTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readAlternateSubTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported alternate substitution subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported alternate substitution subtable format: " + sf);
         }
         return sf;
     }
@@ -850,7 +850,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read ligature set count
@@ -862,7 +862,7 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " ligature substitution ligature set count: " + ns);
         }
         // read coverage table
-        seMapping = readCoverageTable (tableTag + " ligature substitution coverage", subtableOffset + co);
+        seMapping = readCoverageTable(tableTag + " ligature substitution coverage", subtableOffset + co);
         // read ligature set table offsets
         int[] soa = new int[ns];
         for (int i = 0, n = ns; i < n; i++) {
@@ -892,11 +892,11 @@ public final class OTFAdvancedTypographicTableReader {
                     ca[k] = in.readTTFUShort();
                 }
                 if (log.isDebugEnabled()) {
-                    log.debug(tableTag + " ligature substitution ligature set[" + i + "]: ligature(" + lg + "), components: " + toString (ca));
+                    log.debug(tableTag + " ligature substitution ligature set[" + i + "]: ligature(" + lg + "), components: " + toString(ca));
                 }
-                ligs.add (new GlyphSubstitutionTable.Ligature (lg, ca));
+                ligs.add(new GlyphSubstitutionTable.Ligature(lg, ca));
             }
-            seEntries.add (new GlyphSubstitutionTable.LigatureSet (ligs));
+            seEntries.add(new GlyphSubstitutionTable.LigatureSet(ligs));
         }
     }
 
@@ -905,9 +905,9 @@ public final class OTFAdvancedTypographicTableReader {
         // read substitution subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readLigatureSubTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readLigatureSubTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported ligature substitution subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported ligature substitution subtable format: " + sf);
         }
         return sf;
     }
@@ -917,7 +917,7 @@ public final class OTFAdvancedTypographicTableReader {
         for (int i = 0, n = numLookups; i < n; i++) {
             int sequenceIndex = in.readTTFUShort();
             int lookupIndex = in.readTTFUShort();
-            la [ i ] = new GlyphTable.RuleLookup (sequenceIndex, lookupIndex);
+            la [ i ] = new GlyphTable.RuleLookup(sequenceIndex, lookupIndex);
             // dump info if debugging and header is non-null
             if (log.isDebugEnabled() && (header != null)) {
                 log.debug(header + "lookup[" + i + "]: " + la[i]);
@@ -930,7 +930,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read rule set count
@@ -952,7 +952,7 @@ public final class OTFAdvancedTypographicTableReader {
         // read coverage table
         GlyphCoverageTable ct;
         if (co > 0) {
-            ct = readCoverageTable (tableTag + " contextual substitution coverage", subtableOffset + co);
+            ct = readCoverageTable(tableTag + " contextual substitution coverage", subtableOffset + co);
         } else {
             ct = null;
         }
@@ -964,7 +964,7 @@ public final class OTFAdvancedTypographicTableReader {
             int rso = rsoa [ i ];
             if (rso > 0) {
                 // seek to rule set [ i ]
-                in.seekSet (subtableOffset + rso);
+                in.seekSet(subtableOffset + rso);
                 // read rule count
                 int nr = in.readTTFUShort();
                 // read rule offsets
@@ -979,7 +979,7 @@ public final class OTFAdvancedTypographicTableReader {
                     int ro = roa [ j ];
                     if (ro > 0) {
                         // seek to rule [ j ]
-                        in.seekSet (subtableOffset + rso + ro);
+                        in.seekSet(subtableOffset + rso + ro);
                         // read glyph count
                         int ng = in.readTTFUShort();
                         // read rule lookup count
@@ -993,14 +993,14 @@ public final class OTFAdvancedTypographicTableReader {
                         if (log.isDebugEnabled()) {
                             header = tableTag + " contextual substitution lookups @rule[" + i + "][" + j + "]: ";
                         }
-                        GlyphTable.RuleLookup[] lookups = readRuleLookups (nl, header);
-                        r = new GlyphTable.GlyphSequenceRule (lookups, ng, glyphs);
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups(nl, header);
+                        r = new GlyphTable.GlyphSequenceRule(lookups, ng, glyphs);
                     } else {
                         r = null;
                     }
                     ra [ j ] = r;
                 }
-                rs = new GlyphTable.HomogeneousRuleSet (ra);
+                rs = new GlyphTable.HomogeneousRuleSet(ra);
             } else {
                 rs = null;
             }
@@ -1008,14 +1008,14 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = ct;
-        seEntries.add (rsa);
+        seEntries.add(rsa);
     }
 
     private void readContextualSubTableFormat2(int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read class def table offset
@@ -1039,14 +1039,14 @@ public final class OTFAdvancedTypographicTableReader {
         // read coverage table
         GlyphCoverageTable ct;
         if (co > 0) {
-            ct = readCoverageTable (tableTag + " contextual substitution coverage", subtableOffset + co);
+            ct = readCoverageTable(tableTag + " contextual substitution coverage", subtableOffset + co);
         } else {
             ct = null;
         }
         // read class definition table
         GlyphClassTable cdt;
         if (cdo > 0) {
-            cdt = readClassDefTable (tableTag + " contextual substitution class definition", subtableOffset + cdo);
+            cdt = readClassDefTable(tableTag + " contextual substitution class definition", subtableOffset + cdo);
         } else {
             cdt = null;
         }
@@ -1058,7 +1058,7 @@ public final class OTFAdvancedTypographicTableReader {
             GlyphTable.RuleSet rs;
             if (cso > 0) {
                 // seek to rule set [ i ]
-                in.seekSet (subtableOffset + cso);
+                in.seekSet(subtableOffset + cso);
                 // read rule count
                 int nr = in.readTTFUShort();
                 // read rule offsets
@@ -1073,7 +1073,7 @@ public final class OTFAdvancedTypographicTableReader {
                     GlyphTable.ClassSequenceRule r;
                     if (ro > 0) {
                         // seek to rule [ j ]
-                        in.seekSet (subtableOffset + cso + ro);
+                        in.seekSet(subtableOffset + cso + ro);
                         // read glyph count
                         int ng = in.readTTFUShort();
                         // read rule lookup count
@@ -1087,15 +1087,15 @@ public final class OTFAdvancedTypographicTableReader {
                         if (log.isDebugEnabled()) {
                             header = tableTag + " contextual substitution lookups @rule[" + i + "][" + j + "]: ";
                         }
-                        GlyphTable.RuleLookup[] lookups = readRuleLookups (nl, header);
-                        r = new GlyphTable.ClassSequenceRule (lookups, ng, classes);
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups(nl, header);
+                        r = new GlyphTable.ClassSequenceRule(lookups, ng, classes);
                     } else {
                         assert ro > 0 : "unexpected null subclass rule offset";
                         r = null;
                     }
                     ra [ j ] = r;
                 }
-                rs = new GlyphTable.HomogeneousRuleSet (ra);
+                rs = new GlyphTable.HomogeneousRuleSet(ra);
             } else {
                 rs = null;
             }
@@ -1103,16 +1103,16 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = ct;
-        seEntries.add (cdt);
-        seEntries.add (Integer.valueOf (ngc));
-        seEntries.add (rsa);
+        seEntries.add(cdt);
+        seEntries.add(Integer.valueOf(ngc));
+        seEntries.add(rsa);
     }
 
     private void readContextualSubTableFormat3(int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read glyph (input sequence length) count
         int ng = in.readTTFUShort();
         // read substitution lookup count
@@ -1137,7 +1137,7 @@ public final class OTFAdvancedTypographicTableReader {
             int gco = gcoa [ i ];
             GlyphCoverageTable gct;
             if (gco > 0) {
-                gct = readCoverageTable (tableTag + " contextual substitution coverage[" + i + "]", subtableOffset + gco);
+                gct = readCoverageTable(tableTag + " contextual substitution coverage[" + i + "]", subtableOffset + gco);
             } else {
                 gct = null;
             }
@@ -1148,15 +1148,15 @@ public final class OTFAdvancedTypographicTableReader {
         if (log.isDebugEnabled()) {
             header = tableTag + " contextual substitution lookups: ";
         }
-        GlyphTable.RuleLookup[] lookups = readRuleLookups (nl, header);
+        GlyphTable.RuleLookup[] lookups = readRuleLookups(nl, header);
         // construct rule, rule set, and rule set array
-        GlyphTable.Rule r = new GlyphTable.CoverageSequenceRule (lookups, ng, gca);
-        GlyphTable.RuleSet rs = new GlyphTable.HomogeneousRuleSet (new GlyphTable.Rule[] {r});
+        GlyphTable.Rule r = new GlyphTable.CoverageSequenceRule(lookups, ng, gca);
+        GlyphTable.RuleSet rs = new GlyphTable.HomogeneousRuleSet(new GlyphTable.Rule[] {r});
         GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet[] {rs};
         // store results
         assert (gca != null) && (gca.length > 0);
         seMapping = gca[0];
-        seEntries.add (rsa);
+        seEntries.add(rsa);
     }
 
     private int readContextualSubTable(int lookupType, int lookupFlags, long subtableOffset) throws IOException {
@@ -1164,13 +1164,13 @@ public final class OTFAdvancedTypographicTableReader {
         // read substitution subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readContextualSubTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readContextualSubTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else if (sf == 2) {
-            readContextualSubTableFormat2 (lookupType, lookupFlags, subtableOffset, sf);
+            readContextualSubTableFormat2(lookupType, lookupFlags, subtableOffset, sf);
         } else if (sf == 3) {
-            readContextualSubTableFormat3 (lookupType, lookupFlags, subtableOffset, sf);
+            readContextualSubTableFormat3(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported contextual substitution subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported contextual substitution subtable format: " + sf);
         }
         return sf;
     }
@@ -1179,7 +1179,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read rule set count
@@ -1201,7 +1201,7 @@ public final class OTFAdvancedTypographicTableReader {
         // read coverage table
         GlyphCoverageTable ct;
         if (co > 0) {
-            ct = readCoverageTable (tableTag + " chained contextual substitution coverage", subtableOffset + co);
+            ct = readCoverageTable(tableTag + " chained contextual substitution coverage", subtableOffset + co);
         } else {
             ct = null;
         }
@@ -1213,7 +1213,7 @@ public final class OTFAdvancedTypographicTableReader {
             int rso = rsoa [ i ];
             if (rso > 0) {
                 // seek to rule set [ i ]
-                in.seekSet (subtableOffset + rso);
+                in.seekSet(subtableOffset + rso);
                 // read rule count
                 int nr = in.readTTFUShort();
                 // read rule offsets
@@ -1228,7 +1228,7 @@ public final class OTFAdvancedTypographicTableReader {
                     int ro = roa [ j ];
                     if (ro > 0) {
                         // seek to rule [ j ]
-                        in.seekSet (subtableOffset + rso + ro);
+                        in.seekSet(subtableOffset + rso + ro);
                         // read backtrack glyph count
                         int nbg = in.readTTFUShort();
                         // read backtrack glyphs
@@ -1256,14 +1256,14 @@ public final class OTFAdvancedTypographicTableReader {
                         if (log.isDebugEnabled()) {
                             header = tableTag + " contextual substitution lookups @rule[" + i + "][" + j + "]: ";
                         }
-                        GlyphTable.RuleLookup[] lookups = readRuleLookups (nl, header);
-                        r = new GlyphTable.ChainedGlyphSequenceRule (lookups, nig, glyphs, backtrackGlyphs, lookaheadGlyphs);
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups(nl, header);
+                        r = new GlyphTable.ChainedGlyphSequenceRule(lookups, nig, glyphs, backtrackGlyphs, lookaheadGlyphs);
                     } else {
                         r = null;
                     }
                     ra [ j ] = r;
                 }
-                rs = new GlyphTable.HomogeneousRuleSet (ra);
+                rs = new GlyphTable.HomogeneousRuleSet(ra);
             } else {
                 rs = null;
             }
@@ -1271,14 +1271,14 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = ct;
-        seEntries.add (rsa);
+        seEntries.add(rsa);
     }
 
     private void readChainedContextualSubTableFormat2(int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read backtrack class def table offset
@@ -1306,28 +1306,28 @@ public final class OTFAdvancedTypographicTableReader {
         // read coverage table
         GlyphCoverageTable ct;
         if (co > 0) {
-            ct = readCoverageTable (tableTag + " chained contextual substitution coverage", subtableOffset + co);
+            ct = readCoverageTable(tableTag + " chained contextual substitution coverage", subtableOffset + co);
         } else {
             ct = null;
         }
         // read backtrack class definition table
         GlyphClassTable bcdt;
         if (bcdo > 0) {
-            bcdt = readClassDefTable (tableTag + " contextual substitution backtrack class definition", subtableOffset + bcdo);
+            bcdt = readClassDefTable(tableTag + " contextual substitution backtrack class definition", subtableOffset + bcdo);
         } else {
             bcdt = null;
         }
         // read input class definition table
         GlyphClassTable icdt;
         if (icdo > 0) {
-            icdt = readClassDefTable (tableTag + " contextual substitution input class definition", subtableOffset + icdo);
+            icdt = readClassDefTable(tableTag + " contextual substitution input class definition", subtableOffset + icdo);
         } else {
             icdt = null;
         }
         // read lookahead class definition table
         GlyphClassTable lcdt;
         if (lcdo > 0) {
-            lcdt = readClassDefTable (tableTag + " contextual substitution lookahead class definition", subtableOffset + lcdo);
+            lcdt = readClassDefTable(tableTag + " contextual substitution lookahead class definition", subtableOffset + lcdo);
         } else {
             lcdt = null;
         }
@@ -1339,7 +1339,7 @@ public final class OTFAdvancedTypographicTableReader {
             GlyphTable.RuleSet rs;
             if (cso > 0) {
                 // seek to rule set [ i ]
-                in.seekSet (subtableOffset + cso);
+                in.seekSet(subtableOffset + cso);
                 // read rule count
                 int nr = in.readTTFUShort();
                 // read rule offsets
@@ -1354,7 +1354,7 @@ public final class OTFAdvancedTypographicTableReader {
                     GlyphTable.ChainedClassSequenceRule r;
                     if (ro > 0) {
                         // seek to rule [ j ]
-                        in.seekSet (subtableOffset + cso + ro);
+                        in.seekSet(subtableOffset + cso + ro);
                         // read backtrack glyph class count
                         int nbc = in.readTTFUShort();
                         // read backtrack glyph classes
@@ -1382,14 +1382,14 @@ public final class OTFAdvancedTypographicTableReader {
                         if (log.isDebugEnabled()) {
                             header = tableTag + " contextual substitution lookups @rule[" + i + "][" + j + "]: ";
                         }
-                        GlyphTable.RuleLookup[] lookups = readRuleLookups (nl, header);
-                        r = new GlyphTable.ChainedClassSequenceRule (lookups, nic, classes, backtrackClasses, lookaheadClasses);
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups(nl, header);
+                        r = new GlyphTable.ChainedClassSequenceRule(lookups, nic, classes, backtrackClasses, lookaheadClasses);
                     } else {
                         r = null;
                     }
                     ra [ j ] = r;
                 }
-                rs = new GlyphTable.HomogeneousRuleSet (ra);
+                rs = new GlyphTable.HomogeneousRuleSet(ra);
             } else {
                 rs = null;
             }
@@ -1397,18 +1397,18 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = ct;
-        seEntries.add (icdt);
-        seEntries.add (bcdt);
-        seEntries.add (lcdt);
-        seEntries.add (Integer.valueOf (ngc));
-        seEntries.add (rsa);
+        seEntries.add(icdt);
+        seEntries.add(bcdt);
+        seEntries.add(lcdt);
+        seEntries.add(Integer.valueOf(ngc));
+        seEntries.add(rsa);
     }
 
     private void readChainedContextualSubTableFormat3(int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read backtrack glyph count
         int nbg = in.readTTFUShort();
         // read backtrack glyph coverage offsets
@@ -1455,7 +1455,7 @@ public final class OTFAdvancedTypographicTableReader {
             int bgco = bgcoa [ i ];
             GlyphCoverageTable bgct;
             if (bgco > 0) {
-                bgct = readCoverageTable (tableTag + " chained contextual substitution backtrack coverage[" + i + "]", subtableOffset + bgco);
+                bgct = readCoverageTable(tableTag + " chained contextual substitution backtrack coverage[" + i + "]", subtableOffset + bgco);
             } else {
                 bgct = null;
             }
@@ -1467,7 +1467,7 @@ public final class OTFAdvancedTypographicTableReader {
             int igco = igcoa [ i ];
             GlyphCoverageTable igct;
             if (igco > 0) {
-                igct = readCoverageTable (tableTag + " chained contextual substitution input coverage[" + i + "]", subtableOffset + igco);
+                igct = readCoverageTable(tableTag + " chained contextual substitution input coverage[" + i + "]", subtableOffset + igco);
             } else {
                 igct = null;
             }
@@ -1479,7 +1479,7 @@ public final class OTFAdvancedTypographicTableReader {
             int lgco = lgcoa [ i ];
             GlyphCoverageTable lgct;
             if (lgco > 0) {
-                lgct = readCoverageTable (tableTag + " chained contextual substitution lookahead coverage[" + i + "]", subtableOffset + lgco);
+                lgct = readCoverageTable(tableTag + " chained contextual substitution lookahead coverage[" + i + "]", subtableOffset + lgco);
             } else {
                 lgct = null;
             }
@@ -1490,15 +1490,15 @@ public final class OTFAdvancedTypographicTableReader {
         if (log.isDebugEnabled()) {
             header = tableTag + " chained contextual substitution lookups: ";
         }
-        GlyphTable.RuleLookup[] lookups = readRuleLookups (nl, header);
+        GlyphTable.RuleLookup[] lookups = readRuleLookups(nl, header);
         // construct rule, rule set, and rule set array
-        GlyphTable.Rule r = new GlyphTable.ChainedCoverageSequenceRule (lookups, nig, igca, bgca, lgca);
-        GlyphTable.RuleSet rs = new GlyphTable.HomogeneousRuleSet (new GlyphTable.Rule[] {r});
+        GlyphTable.Rule r = new GlyphTable.ChainedCoverageSequenceRule(lookups, nig, igca, bgca, lgca);
+        GlyphTable.RuleSet rs = new GlyphTable.HomogeneousRuleSet(new GlyphTable.Rule[] {r});
         GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet[] {rs};
         // store results
         assert (igca != null) && (igca.length > 0);
         seMapping = igca[0];
-        seEntries.add (rsa);
+        seEntries.add(rsa);
     }
 
     private int readChainedContextualSubTable(int lookupType, int lookupFlags, long subtableOffset) throws IOException {
@@ -1506,13 +1506,13 @@ public final class OTFAdvancedTypographicTableReader {
         // read substitution subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readChainedContextualSubTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readChainedContextualSubTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else if (sf == 2) {
-            readChainedContextualSubTableFormat2 (lookupType, lookupFlags, subtableOffset, sf);
+            readChainedContextualSubTableFormat2(lookupType, lookupFlags, subtableOffset, sf);
         } else if (sf == 3) {
-            readChainedContextualSubTableFormat3 (lookupType, lookupFlags, subtableOffset, sf);
+            readChainedContextualSubTableFormat3(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported chained contextual substitution subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported chained contextual substitution subtable format: " + sf);
         }
         return sf;
     }
@@ -1521,7 +1521,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read extension lookup type
         int lt = in.readTTFUShort();
         // read extension offset
@@ -1533,7 +1533,7 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " extension substitution lookup table offset: " + eo);
         }
         // read referenced subtable from extended offset
-        readGSUBSubtable (lt, lookupFlags, lookupSequence, subtableSequence, subtableOffset + eo);
+        readGSUBSubtable(lt, lookupFlags, lookupSequence, subtableSequence, subtableOffset + eo);
     }
 
     private int readExtensionSubTable(int lookupType, int lookupFlags, int lookupSequence, int subtableSequence, long subtableOffset) throws IOException {
@@ -1541,9 +1541,9 @@ public final class OTFAdvancedTypographicTableReader {
         // read substitution subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readExtensionSubTableFormat1 (lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset, sf);
+            readExtensionSubTableFormat1(lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported extension substitution subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported extension substitution subtable format: " + sf);
         }
         return sf;
     }
@@ -1552,7 +1552,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read backtrack glyph count
@@ -1591,14 +1591,14 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " reverse chained contextual substitution glyphs: " + toString(glyphs));
         }
         // read coverage table
-        GlyphCoverageTable ct = readCoverageTable (tableTag + " reverse chained contextual substitution coverage", subtableOffset + co);
+        GlyphCoverageTable ct = readCoverageTable(tableTag + " reverse chained contextual substitution coverage", subtableOffset + co);
         // read backtrack coverage tables
         GlyphCoverageTable[] bgca = new GlyphCoverageTable[nbg];
         for (int i = 0; i < nbg; i++) {
             int bgco = bgcoa[i];
             GlyphCoverageTable bgct;
             if (bgco > 0) {
-                bgct = readCoverageTable (tableTag + " reverse chained contextual substitution backtrack coverage[" + i + "]", subtableOffset + bgco);
+                bgct = readCoverageTable(tableTag + " reverse chained contextual substitution backtrack coverage[" + i + "]", subtableOffset + bgco);
             } else {
                 bgct = null;
             }
@@ -1610,7 +1610,7 @@ public final class OTFAdvancedTypographicTableReader {
             int lgco = lgcoa[i];
             GlyphCoverageTable lgct;
             if (lgco > 0) {
-                lgct = readCoverageTable (tableTag + " reverse chained contextual substitution lookahead coverage[" + i + "]", subtableOffset + lgco);
+                lgct = readCoverageTable(tableTag + " reverse chained contextual substitution lookahead coverage[" + i + "]", subtableOffset + lgco);
             } else {
                 lgct = null;
             }
@@ -1618,9 +1618,9 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = ct;
-        seEntries.add (bgca);
-        seEntries.add (lgca);
-        seEntries.add (glyphs);
+        seEntries.add(bgca);
+        seEntries.add(lgca);
+        seEntries.add(glyphs);
     }
 
     private int readReverseChainedSingleSubTable(int lookupType, int lookupFlags, long subtableOffset) throws IOException {
@@ -1628,9 +1628,9 @@ public final class OTFAdvancedTypographicTableReader {
         // read substitution subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readReverseChainedSingleSubTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readReverseChainedSingleSubTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported reverse chained single substitution subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported reverse chained single substitution subtable format: " + sf);
         }
         return sf;
     }
@@ -1640,33 +1640,33 @@ public final class OTFAdvancedTypographicTableReader {
         int subtableFormat = -1;
         switch (lookupType) {
         case GSUBLookupType.SINGLE:
-            subtableFormat = readSingleSubTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readSingleSubTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GSUBLookupType.MULTIPLE:
-            subtableFormat = readMultipleSubTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readMultipleSubTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GSUBLookupType.ALTERNATE:
-            subtableFormat = readAlternateSubTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readAlternateSubTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GSUBLookupType.LIGATURE:
-            subtableFormat = readLigatureSubTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readLigatureSubTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GSUBLookupType.CONTEXTUAL:
-            subtableFormat = readContextualSubTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readContextualSubTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GSUBLookupType.CHAINED_CONTEXTUAL:
-            subtableFormat = readChainedContextualSubTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readChainedContextualSubTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GSUBLookupType.REVERSE_CHAINED_SINGLE:
-            subtableFormat = readReverseChainedSingleSubTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readReverseChainedSingleSubTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GSUBLookupType.EXTENSION:
-            subtableFormat = readExtensionSubTable (lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset);
+            subtableFormat = readExtensionSubTable(lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset);
             break;
         default:
             break;
         }
-        extractSESubState (GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION, lookupType, lookupFlags, lookupSequence, subtableSequence, subtableFormat);
+        extractSESubState(GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION, lookupType, lookupFlags, lookupSequence, subtableSequence, subtableFormat);
         resetATSubState();
     }
 
@@ -1703,13 +1703,13 @@ public final class OTFAdvancedTypographicTableReader {
             dd = 256;
             s2 = 8;
         } else {
-            log.debug ("unsupported device table delta format: " + df + ", ignoring device table");
+            log.debug("unsupported device table delta format: " + df + ", ignoring device table");
             return null;
         }
         // read deltas
         int n = (es - ss) + 1;
         if (n < 0) {
-            log.debug ("invalid device table delta count: " + n + ", ignoring device table");
+            log.debug("invalid device table delta count: " + n + ", ignoring device table");
             return null;
         }
         int[] da = new int [ n ];
@@ -1729,35 +1729,35 @@ public final class OTFAdvancedTypographicTableReader {
             }
         }
         in.seekSet(cp);
-        return new GlyphPositioningTable.DeviceTable (ss, es, da);
+        return new GlyphPositioningTable.DeviceTable(ss, es, da);
     }
 
     private GlyphPositioningTable.Value readPosValue(long subtableOffset, int valueFormat) throws IOException {
         // XPlacement
         int xp;
         if ((valueFormat & GlyphPositioningTable.Value.X_PLACEMENT) != 0) {
-            xp = ttf.convertTTFUnit2PDFUnit (in.readTTFShort());
+            xp = ttf.convertTTFUnit2PDFUnit(in.readTTFShort());
         } else {
             xp = 0;
         }
         // YPlacement
         int yp;
         if ((valueFormat & GlyphPositioningTable.Value.Y_PLACEMENT) != 0) {
-            yp = ttf.convertTTFUnit2PDFUnit (in.readTTFShort());
+            yp = ttf.convertTTFUnit2PDFUnit(in.readTTFShort());
         } else {
             yp = 0;
         }
         // XAdvance
         int xa;
         if ((valueFormat & GlyphPositioningTable.Value.X_ADVANCE) != 0) {
-            xa = ttf.convertTTFUnit2PDFUnit (in.readTTFShort());
+            xa = ttf.convertTTFUnit2PDFUnit(in.readTTFShort());
         } else {
             xa = 0;
         }
         // YAdvance
         int ya;
         if ((valueFormat & GlyphPositioningTable.Value.Y_ADVANCE) != 0) {
-            ya = ttf.convertTTFUnit2PDFUnit (in.readTTFShort());
+            ya = ttf.convertTTFUnit2PDFUnit(in.readTTFShort());
         } else {
             ya = 0;
         }
@@ -1765,7 +1765,7 @@ public final class OTFAdvancedTypographicTableReader {
         GlyphPositioningTable.DeviceTable xpd;
         if ((valueFormat & GlyphPositioningTable.Value.X_PLACEMENT_DEVICE) != 0) {
             int xpdo = in.readTTFUShort();
-            xpd = readPosDeviceTable (subtableOffset, xpdo);
+            xpd = readPosDeviceTable(subtableOffset, xpdo);
         } else {
             xpd = null;
         }
@@ -1773,7 +1773,7 @@ public final class OTFAdvancedTypographicTableReader {
         GlyphPositioningTable.DeviceTable ypd;
         if ((valueFormat & GlyphPositioningTable.Value.Y_PLACEMENT_DEVICE) != 0) {
             int ypdo = in.readTTFUShort();
-            ypd = readPosDeviceTable (subtableOffset, ypdo);
+            ypd = readPosDeviceTable(subtableOffset, ypdo);
         } else {
             ypd = null;
         }
@@ -1781,7 +1781,7 @@ public final class OTFAdvancedTypographicTableReader {
         GlyphPositioningTable.DeviceTable xad;
         if ((valueFormat & GlyphPositioningTable.Value.X_ADVANCE_DEVICE) != 0) {
             int xado = in.readTTFUShort();
-            xad = readPosDeviceTable (subtableOffset, xado);
+            xad = readPosDeviceTable(subtableOffset, xado);
         } else {
             xad = null;
         }
@@ -1789,24 +1789,24 @@ public final class OTFAdvancedTypographicTableReader {
         GlyphPositioningTable.DeviceTable yad;
         if ((valueFormat & GlyphPositioningTable.Value.Y_ADVANCE_DEVICE) != 0) {
             int yado = in.readTTFUShort();
-            yad = readPosDeviceTable (subtableOffset, yado);
+            yad = readPosDeviceTable(subtableOffset, yado);
         } else {
             yad = null;
         }
-        return new GlyphPositioningTable.Value (xp, yp, xa, ya, xpd, ypd, xad, yad);
+        return new GlyphPositioningTable.Value(xp, yp, xa, ya, xpd, ypd, xad, yad);
     }
 
     private void readSinglePosTableFormat1(int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read value format
         int vf = in.readTTFUShort();
         // read value
-        GlyphPositioningTable.Value v = readPosValue (subtableOffset, vf);
+        GlyphPositioningTable.Value v = readPosValue(subtableOffset, vf);
         // dump info if debugging
         if (log.isDebugEnabled()) {
             log.debug(tableTag + " single positioning subtable format: " + subtableFormat + " (delta)");
@@ -1814,17 +1814,17 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " single positioning value: " + v);
         }
         // read coverage table
-        GlyphCoverageTable ct = readCoverageTable (tableTag + " single positioning coverage", subtableOffset + co);
+        GlyphCoverageTable ct = readCoverageTable(tableTag + " single positioning coverage", subtableOffset + co);
         // store results
         seMapping = ct;
-        seEntries.add (v);
+        seEntries.add(v);
     }
 
     private void readSinglePosTableFormat2(int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read value format
@@ -1838,11 +1838,11 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " single positioning value count: " + nv);
         }
         // read coverage table
-        GlyphCoverageTable ct = readCoverageTable (tableTag + " single positioning coverage", subtableOffset + co);
+        GlyphCoverageTable ct = readCoverageTable(tableTag + " single positioning coverage", subtableOffset + co);
         // read positioning values
         GlyphPositioningTable.Value[] pva = new GlyphPositioningTable.Value[nv];
         for (int i = 0, n = nv; i < n; i++) {
-            GlyphPositioningTable.Value pv = readPosValue (subtableOffset, vf);
+            GlyphPositioningTable.Value pv = readPosValue(subtableOffset, vf);
             if (log.isDebugEnabled()) {
                 log.debug(tableTag + " single positioning value[" + i + "]: " + pv);
             }
@@ -1850,7 +1850,7 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = ct;
-        seEntries.add (pva);
+        seEntries.add(pva);
     }
 
     private int readSinglePosTable(int lookupType, int lookupFlags, long subtableOffset) throws IOException {
@@ -1858,11 +1858,11 @@ public final class OTFAdvancedTypographicTableReader {
         // read positionining subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readSinglePosTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readSinglePosTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else if (sf == 2) {
-            readSinglePosTableFormat2 (lookupType, lookupFlags, subtableOffset, sf);
+            readSinglePosTableFormat2(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported single positioning subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported single positioning subtable format: " + sf);
         }
         return sf;
     }
@@ -1878,18 +1878,18 @@ public final class OTFAdvancedTypographicTableReader {
         // read first value (if present)
         GlyphPositioningTable.Value v1;
         if (vf1 != 0) {
-            v1 = readPosValue (subtableOffset, vf1);
+            v1 = readPosValue(subtableOffset, vf1);
         } else {
             v1 = null;
         }
         // read second value (if present)
         GlyphPositioningTable.Value v2;
         if (vf2 != 0) {
-            v2 = readPosValue (subtableOffset, vf2);
+            v2 = readPosValue(subtableOffset, vf2);
         } else {
             v2 = null;
         }
-        return new GlyphPositioningTable.PairValues (glyph, v1, v2);
+        return new GlyphPositioningTable.PairValues(glyph, v1, v2);
     }
 
     private GlyphPositioningTable.PairValues[] readPosPairSetTable(long subtableOffset, int pairSetTableOffset, int vf1, int vf2) throws IOException {
@@ -1906,7 +1906,7 @@ public final class OTFAdvancedTypographicTableReader {
         // read pair values
         GlyphPositioningTable.PairValues[] pva = new GlyphPositioningTable.PairValues [ npv ];
         for (int i = 0, n = npv; i < n; i++) {
-            GlyphPositioningTable.PairValues pv = readPosPairValues (subtableOffset, true, vf1, vf2);
+            GlyphPositioningTable.PairValues pv = readPosPairValues(subtableOffset, true, vf1, vf2);
             pva [ i ] = pv;
             if (log.isDebugEnabled()) {
                 log.debug(tableTag + " pair set table value[" + i + "]: " + pv);
@@ -1920,7 +1920,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read value format for first glyph
@@ -1937,25 +1937,25 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " pair positioning value format #2: " + vf2);
         }
         // read coverage table
-        GlyphCoverageTable ct = readCoverageTable (tableTag + " pair positioning coverage", subtableOffset + co);
+        GlyphCoverageTable ct = readCoverageTable(tableTag + " pair positioning coverage", subtableOffset + co);
         // read pair value matrix
         GlyphPositioningTable.PairValues[][] pvm = new GlyphPositioningTable.PairValues [ nps ][];
         for (int i = 0, n = nps; i < n; i++) {
             // read pair set offset
             int pso = in.readTTFUShort();
             // read pair set table at offset
-            pvm [ i ] = readPosPairSetTable (subtableOffset, pso, vf1, vf2);
+            pvm [ i ] = readPosPairSetTable(subtableOffset, pso, vf1, vf2);
         }
         // store results
         seMapping = ct;
-        seEntries.add (pvm);
+        seEntries.add(pvm);
     }
 
     private void readPairPosTableFormat2(int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read value format for first glyph
@@ -1982,16 +1982,16 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " pair positioning class #2 count: " + nc2);
         }
         // read coverage table
-        GlyphCoverageTable ct = readCoverageTable (tableTag + " pair positioning coverage", subtableOffset + co);
+        GlyphCoverageTable ct = readCoverageTable(tableTag + " pair positioning coverage", subtableOffset + co);
         // read class definition table #1
-        GlyphClassTable cdt1 = readClassDefTable (tableTag + " pair positioning class definition #1", subtableOffset + cd1o);
+        GlyphClassTable cdt1 = readClassDefTable(tableTag + " pair positioning class definition #1", subtableOffset + cd1o);
         // read class definition table #2
-        GlyphClassTable cdt2 = readClassDefTable (tableTag + " pair positioning class definition #2", subtableOffset + cd2o);
+        GlyphClassTable cdt2 = readClassDefTable(tableTag + " pair positioning class definition #2", subtableOffset + cd2o);
         // read pair value matrix
         GlyphPositioningTable.PairValues[][] pvm = new GlyphPositioningTable.PairValues [ nc1 ] [ nc2 ];
         for (int i = 0; i < nc1; i++) {
             for (int j = 0; j < nc2; j++) {
-                GlyphPositioningTable.PairValues pv = readPosPairValues (subtableOffset, false, vf1, vf2);
+                GlyphPositioningTable.PairValues pv = readPosPairValues(subtableOffset, false, vf1, vf2);
                 pvm [ i ] [ j ] = pv;
                 if (log.isDebugEnabled()) {
                     log.debug(tableTag + " pair set table value[" + i + "][" + j + "]: " + pv);
@@ -2000,11 +2000,11 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = ct;
-        seEntries.add (cdt1);
-        seEntries.add (cdt2);
-        seEntries.add (Integer.valueOf (nc1));
-        seEntries.add (Integer.valueOf (nc2));
-        seEntries.add (pvm);
+        seEntries.add(cdt1);
+        seEntries.add(cdt2);
+        seEntries.add(Integer.valueOf(nc1));
+        seEntries.add(Integer.valueOf(nc2));
+        seEntries.add(pvm);
     }
 
     private int readPairPosTable(int lookupType, int lookupFlags, long subtableOffset) throws IOException {
@@ -2012,11 +2012,11 @@ public final class OTFAdvancedTypographicTableReader {
         // read positioning subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readPairPosTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readPairPosTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else if (sf == 2) {
-            readPairPosTableFormat2 (lookupType, lookupFlags, subtableOffset, sf);
+            readPairPosTableFormat2(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported pair positioning subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported pair positioning subtable format: " + sf);
         }
         return sf;
     }
@@ -2029,23 +2029,23 @@ public final class OTFAdvancedTypographicTableReader {
         int af = in.readTTFUShort();
         if (af == 1) {
             // read x coordinate
-            int x = ttf.convertTTFUnit2PDFUnit (in.readTTFShort());
+            int x = ttf.convertTTFUnit2PDFUnit(in.readTTFShort());
             // read y coordinate
-            int y = ttf.convertTTFUnit2PDFUnit (in.readTTFShort());
-            a = new GlyphPositioningTable.Anchor (x, y);
+            int y = ttf.convertTTFUnit2PDFUnit(in.readTTFShort());
+            a = new GlyphPositioningTable.Anchor(x, y);
         } else if (af == 2) {
             // read x coordinate
-            int x = ttf.convertTTFUnit2PDFUnit (in.readTTFShort());
+            int x = ttf.convertTTFUnit2PDFUnit(in.readTTFShort());
             // read y coordinate
-            int y = ttf.convertTTFUnit2PDFUnit (in.readTTFShort());
+            int y = ttf.convertTTFUnit2PDFUnit(in.readTTFShort());
             // read anchor point index
             int ap = in.readTTFUShort();
-            a = new GlyphPositioningTable.Anchor (x, y, ap);
+            a = new GlyphPositioningTable.Anchor(x, y, ap);
         } else if (af == 3) {
             // read x coordinate
-            int x = ttf.convertTTFUnit2PDFUnit (in.readTTFShort());
+            int x = ttf.convertTTFUnit2PDFUnit(in.readTTFShort());
             // read y coordinate
-            int y = ttf.convertTTFUnit2PDFUnit (in.readTTFShort());
+            int y = ttf.convertTTFUnit2PDFUnit(in.readTTFShort());
             // read x device table offset
             int xdo = in.readTTFUShort();
             // read y device table offset
@@ -2053,20 +2053,20 @@ public final class OTFAdvancedTypographicTableReader {
             // read x device table (if present)
             GlyphPositioningTable.DeviceTable xd;
             if (xdo != 0) {
-                xd = readPosDeviceTable (cp, xdo);
+                xd = readPosDeviceTable(cp, xdo);
             } else {
                 xd = null;
             }
             // read y device table (if present)
             GlyphPositioningTable.DeviceTable yd;
             if (ydo != 0) {
-                yd = readPosDeviceTable (cp, ydo);
+                yd = readPosDeviceTable(cp, ydo);
             } else {
                 yd = null;
             }
-            a = new GlyphPositioningTable.Anchor (x, y, xd, yd);
+            a = new GlyphPositioningTable.Anchor(x, y, xd, yd);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported positioning anchor format: " + af);
+            throw new AdvancedTypographicTableFormatException("unsupported positioning anchor format: " + af);
         }
         in.seekSet(cp);
         return a;
@@ -2076,7 +2076,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read entry/exit count
@@ -2088,7 +2088,7 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " cursive positioning entry/exit count: " + ec);
         }
         // read coverage table
-        GlyphCoverageTable ct = readCoverageTable (tableTag + " cursive positioning coverage", subtableOffset + co);
+        GlyphCoverageTable ct = readCoverageTable(tableTag + " cursive positioning coverage", subtableOffset + co);
         // read entry/exit records
         GlyphPositioningTable.Anchor[] aa = new GlyphPositioningTable.Anchor [ ec * 2 ];
         for (int i = 0, n = ec; i < n; i++) {
@@ -2099,14 +2099,14 @@ public final class OTFAdvancedTypographicTableReader {
             // read entry anchor
             GlyphPositioningTable.Anchor ena;
             if (eno > 0) {
-                ena = readPosAnchor (subtableOffset + eno);
+                ena = readPosAnchor(subtableOffset + eno);
             } else {
                 ena = null;
             }
             // read exit anchor
             GlyphPositioningTable.Anchor exa;
             if (exo > 0) {
-                exa = readPosAnchor (subtableOffset + exo);
+                exa = readPosAnchor(subtableOffset + exo);
             } else {
                 exa = null;
             }
@@ -2123,7 +2123,7 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = ct;
-        seEntries.add (aa);
+        seEntries.add(aa);
     }
 
     private int readCursivePosTable(int lookupType, int lookupFlags, long subtableOffset) throws IOException {
@@ -2131,9 +2131,9 @@ public final class OTFAdvancedTypographicTableReader {
         // read positioning subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readCursivePosTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readCursivePosTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported cursive positioning subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported cursive positioning subtable format: " + sf);
         }
         return sf;
     }
@@ -2142,7 +2142,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read mark coverage offset
         int mco = in.readTTFUShort();
         // read base coverage offset
@@ -2163,9 +2163,9 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " mark-to-base positioning base array offset: " + bao);
         }
         // read mark coverage table
-        GlyphCoverageTable mct = readCoverageTable (tableTag + " mark-to-base positioning mark coverage", subtableOffset + mco);
+        GlyphCoverageTable mct = readCoverageTable(tableTag + " mark-to-base positioning mark coverage", subtableOffset + mco);
         // read base coverage table
-        GlyphCoverageTable bct = readCoverageTable (tableTag + " mark-to-base positioning base coverage", subtableOffset + bco);
+        GlyphCoverageTable bct = readCoverageTable(tableTag + " mark-to-base positioning base coverage", subtableOffset + bco);
         // read mark anchor array
         // seek to mark array
         in.seekSet(subtableOffset + mao);
@@ -2183,13 +2183,13 @@ public final class OTFAdvancedTypographicTableReader {
             int ao = in.readTTFUShort();
             GlyphPositioningTable.Anchor a;
             if (ao > 0) {
-                a = readPosAnchor (subtableOffset + mao + ao);
+                a = readPosAnchor(subtableOffset + mao + ao);
             } else {
                 a = null;
             }
             GlyphPositioningTable.MarkAnchor ma;
             if (a != null) {
-                ma = new GlyphPositioningTable.MarkAnchor (mc, a);
+                ma = new GlyphPositioningTable.MarkAnchor(mc, a);
             } else {
                 ma = null;
             }
@@ -2215,7 +2215,7 @@ public final class OTFAdvancedTypographicTableReader {
                 int ao = in.readTTFUShort();
                 GlyphPositioningTable.Anchor a;
                 if (ao > 0) {
-                    a = readPosAnchor (subtableOffset + bao + ao);
+                    a = readPosAnchor(subtableOffset + bao + ao);
                 } else {
                     a = null;
                 }
@@ -2227,10 +2227,10 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = mct;
-        seEntries.add (bct);
-        seEntries.add (Integer.valueOf (nmc));
-        seEntries.add (maa);
-        seEntries.add (bam);
+        seEntries.add(bct);
+        seEntries.add(Integer.valueOf(nmc));
+        seEntries.add(maa);
+        seEntries.add(bam);
     }
 
     private int readMarkToBasePosTable(int lookupType, int lookupFlags, long subtableOffset) throws IOException {
@@ -2238,9 +2238,9 @@ public final class OTFAdvancedTypographicTableReader {
         // read positioning subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readMarkToBasePosTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readMarkToBasePosTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported mark-to-base positioning subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported mark-to-base positioning subtable format: " + sf);
         }
         return sf;
     }
@@ -2249,7 +2249,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read mark coverage offset
         int mco = in.readTTFUShort();
         // read ligature coverage offset
@@ -2270,9 +2270,9 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " mark-to-ligature positioning ligature array offset: " + lao);
         }
         // read mark coverage table
-        GlyphCoverageTable mct = readCoverageTable (tableTag + " mark-to-ligature positioning mark coverage", subtableOffset + mco);
+        GlyphCoverageTable mct = readCoverageTable(tableTag + " mark-to-ligature positioning mark coverage", subtableOffset + mco);
         // read ligature coverage table
-        GlyphCoverageTable lct = readCoverageTable (tableTag + " mark-to-ligature positioning ligature coverage", subtableOffset + lco);
+        GlyphCoverageTable lct = readCoverageTable(tableTag + " mark-to-ligature positioning ligature coverage", subtableOffset + lco);
         // read mark anchor array
         // seek to mark array
         in.seekSet(subtableOffset + mao);
@@ -2290,13 +2290,13 @@ public final class OTFAdvancedTypographicTableReader {
             int ao = in.readTTFUShort();
             GlyphPositioningTable.Anchor a;
             if (ao > 0) {
-                a = readPosAnchor (subtableOffset + mao + ao);
+                a = readPosAnchor(subtableOffset + mao + ao);
             } else {
                 a = null;
             }
             GlyphPositioningTable.MarkAnchor ma;
             if (a != null) {
-                ma = new GlyphPositioningTable.MarkAnchor (mc, a);
+                ma = new GlyphPositioningTable.MarkAnchor(mc, a);
             } else {
                 ma = null;
             }
@@ -2322,7 +2322,7 @@ public final class OTFAdvancedTypographicTableReader {
         int mxc = 0;
         for (int i = 0; i < nl; i++) {
             int lato = laoa [ i ];
-            in.seekSet (subtableOffset + lao + lato);
+            in.seekSet(subtableOffset + lao + lato);
             // read component count
             int cc = in.readTTFUShort();
             if (cc > mxc) {
@@ -2337,7 +2337,7 @@ public final class OTFAdvancedTypographicTableReader {
         for (int i = 0; i < nl; i++) {
             int lato = laoa [ i ];
             // seek to ligature attach table for ligature[i]
-            in.seekSet (subtableOffset + lao + lato);
+            in.seekSet(subtableOffset + lao + lato);
             // read component count
             int cc = in.readTTFUShort();
             GlyphPositioningTable.Anchor[][] lcm = new GlyphPositioningTable.Anchor [ cc ] [ nmc ];
@@ -2347,7 +2347,7 @@ public final class OTFAdvancedTypographicTableReader {
                     int ao = in.readTTFUShort();
                     GlyphPositioningTable.Anchor a;
                     if (ao > 0) {
-                        a  = readPosAnchor (subtableOffset + lao + lato + ao);
+                        a  = readPosAnchor(subtableOffset + lao + lato + ao);
                     } else {
                         a = null;
                     }
@@ -2361,11 +2361,11 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = mct;
-        seEntries.add (lct);
-        seEntries.add (Integer.valueOf (nmc));
-        seEntries.add (Integer.valueOf (mxc));
-        seEntries.add (maa);
-        seEntries.add (lam);
+        seEntries.add(lct);
+        seEntries.add(Integer.valueOf(nmc));
+        seEntries.add(Integer.valueOf(mxc));
+        seEntries.add(maa);
+        seEntries.add(lam);
     }
 
     private int readMarkToLigaturePosTable(int lookupType, int lookupFlags, long subtableOffset) throws IOException {
@@ -2373,9 +2373,9 @@ public final class OTFAdvancedTypographicTableReader {
         // read positioning subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readMarkToLigaturePosTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readMarkToLigaturePosTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported mark-to-ligature positioning subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported mark-to-ligature positioning subtable format: " + sf);
         }
         return sf;
     }
@@ -2384,7 +2384,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read mark #1 coverage offset
         int m1co = in.readTTFUShort();
         // read mark #2 coverage offset
@@ -2405,9 +2405,9 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " mark-to-mark positioning mark #2 array offset: " + m2ao);
         }
         // read mark #1 coverage table
-        GlyphCoverageTable mct1 = readCoverageTable (tableTag + " mark-to-mark positioning mark #1 coverage", subtableOffset + m1co);
+        GlyphCoverageTable mct1 = readCoverageTable(tableTag + " mark-to-mark positioning mark #1 coverage", subtableOffset + m1co);
         // read mark #2 coverage table
-        GlyphCoverageTable mct2 = readCoverageTable (tableTag + " mark-to-mark positioning mark #2 coverage", subtableOffset + m2co);
+        GlyphCoverageTable mct2 = readCoverageTable(tableTag + " mark-to-mark positioning mark #2 coverage", subtableOffset + m2co);
         // read mark #1 anchor array
         // seek to mark array
         in.seekSet(subtableOffset + m1ao);
@@ -2425,13 +2425,13 @@ public final class OTFAdvancedTypographicTableReader {
             int ao = in.readTTFUShort();
             GlyphPositioningTable.Anchor a;
             if (ao > 0) {
-                a = readPosAnchor (subtableOffset + m1ao + ao);
+                a = readPosAnchor(subtableOffset + m1ao + ao);
             } else {
                 a = null;
             }
             GlyphPositioningTable.MarkAnchor ma;
             if (a != null) {
-                ma = new GlyphPositioningTable.MarkAnchor (mc, a);
+                ma = new GlyphPositioningTable.MarkAnchor(mc, a);
             } else {
                 ma = null;
             }
@@ -2456,7 +2456,7 @@ public final class OTFAdvancedTypographicTableReader {
                 int ao = in.readTTFUShort();
                 GlyphPositioningTable.Anchor a;
                 if (ao > 0) {
-                    a = readPosAnchor (subtableOffset + m2ao + ao);
+                    a = readPosAnchor(subtableOffset + m2ao + ao);
                 } else {
                     a = null;
                 }
@@ -2468,10 +2468,10 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = mct1;
-        seEntries.add (mct2);
-        seEntries.add (Integer.valueOf (nmc));
-        seEntries.add (maa);
-        seEntries.add (mam);
+        seEntries.add(mct2);
+        seEntries.add(Integer.valueOf(nmc));
+        seEntries.add(maa);
+        seEntries.add(mam);
     }
 
     private int readMarkToMarkPosTable(int lookupType, int lookupFlags, long subtableOffset) throws IOException {
@@ -2479,9 +2479,9 @@ public final class OTFAdvancedTypographicTableReader {
         // read positioning subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readMarkToMarkPosTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readMarkToMarkPosTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported mark-to-mark positioning subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported mark-to-mark positioning subtable format: " + sf);
         }
         return sf;
     }
@@ -2490,7 +2490,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read rule set count
@@ -2512,7 +2512,7 @@ public final class OTFAdvancedTypographicTableReader {
         // read coverage table
         GlyphCoverageTable ct;
         if (co > 0) {
-            ct = readCoverageTable (tableTag + " contextual positioning coverage", subtableOffset + co);
+            ct = readCoverageTable(tableTag + " contextual positioning coverage", subtableOffset + co);
         } else {
             ct = null;
         }
@@ -2524,7 +2524,7 @@ public final class OTFAdvancedTypographicTableReader {
             int rso = rsoa [ i ];
             if (rso > 0) {
                 // seek to rule set [ i ]
-                in.seekSet (subtableOffset + rso);
+                in.seekSet(subtableOffset + rso);
                 // read rule count
                 int nr = in.readTTFUShort();
                 // read rule offsets
@@ -2539,7 +2539,7 @@ public final class OTFAdvancedTypographicTableReader {
                     int ro = roa [ j ];
                     if (ro > 0) {
                         // seek to rule [ j ]
-                        in.seekSet (subtableOffset + rso + ro);
+                        in.seekSet(subtableOffset + rso + ro);
                         // read glyph count
                         int ng = in.readTTFUShort();
                         // read rule lookup count
@@ -2553,14 +2553,14 @@ public final class OTFAdvancedTypographicTableReader {
                         if (log.isDebugEnabled()) {
                             header = tableTag + " contextual positioning lookups @rule[" + i + "][" + j + "]: ";
                         }
-                        GlyphTable.RuleLookup[] lookups = readRuleLookups (nl, header);
-                        r = new GlyphTable.GlyphSequenceRule (lookups, ng, glyphs);
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups(nl, header);
+                        r = new GlyphTable.GlyphSequenceRule(lookups, ng, glyphs);
                     } else {
                         r = null;
                     }
                     ra [ j ] = r;
                 }
-                rs = new GlyphTable.HomogeneousRuleSet (ra);
+                rs = new GlyphTable.HomogeneousRuleSet(ra);
             } else {
                 rs = null;
             }
@@ -2568,14 +2568,14 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = ct;
-        seEntries.add (rsa);
+        seEntries.add(rsa);
     }
 
     private void readContextualPosTableFormat2(int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read class def table offset
@@ -2599,14 +2599,14 @@ public final class OTFAdvancedTypographicTableReader {
         // read coverage table
         GlyphCoverageTable ct;
         if (co > 0) {
-            ct = readCoverageTable (tableTag + " contextual positioning coverage", subtableOffset + co);
+            ct = readCoverageTable(tableTag + " contextual positioning coverage", subtableOffset + co);
         } else {
             ct = null;
         }
         // read class definition table
         GlyphClassTable cdt;
         if (cdo > 0) {
-            cdt = readClassDefTable (tableTag + " contextual positioning class definition", subtableOffset + cdo);
+            cdt = readClassDefTable(tableTag + " contextual positioning class definition", subtableOffset + cdo);
         } else {
             cdt = null;
         }
@@ -2618,7 +2618,7 @@ public final class OTFAdvancedTypographicTableReader {
             GlyphTable.RuleSet rs;
             if (cso > 0) {
                 // seek to rule set [ i ]
-                in.seekSet (subtableOffset + cso);
+                in.seekSet(subtableOffset + cso);
                 // read rule count
                 int nr = in.readTTFUShort();
                 // read rule offsets
@@ -2633,7 +2633,7 @@ public final class OTFAdvancedTypographicTableReader {
                     GlyphTable.ClassSequenceRule r;
                     if (ro > 0) {
                         // seek to rule [ j ]
-                        in.seekSet (subtableOffset + cso + ro);
+                        in.seekSet(subtableOffset + cso + ro);
                         // read glyph count
                         int ng = in.readTTFUShort();
                         // read rule lookup count
@@ -2647,14 +2647,14 @@ public final class OTFAdvancedTypographicTableReader {
                         if (log.isDebugEnabled()) {
                             header = tableTag + " contextual positioning lookups @rule[" + i + "][" + j + "]: ";
                         }
-                        GlyphTable.RuleLookup[] lookups = readRuleLookups (nl, header);
-                        r = new GlyphTable.ClassSequenceRule (lookups, ng, classes);
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups(nl, header);
+                        r = new GlyphTable.ClassSequenceRule(lookups, ng, classes);
                     } else {
                         r = null;
                     }
                     ra [ j ] = r;
                 }
-                rs = new GlyphTable.HomogeneousRuleSet (ra);
+                rs = new GlyphTable.HomogeneousRuleSet(ra);
             } else {
                 rs = null;
             }
@@ -2662,16 +2662,16 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = ct;
-        seEntries.add (cdt);
-        seEntries.add (Integer.valueOf (ngc));
-        seEntries.add (rsa);
+        seEntries.add(cdt);
+        seEntries.add(Integer.valueOf(ngc));
+        seEntries.add(rsa);
     }
 
     private void readContextualPosTableFormat3(int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read glyph (input sequence length) count
         int ng = in.readTTFUShort();
         // read positioning lookup count
@@ -2696,7 +2696,7 @@ public final class OTFAdvancedTypographicTableReader {
             int gco = gcoa [ i ];
             GlyphCoverageTable gct;
             if (gco > 0) {
-                gct = readCoverageTable (tableTag + " contextual positioning coverage[" + i + "]", subtableOffset + gcoa[i]);
+                gct = readCoverageTable(tableTag + " contextual positioning coverage[" + i + "]", subtableOffset + gcoa[i]);
             } else {
                 gct = null;
             }
@@ -2707,15 +2707,15 @@ public final class OTFAdvancedTypographicTableReader {
         if (log.isDebugEnabled()) {
             header = tableTag + " contextual positioning lookups: ";
         }
-        GlyphTable.RuleLookup[] lookups = readRuleLookups (nl, header);
+        GlyphTable.RuleLookup[] lookups = readRuleLookups(nl, header);
         // construct rule, rule set, and rule set array
-        GlyphTable.Rule r = new GlyphTable.CoverageSequenceRule (lookups, ng, gca);
-        GlyphTable.RuleSet rs = new GlyphTable.HomogeneousRuleSet (new GlyphTable.Rule[] {r});
+        GlyphTable.Rule r = new GlyphTable.CoverageSequenceRule(lookups, ng, gca);
+        GlyphTable.RuleSet rs = new GlyphTable.HomogeneousRuleSet(new GlyphTable.Rule[] {r});
         GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet[] {rs};
         // store results
         assert (gca != null) && (gca.length > 0);
         seMapping = gca[0];
-        seEntries.add (rsa);
+        seEntries.add(rsa);
     }
 
     private int readContextualPosTable(int lookupType, int lookupFlags, long subtableOffset) throws IOException {
@@ -2723,13 +2723,13 @@ public final class OTFAdvancedTypographicTableReader {
         // read positioning subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readContextualPosTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readContextualPosTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else if (sf == 2) {
-            readContextualPosTableFormat2 (lookupType, lookupFlags, subtableOffset, sf);
+            readContextualPosTableFormat2(lookupType, lookupFlags, subtableOffset, sf);
         } else if (sf == 3) {
-            readContextualPosTableFormat3 (lookupType, lookupFlags, subtableOffset, sf);
+            readContextualPosTableFormat3(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported contextual positioning subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported contextual positioning subtable format: " + sf);
         }
         return sf;
     }
@@ -2738,7 +2738,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read rule set count
@@ -2760,7 +2760,7 @@ public final class OTFAdvancedTypographicTableReader {
         // read coverage table
         GlyphCoverageTable ct;
         if (co > 0) {
-            ct = readCoverageTable (tableTag + " chained contextual positioning coverage", subtableOffset + co);
+            ct = readCoverageTable(tableTag + " chained contextual positioning coverage", subtableOffset + co);
         } else {
             ct = null;
         }
@@ -2772,7 +2772,7 @@ public final class OTFAdvancedTypographicTableReader {
             int rso = rsoa [ i ];
             if (rso > 0) {
                 // seek to rule set [ i ]
-                in.seekSet (subtableOffset + rso);
+                in.seekSet(subtableOffset + rso);
                 // read rule count
                 int nr = in.readTTFUShort();
                 // read rule offsets
@@ -2787,7 +2787,7 @@ public final class OTFAdvancedTypographicTableReader {
                     int ro = roa [ j ];
                     if (ro > 0) {
                         // seek to rule [ j ]
-                        in.seekSet (subtableOffset + rso + ro);
+                        in.seekSet(subtableOffset + rso + ro);
                         // read backtrack glyph count
                         int nbg = in.readTTFUShort();
                         // read backtrack glyphs
@@ -2815,14 +2815,14 @@ public final class OTFAdvancedTypographicTableReader {
                         if (log.isDebugEnabled()) {
                             header = tableTag + " contextual positioning lookups @rule[" + i + "][" + j + "]: ";
                         }
-                        GlyphTable.RuleLookup[] lookups = readRuleLookups (nl, header);
-                        r = new GlyphTable.ChainedGlyphSequenceRule (lookups, nig, glyphs, backtrackGlyphs, lookaheadGlyphs);
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups(nl, header);
+                        r = new GlyphTable.ChainedGlyphSequenceRule(lookups, nig, glyphs, backtrackGlyphs, lookaheadGlyphs);
                     } else {
                         r = null;
                     }
                     ra [ j ] = r;
                 }
-                rs = new GlyphTable.HomogeneousRuleSet (ra);
+                rs = new GlyphTable.HomogeneousRuleSet(ra);
             } else {
                 rs = null;
             }
@@ -2830,14 +2830,14 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = ct;
-        seEntries.add (rsa);
+        seEntries.add(rsa);
     }
 
     private void readChainedContextualPosTableFormat2(int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read coverage offset
         int co = in.readTTFUShort();
         // read backtrack class def table offset
@@ -2865,28 +2865,28 @@ public final class OTFAdvancedTypographicTableReader {
         // read coverage table
         GlyphCoverageTable ct;
         if (co > 0) {
-            ct = readCoverageTable (tableTag + " chained contextual positioning coverage", subtableOffset + co);
+            ct = readCoverageTable(tableTag + " chained contextual positioning coverage", subtableOffset + co);
         } else {
             ct = null;
         }
         // read backtrack class definition table
         GlyphClassTable bcdt;
         if (bcdo > 0) {
-            bcdt = readClassDefTable (tableTag + " contextual positioning backtrack class definition", subtableOffset + bcdo);
+            bcdt = readClassDefTable(tableTag + " contextual positioning backtrack class definition", subtableOffset + bcdo);
         } else {
             bcdt = null;
         }
         // read input class definition table
         GlyphClassTable icdt;
         if (icdo > 0) {
-            icdt = readClassDefTable (tableTag + " contextual positioning input class definition", subtableOffset + icdo);
+            icdt = readClassDefTable(tableTag + " contextual positioning input class definition", subtableOffset + icdo);
         } else {
             icdt = null;
         }
         // read lookahead class definition table
         GlyphClassTable lcdt;
         if (lcdo > 0) {
-            lcdt = readClassDefTable (tableTag + " contextual positioning lookahead class definition", subtableOffset + lcdo);
+            lcdt = readClassDefTable(tableTag + " contextual positioning lookahead class definition", subtableOffset + lcdo);
         } else {
             lcdt = null;
         }
@@ -2898,7 +2898,7 @@ public final class OTFAdvancedTypographicTableReader {
             GlyphTable.RuleSet rs;
             if (cso > 0) {
                 // seek to rule set [ i ]
-                in.seekSet (subtableOffset + cso);
+                in.seekSet(subtableOffset + cso);
                 // read rule count
                 int nr = in.readTTFUShort();
                 // read rule offsets
@@ -2913,7 +2913,7 @@ public final class OTFAdvancedTypographicTableReader {
                     int ro = roa [ j ];
                     if (ro > 0) {
                         // seek to rule [ j ]
-                        in.seekSet (subtableOffset + cso + ro);
+                        in.seekSet(subtableOffset + cso + ro);
                         // read backtrack glyph class count
                         int nbc = in.readTTFUShort();
                         // read backtrack glyph classes
@@ -2941,14 +2941,14 @@ public final class OTFAdvancedTypographicTableReader {
                         if (log.isDebugEnabled()) {
                             header = tableTag + " contextual positioning lookups @rule[" + i + "][" + j + "]: ";
                         }
-                        GlyphTable.RuleLookup[] lookups = readRuleLookups (nl, header);
-                        r = new GlyphTable.ChainedClassSequenceRule (lookups, nic, classes, backtrackClasses, lookaheadClasses);
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups(nl, header);
+                        r = new GlyphTable.ChainedClassSequenceRule(lookups, nic, classes, backtrackClasses, lookaheadClasses);
                     } else {
                         r = null;
                     }
                     ra [ j ] = r;
                 }
-                rs = new GlyphTable.HomogeneousRuleSet (ra);
+                rs = new GlyphTable.HomogeneousRuleSet(ra);
             } else {
                 rs = null;
             }
@@ -2956,18 +2956,18 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // store results
         seMapping = ct;
-        seEntries.add (icdt);
-        seEntries.add (bcdt);
-        seEntries.add (lcdt);
-        seEntries.add (Integer.valueOf (ngc));
-        seEntries.add (rsa);
+        seEntries.add(icdt);
+        seEntries.add(bcdt);
+        seEntries.add(lcdt);
+        seEntries.add(Integer.valueOf(ngc));
+        seEntries.add(rsa);
     }
 
     private void readChainedContextualPosTableFormat3(int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read backtrack glyph count
         int nbg = in.readTTFUShort();
         // read backtrack glyph coverage offsets
@@ -3014,7 +3014,7 @@ public final class OTFAdvancedTypographicTableReader {
             int bgco = bgcoa [ i ];
             GlyphCoverageTable bgct;
             if (bgco > 0) {
-                bgct = readCoverageTable (tableTag + " chained contextual positioning backtrack coverage[" + i + "]", subtableOffset + bgco);
+                bgct = readCoverageTable(tableTag + " chained contextual positioning backtrack coverage[" + i + "]", subtableOffset + bgco);
             } else {
                 bgct = null;
             }
@@ -3026,7 +3026,7 @@ public final class OTFAdvancedTypographicTableReader {
             int igco = igcoa [ i ];
             GlyphCoverageTable igct;
             if (igco > 0) {
-                igct = readCoverageTable (tableTag + " chained contextual positioning input coverage[" + i + "]", subtableOffset + igco);
+                igct = readCoverageTable(tableTag + " chained contextual positioning input coverage[" + i + "]", subtableOffset + igco);
             } else {
                 igct = null;
             }
@@ -3038,7 +3038,7 @@ public final class OTFAdvancedTypographicTableReader {
             int lgco = lgcoa [ i ];
             GlyphCoverageTable lgct;
             if (lgco > 0) {
-                lgct = readCoverageTable (tableTag + " chained contextual positioning lookahead coverage[" + i + "]", subtableOffset + lgco);
+                lgct = readCoverageTable(tableTag + " chained contextual positioning lookahead coverage[" + i + "]", subtableOffset + lgco);
             } else {
                 lgct = null;
             }
@@ -3049,15 +3049,15 @@ public final class OTFAdvancedTypographicTableReader {
         if (log.isDebugEnabled()) {
             header = tableTag + " chained contextual positioning lookups: ";
         }
-        GlyphTable.RuleLookup[] lookups = readRuleLookups (nl, header);
+        GlyphTable.RuleLookup[] lookups = readRuleLookups(nl, header);
         // construct rule, rule set, and rule set array
-        GlyphTable.Rule r = new GlyphTable.ChainedCoverageSequenceRule (lookups, nig, igca, bgca, lgca);
-        GlyphTable.RuleSet rs = new GlyphTable.HomogeneousRuleSet (new GlyphTable.Rule[] {r});
+        GlyphTable.Rule r = new GlyphTable.ChainedCoverageSequenceRule(lookups, nig, igca, bgca, lgca);
+        GlyphTable.RuleSet rs = new GlyphTable.HomogeneousRuleSet(new GlyphTable.Rule[] {r});
         GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet[] {rs};
         // store results
         assert (igca != null) && (igca.length > 0);
         seMapping = igca[0];
-        seEntries.add (rsa);
+        seEntries.add(rsa);
     }
 
     private int readChainedContextualPosTable(int lookupType, int lookupFlags, long subtableOffset) throws IOException {
@@ -3065,13 +3065,13 @@ public final class OTFAdvancedTypographicTableReader {
         // read positioning subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readChainedContextualPosTableFormat1 (lookupType, lookupFlags, subtableOffset, sf);
+            readChainedContextualPosTableFormat1(lookupType, lookupFlags, subtableOffset, sf);
         } else if (sf == 2) {
-            readChainedContextualPosTableFormat2 (lookupType, lookupFlags, subtableOffset, sf);
+            readChainedContextualPosTableFormat2(lookupType, lookupFlags, subtableOffset, sf);
         } else if (sf == 3) {
-            readChainedContextualPosTableFormat3 (lookupType, lookupFlags, subtableOffset, sf);
+            readChainedContextualPosTableFormat3(lookupType, lookupFlags, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported chained contextual positioning subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported chained contextual positioning subtable format: " + sf);
         }
         return sf;
     }
@@ -3080,7 +3080,7 @@ public final class OTFAdvancedTypographicTableReader {
         String tableTag = "GPOS";
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read extension lookup type
         int lt = in.readTTFUShort();
         // read extension offset
@@ -3092,7 +3092,7 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " extension positioning lookup table offset: " + eo);
         }
         // read referenced subtable from extended offset
-        readGPOSSubtable (lt, lookupFlags, lookupSequence, subtableSequence, subtableOffset + eo);
+        readGPOSSubtable(lt, lookupFlags, lookupSequence, subtableSequence, subtableOffset + eo);
     }
 
     private int readExtensionPosTable(int lookupType, int lookupFlags, int lookupSequence, int subtableSequence, long subtableOffset) throws IOException {
@@ -3100,9 +3100,9 @@ public final class OTFAdvancedTypographicTableReader {
         // read positioning subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readExtensionPosTableFormat1 (lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset, sf);
+            readExtensionPosTableFormat1(lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported extension positioning subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported extension positioning subtable format: " + sf);
         }
         return sf;
     }
@@ -3112,42 +3112,42 @@ public final class OTFAdvancedTypographicTableReader {
         int subtableFormat = -1;
         switch (lookupType) {
         case GPOSLookupType.SINGLE:
-            subtableFormat = readSinglePosTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readSinglePosTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GPOSLookupType.PAIR:
-            subtableFormat = readPairPosTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readPairPosTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GPOSLookupType.CURSIVE:
-            subtableFormat = readCursivePosTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readCursivePosTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GPOSLookupType.MARK_TO_BASE:
-            subtableFormat = readMarkToBasePosTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readMarkToBasePosTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GPOSLookupType.MARK_TO_LIGATURE:
-            subtableFormat = readMarkToLigaturePosTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readMarkToLigaturePosTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GPOSLookupType.MARK_TO_MARK:
-            subtableFormat = readMarkToMarkPosTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readMarkToMarkPosTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GPOSLookupType.CONTEXTUAL:
-            subtableFormat = readContextualPosTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readContextualPosTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GPOSLookupType.CHAINED_CONTEXTUAL:
-            subtableFormat = readChainedContextualPosTable (lookupType, lookupFlags, subtableOffset);
+            subtableFormat = readChainedContextualPosTable(lookupType, lookupFlags, subtableOffset);
             break;
         case GPOSLookupType.EXTENSION:
-            subtableFormat = readExtensionPosTable (lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset);
+            subtableFormat = readExtensionPosTable(lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset);
             break;
         default:
             break;
         }
-        extractSESubState (GlyphTable.GLYPH_TABLE_TYPE_POSITIONING, lookupType, lookupFlags, lookupSequence, subtableSequence, subtableFormat);
+        extractSESubState(GlyphTable.GLYPH_TABLE_TYPE_POSITIONING, lookupType, lookupFlags, lookupSequence, subtableSequence, subtableFormat);
         resetATSubState();
     }
 
     private void readLookupTable(TTFTableName tableTag, int lookupSequence, long lookupTable) throws IOException {
-        boolean isGSUB = tableTag.equals (TTFTableName.GSUB);
-        boolean isGPOS = tableTag.equals (TTFTableName.GPOS);
+        boolean isGSUB = tableTag.equals(TTFTableName.GSUB);
+        boolean isGPOS = tableTag.equals(TTFTableName.GPOS);
         in.seekSet(lookupTable);
         // read lookup type
         int lt = in.readTTFUShort();
@@ -3159,14 +3159,14 @@ public final class OTFAdvancedTypographicTableReader {
         if (log.isDebugEnabled()) {
             String lts;
             if (isGSUB) {
-                lts = GSUBLookupType.toString (lt);
+                lts = GSUBLookupType.toString(lt);
             } else if (isGPOS) {
-                lts = GPOSLookupType.toString (lt);
+                lts = GPOSLookupType.toString(lt);
             } else {
                 lts = "?";
             }
             log.debug(tableTag + " lookup table type: " + lt + " (" + lts + ")");
-            log.debug(tableTag + " lookup table flags: " + lf + " (" + LookupFlag.toString (lf) + ")");
+            log.debug(tableTag + " lookup table flags: " + lf + " (" + LookupFlag.toString(lf) + ")");
             log.debug(tableTag + " lookup table subtable count: " + ns);
         }
         // read subtable offsets
@@ -3191,9 +3191,9 @@ public final class OTFAdvancedTypographicTableReader {
         for (int i = 0; i < ns; i++) {
             int so = soa[i];
             if (isGSUB) {
-                readGSUBSubtable (lt, lf, lookupSequence, i, lookupTable + so);
+                readGSUBSubtable(lt, lf, lookupSequence, i, lookupTable + so);
             } else if (isGPOS) {
-                readGPOSSubtable (lt, lf, lookupSequence, i, lookupTable + so);
+                readGPOSSubtable(lt, lf, lookupSequence, i, lookupTable + so);
             }
         }
     }
@@ -3220,7 +3220,7 @@ public final class OTFAdvancedTypographicTableReader {
                 if (log.isDebugEnabled()) {
                     log.debug(tableTag + " lookup index: " + i);
                 }
-                readLookupTable (tableTag, i, lookupList + loa [ i ]);
+                readLookupTable(tableTag, i, lookupList + loa [ i ]);
             }
         }
     }
@@ -3235,13 +3235,13 @@ public final class OTFAdvancedTypographicTableReader {
      */
     private void readCommonLayoutTables(TTFTableName tableTag, long scriptList, long featureList, long lookupList) throws IOException {
         if (scriptList > 0) {
-            readScriptList (tableTag, scriptList);
+            readScriptList(tableTag, scriptList);
         }
         if (featureList > 0) {
-            readFeatureList (tableTag, featureList);
+            readFeatureList(tableTag, featureList);
         }
         if (lookupList > 0) {
-            readLookupList (tableTag, lookupList);
+            readLookupList(tableTag, lookupList);
         }
     }
 
@@ -3249,11 +3249,11 @@ public final class OTFAdvancedTypographicTableReader {
         initATSubState();
         in.seekSet(subtableOffset);
         // subtable is a bare class definition table
-        GlyphClassTable ct = readClassDefTable (tableTag + " glyph class definition table", subtableOffset);
+        GlyphClassTable ct = readClassDefTable(tableTag + " glyph class definition table", subtableOffset);
         // store results
         seMapping = ct;
         // extract subtable
-        extractSESubState (GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.GLYPH_CLASS, 0, lookupSequence, 0, 1);
+        extractSESubState(GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.GLYPH_CLASS, 0, lookupSequence, 0, 1);
         resetATSubState();
     }
 
@@ -3267,11 +3267,11 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " attachment point coverage table offset: " + co);
         }
         // read coverage table
-        GlyphCoverageTable ct = readCoverageTable (tableTag + " attachment point coverage", subtableOffset + co);
+        GlyphCoverageTable ct = readCoverageTable(tableTag + " attachment point coverage", subtableOffset + co);
         // store results
         seMapping = ct;
         // extract subtable
-        extractSESubState (GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.ATTACHMENT_POINT, 0, lookupSequence, 0, 1);
+        extractSESubState(GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.ATTACHMENT_POINT, 0, lookupSequence, 0, 1);
         resetATSubState();
     }
 
@@ -3297,11 +3297,11 @@ public final class OTFAdvancedTypographicTableReader {
             }
         }
         // read coverage table
-        GlyphCoverageTable ct = readCoverageTable (tableTag + " ligature caret coverage", subtableOffset + co);
+        GlyphCoverageTable ct = readCoverageTable(tableTag + " ligature caret coverage", subtableOffset + co);
         // store results
         seMapping = ct;
         // extract subtable
-        extractSESubState (GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.LIGATURE_CARET, 0, lookupSequence, 0, 1);
+        extractSESubState(GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.LIGATURE_CARET, 0, lookupSequence, 0, 1);
         resetATSubState();
     }
 
@@ -3309,11 +3309,11 @@ public final class OTFAdvancedTypographicTableReader {
         initATSubState();
         in.seekSet(subtableOffset);
         // subtable is a bare class definition table
-        GlyphClassTable ct = readClassDefTable (tableTag + " glyph class definition table", subtableOffset);
+        GlyphClassTable ct = readClassDefTable(tableTag + " glyph class definition table", subtableOffset);
         // store results
         seMapping = ct;
         // extract subtable
-        extractSESubState (GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.MARK_ATTACHMENT, 0, lookupSequence, 0, 1);
+        extractSESubState(GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.MARK_ATTACHMENT, 0, lookupSequence, 0, 1);
         resetATSubState();
     }
 
@@ -3321,7 +3321,7 @@ public final class OTFAdvancedTypographicTableReader {
         initATSubState();
         in.seekSet(subtableOffset);
         // skip over format (already known)
-        in.skip (2);
+        in.skip(2);
         // read mark set class count
         int nmc = in.readTTFUShort();
         long[] mso = new long [ nmc ];
@@ -3340,14 +3340,14 @@ public final class OTFAdvancedTypographicTableReader {
         // read mark set coverage tables, one per class
         GlyphCoverageTable[] msca = new GlyphCoverageTable[nmc];
         for (int i = 0; i < nmc; i++) {
-            msca[i] = readCoverageTable (tableTag + " mark set coverage[" + i + "]", subtableOffset + mso[i]);
+            msca[i] = readCoverageTable(tableTag + " mark set coverage[" + i + "]", subtableOffset + mso[i]);
         }
         // create combined class table from per-class coverage tables
-        GlyphClassTable ct = GlyphClassTable.createClassTable (Arrays.asList (msca));
+        GlyphClassTable ct = GlyphClassTable.createClassTable(Arrays.asList(msca));
         // store results
         seMapping = ct;
         // extract subtable
-        extractSESubState (GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.MARK_ATTACHMENT, 0, lookupSequence, 0, 1);
+        extractSESubState(GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.MARK_ATTACHMENT, 0, lookupSequence, 0, 1);
         resetATSubState();
     }
 
@@ -3356,9 +3356,9 @@ public final class OTFAdvancedTypographicTableReader {
         // read mark set subtable format
         int sf = in.readTTFUShort();
         if (sf == 1) {
-            readGDEFMarkGlyphsTableFormat1 (tableTag, lookupSequence, subtableOffset, sf);
+            readGDEFMarkGlyphsTableFormat1(tableTag, lookupSequence, subtableOffset, sf);
         } else {
-            throw new AdvancedTypographicTableFormatException ("unsupported mark glyph sets subtable format: " + sf);
+            throw new AdvancedTypographicTableFormatException("unsupported mark glyph sets subtable format: " + sf);
         }
     }
 
@@ -3410,23 +3410,23 @@ public final class OTFAdvancedTypographicTableReader {
             long to = dirTab.getOffset();
             // (optionally) read glyph class definition subtable
             if (cdo != 0) {
-                readGDEFClassDefTable (tableTag, seqno++, to + cdo);
+                readGDEFClassDefTable(tableTag, seqno++, to + cdo);
             }
             // (optionally) read glyph attachment point subtable
             if (apo != 0) {
-                readGDEFAttachmentTable (tableTag, seqno++, to + apo);
+                readGDEFAttachmentTable(tableTag, seqno++, to + apo);
             }
             // (optionally) read ligature caret subtable
             if (lco != 0) {
-                readGDEFLigatureCaretTable (tableTag, seqno++, to + lco);
+                readGDEFLigatureCaretTable(tableTag, seqno++, to + lco);
             }
             // (optionally) read mark attachment class subtable
             if (mao != 0) {
-                readGDEFMarkAttachmentTable (tableTag, seqno++, to + mao);
+                readGDEFMarkAttachmentTable(tableTag, seqno++, to + mao);
             }
             // (optionally) read mark glyph sets subtable
             if (mgo != 0) {
-                readGDEFMarkGlyphsTable (tableTag, seqno++, to + mgo);
+                readGDEFMarkGlyphsTable(tableTag, seqno++, to + mgo);
             }
             GlyphDefinitionTable gdef;
             if ((gdef = constructGDEF()) != null) {
@@ -3444,7 +3444,7 @@ public final class OTFAdvancedTypographicTableReader {
         // Initialize temporary state
         initATState();
         // Read glyph substitution (GSUB) table
-        TTFDirTabEntry dirTab = ttf.getDirectoryEntry (tableTag);
+        TTFDirTabEntry dirTab = ttf.getDirectoryEntry(tableTag);
         if (gpos != null) {
             if (log.isDebugEnabled()) {
                 log.debug(tableTag + ": ignoring duplicate table");
@@ -3464,7 +3464,7 @@ public final class OTFAdvancedTypographicTableReader {
                 log.debug(tableTag + " lookup list offset: " + llo);
             }
             long to = dirTab.getOffset();
-            readCommonLayoutTables (tableTag, to + slo, to + flo, to + llo);
+            readCommonLayoutTables(tableTag, to + slo, to + flo, to + llo);
             GlyphSubstitutionTable gsub;
             if ((gsub = constructGSUB()) != null) {
                 this.gsub = gsub;
@@ -3481,7 +3481,7 @@ public final class OTFAdvancedTypographicTableReader {
         // Initialize temporary state
         initATState();
         // Read glyph positioning (GPOS) table
-        TTFDirTabEntry dirTab = ttf.getDirectoryEntry (tableTag);
+        TTFDirTabEntry dirTab = ttf.getDirectoryEntry(tableTag);
         if (gpos != null) {
             if (log.isDebugEnabled()) {
                 log.debug(tableTag + ": ignoring duplicate table");
@@ -3501,7 +3501,7 @@ public final class OTFAdvancedTypographicTableReader {
                 log.debug(tableTag + " lookup list offset: " + llo);
             }
             long to = dirTab.getOffset();
-            readCommonLayoutTables (tableTag, to + slo, to + flo, to + llo);
+            readCommonLayoutTables(tableTag, to + slo, to + flo, to + llo);
             GlyphPositioningTable gpos;
             if ((gpos = constructGPOS()) != null) {
                 this.gpos = gpos;
@@ -3519,7 +3519,7 @@ public final class OTFAdvancedTypographicTableReader {
         List subtables;
         if ((subtables = constructGDEFSubtables()) != null) {
             if (subtables.size() > 0) {
-                gdef = new GlyphDefinitionTable (subtables);
+                gdef = new GlyphDefinitionTable(subtables);
             }
         }
         resetATState();
@@ -3538,7 +3538,7 @@ public final class OTFAdvancedTypographicTableReader {
             List subtables;
             if ((subtables = constructGSUBSubtables()) != null) {
                 if ((lookups.size() > 0) && (subtables.size() > 0)) {
-                    gsub = new GlyphSubstitutionTable (gdef, lookups, subtables);
+                    gsub = new GlyphSubstitutionTable(gdef, lookups, subtables);
                 }
             }
         }
@@ -3558,7 +3558,7 @@ public final class OTFAdvancedTypographicTableReader {
             List subtables;
             if ((subtables = constructGPOSSubtables()) != null) {
                 if ((lookups.size() > 0) && (subtables.size() > 0)) {
-                    gpos = new GlyphPositioningTable (gdef, lookups, subtables);
+                    gpos = new GlyphPositioningTable(gdef, lookups, subtables);
                 }
             }
         }
@@ -3566,43 +3566,43 @@ public final class OTFAdvancedTypographicTableReader {
         return gpos;
     }
 
-    private void constructLookupsFeature (Map lookups, String st, String lt, String fid) {
-        Object[] fp = (Object[]) seFeatures.get (fid);
+    private void constructLookupsFeature(Map lookups, String st, String lt, String fid) {
+        Object[] fp = (Object[]) seFeatures.get(fid);
         if (fp != null) {
             assert fp.length == 2;
             String ft = (String) fp[0];                 // feature tag
             List/*<String>*/ lul = (List) fp[1];        // list of lookup table ids
             if ((ft != null) && (lul != null) && (lul.size() > 0)) {
-                GlyphTable.LookupSpec ls = new GlyphTable.LookupSpec (st, lt, ft);
-                lookups.put (ls, lul);
+                GlyphTable.LookupSpec ls = new GlyphTable.LookupSpec(st, lt, ft);
+                lookups.put(ls, lul);
             }
         }
     }
 
-    private void constructLookupsFeatures (Map lookups, String st, String lt, List/*<String>*/ fids) {
+    private void constructLookupsFeatures(Map lookups, String st, String lt, List/*<String>*/ fids) {
         for (Iterator fit = fids.iterator(); fit.hasNext();) {
             String fid = (String) fit.next();
-            constructLookupsFeature (lookups, st, lt, fid);
+            constructLookupsFeature(lookups, st, lt, fid);
         }
     }
 
-    private void constructLookupsLanguage (Map lookups, String st, String lt, Map/*<String,Object[2]>*/ languages) {
-        Object[] lp = (Object[]) languages.get (lt);
+    private void constructLookupsLanguage(Map lookups, String st, String lt, Map/*<String,Object[2]>*/ languages) {
+        Object[] lp = (Object[]) languages.get(lt);
         if (lp != null) {
             assert lp.length == 2;
             if (lp[0] != null) {                      // required feature id
-                constructLookupsFeature (lookups, st, lt, (String) lp[0]);
+                constructLookupsFeature(lookups, st, lt, (String) lp[0]);
             }
             if (lp[1] != null) {                      // non-required features ids
-                constructLookupsFeatures (lookups, st, lt, (List) lp[1]);
+                constructLookupsFeatures(lookups, st, lt, (List) lp[1]);
             }
         }
     }
 
-    private void constructLookupsLanguages (Map lookups, String st, List/*<String>*/ ll, Map/*<String,Object[2]>*/ languages) {
+    private void constructLookupsLanguages(Map lookups, String st, List/*<String>*/ ll, Map/*<String,Object[2]>*/ languages) {
         for (Iterator lit = ll.iterator(); lit.hasNext();) {
             String lt = (String) lit.next();
-            constructLookupsLanguage (lookups, st, lt, languages);
+            constructLookupsLanguage(lookups, st, lt, languages);
         }
     }
 
@@ -3610,15 +3610,15 @@ public final class OTFAdvancedTypographicTableReader {
         Map/*<GlyphTable.LookupSpec,List<String>>*/ lookups = new java.util.LinkedHashMap();
         for (Iterator sit = seScripts.keySet().iterator(); sit.hasNext();) {
             String st = (String) sit.next();
-            Object[] sp = (Object[]) seScripts.get (st);
+            Object[] sp = (Object[]) seScripts.get(st);
             if (sp != null) {
                 assert sp.length == 3;
                 Map/*<String,Object[2]>*/ languages = (Map) sp[2];
                 if (sp[0] != null) {                  // default language
-                    constructLookupsLanguage (lookups, st, (String) sp[0], languages);
+                    constructLookupsLanguage(lookups, st, (String) sp[0], languages);
                 }
                 if (sp[1] != null) {                  // non-default languages
-                    constructLookupsLanguages (lookups, st, (List) sp[1], languages);
+                    constructLookupsLanguages(lookups, st, (List) sp[1], languages);
                 }
             }
         }
@@ -3631,15 +3631,15 @@ public final class OTFAdvancedTypographicTableReader {
             for (Iterator it = seSubtables.iterator(); it.hasNext();) {
                 Object[] stp = (Object[]) it.next();
                 GlyphSubtable st;
-                if ((st = constructGDEFSubtable (stp)) != null) {
-                    subtables.add (st);
+                if ((st = constructGDEFSubtable(stp)) != null) {
+                    subtables.add(st);
                 }
             }
         }
         return subtables;
     }
 
-    private GlyphSubtable constructGDEFSubtable (Object[] stp) {
+    private GlyphSubtable constructGDEFSubtable(Object[] stp) {
         GlyphSubtable st = null;
         assert (stp != null) && (stp.length == 8);
         Integer tt = (Integer) stp[0];          // table type
@@ -3651,12 +3651,12 @@ public final class OTFAdvancedTypographicTableReader {
         GlyphMappingTable mapping = (GlyphMappingTable) stp[6];
         List entries = (List) stp[7];
         if (tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_DEFINITION) {
-            int type = GDEFLookupType.getSubtableType (lt.intValue());
+            int type = GDEFLookupType.getSubtableType(lt.intValue());
             String lid = "lu" + ln.intValue();
             int sequence = sn.intValue();
             int flags = lf.intValue();
             int format = sf.intValue();
-            st = GlyphDefinitionTable.createSubtable (type, lid, sequence, flags, format, mapping, entries);
+            st = GlyphDefinitionTable.createSubtable(type, lid, sequence, flags, format, mapping, entries);
         }
         return st;
     }
@@ -3667,15 +3667,15 @@ public final class OTFAdvancedTypographicTableReader {
             for (Iterator it = seSubtables.iterator(); it.hasNext();) {
                 Object[] stp = (Object[]) it.next();
                 GlyphSubtable st;
-                if ((st = constructGSUBSubtable (stp)) != null) {
-                    subtables.add (st);
+                if ((st = constructGSUBSubtable(stp)) != null) {
+                    subtables.add(st);
                 }
             }
         }
         return subtables;
     }
 
-    private GlyphSubtable constructGSUBSubtable (Object[] stp) {
+    private GlyphSubtable constructGSUBSubtable(Object[] stp) {
         GlyphSubtable st = null;
         assert (stp != null) && (stp.length == 8);
         Integer tt = (Integer) stp[0];          // table type
@@ -3687,12 +3687,12 @@ public final class OTFAdvancedTypographicTableReader {
         GlyphCoverageTable coverage = (GlyphCoverageTable) stp[6];
         List entries = (List) stp[7];
         if (tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION) {
-            int type = GSUBLookupType.getSubtableType (lt.intValue());
+            int type = GSUBLookupType.getSubtableType(lt.intValue());
             String lid = "lu" + ln.intValue();
             int sequence = sn.intValue();
             int flags = lf.intValue();
             int format = sf.intValue();
-            st = GlyphSubstitutionTable.createSubtable (type, lid, sequence, flags, format, coverage, entries);
+            st = GlyphSubstitutionTable.createSubtable(type, lid, sequence, flags, format, coverage, entries);
         }
         return st;
     }
@@ -3703,15 +3703,15 @@ public final class OTFAdvancedTypographicTableReader {
             for (Iterator it = seSubtables.iterator(); it.hasNext();) {
                 Object[] stp = (Object[]) it.next();
                 GlyphSubtable st;
-                if ((st = constructGPOSSubtable (stp)) != null) {
-                    subtables.add (st);
+                if ((st = constructGPOSSubtable(stp)) != null) {
+                    subtables.add(st);
                 }
             }
         }
         return subtables;
     }
 
-    private GlyphSubtable constructGPOSSubtable (Object[] stp) {
+    private GlyphSubtable constructGPOSSubtable(Object[] stp) {
         GlyphSubtable st = null;
         assert (stp != null) && (stp.length == 8);
         Integer tt = (Integer) stp[0];          // table type
@@ -3723,12 +3723,12 @@ public final class OTFAdvancedTypographicTableReader {
         GlyphCoverageTable coverage = (GlyphCoverageTable) stp[6];
         List entries = (List) stp[7];
         if (tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_POSITIONING) {
-            int type = GSUBLookupType.getSubtableType (lt.intValue());
+            int type = GSUBLookupType.getSubtableType(lt.intValue());
             String lid = "lu" + ln.intValue();
             int sequence = sn.intValue();
             int flags = lf.intValue();
             int format = sf.intValue();
-            st = GlyphPositioningTable.createSubtable (type, lid, sequence, flags, format, coverage, entries);
+            st = GlyphPositioningTable.createSubtable(type, lid, sequence, flags, format, coverage, entries);
         }
         return st;
     }
@@ -3754,17 +3754,17 @@ public final class OTFAdvancedTypographicTableReader {
         seEntries = new java.util.ArrayList();
     }
 
-    private void extractSESubState (int tableType, int lookupType, int lookupFlags, int lookupSequence, int subtableSequence, int subtableFormat) {
+    private void extractSESubState(int tableType, int lookupType, int lookupFlags, int lookupSequence, int subtableSequence, int subtableFormat) {
         if (seEntries != null) {
             if ((tableType == GlyphTable.GLYPH_TABLE_TYPE_DEFINITION) || (seEntries.size() > 0)) {
                 if (seSubtables != null) {
-                    Integer tt = Integer.valueOf (tableType);
-                    Integer lt = Integer.valueOf (lookupType);
-                    Integer ln = Integer.valueOf (lookupSequence);
-                    Integer lf = Integer.valueOf (lookupFlags);
-                    Integer sn = Integer.valueOf (subtableSequence);
-                    Integer sf = Integer.valueOf (subtableFormat);
-                    seSubtables.add (new Object[] { tt, lt, ln, lf, sn, sf, seMapping, seEntries });
+                    Integer tt = Integer.valueOf(tableType);
+                    Integer lt = Integer.valueOf(lookupType);
+                    Integer ln = Integer.valueOf(lookupSequence);
+                    Integer lf = Integer.valueOf(lookupFlags);
+                    Integer sn = Integer.valueOf(subtableSequence);
+                    Integer sf = Integer.valueOf(subtableFormat);
+                    seSubtables.add(new Object[] { tt, lt, ln, lf, sn, sf, seMapping, seEntries });
                 }
             }
         }
@@ -3783,19 +3783,19 @@ public final class OTFAdvancedTypographicTableReader {
     }
 
     /** helper method for formatting an integer array for output */
-    private String toString (int[] ia) {
+    private String toString(int[] ia) {
         StringBuffer sb = new StringBuffer();
         if ((ia == null) || (ia.length == 0)) {
-            sb.append ('-');
+            sb.append('-');
         } else {
             boolean first = true;
             for (int i = 0; i < ia.length; i++) {
                 if (! first) {
-                    sb.append (' ');
+                    sb.append(' ');
                 } else {
                     first = false;
                 }
-                sb.append (ia[i]);
+                sb.append(ia[i]);
             }
         }
         return sb.toString();

@@ -53,39 +53,39 @@ public class AFPRectanglePainter extends AbstractAFPPainter {
         AffineTransform at = paintingState.getData().getTransform();
 
         AFPLineDataInfo lineDataInfo = new AFPLineDataInfo();
-        lineDataInfo.setColor (paintingState.getColor());
-        lineDataInfo.setRotation (paintingState.getRotation());
-        lineDataInfo.setThickness (Math.round(height));
+        lineDataInfo.setColor(paintingState.getColor());
+        lineDataInfo.setRotation(paintingState.getRotation());
+        lineDataInfo.setThickness(Math.round(height));
 
         switch (lineDataInfo.getRotation()) {
         case 90:
-            lineDataInfo.setX1 (Math.round((float)at.getTranslateY() + x));
+            lineDataInfo.setX1(Math.round((float)at.getTranslateY() + x));
             yNew = pageWidth - Math.round((float)at.getTranslateX()) + Math.round(y);
-            lineDataInfo.setY1 (yNew);
-            lineDataInfo.setY2 (yNew);
-            lineDataInfo.setX2 (Math.round(width + (float)at.getTranslateY() + x));
+            lineDataInfo.setY1(yNew);
+            lineDataInfo.setY2(yNew);
+            lineDataInfo.setX2(Math.round(width + (float)at.getTranslateY() + x));
             break;
         case 180:
-            lineDataInfo.setX1 (pageWidth - Math.round((float)at.getTranslateX() - x));
+            lineDataInfo.setX1(pageWidth - Math.round((float)at.getTranslateX() - x));
             yNew = pageHeight - Math.round((float)at.getTranslateY() - y);
-            lineDataInfo.setY1 (yNew);
-            lineDataInfo.setY2 (yNew);
-            lineDataInfo.setX2 (pageWidth - Math.round((float)at.getTranslateX() - x - width));
+            lineDataInfo.setY1(yNew);
+            lineDataInfo.setY2(yNew);
+            lineDataInfo.setX2(pageWidth - Math.round((float)at.getTranslateX() - x - width));
             break;
         case 270:
-            lineDataInfo.setX1 (pageHeight - Math.round((float)at.getTranslateY() - x));
+            lineDataInfo.setX1(pageHeight - Math.round((float)at.getTranslateY() - x));
             yNew = Math.round((float)at.getTranslateX() + y);
-            lineDataInfo.setY1 (yNew);
-            lineDataInfo.setY2 (yNew);
-            lineDataInfo.setX2 (pageHeight - Math.round((float)at.getTranslateY() - x - width));
+            lineDataInfo.setY1(yNew);
+            lineDataInfo.setY2(yNew);
+            lineDataInfo.setX2(pageHeight - Math.round((float)at.getTranslateY() - x - width));
             break;
         case 0:
         default:
-            lineDataInfo.setX1 (Math.round((float)at.getTranslateX() + x));
+            lineDataInfo.setX1(Math.round((float)at.getTranslateX() + x));
             yNew = Math.round((float)at.getTranslateY() + y);
-            lineDataInfo.setY1 (yNew);
-            lineDataInfo.setY2 (yNew);
-            lineDataInfo.setX2 (Math.round((float)at.getTranslateX() + x + width));
+            lineDataInfo.setY1(yNew);
+            lineDataInfo.setY2(yNew);
+            lineDataInfo.setX2(Math.round((float)at.getTranslateX() + x + width));
             break;
         }
         dataStream.createLine(lineDataInfo);

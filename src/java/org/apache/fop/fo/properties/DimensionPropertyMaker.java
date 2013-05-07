@@ -49,7 +49,7 @@ public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
         for (int i = 0; i < extraCorresponding.length; i++) {
             int[] eca = extraCorresponding[i];
             if ((eca == null) || (eca.length != 4)) {
-                throw new IllegalArgumentException ("bad sub-array @ [" + i + "]");
+                throw new IllegalArgumentException("bad sub-array @ [" + i + "]");
             }
         }
         this.extraCorresponding = extraCorresponding;

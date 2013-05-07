@@ -57,7 +57,7 @@ public class RtfParagraphBreak extends RtfElement {
      * @return boolean
      */
     public boolean canHide() {
-        return this.controlWord.equals (DEFAULT_PARAGRAPH);
+        return this.controlWord.equals(DEFAULT_PARAGRAPH);
     }
 
     /**

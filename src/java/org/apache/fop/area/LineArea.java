@@ -130,12 +130,12 @@ public class LineArea extends Area {
      * <p> Used by bidirectional processing after line area consituent reordering.</p>
      * @param inlineAreas the list of inline areas
      */
-    public void setInlineAreas (List inlineAreas) {
+    public void setInlineAreas(List inlineAreas) {
         for (Iterator<InlineArea> it = inlineAreas.iterator(); it.hasNext();) {
             InlineArea ia = it.next();
             Area pa = ia.getParentArea();
             if (pa == null) {
-                ia.setParentArea (this);
+                ia.setParentArea(this);
             } else {
                 assert pa == this;
             }

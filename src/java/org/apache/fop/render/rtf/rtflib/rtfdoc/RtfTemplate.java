@@ -43,7 +43,7 @@ public final class RtfTemplate  {
     /**
      * Constructor.
      */
-    private RtfTemplate () {
+    private RtfTemplate() {
 
     }
 
@@ -53,7 +53,7 @@ public final class RtfTemplate  {
      *
      * @return The instance of RtfTemplate
      */
-    public static RtfTemplate getInstance () {
+    public static RtfTemplate getInstance() {
         if (instance == null) {
             instance = new RtfTemplate();
         }
@@ -81,19 +81,19 @@ public final class RtfTemplate  {
      * @param header Rtf header is the parent
      * @throws IOException On write error
      */
-    public void writeTemplate (RtfHeader header) throws IOException {
+    public void writeTemplate(RtfHeader header) throws IOException {
         if (templateFilePath == null || templateFilePath.length() == 0) {
             return;
         }
 
-        header.writeGroupMark (true);
-        header.writeControlWord ("template");
+        header.writeGroupMark(true);
+        header.writeControlWord("template");
         header.writeRtfString(this.templateFilePath);
-        header.writeGroupMark (false);
+        header.writeGroupMark(false);
 
-        header.writeGroupMark (true);
-        header.writeControlWord ("linkstyles");
-        header.writeGroupMark (false);
+        header.writeGroupMark(true);
+        header.writeControlWord("linkstyles");
+        header.writeGroupMark(false);
     }
 }
 

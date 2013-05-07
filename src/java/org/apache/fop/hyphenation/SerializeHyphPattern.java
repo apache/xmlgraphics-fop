@@ -130,7 +130,7 @@ public class SerializeHyphPattern {
      * Entry point for ant java task
      * @param args sourceDir, targetDir
      */
-    public static void main (String[] args) {
+    public static void main(String[] args) {
         SerializeHyphPattern ser = new SerializeHyphPattern();
         ser.serializeDir(new File(args[0]), new File(args[1]));
     }
