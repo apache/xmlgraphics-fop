@@ -334,7 +334,7 @@ public class PDFShading extends PDFObject {
      *
      * @return the PDF string.
      */
-    public String toPDFString() {                               // CSOK: MethodLength
+    public String toPDFString() {
         int vectorSize;
         int tempInt;
         StringBuffer p = new StringBuffer(128);

@@ -21,7 +21,6 @@ package org.apache.fop.complexscripts.scripts;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -55,10 +54,10 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 public class IndicScriptProcessor extends DefaultScriptProcessor {
 
     /** logging instance */
-    private static final Log log = LogFactory.getLog(IndicScriptProcessor.class);                                      // CSOK: ConstantNameCheck
+    private static final Log log = LogFactory.getLog(IndicScriptProcessor.class);
 
     /** required features to use for substitutions */
-    private static final String[] gsubReqFeatures =                                                                    // CSOK: ConstantNameCheck
+    private static final String[] GSUB_REQ_FEATURES =
     {
         "abvf",                                                 // above base forms
         "abvs",                                                 // above base substitutions
@@ -82,7 +81,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     };
 
     /** optional features to use for substitutions */
-    private static final String[] gsubOptFeatures =                                                                     // CSOK: ConstantNameCheck
+    private static final String[] GSUB_OPT_FEATURES =
     {
         "afrc",                                                 // alternative fractions
         "calt",                                                 // contextual alternatives
@@ -90,7 +89,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     };
 
     /** required features to use for positioning */
-    private static final String[] gposReqFeatures =                                                                     // CSOK: ConstantNameCheck
+    private static final String[] GPOS_REQ_FEATURES =
     {
         "abvm",                                                 // above base marks
         "blwm",                                                 // below base marks
@@ -99,7 +98,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     };
 
     /** required features to use for positioning */
-    private static final String[] gposOptFeatures =                                                                     // CSOK: ConstantNameCheck
+    private static final String[] GPOS_OPT_FEATURES =
     {
     };
 
@@ -150,12 +149,12 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
 
     /** {@inheritDoc} */
     public String[] getSubstitutionFeatures() {
-        return gsubReqFeatures;
+        return GSUB_REQ_FEATURES;
     }
 
     /** {@inheritDoc} */
     public String[] getOptionalSubstitutionFeatures() {
-        return gsubOptFeatures;
+        return GSUB_OPT_FEATURES;
     }
 
     /** {@inheritDoc} */
@@ -165,12 +164,12 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
 
     /** {@inheritDoc} */
     public String[] getPositioningFeatures() {
-        return gposReqFeatures;
+        return GPOS_REQ_FEATURES;
     }
 
     /** {@inheritDoc} */
     public String[] getOptionalPositioningFeatures() {
-        return gposOptFeatures;
+        return GPOS_OPT_FEATURES;
     }
 
     /** {@inheritDoc} */
@@ -231,7 +230,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     }
 
     private static Set<String> basicShapingFeatures;
-    private static final String[] basicShapingFeatureStrings = {                                                        // CSOK: ConstantNameCheck
+    private static final String[] BASIC_SHAPING_FEATURE_STRINGS = {
         "abvf",
         "akhn",
         "blwf",
@@ -247,7 +246,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     };
     static {
         basicShapingFeatures = new HashSet<String>();
-        for (String s : basicShapingFeatureStrings) {
+        for (String s : BASIC_SHAPING_FEATURE_STRINGS) {
             basicShapingFeatures.add(s);
         }
     }
@@ -261,7 +260,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     }
 
     private static  Set<String> presentationFeatures;
-    private static final String[] presentationFeatureStrings = {                                                        // CSOK: ConstantNameCheck
+    private static final String[] PRESENTATION_FEATURE_STRINGS = {
         "abvs",
         "blws",
         "calt",
@@ -271,7 +270,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     };
     static {
         presentationFeatures = new HashSet<String>();
-        for (String s : presentationFeatureStrings) {
+        for (String s : PRESENTATION_FEATURE_STRINGS) {
             presentationFeatures.add(s);
         }
     }

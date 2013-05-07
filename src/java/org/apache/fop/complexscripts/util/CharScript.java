@@ -133,7 +133,7 @@ public final class CharScript {
       * A static (class) parameter indicating whether V2 indic shaping
       * rules apply or not, with default being <code>true</code>.
       */
-    private static final boolean useV2Indic = true; // CSOK: ConstantNameCheck
+    private static final boolean USE_V2_INDIC = true;
 
     private CharScript() {
     }
@@ -697,7 +697,7 @@ public final class CharScript {
      * @return either SC or the V2 flavor of SC if V2 indic rules apply
      */
     public static int useV2IndicRules(int sc) {
-        if (useV2Indic) {
+        if (USE_V2_INDIC) {
             return (sc < 1000) ? (sc + 1000) : sc;
         } else {
             return sc;

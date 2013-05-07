@@ -46,7 +46,7 @@ import org.apache.fop.complexscripts.util.GlyphTester;
 public class GlyphPositioningTable extends GlyphTable {
 
     /** logging instance */
-    private static final Log log = LogFactory.getLog(GlyphPositioningTable.class);                                      // CSOK: ConstantNameCheck
+    private static final Log log = LogFactory.getLog(GlyphPositioningTable.class);
 
     /** single positioning subtable type */
     public static final int GPOS_LOOKUP_TYPE_SINGLE = 1;

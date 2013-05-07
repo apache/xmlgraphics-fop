@@ -566,7 +566,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("volume", m);
     }
 
-    private void createBorderPaddingBackgroundProperties() {    // CSOK: MethodLength
+    private void createBorderPaddingBackgroundProperties() {
         PropertyMaker m;
         BorderWidthPropertyMaker bwm;
         CorrespondingPropertyMaker corr;
@@ -1332,7 +1332,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("relative-align", m);
     }
 
-    private void createAreaDimensionProperties() {              // CSOK: MethodLength
+    private void createAreaDimensionProperties() {
         PropertyMaker m;
         LengthProperty.Maker l;
         DimensionPropertyMaker pdim;
@@ -1534,7 +1534,7 @@ public final class FOPropertyMapping implements Constants {
         }
     }
 
-    private void createBlockAndLineProperties() {               // CSOK: MethodLength
+    private void createBlockAndLineProperties() {
         PropertyMaker m;
 
         // hyphenation-keep
@@ -2723,7 +2723,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("z-index", m);
     }
 
-    private void createShorthandProperties() {                  // CSOK: MethodLength
+    private void createShorthandProperties() {
         PropertyMaker m;
 
         // background

@@ -30,92 +30,92 @@ public class CommonAural {
     /**
      * The "azimuth" property.
      */
-    public int azimuth;                                         // CSOK: VisibilityModifier
+    public int azimuth;
 
     /**
      * The "cueAfter" property.
      */
-    public String cueAfter;                                     // CSOK: VisibilityModifier
+    public String cueAfter;
 
     /**
      * The "cueBefore" property.
      */
-    public String cueBefore;                                    // CSOK: VisibilityModifier
+    public String cueBefore;
 
     /**
      * The "elevation" property.
      */
-    public int elevation;                                       // CSOK: VisibilityModifier
+    public int elevation;
 
     /**
      * The "pauseAfter" property.
      */
-    public int pauseAfter;                                      // CSOK: VisibilityModifier
+    public int pauseAfter;
 
     /**
      * The "pauseBefore" property.
      */
-    public int pauseBefore;                                     // CSOK: VisibilityModifier
+    public int pauseBefore;
 
     /**
      * The "pitch" property.
      */
-    public int pitch;                                           // CSOK: VisibilityModifier
+    public int pitch;
 
     /**
      * The "pitch-range" property.
      */
-    public int pitchRange;                                      // CSOK: VisibilityModifier
+    public int pitchRange;
 
     /**
      * The "playDuring" property.
      */
-    public int playDuring;                                      // CSOK: VisibilityModifier
+    public int playDuring;
 
     /**
      * The "richness" property.
      */
-    public int richness;                                        // CSOK: VisibilityModifier
+    public int richness;
 
     /**
      * The "speak" property.
      */
-    public int speak;                                           // CSOK: VisibilityModifier
+    public int speak;
 
     /**
      * The "speak-header" property.
      */
-    public int speakHeader;                                     // CSOK: VisibilityModifier
+    public int speakHeader;
 
     /**
      * The "speak-numeral" property.
      */
-    public int speakNumeral;                                    // CSOK: VisibilityModifier
+    public int speakNumeral;
 
     /**
      * The "speak-punctuation" property.
      */
-    public int speakPunctuation;                                // CSOK: VisibilityModifier
+    public int speakPunctuation;
 
     /**
      * The "speech-rate" property.
      */
-    public int speechRate;                                      // CSOK: VisibilityModifier
+    public int speechRate;
 
     /**
      * The "stress" property.
      */
-    public int stress;                                          // CSOK: VisibilityModifier
+    public int stress;
 
     /**
      * The "voice-family" property.
      */
-    public int voiceFamily;                                     // CSOK: VisibilityModifier
+    public int voiceFamily;
 
     /**
      * The "volume" property.
      */
-    public int volume;                                          // CSOK: VisibilityModifier
+    public int volume;
 
     /**
      * Create a CommonAbsolutePosition object.

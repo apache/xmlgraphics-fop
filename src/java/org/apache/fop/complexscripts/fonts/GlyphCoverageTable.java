@@ -38,7 +38,7 @@ import org.apache.commons.logging.LogFactory;
 public final class GlyphCoverageTable extends GlyphMappingTable implements GlyphCoverageMapping {
 
     /* logging instance */
-    private static final Log log = LogFactory.getLog(GlyphCoverageTable.class);                                         // CSOK: ConstantNameCheck
+    private static final Log log = LogFactory.getLog(GlyphCoverageTable.class);
 
     /** empty mapping table */
     public static final int GLYPH_COVERAGE_TYPE_EMPTY = GLYPH_MAPPING_TYPE_EMPTY;

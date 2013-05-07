@@ -33,42 +33,42 @@ public class CommonMarginBlock {
     /**
      * The "margin-top" property.
      */
-    public Length marginTop;                                    // CSOK: VisibilityModifier
+    public Length marginTop;
 
     /**
      * The "margin-bottom" property.
      */
-    public Length marginBottom;                                 // CSOK: VisibilityModifier
+    public Length marginBottom;
 
     /**
      * The "margin-left" property.
      */
-    public Length marginLeft;                                   // CSOK: VisibilityModifier
+    public Length marginLeft;
 
     /**
      * The "margin-right" property.
      */
-    public Length marginRight;                                  // CSOK: VisibilityModifier
+    public Length marginRight;
 
     /**
      * The "space-before" property.
      */
-    public SpaceProperty spaceBefore;                           // CSOK: VisibilityModifier
+    public SpaceProperty spaceBefore;
 
     /**
      * The "space-after" property.
      */
-    public SpaceProperty spaceAfter;                            // CSOK: VisibilityModifier
+    public SpaceProperty spaceAfter;
 
     /**
      * The "start-indent" property.
      */
-    public Length startIndent;                                  // CSOK: VisibilityModifier
+    public Length startIndent;
 
     /**
      * The "end-indent" property.
      */
-    public Length endIndent;                                    // CSOK: VisibilityModifier
+    public Length endIndent;
 
     /**
      * Create a CommonMarginBlock object.

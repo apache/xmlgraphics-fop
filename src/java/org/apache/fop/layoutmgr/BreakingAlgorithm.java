@@ -226,49 +226,49 @@ public abstract class BreakingAlgorithm {
      */
     public class KnuthNode {
         /** index of the breakpoint represented by this node */
-        public final int position;                              // CSOK: VisibilityModifier
+        public final int position;
 
         /** number of the line ending at this breakpoint */
-        public final int line;                                  // CSOK: VisibilityModifier
+        public final int line;
 
         /** fitness class of the line ending at this breakpoint. One of 0, 1, 2, 3. */
-        public final int fitness;                               // CSOK: VisibilityModifier
+        public final int fitness;
 
         /** accumulated width of the KnuthElements up to after this breakpoint. */
-        public final int totalWidth;                            // CSOK: VisibilityModifier
+        public final int totalWidth;
 
         /** accumulated stretchability of the KnuthElements up to after this breakpoint. */
-        public final int totalStretch;                          // CSOK: VisibilityModifier
+        public final int totalStretch;
 
         /** accumulated shrinkability of the KnuthElements up to after this breakpoint. */
-        public final int totalShrink;                           // CSOK: VisibilityModifier
+        public final int totalShrink;
 
         /** adjustment ratio if the line ends at this breakpoint */
-        public final double adjustRatio;                        // CSOK: VisibilityModifier
+        public final double adjustRatio;
 
         /** available stretch of the line ending at this breakpoint */
-        public final int availableShrink;                       // CSOK: VisibilityModifier
+        public final int availableShrink;
 
         /** available shrink of the line ending at this breakpoint */
-        public final int availableStretch;                      // CSOK: VisibilityModifier
+        public final int availableStretch;
 
         /** difference between target and actual line width */
-        public final int difference;                            // CSOK: VisibilityModifier
+        public final int difference;
 
         /** minimum total demerits up to this breakpoint */
-        public double totalDemerits;                            // CSOK: VisibilityModifier
+        public double totalDemerits;
 
         /** best node for the preceding breakpoint */
-        public KnuthNode previous;                              // CSOK: VisibilityModifier
+        public KnuthNode previous;
 
         /** next possible node in the same line */
-        public KnuthNode next;                                  // CSOK: VisibilityModifier
+        public KnuthNode next;
 
         /**
          * Holds the number of subsequent recovery attempty that are made to get content fit
          * into a line.
          */
-        public int fitRecoveryCounter = 0;                      // CSOK: VisibilityModifier
+        public int fitRecoveryCounter = 0;
 
         /**
          * Construct node.
@@ -995,7 +995,7 @@ public abstract class BreakingAlgorithm {
      * @param availableShrink   the available amount of shrink
      * @param availableStretch  tha available amount of stretch
      */
-    protected void forceNode(KnuthNode node,                    // CSOK: ParameterNumber
+    protected void forceNode(KnuthNode node,
                              int line,
                              int elementIdx,
                              int difference,

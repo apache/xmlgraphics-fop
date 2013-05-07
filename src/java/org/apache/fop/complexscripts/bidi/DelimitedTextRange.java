@@ -166,7 +166,7 @@ public class DelimitedTextRange {
      * text range
      * @return a list of text intervals as described above
      */
-    private static final Log log = LogFactory.getLog(BidiResolver.class); // CSOK: ConstantNameCheck
+    private static final Log log = LogFactory.getLog(BidiResolver.class);
     private List assignLevels(TextInterval ti, int[] levels) {
         Vector tiv = new Vector();
         FONode fn = ti.getNode();

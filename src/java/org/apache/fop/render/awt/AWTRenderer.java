@@ -62,7 +62,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
     public static final String MIME_TYPE = MimeConstants.MIME_FOP_AWT_PREVIEW;
 
     /** flag for debugging */
-    public boolean debug;                                       // CSOK: VisibilityModifier
+    public boolean debug;
 
     /**
      * Will be notified when rendering progresses

@@ -41,7 +41,7 @@ public class AFPBorderPainter extends AbstractAFPPainter {
     }
 
     /** {@inheritDoc} */
-    public void paint(PaintingInfo paintInfo) { // CSOK: MethodLength
+    public void paint(PaintingInfo paintInfo) {
         BorderPaintingInfo borderPaintInfo = (BorderPaintingInfo)paintInfo;
         float w = borderPaintInfo.getX2() - borderPaintInfo.getX1();
         float h = borderPaintInfo.getY2() - borderPaintInfo.getY1();

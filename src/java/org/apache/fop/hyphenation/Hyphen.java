@@ -42,13 +42,13 @@ public class Hyphen implements Serializable {
     private static final long serialVersionUID = 8989909741110279085L;
 
     /** pre break string */
-    public String preBreak;                                     // CSOK: VisibilityModifier
+    public String preBreak;
 
     /** no break string */
-    public String noBreak;                                      // CSOK: VisibilityModifier
+    public String noBreak;
 
     /** post break string */
-    public String postBreak;                                    // CSOK: VisibilityModifier
+    public String postBreak;
 
     /**
      * Construct a hyphen.

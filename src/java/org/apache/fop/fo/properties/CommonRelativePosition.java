@@ -33,27 +33,27 @@ public class CommonRelativePosition {
     /**
      * The "relative-position" property.
      */
-    public int relativePosition;                                // CSOK: VisibilityModifier
+    public int relativePosition;
 
     /**
      * The "top" property.
      */
-    public Length top;                                          // CSOK: VisibilityModifier
+    public Length top;
 
     /**
      * The "right" property.
      */
-    public Length right;                                        // CSOK: VisibilityModifier
+    public Length right;
 
     /**
      * The "bottom" property.
      */
-    public Length bottom;                                       // CSOK: VisibilityModifier
+    public Length bottom;
 
     /**
      * The "left" property.
      */
-    public Length left;                                         // CSOK: VisibilityModifier
+    public Length left;
 
     /**
      * Create a CommonRelativePosition object.

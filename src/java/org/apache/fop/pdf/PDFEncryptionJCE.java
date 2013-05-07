@@ -165,13 +165,13 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
 
     private static final class EncryptionSettings {
 
-        final int encryptionLength; // CSOK: VisibilityModifier
+        final int encryptionLength;
 
-        final int permissions; // CSOK: VisibilityModifier
+        final int permissions;
 
-        final String userPassword; // CSOK: VisibilityModifier
+        final String userPassword;
 
-        final String ownerPassword; // CSOK: VisibilityModifier
+        final String ownerPassword;
 
         EncryptionSettings(int encryptionLength, int permissions,
                 String userPassword, String ownerPassword) {

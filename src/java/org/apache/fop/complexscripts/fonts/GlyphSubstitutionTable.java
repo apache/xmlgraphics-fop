@@ -44,7 +44,7 @@ import org.apache.fop.complexscripts.util.GlyphTester;
 public class GlyphSubstitutionTable extends GlyphTable {
 
     /** logging instance */
-    private static final Log log = LogFactory.getLog(GlyphSubstitutionTable.class);                                     // CSOK: ConstantNameCheck
+    private static final Log log = LogFactory.getLog(GlyphSubstitutionTable.class);
 
     /** single substitution subtable type */
     public static final int GSUB_LOOKUP_TYPE_SINGLE = 1;

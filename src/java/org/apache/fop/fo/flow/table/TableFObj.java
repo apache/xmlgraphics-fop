@@ -48,12 +48,12 @@ public abstract class TableFObj extends FObj {
     private Numeric borderEndPrecedence;
     private Numeric borderStartPrecedence;
 
-    ConditionalBorder borderBefore;             // CSOK: VisibilityModifier
-    ConditionalBorder borderAfter;              // CSOK: VisibilityModifier
-    BorderSpecification borderStart;            // CSOK: VisibilityModifier
-    BorderSpecification borderEnd;              // CSOK: VisibilityModifier
+    ConditionalBorder borderBefore;
+    ConditionalBorder borderAfter;
+    BorderSpecification borderStart;
+    BorderSpecification borderEnd;
 
-    CollapsingBorderModel collapsingBorderModel; // CSOK: VisibilityModifier
+    CollapsingBorderModel collapsingBorderModel;
 
     /**
      * Create a TableFObj instance that is a child

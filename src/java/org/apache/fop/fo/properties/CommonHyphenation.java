@@ -46,25 +46,25 @@ public final class CommonHyphenation {
     private int hash = 0;
 
     /** The "language" property */
-    public final StringProperty language;                       // CSOK: VisibilityModifier
+    public final StringProperty language;
 
     /** The "country" property */
-    public final StringProperty country;                        // CSOK: VisibilityModifier
+    public final StringProperty country;
 
     /** The "script" property */
-    public final StringProperty script;                         // CSOK: VisibilityModifier
+    public final StringProperty script;
 
     /** The "hyphenate" property */
-    public final EnumProperty hyphenate;                        // CSOK: VisibilityModifier
+    public final EnumProperty hyphenate;
 
     /** The "hyphenation-character" property */
-    public final CharacterProperty hyphenationCharacter;        // CSOK: VisibilityModifier
+    public final CharacterProperty hyphenationCharacter;
 
     /** The "hyphenation-push-character-count" property */
-    public final NumberProperty hyphenationPushCharacterCount;  // CSOK: VisibilityModifier
+    public final NumberProperty hyphenationPushCharacterCount;
 
     /** The "hyphenation-remain-character-count" property*/
-    public final NumberProperty hyphenationRemainCharacterCount; // CSOK: VisibilityModifier
+    public final NumberProperty hyphenationRemainCharacterCount;
 
     /**
      * Construct a CommonHyphenation object holding the given properties

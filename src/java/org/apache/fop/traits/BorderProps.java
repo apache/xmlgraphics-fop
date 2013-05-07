@@ -58,19 +58,19 @@ public class BorderProps implements Serializable {
     }
 
     /** Border style (one of EN_*) */
-    public final int style; // Enum for border style            // CSOK: VisibilityModifier
+    public final int style; // Enum for border style
     /** Border color */
-    public final Color color;                                   // CSOK: VisibilityModifier
+    public final Color color;
 
     /** Border width */
-    public final int width;                                           // CSOK: VisibilityModifier
+    public final int width;
 
     private final int radiusStart;
 
     private final int radiusEnd;
 
     /** Border mode */
-    private final Mode mode;                                   // CSOK: VisibilityModifier
+    private final Mode mode;
 
     /**
      * Constructs a new BorderProps instance.

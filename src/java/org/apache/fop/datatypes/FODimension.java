@@ -27,9 +27,9 @@ package org.apache.fop.datatypes;
 public class FODimension {
 
     /** distance (in millipoints) on the inline-progression-direction */
-    public int ipd; // CSOK: VisibilityModifier
+    public int ipd;
     /** distance (in millipoints) on the block-progression-direction */
-    public int bpd; // CSOK: VisibilityModifier
+    public int bpd;
 
     /**
      * Constructor

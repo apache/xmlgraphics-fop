@@ -65,13 +65,13 @@ public class GridUnit {
     private byte flags = 0;
 
     /** the border-before specification */
-    ConditionalBorder borderBefore;             // CSOK: VisibilityModifier
+    ConditionalBorder borderBefore;
     /** the border-after specification */
-    ConditionalBorder borderAfter;              // CSOK: VisibilityModifier
+    ConditionalBorder borderAfter;
     /** the border-start specification */
-    BorderSpecification borderStart;            // CSOK: VisibilityModifier
+    BorderSpecification borderStart;
     /** the border-end specification */
-    BorderSpecification borderEnd;              // CSOK: VisibilityModifier
+    BorderSpecification borderEnd;
 
     /** The border model helper associated with the table */
     protected CollapsingBorderModel collapsingBorderModel;

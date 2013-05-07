@@ -34,7 +34,7 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 public class DefaultScriptProcessor extends ScriptProcessor {
 
     /** features to use for substitutions */
-    private static final String[] gsubFeatures =                                                                        // CSOK: ConstantNameCheck
+    private static final String[] GSUB_FEATURES =
     {
         "ccmp",                                                 // glyph composition/decomposition
         "liga",                                                 // common ligatures
@@ -42,7 +42,7 @@ public class DefaultScriptProcessor extends ScriptProcessor {
     };
 
     /** features to use for positioning */
-    private static final String[] gposFeatures =                                                                        // CSOK: ConstantNameCheck
+    private static final String[] GPOS_FEATURES =
     {
         "kern",                                                 // kerning
         "mark",                                                 // mark to base or ligature positioning
@@ -56,7 +56,7 @@ public class DefaultScriptProcessor extends ScriptProcessor {
     @Override
     /** {@inheritDoc} */
     public String[] getSubstitutionFeatures() {
-        return gsubFeatures;
+        return GSUB_FEATURES;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class DefaultScriptProcessor extends ScriptProcessor {
     @Override
     /** {@inheritDoc} */
     public String[] getPositioningFeatures() {
-        return gposFeatures;
+        return GPOS_FEATURES;
     }
 
     @Override

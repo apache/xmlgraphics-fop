@@ -46,13 +46,13 @@ public class ConditionalBorder {
     public static final int REST = 2;
 
     /** Normal case, no break. */
-    BorderSpecification normal;                  // CSOK: VisibilityModifier
+    BorderSpecification normal;
 
     /** Special case: the cell is at the top or the bottom of the page. */
-    BorderSpecification leadingTrailing;         // CSOK: VisibilityModifier
+    BorderSpecification leadingTrailing;
 
     /** Special case: break inside the cell. */
-    BorderSpecification rest;                    // CSOK: VisibilityModifier
+    BorderSpecification rest;
 
     /** The model used to resolve borders. */
     private CollapsingBorderModel collapsingBorderModel;

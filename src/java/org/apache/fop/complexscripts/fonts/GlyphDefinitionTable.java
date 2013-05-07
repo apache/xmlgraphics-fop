@@ -41,7 +41,7 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 public class GlyphDefinitionTable extends GlyphTable {
 
     /** logging instance */
-    private static final Log log = LogFactory.getLog(GlyphDefinitionTable.class);                                       // CSOK: ConstantNameCheck
+    private static final Log log = LogFactory.getLog(GlyphDefinitionTable.class);
 
     /** glyph class subtable type */
     public static final int GDEF_LOOKUP_TYPE_GLYPH_CLASS = 1;

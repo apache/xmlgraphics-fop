@@ -47,14 +47,14 @@ public abstract class AbstractBreaker {
      */
     public static class PageBreakPosition extends LeafPosition {
         // Percentage to adjust (stretch or shrink)
-        double bpdAdjust;                                       // CSOK: VisibilityModifier
-        int difference;                                         // CSOK: VisibilityModifier
-        int footnoteFirstListIndex;                             // CSOK: VisibilityModifier
-        int footnoteFirstElementIndex;                          // CSOK: VisibilityModifier
-        int footnoteLastListIndex;                              // CSOK: VisibilityModifier
-        int footnoteLastElementIndex;                           // CSOK: VisibilityModifier
+        double bpdAdjust;
+        int difference;
+        int footnoteFirstListIndex;
+        int footnoteFirstElementIndex;
+        int footnoteLastListIndex;
+        int footnoteLastElementIndex;
 
-        PageBreakPosition(LayoutManager lm, int breakIndex,     // CSOK: ParameterNumber
+        PageBreakPosition(LayoutManager lm, int breakIndex,
                           int ffli, int ffei, int flli, int flei,
                           double bpdA, int diff) {
             super(lm, breakIndex);
@@ -96,9 +96,9 @@ public abstract class AbstractBreaker {
         private static final long serialVersionUID = -5348831120146774118L;
 
         /** Number of elements to ignore at the beginning of the list. */
-        int ignoreAtStart = 0;                                  // CSOK: VisibilityModifier
+        int ignoreAtStart = 0;
         /** Number of elements to ignore at the end of the list. */
-        int ignoreAtEnd = 0;                                    // CSOK: VisibilityModifier
+        int ignoreAtEnd = 0;
 
         /**
          * startOn represents where on the page/which page layout

@@ -40,7 +40,7 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 public class GujaratiScriptProcessor extends IndicScriptProcessor {
 
     /** logging instance */
-    private static final Log log = LogFactory.getLog(GujaratiScriptProcessor.class);                                  // CSOK: ConstantNameCheck
+    private static final Log log = LogFactory.getLog(GujaratiScriptProcessor.class);
 
     GujaratiScriptProcessor(String script) {
         super(script);
@@ -352,10 +352,10 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
     static final short C_M_TYPE     = 0x00FF;       // type mask
     static final short C_M_FLAGS    = 0x7F00;       // flag mask
     // gujarati block range
-    static final int ccaStart       =  0x0A80;      // first code point mapped by cca                                   // CSOK: ConstantNameCheck
-    static final int ccaEnd         =  0x0B00;      // last code point + 1 mapped by cca                                // CSOK: ConstantNameCheck
+    static final int CCA_START       =  0x0A80;      // first code point mapped by cca
+    static final int CCA_END         =  0x0B00;      // last code point + 1 mapped by cca
     // gujarati character type lookups
-    static final short[] cca = {                                                                                        // CSOK: ConstantNameCheck
+    static final short[] CCA = {
         C_U,                        // 0x0A80       // UNASSIGNED
         C_O,                        // 0x0A81       // CANDRABINDU
         C_O,                        // 0x0A82       // ANUSVARA
@@ -404,7 +404,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         C_C,                        // 0x0AAD       // BHA
         C_C,                        // 0x0AAE       // MA
         C_C,                        // 0x0AAF       // YA
-        C_C|C_R,                    // 0x0AB0       // RA                                                               // CSOK: WhitespaceAround
+        C_C | C_R,                  // 0x0AB0       // RA
         C_U,                        // 0x0AB1       // UNASSIGNED
         C_C,                        // 0x0AB2       // LA
         C_C,                        // 0x0AB3       // LLA
@@ -419,7 +419,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         C_N,                        // 0x0ABC       // NUKTA
         C_S,                        // 0x0ABD       // AVAGRAHA
         C_M,                        // 0x0ABE       // AA
-        C_M|C_PRE,                  // 0x0ABF       // I                                                               // CSOK: WhitespaceAround
+        C_M | C_PRE,                // 0x0ABF       // I
         C_M,                        // 0x0AC0       // II
         C_M,                        // 0x0AC1       // U
         C_M,                        // 0x0AC2       // UU
@@ -486,8 +486,8 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         C_U                         // 0x0AFF       // UNASSIGNED
     };
     static int typeOf(int c) {
-        if ((c >= ccaStart) && (c < ccaEnd)) {
-            return cca [ c - ccaStart ] & C_M_TYPE;
+        if ((c >= CCA_START) && (c < CCA_END)) {
+            return CCA [ c - CCA_START ] & C_M_TYPE;
         } else {
             return C_U;
         }
@@ -496,8 +496,8 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         return typeOf(c) == t;
     }
     static boolean hasFlag(int c, int f) {
-        if ((c >= ccaStart) && (c < ccaEnd)) {
-            return (cca [ c - ccaStart ] & f) == f;
+        if ((c >= CCA_START) && (c < CCA_END)) {
+            return (CCA [ c - CCA_START ] & f) == f;
         } else {
             return false;
         }
