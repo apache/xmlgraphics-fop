@@ -48,7 +48,7 @@ public final class BidiResolver {
     /**
      * logging instance
      */
-    private static final Log log = LogFactory.getLog(BidiResolver.class);                                                   // CSOK: ConstantNameCheck
+    private static final Log log = LogFactory.getLog(BidiResolver.class);
 
     private BidiResolver() {
     }

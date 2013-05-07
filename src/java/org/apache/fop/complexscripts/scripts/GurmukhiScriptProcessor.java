@@ -41,7 +41,7 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 public class GurmukhiScriptProcessor extends IndicScriptProcessor {
 
     /** logging instance */
-    private static final Log log = LogFactory.getLog(GurmukhiScriptProcessor.class);                                  // CSOK: ConstantNameCheck
+    private static final Log log = LogFactory.getLog(GurmukhiScriptProcessor.class);
 
     GurmukhiScriptProcessor(String script) {
         super(script);
@@ -353,10 +353,10 @@ public class GurmukhiScriptProcessor extends IndicScriptProcessor {
     static final short C_M_TYPE     = 0x00FF;       // type mask
     static final short C_M_FLAGS    = 0x7F00;       // flag mask
     // gurmukhi block range
-    static final int ccaStart       =  0x0A00;      // first code point mapped by cca                                   // CSOK: ConstantNameCheck
-    static final int ccaEnd         =  0x0A80;      // last code point + 1 mapped by cca                                // CSOK: ConstantNameCheck
+    static final int CCA_START       =  0x0A00;      // first code point mapped by cca
+    static final int CCA_END         =  0x0A80;      // last code point + 1 mapped by cca
     // gurmukhi character type lookups
-    static final short[] cca = {                                                                                        // CSOK: ConstantNameCheck
+    static final short[] CCA = {
         C_U,                        // 0x0A00       // UNASSIGNED
         C_O,                        // 0x0A01       // ADAK BINDI
         C_O,                        // 0x0A02       // BINDI
@@ -405,7 +405,7 @@ public class GurmukhiScriptProcessor extends IndicScriptProcessor {
         C_C,                        // 0x0A2D       // BHA
         C_C,                        // 0x0A2E       // MA
         C_C,                        // 0x0A2F       // YA
-        C_C|C_R,                    // 0x0A30       // RA                                                               // CSOK: WhitespaceAround
+        C_C | C_R,                  // 0x0A30       // RA
         C_U,                        // 0x0A31       // UNASSIGNED
         C_C,                        // 0x0A32       // LA
         C_C,                        // 0x0A33       // LLA
@@ -420,7 +420,7 @@ public class GurmukhiScriptProcessor extends IndicScriptProcessor {
         C_N,                        // 0x0A3C       // NUKTA
         C_U,                        // 0x0A3D       // UNASSIGNED
         C_M,                        // 0x0A3E       // AA
-        C_M|C_PRE,                  // 0x0A3F       // I                                                               // CSOK: WhitespaceAround
+        C_M | C_PRE,                // 0x0A3F       // I
         C_M,                        // 0x0A40       // II
         C_M,                        // 0x0A41       // U
         C_M,                        // 0x0A42       // UU
@@ -446,12 +446,12 @@ public class GurmukhiScriptProcessor extends IndicScriptProcessor {
         C_U,                        // 0x0A56       // UNASSIGNED
         C_U,                        // 0x0A57       // UNASSIGNED
         C_U,                        // 0x0A58       // UNASSIGNED
-        C_C|C_N,                    // 0x0A59       // KHHA                                                             // CSOK: WhitespaceAround
-        C_C|C_N,                    // 0x0A5A       // GHHA                                                             // CSOK: WhitespaceAround
-        C_C|C_N,                    // 0x0A5B       // ZA                                                               // CSOK: WhitespaceAround
-        C_C|C_N,                    // 0x0A5C       // RRA                                                              // CSOK: WhitespaceAround
+        C_C | C_N,                  // 0x0A59       // KHHA
+        C_C | C_N,                  // 0x0A5A       // GHHA
+        C_C | C_N,                  // 0x0A5B       // ZA
+        C_C | C_N,                  // 0x0A5C       // RRA
         C_U,                        // 0x0A5D       // UNASSIGNED
-        C_C|C_N,                    // 0x0A5E       // FA                                                               // CSOK: WhitespaceAround
+        C_C | C_N,                  // 0x0A5E       // FA
         C_U,                        // 0x0A5F       // UNASSIGNED
         C_U,                        // 0x0A60       // UNASSIGNED
         C_U,                        // 0x0A61       // UNASSIGNED
@@ -487,8 +487,8 @@ public class GurmukhiScriptProcessor extends IndicScriptProcessor {
         C_U                         // 0x0A7F       // UNASSIGNED
     };
     static int typeOf(int c) {
-        if ((c >= ccaStart) && (c < ccaEnd)) {
-            return cca [ c - ccaStart ] & C_M_TYPE;
+        if ((c >= CCA_START) && (c < CCA_END)) {
+            return CCA [ c - CCA_START ] & C_M_TYPE;
         } else {
             return C_U;
         }
@@ -497,8 +497,8 @@ public class GurmukhiScriptProcessor extends IndicScriptProcessor {
         return typeOf(c) == t;
     }
     static boolean hasFlag(int c, int f) {
-        if ((c >= ccaStart) && (c < ccaEnd)) {
-            return (cca [ c - ccaStart ] & f) == f;
+        if ((c >= CCA_START) && (c < CCA_END)) {
+            return (CCA [ c - CCA_START ] & f) == f;
         } else {
             return false;
         }

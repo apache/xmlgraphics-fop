@@ -62,10 +62,10 @@ public final class CommonFont {
     private final EnumProperty fontWeight;
 
     /** The "font-size" property. */
-    public final Length fontSize;                               // CSOK: VisibilityModifier
+    public final Length fontSize;
 
     /** The "font-size-adjust" property. */
-    public final Numeric fontSizeAdjust;                        // CSOK: VisibilityModifier
+    public final Numeric fontSizeAdjust;
 
 
     /**
@@ -80,7 +80,7 @@ public final class CommonFont {
      * @param fontSize  the font-size (possibly non-cached)
      * @param fontSizeAdjust    the font-size-adjust (possibly non-cached)
      */
-    private CommonFont(FontFamilyProperty fontFamily,           // CSOK: ParameterNumber
+    private CommonFont(FontFamilyProperty fontFamily,
                        EnumProperty fontSelectionStrategy,
                        EnumProperty fontStretch,
                        EnumProperty fontStyle,

@@ -48,10 +48,10 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 public class ArabicScriptProcessor extends DefaultScriptProcessor {
 
     /** logging instance */
-    private static final Log log = LogFactory.getLog(ArabicScriptProcessor.class);                                      // CSOK: ConstantNameCheck
+    private static final Log log = LogFactory.getLog(ArabicScriptProcessor.class);
 
     /** features to use for substitutions */
-    private static final String[] gsubFeatures =                                                                        // CSOK: ConstantNameCheck
+    private static final String[] GSUB_FEATURES =
     {
         "calt",                                                 // contextual alternates
         "ccmp",                                                 // glyph composition/decomposition
@@ -64,7 +64,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
     };
 
     /** features to use for positioning */
-    private static final String[] gposFeatures =                                                                        // CSOK: ConstantNameCheck
+    private static final String[] GPOS_FEATURES =
     {
         "curs",                                                 // cursive positioning
         "kern",                                                 // kerning
@@ -124,7 +124,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
 
     /** {@inheritDoc} */
     public String[] getSubstitutionFeatures() {
-        return gsubFeatures;
+        return GSUB_FEATURES;
     }
 
     /** {@inheritDoc} */
@@ -134,7 +134,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
 
     /** {@inheritDoc} */
     public String[] getPositioningFeatures() {
-        return gposFeatures;
+        return GPOS_FEATURES;
     }
 
     /** {@inheritDoc} */

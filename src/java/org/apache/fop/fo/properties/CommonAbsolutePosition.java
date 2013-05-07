@@ -33,27 +33,27 @@ public class CommonAbsolutePosition {
     /**
      * The "absolute-position" property.
      */
-    public int absolutePosition;                                // CSOK: VisibilityModifier
+    public int absolutePosition;
 
     /**
      * The "top" property.
      */
-    public Length top;                                          // CSOK: VisibilityModifier
+    public Length top;
 
     /**
      * The "right" property.
      */
-    public Length right;                                        // CSOK: VisibilityModifier
+    public Length right;
 
     /**
      * The "bottom" property.
      */
-    public Length bottom;                                       // CSOK: VisibilityModifier
+    public Length bottom;
 
     /**
      * The "left" property.
      */
-    public Length left;                                         // CSOK: VisibilityModifier
+    public Length left;
 
     /**
      * Create a CommonAbsolutePosition object.

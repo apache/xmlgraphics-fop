@@ -778,7 +778,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @param fill true if the paint should be set for filling
      * @return true if the paint is handled natively, false if the paint should be rasterized
      */
-    protected boolean applyPaint(Paint paint, boolean fill) {   // CSOK: MethodLength
+    protected boolean applyPaint(Paint paint, boolean fill) {
         preparePainting();
 
         if (paint instanceof Color) {

@@ -55,7 +55,7 @@ public class TableAndCaption extends FObj implements CommonAccessibilityHolder {
     //     private int textAlign;
     // End of property values
 
-    static boolean notImplementedWarningGiven = false; // CSOK: VisibilityModifier
+    static boolean notImplementedWarningGiven = false;
 
     /** used for FO validation */
     private boolean tableCaptionFound = false;

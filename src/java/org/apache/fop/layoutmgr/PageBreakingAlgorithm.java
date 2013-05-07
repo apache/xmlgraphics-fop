@@ -117,7 +117,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param favorSinglePart true if favoring single part
      * @see BreakingAlgorithm
      */
-    public PageBreakingAlgorithm(LayoutManager topLevelLM,      // CSOK: ParameterNumber
+    public PageBreakingAlgorithm(LayoutManager topLevelLM,
                                  PageProvider pageProvider,
                                  PageBreakingLayoutListener layoutListener,
                                  int alignment, int alignmentLast,
@@ -141,15 +141,15 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     protected class KnuthPageNode extends KnuthNode {
 
         /** Additional length due to footnotes. */
-        public int totalFootnotes;                              // CSOK: VisibilityModifier
+        public int totalFootnotes;
 
         /** Index of the last inserted footnote. */
-        public int footnoteListIndex;                           // CSOK: VisibilityModifier
+        public int footnoteListIndex;
 
         /** Index of the last inserted element of the last inserted footnote. */
-        public int footnoteElementIndex;                        // CSOK: VisibilityModifier
+        public int footnoteElementIndex;
 
-        public KnuthPageNode(int position,                      // CSOK: ParameterNumber
+        public KnuthPageNode(int position,
                              int line, int fitness,
                              int totalWidth, int totalStretch, int totalShrink,
                              int totalFootnotes, int footnoteListIndex, int footnoteElementIndex,
@@ -280,7 +280,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     /** {@inheritDoc} */
     @Override
-    protected KnuthNode createNode(int position,                // CSOK: ParameterNumber
+    protected KnuthNode createNode(int position,
                                    int line, int fitness,
                                    int totalWidth, int totalStretch, int totalShrink,
                                    double adjustRatio, int availableShrink, int availableStretch,
@@ -515,10 +515,10 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                     footnoteListIndex = footnotesList.size() - 1;
                     footnoteElementIndex
                         = getFootnoteList(footnoteListIndex).size() - 1;
-                } else if (((canDeferOldFN = canDeferOldFootnotes(// CSOK: InnerAssignment
+                } else if (((canDeferOldFN = canDeferOldFootnotes(
                              pageNode, elementIndex))
                             || newFootnotes)
-                           && (footnoteSplit = getFootnoteSplit(// CSOK: InnerAssignment
+                           && (footnoteSplit = getFootnoteSplit(
                                pageNode, getLineWidth(activeNode.line) - actualWidth,
                                 canDeferOldFN)) > 0) {
                     // it is allowed to break or even defer footnotes if either:
@@ -890,7 +890,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 insertedFootnotesLength = totalFootnotesLength;
                 footnoteListIndex = lengthList.size() - 1;
                 footnoteElementIndex = getFootnoteList(footnoteListIndex).size() - 1;
-            } else if ((split = getFootnoteSplit(// CSOK: InnerAssignment
+            } else if ((split = getFootnoteSplit(
                         footnoteListIndex, footnoteElementIndex,
                          insertedFootnotesLength, availableBPD, true)) > 0) {
                 // add a piece of a footnote
@@ -1145,7 +1145,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     @Override
     protected void addNode(int line, KnuthNode node) {
         if (node.position < par.size() - 1 && line > 0
-                && (ipdDifference = compareIPDs(line - 1)) != 0) {  // CSOK: InnerAssignment
+                && (ipdDifference = compareIPDs(line - 1)) != 0) {
             log.trace("IPD changes at page " + line);
             if (bestNodeForIPDChange == null
                     || node.totalDemerits < bestNodeForIPDChange.totalDemerits) {

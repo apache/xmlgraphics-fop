@@ -57,32 +57,32 @@ public class CommonBorderPaddingBackground {
     /**
      * The "background-attachment" property.
      */
-    public final int backgroundAttachment;                      // CSOK: VisibilityModifier
+    public final int backgroundAttachment;
 
     /**
      * The "background-color" property.
      */
-    public final Color backgroundColor;                         // CSOK: VisibilityModifier
+    public final Color backgroundColor;
 
     /**
      * The "background-image" property.
      */
-    public final String backgroundImage;                        // CSOK: VisibilityModifier
+    public final String backgroundImage;
 
     /**
      * The "background-repeat" property.
      */
-    public final int backgroundRepeat;                          // CSOK: VisibilityModifier
+    public final int backgroundRepeat;
 
     /**
      * The "background-position-horizontal" property.
      */
-    public final Length backgroundPositionHorizontal;           // CSOK: VisibilityModifier
+    public final Length backgroundPositionHorizontal;
 
     /**
      * The "background-position-vertical" property.
      */
-    public final Length backgroundPositionVertical;             // CSOK: VisibilityModifier
+    public final Length backgroundPositionVertical;
 
 
     private ImageInfo backgroundImageInfo;

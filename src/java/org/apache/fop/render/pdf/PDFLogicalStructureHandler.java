@@ -67,12 +67,12 @@ class PDFLogicalStructureHandler {
          * operator. This is the structure type of the corresponding structure
          * element.
          */
-        final String tag;                                       // CSOK: VisibilityModifier
+        final String tag;
 
         /**
          * The value for the MCID entry of the marked-content sequence's property list.
          */
-        final int mcid;                                         // CSOK: VisibilityModifier
+        final int mcid;
 
         private final PDFStructElem parent;
 

@@ -40,7 +40,7 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 public class DevanagariScriptProcessor extends IndicScriptProcessor {
 
     /** logging instance */
-    private static final Log log = LogFactory.getLog(DevanagariScriptProcessor.class);                                  // CSOK: ConstantNameCheck
+    private static final Log log = LogFactory.getLog(DevanagariScriptProcessor.class);
 
     DevanagariScriptProcessor(String script) {
         super(script);
@@ -352,10 +352,10 @@ public class DevanagariScriptProcessor extends IndicScriptProcessor {
     static final short C_M_TYPE     = 0x00FF;       // type mask
     static final short C_M_FLAGS    = 0x7F00;       // flag mask
     // devanagari block range
-    static final int ccaStart       =  0x0900;      // first code point mapped by cca                                   // CSOK: ConstantNameCheck
-    static final int ccaEnd         =  0x0980;      // last code point + 1 mapped by cca                                // CSOK: ConstantNameCheck
+    static final int CCA_START       =  0x0900;      // first code point mapped by cca
+    static final int CCA_END         =  0x0980;      // last code point + 1 mapped by cca
     // devanagari character type lookups
-    static final short[] cca = {                                                                                        // CSOK: ConstantNameCheck
+    static final short[] CCA = {
         C_O,                        // 0x0900       // INVERTED CANDRABINDU
         C_O,                        // 0x0901       // CANDRABINDU
         C_O,                        // 0x0902       // ANUSVARA
@@ -404,8 +404,8 @@ public class DevanagariScriptProcessor extends IndicScriptProcessor {
         C_C,                        // 0x092D       // BHA
         C_C,                        // 0x092E       // MA
         C_C,                        // 0x092F       // YA
-        C_C|C_R,                    // 0x0930       // RA                                                               // CSOK: WhitespaceAround
-        C_C|C_R|C_N,                // 0x0931       // RRA          = 0930+093C                                         // CSOK: WhitespaceAround
+        C_C | C_R,                  // 0x0930       // RA
+        C_C | C_R | C_N,            // 0x0931       // RRA          = 0930+093C
         C_C,                        // 0x0932       // LA
         C_C,                        // 0x0933       // LLA
         C_C,                        // 0x0934       // LLLA
@@ -419,7 +419,7 @@ public class DevanagariScriptProcessor extends IndicScriptProcessor {
         C_N,                        // 0x093C       // NUKTA
         C_S,                        // 0x093D       // AVAGRAHA
         C_M,                        // 0x093E       // AA
-        C_M|C_PRE,                  // 0x093F       // I                                                               // CSOK: WhitespaceAround
+        C_M | C_PRE,                // 0x093F       // I
         C_M,                        // 0x0940       // II
         C_M,                        // 0x0941       // U
         C_M,                        // 0x0942       // UU
@@ -444,14 +444,14 @@ public class DevanagariScriptProcessor extends IndicScriptProcessor {
         C_M,                        // 0x0955       // CANDRA LONG E
         C_M,                        // 0x0956       // UE
         C_M,                        // 0x0957       // UUE
-        C_C|C_N,                    // 0x0958       // QA                                                               // CSOK: WhitespaceAround
-        C_C|C_N,                    // 0x0959       // KHHA                                                             // CSOK: WhitespaceAround
-        C_C|C_N,                    // 0x095A       // GHHA                                                             // CSOK: WhitespaceAround
-        C_C|C_N,                    // 0x095B       // ZA                                                               // CSOK: WhitespaceAround
-        C_C|C_N,                    // 0x095C       // DDDHA                                                            // CSOK: WhitespaceAround
-        C_C|C_N,                    // 0x095D       // RHA                                                              // CSOK: WhitespaceAround
-        C_C|C_N,                    // 0x095E       // FA                                                               // CSOK: WhitespaceAround
-        C_C|C_N,                    // 0x095F       // YYA                                                              // CSOK: WhitespaceAround
+        C_C | C_N,                  // 0x0958       // QA
+        C_C | C_N,                  // 0x0959       // KHHA
+        C_C | C_N,                  // 0x095A       // GHHA
+        C_C | C_N,                  // 0x095B       // ZA
+        C_C | C_N,                  // 0x095C       // DDDHA
+        C_C | C_N,                  // 0x095D       // RHA
+        C_C | C_N,                  // 0x095E       // FA
+        C_C | C_N,                  // 0x095F       // YYA
         C_V,                        // 0x0960       // VOCALIC RR
         C_V,                        // 0x0961       // VOCALIC LL
         C_M,                        // 0x0962       // VOCALIC RR
@@ -486,8 +486,8 @@ public class DevanagariScriptProcessor extends IndicScriptProcessor {
         C_C                         // 0x097F       // BBA (SINDHI)
     };
     static int typeOf(int c) {
-        if ((c >= ccaStart) && (c < ccaEnd)) {
-            return cca [ c - ccaStart ] & C_M_TYPE;
+        if ((c >= CCA_START) && (c < CCA_END)) {
+            return CCA [ c - CCA_START ] & C_M_TYPE;
         } else {
             return C_U;
         }
@@ -496,8 +496,8 @@ public class DevanagariScriptProcessor extends IndicScriptProcessor {
         return typeOf(c) == t;
     }
     static boolean hasFlag(int c, int f) {
-        if ((c >= ccaStart) && (c < ccaEnd)) {
-            return (cca [ c - ccaStart ] & f) == f;
+        if ((c >= CCA_START) && (c < CCA_END)) {
+            return (CCA [ c - CCA_START ] & f) == f;
         } else {
             return false;
         }

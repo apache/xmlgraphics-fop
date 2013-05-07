@@ -34,7 +34,7 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
  */
 public abstract class GlyphPositioningSubtable extends GlyphSubtable implements GlyphPositioning {
 
-    private static final GlyphPositioningState state = new GlyphPositioningState();   // CSOK: ConstantName
+    private static final GlyphPositioningState STATE = new GlyphPositioningState();
 
     /**
      * Instantiate a <code>GlyphPositioningSubtable</code>.
@@ -124,8 +124,8 @@ public abstract class GlyphPositioningSubtable extends GlyphSubtable implements 
      * @return true if a non-zero adjustment occurred
      */
     public static final boolean position(GlyphSequence gs, String script, String language, String feature, int fontSize, GlyphPositioningSubtable[] sta, int[] widths, int[][] adjustments, ScriptContextTester sct) {
-        synchronized (state) {
-            return position(state.reset(gs, script, language, feature, fontSize, widths, adjustments, sct), sta, -1);
+        synchronized (STATE) {
+            return position(STATE.reset(gs, script, language, feature, fontSize, widths, adjustments, sct), sta, -1);
         }
     }
 

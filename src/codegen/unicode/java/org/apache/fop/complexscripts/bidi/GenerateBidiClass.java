@@ -445,7 +445,7 @@ public final class GenerateBidiClass {
         }
     }
 
-    private static final int[] testData =                       // CSOK: ConstantName
+    private static final int[] TEST_DATA =
     {
         0x000000, BidiConstants.BN,
         0x000009, BidiConstants.S,
@@ -495,9 +495,9 @@ public final class GenerateBidiClass {
     };
 
     private static void test() throws Exception {
-        for (int i = 0, n = testData.length / 2; i < n; i++) {
-            int ch = testData [ i * 2 + 0 ];
-            int tc = testData [ i * 2 + 1 ];
+        for (int i = 0, n = TEST_DATA.length / 2; i < n; i++) {
+            int ch = TEST_DATA [ i * 2 + 0 ];
+            int tc = TEST_DATA [ i * 2 + 1 ];
             int bc = getBidiClass(ch);
             if (bc != tc) {
                 throw new Exception("test mapping failed for character (0x" + Integer.toHexString(ch) + "): expected " + tc + ", got " + bc);
@@ -545,9 +545,9 @@ public final class GenerateBidiClass {
     }
 
     private static class Interval implements Comparable {
-        int start;                                              // CSOK: VisibilityModifier
-        int end;                                                // CSOK: VisibilityModifier
-        int bidiClass;                                          // CSOK: VisibilityModifier
+        int start;
+        int end;
+        int bidiClass;
         Interval(int start, int end, int bidiClass) {
             this.start = start;
             this.end = end;

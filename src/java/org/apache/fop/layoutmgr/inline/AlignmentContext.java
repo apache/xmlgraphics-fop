@@ -111,7 +111,7 @@ public class AlignmentContext implements Constants {
      * @param dominantBaseline the dominant-baseline property
      * @param parentAlignmentContext the parent alignment context
      */
-    private AlignmentContext(int altitude,                              // CSOK: ParameterNumber
+    private AlignmentContext(int altitude,
             int depth,
             int lineHeight,
             int xHeight,

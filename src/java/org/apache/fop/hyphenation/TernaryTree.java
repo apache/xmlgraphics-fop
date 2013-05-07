@@ -525,18 +525,18 @@ public class TernaryTree implements Cloneable, Serializable {
         /**
          * current node index
          */
-        int cur;                                                // CSOK: VisibilityModifier
+        int cur;
 
         /**
          * current key
          */
-        String curkey;                                          // CSOK: VisibilityModifier
+        String curkey;
 
         private class Item implements Cloneable {
             /** parent */
-            char parent;                                        // CSOK: VisibilityModifier
+            char parent;
             /** child */
-            char child;                                         // CSOK: VisibilityModifier
+            char child;
 
             /** default constructor */
             public Item() {
@@ -564,12 +564,12 @@ public class TernaryTree implements Cloneable, Serializable {
         /**
          * Node stack
          */
-        Stack ns;                                               // CSOK: VisibilityModifier
+        Stack ns;
 
         /**
          * key stack implemented with a StringBuffer
          */
-        StringBuffer ks;                                        // CSOK: VisibilityModifier
+        StringBuffer ks;
 
         /** default constructor */
         public Iterator() {

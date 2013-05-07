@@ -42,7 +42,7 @@ import org.apache.fop.util.CharUtilities;
 public class MultiByteFont extends CIDFont implements Substitutable, Positionable {
 
     /** logging instance */
-    private static final Log log // CSOK: ConstantNameCheck
+    private static final Log log
         = LogFactory.getLog(MultiByteFont.class);
 
     private String ttcName;

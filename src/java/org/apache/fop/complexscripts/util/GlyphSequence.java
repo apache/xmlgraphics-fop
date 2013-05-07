@@ -983,10 +983,10 @@ public class GlyphSequence implements Cloneable {
             return sortIntervals(sa, ea);
         }
 
-        private static final int[] sortIncrements16                                                             // CSOK: ConstantNameCheck
+        private static final int[] SORT_INCREMENTS_16
             = { 1391376, 463792, 198768, 86961, 33936, 13776, 4592, 1968, 861, 336, 112, 48, 21, 7, 3, 1 };
 
-        private static final int[] sortIncrements03                                                             // CSOK: ConstantNameCheck
+        private static final int[] SORT_INCREMENTS_03
             = { 7, 3, 1 };
 
         /**
@@ -997,7 +997,7 @@ public class GlyphSequence implements Cloneable {
             assert ea != null;
             assert sa.length == ea.length;
             int ni = sa.length;
-            int[] incr = (ni < 21) ? sortIncrements03 : sortIncrements16;
+            int[] incr = (ni < 21) ? SORT_INCREMENTS_03 : SORT_INCREMENTS_16;
             for (int k = 0; k < incr.length; k++) {
                 for (int h = incr [ k ], i = h, n = ni, j; i < n; i++) {
                     int s1 = sa [ i ];

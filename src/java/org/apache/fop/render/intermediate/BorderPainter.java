@@ -77,7 +77,7 @@ public class BorderPainter {
      * @param innerBackgroundColor the inner background color
      * @throws IFException if an error occurs while drawing the borders
      */
-    public void drawBorders(Rectangle borderRect,               // CSOK: MethodLength
+    public void drawBorders(Rectangle borderRect,
             BorderProps bpsTop, BorderProps bpsBottom,
             BorderProps bpsLeft, BorderProps bpsRight, Color innerBackgroundColor)
                 throws IFException {

@@ -34,32 +34,32 @@ public class CommonMarginInline {
     /**
      * The "margin-top" property.
      */
-    public Length marginTop;                                    // CSOK: VisibilityModifier
+    public Length marginTop;
 
     /**
      * The "margin-bottom" property.
      */
-    public Length marginBottom;                                 // CSOK: VisibilityModifier
+    public Length marginBottom;
 
     /**
      * The "margin-left" property.
      */
-    public Length marginLeft;                                   // CSOK: VisibilityModifier
+    public Length marginLeft;
 
     /**
      * The "margin-right" property.
      */
-    public Length marginRight;                                  // CSOK: VisibilityModifier
+    public Length marginRight;
 
     /**
      * The "space-start" property.
      */
-    public SpaceProperty spaceStart;                            // CSOK: VisibilityModifier
+    public SpaceProperty spaceStart;
 
     /**
      * The "space-end" property.
      */
-    public SpaceProperty spaceEnd;                              // CSOK: VisibilityModifier
+    public SpaceProperty spaceEnd;
 
     /**
      * Create a CommonMarginInline object.

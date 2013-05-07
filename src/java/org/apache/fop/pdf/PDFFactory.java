@@ -1061,12 +1061,12 @@ public class PDFFactory {
         } else if (targetLo.endsWith(".pdf")) {
             // Bare PDF file name?
             return getGoToPDFAction(target, null, -1, newWindow);
-        } else if ((index = targetLo.indexOf(".pdf#page=")) > 0) { // CSOK: InnerAssignment
+        } else if ((index = targetLo.indexOf(".pdf#page=")) > 0) {
             // PDF file + page?
             String filename = target.substring(0, index + 4);
             int page = Integer.parseInt(target.substring(index + 10));
             return getGoToPDFAction(filename, null, page, newWindow);
-        } else if ((index = targetLo.indexOf(".pdf#dest=")) > 0) { // CSOK: InnerAssignment
+        } else if ((index = targetLo.indexOf(".pdf#dest=")) > 0) {
             // PDF file + destination?
             String filename = target.substring(0, index + 4);
             String dest = target.substring(index + 10);

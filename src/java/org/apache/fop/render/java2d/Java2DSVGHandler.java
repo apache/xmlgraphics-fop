@@ -82,17 +82,17 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
      */
     public static class Java2DInfo {
         /** see Java2D_STATE */
-        public Java2DGraphicsState state;                       // CSOK: VisibilityModifier
+        public Java2DGraphicsState state;
         /** see Java2D_WIDTH */
-        public int width;                                       // CSOK: VisibilityModifier
+        public int width;
         /** see Java2D_HEIGHT */
-        public int height;                                      // CSOK: VisibilityModifier
+        public int height;
         /** see Java2D_XPOS */
-        public int currentXPosition;                            // CSOK: VisibilityModifier
+        public int currentXPosition;
         /** see Java2D_YPOS */
-        public int currentYPosition;                            // CSOK: VisibilityModifier
+        public int currentYPosition;
         /** paint as bitmap */
-        public boolean paintAsBitmap;                           // CSOK: VisibilityModifier
+        public boolean paintAsBitmap;
 
         /** {@inheritDoc} */
         public String toString() {

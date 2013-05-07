@@ -54,7 +54,7 @@ public class TableCaption extends FObj implements CommonAccessibilityHolder {
     /** used for FO validation */
     private boolean blockItemFound = false;
 
-    static boolean notImplementedWarningGiven = false; // CSOK: VisibilityModifier
+    static boolean notImplementedWarningGiven = false;
 
     /**
      * Create a TableCaption instance with the given {@link FONode}

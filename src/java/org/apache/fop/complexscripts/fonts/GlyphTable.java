@@ -52,7 +52,7 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 public class GlyphTable {
 
     /** logging instance */
-    private static final Log log = LogFactory.getLog(GlyphTable.class);                                                 // CSOK: ConstantNameCheck
+    private static final Log log = LogFactory.getLog(GlyphTable.class);
 
     /** substitution glyph table type */
     public static final int GLYPH_TABLE_TYPE_SUBSTITUTION = 1;

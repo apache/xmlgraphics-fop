@@ -784,7 +784,7 @@ public final class ColorUtil {
     /**
      * Initializes the colorMap with some predefined values.
      */
-    private static void initializeColorMap() {                  // CSOK: MethodLength
+    private static void initializeColorMap() {
         colorMap = Collections.synchronizedMap(new java.util.HashMap<String, Color>());
 
         colorMap.put("aliceblue", createColor(240, 248, 255));

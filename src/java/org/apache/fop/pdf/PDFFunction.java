@@ -374,7 +374,7 @@ public class PDFFunction extends PDFObject {
      *
      * @return the PDF string.
      */
-    public byte[] toPDF() {                                     // CSOK: MethodLength
+    public byte[] toPDF() {
         int vectorSize = 0;
         int numberOfFunctions = 0;
         int tempInt = 0;
