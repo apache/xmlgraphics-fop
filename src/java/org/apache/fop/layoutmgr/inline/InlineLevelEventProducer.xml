@@ -19,5 +19,5 @@
 <catalogue xml:lang="en">
   <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
   <message key="leaderWithoutContent">fo:leader is set to "use-content" but has no content.{{locator}}</message>
-  <message key="lineOverflows">The contents of {elementName} line {line} exceeds the available area by {overflowLength,choice,50000#{overflowLength} millipoints|50000&lt;more than 50 points}.{{locator}}</message>
+  <message key="lineOverflows">The contents of {elementName} line {line} exceed the available area in the inline-progression direction by {overflowLength,choice,50000#{overflowLength} millipoints|50000&lt;more than 50 points}.{{locator}}</message>
 </catalogue>
