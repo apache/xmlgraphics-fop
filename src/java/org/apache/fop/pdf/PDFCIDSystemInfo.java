@@ -19,6 +19,9 @@
 
 package org.apache.fop.pdf;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 // based on work by Takayuki Takeuchi
 
 /**
@@ -62,6 +65,25 @@ public class PDFCIDSystemInfo extends PDFObject {
         p.append(supplement);
         p.append(" >>");
         return p.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public byte[] toPDF() {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
+        try {
+            bout.write(encode("<< /Registry "));
+            bout.write(encodeText(registry));
+            bout.write(encode(" /Ordering "));
+            bout.write(encodeText(ordering));
+            bout.write(encode(" /Supplement "));
+            bout.write(encode(Integer.toString(supplement)));
+            bout.write(encode(" >>"));
+        } catch (IOException ioe) {
+            log.error("Ignored I/O exception", ioe);
+        }
+        return bout.toByteArray();
     }
 
 }

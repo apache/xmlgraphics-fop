@@ -516,10 +516,19 @@ public class PDFDocument {
         if (this.encryption != null) {
             PDFObject pdfObject = (PDFObject)this.encryption;
             addTrailerObject(pdfObject);
+            try {
+                versionController.setPDFVersion(encryption.getPDFVersion());
+            } catch (IllegalStateException ise) {
+                log.warn("Configured encryption requires PDF version " + encryption.getPDFVersion()
+                        + " but version has been set to " + versionController.getPDFVersion() + ".");
+                throw ise;
+            }
         } else {
-            log.warn(
-                "PDF encryption is unavailable. PDF will be "
-                    + "generated without encryption.");
+            log.warn("PDF encryption is unavailable. PDF will be generated without encryption.");
+            if (params.getEncryptionLengthInBits() == 256) {
+                log.warn("Make sure the JCE Unlimited Strength Jurisdiction Policy files are available."
+                        + "AES 256 encryption cannot be performed without them.");
+            }
         }
     }
 

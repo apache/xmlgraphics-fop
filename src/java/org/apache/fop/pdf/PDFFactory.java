@@ -1364,6 +1364,7 @@ public class PDFFactory {
                 }
                 PDFCIDSystemInfo sysInfo = new PDFCIDSystemInfo(cidMetrics.getRegistry(),
                         cidMetrics.getOrdering(), cidMetrics.getSupplement());
+                sysInfo.setDocument(document);
                 PDFCIDFont cidFont = new PDFCIDFont(subsetFontName, cidMetrics.getCIDType(),
                         cidMetrics.getDefaultWidth(), getFontWidths(cidMetrics), sysInfo,
                         (PDFCIDFontDescriptor) pdfdesc);

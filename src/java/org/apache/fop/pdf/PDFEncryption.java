@@ -46,4 +46,10 @@ public interface PDFEncryption {
      * of the document's encryption dictionary
      */
     String getTrailerEntry();
+
+    /**
+     * Returns the PDF version required by the current encryption algorithm.
+     * @return the PDF Version
+     */
+    Version getPDFVersion();
 }

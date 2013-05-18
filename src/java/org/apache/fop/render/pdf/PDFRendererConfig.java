@@ -43,6 +43,7 @@ import org.apache.fop.util.LogUtil;
 
 import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPTION_LENGTH;
 import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPTION_PARAMS;
+import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPT_METADATA;
 import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_ACCESSCONTENT;
 import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_ANNOTATIONS;
 import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_ASSEMBLEDOC;
@@ -155,6 +156,7 @@ public final class PDFRendererConfig implements RendererConfig {
                 encryptionConfig.setAllowAccessContent(!doesValueExist(encryptCfg, NO_ACCESSCONTENT));
                 encryptionConfig.setAllowAssembleDocument(!doesValueExist(encryptCfg, NO_ASSEMBLEDOC));
                 encryptionConfig.setAllowPrintHq(!doesValueExist(encryptCfg, NO_PRINTHQ));
+                encryptionConfig.setEncryptMetadata(getConfigValue(encryptCfg, ENCRYPT_METADATA, true));
                 String encryptionLength = parseConfig(encryptCfg, ENCRYPTION_LENGTH);
                 if (encryptionLength != null) {
                     int validatedLength = checkEncryptionLength(Integer.parseInt(encryptionLength), userAgent);
@@ -206,11 +208,26 @@ public final class PDFRendererConfig implements RendererConfig {
             return cfg.getChild(option.getName(), false) != null;
         }
 
+        private boolean getConfigValue(Configuration cfg, RendererConfigOption option, boolean defaultTo) {
+            if (cfg.getChild(option.getName(), false) != null) {
+                Configuration child = cfg.getChild(option.getName());
+                try {
+                    return child.getValueAsBoolean();
+                } catch (ConfigurationException e) {
+                    return defaultTo;
+                }
+            } else {
+                return defaultTo;
+            }
+        }
+
         private int checkEncryptionLength(int encryptionLength, FOUserAgent userAgent) {
             int correctEncryptionLength = encryptionLength;
             if (encryptionLength < 40) {
                 correctEncryptionLength = 40;
-            } else if (encryptionLength > 128) {
+            } else if (encryptionLength > 256) {
+                correctEncryptionLength = 256;
+            } else if (encryptionLength > 128 && encryptionLength < 256) {
                 correctEncryptionLength = 128;
             } else if (encryptionLength % 8 != 0) {
                 correctEncryptionLength = Math.round(encryptionLength / 8.0f) * 8;

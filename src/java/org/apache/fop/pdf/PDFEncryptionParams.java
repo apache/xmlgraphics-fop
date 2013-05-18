@@ -35,8 +35,9 @@ public class PDFEncryptionParams {
     private boolean allowAccessContent = true;
     private boolean allowAssembleDocument = true;
     private boolean allowPrintHq = true;
+    private boolean encryptMetadata = true;
 
-    private int encryptionLengthInBits = 40;
+    private int encryptionLengthInBits = 128;
 
     /**
      * Creates a new instance.
@@ -51,13 +52,15 @@ public class PDFEncryptionParams {
                                boolean allowPrint,
                                boolean allowCopyContent,
                                boolean allowEditContent,
-                               boolean allowEditAnnotations) {
+                               boolean allowEditAnnotations,
+                               boolean encryptMetadata) {
         setUserPassword(userPassword);
         setOwnerPassword(ownerPassword);
         setAllowPrint(allowPrint);
         setAllowCopyContent(allowCopyContent);
         setAllowEditContent(allowEditContent);
         setAllowEditAnnotations(allowEditAnnotations);
+        this.encryptMetadata = encryptMetadata;
     }
 
     /**
@@ -84,6 +87,7 @@ public class PDFEncryptionParams {
         setAllowFillInForms(source.isAllowFillInForms());
         setAllowPrintHq(source.isAllowPrintHq());
         setEncryptionLengthInBits(source.getEncryptionLengthInBits());
+        encryptMetadata = source.encryptMetadata();
     }
 
     /**
@@ -148,6 +152,14 @@ public class PDFEncryptionParams {
      */
     public boolean isAllowPrintHq() {
         return allowPrintHq;
+    }
+
+    /**
+     * Indicates whether Metadata should be encrypted.
+     * @return true or false
+     */
+    public boolean encryptMetadata() {
+        return encryptMetadata;
     }
 
     /**
@@ -231,6 +243,14 @@ public class PDFEncryptionParams {
     }
 
     /**
+     * Whether the Metadata should be encrypted or not; default is true;
+     * @param encryptMetadata true or false
+     */
+    public void setEncryptMetadata(boolean encryptMetadata) {
+        this.encryptMetadata = encryptMetadata;
+    }
+
+    /**
      * Sets the owner password.
      * @param ownerPassword The owner password to set, null or an empty String
      * if no password is applicable
@@ -283,7 +303,8 @@ public class PDFEncryptionParams {
                 + "allowFillInForms  = " + allowFillInForms + "\n"
                 + "allowAccessContent = " + allowAccessContent + "\n"
                 + "allowAssembleDocument = " + allowAssembleDocument + "\n"
-                + "allowPrintHq = " + allowPrintHq;
+                + "allowPrintHq = " + allowPrintHq + "\n"
+                + "encryptMetadata = " + encryptMetadata;
     }
 
 }

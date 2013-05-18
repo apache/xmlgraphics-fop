@@ -19,6 +19,9 @@
 
 package org.apache.fop.pdf;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import org.apache.fop.fonts.CIDFontType;
 
 // based on work by Takayuki Takeuchi
@@ -106,6 +109,7 @@ public class PDFCIDFont extends PDFObject {
         this.w = w;
         this.dw2 = null;
         this.w2 = null;
+        systemInfo.setParent(this);
         this.systemInfo = systemInfo;
         this.descriptor = descriptor;
         this.cidMap = null;
@@ -240,6 +244,61 @@ public class PDFCIDFont extends PDFObject {
         }
         p.append("\n>>");
         return p.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public byte[] toPDF() {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
+        try {
+            bout.write(encode("<< /Type /Font\n"));
+            bout.write(encode("/BaseFont /"));
+            bout.write(encode(this.basefont));
+            bout.write(encode(" \n"));
+            bout.write(encode("/CIDToGIDMap "));
+            bout.write(encode(cidMap != null ? cidMap.referencePDF() : "/Identity"));
+            bout.write(encode(" \n"));
+            bout.write(encode("/Subtype /"));
+            bout.write(encode(getPDFNameForCIDFontType(this.cidtype)));
+            bout.write(encode("\n"));
+            bout.write(encode("/CIDSystemInfo "));
+            bout.write(systemInfo.toPDF());
+            bout.write(encode("\n"));
+            bout.write(encode("/FontDescriptor "));
+            bout.write(encode(this.descriptor.referencePDF()));
+            bout.write(encode("\n"));
+            if (cmap != null) {
+                bout.write(encode("/ToUnicode "));
+                bout.write(encode(cmap.referencePDF()));
+                bout.write(encode("\n"));
+            }
+            if (dw != null) {
+                bout.write(encode("/DW "));
+                bout.write(encode(this.dw.toString()));
+                bout.write(encode("\n"));
+            }
+            if (w != null) {
+                bout.write(encode("/W "));
+                bout.write(encode(w.toPDFString()));
+                bout.write(encode("\n"));
+            }
+            if (dw2 != null) {
+                bout.write(encode("/DW2 [")); // always two values, see p 211
+                bout.write(encode(Integer.toString(this.dw2[0])));
+                bout.write(encode(Integer.toString(this.dw2[1])));
+                bout.write(encode("]\n"));
+            }
+            if (w2 != null) {
+                bout.write(encode("/W2 "));
+                bout.write(encode(w2.toPDFString()));
+                bout.write(encode("\n"));
+            }
+            bout.write(encode(">>"));
+        } catch (IOException ioe) {
+            log.error("Ignored I/O exception", ioe);
+        }
+        return bout.toByteArray();
     }
 
 }
