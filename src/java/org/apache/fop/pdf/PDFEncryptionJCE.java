@@ -21,9 +21,12 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
@@ -31,6 +34,7 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
@@ -40,9 +44,19 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
 
     private final MessageDigest digest;
 
+    private SecureRandom random;
+
     private byte[] encryptionKey;
 
     private String encryptionDictionary;
+
+    private boolean useAlgorithm31a;
+
+    private boolean encryptMetadata = true;
+
+    private Version pdfVersion = Version.V1_4;
+
+    private static byte[] ivZero = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     private class EncryptionInitializer {
 
@@ -64,18 +78,30 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             int permissions = Permission.computePermissions(encryptionParams);
             EncryptionSettings encryptionSettings = new EncryptionSettings(
                     encryptionLength, permissions,
-                    encryptionParams.getUserPassword(), encryptionParams.getOwnerPassword());
-            InitializationEngine initializationEngine = (revision == 2)
-                    ? new Rev2Engine(encryptionSettings)
-                    : new Rev3Engine(encryptionSettings);
+                    encryptionParams.getUserPassword(), encryptionParams.getOwnerPassword(),
+                    encryptionParams.encryptMetadata());
+            InitializationEngine initializationEngine = createEngine(encryptionSettings);
             initializationEngine.run();
-            encryptionDictionary = createEncryptionDictionary(permissions,
-                    initializationEngine.oValue,
-                    initializationEngine.uValue);
+            encryptionDictionary = createEncryptionDictionary(permissions, initializationEngine);
+            encryptMetadata = encryptionParams.encryptMetadata();
+        }
+
+        private InitializationEngine createEngine(EncryptionSettings encryptionSettings) {
+            if (revision == 5) {
+                return new Rev5Engine(encryptionSettings);
+            } else if (revision == 2) {
+                return new Rev2Engine(encryptionSettings);
+            } else {
+                return new Rev3Engine(encryptionSettings);
+            }
         }
 
         private void determineEncryptionAlgorithm() {
-            if (isVersion1Revision2Algorithm()) {
+            if (isVersion5Revision5Algorithm()) {
+                version = 5;
+                revision = 5;
+                pdfVersion = Version.V1_7;
+            } else if (isVersion1Revision2Algorithm()) {
                 version = 1;
                 revision = 2;
             } else {
@@ -92,16 +118,20 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
                     && encryptionParams.isAllowPrintHq();
         }
 
-        private String createEncryptionDictionary(final int permissions, final byte[] oValue,
-                final byte[] uValue) {
-            return "<< /Filter /Standard\n"
+        private boolean isVersion5Revision5Algorithm() {
+            return encryptionLength == 256;
+        }
+
+        private String createEncryptionDictionary(final int permissions, InitializationEngine engine) {
+            String encryptionDict = "<<\n"
+                    + "/Filter /Standard\n"
                     + "/V " + version + "\n"
                     + "/R " + revision + "\n"
                     + "/Length " + encryptionLength + "\n"
-                    + "/P "  + permissions + "\n"
-                    + "/O " + PDFText.toHex(oValue) + "\n"
-                    + "/U " + PDFText.toHex(uValue) + "\n"
+                    + "/P " + permissions + "\n"
+                    + engine.getEncryptionDictionaryPart()
                     + ">>";
+            return encryptionDict;
         }
 
     }
@@ -173,62 +203,88 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
 
         final String ownerPassword;
 
+        final boolean encryptMetadata;
+
         EncryptionSettings(int encryptionLength, int permissions,
-                String userPassword, String ownerPassword) {
+                String userPassword, String ownerPassword, boolean encryptMetadata) {
             this.encryptionLength = encryptionLength;
             this.permissions = permissions;
             this.userPassword = userPassword;
             this.ownerPassword = ownerPassword;
+            this.encryptMetadata = encryptMetadata;
         }
 
     }
 
     private abstract class InitializationEngine {
 
-        /** Padding for passwords. */
-        protected final byte[] padding = new byte[] {
-                (byte) 0x28, (byte) 0xBF, (byte) 0x4E, (byte) 0x5E,
-                (byte) 0x4E, (byte) 0x75, (byte) 0x8A, (byte) 0x41,
-                (byte) 0x64, (byte) 0x00, (byte) 0x4E, (byte) 0x56,
-                (byte) 0xFF, (byte) 0xFA, (byte) 0x01, (byte) 0x08,
-                (byte) 0x2E, (byte) 0x2E, (byte) 0x00, (byte) 0xB6,
-                (byte) 0xD0, (byte) 0x68, (byte) 0x3E, (byte) 0x80,
-                (byte) 0x2F, (byte) 0x0C, (byte) 0xA9, (byte) 0xFE,
-                (byte) 0x64, (byte) 0x53, (byte) 0x69, (byte) 0x7A};
-
         protected final int encryptionLengthInBytes;
 
-        private final int permissions;
+        protected final int permissions;
 
-        private byte[] oValue;
+        private final String userPassword;
 
-        private byte[] uValue;
+        private final String ownerPassword;
 
-        private final byte[] preparedUserPassword;
+        protected byte[] oValue;
 
-        protected final String ownerPassword;
+        protected byte[] uValue;
+
+        protected byte[] preparedUserPassword;
+
+        protected byte[] preparedOwnerPassword;
 
         InitializationEngine(EncryptionSettings encryptionSettings) {
             this.encryptionLengthInBytes = encryptionSettings.encryptionLength / 8;
             this.permissions = encryptionSettings.permissions;
-            this.preparedUserPassword = preparePassword(encryptionSettings.userPassword);
+            this.userPassword = encryptionSettings.userPassword;
             this.ownerPassword = encryptionSettings.ownerPassword;
         }
 
         void run() {
-            oValue = computeOValue();
-            createEncryptionKey();
-            uValue = computeUValue();
+            preparedUserPassword = preparePassword(userPassword);
+            if (ownerPassword == null || ownerPassword.length() == 0) {
+                preparedOwnerPassword = preparedUserPassword;
+            } else {
+                preparedOwnerPassword = preparePassword(ownerPassword);
+            }
+        }
+
+        protected String getEncryptionDictionaryPart() {
+            String encryptionDictionaryPart = "/O " + PDFText.toHex(oValue) + "\n"
+                    + "/U " + PDFText.toHex(uValue) + "\n";
+            return encryptionDictionaryPart;
+        }
+
+        protected abstract void computeOValue();
+
+        protected abstract void computeUValue();
+
+        protected abstract void createEncryptionKey();
+
+        protected abstract byte[] preparePassword(String password);
+    }
+
+    private abstract class RevBefore5Engine extends InitializationEngine {
+
+        /** Padding for passwords. */
+        protected final byte[] padding = new byte[] {(byte) 0x28, (byte) 0xBF, (byte) 0x4E, (byte) 0x5E,
+                (byte) 0x4E, (byte) 0x75, (byte) 0x8A, (byte) 0x41, (byte) 0x64, (byte) 0x00, (byte) 0x4E,
+                (byte) 0x56, (byte) 0xFF, (byte) 0xFA, (byte) 0x01, (byte) 0x08, (byte) 0x2E, (byte) 0x2E,
+                (byte) 0x00, (byte) 0xB6, (byte) 0xD0, (byte) 0x68, (byte) 0x3E, (byte) 0x80, (byte) 0x2F,
+                (byte) 0x0C, (byte) 0xA9, (byte) 0xFE, (byte) 0x64, (byte) 0x53, (byte) 0x69, (byte) 0x7A};
+
+        RevBefore5Engine(EncryptionSettings encryptionSettings) {
+            super(encryptionSettings);
         }
 
         /**
          * Applies Algorithm 3.3 Page 79 of the PDF 1.4 Reference.
          *
-         * @return the O value
          */
-        private byte[] computeOValue() {
+        protected void computeOValue() {
             // Step 1
-            byte[] md5Input = prepareMD5Input();
+            byte[] md5Input = preparedOwnerPassword;
             // Step 2
             digest.reset();
             byte[] hash = digest.digest(md5Input);
@@ -240,15 +296,13 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             // Steps 5, 6
             byte[] encryptionResult = encryptWithKey(key, preparedUserPassword);
             // Step 7
-            encryptionResult = computeOValueStep7(key, encryptionResult);
-            // Step 8
-            return encryptionResult;
+            oValue = computeOValueStep7(key, encryptionResult);
         }
 
         /**
          * Applies Algorithm 3.2 Page 78 of the PDF 1.4 Reference.
          */
-        private void createEncryptionKey() {
+        protected void createEncryptionKey() {
             // Steps 1, 2
             digest.reset();
             digest.update(preparedUserPassword);
@@ -269,30 +323,31 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             System.arraycopy(hash, 0, encryptionKey, 0, encryptionLengthInBytes);
         }
 
-        protected abstract byte[] computeUValue();
-
         /**
          * Adds padding to the password as directed in page 78 of the PDF 1.4 Reference.
          *
          * @param password the password
          * @return the password with additional padding if necessary
          */
-        private byte[] preparePassword(String password) {
+        protected byte[] preparePassword(String password) {
             int finalLength = 32;
             byte[] preparedPassword = new byte[finalLength];
-            byte[] passwordBytes = password.getBytes();
-            System.arraycopy(passwordBytes, 0, preparedPassword, 0, passwordBytes.length);
-            System.arraycopy(padding, 0, preparedPassword, passwordBytes.length,
-                    finalLength - passwordBytes.length);
-            return preparedPassword;
+            try {
+                byte[] passwordBytes = password.getBytes("UTF-8");
+                System.arraycopy(passwordBytes, 0, preparedPassword, 0, passwordBytes.length);
+                System.arraycopy(padding, 0, preparedPassword, passwordBytes.length, finalLength
+                        - passwordBytes.length);
+                return preparedPassword;
+            } catch (UnsupportedEncodingException e) {
+                throw new UnsupportedOperationException(e);
+            }
         }
 
-        private byte[] prepareMD5Input() {
-            if (ownerPassword.length() != 0) {
-                return preparePassword(ownerPassword);
-            } else {
-                return preparedUserPassword;
-            }
+        void run() {
+            super.run();
+            computeOValue();
+            createEncryptionKey();
+            computeUValue();
         }
 
         protected abstract byte[] computeOValueStep3(byte[] hash);
@@ -303,7 +358,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
 
     }
 
-    private class Rev2Engine extends InitializationEngine {
+    private class Rev2Engine extends RevBefore5Engine {
 
         Rev2Engine(EncryptionSettings encryptionSettings) {
             super(encryptionSettings);
@@ -325,13 +380,13 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         }
 
         @Override
-        protected byte[] computeUValue() {
-            return encryptWithKey(encryptionKey, padding);
+        protected void computeUValue() {
+            uValue = encryptWithKey(encryptionKey, padding);
         }
 
     }
 
-    private class Rev3Engine extends InitializationEngine {
+    private class Rev3Engine extends RevBefore5Engine {
 
         Rev3Engine(EncryptionSettings encryptionSettings) {
             super(encryptionSettings);
@@ -360,7 +415,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         }
 
         @Override
-        protected byte[] computeUValue() {
+        protected void computeUValue() {
             // Step 1 is encryptionKey
             // Step 2
             digest.reset();
@@ -372,11 +427,10 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             // Step 5
             encryptionResult = xorKeyAndEncrypt19Times(encryptionKey, encryptionResult);
             // Step 6
-            byte[] uValue = new byte[32];
+            uValue = new byte[32];
             System.arraycopy(encryptionResult, 0, uValue, 0, 16);
             // Add the arbitrary padding
             Arrays.fill(uValue, 16, 32, (byte) 0);
-            return uValue;
         }
 
         private byte[] xorKeyAndEncrypt19Times(byte[] key, byte[] input) {
@@ -391,6 +445,174 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             return result;
         }
 
+    }
+
+    private class Rev5Engine extends InitializationEngine {
+
+        // private SecureRandom random = new SecureRandom();
+        private byte[] userValidationSalt = new byte[8];
+        private byte[] userKeySalt = new byte[8];
+        private byte[] ownerValidationSalt = new byte[8];
+        private byte[] ownerKeySalt = new byte[8];
+        private byte[] ueValue;
+        private byte[] oeValue;
+        private final boolean encryptMetadata;
+
+        Rev5Engine(EncryptionSettings encryptionSettings) {
+            super(encryptionSettings);
+            this.encryptMetadata = encryptionSettings.encryptMetadata;
+        }
+
+        void run() {
+            super.run();
+            random = new SecureRandom();
+            createEncryptionKey();
+            computeUValue();
+            computeOValue();
+            computeUEValue();
+            computeOEValue();
+        }
+
+        protected String getEncryptionDictionaryPart() {
+            String encryptionDictionaryPart = super.getEncryptionDictionaryPart();
+            encryptionDictionaryPart += "/OE " + PDFText.toHex(oeValue) + "\n"
+                    + "/UE " + PDFText.toHex(ueValue) + "\n"
+                    + "/Perms " + PDFText.toHex(computePermsValue(permissions)) + "\n"
+                    + "/EncryptMetadata " + encryptMetadata + "\n"
+                    // note: I think Length below should be 256 but Acrobat 9 uses 32...
+                    + "/CF <</StdCF <</AuthEvent /DocOpen /CFM /AESV3 /Length 32>>>>\n"
+                    + "/StmF /StdCF /StrF /StdCF\n";
+            return encryptionDictionaryPart;
+        }
+
+        /**
+         * Algorithm 3.8-1 (page 20, Adobe Supplement to the ISO 32000, BaseVersion: 1.7, ExtensionLevel: 3)
+         */
+        @Override
+        protected void computeUValue() {
+            byte[] userBytes = new byte[16];
+            random.nextBytes(userBytes);
+            System.arraycopy(userBytes, 0, userValidationSalt, 0, 8);
+            System.arraycopy(userBytes, 8, userKeySalt, 0, 8);
+            digest.reset();
+            byte[] prepared = preparedUserPassword;
+            byte[] concatenated = new byte[prepared.length + 8];
+            System.arraycopy(prepared, 0, concatenated, 0, prepared.length);
+            System.arraycopy(userValidationSalt, 0, concatenated, prepared.length, 8);
+            digest.update(concatenated);
+            byte[] sha256 = digest.digest();
+            uValue = new byte[48];
+            System.arraycopy(sha256, 0, uValue, 0, 32);
+            System.arraycopy(userValidationSalt, 0, uValue, 32, 8);
+            System.arraycopy(userKeySalt, 0, uValue, 40, 8);
+        }
+
+        /**
+         * Algorithm 3.9-1 (page 20, Adobe Supplement to the ISO 32000, BaseVersion: 1.7, ExtensionLevel: 3)
+         */
+        @Override
+        protected void computeOValue() {
+            byte[] ownerBytes = new byte[16];
+            random.nextBytes(ownerBytes);
+            System.arraycopy(ownerBytes, 0, ownerValidationSalt, 0, 8);
+            System.arraycopy(ownerBytes, 8, ownerKeySalt, 0, 8);
+            digest.reset();
+            byte[] prepared = preparedOwnerPassword;
+            byte[] concatenated = new byte[prepared.length + 56];
+            System.arraycopy(prepared, 0, concatenated, 0, prepared.length);
+            System.arraycopy(ownerValidationSalt, 0, concatenated, prepared.length, 8);
+            System.arraycopy(uValue, 0, concatenated, prepared.length + 8, 48);
+            digest.update(concatenated);
+            byte[] sha256 = digest.digest();
+            oValue = new byte[48];
+            System.arraycopy(sha256, 0, oValue, 0, 32);
+            System.arraycopy(ownerValidationSalt, 0, oValue, 32, 8);
+            System.arraycopy(ownerKeySalt, 0, oValue, 40, 8);
+        }
+
+        /**
+         * See Adobe Supplement to the ISO 32000, BaseVersion: 1.7, ExtensionLevel: 3, page 20, paragraph 5.
+         */
+        protected void createEncryptionKey() {
+            encryptionKey = new byte[encryptionLengthInBytes];
+            random.nextBytes(encryptionKey);
+        }
+
+        /**
+         * Algorithm 3.2a-1 (page 19, Adobe Supplement to the ISO 32000, BaseVersion: 1.7, ExtensionLevel: 3)
+         */
+        protected byte[] preparePassword(String password) {
+            byte[] passwordBytes;
+            byte[] preparedPassword;
+            try {
+                // the password needs to be normalized first but we are bypassing that step for now
+                passwordBytes = password.getBytes("UTF-8");
+                if (passwordBytes.length > 127) {
+                    preparedPassword = new byte[127];
+                    System.arraycopy(passwordBytes, 0, preparedPassword, 0, 127);
+                } else {
+                    preparedPassword = new byte[passwordBytes.length];
+                    System.arraycopy(passwordBytes, 0, preparedPassword, 0, passwordBytes.length);
+                }
+                return preparedPassword;
+            } catch (UnsupportedEncodingException e) {
+                throw new UnsupportedOperationException(e.getMessage());
+            }
+        }
+
+        /**
+         * Algorithm 3.8-2 (page 20, Adobe Supplement to the ISO 32000, BaseVersion: 1.7, ExtensionLevel: 3)
+         */
+        private void computeUEValue() {
+            digest.reset();
+            byte[] prepared = preparedUserPassword;
+            byte[] concatenated = new byte[prepared.length + 8];
+            System.arraycopy(prepared, 0, concatenated, 0, prepared.length);
+            System.arraycopy(userKeySalt, 0, concatenated, prepared.length, 8);
+            digest.update(concatenated);
+            byte[] ueEncryptionKey = digest.digest();
+            ueValue = encryptWithKey(ueEncryptionKey, encryptionKey, true, ivZero);
+        }
+
+        /**
+         * Algorithm 3.9-2 (page 20, Adobe Supplement to the ISO 32000, BaseVersion: 1.7, ExtensionLevel: 3)
+         */
+        private void computeOEValue() {
+            digest.reset();
+            byte[] prepared = preparedOwnerPassword;
+            byte[] concatenated = new byte[prepared.length + 56];
+            System.arraycopy(prepared, 0, concatenated, 0, prepared.length);
+            System.arraycopy(ownerKeySalt, 0, concatenated, prepared.length, 8);
+            System.arraycopy(uValue, 0, concatenated, prepared.length + 8, 48);
+            digest.update(concatenated);
+            byte[] oeEncryptionKey = digest.digest();
+            oeValue = encryptWithKey(oeEncryptionKey, encryptionKey, true, ivZero);
+        }
+
+        /**
+         * Algorithm 3.10 (page 20, Adobe Supplement to the ISO 32000, BaseVersion: 1.7, ExtensionLevel: 3)
+         */
+        public byte[] computePermsValue(int permissions) {
+            byte[] perms = new byte[16];
+            long extendedPermissions = 0xffffffff00000000L | permissions;
+            for (int k = 0; k < 8; k++) {
+                perms[k] = (byte) (extendedPermissions & 0xff);
+                extendedPermissions >>= 8;
+            }
+            if (encryptMetadata) {
+                perms[8] = 'T';
+            } else {
+                perms[8] = 'F';
+            }
+            perms[9] = 'a';
+            perms[10] = 'd';
+            perms[11] = 'b';
+            byte[] randomBytes = new byte[4];
+            random.nextBytes(randomBytes);
+            System.arraycopy(randomBytes, 0, perms, 12, 4);
+            byte[] encryptedPerms = encryptWithKey(encryptionKey, perms, true, ivZero);
+            return encryptedPerms;
+        }
     }
 
     private class EncryptionFilter extends PDFFilter {
@@ -424,9 +646,18 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
 
         /** {@inheritDoc} */
         public OutputStream applyFilter(OutputStream out) throws IOException {
-            byte[] key = createEncryptionKey(streamNumber, streamGeneration);
-            Cipher cipher = initCipher(key);
-            return new CipherOutputStream(out, cipher);
+            if (useAlgorithm31a) {
+                byte[] iv = new byte[16];
+                random.nextBytes(iv);
+                Cipher cipher = initCipher(encryptionKey, false, iv);
+                out.write(iv);
+                out.flush();
+                return new CipherOutputStream(out, cipher);
+            } else {
+                byte[] key = createEncryptionKey(streamNumber, streamGeneration);
+                Cipher cipher = initCipher(key);
+                return new CipherOutputStream(out, cipher);
+            }
         }
 
     }
@@ -434,13 +665,18 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
     private PDFEncryptionJCE(int objectNumber, PDFEncryptionParams params, PDFDocument pdf) {
         setObjectNumber(objectNumber);
         try {
-            digest = MessageDigest.getInstance("MD5");
+            if (params.getEncryptionLengthInBits() == 256) {
+                digest = MessageDigest.getInstance("SHA-256");
+            } else {
+                digest = MessageDigest.getInstance("MD5");
+            }
         } catch (NoSuchAlgorithmException e) {
             throw new UnsupportedOperationException(e.getMessage());
         }
         setDocument(pdf);
         EncryptionInitializer encryptionInitializer = new EncryptionInitializer(params);
         encryptionInitializer.init();
+        useAlgorithm31a = encryptionInitializer.isVersion5Revision5Algorithm();
     }
 
     /**
@@ -462,15 +698,28 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         while (o != null && !o.hasObjectNumber()) {
             o = o.getParent();
         }
-        if (o == null) {
+        if (o == null && !useAlgorithm31a) {
             throw new IllegalStateException("No object number could be obtained for a PDF object");
         }
-        byte[] key = createEncryptionKey(o.getObjectNumber(), o.getGeneration());
-        return encryptWithKey(key, data);
+        if (useAlgorithm31a) {
+            byte[] iv = new byte[16];
+            random.nextBytes(iv);
+            byte[] encryptedData = encryptWithKey(encryptionKey, data, false, iv);
+            byte[] storedData = new byte[encryptedData.length + 16];
+            System.arraycopy(iv, 0, storedData, 0, 16);
+            System.arraycopy(encryptedData, 0, storedData, 16, encryptedData.length);
+            return storedData;
+        } else {
+            byte[] key = createEncryptionKey(o.getObjectNumber(), o.getGeneration());
+            return encryptWithKey(key, data);
+        }
     }
 
     /** {@inheritDoc} */
     public void applyFilter(AbstractPDFStream stream) {
+        if (!encryptMetadata && stream instanceof PDFMetadata) {
+            return;
+        }
         stream.getFilterList().addFilter(
                 new EncryptionFilter(stream.getObjectNumber(), stream.getGeneration()));
     }
@@ -501,17 +750,47 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         }
     }
 
+    private static byte[] encryptWithKey(byte[] key, byte[] data, boolean noPadding, byte[] iv) {
+        try {
+            final Cipher c = initCipher(key, noPadding, iv);
+            return c.doFinal(data);
+        } catch (IllegalBlockSizeException e) {
+            throw new IllegalStateException(e.getMessage());
+        } catch (BadPaddingException e) {
+            throw new IllegalStateException(e.getMessage());
+        }
+    }
+
     private static Cipher initCipher(byte[] key) {
         try {
-            Cipher c = Cipher.getInstance("RC4");
             SecretKeySpec keyspec = new SecretKeySpec(key, "RC4");
-            c.init(Cipher.ENCRYPT_MODE, keyspec);
-            return c;
+            Cipher cipher = Cipher.getInstance("RC4");
+            cipher.init(Cipher.ENCRYPT_MODE, keyspec);
+            return cipher;
         } catch (InvalidKeyException e) {
             throw new IllegalStateException(e);
         } catch (NoSuchAlgorithmException e) {
             throw new UnsupportedOperationException(e);
         } catch (NoSuchPaddingException e) {
+            throw new UnsupportedOperationException(e);
+        }
+    }
+
+    private static Cipher initCipher(byte[] key, boolean noPadding, byte[] iv) {
+        try {
+            SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+            IvParameterSpec ivspec = new IvParameterSpec(iv);
+            Cipher cipher = noPadding ? Cipher.getInstance("AES/CBC/NoPadding") : Cipher
+                    .getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec, ivspec);
+            return cipher;
+        } catch (InvalidKeyException e) {
+            throw new IllegalStateException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new UnsupportedOperationException(e);
+        } catch (NoSuchPaddingException e) {
+            throw new UnsupportedOperationException(e);
+        } catch (InvalidAlgorithmParameterException e) {
             throw new UnsupportedOperationException(e);
         }
     }
@@ -547,6 +826,11 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         md5Input[i++] = (byte) (generationNumber >>> 0);
         md5Input[i++] = (byte) (generationNumber >>> 8);
         return md5Input;
+    }
+
+    /** {@inheritDoc} */
+    public Version getPDFVersion() {
+        return pdfVersion;
     }
 
 }

@@ -2723,6 +2723,10 @@
       <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
    </Match>
    <Match>
+      <Class name="org.apache.fop.pdf.PDFEncryptionJCE$InitializationEngine"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
       <Class name="org.apache.fop.render.awt.viewer.PreviewPanel$ViewportScroller"/>
       <!--Neither method nor field-->
       <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>

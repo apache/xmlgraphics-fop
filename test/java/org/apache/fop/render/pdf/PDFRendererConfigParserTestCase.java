@@ -165,12 +165,20 @@ public class PDFRendererConfigParserTestCase
                                                  .getEncryptionLengthInBits());
         }
 
-        for (int i = 128; i < 1000; i += 50) {
+        for (int i = 128; i < 256; i += 10) {
             parseConfig(createRenderer()
                     .startEncryptionParams()
                         .setEncryptionLength(i)
                     .endEncryptionParams());
             assertEquals(128, conf.getConfigOptions().getEncryptionParameters().getEncryptionLengthInBits());
+        }
+
+        for (int i = 256; i < 1000; i += 50) {
+            parseConfig(createRenderer()
+                    .startEncryptionParams()
+                        .setEncryptionLength(i)
+                    .endEncryptionParams());
+            assertEquals(256, conf.getConfigOptions().getEncryptionParameters().getEncryptionLengthInBits());
         }
     }
 

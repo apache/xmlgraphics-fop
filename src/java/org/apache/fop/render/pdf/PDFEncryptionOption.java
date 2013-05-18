@@ -25,9 +25,9 @@ public enum PDFEncryptionOption implements RendererConfigOption {
 
     /**
      * PDF encryption length parameter: must be a multiple of 8 between 40 and 128,
-     * default value 40, datatype: int, default: 40
+     * datatype: int, default: 128
      */
-    ENCRYPTION_LENGTH("encryption-length", 40),
+    ENCRYPTION_LENGTH("encryption-length", 128),
     /**
      * PDF encryption parameter: Forbids printing to high quality, datatype: Boolean or
      * "true"/"false", default: false
@@ -71,7 +71,11 @@ public enum PDFEncryptionOption implements RendererConfigOption {
     /** PDF encryption parameter: user password, datatype: String, default: "" */
     USER_PASSWORD("user-password", ""),
     /** PDF encryption parameter: owner password, datatype: String, default: "" */
-    OWNER_PASSWORD("owner-password", "");
+    OWNER_PASSWORD("owner-password", ""),
+    /**
+     * PDF encryption parameter: encrypts Metadata, datatype: Boolean or "true"/"false", default: true
+     */
+    ENCRYPT_METADATA("encrypt-metadata", true);
 
     public static final String ENCRYPTION_PARAMS = "encryption-params";
 
