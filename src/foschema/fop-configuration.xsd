@@ -28,24 +28,41 @@
   <xsd:element name="fop">
     <xsd:complexType>
       <xsd:all>
-        <xsd:element name="base" type="xsd:anyURI" minOccurs="0"></xsd:element>
-        <xsd:element name="font-base" type="xsd:anyURI" minOccurs="0"></xsd:element>
-        <xsd:element name="hyphenation-base" type="xsd:anyURI" minOccurs="0"></xsd:element>
-        <xsd:element name="source-resolution"
-          type="xsd:positiveInteger" minOccurs="0">
+        <xsd:element name="base" type="xsd:anyURI" minOccurs="0"/>
+        <xsd:element name="font-base" type="xsd:anyURI" minOccurs="0"/>
+        <xsd:element name="fonts" minOccurs="0">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="substitutions" maxOccurs="1" minOccurs="0"/>
+              <xsd:element name="font" type="fontType" maxOccurs="unbounded" minOccurs="0"/>
+              <xsd:element name="referenced-fonts" type="referenceFontType" minOccurs="0" maxOccurs="unbounded"/>
+            </xsd:sequence>
+          </xsd:complexType>
         </xsd:element>
-        <xsd:element name="target-resolution"
-          type="xsd:positiveInteger" minOccurs="0">
+        <xsd:element name="hyphenation-base" type="xsd:anyURI" minOccurs="0"/>
+        <xsd:element name="source-resolution" type="xsd:positiveInteger" minOccurs="0"/>
+        <xsd:element name="target-resolution" type="xsd:positiveInteger" minOccurs="0"/>
+        <xsd:element name="strict-validation" type="xsd:boolean" minOccurs="0"/>
+        <xsd:element name="image-loading" minOccurs="0">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="penalty">
+                <xsd:complexType>
+                  <xsd:attribute name="value" type="xsd:positiveInteger" use="required"/>
+                  <xsd:attribute name="class" type="xsd:string" use="required"/>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
         </xsd:element>
-        <xsd:element name="strict-validation" type="xsd:boolean" minOccurs="0"></xsd:element>
-        <xsd:element name="strict-configuration" type="xsd:boolean" minOccurs="0"></xsd:element>
-        <xsd:element name="break-indent-inheritance"
-          type="xsd:boolean" minOccurs="0">
-        </xsd:element>
+        <xsd:element name="strict-configuration" type="xsd:boolean" minOccurs="0"/>
+        <xsd:element name="break-indent-inheritance" type="xsd:boolean" minOccurs="0"/>
+        <xsd:element name="accessibility" type="xsd:boolean" minOccurs="0"/>
+        <xsd:element name="use-cache" type="xsd:boolean" minOccurs="0"/>
         <xsd:element name="default-page-settings" minOccurs="0">
           <xsd:complexType>
-            <xsd:attribute name="width" type="xsd:string"></xsd:attribute>
-            <xsd:attribute name="height" type="xsd:string"></xsd:attribute>
+            <xsd:attribute name="width" type="xsd:string" use="optional"/>
+            <xsd:attribute name="height" type="xsd:string" use="optional"/>
           </xsd:complexType>
         </xsd:element>
         <xsd:element name="complex-scripts" minOccurs="0">
@@ -56,9 +73,7 @@
         <xsd:element name="renderers" minOccurs="0">
           <xsd:complexType>
             <xsd:sequence>
-              <xsd:element name="renderer" maxOccurs="unbounded"
-                type="rendererType">
-              </xsd:element>
+              <xsd:element name="renderer" maxOccurs="unbounded" type="rendererType"/>
             </xsd:sequence>
           </xsd:complexType>
         </xsd:element>
@@ -77,145 +92,206 @@
       <xsd:documentation>This type is stricter than required by FOP, in that it imposes an
       order of the elements, which is not required by FOP.</xsd:documentation>
     </xsd:annotation>
-    <xsd:sequence>
-      <xsd:choice minOccurs="0">
-        <xsd:sequence>
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:choice>
+        <xsd:element name="version" type="xsd:float" minOccurs="0"/>
+        <xsd:element name="endianness" type="xsd:string" minOccurs="0">
           <xsd:annotation>
-            <xsd:documentation>Configuration elements used by the PDF renderer,
-          MIME type application/pdf</xsd:documentation>
+            <xsd:documentation>endianness is used by the TIFF renderer, MIME type image/tiff.</xsd:documentation>
           </xsd:annotation>
-          <xsd:element name="filterList" minOccurs="0" maxOccurs="unbounded">
-            <xsd:annotation>
-              <xsd:documentation>filterLists are used by the PDF renderer, MIME type
-              application/pdf.</xsd:documentation>
-            </xsd:annotation>
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" maxOccurs="unbounded"/>
-              </xsd:sequence>
-              <xsd:attribute name="type" use="optional">
-                <xsd:simpleType>
-                  <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="default"/>
-                    <xsd:enumeration value="content"/>
-                    <xsd:enumeration value="image"/>
-                    <xsd:enumeration value="jpeg"/>
-                    <xsd:enumeration value="tiff"/>
-                    <xsd:enumeration value="font"/>
-                    <xsd:enumeration value="metadata"/>
-                    <!-- Available values: see PDFFilterList.java -->
-                  </xsd:restriction>
-                </xsd:simpleType>
-              </xsd:attribute>
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="output-profile" type="xsd:string" minOccurs="0">
-            <xsd:annotation>
-              <xsd:documentation>Output color profile used by the PDF renderer. Specifies a
-              filename to an ICC file.</xsd:documentation>
-            </xsd:annotation>
-          </xsd:element>
-        </xsd:sequence>
-        <xsd:sequence>
+        </xsd:element>
+        <xsd:element name="color-mode" type="xsd:string" minOccurs="0"/>
+        <xsd:element name="single-strip" type="xsd:boolean" minOccurs="0">
           <xsd:annotation>
-            <xsd:documentation>Configuration elements used by the PostScript renderer,
-          MIME type application/postscript</xsd:documentation>
+            <xsd:documentation>single-strip is used by the TIFF renderer, MIME type image/tiff.</xsd:documentation>
           </xsd:annotation>
-          <xsd:element name="auto-rotate-landscape" type="xsd:boolean" default="false" minOccurs="0">
-            <xsd:annotation>
-              <xsd:documentation>When set to "true" a landscape page is automatically
-                rotated and specified as a landscape page in PostScript.</xsd:documentation>
-            </xsd:annotation>
-          </xsd:element>
-          <xsd:element name="language-level" default="3" minOccurs="0">
-            <xsd:annotation>
-              <xsd:documentation>Specifies the PostScript language level to use when
-                generating PostScript code.
-                language-level is used by the PostScript renderer,
-                MIME type application/postscript.</xsd:documentation>
-            </xsd:annotation>
-            <xsd:simpleType>
-              <xsd:restriction base="xsd:positiveInteger">
-                <xsd:enumeration value="2"/>
-                <xsd:enumeration value="3"/>
-              </xsd:restriction>
-            </xsd:simpleType>
-          </xsd:element>
-          <xsd:element name="optimize-resources" type="xsd:boolean" default="false" minOccurs="0">
-            <xsd:annotation>
-              <xsd:documentation>When set to "true" PostScript resources are optimized by making a
-                second pass over the PostScript file (rewriting it). Optimized means that no duplicate
-                images are written to the stream and only used fonts are added to the PostScript file.</xsd:documentation>
-            </xsd:annotation>
-          </xsd:element>
-        </xsd:sequence>
-        <xsd:sequence>
+        </xsd:element>
+        <xsd:element name="line-width-correction" type="xsd:float" minOccurs="0">
           <xsd:annotation>
-            <xsd:documentation>rendering and text-rendering are used by the PCL renderer,
-          MIME type application/vnd.hp-PCL</xsd:documentation>
+            <xsd:documentation>line-width-correction is used by the AFP renderer, MIME type application/x-afp.</xsd:documentation>
           </xsd:annotation>
-          <xsd:element name="rendering" minOccurs="0">
-            <xsd:simpleType>
-              <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="speed"/>
-                <xsd:enumeration value="quality"/>
-              </xsd:restriction>
-            </xsd:simpleType>
-          </xsd:element>
-          <xsd:element name="text-rendering" minOccurs="0">
-            <xsd:simpleType>
-              <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="auto"/>
-                <xsd:enumeration value="bitmap"/>
-              </xsd:restriction>
-            </xsd:simpleType>
-          </xsd:element>
-        </xsd:sequence>
-        <xsd:sequence>
+        </xsd:element>
+        <xsd:element name="border-rendering-mode" type="xsd:string" minOccurs="0"/>
+        <xsd:element name="filterList" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:documentation>The elements in this sequence apply only to the bitmap renderers (PNG and TIFF).</xsd:documentation>
+            <xsd:documentation>filterLists are used by the PDF renderer, MIME type
+            application/pdf.</xsd:documentation>
           </xsd:annotation>
-          <xsd:element name="transparent-page-background" type="xsd:boolean" default="false" minOccurs="0"/>
-        </xsd:sequence>
-        <xsd:sequence>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="value" type="xsd:string" maxOccurs="unbounded"/>
+            </xsd:sequence>
+            <xsd:attribute name="type" use="optional">
+              <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                  <xsd:enumeration value="default"/>
+                  <xsd:enumeration value="content"/>
+                  <xsd:enumeration value="image"/>
+                  <xsd:enumeration value="jpeg"/>
+                  <xsd:enumeration value="tiff"/>
+                  <xsd:enumeration value="font"/>
+                  <xsd:enumeration value="metadata"/>
+                  <!-- Available values: see PDFFilterList.java -->
+                </xsd:restriction>
+              </xsd:simpleType>
+            </xsd:attribute>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="encryption-params" minOccurs="0" maxOccurs="1">
           <xsd:annotation>
-            <xsd:documentation>The elements in this sequence apply only to the text renderer,
-          MIME type text/plain.</xsd:documentation>
+            <xsd:documentation>Optional parameters used by the PDF renderer.</xsd:documentation>
           </xsd:annotation>
-          <xsd:element name="encoding" type="xsd:string" default="UTF-8" minOccurs="0"/>
-        </xsd:sequence>
-      </xsd:choice>
-      <xsd:sequence>
-        <xsd:annotation>
-          <xsd:documentation>The elements in this sequence apply only to the TIFF renderer,
-        MIME type image/tiff.</xsd:documentation>
-        </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="user-password" type="xsd:string" minOccurs="0" maxOccurs="1"></xsd:element>
+              <xsd:element name="owner-password" type="xsd:string" minOccurs="0" maxOccurs="1"></xsd:element>
+              <xsd:element name="noprint" minOccurs="0" maxOccurs="1"></xsd:element>
+              <xsd:element name="nocopy" minOccurs="0" maxOccurs="1"></xsd:element>
+              <xsd:element name="noedit" minOccurs="0" maxOccurs="1"></xsd:element>
+              <xsd:element name="noannotations" minOccurs="0" maxOccurs="1"></xsd:element>
+              <xsd:element name="encryption-length" type="xsd:positiveInteger" minOccurs="0" maxOccurs="1"></xsd:element>
+              <xsd:element name="encrypt-metadata" type="xsd:boolean" minOccurs="0" maxOccurs="1"></xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="output-profile" type="xsd:string" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>Output color profile used by the PDF renderer. Specifies a 
+            filename to an ICC file.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="auto-rotate-landscape" type="xsd:boolean" default="false" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>When set to "true" a landscape page is automatically
+              rotated and specified as a landscape page in PostScript.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="language-level" default="3" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>Specifies the PostScript language level to use when
+              generating PostScript code.
+              language-level is used by the PostScript renderer,
+              MIME type application/postscript.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:positiveInteger">
+              <xsd:enumeration value="2"/>
+              <xsd:enumeration value="3"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="optimize-resources" type="xsd:boolean" default="false" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>When set to "true" PostScript resources are optimized by making a
+              second pass over the PostScript file (rewriting it). Optimized means that no duplicate
+              images are written to the stream and only used fonts are added to the PostScript file.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="rendering" minOccurs="0">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="speed"/>
+              <xsd:enumeration value="quality"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="text-rendering" minOccurs="0">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="auto"/>
+              <xsd:enumeration value="bitmap"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="transparent-page-background" type="xsd:boolean" default="false" minOccurs="0"/>
+        <xsd:element name="encoding" type="xsd:string" default="UTF-8" minOccurs="0"/>
         <xsd:element name="compression" type="xsd:string" minOccurs="0"/>
-      </xsd:sequence>
-      <xsd:element name="fonts" minOccurs="0">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="font" type="fontType" maxOccurs="unbounded"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="xml-handler" minOccurs="0" maxOccurs="unbounded">
-        <xsd:complexType>
-          <xsd:complexContent>
-            <xsd:extension base="xsd:anyType"/>
-          </xsd:complexContent>
-        </xsd:complexType>
-      </xsd:element>
+        <xsd:element name="images" minOccurs="0">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="jpeg" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:attribute name="mode" type="xsd:string" use="optional"/>
+            <xsd:attribute name="bits-per-pixel" type="xsd:positiveInteger" use="optional"/>
+            <xsd:attribute name="fs45" type="xsd:boolean" use="optional"/>
+            <xsd:attribute name="cmyk" type="xsd:boolean" use="optional"/>
+            <xsd:attribute name="pseg" type="xsd:boolean" use="optional"/>
+            <xsd:attribute name="f11x-pseg" type="xsd:boolean" use="optional"/>
+          </xsd:complexType>
+        </xsd:element>   
+        <xsd:element name="shading" minOccurs="0" type="xsd:string"/>
+        <xsd:element name="renderer-resolution" type="xsd:positiveInteger" minOccurs="0"/>
+        <xsd:element name="fonts" minOccurs="1">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="font" type="fontType" maxOccurs="unbounded" minOccurs="0"/>
+              <xsd:element name="referenced-fonts" type="referenceFontType" maxOccurs="unbounded" minOccurs="0"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="xmlHandler" minOccurs="1" maxOccurs="1">
+          <xsd:complexType>
+            <xsd:attribute name="mime" use="required">
+              <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                  <xsd:enumeration value="text/svg+xml"/>
+                  <xsd:enumeration value="image/svg+xml"/>
+                </xsd:restriction>
+              </xsd:simpleType>
+              </xsd:attribute>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="xml-handler" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:complexContent>
+              <xsd:extension base="xsd:anyType"/>
+            </xsd:complexContent>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="dsc-compliant" type="xsd:boolean" minOccurs="0"/>
+        <xsd:element name="format" minOccurs="0">
+          <xsd:complexType>
+            <xsd:attribute name="type" type="xsd:string" use="required"/>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="link" minOccurs="0">
+          <xsd:complexType>
+            <xsd:attribute name="value" type="xsd:boolean" use="required"/>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="strokeText" minOccurs="0">
+          <xsd:complexType>
+            <xsd:attribute name="value" type="xsd:boolean" use="required"/>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="pageSize" minOccurs="0">
+          <xsd:complexType>
+            <xsd:attribute name="columns" type="xsd:positiveInteger" use="required"/>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="resource-group-file" type="xsd:string" minOccurs="0"/>
+        <xsd:element name="default-resource-levels" minOccurs="0"/>
+      </xsd:choice>
     </xsd:sequence>
     <xsd:attribute name="mime" type="MimeConstants" use="required"/>
   </xsd:complexType>
+
   <xsd:complexType name="fontType">
     <xsd:sequence>
-      <xsd:element name="font-triplet" type="fontTripletType" maxOccurs="unbounded"/>
+      <xsd:element name="afp-font" type="afpFontType" minOccurs="0" maxOccurs="unbounded"/>    
+      <xsd:element name="font-triplet" type="fontTripletType" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
     <xsd:attribute name="metrics-url" type="xsd:anyURI" use="optional"/>
     <xsd:attribute name="embed-url" type="xsd:anyURI" use="optional"/>
     <xsd:attribute name="sub-font" type="xsd:string" use="optional"/>
+    <xsd:attribute name="embedding-mode" use="optional">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="full"/>
+          <xsd:enumeration value="subset"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
     <xsd:attribute name="kerning" use="optional" default="no">
       <xsd:simpleType>
         <xsd:restriction base="xsd:string">
@@ -234,11 +310,44 @@
       </xsd:simpleType>
     </xsd:attribute>
   </xsd:complexType>
+
   <xsd:complexType name="fontTripletType">
     <xsd:attribute name="name" type="xsd:string" use="required"/>
     <xsd:attribute name="style" type="xsd:string" use="required"/>
     <xsd:attribute name="weight" type="xsd:string" use="required"/>
   </xsd:complexType>
+
+  <xsd:complexType name="referenceFontType">
+    <xsd:sequence>
+      <xsd:element name="match">
+        <xsd:complexType>
+          <xsd:attribute name="font-family" type="xsd:string" use="optional"/>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="afpFontType">
+    <xsd:sequence>
+      <xsd:element name="afp-raster-font" type="afpRasterFont" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="encoding" type="xsd:string" use="required"/>
+    <xsd:attribute name="codepage" type="xsd:string" use="required"/>
+    <xsd:attribute name="type" type="xsd:string" use="required"/>
+    <xsd:attribute name="name" type="xsd:string" use="optional"/>
+    <xsd:attribute name="characterset" type="xsd:string" use="optional"/>
+    <xsd:attribute name="base-uri" type="xsd:anyURI" use="optional"/>
+    <xsd:attribute name="embed-uri" type="xsd:anyURI" use="optional"/>
+    <xsd:attribute name="base14-font" type="xsd:string" use="optional"/>
+    <xsd:attribute name="ebcdic-dbcs" type="xsd:boolean" use="optional"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="afpRasterFont">
+    <xsd:attribute name="size" type="xsd:float" use="required"/>
+    <xsd:attribute name="base14-font" type="xsd:string" use="optional"/>
+    <xsd:attribute name="characterset" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
   <xsd:simpleType name="MimeConstants">
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="application/pdf"/>
@@ -247,16 +356,20 @@
       <xsd:enumeration value="application/vnd.hp-PCL"/>
       <xsd:enumeration value="application/x-afp"/>
       <xsd:enumeration value="application/vnd.ibm.modcap"/>
+      <xsd:enumeration value="application/awt"/>
       <xsd:enumeration value="text/plain"/>
       <xsd:enumeration value="application/rtf"/>
       <xsd:enumeration value="text/richtext"/>
       <xsd:enumeration value="text/rtf"/>
+      <xsd:enumeration value="text/xml"/>
       <xsd:enumeration value="application/mif"/>
       <xsd:enumeration value="application/X-fop-awt-preview"/>
       <xsd:enumeration value="application/X-fop-print"/>
       <xsd:enumeration value="application/X-fop-areatree"/>
       <xsd:enumeration value="image/png"/>
       <xsd:enumeration value="image/tiff"/>
+      <xsd:enumeration value="image/svg+xml"/>
+      <xsd:enumeration value="application/X-fop-intermediate-format"/>
     </xsd:restriction>
   </xsd:simpleType>
 </xsd:schema>
