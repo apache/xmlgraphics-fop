@@ -59,6 +59,16 @@ public class SpaceVal {
         int min = spaceprop.getMinimum(context).getLength().getValue(context);
         int opt = spaceprop.getOptimum(context).getLength().getValue(context);
         int max = spaceprop.getMaximum(context).getLength().getValue(context);
+        // if a value is not set defaults to zero
+        if (min > max && max == 0) {
+            max = opt > min ? opt : min;
+        }
+        if (min > opt && opt == 0) {
+            opt = (min + max) / 2;
+        }
+        if (opt > max && max == 0) {
+            max = opt;
+        }
         return MinOptMax.getInstance(min, opt, max);
     }
 
