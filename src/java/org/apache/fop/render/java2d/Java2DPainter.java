@@ -43,7 +43,6 @@ import org.apache.fop.render.intermediate.GraphicsPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
-import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
@@ -234,27 +233,31 @@ public class Java2DPainter extends AbstractIFPainter<Java2DDocumentHandler> {
         Point2D cursor = new Point2D.Float(0, 0);
 
         int l = text.length();
-        int[] dx = IFUtil.convertDPToDX(dp);
-        int dxl = (dx != null ? dx.length : 0);
 
-        if (dx != null && dxl > 0 && dx[0] != 0) {
-            cursor.setLocation(cursor.getX() - (dx[0] / 10f), cursor.getY());
+        if (dp != null && dp[0] != null && (dp[0][0] != 0 || dp[0][1] != 0)) {
+            cursor.setLocation(cursor.getX() + dp[0][0], cursor.getY() - dp[0][1]);
             gv.setGlyphPosition(0, cursor);
         }
         for (int i = 0; i < l; i++) {
             char orgChar = text.charAt(i);
-            float glyphAdjust = 0;
+            float xGlyphAdjust = 0;
+            float yGlyphAdjust = 0;
             int cw = font.getCharWidth(orgChar);
 
             if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
-                glyphAdjust += wordSpacing;
+                xGlyphAdjust += wordSpacing;
             }
-            glyphAdjust += letterSpacing;
-            if (dx != null && i < dxl - 1) {
-                glyphAdjust += dx[i + 1];
+            xGlyphAdjust += letterSpacing;
+            if (dp != null && i < dp.length && dp[i] != null) {
+                xGlyphAdjust += dp[i][2] - dp[i][0];
+                yGlyphAdjust += dp[i][3] - dp[i][1];
+            }
+            if (dp != null && i < dp.length - 1 && dp[i + 1] != null) {
+                xGlyphAdjust += dp[i + 1][0];
+                yGlyphAdjust += dp[i + 1][1];
             }
 
-            cursor.setLocation(cursor.getX() + cw + glyphAdjust, cursor.getY());
+            cursor.setLocation(cursor.getX() + cw + xGlyphAdjust, cursor.getY() - yGlyphAdjust);
             gv.setGlyphPosition(i + 1, cursor);
         }
         g2d.drawGlyphVector(gv, x, y);

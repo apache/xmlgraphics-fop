@@ -346,17 +346,27 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
         float fontSize = state.getFontSize() / 1000f;
         Font font = getFontInfo().getFontInstance(triplet, state.getFontSize());
         int l = text.length();
-        int[] dx = IFUtil.convertDPToDX(dp);
-        int dxl = (dx != null ? dx.length : 0);
 
         StringBuffer sb = new StringBuffer(Math.max(16, l));
-        if (dx != null && dxl > 0 && dx[0] != 0) {
-            sb.append("\u001B&a+").append(gen.formatDouble2(dx[0] / 100.0)).append('H');
+        if (dp != null && dp[0] != null && dp[0][0] != 0) {
+            if (dp[0][0] > 0) {
+                sb.append("\u001B&a+").append(gen.formatDouble2(dp[0][0] / 100.0)).append('H');
+            } else {
+                sb.append("\u001B&a-").append(gen.formatDouble2(-dp[0][0] / 100.0)).append('H');
+            }
+        }
+        if (dp != null && dp[0] != null && dp[0][1] != 0) {
+            if (dp[0][1] > 0) {
+                sb.append("\u001B&a-").append(gen.formatDouble2(dp[0][1] / 100.0)).append('V');
+            } else {
+                sb.append("\u001B&a+").append(gen.formatDouble2(-dp[0][1] / 100.0)).append('V');
+            }
         }
         for (int i = 0; i < l; i++) {
             char orgChar = text.charAt(i);
             char ch;
-            float glyphAdjust = 0;
+            float xGlyphAdjust = 0;
+            float yGlyphAdjust = 0;
             if (font.hasChar(orgChar)) {
                 ch = font.mapChar(orgChar);
             } else {
@@ -364,7 +374,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
                     //Fixed width space are rendered as spaces so copy/paste works in a reader
                     ch = font.mapChar(CharUtilities.SPACE);
                     int spaceDiff = font.getCharWidth(ch) - font.getCharWidth(orgChar);
-                    glyphAdjust = -(10 * spaceDiff / fontSize);
+                    xGlyphAdjust = -(10 * spaceDiff / fontSize);
                 } else {
                     ch = font.mapChar(orgChar);
                 }
@@ -372,15 +382,31 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
             sb.append(ch);
 
             if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
-                glyphAdjust += wordSpacing;
+                xGlyphAdjust += wordSpacing;
             }
-            glyphAdjust += letterSpacing;
-            if (dx != null && i < dxl - 1) {
-                glyphAdjust += dx[i + 1];
+            xGlyphAdjust += letterSpacing;
+            if (dp != null && i < dp.length && dp[i] != null) {
+                xGlyphAdjust += dp[i][2] - dp[i][0];
+                yGlyphAdjust += dp[i][3] - dp[i][1];
+            }
+            if (dp != null && i < dp.length - 1 && dp[i + 1] != null) {
+                xGlyphAdjust += dp[i + 1][0];
+                yGlyphAdjust += dp[i + 1][1];
             }
 
-            if (glyphAdjust != 0) {
-                sb.append("\u001B&a+").append(gen.formatDouble2(glyphAdjust / 100.0)).append('H');
+            if (xGlyphAdjust != 0) {
+                if (xGlyphAdjust > 0) {
+                    sb.append("\u001B&a+").append(gen.formatDouble2(xGlyphAdjust / 100.0)).append('H');
+                } else {
+                    sb.append("\u001B&a-").append(gen.formatDouble2(-xGlyphAdjust / 100.0)).append('H');
+                }
+            }
+            if (yGlyphAdjust != 0) {
+                if (yGlyphAdjust > 0) {
+                    sb.append("\u001B&a-").append(gen.formatDouble2(yGlyphAdjust / 100.0)).append('V');
+                } else {
+                    sb.append("\u001B&a+").append(gen.formatDouble2(-yGlyphAdjust / 100.0)).append('V');
+                }
             }
 
         }
