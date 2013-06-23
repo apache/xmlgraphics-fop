@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.fop.complexscripts.fonts.Positionable;
+import org.apache.fop.complexscripts.fonts.Substitutable;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.LazyFont;
@@ -37,7 +39,8 @@ import org.apache.fop.fonts.Typeface;
  * the underlying {@link Font} to be loaded from a
  * user-configured file not registered in the current graphics environment.
  */
-public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapper {
+public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapper, Substitutable,
+        Positionable {
 
     /**
      * Font metrics for the font this class models.
@@ -188,6 +191,72 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
     /** {@inheritDoc} */
     public final boolean hasKerningInfo() {
         return typeface.hasKerningInfo();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean performsPositioning() {
+        if (typeface instanceof Positionable) {
+            return ((Positionable) typeface).performsPositioning();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int[][] performPositioning(CharSequence cs, String script, String language, int fontSize) {
+        if (typeface instanceof Positionable) {
+            return ((Positionable) typeface).performPositioning(cs, script, language, fontSize);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int[][] performPositioning(CharSequence cs, String script, String language) {
+        if (typeface instanceof Positionable) {
+            return ((Positionable) typeface).performPositioning(cs, script, language);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean performsSubstitution() {
+        if (typeface instanceof Substitutable) {
+            return ((Substitutable) typeface).performsSubstitution();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public CharSequence performSubstitution(CharSequence cs, String script, String language) {
+        if (typeface instanceof Substitutable) {
+            return ((Substitutable) typeface).performSubstitution(cs, script, language);
+        } else {
+            return cs;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public CharSequence reorderCombiningMarks(CharSequence cs, int[][] gpa, String script, String language) {
+        if (typeface instanceof Substitutable) {
+            return ((Substitutable) typeface).reorderCombiningMarks(cs, gpa, script, language);
+        } else {
+            return cs;
+        }
     }
 
 }
