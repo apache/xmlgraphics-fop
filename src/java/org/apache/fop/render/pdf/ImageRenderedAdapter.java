@@ -63,7 +63,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
      */
     public ImageRenderedAdapter(ImageRendered image, String key) {
         super(image, key);
-        this.encodingHelper = new ImageEncodingHelper(image.getRenderedImage(), true);
+        this.encodingHelper = new ImageEncodingHelper(image.getRenderedImage());
     }
 
     /**
@@ -195,6 +195,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     /** {@inheritDoc} */
     public void outputContents(OutputStream out) throws IOException {
         long start = System.currentTimeMillis();
+        encodingHelper.setBWInvert(true);
         encodingHelper.encode(out);
         long duration = System.currentTimeMillis() - start;
         if (log.isDebugEnabled()) {

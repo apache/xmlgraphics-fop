@@ -69,7 +69,7 @@ public class PSImageHandlerRenderedImage implements PSImageHandler {
         ImageEncodingHelper helper = new ImageEncodingHelper(ri);
         ColorModel cm = helper.getEncodedColorModel();
 
-        PSImageUtils.writeImage(encoder, imgDim, imgDescription, targetRect, cm, gen);
+        PSImageUtils.writeImage(encoder, imgDim, imgDescription, targetRect, cm, gen, ri);
     }
 
     /** {@inheritDoc} */

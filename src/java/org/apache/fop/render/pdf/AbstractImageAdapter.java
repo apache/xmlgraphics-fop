@@ -20,13 +20,16 @@
 package org.apache.fop.render.pdf;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
+import java.awt.image.DataBufferByte;
 import java.awt.image.IndexColorModel;
+import java.awt.image.Raster;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
 import org.apache.fop.pdf.PDFArray;
@@ -257,7 +260,13 @@ public abstract class AbstractImageAdapter implements PDFImage {
         indexed.add(baout.toByteArray());
 
         dict.put("ColorSpace", indexed);
-        dict.put("BitsPerComponent", icm.getPixelSize());
+
+        Raster raster = ((ImageRendered)image).getRenderedImage().getTile(0, 0);
+        if (raster.getDataBuffer() instanceof DataBufferByte) {
+            dict.put("BitsPerComponent", icm.getPixelSize());
+        } else {
+            dict.put("BitsPerComponent", 8);
+        }
 
         Integer index = getIndexOfFirstTransparentColorInPalette(icm);
         if (index != null) {
