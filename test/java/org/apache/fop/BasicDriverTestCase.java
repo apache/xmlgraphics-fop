@@ -28,6 +28,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.fop.apps.FOPException;
 import org.junit.Test;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -124,6 +125,18 @@ public class BasicDriverTestCase {
         handler.renderTo(foUserAgent, MimeConstants.MIME_PDF, baout);
 
         assertTrue("Generated PDF has zero length", baout.size() > 0);
+    }
+
+    @Test
+    public void testXSLILoop() throws Exception {
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        File xmlFile = new File(getBaseDir(), "test/xml/1.xml");
+        File xsltFile = new File(getBaseDir(), "test/xsl/iloop.xsl");
+        ByteArrayOutputStream baout = new ByteArrayOutputStream();
+        InputHandler handler = new InputHandler(xmlFile, xsltFile, null);
+        try {
+            handler.renderTo(foUserAgent, MimeConstants.MIME_PDF, baout);
+        } catch (FOPException e) {}
     }
 
 }
