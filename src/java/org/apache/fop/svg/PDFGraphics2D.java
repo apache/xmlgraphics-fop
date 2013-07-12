@@ -1237,7 +1237,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             float lw = bs.getLineWidth();
             currentStream.write(PDFNumber.doubleOut(lw) + " w\n");
 
-            float ml = bs.getMiterLimit();
+            float ml = Math.max(1.0f, bs.getMiterLimit());
             currentStream.write(PDFNumber.doubleOut(ml) + " M\n");
         }
     }
