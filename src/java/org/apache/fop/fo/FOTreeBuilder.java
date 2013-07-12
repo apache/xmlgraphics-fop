@@ -83,6 +83,7 @@ public class FOTreeBuilder extends DefaultHandler {
     private boolean empty = true;
 
     private int depth;
+    private boolean errorinstart;
 
     /**
      * <code>FOTreeBuilder</code> constructor
@@ -172,20 +173,28 @@ public class FOTreeBuilder extends DefaultHandler {
     public void startElement(String namespaceURI, String localName, String rawName,
                              Attributes attlist) throws SAXException {
         this.depth++;
-        delegate.startElement(namespaceURI, localName, rawName, attlist);
+        errorinstart = false;
+        try {
+            delegate.startElement(namespaceURI, localName, rawName, attlist);
+        } catch (SAXException e) {
+            errorinstart = true;
+            throw e;
+        }
     }
 
     /** {@inheritDoc} */
     public void endElement(String uri, String localName, String rawName)
                 throws SAXException {
-        this.delegate.endElement(uri, localName, rawName);
-        this.depth--;
-        if (depth == 0) {
-            if (delegate != mainFOHandler) {
-                //Return from sub-handler back to main handler
-                delegate.endDocument();
-                delegate = mainFOHandler;
-                delegate.endElement(uri, localName, rawName);
+        if (!errorinstart) {
+            this.delegate.endElement(uri, localName, rawName);
+            this.depth--;
+            if (depth == 0) {
+                if (delegate != mainFOHandler) {
+                    //Return from sub-handler back to main handler
+                    delegate.endDocument();
+                    delegate = mainFOHandler;
+                    delegate.endElement(uri, localName, rawName);
+                }
             }
         }
     }
