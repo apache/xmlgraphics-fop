@@ -103,7 +103,7 @@ public class CharVector implements Cloneable, Serializable {
     /** {@inheritDoc} */
     public Object clone() throws CloneNotSupportedException {
         CharVector cv = (CharVector) super.clone();
-        cv.array = (char[])array.clone();
+        cv.array = array.clone();
         return cv;
     }
 

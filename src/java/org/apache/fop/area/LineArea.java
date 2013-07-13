@@ -258,7 +258,7 @@ public class LineArea extends Area {
             boolean bUnresolvedAreasPresent = false;
             // recursively apply variation factor to descendant areas
             for (int i = 0, len = inlineAreas.size(); i < len; i++) {
-                bUnresolvedAreasPresent |= ((InlineArea) inlineAreas.get(i))
+                bUnresolvedAreasPresent |= inlineAreas.get(i)
                         .applyVariationFactor(adjustingInfo.variationFactor,
                                 adjustingInfo.availableStretch,
                                 adjustingInfo.availableShrink);

@@ -71,7 +71,7 @@ public class BlockKnuthSequence extends KnuthSequence {
         if (keepTogether) {
             breakElement.setPenaltyValue(KnuthElement.INFINITE);
             add(breakElement);
-        } else if (!((ListElement) getLast()).isGlue()) {
+        } else if (!getLast().isGlue()) {
             breakElement.setPenaltyValue(0);
             add(breakElement);
         }

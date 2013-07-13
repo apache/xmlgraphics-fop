@@ -135,7 +135,7 @@ public class BodyRegion extends RegionReference {
         List<Span> spans = getMainReference().getSpans();
         int previousSpanCount = spans.size() - 1;
         for (int i = 0; i < previousSpanCount; i++) {
-            usedBPD += ((Span)spans.get(i)).getHeight();
+            usedBPD += spans.get(i).getHeight();
         }
         return getBPD() - usedBPD;
     }

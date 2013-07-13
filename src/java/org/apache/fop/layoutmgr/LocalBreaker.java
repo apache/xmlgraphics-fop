@@ -115,7 +115,7 @@ public abstract class LocalBreaker extends AbstractBreaker {
     protected void doPhase3(PageBreakingAlgorithm alg, int partCount, BlockSequence originalList,
             BlockSequence effectiveList) {
         if (partCount > 1) {
-            PageBreakPosition pos = (PageBreakPosition) alg.getPageBreaks().getFirst();
+            PageBreakPosition pos = alg.getPageBreaks().getFirst();
             int firstPartLength = ElementListUtils.calcContentLength(effectiveList,
                     effectiveList.ignoreAtStart, pos.getLeafPos());
             overflow += alg.totalWidth - firstPartLength;

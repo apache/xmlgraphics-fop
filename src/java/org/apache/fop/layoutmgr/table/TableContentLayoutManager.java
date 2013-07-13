@@ -350,7 +350,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         Position lastPos = null;
         Position lastCheckPos = null;
         while (parentIter.hasNext()) {
-            Position pos = (Position)parentIter.next();
+            Position pos = parentIter.next();
             if (pos instanceof SpaceHandlingBreakPosition) {
                 //This position has only been needed before addAreas was called, now we need the
                 //original one created by the layout manager.

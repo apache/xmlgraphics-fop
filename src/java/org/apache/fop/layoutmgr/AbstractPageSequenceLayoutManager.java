@@ -244,7 +244,7 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
                 PageViewport pv = areaTreeModel.getPage(seq, page);
                 int originalPosition = rm.getPosition();
                 rm.changePositionTo(Constants.EN_LEWP);
-                mark = (Marker) pv.resolveMarker(rm);
+                mark = pv.resolveMarker(rm);
                 // this is probably not necessary since the RM will not be used again, but to be safe...
                 rm.changePositionTo(originalPosition);
                 if (mark != null) {

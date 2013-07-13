@@ -446,7 +446,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
      * @return document id of the corner image
      */
     public String getCachedRoundedCorner(String cornerKey) {
-        return (String)roundedCornerNameCache.get(cornerKey);
+        return roundedCornerNameCache.get(cornerKey);
     }
 
 

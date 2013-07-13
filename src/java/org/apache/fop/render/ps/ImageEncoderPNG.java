@@ -51,7 +51,7 @@ public class ImageEncoderPNG implements ImageEncoder {
      */
     public ImageEncoderPNG(ImageRawPNG image) {
         this.image = image;
-        ColorModel cm = ((ImageRawPNG) this.image).getColorModel();
+        ColorModel cm = this.image.getColorModel();
         if (cm instanceof IndexColorModel) {
             numberOfInterleavedComponents = 1;
         } else {

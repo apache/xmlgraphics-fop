@@ -250,7 +250,7 @@ public class PDFFilterList {
         // run the filters
         int nonNullParams = 0;
         for (int count = 0; count < filters.size(); count++) {
-            PDFFilter filter = (PDFFilter)filters.get(count);
+            PDFFilter filter = filters.get(count);
             // place the names in our local vector in reverse order
             if (filter.getName().length() > 0) {
                 names.add(0, filter.getName());
@@ -365,7 +365,7 @@ public class PDFFilterList {
         OutputStream out = stream;
         if (!isDisableAllFilters()) {
             for (int count = filters.size() - 1; count >= 0; count--) {
-                PDFFilter filter = (PDFFilter)filters.get(count);
+                PDFFilter filter = filters.get(count);
                 out = filter.applyFilter(out);
             }
         }

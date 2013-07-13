@@ -65,8 +65,8 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
         float imw = (float)dim.getWidth() / 1000f;
         float imh = (float)dim.getHeight() / 1000f;
 
-        float sx = fwidth / (float)imw;
-        float sy = fheight / (float)imh;
+        float sx = fwidth / imw;
+        float sy = fheight / imh;
 
         gen.commentln("%FOPBeginGraphics2D");
         gen.saveGraphicsState();

@@ -43,7 +43,7 @@ public class RtfJforCmd extends RtfContainer {
 
 
     RtfJforCmd(RtfContainer parent, Writer w, RtfAttributes attrs) throws IOException {
-        super((RtfContainer)parent, w);
+        super(parent, w);
         attrib = attrs;
     }
 
