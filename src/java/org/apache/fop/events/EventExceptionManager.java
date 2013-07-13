@@ -53,7 +53,7 @@ public final class EventExceptionManager {
      */
     public static void throwException(Event event, String exceptionClass) throws Throwable {
         if (exceptionClass != null) {
-            ExceptionFactory factory = (ExceptionFactory)EXCEPTION_FACTORIES.get(exceptionClass);
+            ExceptionFactory factory = EXCEPTION_FACTORIES.get(exceptionClass);
             if (factory != null) {
                 throw factory.createException(event);
             } else {

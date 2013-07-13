@@ -144,7 +144,7 @@ public final class CommonFont {
 
     /** @return the first font-family name in the list */
     public String getFirstFontFamily() {
-        return ((Property) fontFamily.list.get(0)).getString();
+        return fontFamily.list.get(0).getString();
     }
 
     /** @return the "font-selection-strategy" property */

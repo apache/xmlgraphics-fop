@@ -393,7 +393,7 @@ public final class PropertyParser extends PropertyTokenizer {
                 }
             }
         }
-        return (Property[]) args.toArray(new Property [ args.size() ]);
+        return args.toArray(new Property [ args.size() ]);
     }
 
     /**

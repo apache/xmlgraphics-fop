@@ -990,7 +990,7 @@ public class TTFFile {
         int[] bboxInTTFUnits = mtxTab[glyphIndex].getBoundingBox();
         int[] bbox = new int[4];
         for (int i = 0; i < 4; i++) {
-            bbox[i] = (int) convertTTFUnit2PDFUnit(bboxInTTFUnits[i]);
+            bbox[i] = convertTTFUnit2PDFUnit(bboxInTTFUnits[i]);
         }
         return bbox;
     }

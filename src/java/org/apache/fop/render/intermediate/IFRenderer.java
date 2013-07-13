@@ -992,7 +992,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     private Typeface getTypeface(String fontName) {
-        Typeface tf = (Typeface) fontInfo.getFonts().get(fontName);
+        Typeface tf = fontInfo.getFonts().get(fontName);
         if (tf instanceof LazyFont) {
             tf = ((LazyFont)tf).getRealFont();
         }

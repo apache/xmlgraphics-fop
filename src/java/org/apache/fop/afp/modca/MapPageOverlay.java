@@ -99,8 +99,8 @@ public class MapPageOverlay extends AbstractAFPObject {
 
         // Structured field ID for a MPO
         data[3] = (byte) 0xD3;
-        data[4] = (byte) Type.MAP;
-        data[5] = (byte) Category.PAGE_OVERLAY;
+        data[4] = Type.MAP;
+        data[5] = Category.PAGE_OVERLAY;
 
         data[6] = 0x00; // Reserved
         data[7] = 0x00; // Reserved

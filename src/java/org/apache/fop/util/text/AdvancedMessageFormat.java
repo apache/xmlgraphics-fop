@@ -170,7 +170,7 @@ public class AdvancedMessageFormat {
             }
         } else {
             String format = parts[1];
-            PartFactory factory = (PartFactory)PART_FACTORIES.get(format);
+            PartFactory factory = PART_FACTORIES.get(format);
             if (factory == null) {
                 throw new IllegalArgumentException(
                         "No PartFactory available under the name: " + format);
@@ -184,7 +184,7 @@ public class AdvancedMessageFormat {
     }
 
     private static Function getFunction(String functionName) {
-        return (Function)FUNCTIONS.get(functionName);
+        return FUNCTIONS.get(functionName);
     }
 
     /**

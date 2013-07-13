@@ -861,7 +861,7 @@ public abstract class AbstractBreaker {
         }
         int averageLineLength = 0;
         if (accumulatedLineLength > 0 && boxCount > 0) {
-            averageLineLength = (int) (accumulatedLineLength / boxCount);
+            averageLineLength = accumulatedLineLength / boxCount;
             log.debug("Average line length = " + averageLineLength);
             if (averageLineLength < greatestMinimumLength) {
                 averageLineLength = greatestMinimumLength;

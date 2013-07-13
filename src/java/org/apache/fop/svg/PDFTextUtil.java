@@ -104,7 +104,7 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
      * @return true if it's a multi-byte font
      */
     protected boolean isMultiByteFont(String name) {
-        Typeface f = (Typeface)fontInfo.getFonts().get(name);
+        Typeface f = fontInfo.getFonts().get(name);
         return f.isMultiByte();
     }
 

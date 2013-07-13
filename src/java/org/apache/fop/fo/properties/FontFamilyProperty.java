@@ -140,7 +140,7 @@ public final class FontFamilyProperty extends ListProperty {
     /** {@inheritDoc} */
     public String getString() {
         if (list.size() > 0) {
-            Property first = (Property)list.get(0);
+            Property first = list.get(0);
             return first.getString();
         } else {
             return super.getString();

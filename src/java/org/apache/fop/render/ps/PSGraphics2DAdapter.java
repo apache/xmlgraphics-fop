@@ -76,8 +76,8 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
                    && ImageHandlerUtil.isConversionModeBitmap(foreign));
         }
 
-        float sx = paintAsBitmap ? 1.0f : (fwidth / (float)imw);
-        float sy = paintAsBitmap ? 1.0f : (fheight / (float)imh);
+        float sx = paintAsBitmap ? 1.0f : (fwidth / imw);
+        float sy = paintAsBitmap ? 1.0f : (fheight / imh);
 
         gen.commentln("%FOPBeginGraphics2D");
         gen.saveGraphicsState();
@@ -102,7 +102,7 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
         gen.getCurrentState().concatMatrix(transform);
         if (paintAsBitmap) {
             //Fallback solution: Paint to a BufferedImage
-            int resolution = (int)Math.round(context.getUserAgent().getTargetResolution());
+            int resolution = Math.round(context.getUserAgent().getTargetResolution());
             RendererContextWrapper ctx = RendererContext.wrapRendererContext(context);
             BufferedImage bi = paintToBufferedImage(painter, ctx, resolution, false, false);
 

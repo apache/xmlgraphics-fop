@@ -284,7 +284,7 @@ public class TernaryTree implements Cloneable, Serializable {
             }
         }
         if (a[start + i] != 0) {
-            return (int)-a[start + i];
+            return -a[start + i];
         }
         return 0;
 
@@ -408,10 +408,10 @@ public class TernaryTree implements Cloneable, Serializable {
     /** {@inheritDoc} */
     public Object clone() throws CloneNotSupportedException {
         TernaryTree t = (TernaryTree) super.clone();
-        t.lo = (char[])this.lo.clone();
-        t.hi = (char[])this.hi.clone();
-        t.eq = (char[])this.eq.clone();
-        t.sc = (char[])this.sc.clone();
+        t.lo = this.lo.clone();
+        t.hi = this.hi.clone();
+        t.eq = this.eq.clone();
+        t.sc = this.sc.clone();
         t.kv = (CharVector)this.kv.clone();
 
         return t;

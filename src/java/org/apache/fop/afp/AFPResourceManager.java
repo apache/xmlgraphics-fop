@@ -279,20 +279,20 @@ public class AFPResourceManager {
      */
     public boolean includeCachedObject(AFPResourceInfo resourceInfo, AFPObjectAreaInfo areaInfo) {
 
-            String objectName;
+        String objectName;
 
-            AbstractCachedObject cachedObject = (AbstractCachedObject)includeObjectCache.get(resourceInfo);
+        AbstractCachedObject cachedObject = includeObjectCache.get(resourceInfo);
 
-            if (cachedObject != null) {
-                if (areaInfo != null) {
-                    cachedObject.dataObjectInfo.setObjectAreaInfo(areaInfo);
-                }
-                cachedObject.includeObject();
-
-                return true;
-            } else {
-                return false;
+        if (cachedObject != null) {
+            if (areaInfo != null) {
+                cachedObject.dataObjectInfo.setObjectAreaInfo(areaInfo);
             }
+            cachedObject.includeObject();
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -382,8 +382,7 @@ public class AFPResourceManager {
         resourceInfo.setName(resourceName);
         resourceInfo.setUri(uri.toASCIIString());
 
-        AbstractCachedObject cachedObject = (AbstractCachedObject)
-                includeObjectCache.get(resourceInfo);
+        AbstractCachedObject cachedObject = includeObjectCache.get(resourceInfo);
         if (cachedObject == null) {
             if (log.isDebugEnabled()) {
                 log.debug("Adding included resource: " + resourceName);
@@ -425,7 +424,7 @@ public class AFPResourceManager {
         resourceInfo.setName(resourceName);
         resourceInfo.setUri(uri.toASCIIString());
 
-        AbstractCachedObject cachedObject = (AbstractCachedObject) includeObjectCache.get(resourceInfo);
+        AbstractCachedObject cachedObject = includeObjectCache.get(resourceInfo);
         if (cachedObject == null) {
             ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
 
