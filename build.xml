@@ -325,6 +325,7 @@ list of possible build targets.
       <patternset refid="exclude-jce-dependencies"/>
       <patternset refid="exclude-jai"/>
       <classpath refid="libs-build-classpath"/>
+      <compilerarg value="-Xlint:cast"/> 
     </javac>
     <mkdir dir="${build.sandbox-classes.dir}"/>
     <javac destdir="${build.sandbox-classes.dir}" includeAntRuntime="true">
