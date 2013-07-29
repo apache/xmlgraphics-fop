@@ -71,22 +71,6 @@ public abstract class AbstractOutlineFont extends AFPFont {
     }
 
     /**
-     * Get the first character in this font.
-     * @return the first character in this font
-     */
-    public int getFirstChar() {
-        return charSet.getFirstChar();
-    }
-
-    /**
-     * Get the last character in this font.
-     * @return the last character in this font
-     */
-    public int getLastChar() {
-        return charSet.getLastChar();
-    }
-
-    /**
      * The ascender is the part of a lowercase letter that extends above the
      * "x-height" (the height of the letter "x"), such as "d", "t", or "h". Also
      * used to denote the part of the letter extending above the x-height.
@@ -96,6 +80,17 @@ public abstract class AbstractOutlineFont extends AFPFont {
      */
     public int getAscender(int size) {
         return charSet.getAscender() * size;
+    }
+
+    /** {@inheritDoc} */
+    public int getUnderlinePosition(int size) {
+        return charSet.getUnderscorePosition() * size;
+    }
+
+    @Override
+    public int getUnderlineThickness(int size) {
+        int underscoreWidth = charSet.getUnderscoreWidth();
+        return underscoreWidth == 0 ? super.getUnderlineThickness(size) : underscoreWidth * size;
     }
 
     /**
@@ -130,40 +125,7 @@ public abstract class AbstractOutlineFont extends AFPFont {
         return charSet.getXHeight() * size;
     }
 
-    /**
-     * Obtain the width of the character for the specified point size.
-     * @param character the character
-     * @param size the font size (in mpt)
-     * @return the width of the character for the specified point size
-     */
-    public int getWidth(int character, int size) {
-        return charSet.getWidth(toUnicodeCodepoint(character)) * size;
-    }
 
-    /**
-     * Get the getWidth (in 1/1000ths of a point size) of all characters in this
-     * character set.
-     *
-     * @param size the font size (in mpt)
-     * @return the widths of all characters
-     */
-    public int[] getWidths(int size) {
-        int[] widths =  charSet.getWidths();
-        for (int i = 0; i < widths.length; i++) {
-            widths[i] = widths[i] * size;
-        }
-        return widths;
-    }
-
-    /**
-     * Get the getWidth (in 1/1000ths of a point size) of all characters in this
-     * character set.
-     *
-     * @return the widths of all characters
-     */
-    public int[] getWidths() {
-        return getWidths(1000);
-    }
 
     /** {@inheritDoc} */
     public boolean hasChar(char c) {

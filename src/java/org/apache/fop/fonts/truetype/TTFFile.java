@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts.truetype;
 
+import java.awt.Rectangle;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -199,6 +200,8 @@ public class TTFFile {
     private int os2CapHeight = 0;
     private int underlinePosition = 0;
     private int underlineThickness = 0;
+    private int strikeoutPosition;
+    private int strikeoutThickness;
     private int xHeight = 0;
     private int os2xHeight = 0;
     //Effective ascender/descender
@@ -976,8 +979,20 @@ public class TTFFile {
         for (int i = 0; i < wx.length; i++) {
             wx[i] = convertTTFUnit2PDFUnit(mtxTab[i].getWx());
         }
-
         return wx;
+    }
+
+    public Rectangle[] getBoundingBoxes() {
+        Rectangle[] boundingBoxes = new Rectangle[mtxTab.length];
+        for (int i = 0; i < boundingBoxes.length; i++) {
+            int[] boundingBox = mtxTab[i].getBoundingBox();
+            boundingBoxes[i] = new Rectangle(
+                    convertTTFUnit2PDFUnit(boundingBox[0]),
+                    convertTTFUnit2PDFUnit(boundingBox[1]),
+                    convertTTFUnit2PDFUnit(boundingBox[2] - boundingBox[0]),
+                    convertTTFUnit2PDFUnit(boundingBox[3] - boundingBox[1]));
+        }
+        return boundingBoxes;
     }
 
     /**
@@ -1018,6 +1033,22 @@ public class TTFFile {
      */
     public Map<Integer, Map<Integer, Integer>> getAnsiKerning() {
         return ansiKerningTab;
+    }
+
+    public int getUnderlinePosition() {
+        return convertTTFUnit2PDFUnit(underlinePosition);
+    }
+
+    public int getUnderlineThickness() {
+        return convertTTFUnit2PDFUnit(underlineThickness);
+    }
+
+    public int getStrikeoutPosition() {
+        return convertTTFUnit2PDFUnit(strikeoutPosition);
+    }
+
+    public int getStrikeoutThickness() {
+        return convertTTFUnit2PDFUnit(strikeoutThickness);
     }
 
     /**
@@ -1301,7 +1332,10 @@ public class TTFFile {
             } else {
                 isEmbeddable = true;
             }
-            fontFile.skip(11 * 2);
+            fontFile.skip(8 * 2);
+            strikeoutThickness = fontFile.readTTFShort();
+            strikeoutPosition = fontFile.readTTFShort();
+            fontFile.skip(2);
             fontFile.skip(10); //panose array
             fontFile.skip(4 * 4); //unicode ranges
             fontFile.skip(4);

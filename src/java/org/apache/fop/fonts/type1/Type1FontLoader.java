@@ -203,10 +203,14 @@ public class Type1FontLoader extends FontLoader {
         for (AFMCharMetrics metrics : charMetrics) {
             String charName = metrics.getCharName();
             if (charName != null && !glyphNames.contains(charName)) {
-                singleFont.addUnencodedCharacter(metrics.getCharacter(),
-                        (int)Math.round(metrics.getWidthX()));
+                addUnencodedCharacter(singleFont, metrics);
             }
         }
+    }
+
+    private static void addUnencodedCharacter(SingleByteFont font, AFMCharMetrics metrics) {
+        font.addUnencodedCharacter(metrics.getCharacter(),
+                (int) Math.round(metrics.getWidthX()), metrics.getBBox());
     }
 
     /**
@@ -220,8 +224,7 @@ public class Type1FontLoader extends FontLoader {
         for (int i = 0, c = afm.getCharCount(); i < c; i++) {
             AFMCharMetrics metrics = (AFMCharMetrics)charMetrics.get(i);
             if (!metrics.hasCharCode() && metrics.getCharacter() != null) {
-                singleFont.addUnencodedCharacter(metrics.getCharacter(),
-                        (int)Math.round(metrics.getWidthX()));
+                addUnencodedCharacter(singleFont, metrics);
             }
         }
     }
@@ -267,7 +270,10 @@ public class Type1FontLoader extends FontLoader {
             } else {
                 returnFont.setStemV(80); // Arbitrary value
             }
-            returnFont.setItalicAngle((int) afm.getWritingDirectionMetrics(0).getItalicAngle());
+            AFMWritingDirectionMetrics metrics = afm.getWritingDirectionMetrics(0);
+            returnFont.setItalicAngle((int) metrics.getItalicAngle());
+            returnFont.setUnderlinePosition(metrics.getUnderlinePosition().intValue());
+            returnFont.setUnderlineThickness(metrics.getUnderlineThickness().intValue());
         } else {
             returnFont.setFontBBox(pfm.getFontBBox());
             returnFont.setStemV(pfm.getStemV());
@@ -369,6 +375,7 @@ public class Type1FontLoader extends FontLoader {
             for (AFMCharMetrics chm : afm.getCharMetrics()) {
                 if (chm.hasCharCode()) {
                     singleFont.setWidth(chm.getCharCode(), (int) Math.round(chm.getWidthX()));
+                    singleFont.setBoundingBox(chm.getCharCode(), chm.getBBox());
                 }
             }
             if (useKerning) {

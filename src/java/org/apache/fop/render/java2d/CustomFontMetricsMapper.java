@@ -21,6 +21,7 @@ package org.apache.fop.render.java2d;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -183,9 +184,29 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
         return typeface.getWidths();
     }
 
+    public Rectangle getBoundingBox(int glyphIndex, int size) {
+        return typeface.getBoundingBox(glyphIndex, size);
+    }
+
     /** {@inheritDoc} */
     public final int getXHeight(final int size) {
         return typeface.getXHeight(size);
+    }
+
+    public int getUnderlinePosition(int size) {
+        return typeface.getUnderlinePosition(size);
+    }
+
+    public int getUnderlineThickness(int size) {
+        return typeface.getUnderlineThickness(size);
+    }
+
+    public int getStrikeoutPosition(int size) {
+        return typeface.getStrikeoutPosition(size);
+    }
+
+    public int getStrikeoutThickness(int size) {
+        return typeface.getStrikeoutThickness(size);
     }
 
     /** {@inheritDoc} */

@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts;
 
+import java.awt.Rectangle;
 import java.util.Map;
 import java.util.Set;
 
@@ -120,6 +121,15 @@ public interface FontMetrics {
     int[] getWidths();
 
     /**
+     * Returns the bounding box of the glyph at the given index, for the given font size.
+     *
+     * @param glyphIndex glyph index
+     * @param size font size
+     * @return the scaled bounding box scaled in 1/1000ths of the given size
+     */
+    Rectangle getBoundingBox(int glyphIndex, int size);
+
+    /**
      * Indicates if the font has kering information.
      * @return True, if kerning is available.
      */
@@ -130,5 +140,39 @@ public interface FontMetrics {
      * @return the kerning map
      */
     Map<Integer, Map<Integer, Integer>> getKerningInfo();
+
+    /**
+     * Returns the distance from the baseline to the center of the underline (negative
+     * value indicates below baseline).
+     *
+     * @param size font size
+     * @return the position in 1/1000ths of the font size
+     */
+    int getUnderlinePosition(int size);
+
+    /**
+     * Returns the thickness of the underline.
+     *
+     * @param size font size
+     * @return the thickness in 1/1000ths of the font size
+     */
+    int getUnderlineThickness(int size);
+
+    /**
+     * Returns the distance from the baseline to the center of the strikeout line
+     * (negative value indicates below baseline).
+     *
+     * @param size font size
+     * @return the position in 1/1000ths of the font size
+     */
+    int getStrikeoutPosition(int size);
+
+    /**
+     * Returns the thickness of the strikeout line.
+     *
+     * @param size font size
+     * @return the thickness in 1/1000ths of the font size
+     */
+    int getStrikeoutThickness(int size);
 
 }

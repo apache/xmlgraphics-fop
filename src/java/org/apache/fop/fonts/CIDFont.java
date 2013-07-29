@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts;
 
+
 import org.apache.fop.apps.io.InternalResourceResolver;
 
 //Java

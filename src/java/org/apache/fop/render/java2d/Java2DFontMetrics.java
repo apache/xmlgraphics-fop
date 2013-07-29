@@ -223,6 +223,26 @@ public class Java2DFontMetrics {
         return xHeight * 1000;
     }
 
+    public int getUnderlinePosition(String family, int style, int size) {
+        setFont(family, style, size);
+        return -Math.round(lineMetrics.getUnderlineOffset());
+    }
+
+    public int getUnderlineThickness(String family, int style, int size) {
+        setFont(family, style, size);
+        return Math.round(lineMetrics.getUnderlineThickness());
+    }
+
+    public int getStrikeoutPosition(String family, int style, int size) {
+        setFont(family, style, size);
+        return -Math.round(lineMetrics.getStrikethroughOffset());
+    }
+
+    public int getStrikeoutThickness(String family, int style, int size) {
+        setFont(family, style, size);
+        return Math.round(lineMetrics.getStrikethroughThickness());
+    }
+
     /**
      * Returns width (in 1/1000ths of point size) of character at
      * code point i

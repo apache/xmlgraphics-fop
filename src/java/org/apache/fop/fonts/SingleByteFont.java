@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,8 @@ public class SingleByteFont extends CustomFont {
     private boolean useNativeEncoding = false;
 
     private int[] width = null;
+
+    private Rectangle[] boundingBoxes;
 
     private Map<Character, UnencodedCharacter> unencodedCharacters;
     private List<SimpleSingleByteEncoding> additionalEncodings;
@@ -109,6 +112,24 @@ public class SingleByteFont extends CustomFont {
         int[] arr = new int[width.length];
         System.arraycopy(width, 0, arr, 0, width.length);
         return arr;
+    }
+
+    public Rectangle getBoundingBox(int glyphIndex, int size) {
+        Rectangle bbox = null;
+        if (glyphIndex < 256) {
+            int idx = glyphIndex - getFirstChar();
+            if (idx >= 0 && idx < boundingBoxes.length) {
+                bbox =  boundingBoxes[idx];
+            }
+        } else if (this.additionalEncodings != null) {
+            int encodingIndex = (glyphIndex / 256) - 1;
+            SimpleSingleByteEncoding encoding = getAdditionalEncoding(encodingIndex);
+            int codePoint = glyphIndex % 256;
+            NamedCharacter nc = encoding.getCharacterForIndex(codePoint);
+            UnencodedCharacter uc = this.unencodedCharacters.get(Character.valueOf(nc.getSingleUnicodeValue()));
+            bbox = uc.getBBox();
+        }
+        return bbox == null ? null : new Rectangle(bbox.x * size, bbox.y * size, bbox.width * size, bbox.height * size);
     }
 
     /**
@@ -292,17 +313,24 @@ public class SingleByteFont extends CustomFont {
         this.width[index - getFirstChar()] = w;
     }
 
+    public void setBoundingBox(int index, Rectangle bbox) {
+        if (this.boundingBoxes == null) {
+            this.boundingBoxes = new Rectangle[getLastChar() - getFirstChar() + 1];
+        }
+        this.boundingBoxes[index - getFirstChar()] = bbox;
+    }
+
     /**
      * Adds an unencoded character (one that is not supported by the primary encoding).
      * @param ch the named character
      * @param width the width of the character
      */
-    public void addUnencodedCharacter(NamedCharacter ch, int width) {
+    public void addUnencodedCharacter(NamedCharacter ch, int width, Rectangle bbox) {
         if (this.unencodedCharacters == null) {
             this.unencodedCharacters = new HashMap<Character, UnencodedCharacter>();
         }
         if (ch.hasSingleUnicodeValue()) {
-            UnencodedCharacter uc = new UnencodedCharacter(ch, width);
+            UnencodedCharacter uc = new UnencodedCharacter(ch, width, bbox);
             this.unencodedCharacters.put(Character.valueOf(ch.getSingleUnicodeValue()), uc);
         } else {
             //Cannot deal with unicode sequences, so ignore this character
@@ -381,10 +409,12 @@ public class SingleByteFont extends CustomFont {
 
         private final NamedCharacter character;
         private final int width;
+        private final Rectangle bbox;
 
-        public UnencodedCharacter(NamedCharacter character, int width) {
+        public UnencodedCharacter(NamedCharacter character, int width, Rectangle bbox) {
             this.character = character;
             this.width = width;
+            this.bbox = bbox;
         }
 
         public NamedCharacter getCharacter() {
@@ -393,6 +423,10 @@ public class SingleByteFont extends CustomFont {
 
         public int getWidth() {
             return this.width;
+        }
+
+        public Rectangle getBBox() {
+            return bbox;
         }
 
         /** {@inheritDoc} */

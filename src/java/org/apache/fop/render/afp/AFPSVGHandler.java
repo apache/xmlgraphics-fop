@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.gvt.font.DefaultFontFamilyResolver;
 
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
@@ -43,6 +44,7 @@ import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.AFPUnitConverter;
 import org.apache.fop.afp.svg.AFPBridgeContext;
+import org.apache.fop.afp.svg.AFPFontFamilyResolver;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.image.loader.batik.BatikUtil;
@@ -53,6 +55,7 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
+import org.apache.fop.svg.font.AggregatingFontFamilyResolver;
 
 /**
  * AFP XML handler for SVG. Uses Apache Batik for SVG processing.
@@ -196,15 +199,13 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
      */
     public static BridgeContext createBridgeContext(FOUserAgent userAgent, AFPGraphics2D g2d) {
         ImageManager imageManager = userAgent.getImageManager();
-
-        SVGUserAgent svgUserAgent
-            = new SVGUserAgent(userAgent, new AffineTransform());
-
-        ImageSessionContext imageSessionContext = userAgent.getImageSessionContext();
-
         FontInfo fontInfo = g2d.getFontInfo();
+        SVGUserAgent svgUserAgent = new SVGUserAgent(userAgent, new AggregatingFontFamilyResolver(
+                new AFPFontFamilyResolver(fontInfo, userAgent.getEventBroadcaster()), DefaultFontFamilyResolver.SINGLETON),
+                new AffineTransform());
+        ImageSessionContext imageSessionContext = userAgent.getImageSessionContext();
         return new AFPBridgeContext(svgUserAgent, fontInfo, imageManager, imageSessionContext,
-                new AffineTransform(), g2d);
+                new AffineTransform(), g2d, userAgent.getEventBroadcaster());
     }
 
     /** {@inheritDoc} */

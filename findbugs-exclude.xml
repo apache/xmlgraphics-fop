@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FindBugsFilter>
   <Match>
+    <Class name="org.apache.fop.layoutmgr.inline.TextLayoutManager$TextAreaBuilder"/>
+    <Method name="getMappingBidiLevels"/>
+    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.svg.PDFTextPainter"/>
+    <Field name="pdf"/>
+    <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.render.ps.PSTextPainter"/>
+    <Or>
+      <Field name="gen"/>
+      <Field name="ps"/>
+      <Field name="psRun"/>
+      <Field name="textUtil"/>
+    </Or>
+    <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.GlyphMapping"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.MultiByteFont"/>
+    <Method name="setBBoxArray"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
     <Class name="org.apache.fop.fonts.truetype.TTFFile$1"/>
     <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
   </Match>

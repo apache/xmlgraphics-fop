@@ -22,245 +22,246 @@
    <family-name>Times</family-name>
    <class-name>TimesBold</class-name>
    <encoding>StandardEncoding</encoding>
+   <underline-position>-100</underline-position>
+   <underline-thickness>50</underline-thickness>
    <cap-height>676</cap-height>
    <x-height>461</x-height>
    <ascender>676</ascender>
    <descender>-205</descender>
    <first-char>32</first-char>
    <last-char>255</last-char>
-   <widths>
-      <char name="A" width="722"/>
-      <char name="AE" width="1000"/>
-      <char name="Aacute" width="722"/>
-      <char name="Acircumflex" width="722"/>
-      <char name="Adieresis" width="722"/>
-      <char name="Agrave" width="722"/>
-      <char name="Aring" width="722"/>
-      <char name="Atilde" width="722"/>
-      <char name="B" width="667"/>
-      <char name="C" width="722"/>
-      <char name="Ccedilla" width="722"/>
-      <char name="D" width="722"/>
-      <char name="E" width="667"/>
-      <char name="Eacute" width="667"/>
-      <char name="Ecircumflex" width="667"/>
-      <char name="Edieresis" width="667"/>
-      <char name="Egrave" width="667"/>
-      <char name="Eth" width="722"/>
-      <char name="Euro" width="500"/>
-      <char name="F" width="611"/>
-      <char name="G" width="778"/>
-      <char name="H" width="778"/>
-      <char name="I" width="389"/>
-      <char name="Iacute" width="389"/>
-      <char name="Icircumflex" width="389"/>
-      <char name="Idieresis" width="389"/>
-      <char name="Igrave" width="389"/>
-      <char name="J" width="500"/>
-      <char name="K" width="778"/>
-      <char name="L" width="667"/>
-      <char name="Lslash" width="667"/>
-      <char name="M" width="944"/>
-      <char name="N" width="722"/>
-      <char name="Ntilde" width="722"/>
-      <char name="O" width="778"/>
-      <char name="OE" width="1000"/>
-      <char name="Oacute" width="778"/>
-      <char name="Ocircumflex" width="778"/>
-      <char name="Odieresis" width="778"/>
-      <char name="Ograve" width="778"/>
-      <char name="Oslash" width="778"/>
-      <char name="Otilde" width="778"/>
-      <char name="P" width="611"/>
-      <char name="Q" width="778"/>
-      <char name="R" width="722"/>
-      <char name="S" width="556"/>
-      <char name="Scaron" width="556"/>
-      <char name="T" width="667"/>
-      <char name="Thorn" width="611"/>
-      <char name="U" width="722"/>
-      <char name="Uacute" width="722"/>
-      <char name="Ucircumflex" width="722"/>
-      <char name="Udieresis" width="722"/>
-      <char name="Ugrave" width="722"/>
-      <char name="V" width="722"/>
-      <char name="W" width="1000"/>
-      <char name="X" width="722"/>
-      <char name="Y" width="722"/>
-      <char name="Yacute" width="722"/>
-      <char name="Ydieresis" width="722"/>
-      <char name="Z" width="667"/>
-      <char name="Zcaron" width="667"/>
-      <char name="a" width="500"/>
-      <char name="aacute" width="500"/>
-      <char name="acircumflex" width="500"/>
-      <char name="acute" width="333"/>
-      <char name="adieresis" width="500"/>
-      <char name="ae" width="722"/>
-      <char name="agrave" width="500"/>
-      <char name="ampersand" width="833"/>
-      <char name="aring" width="500"/>
-      <char name="asciicircum" width="581"/>
-      <char name="asciitilde" width="520"/>
-      <char name="asterisk" width="500"/>
-      <char name="at" width="930"/>
-      <char name="atilde" width="500"/>
-      <char name="b" width="556"/>
-      <char name="backslash" width="278"/>
-      <char name="bar" width="220"/>
-      <char name="braceleft" width="394"/>
-      <char name="braceright" width="394"/>
-      <char name="bracketleft" width="333"/>
-      <char name="bracketright" width="333"/>
-      <char name="breve" width="333"/>
-      <char name="brokenbar" width="220"/>
-      <char name="bullet" width="350"/>
-      <char name="c" width="444"/>
-      <char name="caron" width="333"/>
-      <char name="ccedilla" width="444"/>
-      <char name="cedilla" width="333"/>
-      <char name="cent" width="500"/>
-      <char name="circumflex" width="333"/>
-      <char name="colon" width="333"/>
-      <char name="comma" width="250"/>
-      <char name="copyright" width="747"/>
-      <char name="currency" width="500"/>
-      <char name="d" width="556"/>
-      <char name="dagger" width="500"/>
-      <char name="daggerdbl" width="500"/>
-      <char name="degree" width="400"/>
-      <char name="dieresis" width="333"/>
-      <char name="divide" width="570"/>
-      <char name="dollar" width="500"/>
-      <char name="dotaccent" width="333"/>
-      <char name="dotlessi" width="278"/>
-      <char name="e" width="444"/>
-      <char name="eacute" width="444"/>
-      <char name="ecircumflex" width="444"/>
-      <char name="edieresis" width="444"/>
-      <char name="egrave" width="444"/>
-      <char name="eight" width="500"/>
-      <char name="ellipsis" width="1000"/>
-      <char name="emdash" width="1000"/>
-      <char name="endash" width="500"/>
-      <char name="equal" width="570"/>
-      <char name="eth" width="500"/>
-      <char name="exclam" width="333"/>
-      <char name="exclamdown" width="333"/>
-      <char name="f" width="333"/>
-      <char name="fi" width="556"/>
-      <char name="five" width="500"/>
-      <char name="fl" width="556"/>
-      <char name="florin" width="500"/>
-      <char name="four" width="500"/>
-      <char name="fraction" width="167"/>
-      <char name="g" width="500"/>
-      <char name="germandbls" width="556"/>
-      <char name="grave" width="333"/>
-      <char name="greater" width="570"/>
-      <char name="guillemotleft" width="500"/>
-      <char name="guillemotright" width="500"/>
-      <char name="guilsinglleft" width="333"/>
-      <char name="guilsinglright" width="333"/>
-      <char name="h" width="556"/>
-      <char name="hungarumlaut" width="333"/>
-      <char name="hyphen" width="333"/>
-      <char name="i" width="278"/>
-      <char name="iacute" width="278"/>
-      <char name="icircumflex" width="278"/>
-      <char name="idieresis" width="278"/>
-      <char name="igrave" width="278"/>
-      <char name="j" width="333"/>
-      <char name="k" width="556"/>
-      <char name="l" width="278"/>
-      <char name="less" width="570"/>
-      <char name="logicalnot" width="570"/>
-      <char name="lslash" width="278"/>
-      <char name="m" width="833"/>
-      <char name="macron" width="333"/>
-      <char name="minus" width="324"/>
-      <char name="mu" width="556"/>
-      <char name="multiply" width="570"/>
-      <char name="n" width="556"/>
-      <char name="nine" width="500"/>
-      <char name="ntilde" width="556"/>
-      <char name="numbersign" width="500"/>
-      <char name="o" width="500"/>
-      <char name="oacute" width="500"/>
-      <char name="ocircumflex" width="500"/>
-      <char name="odieresis" width="500"/>
-      <char name="oe" width="722"/>
-      <char name="ogonek" width="333"/>
-      <char name="ograve" width="500"/>
-      <char name="one" width="500"/>
-      <char name="onehalf" width="750"/>
-      <char name="onequarter" width="750"/>
-      <char name="onesuperior" width="300"/>
-      <char name="ordfeminine" width="300"/>
-      <char name="ordmasculine" width="330"/>
-      <char name="oslash" width="500"/>
-      <char name="otilde" width="500"/>
-      <char name="p" width="556"/>
-      <char name="paragraph" width="540"/>
-      <char name="parenleft" width="333"/>
-      <char name="parenright" width="333"/>
-      <char name="percent" width="1000"/>
-      <char name="period" width="250"/>
-      <char name="periodcentered" width="250"/>
-      <char name="perthousand" width="1000"/>
-      <char name="plus" width="570"/>
-      <char name="plusminus" width="570"/>
-      <char name="q" width="556"/>
-      <char name="question" width="500"/>
-      <char name="questiondown" width="500"/>
-      <char name="quotedbl" width="555"/>
-      <char name="quotedblbase" width="500"/>
-      <char name="quotedblleft" width="500"/>
-      <char name="quotedblright" width="500"/>
-      <char name="quoteleft" width="333"/>
-      <char name="quoteright" width="333"/>
-      <char name="quotesinglbase" width="333"/>
-      <char name="quotesingle" width="278"/>
-      <char name="r" width="444"/>
-      <char name="registered" width="747"/>
-      <char name="ring" width="333"/>
-      <char name="s" width="389"/>
-      <char name="scaron" width="389"/>
-      <char name="section" width="500"/>
-      <char name="semicolon" width="333"/>
-      <char name="seven" width="500"/>
-      <char name="six" width="500"/>
-      <char name="slash" width="278"/>
-      <char name="space" width="250"/>
+    <char-metrics>
+      <char name="A" width="722" llx="9" lly="0" urx="689" ury="690"/>
+      <char name="AE" width="1000" llx="4" lly="0" urx="951" ury="676"/>
+      <char name="Aacute" width="722" llx="9" lly="0" urx="689" ury="923"/>
+      <char name="Acircumflex" width="722" llx="9" lly="0" urx="689" ury="914"/>
+      <char name="Adieresis" width="722" llx="9" lly="0" urx="689" ury="877"/>
+      <char name="Agrave" width="722" llx="9" lly="0" urx="689" ury="923"/>
+      <char name="Aring" width="722" llx="9" lly="0" urx="689" ury="935"/>
+      <char name="Atilde" width="722" llx="9" lly="0" urx="689" ury="884"/>
+      <char name="B" width="667" llx="16" lly="0" urx="619" ury="676"/>
+      <char name="C" width="722" llx="49" lly="-19" urx="687" ury="691"/>
+      <char name="Ccedilla" width="722" llx="49" lly="-218" urx="687" ury="691"/>
+      <char name="D" width="722" llx="14" lly="0" urx="690" ury="676"/>
+      <char name="E" width="667" llx="16" lly="0" urx="641" ury="676"/>
+      <char name="Eacute" width="667" llx="16" lly="0" urx="641" ury="923"/>
+      <char name="Ecircumflex" width="667" llx="16" lly="0" urx="641" ury="914"/>
+      <char name="Edieresis" width="667" llx="16" lly="0" urx="641" ury="877"/>
+      <char name="Egrave" width="667" llx="16" lly="0" urx="641" ury="923"/>
+      <char name="Eth" width="722" llx="6" lly="0" urx="690" ury="676"/>
+      <char name="Euro" width="500" llx="0" lly="0" urx="0" ury="0"/>
+      <char name="F" width="611" llx="16" lly="0" urx="583" ury="676"/>
+      <char name="G" width="778" llx="37" lly="-19" urx="755" ury="691"/>
+      <char name="H" width="778" llx="21" lly="0" urx="759" ury="676"/>
+      <char name="I" width="389" llx="20" lly="0" urx="370" ury="676"/>
+      <char name="Iacute" width="389" llx="20" lly="0" urx="370" ury="923"/>
+      <char name="Icircumflex" width="389" llx="20" lly="0" urx="370" ury="914"/>
+      <char name="Idieresis" width="389" llx="20" lly="0" urx="370" ury="877"/>
+      <char name="Igrave" width="389" llx="20" lly="0" urx="370" ury="923"/>
+      <char name="J" width="500" llx="3" lly="-96" urx="479" ury="676"/>
+      <char name="K" width="778" llx="30" lly="0" urx="769" ury="676"/>
+      <char name="L" width="667" llx="19" lly="0" urx="638" ury="676"/>
+      <char name="Lslash" width="667" llx="19" lly="0" urx="638" ury="676"/>
+      <char name="M" width="944" llx="14" lly="0" urx="921" ury="676"/>
+      <char name="N" width="722" llx="16" lly="-18" urx="701" ury="676"/>
+      <char name="Ntilde" width="722" llx="16" lly="-18" urx="701" ury="884"/>
+      <char name="O" width="778" llx="35" lly="-19" urx="743" ury="691"/>
+      <char name="OE" width="1000" llx="22" lly="-5" urx="981" ury="684"/>
+      <char name="Oacute" width="778" llx="35" lly="-19" urx="743" ury="923"/>
+      <char name="Ocircumflex" width="778" llx="35" lly="-19" urx="743" ury="914"/>
+      <char name="Odieresis" width="778" llx="35" lly="-19" urx="743" ury="877"/>
+      <char name="Ograve" width="778" llx="35" lly="-19" urx="743" ury="923"/>
+      <char name="Oslash" width="778" llx="35" lly="-74" urx="743" ury="737"/>
+      <char name="Otilde" width="778" llx="35" lly="-19" urx="743" ury="884"/>
+      <char name="P" width="611" llx="16" lly="0" urx="600" ury="676"/>
+      <char name="Q" width="778" llx="35" lly="-176" urx="743" ury="691"/>
+      <char name="R" width="722" llx="26" lly="0" urx="715" ury="676"/>
+      <char name="S" width="556" llx="35" lly="-19" urx="513" ury="692"/>
+      <char name="Scaron" width="556" llx="35" lly="-19" urx="513" ury="914"/>
+      <char name="T" width="667" llx="31" lly="0" urx="636" ury="676"/>
+      <char name="Thorn" width="611" llx="16" lly="0" urx="600" ury="676"/>
+      <char name="U" width="722" llx="16" lly="-19" urx="701" ury="676"/>
+      <char name="Uacute" width="722" llx="16" lly="-19" urx="701" ury="923"/>
+      <char name="Ucircumflex" width="722" llx="16" lly="-19" urx="701" ury="914"/>
+      <char name="Udieresis" width="722" llx="16" lly="-19" urx="701" ury="877"/>
+      <char name="Ugrave" width="722" llx="16" lly="-19" urx="701" ury="923"/>
+      <char name="V" width="722" llx="16" lly="-18" urx="701" ury="676"/>
+      <char name="W" width="1000" llx="19" lly="-15" urx="981" ury="676"/>
+      <char name="X" width="722" llx="16" lly="0" urx="699" ury="676"/>
+      <char name="Y" width="722" llx="15" lly="0" urx="699" ury="676"/>
+      <char name="Yacute" width="722" llx="15" lly="0" urx="699" ury="923"/>
+      <char name="Ydieresis" width="722" llx="15" lly="0" urx="699" ury="877"/>
+      <char name="Z" width="667" llx="28" lly="0" urx="634" ury="676"/>
+      <char name="Zcaron" width="667" llx="28" lly="0" urx="634" ury="914"/>
+      <char name="a" width="500" llx="25" lly="-14" urx="488" ury="473"/>
+      <char name="aacute" width="500" llx="25" lly="-14" urx="488" ury="713"/>
+      <char name="acircumflex" width="500" llx="25" lly="-14" urx="488" ury="704"/>
+      <char name="acute" width="333" llx="86" lly="528" urx="324" ury="713"/>
+      <char name="adieresis" width="500" llx="25" lly="-14" urx="488" ury="667"/>
+      <char name="ae" width="722" llx="33" lly="-14" urx="693" ury="473"/>
+      <char name="agrave" width="500" llx="25" lly="-14" urx="488" ury="713"/>
+      <char name="ampersand" width="833" llx="62" lly="-16" urx="787" ury="691"/>
+      <char name="aring" width="500" llx="25" lly="-14" urx="488" ury="740"/>
+      <char name="asciicircum" width="581" llx="73" lly="311" urx="509" ury="676"/>
+      <char name="asciitilde" width="520" llx="29" lly="173" urx="491" ury="333"/>
+      <char name="asterisk" width="500" llx="56" lly="255" urx="447" ury="691"/>
+      <char name="at" width="930" llx="108" lly="-19" urx="822" ury="691"/>
+      <char name="atilde" width="500" llx="25" lly="-14" urx="488" ury="674"/>
+      <char name="b" width="556" llx="17" lly="-14" urx="521" ury="676"/>
+      <char name="backslash" width="278" llx="-25" lly="-19" urx="303" ury="691"/>
+      <char name="bar" width="220" llx="66" lly="-218" urx="154" ury="782"/>
+      <char name="braceleft" width="394" llx="22" lly="-175" urx="340" ury="698"/>
+      <char name="braceright" width="394" llx="54" lly="-175" urx="372" ury="698"/>
+      <char name="bracketleft" width="333" llx="67" lly="-149" urx="301" ury="678"/>
+      <char name="bracketright" width="333" llx="32" lly="-149" urx="266" ury="678"/>
+      <char name="breve" width="333" llx="15" lly="528" urx="318" ury="691"/>
+      <char name="brokenbar" width="220" llx="66" lly="-143" urx="154" ury="707"/>
+      <char name="bullet" width="350" llx="35" lly="198" urx="315" ury="478"/>
+      <char name="c" width="444" llx="25" lly="-14" urx="430" ury="473"/>
+      <char name="caron" width="333" llx="-2" lly="528" urx="335" ury="704"/>
+      <char name="ccedilla" width="444" llx="25" lly="-218" urx="430" ury="473"/>
+      <char name="cedilla" width="333" llx="68" lly="-218" urx="294" ury="0"/>
+      <char name="cent" width="500" llx="53" lly="-140" urx="458" ury="588"/>
+      <char name="circumflex" width="333" llx="-2" lly="528" urx="335" ury="704"/>
+      <char name="colon" width="333" llx="82" lly="-13" urx="251" ury="472"/>
+      <char name="comma" width="250" llx="39" lly="-180" urx="223" ury="155"/>
+      <char name="copyright" width="747" llx="26" lly="-19" urx="721" ury="691"/>
+      <char name="currency" width="500" llx="-26" lly="61" urx="526" ury="613"/>
+      <char name="d" width="556" llx="25" lly="-14" urx="534" ury="676"/>
+      <char name="dagger" width="500" llx="47" lly="-134" urx="453" ury="691"/>
+      <char name="daggerdbl" width="500" llx="45" lly="-132" urx="456" ury="691"/>
+      <char name="degree" width="400" llx="57" lly="402" urx="343" ury="688"/>
+      <char name="dieresis" width="333" llx="-2" lly="537" urx="335" ury="667"/>
+      <char name="divide" width="570" llx="33" lly="-31" urx="537" ury="537"/>
+      <char name="dollar" width="500" llx="29" lly="-99" urx="472" ury="750"/>
+      <char name="dotaccent" width="333" llx="103" lly="536" urx="258" ury="691"/>
+      <char name="dotlessi" width="278" llx="16" lly="0" urx="255" ury="461"/>
+      <char name="e" width="444" llx="25" lly="-14" urx="426" ury="473"/>
+      <char name="eacute" width="444" llx="25" lly="-14" urx="426" ury="713"/>
+      <char name="ecircumflex" width="444" llx="25" lly="-14" urx="426" ury="704"/>
+      <char name="edieresis" width="444" llx="25" lly="-14" urx="426" ury="667"/>
+      <char name="egrave" width="444" llx="25" lly="-14" urx="426" ury="713"/>
+      <char name="eight" width="500" llx="28" lly="-13" urx="472" ury="688"/>
+      <char name="ellipsis" width="1000" llx="82" lly="-13" urx="917" ury="156"/>
+      <char name="emdash" width="1000" llx="0" lly="181" urx="1000" ury="271"/>
+      <char name="endash" width="500" llx="0" lly="181" urx="500" ury="271"/>
+      <char name="equal" width="570" llx="33" lly="107" urx="537" ury="399"/>
+      <char name="eth" width="500" llx="25" lly="-14" urx="476" ury="691"/>
+      <char name="exclam" width="333" llx="81" lly="-13" urx="251" ury="691"/>
+      <char name="exclamdown" width="333" llx="82" lly="-203" urx="252" ury="501"/>
+      <char name="f" width="333" llx="14" lly="0" urx="389" ury="691"/>
+      <char name="fi" width="556" llx="14" lly="0" urx="536" ury="691"/>
+      <char name="five" width="500" llx="22" lly="-8" urx="470" ury="676"/>
+      <char name="fl" width="556" llx="14" lly="0" urx="536" ury="691"/>
+      <char name="florin" width="500" llx="0" lly="-155" urx="498" ury="706"/>
+      <char name="four" width="500" llx="19" lly="0" urx="475" ury="688"/>
+      <char name="fraction" width="167" llx="-168" lly="-12" urx="329" ury="688"/>
+      <char name="g" width="500" llx="28" lly="-206" urx="483" ury="473"/>
+      <char name="germandbls" width="556" llx="19" lly="-12" urx="517" ury="691"/>
+      <char name="grave" width="333" llx="8" lly="528" urx="246" ury="713"/>
+      <char name="greater" width="570" llx="31" lly="-8" urx="539" ury="514"/>
+      <char name="guillemotleft" width="500" llx="23" lly="36" urx="473" ury="415"/>
+      <char name="guillemotright" width="500" llx="27" lly="36" urx="477" ury="415"/>
+      <char name="guilsinglleft" width="333" llx="51" lly="36" urx="305" ury="415"/>
+      <char name="guilsinglright" width="333" llx="28" lly="36" urx="282" ury="415"/>
+      <char name="h" width="556" llx="16" lly="0" urx="534" ury="676"/>
+      <char name="hungarumlaut" width="333" llx="-13" lly="528" urx="425" ury="713"/>
+      <char name="hyphen" width="333" llx="44" lly="171" urx="287" ury="287"/>
+      <char name="i" width="278" llx="16" lly="0" urx="255" ury="691"/>
+      <char name="iacute" width="278" llx="16" lly="0" urx="289" ury="713"/>
+      <char name="icircumflex" width="278" llx="-37" lly="0" urx="300" ury="704"/>
+      <char name="idieresis" width="278" llx="-37" lly="0" urx="300" ury="667"/>
+      <char name="igrave" width="278" llx="-27" lly="0" urx="255" ury="713"/>
+      <char name="j" width="333" llx="-57" lly="-203" urx="263" ury="691"/>
+      <char name="k" width="556" llx="22" lly="0" urx="543" ury="676"/>
+      <char name="l" width="278" llx="16" lly="0" urx="255" ury="676"/>
+      <char name="less" width="570" llx="31" lly="-8" urx="539" ury="514"/>
+      <char name="logicalnot" width="570" llx="33" lly="108" urx="537" ury="399"/>
+      <char name="lslash" width="278" llx="-22" lly="0" urx="303" ury="676"/>
+      <char name="m" width="833" llx="16" lly="0" urx="814" ury="473"/>
+      <char name="macron" width="333" llx="1" lly="565" urx="331" ury="637"/>
+      <char name="minus" width="324" llx="33" lly="209" urx="537" ury="297"/>
+      <char name="mu" width="556" llx="33" lly="-206" urx="536" ury="461"/>
+      <char name="multiply" width="570" llx="48" lly="16" urx="522" ury="490"/>
+      <char name="n" width="556" llx="21" lly="0" urx="539" ury="473"/>
+      <char name="nine" width="500" llx="26" lly="-13" urx="473" ury="688"/>
+      <char name="ntilde" width="556" llx="21" lly="0" urx="539" ury="674"/>
+      <char name="numbersign" width="500" llx="4" lly="0" urx="496" ury="700"/>
+      <char name="o" width="500" llx="25" lly="-14" urx="476" ury="473"/>
+      <char name="oacute" width="500" llx="25" lly="-14" urx="476" ury="713"/>
+      <char name="ocircumflex" width="500" llx="25" lly="-14" urx="476" ury="704"/>
+      <char name="odieresis" width="500" llx="25" lly="-14" urx="476" ury="667"/>
+      <char name="oe" width="722" llx="22" lly="-14" urx="696" ury="473"/>
+      <char name="ogonek" width="333" llx="90" lly="-193" urx="319" ury="24"/>
+      <char name="ograve" width="500" llx="25" lly="-14" urx="476" ury="713"/>
+      <char name="one" width="500" llx="65" lly="0" urx="442" ury="688"/>
+      <char name="onehalf" width="750" llx="-7" lly="-12" urx="775" ury="688"/>
+      <char name="onequarter" width="750" llx="28" lly="-12" urx="743" ury="688"/>
+      <char name="onesuperior" width="300" llx="28" lly="275" urx="273" ury="688"/>
+      <char name="ordfeminine" width="300" llx="-1" lly="397" urx="301" ury="688"/>
+      <char name="ordmasculine" width="330" llx="18" lly="397" urx="312" ury="688"/>
+      <char name="oslash" width="500" llx="25" lly="-92" urx="476" ury="549"/>
+      <char name="otilde" width="500" llx="25" lly="-14" urx="476" ury="674"/>
+      <char name="p" width="556" llx="19" lly="-205" urx="524" ury="473"/>
+      <char name="paragraph" width="540" llx="0" lly="-186" urx="519" ury="676"/>
+      <char name="parenleft" width="333" llx="46" lly="-168" urx="306" ury="694"/>
+      <char name="parenright" width="333" llx="27" lly="-168" urx="287" ury="694"/>
+      <char name="percent" width="1000" llx="124" lly="-14" urx="877" ury="692"/>
+      <char name="period" width="250" llx="41" lly="-13" urx="210" ury="156"/>
+      <char name="periodcentered" width="250" llx="41" lly="248" urx="210" ury="417"/>
+      <char name="perthousand" width="1000" llx="7" lly="-29" urx="995" ury="706"/>
+      <char name="plus" width="570" llx="33" lly="0" urx="537" ury="506"/>
+      <char name="plusminus" width="570" llx="33" lly="0" urx="537" ury="506"/>
+      <char name="q" width="556" llx="34" lly="-205" urx="536" ury="473"/>
+      <char name="question" width="500" llx="57" lly="-13" urx="445" ury="689"/>
+      <char name="questiondown" width="500" llx="55" lly="-201" urx="443" ury="501"/>
+      <char name="quotedbl" width="555" llx="83" lly="404" urx="472" ury="691"/>
+      <char name="quotedblbase" width="500" llx="14" lly="-180" urx="468" ury="155"/>
+      <char name="quotedblleft" width="500" llx="32" lly="356" urx="486" ury="691"/>
+      <char name="quotedblright" width="500" llx="14" lly="356" urx="468" ury="691"/>
+      <char name="quoteleft" width="333" llx="70" lly="356" urx="254" ury="691"/>
+      <char name="quoteright" width="333" llx="79" lly="356" urx="263" ury="691"/>
+      <char name="quotesinglbase" width="333" llx="79" lly="-180" urx="263" ury="155"/>
+      <char name="quotesingle" width="278" llx="75" lly="404" urx="204" ury="691"/>
+      <char name="r" width="444" llx="29" lly="0" urx="434" ury="473"/>
+      <char name="registered" width="747" llx="26" lly="-19" urx="721" ury="691"/>
+      <char name="ring" width="333" llx="60" lly="527" urx="273" ury="740"/>
+      <char name="s" width="389" llx="25" lly="-14" urx="361" ury="473"/>
+      <char name="scaron" width="389" llx="25" lly="-14" urx="363" ury="704"/>
+      <char name="section" width="500" llx="57" lly="-132" urx="443" ury="691"/>
+      <char name="semicolon" width="333" llx="82" lly="-180" urx="266" ury="472"/>
+      <char name="seven" width="500" llx="17" lly="0" urx="477" ury="676"/>
+      <char name="six" width="500" llx="28" lly="-13" urx="475" ury="688"/>
+      <char name="slash" width="278" llx="-24" lly="-19" urx="302" ury="691"/>
+      <char name="space" width="250" llx="0" lly="0" urx="0" ury="0"/>
       <!-- JKT: the following has been manually added -->
-      <char name="nbsp" width="250"/>
-      <char name="sterling" width="500"/>
-      <char name="t" width="333"/>
-      <char name="thorn" width="556"/>
-      <char name="three" width="500"/>
-      <char name="threequarters" width="750"/>
-      <char name="threesuperior" width="300"/>
-      <char name="tilde" width="333"/>
-      <char name="trademark" width="1000"/>
-      <char name="two" width="500"/>
-      <char name="twosuperior" width="300"/>
-      <char name="u" width="556"/>
-      <char name="uacute" width="556"/>
-      <char name="ucircumflex" width="556"/>
-      <char name="udieresis" width="556"/>
-      <char name="ugrave" width="556"/>
-      <char name="underscore" width="500"/>
-      <char name="v" width="500"/>
-      <char name="w" width="722"/>
-      <char name="x" width="500"/>
-      <char name="y" width="500"/>
-      <char name="yacute" width="500"/>
-      <char name="ydieresis" width="500"/>
-      <char name="yen" width="500"/>
-      <char name="z" width="444"/>
-      <char name="zcaron" width="444"/>
-      <char name="zero" width="500"/>
-   </widths>
+      <char name="sterling" width="500" llx="21" lly="-14" urx="477" ury="684"/>
+      <char name="t" width="333" llx="20" lly="-12" urx="332" ury="630"/>
+      <char name="thorn" width="556" llx="19" lly="-205" urx="524" ury="676"/>
+      <char name="three" width="500" llx="16" lly="-14" urx="468" ury="688"/>
+      <char name="threequarters" width="750" llx="23" lly="-12" urx="733" ury="688"/>
+      <char name="threesuperior" width="300" llx="3" lly="268" urx="297" ury="688"/>
+      <char name="tilde" width="333" llx="-16" lly="547" urx="349" ury="674"/>
+      <char name="trademark" width="1000" llx="24" lly="271" urx="977" ury="676"/>
+      <char name="two" width="500" llx="17" lly="0" urx="478" ury="688"/>
+      <char name="twosuperior" width="300" llx="0" lly="275" urx="300" ury="688"/>
+      <char name="u" width="556" llx="16" lly="-14" urx="537" ury="461"/>
+      <char name="uacute" width="556" llx="16" lly="-14" urx="537" ury="713"/>
+      <char name="ucircumflex" width="556" llx="16" lly="-14" urx="537" ury="704"/>
+      <char name="udieresis" width="556" llx="16" lly="-14" urx="537" ury="667"/>
+      <char name="ugrave" width="556" llx="16" lly="-14" urx="537" ury="713"/>
+      <char name="underscore" width="500" llx="0" lly="-125" urx="500" ury="-75"/>
+      <char name="v" width="500" llx="21" lly="-14" urx="485" ury="461"/>
+      <char name="w" width="722" llx="23" lly="-14" urx="707" ury="461"/>
+      <char name="x" width="500" llx="12" lly="0" urx="484" ury="461"/>
+      <char name="y" width="500" llx="16" lly="-205" urx="480" ury="461"/>
+      <char name="yacute" width="500" llx="16" lly="-205" urx="480" ury="713"/>
+      <char name="ydieresis" width="500" llx="16" lly="-205" urx="480" ury="667"/>
+      <char name="yen" width="500" llx="-64" lly="0" urx="547" ury="676"/>
+      <char name="z" width="444" llx="21" lly="0" urx="420" ury="461"/>
+      <char name="zcaron" width="444" llx="21" lly="0" urx="420" ury="704"/>
+      <char name="zero" width="500" llx="24" lly="-13" urx="476" ury="688"/>
+    </char-metrics>
   <kerning kpx1="79">
     <pair kern="-40" kpx2="65"/>
     <pair kern="-50" kpx2="87"/>
