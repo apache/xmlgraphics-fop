@@ -24,10 +24,10 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -58,4 +58,17 @@ public class DejaVuLGCSerifTestCase {
     public void testFontName() {
         assertEquals("DejaVuLGCSerif", font.getFontName());
     }
+
+    @Test
+    public void testUnderline() {
+        assertEquals(-840, font.getUnderlinePosition(10));
+        assertEquals(430, font.getUnderlineThickness(10));
+    }
+
+    @Test
+    public void testStrikeout() {
+        assertEquals(2340, font.getStrikeoutPosition(10));
+        assertEquals(490, font.getStrikeoutThickness(10));
+    }
+
 }

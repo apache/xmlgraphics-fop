@@ -19,6 +19,7 @@
 
 package org.apache.fop.afp.fonts;
 
+import java.awt.Rectangle;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +34,8 @@ import org.apache.fop.fonts.Typeface;
  * <p/>
  */
 public abstract class AFPFont extends Typeface {
+
+    private static final double STRIKEOUT_POSITION_FACTOR = 0.45;
 
     /** The font name */
     protected final String name;
@@ -117,7 +120,34 @@ public abstract class AFPFont extends Typeface {
      */
     protected static final char toUnicodeCodepoint(int character) {
         //AFP fonts use Unicode directly as their mapped code points, so we can simply cast to char
-        return (char)character;
+        return (char) character;
+    }
+
+    /** {@inheritDoc} */
+    public int getUnderlineThickness(int size) {
+        // This is the FOCA recommendation in the absence of the Underline Thickness parameter
+        return getBoundingBox('-', size).height;
+    }
+
+    /** {@inheritDoc} */
+    public int getStrikeoutPosition(int size) {
+        //TODO This conflicts with the FOCA recommendation of 0 in the absence of the Throughscore Position
+        // parameter
+        return (int) (STRIKEOUT_POSITION_FACTOR * getCapHeight(size));
+    }
+
+    /** {@inheritDoc} */
+    public int getStrikeoutThickness(int size) {
+        // This is the FOCA recommendation in the absence of the Throughscore Thickness parameter
+        return getBoundingBox('-', size).height;
+    }
+
+    /** {@inheritDoc} */
+    public abstract Rectangle getBoundingBox(int glyphIndex, int size);
+
+    /** {@inheritDoc} */
+    public int[] getWidths() {
+        throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */

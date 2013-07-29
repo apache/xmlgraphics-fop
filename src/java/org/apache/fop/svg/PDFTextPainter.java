@@ -19,25 +19,17 @@
 
 package org.apache.fop.svg;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
-import java.text.AttributedCharacterIterator;
 
-import org.apache.batik.gvt.font.GVTGlyphVector;
 import org.apache.batik.gvt.text.TextPaintInfo;
-import org.apache.batik.gvt.text.TextSpanLayout;
 
-import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.util.CharUtilities;
 
 /**
  * Renders the attributed character iterator of a {@link org.apache.batik.gvt.TextNode}.
@@ -51,11 +43,19 @@ import org.apache.fop.util.CharUtilities;
  */
 class PDFTextPainter extends NativeTextPainter {
 
-    private static final boolean DEBUG = false;
+    private PDFGraphics2D pdf;
+
+    private PDFTextUtil textUtil;
+
+    private double prevVisibleGlyphWidth;
+
+    private boolean repositionNextGlyph;
 
     /**
      * Create a new PDF text painter with the given font information.
+     *
      * @param fi the font info
+     * @param fontFamilyResolver the Font Family Resolver
      */
     public PDFTextPainter(FontInfo fi) {
         super(fi);
@@ -67,29 +67,29 @@ class PDFTextPainter extends NativeTextPainter {
         return g2d instanceof PDFGraphics2D;
     }
 
-    /** {@inheritDoc} */
     @Override
-    protected void paintTextRun(TextRun textRun, Graphics2D g2d) {
-        AttributedCharacterIterator runaci = textRun.getACI();
-        runaci.first();
+    protected void preparePainting(Graphics2D g2d) {
+        pdf = (PDFGraphics2D) g2d;
+    }
 
-        TextPaintInfo tpi = (TextPaintInfo)runaci.getAttribute(PAINT_INFO);
-        if (tpi == null || !tpi.visible) {
-            return;
-        }
-        if ((tpi != null) && (tpi.composite != null)) {
-            g2d.setComposite(tpi.composite);
-        }
+    @Override
+    protected void saveGraphicsState() {
+        pdf.saveGraphicsState();
+    }
 
-        //------------------------------------
-        TextSpanLayout layout = textRun.getLayout();
-        logTextRun(runaci, layout);
-        CharSequence chars = collectCharacters(runaci);
-        runaci.first(); //Reset ACI
+    @Override
+    protected void restoreGraphicsState() {
+        pdf.restoreGraphicsState();
+    }
 
-        final PDFGraphics2D pdf = (PDFGraphics2D)g2d;
+    @Override
+    protected void setInitialTransform(AffineTransform transform) {
+        createTextUtil();
+        textUtil.concatMatrix(transform);
+    }
 
-        PDFTextUtil textUtil = new PDFTextUtil(pdf.fontInfo) {
+    private void createTextUtil() {
+        textUtil = new PDFTextUtil(pdf.fontInfo) {
             protected void write(String code) {
                 pdf.currentStream.write(code);
             }
@@ -97,142 +97,39 @@ class PDFTextPainter extends NativeTextPainter {
                 pdf.currentStream.append(code);
             }
         };
-
-        if (DEBUG) {
-            log.debug("Text: " + chars);
-            pdf.currentStream.write("%Text: " + chars + "\n");
-        }
-
-        GeneralPath debugShapes = null;
-        if (DEBUG) {
-            debugShapes = new GeneralPath();
-        }
-
-        Font[] fonts = findFonts(runaci);
-        if (fonts == null || fonts.length == 0) {
-            //Draw using Java2D when no native fonts are available
-            textRun.getLayout().draw(g2d);
-            return;
-        }
-
-        pdf.saveGraphicsState();
-        textUtil.concatMatrix(g2d.getTransform());
-        Shape imclip = g2d.getClip();
-        pdf.writeClip(imclip);
-
-        applyColorAndPaint(tpi, pdf);
-
-        textUtil.beginTextObject();
-        textUtil.setFonts(fonts);
-        boolean stroke = (tpi.strokePaint != null)
-            && (tpi.strokeStroke != null);
-        textUtil.setTextRenderingMode(tpi.fillPaint != null, stroke, false);
-
-        AffineTransform localTransform = new AffineTransform();
-        Point2D prevPos = null;
-        double prevVisibleCharWidth = 0.0;
-        GVTGlyphVector gv = layout.getGlyphVector();
-        for (int index = 0, c = gv.getNumGlyphs(); index < c; index++) {
-            char ch = chars.charAt(index);
-            boolean visibleChar = gv.isGlyphVisible(index)
-                || (CharUtilities.isAnySpace(ch) && !CharUtilities.isZeroWidthSpace(ch));
-            logCharacter(ch, layout, index, visibleChar);
-            if (!visibleChar) {
-                continue;
-            }
-            Point2D glyphPos = gv.getGlyphPosition(index);
-
-            AffineTransform glyphTransform = gv.getGlyphTransform(index);
-            //TODO Glyph transforms could be refined so not every char has to be painted
-            //with its own TJ command (stretch/squeeze case could be optimized)
-            if (log.isTraceEnabled()) {
-                log.trace("pos " + glyphPos + ", transform " + glyphTransform);
-            }
-            if (DEBUG) {
-                Shape sh = gv.getGlyphLogicalBounds(index);
-                if (sh == null) {
-                    sh = new Ellipse2D.Double(glyphPos.getX(), glyphPos.getY(), 2, 2);
-                }
-                debugShapes.append(sh, false);
-            }
-
-            //Exact position of the glyph
-            localTransform.setToIdentity();
-            localTransform.translate(glyphPos.getX(), glyphPos.getY());
-            if (glyphTransform != null) {
-                localTransform.concatenate(glyphTransform);
-            }
-            localTransform.scale(1, -1);
-
-            boolean yPosChanged = (prevPos == null
-                    || prevPos.getY() != glyphPos.getY()
-                    || glyphTransform != null);
-            if (yPosChanged) {
-                if (index > 0) {
-                    textUtil.writeTJ();
-                    textUtil.writeTextMatrix(localTransform);
-                }
-            } else {
-                double xdiff = glyphPos.getX() - prevPos.getX();
-                //Width of previous character
-                Font font = textUtil.getCurrentFont();
-                double cw = prevVisibleCharWidth;
-                double effxdiff = (1000 * xdiff) - cw;
-                if (effxdiff != 0) {
-                    double adjust = (-effxdiff / font.getFontSize());
-                    textUtil.adjustGlyphTJ(adjust * 1000);
-                }
-                if (log.isTraceEnabled()) {
-                    log.trace("==> x diff: " + xdiff + ", " + effxdiff
-                            + ", charWidth: " + cw);
-                }
-            }
-            Font f = textUtil.selectFontForChar(ch);
-            char paintChar = (CharUtilities.isAnySpace(ch) ? ' ' : ch);
-            char mappedChar = f.mapChar(paintChar);
-            boolean encodingChanging = false; // used for single byte
-            if (!textUtil.isMultiByteFont(f.getFontName())) {
-                int encoding = mappedChar / 256;
-                mappedChar = (char) (mappedChar % 256);
-                if (textUtil.getCurrentEncoding() != encoding) {
-                    textUtil.setCurrentEncoding(encoding);
-                    encodingChanging = true;
-                }
-            }
-            if (f != textUtil.getCurrentFont() || encodingChanging) {
-                textUtil.writeTJ();
-                textUtil.setCurrentFont(f);
-                textUtil.writeTf(f);
-                textUtil.writeTextMatrix(localTransform);
-            }
-            textUtil.writeTJMappedChar(mappedChar);
-
-            //Update last position
-            prevPos = glyphPos;
-            prevVisibleCharWidth = textUtil.getCurrentFont().getCharWidth(chars.charAt(index));
-        }
-        textUtil.writeTJ();
-        textUtil.endTextObject();
-        pdf.restoreGraphicsState();
-        if (DEBUG) {
-            g2d.setStroke(new BasicStroke(0));
-            g2d.setColor(Color.LIGHT_GRAY);
-            g2d.draw(debugShapes);
-        }
     }
 
-    private void applyColorAndPaint(TextPaintInfo tpi, PDFGraphics2D pdf) {
+    @Override
+    protected void clip(Shape clip) {
+        pdf.writeClip(clip);
+    }
+
+    @Override
+    protected void beginTextObject() {
+        applyColorAndPaint(tpi);
+        textUtil.beginTextObject();
+        boolean stroke = (tpi.strokePaint != null) && (tpi.strokeStroke != null);
+        textUtil.setTextRenderingMode(tpi.fillPaint != null, stroke, false);
+    }
+
+    @Override
+    protected void endTextObject() {
+        textUtil.writeTJ();
+        textUtil.endTextObject();
+    }
+
+    private void applyColorAndPaint(TextPaintInfo tpi) {
         Paint fillPaint = tpi.fillPaint;
         Paint strokePaint = tpi.strokePaint;
         Stroke stroke = tpi.strokeStroke;
         int fillAlpha = PDFGraphics2D.OPAQUE;
         if (fillPaint instanceof Color) {
-            Color col = (Color)fillPaint;
+            Color col = (Color) fillPaint;
             pdf.applyColor(col, true);
             fillAlpha = col.getAlpha();
         }
         if (strokePaint instanceof Color) {
-            Color col = (Color)strokePaint;
+            Color col = (Color) strokePaint;
             pdf.applyColor(col, false);
         }
         pdf.applyPaint(fillPaint, true);
@@ -241,6 +138,48 @@ class PDFTextPainter extends NativeTextPainter {
             pdf.applyPaint(strokePaint, false);
         }
         pdf.applyAlpha(fillAlpha, PDFGraphics2D.OPAQUE);
+    }
+
+    @Override
+    protected void positionGlyph(Point2D prevPos, Point2D glyphPos, boolean reposition) {
+        // TODO Glyph transforms could be refined so not every char has to be painted
+        // with its own TJ command (stretch/squeeze case could be optimized)
+        repositionNextGlyph = (prevPos == null
+                || prevPos.getY() != glyphPos.getY()
+                || reposition);
+        if (!repositionNextGlyph) {
+            double xdiff = glyphPos.getX() - prevPos.getX();
+            //Width of previous character
+            double cw = prevVisibleGlyphWidth;
+            double effxdiff = (1000 * xdiff) - cw;
+            if (effxdiff != 0) {
+                double adjust = (-effxdiff / font.getFontSize());
+                textUtil.adjustGlyphTJ(adjust * 1000);
+            }
+        }
+    }
+
+    @Override
+    protected void writeGlyph(char glyph, AffineTransform transform) {
+        prevVisibleGlyphWidth = font.getWidth(glyph);
+        boolean encodingChanging = false; // used for single byte
+        if (!textUtil.isMultiByteFont(font.getFontName())) {
+            int encoding = glyph / 256;
+            glyph = (char) (glyph % 256);
+            if (textUtil.getCurrentEncoding() != encoding) {
+                textUtil.setCurrentEncoding(encoding);
+                encodingChanging = true;
+            }
+        }
+        if (repositionNextGlyph || encodingChanging) {
+            textUtil.writeTJ();
+            if (font != textUtil.getCurrentFont() || encodingChanging) {
+                textUtil.setCurrentFont(font);
+                textUtil.writeTf(font);
+            }
+            textUtil.writeTextMatrix(transform);
+        }
+        textUtil.writeTJMappedChar(glyph);
     }
 
 }

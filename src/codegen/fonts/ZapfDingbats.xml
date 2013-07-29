@@ -21,214 +21,216 @@
   <family-name>ZapfDingbats</family-name>
   <class-name>ZapfDingbats</class-name>
   <encoding>ZapfDingbatsEncoding</encoding>
+   <underline-position>-100</underline-position>
+   <underline-thickness>50</underline-thickness>
   <cap-height>820</cap-height>
   <x-height>426</x-height>
   <ascender>820</ascender>
   <descender>-143</descender>
   <first-char>32</first-char>
   <last-char>255</last-char>
-  <widths>
-    <char name="space" width="278"/>
-    <char name="a1" width="974"/>
-    <char name="a2" width="961"/>
-    <char name="a202" width="974"/>
-    <char name="a3" width="980"/>
-    <char name="a4" width="719"/>
-    <char name="a5" width="789"/>
-    <char name="a119" width="790"/>
-    <char name="a118" width="791"/>
-    <char name="a117" width="690"/>
-    <char name="a11" width="960"/>
-    <char name="a12" width="939"/>
-    <char name="a13" width="549"/>
-    <char name="a14" width="855"/>
-    <char name="a15" width="911"/>
-    <char name="a16" width="933"/>
-    <char name="a105" width="911"/>
-    <char name="a17" width="945"/>
-    <char name="a18" width="974"/>
-    <char name="a19" width="755"/>
-    <char name="a20" width="846"/>
-    <char name="a21" width="762"/>
-    <char name="a22" width="761"/>
-    <char name="a23" width="571"/>
-    <char name="a24" width="677"/>
-    <char name="a25" width="763"/>
-    <char name="a26" width="760"/>
-    <char name="a27" width="759"/>
-    <char name="a28" width="754"/>
-    <char name="a6" width="494"/>
-    <char name="a7" width="552"/>
-    <char name="a8" width="537"/>
-    <char name="a9" width="577"/>
-    <char name="a10" width="692"/>
-    <char name="a29" width="786"/>
-    <char name="a30" width="788"/>
-    <char name="a31" width="788"/>
-    <char name="a32" width="790"/>
-    <char name="a33" width="793"/>
-    <char name="a34" width="794"/>
-    <char name="a35" width="816"/>
-    <char name="a36" width="823"/>
-    <char name="a37" width="789"/>
-    <char name="a38" width="841"/>
-    <char name="a39" width="823"/>
-    <char name="a40" width="833"/>
-    <char name="a41" width="816"/>
-    <char name="a42" width="831"/>
-    <char name="a43" width="923"/>
-    <char name="a44" width="744"/>
-    <char name="a45" width="723"/>
-    <char name="a46" width="749"/>
-    <char name="a47" width="790"/>
-    <char name="a48" width="792"/>
-    <char name="a49" width="695"/>
-    <char name="a50" width="776"/>
-    <char name="a51" width="768"/>
-    <char name="a52" width="792"/>
-    <char name="a53" width="759"/>
-    <char name="a54" width="707"/>
-    <char name="a55" width="708"/>
-    <char name="a56" width="682"/>
-    <char name="a57" width="701"/>
-    <char name="a58" width="826"/>
-    <char name="a59" width="815"/>
-    <char name="a60" width="789"/>
-    <char name="a61" width="789"/>
-    <char name="a62" width="707"/>
-    <char name="a63" width="687"/>
-    <char name="a64" width="696"/>
-    <char name="a65" width="689"/>
-    <char name="a66" width="786"/>
-    <char name="a67" width="787"/>
-    <char name="a68" width="713"/>
-    <char name="a69" width="791"/>
-    <char name="a70" width="785"/>
-    <char name="a71" width="791"/>
-    <char name="a72" width="873"/>
-    <char name="a73" width="761"/>
-    <char name="a74" width="762"/>
-    <char name="a203" width="762"/>
-    <char name="a75" width="759"/>
-    <char name="a204" width="759"/>
-    <char name="a76" width="892"/>
-    <char name="a77" width="892"/>
-    <char name="a78" width="788"/>
-    <char name="a79" width="784"/>
-    <char name="a81" width="438"/>
-    <char name="a82" width="138"/>
-    <char name="a83" width="277"/>
-    <char name="a84" width="415"/>
-    <char name="a97" width="392"/>
-    <char name="a98" width="392"/>
-    <char name="a99" width="668"/>
-    <char name="a100" width="668"/>
-    <char name="a101" width="732"/>
-    <char name="a102" width="544"/>
-    <char name="a103" width="544"/>
-    <char name="a104" width="910"/>
-    <char name="a106" width="667"/>
-    <char name="a107" width="760"/>
-    <char name="a108" width="760"/>
-    <char name="a112" width="776"/>
-    <char name="a111" width="595"/>
-    <char name="a110" width="694"/>
-    <char name="a109" width="626"/>
-    <char name="a120" width="788"/>
-    <char name="a121" width="788"/>
-    <char name="a122" width="788"/>
-    <char name="a123" width="788"/>
-    <char name="a124" width="788"/>
-    <char name="a125" width="788"/>
-    <char name="a126" width="788"/>
-    <char name="a127" width="788"/>
-    <char name="a128" width="788"/>
-    <char name="a129" width="788"/>
-    <char name="a130" width="788"/>
-    <char name="a131" width="788"/>
-    <char name="a132" width="788"/>
-    <char name="a133" width="788"/>
-    <char name="a134" width="788"/>
-    <char name="a135" width="788"/>
-    <char name="a136" width="788"/>
-    <char name="a137" width="788"/>
-    <char name="a138" width="788"/>
-    <char name="a139" width="788"/>
-    <char name="a140" width="788"/>
-    <char name="a141" width="788"/>
-    <char name="a142" width="788"/>
-    <char name="a143" width="788"/>
-    <char name="a144" width="788"/>
-    <char name="a145" width="788"/>
-    <char name="a146" width="788"/>
-    <char name="a147" width="788"/>
-    <char name="a148" width="788"/>
-    <char name="a149" width="788"/>
-    <char name="a150" width="788"/>
-    <char name="a151" width="788"/>
-    <char name="a152" width="788"/>
-    <char name="a153" width="788"/>
-    <char name="a154" width="788"/>
-    <char name="a155" width="788"/>
-    <char name="a156" width="788"/>
-    <char name="a157" width="788"/>
-    <char name="a158" width="788"/>
-    <char name="a159" width="788"/>
-    <char name="a160" width="894"/>
-    <char name="a161" width="838"/>
-    <char name="a163" width="1016"/>
-    <char name="a164" width="458"/>
-    <char name="a196" width="748"/>
-    <char name="a165" width="924"/>
-    <char name="a192" width="748"/>
-    <char name="a166" width="918"/>
-    <char name="a167" width="927"/>
-    <char name="a168" width="928"/>
-    <char name="a169" width="928"/>
-    <char name="a170" width="834"/>
-    <char name="a171" width="873"/>
-    <char name="a172" width="828"/>
-    <char name="a173" width="924"/>
-    <char name="a162" width="924"/>
-    <char name="a174" width="917"/>
-    <char name="a175" width="930"/>
-    <char name="a176" width="931"/>
-    <char name="a177" width="463"/>
-    <char name="a178" width="883"/>
-    <char name="a179" width="836"/>
-    <char name="a193" width="836"/>
-    <char name="a180" width="867"/>
-    <char name="a199" width="867"/>
-    <char name="a181" width="696"/>
-    <char name="a200" width="696"/>
-    <char name="a182" width="874"/>
-    <char name="a201" width="874"/>
-    <char name="a183" width="760"/>
-    <char name="a184" width="946"/>
-    <char name="a197" width="771"/>
-    <char name="a185" width="865"/>
-    <char name="a194" width="771"/>
-    <char name="a198" width="888"/>
-    <char name="a186" width="967"/>
-    <char name="a195" width="888"/>
-    <char name="a187" width="831"/>
-    <char name="a188" width="873"/>
-    <char name="a189" width="927"/>
-    <char name="a190" width="970"/>
-    <char name="a191" width="918"/>
-    <char name="a86" width="410"/>
-    <char name="a85" width="509"/>
-    <char name="a95" width="334"/>
-    <char name="a205" width="509"/>
-    <char name="a89" width="390"/>
-    <char name="a87" width="234"/>
-    <char name="a91" width="276"/>
-    <char name="a90" width="390"/>
-    <char name="a206" width="410"/>
-    <char name="a94" width="317"/>
-    <char name="a93" width="317"/>
-    <char name="a92" width="276"/>
-    <char name="a96" width="334"/>
-    <char name="a88" width="234"/>
-  </widths>
+    <char-metrics>
+    <char name="space" width="278" llx="0" lly="0" urx="0" ury="0"/>
+    <char name="a1" width="974" llx="35" lly="72" urx="939" ury="621"/>
+    <char name="a2" width="961" llx="35" lly="81" urx="927" ury="611"/>
+    <char name="a202" width="974" llx="35" lly="72" urx="939" ury="621"/>
+    <char name="a3" width="980" llx="35" lly="0" urx="945" ury="692"/>
+    <char name="a4" width="719" llx="34" lly="139" urx="685" ury="566"/>
+    <char name="a5" width="789" llx="35" lly="-14" urx="755" ury="705"/>
+    <char name="a119" width="790" llx="35" lly="-14" urx="755" ury="705"/>
+    <char name="a118" width="791" llx="35" lly="-13" urx="761" ury="705"/>
+    <char name="a117" width="690" llx="34" lly="138" urx="655" ury="553"/>
+    <char name="a11" width="960" llx="35" lly="123" urx="925" ury="568"/>
+    <char name="a12" width="939" llx="35" lly="134" urx="904" ury="559"/>
+    <char name="a13" width="549" llx="29" lly="-11" urx="516" ury="705"/>
+    <char name="a14" width="855" llx="34" lly="59" urx="820" ury="632"/>
+    <char name="a15" width="911" llx="35" lly="50" urx="876" ury="642"/>
+    <char name="a16" width="933" llx="35" lly="139" urx="899" ury="550"/>
+    <char name="a105" width="911" llx="35" lly="50" urx="876" ury="642"/>
+    <char name="a17" width="945" llx="35" lly="139" urx="909" ury="553"/>
+    <char name="a18" width="974" llx="35" lly="104" urx="938" ury="587"/>
+    <char name="a19" width="755" llx="34" lly="-13" urx="721" ury="705"/>
+    <char name="a20" width="846" llx="36" lly="-14" urx="811" ury="705"/>
+    <char name="a21" width="762" llx="35" lly="0" urx="727" ury="692"/>
+    <char name="a22" width="761" llx="35" lly="0" urx="727" ury="692"/>
+    <char name="a23" width="571" llx="-1" lly="-68" urx="571" ury="661"/>
+    <char name="a24" width="677" llx="36" lly="-13" urx="642" ury="705"/>
+    <char name="a25" width="763" llx="35" lly="0" urx="728" ury="692"/>
+    <char name="a26" width="760" llx="35" lly="0" urx="726" ury="692"/>
+    <char name="a27" width="759" llx="35" lly="0" urx="725" ury="692"/>
+    <char name="a28" width="754" llx="35" lly="0" urx="720" ury="692"/>
+    <char name="a6" width="494" llx="35" lly="0" urx="460" ury="692"/>
+    <char name="a7" width="552" llx="35" lly="0" urx="517" ury="692"/>
+    <char name="a8" width="537" llx="35" lly="0" urx="503" ury="692"/>
+    <char name="a9" width="577" llx="35" lly="96" urx="542" ury="596"/>
+    <char name="a10" width="692" llx="35" lly="-14" urx="657" ury="705"/>
+    <char name="a29" width="786" llx="35" lly="-14" urx="751" ury="705"/>
+    <char name="a30" width="788" llx="35" lly="-14" urx="752" ury="705"/>
+    <char name="a31" width="788" llx="35" lly="-14" urx="753" ury="705"/>
+    <char name="a32" width="790" llx="35" lly="-14" urx="756" ury="705"/>
+    <char name="a33" width="793" llx="35" lly="-13" urx="759" ury="705"/>
+    <char name="a34" width="794" llx="35" lly="-13" urx="759" ury="705"/>
+    <char name="a35" width="816" llx="35" lly="-14" urx="782" ury="705"/>
+    <char name="a36" width="823" llx="35" lly="-14" urx="787" ury="705"/>
+    <char name="a37" width="789" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a38" width="841" llx="35" lly="-14" urx="807" ury="705"/>
+    <char name="a39" width="823" llx="35" lly="-14" urx="789" ury="705"/>
+    <char name="a40" width="833" llx="35" lly="-14" urx="798" ury="705"/>
+    <char name="a41" width="816" llx="35" lly="-13" urx="782" ury="705"/>
+    <char name="a42" width="831" llx="35" lly="-14" urx="796" ury="705"/>
+    <char name="a43" width="923" llx="35" lly="-14" urx="888" ury="705"/>
+    <char name="a44" width="744" llx="35" lly="0" urx="710" ury="692"/>
+    <char name="a45" width="723" llx="35" lly="0" urx="688" ury="692"/>
+    <char name="a46" width="749" llx="35" lly="0" urx="714" ury="692"/>
+    <char name="a47" width="790" llx="34" lly="-14" urx="756" ury="705"/>
+    <char name="a48" width="792" llx="35" lly="-14" urx="758" ury="705"/>
+    <char name="a49" width="695" llx="35" lly="-14" urx="661" ury="706"/>
+    <char name="a50" width="776" llx="35" lly="-6" urx="741" ury="699"/>
+    <char name="a51" width="768" llx="35" lly="-7" urx="734" ury="699"/>
+    <char name="a52" width="792" llx="35" lly="-14" urx="757" ury="705"/>
+    <char name="a53" width="759" llx="35" lly="0" urx="725" ury="692"/>
+    <char name="a54" width="707" llx="35" lly="-13" urx="672" ury="704"/>
+    <char name="a55" width="708" llx="35" lly="-14" urx="672" ury="705"/>
+    <char name="a56" width="682" llx="35" lly="-14" urx="647" ury="705"/>
+    <char name="a57" width="701" llx="35" lly="-14" urx="666" ury="705"/>
+    <char name="a58" width="826" llx="35" lly="-14" urx="791" ury="705"/>
+    <char name="a59" width="815" llx="35" lly="-14" urx="780" ury="705"/>
+    <char name="a60" width="789" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a61" width="789" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a62" width="707" llx="34" lly="-14" urx="673" ury="705"/>
+    <char name="a63" width="687" llx="36" lly="0" urx="651" ury="692"/>
+    <char name="a64" width="696" llx="35" lly="0" urx="661" ury="691"/>
+    <char name="a65" width="689" llx="35" lly="0" urx="655" ury="692"/>
+    <char name="a66" width="786" llx="34" lly="-14" urx="751" ury="705"/>
+    <char name="a67" width="787" llx="35" lly="-14" urx="752" ury="705"/>
+    <char name="a68" width="713" llx="35" lly="-14" urx="678" ury="705"/>
+    <char name="a69" width="791" llx="35" lly="-14" urx="756" ury="705"/>
+    <char name="a70" width="785" llx="36" lly="-14" urx="751" ury="705"/>
+    <char name="a71" width="791" llx="35" lly="-14" urx="757" ury="705"/>
+    <char name="a72" width="873" llx="35" lly="-14" urx="838" ury="705"/>
+    <char name="a73" width="761" llx="35" lly="0" urx="726" ury="692"/>
+    <char name="a74" width="762" llx="35" lly="0" urx="727" ury="692"/>
+    <char name="a203" width="762" llx="35" lly="0" urx="727" ury="692"/>
+    <char name="a75" width="759" llx="35" lly="0" urx="725" ury="692"/>
+    <char name="a204" width="759" llx="35" lly="0" urx="725" ury="692"/>
+    <char name="a76" width="892" llx="35" lly="0" urx="858" ury="705"/>
+    <char name="a77" width="892" llx="35" lly="-14" urx="858" ury="692"/>
+    <char name="a78" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a79" width="784" llx="35" lly="-14" urx="749" ury="705"/>
+    <char name="a81" width="438" llx="35" lly="-14" urx="403" ury="705"/>
+    <char name="a82" width="138" llx="35" lly="0" urx="104" ury="692"/>
+    <char name="a83" width="277" llx="35" lly="0" urx="242" ury="692"/>
+    <char name="a84" width="415" llx="35" lly="0" urx="380" ury="692"/>
+    <char name="a97" width="392" llx="35" lly="263" urx="357" ury="705"/>
+    <char name="a98" width="392" llx="34" lly="263" urx="357" ury="705"/>
+    <char name="a99" width="668" llx="35" lly="263" urx="633" ury="705"/>
+    <char name="a100" width="668" llx="36" lly="263" urx="634" ury="705"/>
+    <char name="a101" width="732" llx="35" lly="-143" urx="697" ury="806"/>
+    <char name="a102" width="544" llx="56" lly="-14" urx="488" ury="706"/>
+    <char name="a103" width="544" llx="34" lly="-14" urx="508" ury="705"/>
+    <char name="a104" width="910" llx="35" lly="40" urx="875" ury="651"/>
+    <char name="a106" width="667" llx="35" lly="-14" urx="633" ury="705"/>
+    <char name="a107" width="760" llx="35" lly="-14" urx="726" ury="705"/>
+    <char name="a108" width="760" llx="0" lly="121" urx="758" ury="569"/>
+    <char name="a112" width="776" llx="35" lly="0" urx="741" ury="705"/>
+    <char name="a111" width="595" llx="34" lly="-14" urx="560" ury="705"/>
+    <char name="a110" width="694" llx="35" lly="-14" urx="659" ury="705"/>
+    <char name="a109" width="626" llx="34" lly="0" urx="591" ury="705"/>
+    <char name="a120" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a121" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a122" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a123" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a124" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a125" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a126" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a127" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a128" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a129" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a130" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a131" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a132" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a133" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a134" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a135" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a136" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a137" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a138" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a139" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a140" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a141" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a142" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a143" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a144" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a145" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a146" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a147" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a148" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a149" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a150" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a151" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a152" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a153" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a154" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a155" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a156" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a157" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a158" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a159" width="788" llx="35" lly="-14" urx="754" ury="705"/>
+    <char name="a160" width="894" llx="35" lly="58" urx="860" ury="634"/>
+    <char name="a161" width="838" llx="35" lly="152" urx="803" ury="540"/>
+    <char name="a163" width="1016" llx="34" lly="152" urx="981" ury="540"/>
+    <char name="a164" width="458" llx="35" lly="-127" urx="422" ury="820"/>
+    <char name="a196" width="748" llx="35" lly="94" urx="698" ury="597"/>
+    <char name="a165" width="924" llx="35" lly="140" urx="890" ury="552"/>
+    <char name="a192" width="748" llx="35" lly="94" urx="698" ury="597"/>
+    <char name="a166" width="918" llx="35" lly="166" urx="884" ury="526"/>
+    <char name="a167" width="927" llx="35" lly="32" urx="892" ury="660"/>
+    <char name="a168" width="928" llx="35" lly="129" urx="891" ury="562"/>
+    <char name="a169" width="928" llx="35" lly="128" urx="893" ury="563"/>
+    <char name="a170" width="834" llx="35" lly="155" urx="799" ury="537"/>
+    <char name="a171" width="873" llx="35" lly="93" urx="838" ury="599"/>
+    <char name="a172" width="828" llx="35" lly="104" urx="791" ury="588"/>
+    <char name="a173" width="924" llx="35" lly="98" urx="889" ury="594"/>
+    <char name="a162" width="924" llx="35" lly="98" urx="889" ury="594"/>
+    <char name="a174" width="917" llx="35" lly="0" urx="882" ury="692"/>
+    <char name="a175" width="930" llx="35" lly="84" urx="896" ury="608"/>
+    <char name="a176" width="931" llx="35" lly="84" urx="896" ury="608"/>
+    <char name="a177" width="463" llx="35" lly="-99" urx="429" ury="791"/>
+    <char name="a178" width="883" llx="35" lly="71" urx="848" ury="623"/>
+    <char name="a179" width="836" llx="35" lly="44" urx="802" ury="648"/>
+    <char name="a193" width="836" llx="35" lly="44" urx="802" ury="648"/>
+    <char name="a180" width="867" llx="35" lly="101" urx="832" ury="591"/>
+    <char name="a199" width="867" llx="35" lly="101" urx="832" ury="591"/>
+    <char name="a181" width="696" llx="35" lly="44" urx="661" ury="648"/>
+    <char name="a200" width="696" llx="35" lly="44" urx="661" ury="648"/>
+    <char name="a182" width="874" llx="35" lly="77" urx="840" ury="619"/>
+    <char name="a201" width="874" llx="35" lly="73" urx="840" ury="615"/>
+    <char name="a183" width="760" llx="35" lly="0" urx="725" ury="692"/>
+    <char name="a184" width="946" llx="35" lly="160" urx="911" ury="533"/>
+    <char name="a197" width="771" llx="34" lly="37" urx="736" ury="655"/>
+    <char name="a185" width="865" llx="35" lly="207" urx="830" ury="481"/>
+    <char name="a194" width="771" llx="34" lly="37" urx="736" ury="655"/>
+    <char name="a198" width="888" llx="34" lly="-19" urx="853" ury="712"/>
+    <char name="a186" width="967" llx="35" lly="124" urx="932" ury="568"/>
+    <char name="a195" width="888" llx="34" lly="-19" urx="853" ury="712"/>
+    <char name="a187" width="831" llx="35" lly="113" urx="796" ury="579"/>
+    <char name="a188" width="873" llx="36" lly="118" urx="838" ury="578"/>
+    <char name="a189" width="927" llx="35" lly="150" urx="891" ury="542"/>
+    <char name="a190" width="970" llx="35" lly="76" urx="931" ury="616"/>
+    <char name="a191" width="918" llx="34" lly="99" urx="884" ury="593"/>
+    <char name="a86" width="410" llx="35" lly="0" urx="375" ury="692"/>
+    <char name="a85" width="509" llx="35" lly="0" urx="475" ury="692"/>
+    <char name="a95" width="334" llx="35" lly="0" urx="299" ury="692"/>
+    <char name="a205" width="509" llx="35" lly="0" urx="475" ury="692"/>
+    <char name="a89" width="390" llx="35" lly="-14" urx="356" ury="705"/>
+    <char name="a87" width="234" llx="35" lly="-14" urx="199" ury="705"/>
+    <char name="a91" width="276" llx="35" lly="0" urx="242" ury="692"/>
+    <char name="a90" width="390" llx="35" lly="-14" urx="355" ury="705"/>
+    <char name="a206" width="410" llx="35" lly="0" urx="375" ury="692"/>
+    <char name="a94" width="317" llx="35" lly="0" urx="283" ury="692"/>
+    <char name="a93" width="317" llx="35" lly="0" urx="283" ury="692"/>
+    <char name="a92" width="276" llx="35" lly="0" urx="242" ury="692"/>
+    <char name="a96" width="334" llx="35" lly="0" urx="299" ury="692"/>
+    <char name="a88" width="234" llx="35" lly="-14" urx="199" ury="705"/>
+    </char-metrics>
 </font-metrics>

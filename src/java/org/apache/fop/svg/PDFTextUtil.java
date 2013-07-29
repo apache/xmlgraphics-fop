@@ -30,7 +30,6 @@ import org.apache.fop.fonts.Typeface;
 public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
 
     private FontInfo fontInfo;
-    private Font[] fonts;
     private Font font;
     private int encoding;
 
@@ -47,23 +46,6 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
     protected void initValues() {
         super.initValues();
         this.font = null;
-    }
-
-    /**
-     * Sets the current fonts for the text object. For every character, the suitable font will
-     * be selected.
-     * @param fonts the new fonts
-     */
-    public void setFonts(Font[] fonts) {
-        this.fonts = fonts;
-    }
-
-    /**
-     * Sets the current font for the text object.
-     * @param font the new font
-     */
-    public void setFont(Font font) {
-        setFonts(new Font[] {font});
     }
 
     /**
@@ -121,29 +103,6 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
         } else {
             updateTf(fontName, fontSize, isMultiByte);
         }
-    }
-
-    /**
-     * Selects a font from the font list suitable to display the given character.
-     * @param ch the character
-     * @return the recommended Font to use
-     */
-    public Font selectFontForChar(char ch) {
-        for (int i = 0, c = fonts.length; i < c; i++) {
-            if (fonts[i].hasChar(ch)) {
-                return fonts[i];
-            }
-        }
-        return fonts[0]; //TODO Maybe fall back to painting with shapes
-    }
-
-    /**
-     * Writes a char to the "TJ-Buffer".
-     * @param ch the unmapped character
-     */
-    public void writeTJChar(char ch) {
-        char mappedChar = font.mapChar(ch);
-        writeTJMappedChar(mappedChar);
     }
 
 }

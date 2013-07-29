@@ -35,6 +35,7 @@
   <xsl:template match="font-metrics">
 package org.apache.fop.fonts.base14;
 
+import java.awt.Rectangle;
 <xsl:if test="count(kerning) &gt; 0">
 import java.util.Map;
 </xsl:if>
@@ -42,12 +43,14 @@ import java.util.Set;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.CodePointMapping;
-import org.apache.fop.fonts.Typeface;;
+import org.apache.fop.fonts.Typeface;
 
 public class <xsl:value-of select="class-name"/> extends Base14Font {
     private final static String fontName = "<xsl:value-of select="font-name"/>";
     private final static String fullName = "<xsl:value-of select="full-name"/>";
     private final static Set familyNames;
+    private final static int underlinePosition = <xsl:value-of select="underline-position"/>;
+    private final static int underlineThickness = <xsl:value-of select="underline-thickness"/>;
     private final static String encoding = "<xsl:value-of select="$encoding"/>";
     private final static int capHeight = <xsl:value-of select="cap-height"/>;
     private final static int xHeight = <xsl:value-of select="x-height"/>;
@@ -56,6 +59,7 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
     private final static int firstChar = <xsl:value-of select="first-char"/>;
     private final static int lastChar = <xsl:value-of select="last-char"/>;
     private final static int[] width;
+    private final static Rectangle[] boundingBoxes;
     private final CodePointMapping mapping =
         CodePointMapping.getMapping("<xsl:value-of select="$encoding"/>");
 <xsl:if test="count(kerning) &gt; 0">
@@ -66,7 +70,8 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
 
     static {
         width = new int[256];
-        <xsl:apply-templates select="widths"/>
+        boundingBoxes = new Rectangle[256];
+        <xsl:apply-templates select="char-metrics"/>
 <xsl:if test="count(kerning) &gt; 0">
         kerning = new java.util.HashMap();
         Integer first, second;
@@ -125,6 +130,14 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
         return size * xHeight;
     }
 
+    public int getUnderlinePosition(int size) {
+        return size * underlinePosition;
+    }
+
+    public int getUnderlineThickness(int size) {
+        return size * underlineThickness;
+    }
+
     public int getFirstChar() {
         return firstChar;
     }
@@ -135,6 +148,11 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
 
     public int getWidth(int i,int size) {
         return size * width[i];
+    }
+
+    public Rectangle getBoundingBox(int glyphIndex, int size) {
+        Rectangle bbox = boundingBoxes[glyphIndex];
+        return new Rectangle(bbox.x * size, bbox.y * size, bbox.width * size, bbox.height * size);
     }
 
     public int[] getWidths() {
@@ -182,7 +200,9 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
 }
   </xsl:template>
 
-  <xsl:template match="widths/char"><xsl:variable name="char-name" select="@name"/><xsl:variable name="char-num" select="$glyphs[@name = $char-name]/@codepoint"/><xsl:if test="$char-num!=''">        width[0x<xsl:value-of select="$char-num"/>] = <xsl:value-of select="@width"/>;</xsl:if></xsl:template>
+  <xsl:template match="char-metrics/char">
+    <xsl:variable name="char-name" select="@name"/><xsl:variable name="char-num" select="$glyphs[@name = $char-name]/@codepoint"/><xsl:if test="$char-num!=''">  width[0x<xsl:value-of select="$char-num"/>] = <xsl:value-of select="@width"/>;
+        boundingBoxes[0x<xsl:value-of select="$char-num"/>] = new Rectangle(<xsl:value-of select="@llx"/>,<xsl:value-of select="@lly"/>,<xsl:value-of select="@urx - @llx"/>,<xsl:value-of select="@ury - @lly"/>);</xsl:if></xsl:template>
   
   <xsl:template match="kerning">
         first = new Integer(<xsl:value-of select="@kpx1"/>);

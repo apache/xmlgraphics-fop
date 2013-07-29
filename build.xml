@@ -565,11 +565,13 @@ list of possible build targets.
       <include name="org/apache/fop/apps/io/**"/>
       <include name="org/apache/fop/complexscripts/fonts/*.class"/>
       <include name="org/apache/fop/complexscripts/util/GlyphTester.class"/>
+      <include name="org/apache/fop/events/EventProducer.class"/>
       <include name="org/apache/fop/fo/Constants.class"/>
       <include name="org/apache/fop/fo/FOTreeBuilder.class"/>
       <include name="org/apache/fop/area/AreaTreeControl*"/>
       <include name="org/apache/fop/svg/**"/>
       <include name="org/apache/fop/fonts/**"/>
+      <include name="org/apache/fop/traits/MinOptMax.class"/>
       <include name="org/apache/fop/image/loader/batik/BatikImageFlavors*.class"/>
       <include name="org/apache/fop/util/CMYKColorSpace*.class"/>
       <include name="org/apache/fop/util/Color*.class"/>
@@ -579,6 +581,7 @@ list of possible build targets.
       <include name="org/apache/fop/util/Finalizable.class"/>
       <include name="org/apache/fop/util/CharUtilities.class"/>
       <include name="org/apache/fop/util/DecimalFormatCache*.class"/>
+      <include name="org/apache/fop/util/ImageObject.class"/>
     </patternset>
 <!-- PDF transcoder -->
     <patternset>
@@ -647,7 +650,8 @@ list of possible build targets.
         <include name="org/apache/xmlgraphics/java2d/**"/>
         <include name="org/apache/xmlgraphics/ps/**"/>
         <include name="org/apache/xmlgraphics/fonts/**"/>
-        <include name="org/apache/xmlgraphics/util/io/**"/>
+        <include name="org/apache/xmlgraphics/util/**"/>
+        <include name="org/apache/xmlgraphics/image/loader/**"/>
       </patternset>
       <fileset refid="transcoder-lib-files"/>
     </unjar>
@@ -709,6 +713,7 @@ list of possible build targets.
         <include name="**/*.txt"/>
         <include name="**/*.afm"/>
         <include name="**/*.fo"/>
+        <include name="**/*.svg"/>
       </fileset>
     </copy>
   </target>

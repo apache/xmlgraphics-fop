@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts.truetype;
 
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -144,6 +145,10 @@ public class TTFFontLoader extends FontLoader {
         returnFont.setAscender(ttf.getLowerCaseAscent());
         returnFont.setDescender(ttf.getLowerCaseDescent());
         returnFont.setFontBBox(ttf.getFontBBox());
+        returnFont.setUnderlinePosition(ttf.getUnderlinePosition() - ttf.getUnderlineThickness() / 2);
+        returnFont.setUnderlineThickness(ttf.getUnderlineThickness());
+        returnFont.setStrikeoutPosition(ttf.getStrikeoutPosition() - ttf.getStrikeoutThickness() / 2);
+        returnFont.setStrikeoutThickness(ttf.getStrikeoutThickness());
         returnFont.setFlags(ttf.getFlags());
         returnFont.setStemV(Integer.parseInt(ttf.getStemV())); //not used for TTF
         returnFont.setItalicAngle(Integer.parseInt(ttf.getItalicAngle()));
@@ -152,15 +157,15 @@ public class TTFFontLoader extends FontLoader {
         returnFont.setEmbeddingMode(this.embeddingMode);
         if (isCid) {
             multiFont.setCIDType(CIDFontType.CIDTYPE2);
-            int[] wx = ttf.getWidths();
-            multiFont.setWidthArray(wx);
+            multiFont.setWidthArray(ttf.getWidths());
+            multiFont.setBBoxArray(ttf.getBoundingBoxes());
         } else {
             singleFont.setFontType(FontType.TRUETYPE);
             singleFont.setEncoding(ttf.getCharSetName());
             returnFont.setFirstChar(ttf.getFirstChar());
             returnFont.setLastChar(ttf.getLastChar());
             singleFont.setTrueTypePostScriptVersion(ttf.getPostScriptVersion());
-            copyWidthsSingleByte(ttf);
+            copyGlyphMetricsSingleByte(ttf);
         }
         returnFont.setCMap(getCMap(ttf));
 
@@ -186,12 +191,15 @@ public class TTFFontLoader extends FontLoader {
         return ttf.getCMaps().toArray(array);
     }
 
-    private void copyWidthsSingleByte(TTFFile ttf) {
+    private void copyGlyphMetricsSingleByte(TTFFile ttf) {
         int[] wx = ttf.getWidths();
+        Rectangle[] bboxes = ttf.getBoundingBoxes();
         for (int i = singleFont.getFirstChar(); i <= singleFont.getLastChar(); i++) {
             singleFont.setWidth(i, ttf.getCharWidth(i));
+            int[] bbox = ttf.getBBox(i);
+            singleFont.setBoundingBox(i,
+                    new Rectangle(bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]));
         }
-
         for (CMapSegment segment : ttf.getCMaps()) {
             if (segment.getUnicodeStart() < 0xFFFE) {
                 for (char u = (char)segment.getUnicodeStart(); u <= segment.getUnicodeEnd(); u++) {
@@ -205,7 +213,7 @@ public class TTFFontLoader extends FontLoader {
                         if (glyphName.length() > 0) {
                             String unicode = Character.toString(u);
                             NamedCharacter nc = new NamedCharacter(glyphName, unicode);
-                            singleFont.addUnencodedCharacter(nc, wx[glyphIndex]);
+                            singleFont.addUnencodedCharacter(nc, wx[glyphIndex], bboxes[glyphIndex]);
                         }
                     }
                 }

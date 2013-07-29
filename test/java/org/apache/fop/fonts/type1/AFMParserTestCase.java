@@ -19,15 +19,15 @@
 
 package org.apache.fop.fonts.type1;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test case for {@link AFMParser}.
@@ -128,4 +128,13 @@ public class AFMParserTestCase {
     private boolean objectEquals(Object o1, Object o2) {
         return o1 == null ? o2 == null : (o1 == o2 || o1.equals(o2));
     }
+
+    @Test
+    public void testUnderlinePositionAndThickness() throws IOException {
+        AFMFile afm = sut.parse(getClass().getResourceAsStream("underline.afm"), null);
+        AFMWritingDirectionMetrics metrics = afm.getWritingDirectionMetrics(0);
+        assertEquals(-96, metrics.getUnderlinePosition());
+        assertEquals(58, metrics.getUnderlineThickness());
+    }
+
 }
