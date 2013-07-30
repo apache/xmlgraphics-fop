@@ -33,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.Version;
 import org.apache.fop.fonts.type1.PFMFile;
-import org.apache.fop.util.CommandLineLogger;
 
 /**
  * A tool which reads PFM files from Adobe Type 1 fonts and creates
@@ -92,14 +91,7 @@ public class PFMReader extends AbstractFontReader {
         Map options = new java.util.HashMap();
         String[] arguments = parseArguments(options, args);
 
-        // Enable the simple command line logging when no other logger is
-        // defined.
         LogFactory logFactory = LogFactory.getFactory();
-        if (System.getProperty("org.apache.commons.logging.Log") == null) {
-            logFactory.setAttribute("org.apache.commons.logging.Log",
-                                            CommandLineLogger.class.getName());
-        }
-
         determineLogLevel(options);
 
         PFMReader app = new PFMReader();
