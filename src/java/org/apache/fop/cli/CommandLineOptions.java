@@ -58,7 +58,6 @@ import org.apache.fop.render.pdf.PDFEncryptionOption;
 import org.apache.fop.render.print.PagesMode;
 import org.apache.fop.render.print.PrintRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
-import org.apache.fop.util.CommandLineLogger;
 
 /**
  * Options parses the commandline arguments
@@ -146,15 +145,6 @@ public class CommandLineOptions {
      */
     public CommandLineOptions() {
         LogFactory logFactory = LogFactory.getFactory();
-
-        // Enable the simple command line logging when no other logger is
-        // defined.
-        if (System.getProperty("org.apache.commons.logging.Log") == null) {
-            logFactory.setAttribute("org.apache.commons.logging.Log",
-                                            CommandLineLogger.class.getName());
-            setLogLevel("info");
-        }
-
         log = LogFactory.getLog("FOP");
     }
 
@@ -292,7 +282,7 @@ public class CommandLineOptions {
             } else if (args[i].equals("-s")) {
                 suppressLowLevelAreas = Boolean.TRUE;
             } else if (args[i].equals("-d")) {
-                setLogOption("debug", "debug");
+                // nop. Left there for backwards compatibility
             } else if (args[i].equals("-r")) {
                 strictValidation = false;
             } else if (args[i].equals("-conserve")) {
@@ -304,7 +294,7 @@ public class CommandLineOptions {
             } else if (args[i].equals("-dpi")) {
                 i = i + parseResolution(args, i);
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
-                setLogOption("quiet", "error");
+                // nop. Left there for backwards compatibility
             } else if (args[i].equals("-fo")) {
                 i = i + parseFOInputOption(args, i);
             } else if (args[i].equals("-xsl")) {
@@ -904,27 +894,6 @@ public class CommandLineOptions {
         }
     }
 
-    private void setLogOption(String option, String level) {
-        if (log instanceof CommandLineLogger
-            || System.getProperty("org.apache.commons.logging.Log") == null) {
-            setLogLevel(level);
-        } else if (log != null) {
-            log.warn("The option " + option + " can only be used");
-            log.warn("with FOP's command line logger,");
-            log.warn("which is the default on the command line.");
-            log.warn("Configure other loggers using Java system properties.");
-        }
-    }
-
-    private void setLogLevel(String level) {
-        // Set the level for future loggers.
-        LogFactory.getFactory().setAttribute("level", level);
-        if (log instanceof CommandLineLogger) {
-            // Set the level for the logger created already.
-            ((CommandLineLogger) log).setLogLevel(level);
-        }
-    }
-
     private void setInputFormat(int format) throws FOPException {
         if (inputmode == NOT_SET || inputmode == format) {
             inputmode = format;
@@ -1208,9 +1177,7 @@ public class CommandLineOptions {
                     + "[-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl|-ps|-txt|-at [mime]|-print] <outfile>\n"
             + " [OPTIONS]  \n"
             + "  -version          print FOP version and exit\n"
-            + "  -d                debug mode   \n"
             + "  -x                dump configuration settings  \n"
-            + "  -q                quiet mode  \n"
             + "  -c cfg.xml        use additional configuration file cfg.xml\n"
             + "  -l lang           the language to use for user information \n"
             + "  -nocs             disable complex script features\n"

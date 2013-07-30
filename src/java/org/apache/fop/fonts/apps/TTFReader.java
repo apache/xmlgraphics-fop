@@ -39,7 +39,6 @@ import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFFile;
-import org.apache.fop.util.CommandLineLogger;
 
 // CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
@@ -123,14 +122,7 @@ public class TTFReader extends AbstractFontReader {
         Map options = new java.util.HashMap();
         String[] arguments = parseArguments(options, args);
 
-        // Enable the simple command line logging when no other logger is
-        // defined.
         LogFactory logFactory = LogFactory.getFactory();
-        if (System.getProperty("org.apache.commons.logging.Log") == null) {
-            logFactory.setAttribute("org.apache.commons.logging.Log",
-                                            CommandLineLogger.class.getName());
-        }
-
         determineLogLevel(options);
 
         TTFReader app = new TTFReader();
