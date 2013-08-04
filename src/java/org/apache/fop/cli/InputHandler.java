@@ -257,6 +257,10 @@ public class InputHandler implements ErrorListener, Renderable {
         try {
             // Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();
+            if (uriResolver != null) {
+                factory.setURIResolver(uriResolver);
+            }
+            factory.setErrorListener(this);
             Transformer transformer;
 
             Source xsltSource = createXSLTSource();
@@ -271,9 +275,6 @@ public class InputHandler implements ErrorListener, Renderable {
                         transformer.setParameter((String) xsltParams.elementAt(i),
                             (String) xsltParams.elementAt(i + 1));
                     }
-                }
-                if (uriResolver != null) {
-                    transformer.setURIResolver(uriResolver);
                 }
             }
             transformer.setErrorListener(this);
