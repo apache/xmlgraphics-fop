@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * This class represents a TrueType Mtx Entry.
  */
-class TTFMtxEntry {
+class OFMtxEntry {
 
     private int wx;
     private int lsb;

@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
-import org.apache.fop.fonts.truetype.TTFFontLoader;
+import org.apache.fop.fonts.truetype.OFFontLoader;
 import org.apache.fop.fonts.type1.Type1FontLoader;
 
 /**
@@ -105,7 +105,7 @@ public abstract class FontLoader {
             }
             loader = new Type1FontLoader(fontFileURI, embedded, useKerning, resourceResolver);
         } else {
-            loader = new TTFFontLoader(fontFileURI, subFontName, embedded, embeddingMode,
+            loader = new OFFontLoader(fontFileURI, subFontName, embedded, embeddingMode,
                     encodingMode, useKerning, useAdvanced, resourceResolver);
         }
         return loader.getFont();

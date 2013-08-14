@@ -55,7 +55,8 @@ public class TTFSubSetFileTestCase extends TTFFileTestCase {
         for (int i = 0; i < 255; i++) {
             glyphs.put(i, i);
         }
-        ttfSubset.readFont(dejavuReader, "DejaVu", glyphs);
+        String header = OFFontLoader.readHeader(dejavuReader);
+        ttfSubset.readFont(dejavuReader, "DejaVu", header, glyphs);
         subset = ttfSubset.getFontSubset();
     }
     /**
@@ -68,7 +69,9 @@ public class TTFSubSetFileTestCase extends TTFFileTestCase {
     public void testReadFont3Args() throws IOException {
 
         ByteArrayInputStream byteArray = new ByteArrayInputStream(subset);
-        dejavuTTFFile.readFont(new FontFileReader(byteArray));
+        FontFileReader reader = new FontFileReader(byteArray);
+        String header = OFFontLoader.readHeader(reader);
+        dejavuTTFFile.readFont(reader, header);
         // Test a couple arbitrary values
         assertEquals(dejavuTTFFile.convertTTFUnit2PDFUnit(-1576), dejavuTTFFile.getFontBBox()[0]);
         assertEquals(dejavuTTFFile.getFullName(), "DejaVu LGC Serif");
