@@ -43,8 +43,8 @@ import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.truetype.FontFileReader;
+import org.apache.fop.fonts.truetype.OFFontLoader;
 import org.apache.fop.fonts.truetype.TTFFile;
-import org.apache.fop.fonts.truetype.TTFFontLoader;
 
 /**
  * Attempts to determine correct FontInfo
@@ -220,7 +220,7 @@ public class FontInfoFinder {
                     log.debug("Loading " + fontName);
                 }
                 try {
-                    TTFFontLoader ttfLoader = new TTFFontLoader(fontURI, fontName, true,
+                    OFFontLoader ttfLoader = new OFFontLoader(fontURI, fontName, true,
                             EmbeddingMode.AUTO, EncodingMode.AUTO, useKerning, useAdvanced,
                             resourceResolver);
                     customFont = ttfLoader.getFont();

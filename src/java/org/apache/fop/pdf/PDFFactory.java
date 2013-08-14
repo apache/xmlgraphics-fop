@@ -56,6 +56,8 @@ import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.truetype.FontFileReader;
+import org.apache.fop.fonts.truetype.OFFontLoader;
+import org.apache.fop.fonts.truetype.OTFSubSetFile;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
 import org.apache.fop.fonts.type1.PFBData;
 import org.apache.fop.fonts.type1.PFBParser;
@@ -1387,15 +1389,15 @@ public class PDFFactory {
                 int firstChar = singleByteFont.getFirstChar();
                 int lastChar = singleByteFont.getLastChar();
                 nonBase14.setWidthMetrics(firstChar,
-                                     lastChar,
-                                     new PDFArray(null, metrics.getWidths()));
+                lastChar,
+                new PDFArray(null, metrics.getWidths()));
 
                 //Handle encoding
                 SingleByteEncoding mapping = singleByteFont.getEncoding();
                 if (singleByteFont.isSymbolicFont()) {
                     //no encoding, use the font's encoding
                     if (forceToUnicode) {
-                        generateToUnicodeCmap(nonBase14, mapping);
+                    generateToUnicodeCmap(nonBase14, mapping);
                     }
                 } else if (PDFEncoding.isPredefinedEncoding(mapping.getName())) {
                     font.setEncoding(mapping.getName());
@@ -1403,7 +1405,7 @@ public class PDFFactory {
                     //believed.
                 } else {
                     Object pdfEncoding = createPDFEncoding(mapping,
-                            singleByteFont.getFontName());
+                    singleByteFont.getFontName());
                     if (pdfEncoding instanceof PDFEncoding) {
                         font.setEncoding((PDFEncoding)pdfEncoding);
                     } else {
@@ -1518,7 +1520,8 @@ public class PDFFactory {
 
         // Check if the font is embeddable
         if (desc.isEmbeddable()) {
-            AbstractPDFStream stream = makeFontFile(desc);
+            AbstractPDFStream stream = makeFontFile(desc, fontPrefix);
+
             if (stream != null) {
                 descriptor.setFontFile(desc.getFontType(), stream);
                 getDocument().registerObject(stream);
@@ -1564,7 +1567,7 @@ public class PDFFactory {
      * @param desc FontDescriptor of the font.
      * @return PDFStream The embedded font file
      */
-    public AbstractPDFStream makeFontFile(FontDescriptor desc) {
+    public AbstractPDFStream makeFontFile(FontDescriptor desc, String fontPrefix) {
         if (desc.getFontType() == FontType.OTHER) {
             throw new IllegalArgumentException("Trying to embed unsupported font type: "
                                                 + desc.getFontType());
@@ -1578,20 +1581,24 @@ public class PDFFactory {
             if (in == null) {
                 return null;
             } else {
-                AbstractPDFStream embeddedFont;
+                AbstractPDFStream embeddedFont = null;
                 if (desc.getFontType() == FontType.TYPE0) {
                     MultiByteFont mbfont = (MultiByteFont) font;
                     FontFileReader reader = new FontFileReader(in);
                     byte[] fontBytes;
+                    String header = OFFontLoader.readHeader(reader);
+                    boolean isCFF = mbfont.isOTFFile();
                     if (font.getEmbeddingMode() == EmbeddingMode.FULL) {
                         fontBytes = reader.getAllBytes();
+                        if (isCFF) {
+                            //Ensure version 1.6 for full OTF CFF embedding
+                            document.setPDFVersion(Version.V1_6);
+                        }
                     } else {
-                        TTFSubSetFile ttfFile = new TTFSubSetFile();
-                        ttfFile.readFont(reader, mbfont.getTTCName(), mbfont.getUsedGlyphs());
-                        fontBytes = ttfFile.getFontSubset();
+                        fontBytes = getFontSubsetBytes(reader, mbfont, header, fontPrefix, desc,
+                                isCFF);
                     }
-                    embeddedFont = new PDFTTFStream(fontBytes.length);
-                    ((PDFTTFStream) embeddedFont).setData(fontBytes, fontBytes.length);
+                    embeddedFont = getFontStream(font, fontBytes, isCFF);
                 } else if (desc.getFontType() == FontType.TYPE1) {
                     PFBParser parser = new PFBParser();
                     PFBData pfb = parser.parsePFB(in);
@@ -1619,6 +1626,32 @@ public class PDFFactory {
         } finally {
             IOUtils.closeQuietly(in);
         }
+    }
+
+    private byte[] getFontSubsetBytes(FontFileReader reader, MultiByteFont mbfont, String header,
+            String fontPrefix, FontDescriptor desc, boolean isCFF) throws IOException {
+        if (isCFF) {
+            OTFSubSetFile otfFile = new OTFSubSetFile();
+            otfFile.readFont(reader, fontPrefix + desc.getEmbedFontName(), header, mbfont);
+            return otfFile.getFontSubset();
+        } else {
+            TTFSubSetFile otfFile = new TTFSubSetFile();
+            otfFile.readFont(reader, mbfont.getTTCName(), header, mbfont.getUsedGlyphs());
+            return otfFile.getFontSubset();
+        }
+    }
+
+    private AbstractPDFStream getFontStream(CustomFont font, byte[] fontBytes, boolean isCFF)
+            throws IOException {
+        AbstractPDFStream embeddedFont;
+        if (isCFF) {
+            embeddedFont = new PDFCFFStreamType0C(font.getEmbeddingMode() == EmbeddingMode.FULL);
+            ((PDFCFFStreamType0C) embeddedFont).setData(fontBytes, fontBytes.length);
+        } else {
+            embeddedFont = new PDFTTFStream(fontBytes.length);
+            ((PDFTTFStream) embeddedFont).setData(fontBytes, fontBytes.length);
+        }
+        return embeddedFont;
     }
 
     private CustomFont getCustomFont(FontDescriptor desc) {

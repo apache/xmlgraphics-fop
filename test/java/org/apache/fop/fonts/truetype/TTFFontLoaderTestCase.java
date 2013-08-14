@@ -34,7 +34,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test case for {@link TTFFontLoader}.
+ * Test case for {@link OFFontLoader}.
  */
 public class TTFFontLoaderTestCase {
 
@@ -49,12 +49,12 @@ public class TTFFontLoaderTestCase {
         boolean embedded = false;
         boolean useKerning = true;
 
-        TTFFontLoader fontLoader = new TTFFontLoader(absoluteFilePath, fontName, embedded,
+        OFFontLoader fontLoader = new OFFontLoader(absoluteFilePath, fontName, embedded,
                 EmbeddingMode.AUTO, EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resourceResolver);
         assertTrue(fontLoader.getFont().hasKerningInfo());
         useKerning = false;
 
-        fontLoader = new TTFFontLoader(absoluteFilePath, fontName, embedded, EmbeddingMode.AUTO,
+        fontLoader = new OFFontLoader(absoluteFilePath, fontName, embedded, EmbeddingMode.AUTO,
                 EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resourceResolver);
         assertFalse(fontLoader.getFont().hasKerningInfo());
     }

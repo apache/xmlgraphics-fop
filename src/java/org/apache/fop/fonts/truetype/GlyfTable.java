@@ -31,7 +31,7 @@ import java.util.TreeSet;
  */
 public class GlyfTable {
 
-    private final TTFMtxEntry[] mtxTab;
+    private final OFMtxEntry[] mtxTab;
 
     private final long tableOffset;
 
@@ -47,7 +47,7 @@ public class GlyfTable {
     /** All the glyphs that are composed, but do not appear in the subset. */
     private Set<Integer> composedGlyphs = new TreeSet<Integer>();
 
-    GlyfTable(FontFileReader in, TTFMtxEntry[] metrics, TTFDirTabEntry dirTableEntry,
+    GlyfTable(FontFileReader in, OFMtxEntry[] metrics, OFDirTabEntry dirTableEntry,
             Map<Integer, Integer> glyphs) throws IOException {
         mtxTab = metrics;
         tableOffset = dirTableEntry.getOffset();

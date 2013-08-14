@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FindBugsFilter>
   <Match>
-    <Class name="org.apache.fop.fonts.truetype.TTFFile$1"/>
+    <Class name="org.apache.fop.fonts.truetype.OpenFont$1"/>
     <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
   </Match>
   <Match>
@@ -407,6 +407,11 @@
       <Class name="org.apache.fop.pdf.PDFFactory"/>
       <Method name="buildCIDSet"/>
       <Bug pattern="OS_OPEN_STREAM"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFFactory"/>
+      <Method name="makeFont"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
    </Match>
    <Match>
       <Class name="org.apache.fop.pdf.PDFOutputIntent"/>
@@ -834,7 +839,7 @@
       <Bug pattern="BIT_IOR_OF_SIGNED_BYTE"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFDirTabEntry"/>
+      <Class name="org.apache.fop.fonts.truetype.OFDirTabEntry"/>
       <Method name="toString"/>
       <Bug pattern="DMI_INVOKING_TOSTRING_ON_ARRAY"/>
    </Match>
@@ -989,7 +994,7 @@
       <Bug pattern="UWF_UNWRITTEN_FIELD"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFDirTabEntry"/>
+      <Class name="org.apache.fop.fonts.truetype.OFDirTabEntry"/>
       <Field name="checksum"/>
       <Bug pattern="UWF_UNWRITTEN_FIELD"/>
    </Match>
@@ -2143,37 +2148,37 @@
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont"/>
       <Method name="glyphToUnicode"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont"/>
       <Method name="initAnsiWidths"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont"/>
       <Method name="readKerning"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont"/>
       <Method name="readUnicodeCmap"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont"/>
       <Method name="unicodeToGlyph"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont"/>
       <Method name="unicodeToWinAnsi"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFFile$UnicodeMapping"/>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont$UnicodeMapping"/>
       <Method name="&lt;init&gt;"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
@@ -2623,7 +2628,7 @@
       <Bug pattern="ITA_INEFFICIENT_TO_ARRAY"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont"/>
       <Method name="unicodeToWinAnsi"/>
       <Bug pattern="ITA_INEFFICIENT_TO_ARRAY"/>
    </Match>
@@ -2852,7 +2857,7 @@
       <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFFile$UnicodeMapping"/>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont$UnicodeMapping"/>
       <!--Neither method nor field-->
       <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS"/>
    </Match>
@@ -2902,7 +2907,7 @@
       <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont"/>
       <Method name="printMaxMin"/>
       <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
    </Match>
@@ -3082,7 +3087,7 @@
       <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont"/>
       <Method name="readKerning"/>
       <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
    </Match>
@@ -3747,7 +3752,7 @@
       <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont"/>
       <Method name="readFont"/>
       <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
    </Match>
@@ -5021,7 +5026,7 @@
      <Bug pattern="EI_EXPOSE_REP"/>
    </Match>
    <Match>
-     <Class name="org.apache.fop.fonts.truetype.TTFDirTabEntry"/>
+     <Class name="org.apache.fop.fonts.truetype.OFDirTabEntry"/>
      <Method name="getTag"/>
      <Bug pattern="EI_EXPOSE_REP"/>
    </Match>
@@ -5225,5 +5230,187 @@
        <Method name="generateForm"/>
      </Or>
      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+     <Or>
+       <Class name="org.apache.fop.fo.properties.CommonAural"/>
+       <Class name="org.apache.fop.fo.properties.CommonMarginInline"/>
+       <Class name="org.apache.fop.render.pdf.PDFSVGHandler$PDFInfo"/>
+       <Class name="org.apache.fop.fo.properties.CommonRelativePosition"/>
+     </Or>
+     <Or>
+       <Bug pattern="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD"/>
+       <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+     </Or>
+   </Match>
+   <Match>
+     <Or>
+        <Class name="org.apache.fop.forms.FormLayoutManagerMakerProvider$CheckBoxLayoutManagerMaker"/>
+        <Class name="org.apache.fop.forms.FormLayoutManagerMakerProvider$ComboBoxLayoutManagerMaker"/>
+        <Class name="org.apache.fop.forms.FormLayoutManagerMakerProvider$InputLayoutManagerMaker"/>
+        <Class name="org.apache.fop.forms.FormLayoutManagerMakerProvider$MultilineInputLayoutManagerMaker"/>
+        <Class name="org.apache.fop.forms.FormLayoutManagerMakerProvider$RadioButtonLayoutManagerMaker"/>
+        <Class name="org.apache.fop.forms.FormLayoutManagerMakerProvider$TriggerLayoutManagerMaker"/>
+        <Class name="org.apache.fop.render.intermediate.IFRenderer$1"/>
+        <Class name="org.apache.fop.render.intermediate.IFRenderer$3"/>
+        <Class name="org.apache.fop.render.intermediate.IFRenderer$4"/>
+        <Class name="org.apache.fop.render.intermediate.IFRenderer$5"/>
+        <Class name="org.apache.fop.render.intermediate.IFRenderer$6"/>
+        <Class name="org.apache.fop.render.pdf.PDFPainter$InputPainter"/>
+        <Class name="org.apache.fop.render.pdf.PDFPainter$MultilineInputPainter"/>
+        <Class name="org.apache.fop.render.pdf.PDFPainter$RadioButtonPainter"/>
+        <Class name="org.apache.fop.render.pdf.PDFPainter$TriggerPainter"/>
+        <Class name="org.apache.fop.render.pdf.PDFPainter$ComboBoxPainter"/>
+        <Class name="org.apache.fop.render.pdf.PDFPainter$CheckboxPainter"/>
+     </Or>
+     <Or>
+        <Bug pattern="BC_UNCONFIRMED_CAST"/>
+        <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
+     </Or>
+   </Match>
+   <Match>
+     <Or>
+        <Class name="org.apache.fop.fo.flow.Float"/>
+        <Class name="org.apache.fop.fo.flow.MultiCase"/>
+        <Class name="org.apache.fop.fo.flow.MultiProperties"/>
+        <Class name="org.apache.fop.fo.flow.MultiPropertySet"/>
+        <Class name="org.apache.fop.fo.flow.MultiSwitch"/>
+        <Class name="org.apache.fop.fo.flow.MultiToggle"/>
+        <Class name="org.apache.fop.fo.flow.table.TableAndCaption"/>
+        <Class name="org.apache.fop.fo.flow.table.TableCaption"/>
+        <Class name="org.apache.fop.fonts.apps.AbstractFontReader"/>
+        <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement"/>
+     </Or>
+     <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+   </Match>
+   <Match>
+     <Or>
+        <Class name="org.apache.fop.pdf.PDFFunction"/>
+        <Class name="org.apache.fop.pdf.PDFGoTo"/>
+        <Class name="org.apache.fop.pdf.PDFLink"/>
+        <Class name="org.apache.fop.pdf.PDFPattern"/>
+        <Class name="org.apache.fop.svg.ACIUtils"/>
+        <Class name="org.apache.fop.svg.PDFTextPainter"/>        
+     </Or>
+     <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+     <Or>
+        <Class name="org.apache.fop.area.BodyRegion"/>
+        <Class name="org.apache.fop.area.Page"/>
+        <Class name="org.apache.fop.area.PageViewport"/>
+        <Class name="org.apache.fop.area.RegionReference"/>
+        <Class name="org.apache.fop.area.RegionViewport"/>
+        <Class name="org.apache.fop.hyphenation.CharVector"/>
+        <Class name="org.apache.fop.hyphenation.TernaryTree"/>
+        <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes"/>
+     </Or>
+     <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+   </Match>   
+   <Match>
+     <Or>
+        <Class name="org.apache.fop.forms.CheckBoxArea"/>
+        <Class name="org.apache.fop.forms.ComboBox"/>
+        <Class name="org.apache.fop.forms.RadioButtonArea"/>
+     </Or>
+     <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+   </Match> 
+   <Match>
+     <Or>
+        <Class name="org.apache.fop.layoutmgr.PageBreaker"/>
+        <Class name="org.apache.fop.layoutmgr.BlockContainerLayoutManager"/>
+     </Or>
+     <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>    
+   <Match>
+     <Class name="org.apache.fop.layoutmgr.BlockContainerLayoutManager"/>
+     <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fonts.truetype.OpenFont"/>
+     <Bug pattern="DMI_ENTRY_SETS_MAY_REUSE_ENTRY_OBJECTS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.apps.io.ResourceResolverFactory$FileDeletingInputStream"/>
+     <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fo.properties.FontFamilyProperty"/>
+     <Bug pattern="EQ_OVERRIDING_EQUALS_NOT_SYMMETRIC"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.render.ps.PSImageObject"/>
+     <Or>
+        <Bug pattern="EI_EXPOSE_REP"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+     </Or>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fonts.cff.CFFDataReader"/>
+     <Bug pattern="DM_DEFAULT_ENCODING"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fonts.cff.CFFDataReader$CFFIndexData"/>
+     <Or>
+        <Bug pattern="SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH"/>
+        <Bug pattern="SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH_TO_THROW"/>
+     </Or>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fonts.cff.CFFDataReader$CFFSubTable"/>
+     <Or>
+        <Bug pattern="EI_EXPOSE_REP"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+     </Or>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fonts.cff.CFFDataReader$DICTEntry"/>
+     <Or>
+        <Bug pattern="EI_EXPOSE_REP"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+     </Or>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fonts.truetype.OTFFile"/>
+     <Or>
+        <Bug pattern="ITA_INEFFICIENT_TO_ARRAY"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+     </Or>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fonts.truetype.OTFSubSetFile"/>
+     <Or>
+        <Bug pattern="ITA_INEFFICIENT_TO_ARRAY"/>
+        <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+        <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+     </Or>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fonts.truetype.OTFSubSetFile$1"/>
+     <Or>
+         <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+         <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+     </Or>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fonts.truetype.OTFSubSetFile$FDIndexReference"/>
+     <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.render.ps.PSFontUtils"/>
+     <Bug pattern="DM_DEFAULT_ENCODING"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.forms.IField$Field"/>
+     <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+   </Match>
+   <Match>
+     <Or>
+        <Class name="org.apache.fop.forms.IField$Field"/>
+        <Class name="org.apache.fop.forms.TriggerArea"/>
+        <Class name="org.apache.fop.forms.traits.AdditionalActionTrait"/>
+     </Or>
+     <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
    </Match>
 </FindBugsFilter>

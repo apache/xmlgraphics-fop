@@ -38,6 +38,7 @@ import org.apache.fop.Version;
 import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.truetype.FontFileReader;
+import org.apache.fop.fonts.truetype.OFFontLoader;
 import org.apache.fop.fonts.truetype.TTFFile;
 
 // CSOFF: InnerAssignmentCheck
@@ -216,7 +217,8 @@ public class TTFReader extends AbstractFontReader {
         InputStream stream = new FileInputStream(fileName);
         try {
             FontFileReader reader = new FontFileReader(stream);
-            boolean supported = ttfFile.readFont(reader, fontName);
+            String header = OFFontLoader.readHeader(reader);
+            boolean supported = ttfFile.readFont(reader, header, fontName);
             if (!supported) {
                 return null;
             }

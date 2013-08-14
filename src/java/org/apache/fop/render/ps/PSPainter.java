@@ -40,6 +40,7 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
 
+import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
@@ -375,7 +376,13 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
             }
             Font font = getFontInfo().getFontInstance(triplet, sizeMillipoints);
 
-            useFont(fontKey, sizeMillipoints);
+            PSFontResource res = getDocumentHandler().getPSResourceForFontKey(fontKey);
+            if (tf instanceof MultiByteFont && ((MultiByteFont)tf).isOTFFile()) {
+                generator.writeln("/" + res.getName() + ".0 "
+                        + generator.formatDouble(sizeMillipoints / 1000f) + " F");
+            } else {
+                useFont(fontKey, sizeMillipoints);
+            }
 
             if (dp != null && dp[0] != null) {
                 x += dp[0][0];
@@ -408,7 +415,30 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                     }
                 }
             } else {
-                useFont(fontKey, sizeMillipoints);
+                if (tf instanceof MultiByteFont && ((MultiByteFont)tf).isOTFFile()) {
+                    //Analyze string and split up in order to paint in different sub-fonts/encodings
+                    int curEncoding = 0;
+                    for (int i = start; i < textLen; i++) {
+                        char orgChar = text.charAt(i);
+
+                        MultiByteFont mbFont = (MultiByteFont)tf;
+                        int origGlyphIdx = mbFont.findGlyphIndex(orgChar);
+                        int newGlyphIdx = mbFont.getUsedGlyphs().get(origGlyphIdx);
+                        int encoding = newGlyphIdx / 256;
+                        if (encoding != curEncoding) {
+                            if (i != 0) {
+                                writeText(text, start, i - start, letterSpacing, wordSpacing, dp, font, tf,
+                                        true);
+                                start = i;
+                            }
+                            generator.writeln("/" + res.getName() + "." + encoding + " "
+                                    + generator.formatDouble(sizeMillipoints / 1000f) + " F");
+                            curEncoding = encoding;
+                        }
+                    }
+                } else {
+                    useFont(fontKey, sizeMillipoints);
+                }
             }
             writeText(text, start, textLen - start, letterSpacing, wordSpacing, dp, font, tf,
                     tf instanceof MultiByteFont);
@@ -431,12 +461,14 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
         int lineStart = 0;
         StringBuffer accText = new StringBuffer(initialSize);
         StringBuffer sb = new StringBuffer(initialSize);
+        boolean isOTF = multiByte && ((MultiByteFont)tf).isOTFFile();
         for (int i = start; i < end; i++) {
             char orgChar = text.charAt(i);
             char ch;
             int cw;
             int xGlyphAdjust = 0;
             int yGlyphAdjust = 0;
+
             if (CharUtilities.isFixedWidthSpace(orgChar)) {
                 //Fixed width space are rendered as spaces so copy/paste works in a reader
                 ch = font.mapChar(CharUtilities.SPACE);
@@ -460,11 +492,16 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                 xGlyphAdjust -= dp[i + 1][0];
                 yGlyphAdjust += dp[i + 1][1];
             }
-            if (multiByte) {
-                accText.append(HexEncoder.encode(ch));
-            } else {
+            if (!multiByte || isOTF) {
                 char codepoint = (char)(ch % 256);
-                PSGenerator.escapeChar(codepoint, accText); //add character to accumulated text
+                if (isOTF) {
+                    codepoint -= (((MultiByteFont)tf).getEmbeddingMode() == EmbeddingMode.FULL) ? 0 : 1;
+                    accText.append(HexEncoder.encode(codepoint, 2));
+                } else {
+                    PSGenerator.escapeChar(codepoint, accText); //add character to accumulated text
+                }
+            } else {
+                accText.append(HexEncoder.encode(ch));
             }
             if (xGlyphAdjust != 0 || yGlyphAdjust != 0) {
                 needTJ = true;

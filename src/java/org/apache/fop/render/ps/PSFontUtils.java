@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fontbox.cff.CFFStandardString;
 
 import org.apache.xmlgraphics.fonts.Glyphs;
 import org.apache.xmlgraphics.ps.DSCConstants;
@@ -50,9 +51,14 @@ import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
+import org.apache.fop.fonts.cff.CFFDataReader;
+import org.apache.fop.fonts.cff.CFFDataReader.DICTEntry;
 import org.apache.fop.fonts.truetype.FontFileReader;
+import org.apache.fop.fonts.truetype.OFFontLoader;
+import org.apache.fop.fonts.truetype.OTFFile;
+import org.apache.fop.fonts.truetype.OTFSubSetFile;
+import org.apache.fop.fonts.truetype.OpenFont.PostScriptVersion;
 import org.apache.fop.fonts.truetype.TTFFile;
-import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
 import org.apache.fop.fonts.truetype.TTFOutputStream;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
 import org.apache.fop.render.ps.fonts.PSTTFOutputStream;
@@ -221,6 +227,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
 
     private static PSFontResource embedFont(PSGenerator gen, Typeface tf, PSResource fontRes,
             PSEventProducer eventProducer) throws IOException {
+        boolean embeddedFont = false;
         FontType fontType = tf.getFontType();
         PSFontResource fontResource = null;
         if (!(fontType == FontType.TYPE1 || fontType == FontType.TRUETYPE
@@ -232,52 +239,63 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         CustomFont cf = (CustomFont)tf;
         if (isEmbeddable(cf)) {
             InputStream in = getInputStreamOnFont(gen, cf);
-            if (in == null) {
+            if (in != null) {
+                if (fontType == FontType.TYPE0) {
+                    if (((MultiByteFont)tf).isOTFFile()) {
+                        checkPostScriptLevel3(gen, eventProducer, "OpenType CFF");
+                        embedType2CFF(gen, (MultiByteFont) tf, in);
+                    } else {
+                        if (gen.embedIdentityH()) {
+                            checkPostScriptLevel3(gen, eventProducer, "TrueType");
+                            /*
+                             * First CID-keyed font to be embedded; add
+                             * %%IncludeResource: comment for ProcSet CIDInit.
+                             */
+                            gen.includeProcsetCIDInitResource();
+                        }
+                        PSResource cidFontResource;
+                        cidFontResource = embedType2CIDFont(gen,
+                                (MultiByteFont) tf, in);
+                        fontResource = PSFontResource.createFontResource(fontRes,
+                                gen.getProcsetCIDInitResource(), gen.getIdentityHCMapResource(),
+                                cidFontResource);
+                    }
+                }
+                gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, fontRes);
+                if (fontType == FontType.TYPE1) {
+                    embedType1Font(gen, in);
+                    fontResource = PSFontResource.createFontResource(fontRes);
+                } else if (fontType == FontType.TRUETYPE) {
+                    embedTrueTypeFont(gen, (SingleByteFont) tf, in);
+                    fontResource = PSFontResource.createFontResource(fontRes);
+                } else {
+                    composeType0Font(gen, (MultiByteFont) tf, in);
+                }
+                gen.writeDSCComment(DSCConstants.END_RESOURCE);
+                gen.getResourceTracker().registerSuppliedResource(fontRes);
+                embeddedFont = true;
+            } else {
                 gen.commentln("%WARNING: Could not embed font: " + cf.getEmbedFontName());
                 log.warn("Font " + cf.getEmbedFontName() + " is marked as supplied in the"
                         + " PostScript file but could not be embedded!");
-                gen.writeDSCComment(DSCConstants.INCLUDE_RESOURCE, fontRes);
-                fontResource = PSFontResource.createFontResource(fontRes);
-                return fontResource;
             }
-            if (fontType == FontType.TYPE0) {
-                if (gen.embedIdentityH()) {
-                    checkPostScriptLevel3(gen, eventProducer);
-                    /*
-                     * First CID-keyed font to be embedded; add
-                     * %%IncludeResource: comment for ProcSet CIDInit.
-                     */
-                    gen.includeProcsetCIDInitResource();
-                }
-                PSResource cidFontResource = embedType2CIDFont(gen,
-                        (MultiByteFont) tf, in);
-                fontResource = PSFontResource.createFontResource(fontRes,
-                        gen.getProcsetCIDInitResource(), gen.getIdentityHCMapResource(),
-                        cidFontResource);
-            }
-            gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, fontRes);
-            if (fontType == FontType.TYPE1) {
-                embedType1Font(gen, in);
-                fontResource = PSFontResource.createFontResource(fontRes);
-            } else if (fontType == FontType.TRUETYPE) {
-                embedTrueTypeFont(gen, (SingleByteFont) tf, in);
-                fontResource = PSFontResource.createFontResource(fontRes);
-            } else {
-                composeType0Font(gen, (MultiByteFont) tf, in);
-            }
-            gen.writeDSCComment(DSCConstants.END_RESOURCE);
-            gen.getResourceTracker().registerSuppliedResource(fontRes);
+        }
+        if (!embeddedFont) {
+            gen.writeDSCComment(DSCConstants.INCLUDE_RESOURCE, fontRes);
+            fontResource = PSFontResource.createFontResource(fontRes);
+            return fontResource;
         }
         return fontResource;
     }
 
-    private static void checkPostScriptLevel3(PSGenerator gen, PSEventProducer eventProducer) {
+    private static void checkPostScriptLevel3(PSGenerator gen, PSEventProducer eventProducer,
+            String fontType) {
         if (gen.getPSLevel() < 3) {
             if (eventProducer != null) {
                 eventProducer.postscriptLevel3Needed(gen);
             } else {
                 throw new IllegalStateException("PostScript Level 3 is"
-                        + " required to use TrueType fonts,"
+                        + " required to use " + fontType + " fonts,"
                         + " configured level is "
                         + gen.getPSLevel());
             }
@@ -415,6 +433,96 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.writeln("] composefont pop");
     }
 
+    private static void embedType2CFF(PSGenerator gen,
+            MultiByteFont font, InputStream fontStream) throws IOException {
+        FontFileReader reader = new FontFileReader(fontStream);
+        String header = OFFontLoader.readHeader(reader);
+        String psName;
+        CFFDataReader cffReader = new CFFDataReader(reader);
+        if (cffReader.getFDSelect() != null) {
+            throw new UnsupportedOperationException("CID-Keyed OTF CFF fonts are not supported"
+                    + " for PostScript output.");
+        }
+
+        byte[] bytes;
+        if (font.getEmbeddingMode() == EmbeddingMode.FULL) {
+            font.setFontName(new String(cffReader.getNameIndex().getValue(0)));
+            psName = font.getEmbedFontName();
+            Map<String, DICTEntry> topDICT = cffReader.getTopDictEntries();
+            int charsetOffset = topDICT.get("charset").getOperands().get(0).intValue();
+            for (int gid = 0; gid < cffReader.getCharStringIndex().getNumObjects(); gid++) {
+                int sid = cffReader.getSIDFromGID(charsetOffset, gid);
+
+                //Check whether the SID falls into the standard string set
+                if (sid < 391) {
+                    font.mapUsedGlyphName(gid,
+                            CFFStandardString.getName(sid));
+                } else {
+                    int index = sid - 391;
+                    if (index < cffReader.getStringIndex().getNumObjects()) {
+                        font.mapUsedGlyphName(gid,
+                                new String(cffReader.getStringIndex().getValue(index)));
+                    } else {
+                        font.mapUsedGlyphName(gid, ".notdef");
+                    }
+                }
+            }
+            bytes = OTFFile.getCFFData(reader);
+        } else {
+            psName = font.getEmbedFontName();
+            OTFSubSetFile otfFile = new OTFSubSetFile();
+            otfFile.readFont(reader, psName, header, font);
+            bytes = otfFile.getFontSubset();
+        }
+
+        gen.writeln("%!PS-Adobe-3.0 Resource-FontSet");
+        gen.writeln("%%DocumentNeedResources:ProcSet(FontSetInit)");
+        gen.writeln("%%Title:(FontSet/" + psName + ")");
+        gen.writeln("%%Version: 1.000");
+        gen.writeln("%%EndComments");
+        gen.writeln("%%IncludeResource:ProcSet(FontSetInit)");
+        gen.writeln("%%BeginResource: FontSet (" + psName + ")");
+        gen.writeln("/FontSetInit /ProcSet findresource begin");
+        //Next line + 1
+        String fontDeclaration = "/" + psName + " " + bytes.length + " StartData";
+        gen.writeln("%%BeginData: " + (fontDeclaration.length() + 1 + bytes.length) + " Binary Bytes");
+        gen.writeln(fontDeclaration);
+        gen.writeByteArr(bytes);
+        gen.writeln("%%EndData");
+        gen.writeln("%%EndResource");
+
+        gen.writeln("/" + psName + ".0.enc [ ");
+        int lengthCount = 0;
+        int charCount = 1;
+        int encodingCount = 0;
+        String line = "";
+        for (int gid : font.getUsedGlyphNames().keySet()) {
+            line += "/" + font.getUsedGlyphNames().get(gid) + " ";
+            lengthCount++;
+            charCount++;
+            if (lengthCount == 8) {
+                gen.writeln(line);
+                line = "";
+                lengthCount = 0;
+            }
+            if (charCount > 256) {
+                encodingCount++;
+                charCount = 1;
+                gen.writeln(line);
+                line = "";
+                lengthCount = 0;
+                gen.writeln("] def");
+                gen.writeln(String.format("/%s.%d %s.%d.enc /%s RE", psName,
+                        encodingCount - 1, psName, encodingCount - 1, psName));
+                gen.writeln("/" + psName + "." + encodingCount + ".enc [ ");
+            }
+        }
+        gen.writeln(line);
+        gen.writeln("] def");
+        gen.writeln(String.format("/%s.%d %s.%d.enc /%s RE", psName, encodingCount,
+                psName, encodingCount, psName));
+    }
+
     private static PSResource embedType2CIDFont(PSGenerator gen,
             MultiByteFont font, InputStream fontStream) throws IOException {
         assert font.getCIDType() == CIDFontType.CIDTYPE2;
@@ -502,16 +610,17 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         }
         gen.writeln(">] def");
         FontFileReader reader = new FontFileReader(fontStream);
+        String header = OFFontLoader.readHeader(reader);
 
         TTFFile ttfFile;
         if (font.getEmbeddingMode() != EmbeddingMode.FULL) {
             ttfFile = new TTFSubSetFile();
-            ttfFile.readFont(reader, font.getTTCName(), font.getUsedGlyphs());
+            //Change the TTFFile to have the abstract method for TTFSubSetFile
+            ((TTFSubSetFile)ttfFile).readFont(reader, font.getTTCName(), header, font.getUsedGlyphs());
         } else {
             ttfFile = new TTFFile();
             ttfFile.readFont(reader, font.getTTCName());
         }
-
 
         createType42DictionaryEntries(gen, font, new CMapSegment[0], ttfFile);
         gen.writeln("CIDFontName currentdict end /CIDFont defineresource pop");
@@ -670,7 +779,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
     private static PSResource defineDerivedTrueTypeFont(PSGenerator gen,
             PSEventProducer eventProducer, String baseFontName, String fontName,
             SingleByteEncoding encoding, CMapSegment[] cmap) throws IOException {
-        checkPostScriptLevel3(gen, eventProducer);
+        checkPostScriptLevel3(gen, eventProducer, "TrueType");
         PSResource res = new PSResource(PSResource.TYPE_FONT, fontName);
         gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, res);
         gen.commentln("%XGCDependencies: font " + baseFontName);

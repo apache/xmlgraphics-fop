@@ -22,6 +22,7 @@ package org.apache.fop.fonts;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
 import java.util.BitSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -67,6 +68,15 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     private int firstUnmapped;
     private int lastUnmapped;
 
+    private boolean isOTFFile = false;
+
+    // since for most users the most likely glyphs are in the first cmap segments we store their mapping.
+    private static final int NUM_MOST_LIKELY_GLYPHS = 256;
+    private int[] mostLikelyGlyphs = new int[NUM_MOST_LIKELY_GLYPHS];
+
+    //A map to store each used glyph from the CID set against the glyph name.
+    private LinkedHashMap<Integer, String> usedGlyphNames = new LinkedHashMap<Integer, String>();
+
     /**
      * Default constructor
      */
@@ -111,6 +121,14 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         return cidType;
     }
 
+    public void setIsOTFFile(boolean isOTFFile) {
+        this.isOTFFile = isOTFFile;
+    }
+
+    public boolean isOTFFile() {
+        return this.isOTFFile;
+    }
+
     /**
      * Sets the CIDType.
      * @param cidType The cidType to set
@@ -147,6 +165,14 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         return this.cidSet;
     }
 
+    public void mapUsedGlyphName(int gid, String value) {
+        usedGlyphNames.put(gid, value);
+    }
+
+    public LinkedHashMap<Integer, String> getUsedGlyphNames() {
+        return usedGlyphNames;
+    }
+
     /** {@inheritDoc} */
     @Override
     public String getEncodingName() {
@@ -177,10 +203,15 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * @return the glyph index (or 0 if the glyph is not available)
      */
     // [TBD] - needs optimization, i.e., change from linear search to binary search
-    private int findGlyphIndex(int c) {
+    public int findGlyphIndex(int c) {
         int idx = c;
         int retIdx = SingleByteEncoding.NOT_FOUND_CODE_POINT;
 
+        // for most users the most likely glyphs are in the first cmap segments (meaning the one with
+        // the lowest unicode start values)
+        if (idx < NUM_MOST_LIKELY_GLYPHS && mostLikelyGlyphs[idx] != 0) {
+            return mostLikelyGlyphs[idx];
+        }
         for (int i = 0; (i < cmap.length) && retIdx == 0; i++) {
             if (cmap[i].getUnicodeStart() <= idx
                     && cmap[i].getUnicodeEnd() >= idx) {
@@ -188,6 +219,9 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
                 retIdx = cmap[i].getGlyphStartIndex()
                     + idx
                     - cmap[i].getUnicodeStart();
+                if (idx < NUM_MOST_LIKELY_GLYPHS) {
+                    mostLikelyGlyphs[idx] = retIdx;
+                }
             }
         }
         return retIdx;
@@ -281,22 +315,6 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         return findCharacterFromGlyphIndex(gi, true);
     }
 
-
-    /** {@inheritDoc} */
-    @Override
-    public char mapChar(char c) {
-        notifyMapOperation();
-        int glyphIndex = findGlyphIndex(c);
-        if (glyphIndex == SingleByteEncoding.NOT_FOUND_CODE_POINT) {
-            warnMissingGlyph(c);
-            glyphIndex = findGlyphIndex(Typeface.NOT_FOUND);
-        }
-        if (isEmbeddable()) {
-            glyphIndex = cidSet.mapChar(glyphIndex, c);
-        }
-        return (char) glyphIndex;
-    }
-
     protected BitSet getGlyphIndices() {
         BitSet bitset = new BitSet();
         bitset.set(0);
@@ -325,6 +343,23 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
             }
         }
         return chars;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public char mapChar(char c) {
+        notifyMapOperation();
+        int glyphIndex = findGlyphIndex(c);
+        if (glyphIndex == SingleByteEncoding.NOT_FOUND_CODE_POINT) {
+            warnMissingGlyph(c);
+            if (!isOTFFile) {
+                glyphIndex = findGlyphIndex(Typeface.NOT_FOUND);
+            }
+        }
+        if (isEmbeddable()) {
+            glyphIndex = cidSet.mapChar(glyphIndex, c);
+        }
+        return (char) glyphIndex;
     }
 
     /** {@inheritDoc} */
