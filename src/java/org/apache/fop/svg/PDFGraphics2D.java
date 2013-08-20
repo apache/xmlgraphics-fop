@@ -1691,11 +1691,15 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @param iter PathIterator to process
      */
     public void processPathIterator(PathIterator iter) {
+        double lastX = 0.0;
+        double lastY = 0.0;
         while (!iter.isDone()) {
             double[] vals = new double[6];
             int type = iter.currentSegment(vals);
             switch (type) {
             case PathIterator.SEG_CUBICTO:
+                lastX = vals[4];
+                lastY = vals[5];
                 currentStream.write(PDFNumber.doubleOut(vals[0], DEC) + " "
                                     + PDFNumber.doubleOut(vals[1], DEC) + " "
                                     + PDFNumber.doubleOut(vals[2], DEC) + " "
@@ -1704,18 +1708,30 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                                     + PDFNumber.doubleOut(vals[5], DEC) + " c\n");
                 break;
             case PathIterator.SEG_LINETO:
+                lastX = vals[0];
+                lastY = vals[1];
                 currentStream.write(PDFNumber.doubleOut(vals[0], DEC) + " "
                                     + PDFNumber.doubleOut(vals[1], DEC) + " l\n");
                 break;
             case PathIterator.SEG_MOVETO:
+                lastX = vals[0];
+                lastY = vals[1];
                 currentStream.write(PDFNumber.doubleOut(vals[0], DEC) + " "
                                     + PDFNumber.doubleOut(vals[1], DEC) + " m\n");
                 break;
             case PathIterator.SEG_QUADTO:
-                currentStream.write(PDFNumber.doubleOut(vals[0], DEC) + " "
-                                    + PDFNumber.doubleOut(vals[1], DEC) + " "
-                                    + PDFNumber.doubleOut(vals[2], DEC) + " "
-                                    + PDFNumber.doubleOut(vals[3], DEC) + " y\n");
+                double controlPointAX = lastX + ((2.0 / 3.0) * (vals[0] - lastX));
+                double controlPointAY = lastY + ((2.0 / 3.0) * (vals[1] - lastY));
+                double controlPointBX = vals[2] + ((2.0 / 3.0) * (vals[0] - vals[2]));
+                double controlPointBY = vals[3] + ((2.0 / 3.0) * (vals[1] - vals[3]));
+                currentStream.write(PDFNumber.doubleOut(controlPointAX, DEC) + " "
+                        + PDFNumber.doubleOut(controlPointAY, DEC) + " "
+                        + PDFNumber.doubleOut(controlPointBX, DEC) + " "
+                        + PDFNumber.doubleOut(controlPointBY, DEC) + " "
+                        + PDFNumber.doubleOut(vals[2], DEC) + " "
+                        + PDFNumber.doubleOut(vals[3], DEC) + " c\n");
+                lastX = vals[2];
+                lastY = vals[3];
                 break;
             case PathIterator.SEG_CLOSE:
                 currentStream.write("h\n");
