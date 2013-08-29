@@ -34,6 +34,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FONode.FONodeIterator;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.extensions.AlternativeBlock;
+import org.apache.fop.fo.extensions.BestFit;
 import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.BidiOverride;
@@ -142,6 +144,8 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         registerMaker(TableHeader.class, new Maker());
         registerMaker(Wrapper.class, new WrapperLayoutManagerMaker());
         registerMaker(Title.class, new InlineLayoutManagerMaker());
+        registerMaker(BestFit.class, new BestFitLayoutManagerMaker());
+        registerMaker(AlternativeBlock.class, new AlternativeBlockLayoutManagerMaker());
     }
 
     /**
@@ -442,6 +446,22 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                 FONode child = (FONode) baseIter.next();
                 makeLayoutManagers(child, lms);
             }
+        }
+    }
+
+    /** a layout manager maker */
+    public class BestFitLayoutManagerMaker extends Maker {
+        /** {@inheritDoc} */
+        public void make(FONode node, List lms) {
+            lms.add(new BestFitLayoutManager((BestFit) node));
+        }
+    }
+
+    /** a layout manager maker */
+    public class AlternativeBlockLayoutManagerMaker extends Maker {
+        /** {@inheritDoc} */
+        public void make(FONode node, List lms) {
+            lms.add(new AlternativeBlockLayoutManager((AlternativeBlock) node));
         }
     }
 

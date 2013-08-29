@@ -611,7 +611,7 @@ public abstract class AbstractBreaker {
                 // Handle SpaceHandling(Break)Positions, see SpaceResolver!
                 SpaceResolver.performConditionalsNotification(effectiveList,
                         startElementIndex, notificationEndElementIndex, lastBreak);
-
+                childLC.setAlternativeManager(alg.getAlternativeManager());
                 // Add areas now!
                 addAreas(new KnuthPossPosIter(effectiveList,
                         startElementIndex, endElementIndex + 1), childLC);
