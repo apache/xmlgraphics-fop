@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.layoutmgr.AlternativeManager.Alternative;
 
 /**
  * The set of nodes is sorted into lines indexed into activeLines.
@@ -191,6 +192,8 @@ public abstract class BreakingAlgorithm {
 
     private boolean partOverflowRecoveryActivated = true;
     private KnuthNode lastRecovered;
+
+    private AlternativeManager altManager = new AlternativeManager();
 
     /**
      * Create a new instance.
@@ -822,6 +825,30 @@ public abstract class BreakingAlgorithm {
         }
     }
 
+    private int handleBestFitPenalty(BestFitPenalty penalty, KnuthNode node,
+            int elementIdx) {
+        int difference;
+        // Find the alternatives that can be fitted inside the remaining space
+        for (int i = 0; i < penalty.getAlternativeCount(); ++i) {
+            Alternative alt = penalty.getAlternative(i);
+            difference = computeDifference(node, new KnuthPenalty(alt.getWidth(),
+                    0, false, null, false), elementIdx);
+            if (difference > 0) {
+                alt.setRemainingBPD(difference);
+                altManager.addAlternative(alt);
+            }
+        }
+        Alternative bestAlt = altManager.getBestAlternative(penalty.getStrategyType());
+        if (bestAlt != null) {
+            difference = bestAlt.getRemainingBPD();
+            return difference;
+        } else {
+            // No alternative can be fitted inside the remaining space
+            return computeDifference(node, new KnuthPenalty(0,
+                    0, false, null, false), elementIdx);
+        }
+    }
+
     /**
      * Replace the last too-long or too-short node by the last deactivated
      * node, if applicable.
@@ -930,7 +957,13 @@ public abstract class BreakingAlgorithm {
                 if (node.position == elementIdx) {
                     continue;
                 }
-                int difference = computeDifference(node, element, elementIdx);
+                int difference;
+                if (element instanceof BestFitPenalty) {
+                    BestFitPenalty penalty = (BestFitPenalty)element;
+                    difference = handleBestFitPenalty(penalty, node, elementIdx);
+                } else {
+                    difference = computeDifference(node, element, elementIdx);
+                }
                 if (!elementCanEndLine(element, endLine, difference)) {
                     log.trace("Skipping legal break");
                     break;
@@ -1449,6 +1482,11 @@ public abstract class BreakingAlgorithm {
     /** @return the alignment for the last line/part */
     public int getAlignmentLast() {
         return this.alignmentLast;
+    }
+
+    /** @return the alternative manager (used by fox:best-fit) */
+    public AlternativeManager getAlternativeManager() {
+        return altManager;
     }
 
 }

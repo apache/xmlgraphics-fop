@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.extensions.AlternativeBlock;
 import org.apache.fop.layoutmgr.inline.AlignmentContext;
 import org.apache.fop.layoutmgr.inline.HyphContext;
 import org.apache.fop.traits.MinOptMax;
@@ -34,6 +35,9 @@ import org.apache.fop.traits.WritingMode;
  * method. It is set up by higher level LM and used by lower level LM.
  */
 public final class LayoutContext {
+
+    /** Manager of @{link {@link AlternativeBlock} and only used by {@link BestFitLayoutManager}*/
+    private AlternativeManager altManager;
 
     /** Generated break possibility is first in a new area */
     public static final int NEW_AREA = 0x01;
@@ -142,6 +146,7 @@ public final class LayoutContext {
     public static LayoutContext offspringOf(LayoutContext parent) {
         LayoutContext offspring = new LayoutContext(0);
         offspring.setTreatAsArtifact(parent.treatAsArtifact());
+        offspring.setAlternativeManager(parent.getAlternativeManager());
         return offspring;
     }
 
@@ -646,24 +651,24 @@ public final class LayoutContext {
     /** {@inheritDoc} */
     public String toString() {
         return "Layout Context:"
-        + "\nStack Limit BPD: \t"
-            + (getStackLimitBP() == null ? "null" : getStackLimitBP().toString())
-        + "\nTrailing Space: \t"
-            + (getTrailingSpace() == null ? "null" : getTrailingSpace().toString())
-        + "\nLeading Space: \t"
-            + (getLeadingSpace() == null ? "null" : getLeadingSpace().toString())
-        + "\nReference IPD: \t" + getRefIPD()
-        + "\nSpace Adjust: \t" + getSpaceAdjust()
-        + "\nIPD Adjust: \t" + getIPDAdjust()
-        + "\nResolve Leading Space: \t" + resolveLeadingSpace()
-        + "\nSuppress Break Before: \t" + suppressBreakBefore()
-        + "\nIs First Area: \t" + isFirstArea()
-        + "\nStarts New Area: \t" + startsNewArea()
-        + "\nIs Last Area: \t" + isLastArea()
-        + "\nKeeps: \t[keep-with-next=" + getKeepWithNextPending()
+                + "\nStack Limit BPD: \t"
+                + (getStackLimitBP() == null ? "null" : getStackLimitBP().toString())
+                + "\nTrailing Space: \t"
+                + (getTrailingSpace() == null ? "null" : getTrailingSpace().toString())
+                + "\nLeading Space: \t"
+                + (getLeadingSpace() == null ? "null" : getLeadingSpace().toString())
+                + "\nReference IPD: \t" + getRefIPD()
+                + "\nSpace Adjust: \t" + getSpaceAdjust()
+                + "\nIPD Adjust: \t" + getIPDAdjust()
+                + "\nResolve Leading Space: \t" + resolveLeadingSpace()
+                + "\nSuppress Break Before: \t" + suppressBreakBefore()
+                + "\nIs First Area: \t" + isFirstArea()
+                + "\nStarts New Area: \t" + startsNewArea()
+                + "\nIs Last Area: \t" + isLastArea()
+                + "\nKeeps: \t[keep-with-next=" + getKeepWithNextPending()
                 + "][keep-with-previous=" + getKeepWithPreviousPending() + "] pending"
-        + "\nBreaks: \tforced [" + (breakBefore != Constants.EN_AUTO ? "break-before" : "") + "]["
-        + (breakAfter != Constants.EN_AUTO ? "break-after" : "") + "]";
+                + "\nBreaks: \tforced [" + (breakBefore != Constants.EN_AUTO ? "break-before" : "") + "]["
+                + (breakAfter != Constants.EN_AUTO ? "break-after" : "") + "]";
     }
 
     /**
@@ -691,6 +696,14 @@ public final class LayoutContext {
 
     public void setTreatAsArtifact(boolean treatAsArtifact) {
         setFlags(TREAT_AS_ARTIFACT, treatAsArtifact);
+    }
+
+    public void setAlternativeManager(AlternativeManager altManager) {
+        this.altManager = altManager;
+    }
+
+    public AlternativeManager getAlternativeManager() {
+        return altManager;
     }
 }
 

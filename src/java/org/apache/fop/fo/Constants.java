@@ -815,9 +815,12 @@ public interface Constants {
 
     /** Scope for table header */
     int PR_X_HEADER_COLUMN = 290;
+    
+    /** Property constant - FOP proprietary*/
+    int PR_X_FITTING_STRATEGY = 291;
 
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 290;
+    int PROPERTY_COUNT = 291;
 
     // compound property constants
 

@@ -19,10 +19,16 @@
 
 package org.apache.fop;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+import org.apache.fop.layoutmgr.AlternativeManager.Alternative;
+import org.apache.fop.layoutmgr.AlternativeManager.FittingStrategy;
+import org.apache.fop.layoutmgr.BestFitPenalty;
 import org.apache.fop.layoutmgr.BlockKnuthSequence;
 import org.apache.fop.layoutmgr.BreakingAlgorithm;
 import org.apache.fop.layoutmgr.ElementListObserver;
@@ -30,8 +36,6 @@ import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthSequence;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Tests the Knuth algorithm implementation.
@@ -63,6 +67,27 @@ public class KnuthAlgorithmTestCase {
         return seq;
     }
 
+    private static class BestFitPenaltyTestCase {
+
+        private static KnuthSequence getKnuthSequence() {
+            KnuthSequence seq = new BlockKnuthSequence();
+            FittingStrategy strategies[] = {FittingStrategy.FIRST_FIT,
+                    FittingStrategy.SMALLEST_FIT,
+                    FittingStrategy.BIGGEST_FIT};
+            for (int i = 0; i < 3; ++i) {
+                BestFitPenalty bestFitPenalty = new BestFitPenalty(strategies[i], null);
+                bestFitPenalty.addAlternative(new Alternative(null, 25000));
+                bestFitPenalty.addAlternative(new Alternative(null, 5000));
+                bestFitPenalty.addAlternative(new Alternative(null, 29000));
+                seq.add(new KnuthBox(0, null, false));
+                seq.add(bestFitPenalty);
+                seq.add(new KnuthPenalty(0, -KnuthPenalty.INFINITE, false, null, false));
+            }
+            return seq;
+        }
+
+    }
+
     /**
      * Tests a special condition where a negative-length glue occurs directly after a break
      * possibility.
@@ -79,6 +104,22 @@ public class KnuthAlgorithmTestCase {
         assertEquals(5000, parts[0].difference);
         assertEquals(5000, parts[1].difference);
     }
+    /**
+     * Testcase for BestFitPenalty
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void test2() throws Exception {
+        MyBreakingAlgorithm algo = new MyBreakingAlgorithm(0, 0, true, true, 0);
+        algo.setConstantLineWidth(30000);
+        KnuthSequence seq = BestFitPenaltyTestCase.getKnuthSequence();
+        algo.findBreakingPoints(seq, 1, true, BreakingAlgorithm.ALL_BREAKS);
+        Part[] parts = algo.getParts();
+        assertEquals("Sequence must produce 3 parts", 3, parts.length);
+        assertEquals(5000, 	parts[0].difference);
+        assertEquals(25000, parts[1].difference);
+        assertEquals(1000, 	parts[2].difference);
+    }
 
     private class Part {
         private int difference;
@@ -88,7 +129,7 @@ public class KnuthAlgorithmTestCase {
 
     private class MyBreakingAlgorithm extends BreakingAlgorithm {
 
-        private List parts = new java.util.ArrayList();
+        private List<Part> parts = new java.util.ArrayList<Part>();
 
         public MyBreakingAlgorithm(int align, int alignLast, boolean first,
                     boolean partOverflowRecovery, int maxFlagCount) {
@@ -96,7 +137,7 @@ public class KnuthAlgorithmTestCase {
         }
 
         public Part[] getParts() {
-            return (Part[])parts.toArray(new Part[parts.size()]);
+            return parts.toArray(new Part[parts.size()]);
         }
 
         public void updateData1(int total, double demerits) {
