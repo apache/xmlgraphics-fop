@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.extensions.AlternativeBlock;
 import org.apache.fop.layoutmgr.inline.AlignmentContext;
 import org.apache.fop.layoutmgr.inline.HyphContext;
 import org.apache.fop.traits.MinOptMax;
@@ -35,9 +34,6 @@ import org.apache.fop.traits.WritingMode;
  * method. It is set up by higher level LM and used by lower level LM.
  */
 public final class LayoutContext {
-
-    /** Manager of @{link {@link AlternativeBlock} and only used by {@link BestFitLayoutManager}*/
-    private AlternativeManager altManager;
 
     /** Generated break possibility is first in a new area */
     public static final int NEW_AREA = 0x01;
@@ -146,7 +142,6 @@ public final class LayoutContext {
     public static LayoutContext offspringOf(LayoutContext parent) {
         LayoutContext offspring = new LayoutContext(0);
         offspring.setTreatAsArtifact(parent.treatAsArtifact());
-        offspring.setAlternativeManager(parent.getAlternativeManager());
         return offspring;
     }
 
@@ -649,6 +644,7 @@ public final class LayoutContext {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "Layout Context:"
                 + "\nStack Limit BPD: \t"
@@ -696,14 +692,6 @@ public final class LayoutContext {
 
     public void setTreatAsArtifact(boolean treatAsArtifact) {
         setFlags(TREAT_AS_ARTIFACT, treatAsArtifact);
-    }
-
-    public void setAlternativeManager(AlternativeManager altManager) {
-        this.altManager = altManager;
-    }
-
-    public AlternativeManager getAlternativeManager() {
-        return altManager;
     }
 }
 

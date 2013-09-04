@@ -29,8 +29,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.fo.extensions.BestFit;
-import org.apache.fop.layoutmgr.AlternativeManager.Alternative;
-import org.apache.fop.layoutmgr.AlternativeManager.FittingStrategy;
+import org.apache.fop.layoutmgr.Alternative.FittingStrategy;
 
 /**
  * LayoutManager for a fox:best-fit. It selects the "best" alternative
@@ -39,6 +38,7 @@ import org.apache.fop.layoutmgr.AlternativeManager.FittingStrategy;
 public class BestFitLayoutManager extends AbstractLayoutManager {
 
     private Block curBlockArea;
+    private BestFitPenalty bestFitPenalty;
 
     private static class BestFitPosition extends Position {
 
@@ -48,7 +48,7 @@ public class BestFitLayoutManager extends AbstractLayoutManager {
 
     }
 
-    private FittingStrategy fittingStrategy;
+    private final FittingStrategy fittingStrategy;
 
     public BestFitLayoutManager(BestFit node) {
         super(node);
@@ -78,32 +78,36 @@ public class BestFitLayoutManager extends AbstractLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getNextKnuthElements(LayoutContext context, int alignment,
             Stack lmStack, Position positionAtIPDChange,
             LayoutManager restartAtLM) {
         LayoutManager curLM; // currently active LM
-        BestFitPenalty bestFitPenalty =
-                new BestFitPenalty(fittingStrategy, new BestFitPosition(this));
+        bestFitPenalty = new BestFitPenalty(fittingStrategy, new BestFitPosition(this));
         while ((curLM = getChildLM()) != null) {
             LayoutContext childLC = makeChildLayoutContext(context);
 
-            List returnedList = null;
+            List childKnuthList = null;
             if (!curLM.isFinished()) {
-                returnedList = curLM.getNextKnuthElements(childLC, alignment);
+                childKnuthList = curLM.getNextKnuthElements(childLC, alignment);
             }
-            if (returnedList != null) {
-                List<ListElement> returnList = new LinkedList<ListElement>();
-                this.wrapPositionElements(returnedList, returnList);
-                int contentLength = ElementListUtils.calcFullContentLength(returnList);
+            if (childKnuthList != null) {
+                List<ListElement> newKnuthList = new LinkedList<ListElement>();
+                this.wrapPositionElements(childKnuthList, newKnuthList);
+                int contentLength = ElementListUtils.calcFullContentLength(newKnuthList);
                 // Add a new variant
-                bestFitPenalty.addAlternative(new Alternative(returnList, contentLength));
+                bestFitPenalty.addAlternative(new Alternative(newKnuthList, contentLength));
             }
         }
         setFinished(true);
         List<ListElement> finalList = new LinkedList<ListElement>();
-        // Insert an empty Knuth box to prevent the layout engine from ignoring our penalty
+        // Enclose the penalty with two empty Knuth boxes
+        // to prevent the layout engine from ignoring it.
+        // I know this seems like a hack, but I'll address
+        // this issue properly when more tests are done
         finalList.add(new KnuthBox(0, new Position(this), false));
         finalList.add(bestFitPenalty);
+        finalList.add(new KnuthBox(0, new Position(this), false));
         return finalList;
     }
 
@@ -213,7 +217,6 @@ public class BestFitLayoutManager extends AbstractLayoutManager {
         // and put them in a new list;
         LinkedList<Position> positionList = new LinkedList<Position>();
         Position pos;
-        AlternativeManager altManager = layoutContext.getAlternativeManager();
         while (parentIter.hasNext()) {
             pos = parentIter.next();
             if (pos.getIndex() >= 0) {
@@ -230,10 +233,9 @@ public class BestFitLayoutManager extends AbstractLayoutManager {
                 if (firstLM == null) {
                     firstLM = lastLM;
                 }
-            }
-            else if (pos instanceof BestFitPosition) {
-                if (altManager.hasAny()) {
-                    Alternative bestAlt = altManager.getNextBestAlternative();
+            } else if (pos instanceof BestFitPosition) {
+                if (bestFitPenalty.getBestAlternative() != null) {
+                    Alternative bestAlt = bestFitPenalty.getBestAlternative();
                     Iterator<ListElement> it = bestAlt.getKnuthList().iterator();
                     while (it.hasNext()) {
                         positionList.add(it.next().getPosition());
@@ -270,6 +272,7 @@ public class BestFitLayoutManager extends AbstractLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isRestartable() {
         return true;
     }

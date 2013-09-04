@@ -815,7 +815,7 @@ public interface Constants {
 
     /** Scope for table header */
     int PR_X_HEADER_COLUMN = 290;
-    
+
     /** Property constant - FOP proprietary*/
     int PR_X_FITTING_STRATEGY = 291;
 

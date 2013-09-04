@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.layoutmgr.AlternativeManager.Alternative;
 
 /**
  * The set of nodes is sorted into lines indexed into activeLines.
@@ -193,8 +192,6 @@ public abstract class BreakingAlgorithm {
     private boolean partOverflowRecoveryActivated = true;
     private KnuthNode lastRecovered;
 
-    private AlternativeManager altManager = new AlternativeManager();
-
     /**
      * Create a new instance.
      *
@@ -307,6 +304,7 @@ public abstract class BreakingAlgorithm {
         }
 
         /** {@inheritDoc} */
+        @Override
         public String toString() {
             return "<KnuthNode at " + position + " "
                     + totalWidth + "+" + totalStretch + "-" + totalShrink
@@ -322,12 +320,12 @@ public abstract class BreakingAlgorithm {
     protected class BestRecords {
         private static final double INFINITE_DEMERITS = Double.POSITIVE_INFINITY;
 
-        private double[] bestDemerits = new double[4];
-        private KnuthNode[] bestNode = new KnuthNode[4];
-        private double[] bestAdjust = new double[4];
-        private int[] bestDifference = new int[4];
-        private int[] bestAvailableShrink = new int[4];
-        private int[] bestAvailableStretch = new int[4];
+        private final double[] bestDemerits = new double[4];
+        private final KnuthNode[] bestNode = new KnuthNode[4];
+        private final double[] bestAdjust = new double[4];
+        private final int[] bestDifference = new int[4];
+        private final int[] bestAvailableShrink = new int[4];
+        private final int[] bestAvailableStretch = new int[4];
         /** Points to the fitness class which currently leads to the best demerits. */
         private int bestIndex = -1;
 
@@ -825,30 +823,6 @@ public abstract class BreakingAlgorithm {
         }
     }
 
-    private int handleBestFitPenalty(BestFitPenalty penalty, KnuthNode node,
-            int elementIdx) {
-        int difference;
-        // Find the alternatives that can be fitted inside the remaining space
-        for (int i = 0; i < penalty.getAlternativeCount(); ++i) {
-            Alternative alt = penalty.getAlternative(i);
-            difference = computeDifference(node, new KnuthPenalty(alt.getWidth(),
-                    0, false, null, false), elementIdx);
-            if (difference > 0) {
-                alt.setRemainingBPD(difference);
-                altManager.addAlternative(alt);
-            }
-        }
-        Alternative bestAlt = altManager.getBestAlternative(penalty.getStrategyType());
-        if (bestAlt != null) {
-            difference = bestAlt.getRemainingBPD();
-            return difference;
-        } else {
-            // No alternative can be fitted inside the remaining space
-            return computeDifference(node, new KnuthPenalty(0,
-                    0, false, null, false), elementIdx);
-        }
-    }
-
     /**
      * Replace the last too-long or too-short node by the last deactivated
      * node, if applicable.
@@ -1002,6 +976,33 @@ public abstract class BreakingAlgorithm {
         }
     }
 
+    private int handleBestFitPenalty(BestFitPenalty penalty, KnuthNode node,
+            int elementIdx) {
+        // Find the alternatives that can be fitted inside the remaining space
+        for (int i = 0; i < penalty.getAlternatives().size(); ++i) {
+            Alternative alt = penalty.getAlternatives().get(i);
+            int difference = computeDifference(node, new KnuthPenalty(alt.getWidth(),
+                    0, false, null, false), elementIdx);
+            double r = computeAdjustmentRatio(node, difference);
+            //if (r >= -1) {
+                alt.setRemainingBPD(difference);
+                alt.setEnabled(r >= -1);
+                //altManager.addAlternative(alt);
+            //}
+        }
+        Alternative bestAlt = penalty.getBestAlternative();
+        if (bestAlt != null) {
+            //penalty.setBestAlternative(bestAlt);
+            // Add an empty KnuthBox to represent the chosen alternative
+            par.add(elementIdx + 1, new KnuthBox(bestAlt.getWidth(), null, false));
+            return bestAlt.getRemainingBPD();
+        } else {
+            // No "good" alternative was found
+            return computeDifference(node, new KnuthPenalty(0,
+                    0, false, null, false), elementIdx);
+        }
+    }
+
     /**
      * Check if the given {@link KnuthElement} can end the line with the given
      * number.
@@ -1021,7 +1022,7 @@ public abstract class BreakingAlgorithm {
      * @param node  the node
      * @param line  the line number
      * @param elementIdx    the position index of the element
-     * @param difference    the difference between content-length and avaialable width
+     * @param difference    the difference between content-length and available width
      * @param r     the adjustment ratio
      * @param demerits  demerits produced by the node
      * @param fitnessClass  the fitness class
@@ -1482,11 +1483,6 @@ public abstract class BreakingAlgorithm {
     /** @return the alignment for the last line/part */
     public int getAlignmentLast() {
         return this.alignmentLast;
-    }
-
-    /** @return the alternative manager (used by fox:best-fit) */
-    public AlternativeManager getAlternativeManager() {
-        return altManager;
     }
 
 }

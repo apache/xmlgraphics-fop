@@ -64,24 +64,25 @@ public class AlternativeBlockLayoutManager extends AbstractLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getNextKnuthElements(LayoutContext context, int alignment,
             Stack lmStack, Position positionAtIPDChange,
             LayoutManager restartAtLM) {
         LayoutManager curLM;
-        List<ListElement> returnList = new LinkedList<ListElement>();
+        List<ListElement> knuthList = new LinkedList<ListElement>();
         while ((curLM = getChildLM()) != null) {
             LayoutContext childLC = makeChildLayoutContext(context);
 
-            List returnedList = null;
+            List childKnuthList = null;
             if (!curLM.isFinished()) {
-                returnedList = curLM.getNextKnuthElements(childLC, alignment);
+                childKnuthList = curLM.getNextKnuthElements(childLC, alignment);
             }
-            if (returnedList != null) {
-                wrapPositionElements(returnedList, returnList);
+            if (childKnuthList != null) {
+                wrapPositionElements(childKnuthList, knuthList);
             }
         }
         setFinished(true);
-        return returnList;
+        return knuthList;
     }
 
     /**
@@ -232,6 +233,7 @@ public class AlternativeBlockLayoutManager extends AbstractLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isRestartable() {
         return true;
     }
