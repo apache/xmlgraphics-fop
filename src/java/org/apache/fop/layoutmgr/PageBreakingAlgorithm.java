@@ -26,6 +26,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
@@ -37,9 +38,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     /** the logger for the class */
     private static Log log = LogFactory.getLog(PageBreakingAlgorithm.class);
 
-    private LayoutManager topLevelLM;
-    private PageProvider pageProvider;
-    private PageBreakingLayoutListener layoutListener;
+    private final LayoutManager topLevelLM;
+    private final PageProvider pageProvider;
+    private final PageBreakingLayoutListener layoutListener;
     /** List of PageBreakPosition elements. */
     private LinkedList<PageBreakPosition> pageBreaks = null;
 
@@ -72,9 +73,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private int footnoteElementIndex = -1;
 
     // demerits for a page break that splits a footnote
-    private int splitFootnoteDemerits = 5000;
+    private final int splitFootnoteDemerits = 5000;
     // demerits for a page break that defers a whole footnote to the following page
-    private int deferredFootnoteDemerits = 10000;
+    private final int deferredFootnoteDemerits = 10000;
     private MinOptMax footnoteSeparatorLength = null;
 
     // the method noBreakBetween(int, int) uses these variables
@@ -171,10 +172,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      */
     protected class BestPageRecords extends BestRecords {
 
-        private int[] bestFootnotesLength = new int[4];
-        private int[] bestFootnoteListIndex = new int[4];
-        private int[] bestFootnoteElementIndex = new int[4];
+        private final int[] bestFootnotesLength = new int[4];
+        private final int[] bestFootnoteListIndex = new int[4];
+        private final int[] bestFootnoteElementIndex = new int[4];
 
+        @Override
         public void addRecord(double demerits, KnuthNode node, double adjust,
                               int availableShrink, int availableStretch,
                               int difference, int fitness) {

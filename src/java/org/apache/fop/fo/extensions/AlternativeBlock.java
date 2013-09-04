@@ -40,6 +40,7 @@ public class AlternativeBlock extends FObj {
         super(parent);
     }
 
+    @Override
     public void processNode(String elementName, Locator locator,
             Attributes attlist, PropertyList pList) throws FOPException {
         if (log.isDebugEnabled()) {
@@ -48,29 +49,33 @@ public class AlternativeBlock extends FObj {
         }
     }
 
+    @Override
     public void startOfNode() throws FOPException {
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("AlternativeBlock.startOfNode()");
+        }
     }
 
+    @Override
     public void endOfNode() throws FOPException {
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("AlternativeBlock.endOfNode()");
+        }
     }
 
     /**
      * Content model: see {@link Block}
      */
+    @Override
     protected void validateChildNode(Locator loc, String nsURI, String localName)
             throws ValidationException {
         if (FOX_URI.equals(nsURI)) {
             if ("best-fit".equals(localName) || "alternative-block".equals(localName)) {
                 invalidChildError(loc, FOX_URI, localName);
             }
-        }
-        else if (FO_URI.equals(nsURI)) {
+        } else if (FO_URI.equals(nsURI)) {
             if (!isBlockOrInlineItem(nsURI, localName)) {
-                invalidChildError(loc, FO_URI, localName);
+                invalidChildError(loc, nsURI, localName);
             }
         }
     }
@@ -85,6 +90,7 @@ public class AlternativeBlock extends FObj {
         return ExtensionElementMapping.STANDARD_PREFIX;
     }
 
+    @Override
     public String getNamespaceURI() {
         return ExtensionElementMapping.URI;
     }

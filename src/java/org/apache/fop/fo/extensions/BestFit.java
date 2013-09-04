@@ -19,7 +19,6 @@
 
 package org.apache.fop.fo.extensions;
 
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -27,7 +26,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.layoutmgr.AlternativeManager.FittingStrategy;
+import org.apache.fop.layoutmgr.Alternative.FittingStrategy;
 
 /**
  *  A class that holds a set of <fox:alternative-block> blocks where each one is examined,
@@ -46,52 +45,50 @@ public class BestFit extends FObj {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         String strategyName = pList.get(PR_X_FITTING_STRATEGY).getString();
-        if (strategyName.equals("first-fit"))
-            strategy = FittingStrategy.FIRST_FIT;
-        else if (strategyName.equals("smallest-fit"))
-            strategy = FittingStrategy.SMALLEST_FIT;
-        else if (strategyName.equals("biggest-fit"))
-            strategy = FittingStrategy.BIGGEST_FIT;
-        else {
+        for (FittingStrategy fs : FittingStrategy.values()) {
+            if (fs.getStrategyName().equals(strategyName)) {
+                strategy = fs;
+                return;
+            }
+        }
+        if (log.isWarnEnabled()) {
             log.warn("Unrecognized strategy name => " + strategyName + ". Using default strategy (first-fit");
-            strategy = FittingStrategy.FIRST_FIT;
         }
-
     }
 
-    public void processNode(String elementName, Locator locator,
-            Attributes attlist, PropertyList pList) throws FOPException {
-        if (log.isDebugEnabled()) {
-            log.debug("org.apache.fop.fo.extensions.BestFit: " + elementName
-                    + (locator != null ? " at " + getLocatorString(locator) : ""));
-        }
-        pList.addAttributesToList(attlist);
-        bind(pList);
-    }
-
+    @Override
     public void startOfNode() throws FOPException {
-        if (log.isDebugEnabled())
+        super.startOfNode();
+        if (log.isDebugEnabled()) {
             log.debug("BestFit.startOfNode()");
+        }
     }
 
+    @Override
     public void endOfNode() throws FOPException {
-        if (log.isDebugEnabled())
+        super.endOfNode();
+        if (log.isDebugEnabled()) {
             log.debug("BestFit.endOfNode()");
+        }
     }
 
     /**
      * {@inheritDoc}
      * Content model: (fox:alternative-block)+
      */
+    @Override
     protected void validateChildNode(Locator loc, String nsURI, String localName)
             throws ValidationException {
-        if (FO_URI.equals(nsURI)) {
+        if (FOX_URI.equals(nsURI)) {
             if (!"alternative-block".equals(localName)) {
-                invalidChildError(loc, FO_URI, localName);
+                invalidChildError(loc, FOX_URI, localName);
             }
+        } else {
+            invalidChildError(loc, nsURI, localName);
         }
     }
 
@@ -105,6 +102,7 @@ public class BestFit extends FObj {
         return ExtensionElementMapping.STANDARD_PREFIX;
     }
 
+    @Override
     public String getNamespaceURI() {
         return ExtensionElementMapping.URI;
     }

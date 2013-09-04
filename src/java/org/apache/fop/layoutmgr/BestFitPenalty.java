@@ -20,9 +20,9 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.LinkedList;
+import java.util.List;
 
-import org.apache.fop.layoutmgr.AlternativeManager.Alternative;
-import org.apache.fop.layoutmgr.AlternativeManager.FittingStrategy;
+import org.apache.fop.layoutmgr.Alternative.FittingStrategy;
 
 /**
  * A dummy penalty used in {@link BestFitLayoutManager} to store
@@ -31,8 +31,9 @@ import org.apache.fop.layoutmgr.AlternativeManager.FittingStrategy;
 
 public class BestFitPenalty extends KnuthPenalty {
 
-    private LinkedList<Alternative> alternatives;
-    private FittingStrategy strategy;
+    private final LinkedList<Alternative> alternatives;
+    private final FittingStrategy strategy;
+    private Alternative bestAlternative = null;
 
     public BestFitPenalty(FittingStrategy strategy, Position pos) {
         super(0, 0, false, pos, false);
@@ -44,23 +45,33 @@ public class BestFitPenalty extends KnuthPenalty {
         alternatives.add(alternative);
     }
 
-    public Alternative getAlternative(int index) {
-        return alternatives.get(index);
-    }
-
-    public int getAlternativeCount() {
-        return alternatives.size();
+    public List<Alternative> getAlternatives() {
+        return alternatives;
     }
 
     public FittingStrategy getStrategyType() {
         return strategy;
     }
 
+    public Alternative getBestAlternative() {
+        if (bestAlternative != null) {
+            return bestAlternative;
+        } else {
+            bestAlternative = strategy.filter(alternatives);
+            return bestAlternative;
+        }
+    }
+
+//    public void setBestAlternative(Alternative bestAlternative) {
+//        this.bestAlternative = bestAlternative;
+//    }
+
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         String str = super.toString();
         StringBuffer buffer = new StringBuffer(64);
-        buffer.append(" number of alternatives = " + getAlternativeCount());
+        buffer.append(" number of alternatives = " + getAlternatives().size());
         buffer.append(" fitting-strategy = " + strategy);
         return str + buffer.toString();
     }

@@ -581,6 +581,7 @@ public final class FOPropertyMapping implements Constants {
 
         // background-color
         m  = new ColorProperty.Maker(PR_BACKGROUND_COLOR) {
+            @Override
             protected Property convertPropertyDatatype(
                     Property p, PropertyList propertyList, FObj fo) throws PropertyException {
                 String nameval = p.getNCname();
@@ -1620,6 +1621,7 @@ public final class FOPropertyMapping implements Constants {
 
         // text-align TODO: make it a StringProperty with enums.
         m  = new EnumProperty.Maker(PR_TEXT_ALIGN) {
+            @Override
             public Property get(int subpropId, PropertyList propertyList,
                     boolean bTryInherit, boolean bTryDefault) throws PropertyException {
                 Property p = super.get(subpropId, propertyList, bTryInherit, bTryDefault);
@@ -1649,6 +1651,7 @@ public final class FOPropertyMapping implements Constants {
 
         // text-align-last
         m  = new EnumProperty.Maker(PR_TEXT_ALIGN_LAST) {
+            @Override
             public Property get(int subpropId, PropertyList propertyList,
                     boolean bTryInherit, boolean bTryDefault) throws PropertyException {
                 Property p = super.get(subpropId, propertyList, bTryInherit, bTryDefault);
@@ -2613,7 +2616,7 @@ public final class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("");
         addPropertyMaker("fox:alt-text", m);
-        
+
         //fox:fitting-strategy, used only in fox:best-fit
         m = new StringProperty.Maker(PR_X_FITTING_STRATEGY);
         m.setInherited(false);

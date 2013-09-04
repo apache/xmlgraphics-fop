@@ -178,12 +178,12 @@ public final class ElementListUtils {
                 len += ((KnuthElement)el).getWidth();
             } else if (el.isGlue()) {
                 len += ((KnuthElement)el).getWidth();
-            }
-            else if (el.isUnresolvedElement() && (el instanceof BreakElement) == false) {
+            } else if (el.isUnresolvedElement() && !(el instanceof BreakElement)) {
                 // Handle properties space-before and space-after
                 UnresolvedListElementWithLength uresolvedEl = (UnresolvedListElementWithLength)el;
-                if (uresolvedEl.isLast() || uresolvedEl.isFirst())
+                if (uresolvedEl.isLast() || uresolvedEl.isFirst()) {
                     len += uresolvedEl.getLength().getOpt();
+                }
             }
             count--;
             if (count == 0) {

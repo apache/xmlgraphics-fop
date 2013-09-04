@@ -79,6 +79,7 @@ public class ExtensionElementMapping extends ElementMapping {
     /**
      * Initialize the data structures.
      */
+    @Override
     protected void initialize() {
         if (foObjs == null) {
             foObjs = new HashMap<String, Maker>();
@@ -92,35 +93,41 @@ public class ExtensionElementMapping extends ElementMapping {
     }
 
     static class DestinationMaker extends ElementMapping.Maker {
+        @Override
         public FONode make(FONode parent) {
             return new Destination(parent);
         }
     }
 
     static class ExternalDocumentMaker extends ElementMapping.Maker {
+        @Override
         public FONode make(FONode parent) {
             return new ExternalDocument(parent);
         }
     }
-    
+
     static class BestFitMaker extends ElementMapping.Maker {
+        @Override
         public FONode make(FONode parent) {
             return new BestFit(parent);
         }
     }
-    
+
     static class AlternativeBlockMaker extends ElementMapping.Maker {
+        @Override
         public FONode make(FONode parent) {
             return new AlternativeBlock(parent);
         }
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getStandardPrefix() {
         return STANDARD_PREFIX;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isAttributeProperty(QName attributeName) {
         if (!URI.equals(attributeName.getNamespaceURI())) {
             throw new IllegalArgumentException("The namespace URIs don't match");
