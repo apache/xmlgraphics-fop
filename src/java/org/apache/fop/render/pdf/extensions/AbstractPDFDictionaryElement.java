@@ -19,32 +19,25 @@
 
 package org.apache.fop.render.pdf.extensions;
 
-import org.apache.xmlgraphics.util.XMLizable;
-
-import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.fo.FONode;
 
 // CSOFF: LineLengthCheck
 
-public abstract class PDFExtensionAttachment implements ExtensionAttachment, XMLizable {
+/**
+ * Base class for the PDF dictionary related extension elements.
+ */
+public abstract class AbstractPDFDictionaryElement extends AbstractPDFExtensionElement {
 
-    /** The category URI for this extension attachment. */
-    public static final String CATEGORY = "apache:fop:extensions:pdf";
-
-    /** The prefix to use with qualified names for this extension attachment. */
-    public static final String PREFIX = "pdf";
+    public static final String ATT_KEY = PDFDictionaryEntryExtension.PROPERTY_KEY;
 
     /**
-     * Default constructor.
+     * Default constructor
+     *
+     * @param parent parent of this node
+     * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
-    public PDFExtensionAttachment() {
-    }
-
-    public String getPrefix() {
-        return PREFIX;
-    }
-
-    @Override
-    public String getCategory() {
-        return CATEGORY;
+    public AbstractPDFDictionaryElement(FONode parent) {
+        super(parent);
     }
 }
+

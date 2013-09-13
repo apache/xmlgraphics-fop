@@ -35,6 +35,7 @@ public class GenerationHelperContentHandler extends DelegatingContentHandler {
     private static final Attributes EMPTY_ATTS = new AttributesImpl();
 
     private String mainNamespace;
+    private Object contentHandlerContext;
 
     /**
      * Main constructor. If the given handler also implements any of the EntityResolver,
@@ -42,10 +43,12 @@ public class GenerationHelperContentHandler extends DelegatingContentHandler {
      * @param handler the SAX content handler to delegate all calls to
      * @param mainNamespace the main namespace used for generated XML content when abbreviated
      *                          ContentHandler calls are used.
+     * @param contentHandlerContext additional content handler context state
      */
-    public GenerationHelperContentHandler(ContentHandler handler, String mainNamespace) {
+    public GenerationHelperContentHandler(ContentHandler handler, String mainNamespace, Object contentHandlerContext) {
         super(handler);
         this.mainNamespace = mainNamespace;
+        this.contentHandlerContext = contentHandlerContext;
     }
 
     /**
@@ -63,6 +66,14 @@ public class GenerationHelperContentHandler extends DelegatingContentHandler {
      */
     public void setMainNamespace(String namespaceURI) {
         this.mainNamespace = namespaceURI;
+    }
+
+    /**
+     * Returns the context object (may be null).
+     * @return the context object
+     */
+    public Object getContentHandlerContext() {
+        return this.contentHandlerContext;
     }
 
     /**

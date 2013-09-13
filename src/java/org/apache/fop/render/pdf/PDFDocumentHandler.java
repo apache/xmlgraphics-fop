@@ -50,7 +50,8 @@ import org.apache.fop.render.intermediate.IFDocumentNavigationHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.render.pdf.PDFRendererConfig.PDFRendererConfigParser;
-import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileExtensionAttachment;
+import org.apache.fop.render.pdf.extensions.PDFDictionaryAttachment;
+import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileAttachment;
 
 /**
  * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation that produces PDF.
@@ -296,17 +297,22 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         } else if (extension instanceof Metadata) {
             XMPMetadata wrapper = new XMPMetadata(((Metadata) extension));
             pdfUtil.renderXMPMetadata(wrapper);
-        } else if (extension instanceof PDFEmbeddedFileExtensionAttachment) {
-            PDFEmbeddedFileExtensionAttachment embeddedFile
-                = (PDFEmbeddedFileExtensionAttachment)extension;
+        } else if (extension instanceof PDFEmbeddedFileAttachment) {
+            PDFEmbeddedFileAttachment embeddedFile
+                = (PDFEmbeddedFileAttachment)extension;
             try {
                 pdfUtil.addEmbeddedFile(embeddedFile);
             } catch (IOException ioe) {
                 throw new IFException("Error adding embedded file: " + embeddedFile.getSrc(), ioe);
             }
-        } else {
+        } else if (extension instanceof PDFDictionaryAttachment) {
+            PDFDictionaryAttachment dictionaryExtension = (PDFDictionaryAttachment) extension;
+            pdfUtil.renderDictionaryExtension(dictionaryExtension, currentPage);
+        } else if (extension != null) {
             log.debug("Don't know how to handle extension object. Ignoring: "
                     + extension + " (" + extension.getClass().getName() + ")");
+        } else {
+            log.debug("Ignoring null extension object.");
         }
     }
 

@@ -29,6 +29,14 @@ public class PDFNumber extends PDFObject {
 
     private Number number;
 
+    public PDFNumber() {
+        this.number = Integer.valueOf(0);
+    }
+
+    public PDFNumber(Number number) {
+        this.number = number;
+    }
+
     /**
      * Returns the number.
      * @return the number

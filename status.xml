@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="GA" type="add" fixes-bug="FOP-2298">
+          Enable support for PDF page transitions.
+      </action>
       <action context="Code" dev="PH" type="fix" fixes-bug="FOP-2211" due-to="Alexios Giotis, PH">
           Fix and improve the handling of temporary files using the new URI resource resolvers
       </action>

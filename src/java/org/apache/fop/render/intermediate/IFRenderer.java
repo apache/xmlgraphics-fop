@@ -571,6 +571,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             Dimension dim = new Dimension(viewArea.width, viewArea.height);
 
             establishForeignAttributes(page.getForeignAttributes());
+            documentHandler.getContext().setPageIndex(page.getPageIndex());
             documentHandler.startPage(page.getPageIndex(), page.getPageNumberString(),
                     page.getSimplePageMasterName(), dim);
             resetForeignAttributes();
@@ -598,6 +599,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
             establishForeignAttributes(page.getForeignAttributes());
             documentHandler.endPage();
+            documentHandler.getContext().setPageIndex(-1);
             resetForeignAttributes();
         } catch (IFException e) {
             handleIFException(e);
