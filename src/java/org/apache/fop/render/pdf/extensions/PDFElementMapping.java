@@ -22,6 +22,8 @@ package org.apache.fop.render.pdf.extensions;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FONode;
 
+// CSOFF: LineLengthCheck
+
 /**
  * This class provides the element mapping for the PDF-specific extensions.
  */
@@ -39,13 +41,43 @@ public class PDFElementMapping extends ElementMapping {
     protected void initialize() {
         if (foObjs == null) {
             foObjs = new java.util.HashMap<String, Maker>();
-            foObjs.put(PDFEmbeddedFileElement.ELEMENT, new PDFEmbeddedFileMaker());
+            // pdf:embedded-file
+            foObjs.put(PDFEmbeddedFileElement.ELEMENT, new PDFEmbeddedFileElementMaker());
+            // pdf:{catalog,page} et al.
+            for (PDFDictionaryType type : PDFDictionaryType.values()) {
+                foObjs.put(type.elementName(), new PDFDictionaryElementMaker(type));
+            }
+            for (PDFDictionaryEntryType type : PDFDictionaryEntryType.values()) {
+                if (type != PDFDictionaryEntryType.Dictionary) {
+                    foObjs.put(type.elementName(), new PDFDictionaryEntryElementMaker(type));
+                }
+            }
         }
     }
 
-    static class PDFEmbeddedFileMaker extends ElementMapping.Maker {
+    static class PDFEmbeddedFileElementMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new PDFEmbeddedFileElement(parent);
+        }
+    }
+
+    static class PDFDictionaryElementMaker extends ElementMapping.Maker {
+        private PDFDictionaryType dictionaryType;
+        PDFDictionaryElementMaker(PDFDictionaryType dictionaryType) {
+            this.dictionaryType = dictionaryType;
+        }
+        public FONode make(FONode parent) {
+            return new PDFDictionaryElement(parent, dictionaryType);
+        }
+    }
+
+    static class PDFDictionaryEntryElementMaker extends ElementMapping.Maker {
+        private PDFDictionaryEntryType entryType;
+        PDFDictionaryEntryElementMaker(PDFDictionaryEntryType entryType) {
+            this.entryType = entryType;
+        }
+        public FONode make(FONode parent) {
+            return new PDFDictionaryEntryElement(parent, entryType);
         }
     }
 }

@@ -19,32 +19,26 @@
 
 package org.apache.fop.render.pdf.extensions;
 
-import org.apache.xmlgraphics.util.XMLizable;
+import org.xml.sax.ContentHandler;
 
-import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.util.ContentHandlerFactory;
 
 // CSOFF: LineLengthCheck
 
-public abstract class PDFExtensionAttachment implements ExtensionAttachment, XMLizable {
+/**
+ * Factory for the ContentHandler that handles serialized PDFExtensionAttachment instances.
+ */
+public class PDFExtensionHandlerFactory implements ContentHandlerFactory {
 
-    /** The category URI for this extension attachment. */
-    public static final String CATEGORY = "apache:fop:extensions:pdf";
+    private static final String[] NAMESPACES = new String[] {PDFExtensionAttachment.CATEGORY};
 
-    /** The prefix to use with qualified names for this extension attachment. */
-    public static final String PREFIX = "pdf";
-
-    /**
-     * Default constructor.
-     */
-    public PDFExtensionAttachment() {
+    /** {@inheritDoc} */
+    public String[] getSupportedNamespaces() {
+        return NAMESPACES;
     }
 
-    public String getPrefix() {
-        return PREFIX;
-    }
-
-    @Override
-    public String getCategory() {
-        return CATEGORY;
+    /** {@inheritDoc} */
+    public ContentHandler createContentHandler() {
+        return new PDFExtensionHandler();
     }
 }

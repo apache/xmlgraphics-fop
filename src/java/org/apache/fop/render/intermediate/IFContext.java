@@ -55,6 +55,8 @@ public class IFContext {
 
     private boolean hyphenated;
 
+    private int pageIndex = -1;
+
     /**
      * Main constructor.
      * @param ua the user agent
@@ -214,6 +216,22 @@ public class IFContext {
      */
     public boolean isHyphenated() {
         return hyphenated;
+    }
+
+    /**
+     * Record current page index.
+     * @param pageIndex a zero based page index or -1 (no page)
+     */
+    public void setPageIndex(int pageIndex) {
+        this.pageIndex = pageIndex;
+    }
+
+    /**
+     * Obtain current page index.
+     * @return a zero based page index or -1 (no page)
+     */
+    public int getPageIndex() {
+        return this.pageIndex;
     }
 
 }

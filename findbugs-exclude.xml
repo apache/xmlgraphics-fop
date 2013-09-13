@@ -5413,4 +5413,24 @@
      </Or>
      <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
    </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.extensions.PDFExtensionHandlerFactory"/>
+      <Method name="getSupportedNamespaces"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.extensions.PDFDictionaryEntryExtension"/>
+      <Method name="getValueAsNumber"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.extensions.PDFDictionaryType"/>
+      <Method name="hasValueOfElementName"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.extensions.PDFDictionaryEntryType"/>
+      <Method name="hasValueOfElementName"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
 </FindBugsFilter>

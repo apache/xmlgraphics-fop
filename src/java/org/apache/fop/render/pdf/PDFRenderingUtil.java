@@ -56,15 +56,23 @@ import org.apache.fop.pdf.PDFICCBasedColorSpace;
 import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFMetadata;
+import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFNames;
+import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFOutputIntent;
+import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFPageLabels;
 import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.Version;
 import org.apache.fop.pdf.VersionController;
-import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileExtensionAttachment;
+import org.apache.fop.render.pdf.extensions.PDFDictionaryAttachment;
+import org.apache.fop.render.pdf.extensions.PDFDictionaryEntryExtension;
+import org.apache.fop.render.pdf.extensions.PDFDictionaryEntryType;
+import org.apache.fop.render.pdf.extensions.PDFDictionaryExtension;
+import org.apache.fop.render.pdf.extensions.PDFDictionaryType;
+import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileAttachment;
 
 import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPTION_PARAMS;
 import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_ACCESSCONTENT;
@@ -250,6 +258,46 @@ class PDFRenderingUtil {
         }
     }
 
+    public void renderDictionaryExtension(PDFDictionaryAttachment attachment, PDFPage currentPage) {
+        PDFDictionaryExtension extension = attachment.getExtension();
+        if (extension.getDictionaryType() == PDFDictionaryType.Catalog) {
+            augmentDictionary(pdfDoc.getRoot(), extension);
+        } else if (extension.getDictionaryType() == PDFDictionaryType.Page) {
+            if (extension.matchesPageNumber(currentPage.getPageIndex() + 1)) {
+                augmentDictionary(currentPage, extension);
+            }
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private PDFDictionary augmentDictionary(PDFDictionary dictionary, PDFDictionaryExtension extension) {
+        for (PDFDictionaryEntryExtension entry : extension.getEntries()) {
+            if (entry instanceof PDFDictionaryExtension) {
+                dictionary.put(entry.getKey(), augmentDictionary(new PDFDictionary(dictionary), (PDFDictionaryExtension) entry));
+            } else {
+                augmentDictionary(dictionary, entry);
+            }
+        }
+        return dictionary;
+    }
+
+    private void augmentDictionary(PDFDictionary dictionary, PDFDictionaryEntryExtension entry) {
+        PDFDictionaryEntryType type = entry.getType();
+        String key = entry.getKey();
+        if (type == PDFDictionaryEntryType.Boolean) {
+            dictionary.put(key, entry.getValueAsBoolean());
+        } else if (type == PDFDictionaryEntryType.Name) {
+            dictionary.put(key, new PDFName(entry.getValueAsString()));
+        } else if (type == PDFDictionaryEntryType.Number) {
+            dictionary.put(key, new PDFNumber(entry.getValueAsNumber()));
+        } else if (type == PDFDictionaryEntryType.String) {
+            dictionary.put(key, entry.getValueAsString());
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
     public PDFDocument setupPDFDocument(OutputStream out) throws IOException {
         if (this.pdfDoc != null) {
             throw new IllegalStateException("PDFDocument already set up");
@@ -315,7 +363,7 @@ class PDFRenderingUtil {
      * @param embeddedFile the object representing the embedded file to be added
      * @throws IOException if an I/O error occurs
      */
-    public void addEmbeddedFile(PDFEmbeddedFileExtensionAttachment embeddedFile)
+    public void addEmbeddedFile(PDFEmbeddedFileAttachment embeddedFile)
             throws IOException {
         this.pdfDoc.getProfile().verifyEmbeddedFilesAllowed();
         PDFNames names = this.pdfDoc.getRoot().getNames();

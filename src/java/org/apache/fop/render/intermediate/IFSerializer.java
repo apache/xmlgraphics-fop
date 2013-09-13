@@ -303,6 +303,7 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
             addAttribute(atts, "width", Integer.toString(size.width));
             addAttribute(atts, "height", Integer.toString(size.height));
             addForeignAttributes(atts);
+            getContext().setPageIndex(index);
             handler.startElement(EL_PAGE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startPage()", e);
@@ -379,6 +380,7 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
     public void endPage() throws IFException {
         try {
             handler.endElement(EL_PAGE);
+            getContext().setPageIndex(-1);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPage()", e);
         }
