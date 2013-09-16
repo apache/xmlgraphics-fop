@@ -66,7 +66,7 @@ public class PDFDictionaryElement extends AbstractPDFDictionaryElement {
             String key = attlist.getValue(ATT_KEY);
             if (key == null) {
                 missingPropertyError(ATT_KEY);
-            } else if (key.isEmpty()) {
+            } else if (key.length() == 0) {
                 invalidPropertyValueError(ATT_KEY, key, null);
             } else {
                 extension.setKey(key);

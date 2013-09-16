@@ -55,7 +55,7 @@ public class PDFDictionaryEntryElement extends AbstractPDFDictionaryElement {
         String key = attlist.getValue("key");
         if (key == null) {
             missingPropertyError("key");
-        } else if (key.isEmpty()) {
+        } else if (key.length() == 0) {
             invalidPropertyValueError("key", key, null);
         } else {
             extension.setKey(key);
@@ -86,7 +86,7 @@ public class PDFDictionaryEntryElement extends AbstractPDFDictionaryElement {
                 invalidPropertyValueError("<value>", value, null);
             }
         } else if (extension.getType() == PDFDictionaryEntryType.Name) {
-            if (value.isEmpty()) {
+            if (value.length() == 0) {
                 invalidPropertyValueError("<value>", value, null);
             }
         } else if (extension.getType() == PDFDictionaryEntryType.Number) {
