@@ -147,12 +147,10 @@ public class PDFExtensionHandler extends DefaultHandler implements ContentHandle
         }
     }
 
-    @Override
     public Object getObject() {
         return returnedObject;
     }
 
-    @Override
     public void setObjectBuiltListener(ObjectBuiltListener listener) {
         this.listener = listener;
     }

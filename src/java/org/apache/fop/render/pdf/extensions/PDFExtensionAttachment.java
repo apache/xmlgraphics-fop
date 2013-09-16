@@ -43,7 +43,6 @@ public abstract class PDFExtensionAttachment implements ExtensionAttachment, XML
         return PREFIX;
     }
 
-    @Override
     public String getCategory() {
         return CATEGORY;
     }
