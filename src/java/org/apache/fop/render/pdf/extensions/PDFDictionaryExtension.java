@@ -82,7 +82,7 @@ public class PDFDictionaryExtension extends PDFDictionaryEntryExtension {
             return false;
         }
         String pageNumbers = getProperty(PROPERTY_PAGE_NUMBERS);
-        if ((pageNumbers == null) || pageNumbers.isEmpty()) {
+        if ((pageNumbers == null) || (pageNumbers.length() == 0)) {
             return false;
         } else if (pageNumbers.equals("*")) {
             return true;
