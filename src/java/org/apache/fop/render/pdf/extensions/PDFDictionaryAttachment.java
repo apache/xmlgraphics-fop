@@ -42,7 +42,6 @@ public class PDFDictionaryAttachment extends PDFExtensionAttachment {
         return extension;
     }
 
-    @Override
     public void toSAX(ContentHandler handler) throws SAXException {
         PDFDictionaryType dictionaryType = extension.getDictionaryType();
         int pageNumber = 0;
