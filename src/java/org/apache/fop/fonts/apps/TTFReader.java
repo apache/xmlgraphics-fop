@@ -32,8 +32,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.Version;
 import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.FontUtil;
@@ -123,7 +121,6 @@ public class TTFReader extends AbstractFontReader {
         Map options = new java.util.HashMap();
         String[] arguments = parseArguments(options, args);
 
-        LogFactory logFactory = LogFactory.getFactory();
         determineLogLevel(options);
 
         TTFReader app = new TTFReader();

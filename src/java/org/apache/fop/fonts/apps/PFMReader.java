@@ -29,8 +29,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.Version;
 import org.apache.fop.fonts.type1.PFMFile;
 
@@ -91,7 +89,6 @@ public class PFMReader extends AbstractFontReader {
         Map options = new java.util.HashMap();
         String[] arguments = parseArguments(options, args);
 
-        LogFactory logFactory = LogFactory.getFactory();
         determineLogLevel(options);
 
         PFMReader app = new PFMReader();
