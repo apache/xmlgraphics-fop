@@ -144,7 +144,6 @@ public class CommandLineOptions {
      * Construct a command line option object.
      */
     public CommandLineOptions() {
-        LogFactory logFactory = LogFactory.getFactory();
         log = LogFactory.getLog("FOP");
     }
 
