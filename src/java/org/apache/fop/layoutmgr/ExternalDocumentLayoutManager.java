@@ -242,8 +242,14 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         pv.setPage(pageArea);
 
         RegionViewport rv = new RegionViewport(referenceRect);
-        rv.setIPD(referenceRect.width);
-        rv.setBPD(referenceRect.height);
+
+        if (pageSeq.getReferenceOrientation() % 180 == 0) {
+            rv.setIPD(referenceRect.width);
+            rv.setBPD(referenceRect.height);
+        }  else {
+            rv.setIPD(referenceRect.height);
+            rv.setBPD(referenceRect.width);
+        }
         rv.setClip(true);
 
         BodyRegion body = new BodyRegion(Constants.FO_REGION_BODY,
