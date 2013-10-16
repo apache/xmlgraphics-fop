@@ -269,13 +269,14 @@ public class PDFPattern extends PDFPathPaint {
                 pdfStream = new PDFStream();
                 pdfStream.setDocument(getDocumentSafely());
                 pdfStream.add(this.patternDataStream.toString());
+                pdfStream.setObjectNumber(getObjectNumber());
                 pdfStream.getFilterList().addDefaultFilters(
                         getDocument().getFilterMap(),
                         PDFFilterList.CONTENT_FILTER);
+                getDocument().applyEncryption(pdfStream);
                 encodedStream = pdfStream.encodeStream();
                 p.append(pdfStream.getFilterList().buildFilterDictEntries());
-                p.append("/Length " + (encodedStream.getSize() + 1)
-                         + " \n");
+                p.append("/Length " + encodedStream.getSize() + " \n");
             }
 
         } else {
