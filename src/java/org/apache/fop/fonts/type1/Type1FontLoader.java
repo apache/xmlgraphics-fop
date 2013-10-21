@@ -393,10 +393,7 @@ public class Type1FontLoader extends FontLoader {
         List<AFMCharMetrics> chars = afm.getCharMetrics();
         for (AFMCharMetrics charMetrics : chars) {
             if (charMetrics.getCharCode() >= 0) {
-                String u = charMetrics.getUnicodeSequence();
-                if (u != null && u.length() == 1) {
-                    mappingCount++;
-                }
+                mappingCount++;
             }
         }
         // ...and now build the table.
@@ -409,6 +406,10 @@ public class Type1FontLoader extends FontLoader {
                 String unicodes = charMetrics.getUnicodeSequence();
                 if (unicodes == null) {
                     log.info("No Unicode mapping for glyph: " + charMetrics);
+                    table[idx] = charMetrics.getCharCode();
+                    idx++;
+                    table[idx] = charMetrics.getCharCode();
+                    idx++;
                 } else if (unicodes.length() == 1) {
                     table[idx] = charMetrics.getCharCode();
                     idx++;
