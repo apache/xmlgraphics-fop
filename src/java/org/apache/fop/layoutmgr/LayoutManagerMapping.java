@@ -73,7 +73,7 @@ import org.apache.fop.layoutmgr.inline.CharacterLayoutManager;
 import org.apache.fop.layoutmgr.inline.ContentLayoutManager;
 import org.apache.fop.layoutmgr.inline.ExternalGraphicLayoutManager;
 import org.apache.fop.layoutmgr.inline.FootnoteLayoutManager;
-import org.apache.fop.layoutmgr.inline.ICLayoutManager;
+import org.apache.fop.layoutmgr.inline.InlineContainerLayoutManager;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.layoutmgr.inline.InstreamForeignObjectLM;
 import org.apache.fop.layoutmgr.inline.LeaderLayoutManager;
@@ -257,9 +257,9 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class InlineLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-         public void make(FONode node, List lms) {
-             lms.add(new InlineLayoutManager((InlineLevel) node));
-         }
+        public void make(FONode node, List lms) {
+            lms.add(new InlineLayoutManager((InlineLevel) node));
+        }
     }
 
     /** a layout manager maker */
@@ -274,9 +274,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     public static class InlineContainerLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
         public void make(FONode node, List lms) {
-            ArrayList childList = new ArrayList();
-            super.make(node, childList);
-            lms.add(new ICLayoutManager((InlineContainer) node, childList));
+            lms.add(new InlineContainerLayoutManager((InlineContainer) node));
         }
     }
 
