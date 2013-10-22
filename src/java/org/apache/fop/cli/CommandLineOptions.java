@@ -21,8 +21,10 @@ package org.apache.fop.cli;
 
 // java
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URI;
 import java.util.Locale;
@@ -45,6 +47,7 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.FopFactoryConfig;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
@@ -1018,7 +1021,10 @@ public class CommandLineOptions {
             fopFactoryBuilder.setComplexScriptFeatures(useComplexScriptFeatures);
         } else {
             try {
-                fopFactoryBuilder = new FopConfParser(userConfigFile).getFopFactoryBuilder();
+                InputStream userConfig = new FileInputStream(userConfigFile);
+                FopConfParser fopConfParser = new FopConfParser(userConfig, baseURI,
+                        ResourceResolverFactory.createDefaultResourceResolver());
+                fopFactoryBuilder = fopConfParser.getFopFactoryBuilder();
             } catch (SAXException e) {
                 throw new FOPException(e);
             }
