@@ -51,13 +51,12 @@ public class Container extends Area {
     public Container() {
     }
 
-    /**
-     * Add the block to this area.
-     *
-     * @param block the block area to add
-     */
-    public void addBlock(Block block) {
-        blocks.add(block);
+    @Override
+    public void addChildArea(Area child) {
+        if (!(child instanceof Block)) {
+            throw new IllegalArgumentException("Container only accepts block areas");
+        }
+        blocks.add((Block) child);
     }
 
     /**
@@ -65,7 +64,7 @@ public class Container extends Area {
      *
      * @return the list of block areas
      */
-    public List getBlocks() {
+    public List<Block> getBlocks() {
         return blocks;
     }
 

@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.InlineViewport;
@@ -189,7 +188,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
 
     @Override
     public void addChildArea(Area childArea) {
-        referenceArea.addBlock((Block) childArea);
+        referenceArea.addChildArea(childArea);
     }
 
     private boolean needClip() {

@@ -62,6 +62,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Trait.Background;
 import org.apache.fop.area.Trait.InternalLink;
 import org.apache.fop.area.inline.AbstractTextArea;
+import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
@@ -195,6 +196,7 @@ public class AreaTreeParser {
             makers.put("space", new SpaceMaker());
             makers.put("leader", new LeaderMaker());
             makers.put("viewport", new InlineViewportMaker());
+            makers.put("container", new ContainerMaker());
             makers.put("image", new ImageMaker());
             makers.put("foreignObject", new ForeignObjectMaker());
             makers.put("bookmarkTree", new BookmarkTreeMaker());
@@ -860,6 +862,21 @@ public class AreaTreeParser {
                         XMLUtil.getAttributeAsInt(attributes, "ruleThickness", 0));
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(leader);
+            }
+        }
+
+        private class ContainerMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                Container container = new Container();
+                transferForeignObjects(attributes, container);
+                InlineViewport parent = (InlineViewport) areaStack.peek();
+                parent.setContent(container);
+                areaStack.push(container);
+            }
+
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), Container.class);
             }
         }
 
