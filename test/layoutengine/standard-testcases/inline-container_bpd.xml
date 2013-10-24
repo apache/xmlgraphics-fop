@@ -37,10 +37,20 @@
             </fo:inline-container> After.</fo:block>
         </fo:flow>
       </fo:page-sequence>
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Before: <fo:inline-container width="70pt" height="35pt" overflow="hidden">
+              <fo:block>This text overflows the inline-container in the 
+                block-progression-direction.</fo:block>
+            </fo:inline-container> After.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
     </fo:root>
   </fo>
 
   <checks>
-    <eval expected="40000" xpath="//viewport/@bpd"/>
+    <eval expected="40000" xpath="//pageSequence[1]//viewport/@bpd"/>
+    <eval expected="35000" xpath="//pageSequence[2]//viewport/@bpd"/>
+    <true xpath="//pageSequence[2]//viewport/@clip"/>
   </checks>
 </testcase>

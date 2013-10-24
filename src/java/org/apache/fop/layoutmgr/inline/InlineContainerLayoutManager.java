@@ -35,6 +35,7 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
+import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
@@ -106,10 +107,19 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     private void determineBPD() {
         LengthRangeProperty bpd = ((InlineContainer) fobj).getBlockProgressionDimension();
         Property optimum = bpd.getOptimum(this); // TODO percent base context
+        int actualBPD = ElementListUtils.calcContentLength(childElements);
         if (optimum.isAuto()) {
-            contentAreaBPD = ElementListUtils.calcContentLength(childElements);
+            contentAreaBPD = actualBPD;
         } else {
             contentAreaBPD = optimum.getLength().getValue(this); // TODO percent base context
+            if (contentAreaBPD < actualBPD) {
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
+                        fobj.getUserAgent().getEventBroadcaster());
+                boolean canRecover = (((InlineContainer) fobj).getOverflow() != EN_ERROR_IF_OVERFLOW);
+                eventProducer.viewportBPDOverflow(this, fobj.getName(),
+                        actualBPD - contentAreaBPD, needClip(), canRecover,
+                        fobj.getLocator());
+            }
         }
     }
 
