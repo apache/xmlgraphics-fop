@@ -42,7 +42,7 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block-container space-before="10pt" start-indent="100pt" width="100pt">
             <fo:block start-indent="0">
-              Before: <fo:inline-container height="20pt">
+              Before: <fo:inline-container>
                 <fo:block>Inside the inline-container.</fo:block>
               </fo:inline-container> After.
             </fo:block>
