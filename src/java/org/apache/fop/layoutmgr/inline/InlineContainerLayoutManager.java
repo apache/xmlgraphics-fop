@@ -35,6 +35,7 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
+import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.KnuthSequence;
@@ -74,12 +75,11 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
 
     @Override
     public List<KnuthSequence> getNextKnuthElements(LayoutContext context, int alignment) {
-        InlineContainer ic = (InlineContainer) fobj;
         determineIPD(context);
-        contentAreaBPD = getLength(ic.getBlockProgressionDimension());
         LayoutContext childLC = LayoutContext.offspringOf(context); // TODO copyOf?
         childLC.setRefIPD(contentAreaIPD);
         childElements = getChildKnuthElements(childLC, alignment); // TODO which alignment?
+        determineBPD();
         AlignmentContext alignmentContext = makeAlignmentContext(context); // TODO correct?
         Position position = new Position(this, 0);
         KnuthSequence knuthSequence = new InlineKnuthSequence();
@@ -103,12 +103,14 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         }
     }
 
-    private int getLength(LengthRangeProperty property) {
-        Property optimum = property.getOptimum(this); // TODO percent base context
+    private void determineBPD() {
+        LengthRangeProperty bpd = ((InlineContainer) fobj).getBlockProgressionDimension();
+        Property optimum = bpd.getOptimum(this); // TODO percent base context
         if (optimum.isAuto()) {
-            throw new UnsupportedOperationException("auto dimension not supported");
+            contentAreaBPD = ElementListUtils.calcContentLength(childElements);
+        } else {
+            contentAreaBPD = optimum.getLength().getValue(this); // TODO percent base context
         }
-        return optimum.getLength().getValue(this); // TODO percent base context
     }
 
     private List<ListElement> getChildKnuthElements(LayoutContext layoutContext, int alignment) {
