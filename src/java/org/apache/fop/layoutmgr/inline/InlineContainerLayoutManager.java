@@ -75,7 +75,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     @Override
     public List<KnuthSequence> getNextKnuthElements(LayoutContext context, int alignment) {
         InlineContainer ic = (InlineContainer) fobj;
-        contentAreaIPD = getLength(ic.getInlineProgressionDimension());
+        determineIPD(context);
         contentAreaBPD = getLength(ic.getBlockProgressionDimension());
         LayoutContext childLC = LayoutContext.offspringOf(context); // TODO copyOf?
         childLC.setRefIPD(contentAreaIPD);
@@ -88,6 +88,19 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         knuthElements.add(knuthSequence);
         setFinished(true);
         return knuthElements;
+    }
+
+    private void determineIPD(LayoutContext layoutContext) {
+        LengthRangeProperty ipd = ((InlineContainer) fobj).getInlineProgressionDimension();
+        Property optimum = ipd.getOptimum(this); // TODO percent base context
+        if (optimum.isAuto()) {
+            contentAreaIPD = layoutContext.getRefIPD();
+            InlineLevelEventProducer eventProducer = InlineLevelEventProducer.Provider.get(
+                    fobj.getUserAgent().getEventBroadcaster());
+            eventProducer.inlineContainerAutoIPDNotSupported(this, contentAreaIPD / 1000f);
+        } else {
+            contentAreaIPD = optimum.getLength().getValue(this); // TODO percent base context
+        }
     }
 
     private int getLength(LengthRangeProperty property) {
