@@ -63,6 +63,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     private int contentAreaBPD;
 
     private List<ListElement> childElements;
+    private int ipdOverflow;
     private InlineViewport currentViewport;
     private Container referenceArea;
 
@@ -119,15 +120,21 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
             } else {
                 contentAreaBPD = (int) Math.round(bpdValue);
                 if (contentAreaBPD < actualBPD) {
-                    BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
-                            fobj.getUserAgent().getEventBroadcaster());
-                    boolean canRecover = (((InlineContainer) fobj).getOverflow() != EN_ERROR_IF_OVERFLOW);
+                    BlockLevelEventProducer eventProducer = getBlockLevelEventProducer();
                     eventProducer.viewportBPDOverflow(this, fobj.getName(),
-                            actualBPD - contentAreaBPD, needClip(), canRecover,
+                            actualBPD - contentAreaBPD, needClip(), canRecoverFromOverflow(),
                             fobj.getLocator());
                 }
             }
         }
+    }
+
+    private BlockLevelEventProducer getBlockLevelEventProducer() {
+        return BlockLevelEventProducer.Provider.get(fobj.getUserAgent().getEventBroadcaster());
+    }
+
+    private boolean canRecoverFromOverflow() {
+        return ((InlineContainer) fobj).getOverflow() != EN_ERROR_IF_OVERFLOW;
     }
 
     private List<ListElement> getChildKnuthElements(LayoutContext layoutContext, int alignment) {
@@ -141,10 +148,20 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
             allChildElements.addAll(childElements);
             // TODO breaks, keeps, empty content
         }
+        handleIPDOverflow();
         wrapPositions(allChildElements);
         SpaceResolver.resolveElementList(allChildElements);
         // TODO break-before, break-after
         return allChildElements;
+    }
+
+    private void handleIPDOverflow() {
+        if (ipdOverflow > 0) {
+            BlockLevelEventProducer eventProducer = getBlockLevelEventProducer();
+            eventProducer.viewportIPDOverflow(this, fobj.getName(),
+                    ipdOverflow, needClip(), canRecoverFromOverflow(),
+                    fobj.getLocator());
+        }
     }
 
     private void wrapPositions(List<ListElement> elements) {
@@ -232,6 +249,11 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         Font fs = fi.getFontInstance(fontkeys[0], ic.getCommonFont().fontSize.getValue(this));
         return new AlignmentContext(fs, ic.getLineHeight().getOptimum(this).getLength().getValue(this), // TODO
                 context.getWritingMode());
+    }
+
+    public boolean handleOverflow(int milliPoints) {
+        ipdOverflow = Math.max(ipdOverflow, milliPoints);
+        return true;
     }
 
     public List addALetterSpaceTo(List oldList) {
