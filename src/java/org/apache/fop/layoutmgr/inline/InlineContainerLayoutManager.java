@@ -95,32 +95,37 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
 
     private void determineIPD(LayoutContext layoutContext) {
         LengthRangeProperty ipd = ((InlineContainer) fobj).getInlineProgressionDimension();
-        Property optimum = ipd.getOptimum(this); // TODO percent base context
+        Property optimum = ipd.getOptimum(this);
         if (optimum.isAuto()) {
             contentAreaIPD = layoutContext.getRefIPD();
             InlineLevelEventProducer eventProducer = InlineLevelEventProducer.Provider.get(
                     fobj.getUserAgent().getEventBroadcaster());
             eventProducer.inlineContainerAutoIPDNotSupported(this, contentAreaIPD / 1000f);
         } else {
-            contentAreaIPD = optimum.getLength().getValue(this); // TODO percent base context
+            contentAreaIPD = optimum.getLength().getValue(this);
         }
     }
 
     private void determineBPD() {
         LengthRangeProperty bpd = ((InlineContainer) fobj).getBlockProgressionDimension();
-        Property optimum = bpd.getOptimum(this); // TODO percent base context
+        Property optimum = bpd.getOptimum(this);
         int actualBPD = ElementListUtils.calcContentLength(childElements);
         if (optimum.isAuto()) {
             contentAreaBPD = actualBPD;
         } else {
-            contentAreaBPD = optimum.getLength().getValue(this); // TODO percent base context
-            if (contentAreaBPD < actualBPD) {
-                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
-                        fobj.getUserAgent().getEventBroadcaster());
-                boolean canRecover = (((InlineContainer) fobj).getOverflow() != EN_ERROR_IF_OVERFLOW);
-                eventProducer.viewportBPDOverflow(this, fobj.getName(),
-                        actualBPD - contentAreaBPD, needClip(), canRecover,
-                        fobj.getLocator());
+            double bpdValue = optimum.getLength().getNumericValue(this);
+            if (bpdValue < 0) {
+                contentAreaBPD = actualBPD;
+            } else {
+                contentAreaBPD = (int) Math.round(bpdValue);
+                if (contentAreaBPD < actualBPD) {
+                    BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
+                            fobj.getUserAgent().getEventBroadcaster());
+                    boolean canRecover = (((InlineContainer) fobj).getOverflow() != EN_ERROR_IF_OVERFLOW);
+                    eventProducer.viewportBPDOverflow(this, fobj.getName(),
+                            actualBPD - contentAreaBPD, needClip(), canRecover,
+                            fobj.getLocator());
+                }
             }
         }
     }
