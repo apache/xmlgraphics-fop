@@ -35,6 +35,7 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
+import org.apache.fop.layoutmgr.AreaAdditionUtil;
 import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
@@ -43,6 +44,7 @@ import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.ListElement;
+import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceResolver;
@@ -134,9 +136,18 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
             allChildElements.addAll(childElements);
             // TODO breaks, keeps, empty content
         }
+        wrapPositions(allChildElements);
         SpaceResolver.resolveElementList(allChildElements);
         // TODO break-before, break-after
         return allChildElements;
+    }
+
+    private void wrapPositions(List<ListElement> elements) {
+        for (ListElement element : elements) {
+            Position position = new NonLeafPosition(this, element.getPosition());
+            notifyPos(position);
+            element.setPosition(position);
+        }
     }
 
     @Override
@@ -148,25 +159,11 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
                 inlineContainerPosition = pos;
             }
         }
-        addId();
-//        addMarkersToPage(
-//                true,
-//                true,
-//                lastPos == null || isLast(lastPos));
-
         if (inlineContainerPosition != null) {
-            LayoutManager childLM;
+            SpaceResolver.performConditionalsNotification(childElements, 0, childElements.size() - 1, -1);
             KnuthPossPosIter childPosIter = new KnuthPossPosIter(childElements);
-            while ((childLM = childPosIter.getNextChildLM()) != null) {
-                LayoutContext childLC = LayoutContext.copyOf(context); // TODO correct?
-                childLM.addAreas(childPosIter, childLC);
-            }
+            AreaAdditionUtil.addAreas(this, childPosIter, context);
         }
-
-//        addMarkersToPage(
-//                false,
-//                true,
-//                lastPos == null || isLast(lastPos));
 
 //        boolean isLast = (context.isLastArea() && prevLM == lastChildLM);
 //        context.setFlags(LayoutContext.LAST_AREA, isLast);

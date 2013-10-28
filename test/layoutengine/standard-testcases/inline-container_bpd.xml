@@ -45,12 +45,24 @@
             </fo:inline-container> After.</fo:block>
         </fo:flow>
       </fo:page-sequence>
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Before: <fo:inline-container width="80pt">
+              <fo:block space-after="10pt">Block 1</fo:block>
+              <fo:block space-before="20pt" space-after="10pt" 
+                space-after.conditionality="retain">Block 2</fo:block>
+          </fo:inline-container> After.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
     </fo:root>
   </fo>
 
   <checks>
     <eval expected="40000" xpath="//pageSequence[1]//viewport/@bpd"/>
+
     <eval expected="35000" xpath="//pageSequence[2]//viewport/@bpd"/>
     <true xpath="//pageSequence[2]//viewport/@clip"/>
+
+    <eval expected="50000" xpath="//pageSequence[3]//viewport/@bpd"/>
   </checks>
 </testcase>

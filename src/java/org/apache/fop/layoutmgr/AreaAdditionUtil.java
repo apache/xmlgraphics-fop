@@ -33,11 +33,11 @@ public final class AreaAdditionUtil {
 
     /**
      * Creates the child areas for the given layout manager.
-     * @param bslm the BlockStackingLayoutManager instance for which "addAreas" is performed.
+     * @param parentLM the parent layout manager
      * @param parentIter the position iterator
      * @param layoutContext the layout context
      */
-    public static void addAreas(BlockStackingLayoutManager bslm,
+    public static void addAreas(AbstractLayoutManager parentLM,
             PositionIterator parentIter, LayoutContext layoutContext) {
         LayoutManager childLM;
         LayoutContext lc = LayoutContext.offspringOf(layoutContext);
@@ -46,8 +46,8 @@ public final class AreaAdditionUtil {
         Position firstPos = null;
         Position lastPos = null;
 
-        if (bslm != null) {
-            bslm.addId();
+        if (parentLM != null) {
+            parentLM.addId();
         }
 
         // "unwrap" the NonLeafPositions stored in parentIter
@@ -86,11 +86,11 @@ public final class AreaAdditionUtil {
             //doesn't give us that info.
         }
 
-        if (bslm != null) {
-            bslm.registerMarkers(
+        if (parentLM != null) {
+            parentLM.registerMarkers(
                     true,
-                    bslm.isFirst(firstPos),
-                    bslm.isLast(lastPos));
+                    parentLM.isFirst(firstPos),
+                    parentLM.isLast(lastPos));
         }
 
         PositionIterator childPosIter = new PositionIterator(positionList.listIterator());
@@ -113,11 +113,11 @@ public final class AreaAdditionUtil {
             childLM.addAreas(childPosIter, lc);
         }
 
-        if (bslm != null) {
-            bslm.registerMarkers(
+        if (parentLM != null) {
+            parentLM.registerMarkers(
                     false,
-                    bslm.isFirst(firstPos),
-                    bslm.isLast(lastPos));
+                    parentLM.isFirst(firstPos),
+                    parentLM.isLast(lastPos));
         }
 
 
