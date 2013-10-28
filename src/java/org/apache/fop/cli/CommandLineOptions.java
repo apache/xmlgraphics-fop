@@ -176,9 +176,6 @@ public class CommandLineOptions {
                 //Factory config is set up, now we can create the user agent
                 foUserAgent = factory.newFOUserAgent();
                 foUserAgent.getRendererOptions().putAll(renderingOptions);
-                if (targetResolution != 0) {
-                    foUserAgent.setTargetResolution(targetResolution);
-                }
                 addXSLTParameter("fop-output-format", getOutputFormat());
                 addXSLTParameter("fop-version", Version.getVersion());
                 foUserAgent.setConserveMemoryPolicy(conserveMemoryPolicy);
