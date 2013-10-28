@@ -154,16 +154,18 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         Position inlineContainerPosition = null;
         while (posIter.hasNext()) {
-            Position pos = posIter.next();
-            if (pos.getLM() == this) {
-                inlineContainerPosition = pos;
-            }
+            /*
+             * Should iterate only once, but hasNext must be called twice for its
+             * side-effects to apply and the iterator to switch to the next LM.
+             */
+            assert inlineContainerPosition == null;
+            inlineContainerPosition = posIter.next();
+            assert inlineContainerPosition.getLM() == this;
         }
-        if (inlineContainerPosition != null) {
-            SpaceResolver.performConditionalsNotification(childElements, 0, childElements.size() - 1, -1);
-            KnuthPossPosIter childPosIter = new KnuthPossPosIter(childElements);
-            AreaAdditionUtil.addAreas(this, childPosIter, context);
-        }
+        assert inlineContainerPosition != null;
+        SpaceResolver.performConditionalsNotification(childElements, 0, childElements.size() - 1, -1);
+        KnuthPossPosIter childPosIter = new KnuthPossPosIter(childElements);
+        AreaAdditionUtil.addAreas(this, childPosIter, context);
 
 //        boolean isLast = (context.isLastArea() && prevLM == lastChildLM);
 //        context.setFlags(LayoutContext.LAST_AREA, isLast);
