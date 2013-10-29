@@ -42,7 +42,7 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="1: This TExT Is Capitalized." xpath="//flow/block[1]"/>
-    <eval expected="2: This TExT Is CapitAliZed." xpath="//flow/block[2]"/>
+    <eval expected="1: This Text Is Capitalized." xpath="//flow/block[1]"/>
+    <eval expected="2: This Text Is Capitalized." xpath="//flow/block[2]"/>
   </checks>
 </testcase>
