@@ -41,7 +41,7 @@
   </fo>
   <checks>
     <eval expected="none: This tExT is left as-IS." xpath="//flow/block[1]"/>
-    <eval expected="capitalize: This Text Is Capitalized." xpath="//flow/block[2]"/>
+    <eval expected="capitalize: This TExT Is Capitalized." xpath="//flow/block[2]"/>
     <!-- spaces are discarded when around a line break -->
     <eval expected="uppercase: THIS TEXT IS CONVERTED TO UPPERCASE.LIBERTÉ, ÉGALITÉ, FRATERNITÉ UND KÄSE." xpath="//flow/block[3]"/>
     <eval expected="lowercase: this text is converted to lowercase. liberté, égalité,fraternité und käse." xpath="//flow/block[4]"/>

@@ -297,7 +297,7 @@ public class FOText extends FONode implements CharSequence {
                         */
                         tmp.put(Character.toTitleCase(c));
                     } else {
-                        tmp.put(Character.toLowerCase(c));
+                        tmp.put(c);
                     }
                     break;
                 default:
