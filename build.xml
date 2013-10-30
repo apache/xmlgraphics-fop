@@ -1087,6 +1087,7 @@ NOTE:
         <path refid="libs-tools-build-classpath"/>
       </classpath>
     </taskdef>
+    <mkdir dir="${build.dir}"/>
     <pmd shortFilenames="true" targetjdk="${javac.target}">
       <ruleset>basic</ruleset>
       <ruleset>rulesets/migrating_to_14.xml</ruleset>
