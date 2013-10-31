@@ -58,13 +58,14 @@ public interface WritingModeTraitsSetter extends WritingModeTraitsGetter {
      * Set value of writing-mode trait.
      * @param writingMode the "writing-mode" trait
      */
-    void setWritingMode(WritingMode writingMode);
+    void setWritingMode(WritingMode writingMode, boolean explicit);
 
     /**
      * Collectivelly assign values to all writing mode traits based upon a specific
      * writing mode.
      * @param writingMode the "writing-mode" trait
+     * @param explicit true if writing mode explicitly specified
      */
-    void assignWritingModeTraits(WritingMode writingMode);
+    void assignWritingModeTraits(WritingMode writingMode, boolean explicit);
 
 }

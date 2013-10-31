@@ -98,7 +98,8 @@ public class BlockContainer extends FObj implements BreakPropertySet, WritingMod
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         span = pList.get(PR_SPAN).getEnum();
         writingModeTraits = new WritingModeTraits(
-            WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()));
+            WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()),
+            pList.getExplicit(PR_WRITING_MODE) != null);
         disableColumnBalancing = pList.get(PR_X_DISABLE_COLUMN_BALANCING).getEnum();
     }
 
@@ -280,6 +281,14 @@ public class BlockContainer extends FObj implements BreakPropertySet, WritingMod
         return writingModeTraits.getWritingMode();
     }
 
+    /**
+     * Obtain writing mode explicit indicator.
+     * @return the writing mode explicit indicator
+     */
+    public boolean getExplicitWritingMode() {
+        return writingModeTraits.getExplicitWritingMode();
+    }
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "block-container";
@@ -292,5 +301,10 @@ public class BlockContainer extends FObj implements BreakPropertySet, WritingMod
     public int getNameId() {
         return FO_BLOCK_CONTAINER;
     }
-}
 
+    @Override
+    protected boolean isBidiBoundary(boolean propagate) {
+        return getExplicitWritingMode();
+    }
+
+}

@@ -615,6 +615,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager implements
             int contentIPD = referenceIPD - getIPIndents();
             curBlockArea.setIPD(contentIPD);
 
+            curBlockArea.setBidiLevel(fo.getBidiLevel());
+
             setCurrentArea(curBlockArea);
         }
         return curBlockArea;
