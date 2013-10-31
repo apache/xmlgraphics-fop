@@ -19,7 +19,7 @@
 <testcase>
   <info>
     <p>
-      Checks that inline-progression-dimension on fo:inline-container is properly handled.
+      Checks that block-progression-dimension on fo:inline-container is properly handled.
     </p>
   </info>
   <fo>
