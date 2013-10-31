@@ -247,8 +247,10 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         FontInfo fi = fobj.getFOEventHandler().getFontInfo();
         FontTriplet[] fontkeys = ic.getCommonFont().getFontState(fi);
         Font fs = fi.getFontInstance(fontkeys[0], ic.getCommonFont().fontSize.getValue(this));
-        return new AlignmentContext(fs, ic.getLineHeight().getOptimum(this).getLength().getValue(this), // TODO
-                context.getWritingMode());
+        return new AlignmentContext(contentAreaBPD,
+                ic.getAlignmentAdjust(), ic.getAlignmentBaseline(),
+                ic.getBaselineShift(), ic.getDominantBaseline(),
+                context.getAlignmentContext());
     }
 
     public boolean handleOverflow(int milliPoints) {
