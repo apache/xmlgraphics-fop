@@ -196,8 +196,8 @@ public class BuilderContext {
         } else {
             /* This should never happen unless a placeholder is not catered for
              * in the RTFHandler.endContainer method. */
-            LOG.warn("Unhandled RTF structure tag mismatch detected between " +
-                    aClass.getSimpleName() + " and "+object.getClass().getSimpleName());
+            LOG.warn("Unhandled RTF structure tag mismatch detected between "
+                     + aClass.getSimpleName() + " and " + object.getClass().getSimpleName());
         }
     }
 

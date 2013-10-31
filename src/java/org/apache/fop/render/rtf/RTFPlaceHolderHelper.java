@@ -65,8 +65,10 @@ public class RTFPlaceHolderHelper {
                 builderContext.pushContainer(newRow);
                 builderContext.getTableContext().selectFirstColumn();
             }
-        } catch (Exception ex) {
-            throw new RtfException(ex.getMessage());
+        } catch (org.apache.fop.apps.FOPException e) {
+            throw new RtfException(e.getMessage());
+        } catch (java.io.IOException e) {
+            throw new RtfException(e.getMessage());
         }
     }
 }

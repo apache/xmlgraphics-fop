@@ -611,7 +611,7 @@ public abstract class FObj extends FONode implements Constants {
         if (bidiLevel >= 0) {
             if ((this.bidiLevel < 0) || (bidiLevel < this.bidiLevel)) {
                 this.bidiLevel = bidiLevel;
-                if (parent != null) {
+                if ((parent != null) && !isBidiPropagationBoundary()) {
                     FObj foParent = (FObj) parent;
                     int parentBidiLevel = foParent.getBidiLevel();
                     if ((parentBidiLevel < 0) || (bidiLevel < parentBidiLevel)) {
@@ -646,8 +646,23 @@ public abstract class FObj extends FONode implements Constants {
                     return level;
                 }
             }
+            if (isBidiInheritanceBoundary()) {
+                break;
+            }
         }
         return -1;
+    }
+
+    protected boolean isBidiBoundary(boolean propagate) {
+        return false;
+    }
+
+    private boolean isBidiInheritanceBoundary() {
+        return isBidiBoundary(false);
+    }
+
+    private boolean isBidiPropagationBoundary() {
+        return isBidiBoundary(true);
     }
 
     /**

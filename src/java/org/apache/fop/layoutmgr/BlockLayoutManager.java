@@ -360,7 +360,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager implements Co
 
             curBlockArea.setIPD(super.getContentAreaIPD());
 
-            curBlockArea.setBidiLevel(getBlockFO().getBidiLevel());
+            curBlockArea.setBidiLevel(getBlockFO().getBidiLevelRecursive());
 
             TraitSetter.addBreaks(curBlockArea,
                     getBlockFO().getBreakBefore(), getBlockFO().getBreakAfter());

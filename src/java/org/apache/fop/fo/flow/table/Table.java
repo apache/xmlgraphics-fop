@@ -139,7 +139,8 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
         tableOmitFooterAtBreak = pList.get(PR_TABLE_OMIT_FOOTER_AT_BREAK).getEnum();
         tableOmitHeaderAtBreak = pList.get(PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum();
         writingModeTraits = new WritingModeTraits(
-            WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()));
+            WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()),
+            pList.getExplicit(PR_WRITING_MODE) != null);
 
         //Bind extension properties
         widowContentLimit = pList.get(PR_X_WIDOW_CONTENT_LIMIT).getLength();
@@ -554,6 +555,11 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
         return writingModeTraits.getWritingMode();
     }
 
+    /** {@inheritDoc} */
+    public boolean getExplicitWritingMode() {
+        return writingModeTraits.getExplicitWritingMode();
+    }
+
     /** @return the "fox:widow-content-limit" extension FO trait */
     public Length getWidowContentLimit() {
         return widowContentLimit;
@@ -618,6 +624,11 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
             ranges = ((FONode) it.next()).collectDelimitedTextRanges(ranges);
         }
         return ranges;
+    }
+
+    @Override
+    protected boolean isBidiBoundary(boolean propagate) {
+        return getExplicitWritingMode();
     }
 
 }
