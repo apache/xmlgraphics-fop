@@ -21,8 +21,12 @@ package org.apache.fop.layoutengine;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
@@ -41,9 +45,15 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.fop.DebugHelper;
 import org.apache.fop.apps.FOUserAgent;
@@ -53,6 +63,8 @@ import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.AreaTreeParser;
 import org.apache.fop.area.RenderPagesModel;
+import org.apache.fop.events.Event;
+import org.apache.fop.events.EventListener;
 import org.apache.fop.events.model.EventSeverity;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.intermediate.IFTester;
@@ -131,6 +143,8 @@ public class LayoutEngineTestCase {
 
         Fop fop;
         FopFactory effFactory;
+        EventsChecker eventsChecker = new EventsChecker(
+                new ConsoleEventListenerForTests(testFile.getName(), EventSeverity.WARN));
         try {
             Document testDoc = testAssistant.loadTestCase(testFile);
             effFactory = testAssistant.getFopFactory(testDoc);
@@ -146,8 +160,7 @@ public class LayoutEngineTestCase {
 
             //Setup FOP for area tree rendering
             FOUserAgent ua = effFactory.newFOUserAgent();
-            ua.getEventBroadcaster().addEventListener(
-                    new ConsoleEventListenerForTests(testFile.getName(), EventSeverity.WARN));
+            ua.getEventBroadcaster().addEventListener(eventsChecker);
 
             XMLRenderer atrenderer = new XMLRenderer(ua);
             atrenderer.setContentHandler(athandler);
@@ -167,7 +180,60 @@ public class LayoutEngineTestCase {
         }
         FormattingResults results = fop.getResults();
         LayoutResult result = new LayoutResult(doc, elCollector, results);
-        checkAll(effFactory, testFile, result);
+        checkAll(effFactory, testFile, result, eventsChecker);
+    }
+
+    private static class EventsChecker implements EventListener {
+
+        private final List<Event> events = new ArrayList<Event>();
+
+        private final EventListener defaultListener;
+
+        /**
+         * @param fallbackListener the listener to which this class will pass through
+         * events that are not being checked
+         */
+        public EventsChecker(EventListener fallbackListener) {
+            this.defaultListener = fallbackListener;
+        }
+
+        public void processEvent(Event event) {
+            events.add(event);
+        }
+
+        public void checkEvent(String expectedKey, Map<String, String> expectedParams) {
+            boolean eventFound = false;
+            for (Iterator<Event> iter = events.iterator(); !eventFound && iter.hasNext();) {
+                Event event = iter.next();
+                if (event.getEventKey().equals(expectedKey)) {
+                    eventFound = true;
+                    iter.remove();
+                    checkParameters(event, expectedParams);
+                }
+            }
+            if (!eventFound) {
+                fail("Event did not occur but was expected to: " + expectedKey + expectedParams);
+            }
+        }
+
+        private void checkParameters(Event event, Map<String, String> expectedParams) {
+            Map<String, Object> actualParams = event.getParams();
+            for (Map.Entry<String, String> expectedParam : expectedParams.entrySet()) {
+                assertTrue("Event \"" + event.getEventKey()
+                        + "\" is missing parameter \"" + expectedParam.getKey() + '"',
+                        actualParams.containsKey(expectedParam.getKey()));
+                assertEquals("Event \"" + event.getEventKey()
+                        + "\" has wrong value for parameter \"" + expectedParam.getKey() + "\";",
+                        actualParams.get(expectedParam.getKey()).toString(),
+                        expectedParam.getValue());
+            }
+        }
+
+        public void emitUncheckedEvents() {
+            for (Event event : events) {
+                defaultListener.processEvent(event);
+            }
+        }
     }
 
     /**
@@ -177,8 +243,8 @@ public class LayoutEngineTestCase {
      * @param result The layout results
      * @throws TransformerException if a problem occurs in XSLT/JAXP
      */
-    protected void checkAll(FopFactory fopFactory, File testFile, LayoutResult result)
-            throws TransformerException {
+    protected void checkAll(FopFactory fopFactory, File testFile, LayoutResult result,
+            EventsChecker eventsChecker) throws TransformerException {
         Element testRoot = testAssistant.getTestRoot(testFile);
 
         NodeList nodes;
@@ -196,6 +262,13 @@ public class LayoutEngineTestCase {
             Document ifDocument = createIF(fopFactory, testFile, result.getAreaTree());
             ifTester.doIFChecks(testFile.getName(), ifChecks, ifDocument);
         }
+
+        nodes = testRoot.getElementsByTagName("event-checks");
+        if (nodes.getLength() > 0) {
+            Element eventChecks = (Element) nodes.item(0);
+            doEventChecks(eventChecks, eventsChecker);
+        }
+        eventsChecker.emitUncheckedEvents();
     }
 
     private Document createIF(FopFactory fopFactory, File testFile, Document areaTreeXML)
@@ -251,6 +324,30 @@ public class LayoutEngineTestCase {
         }
         for (LayoutEngineCheck check : checks) {
             check.check(result);
+        }
+    }
+
+    private void doEventChecks(Element eventChecks, EventsChecker eventsChecker) {
+        NodeList events = eventChecks.getElementsByTagName("event");
+        for (int i = 0; i < events.getLength(); i++) {
+            Element event = (Element) events.item(i);
+            NamedNodeMap attributes = event.getAttributes();
+            Map<String, String> params = new HashMap<String, String>();
+            String key = null;
+            for (int j = 0; j < attributes.getLength(); j++) {
+                Node attribute = attributes.item(j);
+                String name = attribute.getNodeName();
+                String value = attribute.getNodeValue();
+                if ("key".equals(name)) {
+                    key = value;
+                } else {
+                    params.put(name, value);
+                }
+            }
+            if (key == null) {
+                throw new RuntimeException("An event element must have a \"key\" attribute");
+            }
+            eventsChecker.checkEvent(key, params);
         }
     }
 

@@ -65,4 +65,8 @@
 
     <eval expected="50000" xpath="//pageSequence[3]//viewport/@bpd"/>
   </checks>
+
+  <event-checks>
+    <event key="viewportBPDOverflow" elementName="fo:inline-container" amount="15000" clip="true"/>
+  </event-checks>
 </testcase>
