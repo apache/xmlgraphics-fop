@@ -107,6 +107,24 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         }
     }
 
+    private List<ListElement> getChildKnuthElements(LayoutContext layoutContext, int alignment) {
+        List<ListElement> allChildElements = new LinkedList<ListElement>();
+        LayoutManager childLM;
+        while ((childLM = getChildLM()) != null) {
+            LayoutContext childLC = LayoutContext.offspringOf(layoutContext); // TODO copyOf? newInstance?
+            childLC.setRefIPD(layoutContext.getRefIPD());
+            @SuppressWarnings("unchecked")
+            List<ListElement> childElements = childLM.getNextKnuthElements(childLC, alignmentBaseline);
+            allChildElements.addAll(childElements);
+            // TODO breaks, keeps, empty content
+        }
+        handleIPDOverflow();
+        wrapPositions(allChildElements);
+        SpaceResolver.resolveElementList(allChildElements);
+        // TODO break-before, break-after
+        return allChildElements;
+    }
+
     private void determineBPD() {
         LengthRangeProperty bpd = ((InlineContainer) fobj).getBlockProgressionDimension();
         Property optimum = bpd.getOptimum(this);
@@ -129,30 +147,15 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         }
     }
 
-    private BlockLevelEventProducer getBlockLevelEventProducer() {
-        return BlockLevelEventProducer.Provider.get(fobj.getUserAgent().getEventBroadcaster());
-    }
-
-    private boolean canRecoverFromOverflow() {
-        return ((InlineContainer) fobj).getOverflow() != EN_ERROR_IF_OVERFLOW;
-    }
-
-    private List<ListElement> getChildKnuthElements(LayoutContext layoutContext, int alignment) {
-        List<ListElement> allChildElements = new LinkedList<ListElement>();
-        LayoutManager childLM;
-        while ((childLM = getChildLM()) != null) {
-            LayoutContext childLC = LayoutContext.offspringOf(layoutContext); // TODO copyOf? newInstance?
-            childLC.setRefIPD(layoutContext.getRefIPD());
-            @SuppressWarnings("unchecked")
-            List<ListElement> childElements = childLM.getNextKnuthElements(childLC, alignmentBaseline);
-            allChildElements.addAll(childElements);
-            // TODO breaks, keeps, empty content
-        }
-        handleIPDOverflow();
-        wrapPositions(allChildElements);
-        SpaceResolver.resolveElementList(allChildElements);
-        // TODO break-before, break-after
-        return allChildElements;
+    protected AlignmentContext makeAlignmentContext(LayoutContext context) {
+        InlineContainer ic = (InlineContainer) fobj;
+        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
+        FontTriplet[] fontkeys = ic.getCommonFont().getFontState(fi);
+        Font fs = fi.getFontInstance(fontkeys[0], ic.getCommonFont().fontSize.getValue(this));
+        return new AlignmentContext(contentAreaBPD,
+                ic.getAlignmentAdjust(), ic.getAlignmentBaseline(),
+                ic.getBaselineShift(), ic.getDominantBaseline(),
+                context.getAlignmentContext());
     }
 
     private void handleIPDOverflow() {
@@ -170,6 +173,14 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
             notifyPos(position);
             element.setPosition(position);
         }
+    }
+
+    private BlockLevelEventProducer getBlockLevelEventProducer() {
+        return BlockLevelEventProducer.Provider.get(fobj.getUserAgent().getEventBroadcaster());
+    }
+
+    private boolean canRecoverFromOverflow() {
+        return ((InlineContainer) fobj).getOverflow() != EN_ERROR_IF_OVERFLOW;
     }
 
     @Override
@@ -240,17 +251,6 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     private boolean needClip() {
         int overflow = ((InlineContainer) fobj).getOverflow();
         return (overflow == EN_HIDDEN || overflow == EN_ERROR_IF_OVERFLOW);
-    }
-
-    protected AlignmentContext makeAlignmentContext(LayoutContext context) {
-        InlineContainer ic = (InlineContainer) fobj;
-        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
-        FontTriplet[] fontkeys = ic.getCommonFont().getFontState(fi);
-        Font fs = fi.getFontInstance(fontkeys[0], ic.getCommonFont().fontSize.getValue(this));
-        return new AlignmentContext(contentAreaBPD,
-                ic.getAlignmentAdjust(), ic.getAlignmentBaseline(),
-                ic.getBaselineShift(), ic.getDominantBaseline(),
-                context.getAlignmentContext());
     }
 
     public boolean handleOverflow(int milliPoints) {
