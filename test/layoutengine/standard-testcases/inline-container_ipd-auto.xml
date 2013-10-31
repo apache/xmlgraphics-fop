@@ -58,4 +58,9 @@
     <eval expected="3" xpath="count(//pageSequence[2]//flow/block/block/block/lineArea)"/>
     <eval expected="100000"  xpath="//pageSequence[2]//flow/block/block/block/lineArea[2]/viewport/@ipd"/>
   </checks>
+
+  <event-checks>
+    <event key="inlineContainerAutoIPDNotSupported" fallback="300.0"/>
+    <event key="inlineContainerAutoIPDNotSupported" fallback="100.0"/>
+  </event-checks>
 </testcase>
