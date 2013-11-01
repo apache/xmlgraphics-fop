@@ -143,7 +143,7 @@ public abstract class AbstractPDFStream extends PDFObject {
      */
     protected int outputStreamData(StreamCache encodedStream, OutputStream out) throws IOException {
         int length = 0;
-        byte[] p = encode("stream\n");
+        byte[] p = encode("\nstream\n");
         out.write(p);
         length += p.length;
 
@@ -186,7 +186,7 @@ public abstract class AbstractPDFStream extends PDFObject {
                 throws IOException {
         int bytesWritten = 0;
         //Stream header
-        byte[] buf = encode("stream\n");
+        byte[] buf = encode("\nstream\n");
         out.write(buf);
         bytesWritten += buf.length;
 

@@ -169,9 +169,11 @@ public final class Trait implements Serializable {
     /** shift direction trait */
     public static final Integer SHIFT_DIRECTION = 42;
 
+    /** For optional content groups. */
+    public static final Integer LAYER = 43;
 
     /** Maximum value used by trait keys */
-    public static final int MAX_TRAIT_KEY = 42;
+    public static final int MAX_TRAIT_KEY = 43;
 
     private static final TraitInfo[] TRAIT_INFO = new TraitInfo[MAX_TRAIT_KEY + 1];
 
@@ -243,6 +245,7 @@ public final class Trait implements Serializable {
                 new TraitInfo("block-progression-direction", Direction.class));
         put(SHIFT_DIRECTION,
                 new TraitInfo("shift-direction", Direction.class));
+        put(LAYER, new TraitInfo("layer", String.class));
 
     }
 

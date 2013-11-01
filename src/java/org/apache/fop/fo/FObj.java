@@ -74,7 +74,8 @@ public abstract class FObj extends FONode implements Constants {
     private int bidiLevel = -1;
 
     // The value of properties relevant for all fo objects
-    private String id = null;
+    private String id;
+    private String layer;
     // End of property values
 
     /**
@@ -173,6 +174,7 @@ public abstract class FObj extends FONode implements Constants {
      */
     public void bind(PropertyList pList) throws FOPException {
         id = pList.get(PR_ID).getString();
+        layer = pList.get(PR_X_LAYER).getString();
     }
 
     /**
@@ -581,6 +583,16 @@ public abstract class FObj extends FONode implements Constants {
     /** @return whether this object has an id set */
     public boolean hasId() {
         return (id != null && id.length() > 0);
+    }
+
+    /** @return the "layer" property. */
+    public String getLayer() {
+        return layer;
+    }
+
+    /** @return whether this object has an layer set */
+    public boolean hasLayer() {
+        return (layer != null && layer.length() > 0);
     }
 
     /** {@inheritDoc} */

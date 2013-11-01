@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -55,24 +56,33 @@ import org.apache.fop.pdf.PDFFileSpec;
 import org.apache.fop.pdf.PDFICCBasedColorSpace;
 import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.pdf.PDFInfo;
+import org.apache.fop.pdf.PDFLayer;
 import org.apache.fop.pdf.PDFMetadata;
 import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFNames;
+import org.apache.fop.pdf.PDFNavigator;
+import org.apache.fop.pdf.PDFNull;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFOutputIntent;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFPageLabels;
 import org.apache.fop.pdf.PDFReference;
+import org.apache.fop.pdf.PDFSetOCGStateAction;
 import org.apache.fop.pdf.PDFText;
+import org.apache.fop.pdf.PDFTransitionAction;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.Version;
 import org.apache.fop.pdf.VersionController;
+import org.apache.fop.render.pdf.extensions.PDFActionExtension;
+import org.apache.fop.render.pdf.extensions.PDFArrayExtension;
+import org.apache.fop.render.pdf.extensions.PDFCollectionEntryExtension;
 import org.apache.fop.render.pdf.extensions.PDFDictionaryAttachment;
-import org.apache.fop.render.pdf.extensions.PDFDictionaryEntryExtension;
-import org.apache.fop.render.pdf.extensions.PDFDictionaryEntryType;
 import org.apache.fop.render.pdf.extensions.PDFDictionaryExtension;
 import org.apache.fop.render.pdf.extensions.PDFDictionaryType;
 import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileAttachment;
+import org.apache.fop.render.pdf.extensions.PDFObjectType;
+import org.apache.fop.render.pdf.extensions.PDFPageExtension;
+import org.apache.fop.render.pdf.extensions.PDFReferenceExtension;
 
 import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPTION_PARAMS;
 import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_ACCESSCONTENT;
@@ -260,10 +270,189 @@ class PDFRenderingUtil {
 
     public void renderDictionaryExtension(PDFDictionaryAttachment attachment, PDFPage currentPage) {
         PDFDictionaryExtension extension = attachment.getExtension();
-        if (extension.getDictionaryType() == PDFDictionaryType.Catalog) {
+        PDFDictionaryType type = extension.getDictionaryType();
+        if (type == PDFDictionaryType.Action) {
+            addNavigatorAction(extension);
+        } else if (type == PDFDictionaryType.Layer) {
+            addLayer(extension);
+        } else if (type == PDFDictionaryType.Navigator) {
+            addNavigator(extension);
+        } else {
+            renderDictionaryExtension(extension, currentPage);
+        }
+    }
+
+    public void addLayer(PDFDictionaryExtension extension) {
+        assert extension.getDictionaryType() == PDFDictionaryType.Layer;
+        String id = extension.getProperty(PDFDictionaryExtension.PROPERTY_ID);
+        if ((id != null) && (id.length() > 0)) {
+            PDFLayer layer = pdfDoc.getFactory().makeLayer(id);
+            layer.setResolver(new PDFLayer.Resolver(layer, extension) {
+                public void performResolution() {
+                    PDFDictionaryExtension extension = (PDFDictionaryExtension) getExtension();
+                    Object name = extension.findEntryValue("Name");
+                    Object intent = extension.findEntryValue("Intent");
+                    Object usage = makeDictionary(extension.findEntryValue("Usage"));
+                    getLayer().populate(name, intent, usage);
+                }
+            });
+        }
+    }
+
+    public void addNavigatorAction(PDFDictionaryExtension extension) {
+        assert extension.getDictionaryType() == PDFDictionaryType.Action;
+        String id = extension.getProperty(PDFDictionaryExtension.PROPERTY_ID);
+        if ((id != null) && (id.length() > 0)) {
+            String type = extension.getProperty(PDFActionExtension.PROPERTY_TYPE);
+            if (type != null) {
+                if (type.equals("SetOCGState")) {
+                    PDFSetOCGStateAction action = pdfDoc.getFactory().makeSetOCGStateAction(id);
+                    action.setResolver(new PDFSetOCGStateAction.Resolver(action, extension) {
+                        public void performResolution() {
+                            PDFDictionaryExtension extension = (PDFDictionaryExtension) getExtension();
+                            Object state = makeArray(extension.findEntryValue("State"));
+                            Object preserveRB = extension.findEntryValue("PreserveRB");
+                            Object nextAction = makeDictionaryOrArray(extension.findEntryValue("Next"));
+                            getAction().populate(state, preserveRB, nextAction);
+                        }
+                    });
+                } else if (type.equals("Trans")) {
+                    PDFTransitionAction action = pdfDoc.getFactory().makeTransitionAction(id);
+                    action.setResolver(new PDFTransitionAction.Resolver(action, extension) {
+                        public void performResolution() {
+                            PDFDictionaryExtension extension = (PDFDictionaryExtension) getExtension();
+                            Object transition = makeDictionary(extension.findEntryValue("Trans"));
+                            Object nextAction = makeDictionaryOrArray(extension.findEntryValue("Next"));
+                            getAction().populate(transition, nextAction);
+                        }
+                    });
+                } else {
+                    throw new UnsupportedOperationException();
+                }
+            }
+        }
+    }
+
+    public void addNavigator(PDFDictionaryExtension extension) {
+        assert extension.getDictionaryType() == PDFDictionaryType.Navigator;
+        String id = extension.getProperty(PDFDictionaryExtension.PROPERTY_ID);
+        if ((id != null) && (id.length() > 0)) {
+            PDFNavigator navigator = pdfDoc.getFactory().makeNavigator(id);
+            navigator.setResolver(new PDFNavigator.Resolver(navigator, extension) {
+                public void performResolution() {
+                    PDFDictionaryExtension extension = (PDFDictionaryExtension) getExtension();
+                    Object nextAction = makeDictionary(extension.findEntryValue("NA"));
+                    Object next = makeDictionary(extension.findEntryValue("Next"));
+                    Object prevAction = makeDictionary(extension.findEntryValue("PA"));
+                    Object prev = makeDictionary(extension.findEntryValue("Prev"));
+                    Object duration = extension.findEntryValue("Dur");
+                    getNavigator().populate(nextAction, next, prevAction, prev, duration);
+                }
+            });
+        }
+    }
+
+    private Object makeArray(Object value) {
+        if (value == null) {
+            return null;
+        } else if (value instanceof PDFReferenceExtension) {
+            return resolveReference((PDFReferenceExtension) value);
+        } else if (value instanceof List<?>) {
+            return populateArray(new PDFArray(), (List<?>) value);
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private Object populateArray(PDFArray array, List<?> entries) {
+        for (PDFCollectionEntryExtension entry : (List<PDFCollectionEntryExtension>) entries) {
+            PDFObjectType type = entry.getType();
+            if (type == PDFObjectType.Array) {
+                array.add(makeArray(entry.getValue()));
+            } else if (type == PDFObjectType.Boolean) {
+                array.add(entry.getValueAsBoolean());
+            } else if (type == PDFObjectType.Dictionary) {
+                array.add(makeDictionary(entry.getValue()));
+            } else if (type == PDFObjectType.Name) {
+                array.add(new PDFName(entry.getValueAsString()));
+            } else if (type == PDFObjectType.Number) {
+                array.add(new PDFNumber(entry.getValueAsNumber()));
+            } else if (type == PDFObjectType.Reference) {
+                array.add(resolveReference((PDFReferenceExtension) entry));
+            } else if (type == PDFObjectType.String) {
+                array.add(entry.getValue());
+            }
+        }
+        return array;
+    }
+
+    private Object makeDictionary(Object value) {
+        if (value == null) {
+            return null;
+        } else if (value instanceof PDFReferenceExtension) {
+            return resolveReference((PDFReferenceExtension) value);
+        } else if (value instanceof List<?>) {
+            return populateDictionary(new PDFDictionary(), (List<?>) value);
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private Object populateDictionary(PDFDictionary dictionary, List<?> entries) {
+        for (PDFCollectionEntryExtension entry : (List<PDFCollectionEntryExtension>) entries) {
+            PDFObjectType type = entry.getType();
+            String key = entry.getKey();
+            if (type == PDFObjectType.Array) {
+                dictionary.put(key, makeArray(entry.getValue()));
+            } else if (type == PDFObjectType.Boolean) {
+                dictionary.put(key, entry.getValueAsBoolean());
+            } else if (type == PDFObjectType.Dictionary) {
+                dictionary.put(key, makeDictionary(entry.getValue()));
+            } else if (type == PDFObjectType.Name) {
+                dictionary.put(key, new PDFName(entry.getValueAsString()));
+            } else if (type == PDFObjectType.Number) {
+                dictionary.put(key, new PDFNumber(entry.getValueAsNumber()));
+            } else if (type == PDFObjectType.Reference) {
+                dictionary.put(key, resolveReference((PDFReferenceExtension) entry));
+            } else if (type == PDFObjectType.String) {
+                dictionary.put(key, entry.getValue());
+            }
+        }
+        return dictionary;
+    }
+
+    private Object makeDictionaryOrArray(Object value) {
+        if (value == null) {
+            return null;
+        } else if (value instanceof PDFReferenceExtension) {
+            return resolveReference((PDFReferenceExtension) value);
+        } else if (value instanceof List<?>) {
+            if (hasKeyedEntry((List<?>) value)) {
+                return populateDictionary(new PDFDictionary(), (List<?>) value);
+            } else {
+                return populateArray(new PDFArray(), (List<?>) value);
+            }
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private boolean hasKeyedEntry(List<?> entries) {
+        for (PDFCollectionEntryExtension entry : (List<PDFCollectionEntryExtension>) entries) {
+            if (entry.getKey() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void renderDictionaryExtension(PDFDictionaryExtension extension, PDFPage currentPage) {
+        PDFDictionaryType type = extension.getDictionaryType();
+        if (type == PDFDictionaryType.Catalog) {
             augmentDictionary(pdfDoc.getRoot(), extension);
-        } else if (extension.getDictionaryType() == PDFDictionaryType.Page) {
-            if (extension.matchesPageNumber(currentPage.getPageIndex() + 1)) {
+        } else if (type == PDFDictionaryType.Page) {
+            assert extension instanceof PDFPageExtension;
+            if (((PDFPageExtension) extension).matchesPageNumber(currentPage.getPageIndex() + 1)) {
                 augmentDictionary(currentPage, extension);
             }
         } else {
@@ -272,9 +461,11 @@ class PDFRenderingUtil {
     }
 
     private PDFDictionary augmentDictionary(PDFDictionary dictionary, PDFDictionaryExtension extension) {
-        for (PDFDictionaryEntryExtension entry : extension.getEntries()) {
+        for (PDFCollectionEntryExtension entry : extension.getEntries()) {
             if (entry instanceof PDFDictionaryExtension) {
                 dictionary.put(entry.getKey(), augmentDictionary(new PDFDictionary(dictionary), (PDFDictionaryExtension) entry));
+            } else if (entry instanceof PDFArrayExtension) {
+                dictionary.put(entry.getKey(), augmentArray(new PDFArray(dictionary), (PDFArrayExtension) entry));
             } else {
                 augmentDictionary(dictionary, entry);
             }
@@ -282,17 +473,63 @@ class PDFRenderingUtil {
         return dictionary;
     }
 
-    private void augmentDictionary(PDFDictionary dictionary, PDFDictionaryEntryExtension entry) {
-        PDFDictionaryEntryType type = entry.getType();
+    private void augmentDictionary(PDFDictionary dictionary, PDFCollectionEntryExtension entry) {
+        PDFObjectType type = entry.getType();
         String key = entry.getKey();
-        if (type == PDFDictionaryEntryType.Boolean) {
+        if (type == PDFObjectType.Boolean) {
             dictionary.put(key, entry.getValueAsBoolean());
-        } else if (type == PDFDictionaryEntryType.Name) {
+        } else if (type == PDFObjectType.Name) {
             dictionary.put(key, new PDFName(entry.getValueAsString()));
-        } else if (type == PDFDictionaryEntryType.Number) {
+        } else if (type == PDFObjectType.Number) {
             dictionary.put(key, new PDFNumber(entry.getValueAsNumber()));
-        } else if (type == PDFDictionaryEntryType.String) {
+        } else if (type == PDFObjectType.Reference) {
+            assert entry instanceof PDFReferenceExtension;
+            dictionary.put(key, resolveReference((PDFReferenceExtension) entry));
+        } else if (type == PDFObjectType.String) {
             dictionary.put(key, entry.getValueAsString());
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private Object resolveReference(PDFReferenceExtension entry) {
+        PDFReference reference = (PDFReference) entry.getResolvedReference();
+        if (reference == null) {
+            reference = pdfDoc.resolveExtensionReference(entry.getReferenceId());
+            if (reference != null) {
+                entry.setResolvedReference(reference);
+            }
+            return reference;
+        }
+        return PDFNull.INSTANCE;
+    }
+
+    private PDFArray augmentArray(PDFArray array, PDFArrayExtension extension) {
+        for (PDFCollectionEntryExtension entry : extension.getEntries()) {
+            if (entry instanceof PDFDictionaryExtension) {
+                array.add(augmentDictionary(new PDFDictionary(array), (PDFDictionaryExtension) entry));
+            } else if (entry instanceof PDFArrayExtension) {
+                array.add(augmentArray(new PDFArray(array), (PDFArrayExtension) entry));
+            } else {
+                augmentArray(array, entry);
+            }
+        }
+        return array;
+    }
+
+    private void augmentArray(PDFArray array, PDFCollectionEntryExtension entry) {
+        PDFObjectType type = entry.getType();
+        if (type == PDFObjectType.Boolean) {
+            array.add(entry.getValueAsBoolean());
+        } else if (type == PDFObjectType.Name) {
+            array.add(new PDFName(entry.getValueAsString()));
+        } else if (type == PDFObjectType.Number) {
+            array.add(new PDFNumber(entry.getValueAsNumber()));
+        } else if (type == PDFObjectType.Reference) {
+            assert entry instanceof PDFReferenceExtension;
+            array.add(resolveReference((PDFReferenceExtension) entry));
+        } else if (type == PDFObjectType.String) {
+            array.add(entry.getValueAsString());
         } else {
             throw new IllegalStateException();
         }

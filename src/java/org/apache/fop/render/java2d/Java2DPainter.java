@@ -143,7 +143,7 @@ public class Java2DPainter extends AbstractIFPainter<Java2DDocumentHandler> {
     }
 
     /** {@inheritDoc} */
-    public void startGroup(AffineTransform transform) throws IFException {
+    public void startGroup(AffineTransform transform, String layer) throws IFException {
         saveGraphicsState();
         try {
             concatenateTransformationMatrix(transform);
