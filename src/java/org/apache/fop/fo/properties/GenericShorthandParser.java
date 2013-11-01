@@ -88,7 +88,8 @@ public class GenericShorthandParser implements ShorthandParser {
         while (iprop.hasNext() && prop == null) {
             Property p = (Property)iprop.next();
             prop = maker.convertShorthandProperty(propertyList, p, null);
-            propertyList.validatePropertyValue(p.getNCname(), prop, property);
+            // The following produces a regression, about which see FOP-2311.
+            // propertyList.validatePropertyValue(p.getNCname(), prop, property);
         }
         return prop;
     }
