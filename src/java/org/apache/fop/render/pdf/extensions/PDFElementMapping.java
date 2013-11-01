@@ -41,17 +41,56 @@ public class PDFElementMapping extends ElementMapping {
     protected void initialize() {
         if (foObjs == null) {
             foObjs = new java.util.HashMap<String, Maker>();
+            // pdf:action
+            foObjs.put(PDFDictionaryType.Action.elementName(), new PDFActionElementMaker());
+            // pdf:array
+            foObjs.put(PDFObjectType.Array.elementName(), new PDFArrayElementMaker());
+            // pdf:boolean
+            foObjs.put(PDFObjectType.Boolean.elementName(), new PDFCollectionEntryElementMaker(PDFObjectType.Boolean));
+            // pdf:catalog
+            foObjs.put(PDFDictionaryType.Catalog.elementName(), new PDFCatalogElementMaker());
+            // pdf:dictionary
+            foObjs.put(PDFDictionaryType.Dictionary.elementName(), new PDFDictionaryElementMaker());
             // pdf:embedded-file
             foObjs.put(PDFEmbeddedFileElement.ELEMENT, new PDFEmbeddedFileElementMaker());
-            // pdf:{catalog,page} et al.
-            for (PDFDictionaryType type : PDFDictionaryType.values()) {
-                foObjs.put(type.elementName(), new PDFDictionaryElementMaker(type));
-            }
-            for (PDFDictionaryEntryType type : PDFDictionaryEntryType.values()) {
-                if (type != PDFDictionaryEntryType.Dictionary) {
-                    foObjs.put(type.elementName(), new PDFDictionaryEntryElementMaker(type));
-                }
-            }
+            // pdf:name
+            foObjs.put(PDFObjectType.Name.elementName(), new PDFCollectionEntryElementMaker(PDFObjectType.Name));
+            // pdf:number
+            foObjs.put(PDFObjectType.Number.elementName(), new PDFCollectionEntryElementMaker(PDFObjectType.Number));
+            // pdf:navigator
+            foObjs.put(PDFDictionaryType.Navigator.elementName(), new PDFNavigatorElementMaker());
+            // pdf:layer
+            foObjs.put(PDFDictionaryType.Layer.elementName(), new PDFLayerElementMaker());
+            // pdf:page
+            foObjs.put(PDFDictionaryType.Page.elementName(), new PDFPageElementMaker());
+            // pdf:reference
+            foObjs.put(PDFObjectType.Reference.elementName(), new PDFReferenceElementMaker());
+            // pdf:string
+            foObjs.put(PDFObjectType.String.elementName(), new PDFCollectionEntryElementMaker(PDFObjectType.String));
+        }
+    }
+
+    static class PDFActionElementMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new PDFActionElement(parent);
+        }
+    }
+
+    static class PDFArrayElementMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new PDFArrayElement(parent);
+        }
+    }
+
+    static class PDFCatalogElementMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new PDFCatalogElement(parent);
+        }
+    }
+
+    static class PDFDictionaryElementMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new PDFDictionaryElement(parent, PDFDictionaryType.Dictionary);
         }
     }
 
@@ -61,23 +100,38 @@ public class PDFElementMapping extends ElementMapping {
         }
     }
 
-    static class PDFDictionaryElementMaker extends ElementMapping.Maker {
-        private PDFDictionaryType dictionaryType;
-        PDFDictionaryElementMaker(PDFDictionaryType dictionaryType) {
-            this.dictionaryType = dictionaryType;
-        }
+    static class PDFLayerElementMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new PDFDictionaryElement(parent, dictionaryType);
+            return new PDFLayerElement(parent);
         }
     }
 
-    static class PDFDictionaryEntryElementMaker extends ElementMapping.Maker {
-        private PDFDictionaryEntryType entryType;
-        PDFDictionaryEntryElementMaker(PDFDictionaryEntryType entryType) {
+    static class PDFNavigatorElementMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new PDFNavigatorElement(parent);
+        }
+    }
+
+    static class PDFPageElementMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new PDFPageElement(parent);
+        }
+    }
+
+    static class PDFCollectionEntryElementMaker extends ElementMapping.Maker {
+        private PDFObjectType entryType;
+        PDFCollectionEntryElementMaker(PDFObjectType entryType) {
             this.entryType = entryType;
         }
         public FONode make(FONode parent) {
-            return new PDFDictionaryEntryElement(parent, entryType);
+            return new PDFCollectionEntryElement(parent, entryType);
         }
     }
+
+    static class PDFReferenceElementMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new PDFReferenceElement(parent);
+        }
+    }
+
 }

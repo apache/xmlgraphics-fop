@@ -867,6 +867,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
             transferForeignAttributes(viewportBlockArea);
 
             TraitSetter.setProducerID(viewportBlockArea, getBlockContainerFO().getId());
+            TraitSetter.setLayer(viewportBlockArea, getBlockContainerFO().getLayer());
             TraitSetter.addBorders(viewportBlockArea,
                     getBlockContainerFO().getCommonBorderPaddingBackground(),
                     discardBorderBefore, discardBorderAfter, false, false, this);

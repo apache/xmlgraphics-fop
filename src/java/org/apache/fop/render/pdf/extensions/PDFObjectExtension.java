@@ -23,34 +23,20 @@ import org.apache.fop.util.XMLUtil;
 
 // CSOFF: LineLengthCheck
 
-public class PDFDictionaryEntryExtension {
+public class PDFObjectExtension {
 
-    public static final String PROPERTY_KEY = "key";
-
-    private PDFDictionaryEntryType type;
-    private String key = "";
+    private PDFObjectType type;
     private Object value;
 
-    PDFDictionaryEntryExtension() {
-    }
-
-    PDFDictionaryEntryExtension(PDFDictionaryEntryType type) {
+    PDFObjectExtension(PDFObjectType type) {
         this.type = type;
     }
 
-    public PDFDictionaryEntryType getType() {
+    public PDFObjectType getType() {
         return type;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
@@ -63,7 +49,10 @@ public class PDFDictionaryEntryExtension {
      * @return entry value
      */
     public Boolean getValueAsBoolean() {
-        if (value instanceof String) {
+        Object value = getValue();
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        } else if (value instanceof String) {
             return Boolean.valueOf((String)value);
         } else {
             return false;
@@ -75,9 +64,12 @@ public class PDFDictionaryEntryExtension {
      * @return entry value
      */
     public Number getValueAsNumber() {
-        if (value instanceof String) {
+        Object value = getValue();
+        if (value instanceof Number) {
+            return (Number) value;
+        } else if (value instanceof String) {
             double d = Double.parseDouble((String) value);
-            if (Math.floor(d) == d) {
+            if (Math.abs(Math.floor(d) - d) < 1E-10) {
                 return Long.valueOf((long) d);
             } else {
                 return Double.valueOf(d);
@@ -88,19 +80,18 @@ public class PDFDictionaryEntryExtension {
     }
 
     public String getValueAsString() {
-        if (value instanceof String) {
+        Object value = getValue();
+        if (value == null) {
+            return null;
+        } else if (value instanceof String) {
             return (String) value;
         } else {
-            return "";
+            return value.toString();
         }
     }
 
     public String getValueAsXMLEscapedString() {
         return XMLUtil.escape(getValueAsString());
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
     }
 
     public String getElementName() {

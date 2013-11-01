@@ -381,6 +381,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager implements Co
                     getBlockFO().getCommonBorderPaddingBackground(),
                     startIndent, endIndent,
                     this);
+            TraitSetter.setLayer(curBlockArea, getBlockFO().getLayer());
 
             curBlockArea.setLocale(getBlockFO().getCommonHyphenation().getLocale());
             curBlockArea.setLocation(FONode.getLocatorString(getBlockFO().getLocator()));

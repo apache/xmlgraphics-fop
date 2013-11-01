@@ -44,8 +44,6 @@ import org.apache.fop.util.AbstractPaintingState;
  * previous state then the necessary values can be overridden.
  * The current transform behaves differently to other values as the
  * matrix is combined with the current resolved value.
- * It is impossible to optimise the result without analysing the all
- * the possible combinations after completing.
  */
 public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState {
 
@@ -187,6 +185,36 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
         return newState;
     }
 
+    public void setLayer(String layer) {
+        getPDFData().setLayer(layer);
+    }
+
+    public String getLayer() {
+        return getPDFData().getLayer();
+    }
+
+    public boolean getLayerChanged() {
+        String layerCurrent = getLayer();
+        if (layerCurrent == null) {
+            return false;
+        } else if (getStateStack().isEmpty()) {
+            return true;
+        } else {
+            for (int i = getStackLevel(); i > 0; --i) {
+                String layerPrev = ((PDFData) getStateStack().get(i - 1)).getLayer();
+                if (layerPrev == null) {
+                    continue;
+                } else {
+                    // Both current and prior are set, so, if same, then we know layer
+                    // didn't change (and can stop search), otherwise it did change.
+                    return !layerCurrent.equals(layerPrev);
+                }
+            }
+            // Current layer set, but no prior saved layer set, so must have changed.
+            return true;
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     protected AbstractData instantiateData() {
@@ -209,7 +237,7 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
         AbstractData data = getData();
         AbstractData copy = (AbstractData)data.clone();
         data.clearTransform();
-        getStateStack().add(copy);
+        getStateStack().push(copy);
     }
 
     private PDFData getPDFData() {

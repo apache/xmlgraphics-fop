@@ -1821,4 +1821,28 @@ public class PDFFactory {
         return obj;
     }
 
+    public PDFLayer makeLayer(String id) {
+        PDFLayer layer = new PDFLayer(id);
+        getDocument().registerObject(layer);
+        return layer;
+    }
+
+    public PDFSetOCGStateAction makeSetOCGStateAction(String id) {
+        PDFSetOCGStateAction action = new PDFSetOCGStateAction(id);
+        getDocument().registerObject(action);
+        return action;
+    }
+
+    public PDFTransitionAction makeTransitionAction(String id) {
+        PDFTransitionAction action = new PDFTransitionAction(id);
+        getDocument().registerObject(action);
+        return action;
+    }
+
+    public PDFNavigator makeNavigator(String id) {
+        PDFNavigator navigator = new PDFNavigator(id);
+        getDocument().registerObject(navigator);
+        return navigator;
+    }
+
 }

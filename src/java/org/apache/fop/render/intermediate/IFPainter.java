@@ -113,19 +113,21 @@ public interface IFPainter {
     /**
      * Starts a new group of graphical elements. Corresponds to SVG's g element.
      * @param transforms a series of transformation matrices establishing the new coordinate system
+     * @param layer an optional layer label (or null if none)
      * @throws IFException if an error occurs while handling this element
      */
-    void startGroup(AffineTransform[] transforms) throws IFException;
+    void startGroup(AffineTransform[] transforms, String layer) throws IFException;
 
     /**
      * Starts a new group of graphical elements. Corresponds to SVG's g element.
      * @param transform the transformation matrix establishing the new coordinate system
+     * @param layer an optional layer label (or null if none)
      * @throws IFException if an error occurs while handling this element
      */
-    void startGroup(AffineTransform transform) throws IFException;
+    void startGroup(AffineTransform transform, String layer) throws IFException;
 
     /**
-     * Ends the current group and restores the previous coordinate system.
+     * Ends the current group and restores the previous coordinate system (and layer).
      * @throws IFException if an error occurs while handling this element
      */
     void endGroup() throws IFException;

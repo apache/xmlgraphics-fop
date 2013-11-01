@@ -476,6 +476,14 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /** {@inheritDoc} */
+    protected void startLayer(String layer) {
+    }
+
+    /** {@inheritDoc} */
+    protected void endLayer() {
+    }
+
+    /** {@inheritDoc} */
     protected List breakOutOfStateStack() {
         log.debug("Block.FIXED --> break out");
         List breakOutList;

@@ -24,24 +24,36 @@ import java.util.Map;
 
 // CSOFF: LineLengthCheck
 
-public class PDFDictionaryExtension extends PDFDictionaryEntryExtension {
+public class PDFDictionaryExtension extends PDFCollectionExtension {
 
+    public static final String PROPERTY_ID = "id";
     public static final String PROPERTY_PAGE_NUMBERS = "page-numbers";
 
     private static final long serialVersionUID = -1L;
 
     private PDFDictionaryType dictionaryType;
     private Map<String, String> properties;
-    private List<PDFDictionaryEntryExtension> entries;
+    private List<PDFCollectionEntryExtension> entries;
 
     PDFDictionaryExtension() {
+        this(PDFDictionaryType.Dictionary);
     }
 
     PDFDictionaryExtension(PDFDictionaryType dictionaryType) {
-        super(PDFDictionaryEntryType.Dictionary);
+        super(PDFObjectType.Dictionary);
         this.dictionaryType = dictionaryType;
         this.properties = new java.util.HashMap<String, String>();
-        this.entries = new java.util.ArrayList<PDFDictionaryEntryExtension>();
+        this.entries = new java.util.ArrayList<PDFCollectionEntryExtension>();
+    }
+
+    @Override
+    public void setValue(Object value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getValue() {
+        return getEntries();
     }
 
     public PDFDictionaryType getDictionaryType() {
@@ -56,15 +68,40 @@ public class PDFDictionaryExtension extends PDFDictionaryEntryExtension {
         return properties.get(name);
     }
 
-    public void addEntry(PDFDictionaryEntryExtension entry) {
-        entries.add(entry);
+    @Override
+    public void addEntry(PDFCollectionEntryExtension entry) {
+        if ((entry.getKey() == null) || (entry.getKey().length() == 0)) {
+            throw new IllegalArgumentException();
+        } else {
+            entries.add(entry);
+        }
     }
 
-    public List<PDFDictionaryEntryExtension> getEntries() {
+    public List<PDFCollectionEntryExtension> getEntries() {
         return entries;
     }
 
-    public PDFDictionaryEntryExtension getLastEntry() {
+    public PDFCollectionEntryExtension findEntry(String key) {
+        for (PDFCollectionEntryExtension entry : entries) {
+            String entryKey = entry.getKey();
+            if ((entryKey != null) && entryKey.equals(key)) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    public Object findEntryValue(String key) {
+        for (PDFCollectionEntryExtension entry : entries) {
+            String entryKey = entry.getKey();
+            if ((entryKey != null) && entryKey.equals(key)) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    public PDFCollectionEntryExtension getLastEntry() {
         if (entries.size() > 0) {
             return entries.get(entries.size() - 1);
         } else {
@@ -72,48 +109,8 @@ public class PDFDictionaryExtension extends PDFDictionaryEntryExtension {
         }
     }
 
-    /**
-     * Determine if page dictionary and page number matches.
-     * @param pageNumber page number, where first page number is 1
-     * @return true if this dictionary is a page dictionary and specified page number matches specified page-number property
-     */
-    public boolean matchesPageNumber(int pageNumber) {
-        if (dictionaryType != PDFDictionaryType.Page) {
-            return false;
-        }
-        String pageNumbers = getProperty(PROPERTY_PAGE_NUMBERS);
-        if ((pageNumbers == null) || (pageNumbers.length() == 0)) {
-            return false;
-        } else if (pageNumbers.equals("*")) {
-            return true;
-        } else {
-            for (String interval : pageNumbers.split("\\s*,\\s*")) {
-                String[] components = interval.split("\\s*-\\s*");
-                if (components.length < 1) {
-                    continue;
-                } else {
-                    try {
-                        int start = Integer.parseInt(components[0]);
-                        int end = 0;
-                        if (components.length > 1) {
-                            if (!components[1].equals("LAST")) {
-                                end = Integer.parseInt(components[1]);
-                            }
-                        }
-                        if ((end == 0) && (pageNumber == start)) {
-                            return true;
-                        } else if ((end > start) && (pageNumber >= start) && (pageNumber < end)) {
-                            return true;
-                        } else {
-                            continue;
-                        }
-                    } catch (NumberFormatException e) {
-                        continue;
-                    }
-                }
-            }
-        }
-        return false;
+    public boolean usesIDAttribute() {
+        return dictionaryType.usesIDAttribute();
     }
 
     @Override
