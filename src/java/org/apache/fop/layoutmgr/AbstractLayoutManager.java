@@ -342,6 +342,34 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
                 && isFinished());
     }
 
+    public boolean hasLineAreaDescendant() {
+        if (childLMs == null || childLMs.isEmpty()) {
+            return false;
+        } else {
+            for (LayoutManager childLM : childLMs) {
+                if (childLM.hasLineAreaDescendant()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public int getBaselineOffset() {
+        if (childLMs != null) {
+            for (LayoutManager childLM : childLMs) {
+                if (childLM.hasLineAreaDescendant()) {
+                    return childLM.getBaselineOffset();
+                }
+            }
+        }
+        throw newNoLineAreaDescendantException();
+    }
+
+    protected IllegalStateException newNoLineAreaDescendantException() {
+        return new IllegalStateException("getBaselineOffset called on an object that has no line-area descendant");
+    }
+
     /**
      * Transfers foreign attributes from the formatting object to the area.
      * @param targetArea the area to set the attributes on
