@@ -32,12 +32,11 @@ import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
-import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.BreakOpportunity;
 import org.apache.fop.layoutmgr.BreakOpportunityHelper;
-import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
@@ -53,10 +52,9 @@ import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.RelSide;
 import org.apache.fop.layoutmgr.SpaceResolver;
+import org.apache.fop.layoutmgr.SpacedBorderedPaddedBlockLayoutManager;
 import org.apache.fop.layoutmgr.TraitSetter;
-import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.util.BreakUtil;
 
@@ -64,8 +62,8 @@ import org.apache.fop.util.BreakUtil;
  * LayoutManager for a list-item FO.
  * The list item contains a list item label and a list item body.
  */
-public class ListItemLayoutManager extends BlockStackingLayoutManager implements ConditionalElementListener,
-        BreakOpportunity {
+public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
+        implements BreakOpportunity {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(ListItemLayoutManager.class);
@@ -77,13 +75,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager implements
 
     private List<ListElement> labelList = null;
     private List<ListElement> bodyList = null;
-
-    private boolean discardBorderBefore;
-    private boolean discardBorderAfter;
-    private boolean discardPaddingBefore;
-    private boolean discardPaddingAfter;
-    private MinOptMax effSpaceBefore;
-    private MinOptMax effSpaceAfter;
 
     private Keep keepWithNextPendingOnLabel;
     private Keep keepWithNextPendingOnBody;
@@ -143,6 +134,11 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager implements
         super(node);
         setLabel(node.getLabel());
         setBody(node.getBody());
+    }
+
+    @Override
+    protected CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return getListItemFO().getCommonBorderPaddingBackground();
     }
 
     /**
@@ -475,6 +471,23 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager implements
         return returnedList;
     }
 
+
+    @Override
+    public boolean hasLineAreaDescendant() {
+        return label.hasLineAreaDescendant() || body.hasLineAreaDescendant();
+    }
+
+    @Override
+    public int getBaselineOffset() {
+        if (label.hasLineAreaDescendant()) {
+            return label.getBaselineOffset();
+        } else if (body.hasLineAreaDescendant()) {
+            return body.getBaselineOffset();
+        } else {
+            throw newNoLineAreaDescendantException();
+        }
+    }
+
     /**
      * Add the areas for the break points.
      *
@@ -650,51 +663,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager implements
     @Override
     public KeepProperty getKeepWithNextProperty() {
         return getListItemFO().getKeepWithNext();
-    }
-
-    /** {@inheritDoc} */
-    public void notifySpace(RelSide side, MinOptMax effectiveLength) {
-        if (RelSide.BEFORE == side) {
-            if (log.isDebugEnabled()) {
-                log.debug(this + ": Space " + side + ", "
-                        + this.effSpaceBefore + "-> " + effectiveLength);
-            }
-            this.effSpaceBefore = effectiveLength;
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug(this + ": Space " + side + ", "
-                        + this.effSpaceAfter + "-> " + effectiveLength);
-            }
-            this.effSpaceAfter = effectiveLength;
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void notifyBorder(RelSide side, MinOptMax effectiveLength) {
-        if (effectiveLength == null) {
-            if (RelSide.BEFORE == side) {
-                this.discardBorderBefore = true;
-            } else {
-                this.discardBorderAfter = true;
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug(this + ": Border " + side + " -> " + effectiveLength);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void notifyPadding(RelSide side, MinOptMax effectiveLength) {
-        if (effectiveLength == null) {
-            if (RelSide.BEFORE == side) {
-                this.discardPaddingBefore = true;
-            } else {
-                this.discardPaddingAfter = true;
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug(this + ": Padding " + side + " -> " + effectiveLength);
-        }
     }
 
     /** {@inheritDoc} */

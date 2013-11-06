@@ -29,7 +29,6 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
@@ -59,7 +58,6 @@ public class InlineContainer extends FObj {
 
     /** used for FO validation */
     private boolean blockItemFound;
-    private CommonFont commonFont;
 
     /**
      * Creates a new instance.
@@ -73,7 +71,6 @@ public class InlineContainer extends FObj {
     @Override
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
-        commonFont = pList.getFontProps(); // TODO get directly from parent?
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
@@ -214,8 +211,9 @@ public class InlineContainer extends FObj {
         return false;
     }
 
-    public CommonFont getCommonFont() {
-        return commonFont;
+    @Override
+    public boolean generatesReferenceAreas() {
+        return true;
     }
 
 }

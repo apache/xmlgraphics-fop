@@ -160,6 +160,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private final int follow;
     private AlignmentContext alignmentContext;
 
+    private int baselineOffset = -1;
+
     private List<KnuthSequence> knuthParagraphs;
 
     private LineLayoutPossibilities lineLayouts;
@@ -556,7 +558,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     private int constantLineHeight = 12000;
 
-
     /**
      * Create a new Line Layout Manager.
      * This is used by the block layout manager to create
@@ -939,7 +940,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 while (listIter.hasNext()) {
                     ListElement tempElement;
                     tempElement = (ListElement) listIter.next();
-                    if (tempElement.getLayoutManager() != this) {
+                    LayoutManager lm = tempElement.getLayoutManager();
+                    if (baselineOffset < 0 && lm != null && lm.hasLineAreaDescendant()) {
+                        baselineOffset = lm.getBaselineOffset();
+                    }
+                    if (lm != this) {
                         tempElement.setPosition(notifyPos(new NonLeafPosition(this,
                                 tempElement.getPosition())));
                     }
@@ -987,6 +992,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     }
                     startIndex = endIndex + 1;
                     LineBreakPosition lbp = (LineBreakPosition) llPoss.getChosenPosition(i);
+                    if (baselineOffset < 0) {
+                        baselineOffset = lbp.spaceBefore + lbp.baseline;
+                    }
                     returnList.add(new KnuthBlockBox(
                                    lbp.lineHeight + lbp.spaceBefore + lbp.spaceAfter,
                                     footnoteList, lbp, false));
@@ -1422,6 +1430,16 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         } else {
             return null;
         }
+    }
+
+    @Override
+    public boolean hasLineAreaDescendant() {
+        return true;
+    }
+
+    @Override
+    public int getBaselineOffset() {
+        return baselineOffset;
     }
 
     /**

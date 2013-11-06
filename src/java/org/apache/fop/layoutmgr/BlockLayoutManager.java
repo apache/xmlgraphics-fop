@@ -32,6 +32,7 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -44,8 +45,8 @@ import org.apache.fop.traits.SpaceVal;
 /**
  * LayoutManager for a block FO.
  */
-public class BlockLayoutManager extends BlockStackingLayoutManager implements ConditionalElementListener,
-        BreakOpportunity {
+public class BlockLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
+        implements BreakOpportunity {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(BlockLayoutManager.class);
@@ -59,13 +60,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager implements Co
     private Length lineHeight;
     private int follow = 2000;
     //private int middleShift = 0;
-
-    private boolean discardBorderBefore;
-    private boolean discardBorderAfter;
-    private boolean discardPaddingBefore;
-    private boolean discardPaddingAfter;
-    private MinOptMax effSpaceBefore;
-    private MinOptMax effSpaceAfter;
 
     /**
      * Creates a new BlockLayoutManager.
@@ -98,6 +92,11 @@ public class BlockLayoutManager extends BlockStackingLayoutManager implements Co
                                     .getOptimum(this).getLength().getValue(this);
         adjustedSpaceAfter = fo.getCommonMarginBlock().spaceAfter.getSpace()
                                     .getOptimum(this).getLength().getValue(this);
+    }
+
+    @Override
+    protected CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return getBlockFO().getCommonBorderPaddingBackground();
     }
 
     /** {@inheritDoc} */
@@ -454,51 +453,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager implements Co
     @Override
     public boolean getGeneratesBlockArea() {
         return true;
-    }
-
-    /** {@inheritDoc} */
-    public void notifySpace(RelSide side, MinOptMax effectiveLength) {
-        if (RelSide.BEFORE == side) {
-            if (log.isDebugEnabled()) {
-                log.debug(this + ": Space " + side + ", "
-                        + this.effSpaceBefore + "-> " + effectiveLength);
-            }
-            this.effSpaceBefore = effectiveLength;
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug(this + ": Space " + side + ", "
-                        + this.effSpaceAfter + "-> " + effectiveLength);
-            }
-            this.effSpaceAfter = effectiveLength;
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void notifyBorder(RelSide side, MinOptMax effectiveLength) {
-        if (effectiveLength == null) {
-            if (RelSide.BEFORE == side) {
-                this.discardBorderBefore = true;
-            } else {
-                this.discardBorderAfter = true;
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug(this + ": Border " + side + " -> " + effectiveLength);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void notifyPadding(RelSide side, MinOptMax effectiveLength) {
-        if (effectiveLength == null) {
-            if (RelSide.BEFORE == side) {
-                this.discardPaddingBefore = true;
-            } else {
-                this.discardPaddingAfter = true;
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug(this + ": Padding " + side + " -> " + effectiveLength);
-        }
     }
 
     /** {@inheritDoc} */

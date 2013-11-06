@@ -31,9 +31,6 @@ import org.apache.fop.fo.flow.InlineContainer;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
 import org.apache.fop.layoutmgr.AreaAdditionUtil;
 import org.apache.fop.layoutmgr.BlockLevelEventProducer;
@@ -64,6 +61,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
 
     private List<ListElement> childElements;
     private int ipdOverflow;
+    private AlignmentContext alignmentContext;
     private InlineViewport currentViewport;
     private Container referenceArea;
 
@@ -84,7 +82,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         childLC.setRefIPD(contentAreaIPD);
         childElements = getChildKnuthElements(childLC, alignment); // TODO which alignment?
         determineBPD();
-        AlignmentContext alignmentContext = makeAlignmentContext(context); // TODO correct?
+        alignmentContext = makeAlignmentContext(context); // TODO correct?
         Position position = new Position(this, 0);
         KnuthSequence knuthSequence = new InlineKnuthSequence();
         knuthSequence.add(new KnuthInlineBox(contentAreaIPD, alignmentContext, position, false));
@@ -121,6 +119,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         handleIPDOverflow();
         wrapPositions(allChildElements);
         SpaceResolver.resolveElementList(allChildElements);
+        SpaceResolver.performConditionalsNotification(allChildElements, 0, allChildElements.size() - 1, -1);
         // TODO break-before, break-after
         return allChildElements;
     }
@@ -149,13 +148,13 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
 
     protected AlignmentContext makeAlignmentContext(LayoutContext context) {
         InlineContainer ic = (InlineContainer) fobj;
-        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
-        FontTriplet[] fontkeys = ic.getCommonFont().getFontState(fi);
-        Font fs = fi.getFontInstance(fontkeys[0], ic.getCommonFont().fontSize.getValue(this));
-        return new AlignmentContext(contentAreaBPD,
+        AlignmentContext ac = new AlignmentContext(contentAreaBPD,
                 ic.getAlignmentAdjust(), ic.getAlignmentBaseline(),
                 ic.getBaselineShift(), ic.getDominantBaseline(),
                 context.getAlignmentContext());
+        int baselineOffset = hasLineAreaDescendant() ? getBaselineOffset() : contentAreaBPD;
+        ac.resizeLine(contentAreaBPD, baselineOffset);
+        return ac;
     }
 
     private void handleIPDOverflow() {
@@ -184,6 +183,11 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     }
 
     @Override
+    public boolean getGeneratesReferenceArea() {
+        return true;
+    }
+
+    @Override
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         Position inlineContainerPosition = null;
         while (posIter.hasNext()) {
@@ -196,7 +200,6 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
             assert inlineContainerPosition.getLM() == this;
         }
         assert inlineContainerPosition != null;
-        SpaceResolver.performConditionalsNotification(childElements, 0, childElements.size() - 1, -1);
         KnuthPossPosIter childPosIter = new KnuthPossPosIter(childElements);
         AreaAdditionUtil.addAreas(this, childPosIter, context);
 
@@ -212,6 +215,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
             TraitSetter.setProducerID(referenceArea, fobj.getId());
             referenceArea.setIPD(contentAreaIPD);
             currentViewport = new InlineViewport(referenceArea);
+            currentViewport.setBlockProgressionOffset(alignmentContext.getOffset());
             currentViewport.addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
             currentViewport.setIPD(getContentAreaIPD());
             currentViewport.setBPD(getContentAreaBPD());
