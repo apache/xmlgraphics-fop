@@ -27,6 +27,8 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.InlineViewport;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.InlineContainer;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
@@ -152,7 +154,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
                 ic.getAlignmentAdjust(), ic.getAlignmentBaseline(),
                 ic.getBaselineShift(), ic.getDominantBaseline(),
                 context.getAlignmentContext());
-        int baselineOffset = hasLineAreaDescendant() ? getBaselineOffset() : contentAreaBPD;
+        int baselineOffset = getAlignmentPoint();
         ac.resizeLine(contentAreaBPD, baselineOffset);
         return ac;
     }
@@ -180,6 +182,45 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
 
     private boolean canRecoverFromOverflow() {
         return ((InlineContainer) fobj).getOverflow() != EN_ERROR_IF_OVERFLOW;
+    }
+
+    private int getAlignmentPoint() {
+        Length alignmentAdjust = ((InlineContainer) fobj).getAlignmentAdjust();
+        int baseline = alignmentAdjust.getEnum();
+        if (baseline == Constants.EN_AUTO
+                || baseline == Constants.EN_BASELINE) {
+            return getInlineContainerBaselineOffset(alignmentBaseline);
+        } else if (baseline != 0) {
+            return getInlineContainerBaselineOffset(baseline);
+        } else {
+            return 0;
+        }
+    }
+
+    private int getInlineContainerBaselineOffset(int property) {
+        switch (property) {
+        case Constants.EN_BEFORE_EDGE:
+        case Constants.EN_TEXT_BEFORE_EDGE:
+            return 0;
+        case Constants.EN_AFTER_EDGE:
+        case Constants.EN_TEXT_AFTER_EDGE:
+            return contentAreaBPD;
+        case Constants.EN_MIDDLE:
+        case Constants.EN_CENTRAL:
+        case Constants.EN_MATHEMATICAL:
+            return contentAreaBPD / 2;
+        case Constants.EN_IDEOGRAPHIC:
+            return contentAreaBPD * 7 / 10;
+        case Constants.EN_ALPHABETIC:
+            return contentAreaBPD * 6 / 10;
+        case Constants.EN_HANGING:
+            return contentAreaBPD * 2 / 10;
+        case Constants.EN_AUTO:
+        case Constants.EN_BASELINE:
+            return hasLineAreaDescendant() ? getBaselineOffset() : contentAreaBPD;
+        default:
+            throw new AssertionError("Unknown baseline value: " + property);
+        }
     }
 
     @Override
