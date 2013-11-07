@@ -57,7 +57,6 @@ import org.apache.fop.layoutmgr.TraitSetter;
 public class InlineContainerLayoutManager extends AbstractLayoutManager implements InlineLevelLayoutManager {
 
     private CommonBorderPaddingBackground borderProps;
-    private int alignmentBaseline = EN_BASELINE;
     private int contentAreaIPD;
     private int contentAreaBPD;
 
@@ -75,6 +74,11 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     public void initialize() {
         InlineContainer node = (InlineContainer) fobj;
         borderProps = node.getCommonBorderPaddingBackground();
+    }
+
+    private InlineContainer getInlineContainer() {
+        assert fobj instanceof InlineContainer;
+        return (InlineContainer) fobj;
     }
 
     @Override
@@ -95,7 +99,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     }
 
     private void determineIPD(LayoutContext layoutContext) {
-        LengthRangeProperty ipd = ((InlineContainer) fobj).getInlineProgressionDimension();
+        LengthRangeProperty ipd = getInlineContainer().getInlineProgressionDimension();
         Property optimum = ipd.getOptimum(this);
         if (optimum.isAuto()) {
             contentAreaIPD = layoutContext.getRefIPD();
@@ -114,7 +118,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
             LayoutContext childLC = LayoutContext.offspringOf(layoutContext); // TODO copyOf? newInstance?
             childLC.setRefIPD(layoutContext.getRefIPD());
             @SuppressWarnings("unchecked")
-            List<ListElement> childElements = childLM.getNextKnuthElements(childLC, alignmentBaseline);
+            List<ListElement> childElements = childLM.getNextKnuthElements(childLC, alignment);
             allChildElements.addAll(childElements);
             // TODO breaks, keeps, empty content
         }
@@ -127,7 +131,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     }
 
     private void determineBPD() {
-        LengthRangeProperty bpd = ((InlineContainer) fobj).getBlockProgressionDimension();
+        LengthRangeProperty bpd = getInlineContainer().getBlockProgressionDimension();
         Property optimum = bpd.getOptimum(this);
         int actualBPD = ElementListUtils.calcContentLength(childElements);
         if (optimum.isAuto()) {
@@ -181,15 +185,15 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     }
 
     private boolean canRecoverFromOverflow() {
-        return ((InlineContainer) fobj).getOverflow() != EN_ERROR_IF_OVERFLOW;
+        return getInlineContainer().getOverflow() != EN_ERROR_IF_OVERFLOW;
     }
 
     private int getAlignmentPoint() {
-        Length alignmentAdjust = ((InlineContainer) fobj).getAlignmentAdjust();
+        Length alignmentAdjust = getInlineContainer().getAlignmentAdjust();
         int baseline = alignmentAdjust.getEnum();
         if (baseline == Constants.EN_AUTO
                 || baseline == Constants.EN_BASELINE) {
-            return getInlineContainerBaselineOffset(alignmentBaseline);
+            return getInlineContainerBaselineOffset(getInlineContainer().getAlignmentBaseline());
         } else if (baseline != 0) {
             return getInlineContainerBaselineOffset(baseline);
         } else {
@@ -294,7 +298,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     }
 
     private boolean needClip() {
-        int overflow = ((InlineContainer) fobj).getOverflow();
+        int overflow = getInlineContainer().getOverflow();
         return (overflow == EN_HIDDEN || overflow == EN_ERROR_IF_OVERFLOW);
     }
 
