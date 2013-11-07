@@ -50,6 +50,7 @@ public class ExtensionElementMapping extends ElementMapping {
         PROPERTY_ATTRIBUTES.add("internal-destination");
         PROPERTY_ATTRIBUTES.add("disable-column-balancing");
         PROPERTY_ATTRIBUTES.add("fitting-strategy");
+        PROPERTY_ATTRIBUTES.add("auto-toggle");
         //These are FOP's extension properties for accessibility
         PROPERTY_ATTRIBUTES.add("alt-text");
         PROPERTY_ATTRIBUTES.add("header");
@@ -87,8 +88,6 @@ public class ExtensionElementMapping extends ElementMapping {
             foObjs.put("label", new UnknownXMLObj.Maker(URI));
             foObjs.put("destination", new DestinationMaker());
             foObjs.put("external-document", new ExternalDocumentMaker());
-            foObjs.put("best-fit", new BestFitMaker());
-            foObjs.put("alternative-block", new AlternativeBlockMaker());
         }
     }
 
@@ -103,20 +102,6 @@ public class ExtensionElementMapping extends ElementMapping {
         @Override
         public FONode make(FONode parent) {
             return new ExternalDocument(parent);
-        }
-    }
-
-    static class BestFitMaker extends ElementMapping.Maker {
-        @Override
-        public FONode make(FONode parent) {
-            return new BestFit(parent);
-        }
-    }
-
-    static class AlternativeBlockMaker extends ElementMapping.Maker {
-        @Override
-        public FONode make(FONode parent) {
-            return new AlternativeBlock(parent);
         }
     }
 

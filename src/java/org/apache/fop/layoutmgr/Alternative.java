@@ -19,24 +19,27 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * An alternative has a set of fitness traits (e.g. occupied bpd and ipd,
+ * adjustment ratio, remaining size, etc.) that determine how good its
+ * eligibility is when evaluated by a fitting strategy.
+ */
 public class Alternative {
 
-    /** remaining BPD after inserting the alternative */
+    /** Remaining BPD after inserting the alternative. */
     private int remainingBPD;
-    /** width of the alternative in block-progressing-dimension */
-    private final int width;
-    /** Knuth element list */
+    /** Size of the alternative in block-progression-direction. */
+    private final int length;
     private final List<ListElement> knuthList;
-    /** Indicates whether we should consider the alternative or not */
-    private boolean enabled;
+    private boolean enabled = true;
 
-    public Alternative(List<ListElement> knuthList, int width) {
+    public Alternative(List<ListElement> knuthList, int length) {
         this.knuthList = knuthList;
-        this.width = width;
+        this.length = length;
         this.remainingBPD = 0;
-        this.enabled = false;
     }
 
     public List<ListElement> getKnuthList() {
@@ -47,8 +50,8 @@ public class Alternative {
         return remainingBPD;
     }
 
-    public int getWidth() {
-        return width;
+    public int getLength() {
+        return length;
     }
 
     public void setRemainingBPD(int remainingBPD) {
@@ -68,20 +71,22 @@ public class Alternative {
         FIRST_FIT("first-fit") {
 
             @Override
-            public Alternative filter(List<Alternative> alternatives) {
+            public List<Alternative> filter(List<Alternative> alternatives) {
+                List<Alternative> alts = new LinkedList<Alternative>();
                 for (Alternative alt : alternatives) {
                     if (alt.isEnabled()) {
-                        return alt;
+                        alts.add(alt);
+                        break;
                     }
                 }
-                return null;
+                return alts;
             }
         },
 
         SMALLEST_FIT("smallest-fit") {
 
             @Override
-            public Alternative filter(List<Alternative> alternatives) {
+            public List<Alternative> filter(List<Alternative> alternatives) {
                 int biggestDiff = -Integer.MAX_VALUE;
                 Alternative bestAlt = null;
 
@@ -91,14 +96,16 @@ public class Alternative {
                         bestAlt = alt;
                     }
                 }
-                return bestAlt;
+                List<Alternative> alts = new LinkedList<Alternative>();
+                alts.add(bestAlt);
+                return alts;
             }
         },
 
         BIGGEST_FIT("biggest-fit") {
 
             @Override
-            public Alternative filter(List<Alternative> alternatives) {
+            public List<Alternative> filter(List<Alternative> alternatives) {
                 int smallestDiff = Integer.MAX_VALUE;
                 Alternative bestAlt = null;
 
@@ -108,7 +115,26 @@ public class Alternative {
                         bestAlt = alt;
                     }
                 }
-                return bestAlt;
+                List<Alternative> alts = new LinkedList<Alternative>();
+                alts.add(bestAlt);
+                return alts;
+            }
+        },
+
+        ANY("any") {
+
+            @Override
+            public List<Alternative> filter(List<Alternative> alternatives) {
+                List<Alternative> alts = new LinkedList<Alternative>();
+
+                int remainingSpace = Integer.MAX_VALUE;
+                for (Alternative alt : alternatives) {
+                    if (alt.isEnabled() && alt.getLength() <= remainingSpace) {
+                        alts.add(alt);
+                        remainingSpace = alt.getRemainingBPD();
+                    }
+                }
+                return alts;
             }
         };
 
@@ -122,11 +148,20 @@ public class Alternative {
             return strategyName;
         }
 
+        public static FittingStrategy make(String strategyName) {
+            for (FittingStrategy fs : FittingStrategy.values()) {
+                if (fs.getStrategyName().equals(strategyName)) {
+                    return fs;
+                }
+            }
+            return null;
+        }
+
         /**
          * @param alternatives the list of potential candidate {@link Alternative}
          * @return the best alternative according to the strategy being employed
          */
-        public abstract Alternative filter(List<Alternative> alternatives);
+        public abstract List<Alternative> filter(List<Alternative> alternatives);
 
     }
 }

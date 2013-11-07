@@ -304,7 +304,6 @@ public abstract class BreakingAlgorithm {
         }
 
         /** {@inheritDoc} */
-        @Override
         public String toString() {
             return "<KnuthNode at " + position + " "
                     + totalWidth + "+" + totalStretch + "-" + totalShrink
@@ -931,13 +930,7 @@ public abstract class BreakingAlgorithm {
                 if (node.position == elementIdx) {
                     continue;
                 }
-                int difference;
-                if (element instanceof BestFitPenalty) {
-                    BestFitPenalty penalty = (BestFitPenalty)element;
-                    difference = handleBestFitPenalty(penalty, node, elementIdx);
-                } else {
-                    difference = computeDifference(node, element, elementIdx);
-                }
+                int difference = computeDifference(node, element, elementIdx);
                 if (!elementCanEndLine(element, endLine, difference)) {
                     log.trace("Skipping legal break");
                     break;
@@ -973,33 +966,6 @@ public abstract class BreakingAlgorithm {
                 }
             }
             addBreaks(line, elementIdx);
-        }
-    }
-
-    private int handleBestFitPenalty(BestFitPenalty penalty, KnuthNode node,
-            int elementIdx) {
-        // Find the alternatives that can be fitted inside the remaining space
-        for (int i = 0; i < penalty.getAlternatives().size(); ++i) {
-            Alternative alt = penalty.getAlternatives().get(i);
-            int difference = computeDifference(node, new KnuthPenalty(alt.getWidth(),
-                    0, false, null, false), elementIdx);
-            double r = computeAdjustmentRatio(node, difference);
-            //if (r >= -1) {
-                alt.setRemainingBPD(difference);
-                alt.setEnabled(r >= -1);
-                //altManager.addAlternative(alt);
-            //}
-        }
-        Alternative bestAlt = penalty.getBestAlternative();
-        if (bestAlt != null) {
-            //penalty.setBestAlternative(bestAlt);
-            // Add an empty KnuthBox to represent the chosen alternative
-            par.add(elementIdx + 1, new KnuthBox(bestAlt.getWidth(), null, false));
-            return bestAlt.getRemainingBPD();
-        } else {
-            // No "good" alternative was found
-            return computeDifference(node, new KnuthPenalty(0,
-                    0, false, null, false), elementIdx);
         }
     }
 

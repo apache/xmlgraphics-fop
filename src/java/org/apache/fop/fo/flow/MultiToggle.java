@@ -19,7 +19,6 @@
 
 package org.apache.fop.fo.flow;
 
-// FOP
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -27,16 +26,17 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.StringProperty;
 
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_multi-toggle">
  * <code>fo:multi-toggle<code></a> property.
  */
-public class MultiToggle extends FObj {
+public class MultiToggle extends FObj implements MultiCaseHandler {
     // The value of properties relevant for fo:multi-toggle (commented out for performance).
     //     private CommonAccessibility commonAccessibility;
-    // public ToBeImplementedProperty prSwitchTo;
+     public StringProperty prSwitchTo;
     // End of property values
 
     private static boolean notImplementedWarningGiven = false;
@@ -57,15 +57,17 @@ public class MultiToggle extends FObj {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void bind(PropertyList pList) throws FOPException {
-        // prSwitchTo = pList.get(PR_SWITCH_TO);
-
+        super.bind(pList);
+        prSwitchTo = (StringProperty) pList.get(PR_SWITCH_TO);
     }
 
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: (#PCDATA|%inline;|%block;)*
      */
+    @Override
     protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
@@ -76,6 +78,7 @@ public class MultiToggle extends FObj {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getLocalName() {
         return "multi-toggle";
     }
@@ -84,7 +87,44 @@ public class MultiToggle extends FObj {
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_MULTI_TOGGLE}
      */
+    @Override
     public int getNameId() {
         return FO_MULTI_TOGGLE;
+    }
+
+    public void filter(MultiSwitch multiSwitch) throws FOPException {
+        if (multiSwitch.getCurrentlyVisibleNode() == null) {
+            multiSwitch.setCurrentlyVisibleNode(parent);
+        }
+
+        FONode currentlyVisibleMultiCase = multiSwitch.getCurrentlyVisibleNode();
+
+        if (prSwitchTo.getString().equals("xsl-any")) {
+//            NoOp
+        } else if (prSwitchTo.getString().equals("xsl-preceding")) {
+            FONodeIterator nodeIter = multiSwitch.getChildNodes(currentlyVisibleMultiCase);
+            if (nodeIter != null) {
+                if (!nodeIter.hasPrevious()) {
+                    currentlyVisibleMultiCase = nodeIter.lastNode();
+                } else {
+                    currentlyVisibleMultiCase = nodeIter.previousNode();
+                }
+            }
+        } else if (prSwitchTo.getString().equals("xsl-following")) {
+            FONodeIterator nodeIter = multiSwitch.getChildNodes(currentlyVisibleMultiCase);
+            if (nodeIter != null) {
+                //Ignore the first node
+                nodeIter.next();
+                if (!nodeIter.hasNext()) {
+                    currentlyVisibleMultiCase = nodeIter.firstNode();
+                } else {
+                    currentlyVisibleMultiCase = nodeIter.nextNode();
+                }
+            }
+        } else {
+            // Pick an fo:multi-case that matches a case-name...
+        }
+
+        multiSwitch.setCurrentlyVisibleNode(currentlyVisibleMultiCase);
     }
 }
