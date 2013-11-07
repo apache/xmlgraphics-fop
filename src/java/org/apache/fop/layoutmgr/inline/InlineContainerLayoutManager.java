@@ -201,8 +201,9 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
             return getInlineContainerBaselineOffset(baseline);
         } else {
             int baselineOffset = getInlineContainerBaselineOffset(dominantBaseline);
+            int lineHeight = getInlineContainer().getLineHeight().getOptimum(this).getLength().getValue(this);
             int adjust = alignmentAdjust.getValue(
-                    new SimplePercentBaseContext(null, LengthBase.ALIGNMENT_ADJUST, 0));
+                    new SimplePercentBaseContext(null, LengthBase.ALIGNMENT_ADJUST, lineHeight));
             return baselineOffset + adjust;
         }
     }
