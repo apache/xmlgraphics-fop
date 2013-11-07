@@ -158,7 +158,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
                 ic.getAlignmentAdjust(), ic.getAlignmentBaseline(),
                 ic.getBaselineShift(), ic.getDominantBaseline(),
                 context.getAlignmentContext());
-        int baselineOffset = getAlignmentPoint();
+        int baselineOffset = getAlignmentPoint(ac.getDominantBaselineIdentifier());
         ac.resizeLine(contentAreaBPD, baselineOffset);
         return ac;
     }
@@ -188,12 +188,13 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         return getInlineContainer().getOverflow() != EN_ERROR_IF_OVERFLOW;
     }
 
-    private int getAlignmentPoint() {
+    private int getAlignmentPoint(int dominantBaseline) {
         Length alignmentAdjust = getInlineContainer().getAlignmentAdjust();
         int baseline = alignmentAdjust.getEnum();
-        if (baseline == Constants.EN_AUTO
-                || baseline == Constants.EN_BASELINE) {
+        if (baseline == Constants.EN_AUTO) {
             return getInlineContainerBaselineOffset(getInlineContainer().getAlignmentBaseline());
+        } else if (baseline == Constants.EN_BASELINE) {
+            return getInlineContainerBaselineOffset(dominantBaseline);
         } else if (baseline != 0) {
             return getInlineContainerBaselineOffset(baseline);
         } else {
