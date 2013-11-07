@@ -28,6 +28,8 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.InlineContainer;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -198,7 +200,10 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         } else if (baseline != 0) {
             return getInlineContainerBaselineOffset(baseline);
         } else {
-            return 0;
+            int baselineOffset = getInlineContainerBaselineOffset(dominantBaseline);
+            int adjust = alignmentAdjust.getValue(
+                    new SimplePercentBaseContext(null, LengthBase.ALIGNMENT_ADJUST, 0));
+            return baselineOffset + adjust;
         }
     }
 
