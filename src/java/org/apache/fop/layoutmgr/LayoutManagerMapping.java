@@ -34,8 +34,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FONode.FONodeIterator;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.extensions.AlternativeBlock;
-import org.apache.fop.fo.extensions.BestFit;
 import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.BidiOverride;
@@ -51,6 +49,8 @@ import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.flow.MultiCase;
+import org.apache.fop.fo.flow.MultiSwitch;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.PageNumberCitationLast;
@@ -98,7 +98,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     private static final Log LOG = LogFactory.getLog(LayoutManagerMapping.class);
 
     /** The map of LayoutManagerMakers */
-    private Map makers = new HashMap();
+    private final Map makers = new HashMap();
 
     /** default constructor */
     public LayoutManagerMapping() {
@@ -144,8 +144,8 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         registerMaker(TableHeader.class, new Maker());
         registerMaker(Wrapper.class, new WrapperLayoutManagerMaker());
         registerMaker(Title.class, new InlineLayoutManagerMaker());
-        registerMaker(BestFit.class, new BestFitLayoutManagerMaker());
-        registerMaker(AlternativeBlock.class, new AlternativeBlockLayoutManagerMaker());
+        registerMaker(MultiCase.class, new MultiCaseLayoutManagerMaker());
+        registerMaker(MultiSwitch.class, new MultiSwitchLayoutManagerMaker());
     }
 
     /**
@@ -449,19 +449,30 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         }
     }
 
-    /** a layout manager maker */
-    public class BestFitLayoutManagerMaker extends Maker {
-        /** {@inheritDoc} */
+    public class MultiSwitchLayoutManagerMaker extends Maker {
+
+        @Override
         public void make(FONode node, List lms) {
-            lms.add(new BestFitLayoutManager((BestFit) node));
+            MultiSwitch multiSwitch = (MultiSwitch) node;
+            MultiSwitchLayoutManager mslm = new MultiSwitchLayoutManager(multiSwitch);
+            FONode multiCase = multiSwitch.getCurrentlyVisibleNode();
+            if (multiCase != null) {
+                FONodeIterator childIter = multiCase.getChildNodes();
+                while (childIter.hasNext()) {
+                    FONode child = (FONode) childIter.next();
+                    makeLayoutManagers(child, lms);
+                }
+            } else {
+                lms.add(mslm);
+            }
         }
     }
 
-    /** a layout manager maker */
-    public class AlternativeBlockLayoutManagerMaker extends Maker {
-        /** {@inheritDoc} */
+    public class MultiCaseLayoutManagerMaker extends Maker {
+
+        @Override
         public void make(FONode node, List lms) {
-            lms.add(new AlternativeBlockLayoutManager((AlternativeBlock) node));
+            lms.add(new MultiCaseLayoutManager((MultiCase) node));
         }
     }
 

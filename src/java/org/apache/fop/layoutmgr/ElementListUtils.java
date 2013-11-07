@@ -163,37 +163,6 @@ public final class ElementListUtils {
     }
 
     /**
-     * Calculates the full content length of the given element list. Warning: It doesn't take any
-     * stretch and shrink possibilities into account.
-     * @param elems the element list
-     * @return the content length
-     */
-    public static int calcFullContentLength(List elems) {
-        ListIterator iter = elems.listIterator(0);
-        int count = elems.size();
-        int len = 0;
-        while (iter.hasNext()) {
-            ListElement el = (ListElement)iter.next();
-            if (el.isBox()) {
-                len += ((KnuthElement)el).getWidth();
-            } else if (el.isGlue()) {
-                len += ((KnuthElement)el).getWidth();
-            } else if (el.isUnresolvedElement() && !(el instanceof BreakElement)) {
-                // Handle properties space-before and space-after
-                UnresolvedListElementWithLength uresolvedEl = (UnresolvedListElementWithLength)el;
-                if (uresolvedEl.isLast() || uresolvedEl.isFirst()) {
-                    len += uresolvedEl.getLength().getOpt();
-                }
-            }
-            count--;
-            if (count == 0) {
-                break;
-            }
-        }
-        return len;
-    }
-
-    /**
      * Calculates the content length of the given element list. Warning: It doesn't take any
      * stretch and shrink possibilities into account.
      * @param elems the element list

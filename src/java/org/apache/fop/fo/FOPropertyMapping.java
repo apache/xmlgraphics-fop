@@ -2128,7 +2128,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("starting-state", m);
 
         // switch-to
-        m  = new ToBeImplementedProperty.Maker(PR_SWITCH_TO);
+        m  = new StringProperty.Maker(PR_SWITCH_TO);
         m.setInherited(false);
         m.setDefault("xsl-any");
         addPropertyMaker("switch-to", m);
@@ -2617,11 +2617,17 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("");
         addPropertyMaker("fox:alt-text", m);
 
-        //fox:fitting-strategy, used only in fox:best-fit
+        // fox:fitting-strategy, used only in fox:best-fit
         m = new StringProperty.Maker(PR_X_FITTING_STRATEGY);
         m.setInherited(false);
         m.setDefault("first-fit");
         addPropertyMaker("fox:fitting-strategy", m);
+
+        // fox:auto-toggle, used only in fo:multi-switch
+        m = new StringProperty.Maker(PR_X_AUTO_TOGGLE);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("fox:auto-toggle", m);
 
         // fox:border-*-radius-*
         m = new CondLengthProperty.Maker(PR_X_BORDER_BEFORE_RADIUS_START);

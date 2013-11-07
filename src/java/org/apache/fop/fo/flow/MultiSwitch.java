@@ -19,7 +19,6 @@
 
 package org.apache.fop.fo.flow;
 
-// XML
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -39,7 +38,10 @@ public class MultiSwitch extends FObj {
     //     private CommonAccessibility commonAccessibility;
     // End of property values
 
-    private static boolean notImplementedWarningGiven = false;
+    private static boolean notImplementedWarningGiven;
+    private FONode currentlyVisibleMultiCase;
+    private String autoToggle;
+    private String fittingStrategy;
 
     /**
      * Base constructor
@@ -57,16 +59,36 @@ public class MultiSwitch extends FObj {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        autoToggle = pList.get(PR_X_AUTO_TOGGLE).getString();
+        fittingStrategy = pList.get(PR_X_FITTING_STRATEGY).getString();
         // autoRestore = pList.get(PR_AUTO_RESTORE);
     }
 
-
     /** {@inheritDoc} */
+    @Override
     public void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("(multi-case+)");
+        }
+        super.endOfNode();
+    }
+
+    @Override
+    public void finalizeNode() throws FOPException {
+        if (autoToggle.equals("best-fit")) {
+            // Nothing to do in this case
+            setCurrentlyVisibleNode(null);
+        } else {
+            FONodeIterator nodeIter = getChildNodes();
+            while (nodeIter.hasNext()) {
+                MultiCase multiCase = (MultiCase) nodeIter.next();
+                if (multiCase.isActuated()) {
+                    multiCase.getHandler().filter(this);
+                }
+            }
         }
     }
 
@@ -74,6 +96,7 @@ public class MultiSwitch extends FObj {
      * {@inheritDoc}
      * <br>XSL Content Model: (multi-case+)
      */
+    @Override
     protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
@@ -84,6 +107,7 @@ public class MultiSwitch extends FObj {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getLocalName() {
         return "multi-switch";
     }
@@ -92,7 +116,25 @@ public class MultiSwitch extends FObj {
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_MULTI_SWITCH}
      */
+    @Override
     public int getNameId() {
         return FO_MULTI_SWITCH;
     }
+
+    public void setCurrentlyVisibleNode(FONode node) {
+        currentlyVisibleMultiCase = node;
+    }
+
+    public FONode getCurrentlyVisibleNode() {
+        return currentlyVisibleMultiCase;
+    }
+
+    public String getFittingStrategy() {
+        return fittingStrategy;
+    }
+
+    public String getAutoToggle() {
+        return autoToggle;
+    }
+
 }

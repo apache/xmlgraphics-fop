@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-/* $Id$ */
-
 package org.apache.fop.fo.extensions;
 
 import org.xml.sax.Locator;
@@ -24,72 +22,36 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.flow.MultiCaseHandler;
+import org.apache.fop.fo.flow.MultiSwitch;
 import org.apache.fop.layoutmgr.Alternative.FittingStrategy;
 
-/**
- *  A class that holds a set of <fox:alternative-block> blocks where each one is examined,
- *  and the one that best matches the fitting strategy is selected.
- *  The selected alternative should have an occupied BPD that is less than
- *  the remaining BPD of the current page.
- */
-public class BestFit extends FObj {
+public class BestFit extends FObj implements MultiCaseHandler {
 
     public static final String OBJECT_NAME = "best-fit";
-    private FittingStrategy strategy = FittingStrategy.FIRST_FIT;
+    private FittingStrategy strategy;
 
     public BestFit(FONode parent) {
         super(parent);
-
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void bind(PropertyList pList) throws FOPException {
-        super.bind(pList);
-        String strategyName = pList.get(PR_X_FITTING_STRATEGY).getString();
-        for (FittingStrategy fs : FittingStrategy.values()) {
-            if (fs.getStrategyName().equals(strategyName)) {
-                strategy = fs;
-                return;
+    public void setFittingStrategy(String strategyName) {
+        strategy = FittingStrategy.make(strategyName);
+        if (strategy == null) {
+            strategy = FittingStrategy.FIRST_FIT;
+            if (log.isWarnEnabled()) {
+                log.warn("Unrecognized strategy name => " + strategyName + ". Using default strategy (first-fit");
             }
-        }
-        if (log.isWarnEnabled()) {
-            log.warn("Unrecognized strategy name => " + strategyName + ". Using default strategy (first-fit");
-        }
-    }
-
-    @Override
-    public void startOfNode() throws FOPException {
-        super.startOfNode();
-        if (log.isDebugEnabled()) {
-            log.debug("BestFit.startOfNode()");
-        }
-    }
-
-    @Override
-    public void endOfNode() throws FOPException {
-        super.endOfNode();
-        if (log.isDebugEnabled()) {
-            log.debug("BestFit.endOfNode()");
         }
     }
 
     /**
      * {@inheritDoc}
-     * Content model: (fox:alternative-block)+
      */
     @Override
     protected void validateChildNode(Locator loc, String nsURI, String localName)
             throws ValidationException {
-        if (FOX_URI.equals(nsURI)) {
-            if (!"alternative-block".equals(localName)) {
-                invalidChildError(loc, FOX_URI, localName);
-            }
-        } else {
-            invalidChildError(loc, nsURI, localName);
-        }
     }
 
     @Override
@@ -107,8 +69,19 @@ public class BestFit extends FObj {
         return ExtensionElementMapping.URI;
     }
 
+    public void filter(MultiSwitch multiSwitch) throws FOPException {
+        // Modifying the FO tree is not advised...
+//        FONodeIterator nodeIter = multiSwitch.getChildNodes();
+//        while (nodeIter.hasNext()) {
+//            FONode childNode = (FONode) nodeIter.next();
+//            this.addChildNode(childNode);
+//        }
+//        multiSwitch.clearChildNodes();
+    }
+
     public FittingStrategy getStrategy() {
         return strategy;
     }
 
 }
+
