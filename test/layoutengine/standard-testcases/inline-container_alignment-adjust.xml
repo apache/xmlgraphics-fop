@@ -131,6 +131,16 @@
         </fo:flow>
       </fo:page-sequence>
 
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="10pt">alignment-adjust="30pt":</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt" 
+              alignment-adjust="30pt">
+              <fo:block>Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
     </fo:root>
   </fo>
 
@@ -205,6 +215,13 @@
     <eval expected="8616"  xpath="//pageSequence[10]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
     <eval expected="28800" xpath="//pageSequence[10]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
     <eval expected="0"     xpath="//pageSequence[10]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- 30pt -->
+    <eval expected="49764" xpath="//pageSequence[11]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="38664" xpath="//pageSequence[11]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[11]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="28800" xpath="//pageSequence[11]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="0"  xpath="//pageSequence[11]//flow/block[2]/lineArea[2]/viewport/@offset"/>
 
   </checks>
 </testcase>
