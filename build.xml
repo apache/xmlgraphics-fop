@@ -579,6 +579,7 @@ list of possible build targets.
       <include name="org/apache/fop/util/Finalizable.class"/>
       <include name="org/apache/fop/util/CharUtilities.class"/>
       <include name="org/apache/fop/util/DecimalFormatCache*.class"/>
+      <include name="org/apache/fop/render/shading/**"/>
     </patternset>
 <!-- PDF transcoder -->
     <patternset>
