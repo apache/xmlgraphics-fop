@@ -301,31 +301,30 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     }
 
     public List addALetterSpaceTo(List oldList) {
-        throw new UnsupportedOperationException("Not implemented");
+        return oldList;
     }
 
     public List addALetterSpaceTo(List oldList, int depth) {
-        throw new UnsupportedOperationException("Not implemented");
+        return oldList;
     }
 
     public String getWordChars(Position pos) {
-        throw new UnsupportedOperationException("Not implemented");
+        return "";
     }
 
     public void hyphenate(Position pos, HyphContext hyphContext) {
-        throw new UnsupportedOperationException("Not implemented");
     }
 
     public boolean applyChanges(List oldList) {
-        throw new UnsupportedOperationException("Not implemented");
+        return false;
     }
 
     public boolean applyChanges(List oldList, int depth) {
-        throw new UnsupportedOperationException("Not implemented");
+        return false;
     }
 
     public List getChangedKnuthElements(List oldList, int alignment, int depth) {
-        throw new UnsupportedOperationException("Not implemented");
+        return oldList;
     }
 
 }
