@@ -71,6 +71,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
 
     public InlineContainerLayoutManager(InlineContainer node) {
         super(node);
+        setGeneratesReferenceArea(true);
     }
 
     @Override
@@ -229,11 +230,6 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         default:
             throw new AssertionError("Unknown baseline value: " + property);
         }
-    }
-
-    @Override
-    public boolean getGeneratesReferenceArea() {
-        return true;
     }
 
     @Override
