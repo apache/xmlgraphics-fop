@@ -91,16 +91,15 @@
     NullPointerException.</description>
   </testcase>
   <testcase>
-    <name>inline-container is not implemented, yet.</name>
-    <file>inline-container_block_nested.xml</file>
-    <description>inline-container is not implemented, yet. Content of an 
-    inline-container will get swallowed. The test case contains no checks.</description>
+    <name>Keeps on inline-container are not implemented, yet.</name>
+    <file>inline-container_keeps.xml</file>
+    <description>The keep-with-previous and keep-with-next properties have not been implemented on 
+      inline-container yet. They will be treated as if they had the value "auto".</description>
   </testcase>
   <testcase>
-    <name>inline-container is not implemented, yet.</name>
+    <name>Borders and padding inline-container are not implemented, yet.</name>
     <file>inline-container_border_padding.xml</file>
-    <description>inline-container is not implemented, yet. Content of an 
-    inline-container will get swallowed.</description>
+    <description>Borders and paddings on an inline-container will be ignored.</description>
   </testcase>
   <testcase>
     <name>inline letter-spacing</name>
