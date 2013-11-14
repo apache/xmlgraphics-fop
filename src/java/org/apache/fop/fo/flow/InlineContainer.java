@@ -158,8 +158,16 @@ public class InlineContainer extends FObj {
         return this.displayAlign;
     }
 
+    public KeepProperty getKeepWithPrevious() {
+        return keepWithPrevious;
+    }
+
     public KeepProperty getKeepTogether() {
         return keepTogether;
+    }
+
+    public KeepProperty getKeepWithNext() {
+        return keepWithNext;
     }
 
     public SpaceProperty getLineHeight() {
