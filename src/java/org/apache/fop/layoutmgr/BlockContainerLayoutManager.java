@@ -90,6 +90,7 @@ public class BlockContainerLayoutManager extends SpacedBorderedPaddedBlockLayout
      */
     public BlockContainerLayoutManager(BlockContainer node) {
         super(node);
+        setGeneratesBlockArea(true);
     }
 
     /** {@inheritDoc} */
