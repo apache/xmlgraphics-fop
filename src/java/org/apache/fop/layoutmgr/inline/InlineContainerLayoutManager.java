@@ -19,6 +19,7 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -86,11 +87,9 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     @Override
     public List<KnuthSequence> getNextKnuthElements(LayoutContext context, int alignment) {
         determineIPD(context);
-        LayoutContext childLC = LayoutContext.offspringOf(context); // TODO copyOf?
-        childLC.setRefIPD(contentAreaIPD);
-        childElements = getChildKnuthElements(childLC, alignment); // TODO which alignment?
+        childElements = getChildKnuthElements(context, alignment);
         determineBPD();
-        alignmentContext = makeAlignmentContext(context); // TODO correct?
+        alignmentContext = makeAlignmentContext(context);
         Position position = new Position(this, 0);
         KnuthSequence knuthSequence = new InlineKnuthSequence();
         knuthSequence.add(new KnuthInlineBox(contentAreaIPD, alignmentContext, position, false));
@@ -117,18 +116,16 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         List<ListElement> allChildElements = new LinkedList<ListElement>();
         LayoutManager childLM;
         while ((childLM = getChildLM()) != null) {
-            LayoutContext childLC = LayoutContext.offspringOf(layoutContext); // TODO copyOf? newInstance?
-            childLC.setRefIPD(layoutContext.getRefIPD());
+            LayoutContext childLC = LayoutContext.offspringOf(layoutContext);
+            childLC.setRefIPD(contentAreaIPD);
             @SuppressWarnings("unchecked")
             List<ListElement> childElements = childLM.getNextKnuthElements(childLC, alignment);
             allChildElements.addAll(childElements);
-            // TODO breaks, keeps, empty content
         }
         handleIPDOverflow();
         wrapPositions(allChildElements);
         SpaceResolver.resolveElementList(allChildElements);
         SpaceResolver.performConditionalsNotification(allChildElements, 0, allChildElements.size() - 1, -1);
-        // TODO break-before, break-after
         return allChildElements;
     }
 
@@ -254,9 +251,6 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         assert inlineContainerPosition != null;
         KnuthPossPosIter childPosIter = new KnuthPossPosIter(childElements);
         AreaAdditionUtil.addAreas(this, childPosIter, context);
-
-//        boolean isLast = (context.isLastArea() && prevLM == lastChildLM);
-//        context.setFlags(LayoutContext.LAST_AREA, isLast);
     }
 
     @Override
@@ -267,23 +261,15 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
             TraitSetter.setProducerID(referenceArea, fobj.getId());
             referenceArea.setIPD(contentAreaIPD);
             currentViewport = new InlineViewport(referenceArea);
-            currentViewport.setBlockProgressionOffset(alignmentContext.getOffset());
             currentViewport.addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
+            TraitSetter.setProducerID(currentViewport, fobj.getId());
+            currentViewport.setBlockProgressionOffset(alignmentContext.getOffset());
             currentViewport.setIPD(getContentAreaIPD());
             currentViewport.setBPD(getContentAreaBPD());
-            TraitSetter.setProducerID(currentViewport, fobj.getId());
-            TraitSetter.addBorders(currentViewport,
-                    borderProps,
-                    false, false, false, false, this);
-            TraitSetter.addPadding(currentViewport,
-                    borderProps,
-                    false, false, false, false, this);
-            TraitSetter.addBackground(currentViewport,
-                    borderProps,
-                    this);
+            TraitSetter.addBackground(currentViewport, borderProps, this);
             currentViewport.setClip(needClip());
             currentViewport.setContentPosition(
-                    new java.awt.geom.Rectangle2D.Float(0, 0, getContentAreaIPD(), getContentAreaBPD()));
+                    new Rectangle2D.Float(0, 0, getContentAreaIPD(), getContentAreaBPD()));
             getParent().addChildArea(currentViewport);
         }
         return referenceArea;
