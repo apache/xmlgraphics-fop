@@ -70,16 +70,7 @@ public class FopConfParser {
      */
     public FopConfParser(InputStream fopConfStream, EnvironmentProfile enviro)
             throws SAXException, IOException {
-        DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-        Configuration cfg;
-        try {
-            cfg = cfgBuilder.build(fopConfStream);
-        } catch (ConfigurationException e) {
-            throw new FOPException(e);
-        }
-        // The default base URI is taken from the directory in which the fopConf resides
-        fopFactoryBuilder = new FopFactoryBuilder(enviro).setConfiguration(cfg);
-        configure(enviro.getDefaultBaseURI(), enviro.getResourceResolver(), cfg);
+        this(fopConfStream, enviro.getDefaultBaseURI(), enviro);
     }
 
     /**
@@ -94,7 +85,8 @@ public class FopConfParser {
      */
     public FopConfParser(InputStream fopConfStream, URI defaultBaseURI,
             ResourceResolver resourceResolver) throws SAXException, IOException {
-        this(fopConfStream, EnvironmentalProfileFactory.createDefault(defaultBaseURI, resourceResolver));
+        this(fopConfStream, defaultBaseURI,
+                EnvironmentalProfileFactory.createDefault(defaultBaseURI, resourceResolver));
     }
 
     /**
@@ -123,6 +115,20 @@ public class FopConfParser {
     }
 
     /**
+     * Constructor that takes the FOP conf and a default base URI and uses the default URI resolver.
+     *
+     * @param fopConfFile the FOP conf file
+     * @param defaultBaseURI the default base URI
+     * @throws SAXException if a SAX error was thrown parsing the FOP conf
+     * @throws IOException if an I/O error is thrown while parsing the FOP conf
+     */
+    public FopConfParser(File fopConfFile, URI defaultBaseURI) throws SAXException, IOException {
+        this(new FileInputStream(fopConfFile), fopConfFile.toURI(),
+                EnvironmentalProfileFactory.createDefault(defaultBaseURI,
+                        ResourceResolverFactory.createDefaultResourceResolver()));
+    }
+
+    /**
      * Constructor that parses the FOP conf and uses the URI resolver given.
      *
      * @param fopConfFile the FOP conf file
@@ -132,11 +138,24 @@ public class FopConfParser {
      */
     public FopConfParser(File fopConfFile, ResourceResolver resourceResolver)
             throws SAXException, IOException {
-        this(new FileInputStream(fopConfFile),
-                fopConfFile.getAbsoluteFile().getParentFile().toURI(), resourceResolver);
+        this(new FileInputStream(fopConfFile), fopConfFile.toURI(), resourceResolver);
     }
 
-    private void configure(final URI defaultBaseURI, final ResourceResolver resourceResolver,
+    private FopConfParser(InputStream fopConfStream, URI baseURI, EnvironmentProfile enviro)
+            throws SAXException, IOException {
+        DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
+        Configuration cfg;
+        try {
+            cfg = cfgBuilder.build(fopConfStream);
+        } catch (ConfigurationException e) {
+            throw new FOPException(e);
+        }
+        // The default base URI is taken from the directory in which the fopConf resides
+        fopFactoryBuilder = new FopFactoryBuilder(enviro).setConfiguration(cfg);
+        configure(baseURI, enviro.getResourceResolver(), cfg);
+    }
+
+    private void configure(final URI baseURI, final ResourceResolver resourceResolver,
             Configuration cfg) throws FOPException {
         if (log.isDebugEnabled()) {
             log.debug("Initializing FopFactory Configuration");
@@ -174,7 +193,7 @@ public class FopConfParser {
         if (cfg.getChild("base", false) != null) {
             try {
                 URI confUri = InternalResourceResolver.getBaseURI(cfg.getChild("base").getValue(null));
-                fopFactoryBuilder.setBaseURI(defaultBaseURI.resolve(confUri));
+                fopFactoryBuilder.setBaseURI(baseURI.resolve(confUri));
             } catch (URISyntaxException use) {
                 LogUtil.handleException(log, use, strict);
             }
@@ -242,8 +261,8 @@ public class FopConfParser {
         }
 
         // configure font manager
-        new FontManagerConfigurator(cfg, fopFactoryBuilder.getBaseURI(), resourceResolver).configure(
-                fopFactoryBuilder.getFontManager(), strict);
+        new FontManagerConfigurator(cfg, baseURI, fopFactoryBuilder.getBaseURI(), resourceResolver)
+                .configure(fopFactoryBuilder.getFontManager(), strict);
 
         // configure image loader framework
         configureImageLoading(cfg.getChild("image-loading", false), strict);
