@@ -34,10 +34,7 @@ import org.apache.fop.traits.WritingModeTraits;
 import org.apache.fop.traits.WritingModeTraitsGetter;
 import org.apache.fop.util.CharUtilities;
 
-// CSOFF: EmptyForIteratorPadCheck
-// CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
 
 /**
  * The <code>DelimitedTextRange</code> class implements the "delimited text range" as described
@@ -151,7 +148,7 @@ public class DelimitedTextRange {
             TextInterval ti = (TextInterval) it.next();
             intervalsNew.addAll(assignLevels(ti, levels));
         }
-        if (! intervalsNew.equals(intervals)) {
+        if (!intervalsNew.equals(intervals)) {
             intervals = intervalsNew;
         }
     }

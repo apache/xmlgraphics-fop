@@ -29,7 +29,6 @@ import org.apache.fop.complexscripts.util.GlyphTester;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
 
 /**
  * <p>The <code>GlyphProcessingState</code> implements a common, base state object used during glyph substitution
@@ -459,7 +458,7 @@ public class GlyphProcessingState {
         int start = index + offset;
         if (start < 0) {
             throw new IndexOutOfBoundsException("will attempt index at " + start);
-        } else if (! reverseOrder && ((start + count) > indexLast)) {
+        } else if (!reverseOrder && ((start + count) > indexLast)) {
             throw new IndexOutOfBoundsException("will attempt index at " + (start + count));
         } else if (reverseOrder && ((start + 1) < count)) {
             throw new IndexOutOfBoundsException("will attempt index at " + (start - count));
@@ -469,7 +468,7 @@ public class GlyphProcessingState {
         } else if (glyphs.length != count) {
             throw new IllegalArgumentException("glyphs array is non-null, but its length (" + glyphs.length + "), is not equal to count (" + count + ")");
         }
-        if (! reverseOrder) {
+        if (!reverseOrder) {
             return getGlyphsForward(start, count, ignoreTester, glyphs, counts);
         } else {
             return getGlyphsReverse(start, count, ignoreTester, glyphs, counts);
@@ -484,7 +483,7 @@ public class GlyphProcessingState {
             if (gi == 65535) {
                 ignored++;
             } else {
-                if ((ignoreTester == null) || ! ignoreTester.test(gi, getLookupFlags())) {
+                if ((ignoreTester == null) || !ignoreTester.test(gi, getLookupFlags())) {
                     glyphs [ counted++ ] = gi;
                 } else {
                     ignored++;
@@ -506,7 +505,7 @@ public class GlyphProcessingState {
             if (gi == 65535) {
                 ignored++;
             } else {
-                if ((ignoreTester == null) || ! ignoreTester.test(gi, getLookupFlags())) {
+                if ((ignoreTester == null) || !ignoreTester.test(gi, getLookupFlags())) {
                     glyphs [ counted++ ] = gi;
                 } else {
                     ignored++;
@@ -629,7 +628,7 @@ public class GlyphProcessingState {
         int start = index + offset;
         if ((start < 0) || (start > indexLast)) {
             return new int[] { 0, 0 };
-        } else if (! reverseOrder) {
+        } else if (!reverseOrder) {
             return getGlyphsAvailableForward(start, ignoreTester);
         } else {
             return getGlyphsAvailableReverse(start, ignoreTester);
@@ -731,7 +730,7 @@ public class GlyphProcessingState {
         int start = index + offset;
         if (start < 0) {
             throw new IndexOutOfBoundsException("will attempt index at " + start);
-        } else if (! reverseOrder && ((start + count) > indexLast)) {
+        } else if (!reverseOrder && ((start + count) > indexLast)) {
             throw new IndexOutOfBoundsException("will attempt index at " + (start + count));
         } else if (reverseOrder && ((start + 1) < count)) {
             throw new IndexOutOfBoundsException("will attempt index at " + (start - count));
@@ -741,7 +740,7 @@ public class GlyphProcessingState {
         } else if (associations.length != count) {
             throw new IllegalArgumentException("associations array is non-null, but its length (" + associations.length + "), is not equal to count (" + count + ")");
         }
-        if (! reverseOrder) {
+        if (!reverseOrder) {
             return getAssociationsForward(start, count, ignoreTester, associations, counts);
         } else {
             return getAssociationsReverse(start, count, ignoreTester, associations, counts);
@@ -757,7 +756,7 @@ public class GlyphProcessingState {
             if (gi == 65535) {
                 ignored++;
             } else {
-                if ((ignoreTester == null) || ! ignoreTester.test(gi, getLookupFlags())) {
+                if ((ignoreTester == null) || !ignoreTester.test(gi, getLookupFlags())) {
                     if (k < count) {
                         associations [ k++ ] = getAssociation(i - index);
                         counted++;
@@ -785,7 +784,7 @@ public class GlyphProcessingState {
             if (gi == 65535) {
                 ignored++;
             } else {
-                if ((ignoreTester == null) || ! ignoreTester.test(gi, getLookupFlags())) {
+                if ((ignoreTester == null) || !ignoreTester.test(gi, getLookupFlags())) {
                     if (k < count) {
                         associations [ k++ ] = getAssociation(i - index);
                         counted++;
@@ -1169,7 +1168,7 @@ public class GlyphProcessingState {
             for (int i = 0, n = ngt; i < n; i++) {
                 GlyphTester gt = gta [ i ];
                 if (gt != null) {
-                    if (! gt.test(gi, flags)) {
+                    if (!gt.test(gi, flags)) {
                         return false;
                     }
                 }

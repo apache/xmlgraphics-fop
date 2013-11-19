@@ -37,11 +37,15 @@
 
   <!-- ===================================================================================================== -->
   <module name="SuppressionCommentFilter">
-    <property name="offCommentFormat" value="CSOFF\: ([\w\|]+)"/>
+    <property name="offCommentFormat" value="CSOFF\: (LineLength)"/>
     <property name="onCommentFormat" value="CSON\: ([\w\|]+)"/>
     <property name="checkFormat" value="$1"/>
   </module>
   <!-- ===================================================================================================== -->
+
+  <module name="SuppressionFilter">
+    <property name="file" value="${samedir}/checkstyle-suppressions.xml"/>
+  </module>
 
   <!-- ===================================================================================================== -->
   <module name="TreeWalker">
@@ -171,10 +175,6 @@
     <module name="NoWhitespaceAfter">
       <property name="allowLineBreaks" value="false"/>
       <property name="tokens" value="BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS"/>
-    </module>
-    <module name="NoWhitespaceAfter">
-      <property name="allowLineBreaks" value="true"/>
-      <property name="tokens" value="ARRAY_INIT"/>
     </module>
     <!-- ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... -->
 

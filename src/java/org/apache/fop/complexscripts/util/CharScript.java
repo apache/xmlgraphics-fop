@@ -28,12 +28,6 @@ import java.util.Set;
 
 import org.apache.fop.util.CharUtilities;
 
-// CSOFF: AvoidNestedBlocksCheck
-// CSOFF: InnerAssignmentCheck
-// CSOFF: LineLengthCheck
-// CSOFF: SimplifyBooleanReturnCheck
-// CSOFF: WhitespaceAfterCheck
-
 /**
  * <p>Script related utilities.</p>
  *
@@ -754,16 +748,14 @@ public final class CharScript {
             case SCRIPT_UNCODED:
                 break;
             default:
-                {
-                    Integer v = (Integer) e.getValue();
-                    assert v != null;
-                    int c = v.intValue();
-                    if (c > cMax) {
-                        cMax = c;
-                        sMax = s;
-                    }
-                    break;
+                Integer v = (Integer) e.getValue();
+                assert v != null;
+                int c = v.intValue();
+                if (c > cMax) {
+                    cMax = c;
+                    sMax = s;
                 }
+                break;
             }
         }
         if (sMax < 0) {
@@ -823,7 +815,7 @@ public final class CharScript {
      * @return a  script tag
      */
     public static String scriptTagFromCode(int code) {
-        Map<Integer,String> m = getScriptTagsMap();
+        Map<Integer, String> m = getScriptTagsMap();
         if (m != null) {
             String tag;
             if ((tag = m.get(Integer.valueOf(code))) != null) {
@@ -842,7 +834,7 @@ public final class CharScript {
      * @return a script code
      */
     public static int scriptCodeFromTag(String tag) {
-        Map<String,Integer> m = getScriptCodeMap();
+        Map<String, Integer> m = getScriptCodeMap();
         if (m != null) {
             Integer c;
             if ((c = m.get(tag)) != null) {
@@ -855,8 +847,8 @@ public final class CharScript {
         }
     }
 
-    private static Map<Integer,String> scriptTagsMap = null;
-    private static Map<String,Integer> scriptCodeMap = null;
+    private static Map<Integer, String> scriptTagsMap = null;
+    private static Map<String, Integer> scriptCodeMap = null;
 
     private static void putScriptTag(Map tm, Map cm, int code, String tag) {
         assert tag != null;
@@ -868,8 +860,8 @@ public final class CharScript {
     }
 
     private static void makeScriptMaps() {
-        HashMap<Integer,String> tm = new HashMap<Integer,String>();
-        HashMap<String,Integer> cm = new HashMap<String,Integer>();
+        HashMap<Integer, String> tm = new HashMap<Integer, String>();
+        HashMap<String, Integer> cm = new HashMap<String, Integer>();
         putScriptTag(tm, cm, SCRIPT_HEBREW, "hebr");
         putScriptTag(tm, cm, SCRIPT_MONGOLIAN, "mong");
         putScriptTag(tm, cm, SCRIPT_ARABIC, "arab");
@@ -915,14 +907,14 @@ public final class CharScript {
         scriptCodeMap = cm;
     }
 
-    private static Map<Integer,String> getScriptTagsMap() {
+    private static Map<Integer, String> getScriptTagsMap() {
         if (scriptTagsMap == null) {
             makeScriptMaps();
         }
         return scriptTagsMap;
     }
 
-    private static Map<String,Integer> getScriptCodeMap() {
+    private static Map<String, Integer> getScriptCodeMap() {
         if (scriptCodeMap == null) {
             makeScriptMaps();
         }

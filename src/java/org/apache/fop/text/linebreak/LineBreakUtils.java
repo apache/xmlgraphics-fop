@@ -29,7 +29,6 @@ package org.apache.fop.text.linebreak;
  * - commit BOTH changed files
  */
 
-// CSOFF: WhitespaceAfterCheck
 // CSOFF: LineLengthCheck
 
 /** Line breaking utilities. */
@@ -694,11 +693,11 @@ public final class LineBreakUtils {
         "CP", "CR", "EX", "GL", "H2", "H3", "HY", "ID", "IN", "IS", "JL", "JT", "JV", "LF", "NL", "NS", "NU", "OP",
         "PO", "PR", "QU", "SA", "SG", "SP", "SY", "WJ", "XX", "ZW"};
 
-    private static String[] lineBreakPropertyLongNames = {"Ambiguous","Alphabetic","Break_Both","Break_After","Break_Before",
-        "Mandatory_Break","Contingent_Break","Close_Punctuation","Combining_Mark","Close_Parenthesis","Carriage_Return",
-        "Exclamation","Glue","H2","H3","Hyphen","Ideographic","Inseparable","Infix_Numeric","JL","JT","JV","Line_Feed",
-        "Next_Line","Nonstarter","Numeric","Open_Punctuation","Postfix_Numeric","Prefix_Numeric","Quotation","Complex_Context",
-        "Surrogate","Space","Break_Symbols","Word_Joiner","Unknown","ZWSpace"};
+    private static String[] lineBreakPropertyLongNames = {"Ambiguous", "Alphabetic", "Break_Both", "Break_After", "Break_Before",
+        "Mandatory_Break", "Contingent_Break", "Close_Punctuation", "Combining_Mark", "Close_Parenthesis", "Carriage_Return",
+        "Exclamation", "Glue", "H2", "H3", "Hyphen", "Ideographic", "Inseparable", "Infix_Numeric", "JL", "JT", "JV", "Line_Feed",
+        "Next_Line", "Nonstarter", "Numeric", "Open_Punctuation", "Postfix_Numeric", "Prefix_Numeric", "Quotation", "Complex_Context",
+        "Surrogate", "Space", "Break_Symbols", "Word_Joiner", "Unknown", "ZWSpace"};
 
     /**
      * Return the short name for the linebreak property corresponding
