@@ -23,7 +23,6 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
 
 /**
  * <p>The <code>GlyphSubstitutionSubtable</code> implements an abstract base of a glyph substitution subtable,
@@ -90,8 +89,8 @@ public abstract class GlyphSubstitutionSubtable extends GlyphSubtable implements
         boolean appliedOneShot = false;
         while (ss.hasNext()) {
             boolean applied = false;
-            if (! appliedOneShot && ss.maybeApplicable()) {
-                for (int i = 0, n = sta.length; ! applied && (i < n); i++) {
+            if (!appliedOneShot && ss.maybeApplicable()) {
+                for (int i = 0, n = sta.length; !applied && (i < n); i++) {
                     if (sequenceIndex < 0) {
                         applied = ss.apply(sta [ i ]);
                     } else if (ss.getPosition() == (sequenceStart + sequenceIndex)) {
@@ -102,7 +101,7 @@ public abstract class GlyphSubstitutionSubtable extends GlyphSubtable implements
                     }
                 }
             }
-            if (! applied || ! ss.didConsume()) {
+            if (!applied || !ss.didConsume()) {
                 ss.applyDefault();
             }
             ss.next();

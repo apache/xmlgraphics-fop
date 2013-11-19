@@ -39,7 +39,6 @@ import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.OFFontLoader;
 import org.apache.fop.fonts.truetype.TTFFile;
 
-// CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
 
 /**

@@ -37,12 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 
-// CSOFF: EmptyForIteratorPadCheck
-// CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: ParameterNumberCheck
-// CSOFF: SimplifyBooleanReturnCheck
 
 /**
  * <p>Base class for all advanced typographic glyph tables.</p>
@@ -86,7 +81,7 @@ public class GlyphTable {
      * @param lookups map from lookup specs to lookup tables
      */
     public GlyphTable(GlyphTable gdef, Map/*<LookupSpec,List<String>>*/ lookups) {
-        if ((gdef != null) && ! (gdef instanceof GlyphDefinitionTable)) {
+        if ((gdef != null) && !(gdef instanceof GlyphDefinitionTable)) {
             throw new AdvancedTypographicTableFormatException("bad glyph definition table");
         } else if (lookups == null) {
             throw new AdvancedTypographicTableFormatException("lookups must be non-null map");
@@ -166,7 +161,7 @@ public class GlyphTable {
      * create resulting cached state.
      */
     protected void freezeSubtables() {
-        if (! frozen) {
+        if (!frozen) {
             for (Iterator it = lookupTables.values().iterator(); it.hasNext(); ) {
                 LookupTable lt = (LookupTable) it.next();
                 lt.freezeSubtables(lookupTables);
@@ -188,18 +183,18 @@ public class GlyphTable {
         List/*<LookupSpec>*/ matches = new ArrayList/*<LookupSpec>*/();
         for (Iterator it = keys.iterator(); it.hasNext();) {
             LookupSpec ls = (LookupSpec) it.next();
-            if (! "*".equals(script)) {
-                if (! ls.getScript().equals(script)) {
+            if (!"*".equals(script)) {
+                if (!ls.getScript().equals(script)) {
                     continue;
                 }
             }
-            if (! "*".equals(language)) {
-                if (! ls.getLanguage().equals(language)) {
+            if (!"*".equals(language)) {
+                if (!ls.getLanguage().equals(language)) {
                     continue;
                 }
             }
-            if (! "*".equals(feature)) {
-                if (! ls.getFeature().equals(feature)) {
+            if (!"*".equals(feature)) {
+                if (!ls.getFeature().equals(feature)) {
                     continue;
                 }
             }
@@ -359,17 +354,17 @@ public class GlyphTable {
          * @param permitWildcard if true the permit wildcard script, language, or feature
          */
         LookupSpec(String script, String language, String feature, boolean permitEmpty, boolean permitWildcard) {
-            if ((script == null) || (! permitEmpty && (script.length() == 0))) {
+            if ((script == null) || (!permitEmpty && (script.length() == 0))) {
                 throw new AdvancedTypographicTableFormatException("script must be non-empty string");
-            } else if ((language == null) || (! permitEmpty && (language.length() == 0))) {
+            } else if ((language == null) || (!permitEmpty && (language.length() == 0))) {
                 throw new AdvancedTypographicTableFormatException("language must be non-empty string");
-            } else if ((feature == null) || (! permitEmpty && (feature.length() == 0))) {
+            } else if ((feature == null) || (!permitEmpty && (feature.length() == 0))) {
                 throw new AdvancedTypographicTableFormatException("feature must be non-empty string");
-            } else if (! permitWildcard && script.equals("*")) {
+            } else if (!permitWildcard && script.equals("*")) {
                 throw new AdvancedTypographicTableFormatException("script must not be wildcard");
-            } else if (! permitWildcard && language.equals("*")) {
+            } else if (!permitWildcard && language.equals("*")) {
                 throw new AdvancedTypographicTableFormatException("language must not be wildcard");
-            } else if (! permitWildcard && feature.equals("*")) {
+            } else if (!permitWildcard && feature.equals("*")) {
                 throw new AdvancedTypographicTableFormatException("feature must not be wildcard");
             }
             this.script = script.trim();
@@ -405,14 +400,12 @@ public class GlyphTable {
         public boolean equals(Object o) {
             if (o instanceof LookupSpec) {
                 LookupSpec l = (LookupSpec) o;
-                if (! l.script.equals(script)) {
+                if (!l.script.equals(script)) {
                     return false;
-                } else if (! l.language.equals(language)) {
-                    return false;
-                } else if (! l.feature.equals(feature)) {
+                } else if (!l.language.equals(language)) {
                     return false;
                 } else {
-                    return true;
+                    return l.feature.equals(feature);
                 }
             } else {
                 return false;
@@ -540,7 +533,7 @@ public class GlyphTable {
                 }
             }
             // append at end of list
-            if (! added && (subtable != null)) {
+            if (!added && (subtable != null)) {
                 subtables.add(subtable);
                 added = true;
             }
@@ -567,7 +560,7 @@ public class GlyphTable {
             }
             if (subtables.size() > 0) {
                 GlyphSubtable st = (GlyphSubtable) subtables.get(0);
-                if (! st.isCompatible(subtable)) {
+                if (!st.isCompatible(subtable)) {
                     throw new AdvancedTypographicTableFormatException("subtable " + subtable + " is not compatible with subtable " + st);
                 }
             }
@@ -580,7 +573,7 @@ public class GlyphTable {
          * @param lookupTables map from lookup table identifers, e.g. "lu4", to lookup tables
          */
         public void freezeSubtables(Map/*<String,LookupTable>*/ lookupTables) {
-            if (! frozen) {
+            if (!frozen) {
                 GlyphSubtable[] sta = getSubtables();
                 resolveLookupReferences(sta, lookupTables);
                 this.subtablesArray = sta;
@@ -1305,7 +1298,7 @@ public class GlyphTable {
                 Class c = r0.getClass();
                 for (int i = 1, n = rules.length; i < n; i++) {
                     Rule r = rules[i];
-                    if ((r != null) && ! c.isInstance(r)) {
+                    if ((r != null) && !c.isInstance(r)) {
                         throw new AdvancedTypographicTableFormatException("rules[" + i + "] is not an instance of " + c.getName());
                     }
                 }
