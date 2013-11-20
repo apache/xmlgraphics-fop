@@ -19,10 +19,8 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.fop.layoutmgr.Alternative.FittingStrategy;
 import org.apache.fop.layoutmgr.BestFitLayoutUtils.BestFitPosition;
 
 /**
@@ -33,59 +31,24 @@ import org.apache.fop.layoutmgr.BestFitLayoutUtils.BestFitPosition;
  */
 public class BestFitPenalty extends KnuthPenalty {
 
-    private final LinkedList<Alternative> alternatives;
-    private final FittingStrategy strategy;
-    public boolean canFit = true;
-    private int currentAltIndex;
+    private final List<ListElement> knuthList;
+    public boolean ignorePenalty;
 
-    public BestFitPenalty(FittingStrategy strategy, Position pos) {
-        super(0, 0, false, pos, false);
-        this.strategy = strategy;
-        alternatives = new LinkedList<Alternative>();
+    public BestFitPenalty(int width, List<ListElement> knuthList, Position pos) {
+        super(width, 0, false, pos, false);
+        this.knuthList = knuthList;
     }
 
-    public void addAlternative(Alternative alternative) {
-        alternatives.add(alternative);
+    public void activateContent() {
+        BestFitPosition pos = getBestFitPosition();
+        pos.setKnuthList(knuthList);
     }
 
-    public List<Alternative> getAlternatives() {
-        return alternatives;
-    }
-
-    public FittingStrategy getFittingStrategy() {
-        return strategy;
-    }
-
-    @Override
     public int getWidth() {
-        if (currentAltIndex == -1) {
+        if (ignorePenalty) {
             return 0;
         }
-        return alternatives.get(currentAltIndex).getLength();
-    }
-
-    public boolean hasMoreAlternatives() {
-        return currentAltIndex != -1;
-    }
-
-    public void considerNextAlternative() {
-        if (currentAltIndex < alternatives.size() - 1) {
-            currentAltIndex++;
-        } else {
-            currentAltIndex = -1;
-        }
-    }
-
-    @Override
-    public Position getPosition() {
-        if (currentAltIndex != -1) {
-            Position pos = super.getPosition();
-            if (alternatives.size() > 0) {
-                getBestFitPosition().setKnuthList(alternatives.get(currentAltIndex).getKnuthList());
-            }
-            return pos;
-        }
-        return null;
+        return super.getWidth();
     }
 
     public BestFitPosition getBestFitPosition() {
@@ -103,8 +66,8 @@ public class BestFitPenalty extends KnuthPenalty {
     public String toString() {
         String str = super.toString();
         StringBuffer buffer = new StringBuffer(64);
-        buffer.append(" number of alternatives = " + getAlternatives().size());
-        buffer.append(" fitting-strategy = " + strategy.getStrategyName());
+//        buffer.append(" number of alternatives = " + alternatives.size());
+//        buffer.append(" fitting-strategy = " + strategy.getStrategyName());
         return str + buffer.toString();
     }
 

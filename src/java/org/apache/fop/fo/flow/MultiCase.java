@@ -44,8 +44,6 @@ public class MultiCase extends FObj {
     //     private CommonAccessibility commonAccessibility;
     // End of property values
 
-    private static boolean notImplementedWarningGiven = false;
-
     /**
      * Base constructor
      *
@@ -53,12 +51,6 @@ public class MultiCase extends FObj {
      */
     public MultiCase(FONode parent) {
         super(parent);
-
-        if (!notImplementedWarningGiven) {
-            getFOValidationEventProducer().unimplementedFeature(this, getName(),
-                    getName(), getLocator());
-            notImplementedWarningGiven = true;
-        }
     }
 
     @Override
@@ -134,7 +126,7 @@ public class MultiCase extends FObj {
         return caseTitle;
     }
 
-    public boolean isActuated() {
+    public boolean hasToggle() {
         return multiCaseHandler != null;
     }
 

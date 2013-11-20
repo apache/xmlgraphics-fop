@@ -817,13 +817,10 @@ public interface Constants {
     int PR_X_HEADER_COLUMN = 290;
 
     /** Property constant */
-    int PR_X_FITTING_STRATEGY = 291;
-
-    /** Property constant */
-    int PR_X_AUTO_TOGGLE = 292;
+    int PR_X_AUTO_TOGGLE = 291;
 
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 292;
+    int PROPERTY_COUNT = 291;
 
     // compound property constants
 
