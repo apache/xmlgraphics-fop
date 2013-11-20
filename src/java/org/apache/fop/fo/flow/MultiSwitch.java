@@ -38,7 +38,6 @@ public class MultiSwitch extends FObj {
     //     private CommonAccessibility commonAccessibility;
     // End of property values
 
-    private static boolean notImplementedWarningGiven;
     private FONode currentlyVisibleMultiCase;
     private String autoToggle;
     private String fittingStrategy;
@@ -50,12 +49,6 @@ public class MultiSwitch extends FObj {
      */
     public MultiSwitch(FONode parent) {
         super(parent);
-
-        if (!notImplementedWarningGiven) {
-            getFOValidationEventProducer().unimplementedFeature(this, getName(),
-                    getName(), getLocator());
-            notImplementedWarningGiven = true;
-        }
     }
 
     /** {@inheritDoc} */
@@ -63,7 +56,6 @@ public class MultiSwitch extends FObj {
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         autoToggle = pList.get(PR_X_AUTO_TOGGLE).getString();
-        fittingStrategy = pList.get(PR_X_FITTING_STRATEGY).getString();
         // autoRestore = pList.get(PR_AUTO_RESTORE);
     }
 
@@ -85,7 +77,7 @@ public class MultiSwitch extends FObj {
             FONodeIterator nodeIter = getChildNodes();
             while (nodeIter.hasNext()) {
                 MultiCase multiCase = (MultiCase) nodeIter.next();
-                if (multiCase.isActuated()) {
+                if (multiCase.hasToggle()) {
                     multiCase.getHandler().filter(this);
                 }
             }

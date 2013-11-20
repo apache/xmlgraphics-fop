@@ -28,7 +28,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FONode.FONodeIterator;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.MultiSwitch;
-import org.apache.fop.layoutmgr.Alternative.FittingStrategy;
 
 public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
 
@@ -56,7 +55,7 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
             }
         }
         setFinished(true);
-        return BestFitLayoutUtils.getKnuthList(this, childrenLists, FittingStrategy.FIRST_FIT);
+        return BestFitLayoutUtils.getKnuthList(this, childrenLists);
     }
 
     @Override

@@ -149,9 +149,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         /** Index of the last inserted element of the last inserted footnote. */
         public int footnoteElementIndex;
 
-        public boolean bestFitNode = false;
-        public boolean skipNode = false;
-
         public KnuthPageNode(int position,
                              int line, int fitness,
                              int totalWidth, int totalStretch, int totalShrink,
@@ -165,12 +162,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             this.totalFootnotes = totalFootnotes;
             this.footnoteListIndex = footnoteListIndex;
             this.footnoteElementIndex = footnoteElementIndex;
-            if (getElement(position) instanceof BestFitPenalty) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Creating a KnuthPageNode for a BestFitPenalty.");
-                }
-                bestFitNode = true;
-            }
         }
 
     }
@@ -403,25 +394,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     /** {@inheritDoc} */
     @Override
     protected int restartFrom(KnuthNode restartingNode, int currentIndex) {
-        if (getLastTooLong() != null) {
-            KnuthPageNode lastTooLong = (KnuthPageNode) getLastTooLong();
-            if (lastTooLong.skipNode) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Alternative does not fit in the current page. "
-                            + "Switching to the next one in the list");
-                }
-                int penaltyIndex = currentIndex;
-                // In case the paragraph has changed...
-                if (lastTooLong.previous.previous == null) {
-                    if (par.get(0) == KnuthPenalty.DUMMY_ZERO_PENALTY) {
-                        ++penaltyIndex;
-                    }
-                }
-                BestFitPenalty bestFitPenalty = (BestFitPenalty) getElement(penaltyIndex);
-                bestFitPenalty.considerNextAlternative();
-                restartingNode = restartingNode.previous;
-            }
-        }
+
         int returnValue = super.restartFrom(restartingNode, currentIndex);
         newFootnotes = false;
         if (footnotesPending) {
@@ -514,22 +487,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                         return false;
                     }
                 }
-            }
-        }
-    }
-
-    /** {@inheritDoc} */
-    protected void forceNode(KnuthNode node, int line, int elementIdx,
-            int difference, double r, double demerits, int fitnessClass,
-            int availableShrink, int availableStretch) {
-
-        super.forceNode(node, line, elementIdx, difference, r, demerits,
-                fitnessClass, availableShrink, availableStretch);
-
-        KnuthPageNode lastTooLong = (KnuthPageNode) getLastTooLong();
-        if (lastTooLong != null) {
-            if (lastTooLong.bestFitNode) {
-                lastTooLong.skipNode = true;
             }
         }
     }

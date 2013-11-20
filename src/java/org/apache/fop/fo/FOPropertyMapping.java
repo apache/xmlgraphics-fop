@@ -2617,12 +2617,6 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("");
         addPropertyMaker("fox:alt-text", m);
 
-        // fox:fitting-strategy, used only in fox:best-fit
-        m = new StringProperty.Maker(PR_X_FITTING_STRATEGY);
-        m.setInherited(false);
-        m.setDefault("first-fit");
-        addPropertyMaker("fox:fitting-strategy", m);
-
         // fox:auto-toggle, used only in fo:multi-switch
         m = new StringProperty.Maker(PR_X_AUTO_TOGGLE);
         m.setInherited(false);

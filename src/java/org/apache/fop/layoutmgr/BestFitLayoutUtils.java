@@ -21,8 +21,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.fop.layoutmgr.Alternative.FittingStrategy;
-
 /*
  * Utility class used in {@link MultiSwitchLayoutManager}
  * to handle  the <i>best-fit</i> property value if specified in {@link MultiSwitch}
@@ -38,13 +36,14 @@ public final class BestFitLayoutUtils {
         public BestFitPosition(LayoutManager lm) {
             super(lm);
         }
-
+        public BestFitPosition(LayoutManager lm, List<ListElement> knuthList) {
+            super(lm);
+            this.knuthList = knuthList;
+        }
         public List<Position> getPositionList() {
             List<Position> positions = new LinkedList<Position>();
             if (knuthList != null) {
-
                 SpaceResolver.performConditionalsNotification(knuthList, 0, knuthList.size() - 1, -1);
-
                 for (ListElement elem : knuthList) {
                     if (elem.getPosition() != null && elem.getLayoutManager() != null) {
                         positions.add(elem.getPosition());
@@ -53,48 +52,29 @@ public final class BestFitLayoutUtils {
             }
             return positions;
         }
-
         public void setKnuthList(List<ListElement> knuthList) {
             this.knuthList = knuthList;
         }
-
-        public List<ListElement> getKnuthList() {
-            return knuthList;
-        }
-
-    }
-
-    public static Alternative makeAlternative(List<ListElement> childList) {
-        // Add a zero penalty to make the SpaceResolver
-        // transform Space elements into Knuth glues.
-        childList.add(KnuthPenalty.DUMMY_ZERO_PENALTY);
-        SpaceResolver.resolveElementList(childList);
-        int contentLength = ElementListUtils.calcContentLength(childList);
-        return new Alternative(childList, contentLength);
     }
 
     public static List<ListElement> getKnuthList(LayoutManager lm,
-            List<List<ListElement>> childrenLists,
-            FittingStrategy strategy) {
+            List<List<ListElement>> childrenLists) {
+
         List<ListElement> knuthList = new LinkedList<ListElement>();
+
         Iterator<List<ListElement>> iter = childrenLists.iterator();
-        BestFitPenalty bestFitPenalty = new BestFitPenalty(strategy, new BestFitPosition(lm));
         while (iter.hasNext()) {
+
             List<ListElement> childList = iter.next();
-            bestFitPenalty.addAlternative(makeAlternative(childList));
+            SpaceResolver.resolveElementList(childList);
+            int contentLength = ElementListUtils.calcContentLength(childList);
+            BestFitPenalty bestFitPenalty =
+                    new BestFitPenalty(contentLength, childList,
+                    new BestFitPosition(lm));
+            knuthList.add(bestFitPenalty);
         }
-        // A penalty must always be preceded by a box
-        // to be considered as a valid breakpoint.
-        addKnuthPenalty(lm, knuthList, bestFitPenalty);
+        knuthList.add(new KnuthBox(0, new Position(lm), false));
         return knuthList;
-    }
-
-    public static void addKnuthPenalty(LayoutManager lm, List<ListElement> list,
-            KnuthPenalty bestFitPenalty) {
-
-        list.add(0, new KnuthBox(0, new Position(lm), false));
-        list.add(bestFitPenalty);
-        list.add(new KnuthBox(0, new Position(lm), false));
     }
 
     public static List<Position> getPositionList(LayoutManager lm, PositionIterator posIter) {
