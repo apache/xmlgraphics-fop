@@ -149,7 +149,7 @@ public abstract class FObj extends FONode implements Constants {
             String attributeName = attList.getQName(i);
             String attributeValue = attList.getValue(i);
             Property prop = propertyList.getPropertyForAttribute(attList, attributeName, attributeValue);
-            if (prop.equals(value)) {
+            if (prop != null && prop.equals(value)) {
                 return attributeName;
             }
         }
