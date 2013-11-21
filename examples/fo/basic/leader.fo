@@ -2,7 +2,7 @@
 
 <!-- examples for the use of the fo leader -->
 
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="sans-serif">
 
   <fo:layout-master-set>
 
@@ -272,7 +272,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-size="10pt" font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-size="10pt">&#183;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
@@ -291,7 +291,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-size="10pt" font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-size="10pt">&#183;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
@@ -391,7 +391,7 @@
 
         <fo:table-row line-height="12pt">
         <fo:table-cell><fo:block text-align="end">A) </fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="start">This is some longer sample text<fo:leader leader-pattern="dots"
+        <fo:table-cell><fo:block text-align="start" text-align-last="justify">This is some longer sample text<fo:leader leader-pattern="dots"
                    leader-pattern-width="8pt"
                    leader-alignment="reference-area"
                    /></fo:block></fo:table-cell>
@@ -401,7 +401,7 @@
 
         <fo:table-row line-height="12pt">
         <fo:table-cell><fo:block text-align="end">B) </fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="start">Some text<fo:leader leader-pattern="dots"
+        <fo:table-cell><fo:block text-align="start" text-align-last="justify">Some text<fo:leader leader-pattern="dots"
                    leader-pattern-width="8pt"
                    leader-alignment="reference-area"
                    /></fo:block></fo:table-cell>
@@ -410,7 +410,7 @@
 
         <fo:table-row line-height="12pt">
         <fo:table-cell><fo:block text-align="end" >C) </fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="start">Text<fo:leader leader-pattern="dots"
+        <fo:table-cell><fo:block text-align="start" text-align-last="justify">Text<fo:leader leader-pattern="dots"
                    leader-pattern-width="8pt"
                    leader-alignment="reference-area"
                    /></fo:block></fo:table-cell>
@@ -419,7 +419,7 @@
 
         <fo:table-row line-height="12pt">
         <fo:table-cell><fo:block text-align="end">D) </fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="start">This text is even longer than the first entry <fo:leader leader-pattern="dots"
+        <fo:table-cell><fo:block text-align="start" text-align-last="justify">This text is even longer than the first entry <fo:leader leader-pattern="dots"
                    leader-pattern-width="8pt"
                    leader-alignment="reference-area"
                    /></fo:block></fo:table-cell>
@@ -428,7 +428,7 @@
 
         <fo:table-row line-height="12pt">
         <fo:table-cell><fo:block text-align="end">E) </fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="start">Shorter text example<fo:leader leader-pattern="dots"
+        <fo:table-cell><fo:block text-align="start" text-align-last="justify">Shorter text example<fo:leader leader-pattern="dots"
                    leader-pattern-width="8pt"
                    leader-alignment="reference-area"
                    /></fo:block></fo:table-cell>
