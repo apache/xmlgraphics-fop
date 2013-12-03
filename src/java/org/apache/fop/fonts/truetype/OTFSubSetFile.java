@@ -561,8 +561,12 @@ public class OTFSubSetFile extends OTFFile {
             int privateOffset = privateEntry.getOperands().get(1).intValue();
             Map<String, DICTEntry> privateDICT = cffReader.getPrivateDict(privateEntry);
 
-            int localSubrOffset = privateOffset + privateDICT.get("Subrs").getOperands().get(0).intValue();
-            localIndexSubr = cffReader.readIndex(localSubrOffset);
+            if (privateDICT.get("Subrs") != null) {
+                int localSubrOffset = privateOffset + privateDICT.get("Subrs").getOperands().get(0).intValue();
+                localIndexSubr = cffReader.readIndex(localSubrOffset);
+            } else {
+                localIndexSubr = cffReader.readIndex(null);
+            }
         }
 
         globalIndexSubr = cffReader.getGlobalIndexSubr();
