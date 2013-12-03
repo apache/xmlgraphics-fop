@@ -463,7 +463,8 @@ class PDFRenderingUtil {
     private PDFDictionary augmentDictionary(PDFDictionary dictionary, PDFDictionaryExtension extension) {
         for (PDFCollectionEntryExtension entry : extension.getEntries()) {
             if (entry instanceof PDFDictionaryExtension) {
-                dictionary.put(entry.getKey(), augmentDictionary(new PDFDictionary(dictionary), (PDFDictionaryExtension) entry));
+                dictionary.put(entry.getKey(),
+                        augmentDictionary(new PDFDictionary(dictionary), (PDFDictionaryExtension) entry));
             } else if (entry instanceof PDFArrayExtension) {
                 dictionary.put(entry.getKey(), augmentArray(new PDFArray(dictionary), (PDFArrayExtension) entry));
             } else {

@@ -451,7 +451,8 @@ public class OTFSubSetFile extends OTFFile {
                 localUniques = foundLocalUniquesB.get(subsetFDSelect.get(subsetGlyphs.get(gid)).getNewFDIndex());
                 byte[] data = charStringsIndex.getValue(gid);
                 subsetLocalIndexSubr = fdSubrs.get(subsetFDSelect.get(subsetGlyphs.get(gid)).getNewFDIndex());
-                subsetLocalSubrCount = foundLocalUniques.get(subsetFDSelect.get(subsetGlyphs.get(gid)).getNewFDIndex()).size();
+                subsetLocalSubrCount = foundLocalUniques.get(
+                        subsetFDSelect.get(subsetGlyphs.get(gid)).getNewFDIndex()).size();
                 data = readCharStringData(data, subsetLocalSubrCount);
                 subsetCharStringsIndex.add(data);
             }
