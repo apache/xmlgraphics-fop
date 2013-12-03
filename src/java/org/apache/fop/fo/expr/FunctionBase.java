@@ -36,7 +36,8 @@ public abstract class FunctionBase implements Function {
     /** {@inheritDoc} */
     public Property getOptionalArgDefault(int index, PropertyInfo pi) throws PropertyException {
         if (index >= getOptionalArgsCount()) {
-            PropertyException e = new PropertyException(new IndexOutOfBoundsException("illegal optional argument index"));
+            PropertyException e = new PropertyException(
+                    new IndexOutOfBoundsException("illegal optional argument index"));
             e.setPropertyInfo(pi);
             throw e;
         } else {

@@ -103,7 +103,8 @@ public final class AFPRendererConfig implements RendererConfig {
         }
     }
 
-    private final EnumMap<AFPRendererOption, Object> params = new EnumMap<AFPRendererOption, Object>(AFPRendererOption.class);
+    private final EnumMap<AFPRendererOption, Object> params
+            = new EnumMap<AFPRendererOption, Object>(AFPRendererOption.class);
 
     private final EnumMap<ImagesModeOptions, Object> imageModeParams
     = new EnumMap<ImagesModeOptions, Object>(ImagesModeOptions.class);

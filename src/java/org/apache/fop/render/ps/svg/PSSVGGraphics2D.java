@@ -119,7 +119,8 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
         List<Double> theCoords = new java.util.ArrayList<Double>();
 
 
-        AffineTransform start = applyTransform(lgp.getTransform(), lgp.getStartPoint().getX(), lgp.getStartPoint().getY());
+        AffineTransform start = applyTransform(lgp.getTransform(),
+                lgp.getStartPoint().getX(), lgp.getStartPoint().getY());
         AffineTransform end = applyTransform(lgp.getTransform(), lgp.getEndPoint().getX(), lgp.getEndPoint().getY());
         double startX = start.getTranslateX();
         double startY = start.getTranslateY();
@@ -177,8 +178,10 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
         transform.concatenate(getTransform());
         transform.concatenate(rgp.getTransform());
 
-        AffineTransform resultCentre = applyTransform(rgp.getTransform(), rgp.getCenterPoint().getX(), rgp.getCenterPoint().getY());
-        AffineTransform resultFocus = applyTransform(rgp.getTransform(), rgp.getFocusPoint().getX(), rgp.getFocusPoint().getY());
+        AffineTransform resultCentre = applyTransform(rgp.getTransform(),
+                rgp.getCenterPoint().getX(), rgp.getCenterPoint().getY());
+        AffineTransform resultFocus = applyTransform(rgp.getTransform(),
+                rgp.getFocusPoint().getX(), rgp.getFocusPoint().getY());
         double scale = Math.sqrt(rgp.getTransform().getDeterminant());
         double radius = rgp.getRadius() * scale;
         double centreX = resultCentre.getTranslateX();
