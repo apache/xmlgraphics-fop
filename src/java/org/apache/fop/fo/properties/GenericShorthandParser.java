@@ -83,14 +83,17 @@ public class GenericShorthandParser implements ShorthandParser {
                                                PropertyList propertyList)
                     throws PropertyException {
         Property prop = null;
+        String vProperty = "";
         // Try each of the stored values in turn
         Iterator iprop = property.getList().iterator();
         while (iprop.hasNext() && prop == null) {
             Property p = (Property)iprop.next();
+            if (p.getNCname() != null) {
+                vProperty += p.getNCname() + " ";
+            }
             prop = maker.convertShorthandProperty(propertyList, p, null);
-            // The following produces a regression, about which see FOP-2311.
-            // propertyList.validatePropertyValue(p.getNCname(), prop, property);
         }
+        propertyList.validatePropertyValue(vProperty.trim(), prop, property);
         return prop;
     }
 
