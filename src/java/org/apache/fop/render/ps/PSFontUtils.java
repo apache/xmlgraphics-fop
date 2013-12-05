@@ -175,6 +175,15 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
 
         if (!tracker.isResourceSupplied(WINANSI_ENCODING_RESOURCE)) {
             //Only out Base 14 fonts still use that
+            for (Typeface tf : fonts.values()) {
+                if (tf instanceof LazyFont) {
+                    tf = ((LazyFont)tf).getRealFont();
+                    if (tf instanceof SingleByteFont
+                            && ((SingleByteFont) tf).getEncoding().getName().equals("custom")) {
+                        defineEncoding(gen, ((SingleByteFont) tf).getEncoding());
+                    }
+                }
+            }
             defineWinAnsiEncoding(gen);
         }
         gen.commentln("%FOPBeginFontReencode");
