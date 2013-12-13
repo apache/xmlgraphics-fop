@@ -146,16 +146,16 @@ public class SVGPainter extends AbstractIFPainter<AbstractSVGDocumentHandler>
     }
 
     /** {@inheritDoc} */
-    public void startGroup(AffineTransform[] transforms) throws IFException {
-        startGroup(SVGUtil.formatAffineTransformsMptToPt(transforms));
+    public void startGroup(AffineTransform[] transforms, String layer) throws IFException {
+        startGroup(SVGUtil.formatAffineTransformsMptToPt(transforms), layer);
     }
 
     /** {@inheritDoc} */
-    public void startGroup(AffineTransform transform) throws IFException {
-        startGroup(SVGUtil.formatAffineTransformMptToPt(transform));
+    public void startGroup(AffineTransform transform, String layer) throws IFException {
+        startGroup(SVGUtil.formatAffineTransformMptToPt(transform), layer);
     }
 
-    private void startGroup(String transform) throws IFException {
+    private void startGroup(String transform, String layer) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             if (transform != null && transform.length() > 0) {

@@ -23,43 +23,27 @@ import org.apache.xmlgraphics.util.XMLizable;
 
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 
-/**
- * This is the pass-through value object for the PDF extension.
- */
+// CSOFF: LineLengthCheck
+
 public abstract class PDFExtensionAttachment implements ExtensionAttachment, XMLizable {
 
     /** The category URI for this extension attachment. */
     public static final String CATEGORY = "apache:fop:extensions:pdf";
 
+    /** The prefix to use with qualified names for this extension attachment. */
+    public static final String PREFIX = "pdf";
+
     /**
      * Default constructor.
      */
     public PDFExtensionAttachment() {
-        //nop
     }
 
-    /**
-     * @return the category URI
-     * @see org.apache.fop.fo.extensions.ExtensionAttachment#getCategory()
-     */
+    public String getPrefix() {
+        return PREFIX;
+    }
+
     public String getCategory() {
         return CATEGORY;
     }
-
-    /** @return type name */
-    public String getType() {
-        String className = getClass().getName();
-        return className.substring(className.lastIndexOf('.') + 3);
-    }
-
-    /**
-     * @return a string representation of this object
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        return getType();
-    }
-
-    /** @return element */
-    protected abstract String getElement();
 }

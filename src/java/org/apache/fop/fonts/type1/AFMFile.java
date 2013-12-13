@@ -319,7 +319,7 @@ public class AFMFile {
      */
     public void addCharMetrics(AFMCharMetrics metrics) {
         String name = metrics.getCharName();
-        if (metrics.getUnicodeSequence() == null) {
+        if (metrics.getUnicodeSequence() == null && name.equals(".notdef")) {
             //Ignore as no Unicode assignment is possible
             return;
         }

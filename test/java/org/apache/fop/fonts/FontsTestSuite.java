@@ -29,7 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
         FontManagerConfiguratorTestCase.class,
-        EmbedFontInfo.class,
+        EmbedFontInfoTestCase.class,
         FontEventProcessingTestCase.class,
         FontManagerConfiguratorTestCase.class
 })

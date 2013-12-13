@@ -72,9 +72,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 
-// CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
 
 /**
  * This class supports a subset of the <code>TTX</code> file as produced by the Adobe FLEX

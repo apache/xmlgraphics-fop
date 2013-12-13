@@ -1,0 +1,395 @@
+Index: fontbox/src/test/java/org/apache/fontbox/cff/CharStringRendererTest.java
+===================================================================
+--- fontbox/src/test/java/org/apache/fontbox/cff/CharStringRendererTest.java	(revision 0)
++++ fontbox/src/test/java/org/apache/fontbox/cff/CharStringRendererTest.java	(revision 0)
+@@ -0,0 +1,28 @@
++package org.apache.fontbox.cff;
++
++import java.util.ArrayList;
++import java.util.List;
++
++import org.junit.Test;
++
++import static org.junit.Assert.assertTrue;
++
++public class CharStringRendererTest {
++
++    @Test
++    public void testArgumentValidation() {
++        CharStringRenderer renderer = new CharStringRenderer();
++        List<Integer> numbers = new ArrayList<Integer>();
++        for (int i = 0;i < 4;i++) {
++            numbers.add(1);
++        }
++        assertTrue(renderer.hasValidArguments("vhcurveto", numbers));
++        numbers.add(1);
++        assertTrue(renderer.hasValidArguments("vvcurveto", numbers));
++        for (int i = 0;i < 3;i++) {
++            numbers.add(1);
++        }
++        assertTrue(renderer.hasValidArguments("rcurveline", numbers));
++    }
++
++}
+Index: fontbox/src/main/java/org/apache/fontbox/cff/AFMFormatter.java
+===================================================================
+--- fontbox/src/main/java/org/apache/fontbox/cff/AFMFormatter.java	(revision 1546564)
++++ fontbox/src/main/java/org/apache/fontbox/cff/AFMFormatter.java	(working copy)
+@@ -27,7 +27,7 @@
+ 
+ /**
+  * This class creates all needed AFM font metric data from a CFFFont ready to be read from a AFMPaser.
+- * 
++ *
+  * @author Villu Ruusmann
+  * @version $Revision$
+  */
+@@ -125,7 +125,7 @@
+             metric.name = mapping.getName();
+             renderer.render(mapping.toType1Sequence());
+             metric.width = renderer.getWidth();
+-            metric.bounds = renderer.getBounds();
++            metric.bounds = renderer.getBounds2D();
+             metrics.add(metric);
+         }
+         return metrics;
+@@ -150,7 +150,7 @@
+     }
+ 
+     /**
+-     * This class represents the metric of one single character. 
++     * This class represents the metric of one single character.
+      *
+      */
+     private static class CharMetric implements Comparable<CharMetric>
+Index: fontbox/src/main/java/org/apache/fontbox/cff/CharStringRenderer.java
+===================================================================
+--- fontbox/src/main/java/org/apache/fontbox/cff/CharStringRenderer.java	(revision 1546564)
++++ fontbox/src/main/java/org/apache/fontbox/cff/CharStringRenderer.java	(working copy)
+@@ -16,9 +16,11 @@
+  */
+ package org.apache.fontbox.cff;
+ 
++import java.awt.Point;
+ import java.awt.geom.GeneralPath;
+ import java.awt.geom.Point2D;
+ import java.awt.geom.Rectangle2D;
++import java.util.HashMap;
+ import java.util.List;
+ 
+ import org.apache.commons.logging.Log;
+@@ -33,7 +35,7 @@
+ {
+     // TODO CharStringRenderer as abstract Class with two inherited classes according to the Charsstring type....
+ 	private static final Log LOG = LogFactory.getLog(CharStringRenderer.class);
+-	
++
+ 	private boolean isCharstringType1 = true;
+     private boolean isFirstCommand = true;
+ 
+@@ -42,6 +44,8 @@
+     private Point2D referencePoint = null;
+     private int width = 0;
+     private boolean hasNonEndCharOp = false;
++    private int[] bbox = {0,0,0,0};
++    private HashMap<String, String> vStrings;
+ 
+     /**
+      * Constructor for the char string renderer.
+@@ -100,7 +104,7 @@
+     private void handleCommandType2(List<Integer> numbers, CharStringCommand command)
+     {
+         String name = CharStringCommand.TYPE2_VOCABULARY.get(command.getKey());
+-
++        checkArguments(name, numbers);
+         if (!hasNonEndCharOp)
+         {
+             hasNonEndCharOp = !"endchar".equals(name);
+@@ -176,7 +180,7 @@
+                 setWidth(numbers.get(0));
+                 rmoveTo(numbers.get(1), numbers.get(2));
+             }
+-            else
++            else if (numbers.size() == 2)
+             {
+                 rmoveTo(numbers.get(0), numbers.get(1));
+             }
+@@ -192,7 +196,7 @@
+                 setWidth(numbers.get(0));
+                 rmoveTo(numbers.get(1), Integer.valueOf(0));
+             }
+-            else
++            else if (numbers.size() == 1)
+             {
+                 rmoveTo(numbers.get(0), Integer.valueOf(0));
+             }
+@@ -284,6 +288,61 @@
+         }
+     }
+ 
++    void checkArguments(String name, List<Integer> numbers) {
++        if (name == null) {
++            return;
++        }
++        boolean valid = hasValidArguments(name, numbers);
++        if (!valid) {
++            //Initialize the validation strings if not already done
++            if (vStrings == null) {
++                vStrings = new HashMap<String, String>();
++                vStrings.put("vmoveto", "1 || 2");
++                vStrings.put("rlineto", "3 || % 2");
++                vStrings.put("rrcurveto", "7 || % 6");
++                vStrings.put("rlinecurve", "% 2 || 6 + % 2");
++                vStrings.put("rcurveline", "% 6 || 2 + % 6");
++                vStrings.put("rmoveto", "2 || 3");
++                vStrings.put("hmoveto", "1 || 2");
++                vStrings.put("vhcurveto", "% 4 || 1 + % 4");
++                vStrings.put("hvcurveto", "% 4 || 1 + % 4");
++                vStrings.put("vvcurveto", "% 4 || 1 + % 4");
++            }
++            LOG.info(String.format("Font has an unexpected number of parameters for operator '%s'. Arguments "+
++                    "size %d did not match pattern '%s'", name, numbers.size(),
++                    vStrings.get(name)));
++        }
++    }
++
++    boolean hasValidArguments(String name, List<Integer> numbers) {
++        boolean valid = true;
++        if (name.equals("vmoveto")) {
++            valid = (numbers.size() == 1 || numbers.size() == 2);
++        }
++        if (name.equals("rlineto")) {
++            valid = (numbers.size() == 3 || numbers.size() % 2 == 0);
++        }
++        if (name.equals("rrcurveto")) {
++            valid = (numbers.size() == 7 || numbers.size() % 6 == 0);
++        }
++        if (name.equals("rlinecurve")) {
++            valid = (numbers.size() % 2 == 0 || (numbers.size() - 6) % 2 == 0);
++        }
++        if (name.equals("rcurveline")) {
++            valid = (numbers.size() % 6 == 0 || (numbers.size() - 2) % 6 == 0);
++        }
++        if (name.equals("rmoveto")) {
++            valid = (numbers.size() == 2 || numbers.size() == 3);
++        }
++        if (name.equals("hmoveto")) {
++            valid = (numbers.size() == 1 || numbers.size() == 2);
++        }
++        if (name.equals("vvcurveto") || name.equals("vhcurveto") || name.equals("hvcurveto")) {
++            valid = (numbers.size() % 4 == 0 || (numbers.size() - 1) % 4 == 0);
++        }
++        return valid;
++    }
++
+     /**
+      *
+      * @param numbers
+@@ -353,11 +412,14 @@
+         Point2D point = referencePoint;
+         if (point == null)
+         {
+-            point = path.getCurrentPoint();
+-            if (point == null)
++            if (path.getCurrentPoint() == null)
+             {
+                 point = sidebearingPoint;
+             }
++            else
++            {
++                point = path.getCurrentPoint();
++            }
+         }
+         referencePoint = null;
+         path.moveTo((float)(point.getX() + dx.doubleValue()),
+@@ -397,15 +459,20 @@
+     private void rlineTo(Number dx, Number dy)
+     {
+         Point2D point = path.getCurrentPoint();
+-        path.lineTo((float)(point.getX() + dx.doubleValue()),
+-                (float)(point.getY() + dy.doubleValue()));
++        if (point != null) {
++            updateBBox(dx.intValue(), dy.intValue());
++            path.lineTo((float)(point.getX() + dx.doubleValue()),
++                    (float)(point.getY() + dy.doubleValue()));
++        }
+     }
+ 
+     private void rrlineTo(List<Integer> numbers)
+     {
+         for (int i = 0;i < numbers.size();i += 2)
+         {
+-            rlineTo(numbers.get(i), numbers.get(i + 1));
++            if (numbers.size() - i >= 2) {
++                rlineTo(numbers.get(i), numbers.get(i + 1));
++            }
+         }
+     }
+ 
+@@ -415,13 +482,15 @@
+         {
+             for (int i = 0;i < numbers.size();i += 6)
+             {
+-                float x1 = numbers.get(i);
+-                float y1 = numbers.get(i + 1);
+-                float x2 = numbers.get(i + 2);
+-                float y2 = numbers.get(i + 3);
+-                float x3 = numbers.get(i + 4);
+-                float y3 = numbers.get(i + 5);
+-                rrcurveTo(x1, y1, x2, y2, x3, y3);
++                if (numbers.size() - i >= 6) {
++                    float x1 = numbers.get(i);
++                    float y1 = numbers.get(i + 1);
++                    float x2 = numbers.get(i + 2);
++                    float y2 = numbers.get(i + 3);
++                    float x3 = numbers.get(i + 4);
++                    float y3 = numbers.get(i + 5);
++                    rrcurveTo(x1, y1, x2, y2, x3, y3);
++                }
+             }
+         }
+     }
+@@ -429,14 +498,42 @@
+     private void rrcurveTo(Number dx1, Number dy1, Number dx2, Number dy2,
+             Number dx3, Number dy3)
+     {
+-        Point2D point = path.getCurrentPoint();
+-        float x1 = (float) point.getX() + dx1.floatValue();
+-        float y1 = (float) point.getY() + dy1.floatValue();
+-        float x2 = x1 + dx2.floatValue();
+-        float y2 = y1 + dy2.floatValue();
+-        float x3 = x2 + dx3.floatValue();
+-        float y3 = y2 + dy3.floatValue();
+-        path.curveTo(x1, y1, x2, y2, x3, y3);
++        Point2D p0 = path.getCurrentPoint();
++        if (p0 != null) {
++            float x1 = (float) p0.getX() + dx1.floatValue();
++            float y1 = (float) p0.getY() + dy1.floatValue();
++            float x2 = x1 + dx2.floatValue();
++            float y2 = y1 + dy2.floatValue();
++            float x3 = x2 + dx3.floatValue();
++            float y3 = y2 + dy3.floatValue( );
++
++            Point p1 = new Point((int)x1, (int)y1);
++            Point p2 = new Point((int)x2, (int)y2);
++            Point p3 = new Point((int)x3, (int)y3);
++
++            updateBBox((int)p0.getX(), (int)p0.getY());
++            updateBBox((int)p3.getX(), (int)p3.getY());
++
++            int[] abc = calculateABC((int)p0.getX(), p1.x, p2.x, p3.x);
++            double[] txs = getT(abc);
++            for (double tx : txs) {
++                if (tx > 0 && tx < 1) {
++                    int[] XandY = getXandY(tx, new Point((int)p0.getX(), (int)p0.getY()), p1, p2, p3);
++                    updateBBox(XandY[0], XandY[1]);
++                }
++            }
++
++            abc = calculateABC((int)p0.getY(), p1.y, p2.y, p3.y);
++            double[] tys = getT(abc);
++            for (double ty : tys) {
++                if (ty > 0 && ty < 1) {
++                    int[] XandY = getXandY(ty, new Point((int)p0.getX(), (int)p0.getY()), p1, p2, p3);
++                    updateBBox(XandY[0], XandY[1]);
++                }
++            }
++
++            path.curveTo(x1, y1, x2, y2, x3, y3);
++        }
+     }
+ 
+ 
+@@ -646,7 +743,9 @@
+     private void closePath()
+     {
+         referencePoint = path.getCurrentPoint();
+-        path.closePath();
++        if (referencePoint != null) {
++            path.closePath();
++        }
+     }
+ 
+     private void pointSb(Number x, Number y)
+@@ -658,11 +757,15 @@
+      * Returns the bounds of the renderer path.
+      * @return the bounds as Rectangle2D
+      */
+-     public Rectangle2D getBounds()
++     public int[] getBounds()
+     {
+-         return path.getBounds2D();
++         return bbox;
+     }
+ 
++     public Rectangle2D getBounds2D() {
++         return path.getBounds2D();
++     }
++
+      /**
+       * Returns the width of the current command.
+       * @return the width
+@@ -676,4 +779,61 @@
+      {
+          this.width = aWidth;
+      }
+-}
+\ No newline at end of file
++
++     private int[] calculateABC(int p0, int p1, int p2, int p3) {
++         int[] abc = new int[3];
++         abc[0] = p0 - 3 * p1 + 3 * p2 - p3;
++         abc[1] = 2 * (-p0 + 2 * p1 - p2);
++         abc[2] = p0 - p1;
++         return abc;
++     }
++
++     private double[] getT(int[] abc) {
++         double[] t = {-1, -1};
++         int a = abc[0];
++         int b = abc[1];
++         int c = abc[2];
++         double s = Math.pow(b, 2) - 4 * a * c;
++         if (a == 0) {
++             if (b != 0) {
++                 t[0] = -c / b;
++             }
++             return t;
++         } else if (s > 0) {
++             t[0] = (-b + Math.sqrt(s)) / 2 / a;
++             t[1] = (-b - Math.sqrt(s)) / 2 / a;
++             return t;
++         } else if (s == 0) {
++             t[0] = -b / 2 / a;
++             return t;
++         } else {
++             return t;
++         }
++     }
++
++     private int[] getXandY(double t, Point p0, Point p1, Point p2, Point p3) {
++         int[] XandY = new int[2];
++         double p0Coeff = Math.pow(1 - t, 3);
++         double p1Coeff = 3 * t * Math.pow(1 - t, 2);
++         double p2Coeff = 3 *  Math.pow(t, 2) * (1 - t);
++         double p3Coeff = Math.pow(t, 3);
++         double x = p0Coeff * p0.x + p1Coeff * p1.x + p2Coeff * p2.x + p3Coeff * p3.x;
++         double y = p0Coeff * p0.y + p1Coeff * p1.y + p2Coeff * p2.y + p3Coeff * p3.y;
++         XandY[0] = (int)x;
++         XandY[1] = (int)y;
++         return XandY;
++     }
++
++     private void updateBBox(int x, int y) {
++         if (x < bbox[0]) {
++             bbox[0] = x;
++         } else if (x > bbox[2]) {
++             bbox[2] = x;
++         }
++         if (y < bbox[1]) {
++             bbox[1] = y;
++         } else if (y > bbox[3]) {
++             bbox[3] = y;
++         }
++     }
++}

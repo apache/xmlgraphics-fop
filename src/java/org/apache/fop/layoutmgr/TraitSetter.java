@@ -617,4 +617,15 @@ public final class TraitSetter {
             area.addTrait(Trait.PROD_ID, id);
         }
     }
+
+    /**
+     * Sets the optional content group layer as a trait on the area.
+     * @param area the area to set the traits on
+     * @param layer the layer ID to set
+     */
+    public static void setLayer(Area area, String layer) {
+        if (layer != null && layer.length() > 0) {
+            area.addTrait(Trait.LAYER, layer);
+        }
+    }
 }

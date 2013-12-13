@@ -592,7 +592,8 @@ public class IFParser implements IFConstants {
                 String transform = attributes.getValue("transform");
                 AffineTransform[] transforms
                     = AffineTransformArrayParser.createAffineTransform(transform);
-                painter.startGroup(transforms);
+                String layer = attributes.getValue("layer");
+                painter.startGroup(transforms, layer);
             }
 
             public void endElement() throws IFException {
@@ -800,8 +801,8 @@ public class IFParser implements IFConstants {
                     }
                     painter.drawImage(uri, new Rectangle(x, y, width, height));
                 }
-                resetForeignAttributes();
                 resetStructureTreeElement();
+                resetForeignAttributes();
                 inForeignObject = false;
             }
 

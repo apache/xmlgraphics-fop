@@ -118,7 +118,7 @@ public class PDFStreamTestCase {
 
     private byte[] createSampleStreamData() throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        stream.write("stream\n".getBytes("US-ASCII"));
+        stream.write("\nstream\n".getBytes("US-ASCII"));
         stream.write(createSampleData());
         stream.write("\nendstream".getBytes("US-ASCII"));
         return stream.toByteArray();

@@ -26,7 +26,9 @@ import org.xml.sax.helpers.AttributesImpl;
 /**
  * This is the pass-through value object for the PDF extension.
  */
-public class PDFEmbeddedFileExtensionAttachment extends PDFExtensionAttachment {
+public class PDFEmbeddedFileAttachment extends PDFExtensionAttachment {
+
+    private static final long serialVersionUID = -1L;
 
     /** element name */
     protected static final String ELEMENT = "embedded-file";
@@ -52,7 +54,7 @@ public class PDFEmbeddedFileExtensionAttachment extends PDFExtensionAttachment {
     /**
      * No-argument contructor.
      */
-    public PDFEmbeddedFileExtensionAttachment() {
+    public PDFEmbeddedFileAttachment() {
         super();
     }
 
@@ -62,7 +64,7 @@ public class PDFEmbeddedFileExtensionAttachment extends PDFExtensionAttachment {
      * @param src the location of the file
      * @param desc the description of the file
      */
-    public PDFEmbeddedFileExtensionAttachment(String filename, String src, String desc) {
+    public PDFEmbeddedFileAttachment(String filename, String src, String desc) {
         super();
         this.filename = filename;
         this.src = src;

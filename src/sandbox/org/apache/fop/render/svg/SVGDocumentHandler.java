@@ -229,7 +229,7 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
     }
 
     private GenerationHelperContentHandler decorate(ContentHandler contentHandler) {
-        return new GenerationHelperContentHandler(contentHandler, getMainNamespace());
+        return new GenerationHelperContentHandler(contentHandler, getMainNamespace(), getContext());
     }
 
     private void closeCurrentStream() {

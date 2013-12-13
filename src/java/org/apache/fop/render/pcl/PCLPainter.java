@@ -126,7 +126,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
     }
 
     /** {@inheritDoc} */
-    public void startGroup(AffineTransform transform) throws IFException {
+    public void startGroup(AffineTransform transform, String layer) throws IFException {
         saveGraphicsState();
         try {
             concatenateTransformationMatrix(transform);

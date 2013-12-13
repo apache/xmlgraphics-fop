@@ -47,7 +47,7 @@ public class PDFDictionaryTestCase extends PDFObjectTestCase {
                                   + "  /array [1 (two) 20]\n"
                                   + "  /number 20\n"
                                   + "  /null null\n"
-                                  + ">>\n";
+                                  + ">>";
 
     @Before
     public void setUp() {

@@ -51,7 +51,7 @@ public class AbstractIFPainterTestCase {
             public void endViewport() throws IFException {
             }
 
-            public void startGroup(AffineTransform transform) throws IFException {
+            public void startGroup(AffineTransform transform, String layer) throws IFException {
             }
 
             public void endGroup() throws IFException {

@@ -2729,6 +2729,13 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         m.setDefault("auto");
         addPropertyMaker("z-index", m);
+
+        // fox:layer
+        m  = new StringProperty.Maker(PR_X_LAYER);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("fox:layer", m);
+
     }
 
     private void createShorthandProperties() {

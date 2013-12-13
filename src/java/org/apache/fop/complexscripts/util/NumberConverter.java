@@ -23,9 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 // CSOFF: LineLengthCheck
-// CSOFF: InnerAssignmentCheck
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: AvoidNestedBlocksCheck
 
 /**
  * <p>Implementation of Number to String Conversion algorithm specified by
@@ -186,10 +183,10 @@ public class NumberConverter {
                 separators.add(token.toArray(new Integer [ token.size() ]));
             }
         }
-        if (! separators.isEmpty()) {
+        if (!separators.isEmpty()) {
             this.prefix = separators.remove(0);
         }
-        if (! separators.isEmpty()) {
+        if (!separators.isEmpty()) {
             this.suffix = separators.remove(separators.size() - 1);
         }
         this.separators = separators.toArray(new Integer [ separators.size() ] []);
@@ -260,33 +257,27 @@ public class NumberConverter {
             int s = token[0].intValue();
             switch (s) {
             case (int) '1':
-                {
-                    fn = formatNumberAsDecimal(number, (int) '1', 1);
-                    break;
-                }
+                fn = formatNumberAsDecimal(number, (int) '1', 1);
+            break;
             case (int) 'W':
             case (int) 'w':
-                {
-                    fn = formatNumberAsWord(number, (s == (int) 'W') ? Character.UPPERCASE_LETTER : Character.LOWERCASE_LETTER);
-                    break;
-                }
+                fn = formatNumberAsWord(number, (s == (int) 'W') ? Character.UPPERCASE_LETTER : Character.LOWERCASE_LETTER);
+            break;
             case (int) 'A': // handled as numeric sequence
             case (int) 'a': // handled as numeric sequence
             case (int) 'I': // handled as numeric special
             case (int) 'i': // handled as numeric special
             default:
-                {
-                    if (isStartOfDecimalSequence(s)) {
-                        fn = formatNumberAsDecimal(number, s, 1);
-                    } else if (isStartOfAlphabeticSequence(s)) {
-                        fn = formatNumberAsSequence(number, s, getSequenceBase(s), null);
-                    } else if (isStartOfNumericSpecial(s)) {
-                        fn = formatNumberAsSpecial(number, s);
-                    } else {
-                        fn = null;
-                    }
-                    break;
+                if (isStartOfDecimalSequence(s)) {
+                    fn = formatNumberAsDecimal(number, s, 1);
+                } else if (isStartOfAlphabeticSequence(s)) {
+                    fn = formatNumberAsSequence(number, s, getSequenceBase(s), null);
+                } else if (isStartOfNumericSpecial(s)) {
+                    fn = formatNumberAsSpecial(number, s);
+                } else {
+                    fn = null;
                 }
+                break;
             }
         } else if ((token.length == 2) && (token[0] == (int) 'W') && (token[1] == (int) 'w')) {
             fn = formatNumberAsWord(number, Character.TITLECASE_LETTER);

@@ -54,10 +54,10 @@ public abstract class AbstractXMLWritingIFDocumentHandler extends AbstractIFDocu
         if (result instanceof SAXResult) {
             SAXResult saxResult = (SAXResult)result;
             this.handler = new GenerationHelperContentHandler(
-                    saxResult.getHandler(), getMainNamespace());
+                    saxResult.getHandler(), getMainNamespace(), getContext());
         } else {
             this.handler = new GenerationHelperContentHandler(
-                    createContentHandler(result), getMainNamespace());
+                    createContentHandler(result), getMainNamespace(), getContext());
         }
     }
 

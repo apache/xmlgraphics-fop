@@ -38,6 +38,7 @@
           <xs:complexContent>
             <xs:extension base="mf:contentType">
               <xs:attribute name="transform" type="xs:string"/>
+              <xs:attribute name="layer" type="xs:string"/>
             </xs:extension>
           </xs:complexContent>
         </xs:complexType>

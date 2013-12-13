@@ -33,10 +33,6 @@ import org.apache.fop.fonts.truetype.OFDirTabEntry;
 import org.apache.fop.fonts.truetype.OFTableName;
 import org.apache.fop.fonts.truetype.OpenFont;
 
-// CSOFF: AvoidNestedBlocksCheck
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: InnerAssignmentCheck
-// CSOFF: SimplifyBooleanReturnCheck
 // CSOFF: LineLengthCheck
 
 /**
@@ -3791,7 +3787,7 @@ public final class OTFAdvancedTypographicTableReader {
         } else {
             boolean first = true;
             for (int i = 0; i < ia.length; i++) {
-                if (! first) {
+                if (!first) {
                     sb.append(' ');
                 } else {
                     first = false;

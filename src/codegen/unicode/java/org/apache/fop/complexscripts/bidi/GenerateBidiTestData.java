@@ -40,10 +40,6 @@ import java.util.TreeMap;
 import org.apache.fop.util.License;
 
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: InnerAssignmentCheck
-// CSOFF: SimplifyBooleanReturnCheck
-// CSOFF: EmptyForIteratorPadCheck
 
 /**
  * <p>Utility for generating a Java class and associated data files representing
@@ -202,7 +198,7 @@ public final class GenerateBidiTestData {
                 String ucName = sa[1];
                 if (isBlockStart(ucName)) {
                     String ucBlock = getBlockName(ucName);
-                    if (! im.containsKey(ucBlock)) {
+                    if (!im.containsKey(ucBlock)) {
                         im.put(ucBlock, new int[] { uc, -1, bc });
                     } else {
                         throw new IllegalArgumentException("duplicate start of block '" + ucBlock + "' at entry: " + line);
@@ -223,7 +219,7 @@ public final class GenerateBidiTestData {
                 } else {
                     Integer k = Integer.valueOf(bc);
                     List sl;
-                    if (! sm.containsKey(k)) {
+                    if (!sm.containsKey(k)) {
                         sl = new ArrayList();
                         sm.put(k, sl);
                     } else {
@@ -267,7 +263,7 @@ public final class GenerateBidiTestData {
                 }
             }
             // populate intervals from (block) interval map
-            if (! im.isEmpty()) {
+            if (!im.isEmpty()) {
                 for (Iterator it = im.values().iterator(); it.hasNext(); ) {
                     int[] ba = (int[]) it.next();
                     assert (ba != null) && (ba.length > 2);
@@ -335,7 +331,7 @@ public final class GenerateBidiTestData {
                 continue;
             } else if (line.startsWith("#")) {
                 continue;
-            } else if (line.startsWith(PFX_TYPE) && ! ignoreDeprecatedTypeData) {
+            } else if (line.startsWith(PFX_TYPE) && !ignoreDeprecatedTypeData) {
                 List lines = new ArrayList();
                 if ((n = readType(line, b, lines)) < 0) {
                     break;
@@ -356,14 +352,14 @@ public final class GenerateBidiTestData {
         // dump instrumentation
         if (verbose) {
             System.out.println();
-            if (! ignoreDeprecatedTypeData) {
+            if (!ignoreDeprecatedTypeData) {
                 System.out.println("Read type ranges : " + numTypeRanges);
             }
             System.out.println("Read level specs : " + numLevelSpecs);
             System.out.println("Read test specs  : " + numTestSpecs);
             System.out.println("Read lines       : " + lineNumber);
         }
-        if (! ignoreDeprecatedTypeData) {
+        if (!ignoreDeprecatedTypeData) {
             td = (int[][]) tdl.toArray(new int [ tdl.size() ] []);
         }
         ld = (int[][]) ldl.toArray(new int [ ldl.size() ] []);
@@ -378,12 +374,12 @@ public final class GenerateBidiTestData {
         boolean done = false;
         int n = 0;
         lines.add(line);
-        while (! done) {
+        while (!done) {
             switch (testPrefix(b, PFX_LEVELS)) {
             case 0:     // within current levels
                 if ((line = b.readLine()) != null) {
                     n++;
-                    if ((line.length() > 0) && ! line.startsWith("#")) {
+                    if ((line.length() > 0) && !line.startsWith("#")) {
                         lines.add(line);
                     }
                 } else {
@@ -509,7 +505,7 @@ public final class GenerateBidiTestData {
         CharacterIterator ci = new StringCharacterIterator(charRanges);
         // read initial list delimiter
         skipSpace(ci);
-        if (! readStartOfList(ci)) {
+        if (!readStartOfList(ci)) {
             badRangeSpec("missing initial list delimiter", charRanges);
         }
         // read negation token if present
@@ -538,7 +534,7 @@ public final class GenerateBidiTestData {
             String s;
             skipSpace(ci);
             if ((s = maybeReadSeparator(ci)) != null) {
-                if ((s.length() != 0) && ! s.equals("||")) {
+                if ((s.length() != 0) && !s.equals("||")) {
                     badRangeSpec("invalid item separator \"" + s + "\"", charRanges);
                 }
             }
@@ -557,10 +553,10 @@ public final class GenerateBidiTestData {
         }
         // read terminating list delimiter
         skipSpace(ci);
-        if (! readEndOfList(ci)) {
+        if (!readEndOfList(ci)) {
             badRangeSpec("missing terminating list delimiter", charRanges);
         }
-        if (! atEnd(ci)) {
+        if (!atEnd(ci)) {
             badRangeSpec("extraneous content prior to end of line", ci);
         }
         if (negated) {
@@ -578,9 +574,9 @@ public final class GenerateBidiTestData {
     }
 
     private static void skipSpace(CharacterIterator ci) {
-        while (! atEnd(ci)) {
+        while (!atEnd(ci)) {
             char c = ci.current();
-            if (! Character.isWhitespace(c)) {
+            if (!Character.isWhitespace(c)) {
                 break;
             } else {
                 ci.next();
@@ -589,7 +585,7 @@ public final class GenerateBidiTestData {
     }
 
     private static boolean maybeReadNext(CharacterIterator ci, char next) {
-        while (! atEnd(ci)) {
+        while (!atEnd(ci)) {
             char c = ci.current();
             if (c == next) {
                 ci.next();
@@ -906,7 +902,7 @@ public final class GenerateBidiTestData {
         List ll = new ArrayList();
         // read prefix
         skipSpace(ci);
-        if (! maybeReadToken(ci, PFX_LEVELS)) {
+        if (!maybeReadToken(ci, PFX_LEVELS)) {
             badLevelSpec("missing prefix \"" + PFX_LEVELS + "\"", ci);
         }
         // read level values
@@ -924,7 +920,7 @@ public final class GenerateBidiTestData {
         }
         // read to end of line
         skipSpace(ci);
-        if (! atEnd(ci)) {
+        if (!atEnd(ci)) {
             badLevelSpec("extraneous content prior to end of line", ci);
         }
         if (ll.size() == 0) {
@@ -1007,7 +1003,7 @@ public final class GenerateBidiTestData {
         List rl = new ArrayList();
         // read prefix
         skipSpace(ci);
-        if (! maybeReadToken(ci, PFX_REORDER)) {
+        if (!maybeReadToken(ci, PFX_REORDER)) {
             badReorderSpec("missing prefix \"" + PFX_REORDER + "\"", ci);
         }
         // read reorder values
@@ -1023,7 +1019,7 @@ public final class GenerateBidiTestData {
         }
         // read to end of line
         skipSpace(ci);
-        if (! atEnd(ci)) {
+        if (!atEnd(ci)) {
             badReorderSpec("extraneous content prior to end of line", ci);
         }
         return createReorderArray(rl, levels);
@@ -1066,7 +1062,7 @@ public final class GenerateBidiTestData {
         CharacterIterator ci = new StringCharacterIterator(line);
         List cl = new ArrayList();
         // read bidi class identifier sequence
-        while (! atEnd(ci) && ! maybeReadNext(ci, ';')) {
+        while (!atEnd(ci) && !maybeReadNext(ci, ';')) {
             skipSpace(ci);
             int bc;
             if ((bc = maybeReadBidiClass(ci)) >= 0) {
@@ -1086,7 +1082,7 @@ public final class GenerateBidiTestData {
         }
         // read to end of line
         skipSpace(ci);
-        if (! atEnd(ci)) {
+        if (!atEnd(ci)) {
             badTestSpec("extraneous content prior to end of line", ci);
         }
         return createTestArray(cl, bs, levels);
@@ -1244,7 +1240,7 @@ public final class GenerateBidiTestData {
                 ok = false;
             }
         }
-        if (! ok) {
+        if (!ok) {
             System.out.println("Usage: GenerateBidiTestData [-v] [-i] [-d <ucdFile>] [-b <bidiFile>] [-o <outputFile>]");
             System.out.println("  defaults:");
             if (ignoreDeprecatedTypeData) {

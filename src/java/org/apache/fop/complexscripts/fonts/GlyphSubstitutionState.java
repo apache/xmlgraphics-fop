@@ -27,7 +27,6 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
 
 /**
  * <p>The <code>GlyphSubstitutionState</code> implements an state object used during glyph substitution
@@ -130,7 +129,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * @param predication a predication value to add to association A if predications enabled
      */
     public void putGlyph(int glyph, GlyphSequence.CharAssociation a, Object predication) {
-        if (! ogb.hasRemaining()) {
+        if (!ogb.hasRemaining()) {
             ogb = growBuffer(ogb);
         }
         ogb.put(glyph);

@@ -20,7 +20,6 @@
 package org.apache.fop.complexscripts.fonts;
 
 // CSOFF: LineLengthCheck
-// CSOFF: InnerAssignmentCheck
 
 /**
  * <p>The <code>GlyphDefinitionSubtable</code> implements an abstract base of a glyph definition subtable,

@@ -96,7 +96,8 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         writingModeTraits = new WritingModeTraits(
-            WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()));
+            WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()),
+            pList.getExplicit(PR_WRITING_MODE) != null);
         if (masterReference == null || masterReference.equals("")) {
             missingPropertyError("master-reference");
         }
@@ -403,6 +404,16 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean getExplicitWritingMode() {
+        if (writingModeTraits != null) {
+            return writingModeTraits.getExplicitWritingMode();
+        } else {
+            return false;
+        }
+    }
 
     @Override
     protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
@@ -421,6 +432,11 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
             ranges = main.collectDelimitedTextRanges(ranges);
         }
         return ranges;
+    }
+
+    @Override
+    protected boolean isBidiBoundary(boolean propagate) {
+        return true;
     }
 
     /**

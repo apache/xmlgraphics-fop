@@ -32,7 +32,7 @@ import java.util.List;
 public class PDFDestsTestCase extends PDFObjectTestCase {
 
     private PDFDests dests = new PDFDests();
-    private String expectedString = "<< /Names [(number) 10 (name) /Test#20name] >>\n";
+    private String expectedString = "<< /Names [(number) 10 (name) /Test#20name] >>";
 
     @Before
     public void setUp() {

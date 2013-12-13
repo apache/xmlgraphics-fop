@@ -571,6 +571,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             Dimension dim = new Dimension(viewArea.width, viewArea.height);
 
             establishForeignAttributes(page.getForeignAttributes());
+            documentHandler.getContext().setPageIndex(page.getPageIndex());
             documentHandler.startPage(page.getPageIndex(), page.getPageNumberString(),
                     page.getSimplePageMasterName(), dim);
             resetForeignAttributes();
@@ -598,6 +599,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
             establishForeignAttributes(page.getForeignAttributes());
             documentHandler.endPage();
+            documentHandler.getContext().setPageIndex(-1);
             resetForeignAttributes();
         } catch (IFException e) {
             handleIFException(e);
@@ -740,6 +742,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     protected void renderBlockViewport(BlockViewport bv, List children) {
         //Essentially the same code as in the super class but optimized for the IF
 
+        // Handle new layer.
+        boolean inNewLayer = false;
+        if (maybeStartLayer(bv)) {
+            inNewLayer = true;
+        }
+
         //This is the content-rect
         Dimension dim = new Dimension(bv.getIPD(), bv.getBPD());
         viewportDimensionStack.push(dim);
@@ -840,6 +848,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             currentBPPosition += bv.getAllocBPD();
         }
         viewportDimensionStack.pop();
+        maybeEndLayer(bv, inNewLayer);
     }
 
     /** {@inheritDoc} */
@@ -847,7 +856,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         StructureTreeElement structElem
                 = (StructureTreeElement) viewport.getTrait(Trait.STRUCTURE_TREE_ELEMENT);
         establishStructureTreeElement(structElem);
-        pushdID(viewport);
+        pushID(viewport);
         Dimension dim = new Dimension(viewport.getIPD(), viewport.getBPD());
         viewportDimensionStack.push(dim);
         super.renderInlineViewport(viewport);
@@ -894,9 +903,26 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
+    protected void startLayer(String layer) {
+        if (log.isTraceEnabled()) {
+            log.trace("startLayer() layer=" + layer);
+        }
+        saveGraphicsState();
+        pushGroup(new IFGraphicContext.Group(layer));
+    }
+
+    /** {@inheritDoc} */
+    protected void endLayer() {
+        if (log.isTraceEnabled()) {
+            log.trace("endLayer()");
+        }
+        restoreGraphicsState();
+    }
+
+    /** {@inheritDoc} */
     protected void renderInlineArea(InlineArea inlineArea) {
         saveInlinePosIfTargetable(inlineArea);
-        pushdID(inlineArea);
+        pushID(inlineArea);
         super.renderInlineArea(inlineArea);
         popID(inlineArea);
     }
@@ -963,7 +989,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             log.trace("renderBlock() " + block);
         }
         saveBlockPosIfTargetable(block);
-        pushdID(block);
+        pushID(block);
         IFContext context = documentHandler.getContext();
         Locale oldLocale = context.getLanguage();
         context.setLanguage(block.getLocale());
@@ -975,7 +1001,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         popID(block);
     }
 
-    private void pushdID(Area area) {
+    private void pushID(Area area) {
         String prodID = (String) area.getTrait(Trait.PROD_ID);
         if (prodID != null) {
             ids.push(prodID);
