@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
+import org.apache.fop.layoutmgr.BestFitPenalty.Variant;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.ListUtil;
 
@@ -98,6 +99,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private int currentKeepContext = Constants.EN_AUTO;
     private KnuthNode lastBeforeKeepContextSwitch;
 
+    /** Holds the variant that should be assigned to the next node to be created */
+    private Variant variant;
+
     /**
      * Construct a page breaking algorithm.
      * @param topLevelLM the top level layout manager
@@ -149,12 +153,14 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         /** Index of the last inserted element of the last inserted footnote. */
         public int footnoteElementIndex;
 
+        public final Variant variant;
+
         public KnuthPageNode(int position,
                              int line, int fitness,
                              int totalWidth, int totalStretch, int totalShrink,
                              int totalFootnotes, int footnoteListIndex, int footnoteElementIndex,
                              double adjustRatio, int availableShrink, int availableStretch,
-                             int difference, double totalDemerits, KnuthNode previous) {
+                             int difference, double totalDemerits, KnuthNode previous, Variant variant) {
             super(position, line, fitness,
                   totalWidth, totalStretch, totalShrink,
                   adjustRatio, availableShrink, availableStretch,
@@ -162,6 +168,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             this.totalFootnotes = totalFootnotes;
             this.footnoteListIndex = footnoteListIndex;
             this.footnoteElementIndex = footnoteElementIndex;
+            this.variant = variant;
         }
 
     }
@@ -175,6 +182,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         private final int[] bestFootnotesLength = new int[4];
         private final int[] bestFootnoteListIndex = new int[4];
         private final int[] bestFootnoteElementIndex = new int[4];
+        private final Variant[] bestVariant = new Variant[4];
 
         @Override
         public void addRecord(double demerits, KnuthNode node, double adjust,
@@ -186,6 +194,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             bestFootnotesLength[fitness] = insertedFootnotesLength;
             bestFootnoteListIndex[fitness] = footnoteListIndex;
             bestFootnoteElementIndex[fitness] = footnoteElementIndex;
+            bestVariant[fitness] = variant;
         }
 
         public int getFootnotesLength(int fitness) {
@@ -198,6 +207,10 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
         public int getFootnoteElementIndex(int fitness) {
             return bestFootnoteElementIndex[fitness];
+        }
+
+        public Variant getVariant(int fitness) {
+            return bestVariant[fitness];
         }
     }
 
@@ -290,7 +303,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                                  totalWidth, totalStretch, totalShrink,
                                  insertedFootnotesLength, footnoteListIndex, footnoteElementIndex,
                                  adjustRatio, availableShrink, availableStretch,
-                                 difference, totalDemerits, previous);
+                                 difference, totalDemerits, previous, variant);
     }
 
     /** {@inheritDoc} */
@@ -304,7 +317,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                                  ((BestPageRecords) best).getFootnoteElementIndex(fitness),
                                  best.getAdjust(fitness), best.getAvailableShrink(fitness),
                                  best.getAvailableStretch(fitness), best.getDifference(fitness),
-                                 best.getDemerits(fitness), best.getNode(fitness));
+                                 best.getDemerits(fitness), best.getNode(fitness),
+                                 ((BestPageRecords) best).getVariant(fitness));
     }
 
     /**
@@ -432,6 +446,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     /** {@inheritDoc} */
     @Override
     protected void considerLegalBreak(KnuthElement element, int elementIdx) {
+        variant = null;
         if (element.isPenalty()) {
             int breakClass = ((KnuthPenalty) element).getBreakClass();
             switch (breakClass) {
@@ -500,7 +515,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         int footnoteSplit;
         boolean canDeferOldFN;
         if (element.isPenalty()) {
-            actualWidth += element.getWidth();
+            if (element instanceof BestFitPenalty) {
+                actualWidth += handleBestFitPenalty(activeNode, (BestFitPenalty) element, elementIndex);
+            } else {
+                actualWidth += element.getWidth();
+            }
         }
         if (footnotesPending) {
             // compute the total length of the footnotes not yet inserted
@@ -558,6 +577,18 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         } else {
             return diff;
         }
+    }
+
+    private int handleBestFitPenalty(KnuthNode activeNode, BestFitPenalty penalty, int elementIndex) {
+        for (Variant var : penalty.getVariantList()) {
+            int difference = computeDifference(activeNode, var.toPenalty(), elementIndex);
+            double r = computeAdjustmentRatio(activeNode, difference);
+            if (r >= -1.0) {
+                variant = var;
+                return variant.width;
+            }
+        }
+        return 0;
     }
 
     /**
@@ -970,6 +1001,12 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                             int total) {
         //int difference = (bestActiveNode.line < total)
         //      ? bestActiveNode.difference : bestActiveNode.difference + fillerMinWidth;
+        // Check if the given node has an attached dynamic content
+        KnuthPageNode pageNode = (KnuthPageNode) bestActiveNode;
+        if (pageNode.variant != null) {
+            BestFitPenalty penalty = (BestFitPenalty) par.get(pageNode.position);
+            penalty.activatePenalty(pageNode.variant);
+        }
         int difference = bestActiveNode.difference;
         if (difference + bestActiveNode.availableShrink < 0) {
             if (!autoHeight) {

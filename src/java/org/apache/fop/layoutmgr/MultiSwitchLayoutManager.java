@@ -137,7 +137,7 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
      */
     @Override
     protected void flush() {
-        if (getCurrentArea() != null) {
+        if (curBlockArea != null) {
             parentLayoutManager.addChildArea(getCurrentArea());
         }
     }
@@ -151,6 +151,7 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
 
         AreaAdditionUtil.addAreas(this, newPosIter, context);
         flush();
+        curBlockArea = null;
     }
 
 }

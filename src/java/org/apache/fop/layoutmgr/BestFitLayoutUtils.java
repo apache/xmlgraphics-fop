@@ -17,7 +17,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,10 +35,12 @@ public final class BestFitLayoutUtils {
         public BestFitPosition(LayoutManager lm) {
             super(lm);
         }
+
         public BestFitPosition(LayoutManager lm, List<ListElement> knuthList) {
             super(lm);
             this.knuthList = knuthList;
         }
+
         public List<Position> getPositionList() {
             List<Position> positions = new LinkedList<Position>();
             if (knuthList != null) {
@@ -62,17 +63,16 @@ public final class BestFitLayoutUtils {
 
         List<ListElement> knuthList = new LinkedList<ListElement>();
 
-        Iterator<List<ListElement>> iter = childrenLists.iterator();
-        while (iter.hasNext()) {
-
-            List<ListElement> childList = iter.next();
+        BestFitPenalty bestFitPenalty = new BestFitPenalty(new BestFitPosition(lm));
+        for (List<ListElement> childList : childrenLists) {
             SpaceResolver.resolveElementList(childList);
             int contentLength = ElementListUtils.calcContentLength(childList);
-            BestFitPenalty bestFitPenalty =
-                    new BestFitPenalty(contentLength, childList,
-                    new BestFitPosition(lm));
-            knuthList.add(bestFitPenalty);
+            bestFitPenalty.addVariant(childList, contentLength);
         }
+        // TODO Adding the two enclosing boxes is definitely a dirty hack.
+        // Let's leave it like that for now, until I find a proper fix.
+        knuthList.add(new KnuthBox(0, new Position(lm), false));
+        knuthList.add(bestFitPenalty);
         knuthList.add(new KnuthBox(0, new Position(lm), false));
         return knuthList;
     }
