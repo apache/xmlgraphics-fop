@@ -300,4 +300,35 @@ public final class XMLUtil implements XMLConstants {
         }
     }
 
+    /**
+     * Escape '<', '>' and '&' using NCRs.
+     * @param unescaped string
+     * @return escaped string
+     */
+    public static String escape(String unescaped) {
+        int needsEscape = 0;
+        for (int i = 0, n = unescaped.length(); i < n; ++i) {
+            char c = unescaped.charAt(i);
+            if ((c == '<') || (c == '>') || (c == '&')) {
+                ++needsEscape;
+            }
+        }
+        if (needsEscape > 0) {
+            StringBuffer sb = new StringBuffer(unescaped.length() + 6 * needsEscape);
+            for (int i = 0, n = unescaped.length(); i < n; ++i) {
+                char c = unescaped.charAt(i);
+                if ((c == '<') || (c == '>') || (c == '&')) {
+                    sb.append("&#x");
+                    sb.append(Integer.toString(c, 16));
+                    sb.append(';');
+                } else {
+                    sb.append(c);
+                }
+            }
+            return sb.toString();
+        } else {
+            return unescaped;
+        }
+    }
+
 }

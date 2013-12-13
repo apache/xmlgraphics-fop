@@ -35,11 +35,6 @@ import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.util.CharUtilities;
 
-// CSOFF: EmptyForIteratorPadCheck
-// CSOFF: InnerAssignmentCheck
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: SimplifyBooleanReturnCheck
-
 /**
  * The <code>InlineRun</code> class is a utility class, the instances of which are used
  * to capture a sequence of reordering levels associated with an inline area.
@@ -179,7 +174,7 @@ public class InlineRun {
         if (inline instanceof WordArea) {
             WordArea w = (WordArea) inline;
             // if not already reversed, then reverse now
-            if (! w.isReversed()) {
+            if (!w.isReversed()) {
                 if ((reversals & 1) != 0) {
                     w.reverse(mirror);
                 } else if (mirror && maybeNeedsMirroring()) {
@@ -209,10 +204,8 @@ public class InlineRun {
                     }
                     return true;
                 }
-            } else if ((ir.levels == null) && (levels == null)) {
-                return true;
             } else {
-                return false;
+                return (ir.levels == null) && (levels == null);
             }
         } else {
             return false;

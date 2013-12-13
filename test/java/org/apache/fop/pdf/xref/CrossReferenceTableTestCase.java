@@ -73,7 +73,7 @@ public class CrossReferenceTableTestCase extends CrossReferenceObjectTest {
                 .append("  /Info 2 0 R\n")
                 .append("  /ID [<0123456789ABCDEF> <0123456789ABCDEF>]\n")
                 .append("  /Size ").append(Integer.toString(offsets.size() + 1)).append('\n')
-                .append(">>\n");
+                .append(">>");
         return getBytes(expected);
     }
 

@@ -80,6 +80,7 @@ import org.apache.fop.pdf.PDFColorHandler;
 import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFFunction;
 import org.apache.fop.pdf.PDFGState;
 import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFImageXObject;
@@ -89,11 +90,18 @@ import org.apache.fop.pdf.PDFPaintingState;
 import org.apache.fop.pdf.PDFPattern;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
+import org.apache.fop.pdf.PDFShading;
 import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.pdf.ImageRawCCITTFaxAdapter;
 import org.apache.fop.render.pdf.ImageRawJPEGAdapter;
 import org.apache.fop.render.pdf.ImageRenderedAdapter;
+import org.apache.fop.render.shading.Function;
+import org.apache.fop.render.shading.GradientFactory;
+import org.apache.fop.render.shading.GradientRegistrar;
+import org.apache.fop.render.shading.PDFGradientFactory;
+import org.apache.fop.render.shading.Pattern;
+import org.apache.fop.render.shading.Shading;
 
 /**
  * <p>PDF Graphics 2D.
@@ -104,7 +112,7 @@ import org.apache.fop.render.pdf.ImageRenderedAdapter;
  *
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
-public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHandler {
+public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHandler, GradientRegistrar {
     private static final AffineTransform IDENTITY_TRANSFORM = new AffineTransform();
 
     /** The number of decimal places. */
@@ -868,11 +876,10 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             }
 
             //Gradients are currently restricted to sRGB
-            PDFDeviceColorSpace aColorSpace;
-            aColorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-            PDFPattern myPat = pdfDoc.getFactory().makeGradient(
-                    resourceContext, false, aColorSpace,
-                    someColors, theBounds, theCoords, theMatrix);
+            PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
+            PDFGradientFactory gradientFactory = (PDFGradientFactory)GradientFactory.newInstance(this);
+            PDFPattern myPat = gradientFactory.createGradient(false, colSpace, someColors, theBounds,
+                    theCoords, theMatrix);
             currentStream.write(myPat.getColorSpaceOut(fill));
 
             return true;
@@ -944,13 +951,10 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 float offset = fractions[count];
                 theBounds.add(new Double(offset));
             }
-            PDFDeviceColorSpace colSpace;
-            colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-
-            PDFPattern myPat = pdfDoc.getFactory().makeGradient(
-                resourceContext, true, colSpace,
-                 someColors, theBounds, theCoords, theMatrix);
-
+            PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
+            PDFGradientFactory gradientFactory = (PDFGradientFactory) GradientFactory.newInstance(this);
+            PDFPattern myPat = gradientFactory.createGradient(true, colSpace, someColors, theBounds,
+                    theCoords, theMatrix);
             currentStream.write(myPat.getColorSpaceOut(fill));
 
             return true;
@@ -1854,6 +1858,38 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     public void copyArea(int x, int y, int width, int height, int dx,
                          int dy) {
         //NYI
+    }
+
+    /**
+     * Registers a function object against the output format document
+     * @param function The function object to register
+     * @return Returns either the function which has already been registered
+     * or the current new registered object.
+     */
+    public Function registerFunction(Function function) {
+        return pdfDoc.getFactory().registerFunction((PDFFunction)function);
+    }
+
+    /**
+     * Registers a shading object against the otuput format document
+     * @param shading The shading object to register
+     * @return Returs either the shading which has already been registered
+     * or the current new registered object
+     */
+    public Shading registerShading(Shading shading) {
+        assert shading instanceof PDFShading;
+        return pdfDoc.getFactory().registerShading(resourceContext, (PDFShading)shading);
+    }
+
+    /**
+     * Registers a pattern object against the output format document
+     * @param pattern The pattern object to register
+     * @return Returns either the pattern which has already been registered
+     * or the current new registered object
+     */
+    public Pattern registerPattern(Pattern pattern) {
+        assert pattern instanceof PDFPattern;
+        return pdfDoc.getFactory().registerPattern(resourceContext, (PDFPattern)pattern);
     }
 
 }

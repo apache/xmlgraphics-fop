@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      Test for FOP-2106: footnote must be positioned on the same page as the inline reference (not 
+      on the page before).
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-size="10pt">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="body" page-width="100pt" page-height="35pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="body">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-before.optimum="1em" space-before.minimum="0.8em" space-before.maximum="1.2em">Page 1 line 1</fo:block>
+          <fo:block space-before.optimum="1em" space-before.minimum="0.8em" space-before.maximum="1.2em">Page 1 line 2</fo:block>
+          <fo:block space-before.optimum="1em" space-before.minimum="0.8em" space-before.maximum="1.2em">Page 2 line 1</fo:block>
+          <fo:block space-before.optimum="1em" space-before.minimum="0.8em" space-before.maximum="1.2em">Page 3 line 
+            1<fo:footnote><fo:inline>*</fo:inline><fo:footnote-body><fo:block 
+                  font-size="6pt">Footnote should be on page 
+                  3</fo:block></fo:footnote-body></fo:footnote></fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- The block with footnote reference is on page 3 -->
+    <eval expected="Page 3 line 1" xpath="//pageViewport[3]//mainReference//text"/>
+    <!-- ... and so is the footnote itself -->
+    <eval expected="Footnote" xpath="//pageViewport[3]//footnote//word[1]"/>
+  </checks>
+</testcase>

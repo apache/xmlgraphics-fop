@@ -88,7 +88,8 @@ public class PDFDocumentGraphics2DConfigurator {
         final boolean strict = false;
         if (cfg != null) {
             URI thisUri = new File(".").getAbsoluteFile().toURI();
-            InternalResourceResolver resourceResolver = ResourceResolverFactory.createDefaultInternalResourceResolver(thisUri);
+            InternalResourceResolver resourceResolver
+                    = ResourceResolverFactory.createDefaultInternalResourceResolver(thisUri);
             //TODO The following could be optimized by retaining the FontManager somewhere
             FontManager fontManager = new FontManager(resourceResolver, FontDetectorFactory.createDefault(),
                     FontCacheManagerFactory.createDefault());

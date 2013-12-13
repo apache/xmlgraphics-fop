@@ -316,8 +316,8 @@ public final class AFPFontConfig implements FontConfig {
 
         private final String characterset;
 
-        private CIDKeyedFontConfig(List<FontTriplet> triplets, String type, String codePage,
-                String encoding, String characterset, String name, CharacterSetType charsetType, boolean embeddable, String uri) {
+        private CIDKeyedFontConfig(List<FontTriplet> triplets, String type, String codePage, String encoding,
+                String characterset, String name, CharacterSetType charsetType, boolean embeddable, String uri) {
             super(triplets, type, codePage, encoding, name, embeddable, uri);
             this.characterset = characterset;
             this.charsetType = charsetType;

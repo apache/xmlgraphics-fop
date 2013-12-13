@@ -55,4 +55,9 @@ public interface WritingModeTraitsGetter {
      */
     WritingMode getWritingMode();
 
+    /**
+     * @return the "explicit-writing-mode" trait
+     */
+    boolean getExplicitWritingMode();
+
 }

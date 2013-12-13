@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the PDF dictionary extensions related to optional content groups (layers),
+      including navigator and action dictionaries.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:pdf="http://xmlgraphics.apache.org/fop/extensions/pdf"
+             xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple">
+          <fo:region-body/>
+          <fo:region-before/>
+          <fo:region-after/>
+          <!-- Initial Layers Navigation Node for Page 1 -->
+          <pdf:page page-numbers="1">
+            <pdf:reference key="PresSteps" refid="navInitial"/>
+          </pdf:page>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:declarations>
+        <!-- Optional Content Group Layers -->
+        <pdf:layer id="layer1">
+          <pdf:string key="Name">Bullet 1</pdf:string>
+        </pdf:layer>
+        <pdf:layer id="layer2">
+          <pdf:string key="Name">Bullet 2</pdf:string>
+        </pdf:layer>
+        <!-- Navigator Actions -->
+        <pdf:action type="SetOCGState" id="setStateInitial">
+          <pdf:array key="State">
+            <pdf:name>OFF</pdf:name>
+            <pdf:reference refid="layer1"/>
+            <pdf:reference refid="layer2"/>
+          </pdf:array>
+        </pdf:action>
+        <pdf:action type="SetOCGState" id="setStateBullet1">
+          <pdf:array key="State">
+            <pdf:name>OFF</pdf:name>
+            <pdf:reference refid="layer2"/>
+            <pdf:name>ON</pdf:name>
+            <pdf:reference refid="layer1"/>
+          </pdf:array>
+        </pdf:action>
+        <pdf:action type="SetOCGState" id="setStateBullet2">
+          <pdf:array key="State">
+            <pdf:name>OFF</pdf:name>
+            <pdf:reference refid="layer1"/>
+            <pdf:name>ON</pdf:name>
+            <pdf:reference refid="layer2"/>
+          </pdf:array>
+        </pdf:action>
+        <!-- Navigators -->
+        <pdf:navigator id="navInitial">
+          <pdf:reference key="NA" refid="setStateBullet1"/>
+          <pdf:reference key="Next" refid="navBullet1"/>
+          <pdf:reference key="PA" refid="setStateInitial"/>
+          <pdf:reference key="Prev" refid="navInitial"/>
+        </pdf:navigator>
+        <pdf:navigator id="navBullet1">
+          <pdf:reference key="NA" refid="setStateBullet2"/>
+          <pdf:reference key="Next" refid="navBullet2"/>
+          <pdf:reference key="PA" refid="setStateInitial"/>
+          <pdf:reference key="Prev" refid="navInitial"/>
+        </pdf:navigator>
+        <pdf:navigator id="navBullet2">
+          <pdf:reference key="NA" refid="setStateBullet2"/>
+          <pdf:reference key="Next" refid="navBullet2"/>
+          <pdf:reference key="PA" refid="setStateBullet1"/>
+          <pdf:reference key="Prev" refid="navBullet1"/>
+        </pdf:navigator>
+        <!-- Document Catalog's Optional Content (Layers) Directory and Default State -->
+        <pdf:catalog>
+          <pdf:dictionary key="OCProperties">
+            <!-- Directory of OCGs (layers) in Document -->
+            <pdf:array key="OCGs">
+              <pdf:reference refid="layer1"/>
+              <pdf:reference refid="layer2"/>
+            </pdf:array>
+            <!-- Default State for OCGs -->
+            <pdf:dictionary key="D">
+              <pdf:string key="Name">Default</pdf:string>
+              <pdf:name key="BaseState">OFF</pdf:name>
+            </pdf:dictionary>
+          </pdf:dictionary>
+        </pdf:catalog>
+      </fo:declarations>
+      <fo:page-sequence master-reference="simple">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block fox:layer="layer1">
+            <fo:block>BULLET 1A</fo:block>
+            <fo:block>BULLET 1B</fo:block>
+          </fo:block>
+          <fo:block fox:layer="layer2">BULLET 2</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks xmlns:pdf="apache:fop:extensions:pdf">
+    <eval expected="layer1" xpath="//flow/block[1]/@layer"/>
+    <eval expected="layer2" xpath="//flow/block[2]/@layer"/>
+  </checks>
+</testcase>

@@ -30,6 +30,7 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFPaintingState;
+import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFText;
@@ -55,7 +56,7 @@ public class PDFContentGenerator {
     private PDFColorHandler colorHandler;
 
     /** drawing state */
-    protected PDFPaintingState currentState = null;
+    protected PDFPaintingState currentState;
     /** Text generation utility holding the current font status */
     protected PDFTextUtil textutil;
 
@@ -156,15 +157,23 @@ public class PDFContentGenerator {
      */
     protected void comment(String text) {
         if (WRITE_COMMENTS) {
-            currentStream.add("% " + text + "\n");
+            getStream().add("% " + text + "\n");
         }
     }
 
     /** Save graphics state. */
     protected void saveGraphicsState() {
         endTextObject();
-        currentState.save();
-        currentStream.add("q\n");
+        getState().save();
+        getStream().add("q\n");
+    }
+
+    /** Save graphics state with optional layer. */
+    protected void saveGraphicsState(String layer) {
+        endTextObject();
+        getState().save();
+        maybeBeginLayer(layer);
+        getStream().add("q\n");
     }
 
     /**
@@ -174,9 +183,9 @@ public class PDFContentGenerator {
      */
     protected void saveGraphicsState(String structElemType, int sequenceNum) {
         endTextObject();
-        currentState.save();
+        getState().save();
         beginMarkedContentSequence(structElemType, sequenceNum);
-        currentStream.add("q\n");
+        getStream().add("q\n");
     }
 
     /**
@@ -208,18 +217,18 @@ public class PDFContentGenerator {
         if (structElemType != null) {
             String actualTextProperty = actualText == null ? ""
                     : " /ActualText " + PDFText.escapeText(actualText);
-            currentStream.add(structElemType + " <</MCID " + String.valueOf(mcid)
+            getStream().add(structElemType + " <</MCID " + String.valueOf(mcid)
                     + actualTextProperty + ">>\n"
                     + "BDC\n");
         } else {
-            currentStream.add("/Artifact\nBMC\n");
+            getStream().add("/Artifact\nBMC\n");
             this.inArtifactMode = true;
         }
         this.inMarkedContentSequence = true;
     }
 
     void endMarkedContentSequence() {
-        currentStream.add("EMC\n");
+        getStream().add("EMC\n");
         this.inMarkedContentSequence = false;
         this.inArtifactMode = false;
     }
@@ -231,9 +240,10 @@ public class PDFContentGenerator {
      */
     protected void restoreGraphicsState(boolean popState) {
         endTextObject();
-        currentStream.add("Q\n");
+        getStream().add("Q\n");
+        maybeEndLayer();
         if (popState) {
-            currentState.restore();
+            getState().restore();
         }
     }
 
@@ -251,11 +261,42 @@ public class PDFContentGenerator {
      */
     protected void restoreGraphicsStateAccess() {
         endTextObject();
-        currentStream.add("Q\n");
+        getStream().add("Q\n");
         if (this.inMarkedContentSequence) {
             endMarkedContentSequence();
         }
-        currentState.restore();
+        getState().restore();
+    }
+
+    private void maybeBeginLayer(String layer) {
+        if ((layer != null) && (layer.length() > 0)) {
+            getState().setLayer(layer);
+            beginOptionalContent(layer);
+        }
+    }
+
+    private void maybeEndLayer() {
+        if (getState().getLayerChanged()) {
+            endOptionalContent();
+        }
+    }
+
+    private int ocNameIndex = 0;
+
+    private void beginOptionalContent(String layerId) {
+        String name;
+        PDFReference layer = document.resolveExtensionReference(layerId);
+        if (layer != null) {
+            name = "oc" + ++ocNameIndex;
+            document.getResources().addProperty(name, layer);
+        } else {
+            name = "unknown";
+        }
+        getStream().add("/OC /" + name + " BDC\n");
+    }
+
+    private void endOptionalContent() {
+        getStream().add("EMC\n");
     }
 
     /** Indicates the beginning of a text object. */
@@ -310,8 +351,8 @@ public class PDFContentGenerator {
     public void concatenate(AffineTransform transform) {
         this.transform = transform;
         if (!transform.isIdentity()) {
-            currentState.concatenate(transform);
-            currentStream.add(CTMHelper.toPDFString(transform, false) + " cm\n");
+            getState().concatenate(transform);
+            getStream().add(CTMHelper.toPDFString(transform, false) + " cm\n");
         }
     }
 
@@ -333,7 +374,7 @@ public class PDFContentGenerator {
      * @param content the PDF content
      */
     public void add(String content) {
-        currentStream.add(content);
+        getStream().add(content);
     }
 
     /**
@@ -350,9 +391,9 @@ public class PDFContentGenerator {
      * @param width line width in points
      */
     public void updateLineWidth(float width) {
-        if (currentState.setLineWidth(width)) {
+        if (getState().setLineWidth(width)) {
             //Only write if value has changed WRT the current line width
-            currentStream.add(format(width) + " w\n");
+            getStream().add(format(width) + " w\n");
         }
     }
 
@@ -362,7 +403,7 @@ public class PDFContentGenerator {
      */
     public void updateCharacterSpacing(float value) {
         if (getState().setCharacterSpacing(value)) {
-            currentStream.add(format(value) + " Tc\n");
+            getStream().add(format(value) + " Tc\n");
         }
     }
 
@@ -400,7 +441,7 @@ public class PDFContentGenerator {
         if (pdf != null) {
             colorHandler.establishColor(pdf, col, fill);
         } else {
-            setColor(col, fill, this.currentStream);
+            setColor(col, fill, getStream());
         }
     }
 

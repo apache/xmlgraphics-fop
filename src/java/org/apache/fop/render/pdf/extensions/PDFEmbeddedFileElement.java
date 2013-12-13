@@ -30,7 +30,6 @@ import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.extensions.ExtensionAttachment;
 
 /**
  * Extension element for pdf:embedded-file.
@@ -44,11 +43,11 @@ public class PDFEmbeddedFileElement extends AbstractPDFExtensionElement {
      * Main constructor
      * @param parent parent FO node
      */
-    protected PDFEmbeddedFileElement(FONode parent) {
+    PDFEmbeddedFileElement(FONode parent) {
         super(parent);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void startOfNode() throws FOPException {
         super.startOfNode();
         if (parent.getNameId() != Constants.FO_DECLARATIONS) {
@@ -57,12 +56,12 @@ public class PDFEmbeddedFileElement extends AbstractPDFExtensionElement {
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList propertyList)
                                 throws FOPException {
-        PDFEmbeddedFileExtensionAttachment embeddedFile
-            = (PDFEmbeddedFileExtensionAttachment)getExtensionAttachment();
+        PDFEmbeddedFileAttachment embeddedFile
+            = (PDFEmbeddedFileAttachment)getExtensionAttachment();
         String desc = attlist.getValue("description");
         if (desc != null && desc.length() > 0) {
             embeddedFile.setDesc(desc);
@@ -94,13 +93,8 @@ public class PDFEmbeddedFileElement extends AbstractPDFExtensionElement {
         embeddedFile.setFilename(filename);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getLocalName() {
         return ELEMENT;
-    }
-
-    /** {@inheritDoc} */
-    protected ExtensionAttachment instantiateExtensionAttachment() {
-        return new PDFEmbeddedFileExtensionAttachment();
     }
 }

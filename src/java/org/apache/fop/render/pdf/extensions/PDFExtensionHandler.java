@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.pdf.extensions;
 
+import java.util.Stack;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -30,68 +32,189 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 
+// CSOFF: LineLengthCheck
+
 /**
  * ContentHandler (parser) for restoring PDF extension objects from XML.
  */
-public class PDFExtensionHandler extends DefaultHandler
-            implements ContentHandlerFactory.ObjectSource {
+public class PDFExtensionHandler extends DefaultHandler implements ContentHandlerFactory.ObjectSource {
 
     /** Logger instance */
     protected static final Log log = LogFactory.getLog(PDFExtensionHandler.class);
 
-    private Attributes lastAttributes;
-
     private PDFExtensionAttachment returnedObject;
     private ObjectBuiltListener listener;
 
-    /** {@inheritDoc} */
-    public void startElement(String uri, String localName, String qName, Attributes attributes)
-                throws SAXException {
-        boolean handled = false;
+    // PDFEmbeddedFileAttachment related state
+    private Attributes lastAttributes;
+
+    // PDFDictionaryAttachment related
+    private Stack<PDFCollectionExtension> collections = new Stack<PDFCollectionExtension>();
+    private boolean captureContent;
+    private StringBuffer characters;
+
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (PDFExtensionAttachment.CATEGORY.equals(uri)) {
-            lastAttributes = new AttributesImpl(attributes);
-            handled = false;
-            if (localName.equals(PDFEmbeddedFileExtensionAttachment.ELEMENT)) {
-                //handled in endElement
-                handled = true;
-            }
-        }
-        if (!handled) {
-            if (PDFExtensionAttachment.CATEGORY.equals(uri)) {
-                throw new SAXException("Unhandled element " + localName
-                        + " in namespace: " + uri);
+            if (localName.equals(PDFEmbeddedFileAttachment.ELEMENT)) {
+                lastAttributes = new AttributesImpl(attributes);
+            } else if (PDFDictionaryType.Action.elementName().equals(localName)) {
+                PDFActionExtension action = new PDFActionExtension();
+                String id = attributes.getValue(PDFDictionaryElement.ATT_ID);
+                if (id != null) {
+                    action.setProperty(PDFDictionaryExtension.PROPERTY_ID, id);
+                }
+                String type = attributes.getValue(PDFActionElement.ATT_TYPE);
+                if (type != null) {
+                    action.setProperty(PDFActionExtension.PROPERTY_TYPE, type);
+                }
+                collections.push(action);
+            } else if (PDFObjectType.Array.elementName().equals(localName)) {
+                PDFArrayExtension array = new PDFArrayExtension();
+                String key = attributes.getValue(PDFCollectionEntryElement.ATT_KEY);
+                if (key != null) {
+                    array.setKey(key);
+                }
+                collections.push(array);
+            } else if (PDFDictionaryType.Catalog.elementName().equals(localName)) {
+                PDFCatalogExtension catalog = new PDFCatalogExtension();
+                collections.push(catalog);
+            } else if (PDFDictionaryType.Dictionary.elementName().equals(localName)) {
+                PDFDictionaryExtension dictionary = new PDFDictionaryExtension();
+                String key = attributes.getValue(PDFCollectionEntryElement.ATT_KEY);
+                if (key != null) {
+                    dictionary.setKey(key);
+                }
+                collections.push(dictionary);
+            } else if (PDFDictionaryType.Layer.elementName().equals(localName)) {
+                PDFLayerExtension layer = new PDFLayerExtension();
+                String id = attributes.getValue(PDFDictionaryElement.ATT_ID);
+                if (id != null) {
+                    layer.setProperty(PDFDictionaryExtension.PROPERTY_ID, id);
+                }
+                collections.push(layer);
+            } else if (PDFDictionaryType.Navigator.elementName().equals(localName)) {
+                PDFNavigatorExtension navigator = new PDFNavigatorExtension();
+                String id = attributes.getValue(PDFDictionaryElement.ATT_ID);
+                if (id != null) {
+                    navigator.setProperty(PDFDictionaryExtension.PROPERTY_ID, id);
+                }
+                collections.push(navigator);
+            } else if (PDFDictionaryType.Page.elementName().equals(localName)) {
+                PDFPageExtension page = new PDFPageExtension();
+                String pageNumbers = attributes.getValue(PDFPageElement.ATT_PAGE_NUMBERS);
+                if (pageNumbers != null) {
+                    page.setProperty(PDFPageExtension.PROPERTY_PAGE_NUMBERS, pageNumbers);
+                }
+                collections.push(page);
+            } else if (PDFObjectType.hasValueOfElementName(localName)) {
+                PDFCollectionEntryExtension entry;
+                if (PDFObjectType.Reference.elementName().equals(localName)) {
+                    entry = new PDFReferenceExtension();
+                } else {
+                    entry = new PDFCollectionEntryExtension(PDFObjectType.valueOfElementName(localName));
+                }
+                String key = attributes.getValue(PDFCollectionEntryElement.ATT_KEY);
+                if (key != null) {
+                    entry.setKey(key);
+                }
+                if (entry instanceof PDFReferenceExtension) {
+                    String refid = attributes.getValue(PDFReferenceElement.ATT_REFID);
+                    if (refid != null) {
+                        ((PDFReferenceExtension) entry).setReferenceId(refid);
+                    }
+                }
+                if (!collections.empty()) {
+                    PDFCollectionExtension collection = collections.peek();
+                    collection.addEntry(entry);
+                    if (!(entry instanceof PDFReferenceExtension)) {
+                        captureContent = true;
+                    }
+                }
             } else {
-                log.warn("Unhandled element " + localName
-                        + " in namespace: " + uri);
+                throw new SAXException("Unhandled element " + localName + " in namespace: " + uri);
             }
+        } else {
+            log.warn("Unhandled element " + localName + " in namespace: " + uri);
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
+    public void characters(char[] data, int start, int length) throws SAXException {
+        if (captureContent) {
+            if (characters == null) {
+                characters = new StringBuffer((length < 16) ? 16 : length);
+            }
+            characters.append(data, start, length);
+        }
+    }
+
+    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (PDFExtensionAttachment.CATEGORY.equals(uri)) {
-            if (PDFEmbeddedFileExtensionAttachment.ELEMENT.equals(localName)) {
+            if (PDFEmbeddedFileAttachment.ELEMENT.equals(localName)) {
                 String name = lastAttributes.getValue("name");
                 String src = lastAttributes.getValue("src");
                 String desc = lastAttributes.getValue("description");
-                this.returnedObject = new PDFEmbeddedFileExtensionAttachment(name, src, desc);
+                this.lastAttributes = null;
+                this.returnedObject = new PDFEmbeddedFileAttachment(name, src, desc);
+            } else if (PDFDictionaryType.hasValueOfElementName(localName)) {
+                if (!collections.empty() && (collections.peek() instanceof PDFDictionaryExtension)) {
+                    PDFDictionaryExtension dictionary = (PDFDictionaryExtension) collections.pop();
+                    if (!collections.empty()) {
+                        PDFCollectionExtension collectionOuter = collections.peek();
+                        collectionOuter.addEntry(dictionary);
+                    } else if (dictionary.getDictionaryType() != PDFDictionaryType.Dictionary) {
+                        this.returnedObject = new PDFDictionaryAttachment(dictionary);
+                    } else {
+                        throw new SAXException(new IllegalStateException("generic dictionary not permitted at outer level"));
+                    }
+                } else {
+                    throw new SAXException(new IllegalStateException("collections stack is empty or not a dictionary"));
+                }
+            } else if (PDFObjectType.Array.elementName().equals(localName)) {
+                if (!collections.empty() && (collections.peek() instanceof PDFArrayExtension)) {
+                    PDFArrayExtension array = (PDFArrayExtension) collections.pop();
+                    if (!collections.empty()) {
+                        PDFCollectionExtension collectionOuter = collections.peek();
+                        collectionOuter.addEntry(array);
+                    } else {
+                        throw new SAXException(new IllegalStateException("array not permitted at outer level"));
+                    }
+                } else {
+                    throw new SAXException(new IllegalStateException("collections stack is empty or not an array"));
+                }
+            } else if (PDFObjectType.hasValueOfElementName(localName)) {
+                if (!collections.empty()) {
+                    PDFCollectionExtension collection = collections.peek();
+                    PDFCollectionEntryExtension entry = collection.getLastEntry();
+                    if (entry != null) {
+                        if (characters != null) {
+                            entry.setValue(characters.toString());
+                            characters = null;
+                        }
+                    } else {
+                        throw new SAXException(new IllegalStateException("no current entry"));
+                    }
+                } else {
+                    throw new SAXException(new IllegalStateException("entry not permitted at outer level"));
+                }
             }
         }
+        captureContent = false;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void endDocument() throws SAXException {
         if (listener != null) {
             listener.notifyObjectBuilt(getObject());
         }
     }
 
-    /** {@inheritDoc} */
     public Object getObject() {
         return returnedObject;
     }
 
-    /** {@inheritDoc} */
     public void setObjectBuiltListener(ObjectBuiltListener listener) {
         this.listener = listener;
     }

@@ -96,7 +96,8 @@ public class InlineContainer extends FObj {
         overflow = pList.get(PR_OVERFLOW).getEnum();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         writingModeTraits = new WritingModeTraits(
-            WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()));
+            WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()),
+            pList.getExplicit(PR_WRITING_MODE) != null);
     }
 
     /**
@@ -238,6 +239,14 @@ public class InlineContainer extends FObj {
         return writingModeTraits.getWritingMode();
     }
 
+    /**
+     * Obtain writing mode explicit indicator.
+     * @return the writing mode explicit indicator
+     */
+    public boolean getExplicitWritingMode() {
+        return writingModeTraits.getExplicitWritingMode();
+    }
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "inline-container";
@@ -254,6 +263,11 @@ public class InlineContainer extends FObj {
     @Override
     public boolean isDelimitedTextRangeBoundary(int boundary) {
         return false;
+    }
+
+    @Override
+    protected boolean isBidiBoundary(boolean propagate) {
+        return getExplicitWritingMode();
     }
 
 }

@@ -33,10 +33,6 @@ import org.apache.fop.complexscripts.util.GlyphContextTester;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 
-// CSOFF: AvoidNestedBlocksCheck
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: InnerAssignmentCheck
-// CSOFF: SimplifyBooleanReturnCheck
 // CSOFF: LineLengthCheck
 
 /**
@@ -159,11 +155,11 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         } else {
             int s = a.getStart();
             int e = a.getEnd();
-            if (! hasFinalPrecedingContext(ca, nc, s, e)) {
+            if (!hasFinalPrecedingContext(ca, nc, s, e)) {
                 return false;
             } else if (forcesFinalThisContext(ca, nc, s, e)) {
                 return true;
-            } else if (! hasFinalFollowingContext(ca, nc, s, e)) {
+            } else if (!hasFinalFollowingContext(ca, nc, s, e)) {
                 return false;
             } else {
                 return true;
@@ -180,9 +176,9 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         } else {
             int s = a.getStart();
             int e = a.getEnd();
-            if (! hasInitialPrecedingContext(ca, nc, s, e)) {
+            if (!hasInitialPrecedingContext(ca, nc, s, e)) {
                 return false;
-            } else if (! hasInitialFollowingContext(ca, nc, s, e)) {
+            } else if (!hasInitialFollowingContext(ca, nc, s, e)) {
                 return false;
             } else {
                 return true;
@@ -211,9 +207,9 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         } else {
             int s = a.getStart();
             int e = a.getEnd();
-            if (! hasLigaturePrecedingContext(ca, nc, s, e)) {
+            if (!hasLigaturePrecedingContext(ca, nc, s, e)) {
                 return false;
-            } else if (! hasLigatureFollowingContext(ca, nc, s, e)) {
+            } else if (!hasLigatureFollowingContext(ca, nc, s, e)) {
                 return false;
             } else {
                 return true;
@@ -230,11 +226,11 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         } else {
             int s = a.getStart();
             int e = a.getEnd();
-            if (! hasMedialPrecedingContext(ca, nc, s, e)) {
+            if (!hasMedialPrecedingContext(ca, nc, s, e)) {
                 return false;
-            } else if (! hasMedialThisContext(ca, nc, s, e)) {
+            } else if (!hasMedialThisContext(ca, nc, s, e)) {
                 return false;
-            } else if (! hasMedialFollowingContext(ca, nc, s, e)) {
+            } else if (!hasMedialFollowingContext(ca, nc, s, e)) {
                 return false;
             } else {
                 return true;

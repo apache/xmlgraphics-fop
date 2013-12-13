@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suppressions PUBLIC "-//Puppy Crawl//DTD Suppressions 1.1//EN" "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 <suppressions>
-    <suppress files="org/apache/fop/fo/FOPropertyMapping.java" checks="FileLengthCheck"/>
-    <suppress files="org/apache/fop/complexscripts/fonts/GlyphPositioningTable.java" checks="FileLengthCheck"/>
-    <suppress files="org/apache/fop/complexscripts/fonts/OTFAdvancedTypographicTableReader.java" checks="FileLengthCheck"/>
-    <suppress files="org/apache/fop/Version.java" lines="40-50" checks="LineLengthCheck"/>
+  <suppress files="org/apache/fop/afp/fonts/CharactersetEncoder.java" checks="FinalClass"/>
+  <suppress files="org/apache/fop/complexscripts/bidi/BidiClass.java" checks="WhitespaceAfter"/>
+  <suppress files="org/apache/fop/complexscripts/bidi/GenerateBidiTestData.java" checks="SimplifyBooleanReturn"/>
+  <suppress files="org/apache/fop/complexscripts/scripts/ArabicScriptProcessor.java" checks="SimplifyBooleanReturn"/>
+  <suppress files="org/apache/fop/complexscripts/util/CharScript.java" checks="SimplifyBooleanReturn"/>
 </suppressions>

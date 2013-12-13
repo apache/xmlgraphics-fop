@@ -27,7 +27,8 @@ import java.io.Serializable;
  */
 public class FontTriplet implements Comparable<FontTriplet>, Serializable {
 
-    public static final FontTriplet DEFAULT_FONT_TRIPLET = new FontTriplet("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
+    public static final FontTriplet DEFAULT_FONT_TRIPLET
+            = new FontTriplet("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
 
     /** serial version UID */
     private static final long serialVersionUID = 1168991106658033508L;

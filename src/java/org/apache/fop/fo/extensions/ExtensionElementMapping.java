@@ -68,6 +68,8 @@ public class ExtensionElementMapping extends ElementMapping {
         PROPERTY_ATTRIBUTES.add("border-before-end-radius");
         PROPERTY_ATTRIBUTES.add("border-after-start-radius");
         PROPERTY_ATTRIBUTES.add("border-after-end-radius");
+        //Optional content groups (layers)
+        PROPERTY_ATTRIBUTES.add("layer");
     }
 
     /**

@@ -35,6 +35,8 @@ import static org.junit.Assert.assertTrue;
  */
 public class EmbedFontInfoTestCase {
 
+    public EmbedFontInfoTestCase() {}
+
     private EmbedFontInfo sut;
 
     private final URI metricsURI = URI.create("test/resources/fonts/ttf/glb12.ttf.xml");

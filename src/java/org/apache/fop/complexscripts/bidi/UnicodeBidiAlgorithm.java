@@ -25,12 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.traits.Direction;
 import org.apache.fop.util.CharUtilities;
 
-// CSOFF: AvoidNestedBlocksCheck
-// CSOFF: EmptyForIteratorPadCheck
-// CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: ParameterNumberCheck
 
 /**
  * <p>The <code>UnicodeBidiAlgorithm</code> class implements functionality prescribed by
@@ -125,47 +120,39 @@ public final class UnicodeBidiAlgorithm implements BidiConstants {
             case RLE:                               // start right-to-left embedding
             case LRO:                               // start left-to-right override
             case RLO:                               // start right-to-left override
-                {
-                    int en;                         /* new embedding level */
-                    if ((bc == RLE) || (bc == RLO)) {
-                        en = ((ec & ~OVERRIDE) + 1) | 1;
-                    } else {
-                        en = ((ec & ~OVERRIDE) + 2) & ~1;
-                    }
-                    if (en < (MAX_LEVELS + 1)) {
-                        es [ ei++ ] = ec;
-                        if ((bc == LRO) || (bc == RLO)) {
-                            ec = en | OVERRIDE;
-                        } else {
-                            ec = en & ~OVERRIDE;
-                        }
-                    } else {
-                        // max levels exceeded, so don't change level or override
-                    }
-                    el = ec;
-                    break;
+                int en;                         /* new embedding level */
+                if ((bc == RLE) || (bc == RLO)) {
+                    en = ((ec & ~OVERRIDE) + 1) | 1;
+                } else {
+                    en = ((ec & ~OVERRIDE) + 2) & ~1;
                 }
+                if (en < (MAX_LEVELS + 1)) {
+                    es [ ei++ ] = ec;
+                    if ((bc == LRO) || (bc == RLO)) {
+                        ec = en | OVERRIDE;
+                    } else {
+                        ec = en & ~OVERRIDE;
+                    }
+                } else {
+                    // max levels exceeded, so don't change level or override
+                }
+                el = ec;
+                break;
             case PDF:                               // pop directional formatting
-                {
-                    el = ec;
-                    if (ei > 0) {
-                        ec = es [ --ei ];
-                    } else {
-                        // ignore isolated PDF
-                    }
-                    break;
+                el = ec;
+                if (ei > 0) {
+                    ec = es [ --ei ];
+                } else {
+                    // ignore isolated PDF
                 }
+                break;
             case B:                                 // paragraph separator
-                {
-                    el = ec = defaultLevel;
-                    ei = 0;
-                    break;
-                }
+                el = ec = defaultLevel;
+                ei = 0;
+                break;
             default:
-                {
-                    el = ec;
-                    break;
-                }
+                el = ec;
+                break;
             }
             switch (bc) {
             case BN:
@@ -608,7 +595,7 @@ public final class UnicodeBidiAlgorithm implements BidiConstants {
 
     private static boolean isRetainedFormatting(int[] ca, int s, int e) {
         for (int i = s; i < e; i++) {
-            if (! isRetainedFormatting(ca[i])) {
+            if (!isRetainedFormatting(ca[i])) {
                 return false;
             }
         }
@@ -680,7 +667,7 @@ public final class UnicodeBidiAlgorithm implements BidiConstants {
             } else {
                 chOut = chIn;
             }
-            if (! triggered && triggersBidi(chOut)) {
+            if (!triggered && triggersBidi(chOut)) {
                 triggered = true;
             }
             if ((chOut & 0xFF0000) == 0) {

@@ -28,6 +28,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.fonts.Glyphs;
+
 import org.apache.fop.fonts.NamedCharacter;
 import org.apache.fop.fonts.type1.AFMParser.ValueHandler;
 
@@ -102,9 +104,10 @@ abstract class CharMetricsHandler {
             AFMCharMetrics chm = defaultHandler.parse(line, stack, afmFileName);
             NamedCharacter namedChar = chm.getCharacter();
             if (namedChar != null) {
-                int codePoint = AdobeStandardEncoding.getAdobeCodePoint(namedChar.getName());
-                if (chm.getCharCode() != codePoint) {
-                    LOG.info(afmFileName + ": named character '" + namedChar.getName() + "'"
+                String charName = namedChar.getName();
+                int codePoint = AdobeStandardEncoding.getAdobeCodePoint(charName);
+                if (chm.getCharCode() != codePoint && !Glyphs.NOTDEF.equals(charName)) {
+                    LOG.info(afmFileName + ": named character '" + charName + "'"
                             + " has an incorrect code point: " + chm.getCharCode()
                             + ". Changed to " + codePoint);
                     chm.setCharCode(codePoint);

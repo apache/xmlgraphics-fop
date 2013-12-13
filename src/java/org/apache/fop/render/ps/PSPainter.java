@@ -116,7 +116,7 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
     }
 
     /** {@inheritDoc} */
-    public void startGroup(AffineTransform transform) throws IFException {
+    public void startGroup(AffineTransform transform, String layer) throws IFException {
         try {
             PSGenerator generator = getGenerator();
             saveGraphicsState();

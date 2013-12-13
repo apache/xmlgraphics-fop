@@ -408,7 +408,7 @@ public class FOUserAgent {
         try {
             // Have to do this so we can resolve data URIs
             StreamSource src = new StreamSource(resourceResolver.getResource(uri));
-            src.setSystemId(uri);
+            src.setSystemId(new File(uri).toURI().toURL().toExternalForm());
             return src;
         } catch (URISyntaxException use) {
             return null;

@@ -32,11 +32,7 @@ import org.apache.fop.area.LineArea;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.pagination.PageSequence;
 
-// CSOFF: EmptyForIteratorPadCheck
-// CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: SimplifyBooleanReturnCheck
 
 /**
  * <p>A utility class for performing bidirectional resolution processing.</p>
@@ -140,7 +136,7 @@ public final class BidiResolver {
                 runsNew.addAll(ir.split());
             }
         }
-        if (! runsNew.equals(runs)) {
+        if (!runsNew.equals(runs)) {
             runs = runsNew;
         }
         return runs;
@@ -180,7 +176,7 @@ public final class BidiResolver {
                 i = e - 1;
             }
         }
-        if (! runsNew.equals(runs)) {
+        if (!runsNew.equals(runs)) {
             runs = runsNew;
         }
         return runs;
@@ -232,7 +228,7 @@ public final class BidiResolver {
         Vector rv = new Vector();
         for (Iterator it = ranges.iterator(); it.hasNext(); ) {
             DelimitedTextRange r = (DelimitedTextRange) it.next();
-            if (! r.isEmpty()) {
+            if (!r.isEmpty()) {
                 rv.add(r);
             }
         }
