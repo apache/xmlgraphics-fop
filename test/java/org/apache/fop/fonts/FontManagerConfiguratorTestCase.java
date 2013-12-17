@@ -20,7 +20,6 @@
 package org.apache.fop.fonts;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 
@@ -28,13 +27,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FopConfBuilder;
 import org.apache.fop.apps.FopConfParser;
 import org.apache.fop.apps.FopFactory;
 
 import static org.apache.fop.apps.FopConfParserTestCase.getFopFactory;
-import static org.junit.Assert.assertEquals;
 
 /**
  * A test case for {@link FontManagerConfigurator}.
@@ -84,7 +84,7 @@ public class FontManagerConfiguratorTestCase {
     /**
      * This test is an interesting one; it's basically testing that if a base URI pointing to a
      * directory that doesn't exist is used, an error is not thrown. The URI resolver should handle
-     * any {@link FileNotFoundException}s, not the configuration. We're NOT testing whether a font
+     * any {@link java.io.FileNotFoundException}s, not the configuration. We're NOT testing whether a font
      * can be resolved here, just that the URI resolver accepts it as its base URI.
      */
     @Test

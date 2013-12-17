@@ -38,7 +38,10 @@ public interface TestEventProducer extends EventProducer {
      */
     void enjoy(Object source, String what);
 
-    public class Provider {
+    public static final class Provider {
+
+        private Provider() {
+        }
 
         public static TestEventProducer get(EventBroadcaster broadcaster) {
             return (TestEventProducer)broadcaster.getEventProducerFor(TestEventProducer.class);

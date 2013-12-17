@@ -29,6 +29,8 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.commons.io.FileUtils;
 
 import org.apache.batik.ext.awt.LinearGradientPaint;
@@ -36,13 +38,11 @@ import org.apache.batik.ext.awt.LinearGradientPaint;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
-import static org.junit.Assert.assertEquals;
-
 public class PSSVGLinearGraphics2DTestCase {
     float startX = 115f;
     float endX = 15f;
     float startY = 285f;
-    float endY=15f;
+    float endY = 15f;
     float[] fractions = {0.0f, 1.0f};
 
     /**

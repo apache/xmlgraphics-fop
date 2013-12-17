@@ -24,22 +24,22 @@ package org.apache.fop.complexscripts.scripts.arabic;
  */
 public interface ArabicTestConstants {
 
-    final String WF_FILE_SCRIPT = "arab";
-    final String WF_FILE_LANGUAGE = "dflt";
+    String WF_FILE_SCRIPT = "arab";
+    String WF_FILE_LANGUAGE = "dflt";
 
-    String srcFilesDir = "test/resources/complexscripts/arab/data";
-    String datFilesDir = "test/resources/complexscripts/arab/data";
+    String SRC_FILES_DIR = "test/resources/complexscripts/arab/data";
+    String DAT_FILES_DIR = "test/resources/complexscripts/arab/data";
 
-    String[] srcFiles = {
+    String[] SRC_FILES = {
         "arab-001",     // unpointed word forms
     };
 
-    final String WF_FILE_SRC_EXT = "txt";
-    final String WF_FILE_DAT_EXT = "ser";
+    String WF_FILE_SRC_EXT = "txt";
+    String WF_FILE_DAT_EXT = "ser";
 
-    String ttxFontsDir = "test/resources/complexscripts/arab/ttx";
+    String TTX_FONTS_DIR = "test/resources/complexscripts/arab/ttx";
 
-    String[] ttxFonts = {
+    String[] TTX_FONTS = {
         "arab-001.ttx", // simplified arabic
         "arab-002.ttx", // traditional arabic
         "arab-003.ttx", // lateef

@@ -19,11 +19,11 @@
 
 package org.apache.fop.afp.modca;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests the {@linkplain AbstractAFPObject} class.

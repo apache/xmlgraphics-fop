@@ -19,8 +19,6 @@
 
 package org.apache.fop.afp;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,11 +27,11 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.fop.afp.util.AFPResourceUtil;
-import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
+
+import org.apache.commons.io.IOUtils;
+
+import org.apache.fop.afp.util.AFPResourceUtil;
 
 /**
  * Tests the {@link AFPResourceUtil} class.
@@ -133,7 +131,7 @@ public class AFPResourceUtilTestCase {
      * names fails.
      * @throws Exception -
      */
-    @Test(expected=Exception.class)
+    @Test(expected = Exception.class)
     public void testResourceNameMismatch() throws Exception {
         testResource(RESOURCE_NAME_MISMATCH, PSEG_B);
     }
@@ -156,6 +154,6 @@ public class AFPResourceUtilTestCase {
     }
 
     private interface ResourceCopier {
-        public void copy(InputStream in, OutputStream out) throws IOException;
+        void copy(InputStream in, OutputStream out) throws IOException;
     }
 }

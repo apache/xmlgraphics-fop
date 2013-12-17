@@ -19,8 +19,6 @@
 
 package org.apache.fop.util;
 
-import static org.junit.Assert.assertEquals;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -31,13 +29,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
 import org.apache.commons.io.IOUtils;
-import org.apache.fop.util.bitmap.BitmapImageUtil;
-import org.apache.fop.util.bitmap.MonochromeBitmapConverter;
+
 import org.apache.xmlgraphics.image.writer.ImageWriterUtil;
 import org.apache.xmlgraphics.util.WriterOutputStream;
 import org.apache.xmlgraphics.util.io.ASCIIHexOutputStream;
-import org.junit.Test;
+
+import org.apache.fop.util.bitmap.BitmapImageUtil;
+import org.apache.fop.util.bitmap.MonochromeBitmapConverter;
 
 /**
  * Tests {@link BitmapImageUtil}.

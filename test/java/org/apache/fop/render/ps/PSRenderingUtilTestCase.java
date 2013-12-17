@@ -23,12 +23,12 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.render.ps.extensions.PSPageTrailerCodeBefore;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 public class PSRenderingUtilTestCase {
 

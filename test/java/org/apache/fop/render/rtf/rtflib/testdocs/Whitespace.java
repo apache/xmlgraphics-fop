@@ -30,11 +30,10 @@ package org.apache.fop.render.rtf.rtflib.testdocs;
 import java.io.IOException;
 
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 
 /**  Generates an RTF document to test the WhitespaceCollapser
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
 class Whitespace extends TestDocument {

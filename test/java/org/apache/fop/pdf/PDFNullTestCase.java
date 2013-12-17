@@ -19,12 +19,12 @@
 
 package org.apache.fop.pdf;
 
-import static org.junit.Assert.assertEquals;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test case for {@link PDFNull}.

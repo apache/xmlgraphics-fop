@@ -19,15 +19,15 @@ package org.apache.fop.render.ps;
 
 import org.junit.Test;
 
-import org.apache.fop.apps.AbstractRendererConfiguratorTest;
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.apps.PSRendererConfBuilder;
-import org.apache.fop.render.ps.PSRendererConfig.PSRendererConfigParser;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
+
+import org.apache.fop.apps.AbstractRendererConfiguratorTest;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.PSRendererConfBuilder;
+import org.apache.fop.render.ps.PSRendererConfig.PSRendererConfigParser;
 
 public class PSRendererConfiguratorTestCase extends
         AbstractRendererConfiguratorTest<PSRendererConfigurator, PSRendererConfBuilder> {

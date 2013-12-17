@@ -19,8 +19,6 @@
 
 package org.apache.fop;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.security.NoSuchAlgorithmException;
@@ -28,12 +26,15 @@ import java.security.NoSuchAlgorithmException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.fop.util.DigestFilter;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+
+import static org.junit.Assert.assertTrue;
+
+import org.apache.fop.util.DigestFilter;
 
 /**
  * Test case for digesting SAX filter.

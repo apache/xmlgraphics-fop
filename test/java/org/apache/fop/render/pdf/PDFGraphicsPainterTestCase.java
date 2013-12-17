@@ -24,11 +24,11 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.apache.fop.pdf.PDFNumber;
-
 import static org.mockito.Matchers.endsWith;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+
+import org.apache.fop.pdf.PDFNumber;
 
 public class PDFGraphicsPainterTestCase {
 
