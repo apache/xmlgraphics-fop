@@ -19,8 +19,8 @@
 
 package org.apache.fop.fo.pagination;
 
-import org.junit.runners.Suite;
 import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * All test to be added in FOTreeTestSuite
@@ -28,6 +28,6 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ PageSequenceMasterTestCase.class,
-        RepeatablePageMasterAlternativesTestCase.class})
+        RepeatablePageMasterAlternativesTestCase.class })
 public final class AllTests {
 }

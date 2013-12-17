@@ -1074,6 +1074,7 @@ NOTE:
         <pathelement location="${build.codegen-classes.dir}"/>
       </classpath>
       <fileset dir="${src.dir}" includes="**/*.java"/>
+      <fileset dir="${test.dir}" includes="**/*.java"/>
       <formatter type="xml" toFile="${build.dir}/report_checkstyle.xml"/>
     </checkstyle>
     <xslt in="${build.dir}/report_checkstyle.xml" out="${build.dir}/report_checkstyle.html" style="${checkstyle.noframes.xslt}"/>

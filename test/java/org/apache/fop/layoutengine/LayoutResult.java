@@ -19,8 +19,9 @@
 
 package org.apache.fop.layoutengine;
 
-import org.apache.fop.apps.FormattingResults;
 import org.w3c.dom.Document;
+
+import org.apache.fop.apps.FormattingResults;
 
 /**
  * This class holds references to all the results from the FOP processing run.

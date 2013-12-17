@@ -30,10 +30,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.flow.Marker;
-import org.apache.fop.fo.flow.Markers;
-import org.apache.fop.fo.flow.RetrieveMarker;
-import org.apache.fop.fo.flow.RetrieveTableMarker;
 
 public class MarkersTestCase {
 

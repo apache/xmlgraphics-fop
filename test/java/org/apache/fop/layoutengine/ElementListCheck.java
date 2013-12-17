@@ -22,15 +22,16 @@ package org.apache.fop.layoutengine;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.fop.layoutmgr.KnuthBox;
-import org.apache.fop.layoutmgr.KnuthElement;
-import org.apache.fop.layoutmgr.KnuthGlue;
-import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+
+import org.apache.fop.layoutmgr.KnuthBox;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthGlue;
+import org.apache.fop.layoutmgr.KnuthPenalty;
 
 /**
  * Check implementation that checks a Knuth element list.

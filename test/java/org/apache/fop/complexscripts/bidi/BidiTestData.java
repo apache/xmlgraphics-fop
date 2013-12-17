@@ -65,7 +65,7 @@ public final class BidiTestData {
             data = null;
         } finally {
             if (is != null) {
-                try { is.close(); } catch (Exception e) {}
+                try { is.close(); } catch (Exception e) { /* NOP */ }
             }
         }
         return data;

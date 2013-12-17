@@ -109,14 +109,14 @@ public class TableHeaderScopeTestCase {
     }
 
     private PDFDictionary scopeAttribute(Scope scope) {
-        return argThat(new isScopeAttribute(scope));
+        return argThat(new IsScopeAttribute(scope));
     }
 
-    private static class isScopeAttribute extends ArgumentMatcher<PDFDictionary> {
+    private static class IsScopeAttribute extends ArgumentMatcher<PDFDictionary> {
 
         private final Scope expectedScope;
 
-        public isScopeAttribute(Scope expectedScope) {
+        public IsScopeAttribute(Scope expectedScope) {
             this.expectedScope = expectedScope;
         }
 

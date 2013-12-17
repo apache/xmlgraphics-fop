@@ -23,13 +23,13 @@ import java.awt.Color;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.util.ColorUtil;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the BorderProps class.
@@ -67,7 +67,7 @@ public class BorderPropsTestCase {
         Color col = new Color(1.0f, 1.0f, 0.5f, 1.0f);
         //Normalize: Avoid false alarms due to color conversion (rounding)
         col = ColorUtil.parseColorString(null, ColorUtil.colorToString(col));
-        for(BorderProps.Mode mode : BorderProps.Mode.values()) {
+        for (BorderProps.Mode mode : BorderProps.Mode.values()) {
             BorderProps sut = BorderProps.makeRectangular(Constants.EN_SOLID, 10, col, mode);
             testSerialization(sut);
             sut = new BorderProps(Constants.EN_SOLID, 10, 4, 3, col, mode);

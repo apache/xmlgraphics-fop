@@ -26,11 +26,11 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import org.apache.fop.fonts.truetype.OpenFont.PostScriptVersion;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import org.apache.fop.fonts.truetype.OpenFont.PostScriptVersion;
 
 /**
  * Class for testing org.apache.fop.fonts.truetype.TTFFile

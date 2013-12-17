@@ -26,13 +26,13 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.fontbox.cff.CFFDataInput;
 
 import org.apache.fop.fonts.cff.CFFDataReader.CFFIndexData;
 import org.apache.fop.fonts.cff.CFFDataReader.DICTEntry;
 import org.apache.fop.fonts.truetype.OTFSubSetFile;
-
-import static org.junit.Assert.assertEquals;
 
 public class CFFDataReaderTestCase {
     private CFFDataReader cffReader;
@@ -113,7 +113,7 @@ public class CFFDataReaderTestCase {
         //Array comparison
         int[] fontBBox = { -50, -40, 100, 120 };
         DICTEntry fontBBoxEntry = dictMap.get("FontBBox");
-        for (int i = 0;i < fontBBoxEntry.getOperands().size();i++) {
+        for (int i = 0; i < fontBBoxEntry.getOperands().size(); i++) {
             assertEquals(fontBBoxEntry.getOperands().get(i).intValue(), fontBBox[i]);
         }
         //Multi-byte offset (number)
@@ -141,7 +141,7 @@ public class CFFDataReaderTestCase {
         };
         Random randGen = new Random();
         byte[] data = new byte[31];
-        for (int i = 0;i < data.length;i++) {
+        for (int i = 0; i < data.length; i++) {
             data[i] = (byte)randGen.nextInt(255);
         }
         testIndex = OTFSubSetFile.concatArray(testIndex, data);
