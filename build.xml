@@ -1062,7 +1062,7 @@ NOTE:
   <target name="checkstyle" depends="package, checkstyle-avail" if="checkstyle.avail" description="Runs Checkstyle for a code quality report">
     <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstyle-classpath"/>
     <mkdir dir="${build.dir}"/>
-    <checkstyle config="${checkstyle.config}" failonviolation="false">
+    <checkstyle config="${checkstyle.config}" failonviolation="true" maxWarnings="0">
       <classpath>
         <path refid="checkstyle-classpath"/>
         <pathelement location="${build.classes.dir}"/>
