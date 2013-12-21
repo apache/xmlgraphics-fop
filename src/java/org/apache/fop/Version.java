@@ -18,7 +18,7 @@
 /* $Id$ */
 
 package org.apache.fop;
- 
+
 /**
  * This class is used to evaluate the version information contained in the Manifest of FOP's JAR.
  * Note that this class can only find the version information if it's in the org.apache.fop package
