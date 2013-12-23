@@ -1072,6 +1072,7 @@ NOTE:
       <fileset dir="${src.dir}" includes="**/*.java"/>
       <fileset dir="${test.dir}" includes="**/*.java"/>
       <formatter type="xml" toFile="${build.dir}/report_checkstyle.xml"/>
+      <formatter type="plain"/>
     </checkstyle>
   </target>
 <!-- =================================================================== -->
