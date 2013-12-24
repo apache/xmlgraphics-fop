@@ -1504,7 +1504,7 @@ NOTE:
 <!-- Special target for Gump                                             -->
 <!-- =================================================================== -->
   <target name="gump" depends="package,transcoder-pkg"/>
-  <target name="gump-test" depends="junit-all,checkstyle">
+  <target name="gump-test" depends="junit-all">
     <fail>
       <condition>
         <or>
