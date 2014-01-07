@@ -40,8 +40,9 @@ public final class Version {
         }
         if (version == null) {
             //Fallback if FOP is used in a development environment
-            String headURL
-                = "$HeadURL$";
+            // CSOFF: LineLength
+            String headURL = "$HeadURL$";
+            // CSON: LineLength
             version = headURL;
             final String pathPrefix = "/xmlgraphics/fop/";
             int pos = version.indexOf(pathPrefix);
