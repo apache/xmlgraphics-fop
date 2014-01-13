@@ -181,6 +181,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager imp
             //TODO: Check - itemIPD never set?
             curBlockArea.setIPD(itemIPD);
             //curBlockArea.setHeight();
+            curBlockArea.setBidiLevel(getPartFO().getBidiLevel());
 
             TraitSetter.setProducerID(curBlockArea, getPartFO().getId());
 

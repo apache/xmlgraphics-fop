@@ -30,12 +30,10 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Test number converter functionality.
- *
- * @author Glenn Adams
  */
 public class NumberConverterTestCase {
 
-    static private String[][] formatDecimal =
+    private static String[][] formatDecimal =
     {
         { "1" },
         { "0", "0" },
@@ -45,7 +43,7 @@ public class NumberConverterTestCase {
         { "1000000000", "1000000000" },
     };
 
-    static private String[][] formatDecimalPadded =
+    private static String[][] formatDecimalPadded =
     {
         { "001" },
         { "0", "000" },
@@ -58,7 +56,7 @@ public class NumberConverterTestCase {
         { "1000", "1000" },
     };
 
-    static private String[][] formatDecimalGrouped =
+    private static String[][] formatDecimalGrouped =
     {
         { "1", ",", "1" },
         { "0", "0" },
@@ -68,7 +66,7 @@ public class NumberConverterTestCase {
         { "1000000000", "1,0,0,0,0,0,0,0,0,0" },
     };
 
-    static private String[][] formatDecimalGroupedPadded =
+    private static String[][] formatDecimalGroupedPadded =
     {
         { "001", ",", "2" },
         { "0", "0,00" },
@@ -81,7 +79,7 @@ public class NumberConverterTestCase {
         { "1000", "10,00" },
     };
 
-    static private String[][] formatDecimalArabic =
+    private static String[][] formatDecimalArabic =
     {
         { "\u0661" },
         { "0", "\u0660" },
@@ -100,7 +98,7 @@ public class NumberConverterTestCase {
         { "1000000000", "\u0661\u0660\u0660\u0660\u0660\u0660\u0660\u0660\u0660\u0660" },
     };
 
-    static private String[][] formatDecimalArabicPadded =
+    private static String[][] formatDecimalArabicPadded =
     {
         { "\u0660\u0660\u0661" },
         { "0", "\u0660\u0660\u0660" },
@@ -113,7 +111,7 @@ public class NumberConverterTestCase {
         { "1000", "\u0661\u0660\u0660\u0660" },
     };
 
-    static private String[][] formatDecimalArabicGrouped =
+    private static String[][] formatDecimalArabicGrouped =
     {
         { "\u0661", "\u066c", "1" },
         { "0", "\u0660" },
@@ -123,7 +121,7 @@ public class NumberConverterTestCase {
         { "1000000000", "\u0661\u066c\u0660\u066c\u0660\u066c\u0660\u066c\u0660\u066c\u0660\u066c\u0660\u066c\u0660\u066c\u0660\u066c\u0660" },
     };
 
-    static private String[][] formatDecimalArabicGroupedPadded =
+    private static String[][] formatDecimalArabicGroupedPadded =
     {
         { "\u0660\u0660\u0661", "\u066c", "2" },
         { "0", "\u0660\u066c\u0660\u0660" },
@@ -136,7 +134,7 @@ public class NumberConverterTestCase {
         { "1000", "\u0661\u0660\u066c\u0660\u0660" },
     };
 
-    static private String[][] formatDecimalThai =
+    private static String[][] formatDecimalThai =
     {
         { "\u0E51" },
         { "0", "\u0E50" },
@@ -155,7 +153,7 @@ public class NumberConverterTestCase {
         { "1000000000", "\u0E51\u0E50\u0E50\u0E50\u0E50\u0E50\u0E50\u0E50\u0E50\u0E50" },
     };
 
-    static private String[][] formatDecimalThaiPadded =
+    private static String[][] formatDecimalThaiPadded =
     {
         { "\u0E50\u0E50\u0E51" },
         { "0", "\u0E50\u0E50\u0E50" },
@@ -168,7 +166,7 @@ public class NumberConverterTestCase {
         { "1000", "\u0E51\u0E50\u0E50\u0E50" },
     };
 
-    static private String[][] formatRomanLower =
+    private static String[][] formatRomanLower =
     {
         { "i" },
         { "0", "0" },
@@ -206,7 +204,7 @@ public class NumberConverterTestCase {
         { "5000", "5000" },
     };
 
-    static private String[][] formatRomanUpper =
+    private static String[][] formatRomanUpper =
     {
 
         { "I" },
@@ -245,7 +243,7 @@ public class NumberConverterTestCase {
         { "5000", "5000" },
     };
 
-    static private String[][] formatRomanLargeLower =
+    private static String[][] formatRomanLargeLower =
     {
         { "i", null, null, null, "large" },
         { "0", "0" },
@@ -293,7 +291,7 @@ public class NumberConverterTestCase {
         { "200000", "200000" },
     };
 
-    static private String[][] formatRomanLargeUpper =
+    private static String[][] formatRomanLargeUpper =
     {
         { "I", null, null, null, "large" },
         { "0", "0" },
@@ -341,7 +339,7 @@ public class NumberConverterTestCase {
         { "200000", "200000" },
     };
 
-    static private String[][] formatRomanNumberFormsLower =
+    private static String[][] formatRomanNumberFormsLower =
     {
         { "i", null, null, null, "unicode-number-forms" },
         { "0", "0" },
@@ -399,7 +397,7 @@ public class NumberConverterTestCase {
         { "200000", "200000" },
     };
 
-    static private String[][] formatRomanNumberFormsUpper =
+    private static String[][] formatRomanNumberFormsUpper =
     {
         { "I", null, null, null, "unicode-number-forms" },
         { "0", "0" },
@@ -457,7 +455,7 @@ public class NumberConverterTestCase {
         { "200000", "200000" },
     };
 
-    static private String[][] formatAlphabeticLatinLower =
+    private static String[][] formatAlphabeticLatinLower =
     {
         { "a" },
         { "0", "0" },
@@ -478,7 +476,7 @@ public class NumberConverterTestCase {
         { "1000000", "bdwgn" },
     };
 
-    static private String[][] formatAlphabeticLatinUpper =
+    private static String[][] formatAlphabeticLatinUpper =
     {
         { "A" },
         { "0", "0" },
@@ -499,7 +497,7 @@ public class NumberConverterTestCase {
         { "1000000", "BDWGN" },
     };
 
-    static private String[][] formatAlphabeticArabicHijai =
+    private static String[][] formatAlphabeticArabicHijai =
     {
         { "\u0627", null, null, "alphabetic" },
         { "0", "0" },
@@ -540,7 +538,7 @@ public class NumberConverterTestCase {
         { "1000000", "\u0623\u0638\u0636\u0635\u062F" },
     };
 
-    static private String[][] formatAlphabeticArabicAbjadi =
+    private static String[][] formatAlphabeticArabicAbjadi =
     {
         { "\u0627", null, null, "traditional" },
         { "0", "0" },
@@ -581,7 +579,7 @@ public class NumberConverterTestCase {
         { "1000000", "\u0623\u0641\u0633\u0646\u062D" },
     };
 
-    static private String[][] formatNumeralArabicAbjadi =
+    private static String[][] formatNumeralArabicAbjadi =
     {
         { "\u0623", null, null, "traditional" },
         { "0", "0" },
@@ -629,7 +627,7 @@ public class NumberConverterTestCase {
         { "2000", "2000" },
     };
 
-    static private String[][] formatAlphabeticHebrew =
+    private static String[][] formatAlphabeticHebrew =
     {
         { "\u05D0", null, null, "alphabetic" },
         { "0", "0" },
@@ -669,7 +667,7 @@ public class NumberConverterTestCase {
         { "1000000", "\u05D0\u05DA\u05E9\u05E8\u05D0" },
     };
 
-    static private String[][] formatNumeralHebrewGematria =
+    private static String[][] formatNumeralHebrewGematria =
     {
         { "\u05D0", null, null, "traditional" },
         { "0", "0" },
@@ -717,7 +715,7 @@ public class NumberConverterTestCase {
         { "2000", "2000" },
     };
 
-    static private String[][] formatAlphabeticThai =
+    private static String[][] formatAlphabeticThai =
     {
         { "\u0E01", null, null, "alphabetic" },
         { "0", "0" },
@@ -738,7 +736,7 @@ public class NumberConverterTestCase {
         { "1000000", "\u0E0B\u0E20\u0E17\u0E0C" },
     };
 
-    static private String[][] formatWordEnglishLower =
+    private static String[][] formatWordEnglishLower =
     {
         { "w", null, null, null, null, "eng" },
         { "0", "zero" },
@@ -762,7 +760,7 @@ public class NumberConverterTestCase {
         { "1000000000", "one billion" }
     };
 
-    static private String[][] formatWordEnglishUpper =
+    private static String[][] formatWordEnglishUpper =
     {
         { "W", null, null, null, null, "eng" },
         { "0", "ZERO" },
@@ -786,7 +784,7 @@ public class NumberConverterTestCase {
         { "1000000000", "ONE BILLION" }
     };
 
-    static private String[][] formatWordEnglishTitle =
+    private static String[][] formatWordEnglishTitle =
     {
         { "Ww", null, null, null, null, "eng" },
         { "0", "Zero" },
@@ -810,7 +808,7 @@ public class NumberConverterTestCase {
         { "1000000000", "One Billion" }
     };
 
-    static private String[][] formatWordSpanishLower =
+    private static String[][] formatWordSpanishLower =
     {
         { "w", null, null, null, null, "spa" },
         { "0", "cero" },
@@ -890,7 +888,7 @@ public class NumberConverterTestCase {
         { "1000000000", "mil millones" }
     };
 
-    static private String[][] formatWordSpanishUpper =
+    private static String[][] formatWordSpanishUpper =
     {
         { "W", null, null, null, null, "spa" },
         { "0", "CERO" },
@@ -970,7 +968,7 @@ public class NumberConverterTestCase {
         { "1000000000", "MIL MILLONES" }
     };
 
-    static private String[][] formatWordSpanishTitle =
+    private static String[][] formatWordSpanishTitle =
     {
         { "Ww", null, null, null, null, "spa" },
         { "0", "Cero" },
@@ -1050,7 +1048,7 @@ public class NumberConverterTestCase {
         { "1000000000", "Mil Millones" }
     };
 
-    static private String[][] formatWordFrenchLower =
+    private static String[][] formatWordFrenchLower =
     {
         { "w", null, null, null, null, "fra" },
         { "0", "z\u00e9ro" },
@@ -1141,7 +1139,7 @@ public class NumberConverterTestCase {
         { "1000000000", "un milliard" }
     };
 
-    static private String[][] formatWordFrenchUpper =
+    private static String[][] formatWordFrenchUpper =
     {
         { "W", null, null, null, null, "fra" },
         { "0", "Z\u00c9RO" },
@@ -1232,7 +1230,7 @@ public class NumberConverterTestCase {
         { "1000000000", "UN MILLIARD" }
     };
 
-    static private String[][] formatWordFrenchTitle =
+    private static String[][] formatWordFrenchTitle =
     {
         { "Ww", null, null, null, null, "fra" },
         { "0", "Z\u00e9ro" },

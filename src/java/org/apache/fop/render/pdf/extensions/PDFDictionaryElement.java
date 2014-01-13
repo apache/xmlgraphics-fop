@@ -23,7 +23,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
@@ -34,38 +33,54 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
  * Extension element for dictionaries: pdf:{catalog,page,dictionary}. The specific type
  * of dictionary is established at construction type.
  */
-public class PDFDictionaryElement extends AbstractPDFDictionaryElement {
+public class PDFDictionaryElement extends PDFCollectionEntryElement {
 
-    public static final String ATT_PAGE_NUMBERS = PDFDictionaryExtension.PROPERTY_PAGE_NUMBERS;
-
-    private PDFDictionaryExtension extension;
+    public static final String ATT_ID = PDFDictionaryExtension.PROPERTY_ID;
 
     /**
      * Main constructor
      * @param parent parent FO node
      */
     PDFDictionaryElement(FONode parent, PDFDictionaryType type) {
-        super(parent);
-        this.extension = new PDFDictionaryExtension(type);
+        super(parent, PDFObjectType.Dictionary, createExtension(type));
     }
 
-    public PDFDictionaryExtension getExtension() {
-        return extension;
+    private static PDFDictionaryExtension createExtension(PDFDictionaryType type) {
+        if (type == PDFDictionaryType.Action) {
+            return new PDFActionExtension();
+        } else if (type == PDFDictionaryType.Catalog) {
+            return new PDFCatalogExtension();
+        } else if (type == PDFDictionaryType.Layer) {
+            return new PDFLayerExtension();
+        } else if (type == PDFDictionaryType.Navigator) {
+            return new PDFNavigatorExtension();
+        } else if (type == PDFDictionaryType.Page) {
+            return new PDFPageExtension();
+        } else {
+            return new PDFDictionaryExtension(type);
+        }
+    }
+
+    public PDFDictionaryExtension getDictionaryExtension() {
+        assert getExtension() instanceof PDFDictionaryExtension;
+        return (PDFDictionaryExtension) getExtension();
     }
 
     @Override
     public void processNode(String elementName, Locator locator, Attributes attlist, PropertyList propertyList) throws FOPException {
-        if (extension.getDictionaryType() == PDFDictionaryType.Catalog) {
-            // no specific properties
-        } else if (extension.getDictionaryType() == PDFDictionaryType.Page) {
-            String pageNumbers = attlist.getValue(ATT_PAGE_NUMBERS);
-            if (pageNumbers != null) {
-                extension.setProperty(ATT_PAGE_NUMBERS, pageNumbers);
+        PDFDictionaryExtension extension = getDictionaryExtension();
+        if (extension.usesIDAttribute()) {
+            String id = attlist.getValue(ATT_ID);
+            if (id != null) {
+                extension.setProperty(PDFDictionaryExtension.PROPERTY_ID, id);
             }
-        } else if (extension.getDictionaryType() == PDFDictionaryType.Dictionary) {
+        }
+        if (extension.getDictionaryType() == PDFDictionaryType.Dictionary) {
             String key = attlist.getValue(ATT_KEY);
             if (key == null) {
-                missingPropertyError(ATT_KEY);
+                if (parent instanceof PDFDictionaryElement) {
+                    missingPropertyError(ATT_KEY);
+                }
             } else if (key.length() == 0) {
                 invalidPropertyValueError(ATT_KEY, key, null);
             } else {
@@ -78,16 +93,18 @@ public class PDFDictionaryElement extends AbstractPDFDictionaryElement {
     public void startOfNode() throws FOPException {
         super.startOfNode();
         String localName = getLocalName();
-        if (localName.equals("catalog")) {
-            if (parent.getNameId() != Constants.FO_DECLARATIONS) {
-                invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(), "rule.childOfDeclarations");
-            }
+        if (localName.equals("action")) {
+            // handled in PDFActionElement subclass
+        } else if (localName.equals("catalog")) {
+            // handled in PDFCatalogElement subclass
+        } else if (localName.equals("layer")) {
+            // handled in PDFLayerElement subclass
+        } else if (localName.equals("navigator")) {
+            // handled in PDFNavigattorElement subclass
         } else if (localName.equals("page")) {
-            if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
-                invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(), "rule.childOfSPM");
-            }
+            // handled in PDFPageElement subclass
         } else if (localName.equals("dictionary")) {
-            if (!PDFDictionaryType.hasValueOfElementName(parent.getLocalName())) {
+            if (!PDFDictionaryType.hasValueOfElementName(parent.getLocalName()) && !PDFObjectType.Array.elementName().equals(parent.getLocalName())) {
                 invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(), null);
             }
         } else {
@@ -97,14 +114,15 @@ public class PDFDictionaryElement extends AbstractPDFDictionaryElement {
 
     @Override
     protected void addChildNode(FONode child) throws FOPException {
+        PDFDictionaryExtension extension = getDictionaryExtension();
         if (child instanceof PDFDictionaryElement) {
-            PDFDictionaryExtension extension = ((PDFDictionaryElement) child).getExtension();
-            if (extension.getDictionaryType() == PDFDictionaryType.Dictionary) {
-                this.extension.addEntry(extension);
+            PDFDictionaryExtension entry = ((PDFDictionaryElement) child).getDictionaryExtension();
+            if (entry.getDictionaryType() == PDFDictionaryType.Dictionary) {
+                extension.addEntry(entry);
             }
-        } else if (child instanceof PDFDictionaryEntryElement) {
-            PDFDictionaryEntryExtension extension = ((PDFDictionaryEntryElement) child).getExtension();
-            this.extension.addEntry(extension);
+        } else if (child instanceof PDFCollectionEntryElement) {
+            PDFCollectionEntryExtension entry = ((PDFCollectionEntryElement) child).getExtension();
+            extension.addEntry(entry);
         }
     }
 
@@ -115,12 +133,13 @@ public class PDFDictionaryElement extends AbstractPDFDictionaryElement {
 
     @Override
     public String getLocalName() {
+        PDFDictionaryExtension extension = getDictionaryExtension();
         return extension.getDictionaryType().elementName();
     }
 
     @Override
     protected ExtensionAttachment instantiateExtensionAttachment() {
-        return new PDFDictionaryAttachment(extension);
+        return new PDFDictionaryAttachment(getDictionaryExtension());
     }
 
 }

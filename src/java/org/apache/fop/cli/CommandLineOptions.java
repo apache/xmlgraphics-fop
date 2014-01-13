@@ -173,9 +173,6 @@ public class CommandLineOptions {
                 //Factory config is set up, now we can create the user agent
                 foUserAgent = factory.newFOUserAgent();
                 foUserAgent.getRendererOptions().putAll(renderingOptions);
-                if (targetResolution != 0) {
-                    foUserAgent.setTargetResolution(targetResolution);
-                }
                 addXSLTParameter("fop-output-format", getOutputFormat());
                 addXSLTParameter("fop-version", Version.getVersion());
                 foUserAgent.setConserveMemoryPolicy(conserveMemoryPolicy);
@@ -1018,7 +1015,8 @@ public class CommandLineOptions {
             fopFactoryBuilder.setComplexScriptFeatures(useComplexScriptFeatures);
         } else {
             try {
-                fopFactoryBuilder = new FopConfParser(userConfigFile).getFopFactoryBuilder();
+                FopConfParser fopConfParser = new FopConfParser(userConfigFile, baseURI);
+                fopFactoryBuilder = fopConfParser.getFopFactoryBuilder();
             } catch (SAXException e) {
                 throw new FOPException(e);
             }

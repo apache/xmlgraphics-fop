@@ -22,10 +22,8 @@ package org.apache.fop.apps;
 import org.w3c.dom.Element;
 
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
-import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.RendererConfigOption;
 import org.apache.fop.render.pdf.PDFEncryptionOption;
-import org.apache.fop.render.pdf.PDFRendererOption;
 
 import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPTION_LENGTH;
 import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPTION_PARAMS;

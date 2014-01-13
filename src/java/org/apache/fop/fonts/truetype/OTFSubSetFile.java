@@ -451,7 +451,8 @@ public class OTFSubSetFile extends OTFFile {
                 localUniques = foundLocalUniquesB.get(subsetFDSelect.get(subsetGlyphs.get(gid)).getNewFDIndex());
                 byte[] data = charStringsIndex.getValue(gid);
                 subsetLocalIndexSubr = fdSubrs.get(subsetFDSelect.get(subsetGlyphs.get(gid)).getNewFDIndex());
-                subsetLocalSubrCount = foundLocalUniques.get(subsetFDSelect.get(subsetGlyphs.get(gid)).getNewFDIndex()).size();
+                subsetLocalSubrCount = foundLocalUniques.get(
+                        subsetFDSelect.get(subsetGlyphs.get(gid)).getNewFDIndex()).size();
                 data = readCharStringData(data, subsetLocalSubrCount);
                 subsetCharStringsIndex.add(data);
             }
@@ -561,8 +562,12 @@ public class OTFSubSetFile extends OTFFile {
             int privateOffset = privateEntry.getOperands().get(1).intValue();
             Map<String, DICTEntry> privateDICT = cffReader.getPrivateDict(privateEntry);
 
-            int localSubrOffset = privateOffset + privateDICT.get("Subrs").getOperands().get(0).intValue();
-            localIndexSubr = cffReader.readIndex(localSubrOffset);
+            if (privateDICT.get("Subrs") != null) {
+                int localSubrOffset = privateOffset + privateDICT.get("Subrs").getOperands().get(0).intValue();
+                localIndexSubr = cffReader.readIndex(localSubrOffset);
+            } else {
+                localIndexSubr = cffReader.readIndex(null);
+            }
         }
 
         globalIndexSubr = cffReader.getGlobalIndexSubr();

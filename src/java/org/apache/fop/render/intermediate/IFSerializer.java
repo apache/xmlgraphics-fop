@@ -428,20 +428,23 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
     }
 
     /** {@inheritDoc} */
-    public void startGroup(AffineTransform[] transforms) throws IFException {
-        startGroup(IFUtil.toString(transforms));
+    public void startGroup(AffineTransform[] transforms, String layer) throws IFException {
+        startGroup(IFUtil.toString(transforms), layer);
     }
 
     /** {@inheritDoc} */
-    public void startGroup(AffineTransform transform) throws IFException {
-        startGroup(IFUtil.toString(transform));
+    public void startGroup(AffineTransform transform, String layer) throws IFException {
+        startGroup(IFUtil.toString(transform), layer);
     }
 
-    private void startGroup(String transform) throws IFException {
+    private void startGroup(String transform, String layer) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             if (transform != null && transform.length() > 0) {
                 addAttribute(atts, "transform", transform);
+            }
+            if (layer != null && layer.length() > 0) {
+                addAttribute(atts, "layer", layer);
             }
             handler.startElement(EL_GROUP, atts);
         } catch (SAXException e) {

@@ -19,25 +19,27 @@
 
 package org.apache.fop.render.pdf.extensions;
 
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 
 // CSOFF: LineLengthCheck
 
 /**
- * Base class for the PDF dictionary related extension elements.
+ * Extension element for pdf:catalog.
  */
-public abstract class AbstractPDFDictionaryElement extends AbstractPDFExtensionElement {
+public class PDFCatalogElement extends PDFDictionaryElement {
 
-    public static final String ATT_KEY = PDFDictionaryEntryExtension.PROPERTY_KEY;
-
-    /**
-     * Default constructor
-     *
-     * @param parent parent of this node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
-     */
-    public AbstractPDFDictionaryElement(FONode parent) {
-        super(parent);
+    PDFCatalogElement(FONode parent) {
+        super(parent, PDFDictionaryType.Catalog);
     }
-}
 
+    @Override
+    public void startOfNode() throws FOPException {
+        super.startOfNode();
+        if (parent.getNameId() != Constants.FO_DECLARATIONS) {
+            invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(), "rule.childOfDeclarations");
+        }
+    }
+
+}

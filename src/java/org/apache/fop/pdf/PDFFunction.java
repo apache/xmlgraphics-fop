@@ -22,6 +22,10 @@ package org.apache.fop.pdf;
 // Java...
 import java.util.List;
 
+import org.apache.fop.render.shading.Function;
+import org.apache.fop.render.shading.FunctionDelegate;
+import org.apache.fop.render.shading.FunctionPattern;
+
 /**
  * class representing a PDF Function.
  *
@@ -33,126 +37,9 @@ import java.util.List;
  *
  * All PDF Functions have a FunctionType (0,2,3, or 4), a Domain, and a Range.
  */
-public class PDFFunction extends PDFObject {
-    // Guts common to all function types
+public class PDFFunction extends PDFObject implements Function {
 
-    /**
-     * Required: The Type of function (0,2,3,4) default is 0.
-     */
-    protected int functionType = 0;    // Default
-
-    /**
-     * Required: 2 * m Array of Double numbers which are possible inputs to the function
-     */
-    protected List domain = null;
-
-    /**
-     * Required: 2 * n Array of Double numbers which are possible outputs to the function
-     */
-    protected List range = null;
-
-    /* ********************TYPE 0***************************** */
-    // FunctionType 0 specific function guts
-
-    /**
-     * Required: Array containing the Integer size of the Domain and Range, respectively.
-     * Note: This is really more like two seperate integers, sizeDomain, and sizeRange,
-     * but since they're expressed as an array in PDF, my implementation reflects that.
-     */
-    protected List size = null;
-
-    /**
-     * Required for Type 0: Number of Bits used to represent each sample value.
-     * Limited to 1,2,4,8,12,16,24, or 32
-     */
-    protected int bitsPerSample = 1;
-
-    /**
-     * Optional for Type 0: order of interpolation between samples.
-     * Limited to linear (1) or cubic (3). Default is 1
-     */
-    protected int order = 1;
-
-    /**
-     * Optional for Type 0: A 2 * m array of Doubles which provides a
-     * linear mapping of input values to the domain.
-     *
-     * Required for Type 3: A 2 * k array of Doubles that, taken
-     * in pairs, map each subset of the domain defined by Domain
-     * and the Bounds array to the domain of the corresponding function.
-     * Should be two values per function, usually (0,1),
-     * as in [0 1 0 1] for 2 functions.
-     */
-    protected List encode = null;
-
-    /**
-     * Optional for Type 0: A 2 * n array of Doubles which provides
-     * a linear mapping of sample values to the range. Defaults to Range.
-     */
-    protected List decode = null;
-
-    /**
-     * Optional For Type 0: A stream of sample values
-     */
-
-    /**
-     * Required For Type 4: Postscript Calculator function
-     * composed of arithmetic, boolean, and stack operators + boolean constants
-     */
-    protected StringBuffer functionDataStream = null;
-
-    /**
-     * Required (possibly) For Type 0: A vector of Strings for the
-     * various filters to be used to decode the stream.
-     * These are how the string is compressed. Flate, LZW, etc.
-     */
-    protected List filter = null;
-    /* *************************TYPE 2************************** */
-
-    /**
-     * Required For Type 2: An Array of n Doubles defining
-     * the function result when x=0. Default is [0].
-     */
-    protected List cZero = null;
-
-    /**
-     * Required For Type 2: An Array of n Doubles defining
-     * the function result when x=1. Default is [1].
-     */
-    protected List cOne = null;
-
-    /**
-     * Required for Type 2: The interpolation exponent.
-     * Each value x will return n results.
-     * Must be greater than 0.
-     */
-    protected double interpolationExponentN = 1;
-
-    /* *************************TYPE 3************************** */
-
-    /**
-     * Required for Type 3: An vector of PDFFunctions which
-     * form an array of k single input functions making up
-     * the stitching function.
-     */
-    protected List functions = null;
-
-    /**
-     * Optional for Type 3: An array of (k-1) Doubles that,
-     * in combination with Domain, define the intervals to which
-     * each function from the Functions array apply. Bounds
-     * elements must be in order of increasing magnitude,
-     * and each value must be within the value of Domain.
-     * k is the number of functions.
-     * If you pass null, it will output (1/k) in an array of k-1 elements.
-     * This makes each function responsible for an equal amount of the stitching function.
-     * It makes the gradient even.
-     */
-    protected List bounds = null;
-    // See encode above, as it's also part of Type 3 Functions.
-
-    /* *************************TYPE 4************************** */
-    // See 'data' above.
+    private FunctionDelegate delegate;
 
     /**
      * create an complete Function object of Type 0, A Sampled function.
@@ -211,26 +98,13 @@ public class PDFFunction extends PDFObject {
      * @param theFunctionType This is the type of function (0,2,3, or 4).
      * It should be 0 as this is the constructor for sampled functions.
      */
-    public PDFFunction(int theFunctionType, List theDomain,
-            List theRange, List theSize, int theBitsPerSample,
-            int theOrder, List theEncode, List theDecode,
-            StringBuffer theFunctionDataStream, List theFilter) {
-        super();
-
-        this.functionType = 0;      // dang well better be 0;
-        this.size = theSize;
-        this.bitsPerSample = theBitsPerSample;
-        this.order = theOrder;      // int
-        this.encode = theEncode;    // vector of int
-        this.decode = theDecode;    // vector of int
-        this.functionDataStream = theFunctionDataStream;
-        this.filter = theFilter;    // vector of Strings
-
-        // the domain and range are actually two dimensional arrays.
-        // so if there's not an even number of items, bad stuff
-        // happens.
-        this.domain = theDomain;
-        this.range = theRange;
+    public PDFFunction(int theFunctionType, List<Double> theDomain,
+                       List<Double> theRange, List<Double> theSize, int theBitsPerSample,
+                       int theOrder, List<Double> theEncode, List<Double> theDecode,
+                       StringBuffer theFunctionDataStream, List<String> theFilter) {
+        delegate = new FunctionDelegate(this, theFunctionType, theDomain, theRange,
+                theSize, theBitsPerSample, theOrder, theEncode, theDecode,
+                theFunctionDataStream, theFilter);
     }
 
     /**
@@ -260,20 +134,11 @@ public class PDFFunction extends PDFObject {
      * PDF Spec page 268
      * @param theFunctionType The type of the function, which should be 2.
      */
-    public PDFFunction(int theFunctionType, List theDomain,
-                       List theRange, List theCZero, List theCOne,
+    public PDFFunction(int theFunctionType, List<Double> theDomain,
+                       List<Double> theRange, List<Double> theCZero, List<Double> theCOne,
                        double theInterpolationExponentN) {
-        super();
-
-        this.functionType = 2;    // dang well better be 2;
-
-        this.cZero = theCZero;
-        this.cOne = theCOne;
-        this.interpolationExponentN = theInterpolationExponentN;
-
-
-        this.domain = theDomain;
-        this.range = theRange;
+        delegate = new FunctionDelegate(this, theFunctionType, theDomain, theRange,
+                theCZero, theCOne, theInterpolationExponentN);
 
     }
 
@@ -312,18 +177,11 @@ public class PDFFunction extends PDFObject {
      * @param theFunctionType This is the function type. It should be 3,
      * for a stitching function.
      */
-    public PDFFunction(int theFunctionType, List theDomain,
-                       List theRange, List theFunctions,
-                       List theBounds, List theEncode) {
-        super();
-
-        this.functionType = 3;    // dang well better be 3;
-
-        this.functions = theFunctions;
-        this.bounds = theBounds;
-        this.encode = theEncode;
-        this.domain = theDomain;
-        this.range = theRange;
+    public PDFFunction(int theFunctionType, List<Double> theDomain,
+                       List<Double> theRange, List<Function> theFunctions,
+                       List<Double> theBounds, List<Double> theEncode) {
+        delegate = new FunctionDelegate(this, theFunctionType, theDomain, theRange,
+                theFunctions, theBounds, theEncode);
 
     }
 
@@ -349,19 +207,11 @@ public class PDFFunction extends PDFObject {
      * @param theFunctionType The type of function which should be 4, as this is
      * a Postscript calculator function
      */
-    public PDFFunction(int theFunctionType, List theDomain,
-                       List theRange, StringBuffer theFunctionDataStream) {
-        super();
-
-        this.functionType = 4;    // dang well better be 4;
-        this.functionDataStream = theFunctionDataStream;
-
-        this.domain = theDomain;
-
-        this.range = theRange;
-
+    public PDFFunction(int theFunctionType, List<Double> theDomain,
+                       List<Double> theRange, StringBuffer theFunctionDataStream) {
+        delegate = new FunctionDelegate(this, theFunctionType, theDomain, theRange,
+                theFunctionDataStream);
     }
-
 
     /**
      * represent as PDF. Whatever the FunctionType is, the correct
@@ -375,319 +225,13 @@ public class PDFFunction extends PDFObject {
      * @return the PDF string.
      */
     public byte[] toPDF() {
-        int vectorSize = 0;
-        int numberOfFunctions = 0;
-        int tempInt = 0;
-        StringBuffer p = new StringBuffer(256);
-        p.append("<< \n/FunctionType " + this.functionType + " \n");
-
-        // FunctionType 0
-        if (this.functionType == 0) {
-            if (this.domain != null) {
-                // DOMAIN
-                p.append("/Domain [ ");
-                vectorSize = this.domain.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.domain.get(tempInt))
-                             + " ");
-                }
-
-                p.append("] \n");
-            } else {
-                p.append("/Domain [ 0 1 ] \n");
-            }
-
-            // SIZE
-            if (this.size != null) {
-                p.append("/Size [ ");
-                vectorSize = this.size.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.size.get(tempInt))
-                             + " ");
-                }
-                p.append("] \n");
-            }
-            // ENCODE
-            if (this.encode != null) {
-                p.append("/Encode [ ");
-                vectorSize = this.encode.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.encode.get(tempInt))
-                             + " ");
-                }
-                p.append("] \n");
-            } else {
-                p.append("/Encode [ ");
-                vectorSize = this.functions.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append("0 1 ");
-                }
-                p.append("] \n");
-
-            }
-
-            // BITSPERSAMPLE
-            p.append("/BitsPerSample " + this.bitsPerSample);
-
-            // ORDER (optional)
-            if (this.order == 1 || this.order == 3) {
-                p.append(" \n/Order " + this.order + " \n");
-            }
-
-            // RANGE
-            if (this.range != null) {
-                p.append("/Range [ ");
-                vectorSize = this.range.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.range.get(tempInt))
-                             + " ");
-                }
-
-                p.append("] \n");
-            }
-
-            // DECODE
-            if (this.decode != null) {
-                p.append("/Decode [ ");
-                vectorSize = this.decode.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.decode.get(tempInt))
-                             + " ");
-                }
-
-                p.append("] \n");
-            }
-
-            // LENGTH
-            if (this.functionDataStream != null) {
-                p.append("/Length " + (this.functionDataStream.length() + 1)
-                         + " \n");
-            }
-
-            // FILTER?
-            if (this.filter != null) {           // if there's a filter
-                vectorSize = this.filter.size();
-                p.append("/Filter ");
-                if (vectorSize == 1) {
-                    p.append("/" + ((String)this.filter.get(0))
-                             + " \n");
-                } else {
-                    p.append("[ ");
-                    for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                        p.append("/" + ((String)this.filter.get(0))
-                                 + " ");
-                    }
-                    p.append("] \n");
-                }
-            }
-            p.append(">>");
-
-            // stream representing the function
-            if (this.functionDataStream != null) {
-                p.append("\nstream\n" + this.functionDataStream
-                         + "\nendstream");
-            }
-
-            // end of if FunctionType 0
-
-        } else if (this.functionType == 2) {
-            // DOMAIN
-            if (this.domain != null) {
-                p.append("/Domain [ ");
-                vectorSize = this.domain.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.domain.get(tempInt))
-                             + " ");
-                }
-
-                p.append("] \n");
-            } else {
-                p.append("/Domain [ 0 1 ] \n");
-            }
+        return toByteString();
+    }
 
 
-            // RANGE
-            if (this.range != null) {
-                p.append("/Range [ ");
-                vectorSize = this.range.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.range.get(tempInt))
-                             + " ");
-                }
-
-                p.append("] \n");
-            }
-
-            // FunctionType, C0, C1, N are required in PDF
-
-            // C0
-            if (this.cZero != null) {
-                p.append("/C0 [ ");
-                vectorSize = this.cZero.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.cZero.get(tempInt))
-                             + " ");
-                }
-                p.append("] \n");
-            }
-
-            // C1
-            if (this.cOne != null) {
-                p.append("/C1 [ ");
-                vectorSize = this.cOne.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.cOne.get(tempInt))
-                             + " ");
-                }
-                p.append("] \n");
-            }
-
-            // N: The interpolation Exponent
-            p.append("/N "
-                     + PDFNumber.doubleOut(new Double(this.interpolationExponentN))
-                     + " \n");
-
-            p.append(">>");
-
-        } else if (this.functionType
-                   == 3) {                       // fix this up when my eyes uncross
-            // DOMAIN
-            if (this.domain != null) {
-                p.append("/Domain [ ");
-                vectorSize = this.domain.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.domain.get(tempInt))
-                             + " ");
-                }
-                p.append("] \n");
-            } else {
-                p.append("/Domain [ 0 1 ] \n");
-            }
-
-            // RANGE
-            if (this.range != null) {
-                p.append("/Range [ ");
-                vectorSize = this.range.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.range.get(tempInt))
-                             + " ");
-                }
-
-                p.append("] \n");
-            }
-
-            // FUNCTIONS
-            if (this.functions != null) {
-                p.append("/Functions [ ");
-                numberOfFunctions = this.functions.size();
-                for (tempInt = 0; tempInt < numberOfFunctions; tempInt++) {
-                    p.append(((PDFFunction)this.functions.get(tempInt)).referencePDF()
-                             + " ");
-
-                }
-                p.append("] \n");
-            }
-
-
-            // ENCODE
-            if (this.encode != null) {
-                p.append("/Encode [ ");
-                vectorSize = this.encode.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.encode.get(tempInt))
-                             + " ");
-                }
-
-                p.append("] \n");
-            } else {
-                p.append("/Encode [ ");
-                vectorSize = this.functions.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append("0 1 ");
-                }
-                p.append("] \n");
-
-            }
-
-
-            // BOUNDS, required, but can be empty
-            p.append("/Bounds [ ");
-            if (this.bounds != null) {
-
-                vectorSize = this.bounds.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.bounds.get(tempInt))
-                             + " ");
-                }
-
-            } else {
-                if (this.functions != null) {
-                    // if there are n functions,
-                    // there must be n-1 bounds.
-                    // so let each function handle an equal portion
-                    // of the whole. e.g. if there are 4, then [ 0.25 0.25 0.25 ]
-
-                    String functionsFraction = PDFNumber.doubleOut(new Double(1.0
-                            / ((double)numberOfFunctions)));
-
-                    for (tempInt = 0; tempInt + 1 < numberOfFunctions;
-                            tempInt++) {
-
-                        p.append(functionsFraction + " ");
-                    }
-                    functionsFraction = null;    // clean reference.
-
-                }
-
-            }
-            p.append("]\n>>");
-        } else if (this.functionType
-                   == 4) {                       // fix this up when my eyes uncross
-            // DOMAIN
-            if (this.domain != null) {
-                p.append("/Domain [ ");
-                vectorSize = this.domain.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.domain.get(tempInt))
-                             + " ");
-                }
-
-                p.append("] \n");
-            } else {
-                p.append("/Domain [ 0 1 ] \n");
-            }
-
-            // RANGE
-            if (this.range != null) {
-                p.append("/Range [ ");
-                vectorSize = this.range.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.range.get(tempInt))
-                             + " ");
-                }
-
-                p.append("] \n");
-            }
-
-            // LENGTH
-            if (this.functionDataStream != null) {
-                p.append("/Length " + (this.functionDataStream.length() + 1)
-                         + " \n");
-            }
-
-            p.append(">>");
-
-            // stream representing the function
-            if (this.functionDataStream != null) {
-                p.append("\nstream\n{ " + this.functionDataStream
-                         + " }\nendstream");
-            }
-
-
-        }
-
-        return encode(p.toString());
-
+    public byte[] toByteString() {
+        FunctionPattern pattern = new FunctionPattern(this);
+        return encode(pattern.toWriteableString());
     }
 
     /** {@inheritDoc} */
@@ -702,96 +246,155 @@ public class PDFFunction extends PDFObject {
             return false;
         }
         PDFFunction func = (PDFFunction)obj;
-        if (functionType != func.functionType) {
+        if (delegate.getFunctionType() != func.getFunctionType()) {
             return false;
         }
-        if (bitsPerSample != func.bitsPerSample) {
+        if (delegate.getBitsPerSample() != func.getBitsPerSample()) {
             return false;
         }
-        if (order != func.order) {
+        if (delegate.getOrder() != func.getOrder()) {
             return false;
         }
-        if (interpolationExponentN != func.interpolationExponentN) {
+        if (delegate.getInterpolationExponentN() != func.getInterpolationExponentN()) {
             return false;
         }
-        if (domain != null) {
-            if (!domain.equals(func.domain)) {
+        if (delegate.getDomain() != null) {
+            if (!delegate.getDomain().equals(func.getDomain())) {
                 return false;
             }
-        } else if (func.domain != null) {
+        } else if (func.getDomain() != null) {
             return false;
         }
-        if (range != null) {
-            if (!range.equals(func.range)) {
+        if (delegate.getRange() != null) {
+            if (!delegate.getRange().equals(func.getRange())) {
                 return false;
             }
-        } else if (func.range != null) {
+        } else if (func.getRange() != null) {
             return false;
         }
-        if (size != null) {
-            if (!size.equals(func.size)) {
+        if (delegate.getSize() != null) {
+            if (!delegate.getSize().equals(func.getSize())) {
                 return false;
             }
-        } else if (func.size != null) {
+        } else if (func.getSize() != null) {
             return false;
         }
-        if (encode != null) {
-            if (!encode.equals(func.encode)) {
+        if (delegate.getEncode() != null) {
+            if (!delegate.getEncode().equals(func.getEncode())) {
                 return false;
             }
-        } else if (func.encode != null) {
+        } else if (func.getEncode() != null) {
             return false;
         }
-        if (decode != null) {
-            if (!decode.equals(func.decode)) {
+        if (delegate.getDecode() != null) {
+            if (!delegate.getDecode().equals(func.getDecode())) {
                 return false;
             }
-        } else if (func.decode != null) {
+        } else if (func.getDecode() != null) {
             return false;
         }
-        if (functionDataStream != null) {
-            if (!functionDataStream.equals(func.functionDataStream)) {
+        if (delegate.getDataStream() != null) {
+            if (!delegate.getDataStream().equals(func.getDataStream())) {
                 return false;
             }
-        } else if (func.functionDataStream != null) {
+        } else if (func.getDataStream() != null) {
             return false;
         }
-        if (filter != null) {
-            if (!filter.equals(func.filter)) {
+        if (delegate.getFilter() != null) {
+            if (!delegate.getFilter().equals(func.getFilter())) {
                 return false;
             }
-        } else if (func.filter != null) {
+        } else if (func.getFilter() != null) {
             return false;
         }
-        if (cZero != null) {
-            if (!cZero.equals(func.cZero)) {
+        if (delegate.getCZero() != null) {
+            if (!delegate.getCZero().equals(func.getCZero())) {
                 return false;
             }
-        } else if (func.cZero != null) {
+        } else if (func.getCZero() != null) {
             return false;
         }
-        if (cOne != null) {
-            if (!cOne.equals(func.cOne)) {
+        if (delegate.getCOne() != null) {
+            if (!delegate.getCOne().equals(func.getCOne())) {
                 return false;
             }
-        } else if (func.cOne != null) {
+        } else if (func.getCOne() != null) {
             return false;
         }
-        if (functions != null) {
-            if (!functions.equals(func.functions)) {
+        if (delegate.getFunctions() != null) {
+            if (!delegate.getFunctions().equals(func.getFunctions())) {
                 return false;
             }
-        } else if (func.functions != null) {
+        } else if (func.getFunctions() != null) {
             return false;
         }
-        if (bounds != null) {
-            if (!bounds.equals(func.bounds)) {
+        if (delegate.getBounds() != null) {
+            if (!delegate.getBounds().equals(func.getBounds())) {
                 return false;
             }
-        } else if (func.bounds != null) {
+        } else if (func.getBounds() != null) {
             return false;
         }
         return true;
     }
 
+    public int getFunctionType() {
+        return delegate.getFunctionType();
+    }
+
+    public List<Double> getBounds() {
+        return delegate.getBounds();
+    }
+
+    public List<Double> getDomain() {
+        return delegate.getDomain();
+    }
+
+    public List<Double> getSize() {
+        return delegate.getSize();
+    }
+
+    public List<String> getFilter() {
+        return delegate.getFilter();
+    }
+
+    public List<Double> getEncode() {
+        return delegate.getEncode();
+    }
+
+    public List<Function> getFunctions() {
+        return delegate.getFunctions();
+    }
+
+    public int getBitsPerSample() {
+        return delegate.getBitsPerSample();
+    }
+
+    public double getInterpolationExponentN() {
+        return delegate.getInterpolationExponentN();
+    }
+
+    public int getOrder() {
+        return delegate.getOrder();
+    }
+
+    public List<Double> getRange() {
+        return delegate.getRange();
+    }
+
+    public List<Double> getDecode() {
+        return delegate.getDecode();
+    }
+
+    public StringBuffer getDataStream() {
+        return delegate.getDataStream();
+    }
+
+    public List<Double> getCZero() {
+        return delegate.getCZero();
+    }
+
+    public List<Double> getCOne() {
+        return delegate.getCOne();
+    }
 }

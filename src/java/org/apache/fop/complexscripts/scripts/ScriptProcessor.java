@@ -31,11 +31,7 @@ import org.apache.fop.complexscripts.util.CharScript;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 
-// CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: ParameterNumberCheck
-// CSOFF: SimplifyBooleanReturnCheck
 
 /**
  * <p>Abstract script processor base class for which an implementation of the substitution and positioning methods
@@ -278,14 +274,12 @@ public abstract class ScriptProcessor {
         public boolean equals(Object o) {
             if (o instanceof AssembledLookupsKey) {
                 AssembledLookupsKey k = (AssembledLookupsKey) o;
-                if (! table.equals(k.table)) {
+                if (!table.equals(k.table)) {
                     return false;
-                } else if (! Arrays.equals(features, k.features)) {
-                    return false;
-                } else if (! lookups.equals(k.lookups)) {
+                } else if (!Arrays.equals(features, k.features)) {
                     return false;
                 } else {
-                    return true;
+                    return lookups.equals(k.lookups);
                 }
             } else {
                 return false;

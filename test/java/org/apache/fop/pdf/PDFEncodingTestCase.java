@@ -19,10 +19,10 @@ package org.apache.fop.pdf;
 
 import org.junit.Test;
 
-import org.apache.fop.fonts.CodePointMapping;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+
+import org.apache.fop.fonts.CodePointMapping;
 
 public class PDFEncodingTestCase {
 

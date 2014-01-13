@@ -22,24 +22,27 @@ package org.apache.fop.render.pdf.extensions;
 // CSOFF: LineLengthCheck
 
 /**
- * Enumeration type for leaf PDF dictionary entry extension elements.
+ * Enumeration type for leaf PDF object extension types used as singletons,
+ * dictionary entries, or array entries.
  */
-public enum PDFDictionaryEntryType {
-    Boolean("boolean"),         // boolean valued entry
-    Dictionary("dictionary"),   // dictionary valued entry
-    Name("name"),               // name valued entry
-    Number("number"),           // number valued entry
-    String("string");           // string valued entry
+public enum PDFObjectType {
+    Array("array"),                     // array valued entry
+    Boolean("boolean"),                 // boolean valued entry
+    Dictionary("dictionary"),           // dictionary valued entry
+    Name("name"),                       // name valued entry
+    Number("number"),                   // number valued entry
+    Reference("reference"),             // indirect object reference entry
+    String("string");                   // string valued entry
 
     private String elementName;
-    PDFDictionaryEntryType(String elementName) {
+    PDFObjectType(String elementName) {
         this.elementName = elementName;
     }
     public String elementName() {
         return elementName;
     }
-    static PDFDictionaryEntryType valueOfElementName(String elementName) {
-        for (PDFDictionaryEntryType type : values()) {
+    static PDFObjectType valueOfElementName(String elementName) {
+        for (PDFObjectType type : values()) {
             if (type.elementName.equals(elementName)) {
                 return type;
             }
@@ -48,7 +51,8 @@ public enum PDFDictionaryEntryType {
     }
     static boolean hasValueOfElementName(String elementName) {
         try {
-            return valueOfElementName(elementName) != null;
+            valueOfElementName(elementName);
+            return true;
         } catch (Exception e) {
             return false;
         }

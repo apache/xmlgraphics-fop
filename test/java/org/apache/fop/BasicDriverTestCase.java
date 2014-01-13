@@ -28,11 +28,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.fop.apps.FOPException;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -40,7 +42,6 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
 
 import static org.apache.fop.FOPTestUtils.getBaseDir;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Basic runtime test for the old Fop class. It is used to verify that
@@ -136,7 +137,7 @@ public class BasicDriverTestCase {
         InputHandler handler = new InputHandler(xmlFile, xsltFile, null);
         try {
             handler.renderTo(foUserAgent, MimeConstants.MIME_PDF, baout);
-        } catch (FOPException e) {}
+        } catch (FOPException e) { /* NOP */ }
     }
 
 }

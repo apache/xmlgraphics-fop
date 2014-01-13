@@ -1057,7 +1057,7 @@ public class AreaTreeParser {
         }
 
         private static final Object[] SUBSET_COMMON = new Object[] {
-            Trait.PROD_ID};
+            Trait.PROD_ID, Trait.LAYER};
         private static final Object[] SUBSET_LINK = new Object[] {
             Trait.INTERNAL_LINK, Trait.EXTERNAL_LINK};
         private static final Object[] SUBSET_COLOR = new Object[] {

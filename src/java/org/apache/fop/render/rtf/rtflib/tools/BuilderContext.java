@@ -21,6 +21,12 @@ package org.apache.fop.render.rtf.rtflib.tools;
 
 import java.util.Stack;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.fo.FObj;
+import org.apache.fop.render.rtf.RTFHandler;
+import org.apache.fop.render.rtf.RTFPlaceHolderHelper;
 import org.apache.fop.render.rtf.rtflib.exceptions.RtfException;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfOptions;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfContainer;
@@ -38,6 +44,10 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfContainer;
  */
 
 public class BuilderContext {
+
+    /** Static logging instance */
+    protected static final Log LOG = LogFactory.getLog(BuilderContext.class.getName());
+
     /** stack of RtfContainers */
     private final Stack containers = new Stack();
 
@@ -96,17 +106,22 @@ public class BuilderContext {
      * @throws RtfException if not caught
      */
     public RtfContainer getContainer(Class containerClass, boolean required,
-                              Object /*IBuilder*/ forWhichBuilder) throws RtfException {
+            Object forWhichBuilder) throws RtfException {
         // TODO what to do if the desired container is not at the top of the stack?
         // close top-of-stack container?
-        final RtfContainer result = (RtfContainer)getObjectFromStack(containers,
+        RtfContainer result = (RtfContainer)getObjectFromStack(containers,
                 containerClass);
 
         if (result == null && required) {
-            throw new RtfException(
-                "No RtfContainer of class '" + containerClass.getName()
-                + "' available for '" + forWhichBuilder.getClass().getName() + "' builder"
-               );
+            RTFPlaceHolderHelper placeHolderHelper = new RTFPlaceHolderHelper(this);
+            placeHolderHelper.createRTFPlaceholder(containerClass);
+            result = getContainer(containerClass, required, forWhichBuilder);
+            if (result == null) {
+                throw new RtfException(
+                    "No RtfContainer of class '" + containerClass.getName()
+                    + "' available for '" + forWhichBuilder.getClass().getName() + "' builder"
+                   );
+            }
         }
 
         return result;
@@ -118,6 +133,14 @@ public class BuilderContext {
      */
     public void pushContainer(RtfContainer c) {
         containers.push(c);
+    }
+
+    /**
+     * Push a Class representing a non-writeable section of the FO tree
+     * @param part the part
+     */
+    public void pushPart(FObj part) {
+        containers.push(part);
     }
 
     /**
@@ -142,8 +165,40 @@ public class BuilderContext {
     }
 
     /** pop the topmost RtfContainer from our stack */
-    public void popContainer() {
-        containers.pop();
+    public void popContainer(Class containerClass, RTFHandler handler) {
+        handlePop(containerClass, handler);
+    }
+
+    /** pop the topmost part class from our stack */
+    public void popPart(Class part, RTFHandler handler) {
+        handlePop(part, handler);
+    }
+
+    /**
+     * This method checks for any tag mismatches between what is being closed
+     * and what exists on the stack. If a mismatch is found, then it will push
+     * the object back onto the stack and attempt to close the given section
+     * before retrying with the current pop task.
+     * @param aClass The class to be popped from the stack
+     * @param handler The RTF handler class to fix any mismatches
+     */
+    private void handlePop(Class aClass, RTFHandler handler) {
+        Object object = containers.pop();
+        if (object.getClass() != aClass) {
+            pushAndClose(aClass, object, handler);
+        }
+    }
+
+    private void pushAndClose(Class aClass, Object object, RTFHandler handler) {
+        containers.push(object);
+        if (handler.endContainer(object.getClass())) {
+            popContainer(aClass, handler);
+        } else {
+            /* This should never happen unless a placeholder is not catered for
+             * in the RTFHandler.endContainer method. */
+            LOG.warn("Unhandled RTF structure tag mismatch detected between "
+                     + aClass.getSimpleName() + " and " + object.getClass().getSimpleName());
+        }
     }
 
     /* push an IBuilder to our stack /

@@ -19,10 +19,11 @@
 
 package org.apache.fop.area;
 
-import org.apache.fop.area.inline.InlineViewportTestCase;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+
+import org.apache.fop.area.inline.InlineViewportTestCase;
 
 /**
  * A suite of all the tests relating to the {@linkplain Viewport} interface.

@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.pagination;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
@@ -29,8 +31,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.NumericProperty;
 import org.apache.fop.fo.properties.Property;
-
-import org.junit.Test;
 
 /**
  * Unit Test for RepeatablePageMasterAlternatives

@@ -19,14 +19,14 @@
 
 package org.apache.fop.pdf.xref;
 
-import static org.junit.Assert.assertArrayEquals;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertArrayEquals;
 
 public class UncompressedObjectReferenceTestCase extends ObjectReferenceTest {
 

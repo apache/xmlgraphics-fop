@@ -19,20 +19,22 @@
 
 package org.apache.fop.render.afp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.apache.commons.io.IOUtils;
+
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.parser.MODCAParser;
 import org.apache.fop.afp.parser.UnparsedStructuredField;
 import org.apache.fop.apps.FOUserAgent;
-import org.junit.Test;
 
 /**
  * Tests generation of afp:no-operation (NOPs).

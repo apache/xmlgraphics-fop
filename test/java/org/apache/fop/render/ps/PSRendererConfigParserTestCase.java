@@ -21,13 +21,13 @@ package org.apache.fop.render.ps;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.apps.AbstractRendererConfigParserTester;
 import org.apache.fop.apps.PSRendererConfBuilder;
 import org.apache.fop.render.ps.PSRendererConfig.PSRendererConfigParser;
-
-import static org.junit.Assert.assertEquals;
 
 public class PSRendererConfigParserTestCase
         extends AbstractRendererConfigParserTester<PSRendererConfBuilder, PSRendererConfig> {

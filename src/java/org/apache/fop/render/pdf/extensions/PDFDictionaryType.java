@@ -25,16 +25,27 @@ package org.apache.fop.render.pdf.extensions;
  * Enumeration type for PDF dictionary extension elements.
  */
 public enum PDFDictionaryType {
-    Dictionary("dictionary"),   // generic (nested) dictionary element
-    Catalog("catalog"),         // catalog dictionary element
-    Page("page");               // page dictionary element
+    Action("action", true),             // action dictionary element
+    Catalog("catalog"),                 // catalog dictionary element
+    Dictionary("dictionary"),           // generic (nested) dictionary element
+    Layer("layer", true),               // optional content group dictionary element
+    Navigator("navigator", true),       // navigation node dictionary element
+    Page("page");                       // page dictionary element
 
     private String elementName;
-    PDFDictionaryType(String elementName) {
+    private boolean usesIDAttribute;
+    PDFDictionaryType(String elementName, boolean usesIDAttribute) {
         this.elementName = elementName;
+        this.usesIDAttribute = usesIDAttribute;
+    }
+    PDFDictionaryType(String elementName) {
+        this(elementName, false);
     }
     public String elementName() {
         return elementName;
+    }
+    public boolean usesIDAttribute() {
+        return usesIDAttribute;
     }
     static PDFDictionaryType valueOfElementName(String elementName) {
         for (PDFDictionaryType type : values()) {

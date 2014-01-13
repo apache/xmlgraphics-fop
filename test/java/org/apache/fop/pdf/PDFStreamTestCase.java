@@ -19,16 +19,16 @@
 
 package org.apache.fop.pdf;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PDFStreamTestCase {
 
@@ -118,7 +118,7 @@ public class PDFStreamTestCase {
 
     private byte[] createSampleStreamData() throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        stream.write("stream\n".getBytes("US-ASCII"));
+        stream.write("\nstream\n".getBytes("US-ASCII"));
         stream.write(createSampleData());
         stream.write("\nendstream".getBytes("US-ASCII"));
         return stream.toByteArray();

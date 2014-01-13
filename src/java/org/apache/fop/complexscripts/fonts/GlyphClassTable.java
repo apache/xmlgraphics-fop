@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
 
 /**
  * <p>Base class implementation of glyph class table.</p>
@@ -100,7 +99,7 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
         } else {
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 Object o = it.next();
-                if (! (o instanceof Integer)) {
+                if (!(o instanceof Integer)) {
                     return false;
                 }
             }
@@ -114,7 +113,7 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
         } else {
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 Object o = it.next();
-                if (! (o instanceof MappingRange)) {
+                if (!(o instanceof MappingRange)) {
                     return false;
                 }
             }
@@ -128,7 +127,7 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
         } else {
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 Object o = it.next();
-                if (! (o instanceof GlyphCoverageTable)) {
+                if (!(o instanceof GlyphCoverageTable)) {
                     return false;
                 }
             }
@@ -197,7 +196,7 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
             if (it.hasNext()) {
                 Object o = it.next();
                 if (o instanceof Integer) {
-                    firstGlyph = ((Integer) o) . intValue();
+                    firstGlyph = ((Integer) o) .intValue();
                 } else {
                     throw new AdvancedTypographicTableFormatException("illegal entry, first entry must be Integer denoting first glyph value, but is: " + o);
                 }
@@ -210,7 +209,7 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
             while (it.hasNext()) {
                 Object o = it.next();
                 if (o instanceof Integer) {
-                    int gc = ((Integer) o) . intValue();
+                    int gc = ((Integer) o) .intValue();
                     gca [ i++ ] = gc;
                     if (gc > gcMax) {
                         gcMax = gc;

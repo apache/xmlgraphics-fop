@@ -310,12 +310,7 @@ public class PDFFactory {
                                                theFunctionDataStream,
                                                theFilter);
 
-        PDFFunction oldfunc = getDocument().findFunction(function);
-        if (oldfunc == null) {
-            getDocument().registerObject(function);
-        } else {
-            function = oldfunc;
-        }
+        function = registerFunction(function);
         return (function);
     }
 
@@ -352,12 +347,7 @@ public class PDFFactory {
         PDFFunction function = new PDFFunction(theFunctionType, theDomain,
                                                theRange, theCZero, theCOne,
                                                theInterpolationExponentN);
-        PDFFunction oldfunc = getDocument().findFunction(function);
-        if (oldfunc == null) {
-            getDocument().registerObject(function);
-        } else {
-            function = oldfunc;
-        }
+        function = registerFunction(function);
         return (function);
     }
 
@@ -407,12 +397,7 @@ public class PDFFactory {
                                                theRange, theFunctions,
                                                theBounds, theEncode);
 
-        PDFFunction oldfunc = getDocument().findFunction(function);
-        if (oldfunc == null) {
-            getDocument().registerObject(function);
-        } else {
-            function = oldfunc;
-        }
+        function = registerFunction(function);
         return (function);
     }
 
@@ -434,14 +419,23 @@ public class PDFFactory {
                                                theRange,
                                                theFunctionDataStream);
 
+        function = registerFunction(function);
+        return (function);
+
+    }
+
+    /**
+     * Registers a function against the document
+     * @param function The function to register
+     */
+    public PDFFunction registerFunction(PDFFunction function) {
         PDFFunction oldfunc = getDocument().findFunction(function);
         if (oldfunc == null) {
             getDocument().registerObject(function);
         } else {
             function = oldfunc;
         }
-        return (function);
-
+        return function;
     }
 
     /* ========================= shadings ================================== */
@@ -481,20 +475,7 @@ public class PDFFactory {
                                             theBBox, theAntiAlias, theDomain,
                                             theMatrix, theFunction);
 
-        PDFShading oldshad = getDocument().findShading(shading);
-        if (oldshad == null) {
-            getDocument().registerObject(shading);
-        } else {
-            shading = oldshad;
-        }
-
-        // add this shading to resources
-        if (res != null) {
-            res.getPDFResources().addShading(shading);
-        } else {
-            getDocument().getResources().addShading(shading);
-        }
-
+        shading = registerShading(res, shading);
         return (shading);
     }
 
@@ -534,18 +515,7 @@ public class PDFFactory {
                                             theDomain, theFunction,
                                             theExtend);
 
-        PDFShading oldshad = getDocument().findShading(shading);
-        if (oldshad == null) {
-            getDocument().registerObject(shading);
-        } else {
-            shading = oldshad;
-        }
-
-        if (res != null) {
-            res.getPDFResources().addShading(shading);
-        } else {
-            getDocument().getResources().addShading(shading);
-        }
+        shading = registerShading(res, shading);
 
         return (shading);
     }
@@ -591,18 +561,7 @@ public class PDFFactory {
                                             theBitsPerFlag, theDecode,
                                             theFunction);
 
-        PDFShading oldshad = getDocument().findShading(shading);
-        if (oldshad == null) {
-            getDocument().registerObject(shading);
-        } else {
-            shading = oldshad;
-        }
-
-        if (res != null) {
-            res.getPDFResources().addShading(shading);
-        } else {
-            getDocument().getResources().addShading(shading);
-        }
+        shading = registerShading(res, shading);
 
         return (shading);
     }
@@ -645,6 +604,17 @@ public class PDFFactory {
                                             theBitsPerComponent, theDecode,
                                             theVerticesPerRow, theFunction);
 
+        shading = registerShading(res, shading);
+
+        return (shading);
+    }
+
+    /**
+     * Registers a shading object against the document
+     * @param res The PDF resource context
+     * @param shading The shading object to be registered
+     */
+    public PDFShading registerShading(PDFResourceContext res, PDFShading shading) {
         PDFShading oldshad = getDocument().findShading(shading);
         if (oldshad == null) {
             getDocument().registerObject(shading);
@@ -652,13 +622,13 @@ public class PDFFactory {
             shading = oldshad;
         }
 
+        // add this shading to resources
         if (res != null) {
             res.getPDFResources().addShading(shading);
         } else {
             getDocument().getResources().addShading(shading);
         }
-
-        return (shading);
+        return shading;
     }
 
     /* ========================= patterns ================================== */
@@ -705,6 +675,22 @@ public class PDFFactory {
         }
 
         return (pattern);
+    }
+
+    public PDFPattern registerPattern(PDFResourceContext res, PDFPattern pattern) {
+        PDFPattern oldpatt = getDocument().findPattern(pattern);
+        if (oldpatt == null) {
+            getDocument().registerObject(pattern);
+        } else {
+            pattern = oldpatt;
+        }
+
+        if (res != null) {
+            res.getPDFResources().addPattern(pattern);
+        } else {
+            getDocument().getResources().addPattern(pattern);
+        }
+        return pattern;
     }
 
     /**
@@ -1819,6 +1805,30 @@ public class PDFFactory {
         PDFAnnotList obj = new PDFAnnotList();
         getDocument().assignObjectNumber(obj);
         return obj;
+    }
+
+    public PDFLayer makeLayer(String id) {
+        PDFLayer layer = new PDFLayer(id);
+        getDocument().registerObject(layer);
+        return layer;
+    }
+
+    public PDFSetOCGStateAction makeSetOCGStateAction(String id) {
+        PDFSetOCGStateAction action = new PDFSetOCGStateAction(id);
+        getDocument().registerObject(action);
+        return action;
+    }
+
+    public PDFTransitionAction makeTransitionAction(String id) {
+        PDFTransitionAction action = new PDFTransitionAction(id);
+        getDocument().registerObject(action);
+        return action;
+    }
+
+    public PDFNavigator makeNavigator(String id) {
+        PDFNavigator navigator = new PDFNavigator(id);
+        getDocument().registerObject(navigator);
+        return navigator;
     }
 
 }

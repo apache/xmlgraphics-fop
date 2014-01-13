@@ -30,14 +30,13 @@ package org.apache.fop.render.rtf.rtflib.testdocs;
 import java.io.IOException;
 
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTable;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableCell;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
 
 /**  Generates an RTF document to test nested tables with the jfor rtflib package.
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
 class NestedTable extends TestDocument {

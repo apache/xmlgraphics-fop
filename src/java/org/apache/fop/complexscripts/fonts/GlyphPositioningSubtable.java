@@ -23,8 +23,6 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: ParameterNumberCheck
 
 /**
  * <p>The <code>GlyphPositioningSubtable</code> implements an abstract base of a glyph subtable,
@@ -90,8 +88,8 @@ public abstract class GlyphPositioningSubtable extends GlyphSubtable implements 
         boolean appliedOneShot = false;
         while (ps.hasNext()) {
             boolean applied = false;
-            if (! appliedOneShot && ps.maybeApplicable()) {
-                for (int i = 0, n = sta.length; ! applied && (i < n); i++) {
+            if (!appliedOneShot && ps.maybeApplicable()) {
+                for (int i = 0, n = sta.length; !applied && (i < n); i++) {
                     if (sequenceIndex < 0) {
                         applied = ps.apply(sta [ i ]);
                     } else if (ps.getPosition() == (sequenceStart + sequenceIndex)) {
@@ -102,7 +100,7 @@ public abstract class GlyphPositioningSubtable extends GlyphSubtable implements 
                     }
                 }
             }
-            if (! applied || ! ps.didConsume()) {
+            if (!applied || !ps.didConsume()) {
                 ps.applyDefault();
             }
             ps.next();

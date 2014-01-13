@@ -21,7 +21,6 @@ package org.apache.fop.complexscripts.bidi;
 
 import java.util.Arrays;
 
-// CSOFF: WhitespaceAfterCheck
 // CSOFF: LineLengthCheck
 
 /*

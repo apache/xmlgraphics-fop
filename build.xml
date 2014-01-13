@@ -579,6 +579,7 @@ list of possible build targets.
       <include name="org/apache/fop/util/Finalizable.class"/>
       <include name="org/apache/fop/util/CharUtilities.class"/>
       <include name="org/apache/fop/util/DecimalFormatCache*.class"/>
+      <include name="org/apache/fop/render/shading/**"/>
     </patternset>
 <!-- PDF transcoder -->
     <patternset>
@@ -1041,10 +1042,8 @@ NOTE:
 <!-- Checkstyle                                                          -->
 <!-- =================================================================== -->
   <property name="checkstyle.location" value="${lib-tools}/checkstyle-5.5-all.jar" />
-  <property name="checkstyle.noframes.xslt" value="${basedir}/checkstyle-noframes.xsl" />
   <property name="checkstyle.config" value="${basedir}/checkstyle-5.5.xml" />
   <path id="checkstyle-classpath">
-    <path refid="libs-build-classpath"/>
     <pathelement location="${checkstyle.location}"/>
   </path>
   <condition property="checkstyle.avail">
@@ -1052,20 +1051,18 @@ NOTE:
       <available classname="com.puppycrawl.tools.checkstyle.CheckStyleTask">
         <classpath refid="checkstyle-classpath"/>
       </available>
-      <available file="${checkstyle.noframes.xslt}"/>
       <available file="${checkstyle.config}"/>
     </and>
   </condition>
   <target name="checkstyle-avail" unless="checkstyle.avail">
     <echo message="Checkstyle support NOT present. Please download it from http://checkstyle.sf.net/ and"/>
     <echo message="... please provide ${checkstyle.location}"/>
-    <echo message="... please provide ${checkstyle.noframes.xslt}"/>
     <echo message="... please provide ${checkstyle.config}"/>
   </target>
   <target name="checkstyle" depends="package, checkstyle-avail" if="checkstyle.avail" description="Runs Checkstyle for a code quality report">
     <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstyle-classpath"/>
     <mkdir dir="${build.dir}"/>
-    <checkstyle config="${checkstyle.config}" failonviolation="false">
+    <checkstyle config="${checkstyle.config}" failonviolation="true" maxWarnings="0">
       <classpath>
         <path refid="checkstyle-classpath"/>
         <pathelement location="${build.classes.dir}"/>
@@ -1073,9 +1070,10 @@ NOTE:
         <pathelement location="${build.codegen-classes.dir}"/>
       </classpath>
       <fileset dir="${src.dir}" includes="**/*.java"/>
+      <fileset dir="${test.dir}" includes="**/*.java"/>
       <formatter type="xml" toFile="${build.dir}/report_checkstyle.xml"/>
+      <formatter type="plain"/>
     </checkstyle>
-    <xslt in="${build.dir}/report_checkstyle.xml" out="${build.dir}/report_checkstyle.html" style="${checkstyle.noframes.xslt}"/>
   </target>
 <!-- =================================================================== -->
 <!-- PMD                                                                 -->
@@ -1087,6 +1085,7 @@ NOTE:
         <path refid="libs-tools-build-classpath"/>
       </classpath>
     </taskdef>
+    <mkdir dir="${build.dir}"/>
     <pmd shortFilenames="true" targetjdk="${javac.target}">
       <ruleset>basic</ruleset>
       <ruleset>rulesets/migrating_to_14.xml</ruleset>
@@ -1505,7 +1504,7 @@ NOTE:
 <!-- Special target for Gump                                             -->
 <!-- =================================================================== -->
   <target name="gump" depends="package,transcoder-pkg"/>
-  <target name="gump-test" depends="junit-all">
+  <target name="gump-test" depends="junit-all,checkstyle">
     <fail>
       <condition>
         <or>

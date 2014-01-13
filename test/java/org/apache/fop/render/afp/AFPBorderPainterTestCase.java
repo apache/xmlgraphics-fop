@@ -19,11 +19,14 @@
 
 package org.apache.fop.render.afp;
 
-import static org.junit.Assert.assertTrue;
-
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPLineDataInfo;
@@ -32,8 +35,6 @@ import org.apache.fop.afp.BorderPaintingInfo;
 import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.Factory;
 import org.apache.fop.fo.Constants;
-import org.junit.Before;
-import org.junit.Test;
 
 public class AFPBorderPainterTestCase {
     private ByteArrayOutputStream outStream;
@@ -63,12 +64,12 @@ public class AFPBorderPainterTestCase {
         ds.endDocument();
         assertTrue(line.getX1() == 4999 && line.getX2() == 8332);
     }
-    
+
     class MyDataStream extends DataStream {
         public MyDataStream(Factory factory, AFPPaintingState paintingState, OutputStream outputStream) {
             super(factory, paintingState, outputStream);
         }
-        
+
         public void createLine(AFPLineDataInfo lineDataInfo) {
             line = lineDataInfo;
         }

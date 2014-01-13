@@ -19,15 +19,15 @@ package org.apache.fop.render.pcl;
 
 import org.junit.Test;
 
-import org.apache.fop.apps.AbstractRendererConfiguratorTest;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.render.pcl.PCLRendererConfig.PCLRendererConfigParser;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
+
+import org.apache.fop.apps.AbstractRendererConfiguratorTest;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.render.pcl.PCLRendererConfig.PCLRendererConfigParser;
 
 public class PCLRendererConfiguratorTestCase extends
         AbstractRendererConfiguratorTest<PCLRendererConfigurator, PCLRendererConfBuilder> {

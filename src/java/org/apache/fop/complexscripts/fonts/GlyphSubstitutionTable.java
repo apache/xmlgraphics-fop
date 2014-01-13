@@ -31,9 +31,7 @@ import org.apache.fop.complexscripts.scripts.ScriptProcessor;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.GlyphTester;
 
-// CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
 
 /**
  * <p>The <code>GlyphSubstitutionTable</code> class is a glyph table that implements
@@ -306,7 +304,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 Object o = entries.get(0);
                 int delta = 0;
                 if (o instanceof Integer) {
-                    delta = ((Integer) o) . intValue();
+                    delta = ((Integer) o) .intValue();
                 } else {
                     throw new AdvancedTypographicTableFormatException("illegal entries entry, must be Integer, but is: " + o);
                 }
@@ -440,7 +438,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 throw new AdvancedTypographicTableFormatException("illegal entries, " + entries.size() + " entries present, but requires 1 entry");
             } else {
                 Object o;
-                if (((o = entries.get(0)) == null) || ! (o instanceof int[][])) {
+                if (((o = entries.get(0)) == null) || !(o instanceof int[][])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, first entry must be an int[][], but is: " + ((o != null) ? o.getClass() : null));
                 } else {
                     gsa = (int[][]) o;
@@ -801,7 +799,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 throw new AdvancedTypographicTableFormatException("illegal entries, " + entries.size() + " entries present, but requires 1 entry");
             } else {
                 Object o;
-                if (((o = entries.get(0)) == null) || ! (o instanceof RuleSet[])) {
+                if (((o = entries.get(0)) == null) || !(o instanceof RuleSet[])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, first entry must be an RuleSet[], but is: " + ((o != null) ? o.getClass() : null));
                 } else {
                     rsa = (RuleSet[]) o;
@@ -894,17 +892,17 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 throw new AdvancedTypographicTableFormatException("illegal entries, " + entries.size() + " entries present, but requires 3 entries");
             } else {
                 Object o;
-                if (((o = entries.get(0)) == null) || ! (o instanceof GlyphClassTable)) {
+                if (((o = entries.get(0)) == null) || !(o instanceof GlyphClassTable)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, first entry must be an GlyphClassTable, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
                     cdt = (GlyphClassTable) o;
                 }
-                if (((o = entries.get(1)) == null) || ! (o instanceof Integer)) {
+                if (((o = entries.get(1)) == null) || !(o instanceof Integer)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, second entry must be an Integer, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
                     ngc = ((Integer)(o)).intValue();
                 }
-                if (((o = entries.get(2)) == null) || ! (o instanceof RuleSet[])) {
+                if (((o = entries.get(2)) == null) || !(o instanceof RuleSet[])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, third entry must be an RuleSet[], but is: " + ((o != null) ? o.getClass() : null));
                 } else {
                     rsa = (RuleSet[]) o;
@@ -994,7 +992,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 throw new AdvancedTypographicTableFormatException("illegal entries, " + entries.size() + " entries present, but requires 1 entry");
             } else {
                 Object o;
-                if (((o = entries.get(0)) == null) || ! (o instanceof RuleSet[])) {
+                if (((o = entries.get(0)) == null) || !(o instanceof RuleSet[])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, first entry must be an RuleSet[], but is: " + ((o != null) ? o.getClass() : null));
                 } else {
                     rsa = (RuleSet[]) o;
@@ -1113,7 +1111,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 throw new AdvancedTypographicTableFormatException("illegal entries, " + entries.size() + " entries present, but requires 1 entry");
             } else {
                 Object o;
-                if (((o = entries.get(0)) == null) || ! (o instanceof RuleSet[])) {
+                if (((o = entries.get(0)) == null) || !(o instanceof RuleSet[])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, first entry must be an RuleSet[], but is: " + ((o != null) ? o.getClass() : null));
                 } else {
                     rsa = (RuleSet[]) o;
@@ -1189,27 +1187,27 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 throw new AdvancedTypographicTableFormatException("illegal entries, " + entries.size() + " entries present, but requires 5 entries");
             } else {
                 Object o;
-                if (((o = entries.get(0)) == null) || ! (o instanceof GlyphClassTable)) {
+                if (((o = entries.get(0)) == null) || !(o instanceof GlyphClassTable)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, first entry must be an GlyphClassTable, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
                     icdt = (GlyphClassTable) o;
                 }
-                if (((o = entries.get(1)) != null) && ! (o instanceof GlyphClassTable)) {
+                if (((o = entries.get(1)) != null) && !(o instanceof GlyphClassTable)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, second entry must be an GlyphClassTable, but is: " + o.getClass());
                 } else {
                     bcdt = (GlyphClassTable) o;
                 }
-                if (((o = entries.get(2)) != null) && ! (o instanceof GlyphClassTable)) {
+                if (((o = entries.get(2)) != null) && !(o instanceof GlyphClassTable)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, third entry must be an GlyphClassTable, but is: " + o.getClass());
                 } else {
                     lcdt = (GlyphClassTable) o;
                 }
-                if (((o = entries.get(3)) == null) || ! (o instanceof Integer)) {
+                if (((o = entries.get(3)) == null) || !(o instanceof Integer)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, fourth entry must be an Integer, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
                     ngc = ((Integer)(o)).intValue();
                 }
-                if (((o = entries.get(4)) == null) || ! (o instanceof RuleSet[])) {
+                if (((o = entries.get(4)) == null) || !(o instanceof RuleSet[])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, fifth entry must be an RuleSet[], but is: " + ((o != null) ? o.getClass() : null));
                 } else {
                     rsa = (RuleSet[]) o;
@@ -1280,7 +1278,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 throw new AdvancedTypographicTableFormatException("illegal entries, " + entries.size() + " entries present, but requires 1 entry");
             } else {
                 Object o;
-                if (((o = entries.get(0)) == null) || ! (o instanceof RuleSet[])) {
+                if (((o = entries.get(0)) == null) || !(o instanceof RuleSet[])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, first entry must be an RuleSet[], but is: " + ((o != null) ? o.getClass() : null));
                 } else {
                     rsa = (RuleSet[]) o;

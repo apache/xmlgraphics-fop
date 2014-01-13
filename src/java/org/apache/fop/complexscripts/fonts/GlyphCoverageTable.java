@@ -27,8 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 // CSOFF: LineLengthCheck
-// CSOFF: InnerAssignmentCheck
-// CSOFF: NoWhitespaceAfterCheck
 
 /**
  * <p>.Base class implementation of glyph coverage table.</p>
@@ -103,7 +101,7 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
         } else {
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 Object o = it.next();
-                if (! (o instanceof Integer)) {
+                if (!(o instanceof Integer)) {
                     return false;
                 }
             }
@@ -117,7 +115,7 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
         } else {
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 Object o = it.next();
-                if (! (o instanceof MappingRange)) {
+                if (!(o instanceof MappingRange)) {
                     return false;
                 }
             }
@@ -183,7 +181,7 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 Object o = it.next();
                 if (o instanceof Integer) {
-                    int gid = ((Integer) o) . intValue();
+                    int gid = ((Integer) o) .intValue();
                     if ((gid >= 0) && (gid < 65536)) {
                         if (gid > gidMax) {
                             map [ i++ ] = gidMax = gid;

@@ -126,8 +126,8 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
     }
 
     /** {@inheritDoc} */
-    public void startGroup(AffineTransform[] transforms) throws IFException {
-        startGroup(combine(transforms));
+    public void startGroup(AffineTransform[] transforms, String layer) throws IFException {
+        startGroup(combine(transforms), layer);
     }
 
     /**

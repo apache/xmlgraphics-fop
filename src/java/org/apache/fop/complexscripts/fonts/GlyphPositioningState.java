@@ -23,7 +23,6 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 
 // CSOFF: LineLengthCheck
-// CSOFF: ParameterNumberCheck
 
 /**
  * <p>The <code>GlyphPositioningState</code> implements an state object used during glyph positioning

@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 
-// CSOFF: WhitespaceAfterCheck
 
 /*
  * !!! THIS IS A GENERATED FILE !!!
@@ -66,7 +65,7 @@ public final class BidiTestData {
             data = null;
         } finally {
             if (is != null) {
-                try { is.close(); } catch (Exception e) {}
+                try { is.close(); } catch (Exception e) { /* NOP */ }
             }
         }
         return data;

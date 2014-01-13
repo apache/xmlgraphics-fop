@@ -19,17 +19,18 @@
 
 package org.apache.fop.util;
 
+import java.util.LinkedList;
+
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-
-import java.util.LinkedList;
 
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
-import org.junit.Test;
 
 /**
  * Test class for ElementListUtils.
