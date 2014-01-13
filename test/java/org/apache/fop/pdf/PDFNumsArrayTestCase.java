@@ -19,10 +19,10 @@
 
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
 
 /**
  * Test case for {@link PDFNumsArray}.

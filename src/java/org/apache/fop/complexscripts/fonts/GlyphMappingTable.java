@@ -23,8 +23,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
 
 /**
@@ -162,7 +160,7 @@ public class GlyphMappingTable {
             int mi;
             if ((i = Arrays.binarySearch(sa, gid)) >= 0) {
                 mi = getMappedIndex(gid, sa [ i ], ma [ i ]);                // matches start of (some) range
-            } else if ((i = - (i + 1)) == 0) {
+            } else if ((i = -(i + 1)) == 0) {
                 mi = -1;                                                        // precedes first range
             } else if (gid > ea [ --i ]) {
                 mi = -1;                                                        // follows preceding (or last) range

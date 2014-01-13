@@ -19,10 +19,10 @@
 
 package org.apache.fop.pdf;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
 
 /**
  * This is a test case for ({@link Version}.

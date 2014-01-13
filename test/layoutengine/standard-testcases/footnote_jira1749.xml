@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      FOP-1749: footnotes with margin-top="..." that do not fit on the current
+      page, but would've fit without top margin cause FOP to hang (instead of
+      being pushed to the next page). Also, verify the top-offset for the
+      footnote is calculated properly with margin-top.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master page-height="50pt" page-width="240pt" master-name="Body">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="Body">
+        <fo:flow flow-name="xsl-region-body" font-size="10pt">
+          <fo:block>No footnote</fo:block>
+          <fo:block>Footnote call<fo:footnote>
+              <fo:inline>*</fo:inline>
+              <fo:footnote-body>
+                <fo:block margin-top="20pt">The footnote</fo:block>
+              </fo:footnote-body>
+            </fo:footnote>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- The block with footnote reference is on page 2 -->
+    <eval expected="Footnote call" xpath="//pageViewport[2]//mainReference//text"/>
+    <eval expected="The footnote" xpath="//pageViewport[2]//footnote//text"/>
+    <!-- And footnote's top-offset positions it on the page, not below -->
+    <eval expected="18000" xpath="//pageViewport[2]//footnote/@top-offset"/>
+  </checks>
+</testcase>

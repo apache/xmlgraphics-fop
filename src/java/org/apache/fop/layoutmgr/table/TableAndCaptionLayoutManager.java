@@ -184,6 +184,7 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
             Area parentArea = parentLayoutManager.getParentArea(curBlockArea);
             int referenceIPD = parentArea.getIPD();
             curBlockArea.setIPD(referenceIPD);
+            curBlockArea.setBidiLevel(getTableAndCaptionFO().getBidiLevel());
             // Get reference IPD from parentArea
             setCurrentArea(curBlockArea); // ??? for generic operations
         }

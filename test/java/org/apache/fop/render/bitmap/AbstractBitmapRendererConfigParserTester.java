@@ -24,6 +24,11 @@ import java.awt.image.BufferedImage;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.fop.apps.AbstractRendererConfigParserTester;
 import org.apache.fop.apps.BitmapRendererConfBuilder;
 import org.apache.fop.render.bitmap.BitmapRendererConfig.BitmapRendererConfigParser;
@@ -36,10 +41,6 @@ import static org.apache.fop.render.bitmap.BitmapRendererOption.COLOR_MODE_RGBA;
 import static org.apache.fop.render.bitmap.BitmapRendererOption.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
 import static org.apache.fop.render.bitmap.BitmapRendererOption.RENDERING_QUALITY;
 import static org.apache.fop.render.bitmap.BitmapRendererOption.RENDERING_SPEED;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class AbstractBitmapRendererConfigParserTester
         extends AbstractRendererConfigParserTester<BitmapRendererConfBuilder, BitmapRendererConfig> {

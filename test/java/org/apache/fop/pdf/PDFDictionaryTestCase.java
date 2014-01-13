@@ -19,16 +19,17 @@
 
 package org.apache.fop.pdf;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import org.apache.commons.io.output.CountingOutputStream;
-import org.junit.Before;
-import org.junit.Test;
 
 
 /**
@@ -47,7 +48,7 @@ public class PDFDictionaryTestCase extends PDFObjectTestCase {
                                   + "  /array [1 (two) 20]\n"
                                   + "  /number 20\n"
                                   + "  /null null\n"
-                                  + ">>\n";
+                                  + ">>";
 
     @Before
     public void setUp() {

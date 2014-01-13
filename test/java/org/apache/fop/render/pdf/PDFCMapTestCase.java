@@ -19,12 +19,13 @@
 
 package org.apache.fop.render.pdf;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.StringWriter;
 
-import org.apache.fop.pdf.CMapBuilder;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+import org.apache.fop.pdf.CMapBuilder;
 
 /** Simple sanity test of the PDFCmap class */
 public class PDFCMapTestCase {
@@ -60,8 +61,7 @@ public class PDFCMapTestCase {
             + "end" + EOL
             + "end" + EOL
             + "%%EndResource" + EOL
-            + "%%EOF" + EOL
-        ;
+            + "%%EOF" + EOL;
 
         final StringWriter w = new StringWriter();
         final CMapBuilder builder = new CMapBuilder(w, "test");

@@ -24,8 +24,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -33,6 +31,8 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.svg.PDFDocumentGraphics2D;
+
+import junit.framework.Assert;
 
 /**
  * Tests for {@link PDFDocumentGraphics2D}.

@@ -29,7 +29,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.complexscripts.scripts.ScriptProcessor;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 
-// CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
 
 /**

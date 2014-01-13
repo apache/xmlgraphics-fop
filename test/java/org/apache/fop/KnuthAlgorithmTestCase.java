@@ -19,9 +19,12 @@
 
 package org.apache.fop;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.layoutmgr.BlockKnuthSequence;
 import org.apache.fop.layoutmgr.BreakingAlgorithm;
@@ -30,8 +33,6 @@ import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthSequence;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Tests the Knuth algorithm implementation.

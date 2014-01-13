@@ -164,7 +164,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
     }
 
     /** {@inheritDoc} */
-    public void startGroup(AffineTransform transform) throws IFException {
+    public void startGroup(AffineTransform transform, String layer) throws IFException {
         try {
             saveGraphicsState();
             concatenateTransformationMatrix(transform);

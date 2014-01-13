@@ -40,7 +40,10 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 /**
  * Tests for functionality related to the arabic script.
  */
-public class GenerateArabicTestData implements ArabicTestConstants {
+public final class GenerateArabicTestData implements ArabicTestConstants {
+
+    private GenerateArabicTestData() {
+    }
 
     public static void main(String[] args) {
         boolean compile = false;
@@ -69,9 +72,9 @@ public class GenerateArabicTestData implements ArabicTestConstants {
     }
 
     private static void compile() {
-        for (String sfn : srcFiles) {
+        for (String sfn : SRC_FILES) {
             try {
-                String spn = srcFilesDir + File.separator + sfn + "." + WF_FILE_SRC_EXT;
+                String spn = SRC_FILES_DIR + File.separator + sfn + "." + WF_FILE_SRC_EXT;
                 compile(WF_FILE_SCRIPT, WF_FILE_LANGUAGE, spn);
             } catch (Exception e) {
                 System.err.println(e.getMessage());
@@ -81,8 +84,8 @@ public class GenerateArabicTestData implements ArabicTestConstants {
 
     private static void compile(String script, String language, String spn) {
         int fno = 0;
-        for (String tfn : ttxFonts) {
-            TTXFile tf = TTXFile.getFromCache(ttxFontsDir + File.separator + tfn);
+        for (String tfn : TTX_FONTS) {
+            TTXFile tf = TTXFile.getFromCache(TTX_FONTS_DIR + File.separator + tfn);
             assert tf != null;
             List data = compile(script, language, spn, tfn, tf);
             output(makeDataPathName(spn, fno++), data);
@@ -106,7 +109,7 @@ public class GenerateArabicTestData implements ArabicTestConstants {
                         GlyphSequence igs = tf.mapCharsToGlyphs(wf);
                         GlyphSequence ogs = gsub.substitute(igs, script, language);
                         int[][] paa = new int [ ogs.getGlyphCount() ] [ 4 ];
-                        if (! gpos.position(ogs, script, language, 1000, widths, paa)) {
+                        if (!gpos.position(ogs, script, language, 1000, widths, paa)) {
                             paa = null;
                         }
                         data.add(new Object[] { wf, getGlyphs(igs), getGlyphs(ogs), paa });
@@ -121,7 +124,7 @@ public class GenerateArabicTestData implements ArabicTestConstants {
                 throw new RuntimeException(e.getMessage(), e);
             } finally {
                 if (fis != null) {
-                    try { fis.close(); } catch (Exception e) {}
+                    try { fis.close(); } catch (Exception e) { /* NOP */ }
                 }
             }
         } else {
@@ -142,7 +145,7 @@ public class GenerateArabicTestData implements ArabicTestConstants {
 
     private static String makeDataPathName(String spn, int fno) {
         File f = new File(spn);
-        return datFilesDir + File.separator + stripExtension(f.getName()) + "-f" + fno + "." + WF_FILE_DAT_EXT;
+        return DAT_FILES_DIR + File.separator + stripExtension(f.getName()) + "-f" + fno + "." + WF_FILE_DAT_EXT;
     }
 
     private static String stripExtension(String s) {
@@ -171,7 +174,7 @@ public class GenerateArabicTestData implements ArabicTestConstants {
             throw new RuntimeException(e.getMessage(), e);
         } finally {
             if (fos != null) {
-                try { fos.close(); } catch (Exception e) {}
+                try { fos.close(); } catch (Exception e) { /* NOP */ }
             }
         }
     }

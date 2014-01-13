@@ -26,14 +26,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.traits.BorderProps;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class AbstractIFPainterTestCase {
 
@@ -51,7 +51,7 @@ public class AbstractIFPainterTestCase {
             public void endViewport() throws IFException {
             }
 
-            public void startGroup(AffineTransform transform) throws IFException {
+            public void startGroup(AffineTransform transform, String layer) throws IFException {
             }
 
             public void endGroup() throws IFException {

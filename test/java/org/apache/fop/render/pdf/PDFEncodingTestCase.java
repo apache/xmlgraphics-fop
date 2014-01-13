@@ -19,9 +19,6 @@
 
 package org.apache.fop.render.pdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
@@ -29,6 +26,9 @@ import java.util.StringTokenizer;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.apps.FOUserAgent;
 

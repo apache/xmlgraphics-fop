@@ -27,16 +27,14 @@
 
 package org.apache.fop.render.rtf.rtflib.testdocs;
 
+import java.io.IOException;
+
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
-
-import java.io.IOException;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 /**
  * Generate a test document containing external graphics.
- *
- * @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
  */
 class ExternalGraphic extends TestDocument {
     private String file = "file:///tmp/jfor-images/logo.";

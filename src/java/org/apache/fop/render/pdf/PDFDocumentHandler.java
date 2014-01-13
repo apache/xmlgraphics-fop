@@ -306,8 +306,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 throw new IFException("Error adding embedded file: " + embeddedFile.getSrc(), ioe);
             }
         } else if (extension instanceof PDFDictionaryAttachment) {
-            PDFDictionaryAttachment dictionaryExtension = (PDFDictionaryAttachment) extension;
-            pdfUtil.renderDictionaryExtension(dictionaryExtension, currentPage);
+            pdfUtil.renderDictionaryExtension((PDFDictionaryAttachment) extension, currentPage);
         } else if (extension != null) {
             log.debug("Don't know how to handle extension object. Ignoring: "
                     + extension + " (" + extension.getClass().getName() + ")");

@@ -27,6 +27,9 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.fontbox.cff.CFFDataInput;
 import org.apache.fontbox.cff.CFFFont;
 import org.apache.fontbox.cff.CFFParser;
@@ -36,9 +39,6 @@ import org.apache.fontbox.cff.Type2CharStringParser;
 import org.apache.fop.fonts.cff.CFFDataReader;
 import org.apache.fop.fonts.cff.CFFDataReader.CFFIndexData;
 import org.apache.fop.fonts.cff.CFFDataReader.DICTEntry;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class OTFSubSetFileTestCase extends OTFFileTestCase {
 
@@ -85,7 +85,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
 
     private boolean checkCorrectOffsets(CFFIndexData indexData) {
         int last = 0;
-        for (int i = 0;i < indexData.getOffsets().length;i++) {
+        for (int i = 0; i < indexData.getOffsets().length; i++) {
             if (indexData.getOffsets()[i] < last) {
                 return false;
             }
@@ -107,7 +107,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         IndexData localIndexData = CFFParser.readIndexData(localSubrs);
 
         CFFIndexData charStrings = cffReader.getCharStringIndex();
-        for (int i = 0;i < charStrings.getNumObjects();i++) {
+        for (int i = 0; i < charStrings.getNumObjects(); i++) {
             byte[] charData = charStrings.getValue(i);
             Type2CharStringParser parser = new Type2CharStringParser();
 

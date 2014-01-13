@@ -19,13 +19,13 @@
 
 package org.apache.fop.pdf;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test case for {@link PDFRectangle}.

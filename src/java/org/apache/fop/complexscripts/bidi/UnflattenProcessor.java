@@ -35,10 +35,7 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
 
-// CSOFF: EmptyForIteratorPadCheck
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: SimplifyBooleanReturnCheck
 
 /**
  * <p>The <code>UnflattenProcessor</code> class is used to reconstruct (by unflattening) a line
@@ -86,10 +83,8 @@ class UnflattenProcessor {
     private boolean shouldFinishTextContainer(TextArea tc, InlineArea ia) {
         if ((tcOrig != null) && (tc != tcOrig)) {
             return true;
-        } else if ((iaLevelLast != -1) && (ia.getBidiLevel() != iaLevelLast)) {
-            return true;
         } else {
-            return false;
+            return (iaLevelLast != -1) && (ia.getBidiLevel() != iaLevelLast);
         }
     }
     private void finishTextContainer() {
@@ -98,7 +93,7 @@ class UnflattenProcessor {
     private void finishTextContainer(TextArea tc, InlineArea ia) {
         if (tcNew != null) {
             updateIPD(tcNew);
-            if (! icNew.empty()) {
+            if (!icNew.empty()) {
                 icNew.peek().addChildArea(tcNew);
             } else {
                 ilNew.add(tcNew);
@@ -113,12 +108,12 @@ class UnflattenProcessor {
     }
     private boolean shouldFinishInlineContainer(List<InlineParent> ich, TextArea tc, InlineArea ia) {
         if ((ich == null) || ich.isEmpty()) {
-            return ! icOrig.empty();
+            return !icOrig.empty();
         } else {
-            if (! icOrig.empty()) {
+            if (!icOrig.empty()) {
                 InlineParent ic  = ich.get(0);
                 InlineParent ic0 = icOrig.peek();
-                return (ic != ic0) && ! isInlineParentOf(ic, ic0);
+                return (ic != ic0) && !isInlineParentOf(ic, ic0);
             } else {
                 return false;
             }
@@ -128,14 +123,14 @@ class UnflattenProcessor {
         finishInlineContainer(null, null, null);
     }
     private void finishInlineContainer(List<InlineParent> ich, TextArea tc, InlineArea ia) {
-        if ((ich != null) && ! ich.isEmpty()) {     // finish non-matching inner inline container(s)
+        if ((ich != null) && !ich.isEmpty()) {     // finish non-matching inner inline container(s)
             for (Iterator<InlineParent> it = ich.iterator(); it.hasNext(); ) {
                 InlineParent ic  = it.next();
                 InlineParent ic0 = icOrig.empty() ? null : icOrig.peek();
                 if (ic0 == null) {
                     assert icNew.empty();
                 } else if (ic != ic0) {
-                    assert ! icNew.empty();
+                    assert !icNew.empty();
                     InlineParent icO0 = icOrig.pop();
                     InlineParent icN0 = icNew.pop();
                     assert icO0 != null;
@@ -145,7 +140,7 @@ class UnflattenProcessor {
                     } else {
                         icNew.peek().addChildArea(icN0);
                     }
-                    if (! icOrig.empty() && (icOrig.peek() == ic)) {
+                    if (!icOrig.empty() && (icOrig.peek() == ic)) {
                         break;
                     }
                 } else {
@@ -153,7 +148,7 @@ class UnflattenProcessor {
                 }
             }
         } else {                                        // finish all inline containers
-            while (! icNew.empty()) {
+            while (!icNew.empty()) {
                 InlineParent icO0 = icOrig.pop();
                 InlineParent icN0 = icNew.pop();
                 assert icO0 != null;
@@ -176,8 +171,8 @@ class UnflattenProcessor {
         finishInlineContainer();
     }
     private void update(List<InlineParent> ich, TextArea tc, InlineArea ia) {
-        if (! alreadyUnflattened(ia)) {
-            if ((ich != null) && ! ich.isEmpty()) {
+        if (!alreadyUnflattened(ia)) {
+            if ((ich != null) && !ich.isEmpty()) {
                 pushInlineContainers(ich);
             }
             if (tc != null) {
@@ -345,7 +340,7 @@ class UnflattenProcessor {
         Area a = ia.getParentArea();
         while (a != null) {
             if (a instanceof InlineArea) {
-                if ((a instanceof InlineParent) && ! (a instanceof TextArea)) {
+                if ((a instanceof InlineParent) && !(a instanceof TextArea)) {
                     ich.add((InlineParent) a);
                 }
                 a = ((InlineArea) a) .getParentArea();

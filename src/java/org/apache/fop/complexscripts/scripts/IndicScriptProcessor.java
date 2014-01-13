@@ -36,13 +36,6 @@ import org.apache.fop.complexscripts.util.GlyphContextTester;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 
-// CSOFF: AvoidNestedBlocksCheck
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: InnerAssignmentCheck
-// CSOFF: SimplifyBooleanReturnCheck
-// CSOFF: EmptyForIteratorPadCheck
-// CSOFF: WhitespaceAfterCheck
-// CSOFF: ParameterNumberCheck
 // CSOFF: LineLengthCheck
 
 /**
@@ -222,7 +215,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     }
 
     private GlyphSequence[] syllabize(GlyphSequence gs, String script, String language) {
-        return Syllabizer.getSyllabizer(script, language, getSyllabizerClass()) . syllabize(gs);
+        return Syllabizer.getSyllabizer(script, language, getSyllabizerClass()) .syllabize(gs);
     }
 
     private GlyphSequence unsyllabize(GlyphSequence gs, GlyphSequence[] sa) {
@@ -384,12 +377,10 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
         public boolean equals(Object o) {
             if (o instanceof Syllabizer) {
                 Syllabizer s = (Syllabizer) o;
-                if (! s.script.equals(script)) {
-                    return false;
-                } else if (! s.language.equals(language)) {
+                if (!s.script.equals(script)) {
                     return false;
                 } else {
-                    return true;
+                    return s.language.equals(language);
                 }
             } else {
                 return false;
@@ -408,7 +399,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
             }
             return d;
         }
-        private static Map<String,Syllabizer> syllabizers = new HashMap<String,Syllabizer>();
+        private static Map<String, Syllabizer> syllabizers = new HashMap<String, Syllabizer>();
         static Syllabizer getSyllabizer(String script, String language, Class<? extends Syllabizer> syllabizerClass) {
             String sid = makeSyllabizerId(script, language);
             Syllabizer s = syllabizers.get(sid);

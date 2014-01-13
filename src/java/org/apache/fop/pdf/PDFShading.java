@@ -22,6 +22,10 @@ package org.apache.fop.pdf;
 // Java...
 import java.util.List;
 
+import org.apache.fop.render.shading.Function;
+import org.apache.fop.render.shading.Shading;
+import org.apache.fop.render.shading.ShadingPattern;
+
 /**
  * class representing a PDF Smooth Shading object.
  *
@@ -32,7 +36,7 @@ import java.util.List;
  *
  * All PDF Functions have a shadingType (0,2,3, or 4), a Domain, and a Range.
  */
-public class PDFShading extends PDFObject {
+public class PDFShading extends PDFObject implements Shading {
     // Guts common to all function types
 
     /**
@@ -205,7 +209,7 @@ public class PDFShading extends PDFObject {
     public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
             List theBackground, List theBBox,
             boolean theAntiAlias, List theCoords,
-            List theDomain, PDFFunction theFunction,
+            List theDomain, Function theFunction,
             List theExtend) {
         super();
         this.shadingType = theShadingType;    // 2 or 3
@@ -216,7 +220,8 @@ public class PDFShading extends PDFObject {
 
         this.coords = theCoords;
         this.domain = theDomain;
-        this.function = theFunction;
+        assert theFunction instanceof PDFFunction;
+        this.function = (PDFFunction)theFunction;
         this.extend = theExtend;
 
     }
@@ -335,197 +340,8 @@ public class PDFShading extends PDFObject {
      * @return the PDF string.
      */
     public String toPDFString() {
-        int vectorSize;
-        int tempInt;
-        StringBuffer p = new StringBuffer(128);
-        p.append("<<\n/ShadingType " + this.shadingType + " \n");
-        if (this.colorSpace != null) {
-            p.append("/ColorSpace /"
-                     + this.colorSpace.getName() + " \n");
-        }
-
-        if (this.background != null) {
-            p.append("/Background [ ");
-            vectorSize = this.background.size();
-            for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                p.append(PDFNumber.doubleOut((Double)this.background.get(tempInt))
-                         + " ");
-            }
-            p.append("] \n");
-        }
-
-        if (this.bBox
-                != null) {    // I've never seen an example, so I guess this is right.
-            p.append("/BBox [ ");
-            vectorSize = this.bBox.size();
-            for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                p.append(PDFNumber.doubleOut((Double)this.bBox.get(tempInt))
-                         + " ");
-            }
-            p.append("] \n");
-        }
-
-        if (this.antiAlias) {
-            p.append("/AntiAlias " + this.antiAlias + " \n");
-        }
-
-        // Here's where we differentiate based on what type it is.
-        if (this.shadingType == 1) {    // function based shading
-            if (this.domain != null) {
-                p.append("/Domain [ ");
-                vectorSize = this.domain.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.domain.get(tempInt))
-                             + " ");
-                }
-                p.append("] \n");
-            } else {
-                p.append("/Domain [ 0 1 ] \n");
-            }
-
-            if (this.matrix != null) {
-                p.append("/Matrix [ ");
-                vectorSize = this.matrix.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.matrix.get(tempInt))
-                             + " ");
-                }
-                p.append("] \n");
-            }
-
-            if (this.function != null) {
-                p.append("/Function ");
-                p.append(this.function.referencePDF() + " \n");
-            }
-        } else if ((this.shadingType == 2)
-                   || (this.shadingType
-                       == 3)) {         // 2 is axial shading (linear gradient)
-            // 3 is radial shading (circular gradient)
-            if (this.coords != null) {
-                p.append("/Coords [ ");
-                vectorSize = this.coords.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.coords.get(tempInt))
-                             + " ");
-                }
-                p.append("] \n");
-            }
-
-            // DOMAIN
-            if (this.domain != null) {
-                p.append("/Domain [ ");
-                vectorSize = this.domain.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.domain.get(tempInt))
-                             + " ");
-                }
-                p.append("] \n");
-            } else {
-                p.append("/Domain [ 0 1 ] \n");
-            }
-
-            if (this.extend != null) {
-                p.append("/Extend [ ");
-                vectorSize = this.extend.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(((Boolean)this.extend.get(tempInt)) + " ");
-                }
-
-                p.append("] \n");
-            } else {
-                p.append("/Extend [ true true ] \n");
-            }
-
-
-            if (this.function != null) {
-                p.append("/Function ");
-                p.append(this.function.referencePDF() + " \n");
-            }
-
-
-        } else if ((this.shadingType == 4) || (this.shadingType == 6)
-                   || (this.shadingType
-                       == 7)) {    // 4:Free-form Gouraud-shaded triangle meshes
-            // 6:coons patch meshes
-            // 7://tensor product patch meshes (which no one ever uses)
-            if (this.bitsPerCoordinate > 0) {
-                p.append("/BitsPerCoordinate " + this.bitsPerCoordinate
-                         + " \n");
-            } else {
-                p.append("/BitsPerCoordinate 1 \n");
-            }
-
-            if (this.bitsPerComponent > 0) {
-                p.append("/BitsPerComponent " + this.bitsPerComponent
-                         + " \n");
-            } else {
-                p.append("/BitsPerComponent 1 \n");
-            }
-
-            if (this.bitsPerFlag > 0) {
-                p.append("/BitsPerFlag " + this.bitsPerFlag + " \n");
-            } else {
-                p.append("/BitsPerFlag 2 \n");
-            }
-
-            if (this.decode != null) {
-                p.append("/Decode [ ");
-                vectorSize = this.decode.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(((Boolean)this.decode.get(tempInt)) + " ");
-                }
-
-                p.append("] \n");
-            }
-
-            if (this.function != null) {
-                p.append("/Function ");
-                p.append(this.function.referencePDF() + " \n");
-            }
-
-        } else if (this.shadingType
-                   == 5) {    // Lattice Free form gouraud-shaded triangle mesh
-
-            if (this.bitsPerCoordinate > 0) {
-                p.append("/BitsPerCoordinate " + this.bitsPerCoordinate
-                         + " \n");
-            } else {
-                p.append("/BitsPerCoordinate 1 \n");
-            }
-
-            if (this.bitsPerComponent > 0) {
-                p.append("/BitsPerComponent " + this.bitsPerComponent
-                         + " \n");
-            } else {
-                p.append("/BitsPerComponent 1 \n");
-            }
-
-            if (this.decode != null) {
-                p.append("/Decode [ ");
-                vectorSize = this.decode.size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(((Boolean)this.decode.get(tempInt)) + " ");
-                }
-
-                p.append("] \n");
-            }
-
-            if (this.function != null) {
-                p.append("/Function ");
-                p.append(this.function.referencePDF() + " \n");
-            }
-
-            if (this.verticesPerRow > 0) {
-                p.append("/VerticesPerRow " + this.verticesPerRow + " \n");
-            } else {
-                p.append("/VerticesPerRow 2 \n");
-            }
-
-        }
-
-        p.append(">>");
-
-        return (p.toString());
+        ShadingPattern pattern = new ShadingPattern(this);
+        return pattern.toString(colorSpace, shadingType, background, bBox, antiAlias);
     }
 
     /** {@inheritDoc} */
@@ -622,5 +438,174 @@ public class PDFShading extends PDFObject {
             return false;
         }
         return true;
+    }
+
+    /**
+     * A method to write a type 1 shading object
+     * @param p The StringBuffer to write the shading object
+     * @return Returns the StringBuffer to which the shading object was written
+     */
+    public StringBuffer handleShadingType1(StringBuffer p) {
+        if (this.domain != null) {
+            p.append("/Domain [ ");
+            for (int domainIndex = 0; domainIndex < domain.size(); domainIndex++) {
+                p.append(PDFNumber.doubleOut((Double)this.domain.get(domainIndex))
+                         + " ");
+            }
+            p.append("] \n");
+        } else {
+            p.append("/Domain [ 0 1 ] \n");
+        }
+
+        if (this.matrix != null) {
+            p.append("/Matrix [ ");
+            for (int matrixIndex = 0; matrixIndex < matrix.size(); matrixIndex++) {
+                p.append(PDFNumber.doubleOut((Double)this.matrix.get(matrixIndex))
+                         + " ");
+            }
+            p.append("] \n");
+        }
+
+        if (this.function != null) {
+            p.append("/Function ");
+            p.append(this.function.referencePDF() + " \n");
+        }
+        return p;
+    }
+
+    /**
+     * A method to write a type 2 or 3 shading object
+     * @param p The StringBuffer to write the shading object
+     * @return Returns the StringBuffer to which the shading object was written
+     */
+    public StringBuffer handleShadingType2or3(StringBuffer p) {
+        // 3 is radial shading (circular gradient)
+        if (this.coords != null) {
+            p.append("/Coords [ ");
+            for (int coordIndex = 0; coordIndex < coords.size(); coordIndex++) {
+                p.append(PDFNumber.doubleOut((Double)this.coords.get(coordIndex))
+                         + " ");
+            }
+            p.append("] \n");
+        }
+
+        // DOMAIN
+        if (this.domain != null) {
+            p.append("/Domain [ ");
+            for (int domainIndex = 0; domainIndex < domain.size(); domainIndex++) {
+                p.append(PDFNumber.doubleOut((Double)this.domain.get(domainIndex))
+                         + " ");
+            }
+            p.append("] \n");
+        } else {
+            p.append("/Domain [ 0 1 ] \n");
+        }
+
+        if (this.extend != null) {
+            p.append("/Extend [ ");
+            for (int extendIndex = 0; extendIndex < extend.size(); extendIndex++) {
+                p.append((this.extend.get(extendIndex)) + " ");
+            }
+
+            p.append("] \n");
+        } else {
+            p.append("/Extend [ true true ] \n");
+        }
+
+
+        if (this.function != null) {
+            p.append("/Function ");
+            p.append(this.function.referencePDF() + " \n");
+        }
+
+        return p;
+    }
+
+    /**
+     * A method to write a type 4, 6 or 7 shading object
+     * @param p The StringBuffer to write the shading object
+     * @return Returns the StringBuffer to which the shading object was written
+     */
+    public StringBuffer handleShadingType4or6or7(StringBuffer p) {
+        // 6:coons patch meshes
+        // 7://tensor product patch meshes (which no one ever uses)
+        if (this.bitsPerCoordinate > 0) {
+            p.append("/BitsPerCoordinate " + this.bitsPerCoordinate
+                     + " \n");
+        } else {
+            p.append("/BitsPerCoordinate 1 \n");
+        }
+
+        if (this.bitsPerComponent > 0) {
+            p.append("/BitsPerComponent " + this.bitsPerComponent
+                     + " \n");
+        } else {
+            p.append("/BitsPerComponent 1 \n");
+        }
+
+        if (this.bitsPerFlag > 0) {
+            p.append("/BitsPerFlag " + this.bitsPerFlag + " \n");
+        } else {
+            p.append("/BitsPerFlag 2 \n");
+        }
+
+        if (this.decode != null) {
+            p.append("/Decode [ ");
+            for (int decodeIndex = 0; decodeIndex < decode.size(); decodeIndex++) {
+                p.append((this.decode.get(decodeIndex)) + " ");
+            }
+
+            p.append("] \n");
+        }
+
+        if (this.function != null) {
+            p.append("/Function ");
+            p.append(this.function.referencePDF() + " \n");
+        }
+
+        return p;
+    }
+
+    /**
+     * A method to write a type 5 shading object
+     * @param p The StringBuffer to write the shading object
+     * @return Returns the StringBuffer to which the shading object was written
+     */
+    public StringBuffer handleShadingType5(StringBuffer p) {
+        if (this.bitsPerCoordinate > 0) {
+            p.append("/BitsPerCoordinate " + this.bitsPerCoordinate
+                     + " \n");
+        } else {
+            p.append("/BitsPerCoordinate 1 \n");
+        }
+
+        if (this.bitsPerComponent > 0) {
+            p.append("/BitsPerComponent " + this.bitsPerComponent
+                     + " \n");
+        } else {
+            p.append("/BitsPerComponent 1 \n");
+        }
+
+        if (this.decode != null) {
+            p.append("/Decode [ ");
+            for (int decodeIndex = 0; decodeIndex < decode.size(); decodeIndex++) {
+                p.append((this.decode.get(decodeIndex)) + " ");
+            }
+
+            p.append("] \n");
+        }
+
+        if (this.function != null) {
+            p.append("/Function ");
+            p.append(this.function.referencePDF() + " \n");
+        }
+
+        if (this.verticesPerRow > 0) {
+            p.append("/VerticesPerRow " + this.verticesPerRow + " \n");
+        } else {
+            p.append("/VerticesPerRow 2 \n");
+        }
+
+        return p;
     }
 }

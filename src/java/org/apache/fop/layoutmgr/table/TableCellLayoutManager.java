@@ -442,12 +442,14 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                 Block[][] blocks = new Block[getTableCell().getNumberRowsSpanned()][getTableCell()
                         .getNumberColumnsSpanned()];
                 GridUnit[] gridUnits = (GridUnit[]) primaryGridUnit.getRows().get(startRow);
+                int level = getTableCell().getBidiLevelRecursive();
                 for (int x = 0; x < getTableCell().getNumberColumnsSpanned(); x++) {
                     GridUnit gu = gridUnits[x];
                     BorderInfo border = gu.getBorderBefore(borderBeforeWhich);
                     int borderWidth = border.getRetainedWidth() / 2;
                     if (borderWidth > 0) {
-                        addBorder(blocks, startRow, x, Trait.BORDER_BEFORE, border, firstOnPage);
+                        addBorder(blocks, startRow, x, Trait.BORDER_BEFORE, border,
+                                  firstOnPage, level);
                         adjustYOffset(blocks[startRow][x], -borderWidth);
                         adjustBPD(blocks[startRow][x], -borderWidth);
                     }
@@ -458,7 +460,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                     BorderInfo border = gu.getBorderAfter(borderAfterWhich);
                     int borderWidth = border.getRetainedWidth() / 2;
                     if (borderWidth > 0) {
-                        addBorder(blocks, endRow, x, Trait.BORDER_AFTER, border, lastOnPage);
+                        addBorder(blocks, endRow, x, Trait.BORDER_AFTER, border,
+                                  lastOnPage, level);
                         adjustBPD(blocks[endRow][x], -borderWidth);
                     }
                 }
@@ -467,7 +470,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                     BorderInfo border = gridUnits[0].getBorderStart();
                     int borderWidth = border.getRetainedWidth() / 2;
                     if (borderWidth > 0) {
-                        addBorder(blocks, y, 0, Trait.BORDER_START, border, inFirstColumn);
+                        addBorder(blocks, y, 0, Trait.BORDER_START, border,
+                                  inFirstColumn, level);
                         adjustXOffset(blocks[y][0], borderWidth);
                         adjustIPD(blocks[y][0], -borderWidth);
                     }
@@ -475,7 +479,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                     borderWidth = border.getRetainedWidth() / 2;
                     if (borderWidth > 0) {
                         addBorder(blocks, y, gridUnits.length - 1, Trait.BORDER_END, border,
-                                inLastColumn);
+                                  inLastColumn, level);
                         adjustIPD(blocks[y][gridUnits.length - 1], -borderWidth);
                     }
                 }
@@ -512,10 +516,12 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             if (getTableCell().getDisplayAlign() == EN_CENTER) {
                 Block space = new Block();
                 space.setBPD((cellBPD - usedBPD) / 2);
+                space.setBidiLevel(getTableCell().getBidiLevelRecursive());
                 curBlockArea.addBlock(space);
             } else if (getTableCell().getDisplayAlign() == EN_AFTER) {
                 Block space = new Block();
                 space.setBPD(cellBPD - usedBPD);
+                space.setBidiLevel(getTableCell().getBidiLevelRecursive());
                 curBlockArea.addBlock(space);
             }
         }
@@ -591,11 +597,12 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     private void addBorder(Block[][] blocks, int i, int j, Integer side, BorderInfo border,
-            boolean outer) {
+                           boolean outer, int level) {
         if (blocks[i][j] == null) {
             blocks[i][j] = new Block();
             blocks[i][j].addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             blocks[i][j].setPositioning(Block.ABSOLUTE);
+            blocks[i][j].setBidiLevel(level);
         }
         blocks[i][j].addTrait(side, BorderProps.makeRectangular(border.getStyle(),
                 border.getRetainedWidth(), border.getColor(),
@@ -630,6 +637,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         block.setBPD(bpd);
         block.setXOffset(xoffset + startIndent - paddingStart);
         block.setYOffset(yoffset + borderBeforeWidth);
+        block.setBidiLevel(getTableCell().getBidiLevelRecursive());
         return block;
     }
 
@@ -655,6 +663,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             curBlockArea.setXOffset(xoffset + startIndent);
             curBlockArea.setYOffset(yoffset);
             curBlockArea.setIPD(cellIPD);
+            curBlockArea.setBidiLevel(getTableCell().getBidiLevelRecursive());
 
             /*Area parentArea =*/ parentLayoutManager.getParentArea(curBlockArea);
             // Get reference IPD from parentArea

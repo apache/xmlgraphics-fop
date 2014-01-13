@@ -26,10 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
-// CSOFF: WhitespaceAfterCheck
-// CSOFF: NoWhitespaceAfterCheck
 
 /**
  * <p>A GlyphSequence encapsulates a sequence of character codes, a sequence of glyph codes,
@@ -639,10 +636,10 @@ public class GlyphSequence implements Cloneable {
         private final int offset;
         private final int count;
         private final int[] subIntervals;
-        private Map<String,Object> predications;
+        private Map<String, Object> predications;
 
         // class state
-        private static volatile Map<String,PredicationMerger> predicationMergers;
+        private static volatile Map<String, PredicationMerger> predicationMergers;
 
         interface PredicationMerger {
             Object merge(String key, Object v1, Object v2);
@@ -724,7 +721,7 @@ public class GlyphSequence implements Cloneable {
         public boolean contained(int offset, int count) {
             int s = offset;
             int e = offset + count;
-            if (! isDisjoint()) {
+            if (!isDisjoint()) {
                 int s0 = getStart();
                 int e0 = getEnd();
                 return (s0 >= s) && (e0 <= e);
@@ -748,7 +745,7 @@ public class GlyphSequence implements Cloneable {
          */
         public void setPredication(String key, Object value) {
             if (predications == null) {
-                predications = new HashMap<String,Object>();
+                predications = new HashMap<String, Object>();
             }
             if (predications != null) {
                 predications.put(key, value);
@@ -775,7 +772,7 @@ public class GlyphSequence implements Cloneable {
          */
         public void mergePredication(String key, Object value) {
             if (predications == null) {
-                predications = new HashMap<String,Object>();
+                predications = new HashMap<String, Object>();
             }
             if (predications != null) {
                 if (predications.containsKey(key)) {
@@ -813,7 +810,7 @@ public class GlyphSequence implements Cloneable {
          */
         public void mergePredications(CharAssociation ca) {
             if (ca.predications != null) {
-                for (Map.Entry<String,Object> e : ca.predications.entrySet()) {
+                for (Map.Entry<String, Object> e : ca.predications.entrySet()) {
                     mergePredication(e.getKey(), e.getValue());
                 }
             }
@@ -824,7 +821,7 @@ public class GlyphSequence implements Cloneable {
             try {
                 CharAssociation ca = (CharAssociation) super.clone();
                 if (predications != null) {
-                    ca.predications = new HashMap<String,Object>(predications);
+                    ca.predications = new HashMap<String, Object>(predications);
                 }
                 return ca;
             } catch (CloneNotSupportedException e) {
@@ -839,7 +836,7 @@ public class GlyphSequence implements Cloneable {
          */
         public static void setPredicationMerger(String key, PredicationMerger pm) {
             if (predicationMergers == null) {
-                predicationMergers = new HashMap<String,PredicationMerger>();
+                predicationMergers = new HashMap<String, PredicationMerger>();
             }
             if (predicationMergers != null) {
                 predicationMergers.put(key, pm);

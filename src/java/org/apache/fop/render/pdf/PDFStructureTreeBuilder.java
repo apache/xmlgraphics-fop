@@ -358,6 +358,7 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     }
 
     public StructureTreeElement startNode(String name, Attributes attributes, StructureTreeElement parent) {
+        assert parent == null || parent instanceof PDFStructElem;
         PDFStructElem parentElem = parent == null ? ancestors.getFirst() : (PDFStructElem) parent;
         PDFStructElem structElem = createStructureElement(name, parentElem, attributes,
                 pdfFactory, eventBroadcaster);

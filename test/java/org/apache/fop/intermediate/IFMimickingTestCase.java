@@ -19,8 +19,6 @@
 
 package org.apache.fop.intermediate;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 
 import javax.xml.transform.ErrorListener;
@@ -33,6 +31,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.fail;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;

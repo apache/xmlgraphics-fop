@@ -19,9 +19,9 @@
 
 package org.apache.fop.text.linebreak;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * TODO add javadoc

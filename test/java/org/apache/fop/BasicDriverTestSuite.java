@@ -27,6 +27,6 @@ import org.junit.runners.Suite.SuiteClasses;
  * Test suite for basic functionality of FOP's Driver API.
  */
 @RunWith(Suite.class)
-@SuiteClasses({ BasicDriverTestCase.class })
+@SuiteClasses(BasicDriverTestCase.class)
 public class BasicDriverTestSuite {
 }

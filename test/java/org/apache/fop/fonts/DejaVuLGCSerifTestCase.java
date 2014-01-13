@@ -24,10 +24,10 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  *

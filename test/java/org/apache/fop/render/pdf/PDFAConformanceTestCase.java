@@ -25,10 +25,10 @@ import java.io.IOException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import static org.junit.Assert.fail;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.pdf.PDFConformanceException;
-
-import static org.junit.Assert.fail;
 
 /**
  * Tests PDF/A-1 functionality.

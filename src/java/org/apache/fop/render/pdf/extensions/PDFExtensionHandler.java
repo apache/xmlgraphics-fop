@@ -49,7 +49,7 @@ public class PDFExtensionHandler extends DefaultHandler implements ContentHandle
     private Attributes lastAttributes;
 
     // PDFDictionaryAttachment related
-    private Stack<PDFDictionaryExtension> dictionaries = new Stack<PDFDictionaryExtension>();
+    private Stack<PDFCollectionExtension> collections = new Stack<PDFCollectionExtension>();
     private boolean captureContent;
     private StringBuffer characters;
 
@@ -58,29 +58,78 @@ public class PDFExtensionHandler extends DefaultHandler implements ContentHandle
         if (PDFExtensionAttachment.CATEGORY.equals(uri)) {
             if (localName.equals(PDFEmbeddedFileAttachment.ELEMENT)) {
                 lastAttributes = new AttributesImpl(attributes);
-            } else if (PDFDictionaryType.hasValueOfElementName(localName)) {
-                PDFDictionaryExtension dictionary = new PDFDictionaryExtension(PDFDictionaryType.valueOfElementName(localName));
-                String key = attributes.getValue(PDFDictionaryEntryExtension.PROPERTY_KEY);
+            } else if (PDFDictionaryType.Action.elementName().equals(localName)) {
+                PDFActionExtension action = new PDFActionExtension();
+                String id = attributes.getValue(PDFDictionaryElement.ATT_ID);
+                if (id != null) {
+                    action.setProperty(PDFDictionaryExtension.PROPERTY_ID, id);
+                }
+                String type = attributes.getValue(PDFActionElement.ATT_TYPE);
+                if (type != null) {
+                    action.setProperty(PDFActionExtension.PROPERTY_TYPE, type);
+                }
+                collections.push(action);
+            } else if (PDFObjectType.Array.elementName().equals(localName)) {
+                PDFArrayExtension array = new PDFArrayExtension();
+                String key = attributes.getValue(PDFCollectionEntryElement.ATT_KEY);
+                if (key != null) {
+                    array.setKey(key);
+                }
+                collections.push(array);
+            } else if (PDFDictionaryType.Catalog.elementName().equals(localName)) {
+                PDFCatalogExtension catalog = new PDFCatalogExtension();
+                collections.push(catalog);
+            } else if (PDFDictionaryType.Dictionary.elementName().equals(localName)) {
+                PDFDictionaryExtension dictionary = new PDFDictionaryExtension();
+                String key = attributes.getValue(PDFCollectionEntryElement.ATT_KEY);
                 if (key != null) {
                     dictionary.setKey(key);
                 }
-                if (dictionary.getDictionaryType() == PDFDictionaryType.Page) {
-                    String pageNumbers = attributes.getValue(PDFDictionaryElement.ATT_PAGE_NUMBERS);
-                    if (pageNumbers != null) {
-                        dictionary.setProperty(PDFDictionaryElement.ATT_PAGE_NUMBERS, pageNumbers);
-                    }
+                collections.push(dictionary);
+            } else if (PDFDictionaryType.Layer.elementName().equals(localName)) {
+                PDFLayerExtension layer = new PDFLayerExtension();
+                String id = attributes.getValue(PDFDictionaryElement.ATT_ID);
+                if (id != null) {
+                    layer.setProperty(PDFDictionaryExtension.PROPERTY_ID, id);
                 }
-                dictionaries.push(dictionary);
-            } else if (PDFDictionaryEntryType.hasValueOfElementName(localName)) {
-                PDFDictionaryEntryExtension entry = new PDFDictionaryEntryExtension(PDFDictionaryEntryType.valueOfElementName(localName));
-                String key = attributes.getValue(PDFDictionaryEntryElement.ATT_KEY);
+                collections.push(layer);
+            } else if (PDFDictionaryType.Navigator.elementName().equals(localName)) {
+                PDFNavigatorExtension navigator = new PDFNavigatorExtension();
+                String id = attributes.getValue(PDFDictionaryElement.ATT_ID);
+                if (id != null) {
+                    navigator.setProperty(PDFDictionaryExtension.PROPERTY_ID, id);
+                }
+                collections.push(navigator);
+            } else if (PDFDictionaryType.Page.elementName().equals(localName)) {
+                PDFPageExtension page = new PDFPageExtension();
+                String pageNumbers = attributes.getValue(PDFPageElement.ATT_PAGE_NUMBERS);
+                if (pageNumbers != null) {
+                    page.setProperty(PDFPageExtension.PROPERTY_PAGE_NUMBERS, pageNumbers);
+                }
+                collections.push(page);
+            } else if (PDFObjectType.hasValueOfElementName(localName)) {
+                PDFCollectionEntryExtension entry;
+                if (PDFObjectType.Reference.elementName().equals(localName)) {
+                    entry = new PDFReferenceExtension();
+                } else {
+                    entry = new PDFCollectionEntryExtension(PDFObjectType.valueOfElementName(localName));
+                }
+                String key = attributes.getValue(PDFCollectionEntryElement.ATT_KEY);
                 if (key != null) {
                     entry.setKey(key);
                 }
-                if (!dictionaries.empty()) {
-                    PDFDictionaryExtension dictionary = dictionaries.peek();
-                    dictionary.addEntry(entry);
-                    captureContent = true;
+                if (entry instanceof PDFReferenceExtension) {
+                    String refid = attributes.getValue(PDFReferenceElement.ATT_REFID);
+                    if (refid != null) {
+                        ((PDFReferenceExtension) entry).setReferenceId(refid);
+                    }
+                }
+                if (!collections.empty()) {
+                    PDFCollectionExtension collection = collections.peek();
+                    collection.addEntry(entry);
+                    if (!(entry instanceof PDFReferenceExtension)) {
+                        captureContent = true;
+                    }
                 }
             } else {
                 throw new SAXException("Unhandled element " + localName + " in namespace: " + uri);
@@ -107,33 +156,48 @@ public class PDFExtensionHandler extends DefaultHandler implements ContentHandle
                 String name = lastAttributes.getValue("name");
                 String src = lastAttributes.getValue("src");
                 String desc = lastAttributes.getValue("description");
+                this.lastAttributes = null;
                 this.returnedObject = new PDFEmbeddedFileAttachment(name, src, desc);
             } else if (PDFDictionaryType.hasValueOfElementName(localName)) {
-                if (!dictionaries.empty()) {
-                    PDFDictionaryExtension dictionary = dictionaries.pop();
-                    if ((dictionary.getDictionaryType() == PDFDictionaryType.Catalog) || (dictionary.getDictionaryType() == PDFDictionaryType.Page)) {
+                if (!collections.empty() && (collections.peek() instanceof PDFDictionaryExtension)) {
+                    PDFDictionaryExtension dictionary = (PDFDictionaryExtension) collections.pop();
+                    if (!collections.empty()) {
+                        PDFCollectionExtension collectionOuter = collections.peek();
+                        collectionOuter.addEntry(dictionary);
+                    } else if (dictionary.getDictionaryType() != PDFDictionaryType.Dictionary) {
                         this.returnedObject = new PDFDictionaryAttachment(dictionary);
-                    } else if (!dictionaries.empty()) {
-                        PDFDictionaryExtension dictionaryOuter = dictionaries.peek();
-                        dictionaryOuter.addEntry(dictionary);
+                    } else {
+                        throw new SAXException(new IllegalStateException("generic dictionary not permitted at outer level"));
                     }
                 } else {
-                    throw new SAXException(new IllegalStateException("no active dictionary"));
+                    throw new SAXException(new IllegalStateException("collections stack is empty or not a dictionary"));
                 }
-            } else if (PDFDictionaryEntryType.hasValueOfElementName(localName)) {
-                if (!dictionaries.empty()) {
-                    PDFDictionaryExtension dictionary = dictionaries.peek();
-                    PDFDictionaryEntryExtension entry = dictionary.getLastEntry();
+            } else if (PDFObjectType.Array.elementName().equals(localName)) {
+                if (!collections.empty() && (collections.peek() instanceof PDFArrayExtension)) {
+                    PDFArrayExtension array = (PDFArrayExtension) collections.pop();
+                    if (!collections.empty()) {
+                        PDFCollectionExtension collectionOuter = collections.peek();
+                        collectionOuter.addEntry(array);
+                    } else {
+                        throw new SAXException(new IllegalStateException("array not permitted at outer level"));
+                    }
+                } else {
+                    throw new SAXException(new IllegalStateException("collections stack is empty or not an array"));
+                }
+            } else if (PDFObjectType.hasValueOfElementName(localName)) {
+                if (!collections.empty()) {
+                    PDFCollectionExtension collection = collections.peek();
+                    PDFCollectionEntryExtension entry = collection.getLastEntry();
                     if (entry != null) {
                         if (characters != null) {
                             entry.setValue(characters.toString());
                             characters = null;
                         }
                     } else {
-                        throw new SAXException(new IllegalStateException("no active entry"));
+                        throw new SAXException(new IllegalStateException("no current entry"));
                     }
                 } else {
-                    throw new SAXException(new IllegalStateException("no active dictionary"));
+                    throw new SAXException(new IllegalStateException("entry not permitted at outer level"));
                 }
             }
         }

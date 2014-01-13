@@ -48,20 +48,24 @@ public class FontManagerConfigurator {
 
     private final Configuration cfg;
 
-    private final URI defaultBaseUri;
+    private final URI baseURI;
+
+    private final URI fallbackURI;
 
     private final ResourceResolver resourceResolver;
 
     /**
      * Main constructor
      * @param cfg the font manager configuration object
-     * @param defaultBaseUri the default URI base to use for URI resolution
+     * @param baseURI the URI against which to resolve relative URIs
+     * @param fallbackURI the URI to use as a fallback if font-base is unspecified
      * @param resourceResolver the resource resolver
      */
-    public FontManagerConfigurator(Configuration cfg, URI defaultBaseUri,
+    public FontManagerConfigurator(Configuration cfg, URI baseURI, URI fallbackURI,
             ResourceResolver resourceResolver) {
         this.cfg = cfg;
-        this.defaultBaseUri = defaultBaseUri;
+        this.baseURI = baseURI;
+        this.fallbackURI = fallbackURI;
         this.resourceResolver = resourceResolver;
     }
 
@@ -77,13 +81,13 @@ public class FontManagerConfigurator {
                 URI fontBase = InternalResourceResolver.getBaseURI(cfg.getChild("font-base")
                                                                       .getValue(null));
                 fontManager.setResourceResolver(ResourceResolverFactory.createInternalResourceResolver(
-                        defaultBaseUri.resolve(fontBase), resourceResolver));
+                        baseURI.resolve(fontBase), resourceResolver));
             } catch (URISyntaxException use) {
                 LogUtil.handleException(log, use, true);
             }
         } else {
             fontManager.setResourceResolver(ResourceResolverFactory.createInternalResourceResolver(
-                    defaultBaseUri, resourceResolver));
+                    fallbackURI, resourceResolver));
         }
         // caching (fonts)
         if (cfg.getChild("use-cache", false) != null) {

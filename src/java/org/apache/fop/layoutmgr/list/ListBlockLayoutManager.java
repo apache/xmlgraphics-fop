@@ -238,6 +238,8 @@ public class ListBlockLayoutManager extends SpacedBorderedPaddedBlockLayoutManag
             int contentIPD = referenceIPD - getIPIndents();
             curBlockArea.setIPD(contentIPD);
 
+            curBlockArea.setBidiLevel(getListBlockFO().getBidiLevel());
+
             setCurrentArea(curBlockArea);
         }
         return curBlockArea;
