@@ -23,6 +23,8 @@ import java.awt.color.ICC_Profile;
 import java.awt.image.DataBufferByte;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
+import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
@@ -239,24 +241,40 @@ public abstract class AbstractImageAdapter implements PDFImage {
                     + " The image may not be handled correctly." + " Base color space: "
                     + icm.getColorSpace() + " Image: " + image.getInfo());
         }
-        indexed.add(new PDFName(toPDFColorSpace(icm.getColorSpace()).getName()));
+        ByteArrayOutputStream baout = new ByteArrayOutputStream();
         int c = icm.getMapSize();
         int hival = c - 1;
         if (hival > MAX_HIVAL) {
             throw new UnsupportedOperationException("hival must not go beyond " + MAX_HIVAL);
         }
-        indexed.add(Integer.valueOf(hival));
+        boolean isDeviceGray = false;
         int[] palette = new int[c];
         icm.getRGBs(palette);
-        ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        for (int i = 0; i < c; i++) {
-            // TODO Probably doesn't work for non RGB based color spaces
-            // See log warning above
-            int entry = palette[i];
-            baout.write((entry & 0xFF0000) >> 16);
-            baout.write((entry & 0xFF00) >> 8);
-            baout.write(entry & 0xFF);
+        byte[] reds = new byte[c];
+        byte[] greens = new byte[c];
+        byte[] blues = new byte[c];
+        icm.getReds(reds);
+        icm.getGreens(greens);
+        icm.getBlues(blues);
+        isDeviceGray = Arrays.equals(reds, blues) && Arrays.equals(blues, greens);
+        if  (isDeviceGray) {
+            indexed.add(new PDFName("DeviceGray"));
+            try {
+                baout.write(blues);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }  else {
+            indexed.add(new PDFName(toPDFColorSpace(icm.getColorSpace()).getName()));
+            for (int i = 0; i < c; i++) {
+                int entry = palette[i];
+                baout.write((entry & 0xFF0000) >> 16);
+                baout.write((entry & 0xFF00) >> 8);
+                baout.write(entry & 0xFF);
+            }
         }
+        indexed.add(hival);
+
         indexed.add(baout.toByteArray());
 
         dict.put("ColorSpace", indexed);
