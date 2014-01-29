@@ -37,6 +37,7 @@ import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
@@ -44,8 +45,8 @@ import org.apache.fop.traits.SpaceVal;
 /**
  * LayoutManager for a block-container FO.
  */
-public class BlockContainerLayoutManager extends BlockStackingLayoutManager implements
-        ConditionalElementListener, BreakOpportunity {
+public class BlockContainerLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
+        implements BreakOpportunity {
 
     /**
      * logging instance
@@ -79,13 +80,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
     private MinOptMax foBlockSpaceBefore;
     private MinOptMax foBlockSpaceAfter;
 
-    private boolean discardBorderBefore;
-    private boolean discardBorderAfter;
-    private boolean discardPaddingBefore;
-    private boolean discardPaddingAfter;
-    private MinOptMax effSpaceBefore;
-    private MinOptMax effSpaceAfter;
-
     private int horizontalOverflow;
     private double contentRectOffsetX = 0;
     private double contentRectOffsetY = 0;
@@ -96,6 +90,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
      */
     public BlockContainerLayoutManager(BlockContainer node) {
         super(node);
+        setGeneratesBlockArea(true);
     }
 
     /** {@inheritDoc} */
@@ -126,6 +121,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
             .spaceBefore.getSpace().getOptimum(this).getLength().getValue(this);
         adjustedSpaceAfter = getBlockContainerFO().getCommonMarginBlock()
             .spaceAfter.getSpace().getOptimum(this).getLength().getValue(this);
+    }
+
+    @Override
+    protected CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return getBlockContainerFO().getCommonBorderPaddingBackground();
     }
 
     private void resetSpaces() {
@@ -992,51 +992,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager impl
     @Override
     public boolean getGeneratesBlockArea() {
         return true;
-    }
-
-    /** {@inheritDoc} */
-    public void notifySpace(RelSide side, MinOptMax effectiveLength) {
-        if (RelSide.BEFORE == side) {
-            if (log.isDebugEnabled()) {
-                log.debug(this + ": Space " + side + ", "
-                        + this.effSpaceBefore + "-> " + effectiveLength);
-            }
-            this.effSpaceBefore = effectiveLength;
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug(this + ": Space " + side + ", "
-                        + this.effSpaceAfter + "-> " + effectiveLength);
-            }
-            this.effSpaceAfter = effectiveLength;
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void notifyBorder(RelSide side, MinOptMax effectiveLength) {
-        if (effectiveLength == null) {
-            if (RelSide.BEFORE == side) {
-                this.discardBorderBefore = true;
-            } else {
-                this.discardBorderAfter = true;
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug(this + ": Border " + side + " -> " + effectiveLength);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void notifyPadding(RelSide side, MinOptMax effectiveLength) {
-        if (effectiveLength == null) {
-            if (RelSide.BEFORE == side) {
-                this.discardPaddingBefore = true;
-            } else {
-                this.discardPaddingAfter = true;
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug(this + ": Padding " + side + " -> " + effectiveLength);
-        }
     }
 
     /** {@inheritDoc} */
