@@ -67,4 +67,13 @@ public interface InlineLevelEventProducer extends EventProducer {
      */
     void lineOverflows(Object source, String elementName, int line, int overflowLength, Locator loc);
 
+    /**
+     * Auto IPD on inline-container is not supported.
+     *
+     * @param source the event source
+     * @param fallback the value in points that will be used as a fallback
+     * @event.severity WARN
+     */
+    void inlineContainerAutoIPDNotSupported(Object source, float fallback);
+
 }

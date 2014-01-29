@@ -117,6 +117,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      */
     public TableCellLayoutManager(TableCell node, PrimaryGridUnit pgu) {
         super(node);
+        setGeneratesBlockArea(true);
         this.primaryGridUnit = pgu;
         this.isDescendantOfTableHeader = node.getParent().getParent() instanceof TableHeader
                 || node.getParent() instanceof TableHeader;
