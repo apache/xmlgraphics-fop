@@ -155,6 +155,12 @@ public class PDFDocument {
 
     private List<PDFLaunch> launches = new ArrayList<PDFLaunch>();
 
+    private List<PDFLayer> layers;
+
+    private List<PDFNavigator> navigators;
+
+    private List<PDFNavigatorAction> navigatorActions;
+
     private PDFFactory factory;
 
     private FileIDGenerator fileIDGenerator;
@@ -476,6 +482,24 @@ public class PDFDocument {
         }
         if (obj instanceof PDFGoToRemote) {
             this.gotoremotes.add((PDFGoToRemote) obj);
+        }
+        if (obj instanceof PDFLayer) {
+            if (this.layers == null) {
+                this.layers = new ArrayList<PDFLayer>();
+            }
+            this.layers.add((PDFLayer) obj);
+        }
+        if (obj instanceof PDFNavigator) {
+            if (this.navigators == null) {
+                this.navigators = new ArrayList<PDFNavigator>();
+            }
+            this.navigators.add((PDFNavigator) obj);
+        }
+        if (obj instanceof PDFNavigatorAction) {
+            if (this.navigatorActions == null) {
+                this.navigatorActions = new ArrayList<PDFNavigatorAction>();
+            }
+            this.navigatorActions.add((PDFNavigatorAction) obj);
         }
     }
 
@@ -890,6 +914,34 @@ public class PDFDocument {
     }
 
     /**
+     *
+     */
+    public PDFReference resolveExtensionReference(String id) {
+        if (layers != null) {
+            for (PDFLayer layer : layers) {
+                if (layer.hasId(id)) {
+                    return layer.makeReference();
+                }
+            }
+        }
+        if (navigators != null) {
+            for (PDFNavigator navigator : navigators) {
+                if (navigator.hasId(id)) {
+                    return navigator.makeReference();
+                }
+            }
+        }
+        if (navigatorActions != null) {
+            for (PDFNavigatorAction action : navigatorActions) {
+                if (action.hasId(id)) {
+                    return action.makeReference();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Writes out the entire document
      *
      * @param stream the OutputStream to output the document to
@@ -1009,7 +1061,7 @@ public class PDFDocument {
         streamIndirectObjects(trailerObjects, stream);
         TrailerDictionary trailerDictionary = createTrailerDictionary();
         long startxref = trailerOutputHelper.outputCrossReferenceObject(stream, trailerDictionary);
-        String trailer = "startxref\n" + startxref + "\n%%EOF\n";
+        String trailer = "\nstartxref\n" + startxref + "\n%%EOF\n";
         stream.write(encode(trailer));
     }
 

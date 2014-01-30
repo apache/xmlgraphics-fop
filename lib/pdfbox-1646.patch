@@ -1,0 +1,738 @@
+Index: fontbox/src/main/java/org/apache/fontbox/cff/CFFParser.java
+===================================================================
+--- fontbox/src/main/java/org/apache/fontbox/cff/CFFParser.java	(revision 1546564)
++++ fontbox/src/main/java/org/apache/fontbox/cff/CFFParser.java	(working copy)
+@@ -36,7 +36,7 @@
+ import org.apache.fontbox.cff.encoding.CFFStandardEncoding;
+ 
+ /**
+- * This class represents a parser for a CFF font. 
++ * This class represents a parser for a CFF font.
+  * @author Villu Ruusmann
+  * @version $Revision: 1.0 $
+  */
+@@ -107,7 +107,11 @@
+         {
+             input.setPosition(0);
+         }
++    	return parse(input);
++    }
+ 
++    public List<CFFFont> parse(CFFDataInput input) throws IOException {
++        this.input = input;
+         header = readHeader(input);
+         nameIndex = readIndexData(input);
+         topDictIndex = readIndexData(input);
+@@ -119,6 +123,7 @@
+         {
+             CFFFont font = parseFont(i);
+             font.setGlobalSubrIndex(globalSubrIndex);
++            font.constructMappings();
+             fonts.add(font);
+         }
+         return fonts;
+@@ -145,7 +150,7 @@
+         return cffHeader;
+     }
+ 
+-    private static IndexData readIndexData(CFFDataInput input) throws IOException
++    public static IndexData readIndexData(CFFDataInput input) throws IOException
+     {
+         int count = input.readCard16();
+         IndexData index = new IndexData(count);
+@@ -179,7 +184,8 @@
+         return dict;
+     }
+ 
+-    private static DictData.Entry readEntry(CFFDataInput input) throws IOException
++    private static DictData.Entry readEntry(CFFDataInput input)
++            throws IOException
+     {
+         DictData.Entry entry = new DictData.Entry();
+         while (true)
+@@ -211,13 +217,15 @@
+         return entry;
+     }
+ 
+-    private static CFFOperator readOperator(CFFDataInput input, int b0) throws IOException
++    private static CFFOperator readOperator(CFFDataInput input, int b0)
++            throws IOException
+     {
+         CFFOperator.Key key = readOperatorKey(input, b0);
+         return CFFOperator.getOperator(key);
+     }
+ 
+-    private static CFFOperator.Key readOperatorKey(CFFDataInput input, int b0) throws IOException
++    private static CFFOperator.Key readOperatorKey(CFFDataInput input, int b0)
++            throws IOException
+     {
+         if (b0 == 12)
+         {
+@@ -227,7 +235,8 @@
+         return new CFFOperator.Key(b0);
+     }
+ 
+-    private static Integer readIntegerNumber(CFFDataInput input, int b0) throws IOException
++    private static Integer readIntegerNumber(CFFDataInput input, int b0)
++            throws IOException
+     {
+         if (b0 == 28)
+         {
+@@ -263,7 +272,8 @@
+         }
+     }
+ 
+-    private static Double readRealNumber(CFFDataInput input, int b0) throws IOException
++    private static Double readRealNumber(CFFDataInput input, int b0)
++            throws IOException
+     {
+         StringBuffer sb = new StringBuffer();
+         boolean done = false;
+@@ -446,9 +456,9 @@
+                 throw new IOException("FDArray is missing for a CIDKeyed Font.");
+             }
+ 
+-            int fontDictOffset = fdArrayEntry.getNumber(0).intValue();
+-            input.setPosition(fontDictOffset);
+-            IndexData fdIndex = readIndexData(input);
++        	int fontDictOffset = fdArrayEntry.getNumber(0).intValue();
++        	input.setPosition(fontDictOffset);
++        	IndexData fdIndex = readIndexData(input);
+ 
+             List<Map<String, Object>> privateDictionaries = new LinkedList<Map<String, Object>>();
+             List<Map<String, Object>> fontDictionaries = new LinkedList<Map<String, Object>>();
+@@ -577,8 +587,8 @@
+         {
+             return CFFStandardString.getName(index);
+         }
+-        if (index - 391 <= stringIndex.getCount())
+-        {
++        if (index - 391 < stringIndex.getCount()) 
++		{
+             DataInput dataInput = new DataInput(stringIndex.getBytes(index - 391));
+             return dataInput.getString();
+         }
+@@ -620,7 +630,8 @@
+         return entry != null ? entry.getArray() : defaultValue;
+     }
+ 
+-    private CFFEncoding readEncoding(CFFDataInput dataInput, int[] gids) throws IOException
++    private CFFEncoding readEncoding(CFFDataInput dataInput, int[] gids)
++            throws IOException
+     {
+         int format = dataInput.readCard8();
+         int baseFormat = format & 0x7f;
+@@ -639,7 +650,8 @@
+         }
+     }
+ 
+-    private Format0Encoding readFormat0Encoding(CFFDataInput dataInput, int format, int[] gids) throws IOException
++    private Format0Encoding readFormat0Encoding(CFFDataInput dataInput, int format,
++            int[] gids) throws IOException
+     {
+         Format0Encoding encoding = new Format0Encoding();
+         encoding.format = format;
+@@ -657,7 +669,8 @@
+         return encoding;
+     }
+ 
+-    private Format1Encoding readFormat1Encoding(CFFDataInput dataInput, int format, int[] gids) throws IOException
++    private Format1Encoding readFormat1Encoding(CFFDataInput dataInput, int format,
++            int[] gids) throws IOException
+     {
+         Format1Encoding encoding = new Format1Encoding();
+         encoding.format = format;
+@@ -683,7 +696,8 @@
+         return encoding;
+     }
+ 
+-    private void readSupplement(CFFDataInput dataInput, EmbeddedEncoding encoding) throws IOException
++    private void readSupplement(CFFDataInput dataInput, EmbeddedEncoding encoding)
++            throws IOException
+     {
+         encoding.nSups = dataInput.readCard8();
+         encoding.supplement = new EmbeddedEncoding.Supplement[encoding.nSups];
+@@ -738,15 +752,14 @@
+         fdselect.fds = new int[nGlyphs];
+         for (int i = 0; i < fdselect.fds.length; i++)
+         {
+-            fdselect.fds[i] = dataInput.readCard8();
+-
++        	fdselect.fds[i] = dataInput.readCard8();
+         }
+         return fdselect;
+     }
+ 
+     /**
+      * Read the Format 3 of the FDSelect data structure.
+-     * 
++     *
+      * @param dataInput
+      * @param format
+      * @param nGlyphs
+@@ -768,7 +781,6 @@
+             r3.first = dataInput.readCard16();
+             r3.fd = dataInput.readCard8();
+             fdselect.range3[i] = r3;
+-
+         }
+ 
+         fdselect.sentinel = dataInput.readCard16();
+@@ -902,7 +914,8 @@
+         }
+     }
+ 
+-    private CFFCharset readCharset(CFFDataInput dataInput, int nGlyphs) throws IOException
++    private CFFCharset readCharset(CFFDataInput dataInput, int nGlyphs)
++            throws IOException
+     {
+         int format = dataInput.readCard8();
+         if (format == 0)
+@@ -923,7 +936,8 @@
+         }
+     }
+ 
+-    private Format0Charset readFormat0Charset(CFFDataInput dataInput, int format, int nGlyphs) throws IOException
++    private Format0Charset readFormat0Charset(CFFDataInput dataInput, int format,
++            int nGlyphs) throws IOException
+     {
+         Format0Charset charset = new Format0Charset();
+         charset.format = format;
+@@ -936,7 +950,8 @@
+         return charset;
+     }
+ 
+-    private Format1Charset readFormat1Charset(CFFDataInput dataInput, int format, int nGlyphs) throws IOException
++    private Format1Charset readFormat1Charset(CFFDataInput dataInput, int format,
++            int nGlyphs) throws IOException
+     {
+         Format1Charset charset = new Format1Charset();
+         charset.format = format;
+@@ -957,7 +972,8 @@
+         return charset;
+     }
+ 
+-    private Format2Charset readFormat2Charset(CFFDataInput dataInput, int format, int nGlyphs) throws IOException
++    private Format2Charset readFormat2Charset(CFFDataInput dataInput, int format,
++            int nGlyphs) throws IOException
+     {
+         Format2Charset charset = new Format2Charset();
+         charset.format = format;
+@@ -981,7 +997,7 @@
+     }
+ 
+     /**
+-     * Inner class holding the header of a CFF font. 
++     * Inner class holding the header of a CFF font.
+      */
+     private static class Header
+     {
+@@ -999,7 +1015,7 @@
+     }
+ 
+     /**
+-     * Inner class holding the DictData of a CFF font. 
++     * Inner class holding the DictData of a CFF font.
+      */
+     private static class DictData
+     {
+@@ -1030,7 +1046,7 @@
+         }
+ 
+         /**
+-         * {@inheritDoc} 
++         * {@inheritDoc}
+          */
+         public String toString()
+         {
+@@ -1038,7 +1054,7 @@
+         }
+ 
+         /**
+-         * Inner class holding an operand of a CFF font. 
++         * Inner class holding an operand of a CFF font.
+          */
+         private static class Entry
+         {
+@@ -1100,7 +1116,7 @@
+     }
+ 
+     /**
+-     * Inner class representing an embedded CFF encoding. 
++     * Inner class representing an embedded CFF encoding.
+      */
+     abstract static class EmbeddedEncoding extends CFFEncoding
+     {
+@@ -1124,7 +1140,7 @@
+         }
+ 
+         /**
+-         * Inner class representing a supplement for an encoding. 
++         * Inner class representing a supplement for an encoding.
+          */
+         static class Supplement
+         {
+@@ -1150,7 +1166,7 @@
+     }
+ 
+     /**
+-     * Inner class representing a Format0 encoding. 
++     * Inner class representing a Format0 encoding.
+      */
+     private static class Format0Encoding extends EmbeddedEncoding
+     {
+@@ -1167,7 +1183,7 @@
+     }
+ 
+     /**
+-     * Inner class representing a Format1 encoding. 
++     * Inner class representing a Format1 encoding.
+      */
+     private static class Format1Encoding extends EmbeddedEncoding
+     {
+@@ -1183,7 +1199,7 @@
+         }
+ 
+         /**
+-         * Inner class representing a range of an encoding. 
++         * Inner class representing a range of an encoding.
+          */
+         private static class Range1
+         {
+@@ -1193,13 +1209,20 @@
+             @Override
+             public String toString()
+             {
+-                return getClass().getName() + "[first=" + first + ", nLeft=" + nLeft + "]";
++                return getClass().getName() + "[first=" + first + ", nLeft="
++                        + nLeft + "]";
+             }
++
++            @Override
++            public boolean equals(Object obj) {
++                Range1 r = (Range1)obj;
++                return (first == r.first && nLeft == r.nLeft);
++            }
+         }
+     }
+ 
+     /**
+-     * Inner class representing an embedded CFF charset. 
++     * Inner class representing an embedded CFF charset.
+      */
+     abstract static class EmbeddedCharset extends CFFCharset
+     {
+@@ -1211,7 +1234,7 @@
+     }
+ 
+     /**
+-     * Inner class representing a Format0 charset. 
++     * Inner class representing a Format0 charset.
+      */
+     private static class Format0Charset extends EmbeddedCharset
+     {
+@@ -1226,7 +1249,7 @@
+     }
+ 
+     /**
+-     * Inner class representing a Format1 charset. 
++     * Inner class representing a Format1 charset.
+      */
+     private static class Format1Charset extends EmbeddedCharset
+     {
+@@ -1240,7 +1263,7 @@
+         }
+ 
+         /**
+-         * Inner class representing a range of a charset. 
++         * Inner class representing a range of a charset.
+          */
+         private static class Range1
+         {
+@@ -1256,7 +1279,7 @@
+     }
+ 
+     /**
+-     * Inner class representing a Format2 charset. 
++     * Inner class representing a Format2 charset.
+      */
+     private static class Format2Charset extends EmbeddedCharset
+     {
+@@ -1270,7 +1293,7 @@
+         }
+ 
+         /**
+-         * Inner class representing a range of a charset. 
++         * Inner class representing a range of a charset.
+          */
+         private static class Range2
+         {
+@@ -1284,4 +1307,8 @@
+             }
+         }
+     }
++
++    public IndexData getStringIndex() {
++        return stringIndex;
++    }
+ }
+Index: fontbox/src/main/java/org/apache/fontbox/cff/CFFFont.java
+===================================================================
+--- fontbox/src/main/java/org/apache/fontbox/cff/CFFFont.java	(revision 1546564)
++++ fontbox/src/main/java/org/apache/fontbox/cff/CFFFont.java	(working copy)
+@@ -31,7 +31,7 @@
+ 
+ /**
+  * This class represents a CFF/Type2 Font.
+- * 
++ *
+  * @author Villu Ruusmann
+  * @version $Revision$
+  */
+@@ -44,6 +44,8 @@
+ 	private CFFEncoding fontEncoding = null;
+ 	private CFFCharset fontCharset = null;
+ 	private Map<String, byte[]> charStringsDict = new LinkedHashMap<String, byte[]>();
++    Map<Integer, Mapping> sidMappings = null;
++    ArrayList<Mapping> gidMappings = null;
+ 	private IndexData globalSubrIndex = null;
+ 	private IndexData localSubrIndex = null;
+ 
+@@ -97,6 +99,7 @@
+ 			topDict.put(name, value);
+ 		}
+ 	}
++
+ 	/** 
+ 	 * Returns the top dictionary.
+ 	 * @return the dictionary
+@@ -107,7 +110,7 @@
+ 	}
+ 
+ 	/**
+-	 * Adds the given key/value pair to the private dictionary. 
++	 * Adds the given key/value pair to the private dictionary.
+ 	 * @param name the given key
+ 	 * @param value the given value
+ 	 */
+@@ -118,7 +121,8 @@
+ 			privateDict.put(name, value);
+ 		}
+ 	}
+-	/** 
++
++	/**
+ 	 * Returns the private dictionary.
+ 	 * @return the dictionary
+ 	 */
+@@ -127,14 +131,60 @@
+ 		return privateDict;
+ 	}
+ 
++    /**
++     * Returns a mapping for a given GID
++     * @param GID The given GID
++     * @return The found mapping
++     */
++    public Mapping getMapping(int GID) {
++        return sidMappings.get(GID);
++    }
++
+ 	/**
+-	 * Get the mapping (code/SID/charname/bytes) for this font.
+-	 * @return mappings for codes < 256 and for codes > = 256
+-	 */
+-	public Collection<Mapping> getMappings()
++     * Get the mapping (code/SID/charname/bytes) for this font.
++     * @return mappings for codes < 256 and for codes > = 256
++     */
++	public Collection<Mapping> getMappings() {
++        constructMappings();
++	    return sidMappings.values();
++	}
++
++    /**
++     * Gets the GID mappings list.
++     */
++	public ArrayList<Mapping> getGIDMappings() {
++	    return gidMappings;
++	}
++
++	private void constructGIDMap() {
++	    gidMappings = new ArrayList<Mapping>();
++	    Mapping notdef = new Mapping();
++	    notdef.setName(".notdef");
++	    gidMappings.add(notdef);
++        for (CFFCharset.Entry entry : fontCharset.getEntries())
++        {
++            String name = entry.getName();
++            byte[] bytes = this.charStringsDict.get(name);
++            if (bytes == null)
++            {
++                continue;
++            }
++            Mapping mapping = new Mapping();
++            mapping.setSID(entry.getSID());
++            mapping.setName(name);
++            mapping.setBytes(bytes);
++            gidMappings.add(mapping);
++        }
++	}
++
++    /**
++     * Construct the mappings.
++     */
++	public void constructMappings()
+ 	{
+-		List<Mapping> mappings = new ArrayList<Mapping>();
+-		Set<String> mappedNames = new HashSet<String>();
++	    constructGIDMap();
++	    sidMappings = new LinkedHashMap<Integer, Mapping>();
++	    Set<String> mappedNames = new HashSet<String>();
+ 		for (CFFEncoding.Entry entry : fontEncoding.getEntries())
+ 		{
+ 			String charName = fontCharset.getName(entry.getSID());
+@@ -153,7 +203,7 @@
+ 			mapping.setSID(entry.getSID());
+ 			mapping.setName(charName);
+ 			mapping.setBytes(bytes);
+-			mappings.add(mapping);
++			sidMappings.put(mapping.getSID(), mapping);
+ 			mappedNames.add(charName);
+ 		}
+ 		if (fontEncoding instanceof CFFParser.EmbeddedEncoding)
+@@ -177,7 +227,7 @@
+ 				mapping.setSID(supplement.getGlyph());
+ 				mapping.setName(charName);
+ 				mapping.setBytes(bytes);
+-				mappings.add(mapping);
++				sidMappings.put(mapping.getSID(), mapping);
+ 				mappedNames.add(charName);
+ 			}
+ 		}
+@@ -185,7 +235,7 @@
+ 		int code = 256;
+ 		for (CFFCharset.Entry entry : fontCharset.getEntries())
+ 		{
+-			String name = entry.getName();
++		    String name = entry.getName();
+ 			if (mappedNames.contains(name))
+ 			{
+ 				continue;
+@@ -201,11 +251,10 @@
+ 			mapping.setName(name);
+ 			mapping.setBytes(bytes);
+ 
+-			mappings.add(mapping);
++			sidMappings.put(mapping.getSID(), mapping);
+ 
+ 			mappedNames.add(name);
+ 		}
+-		return mappings;
+ 	}
+ 
+ 	/**
+@@ -215,34 +264,43 @@
+ 	 * @return -1 if the SID is missing from the Font.
+ 	 * @throws IOException
+ 	 */
+-	public int getWidth(int SID) throws IOException {
+-		int nominalWidth = privateDict.containsKey("nominalWidthX") ? ((Number)privateDict.get("nominalWidthX")).intValue() : 0;
+-		int defaultWidth = privateDict.containsKey("defaultWidthX") ? ((Number)privateDict.get("defaultWidthX")).intValue() : 1000 ;
+-		
+-		for (Mapping m : getMappings() ){
+-			if (m.getSID() == SID) {
++    public int getWidth(int SID) throws IOException {
++        int nominalWidth = privateDict.containsKey("nominalWidthX") ? ((Number) privateDict.get("nominalWidthX")).intValue() : 0;
++        int defaultWidth = privateDict.containsKey("defaultWidthX") ? ((Number) privateDict.get("defaultWidthX")).intValue() : 1000;
++        Mapping m = sidMappings.get(SID);
++        if (m != null) {
++            CharStringRenderer csr = getRendererForMapping(m);
++            // ---- If the CharString has a Width nominalWidthX must be added,
++            // otherwise it is the default width.
++            return csr.getWidth() != 0 ? csr.getWidth() + nominalWidth : defaultWidth;
++        }
+ 
+-				CharStringRenderer csr = null;
+-				if (((Number)getProperty("CharstringType")).intValue() == 2 ) {
+-					List<Object> lSeq = m.toType2Sequence();
+-					csr = new CharStringRenderer(false);
+-					csr.render(lSeq);
+-				} else {
+-					List<Object> lSeq = m.toType1Sequence();
+-					csr = new CharStringRenderer();
+-					csr.render(lSeq);
+-				}
++        // ---- SID Width not found, return the nodef width
++        return getNotDefWidth(defaultWidth, nominalWidth);
++    }
+ 
+-				// ---- If the CharString has a Width nominalWidthX must be added, 
+-				//	    otherwise it is the default width.
+-				return csr.getWidth() != 0 ? csr.getWidth() + nominalWidth : defaultWidth;
+-			}
+-		}
++    private CharStringRenderer getRendererForMapping(Mapping m) throws IOException {
++        CharStringRenderer csr = null;
++        if (((Number) getProperty("CharstringType")).intValue() == 2) {
++            List<Object> lSeq = m.toType2Sequence();
++            csr = new CharStringRenderer(false);
++            csr.render(lSeq);
++        } else {
++            List<Object> lSeq = m.toType1Sequence();
++            csr = new CharStringRenderer();
++            csr.render(lSeq);
++        }
++        return csr;
++    }
+ 
+-		// ---- SID Width not found, return the nodef width
+-		return getNotDefWidth(defaultWidth, nominalWidth);
+-	}
+-	
++    /**
++     * Returns the witdth of the .notdef character.
++     * 
++     * @param defaultWidth default width
++     * @param nominalWidth nominal width
++     * @return the calculated width for the .notdef character
++     * @throws IOException if something went wrong
++     */
+ 	protected int getNotDefWidth(int defaultWidth, int nominalWidth) throws IOException {
+ 		CharStringRenderer csr;
+ 		byte[] glyphDesc = this.getCharStringsDict().get(".notdef");
+@@ -260,6 +318,36 @@
+ 		return csr.getWidth() != 0 ? csr.getWidth() + nominalWidth : defaultWidth;
+ 	}
+ 	
++    /**
++     * Return the Width value of the given Glyph identifier
++     *
++     * @param SID
++     * @return -1 if the SID is missing from the Font.
++     * @throws IOException
++     */
++    public int[] getBoundingBox(int SID) throws IOException {
++        Mapping m = sidMappings.get(SID);
++        if (m != null) {
++            CharStringRenderer csr = getRendererForMapping(m);
++            return csr.getBounds();
++        }
++        // ---- SID Width not found, return the nodef width
++        return new int[4];
++    }
++
++    /**
++     * Gets the name of a character from the given SID
++     * @param SID The given SID
++     * @return The name of the found character
++     */
++    public String getNameOfCharFromCode(int SID) {
++        if (sidMappings.get(SID) != null) {
++            return sidMappings.get(SID).getName();
++        } else {
++            return "";
++        }
++    }
++
+ 	/**
+ 	 * Returns the CFFEncoding of the font.
+ 	 * @return the encoding
+@@ -336,50 +424,51 @@
+ 				+ charStringsDict + "]";
+ 	}
+ 
++    /**
++     * Sets the global subroutine index data.
++     * @param globalSubrIndex the IndexData object containing the global subroutines
++     */
++    public void setGlobalSubrIndex(IndexData globalSubrIndexValue) {
++        globalSubrIndex = globalSubrIndexValue;
++    }
+ 
+-	/**
+-	 * Sets the global subroutine index data.
+-	 * @param globalSubrIndex the IndexData object containing the global subroutines 
+-	 */
+-	public void setGlobalSubrIndex(IndexData globalSubrIndex) {
+-		this.globalSubrIndex = globalSubrIndex;
+-	}
++    /**
++     * Returns the global subroutine index data.
++     * @return the dictionary
++     */
++    public IndexData getGlobalSubrIndex()
++    {
++        return globalSubrIndex;
++    }
+ 
+-	/** 
+-	 * Returns the global subroutine index data.
+-	 * @return the dictionary
+-	 */
+-	public IndexData getGlobalSubrIndex() {
+-		return globalSubrIndex;
+-	}
++    /**
++     * Returns the local subroutine index data.
++     * @return the dictionary
++     */
++    public IndexData getLocalSubrIndex()
++    {
++        return localSubrIndex;
++    }
+ 
+-	/** 
+-	 * Returns the local subroutine index data.
+-	 * @return the dictionary
+-	 */
+-	public IndexData getLocalSubrIndex() {
+-		return localSubrIndex;
+-	}
++    /**
++     * Sets the local subroutine index data.
++     * @param localSubrIndexValue the IndexData object containing the local subroutines
++     */
++    public void setLocalSubrIndex(IndexData localSubrIndexValue) {
++        localSubrIndex = localSubrIndexValue;
++    }
+ 
+-	/**
+-	 * Sets the local subroutine index data.
+-	 * @param localSubrIndex the IndexData object containing the local subroutines 
+-	 */
+-	public void setLocalSubrIndex(IndexData localSubrIndex) {
+-		this.localSubrIndex = localSubrIndex;	
+-	}
++    /**
++     * This class is used for the font mapping.
++     * 
++     */
++    public class Mapping
++    {
++        private int mappedCode;
++        private int mappedSID;
++        private String mappedName;
++        private byte[] mappedBytes;
+ 
+-	/**
+-	 * This class is used for the font mapping.
+-	 *
+-	 */
+-	public class Mapping
+-	{
+-		private int mappedCode;
+-		private int mappedSID;
+-		private String mappedName;
+-		private byte[] mappedBytes;
+-
+ 		/**
+ 		 * Converts the mapping into a Type1-sequence.
+ 		 * @return the Type1-sequence
+@@ -458,4 +547,4 @@
+ 			this.mappedBytes = bytes;
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}

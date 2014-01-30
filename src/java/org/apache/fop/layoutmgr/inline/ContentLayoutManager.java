@@ -332,6 +332,15 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         return parentLM.getPSLM();
     }
 
+
+    public boolean hasLineAreaDescendant() {
+        return true;
+    }
+
+    public int getBaselineOffset() {
+        return childLM.getBaselineOffset();
+    }
+
     // --------- Property Resolution related functions --------- //
 
     /**

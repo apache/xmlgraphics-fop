@@ -31,7 +31,7 @@ import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontMetrics;
-import org.apache.fop.fonts.truetype.TTFFontLoader;
+import org.apache.fop.fonts.truetype.OFFontLoader;
 
 class FontInfoBuilder {
 
@@ -82,7 +82,7 @@ class FontInfoBuilder {
             throws IOException, URISyntaxException {
         URI baseURI = new File("test/resources/fonts/ttf").toURI();
         InternalResourceResolver resolver = ResourceResolverFactory.createDefaultInternalResourceResolver(baseURI);
-        TTFFontLoader fontLoader = new TTFFontLoader(new URI(filename), null, true,
+        OFFontLoader fontLoader = new OFFontLoader(new URI(filename), null, true,
                 EmbeddingMode.AUTO, EncodingMode.AUTO, true, useAdvanced, resolver);
         FontMetrics font = fontLoader.getFont();
         registerFont(font, "F" + fontKey++, fontName);

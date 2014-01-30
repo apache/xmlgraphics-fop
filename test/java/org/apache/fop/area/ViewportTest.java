@@ -19,12 +19,12 @@
 
 package org.apache.fop.area;
 
+import java.awt.Rectangle;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import java.awt.Rectangle;
 
 /**
  * Tests implementations of the {@linkplain Viewport} interface.

@@ -64,7 +64,7 @@ public final class FODocumentParser {
     /**
      * A factory to create custom instances of {@link FOEventHandler}.
      */
-    public static interface FOEventHandlerFactory {
+    public interface FOEventHandlerFactory {
 
         /**
          * Creates a new {@code FOEventHandler} instance parameterized with the given FO user agent.

@@ -95,9 +95,6 @@ public class DigestFilter extends XMLFilterImpl {
         super.endDocument();
     }
 
-    /* (non-Javadoc)
-     * @see org.xml.sax.ContentHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-     */
     public void startElement(
         String url,
         String localName,

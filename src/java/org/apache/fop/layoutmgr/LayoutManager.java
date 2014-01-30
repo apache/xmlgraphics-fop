@@ -178,6 +178,25 @@ public interface LayoutManager extends PercentBaseContext {
     List getChangedKnuthElements(List oldList, int alignment);
 
     /**
+     * Whether the FO handled by this layout manager has a descendant (including itself)
+     * that will generate a line-area.
+     *
+     * @return {@code true} if a descendant line-area will be generated, {@code false} otherwise
+     */
+    boolean hasLineAreaDescendant();
+
+    /**
+     * Returns the position of the dominant-baseline of this FO's first descendant
+     * line-area. <p>The behavior of this method is undefined if this FO has no descendant
+     * line-area, and an exception may be thrown. See {@link #hasLineAreaDescendant()}</p>
+     *
+     * @return this FO's space-before plus the distance from the before-edge of its
+     * allocation-rectangle to the dominant-baseline of the first line-area descendant
+     * @see #hasLineAreaDescendant()
+     */
+    int getBaselineOffset();
+
+    /**
      * Returns the IPD of the content area
      * @return the IPD of the content area
      */

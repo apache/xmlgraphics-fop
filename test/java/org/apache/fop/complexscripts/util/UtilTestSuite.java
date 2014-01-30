@@ -27,8 +27,6 @@ import org.junit.runners.Suite.SuiteClasses;
  * Test suite for bidirectional functionality.
  */
 @RunWith(Suite.class)
-@SuiteClasses({
-    NumberConverterTestCase.class
-})
+@SuiteClasses(NumberConverterTestCase.class)
 public class UtilTestSuite {
 }

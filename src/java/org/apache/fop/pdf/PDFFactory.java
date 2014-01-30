@@ -56,6 +56,8 @@ import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.truetype.FontFileReader;
+import org.apache.fop.fonts.truetype.OFFontLoader;
+import org.apache.fop.fonts.truetype.OTFSubSetFile;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
 import org.apache.fop.fonts.type1.PFBData;
 import org.apache.fop.fonts.type1.PFBParser;
@@ -308,12 +310,7 @@ public class PDFFactory {
                                                theFunctionDataStream,
                                                theFilter);
 
-        PDFFunction oldfunc = getDocument().findFunction(function);
-        if (oldfunc == null) {
-            getDocument().registerObject(function);
-        } else {
-            function = oldfunc;
-        }
+        function = registerFunction(function);
         return (function);
     }
 
@@ -350,12 +347,7 @@ public class PDFFactory {
         PDFFunction function = new PDFFunction(theFunctionType, theDomain,
                                                theRange, theCZero, theCOne,
                                                theInterpolationExponentN);
-        PDFFunction oldfunc = getDocument().findFunction(function);
-        if (oldfunc == null) {
-            getDocument().registerObject(function);
-        } else {
-            function = oldfunc;
-        }
+        function = registerFunction(function);
         return (function);
     }
 
@@ -405,12 +397,7 @@ public class PDFFactory {
                                                theRange, theFunctions,
                                                theBounds, theEncode);
 
-        PDFFunction oldfunc = getDocument().findFunction(function);
-        if (oldfunc == null) {
-            getDocument().registerObject(function);
-        } else {
-            function = oldfunc;
-        }
+        function = registerFunction(function);
         return (function);
     }
 
@@ -432,14 +419,23 @@ public class PDFFactory {
                                                theRange,
                                                theFunctionDataStream);
 
+        function = registerFunction(function);
+        return (function);
+
+    }
+
+    /**
+     * Registers a function against the document
+     * @param function The function to register
+     */
+    public PDFFunction registerFunction(PDFFunction function) {
         PDFFunction oldfunc = getDocument().findFunction(function);
         if (oldfunc == null) {
             getDocument().registerObject(function);
         } else {
             function = oldfunc;
         }
-        return (function);
-
+        return function;
     }
 
     /* ========================= shadings ================================== */
@@ -479,20 +475,7 @@ public class PDFFactory {
                                             theBBox, theAntiAlias, theDomain,
                                             theMatrix, theFunction);
 
-        PDFShading oldshad = getDocument().findShading(shading);
-        if (oldshad == null) {
-            getDocument().registerObject(shading);
-        } else {
-            shading = oldshad;
-        }
-
-        // add this shading to resources
-        if (res != null) {
-            res.getPDFResources().addShading(shading);
-        } else {
-            getDocument().getResources().addShading(shading);
-        }
-
+        shading = registerShading(res, shading);
         return (shading);
     }
 
@@ -532,18 +515,7 @@ public class PDFFactory {
                                             theDomain, theFunction,
                                             theExtend);
 
-        PDFShading oldshad = getDocument().findShading(shading);
-        if (oldshad == null) {
-            getDocument().registerObject(shading);
-        } else {
-            shading = oldshad;
-        }
-
-        if (res != null) {
-            res.getPDFResources().addShading(shading);
-        } else {
-            getDocument().getResources().addShading(shading);
-        }
+        shading = registerShading(res, shading);
 
         return (shading);
     }
@@ -589,18 +561,7 @@ public class PDFFactory {
                                             theBitsPerFlag, theDecode,
                                             theFunction);
 
-        PDFShading oldshad = getDocument().findShading(shading);
-        if (oldshad == null) {
-            getDocument().registerObject(shading);
-        } else {
-            shading = oldshad;
-        }
-
-        if (res != null) {
-            res.getPDFResources().addShading(shading);
-        } else {
-            getDocument().getResources().addShading(shading);
-        }
+        shading = registerShading(res, shading);
 
         return (shading);
     }
@@ -643,6 +604,17 @@ public class PDFFactory {
                                             theBitsPerComponent, theDecode,
                                             theVerticesPerRow, theFunction);
 
+        shading = registerShading(res, shading);
+
+        return (shading);
+    }
+
+    /**
+     * Registers a shading object against the document
+     * @param res The PDF resource context
+     * @param shading The shading object to be registered
+     */
+    public PDFShading registerShading(PDFResourceContext res, PDFShading shading) {
         PDFShading oldshad = getDocument().findShading(shading);
         if (oldshad == null) {
             getDocument().registerObject(shading);
@@ -650,13 +622,13 @@ public class PDFFactory {
             shading = oldshad;
         }
 
+        // add this shading to resources
         if (res != null) {
             res.getPDFResources().addShading(shading);
         } else {
             getDocument().getResources().addShading(shading);
         }
-
-        return (shading);
+        return shading;
     }
 
     /* ========================= patterns ================================== */
@@ -703,6 +675,22 @@ public class PDFFactory {
         }
 
         return (pattern);
+    }
+
+    public PDFPattern registerPattern(PDFResourceContext res, PDFPattern pattern) {
+        PDFPattern oldpatt = getDocument().findPattern(pattern);
+        if (oldpatt == null) {
+            getDocument().registerObject(pattern);
+        } else {
+            pattern = oldpatt;
+        }
+
+        if (res != null) {
+            res.getPDFResources().addPattern(pattern);
+        } else {
+            getDocument().getResources().addPattern(pattern);
+        }
+        return pattern;
     }
 
     /**
@@ -1387,15 +1375,15 @@ public class PDFFactory {
                 int firstChar = singleByteFont.getFirstChar();
                 int lastChar = singleByteFont.getLastChar();
                 nonBase14.setWidthMetrics(firstChar,
-                                     lastChar,
-                                     new PDFArray(null, metrics.getWidths()));
+                lastChar,
+                new PDFArray(null, metrics.getWidths()));
 
                 //Handle encoding
                 SingleByteEncoding mapping = singleByteFont.getEncoding();
                 if (singleByteFont.isSymbolicFont()) {
                     //no encoding, use the font's encoding
                     if (forceToUnicode) {
-                        generateToUnicodeCmap(nonBase14, mapping);
+                    generateToUnicodeCmap(nonBase14, mapping);
                     }
                 } else if (PDFEncoding.isPredefinedEncoding(mapping.getName())) {
                     font.setEncoding(mapping.getName());
@@ -1403,7 +1391,7 @@ public class PDFFactory {
                     //believed.
                 } else {
                     Object pdfEncoding = createPDFEncoding(mapping,
-                            singleByteFont.getFontName());
+                    singleByteFont.getFontName());
                     if (pdfEncoding instanceof PDFEncoding) {
                         font.setEncoding((PDFEncoding)pdfEncoding);
                     } else {
@@ -1518,7 +1506,8 @@ public class PDFFactory {
 
         // Check if the font is embeddable
         if (desc.isEmbeddable()) {
-            AbstractPDFStream stream = makeFontFile(desc);
+            AbstractPDFStream stream = makeFontFile(desc, fontPrefix);
+
             if (stream != null) {
                 descriptor.setFontFile(desc.getFontType(), stream);
                 getDocument().registerObject(stream);
@@ -1564,7 +1553,7 @@ public class PDFFactory {
      * @param desc FontDescriptor of the font.
      * @return PDFStream The embedded font file
      */
-    public AbstractPDFStream makeFontFile(FontDescriptor desc) {
+    public AbstractPDFStream makeFontFile(FontDescriptor desc, String fontPrefix) {
         if (desc.getFontType() == FontType.OTHER) {
             throw new IllegalArgumentException("Trying to embed unsupported font type: "
                                                 + desc.getFontType());
@@ -1578,20 +1567,24 @@ public class PDFFactory {
             if (in == null) {
                 return null;
             } else {
-                AbstractPDFStream embeddedFont;
+                AbstractPDFStream embeddedFont = null;
                 if (desc.getFontType() == FontType.TYPE0) {
                     MultiByteFont mbfont = (MultiByteFont) font;
                     FontFileReader reader = new FontFileReader(in);
                     byte[] fontBytes;
+                    String header = OFFontLoader.readHeader(reader);
+                    boolean isCFF = mbfont.isOTFFile();
                     if (font.getEmbeddingMode() == EmbeddingMode.FULL) {
                         fontBytes = reader.getAllBytes();
+                        if (isCFF) {
+                            //Ensure version 1.6 for full OTF CFF embedding
+                            document.setPDFVersion(Version.V1_6);
+                        }
                     } else {
-                        TTFSubSetFile ttfFile = new TTFSubSetFile();
-                        ttfFile.readFont(reader, mbfont.getTTCName(), mbfont.getUsedGlyphs());
-                        fontBytes = ttfFile.getFontSubset();
+                        fontBytes = getFontSubsetBytes(reader, mbfont, header, fontPrefix, desc,
+                                isCFF);
                     }
-                    embeddedFont = new PDFTTFStream(fontBytes.length);
-                    ((PDFTTFStream) embeddedFont).setData(fontBytes, fontBytes.length);
+                    embeddedFont = getFontStream(font, fontBytes, isCFF);
                 } else if (desc.getFontType() == FontType.TYPE1) {
                     PFBParser parser = new PFBParser();
                     PFBData pfb = parser.parsePFB(in);
@@ -1619,6 +1612,32 @@ public class PDFFactory {
         } finally {
             IOUtils.closeQuietly(in);
         }
+    }
+
+    private byte[] getFontSubsetBytes(FontFileReader reader, MultiByteFont mbfont, String header,
+            String fontPrefix, FontDescriptor desc, boolean isCFF) throws IOException {
+        if (isCFF) {
+            OTFSubSetFile otfFile = new OTFSubSetFile();
+            otfFile.readFont(reader, fontPrefix + desc.getEmbedFontName(), header, mbfont);
+            return otfFile.getFontSubset();
+        } else {
+            TTFSubSetFile otfFile = new TTFSubSetFile();
+            otfFile.readFont(reader, mbfont.getTTCName(), header, mbfont.getUsedGlyphs());
+            return otfFile.getFontSubset();
+        }
+    }
+
+    private AbstractPDFStream getFontStream(CustomFont font, byte[] fontBytes, boolean isCFF)
+            throws IOException {
+        AbstractPDFStream embeddedFont;
+        if (isCFF) {
+            embeddedFont = new PDFCFFStreamType0C(font.getEmbeddingMode() == EmbeddingMode.FULL);
+            ((PDFCFFStreamType0C) embeddedFont).setData(fontBytes, fontBytes.length);
+        } else {
+            embeddedFont = new PDFTTFStream(fontBytes.length);
+            ((PDFTTFStream) embeddedFont).setData(fontBytes, fontBytes.length);
+        }
+        return embeddedFont;
     }
 
     private CustomFont getCustomFont(FontDescriptor desc) {
@@ -1786,6 +1805,30 @@ public class PDFFactory {
         PDFAnnotList obj = new PDFAnnotList();
         getDocument().assignObjectNumber(obj);
         return obj;
+    }
+
+    public PDFLayer makeLayer(String id) {
+        PDFLayer layer = new PDFLayer(id);
+        getDocument().registerObject(layer);
+        return layer;
+    }
+
+    public PDFSetOCGStateAction makeSetOCGStateAction(String id) {
+        PDFSetOCGStateAction action = new PDFSetOCGStateAction(id);
+        getDocument().registerObject(action);
+        return action;
+    }
+
+    public PDFTransitionAction makeTransitionAction(String id) {
+        PDFTransitionAction action = new PDFTransitionAction(id);
+        getDocument().registerObject(action);
+        return action;
+    }
+
+    public PDFNavigator makeNavigator(String id) {
+        PDFNavigator navigator = new PDFNavigator(id);
+        getDocument().registerObject(navigator);
+        return navigator;
     }
 
 }

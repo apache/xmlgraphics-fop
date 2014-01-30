@@ -19,15 +19,16 @@
 
 package org.apache.fop.afp.modca;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.fop.afp.util.BinaryUtils;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
+
+import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * Test {@link IncludeObject}

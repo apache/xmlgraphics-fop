@@ -23,7 +23,10 @@ import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.SAXException;
 
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.gvt.font.FontFamilyResolver;
@@ -84,17 +87,28 @@ public class SimpleSVGUserAgent extends UserAgentAdapter {
         return null; // userStyleSheetURI;
     }
 
+
+    private static final String XML_PARSER_CLASS_NAME;
+
+    static {
+        String result;
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            result = factory.newSAXParser().getXMLReader().getClass().getName();
+        } catch (SAXException e) {
+            result = null;
+        } catch (ParserConfigurationException e) {
+            result = null;
+        }
+        XML_PARSER_CLASS_NAME = result;
+    }
+
     /**
      * Returns the class name of the XML parser.
      * @return the XML parser class name
      */
     public String getXMLParserClassName() {
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            return factory.newSAXParser().getXMLReader().getClass().getName();
-        } catch (Exception e) {
-            return null;
-        }
+        return XML_PARSER_CLASS_NAME;
     }
 
     /**

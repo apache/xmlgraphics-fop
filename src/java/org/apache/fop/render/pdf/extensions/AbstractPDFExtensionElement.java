@@ -19,9 +19,10 @@
 
 package org.apache.fop.render.pdf.extensions;
 
-// FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+
+// CSOFF: LineLengthCheck
 
 /**
  * Base class for the PDF-specific extension elements.
@@ -67,7 +68,9 @@ public abstract class AbstractPDFExtensionElement extends FONode {
      * Instantiates extension attachment object.
      * @return extension attachment
      */
-    protected abstract ExtensionAttachment instantiateExtensionAttachment();
+    protected ExtensionAttachment instantiateExtensionAttachment() {
+        return null;
+    }
 
 }
 

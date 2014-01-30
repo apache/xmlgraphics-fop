@@ -19,15 +19,14 @@
 
 package org.apache.fop.render.pdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.pdf.PDFInfo;
-import org.apache.fop.pdf.PDFMetadata;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.DublinCoreAdapter;
 import org.apache.xmlgraphics.xmp.schemas.DublinCoreSchema;
@@ -35,7 +34,10 @@ import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFAdapter;
 import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFSchema;
-import org.junit.Test;
+
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFInfo;
+import org.apache.fop.pdf.PDFMetadata;
 
 /**
  * Test case for PDF/A metadata handling.

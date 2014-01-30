@@ -37,37 +37,37 @@ public class TTFTableNameTestCase {
      */
     @Test
     public void testGetName() throws IllegalAccessException {
-        assertEquals("tableDirectory", TTFTableName.TABLE_DIRECTORY.getName());
-        assertEquals("EBDT", TTFTableName.EBDT.getName());
-        assertEquals("EBLC", TTFTableName.EBLC.getName());
-        assertEquals("EBSC", TTFTableName.EBSC.getName());
-        assertEquals("FFTM", TTFTableName.FFTM.getName());
-        assertEquals("GDEF", TTFTableName.GDEF.getName());
-        assertEquals("GPOS", TTFTableName.GPOS.getName());
-        assertEquals("GSUB", TTFTableName.GSUB.getName());
-        assertEquals("LTSH", TTFTableName.LTSH.getName());
-        assertEquals("OS/2", TTFTableName.OS2.getName());
-        assertEquals("PCLT", TTFTableName.PCLT.getName());
-        assertEquals("VDMX", TTFTableName.VDMX.getName());
-        assertEquals("cmap", TTFTableName.CMAP.getName());
-        assertEquals("cvt ", TTFTableName.CVT.getName());
-        assertEquals("fpgm", TTFTableName.FPGM.getName());
-        assertEquals("gasp", TTFTableName.GASP.getName());
-        assertEquals("glyf", TTFTableName.GLYF.getName());
-        assertEquals("hdmx", TTFTableName.HDMX.getName());
-        assertEquals("head", TTFTableName.HEAD.getName());
-        assertEquals("hhea", TTFTableName.HHEA.getName());
-        assertEquals("hmtx", TTFTableName.HMTX.getName());
-        assertEquals("kern", TTFTableName.KERN.getName());
-        assertEquals("loca", TTFTableName.LOCA.getName());
-        assertEquals("maxp", TTFTableName.MAXP.getName());
-        assertEquals("name", TTFTableName.NAME.getName());
-        assertEquals("post", TTFTableName.POST.getName());
-        assertEquals("prep", TTFTableName.PREP.getName());
-        assertEquals("vhea", TTFTableName.VHEA.getName());
-        assertEquals("vmtx", TTFTableName.VMTX.getName());
+        assertEquals("tableDirectory", OFTableName.TABLE_DIRECTORY.getName());
+        assertEquals("EBDT", OFTableName.EBDT.getName());
+        assertEquals("EBLC", OFTableName.EBLC.getName());
+        assertEquals("EBSC", OFTableName.EBSC.getName());
+        assertEquals("FFTM", OFTableName.FFTM.getName());
+        assertEquals("GDEF", OFTableName.GDEF.getName());
+        assertEquals("GPOS", OFTableName.GPOS.getName());
+        assertEquals("GSUB", OFTableName.GSUB.getName());
+        assertEquals("LTSH", OFTableName.LTSH.getName());
+        assertEquals("OS/2", OFTableName.OS2.getName());
+        assertEquals("PCLT", OFTableName.PCLT.getName());
+        assertEquals("VDMX", OFTableName.VDMX.getName());
+        assertEquals("cmap", OFTableName.CMAP.getName());
+        assertEquals("cvt ", OFTableName.CVT.getName());
+        assertEquals("fpgm", OFTableName.FPGM.getName());
+        assertEquals("gasp", OFTableName.GASP.getName());
+        assertEquals("glyf", OFTableName.GLYF.getName());
+        assertEquals("hdmx", OFTableName.HDMX.getName());
+        assertEquals("head", OFTableName.HEAD.getName());
+        assertEquals("hhea", OFTableName.HHEA.getName());
+        assertEquals("hmtx", OFTableName.HMTX.getName());
+        assertEquals("kern", OFTableName.KERN.getName());
+        assertEquals("loca", OFTableName.LOCA.getName());
+        assertEquals("maxp", OFTableName.MAXP.getName());
+        assertEquals("name", OFTableName.NAME.getName());
+        assertEquals("post", OFTableName.POST.getName());
+        assertEquals("prep", OFTableName.PREP.getName());
+        assertEquals("vhea", OFTableName.VHEA.getName());
+        assertEquals("vmtx", OFTableName.VMTX.getName());
         // make sure it works with other table names
-        TTFTableName test = TTFTableName.getValue("test");
+        OFTableName test = OFTableName.getValue("test");
         assertEquals("test", test.getName());
     }
 
@@ -78,34 +78,34 @@ public class TTFTableNameTestCase {
      */
     @Test
     public void testGetValue() throws IllegalAccessException {
-        assertEquals(TTFTableName.EBDT, TTFTableName.getValue("EBDT"));
-        assertEquals(TTFTableName.EBLC, TTFTableName.getValue("EBLC"));
-        assertEquals(TTFTableName.EBSC, TTFTableName.getValue("EBSC"));
-        assertEquals(TTFTableName.FFTM, TTFTableName.getValue("FFTM"));
-        assertEquals(TTFTableName.LTSH, TTFTableName.getValue("LTSH"));
-        assertEquals(TTFTableName.OS2, TTFTableName.getValue("OS/2"));
-        assertEquals(TTFTableName.PCLT, TTFTableName.getValue("PCLT"));
-        assertEquals(TTFTableName.VDMX, TTFTableName.getValue("VDMX"));
-        assertEquals(TTFTableName.CMAP, TTFTableName.getValue("cmap"));
-        assertEquals(TTFTableName.CVT, TTFTableName.getValue("cvt "));
-        assertEquals(TTFTableName.FPGM, TTFTableName.getValue("fpgm"));
-        assertEquals(TTFTableName.GASP, TTFTableName.getValue("gasp"));
-        assertEquals(TTFTableName.GLYF, TTFTableName.getValue("glyf"));
-        assertEquals(TTFTableName.HDMX, TTFTableName.getValue("hdmx"));
-        assertEquals(TTFTableName.HEAD, TTFTableName.getValue("head"));
-        assertEquals(TTFTableName.HHEA, TTFTableName.getValue("hhea"));
-        assertEquals(TTFTableName.HMTX, TTFTableName.getValue("hmtx"));
-        assertEquals(TTFTableName.KERN, TTFTableName.getValue("kern"));
-        assertEquals(TTFTableName.LOCA, TTFTableName.getValue("loca"));
-        assertEquals(TTFTableName.MAXP, TTFTableName.getValue("maxp"));
-        assertEquals(TTFTableName.NAME, TTFTableName.getValue("name"));
-        assertEquals(TTFTableName.POST, TTFTableName.getValue("post"));
-        assertEquals(TTFTableName.PREP, TTFTableName.getValue("prep"));
-        assertEquals(TTFTableName.VHEA, TTFTableName.getValue("vhea"));
-        assertEquals(TTFTableName.VMTX, TTFTableName.getValue("vmtx"));
+        assertEquals(OFTableName.EBDT, OFTableName.getValue("EBDT"));
+        assertEquals(OFTableName.EBLC, OFTableName.getValue("EBLC"));
+        assertEquals(OFTableName.EBSC, OFTableName.getValue("EBSC"));
+        assertEquals(OFTableName.FFTM, OFTableName.getValue("FFTM"));
+        assertEquals(OFTableName.LTSH, OFTableName.getValue("LTSH"));
+        assertEquals(OFTableName.OS2, OFTableName.getValue("OS/2"));
+        assertEquals(OFTableName.PCLT, OFTableName.getValue("PCLT"));
+        assertEquals(OFTableName.VDMX, OFTableName.getValue("VDMX"));
+        assertEquals(OFTableName.CMAP, OFTableName.getValue("cmap"));
+        assertEquals(OFTableName.CVT, OFTableName.getValue("cvt "));
+        assertEquals(OFTableName.FPGM, OFTableName.getValue("fpgm"));
+        assertEquals(OFTableName.GASP, OFTableName.getValue("gasp"));
+        assertEquals(OFTableName.GLYF, OFTableName.getValue("glyf"));
+        assertEquals(OFTableName.HDMX, OFTableName.getValue("hdmx"));
+        assertEquals(OFTableName.HEAD, OFTableName.getValue("head"));
+        assertEquals(OFTableName.HHEA, OFTableName.getValue("hhea"));
+        assertEquals(OFTableName.HMTX, OFTableName.getValue("hmtx"));
+        assertEquals(OFTableName.KERN, OFTableName.getValue("kern"));
+        assertEquals(OFTableName.LOCA, OFTableName.getValue("loca"));
+        assertEquals(OFTableName.MAXP, OFTableName.getValue("maxp"));
+        assertEquals(OFTableName.NAME, OFTableName.getValue("name"));
+        assertEquals(OFTableName.POST, OFTableName.getValue("post"));
+        assertEquals(OFTableName.PREP, OFTableName.getValue("prep"));
+        assertEquals(OFTableName.VHEA, OFTableName.getValue("vhea"));
+        assertEquals(OFTableName.VMTX, OFTableName.getValue("vmtx"));
         // Test that we can store a random table name and it will not fail or throw an error.
-        TTFTableName test = TTFTableName.getValue("random");
-        assertTrue(test instanceof TTFTableName);
+        OFTableName test = OFTableName.getValue("random");
+        assertTrue(test instanceof OFTableName);
     }
 
     /**
@@ -115,10 +115,10 @@ public class TTFTableNameTestCase {
      */
     @Test
     public void testHashCode() throws IllegalAccessException {
-        TTFTableName a = TTFTableName.getValue("testObject");
-        TTFTableName b = TTFTableName.getValue("testObject");
+        OFTableName a = OFTableName.getValue("testObject");
+        OFTableName b = OFTableName.getValue("testObject");
         assertTrue(a.hashCode() == b.hashCode());
-        TTFTableName c = TTFTableName.getValue("fail");
+        OFTableName c = OFTableName.getValue("fail");
         assertFalse(a.hashCode() == c.hashCode());
     }
 
@@ -134,15 +134,15 @@ public class TTFTableNameTestCase {
     @Test
     public void testEquals() throws IllegalAccessException {
         // Reflexivity
-        TTFTableName a = TTFTableName.getValue("test");
+        OFTableName a = OFTableName.getValue("test");
         assertTrue(a.equals(a));
         // Symmetry
-        TTFTableName b = TTFTableName.getValue("test");
+        OFTableName b = OFTableName.getValue("test");
         assertTrue(a.equals(b));
         assertTrue(b.equals(a));
         // Transitivity (tested with symmetry)
         // Consistency (test that a == b is true and that a == c fails)
-        TTFTableName c = TTFTableName.getValue("fail");
+        OFTableName c = OFTableName.getValue("fail");
         for (int i = 0; i < 100; i++) {
             assertTrue(a.equals(b));
             assertFalse(a.equals(c));

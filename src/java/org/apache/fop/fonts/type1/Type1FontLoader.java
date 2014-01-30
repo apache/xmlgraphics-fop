@@ -173,7 +173,21 @@ public class Type1FontLoader extends FontLoader {
                 addUnencodedBasedOnAFM(afm);
             }
         } else {
-            if (pfm.getCharSet() >= 0 && pfm.getCharSet() <= 2) {
+            if (pfm.getCharSet() == 2 && !pfm.getCharSetName().equals("Symbol")) {
+                int[] table = new int[256];
+                String[] charNameMap = new String[256];
+                int j = 0;
+                for (int i = pfm.getFirstChar(); i < pfm.getLastChar(); i++) {
+                    if (j < table.length) {
+                        table[j] = i;
+                        table[j + 1] = i;
+                        j += 2;
+                    }
+                    charNameMap[i] = String.format("x%03o", i);
+                }
+                CodePointMapping mapping  = new CodePointMapping("custom", table, charNameMap);
+                singleFont.setEncoding(mapping);
+            } else if (pfm.getCharSet() >= 0 && pfm.getCharSet() <= 2) {
                 singleFont.setEncoding(pfm.getCharSetName() + "Encoding");
             } else {
                 log.warn("The PFM reports an unsupported encoding ("
@@ -400,10 +414,7 @@ public class Type1FontLoader extends FontLoader {
         List<AFMCharMetrics> chars = afm.getCharMetrics();
         for (AFMCharMetrics charMetrics : chars) {
             if (charMetrics.getCharCode() >= 0) {
-                String u = charMetrics.getUnicodeSequence();
-                if (u != null && u.length() == 1) {
-                    mappingCount++;
-                }
+                mappingCount++;
             }
         }
         // ...and now build the table.
@@ -416,6 +427,10 @@ public class Type1FontLoader extends FontLoader {
                 String unicodes = charMetrics.getUnicodeSequence();
                 if (unicodes == null) {
                     log.info("No Unicode mapping for glyph: " + charMetrics);
+                    table[idx] = charMetrics.getCharCode();
+                    idx++;
+                    table[idx] = charMetrics.getCharCode();
+                    idx++;
                 } else if (unicodes.length() == 1) {
                     table[idx] = charMetrics.getCharCode();
                     idx++;

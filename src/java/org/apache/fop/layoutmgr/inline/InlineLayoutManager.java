@@ -213,6 +213,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         }
         if (fobj instanceof Inline || fobj instanceof BasicLink) {
             TraitSetter.setProducerID(area, fobj.getId());
+            TraitSetter.setLayer(area, fobj.getLayer());
         }
         return area;
     }

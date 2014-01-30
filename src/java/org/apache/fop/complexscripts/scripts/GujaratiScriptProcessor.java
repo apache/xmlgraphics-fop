@@ -24,11 +24,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.complexscripts.util.GlyphSequence;
 
-// CSOFF: AvoidNestedBlocksCheck
-// CSOFF: NoWhitespaceAfterCheck
-// CSOFF: WhitespaceAfter
-// CSOFF: InnerAssignmentCheck
-// CSOFF: SimplifyBooleanReturnCheck
 // CSOFF: LineLengthCheck
 
 /**
@@ -109,7 +104,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
     }
 
     private static boolean containsHalfConsonant(GlyphSequence gs, int k) {
-        Boolean half = (Boolean) gs.getAssociation(k) . getPredication("half");
+        Boolean half = (Boolean) gs.getAssociation(k) .getPredication("half");
         return (half != null) ? half.booleanValue() : false;
     }
 
@@ -134,7 +129,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         // first candidate target is after first non-half consonant
         for (int i = 0; i < ng; i++) {
             if ((i != source) && containsConsonant(gs, i)) {
-                if (! containsHalfConsonant(gs, i)) {
+                if (!containsHalfConsonant(gs, i)) {
                     c1 = i + 1;
                     break;
                 }
@@ -142,7 +137,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         }
         // second candidate target is after last non-prebase matra after first candidate or before first syllable or vedic mark
         for (int i = (c1 >= 0) ? c1 : 0; i < ng; i++) {
-            if (containsMatra(gs, i) && ! containsPreBaseMatra(gs, i)) {
+            if (containsMatra(gs, i) && !containsPreBaseMatra(gs, i)) {
                 c2 = i + 1;
             } else if (containsOtherMark(gs, i)) {
                 c2 = i;
@@ -159,7 +154,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
     }
 
     private static boolean containsReph(GlyphSequence gs, int k) {
-        Boolean rphf = (Boolean) gs.getAssociation(k) . getPredication("rphf");
+        Boolean rphf = (Boolean) gs.getAssociation(k) .getPredication("rphf");
         return (rphf != null) ? rphf.booleanValue() : false;
     }
 
@@ -503,13 +498,13 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         }
     }
     static boolean isC(int c) {
-        return isType(c,C_C);
+        return isType(c, C_C);
     }
     static boolean isR(int c) {
-        return isType(c,C_C) && hasR(c);
+        return isType(c, C_C) && hasR(c);
     }
     static boolean isV(int c) {
-        return isType(c,C_V);
+        return isType(c, C_V);
     }
     static boolean isN(int c) {
         return c == 0x0ABC;
@@ -518,10 +513,10 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         return c == 0x0ACD;
     }
     static boolean isM(int c) {
-        return isType(c,C_M);
+        return isType(c, C_M);
     }
     static boolean isPreM(int c) {
-        return isType(c,C_M) && hasFlag(c,C_PRE);
+        return isType(c, C_M) && hasFlag(c, C_PRE);
     }
     static boolean isX(int c) {
         switch (typeOf(c)) {
@@ -535,10 +530,10 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
         }
     }
     static boolean hasR(int c) {
-        return hasFlag(c,C_R);
+        return hasFlag(c, C_R);
     }
     static boolean hasN(int c) {
-        return hasFlag(c,C_N);
+        return hasFlag(c, C_N);
     }
 
 }

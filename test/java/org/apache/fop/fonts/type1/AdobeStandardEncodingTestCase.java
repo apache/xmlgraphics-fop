@@ -19,8 +19,6 @@
 
 package org.apache.fop.fonts.type1;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,6 +27,8 @@ import java.io.InputStreamReader;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test case for {@link AdobeStandardEncoding}.

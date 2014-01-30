@@ -545,6 +545,16 @@ public class XMLRenderer extends AbstractXMLRenderer {
         //only necessary for graphical output
     }
 
+    /** {@inheritDoc} */
+    protected void startLayer(String layer) {
+        //only necessary for graphical output
+    }
+
+    /** {@inheritDoc} */
+    protected void endLayer() {
+        //only necessary for graphical output
+    }
+
     /**
      * {@inheritDoc}
      *          org.apache.fop.area.inline.InlineArea)

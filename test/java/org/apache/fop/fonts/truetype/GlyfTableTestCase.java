@@ -37,7 +37,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class GlyfTableTestCase {
 
-    private final static class DirData {
+    private static final class DirData {
 
         final long offset;
         final long length;
@@ -148,14 +148,15 @@ public class GlyfTableTestCase {
 
     private void setupSubsetReader(Map<Integer, Integer> glyphs) throws IOException {
         TTFSubSetFile fontFile = new TTFSubSetFile();
-        fontFile.readFont(originalFontReader, "Deja", glyphs);
+        String header = OFFontLoader.readHeader(subsetReader);
+        fontFile.readFont(originalFontReader, "Deja", header, glyphs);
         byte[] subsetFont = fontFile.getFontSubset();
         InputStream intputStream = new ByteArrayInputStream(subsetFont);
         subsetReader = new FontFileReader(intputStream);
     }
 
     private void readLoca() throws IOException {
-        DirData loca = getTableData("loca");
+        DirData loca = getTableData(OFTableName.LOCA.getName());
         int numberOfGlyphs = (int) (loca.length - 4) / 4;
         glyphOffsets = new long[numberOfGlyphs];
         subsetReader.seekSet(loca.offset);
@@ -166,7 +167,7 @@ public class GlyfTableTestCase {
     }
 
     private int[] retrieveIndicesOfComposedGlyphs() throws IOException {
-        DirData glyf = getTableData("glyf");
+        DirData glyf = getTableData(OFTableName.GLYF.getName());
         int[] composedGlyphIndices = new int[glyphOffsets.length];
 
         for (int i = 0; i < glyphOffsets.length; i++) {

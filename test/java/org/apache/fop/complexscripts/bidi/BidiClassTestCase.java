@@ -19,13 +19,12 @@
 
 package org.apache.fop.complexscripts.bidi;
 
-import org.apache.fop.complexscripts.bidi.BidiClass;
-import org.apache.fop.util.CharUtilities;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
+import org.apache.fop.util.CharUtilities;
 
 public class BidiClassTestCase {
 
@@ -46,8 +45,8 @@ public class BidiClassTestCase {
     private void testBidiClass(int[] da) throws Exception {
         int bc = da[0];
         for (int i = 1, n = da.length; i < n; i += 2) {
-            int s = da[i+0];
-            int e = da[i+1];
+            int s = da[i + 0];
+            int e = da[i + 1];
             for (int c = s; c < e; c++) {
                 int cbc = BidiClass.getBidiClass(c);
                 assertEquals("bad bidi class for CH(" + CharUtilities.format(c) + ")", bc, cbc);

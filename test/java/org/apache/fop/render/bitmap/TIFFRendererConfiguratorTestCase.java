@@ -23,6 +23,10 @@ import java.awt.image.BufferedImage;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.xmlgraphics.image.writer.Endianness;
 
 import org.apache.fop.apps.FopConfBuilder;
@@ -32,9 +36,6 @@ import org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererConfigParser;
 
 import static org.apache.fop.render.bitmap.TIFFCompressionValue.CCITT_T4;
 import static org.apache.fop.render.bitmap.TIFFCompressionValue.CCITT_T6;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class TIFFRendererConfiguratorTestCase extends AbstractBitmapRendererConfiguratorTest {
 

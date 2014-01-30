@@ -89,6 +89,7 @@ public class IFGraphicContext extends GraphicContext {
     public static class Group {
 
         private AffineTransform[] transforms;
+        private String layer;
 
         /**
          * Construct a Group.
@@ -106,6 +107,16 @@ public class IFGraphicContext extends GraphicContext {
             this(new AffineTransform[] {transform});
         }
 
+        /**
+         * Construct a layer Group, i.e., a Group with no transforms
+         * but with a optional content group layer label.
+         * @param layer a layer label
+         */
+        public Group(String layer) {
+            this();
+            this.layer = layer;
+        }
+
         /** Default constructor. */
         public Group() {
             this(EMPTY_TRANSFORM_ARRAY);
@@ -116,12 +127,17 @@ public class IFGraphicContext extends GraphicContext {
             return this.transforms;
         }
 
+        /** @return layer */
+        public String getLayer() {
+            return this.layer;
+        }
+
         /**
          * @param painter a painter
          * @throws IFException in not caught
          */
         public void start(IFPainter painter) throws IFException {
-            painter.startGroup(transforms);
+            painter.startGroup(transforms, layer);
         }
 
         /**
@@ -136,6 +152,11 @@ public class IFGraphicContext extends GraphicContext {
         public String toString() {
             StringBuffer sb = new StringBuffer("group: ");
             IFUtil.toString(getTransforms(), sb);
+            if ((layer != null) && (layer.length() > 0)) {
+                sb.append(" layer(");
+                sb.append(layer);
+                sb.append(')');
+            }
             return sb.toString();
         }
 

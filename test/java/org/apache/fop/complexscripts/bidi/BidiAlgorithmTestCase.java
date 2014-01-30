@@ -19,26 +19,23 @@
 
 package org.apache.fop.complexscripts.bidi;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.fop.complexscripts.bidi.UnicodeBidiAlgorithm;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * <p>Test case for Unicode Bidi Algorithm.</p>
- * @author Glenn Adams
  */
 public class BidiAlgorithmTestCase {
 
     /**
      * logging instance
      */
-    private static final Log log = LogFactory.getLog(BidiAlgorithmTestCase.class);                                      // CSOK: ConstantNameCheck
+    private static final Log log = LogFactory.getLog(BidiAlgorithmTestCase.class);
 
     /**
      * Concatenated array of <test-set,test-sequence> tuples
@@ -122,7 +119,7 @@ public class BidiAlgorithmTestCase {
                 }
                 if (includeSequence(testSet, testSequence)) {
                     includedSequences++;
-                    if (! excludeSequence(testSet, testSequence)) {
+                    if (!excludeSequence(testSet, testSequence)) {
                         if (testBidiAlgorithm(testSet, testSequence, la, ra, ta, bs)) {
                             passedSequences++;
                         }
@@ -151,7 +148,7 @@ public class BidiAlgorithmTestCase {
     }
 
     private boolean includeSequence(int testSet, int testSequence) {
-        if (! includeTestSet(testSet)) {
+        if (!includeTestSet(testSet)) {
             return false;
         } else {
             for (int i = 0, n = INCLUSIONS.length / 2; i < n; i++) {
@@ -196,7 +193,8 @@ public class BidiAlgorithmTestCase {
         return false;
     }
 
-    private boolean testBidiAlgorithm(int testSet, int testSequence, int[] la, int[] ra, int[] ta, int bs) throws Exception {
+    private boolean testBidiAlgorithm(int testSet, int testSequence, int[] la, int[] ra, int[] ta, int bs)
+            throws Exception {
         boolean passed = true;
         int n = la.length;
         if (ra.length != n) {
@@ -211,14 +209,14 @@ public class BidiAlgorithmTestCase {
             // LTR
             if ((bs & 2) != 0) {
                 int[] levels = UnicodeBidiAlgorithm.resolveLevels(null, ta, 0, new int [ n ], true);
-                if (! verifyResults(la, levels, ta, 0, testSet, testSequence)) {
+                if (!verifyResults(la, levels, ta, 0, testSet, testSequence)) {
                     passed = false;
                 }
             }
             // RTL
             if ((bs & 4) != 0) {
                 int[] levels = UnicodeBidiAlgorithm.resolveLevels(null, ta, 1, new int [ n ], true);
-                if (! verifyResults(la, levels, ta, 1, testSet, testSequence)) {
+                if (!verifyResults(la, levels, ta, 1, testSet, testSequence)) {
                     passed = false;
                 }
             }

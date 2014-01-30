@@ -17,49 +17,42 @@
 
 /* $Id$ */
 
-package org.apache.fop.fo.extensions;
+package org.apache.fop.render.pdf.extensions;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 
+// CSOFF: LineLengthCheck
+
 /**
- * Base class for pdf bookmark extension objects.
+ * Extension element for pdf:reference.
  */
-public abstract class ExtensionObj extends FObj {
+public class PDFReferenceElement extends PDFCollectionEntryElement {
+
+    public static final String ATT_REFID = PDFReferenceExtension.PROPERTY_REFID;
 
     /**
-     * Create a new extension object.
-     *
-     * @param parent the parent formatting object
+     * Main constructor
+     * @param parent parent FO node
      */
-    public ExtensionObj(FONode parent) {
-        super(parent);
+    PDFReferenceElement(FONode parent) {
+        super(parent, PDFObjectType.Reference);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void processNode(String elementName, Locator locator,
-                            Attributes attlist, PropertyList pList)
-        throws FOPException {
-    }
-
-    /**
-     * Create a default property list for this element.
-     * @param parent the parent property list
-     * @param foEventHandler an event handler
-     * @return property list
-     * @throws FOPException in case of exception
-     */
-    protected PropertyList createPropertyList(PropertyList parent,
-                FOEventHandler foEventHandler) throws FOPException {
-        return null;
+    @Override
+    public void processNode(String elementName, Locator locator, Attributes attlist, PropertyList propertyList) throws FOPException {
+        super.processNode(elementName, locator, attlist, propertyList);
+        String refid = attlist.getValue(ATT_REFID);
+        if (refid == null) {
+            missingPropertyError(ATT_REFID);
+        } else if (refid.length() == 0) {
+            invalidPropertyValueError(ATT_REFID, refid, null);
+        } else {
+            ((PDFReferenceExtension) getExtension()).setReferenceId(refid);
+        }
     }
 }
-

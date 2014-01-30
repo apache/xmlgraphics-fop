@@ -43,7 +43,7 @@ public class TTFSubSetFile extends TTFFile {
      * Offsets in name table to be filled out by table.
      * The offsets are to the checkSum field
      */
-    private Map<TTFTableName, Integer> offsets = new HashMap<TTFTableName, Integer>();
+    private Map<OFTableName, Integer> offsets = new HashMap<OFTableName, Integer>();
 
     private int checkSumAdjustmentOffset = 0;
     private int locaOffset = 0;
@@ -67,8 +67,8 @@ public class TTFSubSetFile extends TTFFile {
     }
 
     /** The dir tab entries in the new subset font. */
-    private Map<TTFTableName, TTFDirTabEntry> newDirTabs
-                        = new HashMap<TTFTableName, TTFDirTabEntry>();
+    private Map<OFTableName, OFDirTabEntry> newDirTabs
+                        = new HashMap<OFTableName, OFDirTabEntry>();
 
     private int determineTableCount() {
         int numTables = 4; //4 req'd tables: head,hhea,hmtx,maxp
@@ -117,29 +117,29 @@ public class TTFSubSetFile extends TTFFile {
         writeUShort((numTables * 16) - searchRange);
         realSize += 2;
         // Create space for the table entries (these must be in ASCII alphabetical order[A-Z] then[a-z])
-        writeTableName(TTFTableName.OS2);
+        writeTableName(OFTableName.OS2);
 
         if (hasCvt()) {
-            writeTableName(TTFTableName.CVT);
+            writeTableName(OFTableName.CVT);
         }
         if (hasFpgm()) {
-            writeTableName(TTFTableName.FPGM);
+            writeTableName(OFTableName.FPGM);
         }
-        writeTableName(TTFTableName.GLYF);
-        writeTableName(TTFTableName.HEAD);
-        writeTableName(TTFTableName.HHEA);
-        writeTableName(TTFTableName.HMTX);
-        writeTableName(TTFTableName.LOCA);
-        writeTableName(TTFTableName.MAXP);
-        writeTableName(TTFTableName.NAME);
-        writeTableName(TTFTableName.POST);
+        writeTableName(OFTableName.GLYF);
+        writeTableName(OFTableName.HEAD);
+        writeTableName(OFTableName.HHEA);
+        writeTableName(OFTableName.HMTX);
+        writeTableName(OFTableName.LOCA);
+        writeTableName(OFTableName.MAXP);
+        writeTableName(OFTableName.NAME);
+        writeTableName(OFTableName.POST);
         if (hasPrep()) {
-            writeTableName(TTFTableName.PREP);
+            writeTableName(OFTableName.PREP);
         }
-        newDirTabs.put(TTFTableName.TABLE_DIRECTORY, new TTFDirTabEntry(0, currentPos));
+        newDirTabs.put(OFTableName.TABLE_DIRECTORY, new OFDirTabEntry(0, currentPos));
     }
 
-    private void writeTableName(TTFTableName tableName) {
+    private void writeTableName(OFTableName tableName) {
         writeString(tableName.getName());
         offsets.put(tableName, currentPos);
         currentPos += 12;
@@ -148,15 +148,15 @@ public class TTFSubSetFile extends TTFFile {
 
 
     private boolean hasCvt() {
-        return dirTabs.containsKey(TTFTableName.CVT);
+        return dirTabs.containsKey(OFTableName.CVT);
     }
 
     private boolean hasFpgm() {
-        return dirTabs.containsKey(TTFTableName.FPGM);
+        return dirTabs.containsKey(OFTableName.FPGM);
     }
 
     private boolean hasPrep() {
-        return dirTabs.containsKey(TTFTableName.PREP);
+        return dirTabs.containsKey(OFTableName.PREP);
     }
 
     /**
@@ -165,15 +165,15 @@ public class TTFSubSetFile extends TTFFile {
     private void createLoca(int size) throws IOException {
         pad4();
         locaOffset = currentPos;
-        int dirTableOffset = offsets.get(TTFTableName.LOCA);
+        int dirTableOffset = offsets.get(OFTableName.LOCA);
         writeULong(dirTableOffset + 4, currentPos);
         writeULong(dirTableOffset + 8, size * 4 + 4);
         currentPos += size * 4 + 4;
         realSize += size * 4 + 4;
     }
 
-    private boolean copyTable(FontFileReader in, TTFTableName tableName) throws IOException {
-        TTFDirTabEntry entry = dirTabs.get(tableName);
+    private boolean copyTable(FontFileReader in, OFTableName tableName) throws IOException {
+        OFDirTabEntry entry = dirTabs.get(tableName);
         if (entry != null) {
             pad4();
             seekTab(in, tableName, 0);
@@ -193,28 +193,28 @@ public class TTFSubSetFile extends TTFFile {
      * Copy the cvt table as is from original font to subset font
      */
     private boolean createCvt(FontFileReader in) throws IOException {
-        return copyTable(in, TTFTableName.CVT);
+        return copyTable(in, OFTableName.CVT);
     }
 
     /**
      * Copy the fpgm table as is from original font to subset font
      */
     private boolean createFpgm(FontFileReader in) throws IOException {
-        return copyTable(in, TTFTableName.FPGM);
+        return copyTable(in, OFTableName.FPGM);
     }
 
     /**
      * Copy the name table as is from the original.
      */
     private boolean createName(FontFileReader in) throws IOException {
-        return copyTable(in, TTFTableName.NAME);
+        return copyTable(in, OFTableName.NAME);
     }
 
     /**
      * Copy the OS/2 table as is from the original.
      */
     private boolean createOS2(FontFileReader in) throws IOException {
-        return copyTable(in, TTFTableName.OS2);
+        return copyTable(in, OFTableName.OS2);
     }
 
     /**
@@ -222,8 +222,8 @@ public class TTFSubSetFile extends TTFFile {
      * and set num glyphs to size
      */
     private void createMaxp(FontFileReader in, int size) throws IOException {
-        TTFTableName maxp = TTFTableName.MAXP;
-        TTFDirTabEntry entry = dirTabs.get(maxp);
+        OFTableName maxp = OFTableName.MAXP;
+        OFDirTabEntry entry = dirTabs.get(maxp);
         if (entry != null) {
             pad4();
             seekTab(in, maxp, 0);
@@ -240,8 +240,8 @@ public class TTFSubSetFile extends TTFFile {
     }
 
     private void createPost(FontFileReader in) throws IOException {
-        TTFTableName post = TTFTableName.POST;
-        TTFDirTabEntry entry = dirTabs.get(post);
+        OFTableName post = OFTableName.POST;
+        OFDirTabEntry entry = dirTabs.get(post);
         if (entry != null) {
             pad4();
             seekTab(in, post, 0);
@@ -266,7 +266,7 @@ public class TTFSubSetFile extends TTFFile {
      * Copy the prep table as is from original font to subset font
      */
     private boolean createPrep(FontFileReader in) throws IOException {
-        return copyTable(in, TTFTableName.PREP);
+        return copyTable(in, OFTableName.PREP);
     }
 
 
@@ -275,15 +275,15 @@ public class TTFSubSetFile extends TTFFile {
      * and fill in size of hmtx table
      */
     private void createHhea(FontFileReader in, int size) throws IOException {
-        TTFDirTabEntry entry = dirTabs.get(TTFTableName.HHEA);
+        OFDirTabEntry entry = dirTabs.get(OFTableName.HHEA);
         if (entry != null) {
             pad4();
-            seekTab(in, TTFTableName.HHEA, 0);
+            seekTab(in, OFTableName.HHEA, 0);
             System.arraycopy(in.getBytes((int) entry.getOffset(), (int) entry.getLength()), 0,
                     output, currentPos, (int) entry.getLength());
             writeUShort((int) entry.getLength() + currentPos - 2, size);
 
-            updateCheckSum(currentPos, (int) entry.getLength(), TTFTableName.HHEA);
+            updateCheckSum(currentPos, (int) entry.getLength(), OFTableName.HHEA);
             currentPos += (int) entry.getLength();
             realSize += (int) entry.getLength();
         } else {
@@ -299,8 +299,8 @@ public class TTFSubSetFile extends TTFFile {
      * in checkSumAdjustmentOffset
      */
     private void createHead(FontFileReader in) throws IOException {
-        TTFTableName head = TTFTableName.HEAD;
-        TTFDirTabEntry entry = dirTabs.get(head);
+        OFTableName head = OFTableName.HEAD;
+        OFDirTabEntry entry = dirTabs.get(head);
         if (entry != null) {
             pad4();
             seekTab(in, head, 0);
@@ -329,8 +329,8 @@ public class TTFSubSetFile extends TTFFile {
      */
     private void createGlyf(FontFileReader in,
             Map<Integer, Integer> glyphs) throws IOException {
-        TTFTableName glyf = TTFTableName.GLYF;
-        TTFDirTabEntry entry = dirTabs.get(glyf);
+        OFTableName glyf = OFTableName.GLYF;
+        OFDirTabEntry entry = dirTabs.get(glyf);
         int size = 0;
         int startPos = 0;
         int endOffset = 0;    // Store this as the last loca
@@ -393,10 +393,10 @@ public class TTFSubSetFile extends TTFFile {
             writeULong(locaOffset + glyphs.size() * 4, endOffset);
             int locaSize = glyphs.size() * 4 + 4;
             int checksum = getCheckSum(output, locaOffset, locaSize);
-            writeULong(offsets.get(TTFTableName.LOCA), checksum);
+            writeULong(offsets.get(OFTableName.LOCA), checksum);
             int padSize = (locaOffset + locaSize) % 4;
-            newDirTabs.put(TTFTableName.LOCA,
-                    new TTFDirTabEntry(locaOffset, locaSize + padSize));
+            newDirTabs.put(OFTableName.LOCA,
+                    new OFDirTabEntry(locaOffset, locaSize + padSize));
         } else {
             throw new IOException("Can't find glyf table");
         }
@@ -420,8 +420,8 @@ public class TTFSubSetFile extends TTFFile {
      */
     private void createHmtx(FontFileReader in,
                             Map<Integer, Integer> glyphs) throws IOException {
-        TTFTableName hmtx = TTFTableName.HMTX;
-        TTFDirTabEntry entry = dirTabs.get(hmtx);
+        OFTableName hmtx = OFTableName.HMTX;
+        OFDirTabEntry entry = dirTabs.get(hmtx);
 
         int longHorMetricSize = glyphs.size() * 2;
         int leftSideBearingSize = glyphs.size() * 2;
@@ -457,11 +457,11 @@ public class TTFSubSetFile extends TTFFile {
      * new index as (Integer) value)
      * @throws IOException in case of an I/O problem
      */
-    public void readFont(FontFileReader in, String name,
+    public void readFont(FontFileReader in, String name, String header,
                            Map<Integer, Integer> glyphs) throws IOException {
         fontFile = in;
         //Check if TrueType collection, and that the name exists in the collection
-        if (!checkTTC(name)) {
+        if (!checkTTC(header, name)) {
             throw new IOException("Failed to read font");
         }
 
@@ -533,7 +533,7 @@ public class TTFSubSetFile extends TTFFile {
                     glyphOffsets[i + 1] - glyphOffsets[i]);
         }
         // Stream the last glyph
-        TTFDirTabEntry glyf = newDirTabs.get(TTFTableName.GLYF);
+        OFDirTabEntry glyf = newDirTabs.get(OFTableName.GLYF);
         long lastGlyphLength = glyf.getLength()
             - (glyphOffsets[glyphOffsets.length - 1] - glyf.getOffset());
         glyphOut.streamGlyph(output, glyphOffsets[glyphOffsets.length - 1],
@@ -543,14 +543,14 @@ public class TTFSubSetFile extends TTFFile {
 
     @Override
     public void stream(TTFOutputStream ttfOut) throws IOException {
-        SortedSet<Map.Entry<TTFTableName, TTFDirTabEntry>>  sortedDirTabs
+        SortedSet<Map.Entry<OFTableName, OFDirTabEntry>>  sortedDirTabs
                 = sortDirTabMap(newDirTabs);
         TTFTableOutputStream tableOut = ttfOut.getTableOutputStream();
         TTFGlyphOutputStream glyphOut = ttfOut.getGlyphOutputStream();
 
         ttfOut.startFontStream();
-        for (Map.Entry<TTFTableName, TTFDirTabEntry>  entry : sortedDirTabs) {
-            if (entry.getKey().equals(TTFTableName.GLYF)) {
+        for (Map.Entry<OFTableName, OFDirTabEntry>  entry : sortedDirTabs) {
+            if (entry.getKey().equals(OFTableName.GLYF)) {
                     handleGlyphSubset(glyphOut);
             } else {
                 tableOut.streamTable(output, (int) entry.getValue().getOffset(),
@@ -562,7 +562,7 @@ public class TTFSubSetFile extends TTFFile {
 
     private void scanGlyphs(FontFileReader in, Map<Integer, Integer> subsetGlyphs)
             throws IOException {
-        TTFDirTabEntry glyfTableInfo = dirTabs.get(TTFTableName.GLYF);
+        OFDirTabEntry glyfTableInfo = dirTabs.get(OFTableName.GLYF);
         if (glyfTableInfo == null) {
             throw new IOException("Glyf table could not be found");
         }
@@ -663,11 +663,11 @@ public class TTFSubSetFile extends TTFFile {
     }
 
 
-    private void updateCheckSum(int tableStart, int tableSize, TTFTableName tableName) {
+    private void updateCheckSum(int tableStart, int tableSize, OFTableName tableName) {
         int checksum = getCheckSum(output, tableStart, tableSize);
         int offset = offsets.get(tableName);
         int padSize = getPadSize(tableStart +  tableSize);
-        newDirTabs.put(tableName, new TTFDirTabEntry(tableStart, tableSize + padSize));
+        newDirTabs.put(tableName, new OFDirTabEntry(tableStart, tableSize + padSize));
         writeULong(offset, checksum);
         writeULong(offset + 4, tableStart);
         writeULong(offset + 8, tableSize);

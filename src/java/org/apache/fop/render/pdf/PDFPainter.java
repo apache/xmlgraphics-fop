@@ -143,8 +143,8 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
     }
 
     /** {@inheritDoc} */
-    public void startGroup(AffineTransform transform) throws IFException {
-        generator.saveGraphicsState();
+    public void startGroup(AffineTransform transform, String layer) throws IFException {
+        generator.saveGraphicsState(layer);
         generator.concatenate(toPoints(transform));
     }
 

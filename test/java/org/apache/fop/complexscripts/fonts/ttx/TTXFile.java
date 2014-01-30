@@ -21,11 +21,9 @@ package org.apache.fop.complexscripts.fonts.ttx;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.nio.IntBuffer;
-
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -41,21 +39,23 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.complexscripts.fonts.GlyphClassTable;
 import org.apache.fop.complexscripts.fonts.GlyphCoverageTable;
-import org.apache.fop.complexscripts.fonts.GlyphDefinitionSubtable;
 import org.apache.fop.complexscripts.fonts.GlyphDefinitionTable;
 import org.apache.fop.complexscripts.fonts.GlyphMappingTable;
-import org.apache.fop.complexscripts.fonts.GlyphPositioningSubtable;
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable;
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable.Anchor;
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable.MarkAnchor;
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable.PairValues;
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable.Value;
-import org.apache.fop.complexscripts.fonts.GlyphSubstitutionSubtable;
 import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable;
 import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable.Ligature;
 import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable.LigatureSet;
@@ -66,15 +66,8 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.UTF32;
 import org.apache.fop.util.CharUtilities;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
-
-// CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
-// CSOFF: NoWhitespaceAfterCheck
 
 /**
  * This class supports a subset of the <code>TTX</code> file as produced by the Adobe FLEX
@@ -89,8 +82,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * files directly in the FOP distribution. In such cases, <code>TTX</code> files are used
  * to distribute a subset of the complex script advanced table information contained in
  * certain font files to facilitate testing.
- *
- * @author Glenn Adams
  */
 public class TTXFile {
 
@@ -102,22 +93,22 @@ public class TTXFile {
     private static final String DEFAULT_LANGUAGE_TAG = "dflt";
 
     /** ttxfile cache */
-    private static Map<String,TTXFile> cache = new HashMap<String,TTXFile>();
+    private static Map<String, TTXFile> cache = new HashMap<String, TTXFile>();
 
     // transient parsing state
     private Locator locator;                                    // current document locator
     private Stack<String[]> elements;                           // stack of ttx elements being parsed
-    private Map<String,Integer> glyphIds;                       // map of glyph names to glyph identifiers
+    private Map<String, Integer> glyphIds;                       // map of glyph names to glyph identifiers
     private List<int[]> cmapEntries;                            // list of <charCode,glyphCode> pairs
     private Vector<int[]> hmtxEntries;                          // vector of <width,lsb> pairs
-    private Map<String,Integer> glyphClasses;                   // map of glyph names to glyph classes
-    private Map<String,Map<String,List<String>>> scripts;       // map of script tag to Map<language-tag,List<features-id>>>
-    private Map<String,List<String>> languages;                 // map of language tag to List<feature-id>
-    private Map<String,Object[]> features;                      // map of feature id to Object[2] : { feature-tag, List<lookup-id> }
+    private Map<String, Integer> glyphClasses;                   // map of glyph names to glyph classes
+    private Map<String, Map<String, List<String>>> scripts;       // map of script tag to Map<language-tag,List<features-id>>>
+    private Map<String, List<String>> languages;                 // map of language tag to List<feature-id>
+    private Map<String, Object[]> features;                      // map of feature id to Object[2] : { feature-tag, List<lookup-id> }
     private List<String> languageFeatures;                      // list of language system feature ids, where first is (possibly null) required feature id
     private List<String> featureLookups;                        // list of lookup ids for feature being constructed
     private List<Integer> coverageEntries;                      // list of entries for coverage table being constructed
-    private Map<String,GlyphCoverageTable> coverages;           // map of coverage table keys to coverage tables
+    private Map<String, GlyphCoverageTable> coverages;           // map of coverage table keys to coverage tables
     private List subtableEntries;                               // list of lookup subtable entries
     private List<GlyphSubtable> subtables;                      // list of constructed subtables
     private List<Integer> alternates;                           // list of alternates in alternate set being constructed
@@ -164,8 +155,8 @@ public class TTXFile {
 
     // resultant state
     private int upem;                                           // units per em
-    private Map<Integer,Integer> cmap;                          // constructed character map
-    private Map<Integer,Integer> gmap;                          // constructed glyph map
+    private Map<Integer, Integer> cmap;                          // constructed character map
+    private Map<Integer, Integer> gmap;                          // constructed glyph map
     private int[][] hmtx;                                       // constructed horizontal metrics - array of design { width, lsb } pairs, indexed by glyph code
     private int[] widths;                                       // pdf normalized widths (millipoints)
     private GlyphDefinitionTable gdef;                          // constructed glyph definition table
@@ -174,17 +165,17 @@ public class TTXFile {
 
     public TTXFile() {
         elements = new Stack<String[]>();
-        glyphIds = new HashMap<String,Integer>();
+        glyphIds = new HashMap<String, Integer>();
         cmapEntries = new ArrayList<int[]>();
         hmtxEntries = new Vector<int[]>();
-        glyphClasses = new HashMap<String,Integer>();
-        scripts = new HashMap<String,Map<String,List<String>>>();
-        languages = new HashMap<String,List<String>>();
-        features = new HashMap<String,Object[]>();
+        glyphClasses = new HashMap<String, Integer>();
+        scripts = new HashMap<String, Map<String, List<String>>>();
+        languages = new HashMap<String, List<String>>();
+        features = new HashMap<String, Object[]>();
         languageFeatures = new ArrayList<String>();
         featureLookups = new ArrayList<String>();
         coverageEntries = new ArrayList<Integer>();
-        coverages = new HashMap<String,GlyphCoverageTable>();
+        coverages = new HashMap<String, GlyphCoverageTable>();
         subtableEntries = new ArrayList();
         subtables = new ArrayList<GlyphSubtable>();
         alternates = new ArrayList<Integer>();
@@ -344,7 +335,7 @@ public class TTXFile {
             long rest1 = tw % upem;
             long storrest = 1000 * rest1;
             long ledd2 = (storrest != 0) ? (rest1 / storrest) : 0;
-            pw = - ((-1000 * tw) / upem - (int) ledd2);
+            pw = -((-1000 * tw) / upem - (int) ledd2);
         } else {
             pw = (tw / upem) * 1000 + ((tw % upem) * 1000) / upem;
         }
@@ -372,7 +363,7 @@ public class TTXFile {
     public static synchronized void clearCache() {
         cache.clear();
     }
-    private class Handler extends DefaultHandler {
+    private final class Handler extends DefaultHandler {
         private Handler() {
         }
         @Override
@@ -495,7 +486,7 @@ public class TTXFile {
                 }
             } else if (en[1].equals("BaseArray")) {
                 String[] pn = new String[] { null, "MarkBasePos" };
-                if (! isParent(pn)) {
+                if (!isParent(pn)) {
                     notPermittedInElementContext(en, getParent(), pn);
                 }
             } else if (en[1].equals("BaseCoverage")) {
@@ -589,7 +580,7 @@ public class TTXFile {
                     if (glyphClass == null) {
                         missingRequiredAttribute(en, "class");
                     }
-                    if (! glyphIds.containsKey(glyph)) {
+                    if (!glyphIds.containsKey(glyph)) {
                         unsupportedGlyph(en, glyph);
                     } else if (isParent(pn1)) {
                         if (glyphClasses.containsKey(glyph)) {
@@ -677,7 +668,7 @@ public class TTXFile {
                 }
             } else if (en[1].equals("DefaultLangSys")) {
                 String[] pn = new String[] { null, "Script" };
-                if (! isParent(pn)) {
+                if (!isParent(pn)) {
                     notPermittedInElementContext(en, getParent(), pn);
                 } else {
                     assertLanguageFeaturesClear();
@@ -720,7 +711,7 @@ public class TTXFile {
                 }
             } else if (en[1].equals("Feature")) {
                 String[] pn = new String[] { null, "FeatureRecord" };
-                if (! isParent(pn)) {
+                if (!isParent(pn)) {
                     notPermittedInElementContext(en, getParent(), pn);
                 } else {
                     assertFeatureLookupsClear();
@@ -754,7 +745,7 @@ public class TTXFile {
                 String[] pn1 = new String[] { null, "GSUB" };
                 String[] pn2 = new String[] { null, "GPOS" };
                 String[][] pnx = new String[][] { pn1, pn2 };
-                if (! isParent(pnx)) {
+                if (!isParent(pnx)) {
                     notPermittedInElementContext(en, getParent(), pnx);
                 }
             } else if (en[1].equals("FeatureRecord")) {
@@ -887,7 +878,7 @@ public class TTXFile {
                 }
             } else if (en[1].equals("GlyphOrder")) {
                 String[] pn = new String[] { null, "ttFont" };
-                if (! isParent(pn)) {
+                if (!isParent(pn)) {
                     notPermittedInElementContext(en, getParent(), pn);
                 }
             } else if (en[1].equals("InputCoverage")) {
@@ -925,7 +916,7 @@ public class TTXFile {
                 }
             } else if (en[1].equals("LangSys")) {
                 String[] pn = new String[] { null, "LangSysRecord" };
-                if (! isParent(pn)) {
+                if (!isParent(pn)) {
                     notPermittedInElementContext(en, getParent(), pn);
                 } else {
                     assertLanguageFeaturesClear();
@@ -955,7 +946,7 @@ public class TTXFile {
                 }
             } else if (en[1].equals("LigCaretList")) {
                 String[] pn = new String[] { null, "GDEF" };
-                if (! isParent(pn)) {
+                if (!isParent(pn)) {
                     notPermittedInElementContext(en, getParent(), pn);
                 }
             } else if (en[1].equals("Ligature")) {
@@ -993,7 +984,7 @@ public class TTXFile {
                 }
             } else if (en[1].equals("LigatureArray")) {
                 String[] pn = new String[] { null, "MarkLigPos" };
-                if (! isParent(pn)) {
+                if (!isParent(pn)) {
                     notPermittedInElementContext(en, getParent(), pn);
                 }
             } else if (en[1].equals("LigatureAttach")) {
@@ -1141,7 +1132,7 @@ public class TTXFile {
                 String[] pn1 = new String[] { null, "GSUB" };
                 String[] pn2 = new String[] { null, "GPOS" };
                 String[][] pnx = new String[][] { pn1, pn2 };
-                if (! isParent(pnx)) {
+                if (!isParent(pnx)) {
                     notPermittedInElementContext(en, getParent(), pnx);
                 }
             } else if (en[1].equals("LookupListIndex")) {
@@ -1181,7 +1172,7 @@ public class TTXFile {
                 }
             } else if (en[1].equals("Mark1Array")) {
                 String[] pn = new String[] { null, "MarkMarkPos" };
-                if (! isParent(pn)) {
+                if (!isParent(pn)) {
                     notPermittedInElementContext(en, getParent(), pn);
                 }
             } else if (en[1].equals("Mark1Coverage")) {
@@ -1222,7 +1213,7 @@ public class TTXFile {
                 }
             } else if (en[1].equals("Mark2Array")) {
                 String[] pn = new String[] { null, "MarkMarkPos" };
-                if (! isParent(pn)) {
+                if (!isParent(pn)) {
                     notPermittedInElementContext(en, getParent(), pn);
                 }
             } else if (en[1].equals("Mark2Coverage")) {
@@ -1275,7 +1266,7 @@ public class TTXFile {
                 String[] pn1 = new String[] { null, "MarkBasePos" };
                 String[] pn2 = new String[] { null, "MarkLigPos" };
                 String[][] pnx = new String[][] { pn1, pn2 };
-                if (! isParent(pnx)) {
+                if (!isParent(pnx)) {
                     notPermittedInElementContext(en, getParent(), pnx);
                 }
             } else if (en[1].equals("MarkAttachClassDef")) {
@@ -1551,14 +1542,14 @@ public class TTXFile {
                 }
             } else if (en[1].equals("Script")) {
                 String[] pn = new String[] { null, "ScriptRecord" };
-                if (! isParent(pn)) {
+                if (!isParent(pn)) {
                     notPermittedInElementContext(en, getParent(), pn);
                 }
             } else if (en[1].equals("ScriptList")) {
                 String[] pn1 = new String[] { null, "GSUB" };
                 String[] pn2 = new String[] { null, "GPOS" };
                 String[][] pnx = new String[][] { pn1, pn2 };
-                if (! isParent(pnx)) {
+                if (!isParent(pnx)) {
                     notPermittedInElementContext(en, getParent(), pnx);
                 }
             } else if (en[1].equals("ScriptRecord")) {
@@ -1892,7 +1883,7 @@ public class TTXFile {
                 }
             } else if (en[1].equals("cmap")) {
                 String[] pn = new String[] { null, "ttFont" };
-                if (! isParent(pn)) {
+                if (!isParent(pn)) {
                     notPermittedInElementContext(en, getParent(), pn);
                 }
             } else if (en[1].equals("cmap_format_0")) {
@@ -1999,12 +1990,12 @@ public class TTXFile {
                 }
             } else if (en[1].equals("head")) {
                 String[] pn = new String[] { null, "ttFont" };
-                if (! isParent(pn)) {
+                if (!isParent(pn)) {
                     notPermittedInElementContext(en, getParent(), pn);
                 }
             } else if (en[1].equals("hmtx")) {
                 String[] pn = new String[] { null, "ttFont" };
-                if (! isParent(pn)) {
+                if (!isParent(pn)) {
                     notPermittedInElementContext(en, getParent(), pn);
                 } else if (glyphIdMax > 0) {
                     hmtxEntries.setSize(glyphIdMax + 1);
@@ -2218,7 +2209,7 @@ public class TTXFile {
                 throw new SAXException("element stack is empty, elements are not balanced");
             }
             String[] en = makeExpandedName(uri, localName, qName);
-            if (! sameExpandedName(enParent, en)) {
+            if (!sameExpandedName(enParent, en)) {
                 throw new SAXException("element stack is unbalanced, expanded name mismatch");
             }
             if (en[0] != null) {
@@ -2246,7 +2237,7 @@ public class TTXFile {
             } else if (en[1].equals("AlternateSet")) {
                 subtableEntries.add(extractAlternates());
             } else if (en[1].equals("AlternateSubst")) {
-                if (! sortEntries(coverageEntries, subtableEntries)) {
+                if (!sortEntries(coverageEntries, subtableEntries)) {
                     mismatchedEntries(en, coverageEntries.size(), subtableEntries.size());
                 }
                 addGSUBSubtable(GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_ALTERNATE, extractCoverage());
@@ -2264,9 +2255,9 @@ public class TTXFile {
             } else if (en[1].equals("ChainContextPos") || en[1].equals("ChainContextSubst")) {
                 GlyphCoverageTable coverage = null;
                 if (stFormat == 3) {
-                    GlyphCoverageTable igca[] = getCoveragesWithPrefix("in");
-                    GlyphCoverageTable bgca[] = getCoveragesWithPrefix("bk");
-                    GlyphCoverageTable lgca[] = getCoveragesWithPrefix("la");
+                    GlyphCoverageTable[] igca = getCoveragesWithPrefix("in");
+                    GlyphCoverageTable[] bgca = getCoveragesWithPrefix("bk");
+                    GlyphCoverageTable[] lgca = getCoveragesWithPrefix("la");
                     if ((igca.length == 0) || hasMissingCoverage(igca)) {
                         missingCoverage(en, "input", igca.length);
                     } else if (hasMissingCoverage(bgca)) {
@@ -2365,7 +2356,7 @@ public class TTXFile {
             } else if (en[1].equals("LigatureSet")) {
                 subtableEntries.add(extractLigatures());
             } else if (en[1].equals("LigatureSubst")) {
-                if (! sortEntries(coverageEntries, subtableEntries)) {
+                if (!sortEntries(coverageEntries, subtableEntries)) {
                     mismatchedEntries(en, coverageEntries.size(), subtableEntries.size());
                 }
                 GlyphCoverageTable coverage = extractCoverage();
@@ -2477,7 +2468,8 @@ public class TTXFile {
                 }
                 GlyphCoverageTable coverage = coverages.get("main");
                 addGPOSSubtable(GlyphPositioningTable.GPOS_LOOKUP_TYPE_PAIR, coverage);
-                vf1 = vf2 = -1; psIndex = -1;
+                vf1 = vf2 = -1;
+                psIndex = -1;
             } else if (en[1].equals("PairSet")) {
                 if (psIndex != pairSets.size()) {
                     invalidIndex(en, psIndex, pairSets.size());
@@ -2530,7 +2522,7 @@ public class TTXFile {
                 addGPOSSubtable(GlyphPositioningTable.GPOS_LOOKUP_TYPE_SINGLE, coverage);
                 vf1 = -1;
             } else if (en[1].equals("SingleSubst")) {
-                if (! sortEntries(coverageEntries, subtableEntries)) {
+                if (!sortEntries(coverageEntries, subtableEntries)) {
                     mismatchedEntries(en, coverageEntries.size(), subtableEntries.size());
                 }
                 GlyphCoverageTable coverage = extractCoverage();
@@ -2558,7 +2550,7 @@ public class TTXFile {
         public void characters(char[] chars, int start, int length) {
         }
         private String[] getParent() {
-            if (! elements.empty()) {
+            if (!elements.empty()) {
                 return elements.peek();
             } else {
                 return new String[] { null, null };
@@ -2574,13 +2566,11 @@ public class TTXFile {
                 return false;
             } else if (enx instanceof String[]) {
                 String[] en = (String[]) enx;
-                if (! elements.empty()) {
+                if (!elements.empty()) {
                     String[] pn = elements.peek();
                     return (pn != null) && sameExpandedName(en, pn);
-                } else if ((en[0] == null) && (en[1] == null)) {
-                    return true;
                 } else {
-                    return false;
+                    return ((en[0] == null) && (en[1] == null));
                 }
             } else {
                 return false;
@@ -2597,14 +2587,12 @@ public class TTXFile {
                 return true;
             } else if (ln.equals("MarkAnchor")) {
                 return true;
-            } else if (ln.equals("Mark2Anchor")) {
-                return true;
             } else {
-                return false;
+                return ln.equals("Mark2Anchor");
             }
         }
-        private Map<Integer,Integer> getCMAP() {
-            Map<Integer,Integer> cmap = new TreeMap();
+        private Map<Integer, Integer> getCMAP() {
+            Map<Integer, Integer> cmap = new TreeMap();
             for (int[] cme : cmapEntries) {
                 Integer c = Integer.valueOf(cme[0]);
                 Integer g = Integer.valueOf(cme[1]);
@@ -2612,8 +2600,8 @@ public class TTXFile {
             }
             return cmap;
         }
-        private Map<Integer,Integer> getGMAP() {
-            Map<Integer,Integer> gmap = new TreeMap();
+        private Map<Integer, Integer> getGMAP() {
+            Map<Integer, Integer> gmap = new TreeMap();
             for (int[] cme : cmapEntries) {
                 Integer c = Integer.valueOf(cme[0]);
                 Integer g = Integer.valueOf(cme[1]);
@@ -2633,7 +2621,7 @@ public class TTXFile {
             }
             return hmtx;
         }
-        private GlyphClassTable extractClassDefMapping(Map<String,Integer> glyphClasses, int format, boolean clearSourceMap) {
+        private GlyphClassTable extractClassDefMapping(Map<String, Integer> glyphClasses, int format, boolean clearSourceMap) {
             GlyphClassTable ct;
             if (format == 1) {
                 ct = extractClassDefMapping1(extractClassMappings(glyphClasses, clearSourceMap));
@@ -2687,11 +2675,11 @@ public class TTXFile {
             }
             return GlyphClassTable.createClassTable(entries);
         }
-        private int[][] extractClassMappings(Map<String,Integer> glyphClasses, boolean clearSourceMap) {
+        private int[][] extractClassMappings(Map<String, Integer> glyphClasses, boolean clearSourceMap) {
             int nc = glyphClasses.size();
             int i = 0;
             int[][] cma = new int [ nc ] [ 2 ];
-            for (Map.Entry<String,Integer> e : glyphClasses.entrySet()) {
+            for (Map.Entry<String, Integer> e : glyphClasses.entrySet()) {
                 Integer gid = glyphIds.get(e.getKey());
                 assert gid != null;
                 int[] m = cma [ i ];
@@ -2858,8 +2846,8 @@ public class TTXFile {
         private void clearLanguageFeatures() {
             languageFeatures.clear();
         }
-        private Map<String,List<String>> extractLanguages() {
-            Map<String,List<String>> lm = new HashMap(languages);
+        private Map<String, List<String>> extractLanguages() {
+            Map<String, List<String>> lm = new HashMap(languages);
             clearLanguages();
             return lm;
         }
@@ -2925,10 +2913,10 @@ public class TTXFile {
             ltFlags = 0;
             clearSubtablesInLookup();
         }
-        private Map<GlyphTable.LookupSpec,List<String>> extractLookups() {
-            Map<GlyphTable.LookupSpec,List<String>> lookups = new LinkedHashMap<GlyphTable.LookupSpec,List<String>>();
+        private Map<GlyphTable.LookupSpec, List<String>> extractLookups() {
+            Map<GlyphTable.LookupSpec, List<String>> lookups = new LinkedHashMap<GlyphTable.LookupSpec, List<String>>();
             for (String st : scripts.keySet()) {
-                Map<String,List<String>> lm = scripts.get(st);
+                Map<String, List<String>> lm = scripts.get(st);
                 if (lm != null) {
                     for (String lt : lm.keySet()) {
                         List<String> fids = lm.get(lt);
@@ -3064,7 +3052,7 @@ public class TTXFile {
                 missingParameter(en, "xAdvance");
             }
             String yAdvance = attrs.getValue("YAdvance");
-            int ya = 0;;
+            int ya = 0;
             if (yAdvance != null) {
                 ya = Integer.parseInt(yAdvance);
             } else if ((format & GlyphPositioningTable.Value.Y_ADVANCE) != 0) {
@@ -3209,7 +3197,7 @@ public class TTXFile {
                     if (cm != null) {
                         for (Anchor[] aa : cm) {
                             if (aa != null) {
-                                int nc = aa.length;;
+                                int nc = aa.length;
                                 if (nc > ncMax) {
                                     ncMax = nc;
                                 }
@@ -3225,7 +3213,7 @@ public class TTXFile {
             if (lam != null) {
                 for (Anchor[][] cm : lam) {
                     if (cm != null) {
-                        int nx = cm.length;;
+                        int nx = cm.length;
                         if (nx > nxMax) {
                             nxMax = nx;
                         }
@@ -3426,7 +3414,7 @@ public class TTXFile {
             return false;
         }
         if ((u1 != null) && (u2 != null)) {
-            if (! u1.equals(u2)) {
+            if (!u1.equals(u2)) {
                 return false;
             }
         }
@@ -3436,7 +3424,7 @@ public class TTXFile {
             return false;
         }
         if ((l1 != null) && (l2 != null)) {
-            if (! l1.equals(l2)) {
+            if (!l1.equals(l2)) {
                 return false;
             }
         }

@@ -157,6 +157,7 @@ public class RTFHandler extends FOEventHandler {
 
     private PercentContext percentManager = new PercentContext();
 
+
     /**
      * Creates a new RTF structure handler.
      * @param userAgent the FOUserAgent for this process
@@ -270,7 +271,7 @@ public class RTFHandler extends FOEventHandler {
 
             return;
         } else {
-            builderContext.popContainer();
+            builderContext.popContainer(RtfSection.class, this);
             this.pagemaster = null;
         }
     }
@@ -377,10 +378,10 @@ public class RTFHandler extends FOEventHandler {
                 //just do nothing
             } else if (regionBefore != null
                     && fl.getFlowName().equals(regionBefore.getRegionName())) {
-                builderContext.popContainer();
+                builderContext.popContainer(RtfBefore.class, this);
             } else if (regionAfter != null
                     && fl.getFlowName().equals(regionAfter.getRegionName())) {
-                builderContext.popContainer();
+                builderContext.popContainer(RtfAfter.class, this);
             }
         } catch (Exception e) {
             log.error("endFlow: " + e.getMessage());
@@ -571,7 +572,7 @@ public class RTFHandler extends FOEventHandler {
 
         nestedTableDepth--;
         builderContext.popTableContext();
-        builderContext.popContainer();
+        builderContext.popContainer(RtfTable.class, this);
     }
 
     /** {@inheritDoc} */
@@ -605,21 +606,25 @@ public class RTFHandler extends FOEventHandler {
 
     /** {@inheritDoc} */
     public void startHeader(TableHeader header) {
+        builderContext.pushPart(header);
         startPart(header);
     }
 
     /** {@inheritDoc} */
     public void endHeader(TableHeader header) {
+        builderContext.popPart(header.getClass(), this);
         endPart(header);
     }
 
     /** {@inheritDoc} */
     public void startFooter(TableFooter footer) {
+        builderContext.pushPart(footer);
         startPart(footer);
     }
 
     /** {@inheritDoc} */
     public void endFooter(TableFooter footer) {
+        builderContext.popPart(footer.getClass(), this);
         endPart(footer);
     }
 
@@ -711,11 +716,13 @@ public class RTFHandler extends FOEventHandler {
      * {@inheritDoc}
      */
     public void startBody(TableBody body) {
+        builderContext.pushPart(body);
         startPart(body);
     }
 
     /** {@inheritDoc} */
     public void endBody(TableBody body) {
+        builderContext.popPart(TableBody.class, this);
         endPart(body);
     }
 
@@ -784,7 +791,7 @@ public class RTFHandler extends FOEventHandler {
         }
 
 
-        builderContext.popContainer();
+        builderContext.popContainer(RtfTableRow.class, this);
         builderContext.getTableContext().decreaseRowSpannings();
     }
 
@@ -893,7 +900,7 @@ public class RTFHandler extends FOEventHandler {
             throw new RuntimeException(e.getMessage());
         }
 
-        builderContext.popContainer();
+        builderContext.popContainer(RtfTableCell.class, this);
         builderContext.getTableContext().selectNextColumn();
     }
 
@@ -929,7 +936,7 @@ public class RTFHandler extends FOEventHandler {
             return;
         }
 
-        builderContext.popContainer();
+        builderContext.popContainer(RtfList.class, this);
     }
 
     /** {@inheritDoc} */
@@ -976,7 +983,7 @@ public class RTFHandler extends FOEventHandler {
             return;
         }
 
-        builderContext.popContainer();
+        builderContext.popContainer(RtfListItem.class, this);
     }
 
     /** {@inheritDoc} */
@@ -1005,7 +1012,7 @@ public class RTFHandler extends FOEventHandler {
             return;
         }
 
-        builderContext.popContainer();
+        builderContext.popContainer(RtfListItemLabel.class, this);
     }
 
     /** {@inheritDoc} */
@@ -1070,7 +1077,7 @@ public class RTFHandler extends FOEventHandler {
             return;
         }
 
-        builderContext.popContainer();
+        builderContext.popContainer(RtfHyperLink.class, this);
     }
 
     /** {@inheritDoc} */
@@ -1306,7 +1313,7 @@ public class RTFHandler extends FOEventHandler {
             return;
         }
 
-        builderContext.popContainer();
+        builderContext.popContainer(RtfFootnote.class, this);
     }
 
     /** {@inheritDoc} */
@@ -1685,6 +1692,19 @@ public class RTFHandler extends FOEventHandler {
                     getUserAgent().getEventBroadcaster());
             eventProducer.ignoredDeferredEvent(this, foNode, bStart, foNode.getLocator());
         }
+    }
+
+    /**
+     * Closes any mismatched tags that are detected in the RTF structure.
+     * @param containerClass The class representing the tag to close.
+     * @return Determines whether the tag mismatch has been handled.
+     */
+    public boolean endContainer(Class containerClass) {
+        if (containerClass == RtfTableRow.class) {
+            endRow(null);
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.fop.render.shading.Pattern;
+import org.apache.fop.render.shading.Shading;
+
 /**
  * class representing a PDF Function.
  *
@@ -33,7 +36,7 @@ import java.util.List;
  *
  * All PDF Functions have a FunctionType (0,2,3, or 4), a Domain, and a Range.
  */
-public class PDFPattern extends PDFPathPaint {
+public class PDFPattern extends PDFPathPaint implements Pattern {
 
     /**
      * The resources associated with this pattern
@@ -146,13 +149,14 @@ public class PDFPattern extends PDFPathPaint {
      * @param theExtGState optional: the extended graphics state, if used.
      * @param theMatrix Optional:List of Doubles that specify the matrix.
      */
-    public PDFPattern(int thePatternType, PDFShading theShading,
+    public PDFPattern(int thePatternType, Shading theShading,
                       List theXUID, StringBuffer theExtGState,
                       List theMatrix) {
         super();
 
         this.patternType = 2;             // thePatternType;
-        this.shading = theShading;
+        assert theShading instanceof PDFShading;
+        this.shading = (PDFShading)theShading;
         this.xUID = theXUID;
         // this isn't really implemented, so it should always be null.
         // I just don't want to have to add a new parameter once it is implemented.
@@ -259,7 +263,7 @@ public class PDFPattern extends PDFPathPaint {
                 vectorSize = this.xUID.size();
                 p.append("/XUID [ ");
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(((Integer)this.xUID.get(tempInt)) + " ");
+                    p.append((this.xUID.get(tempInt)) + " ");
                 }
                 p.append("] \n");
             }
@@ -269,13 +273,14 @@ public class PDFPattern extends PDFPathPaint {
                 pdfStream = new PDFStream();
                 pdfStream.setDocument(getDocumentSafely());
                 pdfStream.add(this.patternDataStream.toString());
+                pdfStream.setObjectNumber(getObjectNumber());
                 pdfStream.getFilterList().addDefaultFilters(
                         getDocument().getFilterMap(),
                         PDFFilterList.CONTENT_FILTER);
+                getDocument().applyEncryption(pdfStream);
                 encodedStream = pdfStream.encodeStream();
                 p.append(pdfStream.getFilterList().buildFilterDictEntries());
-                p.append("/Length " + (encodedStream.getSize() + 1)
-                         + " \n");
+                p.append("/Length " + encodedStream.getSize() + " \n");
             }
 
         } else {
@@ -289,7 +294,7 @@ public class PDFPattern extends PDFPathPaint {
                 vectorSize = this.xUID.size();
                 p.append("/XUID [ ");
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(((Integer)this.xUID.get(tempInt)) + " ");
+                    p.append((this.xUID.get(tempInt)) + " ");
                 }
                 p.append("] \n");
             }

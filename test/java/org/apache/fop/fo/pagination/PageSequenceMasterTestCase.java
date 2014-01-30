@@ -19,8 +19,10 @@
 
 package org.apache.fop.fo.pagination;
 
-import static org.junit.Assert.fail;
+import org.junit.Test;
+import org.xml.sax.Locator;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
@@ -33,8 +35,6 @@ import static org.mockito.Mockito.when;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.layoutmgr.BlockLevelEventProducer;
-import org.junit.Test;
-import org.xml.sax.Locator;
 
 
 /**

@@ -19,9 +19,9 @@
 
 package org.apache.fop.datatypes;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for URISpecification.

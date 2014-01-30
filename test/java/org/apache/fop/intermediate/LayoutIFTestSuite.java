@@ -27,6 +27,6 @@ import org.junit.runners.Suite.SuiteClasses;
  * JUnit test suite for the intermediate format
  */
 @RunWith(Suite.class)
-@SuiteClasses({ IFParserTestCase.class })
+@SuiteClasses(IFParserTestCase.class)
 public final class LayoutIFTestSuite {
 }

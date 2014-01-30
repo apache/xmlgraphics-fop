@@ -33,13 +33,12 @@ import javax.xml.transform.TransformerException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import org.apache.fop.apps.FopConfBuilder;
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.apps.PDFRendererConfBuilder;
-
 import static org.junit.Assert.assertTrue;
 
 import org.apache.xmlgraphics.io.Resource;
+
+import org.apache.fop.apps.FopConfBuilder;
+import org.apache.fop.apps.PDFRendererConfBuilder;
 
 public class FontURIResolver extends BaseURIResolutionTest {
 

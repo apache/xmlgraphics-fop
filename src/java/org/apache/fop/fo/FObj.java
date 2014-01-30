@@ -74,7 +74,8 @@ public abstract class FObj extends FONode implements Constants {
     private int bidiLevel = -1;
 
     // The value of properties relevant for all fo objects
-    private String id = null;
+    private String id;
+    private String layer;
     // End of property values
 
     /**
@@ -148,7 +149,7 @@ public abstract class FObj extends FONode implements Constants {
             String attributeName = attList.getQName(i);
             String attributeValue = attList.getValue(i);
             Property prop = propertyList.getPropertyForAttribute(attList, attributeName, attributeValue);
-            if (prop.equals(value)) {
+            if (prop != null && prop.equals(value)) {
                 return attributeName;
             }
         }
@@ -173,6 +174,7 @@ public abstract class FObj extends FONode implements Constants {
      */
     public void bind(PropertyList pList) throws FOPException {
         id = pList.get(PR_ID).getString();
+        layer = pList.get(PR_X_LAYER).getString();
     }
 
     /**
@@ -583,6 +585,16 @@ public abstract class FObj extends FONode implements Constants {
         return (id != null && id.length() > 0);
     }
 
+    /** @return the "layer" property. */
+    public String getLayer() {
+        return layer;
+    }
+
+    /** @return whether this object has an layer set */
+    public boolean hasLayer() {
+        return (layer != null && layer.length() > 0);
+    }
+
     /** {@inheritDoc} */
     public String getNamespaceURI() {
         return FOElementMapping.URI;
@@ -611,7 +623,7 @@ public abstract class FObj extends FONode implements Constants {
         if (bidiLevel >= 0) {
             if ((this.bidiLevel < 0) || (bidiLevel < this.bidiLevel)) {
                 this.bidiLevel = bidiLevel;
-                if (parent != null) {
+                if ((parent != null) && !isBidiPropagationBoundary()) {
                     FObj foParent = (FObj) parent;
                     int parentBidiLevel = foParent.getBidiLevel();
                     if ((parentBidiLevel < 0) || (bidiLevel < parentBidiLevel)) {
@@ -646,8 +658,23 @@ public abstract class FObj extends FONode implements Constants {
                     return level;
                 }
             }
+            if (isBidiInheritanceBoundary()) {
+                break;
+            }
         }
         return -1;
+    }
+
+    protected boolean isBidiBoundary(boolean propagate) {
+        return false;
+    }
+
+    private boolean isBidiInheritanceBoundary() {
+        return isBidiBoundary(false);
+    }
+
+    private boolean isBidiPropagationBoundary() {
+        return isBidiBoundary(true);
     }
 
     /**
