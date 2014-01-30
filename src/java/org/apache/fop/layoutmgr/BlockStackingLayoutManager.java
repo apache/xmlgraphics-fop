@@ -36,6 +36,7 @@ import org.apache.fop.fo.properties.BreakPropertySet;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.layoutmgr.inline.InlineContainerLayoutManager;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.ListUtil;
@@ -1246,6 +1247,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     public boolean handleOverflow(int milliPoints) {
         if (getParent() instanceof BlockStackingLayoutManager) {
             return ((BlockStackingLayoutManager) getParent()).handleOverflow(milliPoints);
+        } else if (getParent() instanceof InlineContainerLayoutManager) {
+            return ((InlineContainerLayoutManager) getParent()).handleOverflow(milliPoints);
         }
         return false;
     }

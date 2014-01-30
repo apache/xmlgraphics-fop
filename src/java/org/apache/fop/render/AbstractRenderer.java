@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.Stack;
 
 import org.w3c.dom.Document;
 
@@ -112,7 +113,11 @@ public abstract class AbstractRenderer
     /** the currently active PageViewport */
     protected PageViewport currentPageViewport;
 
+    /* warned XML handlers */
     private Set warnedXMLHandlers;
+
+    /* layers stack */
+    private Stack<String> layers;
 
     /** {@inheritDoc} */
     public abstract void setupFontInfo(FontInfo fontInfo) throws FOPException;
@@ -471,6 +476,10 @@ public abstract class AbstractRenderer
      * @param children  The children to render within the block viewport
      */
     protected void renderBlockViewport(BlockViewport bv, List children) {
+        boolean inNewLayer = false;
+        if (maybeStartLayer(bv)) {
+            inNewLayer = true;
+        }
         // clip and position viewport if necessary
         if (bv.getPositioning() == Block.ABSOLUTE) {
             // save positions
@@ -506,6 +515,7 @@ public abstract class AbstractRenderer
             currentIPPosition = saveIP;
             currentBPPosition = saveBP + bv.getAllocBPD();
         }
+        maybeEndLayer(bv, inNewLayer);
     }
 
     /**
@@ -573,6 +583,10 @@ public abstract class AbstractRenderer
     protected void renderBlock(Block block) {
         assert block != null;
         List children = block.getChildAreas();
+        boolean inNewLayer = false;
+        if (maybeStartLayer(block)) {
+            inNewLayer = true;
+        }
         if (block instanceof BlockViewport) {
             if (children != null) {
                 renderBlockViewport((BlockViewport) block, children);
@@ -606,6 +620,45 @@ public abstract class AbstractRenderer
                 currentIPPosition = saveIP;
                 currentBPPosition = saveBP + block.getAllocBPD();
             }
+        }
+        maybeEndLayer(block, inNewLayer);
+    }
+
+    /**
+     * Establish new optional content group layer.
+     * @param layer name of layer
+     */
+    protected abstract void startLayer(String layer);
+
+    /**
+     * Finish current optional content group layer.
+     */
+    protected abstract void endLayer();
+
+    protected boolean maybeStartLayer(Area area) {
+        String layer = (String) area.getTrait(Trait.LAYER);
+        if (layer != null) {
+            if (layers == null) {
+                layers = new Stack<String>();
+            }
+            if (layers.empty() || !layers.peek().equals(layer)) {
+                layers.push(layer);
+                startLayer(layer);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected void maybeEndLayer(Area area, boolean inNewLayer) {
+        if (inNewLayer) {
+            assert layers != null;
+            assert !layers.empty();
+            String layer = (String) area.getTrait(Trait.LAYER);
+            assert layer != null;
+            assert layers.peek().equals(layer);
+            endLayer();
+            layers.pop();
         }
     }
 
@@ -746,6 +799,10 @@ public abstract class AbstractRenderer
      * @param ip the inline parent to render
      */
     protected void renderInlineParent(InlineParent ip) {
+        boolean inNewLayer = false;
+        if (maybeStartLayer(ip)) {
+            inNewLayer = true;
+        }
         int level = ip.getBidiLevel();
         List children = ip.getChildAreas();
         renderInlineAreaBackAndBorders(ip);
@@ -782,6 +839,7 @@ public abstract class AbstractRenderer
         }
         currentIPPosition = saveIP + ip.getAllocIPD();
         currentBPPosition = saveBP;
+        maybeEndLayer(ip, inNewLayer);
     }
 
     /**

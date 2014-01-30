@@ -19,14 +19,14 @@
 
 package org.apache.fop.render.extensions.prepress;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * Tests for the fox:bleed, fox:crop-offset, fox:crop-box extension properties.

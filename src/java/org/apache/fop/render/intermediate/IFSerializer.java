@@ -303,6 +303,7 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
             addAttribute(atts, "width", Integer.toString(size.width));
             addAttribute(atts, "height", Integer.toString(size.height));
             addForeignAttributes(atts);
+            getContext().setPageIndex(index);
             handler.startElement(EL_PAGE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startPage()", e);
@@ -379,6 +380,7 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
     public void endPage() throws IFException {
         try {
             handler.endElement(EL_PAGE);
+            getContext().setPageIndex(-1);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPage()", e);
         }
@@ -426,20 +428,23 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
     }
 
     /** {@inheritDoc} */
-    public void startGroup(AffineTransform[] transforms) throws IFException {
-        startGroup(IFUtil.toString(transforms));
+    public void startGroup(AffineTransform[] transforms, String layer) throws IFException {
+        startGroup(IFUtil.toString(transforms), layer);
     }
 
     /** {@inheritDoc} */
-    public void startGroup(AffineTransform transform) throws IFException {
-        startGroup(IFUtil.toString(transform));
+    public void startGroup(AffineTransform transform, String layer) throws IFException {
+        startGroup(IFUtil.toString(transform), layer);
     }
 
-    private void startGroup(String transform) throws IFException {
+    private void startGroup(String transform, String layer) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             if (transform != null && transform.length() > 0) {
                 addAttribute(atts, "transform", transform);
+            }
+            if (layer != null && layer.length() > 0) {
+                addAttribute(atts, "layer", layer);
             }
             handler.startElement(EL_GROUP, atts);
         } catch (SAXException e) {

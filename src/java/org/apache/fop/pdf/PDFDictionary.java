@@ -131,7 +131,7 @@ public class PDFDictionary extends PDFObject {
         } else {
             textBuffer.append('\n');
         }
-        textBuffer.append(">>\n");
+        textBuffer.append(">>");
     }
 
 }

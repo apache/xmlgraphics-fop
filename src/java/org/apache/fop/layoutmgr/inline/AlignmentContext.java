@@ -295,7 +295,7 @@ public class AlignmentContext implements Constants {
      * Return the dominant baseline identifier.
      * @return the dominant baseline identifier
      */
-    private int getDominantBaselineIdentifier() {
+    public int getDominantBaselineIdentifier() {
         return actualBaselineTable.getDominantBaselineIdentifier();
     }
 

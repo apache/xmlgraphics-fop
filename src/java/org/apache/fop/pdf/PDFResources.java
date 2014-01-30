@@ -37,8 +37,8 @@ import org.apache.fop.fonts.base14.ZapfDingbats;
 /**
  * Class representing a /Resources object.
  *
- * /Resources object contain a list of references to the fonts for the
- * document
+ * /Resources object contain a list of references to the fonts, patterns,
+ * shadings, etc.,  for the document.
  */
 public class PDFResources extends PDFDictionary {
 
@@ -72,6 +72,9 @@ public class PDFResources extends PDFDictionary {
 
     /** Map of ICC color spaces (key: ICC profile description) */
     protected Map<String, PDFICCBasedColorSpace> iccColorSpaces = new LinkedHashMap<String, PDFICCBasedColorSpace>();
+
+    /** Named properties */
+    protected Map<String, PDFReference> properties = new LinkedHashMap<String, PDFReference>();
 
     /**
      * create a /Resources object.
@@ -191,6 +194,25 @@ public class PDFResources extends PDFDictionary {
         return cs;
     }
 
+    /**
+     * Add a named property.
+     *
+     * @param name name of property
+     * @param property reference to property value
+     */
+    public void addProperty(String name, PDFReference property) {
+        this.properties.put(name, property);
+    }
+
+    /**
+     * Get a named property.
+     *
+     * @param name name of property
+     */
+    public PDFReference getProperty(String name) {
+        return this.properties.get(name);
+    }
+
     @Override
     public int output(OutputStream stream) throws IOException {
         populateDictionary();
@@ -252,6 +274,14 @@ public class PDFResources extends PDFDictionary {
                 dict.put(colorSpace.getName(), colorSpace);
             }
             put("ColorSpace", dict);
+        }
+
+        if (!properties.isEmpty()) {
+            PDFDictionary dict = new PDFDictionary(this);
+            for (String name : properties.keySet()) {
+                dict.put(name, properties.get(name));
+            }
+            put("Properties", dict);
         }
     }
 

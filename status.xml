@@ -58,7 +58,19 @@
       users, i.e. when the behaviour changes and could affect the layout of existing
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
-    <release version="FOP Trunk" date="TBD">
+    <release version="FOP Trunk" date="01 November 2013">
+      <action context="Code" dev="GA" type="fix" fixes-bug="FOP-2311">
+          Eliminate regression to shorthand properties from Bugzilla 37114 (FOP-1069).
+      </action>
+      <action context="Renderers" dev="GA" type="add" fixes-bug="FOP-2301">
+          Enable support for PDF sub-page transitions.
+      </action>
+      <action context="Layout" dev="GA" type="fix" fixes-bug="FOP-2310">
+          Fix misplaced table cell border in WM RTL context.
+      </action>
+      <action context="Renderers" dev="GA" type="add" fixes-bug="FOP-2298">
+          Enable support for PDF page transitions.
+      </action>
       <action context="Code" dev="PH" type="fix" fixes-bug="FOP-2211" due-to="Alexios Giotis, PH">
           Fix and improve the handling of temporary files using the new URI resource resolvers
       </action>

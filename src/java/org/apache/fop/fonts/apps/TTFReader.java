@@ -32,16 +32,13 @@ import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.Version;
 import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.truetype.FontFileReader;
+import org.apache.fop.fonts.truetype.OFFontLoader;
 import org.apache.fop.fonts.truetype.TTFFile;
-import org.apache.fop.util.CommandLineLogger;
 
-// CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
 
 /**
@@ -122,14 +119,6 @@ public class TTFReader extends AbstractFontReader {
 
         Map options = new java.util.HashMap();
         String[] arguments = parseArguments(options, args);
-
-        // Enable the simple command line logging when no other logger is
-        // defined.
-        LogFactory logFactory = LogFactory.getFactory();
-        if (System.getProperty("org.apache.commons.logging.Log") == null) {
-            logFactory.setAttribute("org.apache.commons.logging.Log",
-                                            CommandLineLogger.class.getName());
-        }
 
         determineLogLevel(options);
 
@@ -224,7 +213,8 @@ public class TTFReader extends AbstractFontReader {
         InputStream stream = new FileInputStream(fileName);
         try {
             FontFileReader reader = new FontFileReader(stream);
-            boolean supported = ttfFile.readFont(reader, fontName);
+            String header = OFFontLoader.readHeader(reader);
+            boolean supported = ttfFile.readFont(reader, header, fontName);
             if (!supported) {
                 return null;
             }

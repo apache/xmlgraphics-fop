@@ -97,7 +97,7 @@ public class PDFAModeTestCase {
     }
 
     @Test
-    public void checkPDFA_1a() {
+    public void checkPDFA1a() {
         new PDFAModeChecker(PDFAMode.PDFA_1A)
                 .isEnabled()
                 .isPart1()
@@ -106,7 +106,7 @@ public class PDFAModeTestCase {
     }
 
     @Test
-    public void checkPDFA_1b() {
+    public void checkPDFA1b() {
         new PDFAModeChecker(PDFAMode.PDFA_1B)
                 .isEnabled()
                 .isPart1()
@@ -115,7 +115,7 @@ public class PDFAModeTestCase {
     }
 
     @Test
-    public void checkPDFA_2a() {
+    public void checkPDFA2a() {
         new PDFAModeChecker(PDFAMode.PDFA_2A)
                 .isEnabled()
                 .isNotPart1()
@@ -124,7 +124,7 @@ public class PDFAModeTestCase {
     }
 
     @Test
-    public void checkPDFA_2b() {
+    public void checkPDFA2b() {
         new PDFAModeChecker(PDFAMode.PDFA_2B)
                 .isEnabled()
                 .isNotPart1()
@@ -133,7 +133,7 @@ public class PDFAModeTestCase {
     }
 
     @Test
-    public void checkPDFA_2u() {
+    public void checkPDFA2u() {
         new PDFAModeChecker(PDFAMode.PDFA_2U)
                 .isEnabled()
                 .isNotPart1()

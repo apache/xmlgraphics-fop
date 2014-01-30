@@ -28,8 +28,6 @@ import org.junit.runners.Suite.SuiteClasses;
  * A test suite for org.apache.fop.render.pdf.*
  */
 @RunWith(Suite.class)
-@SuiteClasses({
-        PDFRendererConfigParserTestCase.class
-})
+@SuiteClasses(PDFRendererConfigParserTestCase.class)
 public final class RenderPDFTestSuite {
 }

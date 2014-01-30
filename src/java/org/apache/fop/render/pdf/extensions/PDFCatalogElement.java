@@ -17,38 +17,29 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr.inline;
+package org.apache.fop.render.pdf.extensions;
 
-// Java
-import java.util.List;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
 
-// FOP
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.fo.flow.InlineContainer;
+// CSOFF: LineLengthCheck
+
 /**
- * This creates a single inline container area after
- * laying out the child block areas. All footnotes, floats
- * and id areas are maintained for later retrieval.
+ * Extension element for pdf:catalog.
  */
-public class ICLayoutManager extends LeafNodeLayoutManager {
-    private List childrenLM;
+public class PDFCatalogElement extends PDFDictionaryElement {
 
-    /**
-     * Construct inline container layout manager.
-     * @param node inline container FO node
-     * @param childLM child layout manager
-     */
-    public ICLayoutManager(InlineContainer node, List childLM) {
-        super(node);
-        childrenLM = childLM;
+    PDFCatalogElement(FONode parent) {
+        super(parent, PDFDictionaryType.Catalog);
     }
 
-    /**
-     * @param index an integer
-     * @return an inline area or null
-     */
-    public InlineArea get(int index) {
-        return null;
+    @Override
+    public void startOfNode() throws FOPException {
+        super.startOfNode();
+        if (parent.getNameId() != Constants.FO_DECLARATIONS) {
+            invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(), "rule.childOfDeclarations");
+        }
     }
 
 }

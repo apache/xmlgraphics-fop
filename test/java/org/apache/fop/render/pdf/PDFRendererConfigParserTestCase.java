@@ -21,16 +21,16 @@ package org.apache.fop.render.pdf;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.fop.apps.AbstractRendererConfigParserTester;
 import org.apache.fop.apps.PDFRendererConfBuilder;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.Version;
 import org.apache.fop.render.pdf.PDFRendererConfig.PDFRendererConfigParser;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class PDFRendererConfigParserTestCase
         extends AbstractRendererConfigParserTester<PDFRendererConfBuilder, PDFRendererConfig> {

@@ -19,11 +19,11 @@
 
 package org.apache.fop.fo.flow.table;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Iterator;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;

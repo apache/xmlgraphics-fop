@@ -28,7 +28,6 @@ import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.Leader;
 
 // CSOFF: LineLengthCheck
-// CSOFF: SimplifyBooleanReturnCheck
 
 /**
  * <p>The <code>TextInterval</code> class is a utility class, the instances of which are used
@@ -102,10 +101,8 @@ class TextInterval {
                 return false;
             } else if (ti.getStart() != start) {
                 return false;
-            } else if (ti.getEnd() != end) {
-                return false;
             } else {
-                return true;
+                return ti.getEnd() == end;
             }
         } else {
             return false;

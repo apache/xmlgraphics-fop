@@ -20,6 +20,9 @@
 package org.apache.fop.fotreetest.ext;
 
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOPropertyMapping;
@@ -31,9 +34,6 @@ import org.apache.fop.fo.properties.PercentLength;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fotreetest.ResultCollector;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * Defines the assert element for the FOP Test extension.

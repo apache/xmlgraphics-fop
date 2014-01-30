@@ -32,7 +32,6 @@ import java.util.TreeSet;
 import org.apache.fop.util.License;
 
 // CSOFF: LineLength
-// CSOFF: NoWhitespaceAfter
 
 /**
  * <p>Utility for generating a Java class representing bidirectional
@@ -303,7 +302,7 @@ public final class GenerateBidiClass {
         sb.setLength(0);
         out.println("private static byte[] bcL1 = {");
         for (int i = 0; i < bcL1.length; i++) {
-            if (! first) {
+            if (!first) {
                 sb.append(",");
             } else {
                 first = false;
@@ -327,7 +326,7 @@ public final class GenerateBidiClass {
         sb.setLength(0);
         out.println("private static byte[] bcR1 = {");
         for (int i = 0; i < bcR1.length; i++) {
-            if (! first) {
+            if (!first) {
                 sb.append(",");
             } else {
                 first = false;
@@ -351,7 +350,7 @@ public final class GenerateBidiClass {
         sb.setLength(0);
         out.println("private static int[] bcS1 = {");
         for (int i = 0; i < bcS1.length; i++) {
-            if (! first) {
+            if (!first) {
                 sb.append(",");
             } else {
                 first = false;
@@ -375,7 +374,7 @@ public final class GenerateBidiClass {
         sb.setLength(0);
         out.println("private static int[] bcE1 = {");
         for (int i = 0; i < bcE1.length; i++) {
-            if (! first) {
+            if (!first) {
                 sb.append(",");
             } else {
                 first = false;
@@ -399,7 +398,7 @@ public final class GenerateBidiClass {
         sb.setLength(0);
         out.println("private static byte[] bcC1 = {");
         for (int i = 0; i < bcC1.length; i++) {
-            if (! first) {
+            if (!first) {
                 sb.append(",");
             } else {
                 first = false;
@@ -434,7 +433,7 @@ public final class GenerateBidiClass {
         if (k >= 0) {
             return ca [ k ];
         } else {
-            k = - (k + 1);
+            k = -(k + 1);
             if (k == 0) {
                 return BidiConstants.L;
             } else if (ch <= ea [ k - 1 ]) {

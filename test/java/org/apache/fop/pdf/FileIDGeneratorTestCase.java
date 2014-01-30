@@ -19,10 +19,6 @@
 
 package org.apache.fop.pdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,6 +28,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests the {@link FileIDGenerator} class.
@@ -96,7 +96,7 @@ public class FileIDGeneratorTestCase {
         assertTrue(Arrays.equals(originalFileID, updatedFileID));
     }
 
-    private static interface TestGetter {
+    private interface TestGetter {
         FileIDGenerator getSut() throws Exception;
     }
 

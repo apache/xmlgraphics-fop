@@ -21,29 +21,25 @@ package org.apache.fop.complexscripts.scripts.arabic;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.io.ObjectInputStream;
 import java.nio.IntBuffer;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable;
 import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable;
 import org.apache.fop.complexscripts.fonts.ttx.TTXFile;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+// CSOFF: LineLength
 
 /**
  * Tests for functionality related to the arabic script.
@@ -52,9 +48,9 @@ public class ArabicTestCase implements ArabicTestConstants {
 
     @Test
     public void testArabicWordForms() {
-        for (String sfn : srcFiles) {
+        for (String sfn : SRC_FILES) {
             try {
-                processWordForms(new File(datFilesDir));
+                processWordForms(new File(DAT_FILES_DIR));
             } catch (Exception e) {
                 fail(e.getMessage());
             }
@@ -72,7 +68,7 @@ public class ArabicTestCase implements ArabicTestConstants {
     private String[] listWordFormFiles(File dfd) {
         return dfd.list(new FilenameFilter() {
                 public boolean accept(File f, String name) {
-                    return hasPrefixFrom(name, srcFiles) && hasExtension(name, WF_FILE_DAT_EXT);
+                    return hasPrefixFrom(name, SRC_FILES) && hasExtension(name, WF_FILE_DAT_EXT);
                 }
                 private boolean hasPrefixFrom(String name, String[] prefixes) {
                     for (String p : prefixes) {
@@ -108,7 +104,7 @@ public class ArabicTestCase implements ArabicTestConstants {
             throw new RuntimeException(e.getMessage(), e);
         } finally {
             if (fis != null) {
-                try { fis.close(); } catch (Exception e) {}
+                try { fis.close(); } catch (Exception e) { /* NOP */ }
             }
         }
     }
@@ -129,7 +125,7 @@ public class ArabicTestCase implements ArabicTestConstants {
                 script = (String) d[0];
                 language = (String) d[1];
                 tfn = (String) d[3];
-                tf = TTXFile.getFromCache(ttxFontsDir + File.separator + tfn);
+                tf = TTXFile.getFromCache(TTX_FONTS_DIR + File.separator + tfn);
                 assertTrue(tf != null);
                 gsub = tf.getGSUB();
                 assertTrue(gsub != null);

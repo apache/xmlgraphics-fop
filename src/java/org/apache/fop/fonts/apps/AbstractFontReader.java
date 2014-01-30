@@ -32,8 +32,6 @@ import javax.xml.transform.TransformerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.util.CommandLineLogger;
-
 /**
  * Abstract base class for the PFM and TTF Reader command-line applications.
  */
@@ -90,10 +88,6 @@ public abstract class AbstractFontReader {
     protected static void setLogLevel(String level) {
         // Set the evel for future loggers.
         LogFactory.getFactory().setAttribute("level", level);
-        if (log instanceof CommandLineLogger) {
-            // Set the level for the logger creates already.
-            ((CommandLineLogger) log).setLogLevel(level);
-        }
     }
 
     /**

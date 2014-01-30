@@ -24,98 +24,104 @@ package org.apache.fop.fonts.truetype;
  * Represents table names as found in a TrueType font's Table Directory.
  * TrueType fonts may have custom tables so we cannot use an enum.
  */
-public final class TTFTableName {
+public final class OFTableName {
 
     /** The first table in a TrueType font file containing metadata about other tables. */
-    public static final TTFTableName TABLE_DIRECTORY = new TTFTableName("tableDirectory");
+    public static final OFTableName TABLE_DIRECTORY = new OFTableName("tableDirectory");
+
+    /** Baseline data */
+    public static final OFTableName BASE = new OFTableName("BASE");
+
+    /** CFF data/ */
+    public static final OFTableName CFF = new OFTableName("CFF ");
 
     /** Embedded bitmap data. */
-    public static final TTFTableName EBDT = new TTFTableName("EBDT");
+    public static final OFTableName EBDT = new OFTableName("EBDT");
 
     /** Embedded bitmap location data. */
-    public static final TTFTableName EBLC = new TTFTableName("EBLC");
+    public static final OFTableName EBLC = new OFTableName("EBLC");
 
     /** Embedded bitmap scaling data. */
-    public static final TTFTableName EBSC = new TTFTableName("EBSC");
+    public static final OFTableName EBSC = new OFTableName("EBSC");
 
     /** A FontForge specific table. */
-    public static final TTFTableName FFTM = new TTFTableName("FFTM");
+    public static final OFTableName FFTM = new OFTableName("FFTM");
 
     /** Divides glyphs into various classes that make using the GPOS/GSUB tables easier. */
-    public static final TTFTableName GDEF = new TTFTableName("GDEF");
+    public static final OFTableName GDEF = new OFTableName("GDEF");
 
     /** Provides kerning information, mark-to-base, etc. for opentype fonts. */
-    public static final TTFTableName GPOS = new TTFTableName("GPOS");
+    public static final OFTableName GPOS = new OFTableName("GPOS");
 
     /** Provides ligature information, swash, etc. for opentype fonts. */
-    public static final TTFTableName GSUB = new TTFTableName("GSUB");
+    public static final OFTableName GSUB = new OFTableName("GSUB");
 
     /** Linear threshold table. */
-    public static final TTFTableName LTSH = new TTFTableName("LTSH");
+    public static final OFTableName LTSH = new OFTableName("LTSH");
 
     /** OS/2 and Windows specific metrics. */
-    public static final TTFTableName OS2 = new TTFTableName("OS/2");
+    public static final OFTableName OS2 = new OFTableName("OS/2");
 
     /** PCL 5 data. */
-    public static final TTFTableName PCLT = new TTFTableName("PCLT");
+    public static final OFTableName PCLT = new OFTableName("PCLT");
 
     /** Vertical Device Metrics table. */
-    public static final TTFTableName VDMX = new TTFTableName("VDMX");
+    public static final OFTableName VDMX = new OFTableName("VDMX");
 
     /** Character to glyph mapping. */
-    public static final TTFTableName CMAP = new TTFTableName("cmap");
+    public static final OFTableName CMAP = new OFTableName("cmap");
 
     /** Control Value Table. */
-    public static final TTFTableName CVT = new TTFTableName("cvt ");
+    public static final OFTableName CVT = new OFTableName("cvt ");
 
     /** Font program. */
-    public static final TTFTableName FPGM = new TTFTableName("fpgm");
+    public static final OFTableName FPGM = new OFTableName("fpgm");
 
     /** Grid-fitting and scan conversion procedure (grayscale). */
-    public static final TTFTableName GASP = new TTFTableName("gasp");
+    public static final OFTableName GASP = new OFTableName("gasp");
 
     /** Glyph data. */
-    public static final TTFTableName GLYF = new TTFTableName("glyf");
+    public static final OFTableName GLYF = new OFTableName("glyf");
 
     /** Horizontal device metrics. */
-    public static final TTFTableName HDMX = new TTFTableName("hdmx");
+    public static final OFTableName HDMX = new OFTableName("hdmx");
 
     /** Font header. */
-    public static final TTFTableName HEAD = new TTFTableName("head");
+    public static final OFTableName HEAD = new OFTableName("head");
 
     /** Horizontal header. */
-    public static final TTFTableName HHEA = new TTFTableName("hhea");
+    public static final OFTableName HHEA = new OFTableName("hhea");
 
     /** Horizontal metrics. */
-    public static final TTFTableName HMTX = new TTFTableName("hmtx");
+    public static final OFTableName HMTX = new OFTableName("hmtx");
 
     /** Kerning. */
-    public static final TTFTableName KERN = new TTFTableName("kern");
+    public static final OFTableName KERN = new OFTableName("kern");
 
     /** Index to location. */
-    public static final TTFTableName LOCA = new TTFTableName("loca");
+    public static final OFTableName LOCA = new OFTableName("loca");
 
     /** Maximum profile. */
-    public static final TTFTableName MAXP = new TTFTableName("maxp");
+    public static final OFTableName MAXP = new OFTableName("maxp");
 
     /** Naming table. */
-    public static final TTFTableName NAME = new TTFTableName("name");
+    public static final OFTableName NAME = new OFTableName("name");
 
     /** PostScript information. */
-    public static final TTFTableName POST = new TTFTableName("post");
+    public static final OFTableName POST = new OFTableName("post");
 
     /** CVT Program. */
-    public static final TTFTableName PREP = new TTFTableName("prep");
+    public static final OFTableName PREP = new OFTableName("prep");
 
     /** Vertical Metrics header. */
-    public static final TTFTableName VHEA = new TTFTableName("vhea");
+    public static final OFTableName VHEA = new OFTableName("vhea");
 
     /** Vertical Metrics. */
-    public static final TTFTableName VMTX = new TTFTableName("vmtx");
+    public static final OFTableName VMTX = new OFTableName("vmtx");
 
     private final String name;
 
-    private TTFTableName(String name) {
+    private OFTableName(String name) {
         this.name = name;
     }
 
@@ -131,9 +137,9 @@ public final class TTFTableName {
      * @param tableName table name as in the Table Directory
      * @return TTFTableName
      */
-    public static TTFTableName getValue(String tableName) {
+    public static OFTableName getValue(String tableName) {
         if (tableName != null) {
-            return new TTFTableName(tableName);
+            return new OFTableName(tableName);
         }
         throw new IllegalArgumentException("A TrueType font table name must not be null");
     }
@@ -148,10 +154,10 @@ public final class TTFTableName {
         if (o == this) {
             return true;
         }
-        if (!(o instanceof TTFTableName)) {
+        if (!(o instanceof OFTableName)) {
             return false;
         }
-        TTFTableName to = (TTFTableName) o;
+        OFTableName to = (OFTableName) o;
         return this.name.equals(to.getName());
     }
 

@@ -30,7 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
+import org.apache.fop.fonts.truetype.OpenFont.PostScriptVersion;
 
 /**
  * Class for testing org.apache.fop.fonts.truetype.TTFFile
@@ -55,14 +55,16 @@ public class TTFFileTestCase {
         dejavuTTFFile = new TTFFile();
         InputStream dejaStream = new FileInputStream("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
         dejavuReader = new FontFileReader(dejaStream);
-        dejavuTTFFile.readFont(dejavuReader);
+        String dejavuHeader = OFFontLoader.readHeader(dejavuReader);
+        dejavuTTFFile.readFont(dejavuReader, dejavuHeader);
         dejaStream.close();
 
         InputStream droidStream = new FileInputStream("test/resources/fonts/ttf/DroidSansMono.ttf");
 
         droidmonoTTFFile = new TTFFile();
         droidmonoReader = new FontFileReader(droidStream);
-        droidmonoTTFFile.readFont(droidmonoReader);
+        String droidmonoHeader = OFFontLoader.readHeader(droidmonoReader);
+        droidmonoTTFFile.readFont(droidmonoReader, droidmonoHeader);
         droidStream.close();
     }
 
@@ -93,8 +95,10 @@ public class TTFFileTestCase {
     @Test
     public void testCheckTTC() throws IOException {
         // DejaVu is not a TTC, thus this returns true
-        assertTrue(dejavuTTFFile.checkTTC(""));
-        assertTrue(droidmonoTTFFile.checkTTC(""));
+        String dejavuHeader = OFFontLoader.readHeader(dejavuReader);
+        assertTrue(dejavuTTFFile.checkTTC(dejavuHeader, ""));
+        String droidmonoHeader = OFFontLoader.readHeader(droidmonoReader);
+        assertTrue(droidmonoTTFFile.checkTTC(droidmonoHeader, ""));
         /*
          * Cannot reasonably test the rest of this method without an actual truetype collection
          * because all methods in FontFileReader are "final" and thus mocking isn't possible.

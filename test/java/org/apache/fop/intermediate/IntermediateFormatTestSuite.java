@@ -27,6 +27,6 @@ import org.junit.runners.Suite.SuiteClasses;
  * A test suite for testing the Intermediate Format output.
  */
 @RunWith(Suite.class)
-@SuiteClasses({ IFTestCase.class })
+@SuiteClasses(IFTestCase.class)
 public final class IntermediateFormatTestSuite {
 }

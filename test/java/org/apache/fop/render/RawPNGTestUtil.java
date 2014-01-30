@@ -28,9 +28,9 @@ import org.apache.xmlgraphics.image.loader.ImageSize;
 
 public final class RawPNGTestUtil {
 
-    private static int NUM_ROWS = 32;
-    private static int NUM_COLUMNS = 32;
-    private static int DPI = 72;
+    private static final int NUM_ROWS = 32;
+    private static final int NUM_COLUMNS = 32;
+    private static final int DPI = 72;
 
     private RawPNGTestUtil() {
 
@@ -83,7 +83,7 @@ public final class RawPNGTestUtil {
     }
 
     /**
-     * 
+     *
      * @return a default ImageSize
      */
     public static ImageSize getImageSize() {

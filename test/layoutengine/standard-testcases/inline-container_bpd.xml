@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      Checks that block-progression-dimension on fo:inline-container is properly handled.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-size="8pt" line-height="10pt">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page"
+          page-height="220pt" page-width="320pt" margin="10pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Before: <fo:inline-container width="60pt">
+              <fo:block>This text inside inline-container should fit on four lines.</fo:block>
+            </fo:inline-container> After.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Before: <fo:inline-container width="70pt" height="35pt" overflow="hidden">
+              <fo:block>This text overflows the inline-container in the 
+                block-progression-direction.</fo:block>
+            </fo:inline-container> After.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Before: <fo:inline-container width="80pt">
+              <fo:block space-after="10pt">Block 1</fo:block>
+              <fo:block space-before="20pt" space-after="10pt" 
+                space-after.conditionality="retain">Block 2</fo:block>
+          </fo:inline-container> After.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+
+  <checks>
+    <eval expected="40000" xpath="//pageSequence[1]//viewport/@bpd"/>
+
+    <eval expected="35000" xpath="//pageSequence[2]//viewport/@bpd"/>
+    <true xpath="//pageSequence[2]//viewport/@clip"/>
+
+    <eval expected="50000" xpath="//pageSequence[3]//viewport/@bpd"/>
+  </checks>
+
+  <event-checks>
+    <event key="viewportBPDOverflow" elementName="fo:inline-container" amount="15000" clip="true"/>
+  </event-checks>
+</testcase>

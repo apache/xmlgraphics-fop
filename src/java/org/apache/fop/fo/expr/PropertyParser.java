@@ -385,7 +385,8 @@ public final class PropertyParser extends PropertyTokenizer {
         }
         int numArgs = args.size();
         if (numArgs < numReq) {
-            throw new PropertyException("Expected " + numReq + " required arguments, but only " + numArgs + " specified");
+            throw new PropertyException("Expected " + numReq + " required arguments, but only "
+                    + numArgs + " specified");
         } else {
             for (int i = 0; i < numOpt; i++) {
                 if (args.size() < (numReq + i + 1)) {

@@ -278,7 +278,6 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         PDFStream pdfStream = this.pdfDoc.getFactory().makeStream(
                 PDFFilterList.CONTENT_FILTER, false);
         pdfStream.add(getString());
-        currentStream = null;
         this.pdfDoc.registerObject(pdfStream);
         pdfContext.getCurrentPage().setContents(pdfStream);
         PDFAnnotList annots = pdfContext.getCurrentPage().getAnnotations();

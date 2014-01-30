@@ -583,6 +583,14 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
+    protected void startLayer(String layer) {
+    }
+
+    /** {@inheritDoc} */
+    protected void endLayer() {
+    }
+
+    /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         currentState.push(new CTM(UnitConv.ptToMpt(at)));
     }

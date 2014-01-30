@@ -19,6 +19,7 @@
 
 package org.apache.fop.apps;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -127,4 +128,41 @@ public class FopConfParserTestCase {
         builder.setPreferRenderer(true);
         assertTrue(buildFactory().getRendererFactory().isRendererPreferred());
     }
+
+    @Test
+    public void testRelativeURINoBaseNoFont() throws Exception {
+        checkRelativeURIs("test/config/relative-uri/no-base_no-font.xconf",
+                "", "");
+    }
+
+    @Test
+    public void testRelativeURINoBaseFont() throws Exception {
+        checkRelativeURIs("test/config/relative-uri/no-base_font.xconf",
+                "", "test/config/relative-uri/fonts/");
+    }
+
+    @Test
+    public void testRelativeURIBaseNoFont() throws Exception {
+        checkRelativeURIs("test/config/relative-uri/base_no-font.xconf",
+                "test/config/relative-uri/relative/", "test/config/relative-uri/relative/");
+    }
+
+    @Test
+    public void testRelativeURIBaseFont() throws Exception {
+        checkRelativeURIs("test/config/relative-uri/base_font.xconf",
+                "test/config/relative-uri/relative/", "test/config/relative-uri/fonts/");
+    }
+
+    private void checkRelativeURIs(String conf, String expectedBase, String expectedFontBase)
+            throws SAXException, IOException {
+        File configFile = new File(conf);
+        URI currentDir = new File(".").getCanonicalFile().toURI();
+        FopConfParser parser = new FopConfParser(configFile, currentDir);
+        FopFactoryBuilder fopFactoryBuilder = parser.getFopFactoryBuilder();
+        assertEquals("base URI", currentDir.resolve(expectedBase),
+                fopFactoryBuilder.getBaseURI());
+        assertEquals("font base", currentDir.resolve(expectedFontBase),
+                fopFactoryBuilder.getFontManager().getResourceResolver().getBaseURI());
+    }
+
 }

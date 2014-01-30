@@ -31,20 +31,21 @@ public class WritingModeTraits implements WritingModeTraitsSetter {
     private Direction rowProgressionDirection;
     private Direction shiftDirection;
     private WritingMode writingMode;
+    private boolean explicit;
 
     /**
      * Default writing mode traits constructor.
      */
     public WritingModeTraits() {
-        this (WritingMode.LR_TB);
+        this (WritingMode.LR_TB, false);
     }
 
     /**
      * Construct writing mode traits using the specified writing mode.
      * @param writingMode a writing mode traits object
      */
-    public WritingModeTraits(WritingMode writingMode) {
-        assignWritingModeTraits(writingMode);
+    public WritingModeTraits(WritingMode writingMode, boolean explicit) {
+        assignWritingModeTraits(writingMode, explicit);
     }
 
     /**
@@ -125,17 +126,25 @@ public class WritingModeTraits implements WritingModeTraitsSetter {
     }
 
     /**
-     * @param writingMode the "writing-mode" trait.
+     * @return the "explicit-writing-mode" trait.
      */
-    public void setWritingMode(WritingMode writingMode) {
-        this.writingMode = writingMode;
+    public boolean getExplicitWritingMode() {
+        return explicit;
     }
 
     /**
      * @param writingMode the "writing-mode" trait.
      */
-    public void assignWritingModeTraits(WritingMode writingMode) {
-        writingMode.assignWritingModeTraits(this);
+    public void setWritingMode(WritingMode writingMode, boolean explicit) {
+        this.writingMode = writingMode;
+        this.explicit = explicit;
+    }
+
+    /**
+     * @param writingMode the "writing-mode" trait.
+     */
+    public void assignWritingModeTraits(WritingMode writingMode, boolean explicit) {
+        writingMode.assignWritingModeTraits(this, explicit);
     }
 
     /**

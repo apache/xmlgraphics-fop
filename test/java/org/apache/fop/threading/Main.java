@@ -32,7 +32,10 @@ import org.apache.avalon.framework.logger.ConsoleLogger;
 /**
  * Starter class for the multi-threading testbed.
  */
-public class Main {
+public final class Main {
+
+    private Main() {
+    }
 
     private static void prompt() throws IOException {
         BufferedReader in = new BufferedReader(new java.io.InputStreamReader(System.in));

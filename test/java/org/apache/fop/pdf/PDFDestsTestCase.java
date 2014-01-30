@@ -19,12 +19,12 @@
 
 package org.apache.fop.pdf;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test case for {@link PDFDests}.
@@ -32,7 +32,7 @@ import java.util.List;
 public class PDFDestsTestCase extends PDFObjectTestCase {
 
     private PDFDests dests = new PDFDests();
-    private String expectedString = "<< /Names [(number) 10 (name) /Test#20name] >>\n";
+    private String expectedString = "<< /Names [(number) 10 (name) /Test#20name] >>";
 
     @Before
     public void setUp() {

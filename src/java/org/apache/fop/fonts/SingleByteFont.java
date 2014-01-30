@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.fonts.Glyphs;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
-import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
+import org.apache.fop.fonts.truetype.OpenFont.PostScriptVersion;
 
 /**
  * Generic SingleByte font

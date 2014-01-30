@@ -24,13 +24,15 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+
+import org.apache.commons.io.output.ByteArrayOutputStream;
+
 import org.apache.batik.transcoder.Transcoder;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import static org.apache.fop.FOPTestUtils.getBaseDir;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Basic runtime test for FOP's transcoders. It is used to verify that

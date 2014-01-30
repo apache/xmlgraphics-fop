@@ -27,6 +27,6 @@ import org.junit.runners.Suite.SuiteClasses;
  * JUnit test suite for the area tree XML format
  */
 @RunWith(Suite.class)
-@SuiteClasses({ AreaTreeParserTestCase.class })
+@SuiteClasses(AreaTreeParserTestCase.class)
 public class AreaTreeXMLFormatTestSuite {
 }

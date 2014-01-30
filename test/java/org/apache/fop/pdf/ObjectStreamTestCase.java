@@ -19,8 +19,6 @@
 
 package org.apache.fop.pdf;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -28,6 +26,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class ObjectStreamTestCase {
 

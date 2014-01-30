@@ -117,7 +117,7 @@ public final class FontListMain {
         }
         try {
             GenerationHelperContentHandler helper = new GenerationHelperContentHandler(
-                    handler, null);
+                    handler, null, null);
             FontListSerializer serializer = new FontListSerializer();
             serializer.generateSAX(fontFamilies, singleFamily, helper);
         } finally {
