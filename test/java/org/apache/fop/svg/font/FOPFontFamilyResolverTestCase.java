@@ -33,16 +33,16 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import org.apache.batik.gvt.font.GVTFontFamily;
-import org.apache.batik.gvt.font.GVTLineMetrics;
-
-import org.apache.fop.fonts.FontInfo;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import org.apache.batik.gvt.font.GVTFontFamily;
+import org.apache.batik.gvt.font.GVTLineMetrics;
+
+import org.apache.fop.fonts.FontInfo;
 
 public class FOPFontFamilyResolverTestCase {
 

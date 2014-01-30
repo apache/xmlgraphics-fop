@@ -200,8 +200,9 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
     public static BridgeContext createBridgeContext(FOUserAgent userAgent, AFPGraphics2D g2d) {
         ImageManager imageManager = userAgent.getImageManager();
         FontInfo fontInfo = g2d.getFontInfo();
-        SVGUserAgent svgUserAgent = new SVGUserAgent(userAgent, new AggregatingFontFamilyResolver(
-                new AFPFontFamilyResolver(fontInfo, userAgent.getEventBroadcaster()), DefaultFontFamilyResolver.SINGLETON),
+        SVGUserAgent svgUserAgent = new SVGUserAgent(userAgent,
+                new AggregatingFontFamilyResolver(new AFPFontFamilyResolver(fontInfo, userAgent.getEventBroadcaster()),
+                        DefaultFontFamilyResolver.SINGLETON),
                 new AffineTransform());
         ImageSessionContext imageSessionContext = userAgent.getImageSessionContext();
         return new AFPBridgeContext(svgUserAgent, fontInfo, imageManager, imageSessionContext,

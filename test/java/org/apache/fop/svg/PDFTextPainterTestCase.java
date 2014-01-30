@@ -30,7 +30,6 @@ import org.apache.xmlgraphics.java2d.GraphicContext;
 
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 
 public class PDFTextPainterTestCase extends NativeTextPainterTest {
 

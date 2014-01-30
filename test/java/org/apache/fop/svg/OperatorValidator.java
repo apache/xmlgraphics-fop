@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 
 class OperatorValidator {
 
-    private static interface Match {
+    private interface Match {
 
         boolean match(String line);
     }
@@ -60,7 +60,7 @@ class OperatorValidator {
         public boolean match(String line) {
             boolean match = currentMatch.match(line);
             if (match) {
-                if(expectedMatches.isEmpty()) {
+                if (expectedMatches.isEmpty()) {
                     currentMatch = FINAL_MATCH;
                 } else {
                     currentMatch = expectedMatches.remove();
