@@ -30,7 +30,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.apache.fop.fonts.Font;
-import org.apache.fop.svg.font.FOPGVTFont;
 
 public class FOPGVTFontTestCase {
 
