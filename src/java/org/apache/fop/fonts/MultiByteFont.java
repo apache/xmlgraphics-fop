@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts;
 
+import java.awt.Rectangle;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
 import java.util.BitSet;
@@ -67,6 +68,9 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     private int lastPrivate;
     private int firstUnmapped;
     private int lastUnmapped;
+
+    /** Contains the character bounding boxes for all characters in the font */
+    protected Rectangle[] boundingBoxes;
 
     private boolean isOTFFile = false;
 
@@ -194,6 +198,12 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         int[] arr = new int[width.length];
         System.arraycopy(width, 0, arr, 0, width.length);
         return arr;
+    }
+
+    public Rectangle getBoundingBox(int glyphIndex, int size) {
+        int index = isEmbeddable() ? cidSet.getOriginalGlyphIndex(glyphIndex) : glyphIndex;
+        Rectangle bbox = boundingBoxes[index];
+        return new Rectangle(bbox.x * size, bbox.y * size, bbox.width * size, bbox.height * size);
     }
 
     /**
@@ -398,6 +408,14 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      */
     public void setWidthArray(int[] wds) {
         this.width = wds;
+    }
+
+    /**
+     * Sets the bounding boxes array.
+     * @param boundingBoxes array of bounding boxes.
+     */
+    public void setBBoxArray(Rectangle[] boundingBoxes) {
+        this.boundingBoxes = boundingBoxes;
     }
 
     /**

@@ -36,9 +36,9 @@ import org.apache.avalon.framework.configuration.DefaultConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
 
-import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.DocumentFactory;
+import org.apache.batik.gvt.font.FontFamilyResolver;
 import org.apache.batik.transcoder.ErrorHandler;
 import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.TranscoderException;
@@ -55,6 +55,8 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
 import org.apache.xmlgraphics.util.UnitConv;
+
+import org.apache.fop.svg.font.FOPFontFamilyResolver;
 
 /**
  * This is the common base class of all of FOP's transcoders.
@@ -86,11 +88,6 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
     /** The value to turn off text stroking. */
     public static final Boolean VALUE_FORMAT_OFF = Boolean.FALSE;
 
-    /**
-     * The user agent dedicated to this Transcoder.
-     */
-    protected UserAgent userAgent = createUserAgent();
-
     private Log logger;
     private EntityResolver resolver;
     private Configuration cfg = null;
@@ -113,7 +110,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
      * this method if you need non-default behaviour.
      * @return UserAgent the newly created user agent
      */
-    protected UserAgent createUserAgent() {
+    protected FOPTranscoderUserAgent createUserAgent() {
         return new FOPTranscoderUserAgent();
     }
 
@@ -331,6 +328,8 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
      */
     protected class FOPTranscoderUserAgent extends SVGAbstractTranscoderUserAgent {
 
+        private FOPFontFamilyResolver fontFamilyResolver;
+
         /**
          * Displays the specified error message using the {@link ErrorHandler}.
          * @param message the message to display
@@ -384,6 +383,15 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
          */
         public String getMedia() {
             return "print";
+        }
+
+        public void setFontFamilyResolver(FOPFontFamilyResolver resolver) {
+            fontFamilyResolver = resolver;
+        }
+
+        @Override
+        public FontFamilyResolver getFontFamilyResolver() {
+            return fontFamilyResolver;
         }
 
     }

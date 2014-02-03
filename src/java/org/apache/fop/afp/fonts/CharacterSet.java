@@ -19,10 +19,9 @@
 
 package org.apache.fop.afp.fonts;
 
+import java.awt.Rectangle;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.CharacterCodingException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,6 +62,8 @@ public class CharacterSet {
 
     private static final int MAX_NAME_LEN = 8;
 
+    /** The current orientation (currently only 0 is supported by FOP) */
+    public static final int SUPPORTED_ORIENTATION = 0;
 
     /** The code page to which the character set relates */
     protected final String codePage;
@@ -79,11 +80,8 @@ public class CharacterSet {
     /** The path to the installed fonts */
     private final AFPResourceAccessor accessor;
 
-    /** The current orientation (currently only 0 is supported by FOP) */
-    private final String currentOrientation = "0";
-
     /** The collection of objects for each orientation */
-    private final Map<String, CharacterSetOrientation> characterSetOrientations;
+    private CharacterSetOrientation characterSetOrientation;
 
     /** The nominal vertical size (in millipoints) for bitmap fonts. 0 for outline fonts. */
     private int nominalVerticalSize;
@@ -116,8 +114,6 @@ public class CharacterSet {
         this.encoding = encoding;
         this.encoder = charsetType.getEncoder(encoding);
         this.accessor = accessor;
-
-        this.characterSetOrientations = new HashMap<String, CharacterSetOrientation>(4);
     }
 
      // right pad short names with space
@@ -131,7 +127,9 @@ public class CharacterSet {
      * @param cso the metrics for the orientation
      */
     public void addCharacterSetOrientation(CharacterSetOrientation cso) {
-        characterSetOrientations.put(String.valueOf(cso.getOrientation()), cso);
+        if (cso.getOrientation() == SUPPORTED_ORIENTATION) {
+            characterSetOrientation = cso;
+        }
     }
 
     /**
@@ -165,8 +163,21 @@ public class CharacterSet {
      * @return the ascender value in millipoints
      */
     public int getAscender() {
-
         return getCharacterSetOrientation().getAscender();
+    }
+
+    /**
+     * TODO
+     */
+    public int getUnderscoreWidth() {
+        return getCharacterSetOrientation().getUnderscoreWidth();
+    }
+
+    /**
+     * TODO
+     */
+    public int getUnderscorePosition() {
+        return getCharacterSetOrientation().getUnderscorePosition();
     }
 
     /**
@@ -177,7 +188,6 @@ public class CharacterSet {
      * @return the cap height value in millipoints
      */
     public int getCapHeight() {
-
         return getCharacterSetOrientation().getCapHeight();
     }
 
@@ -194,39 +204,11 @@ public class CharacterSet {
     }
 
     /**
-     * Returns the first character in the character set
-     *
-     * @return the first character in the character set (Unicode codepoint)
-     */
-    public char getFirstChar() {
-        return getCharacterSetOrientation().getFirstChar();
-    }
-
-    /**
-     * Returns the last character in the character set
-     *
-     * @return the last character in the character set (Unicode codepoint)
-     */
-    public char getLastChar() {
-        return getCharacterSetOrientation().getLastChar();
-    }
-
-    /**
      * Returns the resource accessor to load the font resources with.
      * @return the resource accessor to load the font resources with
      */
     public AFPResourceAccessor getResourceAccessor() {
         return this.accessor;
-    }
-
-    /**
-     * Get the width (in 1/1000ths of a point size) of all characters
-     *
-     * @return the widths of all characters
-     */
-    public int[] getWidths() {
-
-        return getCharacterSetOrientation().getWidths();
     }
 
     /**
@@ -246,11 +228,13 @@ public class CharacterSet {
      * @param character the Unicode character from which the width will be calculated
      * @return the width of the character
      */
-    public int getWidth(char character) {
-        return getCharacterSetOrientation().getWidth(character);
+    public int getWidth(char character, int size) {
+        return getCharacterSetOrientation().getWidth(character, size);
     }
 
-
+    public Rectangle getCharacterBox(char character, int size) {
+        return getCharacterSetOrientation().getCharacterBox(character, size);
+    }
 
     /**
      * Returns the AFP character set identifier
@@ -309,9 +293,7 @@ public class CharacterSet {
      * @return characterSetOrentation The current orientation metrics.
      */
     private CharacterSetOrientation getCharacterSetOrientation() {
-        CharacterSetOrientation c
-            = characterSetOrientations.get(currentOrientation);
-        return c;
+        return characterSetOrientation;
     }
 
     /**

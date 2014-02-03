@@ -33,6 +33,7 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.gvt.font.DefaultFontFamilyResolver;
 
 import org.apache.xmlgraphics.image.GraphicsConstants;
 import org.apache.xmlgraphics.image.loader.Image;
@@ -123,10 +124,8 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
      * @return the newly created user agent
      */
     protected SimpleSVGUserAgent createBatikUserAgent(float pxToMillimeter) {
-        return new SimpleSVGUserAgent(
-                pxToMillimeter,
-                new AffineTransform()) {
-
+        return new SimpleSVGUserAgent(pxToMillimeter, new AffineTransform(),
+                DefaultFontFamilyResolver.SINGLETON) {
             /** {@inheritDoc} */
             public void displayMessage(String message) {
                 //TODO Refine and pipe through to caller

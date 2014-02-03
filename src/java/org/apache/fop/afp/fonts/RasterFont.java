@@ -19,8 +19,8 @@
 
 package org.apache.fop.afp.fonts;
 
+import java.awt.Rectangle;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -135,46 +135,21 @@ public class RasterFont extends AFPFont {
 
     }
 
-    /**
-     * Get the first character in this font.
-     * @return the first character in this font.
-     */
-    public int getFirstChar() {
-        Iterator<CharacterSet> it = charSets.values().iterator();
-        if (it.hasNext()) {
-            CharacterSet csm = it.next();
-            return csm.getFirstChar();
-        } else {
-            String msg = "getFirstChar() - No character set found for font:" + getFontName();
-            LOG.error(msg);
-            throw new FontRuntimeException(msg);
-        }
-    }
-
-    /**
-     * Get the last character in this font.
-     * @return the last character in this font.
-     */
-    public int getLastChar() {
-
-        Iterator<CharacterSet> it = charSets.values().iterator();
-        if (it.hasNext()) {
-            CharacterSet csm = it.next();
-            return csm.getLastChar();
-        } else {
-            String msg = "getLastChar() - No character set found for font:" + getFontName();
-            LOG.error(msg);
-            throw new FontRuntimeException(msg);
-        }
-
-    }
-
     private int metricsToAbsoluteSize(CharacterSet cs, int value, int givenSize) {
         int nominalVerticalSize = cs.getNominalVerticalSize();
         if (nominalVerticalSize != 0) {
             return value * nominalVerticalSize;
         } else {
             return value * givenSize;
+        }
+    }
+
+    private int metricsToAbsoluteSize(CharacterSet cs, double value, int givenSize) {
+        int nominalVerticalSize = cs.getNominalVerticalSize();
+        if (nominalVerticalSize != 0) {
+            return (int) (value * nominalVerticalSize);
+        } else {
+            return (int) (value * givenSize);
         }
     }
 
@@ -189,6 +164,20 @@ public class RasterFont extends AFPFont {
     public int getAscender(int size) {
         CharacterSet cs = getCharacterSet(size);
         return metricsToAbsoluteSize(cs, cs.getAscender(), size);
+    }
+
+    /** {@inheritDoc} */
+    public int getUnderlinePosition(int size) {
+        CharacterSet cs = getCharacterSet(size);
+        return metricsToAbsoluteSize(cs, cs.getUnderscorePosition(), size);
+    }
+
+    @Override
+    public int getUnderlineThickness(int size) {
+        CharacterSet cs = getCharacterSet(size);
+        int underscoreWidth = cs.getUnderscoreWidth();
+        return underscoreWidth == 0 ? super.getUnderlineThickness(size)
+                : metricsToAbsoluteSize(cs, underscoreWidth, size);
     }
 
     /**
@@ -234,33 +223,20 @@ public class RasterFont extends AFPFont {
      */
     public int getWidth(int character, int size) {
         CharacterSet cs = getCharacterSet(size);
-        return metricsToAbsoluteSize(cs, cs.getWidth(toUnicodeCodepoint(character)), size);
+        return metricsToAbsoluteSize(cs, cs.getWidth(toUnicodeCodepoint(character), 1), size);
     }
 
     /**
-     * Get the getWidth (in 1/1000ths of a point size) of all characters in this
-     * character set.
-     *
-     * @param size the font size (in mpt)
-     * @return the widths of all characters
+     * TODO
      */
-    public int[] getWidths(int size) {
+    public Rectangle getBoundingBox(int character, int size) {
         CharacterSet cs = getCharacterSet(size);
-        int[] widths = cs.getWidths();
-        for (int i = 0, c = widths.length; i < c; i++) {
-            widths[i] = metricsToAbsoluteSize(cs, widths[i], size);
-        }
-        return widths;
-    }
-
-    /**
-     * Get the getWidth (in 1/1000ths of a point size) of all characters in this
-     * character set.
-     *
-     * @return the widths of all characters
-     */
-    public int[] getWidths() {
-        return getWidths(1000);
+        Rectangle characterBox = cs.getCharacterBox(toUnicodeCodepoint(character), 1);
+        int x = metricsToAbsoluteSize(cs, characterBox.getX(), size);
+        int y = metricsToAbsoluteSize(cs, characterBox.getY(), size);
+        int w = metricsToAbsoluteSize(cs, characterBox.getWidth(), size);
+        int h = metricsToAbsoluteSize(cs, characterBox.getHeight(), size);
+        return new Rectangle(x, y, w, h);
     }
 
     /** {@inheritDoc} */

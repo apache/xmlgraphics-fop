@@ -19,6 +19,7 @@
 
 package org.apache.fop.afp.fonts;
 
+import java.awt.Rectangle;
 import java.lang.Character.UnicodeBlock;
 import java.util.HashSet;
 import java.util.Set;
@@ -68,7 +69,7 @@ public class DoubleByteFont extends AbstractOutlineFont {
     public int getWidth(int character, int size) {
         int charWidth;
         try {
-            charWidth = charSet.getWidth(toUnicodeCodepoint(character));
+            charWidth = charSet.getWidth(toUnicodeCodepoint(character), size);
         } catch (IllegalArgumentException e) {
             if (!charsProcessed.contains(character)) {
                 charsProcessed.add(character);
@@ -80,9 +81,9 @@ public class DoubleByteFont extends AbstractOutlineFont {
         }
 
         if (charWidth == -1) {
-            charWidth = getDefaultCharacterWidth(character);
+            charWidth = getDefaultCharacterWidth(character) * size;
         }
-        return charWidth * size;
+        return charWidth;
     }
 
     private int getDefaultCharacterWidth(int character) {
@@ -92,6 +93,33 @@ public class DoubleByteFont extends AbstractOutlineFont {
         } else {
             return inferCharWidth(character);
         }
+    }
+
+    @Override
+    public Rectangle getBoundingBox(int character, int size) {
+        Rectangle characterBox = getBoundingBoxOrNull(character, size);
+        if (characterBox == null) {
+            characterBox = getDefaultCharacterBox(character, size);
+        }
+        return characterBox;
+    }
+
+    private Rectangle getBoundingBoxOrNull(int character, int size) {
+        Rectangle characterBox = null;
+        try {
+            characterBox = charSet.getCharacterBox(toUnicodeCodepoint(character), size);
+        } catch (IllegalArgumentException e) {
+            if (!charsProcessed.contains(character)) {
+                charsProcessed.add(character);
+                getAFPEventProducer().charactersetMissingMetrics(this, (char) character,
+                        charSet.getName().trim());
+            }
+        }
+        return characterBox;
+    }
+
+    private Rectangle getDefaultCharacterBox(int character, int size) {
+        return getBoundingBoxOrNull('-', size);
     }
 
     private int inferCharWidth(int character) {

@@ -37,6 +37,9 @@ import org.apache.fop.apps.io.InternalResourceResolver;
 public abstract class CustomFont extends Typeface
             implements FontDescriptor, MutableFont {
 
+    /** Fallback thickness for underline and strikeout when not provided by the font. */
+    private static final int DEFAULT_LINE_THICKNESS = 50;
+
     private String fontName;
     private String fullName;
     private Set<String> familyNames;
@@ -59,6 +62,14 @@ public abstract class CustomFont extends Typeface
     private FontType fontType = FontType.TYPE1;
     private int firstChar;
     private int lastChar = 255;
+
+    private int underlinePosition;
+
+    private int underlineThickness;
+
+    private int strikeoutPosition;
+
+    private int strikeoutThickness;
 
     private Map<Integer, Map<Integer, Integer>> kerning;
 
@@ -505,6 +516,42 @@ public abstract class CustomFont extends Typeface
         CMapSegment[] copy = new CMapSegment[cmap.length];
         System.arraycopy(this.cmap, 0, copy, 0, this.cmap.length);
         return copy;
+    }
+
+    public int getUnderlinePosition(int size) {
+        return (underlinePosition == 0)
+                ? getDescender(size) / 2
+                : size * underlinePosition;
+    }
+
+    public void setUnderlinePosition(int underlinePosition) {
+        this.underlinePosition = underlinePosition;
+    }
+
+    public int getUnderlineThickness(int size) {
+        return size * ((underlineThickness == 0) ? DEFAULT_LINE_THICKNESS : underlineThickness);
+    }
+
+    public void setUnderlineThickness(int underlineThickness) {
+        this.underlineThickness = underlineThickness;
+    }
+
+    public int getStrikeoutPosition(int size) {
+        return (strikeoutPosition == 0)
+                ? getXHeight(size) / 2
+                : size * strikeoutPosition;
+    }
+
+    public void setStrikeoutPosition(int strikeoutPosition) {
+        this.strikeoutPosition = strikeoutPosition;
+    }
+
+    public int getStrikeoutThickness(int size) {
+        return (strikeoutThickness == 0) ? getUnderlineThickness(size) : size * strikeoutThickness;
+    }
+
+    public void setStrikeoutThickness(int strikeoutThickness) {
+        this.strikeoutThickness = strikeoutThickness;
     }
 
 }

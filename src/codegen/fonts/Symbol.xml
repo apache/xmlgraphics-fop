@@ -21,203 +21,204 @@
   <family-name>Symbol</family-name>
   <class-name>Symbol</class-name>
   <encoding>SymbolEncoding</encoding>
+   <underline-position>-100</underline-position>
+   <underline-thickness>50</underline-thickness>
   <cap-height>1010</cap-height>
   <x-height>520</x-height>
   <ascender>1010</ascender>
   <descender>-293</descender>
   <first-char>32</first-char>
   <last-char>255</last-char>
-  <widths>
-    <char name="space" width="250"/>
-    <char name="exclam" width="333"/>
-    <char name="universal" width="713"/>
-    <char name="numbersign" width="500"/>
-    <char name="existential" width="549"/>
-    <char name="percent" width="833"/>
-    <char name="ampersand" width="778"/>
-    <char name="suchthat" width="439"/>
-    <char name="parenleft" width="333"/>
-    <char name="parenright" width="333"/>
-    <char name="asteriskmath" width="500"/>
-    <char name="plus" width="549"/>
-    <char name="comma" width="250"/>
-    <char name="minus" width="549"/>
-    <char name="period" width="250"/>
-    <char name="slash" width="278"/>
-    <char name="zero" width="500"/>
-    <char name="one" width="500"/>
-    <char name="two" width="500"/>
-    <char name="three" width="500"/>
-    <char name="four" width="500"/>
-    <char name="five" width="500"/>
-    <char name="six" width="500"/>
-    <char name="seven" width="500"/>
-    <char name="eight" width="500"/>
-    <char name="nine" width="500"/>
-    <char name="colon" width="278"/>
-    <char name="semicolon" width="278"/>
-    <char name="less" width="549"/>
-    <char name="equal" width="549"/>
-    <char name="greater" width="549"/>
-    <char name="question" width="444"/>
-    <char name="congruent" width="549"/>
-    <char name="Alpha" width="722"/>
-    <char name="Beta" width="667"/>
-    <char name="Chi" width="722"/>
-    <char name="Delta" width="612"/>
-    <char name="Epsilon" width="611"/>
-    <char name="Phi" width="763"/>
-    <char name="Gamma" width="603"/>
-    <char name="Eta" width="722"/>
-    <char name="Iota" width="333"/>
-    <char name="theta1" width="631"/>
-    <char name="Kappa" width="722"/>
-    <char name="Lambda" width="686"/>
-    <char name="Mu" width="889"/>
-    <char name="Nu" width="722"/>
-    <char name="Omicron" width="722"/>
-    <char name="Pi" width="768"/>
-    <char name="Theta" width="741"/>
-    <char name="Rho" width="556"/>
-    <char name="Sigma" width="592"/>
-    <char name="Tau" width="611"/>
-    <char name="Upsilon" width="690"/>
-    <char name="sigma1" width="439"/>
-    <char name="Omega" width="768"/>
-    <char name="Xi" width="645"/>
-    <char name="Psi" width="795"/>
-    <char name="Zeta" width="611"/>
-    <char name="bracketleft" width="333"/>
-    <char name="therefore" width="863"/>
-    <char name="bracketright" width="333"/>
-    <char name="perpendicular" width="658"/>
-    <char name="underscore" width="500"/>
-    <char name="radicalex" width="500"/>
-    <char name="alpha" width="631"/>
-    <char name="beta" width="549"/>
-    <char name="chi" width="549"/>
-    <char name="delta" width="494"/>
-    <char name="epsilon" width="439"/>
-    <char name="phi" width="521"/>
-    <char name="gamma" width="411"/>
-    <char name="eta" width="603"/>
-    <char name="iota" width="329"/>
-    <char name="phi1" width="603"/>
-    <char name="kappa" width="549"/>
-    <char name="lambda" width="549"/>
-    <char name="m" width="576"/>
-    <char name="mu" width="576"/>
-    <char name="nu" width="521"/>
-    <char name="omicron" width="549"/>
-    <char name="pi" width="549"/>
-    <char name="theta" width="521"/>
-    <char name="rho" width="549"/>
-    <char name="sigma" width="603"/>
-    <char name="tau" width="439"/>
-    <char name="upsilon" width="576"/>
-    <char name="omega1" width="713"/>
-    <char name="omega" width="686"/>
-    <char name="xi" width="493"/>
-    <char name="psi" width="686"/>
-    <char name="zeta" width="494"/>
-    <char name="braceleft" width="480"/>
-    <char name="bar" width="200"/>
-    <char name="braceright" width="480"/>
-    <char name="similar" width="549"/>
-    <char name="Euro" width="750"/>
-    <char name="Upsilon1" width="620"/>
-    <char name="minute" width="247"/>
-    <char name="lessequal" width="549"/>
-    <char name="fraction" width="167"/>
-    <char name="infinity" width="713"/>
-    <char name="florin" width="500"/>
-    <char name="club" width="753"/>
-    <char name="diamond" width="753"/>
-    <char name="heart" width="753"/>
-    <char name="spade" width="753"/>
-    <char name="arrowboth" width="1042"/>
-    <char name="arrowleft" width="987"/>
-    <char name="arrowup" width="603"/>
-    <char name="arrowright" width="987"/>
-    <char name="arrowdown" width="603"/>
-    <char name="degree" width="400"/>
-    <char name="plusminus" width="549"/>
-    <char name="second" width="411"/>
-    <char name="greaterequal" width="549"/>
-    <char name="multiply" width="549"/>
-    <char name="proportional" width="713"/>
-    <char name="partialdiff" width="494"/>
-    <char name="bullet" width="460"/>
-    <char name="divide" width="549"/>
-    <char name="notequal" width="549"/>
-    <char name="equivalence" width="549"/>
-    <char name="approxequal" width="549"/>
-    <char name="ellipsis" width="1000"/>
-    <char name="arrowvertex" width="603"/>
-    <char name="arrowhorizex" width="1000"/>
-    <char name="carriagereturn" width="658"/>
-    <char name="aleph" width="823"/>
-    <char name="Ifraktur" width="686"/>
-    <char name="Rfraktur" width="795"/>
-    <char name="weierstrass" width="987"/>
-    <char name="circlemultiply" width="768"/>
-    <char name="circleplus" width="768"/>
-    <char name="emptyset" width="823"/>
-    <char name="intersection" width="768"/>
-    <char name="union" width="768"/>
-    <char name="propersuperset" width="713"/>
-    <char name="reflexsuperset" width="713"/>
-    <char name="notsubset" width="713"/>
-    <char name="propersubset" width="713"/>
-    <char name="reflexsubset" width="713"/>
-    <char name="element" width="713"/>
-    <char name="notelement" width="713"/>
-    <char name="angle" width="768"/>
-    <char name="gradient" width="713"/>
-    <char name="registerserif" width="790"/>
-    <char name="copyrightserif" width="790"/>
-    <char name="trademarkserif" width="890"/>
-    <char name="product" width="823"/>
-    <char name="radical" width="549"/>
-    <char name="dotmath" width="250"/>
-    <char name="logicalnot" width="713"/>
-    <char name="logicaland" width="603"/>
-    <char name="logicalor" width="603"/>
-    <char name="arrowdblboth" width="1042"/>
-    <char name="arrowdblleft" width="987"/>
-    <char name="arrowdblup" width="603"/>
-    <char name="arrowdblright" width="987"/>
-    <char name="arrowdbldown" width="603"/>
-    <char name="lozenge" width="494"/>
-    <char name="angleleft" width="329"/>
-    <char name="registersans" width="790"/>
-    <char name="copyrightsans" width="790"/>
-    <char name="trademarksans" width="786"/>
-    <char name="summation" width="713"/>
-    <char name="parenlefttp" width="384"/>
-    <char name="parenleftex" width="384"/>
-    <char name="parenleftbt" width="384"/>
-    <char name="bracketlefttp" width="384"/>
-    <char name="bracketleftex" width="384"/>
-    <char name="bracketleftbt" width="384"/>
-    <char name="bracelefttp" width="494"/>
-    <char name="braceleftmid" width="494"/>
-    <char name="braceleftbt" width="494"/>
-    <char name="braceex" width="494"/>
-    <char name="angleright" width="329"/>
-    <char name="integral" width="274"/>
-    <char name="integraltp" width="686"/>
-    <char name="integralex" width="686"/>
-    <char name="integralbt" width="686"/>
-    <char name="parenrighttp" width="384"/>
-    <char name="parenrightex" width="384"/>
-    <char name="parenrightbt" width="384"/>
-    <char name="bracketrighttp" width="384"/>
-    <char name="bracketrightex" width="384"/>
-    <char name="bracketrightbt" width="384"/>
-    <char name="bracerighttp" width="494"/>
-    <char name="bracerightmid" width="494"/>
-    <char name="bracerightbt" width="494"/>
-    <char name="apple" width="790"/>
-  </widths>
+    <char-metrics>
+    <char name="space" width="250" llx="0" lly="0" urx="0" ury="0"/>
+    <char name="exclam" width="333" llx="128" lly="-17" urx="240" ury="672"/>
+    <char name="universal" width="713" llx="31" lly="0" urx="681" ury="705"/>
+    <char name="numbersign" width="500" llx="20" lly="-16" urx="481" ury="673"/>
+    <char name="existential" width="549" llx="25" lly="0" urx="478" ury="707"/>
+    <char name="percent" width="833" llx="63" lly="-36" urx="771" ury="655"/>
+    <char name="ampersand" width="778" llx="41" lly="-18" urx="750" ury="661"/>
+    <char name="suchthat" width="439" llx="48" lly="-17" urx="414" ury="500"/>
+    <char name="parenleft" width="333" llx="53" lly="-191" urx="300" ury="673"/>
+    <char name="parenright" width="333" llx="30" lly="-191" urx="277" ury="673"/>
+    <char name="asteriskmath" width="500" llx="65" lly="134" urx="427" ury="551"/>
+    <char name="plus" width="549" llx="10" lly="0" urx="539" ury="533"/>
+    <char name="comma" width="250" llx="56" lly="-152" urx="194" ury="104"/>
+    <char name="minus" width="549" llx="11" lly="233" urx="535" ury="288"/>
+    <char name="period" width="250" llx="69" lly="-17" urx="181" ury="95"/>
+    <char name="slash" width="278" llx="0" lly="-18" urx="254" ury="646"/>
+    <char name="zero" width="500" llx="24" lly="-14" urx="476" ury="685"/>
+    <char name="one" width="500" llx="117" lly="0" urx="390" ury="673"/>
+    <char name="two" width="500" llx="25" lly="0" urx="475" ury="685"/>
+    <char name="three" width="500" llx="43" lly="-14" urx="435" ury="685"/>
+    <char name="four" width="500" llx="15" lly="0" urx="469" ury="685"/>
+    <char name="five" width="500" llx="32" lly="-14" urx="445" ury="690"/>
+    <char name="six" width="500" llx="34" lly="-14" urx="468" ury="685"/>
+    <char name="seven" width="500" llx="24" lly="-16" urx="448" ury="673"/>
+    <char name="eight" width="500" llx="56" lly="-14" urx="445" ury="685"/>
+    <char name="nine" width="500" llx="30" lly="-18" urx="459" ury="685"/>
+    <char name="colon" width="278" llx="81" lly="-17" urx="193" ury="460"/>
+    <char name="semicolon" width="278" llx="83" lly="-152" urx="221" ury="460"/>
+    <char name="less" width="549" llx="26" lly="0" urx="523" ury="522"/>
+    <char name="equal" width="549" llx="11" lly="141" urx="537" ury="390"/>
+    <char name="greater" width="549" llx="26" lly="0" urx="523" ury="522"/>
+    <char name="question" width="444" llx="70" lly="-17" urx="412" ury="686"/>
+    <char name="congruent" width="549" llx="11" lly="0" urx="537" ury="475"/>
+    <char name="Alpha" width="722" llx="4" lly="0" urx="684" ury="673"/>
+    <char name="Beta" width="667" llx="29" lly="0" urx="592" ury="673"/>
+    <char name="Chi" width="722" llx="-9" lly="0" urx="704" ury="673"/>
+    <char name="Delta" width="612" llx="6" lly="0" urx="608" ury="688"/>
+    <char name="Epsilon" width="611" llx="32" lly="0" urx="617" ury="673"/>
+    <char name="Phi" width="763" llx="26" lly="0" urx="741" ury="673"/>
+    <char name="Gamma" width="603" llx="24" lly="0" urx="609" ury="673"/>
+    <char name="Eta" width="722" llx="39" lly="0" urx="729" ury="673"/>
+    <char name="Iota" width="333" llx="32" lly="0" urx="316" ury="673"/>
+    <char name="theta1" width="631" llx="18" lly="-18" urx="623" ury="689"/>
+    <char name="Kappa" width="722" llx="35" lly="0" urx="722" ury="673"/>
+    <char name="Lambda" width="686" llx="6" lly="0" urx="680" ury="688"/>
+    <char name="Mu" width="889" llx="28" lly="0" urx="887" ury="673"/>
+    <char name="Nu" width="722" llx="29" lly="-8" urx="720" ury="673"/>
+    <char name="Omicron" width="722" llx="41" lly="-17" urx="715" ury="685"/>
+    <char name="Pi" width="768" llx="25" lly="0" urx="745" ury="673"/>
+    <char name="Theta" width="741" llx="41" lly="-17" urx="715" ury="685"/>
+    <char name="Rho" width="556" llx="28" lly="0" urx="563" ury="673"/>
+    <char name="Sigma" width="592" llx="5" lly="0" urx="589" ury="673"/>
+    <char name="Tau" width="611" llx="33" lly="0" urx="607" ury="673"/>
+    <char name="Upsilon" width="690" llx="-8" lly="0" urx="694" ury="673"/>
+    <char name="sigma1" width="439" llx="40" lly="-233" urx="436" ury="500"/>
+    <char name="Omega" width="768" llx="34" lly="0" urx="736" ury="688"/>
+    <char name="Xi" width="645" llx="40" lly="0" urx="599" ury="673"/>
+    <char name="Psi" width="795" llx="15" lly="0" urx="781" ury="684"/>
+    <char name="Zeta" width="611" llx="44" lly="0" urx="636" ury="673"/>
+    <char name="bracketleft" width="333" llx="86" lly="-155" urx="299" ury="674"/>
+    <char name="therefore" width="863" llx="163" lly="0" urx="701" ury="487"/>
+    <char name="bracketright" width="333" llx="33" lly="-155" urx="246" ury="674"/>
+    <char name="perpendicular" width="658" llx="15" lly="0" urx="652" ury="674"/>
+    <char name="underscore" width="500" llx="-2" lly="-125" urx="502" ury="-75"/>
+    <char name="radicalex" width="500" llx="480" lly="881" urx="1090" ury="917"/>
+    <char name="alpha" width="631" llx="41" lly="-18" urx="622" ury="500"/>
+    <char name="beta" width="549" llx="61" lly="-223" urx="515" ury="741"/>
+    <char name="chi" width="549" llx="12" lly="-231" urx="522" ury="499"/>
+    <char name="delta" width="494" llx="40" lly="-19" urx="481" ury="740"/>
+    <char name="epsilon" width="439" llx="22" lly="-19" urx="427" ury="502"/>
+    <char name="phi" width="521" llx="28" lly="-224" urx="492" ury="673"/>
+    <char name="gamma" width="411" llx="5" lly="-225" urx="484" ury="499"/>
+    <char name="eta" width="603" llx="0" lly="-202" urx="527" ury="514"/>
+    <char name="iota" width="329" llx="0" lly="-17" urx="301" ury="503"/>
+    <char name="phi1" width="603" llx="36" lly="-224" urx="587" ury="499"/>
+    <char name="kappa" width="549" llx="33" lly="0" urx="558" ury="501"/>
+    <char name="lambda" width="549" llx="24" lly="-17" urx="548" ury="739"/>
+    <char name="mu" width="576" llx="33" lly="-223" urx="567" ury="500"/>
+    <char name="nu" width="521" llx="-9" lly="-16" urx="475" ury="507"/>
+    <char name="omicron" width="549" llx="35" lly="-19" urx="501" ury="499"/>
+    <char name="pi" width="549" llx="10" lly="-19" urx="530" ury="487"/>
+    <char name="theta" width="521" llx="43" lly="-17" urx="485" ury="690"/>
+    <char name="rho" width="549" llx="50" lly="-230" urx="490" ury="499"/>
+    <char name="sigma" width="603" llx="30" lly="-21" urx="588" ury="500"/>
+    <char name="tau" width="439" llx="10" lly="-19" urx="418" ury="500"/>
+    <char name="upsilon" width="576" llx="7" lly="-18" urx="535" ury="507"/>
+    <char name="omega1" width="713" llx="12" lly="-18" urx="671" ury="583"/>
+    <char name="omega" width="686" llx="42" lly="-17" urx="684" ury="500"/>
+    <char name="xi" width="493" llx="27" lly="-224" urx="469" ury="766"/>
+    <char name="psi" width="686" llx="12" lly="-228" urx="701" ury="500"/>
+    <char name="zeta" width="494" llx="60" lly="-225" urx="467" ury="756"/>
+    <char name="braceleft" width="480" llx="58" lly="-183" urx="397" ury="673"/>
+    <char name="bar" width="200" llx="65" lly="-293" urx="135" ury="707"/>
+    <char name="braceright" width="480" llx="79" lly="-183" urx="418" ury="673"/>
+    <char name="similar" width="549" llx="17" lly="203" urx="529" ury="307"/>
+    <char name="Euro" width="750" llx="20" lly="-12" urx="714" ury="685"/>
+    <char name="Upsilon1" width="620" llx="-2" lly="0" urx="610" ury="685"/>
+    <char name="minute" width="247" llx="27" lly="459" urx="228" ury="735"/>
+    <char name="lessequal" width="549" llx="29" lly="0" urx="526" ury="639"/>
+    <char name="fraction" width="167" llx="-180" lly="-12" urx="340" ury="677"/>
+    <char name="infinity" width="713" llx="26" lly="124" urx="688" ury="404"/>
+    <char name="florin" width="500" llx="2" lly="-193" urx="494" ury="686"/>
+    <char name="club" width="753" llx="86" lly="-26" urx="660" ury="533"/>
+    <char name="diamond" width="753" llx="142" lly="-36" urx="600" ury="550"/>
+    <char name="heart" width="753" llx="117" lly="-33" urx="631" ury="532"/>
+    <char name="spade" width="753" llx="113" lly="-36" urx="629" ury="548"/>
+    <char name="arrowboth" width="1042" llx="24" lly="-15" urx="1024" ury="511"/>
+    <char name="arrowleft" width="987" llx="32" lly="-15" urx="942" ury="511"/>
+    <char name="arrowup" width="603" llx="45" lly="0" urx="571" ury="910"/>
+    <char name="arrowright" width="987" llx="49" lly="-15" urx="959" ury="511"/>
+    <char name="arrowdown" width="603" llx="45" lly="-22" urx="571" ury="888"/>
+    <char name="degree" width="400" llx="50" lly="385" urx="350" ury="685"/>
+    <char name="plusminus" width="549" llx="10" lly="0" urx="539" ury="645"/>
+    <char name="second" width="411" llx="20" lly="459" urx="413" ury="737"/>
+    <char name="greaterequal" width="549" llx="29" lly="0" urx="526" ury="639"/>
+    <char name="multiply" width="549" llx="17" lly="8" urx="533" ury="524"/>
+    <char name="proportional" width="713" llx="27" lly="123" urx="639" ury="404"/>
+    <char name="partialdiff" width="494" llx="26" lly="-20" urx="462" ury="746"/>
+    <char name="bullet" width="460" llx="50" lly="113" urx="410" ury="473"/>
+    <char name="divide" width="549" llx="10" lly="71" urx="536" ury="456"/>
+    <char name="notequal" width="549" llx="15" lly="-25" urx="540" ury="549"/>
+    <char name="equivalence" width="549" llx="14" lly="82" urx="538" ury="443"/>
+    <char name="approxequal" width="549" llx="14" lly="135" urx="527" ury="394"/>
+    <char name="ellipsis" width="1000" llx="111" lly="-17" urx="889" ury="95"/>
+    <char name="arrowvertex" width="603" llx="280" lly="-120" urx="336" ury="1010"/>
+    <char name="arrowhorizex" width="1000" llx="-60" lly="220" urx="1050" ury="276"/>
+    <char name="carriagereturn" width="658" llx="15" lly="-16" urx="602" ury="629"/>
+    <char name="aleph" width="823" llx="175" lly="-18" urx="661" ury="658"/>
+    <char name="Ifraktur" width="686" llx="10" lly="-53" urx="578" ury="740"/>
+    <char name="Rfraktur" width="795" llx="26" lly="-15" urx="759" ury="734"/>
+    <char name="weierstrass" width="987" llx="159" lly="-211" urx="870" ury="573"/>
+    <char name="circlemultiply" width="768" llx="43" lly="-17" urx="733" ury="673"/>
+    <char name="circleplus" width="768" llx="43" lly="-15" urx="733" ury="675"/>
+    <char name="emptyset" width="823" llx="39" lly="-24" urx="781" ury="719"/>
+    <char name="intersection" width="768" llx="40" lly="0" urx="732" ury="509"/>
+    <char name="union" width="768" llx="40" lly="-17" urx="732" ury="492"/>
+    <char name="propersuperset" width="713" llx="20" lly="0" urx="673" ury="470"/>
+    <char name="reflexsuperset" width="713" llx="20" lly="-125" urx="673" ury="470"/>
+    <char name="notsubset" width="713" llx="36" lly="-70" urx="690" ury="540"/>
+    <char name="propersubset" width="713" llx="37" lly="0" urx="690" ury="470"/>
+    <char name="reflexsubset" width="713" llx="37" lly="-125" urx="690" ury="470"/>
+    <char name="element" width="713" llx="45" lly="0" urx="505" ury="468"/>
+    <char name="notelement" width="713" llx="45" lly="-58" urx="505" ury="555"/>
+    <char name="angle" width="768" llx="26" lly="0" urx="738" ury="673"/>
+    <char name="gradient" width="713" llx="36" lly="-19" urx="681" ury="718"/>
+    <char name="registerserif" width="790" llx="50" lly="-17" urx="740" ury="673"/>
+    <char name="copyrightserif" width="790" llx="51" lly="-15" urx="741" ury="675"/>
+    <char name="trademarkserif" width="890" llx="18" lly="293" urx="855" ury="673"/>
+    <char name="product" width="823" llx="25" lly="-101" urx="803" ury="751"/>
+    <char name="radical" width="549" llx="10" lly="-38" urx="515" ury="917"/>
+    <char name="dotmath" width="250" llx="69" lly="210" urx="169" ury="310"/>
+    <char name="logicalnot" width="713" llx="15" lly="0" urx="680" ury="288"/>
+    <char name="logicaland" width="603" llx="23" lly="0" urx="583" ury="454"/>
+    <char name="logicalor" width="603" llx="30" lly="0" urx="578" ury="477"/>
+    <char name="arrowdblboth" width="1042" llx="27" lly="-20" urx="1023" ury="510"/>
+    <char name="arrowdblleft" width="987" llx="30" lly="-15" urx="939" ury="513"/>
+    <char name="arrowdblup" width="603" llx="39" lly="2" urx="567" ury="911"/>
+    <char name="arrowdblright" width="987" llx="45" lly="-20" urx="954" ury="508"/>
+    <char name="arrowdbldown" width="603" llx="44" lly="-19" urx="572" ury="890"/>
+    <char name="lozenge" width="494" llx="18" lly="0" urx="466" ury="745"/>
+    <char name="angleleft" width="329" llx="25" lly="-198" urx="306" ury="746"/>
+    <char name="registersans" width="790" llx="50" lly="-20" urx="740" ury="670"/>
+    <char name="copyrightsans" width="790" llx="49" lly="-15" urx="739" ury="675"/>
+    <char name="trademarksans" width="786" llx="5" lly="293" urx="725" ury="673"/>
+    <char name="summation" width="713" llx="14" lly="-108" urx="695" ury="752"/>
+    <char name="parenlefttp" width="384" llx="24" lly="-293" urx="436" ury="926"/>
+    <char name="parenleftex" width="384" llx="24" lly="-85" urx="108" ury="925"/>
+    <char name="parenleftbt" width="384" llx="24" lly="-293" urx="436" ury="926"/>
+    <char name="bracketlefttp" width="384" llx="0" lly="-80" urx="349" ury="926"/>
+    <char name="bracketleftex" width="384" llx="0" lly="-79" urx="77" ury="925"/>
+    <char name="bracketleftbt" width="384" llx="0" lly="-80" urx="349" ury="926"/>
+    <char name="bracelefttp" width="494" llx="209" lly="-85" urx="445" ury="925"/>
+    <char name="braceleftmid" width="494" llx="20" lly="-85" urx="284" ury="935"/>
+    <char name="braceleftbt" width="494" llx="209" lly="-75" urx="445" ury="935"/>
+    <char name="braceex" width="494" llx="209" lly="-85" urx="284" ury="935"/>
+    <char name="angleright" width="329" llx="21" lly="-198" urx="302" ury="746"/>
+    <char name="integral" width="274" llx="2" lly="-107" urx="291" ury="916"/>
+    <char name="integraltp" width="686" llx="308" lly="-88" urx="675" ury="920"/>
+    <char name="integralex" width="686" llx="308" lly="-88" urx="378" ury="975"/>
+    <char name="integralbt" width="686" llx="11" lly="-87" urx="378" ury="921"/>
+    <char name="parenrighttp" width="384" llx="54" lly="-293" urx="466" ury="926"/>
+    <char name="parenrightex" width="384" llx="382" lly="-85" urx="466" ury="925"/>
+    <char name="parenrightbt" width="384" llx="54" lly="-293" urx="466" ury="926"/>
+    <char name="bracketrighttp" width="384" llx="22" lly="-80" urx="371" ury="926"/>
+    <char name="bracketrightex" width="384" llx="294" lly="-79" urx="371" ury="925"/>
+    <char name="bracketrightbt" width="384" llx="22" lly="-80" urx="371" ury="926"/>
+    <char name="bracerighttp" width="494" llx="48" lly="-85" urx="284" ury="925"/>
+    <char name="bracerightmid" width="494" llx="209" lly="-85" urx="473" ury="935"/>
+    <char name="bracerightbt" width="494" llx="48" lly="-75" urx="284" ury="935"/>
+    <char name="apple" width="790" llx="56" lly="-3" urx="733" ury="808"/>
+    </char-metrics>
 </font-metrics>

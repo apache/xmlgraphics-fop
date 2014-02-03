@@ -430,6 +430,24 @@ public class TTFFileTestCase {
         assertEquals(true, droidmonoTTFFile.isEmbeddable());
     }
 
+    /** Underline position and thickness. */
+    @Test
+    public void testUnderline() {
+        assertEquals(-63, dejavuTTFFile.getUnderlinePosition());
+        assertEquals(43, dejavuTTFFile.getUnderlineThickness());
+        assertEquals(-75, droidmonoTTFFile.getUnderlinePosition());
+        assertEquals(49, droidmonoTTFFile.getUnderlineThickness());
+    }
+
+    /** Strikeout position and thickness. */
+    @Test
+    public void testStrikeout() {
+        assertEquals(258, dejavuTTFFile.getStrikeoutPosition());
+        assertEquals(49, dejavuTTFFile.getStrikeoutThickness());
+        assertEquals(243, droidmonoTTFFile.getStrikeoutPosition());
+        assertEquals(49, droidmonoTTFFile.getStrikeoutThickness());
+    }
+
     /**
      * Test readFont() - Add implementation if necessary.
      */
