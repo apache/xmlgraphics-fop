@@ -122,4 +122,12 @@ public interface AFPEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void charactersetMissingMetrics(Object source, char character, String charSet);
+
+    /**
+     * Double-byte fonts are not currently supported in SVG.
+     * @param source the event source
+     * @param fontFamily name of DB font
+     * @event.severity WARN
+     */
+    void invalidDBFontInSVG(Object source, String fontFamily);
 }

@@ -21,7 +21,6 @@ package org.apache.fop.fo;
 
 import java.awt.Color;
 import java.nio.CharBuffer;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
@@ -38,12 +37,13 @@ import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.fonts.TextFragment;
 import org.apache.fop.util.CharUtilities;
 
 /**
  * A text node (PCDATA) in the formatting object tree.
  */
-public class FOText extends FONode implements CharSequence {
+public class FOText extends FONode implements CharSequence, TextFragment {
 
     /** the <code>CharBuffer</code> containing the text */
     private CharBuffer charBuffer;
@@ -92,9 +92,6 @@ public class FOText extends FONode implements CharSequence {
 
     /* bidi levels */
     private int[] bidiLevels;
-
-    /* advanced script processing state */
-    private Map/*<MapRange,String>*/ mappings;
 
     private static final int IS_WORD_CHAR_FALSE = 0;
     private static final int IS_WORD_CHAR_TRUE = 1;
@@ -801,93 +798,6 @@ public class FOText extends FONode implements CharSequence {
             return bidiLevels [ position ];
         } else {
             return -1;
-        }
-    }
-
-    /**
-     * Add characters mapped by script substitution processing.
-     * @param start index in character buffer
-     * @param end index in character buffer
-     * @param mappedChars sequence of character codes denoting substituted characters
-     */
-    public void addMapping(int start, int end, CharSequence mappedChars) {
-        if (mappings == null) {
-            mappings = new java.util.HashMap();
-        }
-        mappings.put(new MapRange(start, end), mappedChars.toString());
-    }
-
-    /**
-     * Determine if characters over specific interval  have a mapping.
-     * @param start index in character buffer
-     * @param end index in character buffer
-     * @return true if a mapping exist such that the mapping's interval is coincident to
-     * [start,end)
-     */
-    public boolean hasMapping(int start, int end) {
-        return (mappings != null) && (mappings.containsKey(new MapRange(start, end)));
-    }
-
-    /**
-     * Obtain mapping of characters over specific interval.
-     * @param start index in character buffer
-     * @param end index in character buffer
-     * @return a string of characters representing the mapping over the interval
-     * [start,end)
-     */
-    public String getMapping(int start, int end) {
-        if (mappings != null) {
-            return (String) mappings.get(new MapRange(start, end));
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Obtain length of mapping of characters over specific interval.
-     * @param start index in character buffer
-     * @param end index in character buffer
-     * @return the length of the mapping (if present) or zero
-     */
-    public int getMappingLength(int start, int end) {
-        if (mappings != null) {
-            return ((String) mappings.get(new MapRange(start, end))) .length();
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * Obtain bidirectional levels of mapping of characters over specific interval.
-     * @param start index in character buffer
-     * @param end index in character buffer
-     * @return a (possibly empty) array of bidi levels or null
-     * in case no bidi levels have been assigned
-     */
-    public int[] getMappingBidiLevels(int start, int end) {
-        if (hasMapping(start, end)) {
-            int   nc = end - start;
-            int   nm = getMappingLength(start, end);
-            int[] la = getBidiLevels(start, end);
-            if (la == null) {
-                return null;
-            } else if (nm == nc) {            // mapping is same length as mapped range
-                return la;
-            } else if (nm > nc) {             // mapping is longer than mapped range
-                int[] ma = new int [ nm ];
-                System.arraycopy(la, 0, ma, 0, la.length);
-                for (int i = la.length,
-                          n = ma.length, l = (i > 0) ? la [ i - 1 ] : 0; i < n; i++) {
-                    ma [ i ] = l;
-                }
-                return ma;
-            } else {                            // mapping is shorter than mapped range
-                int[] ma = new int [ nm ];
-                System.arraycopy(la, 0, ma, 0, ma.length);
-                return ma;
-            }
-        } else {
-            return getBidiLevels(start, end);
         }
     }
 

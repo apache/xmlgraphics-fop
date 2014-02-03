@@ -38,7 +38,8 @@ import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.svg.font.FOPGVTFont;
+import org.apache.fop.svg.font.FOPGVTFontFamily;
 
 /**
  * Utilities for java.text.AttributedCharacterIterator.
@@ -64,57 +65,43 @@ public final class ACIUtils {
         @SuppressWarnings("unchecked")
         List<GVTFontFamily> gvtFonts = (List<GVTFontFamily>) aci.getAttribute(
                 GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
-        Float posture = (Float) aci.getAttribute(TextAttribute.POSTURE);
-        Float taWeight = (Float) aci.getAttribute(TextAttribute.WEIGHT);
-        Float fontSize = (Float) aci.getAttribute(TextAttribute.SIZE);
-
-        String style = toStyle(posture);
-        int weight = toCSSWeight(taWeight);
-        int fsize = (int)(fontSize.floatValue() * 1000);
+        String style = toStyle((Float) aci.getAttribute(TextAttribute.POSTURE));
+        int weight = toCSSWeight((Float) aci.getAttribute(TextAttribute.WEIGHT));
+        float fontSize = ((Float) aci.getAttribute(TextAttribute.SIZE)).floatValue();
 
         String firstFontFamily = null;
-
         //GVT_FONT can sometimes be different from the fonts in GVT_FONT_FAMILIES
         //or GVT_FONT_FAMILIES can even be empty and only GVT_FONT is set
-        /* The following code section is not available until Batik 1.7 is released. */
-        GVTFont gvtFont = (GVTFont)aci.getAttribute(
-                GVTAttributedCharacterIterator.TextAttribute.GVT_FONT);
+        GVTFont gvtFont = (GVTFont) aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.GVT_FONT);
         if (gvtFont != null) {
             String gvtFontFamily = gvtFont.getFamilyName();
-            if (fontInfo.hasFont(gvtFontFamily, style, weight)) {
-                FontTriplet triplet = fontInfo.fontLookup(gvtFontFamily, style,
-                                                          weight);
-                Font f = fontInfo.getFontInstance(triplet, fsize);
+            if (gvtFont instanceof FOPGVTFont) {
+                Font font = ((FOPGVTFont) gvtFont).getFont();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Found a font that matches the GVT font: "
                               + gvtFontFamily + ", " + weight + ", " + style
-                              + " -> " + f);
+                              + " -> " + font);
                 }
-                fonts.add(f);
+                fonts.add(font);
             }
             firstFontFamily = gvtFontFamily;
         }
 
         if (gvtFonts != null) {
             boolean haveInstanceOfSVGFontFamily = false;
-            for (GVTFontFamily fam : gvtFonts) {
-                if (fam instanceof SVGFontFamily) {
+            for (GVTFontFamily fontFamily : gvtFonts) {
+                if (fontFamily instanceof SVGFontFamily) {
                     haveInstanceOfSVGFontFamily = true;
-                }
-                String fontFamily = fam.getFamilyName();
-                if (fontInfo.hasFont(fontFamily, style, weight)) {
-                    FontTriplet triplet = fontInfo.fontLookup(fontFamily, style,
-                                                       weight);
-                    Font f = fontInfo.getFontInstance(triplet, fsize);
+                } else if (fontFamily instanceof FOPGVTFontFamily) {
+                    Font font = ((FOPGVTFontFamily) fontFamily).deriveFont(fontSize, aci).getFont();
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Found a font that matches the GVT font family: "
-                                + fontFamily + ", " + weight + ", " + style
-                                + " -> " + f);
+                                + fontFamily.getFamilyName() + ", " + weight + ", " + style + " -> " + font);
                     }
-                    fonts.add(f);
+                    fonts.add(font);
                 }
                 if (firstFontFamily == null) {
-                    firstFontFamily = fontFamily;
+                    firstFontFamily = fontFamily.getFamilyName();
                 }
             }
             // SVG fonts are embedded fonts in the SVG document and are rarely used; however if they
@@ -126,25 +113,10 @@ public final class ACIUtils {
                 return null; // Let Batik paint this text!
             }
         }
-        if (fonts.isEmpty()) {
-            if (firstFontFamily == null) {
-                //This will probably never happen. Just to be on the safe side.
-                firstFontFamily = "any";
-            }
-            //lookup with fallback possibility (incl. substitution notification)
-            FontTriplet triplet = fontInfo.fontLookup(firstFontFamily, style, weight);
-            Font f = fontInfo.getFontInstance(triplet, fsize);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Falling back to adjustable font lookup up for: "
-                        + firstFontFamily + ", " + weight + ", " + style
-                        + " -> " + f);
-            }
-            fonts.add(f);
-        }
-        return fonts.toArray(new Font[fonts.size()]);
+        return fonts.isEmpty() ? null : fonts.toArray(new Font[fonts.size()]);
     }
 
-    private static int toCSSWeight(Float weight) {
+    public static int toCSSWeight(Float weight) {
         if (weight == null) {
             return 400;
         } else if (weight <= TextAttribute.WEIGHT_EXTRA_LIGHT.floatValue()) {
@@ -170,7 +142,7 @@ public final class ACIUtils {
         }
     }
 
-    private static String toStyle(Float posture) {
+    public static String toStyle(Float posture) {
         return ((posture != null) && (posture.floatValue() > 0.0))
                        ? Font.STYLE_ITALIC
                        : Font.STYLE_NORMAL;

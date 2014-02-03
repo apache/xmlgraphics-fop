@@ -18,6 +18,7 @@
 /* $Id$ */
 
 package org.apache.fop.fonts;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -250,6 +251,26 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
         return realFont.getXHeight(size);
     }
 
+    public int getUnderlinePosition(int size) {
+        load(true);
+        return realFont.getUnderlinePosition(size);
+    }
+
+    public int getUnderlineThickness(int size) {
+        load(true);
+        return realFont.getUnderlineThickness(size);
+    }
+
+    public int getStrikeoutPosition(int size) {
+        load(true);
+        return realFont.getStrikeoutPosition(size);
+    }
+
+    public int getStrikeoutThickness(int size) {
+        load(true);
+        return realFont.getStrikeoutThickness(size);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -266,6 +287,11 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     public int[] getWidths() {
         load(true);
         return realFont.getWidths();
+    }
+
+    public Rectangle getBoundingBox(int glyphIndex, int size) {
+        load(true);
+        return realFont.getBoundingBox(glyphIndex, size);
     }
 
     /**

@@ -40,6 +40,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.svg.AbstractFOPTranscoder;
 import org.apache.fop.svg.PDFDocumentGraphics2DConfigurator;
+import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 
 /**
  * <p>This class enables to transcode an input to a PostScript document.</p>
@@ -115,6 +116,8 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
                 this.fontInfo = PDFDocumentGraphics2DConfigurator.createFontInfo(
                         getEffectiveConfiguration(), useComplexScriptFeatures);
                 graphics.setCustomTextHandler(new NativeTextHandler(graphics, fontInfo));
+                ((FOPTranscoderUserAgent) userAgent).setFontFamilyResolver(
+                        new FOPFontFamilyResolverImpl(fontInfo));
             } catch (FOPException fe) {
                 throw new TranscoderException(fe);
             }

@@ -20,6 +20,7 @@
 package org.apache.fop.render.java2d;
 
 // Java
+import java.awt.Rectangle;
 import java.util.Map;
 import java.util.Set;
 
@@ -133,6 +134,22 @@ public class SystemFontMetricsMapper extends Typeface implements FontMetricsMapp
         return java2DFontMetrics.getXHeight(family, style, size);
     }
 
+    public int getUnderlinePosition(int size) {
+        return java2DFontMetrics.getUnderlinePosition(family, style, size);
+    }
+
+    public int getUnderlineThickness(int size) {
+        return java2DFontMetrics.getUnderlineThickness(family, style, size);
+    }
+
+    public int getStrikeoutPosition(int size) {
+        return java2DFontMetrics.getStrikeoutPosition(family, style, size);
+    }
+
+    public int getStrikeoutThickness(int size) {
+        return java2DFontMetrics.getStrikeoutThickness(family, style, size);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -146,6 +163,10 @@ public class SystemFontMetricsMapper extends Typeface implements FontMetricsMapp
      */
     public int[] getWidths() {
         return java2DFontMetrics.getWidths(family, style, Java2DFontMetrics.FONT_SIZE);
+    }
+
+    public Rectangle getBoundingBox(int glyphIndex, int size) {
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     /**

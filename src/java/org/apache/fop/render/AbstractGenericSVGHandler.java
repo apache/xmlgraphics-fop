@@ -31,6 +31,7 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.dom.AbstractDocument;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.gvt.font.DefaultFontFamilyResolver;
 
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
@@ -122,7 +123,8 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
 
         //Prepare
         FOUserAgent userAgent = rendererContext.getUserAgent();
-        SVGUserAgent svgUserAgent = new SVGUserAgent(userAgent, new AffineTransform());
+        SVGUserAgent svgUserAgent = new SVGUserAgent(userAgent, DefaultFontFamilyResolver.SINGLETON,
+                new AffineTransform());
 
         //Create Batik BridgeContext
         final BridgeContext bridgeContext = new BridgeContext(svgUserAgent);

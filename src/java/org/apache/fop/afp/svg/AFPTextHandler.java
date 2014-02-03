@@ -135,27 +135,18 @@ public class AFPTextHandler extends FOPTextHandlerAdapter {
                 if (log.isDebugEnabled()) {
                     log.debug("  with overriding font: " + internalFontName + ", " + fontSize);
                 }
-            } else {
-                java.awt.Font awtFont = g2d.getFont();
-                Font fopFont = fontInfo.getFontInstanceForAWTFont(awtFont);
-                if (log.isDebugEnabled()) {
-                    log.debug("  with font: " + fopFont);
-                }
-                internalFontName = fopFont.getFontName();
-                fontSize = fopFont.getFontSize();
+                fontSize = (int) Math.round(g2d.convertToAbsoluteLength(fontSize));
+                fontReference = registerPageFont(pageFonts, internalFontName, fontSize);
+                // TODO: re-think above registerPageFont code...
+                AFPFont afpFont = (AFPFont) fontInfo.getFonts().get(internalFontName);
+                final CharacterSet charSet = afpFont.getCharacterSet(fontSize);
+                // Work-around for InfoPrint's AFP which loses character set state
+                // over Graphics Data
+                // boundaries.
+                graphicsObj.setCharacterSet(fontReference);
+                // add the character string
+                graphicsObj.addString(str, Math.round(x), Math.round(y), charSet);
             }
-            fontSize = (int)Math.round(
-                    g2d.convertToAbsoluteLength(fontSize));
-            fontReference = registerPageFont(pageFonts, internalFontName, fontSize);
-            // TODO: re-think above registerPageFont code...
-            AFPFont afpFont = (AFPFont) fontInfo.getFonts().get(internalFontName);
-            final CharacterSet charSet = afpFont.getCharacterSet(fontSize);
-            // Work-around for InfoPrint's AFP which loses character set state
-            // over Graphics Data
-            // boundaries.
-            graphicsObj.setCharacterSet(fontReference);
-            // add the character string
-            graphicsObj.addString(str, Math.round(x), Math.round(y), charSet);
         } else {
             //Inside Batik's SVG filter operations, you won't get an AFPGraphics2D
             g.drawString(str, x, y);

@@ -58,4 +58,17 @@ public class DejaVuLGCSerifTestCase {
     public void testFontName() {
         assertEquals("DejaVuLGCSerif", font.getFontName());
     }
+
+    @Test
+    public void testUnderline() {
+        assertEquals(-840, font.getUnderlinePosition(10));
+        assertEquals(430, font.getUnderlineThickness(10));
+    }
+
+    @Test
+    public void testStrikeout() {
+        assertEquals(2340, font.getStrikeoutPosition(10));
+        assertEquals(490, font.getStrikeoutThickness(10));
+    }
+
 }

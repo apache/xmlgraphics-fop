@@ -19,7 +19,14 @@
 
 package org.apache.fop.svg;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.util.List;
@@ -27,11 +34,17 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.batik.bridge.SVGGVTFont;
+import org.apache.batik.gvt.font.FontFamilyResolver;
+import org.apache.batik.gvt.font.GVTGlyphVector;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
+import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.text.TextSpanLayout;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
+import org.apache.fop.svg.font.FOPGVTFont;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -41,10 +54,18 @@ import org.apache.fop.util.CharUtilities;
 public abstract class NativeTextPainter extends StrokingTextPainter {
 
     /** the logger for this class */
-    protected Log log = LogFactory.getLog(NativeTextPainter.class);
+    protected static final Log log = LogFactory.getLog(NativeTextPainter.class);
+
+    private static final boolean DEBUG = false;
 
     /** the font collection */
     protected final FontInfo fontInfo;
+
+    protected final FontFamilyResolver fontFamilyResolver;
+
+    protected Font font;
+
+    protected TextPaintInfo tpi;
 
     /**
      * Creates a new instance.
@@ -52,6 +73,7 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
      */
     public NativeTextPainter(FontInfo fontInfo) {
         this.fontInfo = fontInfo;
+        this.fontFamilyResolver = new FOPFontFamilyResolverImpl(fontInfo);
     }
 
     /**
@@ -68,11 +90,93 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
      * @param g2d the target Graphics2D instance
      * @throws IOException if an I/O error occurs while rendering the text
      */
-    protected abstract void paintTextRun(TextRun textRun, Graphics2D g2d) throws IOException;
+    protected final void paintTextRun(TextRun textRun, Graphics2D g2d) throws IOException {
+        AttributedCharacterIterator runaci = textRun.getACI();
+        runaci.first();
 
-    /** {@inheritDoc} */
+        tpi = (TextPaintInfo) runaci.getAttribute(PAINT_INFO);
+        if (tpi == null || !tpi.visible) {
+            return;
+        }
+        if (tpi.composite != null) {
+            g2d.setComposite(tpi.composite);
+        }
+
+        //------------------------------------
+        TextSpanLayout layout = textRun.getLayout();
+        logTextRun(runaci, layout);
+        runaci.first(); //Reset ACI
+
+        GeneralPath debugShapes = null;
+        if (DEBUG) {
+            debugShapes = new GeneralPath();
+        }
+
+        preparePainting(g2d);
+
+        GVTGlyphVector gv = layout.getGlyphVector();
+        if (!(gv.getFont() instanceof FOPGVTFont)) {
+            assert gv.getFont() == null || gv.getFont() instanceof SVGGVTFont;
+            //Draw using Java2D when no native fonts are available
+            textRun.getLayout().draw(g2d);
+            return;
+        }
+        font = ((FOPGVTFont) gv.getFont()).getFont();
+
+        saveGraphicsState();
+        setInitialTransform(g2d.getTransform());
+        clip(g2d.getClip());
+        beginTextObject();
+
+        AffineTransform localTransform = new AffineTransform();
+        Point2D prevPos = null;
+        AffineTransform prevGlyphTransform = null;
+        for (int index = 0, c = gv.getNumGlyphs(); index < c; index++) {
+            if (!gv.isGlyphVisible(index)) {
+                continue;
+            }
+            Point2D glyphPos = gv.getGlyphPosition(index);
+
+            AffineTransform glyphTransform = gv.getGlyphTransform(index);
+            if (log.isTraceEnabled()) {
+                log.trace("pos " + glyphPos + ", transform " + glyphTransform);
+            }
+            if (DEBUG) {
+                Shape sh = gv.getGlyphLogicalBounds(index);
+                if (sh == null) {
+                    sh = new Ellipse2D.Double(glyphPos.getX(), glyphPos.getY(), 2, 2);
+                }
+                debugShapes.append(sh, false);
+            }
+
+            //Exact position of the glyph
+            localTransform.setToIdentity();
+            localTransform.translate(glyphPos.getX(), glyphPos.getY());
+            if (glyphTransform != null) {
+                localTransform.concatenate(glyphTransform);
+            }
+            localTransform.scale(1, -1);
+
+            positionGlyph(prevPos, glyphPos, glyphTransform != null || prevGlyphTransform != null);
+            char glyph = (char) gv.getGlyphCode(index);
+            //Update last position
+            prevPos = glyphPos;
+            prevGlyphTransform = glyphTransform;
+
+            writeGlyph(glyph, localTransform);
+        }
+        endTextObject();
+        restoreGraphicsState();
+        if (DEBUG) {
+            //Paint debug shapes
+            g2d.setStroke(new BasicStroke(0));
+            g2d.setColor(Color.LIGHT_GRAY);
+            g2d.draw(debugShapes);
+        }
+    }
+
     @Override
-    protected void paintTextRuns(List textRuns, Graphics2D g2d) {
+    protected void paintTextRuns(@SuppressWarnings("rawtypes") List textRuns, Graphics2D g2d) {
         if (log.isTraceEnabled()) {
             log.trace("paintTextRuns: count = " + textRuns.size());
         }
@@ -81,7 +185,7 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
             return;
         }
         for (int i = 0; i < textRuns.size(); i++) {
-            TextRun textRun = (TextRun)textRuns.get(i);
+            TextRun textRun = (TextRun) textRuns.get(i);
             try {
                 paintTextRun(textRun, g2d);
             } catch (IOException ioe) {
@@ -89,16 +193,6 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
                 throw new RuntimeException(ioe);
             }
         }
-    }
-
-    /**
-     * Finds an array of suitable fonts for a given AttributedCharacterIterator.
-     * @param aci the character iterator
-     * @return the array of fonts
-     */
-    protected Font[] findFonts(AttributedCharacterIterator aci) {
-        Font[] fonts = ACIUtils.findFontsForBatikACI(aci, fontInfo);
-        return fonts;
     }
 
     /**
@@ -114,6 +208,25 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
         }
         return chars;
     }
+
+    protected abstract void preparePainting(Graphics2D g2d);
+
+    protected abstract void saveGraphicsState() throws IOException;
+
+    protected abstract void restoreGraphicsState() throws IOException;
+
+    protected abstract void setInitialTransform(AffineTransform transform) throws IOException;
+
+    protected abstract void clip(Shape clip) throws IOException;
+
+    protected abstract void beginTextObject() throws IOException;
+
+    protected abstract void endTextObject() throws IOException;
+
+    protected abstract void positionGlyph(Point2D prevPos, Point2D glyphPos, boolean reposition);
+
+    protected abstract void writeGlyph(char glyph, AffineTransform transform) throws IOException;
+
 
     /**
      * @param runaci an attributed character iterator
@@ -155,5 +268,9 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
         }
     }
 
+    @Override
+    protected FontFamilyResolver getFontFamilyResolver() {
+        return this.fontFamilyResolver;
+    }
 
 }

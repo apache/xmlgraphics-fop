@@ -1,6 +1,567 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FindBugsFilter>
   <Match>
+    <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.afp.AFPStreamer"/>
+        <Method name="close"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.area.Page"/>
+        <Method name="isEmpty"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.area.PageViewport"/>
+        <Method name="getBodyRegion"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.area.inline.InlineArea"/>
+        <Method name="notifyIPDVariation"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.area.inline.TextArea"/>
+        <Method name="getText"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.BlockStackingLayoutManager"/>
+        <Or>
+          <Method name="discardSpace"/>
+          <Method name="negotiateBPDAdjustment"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.FlowLayoutManager"/>
+        <Or>
+          <Method name="discardSpace"/>
+          <Method name="negotiateBPDAdjustment"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.PageBreakingAlgorithm"/>
+        <Or>
+          <Method name="createFootnotePages"/>
+          <Method name="finish"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.PageSequenceLayoutManager"/>
+        <Method name="activateLayout"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.inline.LineLayoutManager"/>
+        <Or>
+          <Method name="getChangedKnuthElements"/>
+          <Method name="negotiateBPDAdjustment"/>
+          <Method name="postProcessLineBreaks"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.inline.TextLayoutManager"/>
+        <Or>
+          <Method name="addALetterSpaceTo"/>
+          <Method name="addAreas"/>
+          <Method name="applyChanges"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.table.RowPainter"/>
+        <Method name="addAreasAndFlushRow"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.table.TableStepper"/>
+        <Method name="activateCells"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.AbstractRenderer"/>
+        <Method name="renderRegionViewport"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.afp.AFPImageHandler"/>
+        <Method name="generateDataObjectInfo"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.afp.AFPImageHandlerGraphics2D"/>
+        <Method name="handleImage"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.afp.AFPImageHandlerRawJPEG"/>
+        <Method name="handleImage"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.afp.AFPImageHandlerRenderedImage"/>
+        <Method name="handleImage"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.afp.AFPImageHandlerSVG"/>
+        <Method name="handleImage"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.intermediate.IFParser"/>
+        <Method name="parse"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.intermediate.IFParser$Handler"/>
+        <Method name="handleIFException"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.intermediate.IFRenderer"/>
+        <Or>
+          <Method name="handleIFExceptionWithIOException"/>
+          <Method name="renderSpace"/>
+          <Method name="renderWord"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.pdf.PDFRenderingUtil"/>
+        <Or>
+          <Method name="populateArray"/>
+          <Method name="populateDictionary"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.pdf.extensions.PDFArrayElement"/>
+        <Method name="getArrayExtension"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.pdf.extensions.PDFDictionaryElement"/>
+        <Method name="getDictionaryExtension"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.pdf.extensions.PDFReferenceElement"/>
+        <Method name="processNode"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.xml.XMLRenderer"/>
+        <Method name="renderRegionViewport"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.svg.PDFGraphics2D"/>
+        <Method name="applyUnknownPaint"/>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="DM_DEFAULT_ENCODING"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.afp.fonts.CharacterSet"/>
+        <Or>
+          <Method name="getNameBytes"/>
+          <Method name="getBytes"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.afp.modca.AbstractNamedAFPObject"/>
+        <Or>
+          <Method name="getNameBytes"/>
+          <Method name="getBytes"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.afp.modca.triplets.AttributeValueTriplet"/>
+        <Or>
+          <Method name="writeToStream"/>
+          <Method name="getBytes"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.fonts.autodetect.WindowsFontDirFinder"/>
+        <Or>
+          <Method name="getWinDir"/>
+          <Method name="&lt;init&gt;"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.hyphenation.HyphenationTree"/>
+        <Or>
+          <Method name="main"/>
+          <Method name="&lt;init&gt;"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.pdf.PDFDocument"/>
+        <Or>
+          <Method name="encode"/>
+          <Method name="getBytes"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.afp.AFPPainter$AFPBorderPainterAdapter"/>
+        <Or>
+          <Method name="hash"/>
+          <Method name="getBytes"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.rtf.RTFHandler"/>
+        <Or>
+          <Method name="startDocument"/>
+          <Method name="&lt;init&gt;"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFile"/>
+        <Or>
+          <Method name="main"/>
+          <Method name="&lt;init&gt;"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.tools.anttasks.FileCompare"/>
+        <Or>
+          <Method name="execute"/>
+          <Method name="&lt;init&gt;"/>
+        </Or>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.afp.modca.GraphicsObject"/>
+        <Method name="setLineWidth"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.fonts.type1.AFMFile"/>
+        <Method name="overridePrimaryEncoding"/>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="BC_BAD_CAST_TO_CONCRETE_COLLECTION"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.area.AreaTreeObject"/>
+        <Or>
+          <Field name="extensionAttachments"/>
+          <Field name="foreignAttributes"/>
+          <Method name="clone"/>
+        </Or>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningTable"/>
+        <Or>
+          <Method name="position"/>
+          <Method name="matchLookups"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable"/>
+        <Or>
+          <Method name="substitute"/>
+          <Method name="matchLookups"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.complexscripts.fonts.OTFAdvancedTypographicTableReader"/>
+        <Or>
+          <Method name="constructGDEF"/>
+          <Method name="constructGDEFSubtables"/>
+          <Method name="constructGPOS"/>
+          <Method name="constructLookups"/>
+          <Method name="constructGPOSSubtables"/>
+          <Method name="constructGSUB"/>
+          <Method name="constructGSUBSubtables"/>
+          <Method name="readChainedContextualPosTableFormat3"/>
+          <Method name="readChainedContextualSubTableFormat3"/>
+          <Method name="readContextualPosTableFormat3"/>
+          <Method name="readContextualSubTableFormat3"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.complexscripts.util.GlyphSequence$CharAssociation"/>
+        <Or>
+          <Field name="predications"/>
+          <Method name="join"/>
+          <Method name="extractIntervals"/>
+          <Method name="mergePredication"/>
+          <Method name="setPredication"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.fonts.apps.PFMReader"/>
+        <Or>
+          <Method name="main"/>
+          <Method name="loadPFM"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.fonts.substitute.FontQualifier"/>
+        <Or>
+          <Method name="setFontStyle"/>
+          <Method name="valueOf"/>
+          <Method name="setFontWeight"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.hyphenation.Hyphenator"/>
+        <Or>
+          <Method name="getResourceStream"/>
+          <Method name="getMethod"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.hyphenation.PatternParser"/>
+        <Or>
+          <Method name="main"/>
+          <Method name="&lt;init&gt;"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.pdf.PDFMetadata"/>
+        <Or>
+          <Method name="populateStreamDict"/>
+          <Method name="buildFilterDictEntries"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.AbstractRenderer"/>
+        <Or>
+          <Method name="renderBodyRegion"/>
+          <Method name="getBeforeFloat"/>
+          <Method name="getFootnote"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.afp.extensions.AFPExtensionHandler"/>
+        <Or>
+          <Method name="endElement"/>
+          <Method name="&lt;init&gt;"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.pdf.extensions.PDFEmbeddedFileElement"/>
+        <Or>
+          <Method name="processNode"/>
+          <Method name="getURL"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.util.ColorUtil"/>
+        <Or>
+          <Method name="parseAsFopRgbIcc"/>
+          <Method name="trim"/>
+          <Method name="parseAsFopRgbNamedColor"/>
+          <Method name="unescapeString"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.util.XMLUtil"/>
+        <Or>
+          <Method name="decodePositionAdjustments"/>
+          <Method name="split"/>
+        </Or>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.complexscripts.fonts.GlyphProcessingState"/>
+        <Field name="classMatchSet"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.fo.XMLWhiteSpaceHandler$PendingInline"/>
+        <Field name="fo"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.inline.InlineStackingLayoutManager"/>
+        <Field name="extraBPD"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.table.TableRowIterator"/>
+        <Field name="table"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.pdf.PDFCMap"/>
+        <Or>
+          <Field name="base"/>
+          <Field name="sysInfo"/>
+          <Field name="wMode"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic"/>
+        <Or>
+          <Field name="heightPercent"/>
+          <Field name="widthPercent"/>
+        </Or>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.fo.XMLObj"/>
+        <Or>
+          <Field name="doc"/>
+          <Field name="element"/>
+          <Method name="characters"/>
+          <Method name="getDimension"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.fo.flow.table.TableCellContainer"/>
+        <Or>
+          <Field name="pendingSpans"/>
+          <Method name="addTableCellChild"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.fo.pagination.AbstractPageSequence"/>
+        <Or>
+          <Field name="initialPageNumber"/>
+          <Method name="initPageNumber"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.afp.extensions.AbstractAFPExtensionObject"/>
+        <Or>
+          <Field name="extensionAttachment"/>
+          <Method name="processNode"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler"/>
+        <Or>
+          <Field name="outputStream"/>
+          <Method name="rewritePostScriptFile"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.java2d.Java2DSVGHandler$Java2DInfo"/>
+        <Or>
+          <Field name="state"/>
+          <Method name="renderSVGDocument"/>
+        </Or>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="SBSC_USE_STRINGBUFFER_CONCATENATION"/>
+    <And>
+      <Class name="org.apache.fop.fo.properties.GenericShorthandParser"/>
+      <Method name="convertValueForProperty"/>
+    </And>
+  </Match>
+  <Match>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.fonts.GlyphMapping"/>
+        <Or>
+          <Field name="gposAdjustments"/>
+          <Method name="&lt;init&gt;"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.fonts.MultiByteFont"/>
+        <Or>
+          <Field name="boundingBoxes"/>
+          <Method name="setBBoxArray"/>
+        </Or>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH"/>
+    <And>
+      <Class name="org.apache.fop.hyphenation.SerializeHyphPattern"/>
+      <Method name="serializeFile"/>
+    </And>
+  </Match>
+  <Match>
+    <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.PageBreakingAlgorithm"/>
+        <Or>
+          <Field name="best"/>
+          <Field name="next"/>
+          <Method name="createNode"/>
+          <Method name="finish"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.inline.ContentLayoutManager"/>
+        <Or>
+          <Field name="holder"/>
+          <Method name="addAreas"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.inline.PageNumberLayoutManager"/>
+        <Or>
+          <Field name="curArea"/>
+          <Method name="getEffectiveArea"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontTable"/>
+        <Or>
+          <Field name="parent"/>
+          <Method name="writeRtfContent"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.svg.PDFGraphics2D"/>
+        <Method name="registerFunction"/>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+    <And>
+      <Class name="org.apache.fop.layoutmgr.inline.TextLayoutManager$TextAreaBuilder"/>
+      <Method name="getMappingBidiLevels"/>
+    </And>
+  </Match>
+  <Match>
+    <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+    <And>
+      <Class name="org.apache.fop.pdf.PDFFactory"/>
+      <Method name="makeFontFile"/>
+    </And>
+  </Match>
+  <Match>
+    <Bug pattern="SE_BAD_FIELD"/>
+    <And>
+      <Class name="org.apache.fop.render.awt.viewer.ImageProxyPanel"/>
+      <Field name="imageRef"/>
+    </And>
+  </Match>
+  <Match>
+    <Bug pattern="SE_BAD_FIELD_STORE"/>
+    <And>
+      <Class name="org.apache.fop.render.awt.viewer.ImageProxyPanel"/>
+      <Field name="imageRef"/>
+    </And>
+  </Match>
+  <Match>
+    <Bug pattern="RC_REF_COMPARISON_BAD_PRACTICE"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.render.xml.XMLRenderer"/>
+        <Or>
+          <Field name="END_INDENT"/>
+          <Field name="FONT"/>
+          <Field name="START_INDENT"/>
+          <Method name="addTraitAttributes"/>
+        </Or>
+      </And>
+    </Or>
+  </Match>
+
+  <Match>
     <Class name="org.apache.fop.fonts.truetype.OpenFont$1"/>
     <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
   </Match>

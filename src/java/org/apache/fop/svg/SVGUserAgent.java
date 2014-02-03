@@ -21,6 +21,8 @@ package org.apache.fop.svg;
 
 import java.awt.geom.AffineTransform;
 
+import org.apache.batik.gvt.font.FontFamilyResolver;
+
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -34,10 +36,11 @@ public class SVGUserAgent extends SimpleSVGUserAgent {
     /**
      * Creates a new SVGUserAgent.
      * @param foUserAgent the FO user agent to associate with this SVG user agent
+     * @param fontFamilyResolver the font family resolver
      * @param at the current transform
      */
-    public SVGUserAgent(FOUserAgent foUserAgent, AffineTransform at) {
-        super(foUserAgent.getSourcePixelUnitToMillimeter(), at);
+    public SVGUserAgent(FOUserAgent foUserAgent, FontFamilyResolver fontFamilyResolver, AffineTransform at) {
+        super(foUserAgent.getSourcePixelUnitToMillimeter(), at, fontFamilyResolver);
         this.eventProducer = SVGEventProducer.Provider.get(foUserAgent.getEventBroadcaster());
     }
 
@@ -45,8 +48,8 @@ public class SVGUserAgent extends SimpleSVGUserAgent {
      * Creates a new SVGUserAgent.
      * @param foUserAgent the FO user agent to associate with this SVG user agent
      */
-    public SVGUserAgent(FOUserAgent foUserAgent) {
-        this(foUserAgent, new AffineTransform());
+    public SVGUserAgent(FOUserAgent foUserAgent, FontFamilyResolver fontFamilyResolver) {
+        this(foUserAgent, fontFamilyResolver,  new AffineTransform());
     }
 
     /**

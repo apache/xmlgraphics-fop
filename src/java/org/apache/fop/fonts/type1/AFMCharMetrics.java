@@ -19,7 +19,7 @@
 
 package org.apache.fop.fonts.type1;
 
-import java.awt.geom.RectangularShape;
+import java.awt.Rectangle;
 
 import org.apache.fop.fonts.NamedCharacter;
 
@@ -33,7 +33,7 @@ public class AFMCharMetrics {
     private NamedCharacter character;
     private double widthX;
     private double widthY;
-    private RectangularShape bBox;
+    private Rectangle bBox;
 
     /**
      * Returns the character code.
@@ -137,7 +137,7 @@ public class AFMCharMetrics {
      * Returns the character's bounding box.
      * @return the bounding box (or null if it isn't available)
      */
-    public RectangularShape getBBox() {
+    public Rectangle getBBox() {
         return bBox;
     }
 
@@ -145,7 +145,7 @@ public class AFMCharMetrics {
      * Sets the character's bounding box.
      * @param box the bounding box
      */
-    public void setBBox(RectangularShape box) {
+    public void setBBox(Rectangle box) {
         bBox = box;
     }
 

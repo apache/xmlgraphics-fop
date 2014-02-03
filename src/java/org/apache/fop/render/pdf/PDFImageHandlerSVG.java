@@ -52,6 +52,7 @@ import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
+import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 
 /**
  * Image Handler implementation which handles SVG images.
@@ -76,7 +77,8 @@ public class PDFImageHandlerSVG implements ImageHandler {
         }
 
         final float uaResolution = userAgent.getSourceResolution();
-        SVGUserAgent ua = new SVGUserAgent(userAgent, new AffineTransform());
+        SVGUserAgent ua = new SVGUserAgent(userAgent, new FOPFontFamilyResolverImpl(pdfContext.getFontInfo()),
+                new AffineTransform());
 
         GVTBuilder builder = new GVTBuilder();
 
