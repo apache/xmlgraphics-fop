@@ -861,7 +861,6 @@ public class OTFSubSetFile extends OTFFile {
         return hdrTotal + total;
     }
 
-
     private BytesNumber readNumber(int b0, byte[] input, int curPos) throws IOException {
         if (b0 == 28) {
             int b1 = input[curPos + 1] & 0xff;
@@ -887,7 +886,7 @@ public class OTFSubSetFile extends OTFFile {
     /**
      * A class used to store the last number operand and also it's size in bytes
      */
-    private static final class BytesNumber {
+    static class BytesNumber {
         private int number;
         private int numBytes;
 
@@ -907,6 +906,26 @@ public class OTFSubSetFile extends OTFFile {
         public void clearNumber() {
             this.number = -1;
             this.numBytes = -1;
+        }
+
+        public String toString() {
+            return Integer.toString(number);
+        }
+
+        @Override
+        public boolean equals(Object entry) {
+            assert entry instanceof BytesNumber;
+            BytesNumber bnEntry = (BytesNumber)entry;
+            return this.number == bnEntry.getNumber()
+                    && this.numBytes == bnEntry.getNumBytes();
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 1;
+            hash = hash * 17 + number;
+            hash = hash * 31 + numBytes;
+            return hash;
         }
     }
 
@@ -1093,5 +1112,13 @@ public class OTFSubSetFile extends OTFFile {
         byte[] ret = new byte[realSize];
         System.arraycopy(output, 0, ret, 0, realSize);
         return ret;
+    }
+
+    /**
+     * Returns the parsed CFF data for the original font.
+     * @return The CFFDataReader contaiing the parsed data
+     */
+    public CFFDataReader getCFFReader() {
+        return cffReader;
     }
 }
