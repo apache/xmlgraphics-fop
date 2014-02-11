@@ -29,15 +29,15 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.fontbox.cff.CFFFont;
 
 import org.apache.fop.fonts.cff.CFFDataReader;
 import org.apache.fop.fonts.cff.CFFDataReader.CFFIndexData;
 import org.apache.fop.fonts.cff.CFFDataReader.DICTEntry;
 import org.apache.fop.fonts.truetype.OTFSubSetFile.BytesNumber;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class OTFSubSetFileTestCase extends OTFFileTestCase {
 
@@ -111,7 +111,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             byte[] charData = charStrings.getValue(i);
             List<BytesNumber> origOperands = getFullCharString(origCharData, origCFF);
             List<BytesNumber> subsetOperands = getFullCharString(charData, subsetCFF);
-            for (int j = 0;j < origOperands.size();j++) {
+            for (int j = 0; j < origOperands.size(); j++) {
                 assertTrue(origOperands.get(j).equals(subsetOperands.get(j)));
             }
         }
@@ -175,8 +175,8 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             List<BytesNumber> subroutine) {
         BytesNumber[] charStringOperands = charString.toArray(new BytesNumber[0]);
         BytesNumber[] subroutineOperands = subroutine.toArray(new BytesNumber[0]);
-        BytesNumber[] mergeData = new BytesNumber[charStringOperands.length - 1 +
-                                                  subroutineOperands.length - 1];
+        BytesNumber[] mergeData = new BytesNumber[charStringOperands.length - 1
+                                                  + subroutineOperands.length - 1];
         System.arraycopy(charStringOperands, 0, mergeData, 0, charStringOperands.length - 1);
         System.arraycopy(subroutineOperands, 0, mergeData, charStringOperands.length - 1,
                 subroutineOperands.length - 1);

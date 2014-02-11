@@ -162,7 +162,7 @@ public final class LayoutEngineTestUtils {
         Collection<File[]> parametersForJUnit4 = new ArrayList<File[]>();
         int index = 0;
         for (File f : files) {
-            parametersForJUnit4.add(new File[] { f });
+            parametersForJUnit4.add(new File[] {f});
             if (DEBUG) {
                 System.out.println(String.format("%3d %s", index++, f));
             }
