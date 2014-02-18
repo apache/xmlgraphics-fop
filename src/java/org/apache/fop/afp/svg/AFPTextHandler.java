@@ -120,9 +120,8 @@ public class AFPTextHandler extends FOPTextHandlerAdapter {
 
             // set the color
             AFPPaintingState paintingState = g2d.getPaintingState();
-            if (paintingState.setColor(color)) {
-                graphicsObj.setColor(color);
-            }
+            paintingState.setColor(color);
+            graphicsObj.setColor(color);
 
             // set the character set
             int fontReference = 0;
