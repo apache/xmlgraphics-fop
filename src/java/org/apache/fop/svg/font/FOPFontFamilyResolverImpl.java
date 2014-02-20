@@ -19,7 +19,12 @@
 
 package org.apache.fop.svg.font;
 
+import java.io.InputStream;
 import java.util.Map;
+
+import org.apache.batik.bridge.FontFace;
+import org.apache.batik.gvt.font.GVTFontFace;
+import org.apache.batik.gvt.font.GVTFontFamily;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -34,18 +39,25 @@ public class FOPFontFamilyResolverImpl implements FOPFontFamilyResolver {
         this.fontInfo = fontInfo;
     }
 
-    public String lookup(String familyName) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+    public FOPGVTFontFamily resolve(String familyName) {
+        return resolve(familyName, new GVTFontFace(familyName));
     }
 
-    public FOPGVTFontFamily resolve(String familyName) {
+    public FOPGVTFontFamily resolve(String familyName, FontFace fontFace) {
+        return resolve(familyName, (GVTFontFace) FontFace.createFontFace(familyName, fontFace));
+    }
+
+    private FOPGVTFontFamily resolve(String familyName, GVTFontFace fontFace) {
         FOPGVTFontFamily gvtFontFamily = null;
         FontTriplet triplet = fontInfo.fontLookup(familyName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
         if (fontInfo.hasFont(familyName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL)) {
-            gvtFontFamily = new FOPGVTFontFamily(fontInfo, familyName, triplet);
+            gvtFontFamily = new FOPGVTFontFamily(fontInfo, familyName, triplet, fontFace);
         }
         return gvtFontFamily;
+    }
+
+    public GVTFontFamily loadFont(InputStream in, FontFace fontFace) throws Exception {
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     public FOPGVTFontFamily getDefault() {
@@ -58,7 +70,8 @@ public class FOPFontFamilyResolverImpl implements FOPFontFamilyResolver {
             if (font.hasChar(c)) {
                 String fontFamily = font.getFamilyNames().iterator().next();
                 return new FOPGVTFontFamily(fontInfo, fontFamily,
-                        new FontTriplet(fontFamily, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
+                        new FontTriplet(fontFamily, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL),
+                        new GVTFontFace(fontFamily));
             }
         }
         return null;

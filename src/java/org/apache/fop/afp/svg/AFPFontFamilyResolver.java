@@ -22,6 +22,8 @@ package org.apache.fop.afp.svg;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.batik.gvt.font.GVTFontFace;
+
 import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.fonts.DoubleByteFont;
 import org.apache.fop.events.EventBroadcaster;
@@ -69,7 +71,8 @@ public class AFPFontFamilyResolver extends FilteringFontFamilyResolver {
                     notifyDBFontRejection(font.getFontName());
                 } else {
                     return new FOPGVTFontFamily(fontInfo, fontFamily,
-                            new FontTriplet(fontFamily, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
+                            new FontTriplet(fontFamily, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL),
+                            new GVTFontFace(fontFamily));
                 }
 
             }
