@@ -38,10 +38,13 @@ public class FOPGVTFontFamily implements GVTFontFamily {
 
     private final String familyName;
 
-    public FOPGVTFontFamily(FontInfo fontInfo, String familyName, FontTriplet triplet) {
+    private GVTFontFace fontFace;
+
+    public FOPGVTFontFamily(FontInfo fontInfo, String familyName, FontTriplet triplet, GVTFontFace fontFace) {
         this.fontInfo = fontInfo;
         this.fontTriplet = triplet;
         this.familyName = familyName;
+        this.fontFace = fontFace;
     }
 
     public String getFamilyName() {
@@ -49,8 +52,7 @@ public class FOPGVTFontFamily implements GVTFontFamily {
     }
 
     public GVTFontFace getFontFace() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+        return fontFace;
     }
 
     public FOPGVTFont deriveFont(float size, AttributedCharacterIterator aci) {

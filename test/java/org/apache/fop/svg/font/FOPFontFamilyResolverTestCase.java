@@ -81,7 +81,7 @@ public class FOPFontFamilyResolverTestCase {
 
     @Test
     public void testDeriveFont() {
-        FOPGVTFontFamily family = (FOPGVTFontFamily) resolver.resolve(FontInfoBuilder.DEJAVU_LGC_SERIF);
+        FOPGVTFontFamily family = resolver.resolve(FontInfoBuilder.DEJAVU_LGC_SERIF);
         FOPGVTFont font = family.deriveFont(10, Collections.emptyMap());
         assertEquals(10, font.getSize(), 0);
         assertTrue(font.canDisplay('\u01F6'));
@@ -91,7 +91,7 @@ public class FOPFontFamilyResolverTestCase {
     @Test
     @Ignore("FOP metrics don't match AWT, but not sure who is right and who is wrong")
     public void testLineMetrics() throws FontFormatException, IOException {
-        FOPGVTFontFamily family = (FOPGVTFontFamily) resolver.resolve(FontInfoBuilder.DEJAVU_LGC_SERIF);
+        FOPGVTFontFamily family = resolver.resolve(FontInfoBuilder.DEJAVU_LGC_SERIF);
         FOPGVTFont font = family.deriveFont(10, Collections.emptyMap());
         GVTLineMetrics fopMetrics = font.getLineMetrics("", null);
         LineMetrics awtMetrics = getAWTLineMetrics();

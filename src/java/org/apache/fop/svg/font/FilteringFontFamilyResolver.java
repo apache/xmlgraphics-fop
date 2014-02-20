@@ -19,6 +19,11 @@
 
 package org.apache.fop.svg.font;
 
+import java.io.InputStream;
+
+import org.apache.batik.bridge.FontFace;
+import org.apache.batik.gvt.font.GVTFontFamily;
+
 
 public class FilteringFontFamilyResolver implements FOPFontFamilyResolver {
 
@@ -28,12 +33,16 @@ public class FilteringFontFamilyResolver implements FOPFontFamilyResolver {
         this.delegate = delegate;
     }
 
-    public String lookup(String familyName) {
-        return delegate.lookup(familyName);
-    }
-
     public FOPGVTFontFamily resolve(String familyName) {
         return delegate.resolve(familyName);
+    }
+
+    public GVTFontFamily resolve(String familyName, FontFace fontFace) {
+        return delegate.resolve(familyName, fontFace);
+    }
+
+    public GVTFontFamily loadFont(InputStream in, FontFace fontFace) throws Exception {
+        return delegate.loadFont(in, fontFace);
     }
 
     public FOPGVTFontFamily getDefault() {

@@ -19,9 +19,11 @@
 
 package org.apache.fop.svg.font;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.batik.bridge.FontFace;
 import org.apache.batik.gvt.font.FontFamilyResolver;
 import org.apache.batik.gvt.font.GVTFontFamily;
 
@@ -33,21 +35,32 @@ public class AggregatingFontFamilyResolver implements FontFamilyResolver {
         this.resolvers = Arrays.<FontFamilyResolver>asList(resolvers);
     }
 
-    public String lookup(String familyName) {
-        for (FontFamilyResolver resolver : resolvers) {
-            String lookup = resolver.lookup(familyName);
-            if (lookup != null) {
-                return lookup;
-            }
-        }
-        return null;
-    }
-
     public GVTFontFamily resolve(String familyName) {
         for (FontFamilyResolver resolver : resolvers) {
             GVTFontFamily family = resolver.resolve(familyName);
             if (family != null) {
                 return family;
+            }
+        }
+        return null;
+    }
+
+    public GVTFontFamily resolve(String familyName, FontFace fontFace) {
+        for (FontFamilyResolver resolver : resolvers) {
+            GVTFontFamily family = resolver.resolve(familyName, fontFace);
+            if (family != null) {
+                return family;
+            }
+        }
+        return null;
+    }
+
+    public GVTFontFamily loadFont(InputStream in, FontFace fontFace) throws Exception {
+        for (FontFamilyResolver resolver : resolvers) {
+            try {
+                return resolver.loadFont(in, fontFace);
+            } catch (Exception e) {
+                // Try the next one
             }
         }
         return null;
