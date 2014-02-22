@@ -124,6 +124,8 @@ public class CommandLineOptions {
     private boolean conserveMemoryPolicy = false;
     /* true if a complex script features are enabled */
     private boolean useComplexScriptFeatures = true;
+    /* set to true if -dpi used in command line */
+    private boolean overrideTargetResolution = false;
 
     private FopFactory factory;
     private FOUserAgent foUserAgent;
@@ -440,6 +442,7 @@ public class CommandLineOptions {
                     "if you use '-dpi', you must specify a resolution (dots per inch)");
         } else {
             this.targetResolution = Integer.parseInt(args[i + 1]);
+            this.overrideTargetResolution = true;
             return 1;
         }
     }
@@ -1017,6 +1020,9 @@ public class CommandLineOptions {
             try {
                 FopConfParser fopConfParser = new FopConfParser(userConfigFile, baseURI);
                 fopFactoryBuilder = fopConfParser.getFopFactoryBuilder();
+                if (this.overrideTargetResolution) {
+                    fopFactoryBuilder.setTargetResolution(targetResolution);
+                }
             } catch (SAXException e) {
                 throw new FOPException(e);
             }
