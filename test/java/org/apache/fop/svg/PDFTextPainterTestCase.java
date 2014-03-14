@@ -36,7 +36,7 @@ public class PDFTextPainterTestCase extends NativeTextPainterTest {
     private static class OperatorCheckingPDFGraphics2D extends PDFGraphics2D {
 
         OperatorCheckingPDFGraphics2D(FontInfo fontInfo, final OperatorValidator validator) {
-            super(false, fontInfo, new PDFDocument("test"), null, null, null, 0);
+            super(false, fontInfo, new PDFDocument("test"), null, null, null, 0, null);
             this.currentStream = new StringWriter() {
 
                 @Override

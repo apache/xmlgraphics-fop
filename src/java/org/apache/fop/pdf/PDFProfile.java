@@ -169,15 +169,28 @@ public class PDFProfile {
      * @param context Context information for the user to identify the problem spot
      */
     public void verifyTransparencyAllowed(String context) {
-        final String err = "{0} does not allow the use of transparency. ({1})";
+        Object profile = isTransparencyAllowed();
+        if (profile != null) {
+            throw new PDFConformanceException(profile + " does not allow the use of transparency. ("
+                    + profile + ")");
+        }
+    }
+
+    /**
+     * Returns {@code null} if transparency is allowed, otherwise returns the profile that
+     * prevents it.
+     *
+     * @return {@code null}, or an object whose {@code toString} method returns the name
+     * of the profile that disallows transparency
+     */
+    public Object isTransparencyAllowed() {
         if (pdfAMode.isPart1()) {
-            throw new PDFConformanceException(MessageFormat.format(err,
-                    new Object[] {getPDFAMode(), context}));
+            return getPDFAMode();
         }
         if (isPDFXActive()) {
-            throw new PDFConformanceException(MessageFormat.format(err,
-                    new Object[] {getPDFXMode(), context}));
+            return getPDFXMode();
         }
+        return null;
     }
 
     /** Checks if the right PDF version is set. */

@@ -21,6 +21,8 @@ package org.apache.fop.render.pdf;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -28,7 +30,10 @@ import org.xml.sax.SAXException;
 import static org.junit.Assert.fail;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.events.EventChecker;
+import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFConformanceException;
+import org.apache.fop.svg.SVGEventProducer;
 
 /**
  * Tests PDF/A-1 functionality.
@@ -106,6 +111,19 @@ public class PDFAConformanceTestCase extends BasePDFTest {
         } catch (PDFConformanceException e) {
             //Good!
         }
+    }
+
+    @Test
+    public void svgTransparency() throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("pdfProfile", PDFAMode.PDFA_1B);
+        EventChecker eventChecker = new EventChecker(SVGEventProducer.class.getName()
+                + ".transparencyIgnored", params);
+        FOUserAgent ua = getUserAgent();
+        ua.getEventBroadcaster().addEventListener(eventChecker);
+        File foFile = new File(foBaseDir, "svg-transparency.fo");
+        convertFO(foFile, ua, dumpPDF);
+        eventChecker.end();
     }
 
 }
