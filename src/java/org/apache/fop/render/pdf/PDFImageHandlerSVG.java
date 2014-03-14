@@ -41,6 +41,7 @@ import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
 import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.render.ImageHandler;
@@ -171,7 +172,7 @@ public class PDFImageHandlerSVG implements ImageHandler {
         PDFGraphics2D graphics = new PDFGraphics2D(true, pdfContext.getFontInfo(),
                 generator.getDocument(),
                 generator.getResourceContext(), pdfContext.getPage().referencePDF(),
-                "", 0);
+                "", 0, new TransparencyIgnoredEventListener(pdfContext, imageSVG));
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
         if (!resolutionScaling.isIdentity()) {
@@ -219,6 +220,30 @@ public class PDFImageHandlerSVG implements ImageHandler {
         }
         if (log.isTraceEnabled()) {
             generator.comment("SVG end");
+        }
+    }
+
+    private static class TransparencyIgnoredEventListener
+            implements PDFGraphics2D.TransparencyIgnoredEventListener {
+
+        private final RenderingContext context;
+
+        private final Image image;
+
+        public TransparencyIgnoredEventListener(RenderingContext context, Image image) {
+            this.context = context;
+            this.image = image;
+        }
+
+        private boolean warningIssued;
+
+        public void transparencyIgnored(Object pdfProfile) {
+            if (!warningIssued) {
+                EventBroadcaster broadcaster = context.getUserAgent().getEventBroadcaster();
+                SVGEventProducer producer = SVGEventProducer.Provider.get(broadcaster);
+                producer.transparencyIgnored(this, pdfProfile, image.getInfo().getOriginalURI());
+                warningIssued = true;
+            }
         }
     }
 
