@@ -33,13 +33,11 @@ import org.apache.fop.fo.ValidationException;
  * TODO implement validateChildNode()
  */
 public class MultiCase extends FObj {
-    // The value of properties relevant for fo:multi-case.
+
+    // FO multi-case properties
     private int startingState;
     private String caseName;
     private String caseTitle;
-    private MultiCaseHandler multiCaseHandler;
-    // private ToBeImplementedProperty caseName;
-    // private ToBeImplementedProperty caseTitle;
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
     // End of property values
@@ -59,12 +57,6 @@ public class MultiCase extends FObj {
         startingState = pList.get(PR_STARTING_STATE).getEnum();
         caseName = pList.get(PR_CASE_NAME).getString();
         caseTitle = pList.get(PR_CASE_TITLE).getString();
-        if (startingState == EN_SHOW) {
-            MultiSwitch multiSwitch = (MultiSwitch) parent;
-            if (multiSwitch.getCurrentlyVisibleNode() == null) {
-                multiSwitch.setCurrentlyVisibleNode(this);
-            }
-        }
     }
 
     /**
@@ -89,14 +81,6 @@ public class MultiCase extends FObj {
         if (firstChild == null) {
             missingChildElementError("(#PCDATA|%inline;|%block)*");
         }
-    }
-
-    @Override
-    protected void addChildNode(FONode child) throws FOPException {
-        if (child instanceof MultiCaseHandler) {
-            multiCaseHandler = (MultiCaseHandler) child;
-        }
-        super.addChildNode(child);
     }
 
     /** @return the "starting-state" property */
@@ -124,14 +108,6 @@ public class MultiCase extends FObj {
 
     public String getCaseTitle() {
         return caseTitle;
-    }
-
-    public boolean hasToggle() {
-        return multiCaseHandler != null;
-    }
-
-    MultiCaseHandler getHandler() {
-        return multiCaseHandler;
     }
 
 }

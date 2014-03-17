@@ -24,10 +24,7 @@ import java.util.List;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FONode.FONodeIterator;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.flow.MultiSwitch;
 
 public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
 
@@ -41,7 +38,7 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
     public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
 
         referenceIPD = context.getRefIPD();
-        List<List<ListElement>> childrenLists = new LinkedList<List<ListElement>>();
+        List<List<ListElement>> childrenLists = new ArrayList<List<ListElement>>();
         LayoutManager childLM;
         while ((childLM = getChildLM()) != null) {
             if (!childLM.isFinished()) {
@@ -56,33 +53,6 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
         }
         setFinished(true);
         return BestFitLayoutUtils.getKnuthList(this, childrenLists);
-    }
-
-    @Override
-    protected List<LayoutManager> createChildLMs(int size) {
-        MultiSwitch multiSwitch = (MultiSwitch) getFObj();
-        if (multiSwitch.getCurrentlyVisibleNode() != null) {
-            List<LayoutManager> newLMs = new ArrayList<LayoutManager>(size);
-            if (childLMs.size() == 0) {
-                createMultiCaseLM(multiSwitch.getCurrentlyVisibleNode());
-                return new ArrayList<LayoutManager>(size);
-            }
-            return newLMs;
-        } else {
-            return super.createChildLMs(size);
-        }
-    }
-
-    private void createMultiCaseLM(FONode multiCase) {
-        FONodeIterator childIter = multiCase.getChildNodes();
-        while (childIter.hasNext()) {
-            List<LayoutManager> newLMs = new ArrayList<LayoutManager>(1);
-            getPSLM().getLayoutManagerMaker()
-            .makeLayoutManagers((childIter.nextNode()), newLMs);
-            if (!newLMs.isEmpty()) {
-                this.getParent().addChildLM(newLMs.get(0));
-            }
-        }
     }
 
     @Override
@@ -151,6 +121,8 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
 
         AreaAdditionUtil.addAreas(this, newPosIter, context);
         flush();
+        // TODO removing the following line forces the generated area
+        // to be rendered twice in some cases...
         curBlockArea = null;
     }
 
