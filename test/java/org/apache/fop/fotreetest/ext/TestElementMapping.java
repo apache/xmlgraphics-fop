@@ -19,8 +19,8 @@
 
 package org.apache.fop.fotreetest.ext;
 
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.fo.FONode;
 
 /**
  * This class provides the element mapping for FOP.

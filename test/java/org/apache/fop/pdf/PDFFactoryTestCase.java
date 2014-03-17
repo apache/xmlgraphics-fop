@@ -53,7 +53,7 @@ public class PDFFactoryTestCase {
 
             @Override
             public int[] getWidths() {
-                return new int[] { 0 };
+                return new int[] {0};
             }
 
             @Override

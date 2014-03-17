@@ -19,17 +19,19 @@
 
 package org.apache.fop.fo.flow.table;
 
-import static org.junit.Assert.assertEquals;
-
 import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode.FONodeIterator;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
+
+// CSOFF: LineLength
 
 /**
  * A testcase for the resolution of collapsed borders in the FO tree, taking

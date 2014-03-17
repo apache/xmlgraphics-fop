@@ -27,6 +27,6 @@ import org.junit.runners.Suite.SuiteClasses;
  * Test suite for FOP's RTF library.
  */
 @RunWith(Suite.class)
-@SuiteClasses({ Bug39607TestCase.class })
+@SuiteClasses(Bug39607TestCase.class)
 public class RichTextFormatTestSuite {
 }

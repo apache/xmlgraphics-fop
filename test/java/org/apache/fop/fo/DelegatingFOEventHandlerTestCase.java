@@ -19,8 +19,6 @@
 
 package org.apache.fop.fo;
 
-import static org.junit.Assert.assertArrayEquals;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -41,6 +39,8 @@ import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import static org.junit.Assert.assertArrayEquals;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FODocumentParser.FOEventHandlerFactory;

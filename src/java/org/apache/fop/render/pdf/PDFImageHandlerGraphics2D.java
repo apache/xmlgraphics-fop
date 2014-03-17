@@ -86,7 +86,7 @@ public class PDFImageHandlerGraphics2D extends AbstractImageHandlerGraphics2D {
         PDFGraphics2D graphics = new PDFGraphics2D(textAsShapes,
                 pdfContext.getFontInfo(), generator.getDocument(),
                 generator.getResourceContext(), pdfContext.getPage().referencePDF(),
-                "", 0.0f);
+                "", 0.0f, null);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
         AffineTransform transform = new AffineTransform();

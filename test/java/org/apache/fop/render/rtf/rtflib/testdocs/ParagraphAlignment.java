@@ -27,14 +27,13 @@
 
 package org.apache.fop.render.rtf.rtflib.testdocs;
 
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 
 /**  Generates a simple RTF test document for the jfor rtflib package.
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 public class ParagraphAlignment extends TestDocument {
 

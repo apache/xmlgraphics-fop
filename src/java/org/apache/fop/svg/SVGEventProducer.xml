@@ -22,4 +22,5 @@
   <message key="info">SVG info: {message}</message>
   <message key="svgNotBuilt">SVG graphic could not be built. Reason: {e}</message>
   <message key="svgRenderingError">SVG graphic could not be rendered. Reason: {e}</message>
+  <message key="transparencyIgnored">Transparency in an SVG image will be ignored because {pdfProfile} does not allow it[ (see {uri})].</message>
 </catalogue>

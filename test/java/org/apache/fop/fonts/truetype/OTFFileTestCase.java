@@ -20,7 +20,6 @@
 package org.apache.fop.fonts.truetype;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Before;
@@ -37,7 +36,7 @@ public class OTFFileTestCase {
 
     /**
      * Initializes fonts used for the testing of reading OTF CFF
-     * @throws IOException
+     * @throws java.io.IOException
      */
     @Before
     public void setUp() throws Exception {
@@ -75,11 +74,11 @@ public class OTFFileTestCase {
 
         int[] gids = {32, 42, 44, 47};
         int[] sourceSansWidths = {516, 555, 572, 383};
-        for (int i = 0;i < gids.length;i++) {
+        for (int i = 0; i < gids.length; i++) {
             assertEquals(sourceSansWidths[i], sourceSansProBold.getWidths()[gids[i]]);
         }
         int[] carolynaWidths = {842, 822, 658, 784};
-        for (int i = 0;i < gids.length;i++) {
+        for (int i = 0; i < gids.length; i++) {
             assertEquals(carolynaWidths[i], alexBrush.getWidths()[gids[i]]);
         }
     }

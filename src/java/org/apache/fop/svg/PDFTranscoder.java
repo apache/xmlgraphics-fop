@@ -31,7 +31,6 @@ import org.apache.avalon.framework.configuration.Configuration;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
-import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
@@ -39,6 +38,7 @@ import org.apache.batik.transcoder.image.ImageTranscoder;
 
 import org.apache.fop.Version;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 
 /**
  * <p>This class enables to transcode an input to a PDF document.</p>
@@ -88,7 +88,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder {
     /**
      * {@inheritDoc}
      */
-    protected UserAgent createUserAgent() {
+    protected FOPTranscoderUserAgent createUserAgent() {
         return new AbstractFOPTranscoder.FOPTranscoderUserAgent() {
             // The PDF stuff wants everything at 72dpi
             public float getPixelUnitToMillimeter() {
@@ -131,6 +131,8 @@ public class PDFTranscoder extends AbstractFOPTranscoder {
             } else {
                 graphics.setupDefaultFontInfo();
             }
+            ((FOPTranscoderUserAgent) userAgent).setFontFamilyResolver(
+                    new FOPFontFamilyResolverImpl(graphics.getFontInfo()));
         } catch (Exception e) {
             throw new TranscoderException(
                     "Error while setting up PDFDocumentGraphics2D", e);

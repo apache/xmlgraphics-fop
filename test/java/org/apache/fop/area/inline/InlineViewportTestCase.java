@@ -19,8 +19,9 @@
 
 package org.apache.fop.area.inline;
 
-import org.apache.fop.area.ViewportTest;
 import org.junit.Test;
+
+import org.apache.fop.area.ViewportTest;
 
 /**
  * Tests the {@linkplain InlineViewport} class.

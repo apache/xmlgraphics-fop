@@ -23,20 +23,15 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Shape;
-import java.awt.font.TextAttribute;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.batik.dom.svg.SVGOMTextElement;
 import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.TextPainter;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
@@ -66,15 +61,15 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
      * Use the stroking text painter to get the bounds and shape.
      * Also used as a fallback to draw the string with strokes.
      */
-    protected static final TextPainter
-        PROXY_PAINTER = StrokingTextPainter.getInstance();
+    private final TextPainter proxyTextPainter;
 
     /**
      * Create a new PS text painter with the given font information.
      * @param nativeTextHandler the NativeTextHandler instance used for text painting
      */
-    public AbstractFOPTextPainter(FOPTextHandler nativeTextHandler) {
+    public AbstractFOPTextPainter(FOPTextHandler nativeTextHandler, TextPainter proxyTextPainter) {
         this.nativeTextHandler = nativeTextHandler;
+        this.proxyTextPainter = proxyTextPainter;
     }
 
     /**
@@ -85,19 +80,10 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
      * @param g2d the Graphics2D to use
      */
     public void paint(TextNode node, Graphics2D g2d) {
-        Point2D loc = node.getLocation();
-        if (!isSupportedGraphics2D(g2d) || hasUnsupportedAttributes(node)) {
-            if (log.isDebugEnabled()) {
-                log.debug("painting text node " + node
-                    + " by stroking due to unsupported attributes or an incompatible Graphics2D");
-            }
-            PROXY_PAINTER.paint(node, g2d);
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("painting text node " + node + " normally.");
-            }
-            paintTextRuns(node.getTextRuns(), g2d, loc);
+        if (isSupportedGraphics2D(g2d)) {
+            new TextRunPainter().paintTextRuns(node.getTextRuns(), g2d, node.getLocation());
         }
+        proxyTextPainter.paint(node, g2d);
     }
 
     /**
@@ -109,190 +95,99 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
      */
     protected abstract boolean isSupportedGraphics2D(Graphics2D g2d);
 
-    private boolean hasUnsupportedAttributes(TextNode node) {
-        Iterator iter = node.getTextRuns().iterator();
-        while (iter.hasNext()) {
-            StrokingTextPainter.TextRun
-                    run = (StrokingTextPainter.TextRun)iter.next();
+    private class TextRunPainter {
+
+        private Point2D currentLocation;
+
+        public void paintTextRuns(Iterable<StrokingTextPainter.TextRun> textRuns, Graphics2D g2d,
+                Point2D nodeLocation) {
+            currentLocation = new Point2D.Double(nodeLocation.getX(), nodeLocation.getY());
+            for (StrokingTextPainter.TextRun run : textRuns) {
+                paintTextRun(run, g2d);
+            }
+        }
+
+        private void paintTextRun(StrokingTextPainter.TextRun run, Graphics2D g2d) {
             AttributedCharacterIterator aci = run.getACI();
-            boolean hasUnsupported = hasUnsupportedAttributes(aci);
-            if (hasUnsupported) {
-                return true;
+            aci.first();
+            updateLocationFromACI(aci, currentLocation);
+            // font
+            Font font = getFont(aci);
+            if (font != null) {
+                nativeTextHandler.setOverrideFont(font);
             }
-        }
-        return false;
-    }
-
-    private boolean hasUnsupportedAttributes(AttributedCharacterIterator aci) {
-        boolean hasUnsupported = false;
-
-        Font font = getFont(aci);
-        String text = getText(aci);
-        if (hasUnsupportedGlyphs(text, font)) {
-            log.trace("-> Unsupported glyphs found");
-            hasUnsupported = true;
-        }
-
-        TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
-            GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
-        if ((tpi != null)
-                && ((tpi.strokeStroke != null && tpi.strokePaint != null)
-                    || (tpi.strikethroughStroke != null)
-                    || (tpi.underlineStroke != null)
-                    || (tpi.overlineStroke != null))) {
-                        log.trace("-> under/overlines etc. found");
-            hasUnsupported = true;
-        }
-
-        //Alpha is not supported
-        Paint foreground = (Paint) aci.getAttribute(TextAttribute.FOREGROUND);
-        if (foreground instanceof Color) {
-            Color col = (Color)foreground;
-            if (col.getAlpha() != 255) {
-                log.trace("-> transparency found");
-                hasUnsupported = true;
+            // color
+            TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
+                    GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
+            if (tpi == null) {
+                return;
             }
-        }
-
-        Object letSpace = aci.getAttribute(
-                            GVTAttributedCharacterIterator.TextAttribute.LETTER_SPACING);
-        if (letSpace != null) {
-            log.trace("-> letter spacing found");
-            hasUnsupported = true;
-        }
-
-        Object wordSpace = aci.getAttribute(
-                             GVTAttributedCharacterIterator.TextAttribute.WORD_SPACING);
-        if (wordSpace != null) {
-            log.trace("-> word spacing found");
-            hasUnsupported = true;
-        }
-
-        Object lengthAdjust = aci.getAttribute(
-                            GVTAttributedCharacterIterator.TextAttribute.LENGTH_ADJUST);
-        if (lengthAdjust != null) {
-            log.trace("-> length adjustments found");
-            hasUnsupported = true;
-        }
-
-        Object writeMod = aci.getAttribute(
-                GVTAttributedCharacterIterator.TextAttribute.WRITING_MODE);
-        if (writeMod != null
-            && !GVTAttributedCharacterIterator.TextAttribute.WRITING_MODE_LTR.equals(
-                  writeMod)) {
-            log.trace("-> Unsupported writing modes found");
-            hasUnsupported = true;
-        }
-
-        Object vertOr = aci.getAttribute(
-                GVTAttributedCharacterIterator.TextAttribute.VERTICAL_ORIENTATION);
-        if (GVTAttributedCharacterIterator.TextAttribute.ORIENTATION_ANGLE.equals(
-                  vertOr)) {
-            log.trace("-> vertical orientation found");
-            hasUnsupported = true;
-        }
-
-        Object rcDel = aci.getAttribute(
-                GVTAttributedCharacterIterator.TextAttribute.TEXT_COMPOUND_DELIMITER);
-        //Batik 1.6 returns null here which makes it impossible to determine whether this can
-        //be painted or not, i.e. fall back to stroking. :-(
-        if (rcDel != null && !(rcDel instanceof SVGOMTextElement)) {
-            log.trace("-> spans found");
-            hasUnsupported = true; //Filter spans
-        }
-
-        if (hasUnsupported) {
-            log.trace("Unsupported attributes found in ACI, using StrokingTextPainter");
-        }
-        return hasUnsupported;
-    }
-
-    /**
-     * Paint a list of text runs on the Graphics2D at a given location.
-     * @param textRuns the list of text runs
-     * @param g2d the Graphics2D to paint to
-     * @param loc the current location of the "cursor"
-     */
-    protected void paintTextRuns(List textRuns, Graphics2D g2d, Point2D loc) {
-        Point2D currentloc = loc;
-        Iterator i = textRuns.iterator();
-        while (i.hasNext()) {
-            StrokingTextPainter.TextRun
-                    run = (StrokingTextPainter.TextRun)i.next();
-            currentloc = paintTextRun(run, g2d, currentloc);
-        }
-    }
-
-    /**
-     * Paint a single text run on the Graphics2D at a given location.
-     * @param run the text run to paint
-     * @param g2d the Graphics2D to paint to
-     * @param loc the current location of the "cursor"
-     * @return the new location of the "cursor" after painting the text run
-     */
-    protected Point2D paintTextRun(StrokingTextPainter.TextRun run, Graphics2D g2d, Point2D loc) {
-        AttributedCharacterIterator aci = run.getACI();
-        aci.first();
-
-        updateLocationFromACI(aci, loc);
-        AffineTransform at = g2d.getTransform();
-        loc = at.transform(loc, null);
-
-        // font
-        Font font = getFont(aci);
-        if (font != null) {
-            nativeTextHandler.setOverrideFont(font);
-        }
-
-        // color
-        TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
-                GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
-        if (tpi == null) {
-            return loc;
-        }
-        Paint foreground = tpi.fillPaint;
-        if (foreground instanceof Color) {
-            Color col = (Color)foreground;
-            g2d.setColor(col);
-        }
-        g2d.setPaint(foreground);
-
-        // text anchor
-        TextNode.Anchor anchor = (TextNode.Anchor)aci.getAttribute(
-                GVTAttributedCharacterIterator.TextAttribute.ANCHOR_TYPE);
-
-        // text
-        String txt = getText(aci);
-        float advance = getStringWidth(txt, font);
-        float tx = 0;
-        if (anchor != null) {
-            switch (anchor.getType()) {
-            case TextNode.Anchor.ANCHOR_MIDDLE:
-                tx = -advance / 2;
-                break;
-            case TextNode.Anchor.ANCHOR_END:
-                tx = -advance;
-                break;
-            default: //nop
+            Paint foreground = tpi.fillPaint;
+            if (foreground instanceof Color) {
+                Color col = (Color) foreground;
+                g2d.setColor(col);
             }
-        }
-
-        // draw string
-        double x = loc.getX();
-        double y = loc.getY();
-        try {
-            try {
-                nativeTextHandler.drawString(g2d, txt, (float)x + tx, (float)y);
-            } catch (IOException ioe) {
-                if (g2d instanceof AFPGraphics2D) {
-                    ((AFPGraphics2D)g2d).handleIOException(ioe);
+            g2d.setPaint(foreground);
+            // text anchor
+            TextNode.Anchor anchor = (TextNode.Anchor) aci.getAttribute(
+                    GVTAttributedCharacterIterator.TextAttribute.ANCHOR_TYPE);
+            // text
+            String txt = getText(aci);
+            double advance = font == null ? run.getLayout().getAdvance2D().getX() : getStringWidth(txt, font);
+            double tx = 0;
+            if (anchor != null) {
+                switch (anchor.getType()) {
+                case TextNode.Anchor.ANCHOR_MIDDLE:
+                    tx = -advance / 2;
+                    break;
+                case TextNode.Anchor.ANCHOR_END:
+                    tx = -advance;
+                    break;
+                default: //nop
                 }
             }
-        } finally {
-            nativeTextHandler.setOverrideFont(null);
+            // draw string
+            Point2D outputLocation = g2d.getTransform().transform(currentLocation, null);
+            double x = outputLocation.getX();
+            double y = outputLocation.getY();
+            try {
+                try {
+                    //TODO draw underline and overline if set
+                    nativeTextHandler.drawString(g2d, txt, (float) (x + tx), (float) y);
+                    //TODO draw strikethrough if set
+                } catch (IOException ioe) {
+                    if (g2d instanceof AFPGraphics2D) {
+                        ((AFPGraphics2D) g2d).handleIOException(ioe);
+                    }
+                }
+            } finally {
+                nativeTextHandler.setOverrideFont(null);
+            }
+            currentLocation.setLocation(currentLocation.getX() + advance, currentLocation.getY());
         }
-        loc.setLocation(loc.getX() + advance, loc.getY());
-        return loc;
+        private void updateLocationFromACI(AttributedCharacterIterator aci, Point2D loc) {
+            //Adjust position of span
+            Float xpos = (Float) aci.getAttribute(
+                    GVTAttributedCharacterIterator.TextAttribute.X);
+            Float ypos = (Float) aci.getAttribute(
+                    GVTAttributedCharacterIterator.TextAttribute.Y);
+            Float dxpos = (Float) aci.getAttribute(
+                    GVTAttributedCharacterIterator.TextAttribute.DX);
+            Float dypos = (Float) aci.getAttribute(
+                    GVTAttributedCharacterIterator.TextAttribute.DY);
+            if (xpos != null) {
+                loc.setLocation(xpos.doubleValue(), loc.getY());
+            }
+            if (ypos != null) {
+                loc.setLocation(loc.getX(), ypos.doubleValue());
+            }
+            if (dxpos != null) {
+                loc.setLocation(loc.getX() + dxpos.doubleValue(), loc.getY());
+            }
+            if (dypos != null) {
+                loc.setLocation(loc.getX(), loc.getY() + dypos.doubleValue());
+            }
+        }
     }
 
     /**
@@ -305,34 +200,7 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
         for (char c = aci.first(); c != CharacterIterator.DONE; c = aci.next()) {
             sb.append(c);
         }
-        aci.first();
         return sb.toString();
-    }
-
-    private void updateLocationFromACI(
-                AttributedCharacterIterator aci,
-                Point2D loc) {
-        //Adjust position of span
-        Float xpos = (Float)aci.getAttribute(
-                GVTAttributedCharacterIterator.TextAttribute.X);
-        Float ypos = (Float)aci.getAttribute(
-                GVTAttributedCharacterIterator.TextAttribute.Y);
-        Float dxpos = (Float)aci.getAttribute(
-                GVTAttributedCharacterIterator.TextAttribute.DX);
-        Float dypos = (Float)aci.getAttribute(
-                GVTAttributedCharacterIterator.TextAttribute.DY);
-        if (xpos != null) {
-            loc.setLocation(xpos.doubleValue(), loc.getY());
-        }
-        if (ypos != null) {
-            loc.setLocation(loc.getX(), ypos.doubleValue());
-        }
-        if (dxpos != null) {
-            loc.setLocation(loc.getX() + dxpos.doubleValue(), loc.getY());
-        }
-        if (dypos != null) {
-            loc.setLocation(loc.getX(), loc.getY() + dypos.doubleValue());
-        }
     }
 
     private Font getFont(AttributedCharacterIterator aci) {
@@ -360,21 +228,6 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
         return wordWidth / 1000f;
     }
 
-    private boolean hasUnsupportedGlyphs(String str, Font font) {
-         if (font == null) {
-            return true;
-         }
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if (!((c == ' ') || (c == '\n') || (c == '\r') || (c == '\t'))) {
-                if (!font.hasChar(c)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     /**
      * Get the outline shape of the text characters.
      * This uses the StrokingTextPainter to get the outline
@@ -384,7 +237,7 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
      * @return the outline shape of the text characters
      */
     public Shape getOutline(TextNode node) {
-        return PROXY_PAINTER.getOutline(node);
+        return proxyTextPainter.getOutline(node);
     }
 
     /**
@@ -399,7 +252,7 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
         /* (todo) getBounds2D() is too slow
          * because it uses the StrokingTextPainter. We should implement this
          * method ourselves. */
-        return PROXY_PAINTER.getBounds2D(node);
+        return proxyTextPainter.getBounds2D(node);
     }
 
     /**
@@ -411,7 +264,7 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
      * @return the bounds of the text
      */
     public Rectangle2D getGeometryBounds(TextNode node) {
-        return PROXY_PAINTER.getGeometryBounds(node);
+        return proxyTextPainter.getGeometryBounds(node);
     }
 
     // Methods that have no purpose for PS

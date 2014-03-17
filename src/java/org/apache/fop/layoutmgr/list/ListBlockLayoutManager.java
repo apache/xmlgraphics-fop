@@ -28,16 +28,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.ListBlock;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
-import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.RelSide;
+import org.apache.fop.layoutmgr.SpacedBorderedPaddedBlockLayoutManager;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
@@ -47,20 +46,12 @@ import org.apache.fop.traits.SpaceVal;
  * A list block contains list items which are stacked within
  * the list block area..
  */
-public class ListBlockLayoutManager extends BlockStackingLayoutManager
-                implements ConditionalElementListener {
+public class ListBlockLayoutManager extends SpacedBorderedPaddedBlockLayoutManager {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(ListBlockLayoutManager.class);
 
     private Block curBlockArea;
-
-    private boolean discardBorderBefore;
-    private boolean discardBorderAfter;
-    private boolean discardPaddingBefore;
-    private boolean discardPaddingAfter;
-    private MinOptMax effSpaceBefore;
-    private MinOptMax effSpaceAfter;
 
     /**
      * Create a new list block layout manager.
@@ -68,6 +59,11 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
      */
     public ListBlockLayoutManager(ListBlock node) {
         super(node);
+    }
+
+    @Override
+    protected CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return getListBlockFO().getCommonBorderPaddingBackground();
     }
 
     /**
@@ -277,51 +273,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     @Override
     public KeepProperty getKeepWithNextProperty() {
         return getListBlockFO().getKeepWithNext();
-    }
-
-    /** {@inheritDoc} */
-    public void notifySpace(RelSide side, MinOptMax effectiveLength) {
-        if (RelSide.BEFORE == side) {
-            if (log.isDebugEnabled()) {
-                log.debug(this + ": Space " + side + ", "
-                        + this.effSpaceBefore + "-> " + effectiveLength);
-            }
-            this.effSpaceBefore = effectiveLength;
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug(this + ": Space " + side + ", "
-                        + this.effSpaceAfter + "-> " + effectiveLength);
-            }
-            this.effSpaceAfter = effectiveLength;
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void notifyBorder(RelSide side, MinOptMax effectiveLength) {
-        if (effectiveLength == null) {
-            if (RelSide.BEFORE == side) {
-                this.discardBorderBefore = true;
-            } else {
-                this.discardBorderAfter = true;
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug(this + ": Border " + side + " -> " + effectiveLength);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void notifyPadding(RelSide side, MinOptMax effectiveLength) {
-        if (effectiveLength == null) {
-            if (RelSide.BEFORE == side) {
-                this.discardPaddingBefore = true;
-            } else {
-                this.discardPaddingAfter = true;
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug(this + ": Padding " + side + " -> " + effectiveLength);
-        }
     }
 
 }

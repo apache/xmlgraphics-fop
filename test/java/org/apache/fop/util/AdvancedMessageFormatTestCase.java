@@ -19,14 +19,15 @@
 
 package org.apache.fop.util;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Map;
+
+import org.junit.Test;
+import org.xml.sax.helpers.LocatorImpl;
+
+import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.events.model.EventSeverity;
 import org.apache.fop.util.text.AdvancedMessageFormat;
-import org.junit.Test;
-import org.xml.sax.helpers.LocatorImpl;
 
 /**
  * Tests for EventFormatter.

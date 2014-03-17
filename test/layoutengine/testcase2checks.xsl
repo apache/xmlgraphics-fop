@@ -25,6 +25,7 @@
   <checks>
     <xsl:apply-templates select="checks"/>
     <xsl:apply-templates select="if-checks"/>
+    <xsl:apply-templates select="event-checks"/>
   </checks>
 </xsl:template>
 
@@ -40,7 +41,13 @@
     <xsl:copy-of select="*"/>
   </if-checks>
 </xsl:template>
-  
+
+<xsl:template match="event-checks">
+  <event-checks>
+    <xsl:copy-of select="*"/>
+  </event-checks>
+</xsl:template>
+
 <xsl:template match="text()" />
 
 </xsl:stylesheet>

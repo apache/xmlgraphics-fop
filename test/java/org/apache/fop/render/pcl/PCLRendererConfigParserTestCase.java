@@ -21,12 +21,12 @@ package org.apache.fop.render.pcl;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.fop.apps.AbstractRendererConfigParserTester;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.pcl.PCLRendererConfig.PCLRendererConfigParser;
-
-import static org.junit.Assert.assertEquals;
 
 public class PCLRendererConfigParserTestCase
         extends AbstractRendererConfigParserTester<PCLRendererConfBuilder, PCLRendererConfig> {

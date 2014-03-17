@@ -249,8 +249,7 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
             strokeText = cfg.getChild("stroke-text", true).getValueAsBoolean(strokeText);
         }
 
-        SVGUserAgent ua
-             = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
+        SVGUserAgent ua = new SVGUserAgent(context.getUserAgent(), null /* TODO */, new AffineTransform());
 
         PSGraphics2D graphics = new PSGraphics2D(strokeText, gen);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());

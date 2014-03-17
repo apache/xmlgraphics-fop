@@ -27,7 +27,7 @@ import static org.junit.Assert.fail;
 /**
  * Class that checks that an expected event is produced, and only this one.
  */
-class EventChecker implements EventListener {
+public class EventChecker implements EventListener {
 
     private final String expectedEventID;
 
@@ -35,7 +35,7 @@ class EventChecker implements EventListener {
 
     private boolean eventReceived;
 
-    EventChecker(String expectedEventID, Map<String, Object> expectedParams) {
+    public EventChecker(String expectedEventID, Map<String, Object> expectedParams) {
         this.expectedEventID = expectedEventID;
         this.expectedParams = expectedParams;
     }
@@ -51,9 +51,9 @@ class EventChecker implements EventListener {
         }
     }
 
-    void end() {
+    public void end() {
         if (!eventReceived) {
-            fail("Did not received expected event: " + expectedEventID);
+            fail("Did not receive expected event: " + expectedEventID);
         }
     }
 }

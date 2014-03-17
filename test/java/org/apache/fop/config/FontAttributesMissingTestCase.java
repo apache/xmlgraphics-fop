@@ -24,7 +24,6 @@ import java.io.IOException;
 import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FopConfBuilder;
-import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.apps.PDFRendererConfBuilder;
 
 /**

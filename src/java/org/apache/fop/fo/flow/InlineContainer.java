@@ -37,49 +37,38 @@ import org.apache.fop.traits.Direction;
 import org.apache.fop.traits.WritingMode;
 import org.apache.fop.traits.WritingModeTraits;
 
-/**
- * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_inline-container">
- * <code>fo:inline-container</code></a> object.
- */
 public class InlineContainer extends FObj {
 
-    // The value of FO traits (refined properties) that apply to fo:inline-container.
+    private LengthRangeProperty inlineProgressionDimension;
+    private LengthRangeProperty blockProgressionDimension;
+    private int overflow;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonMarginInline commonMarginInline;
+    private Numeric referenceOrientation;
+    private int displayAlign;
+    private KeepProperty keepTogether;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
+    private SpaceProperty lineHeight;
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
-    private LengthRangeProperty blockProgressionDimension;
-    private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private CommonMarginInline commonMarginInline;
-    private int clip;
     private int dominantBaseline;
-    private LengthRangeProperty inlineProgressionDimension;
-    private KeepProperty keepTogether;
-    private SpaceProperty lineHeight;
-    private int overflow;
-    private Numeric referenceOrientation;
     private WritingModeTraits writingModeTraits;
-    // Unused but valid items, commented out for performance:
-    //     private CommonRelativePosition commonRelativePosition;
-    //     private int displayAlign;
-    //     private Length height;
-    //     private KeepProperty keepWithNext;
-    //     private KeepProperty keepWithPrevious;
-    //     private Length width;
-    // End of FO trait values
 
     /** used for FO validation */
-    private boolean blockItemFound = false;
+    private boolean blockItemFound;
 
     /**
-     * Base constructor
+     * Creates a new instance.
      *
-     * @param parent {@link FONode} that is the parent of this object
+     * @param parent the parent of this inline-container
      */
     public InlineContainer(FONode parent) {
         super(parent);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
@@ -88,28 +77,31 @@ public class InlineContainer extends FObj {
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginInline = pList.getMarginInlineProps();
-        clip = pList.get(PR_CLIP).getEnum();
+        displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         overflow = pList.get(PR_OVERFLOW).getEnum();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         writingModeTraits = new WritingModeTraits(
-            WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()),
-            pList.getExplicit(PR_WRITING_MODE) != null);
+                WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()),
+                pList.getExplicit(PR_WRITING_MODE) != null);
     }
 
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: marker* (%block;)+
      */
+    @Override
     protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("marker")) {
                 if (blockItemFound) {
-                   nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+                   nodesOutOfOrderError(loc, "fo:marker", "(%block;)+");
                 }
             } else if (!isBlockItem(nsURI, localName)) {
                 invalidChildError(loc, nsURI, localName);
@@ -119,132 +111,11 @@ public class InlineContainer extends FObj {
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void endOfNode() throws FOPException {
         if (!blockItemFound) {
             missingChildElementError("marker* (%block;)+");
         }
-    }
-
-    /** @return the "alignment-adjust" FO trait */
-    public Length getAlignmentAdjust() {
-        return alignmentAdjust;
-    }
-
-    /** @return the "alignment-baseline" FO trait */
-    public int getAlignmentBaseline() {
-        return alignmentBaseline;
-    }
-
-    /** @return the "baseline-shift" FO trait */
-    public Length getBaselineShift() {
-        return baselineShift;
-    }
-
-    /** @return the "block-progression-dimension" FO trait */
-    public LengthRangeProperty getBlockProgressionDimension() {
-        return blockProgressionDimension;
-    }
-
-    /** @return the "clip" FO trait */
-    public int getClip() {
-        return clip;
-    }
-
-    /**@return Returns the {@link CommonBorderPaddingBackground} */
-    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
-        return this.commonBorderPaddingBackground;
-    }
-
-    /** @return Returns the {@link CommonMarginInline} */
-    public CommonMarginInline getCommonMarginInline() {
-        return this.commonMarginInline;
-    }
-
-    /** @return the "dominant-baseline" FO trait */
-    public int getDominantBaseline() {
-        return dominantBaseline;
-    }
-
-    /** @return the "keep-together" FO trait */
-    public KeepProperty getKeepTogether() {
-        return keepTogether;
-    }
-
-    /** @return the "inline-progression-dimension" FO trait */
-    public LengthRangeProperty getInlineProgressionDimension() {
-        return inlineProgressionDimension;
-    }
-
-    /** @return the "line-height" FO trait */
-    public SpaceProperty getLineHeight() {
-        return lineHeight;
-    }
-
-    /** @return the "overflow" FO trait */
-    public int getOverflow() {
-        return overflow;
-    }
-
-    /** @return the "reference-orientation" FO trait */
-    public int getReferenceOrientation() {
-        return referenceOrientation.getValue();
-    }
-
-    /**
-     * Obtain inline progression direction.
-     * @return the inline progression direction
-     */
-    public Direction getInlineProgressionDirection() {
-        return writingModeTraits.getInlineProgressionDirection();
-    }
-
-    /**
-     * Obtain block progression direction.
-     * @return the block progression direction
-     */
-    public Direction getBlockProgressionDirection() {
-        return writingModeTraits.getBlockProgressionDirection();
-    }
-
-    /**
-     * Obtain column progression direction.
-     * @return the column progression direction
-     */
-    public Direction getColumnProgressionDirection() {
-        return writingModeTraits.getColumnProgressionDirection();
-    }
-
-    /**
-     * Obtain row progression direction.
-     * @return the row progression direction
-     */
-    public Direction getRowProgressionDirection() {
-        return writingModeTraits.getRowProgressionDirection();
-    }
-
-    /**
-     * Obtain (baseline) shift direction.
-     * @return the (baseline) shift direction
-     */
-    public Direction getShiftDirection() {
-        return writingModeTraits.getShiftDirection();
-    }
-
-    /**
-     * Obtain writing mode.
-     * @return the writing mode
-     */
-    public WritingMode getWritingMode() {
-        return writingModeTraits.getWritingMode();
-    }
-
-    /**
-     * Obtain writing mode explicit indicator.
-     * @return the writing mode explicit indicator
-     */
-    public boolean getExplicitWritingMode() {
-        return writingModeTraits.getExplicitWritingMode();
     }
 
     /** {@inheritDoc} */
@@ -260,9 +131,106 @@ public class InlineContainer extends FObj {
         return FO_INLINE_CONTAINER;
     }
 
+    public LengthRangeProperty getInlineProgressionDimension() {
+        return inlineProgressionDimension;
+    }
+
+    public LengthRangeProperty getBlockProgressionDimension() {
+        return blockProgressionDimension;
+    }
+
+    public int getOverflow() {
+        return overflow;
+    }
+
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return this.commonBorderPaddingBackground;
+    }
+
+    public CommonMarginInline getCommonMarginInline() {
+        return this.commonMarginInline;
+    }
+
+    public int getReferenceOrientation() {
+        return referenceOrientation.getValue();
+    }
+
+    public int getDisplayAlign() {
+        return this.displayAlign;
+    }
+
+    public KeepProperty getKeepWithPrevious() {
+        return keepWithPrevious;
+    }
+
+    public KeepProperty getKeepTogether() {
+        return keepTogether;
+    }
+
+    public KeepProperty getKeepWithNext() {
+        return keepWithNext;
+    }
+
+    public SpaceProperty getLineHeight() {
+        return lineHeight;
+    }
+
+    public Length getAlignmentAdjust() {
+        return alignmentAdjust;
+    }
+
+    public int getAlignmentBaseline() {
+        return alignmentBaseline;
+    }
+
+    public Length getBaselineShift() {
+        return baselineShift;
+    }
+
+    public int getDominantBaseline() {
+        return dominantBaseline;
+    }
+
+    public WritingMode getWritingMode() {
+        return writingModeTraits.getWritingMode();
+    }
+
+    /**
+     * Obtain writing mode explicit indicator.
+     * @return the writing mode explicit indicator
+     */
+    public boolean getExplicitWritingMode() {
+        return writingModeTraits.getExplicitWritingMode();
+    }
+
+    public Direction getInlineProgressionDirection() {
+        return writingModeTraits.getInlineProgressionDirection();
+    }
+
+    public Direction getBlockProgressionDirection() {
+        return writingModeTraits.getBlockProgressionDirection();
+    }
+
+    public Direction getColumnProgressionDirection() {
+        return writingModeTraits.getColumnProgressionDirection();
+    }
+
+    public Direction getRowProgressionDirection() {
+        return writingModeTraits.getRowProgressionDirection();
+    }
+
+    public Direction getShiftDirection() {
+        return writingModeTraits.getShiftDirection();
+    }
+
     @Override
     public boolean isDelimitedTextRangeBoundary(int boundary) {
         return false;
+    }
+
+    @Override
+    public boolean generatesReferenceAreas() {
+        return true;
     }
 
     @Override

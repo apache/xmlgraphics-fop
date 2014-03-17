@@ -218,8 +218,10 @@ public class RTFHandler extends FOEventHandler {
                     eventProducer.onlySPMSupported(this, reference, pageSeq.getLocator());
                     PageSequenceMaster master
                         = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(reference);
-                    this.pagemaster = master.getNextSimplePageMaster(
-                            false, false, false, false, pageSeq.getMainFlow().getFlowName());
+                    if (pageSeq.getMainFlow() != null) {
+                        this.pagemaster = master.getNextSimplePageMaster(
+                                false, false, false, false, pageSeq.getMainFlow().getFlowName());
+                    }
                 }
             }
 

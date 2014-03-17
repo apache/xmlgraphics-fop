@@ -29,8 +29,6 @@ import org.apache.fop.complexscripts.scripts.arabic.ArabicTestCase;
  * Test suite for script specific functionality related to complex scripts.
  */
 @RunWith(Suite.class)
-@SuiteClasses({
-    ArabicTestCase.class
-})
+@SuiteClasses(ArabicTestCase.class)
 public class ScriptsTestSuite {
 }

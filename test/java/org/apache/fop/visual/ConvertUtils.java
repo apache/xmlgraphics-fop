@@ -27,7 +27,10 @@ import org.apache.commons.logging.Log;
 /**
  * Utilities for converting files with external converters.
  */
-public class ConvertUtils {
+public final class ConvertUtils {
+
+    private ConvertUtils() {
+    }
 
     /**
      * Calls an external converter application (GhostScript, for example).

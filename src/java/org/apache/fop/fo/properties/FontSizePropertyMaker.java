@@ -105,6 +105,9 @@ public class FontSizePropertyMaker
             // than the last caculated step
             lastStepFontSize = nextStepFontSize;
             nextStepFontSize = (int)Math.round(lastStepFontSize * scale);
+            if (nextStepFontSize == lastStepFontSize) {
+                break;
+            }
         }
         // baseFontSize is between last and next step font size
         // Return the step value closer to the baseFontSize

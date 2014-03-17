@@ -23,6 +23,11 @@ import java.awt.image.BufferedImage;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 import org.apache.fop.apps.AbstractRendererConfiguratorTest;
 import org.apache.fop.apps.BitmapRendererConfBuilder;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
@@ -35,10 +40,6 @@ import static org.apache.fop.render.bitmap.BitmapRendererOption.COLOR_MODE_RGB;
 import static org.apache.fop.render.bitmap.BitmapRendererOption.COLOR_MODE_RGBA;
 import static org.apache.fop.render.bitmap.BitmapRendererOption.RENDERING_QUALITY;
 import static org.apache.fop.render.bitmap.BitmapRendererOption.RENDERING_SPEED;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 public abstract class AbstractBitmapRendererConfiguratorTest extends
         AbstractRendererConfiguratorTest<BitmapRendererConfigurator, BitmapRendererConfBuilder> {

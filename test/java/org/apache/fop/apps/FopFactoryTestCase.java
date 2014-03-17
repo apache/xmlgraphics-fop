@@ -24,15 +24,14 @@ import java.io.IOException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.config.BaseConstructiveUserConfigTest;
-import org.apache.fop.render.RendererConfig.RendererConfigParser;
-import org.apache.fop.render.pdf.PDFRendererConfig;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.apache.fop.config.BaseConstructiveUserConfigTest;
+import org.apache.fop.render.RendererConfig.RendererConfigParser;
+import org.apache.fop.render.pdf.PDFRendererConfig;
 
 public class FopFactoryTestCase extends BaseConstructiveUserConfigTest {
 

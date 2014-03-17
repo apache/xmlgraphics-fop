@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts.truetype;
 
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -149,6 +150,10 @@ public class OFFontLoader extends FontLoader {
         returnFont.setAscender(otf.getLowerCaseAscent());
         returnFont.setDescender(otf.getLowerCaseDescent());
         returnFont.setFontBBox(otf.getFontBBox());
+        returnFont.setUnderlinePosition(otf.getUnderlinePosition() - otf.getUnderlineThickness() / 2);
+        returnFont.setUnderlineThickness(otf.getUnderlineThickness());
+        returnFont.setStrikeoutPosition(otf.getStrikeoutPosition() - otf.getStrikeoutThickness() / 2);
+        returnFont.setStrikeoutThickness(otf.getStrikeoutThickness());
         returnFont.setFlags(otf.getFlags());
         returnFont.setStemV(Integer.parseInt(otf.getStemV())); //not used for TTF
         returnFont.setItalicAngle(Integer.parseInt(otf.getItalicAngle()));
@@ -161,15 +166,15 @@ public class OFFontLoader extends FontLoader {
             } else {
                 multiFont.setCIDType(CIDFontType.CIDTYPE2);
             }
-            int[] wx = otf.getWidths();
-            multiFont.setWidthArray(wx);
+            multiFont.setWidthArray(otf.getWidths());
+            multiFont.setBBoxArray(otf.getBoundingBoxes());
         } else {
             singleFont.setFontType(FontType.TRUETYPE);
             singleFont.setEncoding(otf.getCharSetName());
             returnFont.setFirstChar(otf.getFirstChar());
             returnFont.setLastChar(otf.getLastChar());
             singleFont.setTrueTypePostScriptVersion(otf.getPostScriptVersion());
-            copyWidthsSingleByte(otf);
+            copyGlyphMetricsSingleByte(otf);
         }
         returnFont.setCMap(getCMap(otf));
 
@@ -195,10 +200,14 @@ public class OFFontLoader extends FontLoader {
         return otf.getCMaps().toArray(array);
     }
 
-    private void copyWidthsSingleByte(OpenFont otf) {
+    private void copyGlyphMetricsSingleByte(OpenFont otf) {
         int[] wx = otf.getWidths();
+        Rectangle[] bboxes = otf.getBoundingBoxes();
         for (int i = singleFont.getFirstChar(); i <= singleFont.getLastChar(); i++) {
             singleFont.setWidth(i, otf.getCharWidth(i));
+            int[] bbox = otf.getBBox(i);
+            singleFont.setBoundingBox(i,
+                    new Rectangle(bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]));
         }
 
         for (CMapSegment segment : otf.getCMaps()) {
@@ -214,7 +223,7 @@ public class OFFontLoader extends FontLoader {
                         if (glyphName.length() > 0) {
                             String unicode = Character.toString(u);
                             NamedCharacter nc = new NamedCharacter(glyphName, unicode);
-                            singleFont.addUnencodedCharacter(nc, wx[glyphIndex]);
+                            singleFont.addUnencodedCharacter(nc, wx[glyphIndex], bboxes[glyphIndex]);
                         }
                     }
                 }

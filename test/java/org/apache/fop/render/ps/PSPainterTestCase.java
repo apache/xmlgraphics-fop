@@ -146,11 +146,11 @@ public class PSPainterTestCase {
         int y = 100000;
         int letterSpacing = 0;
         int wordSpacing = 0;
-        int dp[][] = {{100, 100, 0, 0}, null, null, {200, 200, -100, -100}};
-        double X = (x + dp[0][0]) / 1000.0;
-        double Y = (y - dp[0][1]) / 1000.0;
-        when(psGenerator.formatDouble(X)).thenReturn("100.100");
-        when(psGenerator.formatDouble(Y)).thenReturn("99.900");
+        int[][] dp = {{100, 100, 0, 0}, null, null, {200, 200, -100, -100}};
+        double xAsDouble = (x + dp[0][0]) / 1000.0;
+        double yAsDouble = (y - dp[0][1]) / 1000.0;
+        when(psGenerator.formatDouble(xAsDouble)).thenReturn("100.100");
+        when(psGenerator.formatDouble(yAsDouble)).thenReturn("99.900");
         String text = "Hello Mock!";
         try {
             psPainter.drawText(x, y, letterSpacing, wordSpacing, dp, text);

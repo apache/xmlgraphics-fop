@@ -19,7 +19,7 @@
 
 package org.apache.fop.afp.fonts;
 
-import java.util.Arrays;
+import java.awt.Rectangle;
 
 /**
  * The IBM Font Object Content Architecture (FOCA) supports presentation
@@ -60,22 +60,12 @@ public class CharacterSetOrientation {
     /**
      * The character widths in the character set (indexed using Unicode codepoints)
      */
-    private int[] charsWidths;
+    private IntegerKeyStore<CharacterMetrics> characterMetrics;
 
     /**
      * The height of lowercase letters
      */
     private int xHeight;
-
-    /**
-     * The first character (Unicode codepoint)
-     */
-    private char firstChar;
-
-    /**
-     * The last character (Unicode codepoint)
-     */
-    private char lastChar;
 
     /** The character set orientation */
     private final int orientation;
@@ -85,6 +75,10 @@ public class CharacterSetOrientation {
     private final int emSpaceIncrement;
     /** Nominal Character Increment */
     private final int nomCharIncrement;
+
+    private int underscoreWidth;
+
+    private int underscorePosition;
 
     /**
      * Constructor for the CharacterSetOrientation, the orientation is
@@ -97,8 +91,7 @@ public class CharacterSetOrientation {
         this.spaceIncrement = spaceIncrement;
         this.emSpaceIncrement = emSpaceIncrement;
         this.nomCharIncrement = nomCharIncrement;
-        charsWidths = new int[256];
-        Arrays.fill(charsWidths, -1);
+        this.characterMetrics = new IntegerKeyStore<CharacterMetrics>();
     }
 
     /**
@@ -138,19 +131,17 @@ public class CharacterSetOrientation {
     }
 
     /**
-     * The first character in the character set
-     * @return the first character (Unicode codepoint)
+     * TODO
      */
-    public char getFirstChar() {
-        return firstChar;
+    public int getUnderscoreWidth() {
+        return underscoreWidth;
     }
 
     /**
-     * The last character in the character set
-     * @return the last character (Unicode codepoint)
+     * TODO
      */
-    public char getLastChar() {
-        return lastChar;
+    public int getUnderscorePosition() {
+        return underscorePosition;
     }
 
     /**
@@ -159,17 +150,6 @@ public class CharacterSetOrientation {
      */
     public int getOrientation() {
         return orientation;
-    }
-
-    /**
-     * Get the width (in 1/1000ths of a point size) of all characters
-     * in this character set.
-     * @return the widths of all characters
-     */
-    public int[] getWidths() {
-        int[] arr = new int[(getLastChar() - getFirstChar()) + 1];
-        System.arraycopy(charsWidths, getFirstChar(), arr, 0, (getLastChar() - getFirstChar()) + 1);
-        return arr;
     }
 
     /**
@@ -187,13 +167,38 @@ public class CharacterSetOrientation {
      * @param character the Unicode character to evaluate
      * @return the widths of the character
      */
-    public int getWidth(char character) {
-        if (character >= charsWidths.length) {
-            throw new IllegalArgumentException("Invalid character: "
-                    + character + " (" + Integer.toString(character)
-                    + "), maximum is " + (charsWidths.length - 1));
+    public int getWidth(char character, int size) {
+        CharacterMetrics cm = getCharacterMetrics(character);
+        return cm == null ? -1 : size * cm.width;
+    }
+
+    private CharacterMetrics getCharacterMetrics(char character) {
+        return characterMetrics.get((int) character);
+    }
+
+    /**
+     * Get the character box (rectangle with dimensions in 1/1000ths of a point size) of the character
+     * identified by the parameter passed.
+     * @param character the Unicode character to evaluate
+     * @return the character box
+     */
+    public Rectangle getCharacterBox(char character, int size) {
+        CharacterMetrics cm = getCharacterMetrics(character);
+        return scale(cm == null ? getFallbackCharacterBox() : cm.characterBox, size);
+    }
+
+    private static Rectangle scale(Rectangle rectangle, int size) {
+        if (rectangle == null) {
+            return null;
+        } else {
+        return new Rectangle((int) (size * rectangle.getX()), (int) (size * rectangle.getY()),
+                (int) (size * rectangle.getWidth()), (int) (size * rectangle.getHeight()));
         }
-        return charsWidths[character];
+    }
+
+    private Rectangle getFallbackCharacterBox() {
+        // TODO replace with something sensible
+        return new Rectangle(0, 0, 0, 0);
     }
 
     /**
@@ -233,19 +238,19 @@ public class CharacterSetOrientation {
     }
 
     /**
-     * The first character in the character set
-     * @param firstChar the first character
+     * TODO
+     * @param underscoreWidth the underscore width value in millipoints
      */
-    public void setFirstChar(char firstChar) {
-        this.firstChar = firstChar;
+    public void setUnderscoreWidth(int underscoreWidth) {
+        this.underscoreWidth = underscoreWidth;
     }
 
     /**
-     * The last character in the character set
-     * @param lastChar the last character
+     * TODO
+     * @param underscorePosition the underscore position value in millipoints
      */
-    public void setLastChar(char lastChar) {
-        this.lastChar = lastChar;
+    public void setUnderscorePosition(int underscorePosition) {
+        this.underscorePosition = underscorePosition;
     }
 
     /**
@@ -254,17 +259,8 @@ public class CharacterSetOrientation {
      * @param character the Unicode character for which the width is being set
      * @param width the widths of the character
      */
-    public void setWidth(char character, int width) {
-        if (character >= charsWidths.length) {
-            // Increase the size of the array if necessary
-            //  TODO Can we remove firstChar? surely firstChar==0 at this stage?
-            int[] arr = new int[(character - firstChar) + 1];
-            System.arraycopy(charsWidths, 0, arr, 0, charsWidths.length);
-            Arrays.fill(arr, charsWidths.length, character - firstChar, -1);
-            charsWidths = arr;
-        }
-        charsWidths[character] = width;
-
+    public void setCharacterMetrics(char character, int width, Rectangle characterBox) {
+        characterMetrics.put((int) character, new CharacterMetrics(width, characterBox));
     }
 
     /**
@@ -298,5 +294,17 @@ public class CharacterSetOrientation {
      */
     public int getNominalCharIncrement() {
         return this.nomCharIncrement;
+    }
+
+    private static class CharacterMetrics {
+
+        public final int width;
+
+        public final Rectangle characterBox;
+
+        public CharacterMetrics(int width, Rectangle characterBox) {
+            this.width = width;
+            this.characterBox = characterBox;
+        }
     }
 }

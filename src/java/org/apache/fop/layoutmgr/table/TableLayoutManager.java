@@ -39,12 +39,11 @@ import org.apache.fop.fo.flow.Markers;
 import org.apache.fop.fo.flow.RetrieveTableMarker;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.layoutmgr.BlockLevelEventProducer;
-import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.BreakOpportunity;
-import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -52,7 +51,7 @@ import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.RelSide;
+import org.apache.fop.layoutmgr.SpacedBorderedPaddedBlockLayoutManager;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
@@ -66,8 +65,8 @@ import org.apache.fop.util.BreakUtil;
  * The table then creates areas for the columns, bodies and rows
  * the render background.
  */
-public class TableLayoutManager extends BlockStackingLayoutManager
-                implements ConditionalElementListener, BreakOpportunity {
+public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
+        implements BreakOpportunity {
 
     /**
      * logging instance
@@ -81,13 +80,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
     private double tableUnit;
     private boolean autoLayout = true;
-
-    private boolean discardBorderBefore;
-    private boolean discardBorderAfter;
-    private boolean discardPaddingBefore;
-    private boolean discardPaddingAfter;
-    private MinOptMax effSpaceBefore;
-    private MinOptMax effSpaceAfter;
 
     private int halfBorderSeparationBPD;
     private int halfBorderSeparationIPD;
@@ -131,6 +123,13 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         super(node);
         this.columns = new ColumnSetup(node);
     }
+
+
+    @Override
+    protected CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return getTable().getCommonBorderPaddingBackground();
+    }
+
 
     /** @return the table FO */
     public Table getTable() {
@@ -518,51 +517,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             default:
                 return super.getBaseLength(lengthBase, fobj);
             }
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void notifySpace(RelSide side, MinOptMax effectiveLength) {
-        if (RelSide.BEFORE == side) {
-            if (log.isDebugEnabled()) {
-                log.debug(this + ": Space " + side + ", "
-                        + this.effSpaceBefore + "-> " + effectiveLength);
-            }
-            this.effSpaceBefore = effectiveLength;
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug(this + ": Space " + side + ", "
-                        + this.effSpaceAfter + "-> " + effectiveLength);
-            }
-            this.effSpaceAfter = effectiveLength;
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void notifyBorder(RelSide side, MinOptMax effectiveLength) {
-        if (effectiveLength == null) {
-            if (RelSide.BEFORE == side) {
-                this.discardBorderBefore = true;
-            } else {
-                this.discardBorderAfter = true;
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug(this + ": Border " + side + " -> " + effectiveLength);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void notifyPadding(RelSide side, MinOptMax effectiveLength) {
-        if (effectiveLength == null) {
-            if (RelSide.BEFORE == side) {
-                this.discardPaddingBefore = true;
-            } else {
-                this.discardPaddingAfter = true;
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug(this + ": Padding " + side + " -> " + effectiveLength);
         }
     }
 

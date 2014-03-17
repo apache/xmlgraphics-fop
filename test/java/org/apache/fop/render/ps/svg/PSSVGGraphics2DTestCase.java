@@ -29,14 +29,14 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.commons.io.FileUtils;
 
 import org.apache.batik.ext.awt.RadialGradientPaint;
 
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.ps.PSGenerator;
-
-import static org.junit.Assert.assertEquals;
 
 public class PSSVGGraphics2DTestCase {
 

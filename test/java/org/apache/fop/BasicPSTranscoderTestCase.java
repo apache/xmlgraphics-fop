@@ -20,6 +20,7 @@
 package org.apache.fop;
 
 import org.apache.batik.transcoder.Transcoder;
+
 import org.apache.fop.render.ps.PSTranscoder;
 
 /**

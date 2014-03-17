@@ -21,16 +21,13 @@ package org.apache.fop.render.java2d;
 
 import org.junit.Test;
 
-import org.apache.avalon.framework.configuration.Configuration;
-
-import org.apache.fop.apps.AbstractRendererConfigParserTester;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.Java2DRendererConfBuilder;
-import org.apache.fop.render.java2d.Java2DRendererConfig.Java2DRendererConfigParser;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import org.apache.fop.apps.AbstractRendererConfigParserTester;
+import org.apache.fop.apps.Java2DRendererConfBuilder;
+import org.apache.fop.render.java2d.Java2DRendererConfig.Java2DRendererConfigParser;
 
 public class Java2DRendererConfigParserTestcase
         extends AbstractRendererConfigParserTester<Java2DRendererConfBuilder, Java2DRendererConfig> {

@@ -45,7 +45,7 @@ import org.apache.fop.apps.MimeConstants;
 /**
  * Debug tool to create and process large FO files by replicating them a specified number of times.
  */
-public class MemoryEater {
+public final class MemoryEater {
 
     private SAXTransformerFactory tFactory
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
@@ -53,7 +53,7 @@ public class MemoryEater {
 
     private Stats stats;
 
-    public MemoryEater() throws TransformerConfigurationException, MalformedURLException {
+    private MemoryEater() throws TransformerConfigurationException, MalformedURLException {
         File xsltFile = new File("test/xsl/fo-replicator.xsl");
         Source xslt = new StreamSource(xsltFile);
         replicatorTemplates = tFactory.newTemplates(xslt);

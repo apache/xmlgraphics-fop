@@ -26,12 +26,12 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.xmlgraphics.util.MimeConstants;
 
 import org.apache.fop.apps.io.ResourceResolverFactory;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test case for {@link AFPResourceManager}.

@@ -24,16 +24,16 @@ import java.awt.Rectangle;
 
 import org.junit.Test;
 
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.Constants;
-import org.apache.fop.render.intermediate.IFContext;
-import org.apache.fop.traits.BorderProps;
-
 import static org.mockito.Matchers.endsWith;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.traits.BorderProps;
 
 public class PDFPainterTestCase {
 
