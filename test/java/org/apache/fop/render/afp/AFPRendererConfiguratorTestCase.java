@@ -24,6 +24,9 @@ import java.util.Map;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+
 import org.apache.fop.afp.AFPResourceLevel;
 import org.apache.fop.afp.AFPResourceLevel.ResourceType;
 import org.apache.fop.afp.AFPResourceLevelDefaults;
@@ -32,9 +35,6 @@ import org.apache.fop.apps.AbstractRendererConfiguratorTest;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.afp.AFPRendererConfig.AFPRendererConfigParser;
 import org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
 
 public class AFPRendererConfiguratorTestCase extends
         AbstractRendererConfiguratorTest<AFPRendererConfigurator, AFPRendererConfBuilder> {

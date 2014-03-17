@@ -16,16 +16,17 @@
  */
 package org.apache.fop.afp.goca;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.fonts.CharacterSetBuilder;
 import org.apache.fop.fonts.Typeface;
-import org.junit.Before;
-import org.junit.Test;
 
 public class GraphicsCharacterStringTestCase {
     private GraphicsCharacterString gcsCp500;

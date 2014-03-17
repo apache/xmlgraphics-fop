@@ -38,6 +38,7 @@ import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.dom.svg.SVGOMDocument;
+import org.apache.batik.gvt.font.DefaultFontFamilyResolver;
 
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
@@ -162,7 +163,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
             Element e = doc.getRootElement();
             float pxUnitToMillimeter = UnitConv.IN2MM / context.getSourceResolution();
             UserAgent userAg = new SimpleSVGUserAgent(pxUnitToMillimeter,
-                        new AffineTransform()) {
+                        new AffineTransform(), DefaultFontFamilyResolver.SINGLETON) {
 
                 /** {@inheritDoc} */
                 public void displayMessage(String message) {

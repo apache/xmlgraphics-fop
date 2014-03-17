@@ -29,6 +29,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFXMode;
@@ -40,7 +42,6 @@ import static org.apache.fop.render.pdf.PDFRendererOption.OUTPUT_PROFILE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_A_MODE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_X_MODE;
 import static org.apache.fop.render.pdf.PDFRendererOption.VERSION;
-import static org.junit.Assert.assertEquals;
 
 public class PDFRendererOptionsConfigTestCase {
 
@@ -51,7 +52,7 @@ public class PDFRendererOptionsConfigTestCase {
     static {
         final EnumMap<PDFRendererOption, Object> props
         = new EnumMap<PDFRendererOption, Object>(PDFRendererOption.class);
-        for(PDFRendererOption option : PDFRendererOption.values()) {
+        for (PDFRendererOption option : PDFRendererOption.values()) {
             props.put(option, option.getDefaultValue());
         }
         DEFAULT_OPTIONS = Collections.unmodifiableMap(props);
@@ -102,7 +103,7 @@ public class PDFRendererOptionsConfigTestCase {
         assertEncryptionParamsEquals(expectedEncryptionParams, actual.getEncryptionParameters());
     }
 
-    private static void assertEncryptionParamsEquals(PDFEncryptionParams expected, 
+    private static void assertEncryptionParamsEquals(PDFEncryptionParams expected,
             PDFEncryptionParams actual) {
         assertEquals(expected == null, actual == null);
         if (actual != null) {

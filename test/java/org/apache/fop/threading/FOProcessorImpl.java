@@ -81,8 +81,8 @@ public class FOProcessorImpl extends AbstractLogEnabled
         }
     }
 
-    /** {@inheritDoc} 
-     * @throws URISyntaxException 
+    /** {@inheritDoc}
+     * @throws URISyntaxException
      * @throws SAXException */
     public void process(Source src, Templates templates, OutputStream out)
             throws java.io.IOException, URISyntaxException, SAXException {

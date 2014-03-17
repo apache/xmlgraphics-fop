@@ -19,8 +19,6 @@
 
 package org.apache.fop.pdf.xref;
 
-import static org.junit.Assert.assertArrayEquals;
-
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+
+import static org.junit.Assert.assertArrayEquals;
 
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFInfo;

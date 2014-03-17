@@ -37,7 +37,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class GlyfTableTestCase {
 
-    private final static class DirData {
+    private static final class DirData {
 
         final long offset;
         final long length;

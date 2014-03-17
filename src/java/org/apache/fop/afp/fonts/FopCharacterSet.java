@@ -19,6 +19,8 @@
 
 package org.apache.fop.afp.fonts;
 
+import java.awt.Rectangle;
+
 import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.fonts.Typeface;
@@ -84,30 +86,6 @@ public class FopCharacterSet extends CharacterSet {
     }
 
     /**
-     * The first character in the character set
-     * @return the first character
-     */
-    public char getFirstChar() {
-        return 0;
-    }
-
-    /**
-     * The last character in the character set
-     * @return the last character
-     */
-    public char getLastChar() {
-        return 0;
-    }
-
-    /**
-     * Get the width (in 1/1000ths of a point size) of all characters
-     * @return the widths of all characters
-     */
-    public int[] getWidths() {
-        return charSet.getWidths();
-    }
-
-    /**
      * XHeight refers to the height of the lower case letters above the baseline.
      * @return the typical height of characters
      */
@@ -115,14 +93,24 @@ public class FopCharacterSet extends CharacterSet {
         return charSet.getXHeight(1);
     }
 
-    /**
-     * Get the width (in 1/1000ths of a point size) of the character
-     * identified by the parameter passed.
-     * @param character the character from which the width will be calculated
-     * @return the width of the character
-     */
-    public int getWidth(char character) {
-        return charSet.getWidth(character, 1);
+    @Override
+    public int getWidth(char character, int size) {
+        return charSet.getWidth(character, size);
+    }
+
+    @Override
+    public Rectangle getCharacterBox(char character, int size) {
+        return charSet.getBoundingBox(character, size);
+    };
+
+    @Override
+    public int getUnderscoreWidth() {
+        return charSet.getUnderlineThickness(1);
+    }
+
+    @Override
+    public int getUnderscorePosition() {
+        return charSet.getUnderlinePosition(1);
     }
 
     /**

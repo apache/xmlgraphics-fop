@@ -25,13 +25,17 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.gvt.TextPainter;
+import org.apache.batik.gvt.font.DefaultFontFamilyResolver;
+import org.apache.batik.gvt.font.FontFamilyResolver;
 
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
 import org.apache.fop.afp.AFPGraphics2D;
+import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.svg.AbstractFOPBridgeContext;
+import org.apache.fop.svg.font.AggregatingFontFamilyResolver;
 
 /**
  * An AFP specific implementation of a Batik BridgeContext
@@ -39,6 +43,8 @@ import org.apache.fop.svg.AbstractFOPBridgeContext;
 public class AFPBridgeContext extends AbstractFOPBridgeContext {
 
     private final AFPGraphics2D g2d;
+
+    private final EventBroadcaster eventBroadCaster;
 
     /**
      * Constructs a new bridge context.
@@ -54,47 +60,35 @@ public class AFPBridgeContext extends AbstractFOPBridgeContext {
      */
     public AFPBridgeContext(UserAgent userAgent, FontInfo fontInfo,
             ImageManager imageManager, ImageSessionContext imageSessionContext,
-            AffineTransform linkTransform, AFPGraphics2D g2d) {
+            AffineTransform linkTransform, AFPGraphics2D g2d, EventBroadcaster eventBroadCaster) {
         super(userAgent, fontInfo, imageManager, imageSessionContext, linkTransform);
         this.g2d = g2d;
+        this.eventBroadCaster = eventBroadCaster;
     }
 
-    /**
-     * Constructs a new bridge context.
-     * @param userAgent the user agent
-     * @param documentLoader the Document Loader to use for referenced documents.
-     * @param fontInfo the font list for the text painter, may be null
-     *                 in which case text is painted as shapes
-     * @param imageManager an image manager
-     * @param imageSessionContext an image session context
-     * @param linkTransform AffineTransform to properly place links,
-     *                      may be null
-     * @param g2d an AFPGraphics 2D implementation
-     */
-    public AFPBridgeContext(UserAgent userAgent, DocumentLoader documentLoader,
+    private AFPBridgeContext(UserAgent userAgent, DocumentLoader documentLoader,
             FontInfo fontInfo, ImageManager imageManager,
             ImageSessionContext imageSessionContext,
-            AffineTransform linkTransform, AFPGraphics2D g2d) {
-        super(userAgent, documentLoader, fontInfo, imageManager,
-              imageSessionContext, linkTransform);
+            AffineTransform linkTransform, AFPGraphics2D g2d, EventBroadcaster eventBroadCaster) {
+        super(userAgent, documentLoader, fontInfo, imageManager, imageSessionContext, linkTransform);
         this.g2d = g2d;
+        this.eventBroadCaster = eventBroadCaster;
     }
 
     /** {@inheritDoc} */
     @Override
     public void registerSVGBridges() {
         super.registerSVGBridges();
-
         if (fontInfo != null) {
             AFPTextHandler textHandler = new AFPTextHandler(fontInfo, g2d.getResourceManager());
             g2d.setCustomTextHandler(textHandler);
-
-            TextPainter textPainter = new AFPTextPainter(textHandler);
-            setTextPainter(textPainter);
-
+            //TODO
+            FontFamilyResolver fontFamilyResolver = new AggregatingFontFamilyResolver(
+                    new AFPFontFamilyResolver(fontInfo, eventBroadCaster), DefaultFontFamilyResolver.SINGLETON);
+            TextPainter textPainter = new AFPTextPainter(textHandler, fontFamilyResolver);
+            setTextPainter(new AFPTextPainter(textHandler, fontFamilyResolver));
             putBridge(new AFPTextElementBridge(textPainter));
         }
-
         putBridge(new AFPImageElementBridge());
     }
 
@@ -105,7 +99,7 @@ public class AFPBridgeContext extends AbstractFOPBridgeContext {
                 fontInfo,
                 getImageManager(),
                 getImageSessionContext(),
-                linkTransform, g2d);
+                linkTransform, g2d, eventBroadCaster);
     }
 
 }

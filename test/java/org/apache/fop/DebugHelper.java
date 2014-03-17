@@ -25,7 +25,10 @@ import org.apache.fop.logging.LoggingElementListObserver;
 /**
  * Handles some standard tasks for debugging.
  */
-public class DebugHelper {
+public final class DebugHelper {
+
+    private DebugHelper() {
+    }
 
     private static boolean elObserversRegistered = false;
 

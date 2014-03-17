@@ -20,12 +20,11 @@ package org.apache.fop.layoutmgr;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.fop.fo.flow.MultiSwitch;
 import org.apache.fop.layoutmgr.BestFitPenalty.Variant;
 
 /**
  * Utility class used in {@link MultiSwitchLayoutManager}
- * to handle  the <i>best-fit</i> property value if specified in {@link MultiSwitch}
+ * to handle  the <i>best-fit</i> property value if specified in {@link org.apache.fop.fo.flow.MultiSwitch}
  */
 public final class BestFitLayoutUtils {
 

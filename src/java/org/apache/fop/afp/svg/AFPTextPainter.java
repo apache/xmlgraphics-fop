@@ -21,6 +21,9 @@ package org.apache.fop.afp.svg;
 
 import java.awt.Graphics2D;
 
+import org.apache.batik.gvt.font.FontFamilyResolver;
+import org.apache.batik.gvt.renderer.StrokingTextPainter;
+
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.svg.AbstractFOPTextPainter;
 import org.apache.fop.svg.FOPTextHandler;
@@ -39,13 +42,27 @@ public class AFPTextPainter extends AbstractFOPTextPainter {
      * Create a new text painter with the given font information.
      * @param nativeTextHandler the NativeTextHandler instance used for text painting
      */
-    public AFPTextPainter(FOPTextHandler nativeTextHandler) {
-        super(nativeTextHandler);
+    public AFPTextPainter(FOPTextHandler nativeTextHandler, FontFamilyResolver fopFontFamilyResolver) {
+        super(nativeTextHandler, new FOPStrokingTextPainter(fopFontFamilyResolver));
     }
 
     /** {@inheritDoc} */
     protected boolean isSupportedGraphics2D(Graphics2D g2d) {
         return g2d instanceof AFPGraphics2D;
+    }
+
+    private static class FOPStrokingTextPainter extends StrokingTextPainter {
+
+        private final FontFamilyResolver fopFontFontFamily;
+
+        FOPStrokingTextPainter(FontFamilyResolver fopFontFontFamily) {
+            this.fopFontFontFamily = fopFontFontFamily;
+        }
+
+        @Override
+        protected FontFamilyResolver getFontFamilyResolver() {
+            return fopFontFontFamily;
+        }
     }
 
 }

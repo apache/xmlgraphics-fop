@@ -31,7 +31,6 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fo.flow.table.ColumnNumberManager;
 import org.apache.fop.fo.flow.table.ColumnNumberManagerHolder;
@@ -46,7 +45,7 @@ public final class FONodeMocks {
     /**
      * Creates and returns a mock {@link FONode} configured with a mock
      * {@link FOEventHandler}. The FO event handler returns a mock {@link FOUserAgent},
-     * which in turn returns a mock {@link FopFactory}, which returns a mock
+     * which in turn returns a mock {@link org.apache.fop.apps.FopFactory}, which returns a mock
      * {@link ImageManager}.
      *
      * @return a mock FO node

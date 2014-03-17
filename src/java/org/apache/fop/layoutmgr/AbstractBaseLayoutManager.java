@@ -65,9 +65,6 @@ public abstract class AbstractBaseLayoutManager
     public AbstractBaseLayoutManager(FObj fo) {
         this.fobj = fo;
         setGeneratesReferenceArea(fo.generatesReferenceAreas());
-        if (getGeneratesReferenceArea()) {
-            setGeneratesBlockArea(true);
-        }
     }
 
     // --------- Property Resolution related functions --------- //

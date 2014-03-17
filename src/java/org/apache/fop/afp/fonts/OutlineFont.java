@@ -19,6 +19,8 @@
 
 package org.apache.fop.afp.fonts;
 
+import java.awt.Rectangle;
+
 import org.apache.fop.afp.AFPEventProducer;
 
 /**
@@ -38,4 +40,18 @@ public class OutlineFont extends AbstractOutlineFont {
         super(name, embeddable, charSet, eventProducer);
     }
 
+    /**
+     * Obtain the width of the character for the specified point size.
+     * @param character the character
+     * @param size the font size (in mpt)
+     * @return the width of the character for the specified point size
+     */
+    public int getWidth(int character, int size) {
+        return charSet.getWidth(toUnicodeCodepoint(character), size);
+    }
+
+    @Override
+    public Rectangle getBoundingBox(int character, int size) {
+        return charSet.getCharacterBox(toUnicodeCodepoint(character), size);
+    }
 }

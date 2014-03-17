@@ -19,6 +19,7 @@
 
 package org.apache.fop.afp.fonts;
 
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -292,16 +293,14 @@ public abstract class CharacterSetBuilder {
                     metricNormalizationFactor = 1000.0d * 72000.0d
                         / fontDescriptor.getNominalFontSizeInMillipoints() / dpi;
                 }
-
+                ValueNormalizer normalizer = new ValueNormalizer(metricNormalizationFactor);
                 //process D3AC89 Font Position
-                processFontPosition(structuredFieldReader, characterSetOrientations,
-                        metricNormalizationFactor);
-
+                processFontPosition(structuredFieldReader, characterSetOrientations, normalizer);
                 //process D38C89 Font Index (per orientation)
                 for (int i = 0; i < characterSetOrientations.length; i++) {
-                    processFontIndex(structuredFieldReader,
-                            characterSetOrientations[i], codePage, metricNormalizationFactor);
-                    characterSet.addCharacterSetOrientation(characterSetOrientations[i]);
+                    CharacterSetOrientation characterSetOrientation = characterSetOrientations[i];
+                    processFontIndex(structuredFieldReader, characterSetOrientation, codePage, normalizer);
+                    characterSet.addCharacterSetOrientation(characterSetOrientation);
                 }
             } else {
                 throw new IOException("Missing D3AE89 Font Control structured field.");
@@ -312,6 +311,19 @@ public abstract class CharacterSetBuilder {
         }
         characterSetsCache.put(cacheKey, characterSet);
         return characterSet;
+    }
+
+    private static class ValueNormalizer {
+
+        private final double factor;
+
+        public ValueNormalizer(double factor) {
+            this.factor = factor;
+        }
+
+        public int normalize(int value) {
+            return (int) Math.round(value *  factor);
+        }
     }
 
     /**
@@ -475,7 +487,7 @@ public abstract class CharacterSetBuilder {
      * @throws IOException if an I/O exception of some sort has occurred.
      */
     private void processFontPosition(StructuredFieldReader structuredFieldReader,
-        CharacterSetOrientation[] characterSetOrientations, double metricNormalizationFactor)
+        CharacterSetOrientation[] characterSetOrientations, ValueNormalizer normalizer)
             throws IOException {
 
         byte[] data = structuredFieldReader.getNext(FONT_POSITION_SF);
@@ -493,48 +505,34 @@ public abstract class CharacterSetBuilder {
                 if (position == 9) {
                     CharacterSetOrientation characterSetOrientation
                             = characterSetOrientations[characterSetOrientationIndex];
-
                     int xHeight = getSBIN(fpData, 2);
                     int capHeight = getSBIN(fpData, 4);
                     int ascHeight = getSBIN(fpData, 6);
                     int dscHeight = getSBIN(fpData, 8);
-
                     dscHeight = dscHeight * -1;
-
-                    characterSetOrientation.setXHeight(
-                            (int)Math.round(xHeight * metricNormalizationFactor));
-                    characterSetOrientation.setCapHeight(
-                            (int)Math.round(capHeight * metricNormalizationFactor));
-                    characterSetOrientation.setAscender(
-                            (int)Math.round(ascHeight * metricNormalizationFactor));
-                    characterSetOrientation.setDescender(
-                            (int)Math.round(dscHeight * metricNormalizationFactor));
+                    int underscoreWidth = getUBIN(fpData, 17);
+                    int underscorePosition = getSBIN(fpData, 20);
+                    characterSetOrientation.setXHeight(normalizer.normalize(xHeight));
+                    characterSetOrientation.setCapHeight(normalizer.normalize(capHeight));
+                    characterSetOrientation.setAscender(normalizer.normalize(ascHeight));
+                    characterSetOrientation.setDescender(normalizer.normalize(dscHeight));
+                    characterSetOrientation.setUnderscoreWidth(normalizer.normalize(underscoreWidth));
+                    characterSetOrientation.setUnderscorePosition(normalizer.normalize(underscorePosition));
                 }
             } else if (position == 22) {
                 position = 0;
                 characterSetOrientationIndex++;
                 fpData[position] = data[index];
             }
-
             position++;
         }
 
     }
 
-    /**
-     * Process the font index details for the character set orientation.
-     *
-     * @param structuredFieldReader the structured field reader
-     * @param cso the CharacterSetOrientation object to populate
-     * @param codepage the map of code pages
-     * @param metricNormalizationFactor factor to apply to the metrics to get normalized
-     *                  font metric values
-     * @throws IOException if an I/O exception of some sort has occurred.
-     */
-    private void processFontIndex(StructuredFieldReader structuredFieldReader,
-            CharacterSetOrientation cso, Map<String, String> codepage,
-            double metricNormalizationFactor)
-        throws IOException {
+
+    private void processFontIndex(StructuredFieldReader structuredFieldReader, CharacterSetOrientation cso,
+            Map<String, String> codepage, ValueNormalizer normalizer)
+            throws IOException {
 
         byte[] data = structuredFieldReader.getNext(FONT_INDEX_SF);
 
@@ -543,8 +541,6 @@ public abstract class CharacterSetBuilder {
         byte[] gcgid = new byte[8];
         byte[] fiData = new byte[20];
 
-        char lowest = 255;
-        char highest = 0;
         String firstABCMismatch = null;
 
         // Read data, ignoring bytes 0 - 2
@@ -569,13 +565,15 @@ public abstract class CharacterSetBuilder {
 
                     char cidx = idx.charAt(0);
                     int width = getUBIN(fiData, 0);
+                    int ascendHt = getSBIN(fiData, 2);
+                    int descendDp = getSBIN(fiData, 4);
                     int a = getSBIN(fiData, 10);
                     int b = getUBIN(fiData, 12);
                     int c = getSBIN(fiData, 14);
                     int abc = a + b + c;
                     int diff = Math.abs(abc - width);
                     if (diff != 0 && width != 0) {
-                        double diffPercent = 100 * diff / (double)width;
+                        double diffPercent = 100 * diff / (double) width;
                         if (diffPercent > 2) {
                             if (LOG.isTraceEnabled()) {
                                 LOG.trace(gcgiString + ": "
@@ -587,26 +585,15 @@ public abstract class CharacterSetBuilder {
                             }
                         }
                     }
-
-                    if (cidx < lowest) {
-                        lowest = cidx;
-                    }
-
-                    if (cidx > highest) {
-                        highest = cidx;
-                    }
-
-                    int normalizedWidth = (int)Math.round(width * metricNormalizationFactor);
-
-                    cso.setWidth(cidx, normalizedWidth);
-
+                    int normalizedWidth = normalizer.normalize(width);
+                    int x0 = normalizer.normalize(a);
+                    int y0 = normalizer.normalize(-descendDp);
+                    int dx = normalizer.normalize(b);
+                    int dy = normalizer.normalize(ascendHt + descendDp);
+                    cso.setCharacterMetrics(cidx, normalizedWidth, new Rectangle(x0, y0, dx, dy));
                 }
-
             }
         }
-
-        cso.setFirstChar(lowest);
-        cso.setLastChar(highest);
 
         if (LOG.isDebugEnabled() && firstABCMismatch != null) {
             //Debug level because it usually is no problem.

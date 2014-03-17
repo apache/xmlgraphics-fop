@@ -65,6 +65,7 @@ import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.ps.svg.PSSVGGraphics2D;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
+import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 
 /**
  * Image handler implementation which handles SVG images for PostScript output.
@@ -107,8 +108,8 @@ public class PSImageHandlerSVG implements ImageHandler {
             boolean strokeText = false;
             //TODO Configure text stroking
 
-            SVGUserAgent ua
-                 = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
+            SVGUserAgent ua = new SVGUserAgent(context.getUserAgent(),
+                    new FOPFontFamilyResolverImpl(psContext.getFontInfo()), new AffineTransform());
 
             PSSVGGraphics2D graphics = new PSSVGGraphics2D(strokeText, gen);
             graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());

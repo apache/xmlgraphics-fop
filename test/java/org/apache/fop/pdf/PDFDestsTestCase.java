@@ -19,12 +19,12 @@
 
 package org.apache.fop.pdf;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test case for {@link PDFDests}.

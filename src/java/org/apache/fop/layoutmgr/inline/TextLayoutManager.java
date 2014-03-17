@@ -30,12 +30,11 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.complexscripts.fonts.GlyphPositioningTable;
-import org.apache.fop.complexscripts.util.CharScript;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontSelector;
+import org.apache.fop.fonts.GlyphMapping;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -65,91 +64,15 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     private static final int SOFT_HYPHEN_PENALTY = 1;
 
     /**
-     * Store information about each potential text area.
-     * Index of character which ends the area, IPD of area, including
-     * any word-space and letter-space.
-     * Number of word-spaces?
-     */
-    private class AreaInfo {
-
-        private final int startIndex;
-        private final int breakIndex;
-        private int wordCharLength;
-        private final int wordSpaceCount;
-        private int letterSpaceCount;
-        private MinOptMax areaIPD;
-        private final boolean isHyphenated;
-        private final boolean isSpace;
-        private boolean breakOppAfter;
-        private final Font font;
-        private final int level;
-        private final int[][] gposAdjustments;
-
-        AreaInfo(
-            int startIndex, int breakIndex, int wordSpaceCount, int letterSpaceCount,
-             MinOptMax areaIPD, boolean isHyphenated, boolean isSpace, boolean breakOppAfter,
-             Font font, int level, int[][] gposAdjustments) {
-            assert startIndex <= breakIndex;
-            this.startIndex = startIndex;
-            this.breakIndex = breakIndex;
-            this.wordCharLength = -1;
-            this.wordSpaceCount = wordSpaceCount;
-            this.letterSpaceCount = letterSpaceCount;
-            this.areaIPD = areaIPD;
-            this.isHyphenated = isHyphenated;
-            this.isSpace = isSpace;
-            this.breakOppAfter = breakOppAfter;
-            this.font = font;
-            this.level = level;
-            this.gposAdjustments = gposAdjustments;
-        }
-
-        /**
-         * Obtain number of 'characters' contained in word. If word
-         * is mapped, then this number may be less than or greater than the
-         * original length (breakIndex - startIndex). We compute and
-         * memoize thius length upon first invocation of this method.
-         */
-        private int getWordLength() {
-            if (wordCharLength == -1) {
-                if (foText.hasMapping(startIndex, breakIndex)) {
-                    wordCharLength = foText.getMapping(startIndex, breakIndex).length();
-                } else {
-                    assert breakIndex >= startIndex;
-                    wordCharLength = breakIndex - startIndex;
-                }
-            }
-            return wordCharLength;
-        }
-
-        private void addToAreaIPD(MinOptMax idp) {
-            areaIPD = areaIPD.plus(idp);
-        }
-
-        public String toString() {
-            return super.toString() + "{"
-                    + "interval = [" + startIndex + "," + breakIndex + "]"
-                    + ", isSpace = " + isSpace
-                    + ", level = " + level
-                    + ", areaIPD = " + areaIPD
-                    + ", letterSpaceCount = " + letterSpaceCount
-                    + ", wordSpaceCount = " + wordSpaceCount
-                    + ", isHyphenated = " + isHyphenated
-                    + ", font = " + font
-                    + "}";
-        }
-    }
-
-    /**
      * this class stores information about changes in vecAreaInfo which are not yet applied
      */
     private final class PendingChange {
 
-        private final AreaInfo areaInfo;
+        private final GlyphMapping mapping;
         private final int index;
 
-        private PendingChange(final AreaInfo areaInfo, final int index) {
-            this.areaInfo = areaInfo;
+        private PendingChange(final GlyphMapping mapping, final int index) {
+            this.mapping = mapping;
             this.index = index;
         }
     }
@@ -160,7 +83,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     private static final Log LOG = LogFactory.getLog(TextLayoutManager.class);
 
     // Hold all possible breaks for the text in this LM's FO.
-    private final List areaInfos;
+    private final List<GlyphMapping> mappings;
 
     /** Non-space characters on which we can end a line. */
     private static final String BREAK_CHARS = "-/";
@@ -216,7 +139,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     public TextLayoutManager(FOText node) {
         foText = node;
         letterSpaceAdjustArray = new MinOptMax[node.length() + 1];
-        areaInfos = new ArrayList();
+        mappings = new ArrayList<GlyphMapping>();
     }
 
     private KnuthPenalty makeZeroWidthPenalty(int penaltyValue) {
@@ -274,61 +197,61 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     public void addAreas(final PositionIterator posIter, final LayoutContext context) {
 
         // Add word areas
-        AreaInfo areaInfo;
+        GlyphMapping mapping;
         int wordSpaceCount = 0;
         int letterSpaceCount = 0;
-        int firstAreaInfoIndex = -1;
-        int lastAreaInfoIndex = 0;
+        int firstMappingIndex = -1;
+        int lastMappingIndex = 0;
         MinOptMax realWidth = MinOptMax.ZERO;
 
         /* On first area created, add any leading space.
          * Calculate word-space stretch value.
          */
-        AreaInfo lastAreaInfo = null;
+        GlyphMapping lastMapping = null;
         while (posIter.hasNext()) {
             final LeafPosition tbpNext = (LeafPosition) posIter.next();
             if (tbpNext == null) {
                 continue; //Ignore elements without Positions
             }
             if (tbpNext.getLeafPos() != -1) {
-                areaInfo = (AreaInfo) areaInfos.get(tbpNext.getLeafPos());
-                if (lastAreaInfo == null
-                    || (areaInfo.font != lastAreaInfo.font)
-                    || (areaInfo.level != lastAreaInfo.level)) {
-                    if (lastAreaInfo != null) {
-                        addAreaInfoAreas(lastAreaInfo, wordSpaceCount,
-                                letterSpaceCount, firstAreaInfoIndex,
-                                lastAreaInfoIndex, realWidth, context);
+                mapping = mappings.get(tbpNext.getLeafPos());
+                if (lastMapping == null
+                    || (mapping.font != lastMapping.font)
+                    || (mapping.level != lastMapping.level)) {
+                    if (lastMapping != null) {
+                        addMappingAreas(lastMapping, wordSpaceCount,
+                                letterSpaceCount, firstMappingIndex,
+                                lastMappingIndex, realWidth, context);
                     }
-                    firstAreaInfoIndex = tbpNext.getLeafPos();
+                    firstMappingIndex = tbpNext.getLeafPos();
                     wordSpaceCount = 0;
                     letterSpaceCount = 0;
                     realWidth = MinOptMax.ZERO;
                 }
-                wordSpaceCount += areaInfo.wordSpaceCount;
-                letterSpaceCount += areaInfo.letterSpaceCount;
-                realWidth = realWidth.plus(areaInfo.areaIPD);
-                lastAreaInfoIndex = tbpNext.getLeafPos();
-                lastAreaInfo = areaInfo;
+                wordSpaceCount += mapping.wordSpaceCount;
+                letterSpaceCount += mapping.letterSpaceCount;
+                realWidth = realWidth.plus(mapping.areaIPD);
+                lastMappingIndex = tbpNext.getLeafPos();
+                lastMapping = mapping;
             }
         }
-        if (lastAreaInfo != null) {
-            addAreaInfoAreas(lastAreaInfo, wordSpaceCount, letterSpaceCount, firstAreaInfoIndex,
-                    lastAreaInfoIndex, realWidth, context);
+        if (lastMapping != null) {
+            addMappingAreas(lastMapping, wordSpaceCount, letterSpaceCount, firstMappingIndex,
+                    lastMappingIndex, realWidth, context);
         }
 
     }
 
-    private void addAreaInfoAreas(AreaInfo areaInfo, int wordSpaceCount, int letterSpaceCount,
-                                  int firstAreaInfoIndex, int lastAreaInfoIndex,
+    private void addMappingAreas(GlyphMapping mapping, int wordSpaceCount, int letterSpaceCount,
+                                  int firstMappingIndex, int lastMappingIndex,
                                   MinOptMax realWidth, LayoutContext context) {
 
         // TODO: These two statements (if, for) were like this before my recent
-        // changes. However, it seems as if they should use the AreaInfo from
-        // firstAreaInfoIndex.. lastAreaInfoIndex rather than just the last areaInfo.
+        // changes. However, it seems as if they should use the GlyphMapping from
+        // firstMappingIndex.. lastMappingIndex rather than just the last mapping.
         // This needs to be checked.
-        int textLength = areaInfo.getWordLength();
-        if (areaInfo.letterSpaceCount == textLength && !areaInfo.isHyphenated
+        int textLength = mapping.getWordLength();
+        if (mapping.letterSpaceCount == textLength && !mapping.isHyphenated
                 && context.isLastArea()) {
             // the line ends at a character like "/" or "-";
             // remove the letter space after the last character
@@ -336,7 +259,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             letterSpaceCount--;
         }
 
-        for (int i = areaInfo.startIndex; i < areaInfo.breakIndex; i++) {
+        for (int i = mapping.startIndex; i < mapping.endIndex; i++) {
             MinOptMax letterSpaceAdjustment = letterSpaceAdjustArray[i + 1];
             if (letterSpaceAdjustment != null && letterSpaceAdjustment.isElastic()) {
                 letterSpaceCount++;
@@ -344,7 +267,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
 
         // add hyphenation character if the last word is hyphenated
-        if (context.isLastArea() && areaInfo.isHyphenated) {
+        if (context.isLastArea() && mapping.isHyphenated) {
             realWidth = realWidth.plus(hyphIPD);
         }
 
@@ -385,8 +308,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             totalAdjust = difference;
         }
 
-        TextArea textArea = new TextAreaBuilder(realWidth, totalAdjust, context, firstAreaInfoIndex,
-                lastAreaInfoIndex, context.isLastArea(), areaInfo.font).build();
+        TextArea textArea = new TextAreaBuilder(realWidth, totalAdjust, context, firstMappingIndex,
+                lastMappingIndex, context.isLastArea(), mapping.font).build();
 
         // wordSpaceDim is computed in relation to wordSpaceIPD.opt
         // but the renderer needs to know the adjustment in relation
@@ -417,15 +340,15 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         private final MinOptMax width;          // content ipd
         private final int adjust;               // content ipd adjustment
         private final LayoutContext context;    // layout context
-        private final int firstIndex;           // index of first AreaInfo
-        private final int lastIndex;            // index of last AreaInfo
+        private final int firstIndex;           // index of first GlyphMapping
+        private final int lastIndex;            // index of last GlyphMapping
         private final boolean isLastArea;       // true if last inline area in line area
         private final Font font;                // applicable font
 
         // other, non-constructor state
         private TextArea textArea;              // text area being constructed
         private int blockProgressionDimension;  // calculated bpd
-        private AreaInfo areaInfo;              // current area info when iterating over words
+        private GlyphMapping mapping;           // current mapping when iterating over words
         private StringBuffer wordChars;         // current word's character buffer
         private int[] letterSpaceAdjust;        // current word's letter space adjustments
         private int letterSpaceAdjustIndex;     // last written letter space adjustment index
@@ -442,8 +365,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
          * @param width      the MinOptMax width of the content
          * @param adjust     the total ipd adjustment with respect to the optimal width
          * @param context    the layout context
-         * @param firstIndex the index of the first AreaInfo used for the TextArea
-         * @param lastIndex  the index of the last AreaInfo used for the TextArea
+         * @param firstIndex the index of the first GlyphMapping used for the TextArea
+         * @param lastIndex  the index of the last GlyphMapping used for the TextArea
          * @param isLastArea is this TextArea the last in a line?
          * @param font       Font to be used in this particular TextArea
          */
@@ -516,30 +439,30 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
          * Sets the text of the TextArea, split into words and spaces.
          */
         private void setText() {
-            int areaInfoIndex = -1;
+            int mappingIndex = -1;
             int wordCharLength = 0;
             for (int wordIndex = firstIndex; wordIndex <= lastIndex; wordIndex++) {
-                areaInfo = getAreaInfo(wordIndex);
-                if (areaInfo.isSpace) {
+                mapping = getGlyphMapping(wordIndex);
+                if (mapping.isSpace) {
                     addSpaces();
                 } else {
-                    // areaInfo stores information about a word fragment
-                    if (areaInfoIndex == -1) {
+                    // mapping stores information about a word fragment
+                    if (mappingIndex == -1) {
                         // here starts a new word
-                        areaInfoIndex = wordIndex;
+                        mappingIndex = wordIndex;
                         wordCharLength = 0;
                     }
-                    wordCharLength += areaInfo.getWordLength();
+                    wordCharLength += mapping.getWordLength();
                     if (isWordEnd(wordIndex)) {
-                        addWord(areaInfoIndex, wordIndex, wordCharLength);
-                        areaInfoIndex = -1;
+                        addWord(mappingIndex, wordIndex, wordCharLength);
+                        mappingIndex = -1;
                     }
                 }
             }
         }
 
-        private boolean isWordEnd(int areaInfoIndex) {
-            return areaInfoIndex == lastIndex || getAreaInfo(areaInfoIndex + 1).isSpace;
+        private boolean isWordEnd(int mappingIndex) {
+            return mappingIndex == lastIndex || getGlyphMapping(mappingIndex + 1).isSpace;
         }
 
         /**
@@ -564,10 +487,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             // iterate over word's fragments, adding word chars (with bidi
             // levels), letter space adjustments, and glyph position adjustments
             for (int i = startIndex; i <= endIndex; i++) {
-                AreaInfo wordAreaInfo = getAreaInfo(i);
-                addWordChars(wordAreaInfo);
-                addLetterAdjust(wordAreaInfo);
-                if (addGlyphPositionAdjustments(wordAreaInfo)) {
+                GlyphMapping wordMapping = getGlyphMapping(i);
+                addWordChars(wordMapping);
+                addLetterAdjust(wordMapping);
+                if (addGlyphPositionAdjustments(wordMapping)) {
                     gposAdjusted = true;
                 }
             }
@@ -617,7 +540,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
 
         private boolean isHyphenated(int endIndex) {
-            return isLastArea && endIndex == lastIndex && areaInfo.isHyphenated;
+            return isLastArea && endIndex == lastIndex && mapping.isHyphenated;
         }
 
         private void addHyphenationChar() {
@@ -632,21 +555,54 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
          * (1) concatenate (possibly mapped) word characters to word character buffer;
          * (2) concatenante (possibly mapped) word bidi levels to levels buffer;
          * (3) update word's IPD with optimal IPD of fragment.
-         * @param wordAreaInfo fragment info
+         * @param wordMapping fragment info
          */
-        private void addWordChars(AreaInfo wordAreaInfo) {
-            int s = wordAreaInfo.startIndex;
-            int e = wordAreaInfo.breakIndex;
-            if (foText.hasMapping(s, e)) {
-                wordChars.append(foText.getMapping(s, e));
-                addWordLevels(foText.getMappingBidiLevels(s, e));
+        private void addWordChars(GlyphMapping wordMapping) {
+            int s = wordMapping.startIndex;
+            int e = wordMapping.endIndex;
+            if (wordMapping.mapping != null) {
+                wordChars.append(wordMapping.mapping);
+                addWordLevels(getMappingBidiLevels(wordMapping));
             } else {
                 for (int i = s; i < e; i++) {
                     wordChars.append(foText.charAt(i));
                 }
                 addWordLevels(foText.getBidiLevels(s, e));
             }
-            wordIPD += wordAreaInfo.areaIPD.getOpt();
+            wordIPD += wordMapping.areaIPD.getOpt();
+        }
+
+        /**
+         * Obtain bidirectional levels of mapping of characters over specific interval.
+         * @param start index in character buffer
+         * @param end index in character buffer
+         * @return a (possibly empty) array of bidi levels or null
+         * in case no bidi levels have been assigned
+         */
+        private int[] getMappingBidiLevels(GlyphMapping mapping) {
+            if (mapping.mapping != null) {
+                int nc = mapping.endIndex - mapping.startIndex;
+                int nm = mapping.mapping.length();
+                int[] la = foText.getBidiLevels(mapping.startIndex, mapping.endIndex);
+                if (la == null) {
+                    return null;
+                } else if (nm == nc) { // mapping is same length as mapped range
+                    return la;
+                } else if (nm > nc) { // mapping is longer than mapped range
+                    int[] ma = new int[nm];
+                    System.arraycopy(la, 0, ma, 0, la.length);
+                    for (int i = la.length, n = ma.length, l = (i > 0) ? la[i - 1] : 0; i < n; i++) {
+                        ma[i] = l;
+                    }
+                    return ma;
+                } else { // mapping is shorter than mapped range
+                    int[] ma = new int[nm];
+                    System.arraycopy(la, 0, ma, 0, ma.length);
+                    return ma;
+                }
+            } else {
+                return foText.getBidiLevels(mapping.startIndex, mapping.endIndex);
+            }
         }
 
         /**
@@ -672,16 +628,16 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         /**
          * Given a word area info associated with a word fragment,
          * concatenate letter space adjustments for each (possibly mapped) character.
-         * @param wordAreaInfo fragment info
+         * @param wordMapping fragment info
          */
-        private void addLetterAdjust(AreaInfo wordAreaInfo) {
-            int letterSpaceCount = wordAreaInfo.letterSpaceCount;
-            int wordLength = wordAreaInfo.getWordLength();
+        private void addLetterAdjust(GlyphMapping wordMapping) {
+            int letterSpaceCount = wordMapping.letterSpaceCount;
+            int wordLength = wordMapping.getWordLength();
             int taAdjust = textArea.getTextLetterSpaceAdjust();
             for (int i = 0, n = wordLength; i < n; i++) {
                 int j = letterSpaceAdjustIndex + i;
                 if (j > 0) {
-                    int k = wordAreaInfo.startIndex + i;
+                    int k = wordMapping.startIndex + i;
                     MinOptMax adj = (k < letterSpaceAdjustArray.length)
                         ? letterSpaceAdjustArray [ k ] : null;
                     letterSpaceAdjust [ j ] = (adj == null) ? 0 : adj.getOpt();
@@ -697,14 +653,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         /**
          * Given a word area info associated with a word fragment,
          * concatenate glyph position adjustments for each (possibly mapped) character.
-         * @param wordAreaInfo fragment info
+         * @param wordMapping fragment info
          * @return true if an adjustment was non-zero
          */
-        private boolean addGlyphPositionAdjustments(AreaInfo wordAreaInfo) {
+        private boolean addGlyphPositionAdjustments(GlyphMapping wordMapping) {
             boolean adjusted = false;
-            int[][] gpa = wordAreaInfo.gposAdjustments;
+            int[][] gpa = wordMapping.gposAdjustments;
             int numAdjusts = (gpa != null) ? gpa.length : 0;
-            int wordLength = wordAreaInfo.getWordLength();
+            int wordLength = wordMapping.getWordLength();
             if (numAdjusts > 0) {
                 int need = gposAdjustmentsIndex + numAdjusts;
                 if (need <= gposAdjustments.length) {
@@ -733,7 +689,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
 
         /**
-         * The <code>AreaInfo</code> stores information about spaces.
+         * The <code>GlyphMapping</code> stores information about spaces.
          * <p/>
          * Add the spaces - except zero-width spaces - to the TextArea.
          */
@@ -743,16 +699,16 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             // divide the area info's allocated IPD evenly among the
             // non-zero-width space characters
             int numZeroWidthSpaces = 0;
-            for (int i = areaInfo.startIndex; i < areaInfo.breakIndex; i++) {
+            for (int i = mapping.startIndex; i < mapping.endIndex; i++) {
                 char spaceChar = foText.charAt(i);
                 if (CharUtilities.isZeroWidthSpace(spaceChar)) {
                     numZeroWidthSpaces++;
                 }
             }
-            int numSpaces = areaInfo.breakIndex - areaInfo.startIndex - numZeroWidthSpaces;
-            int spaceIPD = areaInfo.areaIPD.getOpt() / ((numSpaces > 0) ? numSpaces : 1);
+            int numSpaces = mapping.endIndex - mapping.startIndex - numZeroWidthSpaces;
+            int spaceIPD = mapping.areaIPD.getOpt() / ((numSpaces > 0) ? numSpaces : 1);
             // add space area children, one for each non-zero-width space character
-            for (int i = areaInfo.startIndex; i < areaInfo.breakIndex; i++) {
+            for (int i = mapping.startIndex; i < mapping.endIndex; i++) {
                 char spaceChar = foText.charAt(i);
                 int level = foText.bidiLevelAt(i);
                 if (!CharUtilities.isZeroWidthSpace(spaceChar)) {
@@ -766,39 +722,20 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     }
 
-    private void addAreaInfo(AreaInfo ai) {
-        addAreaInfo(areaInfos.size(), ai);
+    private void addGlyphMapping(GlyphMapping mapping) {
+        addGlyphMapping(mappings.size(), mapping);
     }
 
-    private void addAreaInfo(int index, AreaInfo ai) {
-        areaInfos.add(index, ai);
+    private void addGlyphMapping(int index, GlyphMapping mapping) {
+        mappings.add(index, mapping);
     }
 
-    private void removeAreaInfo(int index) {
-        areaInfos.remove(index);
+    private void removeGlyphMapping(int index) {
+        mappings.remove(index);
     }
 
-    private AreaInfo getAreaInfo(int index) {
-        return (AreaInfo) areaInfos.get(index);
-    }
-
-    private void addToLetterAdjust(int index, int width) {
-        if (letterSpaceAdjustArray[index] == null) {
-            letterSpaceAdjustArray[index] = MinOptMax.getInstance(width);
-        } else {
-            letterSpaceAdjustArray[index] = letterSpaceAdjustArray[index].plus(width);
-        }
-    }
-
-    /**
-     * Indicates whether a character is a space in terms of this layout manager.
-     * @param ch the character
-     * @return true if it's a space
-     */
-    private static boolean isSpace(final char ch) {
-        return ch == CharUtilities.SPACE
-                || CharUtilities.isNonBreakableSpace(ch)
-                || CharUtilities.isFixedWidthSpace(ch);
+    private GlyphMapping getGlyphMapping(int index) {
+        return mappings.get(index);
     }
 
     /** {@inheritDoc} */
@@ -810,8 +747,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         final List returnList = new LinkedList();
         KnuthSequence sequence = new InlineKnuthSequence();
-        AreaInfo areaInfo = null;
-        AreaInfo prevAreaInfo = null;
+        GlyphMapping mapping = null;
+        GlyphMapping prevMapping = null;
         returnList.add(sequence);
 
         if (LOG.isDebugEnabled()) {
@@ -857,24 +794,24 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             }
             if (inWord) {
                 if (breakOpportunity
-                     || TextLayoutManager.isSpace(ch)
+                     || GlyphMapping.isSpace(ch)
                      || CharUtilities.isExplicitBreak(ch)
                      || ((prevLevel != -1) && (level != prevLevel))) {
                     // this.foText.charAt(lastIndex) == CharUtilities.SOFT_HYPHEN
-                    prevAreaInfo = processWord(alignment, sequence, prevAreaInfo, ch,
+                    prevMapping = processWord(alignment, sequence, prevMapping, ch,
                             breakOpportunity, true, prevLevel);
                 }
             } else if (inWhitespace) {
                 if (ch != CharUtilities.SPACE || breakOpportunity) {
-                    prevAreaInfo = processWhitespace(alignment, sequence,
+                    prevMapping = processWhitespace(alignment, sequence,
                                                      breakOpportunity, prevLevel);
                 }
             } else {
-                if (areaInfo != null) {
-                    prevAreaInfo = areaInfo;
-                    processLeftoverAreaInfo(alignment, sequence, areaInfo,
+                if (mapping != null) {
+                    prevMapping = mapping;
+                    processLeftoverGlyphMapping(alignment, sequence, mapping,
                             ch == CharUtilities.SPACE || breakOpportunity);
-                    areaInfo = null;
+                    mapping = null;
                 }
                 if (breakAction == LineBreakStatus.EXPLICIT_BREAK) {
                     sequence = processLinebreak(returnList, sequence);
@@ -888,15 +825,15 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         this.foText, this);
                 font.mapChar(ch);
                 // preserved space or non-breaking space:
-                // create the AreaInfo object
-                areaInfo = new AreaInfo(nextStart, nextStart + 1, 1, 0, wordSpaceIPD, false, true,
+                // create the GlyphMapping object
+                mapping = new GlyphMapping(nextStart, nextStart + 1, 1, 0, wordSpaceIPD, false, true,
                                         breakOpportunity, spaceFont, level, null);
                 thisStart = nextStart + 1;
             } else if (CharUtilities.isFixedWidthSpace(ch) || CharUtilities.isZeroWidthSpace(ch)) {
-                // create the AreaInfo object
+                // create the GlyphMapping object
                 Font font = FontSelector.selectFontForCharacterInText(ch, foText, this);
                 MinOptMax ipd = MinOptMax.getInstance(font.getCharWidth(ch));
-                areaInfo = new AreaInfo(nextStart, nextStart + 1, 0, 0, ipd, false, true,
+                mapping = new GlyphMapping(nextStart, nextStart + 1, 0, 0, ipd, false, true,
                                         breakOpportunity, font, level, null);
                 thisStart = nextStart + 1;
             } else if (CharUtilities.isExplicitBreak(ch)) {
@@ -904,7 +841,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 thisStart = nextStart + 1;
             }
 
-            inWord = !TextLayoutManager.isSpace(ch) && !CharUtilities.isExplicitBreak(ch);
+            inWord = !GlyphMapping.isSpace(ch) && !CharUtilities.isExplicitBreak(ch);
             inWhitespace = ch == CharUtilities.SPACE
                     && foText.getWhitespaceTreatment() != Constants.EN_PRESERVE;
             prevLevel = level;
@@ -913,11 +850,11 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         // Process any last elements
         if (inWord) {
-            processWord(alignment, sequence, prevAreaInfo, ch, false, false, prevLevel);
+            processWord(alignment, sequence, prevMapping, ch, false, false, prevLevel);
         } else if (inWhitespace) {
             processWhitespace(alignment, sequence, !keepTogether, prevLevel);
-        } else if (areaInfo != null) {
-            processLeftoverAreaInfo(alignment, sequence, areaInfo,
+        } else if (mapping != null) {
+            processLeftoverGlyphMapping(alignment, sequence, mapping,
                     ch == CharUtilities.ZERO_WIDTH_SPACE);
         } else if (CharUtilities.isExplicitBreak(ch)) {
             this.processLinebreak(returnList, sequence);
@@ -948,15 +885,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         return sequence;
     }
 
-    private void processLeftoverAreaInfo(int alignment,
-                                         KnuthSequence sequence, AreaInfo areaInfo,
-                                         boolean breakOpportunityAfter) {
-        addAreaInfo(areaInfo);
-        areaInfo.breakOppAfter = breakOpportunityAfter;
-        addElementsForASpace(sequence, alignment, areaInfo, areaInfos.size() - 1);
+    private void processLeftoverGlyphMapping(int alignment, KnuthSequence sequence,
+            GlyphMapping mapping, boolean breakOpportunityAfter) {
+        addGlyphMapping(mapping);
+        mapping.breakOppAfter = breakOpportunityAfter;
+        addElementsForASpace(sequence, alignment, mapping, mappings.size() - 1);
     }
 
-    private AreaInfo processWhitespace(final int alignment,
+    private GlyphMapping processWhitespace(final int alignment,
             final KnuthSequence sequence, final boolean breakOpportunity, int level) {
 
         if (LOG.isDebugEnabled()) {
@@ -964,209 +900,24 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
 
         // End of whitespace
-        // create the AreaInfo object
+        // create the GlyphMapping object
         assert nextStart >= thisStart;
-        AreaInfo areaInfo = new AreaInfo(
-            thisStart, nextStart, nextStart - thisStart, 0,
+        GlyphMapping mapping = new GlyphMapping(
+              thisStart, nextStart, nextStart - thisStart, 0,
               wordSpaceIPD.mult(nextStart - thisStart),
               false, true, breakOpportunity, spaceFont, level, null);
 
-        addAreaInfo(areaInfo);
+        addGlyphMapping(mapping);
 
         // create the elements
-        addElementsForASpace(sequence, alignment, areaInfo, areaInfos.size() - 1);
+        addElementsForASpace(sequence, alignment, mapping, mappings.size() - 1);
 
         thisStart = nextStart;
-        return areaInfo;
+        return mapping;
     }
 
-    private AreaInfo processWordMapping(
-        int lastIndex, final Font font, AreaInfo prevAreaInfo, final char breakOpportunityChar,
-          final boolean endsWithHyphen, int level) {
-        int s = this.thisStart; // start index of word in FOText character buffer
-        int e = lastIndex;      // end index of word in FOText character buffer
-        int nLS = 0;            // # of letter spaces
-        String script = foText.getScript();
-        String language = foText.getLanguage();
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("PW: [" + thisStart + "," + lastIndex + "]: {"
-                        + " +M"
-                        + ", level = " + level
-                        + " }");
-        }
-
-        // 1. extract unmapped character sequence
-        CharSequence ics = foText.subSequence(s, e);
-
-        // 2. if script is not specified (by FO property) or it is specified as 'auto',
-        // then compute dominant script
-        if ((script == null) || "auto".equals(script)) {
-            script = CharScript.scriptTagFromCode(CharScript.dominantScript(ics));
-        }
-        if ((language == null) || "none".equals(language)) {
-            language = "dflt";
-        }
-
-        // 3. perform mapping of chars to glyphs ... to glyphs ... to chars
-        CharSequence mcs = font.performSubstitution(ics, script, language);
-
-        // 4. compute glyph position adjustments on (substituted) characters
-        int[][] gpa;
-        if (font.performsPositioning()) {
-            // handle GPOS adjustments
-            gpa = font.performPositioning(mcs, script, language);
-        } else if (font.hasKerning()) {
-            // handle standard (non-GPOS) kerning adjustments
-            gpa = getKerningAdjustments(mcs, font);
-        } else {
-            gpa = null;
-        }
-
-        // 5. reorder combining marks so that they precede (within the mapped char sequence) the
-        // base to which they are applied; N.B. position adjustments (gpa) are reordered in place
-        mcs = font.reorderCombiningMarks(mcs, gpa, script, language);
-
-        // 6. if mapped sequence differs from input sequence, then memoize mapped sequence
-        if (!CharUtilities.isSameSequence(mcs, ics)) {
-            foText.addMapping(s, e, mcs);
-        }
-
-        // 7. compute word ipd based on final position adjustments
-        MinOptMax ipd = MinOptMax.ZERO;
-        for (int i = 0, n = mcs.length(); i < n; i++) {
-            int c = mcs.charAt(i);
-            // TODO !BMP
-            int  w = font.getCharWidth(c);
-            if (w < 0) {
-                w = 0;
-            }
-            if (gpa != null) {
-                w += gpa [ i ] [ GlyphPositioningTable.Value.IDX_X_ADVANCE ];
-            }
-            ipd = ipd.plus(w);
-        }
-
-        // [TBD] - handle letter spacing
-
-        return new AreaInfo(
-            s, e, 0, nLS, ipd, endsWithHyphen, false,
-              breakOpportunityChar != 0, font, level, gpa);
-    }
-
-    /**
-     * Given a mapped character sequence MCS, obtain glyph position adjustments
-     * from the font's kerning data.
-     * @param mcs mapped character sequence
-     * @param font applicable font
-     * @return glyph position adjustments (or null if no kerning)
-     */
-    private int[][] getKerningAdjustments(CharSequence mcs, final Font font) {
-        int nc = mcs.length();
-        // extract kerning array
-        int[] ka = new int [ nc ]; // kerning array
-        for (int i = 0, n = nc, cPrev = -1; i < n; i++) {
-            int c = mcs.charAt(i);
-            // TODO !BMP
-            if (cPrev >= 0) {
-                ka[i] = font.getKernValue(cPrev, c);
-            }
-            cPrev = c;
-        }
-        // was there a non-zero kerning?
-        boolean hasKerning = false;
-        for (int i = 0, n = nc; i < n; i++) {
-            if (ka[i] != 0) {
-                hasKerning = true;
-                break;
-            }
-        }
-        // if non-zero kerning, then create and return glyph position adjustment array
-        if (hasKerning) {
-            int[][] gpa = new int [ nc ] [ 4 ];
-            for (int i = 0, n = nc; i < n; i++) {
-                if (i > 0) {
-                    gpa [ i - 1 ] [ GlyphPositioningTable.Value.IDX_X_ADVANCE ] = ka [ i ];
-                }
-            }
-            return gpa;
-        } else {
-            return null;
-        }
-    }
-
-    private AreaInfo processWordNoMapping(int lastIndex, final Font font, AreaInfo prevAreaInfo,
-            final char breakOpportunityChar, final boolean endsWithHyphen, int level) {
-        boolean kerning = font.hasKerning();
-        MinOptMax wordIPD = MinOptMax.ZERO;
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("PW: [" + thisStart + "," + lastIndex + "]: {"
-                        + " -M"
-                        + ", level = " + level
-                        + " }");
-        }
-
-        for (int i = thisStart; i < lastIndex; i++) {
-            char currentChar = foText.charAt(i);
-
-            //character width
-            int charWidth = font.getCharWidth(currentChar);
-            wordIPD = wordIPD.plus(charWidth);
-
-            //kerning
-            if (kerning) {
-                int kern = 0;
-                if (i > thisStart) {
-                    char previousChar = foText.charAt(i - 1);
-                    kern = font.getKernValue(previousChar, currentChar);
-                } else if (prevAreaInfo != null
-                           && !prevAreaInfo.isSpace && prevAreaInfo.breakIndex > 0) {
-                    char previousChar = foText.charAt(prevAreaInfo.breakIndex - 1);
-                    kern = font.getKernValue(previousChar, currentChar);
-                }
-                if (kern != 0) {
-                    addToLetterAdjust(i, kern);
-                    wordIPD = wordIPD.plus(kern);
-                }
-            }
-        }
-        if (kerning
-                && (breakOpportunityChar != 0)
-                && !TextLayoutManager.isSpace(breakOpportunityChar)
-                && lastIndex > 0
-                && endsWithHyphen) {
-            int kern = font.getKernValue(foText.charAt(lastIndex - 1), breakOpportunityChar);
-            if (kern != 0) {
-                addToLetterAdjust(lastIndex, kern);
-                //TODO: add kern to wordIPD?
-            }
-        }
-        // shy+chars at start of word: wordLength == 0 && breakOpportunity
-        // shy only characters in word: wordLength == 0 && !breakOpportunity
-        int wordLength = lastIndex - thisStart;
-        int letterSpaces = 0;
-        if (wordLength != 0) {
-            letterSpaces = wordLength - 1;
-            // if there is a break opportunity and the next one (break character)
-            // is not a space, it could be used as a line end;
-            // add one more letter space, in case other text follows
-            if ((breakOpportunityChar != 0) && !TextLayoutManager.isSpace(breakOpportunityChar)) {
-                  letterSpaces++;
-            }
-        }
-        assert letterSpaces >= 0;
-        wordIPD = wordIPD.plus(letterSpaceIPD.mult(letterSpaces));
-
-        // create and return the AreaInfo object
-        return new AreaInfo(thisStart, lastIndex, 0,
-                            letterSpaces, wordIPD,
-                            endsWithHyphen,
-                            false, breakOpportunityChar != 0, font, level, null);
-    }
-
-    private AreaInfo processWord(final int alignment, final KnuthSequence sequence,
-            AreaInfo prevAreaInfo, final char ch, final boolean breakOpportunity,
+    private GlyphMapping processWord(final int alignment, final KnuthSequence sequence,
+            GlyphMapping prevMapping, final char ch, final boolean breakOpportunity,
             final boolean checkEndsWithHyphen, int level) {
 
         //Word boundary found, process widths and kerning
@@ -1178,23 +929,20 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 && foText.charAt(lastIndex) == CharUtilities.SOFT_HYPHEN;
         Font font = FontSelector.selectFontForCharactersInText(
             foText, thisStart, lastIndex, foText, this);
-        AreaInfo areaInfo;
-        if (font.performsSubstitution() || font.performsPositioning()) {
-            areaInfo = processWordMapping(
-                lastIndex, font, prevAreaInfo, breakOpportunity ? ch : 0, endsWithHyphen, level);
-        } else {
-            areaInfo = processWordNoMapping(
-                lastIndex, font, prevAreaInfo, breakOpportunity ? ch : 0, endsWithHyphen, level);
-        }
-        prevAreaInfo = areaInfo;
-        addAreaInfo(areaInfo);
+        char breakOpportunityChar = breakOpportunity ? ch : 0;
+        char precedingChar = prevMapping != null && !prevMapping.isSpace
+                && prevMapping.endIndex > 0 ? foText.charAt(prevMapping.endIndex - 1) : 0;
+        GlyphMapping mapping = GlyphMapping.doGlyphMapping(foText, thisStart, lastIndex, font,
+                letterSpaceIPD, letterSpaceAdjustArray, precedingChar, breakOpportunityChar, endsWithHyphen, level);
+        prevMapping = mapping;
+        addGlyphMapping(mapping);
         tempStart = nextStart;
 
         //add the elements
-        addElementsForAWordFragment(sequence, alignment, areaInfo, areaInfos.size() - 1);
+        addElementsForAWordFragment(sequence, alignment, mapping, mappings.size() - 1);
         thisStart = nextStart;
 
-        return prevAreaInfo;
+        return prevMapping;
     }
 
     /** {@inheritDoc} */
@@ -1214,9 +962,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         int index = leafPos.getLeafPos();
         //element could refer to '-1' position, for non-collapsed spaces (?)
         if (index > -1) {
-            AreaInfo areaInfo = getAreaInfo(index);
-            areaInfo.letterSpaceCount++;
-            areaInfo.addToAreaIPD(letterSpaceIPD);
+            GlyphMapping mapping = getGlyphMapping(index);
+            mapping.letterSpaceCount++;
+            mapping.addToAreaIPD(letterSpaceIPD);
             if (TextLayoutManager.BREAK_CHARS.indexOf(foText.charAt(tempStart - 1)) >= 0) {
                 // the last character could be used as a line break
                 // append new elements to oldList
@@ -1227,13 +975,13 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             } else if (letterSpaceIPD.isStiff()) {
                 // constant letter space: replace the box
                 // give it the unwrapped position of the replaced element
-                oldListIterator.set(new KnuthInlineBox(areaInfo.areaIPD.getOpt(),
+                oldListIterator.set(new KnuthInlineBox(mapping.areaIPD.getOpt(),
                         alignmentContext, pos, false));
             } else {
                 // adjustable letter space: replace the glue
                 oldListIterator.next(); // this would return the penalty element
                 oldListIterator.next(); // this would return the glue element
-                oldListIterator.set(new KnuthGlue(letterSpaceIPD.mult(areaInfo.letterSpaceCount),
+                oldListIterator.set(new KnuthGlue(letterSpaceIPD.mult(mapping.letterSpaceCount),
                         auxiliaryPosition, true));
             }
         }
@@ -1242,26 +990,26 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     /** {@inheritDoc} */
     public void hyphenate(Position pos, HyphContext hyphContext) {
-        AreaInfo areaInfo = getAreaInfo(((LeafPosition) pos).getLeafPos() + changeOffset);
-        int startIndex = areaInfo.startIndex;
+        GlyphMapping mapping = getGlyphMapping(((LeafPosition) pos).getLeafPos() + changeOffset);
+        int startIndex = mapping.startIndex;
         int stopIndex;
         boolean nothingChanged = true;
-        Font font = areaInfo.font;
+        Font font = mapping.font;
 
-        while (startIndex < areaInfo.breakIndex) {
+        while (startIndex < mapping.endIndex) {
             MinOptMax newIPD = MinOptMax.ZERO;
             boolean hyphenFollows;
 
             stopIndex = startIndex + hyphContext.getNextHyphPoint();
-            if (hyphContext.hasMoreHyphPoints() && stopIndex <= areaInfo.breakIndex) {
+            if (hyphContext.hasMoreHyphPoints() && stopIndex <= mapping.endIndex) {
                 // stopIndex is the index of the first character
                 // after a hyphenation point
                 hyphenFollows = true;
             } else {
                 // there are no more hyphenation points,
-                // or the next one is after areaInfo.breakIndex
+                // or the next one is after mapping.breakIndex
                 hyphenFollows = false;
-                stopIndex = areaInfo.breakIndex;
+                stopIndex = mapping.endIndex;
             }
 
             hyphContext.updateOffset(stopIndex - startIndex);
@@ -1286,18 +1034,18 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
             // add letter spaces
             boolean isWordEnd
-                = (stopIndex == areaInfo.breakIndex)
-                && (areaInfo.letterSpaceCount < areaInfo.getWordLength());
+                = (stopIndex == mapping.endIndex)
+                && (mapping.letterSpaceCount < mapping.getWordLength());
             int letterSpaceCount = isWordEnd ? stopIndex - startIndex - 1 : stopIndex - startIndex;
 
             assert letterSpaceCount >= 0;
             newIPD = newIPD.plus(letterSpaceIPD.mult(letterSpaceCount));
 
-            if (!(nothingChanged && stopIndex == areaInfo.breakIndex && !hyphenFollows)) {
-                // the new AreaInfo object is not equal to the old one
+            if (!(nothingChanged && stopIndex == mapping.endIndex && !hyphenFollows)) {
+                // the new GlyphMapping object is not equal to the old one
                 changeList.add(
                     new PendingChange(
-                      new AreaInfo(startIndex, stopIndex, 0,
+                      new GlyphMapping(startIndex, stopIndex, 0,
                                      letterSpaceCount, newIPD, hyphenFollows,
                                      false, false, font, -1, null),
                         ((LeafPosition) pos).getLeafPos() + changeOffset));
@@ -1324,7 +1072,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             return false;
         }
 
-        // Find the first and last positions in oldList that point to an AreaInfo
+        // Find the first and last positions in oldList that point to a GlyphMapping
         // (i.e. getLeafPos() != -1)
         LeafPosition startPos = null;
         LeafPosition endPos = null;
@@ -1349,8 +1097,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         returnedIndices[0] = (startPos != null ? startPos.getLeafPos() : -1) + changeOffset;
         returnedIndices[1] = (endPos != null ? endPos.getLeafPos() : -1) + changeOffset;
 
-        int areaInfosAdded = 0;
-        int areaInfosRemoved = 0;
+        int mappingsAdded = 0;
+        int mappingsRemoved = 0;
 
         if (!changeList.isEmpty()) {
             int oldIndex = -1;
@@ -1360,24 +1108,24 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             while (changeListIterator.hasNext()) {
                 currChange = (PendingChange) changeListIterator.next();
                 if (currChange.index == oldIndex) {
-                    areaInfosAdded++;
-                    changeIndex = currChange.index + areaInfosAdded - areaInfosRemoved;
+                    mappingsAdded++;
+                    changeIndex = currChange.index + mappingsAdded - mappingsRemoved;
                 } else {
-                    areaInfosRemoved++;
-                    areaInfosAdded++;
+                    mappingsRemoved++;
+                    mappingsAdded++;
                     oldIndex = currChange.index;
-                    changeIndex = currChange.index + areaInfosAdded - areaInfosRemoved;
-                    removeAreaInfo(changeIndex);
+                    changeIndex = currChange.index + mappingsAdded - mappingsRemoved;
+                    removeGlyphMapping(changeIndex);
                 }
-                addAreaInfo(changeIndex, currChange.areaInfo);
+                addGlyphMapping(changeIndex, currChange.mapping);
             }
             changeList.clear();
         }
 
         // increase the end index for getChangedKnuthElements()
-        returnedIndices[1] += (areaInfosAdded - areaInfosRemoved);
+        returnedIndices[1] += (mappingsAdded - mappingsRemoved);
         // increase offset to use for subsequent paragraphs
-        changeOffset += (areaInfosAdded - areaInfosRemoved);
+        changeOffset += (mappingsAdded - mappingsRemoved);
 
         return hasChanged;
     }
@@ -1391,16 +1139,16 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         final LinkedList returnList = new LinkedList();
 
         for (; returnedIndices[0] <= returnedIndices[1]; returnedIndices[0]++) {
-            AreaInfo areaInfo = getAreaInfo(returnedIndices[0]);
-            if (areaInfo.wordSpaceCount == 0) {
-                // areaInfo refers either to a word or a word fragment
-                addElementsForAWordFragment(returnList, alignment, areaInfo, returnedIndices[0]);
+            GlyphMapping mapping = getGlyphMapping(returnedIndices[0]);
+            if (mapping.wordSpaceCount == 0) {
+                // mapping refers either to a word or a word fragment
+                addElementsForAWordFragment(returnList, alignment, mapping, returnedIndices[0]);
             } else {
-                // areaInfo refers to a space
-                addElementsForASpace(returnList, alignment, areaInfo, returnedIndices[0]);
+                // mapping refers to a space
+                addElementsForASpace(returnList, alignment, mapping, returnedIndices[0]);
             }
         }
-        setFinished(returnedIndices[0] == areaInfos.size() - 1);
+        setFinished(returnedIndices[0] == mappings.size() - 1);
         //ElementListObserver.observe(returnList, "text-changed", null);
         return returnList;
     }
@@ -1409,9 +1157,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     public String getWordChars(Position pos) {
         int leafValue = ((LeafPosition) pos).getLeafPos() + changeOffset;
         if (leafValue != -1) {
-            AreaInfo areaInfo = getAreaInfo(leafValue);
-            StringBuffer buffer = new StringBuffer(areaInfo.getWordLength());
-            for (int i = areaInfo.startIndex; i < areaInfo.breakIndex; i++) {
+            GlyphMapping mapping = getGlyphMapping(leafValue);
+            StringBuffer buffer = new StringBuffer(mapping.getWordLength());
+            for (int i = mapping.startIndex; i < mapping.endIndex; i++) {
                 buffer.append(foText.charAt(i));
             }
             return buffer.toString();
@@ -1420,41 +1168,39 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
-    private void addElementsForASpace(List baseList, int alignment, AreaInfo areaInfo,
+    private void addElementsForASpace(List baseList, int alignment, GlyphMapping mapping,
                                       int leafValue) {
         LeafPosition mainPosition = new LeafPosition(this, leafValue);
 
-        if (!areaInfo.breakOppAfter) {
+        if (!mapping.breakOppAfter) {
             // a non-breaking space
             if (alignment == Constants.EN_JUSTIFY) {
                 // the space can stretch and shrink, and must be preserved
                 // when starting a line
                 baseList.add(makeAuxiliaryZeroWidthBox());
                 baseList.add(makeZeroWidthPenalty(KnuthElement.INFINITE));
-                baseList.add(new KnuthGlue(areaInfo.areaIPD, mainPosition, false));
+                baseList.add(new KnuthGlue(mapping.areaIPD, mainPosition, false));
             } else {
                 // the space does not need to stretch or shrink, and must be
                 // preserved when starting a line
-                baseList.add(new KnuthInlineBox(areaInfo.areaIPD.getOpt(), null, mainPosition,
+                baseList.add(new KnuthInlineBox(mapping.areaIPD.getOpt(), null, mainPosition,
                         true));
             }
         } else {
-            if (foText.charAt(areaInfo.startIndex) != CharUtilities.SPACE
+            if (foText.charAt(mapping.startIndex) != CharUtilities.SPACE
                     || foText.getWhitespaceTreatment() == Constants.EN_PRESERVE) {
                 // a breaking space that needs to be preserved
-                baseList
-                    .addAll(getElementsForBreakingSpace(alignment, areaInfo, auxiliaryPosition, 0,
-                        mainPosition, areaInfo.areaIPD.getOpt(), true));
+                baseList.addAll(getElementsForBreakingSpace(alignment, mapping, auxiliaryPosition, 0,
+                        mainPosition, mapping.areaIPD.getOpt(), true));
             } else {
                 // a (possible block) of breaking spaces
-                baseList
-                    .addAll(getElementsForBreakingSpace(alignment, areaInfo, mainPosition,
-                        areaInfo.areaIPD.getOpt(), auxiliaryPosition, 0, false));
+                baseList.addAll(getElementsForBreakingSpace(alignment, mapping, mainPosition,
+                        mapping.areaIPD.getOpt(), auxiliaryPosition, 0, false));
             }
         }
     }
 
-    private List getElementsForBreakingSpace(int alignment, AreaInfo areaInfo, Position pos2,
+    private List getElementsForBreakingSpace(int alignment, GlyphMapping mapping, Position pos2,
                                              int p2WidthOffset, Position pos3,
                                              int p3WidthOffset, boolean skipZeroCheck) {
         List elements = new ArrayList();
@@ -1504,7 +1250,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 elements.add(g);
                 elements.add(makeZeroWidthPenalty(0));
                 g = new KnuthGlue(
-                    areaInfo.areaIPD.getOpt(),
+                    mapping.areaIPD.getOpt(),
                      -3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0, pos2, false);
                 elements.add(g);
             }
@@ -1513,25 +1259,24 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         case EN_JUSTIFY:
             // justified text:
             // the stretch and shrink depends on the space width
-            elements.addAll(getElementsForJustifiedText(areaInfo, pos2, p2WidthOffset, pos3,
-                    p3WidthOffset, skipZeroCheck, areaInfo.areaIPD.getShrink()));
+            elements.addAll(getElementsForJustifiedText(mapping, pos2, p2WidthOffset, pos3,
+                    p3WidthOffset, skipZeroCheck, mapping.areaIPD.getShrink()));
             break;
 
         default:
             // last line justified, the other lines unjustified:
             // use only the space stretch
-            elements.addAll(getElementsForJustifiedText(areaInfo, pos2, p2WidthOffset, pos3,
+            elements.addAll(getElementsForJustifiedText(mapping, pos2, p2WidthOffset, pos3,
                     p3WidthOffset, skipZeroCheck, 0));
         }
         return elements;
     }
 
-    private List getElementsForJustifiedText(
-        AreaInfo areaInfo, Position pos2, int p2WidthOffset,
-         Position pos3, int p3WidthOffset, boolean skipZeroCheck,
-         int shrinkability) {
+    private List getElementsForJustifiedText(GlyphMapping mapping, Position pos2, int p2WidthOffset,
+                                             Position pos3, int p3WidthOffset, boolean skipZeroCheck,
+                                             int shrinkability) {
 
-        int stretchability = areaInfo.areaIPD.getStretch();
+        int stretchability = mapping.areaIPD.getStretch();
 
         List elements = new ArrayList();
         if (skipZeroCheck || lineStartBAP != 0 || lineEndBAP != 0) {
@@ -1543,34 +1288,34 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             elements.add(makeZeroWidthPenalty(KnuthElement.INFINITE));
             elements.add(new KnuthGlue(lineStartBAP + p3WidthOffset, 0, 0, pos3, false));
         } else {
-            elements.add(new KnuthGlue(areaInfo.areaIPD.getOpt(), stretchability, shrinkability,
+            elements.add(new KnuthGlue(mapping.areaIPD.getOpt(), stretchability, shrinkability,
                     pos2, false));
         }
         return elements;
     }
 
-    private void addElementsForAWordFragment(List baseList, int alignment, AreaInfo areaInfo,
+    private void addElementsForAWordFragment(List baseList, int alignment, GlyphMapping mapping,
                                              int leafValue) {
         LeafPosition mainPosition = new LeafPosition(this, leafValue);
 
         // if the last character of the word fragment is '-' or '/',
         // the fragment could end a line; in this case, it loses one
         // of its letter spaces;
-        boolean suppressibleLetterSpace = areaInfo.breakOppAfter && !areaInfo.isHyphenated;
+        boolean suppressibleLetterSpace = mapping.breakOppAfter && !mapping.isHyphenated;
 
         if (letterSpaceIPD.isStiff()) {
             // constant letter spacing
             baseList.add(new KnuthInlineBox(suppressibleLetterSpace
-                    ? areaInfo.areaIPD.getOpt() - letterSpaceIPD.getOpt()
-                    : areaInfo.areaIPD.getOpt(),
+                    ? mapping.areaIPD.getOpt() - letterSpaceIPD.getOpt()
+                    : mapping.areaIPD.getOpt(),
                     alignmentContext, notifyPos(mainPosition), false));
         } else {
             // adjustable letter spacing
             int unsuppressibleLetterSpaces = suppressibleLetterSpace
-                    ? areaInfo.letterSpaceCount - 1
-                    : areaInfo.letterSpaceCount;
-            baseList.add(new KnuthInlineBox(areaInfo.areaIPD.getOpt()
-                    - areaInfo.letterSpaceCount * letterSpaceIPD.getOpt(),
+                    ? mapping.letterSpaceCount - 1
+                    : mapping.letterSpaceCount;
+            baseList.add(new KnuthInlineBox(mapping.areaIPD.getOpt()
+                    - mapping.letterSpaceCount * letterSpaceIPD.getOpt(),
                             alignmentContext, notifyPos(mainPosition), false));
             baseList.add(makeZeroWidthPenalty(KnuthElement.INFINITE));
             baseList.add(new KnuthGlue(letterSpaceIPD.mult(unsuppressibleLetterSpaces),
@@ -1580,19 +1325,19 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         // extra-elements if the word fragment is the end of a syllable,
         // or it ends with a character that can be used as a line break
-        if (areaInfo.isHyphenated) {
+        if (mapping.isHyphenated) {
             MinOptMax widthIfNoBreakOccurs = null;
-            if (areaInfo.breakIndex < foText.length()) {
+            if (mapping.endIndex < foText.length()) {
                 //Add in kerning in no-break condition
-                widthIfNoBreakOccurs = letterSpaceAdjustArray[areaInfo.breakIndex];
+                widthIfNoBreakOccurs = letterSpaceAdjustArray[mapping.endIndex];
             }
-            //if (areaInfo.breakIndex)
+            //if (mapping.breakIndex)
 
             // the word fragment ends at the end of a syllable:
             // if a break occurs the content width increases,
             // otherwise nothing happens
             addElementsForAHyphen(baseList, alignment, hyphIPD, widthIfNoBreakOccurs,
-                    areaInfo.breakOppAfter && areaInfo.isHyphenated);
+                    mapping.breakOppAfter && mapping.isHyphenated);
         } else if (suppressibleLetterSpace) {
             // the word fragment ends with a character that acts as a hyphen
             // if a break occurs the width does not increase,

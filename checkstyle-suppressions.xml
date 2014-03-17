@@ -6,4 +6,7 @@
   <suppress files="org/apache/fop/complexscripts/bidi/GenerateBidiTestData.java" checks="SimplifyBooleanReturn"/>
   <suppress files="org/apache/fop/complexscripts/scripts/ArabicScriptProcessor.java" checks="SimplifyBooleanReturn"/>
   <suppress files="org/apache/fop/complexscripts/util/CharScript.java" checks="SimplifyBooleanReturn"/>
+  <suppress files="org/apache/fop/render/rtf/rtflib/testdocs/MergedTableCells.java" checks="AvoidNestedBlocks"/>
+  <suppress files="org/apache/fop/render/rtf/rtflib/testdocs/NestedTable.java" checks="AvoidNestedBlocks"/>
+  <suppress files="org/apache/fop/fo/flow/MarkersTestCase.java" checks="LocalVariableName"/>
 </suppressions>

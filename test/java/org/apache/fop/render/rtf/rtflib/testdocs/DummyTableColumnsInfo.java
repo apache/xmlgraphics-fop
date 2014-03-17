@@ -33,8 +33,6 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableColumnsInfo;
  *  to create documents without worrying about nested tables handling.
  *  Might need to be replaced by more complete version in some sample
  *  documents created by this package.
- *
- *  @author bdelacretaz@codeconsult.ch
  */
 
 class DummyTableColumnsInfo implements ITableColumnsInfo {

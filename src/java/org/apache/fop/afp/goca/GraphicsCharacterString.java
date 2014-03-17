@@ -67,7 +67,11 @@ public class GraphicsCharacterString extends AbstractGraphicsCoord {
 
     /** {@inheritDoc} */
     public int getDataLength() {
-        return super.getDataLength() + str.length();
+        try {
+            return super.getDataLength() + getStringAsBytes().length;
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 
     /** {@inheritDoc} */

@@ -37,7 +37,7 @@ public abstract class ChecksFactory<C extends Check> {
     /**
      * A factory to create a particular kind of check.
      */
-    protected static interface CheckFactory<C> {
+    protected interface CheckFactory<C> {
 
         /**
          * Creates a {@link Check} instance from the given XML element.

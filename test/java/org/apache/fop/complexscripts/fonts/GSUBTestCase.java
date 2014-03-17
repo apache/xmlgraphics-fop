@@ -21,18 +21,6 @@ package org.apache.fop.complexscripts.fonts;
 
 import java.io.File;
 import java.nio.IntBuffer;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.fop.complexscripts.fonts.GlyphSubtable;
-import org.apache.fop.complexscripts.fonts.GlyphSubstitutionSubtable;
-import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable;
-import org.apache.fop.complexscripts.fonts.GlyphTable.LookupSpec;
-import org.apache.fop.complexscripts.fonts.GlyphTable.LookupTable;
-import org.apache.fop.complexscripts.fonts.ttx.TTXFile;
-import org.apache.fop.complexscripts.util.GlyphContextTester;
-import org.apache.fop.complexscripts.util.GlyphSequence;
-import org.apache.fop.complexscripts.util.ScriptContextTester;
 
 import org.junit.Test;
 
@@ -40,6 +28,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import org.apache.fop.complexscripts.fonts.GlyphTable.LookupTable;
+import org.apache.fop.complexscripts.fonts.ttx.TTXFile;
+import org.apache.fop.complexscripts.util.GlyphContextTester;
+import org.apache.fop.complexscripts.util.GlyphSequence;
+import org.apache.fop.complexscripts.util.ScriptContextTester;
+
+// CSOFF: LineLength
 
 public class GSUBTestCase implements ScriptContextTester, GlyphContextTester {
 

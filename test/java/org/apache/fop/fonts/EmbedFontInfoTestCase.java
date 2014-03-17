@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class EmbedFontInfoTestCase {
 
-    public EmbedFontInfoTestCase() {}
+    public EmbedFontInfoTestCase() { }
 
     private EmbedFontInfo sut;
 

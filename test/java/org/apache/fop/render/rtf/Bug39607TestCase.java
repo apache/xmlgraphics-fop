@@ -21,13 +21,14 @@ package org.apache.fop.render.rtf;
 
 import java.io.StringWriter;
 
+import org.junit.Test;
+
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFile;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
-import org.junit.Test;
 
 /**
  * Test for http://issues.apache.org/bugzilla/show_bug.cgi?id=39607

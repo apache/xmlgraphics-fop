@@ -20,10 +20,6 @@
 package org.apache.fop.render.intermediate;
 
 
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -31,6 +27,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
+
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import org.apache.fop.render.intermediate.IFStructureTreeBuilder.SAXEventRecorder;
 import org.apache.fop.util.XMLUtil;

@@ -21,13 +21,12 @@ package org.apache.fop.render.txt;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.fop.apps.AbstractRendererConfigParserTester;
 import org.apache.fop.apps.TxtRendererConfBuilder;
-import org.apache.fop.render.RendererConfig.RendererConfigParser;
-import org.apache.fop.render.txt.TxtRendererConfig.TxtRendererOption;
 import org.apache.fop.render.txt.TxtRendererConfig.TxtRendererConfigParser;
-
-import static org.junit.Assert.assertEquals;
+import org.apache.fop.render.txt.TxtRendererConfig.TxtRendererOption;
 
 public class TxtRendererConfigParserTestCase
         extends AbstractRendererConfigParserTester<TxtRendererConfBuilder, TxtRendererConfig> {

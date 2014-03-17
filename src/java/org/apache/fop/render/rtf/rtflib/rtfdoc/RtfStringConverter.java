@@ -102,7 +102,7 @@ public final class RtfStringConverter {
             if (i != 0) {
                 d = new Character(str.charAt(i - 1));
             } else {
-                d = new Character(str.charAt(i));
+                d = new Character(SPACE);
             }
 
             //This section modified by Chris Scott

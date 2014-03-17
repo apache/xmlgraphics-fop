@@ -89,4 +89,13 @@ public interface SVGEventProducer extends EventProducer {
      */
     void svgRenderingError(Object source, Exception e, String uri);
 
+    /**
+     * Transparency has been ignored due to restrictions from the PDF profile being used.
+     * @param source the event source
+     * @param pdfProfile the PDF profile
+     * @param uri the image URI, if available
+     * @event.severity WARN
+     */
+    void transparencyIgnored(Object source, Object pdfProfile, String uri);
+
 }

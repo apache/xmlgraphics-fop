@@ -189,6 +189,17 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      */
     protected OutputStream outputStream = null;
 
+    private TransparencyIgnoredEventListener transparencyIgnoredEventListener;
+
+    /**
+     * May be used to give proper feedback to the user when a particular PDF profile is
+     * being used that disallows transparency.
+     */
+    public interface TransparencyIgnoredEventListener {
+
+        void transparencyIgnored(Object pdfProfile);
+    }
+
     /**
      * Create a new PDFGraphics2D with the given pdf document info.
      * This is used to create a Graphics object for use inside an already
@@ -203,7 +214,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @param size the current font size
      */
     public PDFGraphics2D(boolean textAsShapes, FontInfo fi, PDFDocument doc,
-                         PDFResourceContext page, String pref, String font, float size) {
+                         PDFResourceContext page, String pref, String font, float size,
+                         TransparencyIgnoredEventListener listener) {
         this(textAsShapes);
         pdfDoc = doc;
         this.colorHandler = new PDFColorHandler(doc.getResources());
@@ -213,6 +225,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         fontInfo = fi;
         pageRef = pref;
         paintingState = new PDFPaintingState();
+        this.transparencyIgnoredEventListener = listener;
     }
 
     /**
@@ -244,6 +257,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         this.nativeCount = g.nativeCount;
         this.outputStream = g.outputStream;
         this.ovFontState = g.ovFontState;
+        this.transparencyIgnoredEventListener = g.transparencyIgnoredEventListener;
     }
 
     /**
@@ -977,7 +991,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         PDFResourceContext context = new PDFResourceContext(res);
         PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, specialFontInfo,
                                         pdfDoc, context, getPageReference(),
-                                        "", 0);
+                                        "", 0, transparencyIgnoredEventListener);
         pattGraphic.setGraphicContext(new GraphicContext());
         pattGraphic.gc.validateTransformStack();
         pattGraphic.setRenderingHints(this.getRenderingHints());
@@ -1430,18 +1444,21 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      */
     protected void applyAlpha(int fillAlpha, int strokeAlpha) {
         if (fillAlpha != OPAQUE || strokeAlpha != OPAQUE) {
-            checkTransparencyAllowed();
-            Map<String, Float> vals = new java.util.HashMap<String, Float>();
-            if (fillAlpha != OPAQUE) {
-                vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, new Float(fillAlpha / 255f));
+            Object profile = isTransparencyAllowed();
+            if (profile == null) {
+                Map<String, Float> vals = new java.util.HashMap<String, Float>();
+                if (fillAlpha != OPAQUE) {
+                    vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, new Float(fillAlpha / 255f));
+                }
+                if (strokeAlpha != OPAQUE) {
+                    vals.put(PDFGState.GSTATE_ALPHA_STROKE, new Float(strokeAlpha / 255f));
+                }
+                PDFGState gstate = pdfDoc.getFactory().makeGState(vals, paintingState.getGState());
+                resourceContext.addGState(gstate);
+                currentStream.write("/" + gstate.getName() + " gs\n");
+            } else if (transparencyIgnoredEventListener != null) {
+                transparencyIgnoredEventListener.transparencyIgnored(profile);
             }
-            if (strokeAlpha != OPAQUE) {
-                vals.put(PDFGState.GSTATE_ALPHA_STROKE, new Float(strokeAlpha / 255f));
-            }
-            PDFGState gstate = pdfDoc.getFactory().makeGState(
-                    vals, paintingState.getGState());
-            resourceContext.addGState(gstate);
-            currentStream.write("/" + gstate.getName() + " gs\n");
         }
     }
 
@@ -1686,8 +1703,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** Checks whether the use of transparency is allowed. */
-    protected void checkTransparencyAllowed() {
-        pdfDoc.getProfile().verifyTransparencyAllowed("Java2D graphics");
+    protected Object isTransparencyAllowed() {
+        return pdfDoc.getProfile().isTransparencyAllowed();
     }
 
     /**

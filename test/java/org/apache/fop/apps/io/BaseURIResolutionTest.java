@@ -34,6 +34,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.SAXException;
 
+import static org.junit.Assert.assertTrue;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
@@ -48,7 +50,6 @@ import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
 
 import static org.apache.fop.FOPTestUtils.getBaseDir;
-import static org.junit.Assert.assertTrue;
 
 public abstract class BaseURIResolutionTest {
 

@@ -58,6 +58,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
      */
     public FlowLayoutManager(PageSequenceLayoutManager pslm, Flow node) {
         super(node);
+        setGeneratesBlockArea(true);
         setParent(pslm);
     }
 

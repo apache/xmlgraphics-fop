@@ -27,17 +27,15 @@
 
 package org.apache.fop.render.rtf.rtflib.testdocs;
 
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfHyperLink;
-
 import java.io.IOException;
+
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfHyperLink;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 
 /**
  * Class <code>BasicLink</code> here.
- *
- * @author <a href="mailto:mks@ANDREAS">Andreas Putz</a>
  */
 
 public class BasicLink extends TestDocument {

@@ -19,10 +19,6 @@
 
 package org.apache.fop.fonts.type1;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,6 +26,10 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.junit.Test;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.apache.fop.fonts.NamedCharacter;
 import org.apache.fop.fonts.type1.AFMParser.ValueHandler;

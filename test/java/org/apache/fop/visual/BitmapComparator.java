@@ -30,11 +30,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.apache.commons.io.IOUtils;
+
 import org.apache.batik.ext.awt.image.GraphicsUtil;
 import org.apache.batik.ext.awt.image.renderable.Filter;
 import org.apache.batik.ext.awt.image.spi.ImageTagRegistry;
 import org.apache.batik.util.ParsedURL;
-import org.apache.commons.io.IOUtils;
 
 /**
  * Helper class to visually compare two bitmap images.
@@ -45,7 +46,11 @@ import org.apache.commons.io.IOUtils;
  * <p>
  * TODO Move as utility class to XML Graphics Commons when possible
  */
-public class BitmapComparator {
+public final class BitmapComparator {
+
+
+    private BitmapComparator() {
+    }
 
     /**
      * Builds a new BufferedImage that is the difference between the two input images
@@ -79,15 +84,14 @@ public class BitmapComparator {
         int w = ref.getWidth();
         int h = ref.getHeight();
 
-        int y, i, val;
         int [] refPix = null;
         int [] genPix = null;
-        for (y = 0; y < h; y++) {
-            refPix = refWR.getPixels (0, y, w, 1, refPix);
-            genPix = genWR.getPixels (0, y, w, 1, genPix);
-            for (i = 0; i < refPix.length; i++) {
+        for (int y = 0; y < h; y++) {
+            refPix = refWR.getPixels(0, y, w, 1, refPix);
+            genPix = genWR.getPixels(0, y, w, 1, genPix);
+            for (int i = 0; i < refPix.length; i++) {
                 // val = ((genPix[i] - refPix[i]) * 5) + 128;
-                val = ((refPix[i] - genPix[i]) * 10) + 128;
+                int val = ((refPix[i] - genPix[i]) * 10) + 128;
                 if ((val & 0xFFFFFF00) != 0) {
                     if ((val & 0x80000000) != 0) {
                         val = 0;
