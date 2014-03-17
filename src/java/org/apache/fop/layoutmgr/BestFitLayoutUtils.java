@@ -20,7 +20,10 @@ package org.apache.fop.layoutmgr;
 import java.util.LinkedList;
 import java.util.List;
 
-/*
+import org.apache.fop.fo.flow.MultiSwitch;
+import org.apache.fop.layoutmgr.BestFitPenalty.Variant;
+
+/**
  * Utility class used in {@link MultiSwitchLayoutManager}
  * to handle  the <i>best-fit</i> property value if specified in {@link MultiSwitch}
  */
@@ -30,15 +33,10 @@ public final class BestFitLayoutUtils {
 
     static class BestFitPosition extends Position {
 
-        public List<ListElement> knuthList;
+        private List<ListElement> knuthList;
 
         public BestFitPosition(LayoutManager lm) {
             super(lm);
-        }
-
-        public BestFitPosition(LayoutManager lm, List<ListElement> knuthList) {
-            super(lm);
-            this.knuthList = knuthList;
         }
 
         public List<Position> getPositionList() {
@@ -46,16 +44,16 @@ public final class BestFitLayoutUtils {
             if (knuthList != null) {
                 SpaceResolver.performConditionalsNotification(knuthList, 0, knuthList.size() - 1, -1);
                 for (ListElement elem : knuthList) {
-                    if (elem.getPosition() != null && elem.getLayoutManager() != null) {
-                        positions.add(elem.getPosition());
-                    }
+                    positions.add(elem.getPosition());
                 }
             }
             return positions;
         }
+
         public void setKnuthList(List<ListElement> knuthList) {
             this.knuthList = knuthList;
         }
+
     }
 
     public static List<ListElement> getKnuthList(LayoutManager lm,
@@ -65,14 +63,23 @@ public final class BestFitLayoutUtils {
 
         BestFitPenalty bestFitPenalty = new BestFitPenalty(new BestFitPosition(lm));
         for (List<ListElement> childList : childrenLists) {
+            // TODO Doing space resolution here is not correct.
+            // Space elements will simply be nulled.
             SpaceResolver.resolveElementList(childList);
             int contentLength = ElementListUtils.calcContentLength(childList);
-            bestFitPenalty.addVariant(childList, contentLength);
+            bestFitPenalty.addVariant(new Variant(childList, contentLength));
         }
-        // TODO Adding the two enclosing boxes is definitely a dirty hack.
-        // Let's leave it like that for now, until I find a proper fix.
+        // TODO Adding two enclosing boxes is definitely a dirty hack.
+        // The first box forces the breaking algorithm to consider the penalty
+        // in case there are no elements preceding it
+        // and the last box prevents the glue and penalty from getting deleted
+        // when they are at the end of the Knuth list.
         knuthList.add(new KnuthBox(0, new Position(lm), false));
         knuthList.add(bestFitPenalty);
+        Variant firstVariant = bestFitPenalty.getVariants().get(0);
+        BestFitPosition pos = new BestFitPosition(lm);
+        pos.setKnuthList(firstVariant.knuthList);
+        knuthList.add(new KnuthGlue(firstVariant.width, 0, 0, pos, false));
         knuthList.add(new KnuthBox(0, new Position(lm), false));
         return knuthList;
     }
@@ -82,9 +89,8 @@ public final class BestFitLayoutUtils {
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list;
         LinkedList<Position> positionList = new LinkedList<Position>();
-        Position pos;
         while (posIter.hasNext()) {
-            pos = posIter.next();
+            Position pos = posIter.next();
             if (pos instanceof BestFitPosition) {
                 positionList.addAll(((BestFitPosition) pos).getPositionList());
             } else {

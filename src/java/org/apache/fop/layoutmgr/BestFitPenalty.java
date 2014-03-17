@@ -27,11 +27,11 @@ import org.apache.fop.layoutmgr.BestFitLayoutUtils.BestFitPosition;
 /**
  * A type of penalty used to specify a set of alternatives for the layout engine
  * to choose from. The chosen alternative must have an occupied size
- * that is less than the available BPD of the current page.
+ * less than the remaining BPD on the active page.
  */
 public class BestFitPenalty extends KnuthPenalty {
 
-    public class Variant {
+    public static class Variant {
 
         public final List<ListElement> knuthList;
         public final int width;
@@ -40,13 +40,14 @@ public class BestFitPenalty extends KnuthPenalty {
             this.knuthList = knuthList;
             this.width = width;
         }
+
         public KnuthElement toPenalty() {
             return new KnuthPenalty(width, 0, false, null, false);
         }
+
     }
 
     private final BestFitPosition bestFitPosition;
-
     private final List<Variant> variantList;
 
     public BestFitPenalty(BestFitPosition pos) {
@@ -55,15 +56,15 @@ public class BestFitPenalty extends KnuthPenalty {
         variantList = new ArrayList<Variant>();
     }
 
-    public void addVariant(List<ListElement> knuthList, int width) {
-        variantList.add(new Variant(knuthList, width));
+    public void addVariant(Variant variant) {
+        variantList.add(variant);
     }
 
-    public void activatePenalty(Variant bestVariant) {
+    public void setActiveVariant(Variant bestVariant) {
         bestFitPosition.setKnuthList(bestVariant.knuthList);
     }
 
-    public List<Variant> getVariantList() {
+    public List<Variant> getVariants() {
         return variantList;
     }
 

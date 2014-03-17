@@ -68,22 +68,6 @@ public class MultiSwitch extends FObj {
         super.endOfNode();
     }
 
-    @Override
-    public void finalizeNode() throws FOPException {
-        if (autoToggle.equals("best-fit")) {
-            // Nothing to do in this case
-            setCurrentlyVisibleNode(null);
-        } else {
-            FONodeIterator nodeIter = getChildNodes();
-            while (nodeIter.hasNext()) {
-                MultiCase multiCase = (MultiCase) nodeIter.next();
-                if (multiCase.hasToggle()) {
-                    multiCase.getHandler().filter(this);
-                }
-            }
-        }
-    }
-
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: (multi-case+)

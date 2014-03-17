@@ -33,7 +33,7 @@ import org.apache.fop.fo.properties.StringProperty;
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_multi-toggle">
  * <code>fo:multi-toggle<code></a> property.
  */
-public class MultiToggle extends FObj implements MultiCaseHandler {
+public class MultiToggle extends FObj {
     // The value of properties relevant for fo:multi-toggle (commented out for performance).
     //     private CommonAccessibility commonAccessibility;
      public StringProperty prSwitchTo;
@@ -92,39 +92,4 @@ public class MultiToggle extends FObj implements MultiCaseHandler {
         return FO_MULTI_TOGGLE;
     }
 
-    public void filter(MultiSwitch multiSwitch) throws FOPException {
-        if (multiSwitch.getCurrentlyVisibleNode() == null) {
-            multiSwitch.setCurrentlyVisibleNode(parent);
-        }
-
-        FONode currentlyVisibleMultiCase = multiSwitch.getCurrentlyVisibleNode();
-
-        if (prSwitchTo.getString().equals("xsl-any")) {
-//            NoOp
-        } else if (prSwitchTo.getString().equals("xsl-preceding")) {
-            FONodeIterator nodeIter = multiSwitch.getChildNodes(currentlyVisibleMultiCase);
-            if (nodeIter != null) {
-                if (!nodeIter.hasPrevious()) {
-                    currentlyVisibleMultiCase = nodeIter.lastNode();
-                } else {
-                    currentlyVisibleMultiCase = nodeIter.previousNode();
-                }
-            }
-        } else if (prSwitchTo.getString().equals("xsl-following")) {
-            FONodeIterator nodeIter = multiSwitch.getChildNodes(currentlyVisibleMultiCase);
-            if (nodeIter != null) {
-                //Ignore the first node
-                nodeIter.next();
-                if (!nodeIter.hasNext()) {
-                    currentlyVisibleMultiCase = nodeIter.firstNode();
-                } else {
-                    currentlyVisibleMultiCase = nodeIter.nextNode();
-                }
-            }
-        } else {
-            // Pick an fo:multi-case that matches a case-name...
-        }
-
-        multiSwitch.setCurrentlyVisibleNode(currentlyVisibleMultiCase);
-    }
 }

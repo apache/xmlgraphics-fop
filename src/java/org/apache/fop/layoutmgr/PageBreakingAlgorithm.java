@@ -99,7 +99,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private int currentKeepContext = Constants.EN_AUTO;
     private KnuthNode lastBeforeKeepContextSwitch;
 
-    /** Holds the variant that should be assigned to the next node to be created */
+    /** Holds the variant of a dynamic content that must be attached to the next page node */
     private Variant variant;
 
     /**
@@ -458,7 +458,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     /** {@inheritDoc} */
     @Override
     protected void considerLegalBreak(KnuthElement element, int elementIdx) {
-        variant = null;
         if (element.isPenalty()) {
             int breakClass = ((KnuthPenalty) element).getBreakClass();
             switch (breakClass) {
@@ -526,6 +525,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         int actualWidth = totalWidth - pageNode.totalWidth;
         int footnoteSplit;
         boolean canDeferOldFN;
+        variant = null;
         if (element.isPenalty()) {
             if (element instanceof BestFitPenalty) {
                 actualWidth += handleBestFitPenalty(activeNode, (BestFitPenalty) element, elementIndex);
@@ -592,7 +592,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     private int handleBestFitPenalty(KnuthNode activeNode, BestFitPenalty penalty, int elementIndex) {
-        for (Variant var : penalty.getVariantList()) {
+        for (Variant var : penalty.getVariants()) {
             int difference = computeDifference(activeNode, var.toPenalty(), elementIndex);
             double r = computeAdjustmentRatio(activeNode, difference);
             if (r >= -1.0) {
@@ -1015,11 +1015,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                             int total) {
         //int difference = (bestActiveNode.line < total)
         //      ? bestActiveNode.difference : bestActiveNode.difference + fillerMinWidth;
-        // Check if the given node has an attached dynamic content
+        // Check if the given node has an attached variant of a dynamic content
         KnuthPageNode pageNode = (KnuthPageNode) bestActiveNode;
         if (pageNode.variant != null) {
             BestFitPenalty penalty = (BestFitPenalty) par.get(pageNode.position);
-            penalty.activatePenalty(pageNode.variant);
+            penalty.setActiveVariant(pageNode.variant);
         }
         int difference = bestActiveNode.difference;
         if (difference + bestActiveNode.availableShrink < 0) {
