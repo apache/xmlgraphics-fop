@@ -18,13 +18,9 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
-import org.apache.fop.area.LineArea;
 import org.apache.fop.fo.FObj;
 
 public class MultiCaseLayoutManager extends BlockStackingLayoutManager {
-
-    private Block curBlockArea;
 
     public MultiCaseLayoutManager(FObj node) {
         super(node);
@@ -47,36 +43,12 @@ public class MultiCaseLayoutManager extends BlockStackingLayoutManager {
 
     @Override
     public Area getParentArea(Area childArea) {
-        if (curBlockArea == null) {
-            curBlockArea = new Block();
-            curBlockArea.setIPD(super.getContentAreaIPD());
-            // Set up dimensions
-            // Must get dimensions from parent area
-            /*Area parentArea = */parentLayoutManager.getParentArea(curBlockArea);
-            setCurrentArea(curBlockArea);
-        }
-        return curBlockArea;
+        return parentLayoutManager.getParentArea(childArea);
     }
 
     @Override
     public void addChildArea(Area childArea) {
-        if (curBlockArea != null) {
-            if (childArea instanceof LineArea) {
-                curBlockArea.addLineArea((LineArea) childArea);
-            } else {
-                curBlockArea.addBlock((Block) childArea);
-            }
-        }
-    }
-
-    /**
-     * Force current area to be added to parent area.
-     */
-    @Override
-    protected void flush() {
-        if (getCurrentArea() != null) {
-            super.flush();
-        }
+        parentLayoutManager.addChildArea(childArea);
     }
 
     /** {@inheritDoc} */

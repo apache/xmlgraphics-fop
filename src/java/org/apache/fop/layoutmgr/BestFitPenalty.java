@@ -35,10 +35,12 @@ public class BestFitPenalty extends KnuthPenalty {
 
         public final List<ListElement> knuthList;
         public final int width;
+        public int penaltyIndex;
 
         public Variant(List<ListElement> knuthList, int width) {
             this.knuthList = knuthList;
             this.width = width;
+            this.penaltyIndex = -1;
         }
 
         public KnuthElement toPenalty() {

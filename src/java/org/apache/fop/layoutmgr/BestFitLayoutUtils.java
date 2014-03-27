@@ -40,10 +40,12 @@ public final class BestFitLayoutUtils {
 
         public List<Position> getPositionList() {
             List<Position> positions = new LinkedList<Position>();
-            if (knuthList != null) {
+            if (knuthList != null && !knuthList.isEmpty()) {
                 SpaceResolver.performConditionalsNotification(knuthList, 0, knuthList.size() - 1, -1);
-                for (ListElement elem : knuthList) {
-                    positions.add(elem.getPosition());
+                for (ListElement el : knuthList) {
+                    if (el.getPosition() != null) {
+                        positions.add(el.getPosition());
+                    }
                 }
             }
             return positions;
@@ -75,10 +77,6 @@ public final class BestFitLayoutUtils {
         // when they are at the end of the Knuth list.
         knuthList.add(new KnuthBox(0, new Position(lm), false));
         knuthList.add(bestFitPenalty);
-        Variant firstVariant = bestFitPenalty.getVariants().get(0);
-        BestFitPosition pos = new BestFitPosition(lm);
-        pos.setKnuthList(firstVariant.knuthList);
-        knuthList.add(new KnuthGlue(firstVariant.width, 0, 0, pos, false));
         knuthList.add(new KnuthBox(0, new Position(lm), false));
         return knuthList;
     }

@@ -22,13 +22,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
-import org.apache.fop.area.LineArea;
 import org.apache.fop.fo.FObj;
 
 public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
-
-    private Block curBlockArea;
 
     public MultiSwitchLayoutManager(FObj node) {
         super(node);
@@ -56,60 +52,13 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
     }
 
     @Override
-    public Keep getKeepTogether() {
-        return Keep.KEEP_AUTO;
-    }
-
-    @Override
-    public Keep getKeepWithNext() {
-        return Keep.KEEP_AUTO;
-    }
-
-    @Override
-    public Keep getKeepWithPrevious() {
-        return Keep.KEEP_AUTO;
-    }
-
-    @Override
-    public int getContentAreaIPD() {
-        if (curBlockArea != null) {
-            return curBlockArea.getIPD();
-        }
-        return super.getContentAreaIPD();
-    }
-
-    @Override
     public Area getParentArea(Area childArea) {
-        if (curBlockArea == null) {
-            curBlockArea = new Block();
-            curBlockArea.setIPD(super.getContentAreaIPD());
-            setCurrentArea(curBlockArea);
-            // Set up dimensions
-            // Must get dimensions from parent area
-            /*Area parentArea = */parentLayoutManager.getParentArea(curBlockArea);
-        }
-        return curBlockArea;
+        return parentLayoutManager.getParentArea(childArea);
     }
 
     @Override
     public void addChildArea(Area childArea) {
-        if (curBlockArea != null) {
-            if (childArea instanceof LineArea) {
-                curBlockArea.addLineArea((LineArea) childArea);
-            } else {
-                curBlockArea.addBlock((Block) childArea);
-            }
-        }
-    }
-
-    /**
-     * Force current area to be added to parent area.
-     */
-    @Override
-    protected void flush() {
-        if (curBlockArea != null) {
-            parentLayoutManager.addChildArea(getCurrentArea());
-        }
+        parentLayoutManager.addChildArea(childArea);
     }
 
     @Override
@@ -121,9 +70,6 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
 
         AreaAdditionUtil.addAreas(this, newPosIter, context);
         flush();
-        // TODO removing the following line forces the generated area
-        // to be rendered twice in some cases...
-        curBlockArea = null;
     }
 
 }
