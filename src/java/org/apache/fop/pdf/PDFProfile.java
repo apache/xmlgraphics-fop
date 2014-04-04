@@ -171,8 +171,7 @@ public class PDFProfile {
     public void verifyTransparencyAllowed(String context) {
         Object profile = isTransparencyAllowed();
         if (profile != null) {
-            throw new PDFConformanceException(profile + " does not allow the use of transparency. ("
-                    + profile + ")");
+            throw new TransparencyDisallowedException(profile, context);
         }
     }
 

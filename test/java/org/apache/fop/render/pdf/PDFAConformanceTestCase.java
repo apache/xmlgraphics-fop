@@ -115,15 +115,29 @@ public class PDFAConformanceTestCase extends BasePDFTest {
 
     @Test
     public void svgTransparency() throws Exception {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("pdfProfile", PDFAMode.PDFA_1B);
-        EventChecker eventChecker = new EventChecker(SVGEventProducer.class.getName()
-                + ".transparencyIgnored", params);
         FOUserAgent ua = getUserAgent();
-        ua.getEventBroadcaster().addEventListener(eventChecker);
+        EventChecker eventChecker = setupEventChecker(ua, "transparencyIgnored");
         File foFile = new File(foBaseDir, "svg-transparency.fo");
         convertFO(foFile, ua, dumpPDF);
         eventChecker.end();
+    }
+
+    @Test
+    public void svgContainingBitmapWithTransparency() throws Exception {
+        FOUserAgent ua = getUserAgent();
+        EventChecker eventChecker = setupEventChecker(ua, "bitmapWithTransparency");
+        File foFile = new File(foBaseDir, "svg-with-transparent-image.fo");
+        convertFO(foFile, ua, dumpPDF);
+        eventChecker.end();
+    }
+
+    private EventChecker setupEventChecker(FOUserAgent ua, String expectedEvent) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("pdfProfile", PDFAMode.PDFA_1B);
+        EventChecker eventChecker = new EventChecker(SVGEventProducer.class.getName()
+                + "." + expectedEvent, params);
+        ua.getEventBroadcaster().addEventListener(eventChecker);
+        return eventChecker;
     }
 
 }
