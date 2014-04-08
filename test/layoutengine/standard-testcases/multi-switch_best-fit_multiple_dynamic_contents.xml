@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<testcase>
+  <info>
+    <p>
+      Test that multiple whitespace managment elements on the same page are handled nicely.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" 
+      xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" font-size="8pt" line-height="10pt">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page"
+          page-height="70pt" page-width="220pt" margin="10pt">
+          <fo:region-body background-color="#F0F0F0"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:multi-switch fox:auto-toggle="best-fit">
+            <fo:multi-case>
+              <fo:block>MS 1 Variant 1</fo:block>
+            </fo:multi-case>
+          </fo:multi-switch>
+          <fo:multi-switch fox:auto-toggle="best-fit">
+            <fo:multi-case>
+              <fo:block>MS 2 Variant 1</fo:block>
+            </fo:multi-case>
+          </fo:multi-switch>
+          <fo:multi-switch fox:auto-toggle="best-fit">
+            <fo:multi-case>
+              <fo:block>MS 3 Variant 1</fo:block>
+            </fo:multi-case>
+          </fo:multi-switch>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:multi-switch fox:auto-toggle="best-fit">
+            <fo:multi-case>
+              <fo:block line-height="70pt">MS 1 Variant 1</fo:block>
+            </fo:multi-case>
+          </fo:multi-switch>
+          <fo:multi-switch fox:auto-toggle="best-fit">
+            <fo:multi-case>
+              <fo:block>MS 2 Variant 1</fo:block>
+            </fo:multi-case>
+          </fo:multi-switch>
+          <fo:multi-switch fox:auto-toggle="best-fit">
+            <fo:multi-case>
+              <fo:block line-height="50pt">MS 3 Variant 1</fo:block>
+            </fo:multi-case>
+            <fo:multi-case>
+              <fo:block>MS 3 Variant 2</fo:block>
+            </fo:multi-case>
+          </fo:multi-switch>
+          <fo:multi-switch fox:auto-toggle="best-fit">
+            <fo:multi-case>
+              <fo:block>MS 4 Variant 1</fo:block>
+            </fo:multi-case>
+          </fo:multi-switch>
+        </fo:flow>
+      </fo:page-sequence>
+
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- 1. 3 multi-switch on the same page -->
+    <eval expected="1"        xpath="count(//pageSequence[1]/pageViewport)"/>
+    <eval expected="3"        xpath="count(//pageSequence[1]/pageViewport[1]//flow/block)"/>
+    <eval expected="MS 1 Variant 1" xpath="//pageSequence[1]/pageViewport[1]//flow/block[1]"/>
+    <eval expected="MS 2 Variant 1" xpath="//pageSequence[1]/pageViewport[1]//flow/block[2]"/>
+    <eval expected="MS 3 Variant 1" xpath="//pageSequence[1]/pageViewport[1]//flow/block[3]"/>
+
+    <!-- 2. 4 multi-switch, one cannot fit, one uses the 2nd variant  -->
+    <eval expected="1"        xpath="count(//pageSequence[2]/pageViewport)"/>
+    <eval expected="3"        xpath="count(//pageSequence[2]/pageViewport[1]//flow/block)"/>
+    <eval expected="MS 2 Variant 1" xpath="//pageSequence[2]/pageViewport[1]//flow/block[1]"/>
+    <eval expected="MS 3 Variant 2" xpath="//pageSequence[2]/pageViewport[1]//flow/block[2]"/>
+    <eval expected="MS 4 Variant 1" xpath="//pageSequence[2]/pageViewport[1]//flow/block[3]"/>
+  </checks>
+</testcase>

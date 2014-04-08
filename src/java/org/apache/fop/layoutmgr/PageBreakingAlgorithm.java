@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
-import org.apache.fop.layoutmgr.BestFitPenalty.Variant;
+import org.apache.fop.layoutmgr.WhitespaceManagementPenalty.Variant;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.ListUtil;
 
@@ -153,10 +153,13 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         /** Index of the last inserted element of the last inserted footnote. */
         public int footnoteElementIndex;
 
-        /** Current active variant attached to this node */
-        public final Variant variant;
-        /** Pending variant to be assigned to all descending nodes */
-        public Variant pendingVariant;
+        /**
+         * Pending variants of dynamic contents that were evaluated WRT this node.
+         * When computing page difference for a break element, the total width of these variants
+         * will be added to 'actualWidth'.
+         */
+        private final List<Variant> pendingVariants = new ArrayList<Variant>();
+        private int totalVariantsWidth;
 
         public KnuthPageNode(int position,
                              int line, int fitness,
@@ -164,7 +167,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                              int insertedFootnotes, int totalFootnotes,
                              int footnoteListIndex, int footnoteElementIndex,
                              double adjustRatio, int availableShrink, int availableStretch,
-                             int difference, double totalDemerits, KnuthNode previous, Variant variant) {
+                             int difference, double totalDemerits, KnuthNode previous) {
             super(position, line, fitness,
                   totalWidth, totalStretch, totalShrink,
                   adjustRatio, availableShrink, availableStretch,
@@ -173,7 +176,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             this.insertedFootnotes = insertedFootnotes;
             this.footnoteListIndex = footnoteListIndex;
             this.footnoteElementIndex = footnoteElementIndex;
-            this.variant = variant;
+        }
+
+        public void addVariant(Variant variant) {
+            pendingVariants.add(variant);
+            totalVariantsWidth += variant.width;
         }
 
     }
@@ -188,7 +195,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         private final int[] bestTotalFootnotesLength = new int[4];
         private final int[] bestFootnoteListIndex = new int[4];
         private final int[] bestFootnoteElementIndex = new int[4];
-        private final Variant[] bestVariant = new Variant[4];
 
         @Override
         public void addRecord(double demerits, KnuthNode node, double adjust,
@@ -201,7 +207,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             bestTotalFootnotesLength[fitness] = totalFootnotesLength;
             bestFootnoteListIndex[fitness] = footnoteListIndex;
             bestFootnoteElementIndex[fitness] = footnoteElementIndex;
-            bestVariant[fitness] = ((KnuthPageNode) node).pendingVariant;
         }
 
         public int getInsertedFootnotesLength(int fitness) {
@@ -220,9 +225,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             return bestFootnoteElementIndex[fitness];
         }
 
-        public Variant getVariant(int fitness) {
-            return bestVariant[fitness];
-        }
 
     }
 
@@ -316,8 +318,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                                  insertedFootnotesLength, totalFootnotesLength,
                                  footnoteListIndex, footnoteElementIndex,
                                  adjustRatio, availableShrink, availableStretch,
-                                 difference, totalDemerits, previous,
-                                 (previous != null) ? ((KnuthPageNode)previous).pendingVariant : null);
+                                 difference, totalDemerits, previous);
     }
 
     /** {@inheritDoc} */
@@ -332,8 +333,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                                  ((BestPageRecords) best).getFootnoteElementIndex(fitness),
                                  best.getAdjust(fitness), best.getAvailableShrink(fitness),
                                  best.getAvailableStretch(fitness), best.getDifference(fitness),
-                                 best.getDemerits(fitness), best.getNode(fitness),
-                                 ((BestPageRecords) best).getVariant(fitness));
+                                 best.getDemerits(fitness), best.getNode(fitness));
     }
 
     /**
@@ -527,15 +527,12 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         int actualWidth = totalWidth - pageNode.totalWidth;
         int footnoteSplit;
         boolean canDeferOldFN;
-        if (element.isPenalty()) {
-            if (element instanceof BestFitPenalty) {
-                actualWidth += handleBestFitPenalty(pageNode, (BestFitPenalty) element, elementIndex);
-            } else {
-                actualWidth += element.getWidth();
-                if (pageNode.pendingVariant != null) {
-                    actualWidth += ((KnuthPageNode) activeNode).pendingVariant.width;
-                }
-            }
+        actualWidth += pageNode.totalVariantsWidth;
+        if (element instanceof WhitespaceManagementPenalty) {
+            actualWidth += handleWhitespaceManagementPenalty(pageNode,
+                    (WhitespaceManagementPenalty) element, elementIndex);
+        } else if (element.isPenalty()) {
+            actualWidth += element.getWidth();
         }
         if (footnotesPending) {
             // compute the total length of the footnotes not yet inserted
@@ -595,13 +592,18 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         }
     }
 
-    private int handleBestFitPenalty(KnuthPageNode activeNode, BestFitPenalty penalty, int elementIndex) {
+    /**
+     * Evaluates the variants corresponding to the given penalty until one that
+     * leads to an acceptable adjustment ratio is found. That variant will
+     * be added to the list of pending variants in the given active node.
+     */
+    private int handleWhitespaceManagementPenalty(KnuthPageNode activeNode,
+            WhitespaceManagementPenalty penalty, int elementIndex) {
         for (Variant var : penalty.getVariants()) {
             int difference = computeDifference(activeNode, var.toPenalty(), elementIndex);
             double r = computeAdjustmentRatio(activeNode, difference);
             if (r >= -1.0) {
-                var.penaltyIndex = elementIndex;
-                activeNode.pendingVariant = var;
+                activeNode.addVariant(var);
                 return var.width;
             }
         }
@@ -1022,9 +1024,14 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         //      ? bestActiveNode.difference : bestActiveNode.difference + fillerMinWidth;
         // Check if the given node has an attached variant of a dynamic content
         KnuthPageNode pageNode = (KnuthPageNode) bestActiveNode;
-        if (pageNode.variant != null) {
-            BestFitPenalty penalty = (BestFitPenalty) par.get(pageNode.variant.penaltyIndex);
-            penalty.setActiveVariant(pageNode.variant);
+        KnuthPageNode previousPageNode = ((KnuthPageNode) pageNode.previous);
+        for (Variant var : previousPageNode.pendingVariants) {
+            WhitespaceManagementPenalty penalty = var.getBestFitPenalty();
+            int penaltyIndex = this.par.indexOf(penalty);
+            // Make sure penalty is inside the range of the current page node
+            if (penaltyIndex <= pageNode.position) {
+                penalty.setActiveVariant(var);
+            }
         }
         int difference = bestActiveNode.difference;
         if (difference + bestActiveNode.availableShrink < 0) {
