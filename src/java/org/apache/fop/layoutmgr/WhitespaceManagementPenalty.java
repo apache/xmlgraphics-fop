@@ -22,39 +22,42 @@ package org.apache.fop.layoutmgr;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.fop.layoutmgr.BestFitLayoutUtils.BestFitPosition;
+import org.apache.fop.layoutmgr.MultiSwitchLayoutManager.WhitespaceManagementPosition;
 
 /**
- * A type of penalty used to specify a set of alternatives for the layout engine
- * to choose from. The chosen alternative must have an occupied size
- * less than the remaining BPD on the active page.
+ * A special penalty used to specify content having multiple variants. At most
+ * only one variant will be inserted into the final document. If none of the
+ * variants fit into the remaining space on the current page, the dynamic
+ * content will be completely ignored.
  */
-public class BestFitPenalty extends KnuthPenalty {
+public class WhitespaceManagementPenalty extends KnuthPenalty {
 
-    public static class Variant {
+    public class Variant {
 
         public final List<ListElement> knuthList;
         public final int width;
-        public int penaltyIndex;
 
         public Variant(List<ListElement> knuthList, int width) {
             this.knuthList = knuthList;
             this.width = width;
-            this.penaltyIndex = -1;
         }
 
         public KnuthElement toPenalty() {
             return new KnuthPenalty(width, 0, false, null, false);
         }
 
+        public WhitespaceManagementPenalty getBestFitPenalty() {
+            return WhitespaceManagementPenalty.this;
+        }
+
     }
 
-    private final BestFitPosition bestFitPosition;
+    private final WhitespaceManagementPosition whitespaceManagementPosition;
     private final List<Variant> variantList;
 
-    public BestFitPenalty(BestFitPosition pos) {
+    public WhitespaceManagementPenalty(WhitespaceManagementPosition pos) {
         super(0, 0, false, pos, false);
-        this.bestFitPosition = pos;
+        this.whitespaceManagementPosition = pos;
         variantList = new ArrayList<Variant>();
     }
 
@@ -63,7 +66,11 @@ public class BestFitPenalty extends KnuthPenalty {
     }
 
     public void setActiveVariant(Variant bestVariant) {
-        bestFitPosition.setKnuthList(bestVariant.knuthList);
+        whitespaceManagementPosition.setKnuthList(bestVariant.knuthList);
+    }
+
+    public boolean isActivated() {
+        return whitespaceManagementPosition.getKnuthList() != null;
     }
 
     public List<Variant> getVariants() {

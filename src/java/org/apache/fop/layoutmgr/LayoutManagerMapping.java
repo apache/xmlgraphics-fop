@@ -451,18 +451,8 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 
         @Override
         public void make(FONode node, List lms) {
-            MultiSwitch multiSwitch = (MultiSwitch) node;
-            MultiSwitchLayoutManager mslm = new MultiSwitchLayoutManager(multiSwitch);
-            FONode multiCase = multiSwitch.getCurrentlyVisibleNode();
-            if (multiCase != null) {
-                FONodeIterator childIter = multiCase.getChildNodes();
-                while (childIter.hasNext()) {
-                    FONode child = (FONode) childIter.next();
-                    makeLayoutManagers(child, lms);
-                }
-            } else {
-                lms.add(mslm);
-            }
+            MultiSwitchLayoutManager mslm = new MultiSwitchLayoutManager((MultiSwitch) node);
+            lms.add(mslm);
         }
     }
 

@@ -38,9 +38,7 @@ public class MultiSwitch extends FObj {
     //     private CommonAccessibility commonAccessibility;
     // End of property values
 
-    private FONode currentlyVisibleMultiCase;
     private String autoToggle;
-    private String fittingStrategy;
 
     /**
      * Base constructor
@@ -95,18 +93,6 @@ public class MultiSwitch extends FObj {
     @Override
     public int getNameId() {
         return FO_MULTI_SWITCH;
-    }
-
-    public void setCurrentlyVisibleNode(FONode node) {
-        currentlyVisibleMultiCase = node;
-    }
-
-    public FONode getCurrentlyVisibleNode() {
-        return currentlyVisibleMultiCase;
-    }
-
-    public String getFittingStrategy() {
-        return fittingStrategy;
     }
 
     public String getAutoToggle() {

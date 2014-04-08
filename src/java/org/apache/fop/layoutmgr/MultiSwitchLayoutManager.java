@@ -17,38 +17,123 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.flow.MultiSwitch;
 
 public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
 
+    static class WhitespaceManagementPosition extends Position {
+
+        private List<ListElement> knuthList;
+
+        public WhitespaceManagementPosition(LayoutManager lm) {
+            super(lm);
+        }
+
+        public List<Position> getPositionList() {
+            List<Position> positions = new LinkedList<Position>();
+            if (knuthList != null && !knuthList.isEmpty()) {
+                SpaceResolver.performConditionalsNotification(knuthList, 0, knuthList.size() - 1, -1);
+                for (ListElement el : knuthList) {
+                    if (el.getPosition() != null) {
+                        positions.add(el.getPosition());
+                    }
+                }
+            }
+            return positions;
+        }
+
+        public void setKnuthList(List<ListElement> knuthList) {
+            this.knuthList = knuthList;
+        }
+
+        public List<ListElement> getKnuthList() {
+            return knuthList;
+        }
+
+    }
+
+    private interface KnuthElementsGenerator {
+        List<ListElement> getKnuthElement(LayoutContext context, int alignment);
+    }
+
+    private class DefaultKnuthListGenerator implements KnuthElementsGenerator {
+
+        public List<ListElement> getKnuthElement(LayoutContext context, int alignment) {
+
+            List<ListElement> knuthList = new LinkedList<ListElement>();
+            LayoutManager childLM;
+            while ((childLM = getChildLM()) != null) {
+                if (!childLM.isFinished()) {
+                    LayoutContext childLC = makeChildLayoutContext(context);
+                    List childElements = childLM.getNextKnuthElements(childLC, alignment);
+                    if (childElements != null) {
+                        List<ListElement> newList = new LinkedList<ListElement>();
+                        wrapPositionElements(childElements, newList);
+                        knuthList.addAll(newList);
+                    }
+                }
+            }
+            return knuthList;
+        }
+
+    }
+
+    private class WhitespaceManagement implements KnuthElementsGenerator {
+
+        public List<ListElement> getKnuthElement(LayoutContext context, int alignment) {
+
+            MultiSwitchLayoutManager mslm = MultiSwitchLayoutManager.this;
+            List<ListElement> knuthList = new LinkedList<ListElement>();
+            WhitespaceManagementPenalty penalty = new WhitespaceManagementPenalty(
+                    new WhitespaceManagementPosition(mslm));
+            LayoutManager childLM;
+            while ((childLM = getChildLM()) != null) {
+                if (!childLM.isFinished()) {
+                    LayoutContext childLC = makeChildLayoutContext(context);
+                    List childElements = childLM.getNextKnuthElements(childLC, alignment);
+                    if (childElements != null) {
+                        List<ListElement> newList = new LinkedList<ListElement>();
+                        wrapPositionElements(childElements, newList);
+                        // TODO Doing space resolution here is wrong.
+                        SpaceResolver.resolveElementList(newList);
+                        int contentLength = ElementListUtils.calcContentLength(newList);
+                        penalty.addVariant(penalty.new Variant(newList, contentLength));
+                    }
+                }
+            }
+            // Prevent the penalty from being ignored if it is at the beginning of the content
+            knuthList.add(new KnuthBox(0, new Position(mslm), false));
+            knuthList.add(penalty);
+            // Prevent the penalty from being ignored if it is at the end of the content
+            knuthList.add(new KnuthBox(0, new Position(mslm), false));
+            return knuthList;
+        }
+
+    }
+
+    private KnuthElementsGenerator knuthGen;
+
     public MultiSwitchLayoutManager(FObj node) {
         super(node);
+        MultiSwitch multiSwitchNode = (MultiSwitch) node;
+        if (multiSwitchNode.getAutoToggle().equals("best-fit")) {
+            knuthGen = new WhitespaceManagement();
+        } else {
+            knuthGen = new DefaultKnuthListGenerator();
+        }
     }
 
     @Override
     public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
-
         referenceIPD = context.getRefIPD();
-        List<List<ListElement>> childrenLists = new ArrayList<List<ListElement>>();
-        LayoutManager childLM;
-        while ((childLM = getChildLM()) != null) {
-            if (!childLM.isFinished()) {
-                LayoutContext childLC = makeChildLayoutContext(context);
-                List childElements = childLM.getNextKnuthElements(childLC, alignment);
-                if (childElements != null) {
-                    List<ListElement> newList = new LinkedList<ListElement>();
-                    wrapPositionElements(childElements, newList);
-                    childrenLists.add(newList);
-                }
-            }
-        }
+        List<ListElement> knuthList = knuthGen.getKnuthElement(context, alignment);
         setFinished(true);
-        return BestFitLayoutUtils.getKnuthList(this, childrenLists);
+        return knuthList;
     }
 
     @Override
@@ -63,11 +148,16 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
 
     @Override
     public void addAreas(PositionIterator posIter, LayoutContext context) {
-
-        List<Position> positionList = BestFitLayoutUtils.getPositionList(this, posIter);
-        PositionIterator newPosIter = new PositionIterator(
-                positionList.listIterator());
-
+        LinkedList<Position> positionList = new LinkedList<Position>();
+        while (posIter.hasNext()) {
+            Position pos = posIter.next();
+            if (pos instanceof WhitespaceManagementPosition) {
+                positionList.addAll(((WhitespaceManagementPosition) pos).getPositionList());
+            } else {
+                positionList.add(pos);
+            }
+        }
+        PositionIterator newPosIter = new PositionIterator(positionList.listIterator());
         AreaAdditionUtil.addAreas(this, newPosIter, context);
         flush();
     }
