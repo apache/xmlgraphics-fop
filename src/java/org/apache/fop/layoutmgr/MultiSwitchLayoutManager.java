@@ -64,18 +64,15 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
     private class DefaultKnuthListGenerator implements KnuthElementsGenerator {
 
         public List<ListElement> getKnuthElement(LayoutContext context, int alignment) {
-
             List<ListElement> knuthList = new LinkedList<ListElement>();
-            LayoutManager childLM;
-            while ((childLM = getChildLM()) != null) {
-                if (!childLM.isFinished()) {
-                    LayoutContext childLC = makeChildLayoutContext(context);
-                    List childElements = childLM.getNextKnuthElements(childLC, alignment);
-                    if (childElements != null) {
-                        List<ListElement> newList = new LinkedList<ListElement>();
-                        wrapPositionElements(childElements, newList);
-                        knuthList.addAll(newList);
-                    }
+            LayoutManager childLM = getChildLM();
+            while (!childLM.isFinished()) {
+                LayoutContext childLC = makeChildLayoutContext(context);
+                List childElements = childLM.getNextKnuthElements(childLC, alignment);
+                if (childElements != null) {
+                    List<ListElement> newList = new LinkedList<ListElement>();
+                    wrapPositionElements(childElements, newList);
+                    knuthList.addAll(newList);
                 }
             }
             return knuthList;

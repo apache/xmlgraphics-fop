@@ -46,7 +46,7 @@ public class WhitespaceManagementPenalty extends KnuthPenalty {
             return new KnuthPenalty(width, 0, false, null, false);
         }
 
-        public WhitespaceManagementPenalty getBestFitPenalty() {
+        public WhitespaceManagementPenalty getWhitespaceManagementPenalty() {
             return WhitespaceManagementPenalty.this;
         }
 
@@ -69,7 +69,7 @@ public class WhitespaceManagementPenalty extends KnuthPenalty {
         whitespaceManagementPosition.setKnuthList(bestVariant.knuthList);
     }
 
-    public boolean isActivated() {
+    public boolean hasActiveVariant() {
         return whitespaceManagementPosition.getKnuthList() != null;
     }
 
