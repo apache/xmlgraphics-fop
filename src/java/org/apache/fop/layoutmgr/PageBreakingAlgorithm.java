@@ -1026,10 +1026,10 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         KnuthPageNode pageNode = (KnuthPageNode) bestActiveNode;
         KnuthPageNode previousPageNode = ((KnuthPageNode) pageNode.previous);
         for (Variant var : previousPageNode.pendingVariants) {
-            WhitespaceManagementPenalty penalty = var.getBestFitPenalty();
-            int penaltyIndex = this.par.indexOf(penalty);
-            // Make sure penalty is inside the range of the current page node
-            if (penaltyIndex <= pageNode.position) {
+            WhitespaceManagementPenalty penalty = var.getWhitespaceManagementPenalty();
+            // A WMPenalty should not be activated more than once. The reason is simply
+            // because a dynamic content cannot occupy multiple pages at the same time.
+            if (!penalty.hasActiveVariant()) {
                 penalty.setActiveVariant(var);
             }
         }

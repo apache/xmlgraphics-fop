@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<testcase>
+  <info>
+    <p>
+      Test padding properties.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page" page-width="300pt" page-height="200pt" margin="10pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:multi-switch fox:auto-toggle="best-fit">
+            <fo:multi-case>
+              <fo:block padding="10pt">MS1 Variant 1</fo:block>
+            </fo:multi-case>
+          </fo:multi-switch>
+          <fo:multi-switch fox:auto-toggle="best-fit">
+            <fo:multi-case>
+              <fo:block padding-before="10pt" padding-after="10pt">MS2 Variant 1</fo:block>
+            </fo:multi-case>
+          </fo:multi-switch>
+          <fo:multi-switch fox:auto-toggle="best-fit">
+            <fo:multi-case>
+              <fo:block>
+                <fo:inline padding-start="10pt" padding-end="10pt">MS3 Variant 1</fo:inline>
+              </fo:block>
+            </fo:multi-case>
+          </fo:multi-switch>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="MS1 Variant 1" xpath="//block[1]"/>
+    <eval expected="10000"         xpath="//block[1]/@padding-start"/>
+    <eval expected="10000"         xpath="//block[1]/@padding-end"/>
+    <eval expected="10000"         xpath="//block[1]/@padding-before"/>
+    <eval expected="10000"         xpath="//block[1]/@padding-after"/>
+
+    <eval expected="MS2 Variant 1" xpath="//block[2]"/>
+    <eval expected="10000"         xpath="//block[2]/@padding-before"/>
+    <eval expected="10000"         xpath="//block[2]/@padding-after"/>
+
+    <eval expected="MS3 Variant 1" xpath="//block[3]/lineArea[1]"/>
+    <eval expected="10000"         xpath="//block[3]/lineArea[1]/inlineparent/@padding-start"/>
+    <eval expected="10000"         xpath="//block[3]/lineArea[1]/inlineparent/@padding-end"/>
+  </checks>
+</testcase>
