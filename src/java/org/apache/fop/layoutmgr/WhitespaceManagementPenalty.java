@@ -36,14 +36,16 @@ public class WhitespaceManagementPenalty extends KnuthPenalty {
 
         public final List<ListElement> knuthList;
         public final int width;
+        private final KnuthPenalty penalty;
 
         public Variant(List<ListElement> knuthList, int width) {
             this.knuthList = knuthList;
             this.width = width;
+            this.penalty = new KnuthPenalty(width, 0, false, null, false);
         }
 
-        public KnuthElement toPenalty() {
-            return new KnuthPenalty(width, 0, false, null, false);
+        public KnuthElement getPenalty() {
+            return penalty;
         }
 
         public WhitespaceManagementPenalty getWhitespaceManagementPenalty() {
