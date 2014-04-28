@@ -451,8 +451,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 
         @Override
         public void make(FONode node, List lms) {
-            MultiSwitchLayoutManager mslm = new MultiSwitchLayoutManager((MultiSwitch) node);
-            lms.add(mslm);
+            lms.add(new MultiSwitchLayoutManager((MultiSwitch) node));
         }
     }
 
