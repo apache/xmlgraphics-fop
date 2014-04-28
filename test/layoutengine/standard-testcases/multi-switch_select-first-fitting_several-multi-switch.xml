@@ -32,17 +32,17 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="page">
         <fo:flow flow-name="xsl-region-body">
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block>MS 1 Variant 1</fo:block>
             </fo:multi-case>
           </fo:multi-switch>
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block>MS 2 Variant 1</fo:block>
             </fo:multi-case>
           </fo:multi-switch>
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block>MS 3 Variant 1</fo:block>
             </fo:multi-case>
@@ -52,17 +52,17 @@
 
       <fo:page-sequence master-reference="page">
         <fo:flow flow-name="xsl-region-body">
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block line-height="70pt">MS 1 Variant 1</fo:block>
             </fo:multi-case>
           </fo:multi-switch>
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block>MS 2 Variant 1</fo:block>
             </fo:multi-case>
           </fo:multi-switch>
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block line-height="50pt">MS 3 Variant 1</fo:block>
             </fo:multi-case>
@@ -70,7 +70,7 @@
               <fo:block>MS 3 Variant 2</fo:block>
             </fo:multi-case>
           </fo:multi-switch>
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block>MS 4 Variant 1</fo:block>
             </fo:multi-case>

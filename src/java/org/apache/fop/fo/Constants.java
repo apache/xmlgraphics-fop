@@ -1263,6 +1263,8 @@ public interface Constants {
     int EN_TB_LR = 205; // for top-to-bottom, left-to-right writing mode
     /** Enumeration constant -- for fo:retrieve-table-marker */
     int EN_FIRST_INCLUDING_CARRYOVER = 206;
+    /** Enumeration constant -- for auto-toggle */
+    int EN_SELECT_FIRST_FITTING = 207;
     /** Number of enumeration constants defined */
-    int ENUM_COUNT = 206;
+    int ENUM_COUNT = 207;
 }

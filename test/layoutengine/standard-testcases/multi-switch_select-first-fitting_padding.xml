@@ -31,17 +31,17 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="page">
         <fo:flow flow-name="xsl-region-body">
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block padding="10pt">MS1 Variant 1</fo:block>
             </fo:multi-case>
           </fo:multi-switch>
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block padding-before="10pt" padding-after="10pt">MS2 Variant 1</fo:block>
             </fo:multi-case>
           </fo:multi-switch>
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block>
                 <fo:inline padding-start="10pt" padding-end="10pt">MS3 Variant 1</fo:inline>

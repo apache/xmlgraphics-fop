@@ -33,20 +33,20 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block break-after="page">
             Block 1 page 1
-            <fo:multi-switch fox:auto-toggle="best-fit">
+            <fo:multi-switch fox:auto-toggle="select-first-fitting">
               <fo:multi-case>
                 <fo:block>MS1 Variant 1</fo:block>
               </fo:multi-case>
             </fo:multi-switch>
           </fo:block>
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block>MS2 Variant 1</fo:block>
             </fo:multi-case>
           </fo:multi-switch>
           <fo:block break-before="page">
             Block 2 page 3
-            <fo:multi-switch fox:auto-toggle="best-fit">
+            <fo:multi-switch fox:auto-toggle="select-first-fitting">
               <fo:multi-case>
                 <fo:block>MS3 Variant 1</fo:block>
               </fo:multi-case>

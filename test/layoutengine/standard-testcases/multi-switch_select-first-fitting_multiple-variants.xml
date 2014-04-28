@@ -41,7 +41,7 @@
           <fo:block>Page 1 line 3</fo:block>
           <fo:block font-size="16pt" line-height="20pt">Filler</fo:block>
           <fo:block>Before the multi-switch</fo:block>
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block>Variant 1 line 1</fo:block>
               <fo:block>Variant 1 line 2</fo:block>
@@ -64,7 +64,7 @@
           <fo:block>Page 2 line 1</fo:block>
           <fo:block font-size="16pt" line-height="20pt">Filler</fo:block>
           <fo:block>Before the multi-switch</fo:block>
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block>Variant 1 line 1</fo:block>
               <fo:block>Variant 1 line 2</fo:block>
@@ -88,7 +88,7 @@
           <fo:block>Page 2 line 2</fo:block>
           <fo:block font-size="16pt" line-height="20pt">Filler</fo:block>
           <fo:block>Before the multi-switch</fo:block>
-          <fo:multi-switch fox:auto-toggle="best-fit">
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block>Variant 1 line 1</fo:block>
               <fo:block>Variant 1 line 2</fo:block>

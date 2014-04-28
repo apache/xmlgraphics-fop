@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      Basic test for fo:multi-switch using the whitespace management extension.
+      Dynamic content in the middle of a page: the first variant is selected.
     </p>
   </info>
   <fo>
@@ -30,22 +30,34 @@
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="page">
-        <fo:flow flow-name="xsl-region-body">
-          <fo:multi-switch fox:auto-toggle="best-fit">
+        <fo:flow flow-name="xsl-region-body" font-size="8pt" line-height="10pt">
+          <fo:block>Before the multi-switch</fo:block>
+          <fo:multi-switch fox:auto-toggle="select-first-fitting">
             <fo:multi-case>
               <fo:block>First variant</fo:block>
             </fo:multi-case>
             <fo:multi-case>
               <fo:block>Second variant</fo:block>
+              <fo:block>Second variant</fo:block>
             </fo:multi-case>
           </fo:multi-switch>
+          <fo:block>After the multi-switch</fo:block>
+          <fo:block>Filler 1</fo:block>
+          <fo:block>Filler 2</fo:block>
+          <fo:block>This should be on page 2.</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
-    <eval expected="1"       xpath="count(//flow/block)"/>
-    <eval expected="First variant" xpath="//flow/block"/>
-    <eval expected="14400"         xpath="//flow/block/@bpd"/>
+    <eval expected="2"                   xpath="count(//pageViewport)"/>
+    <eval expected="5"                   xpath="count(//pageViewport[1]//flow/block)"/>
+    <eval expected="Before the multi-switch"   xpath="//pageViewport[1]//flow/block[1]"/>
+    <eval expected="First variant"             xpath="//pageViewport[1]//flow/block[2]"/>
+    <eval expected="After the multi-switch"    xpath="//pageViewport[1]//flow/block[3]"/>
+    <eval expected="Filler 1"                  xpath="//pageViewport[1]//flow/block[4]"/>
+    <eval expected="Filler 2"                  xpath="//pageViewport[1]//flow/block[5]"/>
+    <eval expected="1"                   xpath="count(//pageViewport[2]//flow/block)"/>
+    <eval expected="This should be on page 2." xpath="//pageViewport[2]//flow/block[1]"/>
   </checks>
 </testcase>
