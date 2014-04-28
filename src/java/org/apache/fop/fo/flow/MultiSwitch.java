@@ -38,7 +38,7 @@ public class MultiSwitch extends FObj {
     //     private CommonAccessibility commonAccessibility;
     // End of property values
 
-    private String autoToggle;
+    private int autoToggle;
 
     /**
      * Base constructor
@@ -53,7 +53,7 @@ public class MultiSwitch extends FObj {
     @Override
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
-        autoToggle = pList.get(PR_X_AUTO_TOGGLE).getString();
+        autoToggle = pList.get(PR_X_AUTO_TOGGLE).getEnum();
         // autoRestore = pList.get(PR_AUTO_RESTORE);
     }
 
@@ -95,7 +95,7 @@ public class MultiSwitch extends FObj {
         return FO_MULTI_SWITCH;
     }
 
-    public String getAutoToggle() {
+    public int getAutoToggle() {
         return autoToggle;
     }
 

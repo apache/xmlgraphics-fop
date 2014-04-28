@@ -2618,9 +2618,10 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("fox:alt-text", m);
 
         // fox:auto-toggle, used only in fo:multi-switch
-        m = new StringProperty.Maker(PR_X_AUTO_TOGGLE);
+        m = new EnumProperty.Maker(PR_X_AUTO_TOGGLE);
         m.setInherited(false);
-        m.setDefault("");
+        m.addEnum("select-first-fitting", getEnumProperty(EN_SELECT_FIRST_FITTING, "SELECT_FIRST_FITTING"));
+        m.setDefault("select-first-fitting");
         addPropertyMaker("fox:auto-toggle", m);
 
         // fox:border-*-radius-*

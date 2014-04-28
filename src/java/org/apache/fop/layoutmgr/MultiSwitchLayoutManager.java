@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.area.Area;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.MultiSwitch;
 
@@ -118,7 +119,7 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
     public MultiSwitchLayoutManager(FObj node) {
         super(node);
         MultiSwitch multiSwitchNode = (MultiSwitch) node;
-        if (multiSwitchNode.getAutoToggle().equals("best-fit")) {
+        if (multiSwitchNode.getAutoToggle() == Constants.EN_SELECT_FIRST_FITTING) {
             knuthGen = new WhitespaceManagement();
         } else {
             knuthGen = new DefaultKnuthListGenerator();
