@@ -600,7 +600,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private int handleWhitespaceManagementPenalty(KnuthPageNode activeNode,
             WhitespaceManagementPenalty penalty, int elementIndex) {
         for (Variant var : penalty.getVariants()) {
-            int difference = computeDifference(activeNode, var.toPenalty(), elementIndex);
+            int difference = computeDifference(activeNode, var.getPenalty(), elementIndex);
             double r = computeAdjustmentRatio(activeNode, difference);
             if (r >= -1.0) {
                 activeNode.addVariant(var);
