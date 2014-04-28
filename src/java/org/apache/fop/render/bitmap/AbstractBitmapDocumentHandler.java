@@ -229,7 +229,9 @@ public abstract class AbstractBitmapDocumentHandler extends AbstractBinaryWritin
         }
 
         //Set up bitmap to paint on
-        this.currentImage = createBufferedImage(bitmapWidth, bitmapHeight);
+        if (currentImage == null || currentImage.getWidth() != bitmapWidth || currentImage.getHeight() != bitmapHeight) {
+            currentImage = createBufferedImage(bitmapWidth, bitmapHeight);
+        }
         Graphics2D graphics2D = this.currentImage.createGraphics();
 
         // draw page background
@@ -316,7 +318,6 @@ public abstract class AbstractBitmapDocumentHandler extends AbstractBinaryWritin
                 this.multiImageWriter.writeImage(this.currentImage,
                         getSettings().getWriterParams());
             }
-            this.currentImage = null;
         } catch (IOException ioe) {
             throw new IFException("I/O error while encoding BufferedImage", ioe);
         }
