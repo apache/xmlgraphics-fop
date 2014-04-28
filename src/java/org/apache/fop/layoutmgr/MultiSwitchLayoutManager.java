@@ -59,12 +59,12 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
     }
 
     private interface KnuthElementsGenerator {
-        List<ListElement> getKnuthElement(LayoutContext context, int alignment);
+        List<ListElement> getKnuthElements(LayoutContext context, int alignment);
     }
 
     private class DefaultKnuthListGenerator implements KnuthElementsGenerator {
 
-        public List<ListElement> getKnuthElement(LayoutContext context, int alignment) {
+        public List<ListElement> getKnuthElements(LayoutContext context, int alignment) {
             List<ListElement> knuthList = new LinkedList<ListElement>();
             LayoutManager childLM = getChildLM();
             while (!childLM.isFinished()) {
@@ -83,7 +83,8 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
 
     private class WhitespaceManagement implements KnuthElementsGenerator {
 
-        public List<ListElement> getKnuthElement(LayoutContext context, int alignment) {
+        @SuppressWarnings("unchecked")
+        public List<ListElement> getKnuthElements(LayoutContext context, int alignment) {
 
             MultiSwitchLayoutManager mslm = MultiSwitchLayoutManager.this;
             List<ListElement> knuthList = new LinkedList<ListElement>();
@@ -91,18 +92,17 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
                     new WhitespaceManagementPosition(mslm));
             LayoutManager childLM;
             while ((childLM = getChildLM()) != null) {
-                if (!childLM.isFinished()) {
-                    LayoutContext childLC = makeChildLayoutContext(context);
-                    List childElements = childLM.getNextKnuthElements(childLC, alignment);
-                    if (childElements != null) {
-                        List<ListElement> newList = new LinkedList<ListElement>();
-                        wrapPositionElements(childElements, newList);
-                        // TODO Doing space resolution here is wrong.
-                        SpaceResolver.resolveElementList(newList);
-                        int contentLength = ElementListUtils.calcContentLength(newList);
-                        penalty.addVariant(penalty.new Variant(newList, contentLength));
-                    }
+                LayoutContext childLC = makeChildLayoutContext(context);
+                List<ListElement> childElements = new LinkedList<ListElement>();
+                while (!childLM.isFinished()) {
+                    childElements.addAll(childLM.getNextKnuthElements(childLC, alignment));
                 }
+                List<ListElement> wrappedElements = new LinkedList<ListElement>();
+                wrapPositionElements(childElements, wrappedElements);
+                // TODO Doing space resolution here is wrong.
+                SpaceResolver.resolveElementList(wrappedElements);
+                int contentLength = ElementListUtils.calcContentLength(wrappedElements);
+                penalty.addVariant(penalty.new Variant(wrappedElements, contentLength));
             }
             // Prevent the penalty from being ignored if it is at the beginning of the content
             knuthList.add(new KnuthBox(0, new Position(mslm), false));
@@ -129,7 +129,7 @@ public class MultiSwitchLayoutManager extends BlockStackingLayoutManager {
     @Override
     public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
         referenceIPD = context.getRefIPD();
-        List<ListElement> knuthList = knuthGen.getKnuthElement(context, alignment);
+        List<ListElement> knuthList = knuthGen.getKnuthElements(context, alignment);
         setFinished(true);
         return knuthList;
     }
