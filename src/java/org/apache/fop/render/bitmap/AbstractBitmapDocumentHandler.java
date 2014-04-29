@@ -229,7 +229,8 @@ public abstract class AbstractBitmapDocumentHandler extends AbstractBinaryWritin
         }
 
         //Set up bitmap to paint on
-        if (currentImage == null || currentImage.getWidth() != bitmapWidth || currentImage.getHeight() != bitmapHeight) {
+        if (currentImage == null || currentImage.getWidth() != bitmapWidth
+                || currentImage.getHeight() != bitmapHeight) {
             currentImage = createBufferedImage(bitmapWidth, bitmapHeight);
         }
         Graphics2D graphics2D = this.currentImage.createGraphics();
