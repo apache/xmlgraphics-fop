@@ -581,6 +581,7 @@ public final class FOPropertyMapping implements Constants {
 
         // background-color
         m  = new ColorProperty.Maker(PR_BACKGROUND_COLOR) {
+            @Override
             protected Property convertPropertyDatatype(
                     Property p, PropertyList propertyList, FObj fo) throws PropertyException {
                 String nameval = p.getNCname();
@@ -1620,6 +1621,7 @@ public final class FOPropertyMapping implements Constants {
 
         // text-align TODO: make it a StringProperty with enums.
         m  = new EnumProperty.Maker(PR_TEXT_ALIGN) {
+            @Override
             public Property get(int subpropId, PropertyList propertyList,
                     boolean bTryInherit, boolean bTryDefault) throws PropertyException {
                 Property p = super.get(subpropId, propertyList, bTryInherit, bTryDefault);
@@ -1649,6 +1651,7 @@ public final class FOPropertyMapping implements Constants {
 
         // text-align-last
         m  = new EnumProperty.Maker(PR_TEXT_ALIGN_LAST) {
+            @Override
             public Property get(int subpropId, PropertyList propertyList,
                     boolean bTryInherit, boolean bTryDefault) throws PropertyException {
                 Property p = super.get(subpropId, propertyList, bTryInherit, bTryDefault);
@@ -2125,7 +2128,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("starting-state", m);
 
         // switch-to
-        m  = new ToBeImplementedProperty.Maker(PR_SWITCH_TO);
+        m  = new StringProperty.Maker(PR_SWITCH_TO);
         m.setInherited(false);
         m.setDefault("xsl-any");
         addPropertyMaker("switch-to", m);
@@ -2614,6 +2617,12 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("");
         addPropertyMaker("fox:alt-text", m);
 
+        // fox:auto-toggle, used only in fo:multi-switch
+        m = new EnumProperty.Maker(PR_X_AUTO_TOGGLE);
+        m.setInherited(false);
+        m.addEnum("select-first-fitting", getEnumProperty(EN_SELECT_FIRST_FITTING, "SELECT_FIRST_FITTING"));
+        m.setDefault("select-first-fitting");
+        addPropertyMaker("fox:auto-toggle", m);
 
         // fox:border-*-radius-*
         m = new CondLengthProperty.Maker(PR_X_BORDER_BEFORE_RADIUS_START);

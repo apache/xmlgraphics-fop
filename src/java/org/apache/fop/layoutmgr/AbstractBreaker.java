@@ -107,9 +107,9 @@ public abstract class AbstractBreaker {
          * of previous BlockSequence?), EN_COLUMN, EN_ODD_PAGE,
          * EN_EVEN_PAGE.
          */
-        private int startOn;
+        private final int startOn;
 
-        private int displayAlign;
+        private final int displayAlign;
 
         /**
          * Creates a new BlockSequence.
@@ -142,6 +142,7 @@ public abstract class AbstractBreaker {
          * Finalizes a Knuth sequence.
          * @return a finalized sequence.
          */
+        @Override
         public KnuthSequence endSequence() {
             return endSequence(null);
         }
@@ -611,7 +612,6 @@ public abstract class AbstractBreaker {
                 // Handle SpaceHandling(Break)Positions, see SpaceResolver!
                 SpaceResolver.performConditionalsNotification(effectiveList,
                         startElementIndex, notificationEndElementIndex, lastBreak);
-
                 // Add areas now!
                 addAreas(new KnuthPossPosIter(effectiveList,
                         startElementIndex, endElementIndex + 1), childLC);

@@ -201,7 +201,7 @@ public final class ElementListUtils {
         if (last.isPenalty() && ((KnuthPenalty)last).getPenalty() < KnuthElement.INFINITE) {
             return true;
         } else if (last instanceof BreakElement
-                        && ((BreakElement)last).getPenaltyValue() < KnuthElement.INFINITE) {
+                && ((BreakElement)last).getPenaltyValue() < KnuthElement.INFINITE) {
             return true;
         }
         return false;

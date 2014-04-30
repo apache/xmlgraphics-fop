@@ -644,26 +644,27 @@ public final class LayoutContext {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "Layout Context:"
-        + "\nStack Limit BPD: \t"
-            + (getStackLimitBP() == null ? "null" : getStackLimitBP().toString())
-        + "\nTrailing Space: \t"
-            + (getTrailingSpace() == null ? "null" : getTrailingSpace().toString())
-        + "\nLeading Space: \t"
-            + (getLeadingSpace() == null ? "null" : getLeadingSpace().toString())
-        + "\nReference IPD: \t" + getRefIPD()
-        + "\nSpace Adjust: \t" + getSpaceAdjust()
-        + "\nIPD Adjust: \t" + getIPDAdjust()
-        + "\nResolve Leading Space: \t" + resolveLeadingSpace()
-        + "\nSuppress Break Before: \t" + suppressBreakBefore()
-        + "\nIs First Area: \t" + isFirstArea()
-        + "\nStarts New Area: \t" + startsNewArea()
-        + "\nIs Last Area: \t" + isLastArea()
-        + "\nKeeps: \t[keep-with-next=" + getKeepWithNextPending()
+                + "\nStack Limit BPD: \t"
+                + (getStackLimitBP() == null ? "null" : getStackLimitBP().toString())
+                + "\nTrailing Space: \t"
+                + (getTrailingSpace() == null ? "null" : getTrailingSpace().toString())
+                + "\nLeading Space: \t"
+                + (getLeadingSpace() == null ? "null" : getLeadingSpace().toString())
+                + "\nReference IPD: \t" + getRefIPD()
+                + "\nSpace Adjust: \t" + getSpaceAdjust()
+                + "\nIPD Adjust: \t" + getIPDAdjust()
+                + "\nResolve Leading Space: \t" + resolveLeadingSpace()
+                + "\nSuppress Break Before: \t" + suppressBreakBefore()
+                + "\nIs First Area: \t" + isFirstArea()
+                + "\nStarts New Area: \t" + startsNewArea()
+                + "\nIs Last Area: \t" + isLastArea()
+                + "\nKeeps: \t[keep-with-next=" + getKeepWithNextPending()
                 + "][keep-with-previous=" + getKeepWithPreviousPending() + "] pending"
-        + "\nBreaks: \tforced [" + (breakBefore != Constants.EN_AUTO ? "break-before" : "") + "]["
-        + (breakAfter != Constants.EN_AUTO ? "break-after" : "") + "]";
+                + "\nBreaks: \tforced [" + (breakBefore != Constants.EN_AUTO ? "break-before" : "") + "]["
+                + (breakAfter != Constants.EN_AUTO ? "break-after" : "") + "]";
     }
 
     /**

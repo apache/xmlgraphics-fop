@@ -19,7 +19,6 @@
 
 package org.apache.fop.fo.flow;
 
-// XML
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -39,7 +38,7 @@ public class MultiSwitch extends FObj {
     //     private CommonAccessibility commonAccessibility;
     // End of property values
 
-    private static boolean notImplementedWarningGiven = false;
+    private int autoToggle;
 
     /**
      * Base constructor
@@ -48,32 +47,30 @@ public class MultiSwitch extends FObj {
      */
     public MultiSwitch(FONode parent) {
         super(parent);
-
-        if (!notImplementedWarningGiven) {
-            getFOValidationEventProducer().unimplementedFeature(this, getName(),
-                    getName(), getLocator());
-            notImplementedWarningGiven = true;
-        }
     }
 
     /** {@inheritDoc} */
+    @Override
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        autoToggle = pList.get(PR_X_AUTO_TOGGLE).getEnum();
         // autoRestore = pList.get(PR_AUTO_RESTORE);
     }
 
-
     /** {@inheritDoc} */
+    @Override
     public void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("(multi-case+)");
         }
+        super.endOfNode();
     }
 
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: (multi-case+)
      */
+    @Override
     protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
@@ -84,6 +81,7 @@ public class MultiSwitch extends FObj {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getLocalName() {
         return "multi-switch";
     }
@@ -92,7 +90,13 @@ public class MultiSwitch extends FObj {
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_MULTI_SWITCH}
      */
+    @Override
     public int getNameId() {
         return FO_MULTI_SWITCH;
     }
+
+    public int getAutoToggle() {
+        return autoToggle;
+    }
+
 }

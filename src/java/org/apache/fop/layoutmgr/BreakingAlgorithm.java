@@ -319,12 +319,12 @@ public abstract class BreakingAlgorithm {
     protected class BestRecords {
         private static final double INFINITE_DEMERITS = Double.POSITIVE_INFINITY;
 
-        private double[] bestDemerits = new double[4];
-        private KnuthNode[] bestNode = new KnuthNode[4];
-        private double[] bestAdjust = new double[4];
-        private int[] bestDifference = new int[4];
-        private int[] bestAvailableShrink = new int[4];
-        private int[] bestAvailableStretch = new int[4];
+        private final double[] bestDemerits = new double[4];
+        private final KnuthNode[] bestNode = new KnuthNode[4];
+        private final double[] bestAdjust = new double[4];
+        private final int[] bestDifference = new int[4];
+        private final int[] bestAvailableShrink = new int[4];
+        private final int[] bestAvailableStretch = new int[4];
         /** Points to the fitness class which currently leads to the best demerits. */
         private int bestIndex = -1;
 
@@ -988,7 +988,7 @@ public abstract class BreakingAlgorithm {
      * @param node  the node
      * @param line  the line number
      * @param elementIdx    the position index of the element
-     * @param difference    the difference between content-length and avaialable width
+     * @param difference    the difference between content-length and available width
      * @param r     the adjustment ratio
      * @param demerits  demerits produced by the node
      * @param fitnessClass  the fitness class

@@ -48,7 +48,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     private static Log log = LogFactory.getLog(FlowLayoutManager.class);
 
     /** Array of areas currently being filled stored by area class */
-    private BlockParent[] currentAreas = new BlockParent[Area.CLASS_MAX];
+    private final BlockParent[] currentAreas = new BlockParent[Area.CLASS_MAX];
 
     /**
      * This is the top level layout manager.
