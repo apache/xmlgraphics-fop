@@ -152,8 +152,21 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
             double y = outputLocation.getY();
             try {
                 try {
+                    AFPGraphics2D afpg2d = (AFPGraphics2D)g2d;
+                    int fontSize = 0;
+                    if (font != null) {
+                        fontSize = (int) Math.round(afpg2d.convertToAbsoluteLength(font.getFontSize()));
+                    }
+                    if (fontSize < 6000) {
+                        nativeTextHandler.drawString(g2d, txt, (float) (x + tx), (float) y);
+                    } else {
+                        double scaleX = g2d.getTransform().getScaleX();
+                        for (int i = 0; i < txt.length(); i++) {
+                            double ad = run.getLayout().getGlyphAdvances()[i] * scaleX;
+                            nativeTextHandler.drawString(g2d, txt.charAt(i) + "", (float) (x + tx + ad), (float) y);
+                        }
+                    }
                     //TODO draw underline and overline if set
-                    nativeTextHandler.drawString(g2d, txt, (float) (x + tx), (float) y);
                     //TODO draw strikethrough if set
                 } catch (IOException ioe) {
                     if (g2d instanceof AFPGraphics2D) {

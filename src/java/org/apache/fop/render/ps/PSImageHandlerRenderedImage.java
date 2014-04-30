@@ -19,9 +19,12 @@
 
 package org.apache.fop.render.ps;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -63,6 +66,17 @@ public class PSImageHandlerRenderedImage implements PSImageHandler {
         Rectangle2D targetRect = new Rectangle2D.Double(x, y, w, h);
 
         RenderedImage ri = imageRend.getRenderedImage();
+
+        if (ri instanceof BufferedImage && ri.getColorModel().hasAlpha()) {
+            BufferedImage convertedImg = new BufferedImage(ri.getWidth(), ri.getHeight(), BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = (Graphics2D) convertedImg.getGraphics();
+            g.setBackground(Color.WHITE);
+            g.clearRect(0, 0, ri.getWidth(), ri.getHeight());
+            g.drawImage((BufferedImage)ri, 0, 0, null);
+            g.dispose();
+            ri = convertedImg;
+        }
+
         ImageEncoder encoder = ImageEncodingHelper.createRenderedImageEncoder(ri);
         Dimension imgDim = new Dimension(ri.getWidth(), ri.getHeight());
         String imgDescription = ri.getClass().getName();

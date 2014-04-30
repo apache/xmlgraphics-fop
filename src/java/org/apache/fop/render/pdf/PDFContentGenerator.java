@@ -486,6 +486,13 @@ public class PDFContentGenerator {
         restoreGraphicsState();
     }
 
+    public void placeImage(AffineTransform at, String stream) {
+        saveGraphicsState();
+        concatenate(at);
+        add(stream);
+        restoreGraphicsState();
+    }
+
     /**
      * Places a previously registered image at a certain place on the page,
      * bracketing it as a marked-content sequence.

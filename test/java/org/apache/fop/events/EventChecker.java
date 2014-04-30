@@ -46,7 +46,7 @@ public class EventChecker implements EventListener {
         if (id.equals(expectedEventID)) {
             eventReceived = true;
             for (Map.Entry<String, Object> param : expectedParams.entrySet()) {
-                assertEquals(event.getParam(param.getKey()), param.getValue());
+                assertEquals(param.getValue(), event.getParam(param.getKey()));
             }
         }
     }
