@@ -444,6 +444,21 @@
           <Method name="renderSVGDocument"/>
         </Or>
       </And>
+      <And>
+        <Class name="org.apache.fop.render.ps.PSTextPainter"/>
+        <Or>
+          <Field name="gen"/>
+          <Field name="ps"/>
+          <Field name="psRun"/>
+          <Field name="textUtil"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.svg.PDFTextPainter"/>
+        <Or>
+          <Field name="pdf"/>
+        </Or>
+      </And>
     </Or>
   </Match>
   <Match>

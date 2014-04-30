@@ -44,6 +44,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
 import org.apache.fop.image.loader.batik.BatikUtil;
+import org.apache.fop.pdf.TransparencyDisallowedException;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
@@ -207,6 +208,10 @@ public class PDFImageHandlerSVG implements ImageHandler {
             root.paint(graphics);
             ctx.dispose();
             generator.add(graphics.getString());
+        } catch (TransparencyDisallowedException e) {
+            SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
+                    context.getUserAgent().getEventBroadcaster());
+            eventProducer.bitmapWithTransparency(this, e.getProfile(), image.getInfo().getOriginalURI());
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());

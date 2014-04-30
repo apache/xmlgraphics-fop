@@ -98,4 +98,13 @@ public interface SVGEventProducer extends EventProducer {
      */
     void transparencyIgnored(Object source, Object pdfProfile, String uri);
 
+
+    /**
+     * SVG references a bitmap image that contains transparency while it is not allowed.
+     * @param source the event source
+     * @param pdfProfile the PDF profile that disallows transparency
+     * @param uri the image URI, if available
+     * @event.severity ERROR
+     */
+    void bitmapWithTransparency(Object source, Object pdfProfile, String uri);
 }

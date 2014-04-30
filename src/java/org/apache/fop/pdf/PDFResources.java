@@ -45,7 +45,7 @@ public class PDFResources extends PDFDictionary {
     /**
      * /Font objects keyed by their internal name
      */
-    protected Map<String, PDFFont> fonts = new LinkedHashMap<String, PDFFont>();
+    protected Map<String, PDFDictionary> fonts = new LinkedHashMap<String, PDFDictionary>();
 
     /**
      * Set of XObjects
@@ -76,6 +76,8 @@ public class PDFResources extends PDFDictionary {
     /** Named properties */
     protected Map<String, PDFReference> properties = new LinkedHashMap<String, PDFReference>();
 
+    private PDFResources parent;
+
     /**
      * create a /Resources object.
      *
@@ -87,13 +89,29 @@ public class PDFResources extends PDFDictionary {
         setObjectNumber(objnum);
     }
 
+    public void setParentResources(PDFResources p) {
+        parent = p;
+    }
+
+    public PDFResources getParentResources() {
+        return parent;
+    }
+
     /**
      * add font object to resources list.
      *
      * @param font the PDFFont to add
      */
     public void addFont(PDFFont font) {
-        this.fonts.put(font.getName(), font);
+        fonts.put(font.getName(), font);
+    }
+
+    public void addFont(String name, PDFDictionary font) {
+        fonts.put(name, font);
+    }
+
+    public Map<String, PDFDictionary> getFonts() {
+        return fonts;
     }
 
     /**
@@ -220,11 +238,16 @@ public class PDFResources extends PDFDictionary {
     }
 
     private void populateDictionary() {
-        if (!this.fonts.isEmpty()) {
+        if (!this.fonts.isEmpty() || (parent != null && !parent.getFonts().isEmpty())) {
             PDFDictionary dict = new PDFDictionary(this);
             /* construct PDF dictionary of font object references */
-            for (Map.Entry<String, PDFFont> entry : fonts.entrySet()) {
+            for (Map.Entry<String, PDFDictionary> entry : fonts.entrySet()) {
                 dict.put(entry.getKey(), entry.getValue());
+            }
+            if (parent != null) {
+                for (Map.Entry<String, PDFDictionary> entry : parent.getFonts().entrySet()) {
+                    dict.put(entry.getKey(), entry.getValue());
+                }
             }
             put("Font", dict);
         }
