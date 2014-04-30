@@ -49,6 +49,8 @@ import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.flow.MultiCase;
+import org.apache.fop.fo.flow.MultiSwitch;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.PageNumberCitationLast;
@@ -96,7 +98,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     private static final Log LOG = LogFactory.getLog(LayoutManagerMapping.class);
 
     /** The map of LayoutManagerMakers */
-    private Map makers = new HashMap();
+    private final Map makers = new HashMap();
 
     /** default constructor */
     public LayoutManagerMapping() {
@@ -142,6 +144,8 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         registerMaker(TableHeader.class, new Maker());
         registerMaker(Wrapper.class, new WrapperLayoutManagerMaker());
         registerMaker(Title.class, new InlineLayoutManagerMaker());
+        registerMaker(MultiCase.class, new MultiCaseLayoutManagerMaker());
+        registerMaker(MultiSwitch.class, new MultiSwitchLayoutManagerMaker());
     }
 
     /**
@@ -440,6 +444,22 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                 FONode child = (FONode) baseIter.next();
                 makeLayoutManagers(child, lms);
             }
+        }
+    }
+
+    public class MultiSwitchLayoutManagerMaker extends Maker {
+
+        @Override
+        public void make(FONode node, List lms) {
+            lms.add(new MultiSwitchLayoutManager((MultiSwitch) node));
+        }
+    }
+
+    public class MultiCaseLayoutManagerMaker extends Maker {
+
+        @Override
+        public void make(FONode node, List lms) {
+            lms.add(new MultiCaseLayoutManager((MultiCase) node));
         }
     }
 

@@ -19,10 +19,13 @@
 
 package org.apache.fop.fo.flow;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_multi-case">
@@ -30,15 +33,14 @@ import org.apache.fop.fo.PropertyList;
  * TODO implement validateChildNode()
  */
 public class MultiCase extends FObj {
-    // The value of properties relevant for fo:multi-case.
+
+    // FO multi-case properties
     private int startingState;
-    // private ToBeImplementedProperty caseName;
-    // private ToBeImplementedProperty caseTitle;
+    private String caseName;
+    private String caseTitle;
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
     // End of property values
-
-    private static boolean notImplementedWarningGiven = false;
 
     /**
      * Base constructor
@@ -47,20 +49,38 @@ public class MultiCase extends FObj {
      */
     public MultiCase(FONode parent) {
         super(parent);
-
-        if (!notImplementedWarningGiven) {
-            getFOValidationEventProducer().unimplementedFeature(this, getName(),
-                    getName(), getLocator());
-            notImplementedWarningGiven = true;
-        }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         startingState = pList.get(PR_STARTING_STATE).getEnum();
-        // caseName = pList.get(PR_CASE_NAME);
-        // caseTitle = pList.get(PR_CASE_TITLE);
+        caseName = pList.get(PR_CASE_NAME).getString();
+        caseTitle = pList.get(PR_CASE_TITLE).getString();
+    }
+
+    /**
+     * Content Model: (#PCDATA|%inline;|%block)*
+     */
+    @Override
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
+            throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!isBlockOrInlineItem(nsURI, localName) || "marker".equals(localName)) {
+                invalidChildError(loc, nsURI, localName);
+            }
+            if (!"multi-toggle".equals(localName)) {
+                // Validate against parent of fo:multi-switch
+                FONode.validateChildNode(getParent().getParent(), loc, nsURI, localName);
+            }
+        }
+    }
+
+    @Override
+    public void endOfNode() throws FOPException {
+        if (firstChild == null) {
+            missingChildElementError("(#PCDATA|%inline;|%block)*");
+        }
     }
 
     /** @return the "starting-state" property */
@@ -68,7 +88,7 @@ public class MultiCase extends FObj {
         return startingState;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getLocalName() {
         return "multi-case";
     }
@@ -77,7 +97,17 @@ public class MultiCase extends FObj {
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_MULTI_CASE}
      */
+    @Override
     public int getNameId() {
         return FO_MULTI_CASE;
     }
+
+    public String getCaseName() {
+        return caseName;
+    }
+
+    public String getCaseTitle() {
+        return caseTitle;
+    }
+
 }

@@ -89,7 +89,7 @@ public class KnuthAlgorithmTestCase {
 
     private class MyBreakingAlgorithm extends BreakingAlgorithm {
 
-        private List parts = new java.util.ArrayList();
+        private final List<Part> parts = new java.util.ArrayList<Part>();
 
         public MyBreakingAlgorithm(int align, int alignLast, boolean first,
                     boolean partOverflowRecovery, int maxFlagCount) {
@@ -97,13 +97,15 @@ public class KnuthAlgorithmTestCase {
         }
 
         public Part[] getParts() {
-            return (Part[])parts.toArray(new Part[parts.size()]);
+            return parts.toArray(new Part[parts.size()]);
         }
 
+        @Override
         public void updateData1(int total, double demerits) {
             //nop
         }
 
+        @Override
         public void updateData2(KnuthNode bestActiveNode, KnuthSequence sequence, int total) {
             int difference = bestActiveNode.difference;
             // it is always allowed to adjust space, so the ratio must be set regardless of
@@ -137,6 +139,7 @@ public class KnuthAlgorithmTestCase {
             parts.add(0, part);
         }
 
+        @Override
         protected int filterActiveNodes() {
             //nop
             return 0;

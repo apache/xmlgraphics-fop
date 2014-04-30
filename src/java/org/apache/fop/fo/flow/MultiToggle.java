@@ -19,7 +19,6 @@
 
 package org.apache.fop.fo.flow;
 
-// FOP
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -27,6 +26,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.StringProperty;
 
 
 /**
@@ -36,7 +36,7 @@ import org.apache.fop.fo.ValidationException;
 public class MultiToggle extends FObj {
     // The value of properties relevant for fo:multi-toggle (commented out for performance).
     //     private CommonAccessibility commonAccessibility;
-    // public ToBeImplementedProperty prSwitchTo;
+     public StringProperty prSwitchTo;
     // End of property values
 
     private static boolean notImplementedWarningGiven = false;
@@ -57,15 +57,17 @@ public class MultiToggle extends FObj {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void bind(PropertyList pList) throws FOPException {
-        // prSwitchTo = pList.get(PR_SWITCH_TO);
-
+        super.bind(pList);
+        prSwitchTo = (StringProperty) pList.get(PR_SWITCH_TO);
     }
 
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: (#PCDATA|%inline;|%block;)*
      */
+    @Override
     protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
@@ -76,6 +78,7 @@ public class MultiToggle extends FObj {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getLocalName() {
         return "multi-toggle";
     }
@@ -84,7 +87,9 @@ public class MultiToggle extends FObj {
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_MULTI_TOGGLE}
      */
+    @Override
     public int getNameId() {
         return FO_MULTI_TOGGLE;
     }
+
 }
