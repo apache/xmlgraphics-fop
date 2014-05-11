@@ -443,6 +443,12 @@ public final class TraitSetter {
                     }
                 }
             }
+            if (backProps.backgroungImageTargetWidth.getValue() != 0) {
+                back.setImageTargetWidth(backProps.backgroungImageTargetWidth.getValue());
+            }
+            if (backProps.backgroungImageTargetHeight.getValue() != 0) {
+                back.setImageTargetHeight(backProps.backgroungImageTargetHeight.getValue());
+            }
         }
 
         area.addTrait(Trait.BACKGROUND, back);

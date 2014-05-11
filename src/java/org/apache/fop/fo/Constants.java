@@ -822,8 +822,12 @@ public interface Constants {
     /** Property constant */
     int PR_X_AUTO_TOGGLE = 292;
 
+    /** Used for scaling of background images */
+    int PR_X_BACKGROUND_IMAGE_WIDTH = 293;
+    int PR_X_BACKGROUND_IMAGE_HEIGHT = 294;
+
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 292;
+    int PROPERTY_COUNT = 294;
 
     // compound property constants
 

@@ -69,6 +69,9 @@ public class ExtensionElementMapping extends ElementMapping {
         PROPERTY_ATTRIBUTES.add("border-after-end-radius");
         //Optional content groups (layers)
         PROPERTY_ATTRIBUTES.add("layer");
+        // used for scaling of background images
+        PROPERTY_ATTRIBUTES.add("background-image-width");
+        PROPERTY_ATTRIBUTES.add("background-image-height");
     }
 
     /**

@@ -2624,6 +2624,16 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("select-first-fitting");
         addPropertyMaker("fox:auto-toggle", m);
 
+        // fox:background-image-width|height, used for scaling of background images
+        m = new LengthProperty.Maker(PR_X_BACKGROUND_IMAGE_WIDTH);
+        m.setInherited(false);
+        m.setDefault("0pt");
+        addPropertyMaker("fox:background-image-width", m);
+        m = new LengthProperty.Maker(PR_X_BACKGROUND_IMAGE_HEIGHT);
+        m.setInherited(false);
+        m.setDefault("0pt");
+        addPropertyMaker("fox:background-image-height", m);
+
         // fox:border-*-radius-*
         m = new CondLengthProperty.Maker(PR_X_BORDER_BEFORE_RADIUS_START);
         m.useGeneric(genericCondCornerRadius);

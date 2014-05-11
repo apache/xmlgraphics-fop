@@ -266,10 +266,21 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
             if (back.getImageInfo() != null) {
                 ImageSize imageSize = back.getImageInfo().getSize();
-                int horzCount = (int)((paddRectWidth
-                        * 1000 / imageSize.getWidthMpt()) + 1.0f);
-                int vertCount = (int)((paddRectHeight
-                        * 1000 / imageSize.getHeightMpt()) + 1.0f);
+                int targetWidth = imageSize.getWidthMpt();
+                int targetHeight = imageSize.getHeightMpt();
+                double multiplier = 1.0;
+                if (back.getImageTargetWidth() != 0 && back.getImageTargetHeight() != 0) {
+                    multiplier = Math.min(1.0 * back.getImageTargetWidth() / targetWidth,
+                            1.0 * back.getImageTargetHeight() / targetHeight);
+                } else if (back.getImageTargetHeight() != 0) {
+                    multiplier = 1.0 * back.getImageTargetHeight() / targetHeight;
+                } else if (back.getImageTargetWidth() != 0) {
+                    multiplier = 1.0 * back.getImageTargetWidth() / targetWidth;
+                }
+                targetWidth = (int) (targetWidth * multiplier);
+                targetHeight = (int) (targetHeight * multiplier);
+                int horzCount = (int) ((paddRectWidth * 1000 / targetWidth) + 1.0f);
+                int vertCount = (int) ((paddRectHeight * 1000 / targetHeight) + 1.0f);
                 if (back.getRepeat() == EN_NOREPEAT) {
                     horzCount = 1;
                     vertCount = 1;
@@ -292,12 +303,8 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                         // place once
                         Rectangle2D pos;
                         // Image positions are relative to the currentIP/BP
-                        pos = new Rectangle2D.Float(sx - currentIPPosition
-                                                        + (x * imageSize.getWidthMpt()),
-                                                    sy - currentBPPosition
-                                                        + (y * imageSize.getHeightMpt()),
-                                                        imageSize.getWidthMpt(),
-                                                        imageSize.getHeightMpt());
+                        pos = new Rectangle2D.Float(sx - currentIPPosition + (x * targetWidth), sy
+                                - currentBPPosition + (y * targetHeight), targetWidth, targetHeight);
                         drawImage(back.getURL(), pos);
                     }
                 }
