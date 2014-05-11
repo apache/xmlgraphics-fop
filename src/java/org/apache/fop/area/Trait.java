@@ -508,6 +508,10 @@ public final class Trait implements Serializable {
         /** Background vertical offset for images. */
         private int vertical;
 
+        private int imageTargetWidth;
+
+        private int imageTargetHeight;
+
         /**
          * Returns the background color.
          * @return background color, null if n/a
@@ -655,7 +659,29 @@ public final class Trait implements Serializable {
                 sb.append(",horiz=").append(horiz);
                 sb.append(",vertical=").append(vertical);
             }
+            if (imageTargetWidth != 0) {
+                sb.append(",target-width=").append(Integer.toString(imageTargetWidth));
+            }
+            if (imageTargetHeight != 0) {
+                sb.append(",target-height=").append(Integer.toString(imageTargetHeight));
+            }
             return sb.toString();
+        }
+
+        public void setImageTargetWidth(int value) {
+            imageTargetWidth = value;
+        }
+
+        public int getImageTargetWidth() {
+            return imageTargetWidth;
+        }
+
+        public void setImageTargetHeight(int value) {
+            imageTargetHeight = value;
+        }
+
+        public int getImageTargetHeight() {
+            return imageTargetHeight;
         }
 
     }

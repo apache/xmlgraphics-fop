@@ -84,6 +84,8 @@ public class CommonBorderPaddingBackground {
      */
     public final Length backgroundPositionVertical;
 
+    public final Length backgroungImageTargetWidth;
+    public final Length backgroungImageTargetHeight;
 
     private ImageInfo backgroundImageInfo;
 
@@ -353,6 +355,9 @@ public class CommonBorderPaddingBackground {
                     Constants.PR_BACKGROUND_POSITION_VERTICAL).getLength();
         }
 
+        backgroungImageTargetWidth = pList.get(Constants.PR_X_BACKGROUND_IMAGE_WIDTH).getLength();
+        backgroungImageTargetHeight = pList.get(Constants.PR_X_BACKGROUND_IMAGE_HEIGHT).getLength();
+
         initBorderInfo(pList, BEFORE,
                 Constants.PR_BORDER_BEFORE_COLOR,
                 Constants.PR_BORDER_BEFORE_STYLE,
@@ -397,18 +402,18 @@ public class CommonBorderPaddingBackground {
         CommonBorderPaddingBackground cachedInstance = null;
         /* if padding-* and background-position-* resolve to absolute lengths
          * the whole instance can be cached */
-        if ((newInstance.padding[BEFORE] == null
-             || newInstance.padding[BEFORE].getLength().isAbsolute())
-                && (newInstance.padding[AFTER] == null
-                    || newInstance.padding[AFTER].getLength().isAbsolute())
-                && (newInstance.padding[START] == null
-                    || newInstance.padding[START].getLength().isAbsolute())
-                && (newInstance.padding[END] == null
-                    || newInstance.padding[END].getLength().isAbsolute())
-                && (newInstance.backgroundPositionHorizontal == null
-                    || newInstance.backgroundPositionHorizontal.isAbsolute())
-                && (newInstance.backgroundPositionVertical == null
-                    || newInstance.backgroundPositionVertical.isAbsolute())) {
+        if ((newInstance.padding[BEFORE] == null || newInstance.padding[BEFORE].getLength().isAbsolute())
+                && (newInstance.padding[AFTER] == null || newInstance.padding[AFTER].getLength().isAbsolute())
+                && (newInstance.padding[START] == null || newInstance.padding[START].getLength().isAbsolute())
+                && (newInstance.padding[END] == null || newInstance.padding[END].getLength().isAbsolute())
+                && (newInstance.backgroundPositionHorizontal == null || newInstance.backgroundPositionHorizontal
+                        .isAbsolute())
+                && (newInstance.backgroundPositionVertical == null || newInstance.backgroundPositionVertical
+                        .isAbsolute())
+                && (newInstance.backgroungImageTargetHeight == null || newInstance.backgroungImageTargetHeight
+                        .isAbsolute())
+                && (newInstance.backgroungImageTargetWidth == null || newInstance.backgroungImageTargetWidth
+                        .isAbsolute())) {
             cachedInstance = CACHE.fetch(newInstance);
         }
         synchronized (newInstance.backgroundImage.intern()) {
@@ -837,6 +842,8 @@ public class CommonBorderPaddingBackground {
                     backgroundImage,
                     backgroundPositionHorizontal,
                     backgroundPositionVertical,
+                    backgroungImageTargetWidth,
+                    backgroungImageTargetHeight,
                     borderInfo[BEFORE],
                     borderInfo[AFTER],
                     borderInfo[START],
