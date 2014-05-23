@@ -99,11 +99,8 @@ public abstract class FontLoader {
                 throw new IllegalArgumentException(
                         "CID encoding mode not supported for Type 1 fonts");
             }
-            if (embeddingMode == EmbeddingMode.SUBSET) {
-                throw new IllegalArgumentException(
-                        "Subset embedding for Type 1 fonts is not supported");
-            }
-            loader = new Type1FontLoader(fontFileURI, embedded, useKerning, resourceResolver);
+            loader = new Type1FontLoader(fontFileURI, embedded, embeddingMode, useKerning,
+                    resourceResolver);
         } else {
             loader = new OFFontLoader(fontFileURI, subFontName, embedded, embeddingMode,
                     encodingMode, useKerning, useAdvanced, resourceResolver);

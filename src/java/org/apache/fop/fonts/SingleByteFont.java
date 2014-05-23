@@ -21,7 +21,9 @@ package org.apache.fop.fonts;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +36,7 @@ import org.apache.xmlgraphics.fonts.Glyphs;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.truetype.OpenFont.PostScriptVersion;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * Generic SingleByte font
@@ -56,12 +59,28 @@ public class SingleByteFont extends CustomFont {
 
     private PostScriptVersion ttPostScriptVersion;
 
-    /**
-     * @param resourceResolver the URI resolver for controlling file access
-     */
+    private int usedGlyphsCount;
+    private LinkedHashMap<Integer, String> usedGlyphNames;
+    private Map<Integer, Integer> usedGlyphs;
+    private Map<Integer, Character> usedCharsIndex;
+
     public SingleByteFont(InternalResourceResolver resourceResolver) {
         super(resourceResolver);
         setEncoding(CodePointMapping.WIN_ANSI_ENCODING);
+    }
+
+    public SingleByteFont(InternalResourceResolver resourceResolver, EmbeddingMode embeddingMode) {
+        this(resourceResolver);
+        setEmbeddingMode(embeddingMode);
+        if (embeddingMode != EmbeddingMode.FULL) {
+            usedGlyphNames = new LinkedHashMap<Integer, String>();
+            usedGlyphs = new HashMap<Integer, Integer>();
+            usedCharsIndex = new HashMap<Integer, Character>();
+
+            // The zeroth value is reserved for .notdef
+            usedGlyphs.put(0, 0);
+            usedGlyphsCount++;
+        }
     }
 
     /** {@inheritDoc} */
@@ -72,7 +91,7 @@ public class SingleByteFont extends CustomFont {
 
     /** {@inheritDoc} */
     public boolean isSubsetEmbedded() {
-        return false;
+        return getEmbeddingMode() != EmbeddingMode.FULL;
     }
 
     /** {@inheritDoc} */
@@ -182,22 +201,53 @@ public class SingleByteFont extends CustomFont {
         return d;
     }
 
+    private boolean isSubset() {
+        return getEmbeddingMode() == EmbeddingMode.SUBSET;
+    }
+
     /** {@inheritDoc} */
     @Override
     public char mapChar(char c) {
         notifyMapOperation();
         char d = lookupChar(c);
-        if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {
-            return d;
-        } else {
+        if (d == SingleByteEncoding.NOT_FOUND_CODE_POINT) {
             // Check for alternative
             d = findAlternative(c);
             if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {
                 return d;
+            } else {
+                this.warnMissingGlyph(c);
+                return Typeface.NOT_FOUND;
             }
         }
-        this.warnMissingGlyph(c);
-        return Typeface.NOT_FOUND;
+        if (isEmbeddable() && isSubset()) {
+            mapChar(d, c);
+        }
+        return d;
+    }
+
+    private int mapChar(int glyphIndex, char unicode) {
+        // Reencode to a new subset font or get the reencoded value
+        // IOW, accumulate the accessed characters and build a character map for them
+        Integer subsetCharSelector = usedGlyphs.get(glyphIndex);
+        if (subsetCharSelector == null) {
+            int selector = usedGlyphsCount;
+            usedGlyphs.put(glyphIndex, selector);
+            usedCharsIndex.put(selector, unicode);
+            usedGlyphsCount++;
+            return selector;
+        } else {
+            return subsetCharSelector;
+        }
+    }
+
+    private char getUnicode(int index) {
+        Character mapValue = usedCharsIndex.get(index);
+        if (mapValue != null) {
+            return mapValue.charValue();
+        } else {
+            return CharUtilities.NOT_A_CHARACTER;
+        }
     }
 
     private char mapUnencodedChar(char ch) {
@@ -457,5 +507,34 @@ public class SingleByteFont extends CustomFont {
         return ttPostScriptVersion;
     }
 
+    /**
+     * Returns a Map of used Glyphs.
+     * @return Map Map of used Glyphs
+     */
+    public Map<Integer, Integer> getUsedGlyphs() {
+        return Collections.unmodifiableMap(usedGlyphs);
+    }
+
+    public char getUnicodeFromSelector(int selector) {
+        return getUnicode(selector);
+    }
+
+    public void mapUsedGlyphName(int gid, String value) {
+        usedGlyphNames.put(gid, value);
+    }
+
+    public Map<Integer, String> getUsedGlyphNames() {
+        return usedGlyphNames;
+    }
+
+    public String getGlyphName(int idx) {
+        if (idx < mapping.getCharNameMap().length) {
+            return mapping.getCharNameMap()[idx];
+        } else {
+            int selector = usedGlyphs.get(idx);
+            char theChar = usedCharsIndex.get(selector);
+            return unencodedCharacters.get(theChar).getCharacter().getName();
+        }
+    }
 }
 

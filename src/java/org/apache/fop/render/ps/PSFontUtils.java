@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.ps;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fontbox.cff.CFFStandardString;
@@ -61,6 +63,7 @@ import org.apache.fop.fonts.truetype.OpenFont.PostScriptVersion;
 import org.apache.fop.fonts.truetype.TTFFile;
 import org.apache.fop.fonts.truetype.TTFOutputStream;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
+import org.apache.fop.fonts.type1.Type1SubsetFile;
 import org.apache.fop.render.ps.fonts.PSTTFOutputStream;
 import org.apache.fop.util.HexEncoder;
 
@@ -272,13 +275,13 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                 }
                 gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, fontRes);
                 if (fontType == FontType.TYPE1) {
-                    embedType1Font(gen, in);
+                    embedType1Font(gen, (SingleByteFont) tf, in);
                     fontResource = PSFontResource.createFontResource(fontRes);
                 } else if (fontType == FontType.TRUETYPE) {
                     embedTrueTypeFont(gen, (SingleByteFont) tf, in);
                     fontResource = PSFontResource.createFontResource(fontRes);
                 } else {
-                    composeType0Font(gen, (MultiByteFont) tf, in);
+                   composeType0Font(gen, (MultiByteFont) tf, in);
                 }
                 gen.writeDSCComment(DSCConstants.END_RESOURCE);
                 gen.getResourceTracker().registerSuppliedResource(fontRes);
@@ -309,6 +312,71 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                         + gen.getPSLevel());
             }
         }
+    }
+
+    private static void embedType1Font(PSGenerator gen, SingleByteFont font,
+            InputStream fontStream) throws IOException {
+        if (font.getEmbeddingMode() == EmbeddingMode.AUTO) {
+            font.setEmbeddingMode(EmbeddingMode.FULL);
+        }
+        byte[] fullFont = IOUtils.toByteArray(fontStream);
+        fontStream = new ByteArrayInputStream(fullFont);
+        boolean embed = true;
+        if (font.getEmbeddingMode() == EmbeddingMode.SUBSET) {
+            Type1SubsetFile subset = new Type1SubsetFile();
+            byte[] byteSubset = subset.createSubset(fontStream, font, "");
+            fontStream = new ByteArrayInputStream(byteSubset);
+        }
+        embedType1Font(gen, fontStream);
+        if (font.getEmbeddingMode() == EmbeddingMode.SUBSET) {
+            writeEncoding(gen, font);
+        }
+    }
+
+    private static void writeEncoding(PSGenerator gen, SingleByteFont font) throws IOException {
+        String psName = font.getEmbedFontName();
+        gen.writeln("/" + psName + ".0.enc [ ");
+        int lengthCount = 0;
+        int charCount = 1;
+        int encodingCount = 0;
+        StringBuilder line = new StringBuilder();
+        int lastGid = 0;
+        Set<Integer> keySet = font.getUsedGlyphNames().keySet();
+        for (int gid : keySet) {
+            for (int i = lastGid; i < gid - 1; i++) {
+                line.append("/.notdef ");
+                lengthCount++;
+                if (lengthCount == 8) {
+                    gen.writeln(line.toString());
+                    line = new StringBuilder();
+                    lengthCount = 0;
+                }
+            }
+            lastGid = gid;
+            line.append(font.getUsedGlyphNames().get(gid) + " ");
+            lengthCount++;
+            charCount++;
+            if (lengthCount == 8) {
+                gen.writeln(line.toString());
+                line = new StringBuilder();
+                lengthCount = 0;
+            }
+            if (charCount > 256) {
+                encodingCount++;
+                charCount = 1;
+                gen.writeln(line.toString());
+                line = new StringBuilder();
+                lengthCount = 0;
+                gen.writeln("] def");
+                gen.writeln(String.format("/%s.%d %s.%d.enc /%s RE", psName,
+                        encodingCount - 1, psName, encodingCount - 1, psName));
+                gen.writeln("/" + psName + "." + encodingCount + ".enc [ ");
+            }
+        }
+        gen.writeln(line.toString());
+        gen.writeln("] def");
+        gen.writeln(String.format("/%s.%d %s.%d.enc /%s RE", psName, encodingCount,
+                psName, encodingCount, psName));
     }
 
     private static void embedTrueTypeFont(PSGenerator gen,

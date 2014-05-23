@@ -137,7 +137,7 @@ public class OFFontLoader extends FontLoader {
             returnFont = multiFont;
             multiFont.setTTCName(ttcFontName);
         } else {
-            singleFont = new SingleByteFont(resourceResolver);
+            singleFont = new SingleByteFont(resourceResolver, embeddingMode);
             returnFont = singleFont;
         }
 

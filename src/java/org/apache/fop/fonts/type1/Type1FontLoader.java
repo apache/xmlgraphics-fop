@@ -34,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.CodePointMapping;
+import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.SingleByteEncoding;
@@ -48,6 +49,8 @@ public class Type1FontLoader extends FontLoader {
 
     private SingleByteFont singleFont;
 
+    private EmbeddingMode embeddingMode;
+
     /**
      * Constructs a new Type 1 font loader.
      * @param fontFileURI the URI to the PFB file of a Type 1 font
@@ -56,9 +59,10 @@ public class Type1FontLoader extends FontLoader {
      * @param resourceResolver the font resolver used to resolve URIs
      * @throws IOException In case of an I/O error
      */
-    public Type1FontLoader(URI fontFileURI, boolean embedded, boolean useKerning,
-            InternalResourceResolver resourceResolver) throws IOException {
+    public Type1FontLoader(URI fontFileURI, boolean embedded, EmbeddingMode embeddingMode,
+            boolean useKerning, InternalResourceResolver resourceResolver) throws IOException {
         super(fontFileURI, embedded, useKerning, true, resourceResolver);
+        this.embeddingMode = embeddingMode;
     }
 
     private String getPFMURI(String pfbURI) {
@@ -137,7 +141,7 @@ public class Type1FontLoader extends FontLoader {
         if (afm == null && pfm == null) {
             throw new IllegalArgumentException("Need at least an AFM or a PFM!");
         }
-        singleFont = new SingleByteFont(resourceResolver);
+        singleFont = new SingleByteFont(resourceResolver, embeddingMode);
         singleFont.setFontType(FontType.TYPE1);
         if (this.embedded) {
             singleFont.setEmbedURI(this.fontFileURI);
