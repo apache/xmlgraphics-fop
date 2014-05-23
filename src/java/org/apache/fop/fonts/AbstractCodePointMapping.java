@@ -179,6 +179,10 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
         return -1;
     }
 
+    public String getNameFromCodePoint(int idx) {
+        return getCharNameMap()[idx];
+    }
+
     /** {@inheritDoc} */
     public String[] getCharNameMap() {
         if (this.charNameMap != null) {

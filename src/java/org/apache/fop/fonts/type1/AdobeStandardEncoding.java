@@ -26,7 +26,7 @@ import java.util.Map;
  * Enumerates the {@linkplain http://unicode.org/Public/MAPPINGS/VENDORS/ADOBE/stdenc.txt} for
  * characters  found in a Type1 font.
  */
-enum AdobeStandardEncoding {
+public enum AdobeStandardEncoding {
     /** space character */
     space(0x0020, 0x20, "SPACE", "space"),
     /** space character */
@@ -406,5 +406,14 @@ enum AdobeStandardEncoding {
     public static int getAdobeCodePoint(String adobeName) {
         AdobeStandardEncoding encoding = CACHE.get(adobeName);
         return encoding != null ? encoding.getAdobeCodePoint() : -1;
+    }
+
+    public static String getCharFromCodePoint(int codePoint) {
+        for (AdobeStandardEncoding encoding : CACHE.values()) {
+            if (encoding.getAdobeCodePoint() == codePoint) {
+                return encoding.getAdobeName();
+            }
+        }
+        return "";
     }
 }

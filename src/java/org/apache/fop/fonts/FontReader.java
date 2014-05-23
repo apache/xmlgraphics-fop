@@ -162,13 +162,13 @@ public class FontReader extends DefaultHandler {
                 isCID = true;
                 TTFReader.checkMetricsVersion(attributes);
             } else if ("TRUETYPE".equals(attributes.getValue("type"))) {
-                singleFont = new SingleByteFont(resourceResolver);
+                singleFont = new SingleByteFont(resourceResolver, EmbeddingMode.AUTO);
                 singleFont.setFontType(FontType.TRUETYPE);
                 returnFont = singleFont;
                 isCID = false;
                 TTFReader.checkMetricsVersion(attributes);
             } else {
-                singleFont = new SingleByteFont(resourceResolver);
+                singleFont = new SingleByteFont(resourceResolver, EmbeddingMode.AUTO);
                 singleFont.setFontType(FontType.TYPE1);
                 returnFont = singleFont;
                 isCID = false;

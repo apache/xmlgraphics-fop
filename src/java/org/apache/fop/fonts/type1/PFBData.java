@@ -85,6 +85,14 @@ public class PFBData {
     }
 
     /**
+     * Gets the header segment of the font file
+     * @return Header segment as a byte array
+     */
+    public byte[] getHeaderSegment() {
+        return this.headerSegment.clone();
+    }
+
+    /**
      * Sets the encrypted segment of the font file.
      * @param encryptedSeg the encrypted segment
      */
@@ -93,11 +101,27 @@ public class PFBData {
     }
 
     /**
+     * Gets the encrypted segment of the font file
+     * @return The encrypted segment as a byte array
+     */
+    public byte[] getEncryptedSegment() {
+        return this.encryptedSegment.clone();
+    }
+
+    /**
      * Sets the trailer segment of the font file.
      * @param trailerSeg the trailer segment
      */
     public void setTrailerSegment(byte[] trailerSeg) {
         this.trailerSegment = trailerSeg;
+    }
+
+    /**
+     * Gets the trailer segment of the font file
+     * @return The trailer segment as a byte array
+     */
+    public byte[] getTrailerSegment() {
+        return this.trailerSegment.clone();
     }
 
     /**

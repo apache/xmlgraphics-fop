@@ -23,6 +23,7 @@ package org.apache.fop.pdf;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -32,6 +33,8 @@ import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -61,6 +64,7 @@ import org.apache.fop.fonts.truetype.OTFSubSetFile;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
 import org.apache.fop.fonts.type1.PFBData;
 import org.apache.fop.fonts.type1.PFBParser;
+import org.apache.fop.fonts.type1.Type1SubsetFile;
 
 /**
  * This class provides method to create and register PDF objects.
@@ -1372,11 +1376,50 @@ public class PDFFactory {
                 } else {
                     singleByteFont = (SingleByteFont)metrics;
                 }
-                int firstChar = singleByteFont.getFirstChar();
-                int lastChar = singleByteFont.getLastChar();
-                nonBase14.setWidthMetrics(firstChar,
-                lastChar,
-                new PDFArray(null, metrics.getWidths()));
+
+                int firstChar = 0;
+                int lastChar = 0;
+                boolean defaultChars = false;
+                if (singleByteFont.getEmbeddingMode() == EmbeddingMode.SUBSET) {
+                    Map<Integer, Integer> usedGlyphs = singleByteFont.getUsedGlyphs();
+                    if (fonttype == FontType.TYPE1 && usedGlyphs.size() > 0) {
+                        SortedSet<Integer> keys = new TreeSet<Integer>(usedGlyphs.keySet());
+                        keys.remove(0);
+                        if (keys.size() > 0) {
+                            firstChar = keys.first();
+                            lastChar = keys.last();
+                            int[] newWidths = new int[(lastChar - firstChar) + 1];
+                            for (int i = firstChar; i < lastChar + 1; i++) {
+                                if (usedGlyphs.get(i) != null) {
+                                    if (i - singleByteFont.getFirstChar() < metrics.getWidths().length) {
+                                        newWidths[i - firstChar] = metrics.getWidths()[i
+                                        - singleByteFont.getFirstChar()];
+                                    } else {
+                                        defaultChars = true;
+                                        break;
+                                    }
+                                } else {
+                                    newWidths[i - firstChar] = 0;
+                                }
+                            }
+                            nonBase14.setWidthMetrics(firstChar,
+                                    lastChar,
+                                    new PDFArray(null, newWidths));
+                        }
+                    } else {
+                        defaultChars = true;
+                    }
+                } else {
+                    defaultChars = true;
+                }
+
+                if (defaultChars) {
+                    firstChar = singleByteFont.getFirstChar();
+                    lastChar = singleByteFont.getLastChar();
+                    nonBase14.setWidthMetrics(firstChar,
+                            lastChar,
+                            new PDFArray(null, metrics.getWidths()));
+                }
 
                 //Handle encoding
                 SingleByteEncoding mapping = singleByteFont.getEncoding();
@@ -1493,7 +1536,7 @@ public class PDFFactory {
                                             desc.getStemV(), null);
         } else {
             // Create normal FontDescriptor
-            descriptor = new PDFFontDescriptor(desc.getEmbedFontName(),
+            descriptor = new PDFFontDescriptor(fontPrefix + desc.getEmbedFontName(),
                                          desc.getAscender(),
                                          desc.getDescender(),
                                          desc.getCapHeight(),
@@ -1507,7 +1550,6 @@ public class PDFFactory {
         // Check if the font is embeddable
         if (desc.isEmbeddable()) {
             AbstractPDFStream stream = makeFontFile(desc, fontPrefix);
-
             if (stream != null) {
                 descriptor.setFontFile(desc.getFontType(), stream);
                 getDocument().registerObject(stream);
@@ -1586,10 +1628,19 @@ public class PDFFactory {
                     }
                     embeddedFont = getFontStream(font, fontBytes, isCFF);
                 } else if (desc.getFontType() == FontType.TYPE1) {
-                    PFBParser parser = new PFBParser();
-                    PFBData pfb = parser.parsePFB(in);
-                    embeddedFont = new PDFT1Stream();
-                    ((PDFT1Stream) embeddedFont).setData(pfb);
+                    if (font.getEmbeddingMode() != EmbeddingMode.SUBSET) {
+                        embeddedFont = fullyEmbedType1Font(in);
+                    } else {
+                        assert font instanceof SingleByteFont;
+                        SingleByteFont sbfont = (SingleByteFont)font;
+                        Type1SubsetFile pfbFile = new Type1SubsetFile();
+                        byte[] subsetData = pfbFile.createSubset(in, sbfont, fontPrefix);
+                        InputStream subsetStream = new ByteArrayInputStream(subsetData);
+                        PFBParser parser = new PFBParser();
+                        PFBData pfb = parser.parsePFB(subsetStream);
+                        embeddedFont = new PDFT1Stream();
+                        ((PDFT1Stream) embeddedFont).setData(pfb);
+                    }
                 } else {
                     byte[] file = IOUtils.toByteArray(in);
                     embeddedFont = new PDFTTFStream(file.length);
@@ -1612,6 +1663,14 @@ public class PDFFactory {
         } finally {
             IOUtils.closeQuietly(in);
         }
+    }
+
+    private AbstractPDFStream fullyEmbedType1Font(InputStream in) throws IOException {
+        PFBParser parser = new PFBParser();
+        PFBData pfb = parser.parsePFB(in);
+        AbstractPDFStream embeddedFont = new PDFT1Stream();
+        ((PDFT1Stream) embeddedFont).setData(pfb);
+        return embeddedFont;
     }
 
     private byte[] getFontSubsetBytes(FontFileReader reader, MultiByteFont mbfont, String header,
