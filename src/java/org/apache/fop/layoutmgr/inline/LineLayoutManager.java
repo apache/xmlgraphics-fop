@@ -50,6 +50,7 @@ import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.BreakingAlgorithm;
 import org.apache.fop.layoutmgr.ElementListObserver;
+import org.apache.fop.layoutmgr.FootenoteUtil;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
@@ -979,17 +980,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     endIndex = ((LineBreakPosition) llPoss.getChosenPosition(i)).getLeafPos();
                     // create a list of the FootnoteBodyLM handling footnotes
                     // whose citations are in this line
-                    List<LayoutManager> footnoteList = new LinkedList<LayoutManager>();
-                    ListIterator<KnuthElement> elementIterator = seq.listIterator(startIndex);
-                    while (elementIterator.nextIndex() <= endIndex) {
-                        KnuthElement element = elementIterator.next();
-                        if (element instanceof KnuthInlineBox
-                                && ((KnuthInlineBox) element).isAnchor()) {
-                            footnoteList.add(((KnuthInlineBox) element).getFootnoteBodyLM());
-                        } else if (element instanceof KnuthBlockBox) {
-                            footnoteList.addAll(((KnuthBlockBox) element).getFootnoteBodyLMs());
-                        }
-                    }
+                    List<LayoutManager> footnoteList = FootenoteUtil.getFootnotes(seq, startIndex, endIndex);
                     startIndex = endIndex + 1;
                     LineBreakPosition lbp = (LineBreakPosition) llPoss.getChosenPosition(i);
                     if (baselineOffset < 0) {

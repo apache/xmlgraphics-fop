@@ -39,7 +39,7 @@ import org.apache.fop.layoutmgr.BreakOpportunity;
 import org.apache.fop.layoutmgr.BreakOpportunityHelper;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
-import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
+import org.apache.fop.layoutmgr.FootenoteUtil;
 import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -322,18 +322,9 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
             // collect footnote information
             // TODO this should really not be done like this. ListItemLM should remain as
             // footnote-agnostic as possible
-            LinkedList<FootnoteBodyLayoutManager> footnoteList = null;
-            ListElement el;
+            LinkedList<LayoutManager> footnoteList = new LinkedList<LayoutManager>();
             for (int i = 0; i < elementLists.length; i++) {
-                for (int j = start[i]; j <= end[i]; j++) {
-                    el = (ListElement) elementLists[i].get(j);
-                    if (el instanceof KnuthBlockBox && ((KnuthBlockBox) el).hasAnchors()) {
-                        if (footnoteList == null) {
-                            footnoteList = new LinkedList<FootnoteBodyLayoutManager>();
-                        }
-                        footnoteList.addAll(((KnuthBlockBox) el).getFootnoteBodyLMs());
-                    }
-                }
+                footnoteList.addAll(FootenoteUtil.getFootnotes(elementLists[i], start[i], end[i]));
             }
 
             // add the new elements
