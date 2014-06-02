@@ -39,12 +39,15 @@ import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.FootenoteUtil;
 import org.apache.fop.layoutmgr.Keep;
+import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
@@ -147,6 +150,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         KnuthBox headerAsFirst = null;
         KnuthBox headerAsSecondToLast = null;
         KnuthBox footerAsLast = null;
+        LinkedList returnList = new LinkedList();
         if (headerIter != null && headerList == null) {
             this.headerList = getKnuthElementsForRowIterator(
                     headerIter, context, alignment, TableRowIterator.HEADER);
@@ -158,12 +162,18 @@ public class TableContentLayoutManager implements PercentBaseContext {
             }
             TableHeaderFooterPosition pos = new TableHeaderFooterPosition(
                     getTableLM(), true, this.headerList);
-            KnuthBox box = new KnuthBox(headerNetHeight, pos, false);
+            List<LayoutManager> footnoteList = FootenoteUtil.getFootnotes(headerList);
+            KnuthBox box = (footnoteList.isEmpty() || !getTableLM().getTable().omitHeaderAtBreak())
+                    ? new KnuthBox(headerNetHeight, pos, false)
+                    : new KnuthBlockBox(headerNetHeight, footnoteList, pos, false);
             if (getTableLM().getTable().omitHeaderAtBreak()) {
                 //We can simply add the table header at the start
                 //of the whole list
                 headerAsFirst = box;
             } else {
+                if (!footnoteList.isEmpty()) {
+                    returnList.add(new KnuthBlockBox(0, footnoteList, new Position(getTableLM()), true));
+                }
                 headerAsSecondToLast = box;
             }
         }
@@ -179,11 +189,13 @@ public class TableContentLayoutManager implements PercentBaseContext {
             //We can simply add the table footer at the end of the whole list
             TableHeaderFooterPosition pos = new TableHeaderFooterPosition(
                     getTableLM(), false, this.footerList);
-            KnuthBox box = new KnuthBox(footerNetHeight, pos, false);
-            footerAsLast = box;
+            List<LayoutManager> footnoteList = FootenoteUtil.getFootnotes(footerList);
+            footerAsLast = footnoteList.isEmpty()
+                    ? new KnuthBox(footerNetHeight, pos, false)
+                    : new KnuthBlockBox(footerNetHeight, footnoteList, pos, false);
         }
-        LinkedList returnList = getKnuthElementsForRowIterator(
-                bodyIter, context, alignment, TableRowIterator.BODY);
+        returnList.addAll(getKnuthElementsForRowIterator(
+                bodyIter, context, alignment, TableRowIterator.BODY));
         if (headerAsFirst != null) {
             int insertionPoint = 0;
             if (returnList.size() > 0 && ((ListElement)returnList.getFirst()).isForcedBreak()) {
