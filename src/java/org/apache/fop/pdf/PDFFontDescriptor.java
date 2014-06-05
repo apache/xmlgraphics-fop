@@ -102,7 +102,7 @@ public class PDFFontDescriptor extends PDFDictionary {
     public void setFontFile(FontType subtype, AbstractPDFStream fontfile) {
         if (subtype == FontType.TYPE1) {
             put("FontFile", fontfile);
-        } else if (fontfile instanceof PDFCFFStreamType0C) {
+        } else if (fontfile instanceof PDFCFFStreamType0C || subtype == FontType.TYPE1C) {
             put("FontFile3", fontfile);
         } else {
             put("FontFile2", fontfile);

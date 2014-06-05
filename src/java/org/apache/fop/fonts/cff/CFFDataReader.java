@@ -580,7 +580,9 @@ public class CFFDataReader {
                     LinkedHashMap<String, DICTEntry> fdEntries = parseDictData(fdData);
                     newFontDict.setByteData(fontDicts.getValuePosition(i), fontDicts.getValueLength(i));
                     DICTEntry fontFDEntry = fdEntries.get("FontName");
-                    newFontDict.setFontName(getString(fontFDEntry.getOperands().get(0).intValue()));
+                    if (fontFDEntry != null) {
+                        newFontDict.setFontName(getString(fontFDEntry.getOperands().get(0).intValue()));
+                    }
                     DICTEntry privateFDEntry = fdEntries.get("Private");
                     if (privateFDEntry != null) {
                         newFontDict = setFDData(privateFDEntry, newFontDict);

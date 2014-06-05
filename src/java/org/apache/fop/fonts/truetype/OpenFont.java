@@ -187,6 +187,7 @@ public abstract class OpenFont {
     protected String notice = "";
     protected final Set<String> familyNames = new HashSet<String>();
     protected String subFamilyName = "";
+    protected boolean cid = true;
 
     private long italicAngle = 0;
     private long isFixedPitch = 0;
@@ -393,7 +394,9 @@ public abstract class OpenFont {
 
         unicodeMappings = new ArrayList<OpenFont.UnicodeMapping>();
 
-        seekTab(fontFile, OFTableName.CMAP, 2);
+        if (!seekTab(fontFile, OFTableName.CMAP, 2)) {
+            return true;
+        }
         int numCMap = fontFile.readTTFUShort();    // Number of cmap subtables
         long cmapUniOffset = 0;
         long symbolMapOffset = 0;
@@ -796,7 +799,9 @@ public abstract class OpenFont {
         int unicodeStart;
         int glyphStart;
         int unicodeEnd;
-
+        if (unicodeMappings.isEmpty()) {
+            return;
+        }
         Iterator<UnicodeMapping> e = unicodeMappings.iterator();
         UnicodeMapping um = e.next();
         UnicodeMapping lastMapping = um;
@@ -1229,7 +1234,7 @@ public abstract class OpenFont {
             }
         }
 
-        if (nhmtx < mtxSize) {
+        if (cid && nhmtx < mtxSize) {
             // Fill in the missing widths
             int lastWidth = mtxTab[nhmtx - 1].getWx();
             for (int i = nhmtx; i < mtxSize; i++) {
