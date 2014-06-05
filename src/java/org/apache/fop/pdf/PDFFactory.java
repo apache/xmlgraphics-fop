@@ -1344,9 +1344,15 @@ public class PDFFactory {
             PDFFont font = null;
 
             font = PDFFont.createFont(fontname, fonttype, subsetFontName, null);
-            getDocument().registerObject(font);
+            if (descriptor instanceof RefPDFFont) {
+                font.setObjectNumber(((RefPDFFont)descriptor).getRef().getObjectNumber());
+                font.setDocument(getDocument());
+                getDocument().addObject(font);
+            } else {
+                getDocument().registerObject(font);
+            }
 
-            if (fonttype == FontType.TYPE0) {
+            if ((fonttype == FontType.TYPE0 || fonttype == FontType.CIDTYPE0)) {
                 font.setEncoding(encoding);
                 CIDFont cidMetrics;
                 if (metrics instanceof LazyFont) {
@@ -1357,16 +1363,30 @@ public class PDFFactory {
                 PDFCIDSystemInfo sysInfo = new PDFCIDSystemInfo(cidMetrics.getRegistry(),
                         cidMetrics.getOrdering(), cidMetrics.getSupplement());
                 sysInfo.setDocument(document);
+                assert pdfdesc instanceof PDFCIDFontDescriptor;
                 PDFCIDFont cidFont = new PDFCIDFont(subsetFontName, cidMetrics.getCIDType(),
                         cidMetrics.getDefaultWidth(), getFontWidths(cidMetrics), sysInfo,
                         (PDFCIDFontDescriptor) pdfdesc);
                 getDocument().registerObject(cidFont);
-                PDFCMap cmap = new PDFToUnicodeCMap(cidMetrics.getCIDSet().getChars(), "fop-ucs-H",
+
+                PDFCMap cmap;
+                if (cidMetrics instanceof MultiByteFont && ((MultiByteFont) cidMetrics).getCmapStream() != null) {
+                    cmap = new PDFCMap("fop-ucs-H", null);
+                    try {
+                        cmap.setData(IOUtils.toByteArray(((MultiByteFont) cidMetrics).getCmapStream()));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    cmap = new PDFToUnicodeCMap(cidMetrics.getCIDSet().getChars(), "fop-ucs-H",
                         new PDFCIDSystemInfo("Adobe", "Identity", 0), false);
+                }
                 getDocument().registerObject(cmap);
+                assert font instanceof PDFFontType0;
                 ((PDFFontType0)font).setCMAP(cmap);
                 ((PDFFontType0)font).setDescendantFonts(cidFont);
             } else {
+                assert font instanceof PDFFontNonBase14;
                 PDFFontNonBase14 nonBase14 = (PDFFontNonBase14)font;
                 nonBase14.setDescriptor(pdfdesc);
 
@@ -1432,6 +1452,29 @@ public class PDFFactory {
                     font.setEncoding(mapping.getName());
                     //No ToUnicode CMap necessary if PDF 1.4, chapter 5.9 (page 368) is to be
                     //believed.
+                } else if (mapping.getName().equals("FOPPDFEncoding")) {
+                    String[] charNameMap = mapping.getCharNameMap();
+                    char[] intmap = mapping.getUnicodeCharMap();
+                    PDFArray differences = new PDFArray();
+                    int len = intmap.length;
+                    if (charNameMap.length < len) {
+                        len = charNameMap.length;
+                    }
+                    int last = 0;
+                    for (int i = 0; i < len; i++) {
+                        if (intmap[i] - 1 != last) {
+                            differences.add(intmap[i]);
+                        }
+                        last = intmap[i];
+                        differences.add(new PDFName(charNameMap[i]));
+                    }
+                    PDFEncoding pdfEncoding = new PDFEncoding(singleByteFont.getEncodingName());
+                    getDocument().registerObject(pdfEncoding);
+                    pdfEncoding.setDifferences(differences);
+                    font.setEncoding(pdfEncoding);
+                    if (mapping.getUnicodeCharMap() != null) {
+                        generateToUnicodeCmap(nonBase14, mapping);
+                    }
                 } else {
                     Object pdfEncoding = createPDFEncoding(mapping,
                     singleByteFont.getFontName());
@@ -1495,8 +1538,30 @@ public class PDFFactory {
     private PDFWArray getFontWidths(CIDFont cidFont) {
         // Create widths for reencoded chars
         PDFWArray warray = new PDFWArray();
-        int[] widths = cidFont.getCIDSet().getWidths();
-        warray.addEntry(0, widths);
+        if (cidFont instanceof MultiByteFont && ((MultiByteFont)cidFont).getWidthsMap() != null) {
+            Map<Integer, Integer> map = ((MultiByteFont)cidFont).getWidthsMap();
+            for (Map.Entry<Integer, Integer> cid : map.entrySet()) {
+                warray.addEntry(cid.getKey(), new int[] {cid.getValue()});
+            }
+//            List<Integer> l = new ArrayList<Integer>(map.keySet());
+//            for (int i=0; i<map.size(); i++) {
+//                int cid = l.get(i);
+//                List<Integer> cids = new ArrayList<Integer>();
+//                cids.add(map.get(cid));
+//                while (i<map.size()-1 && l.get(i) + 1 == l.get(i + 1)) {
+//                    cids.add(map.get(l.get(i + 1)));
+//                    i++;
+//                }
+//                int[] cidsints = new int[cids.size()];
+//                for (int j=0; j<cids.size(); j++) {
+//                    cidsints[j] = cids.get(j);
+//                }
+//                warray.addEntry(cid, cidsints);
+//            }
+        } else {
+            int[] widths = cidFont.getCIDSet().getWidths();
+            warray.addEntry(0, widths);
+        }
         return warray;
     }
 
@@ -1526,7 +1591,7 @@ public class PDFFactory {
     private PDFFontDescriptor makeFontDescriptor(FontDescriptor desc, String fontPrefix) {
         PDFFontDescriptor descriptor = null;
 
-        if (desc.getFontType() == FontType.TYPE0) {
+        if (desc.getFontType() == FontType.TYPE0 || desc.getFontType() == FontType.CIDTYPE0) {
             // CID Font
             descriptor = new PDFCIDFontDescriptor(fontPrefix + desc.getEmbedFontName(),
                                             desc.getFontBBox(),
@@ -1608,55 +1673,64 @@ public class PDFFactory {
             in = font.getInputStream();
             if (in == null) {
                 return null;
-            } else {
-                AbstractPDFStream embeddedFont = null;
-                if (desc.getFontType() == FontType.TYPE0) {
-                    MultiByteFont mbfont = (MultiByteFont) font;
-                    FontFileReader reader = new FontFileReader(in);
-                    byte[] fontBytes;
-                    String header = OFFontLoader.readHeader(reader);
-                    boolean isCFF = mbfont.isOTFFile();
-                    if (font.getEmbeddingMode() == EmbeddingMode.FULL) {
-                        fontBytes = reader.getAllBytes();
-                        if (isCFF) {
-                            //Ensure version 1.6 for full OTF CFF embedding
-                            document.setPDFVersion(Version.V1_6);
-                        }
-                    } else {
-                        fontBytes = getFontSubsetBytes(reader, mbfont, header, fontPrefix, desc,
-                                isCFF);
-                    }
-                    embeddedFont = getFontStream(font, fontBytes, isCFF);
-                } else if (desc.getFontType() == FontType.TYPE1) {
-                    if (font.getEmbeddingMode() != EmbeddingMode.SUBSET) {
-                        embeddedFont = fullyEmbedType1Font(in);
-                    } else {
-                        assert font instanceof SingleByteFont;
-                        SingleByteFont sbfont = (SingleByteFont)font;
-                        Type1SubsetFile pfbFile = new Type1SubsetFile();
-                        byte[] subsetData = pfbFile.createSubset(in, sbfont, fontPrefix);
-                        InputStream subsetStream = new ByteArrayInputStream(subsetData);
-                        PFBParser parser = new PFBParser();
-                        PFBData pfb = parser.parsePFB(subsetStream);
-                        embeddedFont = new PDFT1Stream();
-                        ((PDFT1Stream) embeddedFont).setData(pfb);
-                    }
-                } else {
-                    byte[] file = IOUtils.toByteArray(in);
-                    embeddedFont = new PDFTTFStream(file.length);
-                    ((PDFTTFStream) embeddedFont).setData(file, file.length);
-                }
-
-                /*
-                embeddedFont.getFilterList().addFilter("flate");
-                if (getDocument().isEncryptionActive()) {
-                    getDocument().applyEncryption(embeddedFont);
-                } else {
-                    embeddedFont.getFilterList().addFilter("ascii-85");
-                }*/
-
-                return embeddedFont;
             }
+            AbstractPDFStream embeddedFont = null;
+            if (desc.getFontType() == FontType.TYPE0) {
+                MultiByteFont mbfont = (MultiByteFont) font;
+                FontFileReader reader = new FontFileReader(in);
+                byte[] fontBytes;
+                String header = OFFontLoader.readHeader(reader);
+                boolean isCFF = mbfont.isOTFFile();
+                if (font.getEmbeddingMode() == EmbeddingMode.FULL) {
+                    fontBytes = reader.getAllBytes();
+                    if (isCFF) {
+                        //Ensure version 1.6 for full OTF CFF embedding
+                        document.setPDFVersion(Version.V1_6);
+                    }
+                } else {
+                    fontBytes = getFontSubsetBytes(reader, mbfont, header, fontPrefix, desc,
+                            isCFF);
+                }
+                embeddedFont = getFontStream(font, fontBytes, isCFF);
+            } else if (desc.getFontType() == FontType.TYPE1) {
+                if (font.getEmbeddingMode() != EmbeddingMode.SUBSET) {
+                    embeddedFont = fullyEmbedType1Font(in);
+                } else {
+                    assert font instanceof SingleByteFont;
+                    SingleByteFont sbfont = (SingleByteFont)font;
+                    Type1SubsetFile pfbFile = new Type1SubsetFile();
+                    byte[] subsetData = pfbFile.createSubset(in, sbfont, fontPrefix);
+                    InputStream subsetStream = new ByteArrayInputStream(subsetData);
+                    PFBParser parser = new PFBParser();
+                    PFBData pfb = parser.parsePFB(subsetStream);
+                    embeddedFont = new PDFT1Stream();
+                    ((PDFT1Stream) embeddedFont).setData(pfb);
+                }
+            } else if (desc.getFontType() == FontType.TYPE1C) {
+                byte[] file = IOUtils.toByteArray(in);
+                PDFCFFStream embeddedFont2 = new PDFCFFStream("Type1C");
+                embeddedFont2.setData(file);
+                return embeddedFont2;
+            } else if (desc.getFontType() == FontType.CIDTYPE0) {
+                byte[] file = IOUtils.toByteArray(in);
+                PDFCFFStream embeddedFont2 = new PDFCFFStream("CIDFontType0C");
+                embeddedFont2.setData(file);
+                return embeddedFont2;
+            } else {
+                byte[] file = IOUtils.toByteArray(in);
+                embeddedFont = new PDFTTFStream(file.length);
+                ((PDFTTFStream) embeddedFont).setData(file, file.length);
+            }
+
+            /*
+            embeddedFont.getFilterList().addFilter("flate");
+            if (getDocument().isEncryptionActive()) {
+                getDocument().applyEncryption(embeddedFont);
+            } else {
+                embeddedFont.getFilterList().addFilter("ascii-85");
+            }*/
+
+            return embeddedFont;
         } catch (IOException ioe) {
             log.error("Failed to embed font [" + desc + "] " + desc.getEmbedFontName(), ioe);
             return null;

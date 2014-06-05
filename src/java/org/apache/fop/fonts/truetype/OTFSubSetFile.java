@@ -49,23 +49,23 @@ import org.apache.fop.fonts.cff.CFFDataReader.Format3FDSelect;
  */
 public class OTFSubSetFile extends OTFFile {
 
-    private byte[] output;
-    private int currentPos = 0;
+    protected byte[] output;
+    protected int currentPos = 0;
     private int realSize = 0;
 
     /** A map containing each glyph to be included in the subset
       * with their existing and new GID's **/
-    private LinkedHashMap<Integer, Integer> subsetGlyphs;
+    protected LinkedHashMap<Integer, Integer> subsetGlyphs = new LinkedHashMap<Integer, Integer>();
 
     /** A map of the new GID to SID used to construct the charset table **/
-    private LinkedHashMap<Integer, Integer> gidToSID;
+    protected LinkedHashMap<Integer, Integer> gidToSID;
 
-    private CFFIndexData localIndexSubr;
-    private CFFIndexData globalIndexSubr;
+    protected CFFIndexData localIndexSubr;
+    protected CFFIndexData globalIndexSubr;
 
     /** List of subroutines to write to the local / global indexes in the subset font **/
-    private List<byte[]> subsetLocalIndexSubr;
-    private List<byte[]> subsetGlobalIndexSubr;
+    protected List<byte[]> subsetLocalIndexSubr;
+    protected List<byte[]> subsetGlobalIndexSubr;
 
     /** For fonts which have an FDSelect or ROS flag in Top Dict, this is used to store the
      * local subroutine indexes for each group as opposed to the above subsetLocalIndexSubr */
@@ -76,30 +76,30 @@ public class OTFSubSetFile extends OTFFile {
     private LinkedHashMap<Integer, FDIndexReference> subsetFDSelect;
 
     /** A list of unique subroutines from the global / local subroutine indexes */
-    private List<Integer> localUniques;
-    private List<Integer> globalUniques;
+    protected List<Integer> localUniques;
+    protected List<Integer> globalUniques;
 
     /** A store of the number of subroutines each global / local subroutine will store **/
-    private int subsetLocalSubrCount;
-    private int subsetGlobalSubrCount;
+    protected int subsetLocalSubrCount;
+    protected int subsetGlobalSubrCount;
 
     /** A list of char string data for each glyph to be stored in the subset font **/
-    private List<byte[]> subsetCharStringsIndex;
+    protected List<byte[]> subsetCharStringsIndex;
 
     /** The embedded name to change in the name table **/
-    private String embeddedName;
+    protected String embeddedName;
 
     /** An array used to hold the string index data for the subset font **/
-    private List<byte[]> stringIndexData = new ArrayList<byte[]>();
+    protected List<byte[]> stringIndexData = new ArrayList<byte[]>();
 
     /** The CFF reader object used to read data and offsets from the original font file */
-    private CFFDataReader cffReader = null;
+    protected CFFDataReader cffReader = null;
 
     /** The class used to represent this font **/
     private MultiByteFont mbFont;
 
     /** The number of standard strings in CFF **/
-    private static final int NUM_STANDARD_STRINGS = 391;
+    public static final int NUM_STANDARD_STRINGS = 391;
     /** The operator used to identify a local subroutine reference */
     private static final int LOCAL_SUBROUTINE = 10;
     /** The operator used to identify a global subroutine reference */
@@ -162,7 +162,7 @@ public class OTFSubSetFile extends OTFFile {
        return result;
     }
 
-    private void createCFF() throws IOException {
+    protected void createCFF() throws IOException {
         //Header
         writeBytes(cffReader.getHeader());
 
@@ -238,7 +238,7 @@ public class OTFSubSetFile extends OTFFile {
         }
     }
 
-    private List<Integer> storeFDStrings(List<Integer> uniqueNewRefs) throws IOException {
+    protected List<Integer> storeFDStrings(List<Integer> uniqueNewRefs) throws IOException {
         ArrayList<Integer> fontNameSIDs = new ArrayList<Integer>();
         List<FontDict> fdFonts = cffReader.getFDFonts();
         for (int i = 0; i < uniqueNewRefs.size(); i++) {
@@ -252,14 +252,13 @@ public class OTFSubSetFile extends OTFFile {
         return fontNameSIDs;
     }
 
-    private void writeBytes(byte[] out) {
+    protected void writeBytes(byte[] out) {
         for (int i = 0; i < out.length; i++) {
-            output[currentPos++] = out[i];
-            realSize++;
+            writeByte(out[i]);
         }
     }
 
-    private void writeBytes(byte[] out, int offset, int length) {
+    protected void writeBytes(byte[] out, int offset, int length) {
         for (int i = offset; i < offset + length; i++) {
             output[currentPos++] = out[i];
             realSize++;
@@ -280,7 +279,7 @@ public class OTFSubSetFile extends OTFFile {
         }
     }
 
-    private void writeTopDICT() throws IOException {
+    protected void writeTopDICT() throws IOException {
         LinkedHashMap<String, DICTEntry> topDICT = cffReader.getTopDictEntries();
         List<String> topDictStringEntries = Arrays.asList("version", "Notice", "Copyright",
                 "FullName", "FamilyName", "Weight", "PostScript");
@@ -321,7 +320,7 @@ public class OTFSubSetFile extends OTFFile {
         writeBytes(cidEntryByteData);
     }
 
-    private void writeCIDCount(DICTEntry dictEntry) throws IOException {
+    protected void writeCIDCount(DICTEntry dictEntry) throws IOException {
         byte[] cidCountByteData = dictEntry.getByteData();
         cidCountByteData = updateOffset(cidCountByteData, 0, dictEntry.getOperandLengths().get(0),
                 subsetGlyphs.size());
@@ -375,7 +374,7 @@ public class OTFSubSetFile extends OTFFile {
         writeIndex(stringIndexData);
     }
 
-    private void createCharStringDataCID() throws IOException {
+    protected void createCharStringDataCID() throws IOException {
         CFFIndexData charStringsIndex = cffReader.getCharStringIndex();
 
         FDSelect fontDictionary = cffReader.getFDSelect();
@@ -451,22 +450,22 @@ public class OTFSubSetFile extends OTFFile {
                 localUniques = foundLocalUniquesB.get(subsetFDSelect.get(subsetGlyphs.get(gid)).getNewFDIndex());
                 byte[] data = charStringsIndex.getValue(gid);
                 subsetLocalIndexSubr = fdSubrs.get(subsetFDSelect.get(subsetGlyphs.get(gid)).getNewFDIndex());
-                subsetLocalSubrCount = foundLocalUniques.get(
-                        subsetFDSelect.get(subsetGlyphs.get(gid)).getNewFDIndex()).size();
+                subsetLocalSubrCount = foundLocalUniques.get(subsetFDSelect.get(subsetGlyphs.get(gid))
+                        .getNewFDIndex()).size();
                 data = readCharStringData(data, subsetLocalSubrCount);
                 subsetCharStringsIndex.add(data);
             }
         }
     }
 
-    private void writeFDSelect() {
+    protected void writeFDSelect() {
         writeByte(0); //Format
         for (Integer gid : subsetFDSelect.keySet()) {
             writeByte(subsetFDSelect.get(gid).getNewFDIndex());
         }
     }
 
-    private List<Integer> getUsedFDFonts() {
+    protected List<Integer> getUsedFDFonts() {
         List<Integer> uniqueNewRefs = new ArrayList<Integer>();
         for (int gid : subsetFDSelect.keySet()) {
             int fdIndex = subsetFDSelect.get(gid).getOldFDIndex();
@@ -477,7 +476,7 @@ public class OTFSubSetFile extends OTFFile {
         return uniqueNewRefs;
     }
 
-    private List<Integer> writeCIDDictsAndSubrs(List<Integer> uniqueNewRefs)
+    protected List<Integer> writeCIDDictsAndSubrs(List<Integer> uniqueNewRefs)
             throws IOException {
         List<Integer> privateDictOffsets = new ArrayList<Integer>();
         List<FontDict> fdFonts = cffReader.getFDFonts();
@@ -499,7 +498,7 @@ public class OTFSubSetFile extends OTFFile {
         return privateDictOffsets;
     }
 
-    private int writeFDArray(List<Integer> uniqueNewRefs, List<Integer> privateDictOffsets,
+    protected int writeFDArray(List<Integer> uniqueNewRefs, List<Integer> privateDictOffsets,
             List<Integer> fontNameSIDs)
             throws IOException {
         int offset = currentPos;
@@ -796,7 +795,7 @@ public class OTFSubSetFile extends OTFFile {
         return c;
     }
 
-    private int writeIndex(List<byte[]> dataArray) {
+    protected int writeIndex(List<byte[]> dataArray) {
         int hdrTotal = 3;
         //2 byte number of items
         this.writeCard16(dataArray.size());
@@ -939,7 +938,7 @@ public class OTFSubSetFile extends OTFFile {
         }
     }
 
-    private void writePrivateDict() throws IOException {
+    protected void writePrivateDict() throws IOException {
         Map<String, DICTEntry> topDICT = cffReader.getTopDictEntries();
 
         DICTEntry privateEntry = topDICT.get("Private");
@@ -948,7 +947,7 @@ public class OTFSubSetFile extends OTFFile {
         }
     }
 
-    private void updateOffsets(int topDictOffset, int charsetOffset, int charStringOffset,
+    protected void updateOffsets(int topDictOffset, int charsetOffset, int charStringOffset,
             int privateDictOffset, int localIndexOffset, int encodingOffset)
             throws IOException {
         Map<String, DICTEntry> topDICT = cffReader.getTopDictEntries();
@@ -973,18 +972,20 @@ public class OTFSubSetFile extends OTFFile {
 
             //Update the local subroutine index offset in the private dict
             DICTEntry subroutines = privateDICT.get("Subrs");
-            int oldLocalSubrOffset = privateDictOffset + subroutines.getOffset();
-            //Value needs to be converted to -139 etc.
-            int encodeValue = 0;
-            if (subroutines.getOperandLength() == 1) {
-                encodeValue = 139;
+            if (subroutines != null) {
+                int oldLocalSubrOffset = privateDictOffset + subroutines.getOffset();
+                //Value needs to be converted to -139 etc.
+                int encodeValue = 0;
+                if (subroutines.getOperandLength() == 1) {
+                    encodeValue = 139;
+                }
+                output = updateOffset(output, oldLocalSubrOffset, subroutines.getOperandLength(),
+                        (localIndexOffset - privateDictOffset) + encodeValue);
             }
-            output = updateOffset(output, oldLocalSubrOffset, subroutines.getOperandLength(),
-                    (localIndexOffset - privateDictOffset) + encodeValue);
         }
     }
 
-    private void updateFixedOffsets(Map<String, DICTEntry> topDICT, int dataTopDictOffset,
+    protected void updateFixedOffsets(Map<String, DICTEntry> topDICT, int dataTopDictOffset,
             int charsetOffset, int charStringOffset, int encodingOffset) {
         //Charset offset in the top dict
         DICTEntry charset = topDICT.get("charset");
@@ -1004,7 +1005,7 @@ public class OTFSubSetFile extends OTFFile {
         }
     }
 
-    private void updateCIDOffsets(int topDictDataOffset, int fdArrayOffset, int fdSelectOffset,
+    protected void updateCIDOffsets(int topDictDataOffset, int fdArrayOffset, int fdSelectOffset,
             int charsetOffset, int charStringOffset, int encodingOffset) {
         LinkedHashMap<String, DICTEntry> topDict = cffReader.getTopDictEntries();
 
@@ -1023,7 +1024,7 @@ public class OTFSubSetFile extends OTFFile {
         updateFixedOffsets(topDict, topDictDataOffset, charsetOffset, charStringOffset, encodingOffset);
     }
 
-    private byte[] updateOffset(byte[] out, int position, int length, int replacement) {
+    protected byte[] updateOffset(byte[] out, int position, int length, int replacement) {
         switch (length) {
         case 1:
             out[position] = (byte)(replacement & 0xFF);
@@ -1061,7 +1062,7 @@ public class OTFSubSetFile extends OTFFile {
      * Appends a byte to the output array,
      * updates currentPost but not realSize
      */
-    private void writeByte(int b) {
+    protected void writeByte(int b) {
         output[currentPos++] = (byte)b;
         realSize++;
     }
@@ -1070,7 +1071,7 @@ public class OTFSubSetFile extends OTFFile {
      * Appends a USHORT to the output array,
      * updates currentPost but not realSize
      */
-    private void writeCard16(int s) {
+    protected void writeCard16(int s) {
         byte b1 = (byte)((s >> 8) & 0xff);
         byte b2 = (byte)(s & 0xff);
         writeByte(b1);
@@ -1081,10 +1082,9 @@ public class OTFSubSetFile extends OTFFile {
         byte b1 = (byte)((s >> 16) & 0xFF);
         byte b2 = (byte)((s >> 8) & 0xFF);
         byte b3 = (byte)(s & 0xFF);
-        output[currentPos++] = b1;
-        output[currentPos++] = b2;
-        output[currentPos++] = b3;
-        realSize += 3;
+        writeByte(b1);
+        writeByte(b2);
+        writeByte(b3);
     }
 
     /**
@@ -1096,11 +1096,10 @@ public class OTFSubSetFile extends OTFFile {
         byte b2 = (byte)((s >> 16) & 0xff);
         byte b3 = (byte)((s >> 8) & 0xff);
         byte b4 = (byte)(s & 0xff);
-        output[currentPos++] = b1;
-        output[currentPos++] = b2;
-        output[currentPos++] = b3;
-        output[currentPos++] = b4;
-        realSize += 4;
+        writeByte(b1);
+        writeByte(b2);
+        writeByte(b3);
+        writeByte(b4);
     }
 
     /**

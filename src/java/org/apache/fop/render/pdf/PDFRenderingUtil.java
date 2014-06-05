@@ -576,6 +576,7 @@ class PDFRenderingUtil {
         }
 
         this.pdfDoc.enableAccessibility(userAgent.isAccessibilityEnabled());
+        pdfDoc.setMergeFontsEnabled(rendererConfig.getMergeFontsEnabled());
 
         return this.pdfDoc;
     }

@@ -46,10 +46,10 @@ public class SingleByteFont extends CustomFont {
     /** logger */
     private  static Log log = LogFactory.getLog(SingleByteFont.class);
 
-    private SingleByteEncoding mapping;
+    protected SingleByteEncoding mapping;
     private boolean useNativeEncoding = false;
 
-    private int[] width = null;
+    protected int[] width = null;
 
     private Rectangle[] boundingBoxes;
 
