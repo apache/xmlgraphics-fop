@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.fo.flow.FootnoteBody;
@@ -29,12 +30,22 @@ import org.apache.fop.fo.flow.FootnoteBody;
  */
 public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
 
+    private List<KnuthElement> knuthElements;
+
     /**
      * Creates a new FootnoteBodyLayoutManager.
      * @param body the footnote-body element
      */
     public FootnoteBodyLayoutManager(FootnoteBody body) {
         super(body);
+    }
+
+    @Override
+    public List<KnuthElement> getNextKnuthElements(LayoutContext context, int alignment) {
+        if (knuthElements == null) {
+            knuthElements = super.getNextKnuthElements(context, alignment);
+        }
+        return knuthElements;
     }
 
     /** {@inheritDoc} */
@@ -106,6 +117,12 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
     @Override
     public Keep getKeepWithPrevious() {
         return Keep.KEEP_AUTO;
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        knuthElements = null;
     }
 
 }

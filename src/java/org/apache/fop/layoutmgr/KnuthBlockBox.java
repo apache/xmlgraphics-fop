@@ -35,7 +35,7 @@ public class KnuthBlockBox extends KnuthBox {
      * it isn't possible to get the opt value stored in a MinOptMax object.
      */
     private int bpd;
-    private List footnoteList;
+    private List<FootnoteBodyLayoutManager> footnoteList;
     /** List of Knuth elements. This is a list of LinkedList elements. */
     private List elementLists = null;
 
@@ -52,7 +52,7 @@ public class KnuthBlockBox extends KnuthBox {
         super(width, pos, auxiliary);
         ipdRange = range;
         bpd = bpdim;
-        footnoteList = new LinkedList();
+        footnoteList = new LinkedList<FootnoteBodyLayoutManager>();
     }
 
     /**
@@ -68,13 +68,13 @@ public class KnuthBlockBox extends KnuthBox {
         super(width, pos, auxiliary);
         ipdRange = MinOptMax.ZERO;
         bpd = 0;
-        footnoteList = new LinkedList(list);
+        footnoteList = new LinkedList<FootnoteBodyLayoutManager>(list);
     }
 
     /**
      * @return the LMs for the footnotes cited in this box.
      */
-    public List getFootnoteBodyLMs() {
+    public List<FootnoteBodyLayoutManager> getFootnoteBodyLMs() {
         return footnoteList;
     }
 

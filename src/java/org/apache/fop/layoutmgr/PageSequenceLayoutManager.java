@@ -19,6 +19,10 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,6 +47,14 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
     private static Log log = LogFactory.getLog(PageSequenceLayoutManager.class);
 
     private PageProvider pageProvider;
+
+    private PageBreaker pageBreaker;
+
+    /** Footnotes coming from repeated table headers, to be added before any other footnote. */
+    private List<List<KnuthElement>> tableHeaderFootnotes;
+
+    /** Footnotes coming from repeated table footers, to be added after any other footnote. */
+    private List<List<KnuthElement>> tableFooterFootnotes;
 
     /**
      * Constructor
@@ -73,6 +85,13 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
      */
     public PageSequenceLayoutManager getPSLM() {
         return this;
+    }
+
+    public FlowLayoutManager getFlowLayoutManager() {
+        if (pageBreaker == null) {
+            throw new IllegalStateException("This method can be called only during layout");
+        }
+        return pageBreaker.getCurrentChildLM();
     }
 
     /** {@inheritDoc} */
@@ -107,9 +126,9 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
 
         curPage = makeNewPage(false);
 
-        PageBreaker breaker = new PageBreaker(this);
+        pageBreaker = new PageBreaker(this);
         int flowBPD = getCurrentPV().getBodyRegion().getRemainingBPD();
-        breaker.doLayout(flowBPD);
+        pageBreaker.doLayout(flowBPD);
 
         finishPage();
     }
@@ -217,6 +236,60 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
      */
     boolean isOnFirstPage(int partIndex) {
         return pageProvider.isOnFirstPage(partIndex);
+    }
+
+    /**
+     * Registers the given footnotes so that they can be added to the current page, before any other footnote.
+     *
+     * @param headerFootnotes footnotes coming from a repeated table header
+     */
+    public void addTableHeaderFootnotes(List<List<KnuthElement>> headerFootnotes) {
+        if (tableHeaderFootnotes == null) {
+            tableHeaderFootnotes = new ArrayList<List<KnuthElement>>();
+        }
+        tableHeaderFootnotes.addAll(headerFootnotes);
+    }
+
+    public List<List<KnuthElement>> getTableHeaderFootnotes() {
+        return getTableFootnotes(tableHeaderFootnotes);
+    }
+
+    /**
+     * Registers the given footnotes so that they can be added to the current page, after any other footnote.
+     *
+     * @param footerFootnotes footnotes coming from a repeated table footer
+     */
+    public void addTableFooterFootnotes(List<List<KnuthElement>> footerFootnotes) {
+        if (tableFooterFootnotes == null) {
+            tableFooterFootnotes = new ArrayList<List<KnuthElement>>();
+        }
+        tableFooterFootnotes.addAll(footerFootnotes);
+    }
+
+    public List<List<KnuthElement>> getTableFooterFootnotes() {
+        return getTableFootnotes(tableFooterFootnotes);
+    }
+
+    private List<List<KnuthElement>> getTableFootnotes(List<List<KnuthElement>> tableFootnotes) {
+        if (tableFootnotes == null) {
+            List<List<KnuthElement>> emptyList = Collections.emptyList();
+            return emptyList;
+        } else {
+            return tableFootnotes;
+        }
+    }
+
+    /**
+     * Clears the footnotes coming from repeated table headers/footers, in order to start
+     * afresh for a new page.
+     */
+    public void clearTableHeadingFootnotes() {
+        if (tableHeaderFootnotes != null) {
+            tableHeaderFootnotes.clear();
+        }
+        if (tableFooterFootnotes != null) {
+            tableFooterFootnotes.clear();
+        }
     }
 
 }
