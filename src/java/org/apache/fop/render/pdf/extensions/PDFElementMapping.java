@@ -67,6 +67,8 @@ public class PDFElementMapping extends ElementMapping {
             foObjs.put(PDFObjectType.Reference.elementName(), new PDFReferenceElementMaker());
             // pdf:string
             foObjs.put(PDFObjectType.String.elementName(), new PDFCollectionEntryElementMaker(PDFObjectType.String));
+            // pdf:info
+            foObjs.put(PDFDictionaryType.Info.elementName(), new PDFDocumentInformationElementMaker());
         }
     }
 
@@ -85,6 +87,12 @@ public class PDFElementMapping extends ElementMapping {
     static class PDFCatalogElementMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new PDFCatalogElement(parent);
+        }
+    }
+
+    static class PDFDocumentInformationElementMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new PDFDocumentInformationElement(parent);
         }
     }
 

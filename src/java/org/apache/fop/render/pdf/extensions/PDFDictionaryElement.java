@@ -56,6 +56,8 @@ public class PDFDictionaryElement extends PDFCollectionEntryElement {
             return new PDFNavigatorExtension();
         } else if (type == PDFDictionaryType.Page) {
             return new PDFPageExtension();
+        } else if (type == PDFDictionaryType.Info) {
+            return new PDFDocumentInformationExtension();
         } else {
             return new PDFDictionaryExtension(type);
         }
@@ -103,6 +105,8 @@ public class PDFDictionaryElement extends PDFCollectionEntryElement {
             // handled in PDFNavigattorElement subclass
         } else if (localName.equals("page")) {
             // handled in PDFPageElement subclass
+        } else if (localName.equals("info")) {
+            // handled in PDFDocumentInformationElement subclass
         } else if (localName.equals("dictionary")) {
             if (!PDFDictionaryType.hasValueOfElementName(parent.getLocalName()) && !PDFObjectType.Array.elementName().equals(parent.getLocalName())) {
                 invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(), null);

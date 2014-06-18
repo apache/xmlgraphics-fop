@@ -22,6 +22,8 @@ package org.apache.fop.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.xmlgraphics.util.DateFormatUtil;
@@ -30,6 +32,49 @@ import org.apache.xmlgraphics.util.DateFormatUtil;
  * class representing an /Info object
  */
 public class PDFInfo extends PDFObject {
+
+    /** The standard keys in the Document Information Dictionary */
+    public static enum StandardKey {
+        TITLE("Title"),
+        AUTHOR("Author"),
+        SUBJECT("Subject"),
+        KEYWORDS("Keywords"),
+        CREATOR("Creator"),
+        PRODUCER("Producer"),
+        CREATION_DATE("CreationDate"),
+        MOD_DATE("ModDate"),
+        TRAPPED("Trapped");
+
+        private final String name;
+
+        private StandardKey(String name) {
+            this.name = name;
+        }
+
+        /**
+         * Returns the standard key that corresponds to the given name.
+         *
+         * @param name key name
+         * @return the key whose name exactly matches the given name (case-sensitive)
+         */
+        public static StandardKey get(String name) {
+            for (StandardKey key : values()) {
+                if (key.name.equals(name)) {
+                    return key;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Returns the name of this key.
+         *
+         * @return the name as it would appear in the Info dictionary without the leading slash
+         */
+        public String getName() {
+            return name;
+        }
+    }
 
     /**
      * the application producing the PDF
@@ -42,6 +87,8 @@ public class PDFInfo extends PDFObject {
     private String keywords = null;
     private Date creationDate = null;
     private Date modDate = null;
+
+    private Map<PDFName, String> customProperties;
 
     /**
      * the name of the application that created the
@@ -227,6 +274,14 @@ public class PDFInfo extends PDFObject {
                 bout.write(encode("/Trapped /False\n"));
             }
 
+            if (customProperties != null) {
+                for (Map.Entry<PDFName, String> entry : customProperties.entrySet()) {
+                    entry.getKey().output(bout);
+                    bout.write(encode(" "));
+                    bout.write(encodeText(entry.getValue()));
+                    bout.write(encode("\n"));
+                }
+            }
             bout.write(encode(">>"));
         } catch (IOException ioe) {
             log.error("Ignored I/O exception", ioe);
@@ -252,5 +307,20 @@ public class PDFInfo extends PDFObject {
     protected static String formatDateTime(final Date time) {
         return formatDateTime(time, TimeZone.getDefault());
     }
+
+    /**
+     * Adds a custom property to this Info dictionary.
+     */
+    public void put(String key, String value) {
+        StandardKey standardKey = StandardKey.get(key);
+        if (standardKey != null) {
+            throw new IllegalArgumentException(key + " is a reserved keyword");
+        }
+        if (customProperties == null) {
+            customProperties = new HashMap<PDFName, String>();
+        }
+        customProperties.put(new PDFName(key), value);
+    }
+
 }
 
