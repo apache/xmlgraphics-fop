@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" 
+  xmlns:pdf="http://xmlgraphics.apache.org/fop/extensions/pdf">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="320pt" page-width="420pt" margin="10pt">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:declarations>
+    <pdf:info>
+      <pdf:name key="Creator">MyCreator</pdf:name>
+    </pdf:info>
+  </fo:declarations>
+
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body" text-align="justify">
+      <fo:block>pdf:info only accepts pdf:name child elements.</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+
+</fo:root>

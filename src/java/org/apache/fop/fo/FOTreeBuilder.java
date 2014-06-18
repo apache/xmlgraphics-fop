@@ -40,6 +40,7 @@ import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.pagination.Root;
+import org.apache.fop.render.pdf.extensions.PDFElementMapping;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 import org.apache.fop.util.ContentHandlerFactory.ObjectSource;
@@ -270,7 +271,8 @@ public class FOTreeBuilder extends DefaultHandler {
                 }
             } else { // check that incoming node is valid for currentFObj
                 if (currentFObj.getNamespaceURI().equals(FOElementMapping.URI)
-                    || currentFObj.getNamespaceURI().equals(ExtensionElementMapping.URI)) {
+                    || currentFObj.getNamespaceURI().equals(ExtensionElementMapping.URI)
+                    || currentFObj.getNamespaceURI().equals(PDFElementMapping.NAMESPACE)) {
                     currentFObj.validateChildNode(locator, namespaceURI, localName);
                 }
             }

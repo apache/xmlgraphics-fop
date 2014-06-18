@@ -107,6 +107,9 @@ public class PDFExtensionHandler extends DefaultHandler implements ContentHandle
                     page.setProperty(PDFPageExtension.PROPERTY_PAGE_NUMBERS, pageNumbers);
                 }
                 collections.push(page);
+            } else if (PDFDictionaryType.Info.elementName().equals(localName)) {
+                PDFDocumentInformationExtension info = new PDFDocumentInformationExtension();
+                collections.push(info);
             } else if (PDFObjectType.hasValueOfElementName(localName)) {
                 PDFCollectionEntryExtension entry;
                 if (PDFObjectType.Reference.elementName().equals(localName)) {

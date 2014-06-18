@@ -455,6 +455,11 @@ class PDFRenderingUtil {
             if (((PDFPageExtension) extension).matchesPageNumber(currentPage.getPageIndex() + 1)) {
                 augmentDictionary(currentPage, extension);
             }
+        } else if (type == PDFDictionaryType.Info) {
+            PDFInfo info = pdfDoc.getInfo();
+            for (PDFCollectionEntryExtension entry : extension.getEntries()) {
+                info.put(entry.getKey(), entry.getValueAsString());
+            }
         } else {
             throw new IllegalStateException();
         }

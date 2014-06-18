@@ -56,6 +56,6 @@ public interface EventBroadcaster {
      * @param clazz the Class object identifying an {@link EventProducer} interface
      * @return the event producer instance
      */
-    EventProducer getEventProducerFor(Class clazz);
+    <T extends EventProducer> T getEventProducerFor(Class<T> clazz);
 
 }

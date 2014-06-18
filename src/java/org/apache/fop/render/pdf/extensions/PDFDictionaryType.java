@@ -30,7 +30,9 @@ public enum PDFDictionaryType {
     Dictionary("dictionary"),           // generic (nested) dictionary element
     Layer("layer", true),               // optional content group dictionary element
     Navigator("navigator", true),       // navigation node dictionary element
-    Page("page");                       // page dictionary element
+    Page("page"),                       // page dictionary element
+    /** Document Information Dictionary */
+    Info("info");
 
     private String elementName;
     private boolean usesIDAttribute;
