@@ -19,6 +19,7 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -156,7 +157,6 @@ public class PageBreaker extends AbstractBreaker {
     }
 
     private boolean containsFootnotes(List contentList, LayoutContext context) {
-
         boolean containsFootnotes = false;
         if (contentList != null) {
             ListIterator contentListIterator = contentList.listIterator();
@@ -166,26 +166,34 @@ public class PageBreaker extends AbstractBreaker {
                     && ((KnuthBlockBox) element).hasAnchors()) {
                     // element represents a line with footnote citations
                     containsFootnotes = true;
-                    LayoutContext footnoteContext = LayoutContext.copyOf(context);
-                    footnoteContext.setStackLimitBP(context.getStackLimitBP());
-                    footnoteContext.setRefIPD(pslm.getCurrentPV()
-                            .getRegionReference(Constants.FO_REGION_BODY).getIPD());
-                    List footnoteBodyLMs = ((KnuthBlockBox) element).getFootnoteBodyLMs();
-                    ListIterator footnoteBodyIterator = footnoteBodyLMs.listIterator();
-                    // store the lists of elements representing the footnote bodies
-                    // in the box representing the line containing their references
-                    while (footnoteBodyIterator.hasNext()) {
-                        FootnoteBodyLayoutManager fblm
-                            = (FootnoteBodyLayoutManager) footnoteBodyIterator.next();
-                        fblm.setParent(childFLM);
-                        fblm.initialize();
-                        ((KnuthBlockBox) element).addElementList(
-                                fblm.getNextKnuthElements(footnoteContext, alignment));
+                    KnuthBlockBox box = (KnuthBlockBox) element;
+                    List<List<KnuthElement>> footnotes = getFootnoteKnuthElements(childFLM, context,
+                            box.getFootnoteBodyLMs());
+                    for (List<KnuthElement> footnote : footnotes) {
+                        box.addElementList(footnote);
                     }
                 }
             }
         }
         return containsFootnotes;
+    }
+
+    public static  List<List<KnuthElement>> getFootnoteKnuthElements(FlowLayoutManager flowLM, LayoutContext context,
+            List<FootnoteBodyLayoutManager> footnoteBodyLMs) {
+        List<List<KnuthElement>> footnotes = new ArrayList<List<KnuthElement>>();
+        LayoutContext footnoteContext = LayoutContext.copyOf(context);
+        footnoteContext.setStackLimitBP(context.getStackLimitBP());
+        footnoteContext.setRefIPD(flowLM.getPSLM()
+                .getCurrentPV().getRegionReference(Constants.FO_REGION_BODY).getIPD());
+        for (FootnoteBodyLayoutManager fblm : footnoteBodyLMs) {
+            fblm.setParent(flowLM);
+            fblm.initialize();
+            List<KnuthElement> footnote = fblm.getNextKnuthElements(footnoteContext, Constants.EN_START);
+            // TODO this does not respect possible stacking constraints between footnotes
+            SpaceResolver.resolveElementList(footnote);
+            footnotes.add(footnote);
+        }
+        return footnotes;
     }
 
     private void handleFootnoteSeparator() {
@@ -460,8 +468,13 @@ public class PageBreaker extends AbstractBreaker {
     /** {@inheritDoc} */
     protected void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp) {
         // add footnote areas
-        if (pbp.footnoteFirstListIndex < pbp.footnoteLastListIndex
-            || pbp.footnoteFirstElementIndex <= pbp.footnoteLastElementIndex) {
+        if (!pslm.getTableHeaderFootnotes().isEmpty()
+                || pbp.footnoteFirstListIndex < pbp.footnoteLastListIndex
+                || pbp.footnoteFirstElementIndex <= pbp.footnoteLastElementIndex
+                || !pslm.getTableFooterFootnotes().isEmpty()) {
+            for (List<KnuthElement> footnote : pslm.getTableHeaderFootnotes()) {
+                addFootnoteAreas(footnote);
+            }
             // call addAreas() for each FootnoteBodyLM
             for (int i = pbp.footnoteFirstListIndex; i <= pbp.footnoteLastListIndex; i++) {
                 List elementList = alg.getFootnoteList(i);
@@ -469,13 +482,10 @@ public class PageBreaker extends AbstractBreaker {
                         ? pbp.footnoteFirstElementIndex : 0);
                 int lastIndex = (i == pbp.footnoteLastListIndex
                         ? pbp.footnoteLastElementIndex : elementList.size() - 1);
-
-                SpaceResolver.performConditionalsNotification(elementList,
-                        firstIndex, lastIndex, -1);
-                LayoutContext childLC = LayoutContext.newInstance();
-                AreaAdditionUtil.addAreas(null,
-                        new KnuthPossPosIter(elementList, firstIndex, lastIndex + 1),
-                        childLC);
+                addFootnoteAreas(elementList, firstIndex, lastIndex + 1);
+            }
+            for (List<KnuthElement> footnote : pslm.getTableFooterFootnotes()) {
+                addFootnoteAreas(footnote);
             }
             // set the offset from the top margin
             Footnote parentArea = pslm.getCurrentPV().getBodyRegion().getFootnote();
@@ -487,10 +497,21 @@ public class PageBreaker extends AbstractBreaker {
             parentArea.setSeparator(separatorArea);
         }
         pslm.getCurrentPV().getCurrentSpan().notifyFlowsFinished();
+        pslm.clearTableHeadingFootnotes();
+    }
+
+    private void addFootnoteAreas(List<KnuthElement> footnote) {
+        addFootnoteAreas(footnote, 0, footnote.size());
+    }
+
+    private void addFootnoteAreas(List<KnuthElement> footnote, int startIndex, int endIndex) {
+        SpaceResolver.performConditionalsNotification(footnote, startIndex, endIndex - 1, -1);
+        LayoutContext childLC = LayoutContext.newInstance();
+        AreaAdditionUtil.addAreas(null, new KnuthPossPosIter(footnote, startIndex, endIndex), childLC);
     }
 
     /** {@inheritDoc} */
-    protected LayoutManager getCurrentChildLM() {
+    protected FlowLayoutManager getCurrentChildLM() {
         return childFLM;
     }
 

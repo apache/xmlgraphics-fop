@@ -398,11 +398,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
         // compute the total length of the footnotes
         for (List<KnuthElement> noteList : elementLists) {
-
-            //Space resolution (Note: this does not respect possible stacking constraints
-            //between footnotes!)
-            SpaceResolver.resolveElementList(noteList);
-
             int noteLength = 0;
             footnotesList.add(noteList);
             for (KnuthElement element : noteList) {

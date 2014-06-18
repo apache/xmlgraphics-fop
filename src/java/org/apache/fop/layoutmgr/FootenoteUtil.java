@@ -34,7 +34,7 @@ public final class FootenoteUtil {
     /**
      * Returns the footnotes contained in the given element list.
      */
-    public static List<LayoutManager> getFootnotes(List<ListElement> elemenList) {
+    public static List<FootnoteBodyLayoutManager> getFootnotes(List<ListElement> elemenList) {
         return getFootnotes(elemenList, 0, elemenList.size() - 1);
     }
 
@@ -44,9 +44,10 @@ public final class FootenoteUtil {
      * @param startIndex index in the element list from which to start the scan, inclusive
      * @param endIndex index in the element list at which to stop the scan, inclusive
      */
-    public static List<LayoutManager> getFootnotes(List<ListElement> elemenList, int startIndex, int endIndex) {
+    public static List<FootnoteBodyLayoutManager> getFootnotes(
+            List<ListElement> elemenList, int startIndex, int endIndex) {
         ListIterator<ListElement> iter = elemenList.listIterator(startIndex);
-        List<LayoutManager> footnotes = null;
+        List<FootnoteBodyLayoutManager> footnotes = null;
         while (iter.nextIndex() <= endIndex) {
             ListElement element = iter.next();
             if (element instanceof KnuthInlineBox && ((KnuthInlineBox) element).isAnchor()) {

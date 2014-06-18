@@ -40,6 +40,7 @@ import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.FootenoteUtil;
+import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
 import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -47,8 +48,8 @@ import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.ListElement;
+import org.apache.fop.layoutmgr.PageBreaker;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
@@ -151,6 +152,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         KnuthBox headerAsSecondToLast = null;
         KnuthBox footerAsLast = null;
         LinkedList returnList = new LinkedList();
+        int headerFootnoteBPD = 0;
         if (headerIter != null && headerList == null) {
             this.headerList = getKnuthElementsForRowIterator(
                     headerIter, context, alignment, TableRowIterator.HEADER);
@@ -162,7 +164,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             }
             TableHeaderFooterPosition pos = new TableHeaderFooterPosition(
                     getTableLM(), true, this.headerList);
-            List<LayoutManager> footnoteList = FootenoteUtil.getFootnotes(headerList);
+            List<FootnoteBodyLayoutManager> footnoteList = FootenoteUtil.getFootnotes(headerList);
             KnuthBox box = (footnoteList.isEmpty() || !getTableLM().getTable().omitHeaderAtBreak())
                     ? new KnuthBox(headerNetHeight, pos, false)
                     : new KnuthBlockBox(headerNetHeight, footnoteList, pos, false);
@@ -172,7 +174,13 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 headerAsFirst = box;
             } else {
                 if (!footnoteList.isEmpty()) {
-                    returnList.add(new KnuthBlockBox(0, footnoteList, new Position(getTableLM()), true));
+                    List<List<KnuthElement>> footnotes = PageBreaker.getFootnoteKnuthElements(
+                            getTableLM().getPSLM().getFlowLayoutManager(), context, footnoteList);
+                    getTableLM().setHeaderFootnotes(footnotes);
+                    headerFootnoteBPD = getFootnotesBPD(footnotes);
+                    returnList.add(new KnuthBlockBox(-headerFootnoteBPD, footnoteList,
+                            new Position(getTableLM()), true));
+                    headerNetHeight += headerFootnoteBPD;
                 }
                 headerAsSecondToLast = box;
             }
@@ -189,10 +197,16 @@ public class TableContentLayoutManager implements PercentBaseContext {
             //We can simply add the table footer at the end of the whole list
             TableHeaderFooterPosition pos = new TableHeaderFooterPosition(
                     getTableLM(), false, this.footerList);
-            List<LayoutManager> footnoteList = FootenoteUtil.getFootnotes(footerList);
+            List<FootnoteBodyLayoutManager> footnoteList = FootenoteUtil.getFootnotes(footerList);
             footerAsLast = footnoteList.isEmpty()
                     ? new KnuthBox(footerNetHeight, pos, false)
                     : new KnuthBlockBox(footerNetHeight, footnoteList, pos, false);
+            if (!(getTableLM().getTable().omitFooterAtBreak() || footnoteList.isEmpty())) {
+                List<List<KnuthElement>> footnotes = PageBreaker.getFootnoteKnuthElements(
+                        getTableLM().getPSLM().getFlowLayoutManager(), context, footnoteList);
+                getTableLM().setFooterFootnotes(footnotes);
+                footerNetHeight += getFootnotesBPD(footnotes);
+            }
         }
         returnList.addAll(getKnuthElementsForRowIterator(
                 bodyIter, context, alignment, TableRowIterator.BODY));
@@ -216,7 +230,18 @@ public class TableContentLayoutManager implements PercentBaseContext {
             }
             returnList.add(insertionPoint, footerAsLast);
         }
+        if (headerFootnoteBPD != 0) {
+            returnList.add(new KnuthBox(headerFootnoteBPD, new Position(getTableLM()), true));
+        }
         return returnList;
+    }
+
+    private int getFootnotesBPD(List<List<KnuthElement>> footnotes) {
+        int bpd = 0;
+        for (List<KnuthElement> footnote : footnotes) {
+            bpd += ElementListUtils.calcContentLength(footnote);
+        }
+        return bpd;
     }
 
     /**
@@ -428,6 +453,9 @@ public class TableContentLayoutManager implements PercentBaseContext {
             boolean ancestorTreatAsArtifact = layoutContext.treatAsArtifact();
             if (headerIsBeingRepeated) {
                 layoutContext.setTreatAsArtifact(true);
+                if (!getTableLM().getHeaderFootnotes().isEmpty()) {
+                    getTableLM().getPSLM().addTableHeaderFootnotes(getTableLM().getHeaderFootnotes());
+                }
             }
             //header positions for the last part are the second-to-last element and need to
             //be handled first before all other TableContentPositions
@@ -456,8 +484,10 @@ public class TableContentLayoutManager implements PercentBaseContext {
             boolean ancestorTreatAsArtifact = layoutContext.treatAsArtifact();
             layoutContext.setTreatAsArtifact(treatFooterAsArtifact);
             //Positions for footers are simply added at the end
-            addHeaderFooterAreas(footerElements, tableLM.getTable().getTableFooter(), painter,
-                    true);
+            addHeaderFooterAreas(footerElements, tableLM.getTable().getTableFooter(), painter, true);
+            if (lastPos instanceof TableHFPenaltyPosition && !tableLM.getFooterFootnotes().isEmpty()) {
+                tableLM.getPSLM().addTableFooterFootnotes(getTableLM().getFooterFootnotes());
+            }
             layoutContext.setTreatAsArtifact(ancestorTreatAsArtifact);
         }
 

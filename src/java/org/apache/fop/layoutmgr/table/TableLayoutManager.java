@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr.table;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -97,6 +98,10 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
     private Markers tableFragmentMarkers;
 
     private boolean hasRetrieveTableMarker;
+
+    private List<List<KnuthElement>> headerFootnotes = Collections.emptyList();
+
+    private List<List<KnuthElement>> footerFootnotes = Collections.emptyList();
 
     /**
      * Temporary holder of column background informations for a table-cell's area.
@@ -633,6 +638,22 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
             registerMarkers(markers, isStarting, isFirst, isLast);
         }
         super.possiblyRegisterMarkersForTables(markers, isStarting, isFirst, isLast);
+    }
+
+    void setHeaderFootnotes(List<List<KnuthElement>> footnotes) {
+        this.headerFootnotes = footnotes;
+    }
+
+    List<List<KnuthElement>> getHeaderFootnotes() {
+        return headerFootnotes;
+    }
+
+    void setFooterFootnotes(List<List<KnuthElement>> footnotes) {
+        this.footerFootnotes = footnotes;
+    }
+
+    List<List<KnuthElement>> getFooterFootnotes() {
+        return footerFootnotes;
     }
 
 }
