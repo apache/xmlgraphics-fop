@@ -331,7 +331,7 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
             addedBoxHeight += boxHeight;
             ListItemPosition stepPosition = new ListItemPosition(this,
                     start[0], end[0], start[1], end[1]);
-            if (footnoteList == null) {
+            if (footnoteList.isEmpty()) {
                 returnList.add(new KnuthBox(boxHeight, stepPosition, false));
             } else {
                 returnList.add(new KnuthBlockBox(boxHeight, footnoteList, stepPosition, false));
