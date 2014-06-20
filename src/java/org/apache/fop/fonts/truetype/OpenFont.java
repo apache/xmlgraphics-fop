@@ -168,7 +168,7 @@ public abstract class OpenFont {
     protected List<UnicodeMapping> unicodeMappings;
 
     private int upem;                                // unitsPerEm from "head" table
-    private int nhmtx;                               // Number of horizontal metrics
+    protected int nhmtx;                               // Number of horizontal metrics
     private PostScriptVersion postScriptVersion;
     protected int locaFormat;
     /**
