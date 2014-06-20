@@ -54,7 +54,7 @@ public class Type1SubsetFileTestCase {
     @Test
     public void test() throws IOException {
         InputStream in = new FileInputStream(TEST_FONT_A);
-        compareCharStringData(in, TEST_FONT_A, createFontASubset(in, TEST_FONT_A));
+        compareCharStringData(TEST_FONT_A, createFontASubset(in, TEST_FONT_A));
     }
 
     @Test
@@ -135,12 +135,12 @@ public class Type1SubsetFileTestCase {
         assertEquals(segment[3], 65);
     }
 
-    private void compareCharStringData(InputStream in, String font, byte[] subsetFont)
+    private void compareCharStringData(String font, byte[] subsetFont)
             throws IOException {
         decodedSections = new ArrayList<byte[]>();
 
         //Reinitialise the input stream as reset only supports 1000 bytes.
-        in = new FileInputStream(font);
+        InputStream in = new FileInputStream(font);
         List<PSElement> origElements = parseElements(in);
         List<PSElement> subsetElements = parseElements(new ByteArrayInputStream(subsetFont));
 
@@ -173,8 +173,6 @@ public class Type1SubsetFileTestCase {
         SingleByteFont sbfont = mock(SingleByteFont.class);
         //Glyph index & selector
         Map<Integer, Integer> glyphs = new HashMap<Integer, Integer>();
-        //Selector & unicode
-        Map<Integer, Character> usedCharsIndex = new HashMap<Integer, Character>();
         Map<Integer, String> usedCharNames = new HashMap<Integer, String>();
         int count = 0;
         for (int i = 32; i < 127; i++) {
@@ -185,7 +183,6 @@ public class Type1SubsetFileTestCase {
         }
         for (int i = 161; i < 204; i++) {
             glyphs.put(i, count++);
-            usedCharsIndex.put(count, (char)i);
             when(sbfont.getUnicodeFromSelector(count)).thenReturn((char)i);
             usedCharNames.put(i, String.format("/%s", Glyphs.charToGlyphName((char)i)));
             when(sbfont.getGlyphName(i)).thenReturn(AdobeStandardEncoding.getCharFromCodePoint(i));
@@ -195,14 +192,12 @@ public class Type1SubsetFileTestCase {
         };
         for (int i = 0; i < randomGlyphs.length; i++) {
             glyphs.put(randomGlyphs[i], count++);
-            usedCharsIndex.put(count, (char)randomGlyphs[i]);
             when(sbfont.getUnicodeFromSelector(count)).thenReturn((char)randomGlyphs[i]);
             usedCharNames.put(i, String.format("/%s", Glyphs.charToGlyphName((char)i)));
             when(sbfont.getGlyphName(i)).thenReturn(AdobeStandardEncoding.getCharFromCodePoint(i));
         }
         for (int i = 256; i < 335; i++) {
             glyphs.put(i, count++);
-            usedCharsIndex.put(count, (char)i);
             when(sbfont.getUnicodeFromSelector(count)).thenReturn((char)i);
             usedCharNames.put(i, String.format("/%s", Glyphs.charToGlyphName((char)i)));
             when(sbfont.getGlyphName(i)).thenReturn(AdobeStandardEncoding.getCharFromCodePoint(i));
@@ -211,7 +206,7 @@ public class Type1SubsetFileTestCase {
         when(sbfont.getUsedGlyphs()).thenReturn(glyphs);
         when(sbfont.getEmbedFileURI()).thenReturn(URI.create(font));
         Type1SubsetFile subset = new Type1SubsetFile();
-        return subset.createSubset(in, sbfont, "AAAAAA");
+        return subset.createSubset(in, sbfont);
     }
 
     private List<PSElement> parseElements(InputStream in)
@@ -235,7 +230,6 @@ public class Type1SubsetFileTestCase {
 
     private byte[] readFullCharString(byte[] decoded, byte[] data, PSFixedArray subroutines) {
         List<BytesNumber> operands = new ArrayList<BytesNumber>();
-        List<BytesNumber> fullList = new ArrayList<BytesNumber>();
         for (int i = 0; i < data.length; i++) {
             int cur = data[i] & 0xFF;
             if (cur >= 0 && cur <= 31) {
@@ -256,20 +250,16 @@ public class Type1SubsetFileTestCase {
                     }
                     BytesNumber operand = new BytesNumber(cur, i);
                     operand.setName(getName(cur, next));
-                    fullList.add(operand);
                 }
                 operands.clear();
             }
             if (cur >= 32 && cur <= 246) {
                 operands.add(new BytesNumber(cur - 139, 1));
-                fullList.add(operands.get(operands.size() - 1));
             } else if (cur >= 247 && cur <= 250) {
                 operands.add(new BytesNumber((cur - 247) * 256 + (data[i + 1] & 0xFF) + 108, 2));
-                fullList.add(operands.get(operands.size() - 1));
                 i++;
             } else if (cur >= 251 && cur <= 254) {
                 operands.add(new BytesNumber(-(cur - 251) * 256 - (data[i + 1] & 0xFF) - 108, 2));
-                fullList.add(operands.get(operands.size() - 1));
                 i++;
             } else if (cur == 255) {
                 int b1 = data[i + 1] & 0xFF;
@@ -278,7 +268,6 @@ public class Type1SubsetFileTestCase {
                 int b4 = data[i + 4] & 0xFF;
                 int value = b1 << 24 | b2 << 16 | b3 << 8 | b4;
                 operands.add(new BytesNumber(value, 5));
-                fullList.add(operands.get(operands.size() - 1));
                 i += 4;
             }
         }

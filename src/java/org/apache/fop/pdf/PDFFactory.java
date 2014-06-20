@@ -1699,7 +1699,7 @@ public class PDFFactory {
                     assert font instanceof SingleByteFont;
                     SingleByteFont sbfont = (SingleByteFont)font;
                     Type1SubsetFile pfbFile = new Type1SubsetFile();
-                    byte[] subsetData = pfbFile.createSubset(in, sbfont, fontPrefix);
+                    byte[] subsetData = pfbFile.createSubset(in, sbfont);
                     InputStream subsetStream = new ByteArrayInputStream(subsetData);
                     PFBParser parser = new PFBParser();
                     PFBData pfb = parser.parsePFB(subsetStream);
