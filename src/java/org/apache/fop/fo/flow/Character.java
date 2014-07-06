@@ -241,7 +241,8 @@ public class Character extends FObj implements StructureTreeElementHolder {
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack<DelimitedTextRange> collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges,
+        DelimitedTextRange currentRange) {
         if (currentRange != null) {
             currentRange.append(charIterator(), this);
         }

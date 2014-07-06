@@ -936,7 +936,7 @@ public abstract class FONode implements Cloneable {
      * @param ranges a stack of delimited text ranges
      * @return the (possibly) updated stack of delimited text ranges
      */
-    public Stack collectDelimitedTextRanges(Stack ranges) {
+    public Stack collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges) {
         // if boundary before, then push new range
         if (isRangeBoundaryBefore()) {
             maybeNewRange(ranges);
@@ -944,7 +944,7 @@ public abstract class FONode implements Cloneable {
         // get current range, if one exists
         DelimitedTextRange currentRange;
         if (ranges.size() > 0) {
-            currentRange = (DelimitedTextRange) ranges.peek();
+            currentRange = ranges.peek();
         } else {
             currentRange = null;
         }
@@ -965,7 +965,7 @@ public abstract class FONode implements Cloneable {
      * @param currentRange the current range or null (if none)
      * @return the (possibly) updated stack of delimited text ranges
      */
-    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges, DelimitedTextRange currentRange) {
         for (Iterator it = getChildNodes(); (it != null) && it.hasNext();) {
             ranges = ((FONode) it.next()).collectDelimitedTextRanges(ranges);
         }
@@ -981,31 +981,18 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
-     * Conditionally add a new delimited text range to RANGES, where new range is
-     * associated with current FONode. A new text range is added unless all of the following are
-     * true:
-     * <ul>
-     * <li>there exists a current range RCUR in RANGES</li>
-     * <li>RCUR is empty</li>
-     * <li>the node of the RCUR is the same node as FN or a descendent node of FN</li>
-     * </ul>
+     * Conditionally add a new delimited text range to RANGES. Always add new
+     * range unless there are no ranges on the stack yet and this node is not a block item.
      * @param ranges stack of delimited text ranges
      * @return new range (if constructed and pushed onto stack) or current range (if any) or null
      */
-    private DelimitedTextRange maybeNewRange(Stack ranges) {
-        DelimitedTextRange rCur = null; // current range (top of range stack)
-        DelimitedTextRange rNew = null; // new range to be pushed onto range stack
-        if (ranges.empty()) {
-            if (isBidiRangeBlockItem()) {
-                rNew = new DelimitedTextRange(this);
-            }
+    private DelimitedTextRange maybeNewRange(Stack<DelimitedTextRange> ranges) {
+        DelimitedTextRange rCur = !ranges.empty() ? ranges.peek() : null;
+        DelimitedTextRange rNew;
+        if ((rCur != null) || isBidiRangeBlockItem()) {
+            rNew = new DelimitedTextRange(this);
         } else {
-            rCur = (DelimitedTextRange) ranges.peek();
-            if (rCur != null) {
-                if (!rCur.isEmpty() || !isSelfOrDescendent(rCur.getNode(), this)) {
-                    rNew = new DelimitedTextRange(this);
-                }
-            }
+            rNew = null;
         }
         if (rNew != null) {
             ranges.push(rNew);
@@ -1021,18 +1008,6 @@ public abstract class FONode implements Cloneable {
 
     private boolean isRangeBoundaryAfter() {
         return isDelimitedTextRangeBoundary(Constants.EN_AFTER);
-    }
-
-    /**
-     * Determine if node N2 is the same or a descendent of node N1.
-     */
-    private static boolean isSelfOrDescendent(FONode n1, FONode n2) {
-        for (FONode n = n2; n != null; n = n.getParent()) {
-            if (n == n1) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

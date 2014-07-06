@@ -608,7 +608,8 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack<DelimitedTextRange> collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges,
+        DelimitedTextRange currentRange) {
         // header sub-tree
         TableHeader header = getTableHeader();
         if (header != null) {

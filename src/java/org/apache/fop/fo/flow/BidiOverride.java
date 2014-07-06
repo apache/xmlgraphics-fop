@@ -97,7 +97,8 @@ public class BidiOverride extends Inline {
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack<DelimitedTextRange> collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges,
+        DelimitedTextRange currentRange) {
         char pfx = 0;
         char sfx = 0;
         int unicodeBidi = getUnicodeBidi();

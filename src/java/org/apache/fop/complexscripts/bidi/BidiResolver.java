@@ -57,7 +57,17 @@ public final class BidiResolver {
         if (log.isDebugEnabled()) {
             log.debug("BD: RESOLVE: " + ps);
         }
-        List ranges = pruneEmptyRanges(ps.collectDelimitedTextRanges(new Stack()));
+        // 1. collect delimited text ranges
+        List ranges = ps.collectDelimitedTextRanges(new Stack());
+        if (log.isDebugEnabled()) {
+            dumpRanges("BD: RESOLVE: RANGES:", ranges);
+        }
+        // 2. prune empty ranges
+        ranges = pruneEmptyRanges(ranges);
+        if (log.isDebugEnabled()) {
+            dumpRanges("BD: RESOLVE: PRUNED RANGES:", ranges);
+        }
+        // 3. resolve inline directionaly of unpruned ranges
         resolveInlineDirectionality(ranges);
     }
 
@@ -223,8 +233,14 @@ public final class BidiResolver {
             log.debug(ir);
         }
     }
-
-    private static List pruneEmptyRanges(Stack ranges) {
+    private static void dumpRanges(String header, List ranges) {
+        log.debug(header);
+        for (Iterator it = ranges.iterator(); it.hasNext(); ) {
+            DelimitedTextRange r = (DelimitedTextRange) it.next();
+            log.debug(r);
+        }
+    }
+    private static List pruneEmptyRanges(List ranges) {
         Vector rv = new Vector();
         for (Iterator it = ranges.iterator(); it.hasNext(); ) {
             DelimitedTextRange r = (DelimitedTextRange) it.next();

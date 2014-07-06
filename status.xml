@@ -58,7 +58,10 @@
       users, i.e. when the behaviour changes and could affect the layout of existing
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
-    <release version="FOP Trunk" date="01 November 2013">
+    <release version="FOP Trunk" date="06 July 2014">
+      <action context="Layout" dev="GA" type="fix" fixes-bug="FOP-2388">
+          Fix Arabic text left justified on the first cell of a table with writing mode rl-tb.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="FOP-2311">
           Eliminate regression to shorthand properties from Bugzilla 37114 (FOP-1069).
       </action>
