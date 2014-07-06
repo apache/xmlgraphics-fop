@@ -26,6 +26,7 @@ import java.awt.image.Raster;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -241,12 +242,12 @@ public abstract class AbstractImageAdapter implements PDFImage {
                     + " The image may not be handled correctly." + " Base color space: "
                     + icm.getColorSpace() + " Image: " + image.getInfo());
         }
-        ByteArrayOutputStream baout = new ByteArrayOutputStream();
         int c = icm.getMapSize();
         int hival = c - 1;
         if (hival > MAX_HIVAL) {
             throw new UnsupportedOperationException("hival must not go beyond " + MAX_HIVAL);
         }
+        ByteArrayOutputStream baout = new ByteArrayOutputStream();
         boolean isDeviceGray = false;
         int[] palette = new int[c];
         icm.getRGBs(palette);
@@ -276,6 +277,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
         indexed.add(hival);
 
         indexed.add(baout.toByteArray());
+        IOUtils.closeQuietly(baout);
 
         dict.put("ColorSpace", indexed);
 

@@ -63,6 +63,7 @@ public class FontPatternExtractor {
             }
 
             ByteArrayInputStream bin = new ByteArrayInputStream(baout.toByteArray());
+            IOUtils.closeQuietly(baout);
             DataInputStream din = new DataInputStream(bin);
             long len = din.readInt() & 0xFFFFFFFFL;
             println("Length: " + len);

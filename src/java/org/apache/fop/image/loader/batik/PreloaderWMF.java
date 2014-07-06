@@ -97,6 +97,7 @@ public class PreloaderWMF extends AbstractImagePreloader {
                 int magic = EndianUtils.swapInteger(din.readInt());
                 din.reset();
                 if (magic != WMFConstants.META_ALDUS_APM) {
+                    IOUtils.closeQuietly(din);
                     return null; //Not a WMF file
                 }
 

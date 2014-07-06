@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.BuildException;
 
 /**
@@ -98,6 +99,7 @@ public class FileCompare {
      * @return true if files are same byte-by-byte, false otherwise
      */
     private static boolean compareBytes(File file1, File file2) throws IOException {
+        boolean same = true;
         BufferedInputStream file1Input
             = new BufferedInputStream(new java.io.FileInputStream(file1));
         BufferedInputStream file2Input
@@ -111,11 +113,15 @@ public class FileCompare {
                 charact1 = file1Input.read();
                 charact2 = file2Input.read();
             } else {
-                return false;
+                same = false;
+                break;
             }
         }
 
-        return true;
+        IOUtils.closeQuietly(file1Input);
+        IOUtils.closeQuietly(file2Input);
+
+        return same;
     }
 
     /**

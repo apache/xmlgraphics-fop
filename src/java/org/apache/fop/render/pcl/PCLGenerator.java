@@ -42,6 +42,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import org.apache.xmlgraphics.image.GraphicsUtil;
@@ -447,6 +448,8 @@ public class PCLGenerator {
         writeCommand("*c" + patternID + "G");
         writeCommand("*c" + baout.size() + "W");
         baout.writeTo(this.out);
+        IOUtils.closeQuietly(data);
+        IOUtils.closeQuietly(baout);
         writeCommand("*c4Q"); //temporary pattern
     }
 
