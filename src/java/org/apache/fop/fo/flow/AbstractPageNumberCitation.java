@@ -206,7 +206,8 @@ public abstract class AbstractPageNumberCitation extends FObj
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack<DelimitedTextRange> collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges,
+        DelimitedTextRange currentRange) {
         if (currentRange != null) {
             currentRange.append(CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this);
         }

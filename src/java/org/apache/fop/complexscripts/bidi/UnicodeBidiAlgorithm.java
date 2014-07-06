@@ -38,7 +38,7 @@ public final class UnicodeBidiAlgorithm implements BidiConstants {
     /**
      * logging instance
      */
-    private static final Log log = LogFactory.getLog(BidiResolver.class);
+    private static final Log log = LogFactory.getLog(UnicodeBidiAlgorithm.class);
 
     private UnicodeBidiAlgorithm() {
     }

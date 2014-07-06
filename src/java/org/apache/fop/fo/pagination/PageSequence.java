@@ -416,7 +416,8 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack<DelimitedTextRange> collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges,
+        DelimitedTextRange currentRange) {
         // collect ranges from static content flows
         Map<String, FONode> flows = getFlowMap();
         if (flows != null) {

@@ -203,7 +203,8 @@ public class Leader extends InlineLevel {
     }
 
     @Override
-    protected Stack collectDelimitedTextRanges(Stack ranges, DelimitedTextRange currentRange) {
+    protected Stack<DelimitedTextRange> collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges,
+        DelimitedTextRange currentRange) {
         if (currentRange != null) {
             if (leaderPattern == EN_USECONTENT) {
                 ranges = super.collectDelimitedTextRanges(ranges, currentRange);
