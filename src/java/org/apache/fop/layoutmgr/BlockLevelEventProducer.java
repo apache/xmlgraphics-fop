@@ -43,8 +43,7 @@ public interface BlockLevelEventProducer extends EventProducer {
          * @return the event producer
          */
         public static BlockLevelEventProducer get(EventBroadcaster broadcaster) {
-            return (BlockLevelEventProducer)broadcaster.getEventProducerFor(
-                    BlockLevelEventProducer.class);
+            return broadcaster.getEventProducerFor(BlockLevelEventProducer.class);
         }
     }
 

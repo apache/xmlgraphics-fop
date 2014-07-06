@@ -41,8 +41,7 @@ public interface RendererEventProducer extends EventProducer {
          * @return the event producer
          */
         public static RendererEventProducer get(EventBroadcaster broadcaster) {
-            return (RendererEventProducer)broadcaster.getEventProducerFor(
-                    RendererEventProducer.class);
+            return broadcaster.getEventProducerFor(RendererEventProducer.class);
         }
     }
 

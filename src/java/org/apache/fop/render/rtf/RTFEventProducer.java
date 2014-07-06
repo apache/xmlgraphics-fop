@@ -42,8 +42,7 @@ public interface RTFEventProducer extends EventProducer {
          * @return the event producer
          */
         public static RTFEventProducer get(EventBroadcaster broadcaster) {
-            return (RTFEventProducer)broadcaster.getEventProducerFor(
-                    RTFEventProducer.class);
+            return broadcaster.getEventProducerFor(RTFEventProducer.class);
         }
     }
 

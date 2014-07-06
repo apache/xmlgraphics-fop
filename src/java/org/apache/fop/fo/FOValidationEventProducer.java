@@ -46,8 +46,7 @@ public interface FOValidationEventProducer extends EventProducer {
          * @return the event producer
          */
         public static FOValidationEventProducer get(EventBroadcaster broadcaster) {
-            return (FOValidationEventProducer)broadcaster.getEventProducerFor(
-                    FOValidationEventProducer.class);
+            return broadcaster.getEventProducerFor(FOValidationEventProducer.class);
         }
     }
 

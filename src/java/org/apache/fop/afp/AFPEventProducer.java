@@ -39,7 +39,7 @@ public interface AFPEventProducer extends EventProducer {
          * @return the event producer
          */
         public static AFPEventProducer get(EventBroadcaster broadcaster) {
-            return (AFPEventProducer) broadcaster.getEventProducerFor(AFPEventProducer.class);
+            return broadcaster.getEventProducerFor(AFPEventProducer.class);
         }
     }
 

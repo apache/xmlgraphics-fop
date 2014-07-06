@@ -39,8 +39,7 @@ public interface AccessibilityEventProducer extends EventProducer {
          * @return the event producer
          */
         public static AccessibilityEventProducer get(EventBroadcaster broadcaster) {
-            return (AccessibilityEventProducer) broadcaster.getEventProducerFor(
-                    AccessibilityEventProducer.class);
+            return broadcaster.getEventProducerFor(AccessibilityEventProducer.class);
         }
     }
 

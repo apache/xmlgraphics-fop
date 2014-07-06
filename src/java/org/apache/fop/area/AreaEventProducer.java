@@ -41,8 +41,7 @@ public interface AreaEventProducer extends EventProducer {
          * @return the event producer
          */
         public static AreaEventProducer get(EventBroadcaster broadcaster) {
-            return (AreaEventProducer)broadcaster.getEventProducerFor(
-                    AreaEventProducer.class);
+            return broadcaster.getEventProducerFor(AreaEventProducer.class);
         }
     }
 
