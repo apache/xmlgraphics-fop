@@ -21,6 +21,7 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 /**
@@ -167,7 +168,9 @@ public class PDFOutputIntent extends PDFObject {
         } catch (IOException ioe) {
             log.error("Ignored I/O exception", ioe);
         }
-        return bout.toByteArray();
+        byte[] bytes = bout.toByteArray();
+        IOUtils.closeQuietly(bout);
+        return bytes;
     }
 
 

@@ -85,6 +85,7 @@ public class PFMFile {
         short sh2 = in.readByte();
         if (sh1 == 128 && sh2 == 1) {
             //Found the first section header of a PFB file!
+            IOUtils.closeQuietly(in);
             throw new IOException("Cannot parse PFM file. You probably specified the PFB file"
                     + " of a Type 1 font as parameter instead of the PFM.");
         }
@@ -93,6 +94,7 @@ public class PFMFile {
         bufin.read(b);
         if (new String(b, "US-ASCII").equalsIgnoreCase("StartFontMetrics")) {
             //Found the header of a AFM file!
+            IOUtils.closeQuietly(in);
             throw new IOException("Cannot parse PFM file. You probably specified the AFM file"
                     + " of a Type 1 font as parameter instead of the PFM.");
         }

@@ -1587,6 +1587,8 @@ public class PDFFactory {
             log.error(
                     "Failed to write CIDSet [" + cidFont + "] "
                     + cidFont.getEmbedFontName(), ioe);
+        } finally {
+            IOUtils.closeQuietly(baout);
         }
     }
 

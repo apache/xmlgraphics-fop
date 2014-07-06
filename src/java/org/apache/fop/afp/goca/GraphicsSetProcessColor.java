@@ -21,10 +21,11 @@ package org.apache.fop.afp.goca;
 
 import java.awt.Color;
 import java.awt.color.ColorSpace;
-import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import org.apache.xmlgraphics.java2d.color.CIELabColorSpace;
@@ -105,6 +106,7 @@ public class GraphicsSetProcessColor extends AbstractGraphicsDrawingOrder {
         ColorSpace cs = color.getColorSpace();
         int colSpaceType = cs.getType();
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
+        DataOutputStream dout = null;
         byte[] colsizes;
         if (colSpaceType == ColorSpace.TYPE_CMYK) {
             colspace = CMYK;
@@ -121,7 +123,7 @@ public class GraphicsSetProcessColor extends AbstractGraphicsDrawingOrder {
         } else if (cs instanceof CIELabColorSpace) {
             colspace = CIELAB;
             colsizes = new byte[] {0x08, 0x08, 0x08, 0x00};
-            DataOutput dout = new java.io.DataOutputStream(baout);
+            dout = new DataOutputStream(baout);
             //According to GOCA, I'd expect the multiplicator below to be 255f, not 100f
             //But only IBM AFP Workbench seems to support Lab colors and it requires "c * 100f"
             int l = Math.round(colorComponents[0] * 100f);
@@ -131,6 +133,8 @@ public class GraphicsSetProcessColor extends AbstractGraphicsDrawingOrder {
             dout.writeByte(a);
             dout.writeByte(b);
         } else {
+            IOUtils.closeQuietly(dout);
+            IOUtils.closeQuietly(baout);
             throw new IllegalStateException();
         }
 
@@ -151,6 +155,8 @@ public class GraphicsSetProcessColor extends AbstractGraphicsDrawingOrder {
 
         os.write(data);
         baout.writeTo(os);
+        IOUtils.closeQuietly(dout);
+        IOUtils.closeQuietly(baout);
     }
 
     /** {@inheritDoc} */

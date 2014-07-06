@@ -36,6 +36,8 @@ import java.util.List;
 
 import org.xml.sax.InputSource;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * <p>This tree structure stores the hyphenation patterns in an efficient
  * way for fast lookup. It provides the provides the method to
@@ -709,9 +711,9 @@ public class HyphenationTree extends TernaryTree
                 token = in.readLine().trim();
                 long starttime = 0;
                 int counter = 0;
+                BufferedReader reader = null;
                 try {
-                    BufferedReader reader
-                        = new BufferedReader(new FileReader(token));
+                    reader = new BufferedReader(new FileReader(token));
                     String line;
 
                     starttime = System.currentTimeMillis();
@@ -731,6 +733,8 @@ public class HyphenationTree extends TernaryTree
                 } catch (Exception ioe) {
                     System.out.println("Exception " + ioe);
                     ioe.printStackTrace();
+                } finally {
+                    IOUtils.closeQuietly(reader);
                 }
                 long endtime = System.currentTimeMillis();
                 long result = endtime - starttime;
