@@ -25,14 +25,13 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.svg.PDFDocumentGraphics2D;
-
-import junit.framework.Assert;
 
 /**
  * Tests for {@link PDFDocumentGraphics2D}.
@@ -86,7 +85,7 @@ public class PDFDocumentGraphics2DTestCase {
         g2d.finish();
 
         String pdfString = baout.toString("ISO-8859-1");
-        Assert.assertEquals("%%EOF not found",
+        assertEquals("%%EOF not found",
                 pdfString.substring(pdfString.length() - 6), "%%EOF\n");
     }
 

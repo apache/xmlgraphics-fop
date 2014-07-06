@@ -43,8 +43,7 @@ public interface TableEventProducer extends EventProducer {
          * @return the event producer
          */
         public static TableEventProducer get(EventBroadcaster broadcaster) {
-            return (TableEventProducer)broadcaster.getEventProducerFor(
-                    TableEventProducer.class);
+            return broadcaster.getEventProducerFor(TableEventProducer.class);
         }
     }
 

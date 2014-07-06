@@ -39,8 +39,7 @@ public interface PSEventProducer extends EventProducer {
          * @return the event producer
          */
         public static PSEventProducer get(EventBroadcaster broadcaster) {
-            return (PSEventProducer)broadcaster.getEventProducerFor(
-                    PSEventProducer.class);
+            return broadcaster.getEventProducerFor(PSEventProducer.class);
         }
     }
 

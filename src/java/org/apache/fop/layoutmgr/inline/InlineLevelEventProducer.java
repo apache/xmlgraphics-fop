@@ -43,8 +43,7 @@ public interface InlineLevelEventProducer extends EventProducer {
          * @return the event producer
          */
         public static InlineLevelEventProducer get(EventBroadcaster broadcaster) {
-            return (InlineLevelEventProducer)broadcaster.getEventProducerFor(
-                    InlineLevelEventProducer.class);
+            return broadcaster.getEventProducerFor(InlineLevelEventProducer.class);
         }
     }
 

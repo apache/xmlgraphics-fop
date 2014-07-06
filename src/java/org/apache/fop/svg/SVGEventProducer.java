@@ -41,8 +41,7 @@ public interface SVGEventProducer extends EventProducer {
          * @return the event producer
          */
         public static SVGEventProducer get(EventBroadcaster broadcaster) {
-            return (SVGEventProducer)broadcaster.getEventProducerFor(
-                    SVGEventProducer.class);
+            return broadcaster.getEventProducerFor(SVGEventProducer.class);
         }
     }
 

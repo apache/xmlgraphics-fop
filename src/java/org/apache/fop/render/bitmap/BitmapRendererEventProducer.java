@@ -41,8 +41,7 @@ public interface BitmapRendererEventProducer extends EventProducer {
          * @return the event producer
          */
         public static BitmapRendererEventProducer get(EventBroadcaster broadcaster) {
-            return (BitmapRendererEventProducer)broadcaster.getEventProducerFor(
-                    BitmapRendererEventProducer.class);
+            return broadcaster.getEventProducerFor(BitmapRendererEventProducer.class);
         }
     }
 

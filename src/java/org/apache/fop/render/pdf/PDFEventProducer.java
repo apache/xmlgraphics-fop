@@ -41,8 +41,7 @@ public interface PDFEventProducer extends EventProducer {
          * @return the event producer
          */
         public static PDFEventProducer get(EventBroadcaster broadcaster) {
-            return (PDFEventProducer)broadcaster.getEventProducerFor(
-                    PDFEventProducer.class);
+            return broadcaster.getEventProducerFor(PDFEventProducer.class);
         }
     }
 

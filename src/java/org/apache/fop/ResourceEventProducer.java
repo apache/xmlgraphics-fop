@@ -50,8 +50,7 @@ public interface ResourceEventProducer extends EventProducer {
          * @return the requested event producer
          */
         public static ResourceEventProducer get(EventBroadcaster broadcaster) {
-            return (ResourceEventProducer)broadcaster.getEventProducerFor(
-                    ResourceEventProducer.class);
+            return broadcaster.getEventProducerFor(ResourceEventProducer.class);
         }
     }
 

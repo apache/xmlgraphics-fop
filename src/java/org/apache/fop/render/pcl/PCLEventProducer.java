@@ -39,8 +39,7 @@ public interface PCLEventProducer extends EventProducer {
          * @return the event producer
          */
         public static PCLEventProducer get(EventBroadcaster broadcaster) {
-            return (PCLEventProducer)broadcaster.getEventProducerFor(
-                    PCLEventProducer.class);
+            return broadcaster.getEventProducerFor(PCLEventProducer.class);
         }
     }
 

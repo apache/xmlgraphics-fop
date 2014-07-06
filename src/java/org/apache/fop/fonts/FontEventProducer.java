@@ -40,7 +40,7 @@ public interface FontEventProducer extends EventProducer {
          * @return the event producer
          */
         public static FontEventProducer get(EventBroadcaster broadcaster) {
-            return (FontEventProducer) broadcaster.getEventProducerFor(FontEventProducer.class);
+            return broadcaster.getEventProducerFor(FontEventProducer.class);
         }
     }
 
