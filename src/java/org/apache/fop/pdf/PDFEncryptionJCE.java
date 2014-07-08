@@ -334,9 +334,13 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             byte[] preparedPassword = new byte[finalLength];
             try {
                 byte[] passwordBytes = password.getBytes("UTF-8");
-                System.arraycopy(passwordBytes, 0, preparedPassword, 0, passwordBytes.length);
-                System.arraycopy(padding, 0, preparedPassword, passwordBytes.length, finalLength
-                        - passwordBytes.length);
+                if (passwordBytes.length >= finalLength) {
+                    System.arraycopy(passwordBytes, 0, preparedPassword, 0, finalLength);
+                } else {
+                    System.arraycopy(passwordBytes, 0, preparedPassword, 0, passwordBytes.length);
+                    System.arraycopy(padding, 0, preparedPassword, passwordBytes.length, finalLength
+                            - passwordBytes.length);
+                }
                 return preparedPassword;
             } catch (UnsupportedEncodingException e) {
                 throw new UnsupportedOperationException(e);
