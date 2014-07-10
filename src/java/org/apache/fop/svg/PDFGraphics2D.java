@@ -36,7 +36,6 @@ import java.awt.Stroke;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -50,7 +49,6 @@ import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -819,11 +817,15 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                     gpaint.isCyclic() ? LinearGradientPaint.REPEAT : LinearGradientPaint.NO_CYCLE);
         }
         if (paint instanceof LinearGradientPaint && gradientSupported((LinearGradientPaint) paint)) {
-            applyLinearGradient((LinearGradientPaint) paint, fill);
+            PDFPattern pattern = new PDFGradientFactory(this)
+                    .createLinearGradient((LinearGradientPaint) paint, getBaseTransform(), getTransform());
+            currentStream.write(pattern.getColorSpaceOut(fill));
             return true;
         }
         if (paint instanceof RadialGradientPaint && gradientSupported((RadialGradientPaint) paint)) {
-            applyRadialGradient((RadialGradientPaint) paint, fill);
+            PDFPattern pattern = new PDFGradientFactory(this)
+                    .createRadialGradient((RadialGradientPaint) paint, getBaseTransform(), getTransform());
+            currentStream.write(pattern.getColorSpaceOut(fill));
             return true;
         }
         if (paint instanceof PatternPaint) {
@@ -857,109 +859,6 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
          // require an extremely large number of stops for cases where the focus is near
          // the edge of the outer circle).
         return (gradient.getCycleMethod() != MultipleGradientPaint.NO_CYCLE);
-    }
-
-    private void applyLinearGradient(LinearGradientPaint gp, boolean fill) {
-        List<Double> matrix = createGradientTransform(gp);
-
-        Point2D startPoint = gp.getStartPoint();
-        Point2D endPoint = gp.getEndPoint();
-        List<Double> coords = new java.util.ArrayList<Double>(4);
-        coords.add(new Double(startPoint.getX()));
-        coords.add(new Double(startPoint.getY()));
-        coords.add(new Double(endPoint.getX()));
-        coords.add(new Double(endPoint.getY()));
-
-        List<Color> colors = createGradientColors(gp);
-
-        List<Double> bounds = createGradientBounds(gp);
-
-        //Gradients are currently restricted to sRGB
-        PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-        PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
-        PDFPattern pattern = gradientFactory.createGradient(false, colSpace, colors, bounds, coords, matrix);
-
-        currentStream.write(pattern.getColorSpaceOut(fill));
-    }
-
-    private void applyRadialGradient(RadialGradientPaint gp, boolean fill) {
-        List<Double> matrix = createGradientTransform(gp);
-
-        double ar = gp.getRadius();
-        Point2D ac = gp.getCenterPoint();
-        Point2D af = gp.getFocusPoint();
-        List<Double> theCoords = new java.util.ArrayList<Double>();
-        double dx = af.getX() - ac.getX();
-        double dy = af.getY() - ac.getY();
-        double d = Math.sqrt(dx * dx + dy * dy);
-        if (d > ar) {
-            // the center point af must be within the circle with
-            // radius ar centered at ac so limit it to that.
-            double scale = (ar * .9999) / d;
-            dx = dx * scale;
-            dy = dy * scale;
-        }
-
-        theCoords.add(new Double(ac.getX() + dx)); // Fx
-        theCoords.add(new Double(ac.getY() + dy)); // Fy
-        theCoords.add(new Double(0));
-        theCoords.add(new Double(ac.getX()));
-        theCoords.add(new Double(ac.getY()));
-        theCoords.add(new Double(ar));
-
-        List<Color> colors = createGradientColors(gp);
-
-        List<Double> bounds = createGradientBounds(gp);
-
-        //Gradients are currently restricted to sRGB
-        PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-        PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
-        PDFPattern pattern = gradientFactory.createGradient(true, colSpace, colors, bounds, theCoords, matrix);
-
-        currentStream.write(pattern.getColorSpaceOut(fill));
-    }
-
-    private List<Double> createGradientTransform(MultipleGradientPaint gp) {
-        // Build proper transform from gradient space to page space
-        // ('Patterns' don't get userspace transform).
-        AffineTransform transform = new AffineTransform(getBaseTransform());
-        transform.concatenate(getTransform());
-        transform.concatenate(gp.getTransform());
-        List<Double> matrix = new java.util.ArrayList<Double>(6);
-        double[] m = new double[6];
-        transform.getMatrix(m);
-        for (double d : m) {
-            matrix.add(Double.valueOf(d));
-        }
-        return matrix;
-    }
-
-    private List<Color> createGradientColors(MultipleGradientPaint gradient) {
-        Color[] svgColors = gradient.getColors();
-        List<Color> gradientColors = new ArrayList<Color>(svgColors.length + 2);
-        float[] fractions = gradient.getFractions();
-        if (fractions[0] > 0f) {
-            gradientColors.add(svgColors[0]);
-        }
-        for (Color c : svgColors) {
-            gradientColors.add(c);
-        }
-        if (fractions[fractions.length - 1] < 1f) {
-            gradientColors.add(svgColors[svgColors.length - 1]);
-        }
-        return gradientColors;
-    }
-
-    private List<Double> createGradientBounds(MultipleGradientPaint gradient) {
-        // TODO is the conversion to double necessary?
-        float[] fractions = gradient.getFractions();
-        List<Double> bounds = new java.util.ArrayList<Double>(fractions.length);
-        for (float offset : fractions) {
-            if (0f < offset && offset < 1f) {
-                bounds.add(Double.valueOf(offset));
-            }
-        }
-        return bounds;
     }
 
     private boolean createPattern(PatternPaint pp, boolean fill) {

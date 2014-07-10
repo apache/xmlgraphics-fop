@@ -25,7 +25,7 @@ import org.apache.fop.render.ps.svg.PSFunction;
 import org.apache.fop.render.ps.svg.PSPattern;
 import org.apache.fop.render.ps.svg.PSShading;
 
-public class PSGradientFactory extends GradientFactory {
+public class PSGradientFactory extends GradientFactory<PSPattern> {
 
     @Override
     public PSPattern createGradient(boolean radial, PDFDeviceColorSpace theColorspace,
