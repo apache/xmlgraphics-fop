@@ -104,24 +104,24 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
         List<Double> matrix = createGradientTransform(gp);
 
-        List<Double> theCoords = new java.util.ArrayList<Double>();
-        theCoords.add(gp.getStartPoint().getX());
-        theCoords.add(gp.getStartPoint().getX());
-        theCoords.add(gp.getEndPoint().getX());
-        theCoords.add(gp.getEndPoint().getY());
+        Point2D startPoint = gp.getStartPoint();
+        Point2D endPoint = gp.getEndPoint();
+        List<Double> coords = new java.util.ArrayList<Double>(4);
+        coords.add(new Double(startPoint.getX()));
+        coords.add(new Double(startPoint.getY()));
+        coords.add(new Double(endPoint.getX()));
+        coords.add(new Double(endPoint.getY()));
 
         List<Color> colors = createGradientColors(gp);
 
         List<Double> bounds = createGradientBounds(gp);
-        PDFDeviceColorSpace colSpace;
-        colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
+        //Gradients are currently restricted to sRGB
+        PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         PSGradientFactory gradientFactory = new PSGradientFactory();
-        PSPattern myPattern = gradientFactory.createGradient(false, colSpace,
-                colors, bounds, theCoords, matrix);
+        PSPattern pattern = gradientFactory.createGradient(false, colSpace, colors, bounds, coords, matrix);
 
-        gen.write(myPattern.toString());
-
+        gen.write(pattern.toString());
     }
 
     private void handleRadialGradient(RadialGradientPaint gp, PSGenerator gen) throws IOException {
@@ -157,14 +157,13 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
         List<Color> colors = createGradientColors(gp);
 
         List<Double> bounds = createGradientBounds(gp);
-        PDFDeviceColorSpace colSpace;
-        colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
+        //Gradients are currently restricted to sRGB
+        PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         PSGradientFactory gradientFactory = new PSGradientFactory();
-        PSPattern myPattern = gradientFactory.createGradient(true, colSpace,
-                colors, bounds, theCoords, matrix);
+        PSPattern pattern = gradientFactory.createGradient(true, colSpace, colors, bounds, theCoords, matrix);
 
-        gen.write(myPattern.toString());
+        gen.write(pattern.toString());
     }
 
     private List<Double> createGradientTransform(MultipleGradientPaint gradient) {
