@@ -875,6 +875,9 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
             List<Color> someColors = new java.util.ArrayList<Color>();
 
+            if (fractions[0] != 0f) {
+                someColors.add(cols[0]);
+            }
             for (int count = 0; count < cols.length; count++) {
                 Color c1 = cols[count];
                 if (c1.getAlpha() != 255) {
@@ -884,9 +887,12 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 //PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
                 //                               c1.getBlue());
                 someColors.add(c1);
-                if (count > 0 && count < cols.length - 1) {
+                if (0f < fractions[count] && fractions[count] < 1f) {
                     theBounds.add(new Double(fractions[count]));
                 }
+            }
+            if (fractions[fractions.length - 1] < 1f) {
+                someColors.add(cols[cols.length - 1]);
             }
 
             //Gradients are currently restricted to sRGB
@@ -948,8 +954,12 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             theCoords.add(new Double(ac.getY()));
             theCoords.add(new Double(ar));
 
+            float[] fractions = rgp.getFractions();
             Color[] cols = rgp.getColors();
             List<Color> someColors = new java.util.ArrayList<Color>();
+            if (fractions[0] > 0f) {
+                someColors.add(cols[0]);
+            }
             for (int count = 0; count < cols.length; count++) {
                 Color cc = cols[count];
                 if (cc.getAlpha() != 255) {
@@ -958,12 +968,16 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
                 someColors.add(cc);
             }
+            if (fractions[fractions.length - 1] < 1f) {
+                someColors.add(cols[cols.length - 1]);
+            }
 
-            float[] fractions = rgp.getFractions();
             List<Double> theBounds = new java.util.ArrayList<Double>();
-            for (int count = 1; count < fractions.length - 1; count++) {
+            for (int count = 0; count < fractions.length; count++) {
                 float offset = fractions[count];
-                theBounds.add(new Double(offset));
+                if (0f < offset && offset < 1f) {
+                    theBounds.add(new Double(offset));
+                }
             }
             PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
             PDFGradientFactory gradientFactory = (PDFGradientFactory) GradientFactory.newInstance(this);
