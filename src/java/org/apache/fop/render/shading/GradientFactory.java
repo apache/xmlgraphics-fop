@@ -20,14 +20,118 @@
 package org.apache.fop.render.shading;
 
 import java.awt.Color;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.batik.ext.awt.LinearGradientPaint;
+import org.apache.batik.ext.awt.MultipleGradientPaint;
+import org.apache.batik.ext.awt.RadialGradientPaint;
 
 import org.apache.xmlgraphics.java2d.color.ColorUtil;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
 
-public abstract class GradientFactory {
+public abstract class GradientFactory<P extends Pattern> {
+
+    public P createLinearGradient(LinearGradientPaint gp,
+            AffineTransform baseTransform, AffineTransform transform) {
+        List<Double> matrix = createGradientTransform(gp, baseTransform, transform);
+
+        Point2D startPoint = gp.getStartPoint();
+        Point2D endPoint = gp.getEndPoint();
+        List<Double> coords = new java.util.ArrayList<Double>(4);
+        coords.add(new Double(startPoint.getX()));
+        coords.add(new Double(startPoint.getY()));
+        coords.add(new Double(endPoint.getX()));
+        coords.add(new Double(endPoint.getY()));
+
+        List<Color> colors = createGradientColors(gp);
+
+        List<Double> bounds = createGradientBounds(gp);
+
+        //Gradients are currently restricted to sRGB
+        PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
+        return createGradient(false, colSpace, colors, bounds, coords, matrix);
+    }
+
+    public P createRadialGradient(RadialGradientPaint gp,
+            AffineTransform baseTransform, AffineTransform transform) {
+        List<Double> matrix = createGradientTransform(gp, baseTransform, transform);
+
+        double ar = gp.getRadius();
+        Point2D ac = gp.getCenterPoint();
+        Point2D af = gp.getFocusPoint();
+        List<Double> theCoords = new java.util.ArrayList<Double>();
+        double dx = af.getX() - ac.getX();
+        double dy = af.getY() - ac.getY();
+        double d = Math.sqrt(dx * dx + dy * dy);
+        if (d > ar) {
+            // the center point af must be within the circle with
+            // radius ar centered at ac so limit it to that.
+            double scale = (ar * .9999) / d;
+            dx = dx * scale;
+            dy = dy * scale;
+        }
+
+        theCoords.add(new Double(ac.getX() + dx)); // Fx
+        theCoords.add(new Double(ac.getY() + dy)); // Fy
+        theCoords.add(new Double(0));
+        theCoords.add(new Double(ac.getX()));
+        theCoords.add(new Double(ac.getY()));
+        theCoords.add(new Double(ar));
+
+        List<Color> colors = createGradientColors(gp);
+
+        List<Double> bounds = createGradientBounds(gp);
+
+        //Gradients are currently restricted to sRGB
+        PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
+        return createGradient(true, colSpace, colors, bounds, theCoords, matrix);
+    }
+
+    private List<Double> createGradientTransform(MultipleGradientPaint gradient,
+            AffineTransform baseTransform, AffineTransform transform) {
+        AffineTransform gradientTransform = new AffineTransform(baseTransform);
+        gradientTransform.concatenate(transform);
+        gradientTransform.concatenate(gradient.getTransform());
+        List<Double> matrix = new ArrayList<Double>(6);
+        double[] m = new double[6];
+        gradientTransform.getMatrix(m);
+        for (double d : m) {
+            matrix.add(Double.valueOf(d));
+        }
+        return matrix;
+    }
+
+    private List<Color> createGradientColors(MultipleGradientPaint gradient) {
+        Color[] svgColors = gradient.getColors();
+        List<Color> gradientColors = new ArrayList<Color>(svgColors.length + 2);
+        float[] fractions = gradient.getFractions();
+        if (fractions[0] > 0f) {
+            gradientColors.add(svgColors[0]);
+        }
+        for (Color c : svgColors) {
+            gradientColors.add(c);
+        }
+        if (fractions[fractions.length - 1] < 1f) {
+            gradientColors.add(svgColors[svgColors.length - 1]);
+        }
+        return gradientColors;
+    }
+
+    private List<Double> createGradientBounds(MultipleGradientPaint gradient) {
+        // TODO is the conversion to double necessary?
+        float[] fractions = gradient.getFractions();
+        List<Double> bounds = new java.util.ArrayList<Double>(fractions.length);
+        for (float offset : fractions) {
+            if (0f < offset && offset < 1f) {
+                bounds.add(Double.valueOf(offset));
+            }
+        }
+        return bounds;
+    }
 
     /**
      * Creates a new gradient
@@ -39,7 +143,7 @@ public abstract class GradientFactory {
      * @param theMatrix The matrix for any transformations
      * @return Returns the Pattern object of the gradient
      */
-    public abstract Pattern createGradient(boolean radial,
+    public abstract P createGradient(boolean radial,
             PDFDeviceColorSpace theColorspace, List<Color> theColors, List<Double> theBounds,
             List<Double> theCoords, List<Double> theMatrix);
 

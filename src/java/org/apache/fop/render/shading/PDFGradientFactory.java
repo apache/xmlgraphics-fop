@@ -26,7 +26,7 @@ import org.apache.fop.pdf.PDFPattern;
 import org.apache.fop.pdf.PDFShading;
 import org.apache.fop.svg.PDFGraphics2D;
 
-public class PDFGradientFactory extends GradientFactory {
+public class PDFGradientFactory extends GradientFactory<PDFPattern> {
 
     private final GradientRegistrar registrar;
 

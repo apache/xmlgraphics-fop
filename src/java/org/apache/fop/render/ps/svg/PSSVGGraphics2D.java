@@ -19,26 +19,20 @@
 
 package org.apache.fop.render.ps.svg;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Paint;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.batik.ext.awt.LinearGradientPaint;
-import org.apache.batik.ext.awt.MultipleGradientPaint;
 import org.apache.batik.ext.awt.RadialGradientPaint;
 
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
-import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.render.shading.Function;
 import org.apache.fop.render.shading.GradientRegistrar;
 import org.apache.fop.render.shading.PSGradientFactory;
@@ -79,122 +73,23 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
     protected void applyPaint(Paint paint, boolean fill) {
         super.applyPaint(paint, fill);
-        if (paint instanceof RadialGradientPaint) {
-            RadialGradientPaint rgp = (RadialGradientPaint)paint;
+        if (paint instanceof LinearGradientPaint) {
+            Pattern pattern = new PSGradientFactory()
+                    .createLinearGradient((LinearGradientPaint) paint, getBaseTransform(), getTransform());
             try {
-                handleRadialGradient(rgp, gen);
+                gen.write(pattern.toString());
             } catch (IOException ioe) {
                 handleIOException(ioe);
             }
-        } else if (paint instanceof LinearGradientPaint) {
-            LinearGradientPaint lgp = (LinearGradientPaint)paint;
+        } else if (paint instanceof RadialGradientPaint) {
+            Pattern pattern = new PSGradientFactory()
+                    .createRadialGradient((RadialGradientPaint) paint, getBaseTransform(), getTransform());
             try {
-                handleLinearGradient(lgp, gen);
+                gen.write(pattern.toString());
             } catch (IOException ioe) {
                 handleIOException(ioe);
             }
         }
-    }
-
-    private void handleLinearGradient(LinearGradientPaint gp, PSGenerator gen) throws IOException {
-        List<Double> matrix = createGradientTransform(gp);
-
-        Point2D startPoint = gp.getStartPoint();
-        Point2D endPoint = gp.getEndPoint();
-        List<Double> coords = new java.util.ArrayList<Double>(4);
-        coords.add(new Double(startPoint.getX()));
-        coords.add(new Double(startPoint.getY()));
-        coords.add(new Double(endPoint.getX()));
-        coords.add(new Double(endPoint.getY()));
-
-        List<Color> colors = createGradientColors(gp);
-
-        List<Double> bounds = createGradientBounds(gp);
-
-        //Gradients are currently restricted to sRGB
-        PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-        PSGradientFactory gradientFactory = new PSGradientFactory();
-        PSPattern pattern = gradientFactory.createGradient(false, colSpace, colors, bounds, coords, matrix);
-
-        gen.write(pattern.toString());
-    }
-
-    private void handleRadialGradient(RadialGradientPaint gp, PSGenerator gen) throws IOException {
-        List<Double> matrix = createGradientTransform(gp);
-
-        double ar = gp.getRadius();
-        Point2D ac = gp.getCenterPoint();
-        Point2D af = gp.getFocusPoint();
-        List<Double> theCoords = new java.util.ArrayList<Double>();
-        double dx = af.getX() - ac.getX();
-        double dy = af.getY() - ac.getY();
-        double d = Math.sqrt(dx * dx + dy * dy);
-        if (d > ar) {
-            // the center point af must be within the circle with
-            // radius ar centered at ac so limit it to that.
-            double scale = (ar * .9999) / d;
-            dx = dx * scale;
-            dy = dy * scale;
-        }
-
-        theCoords.add(new Double(ac.getX() + dx)); // Fx
-        theCoords.add(new Double(ac.getY() + dy)); // Fy
-        theCoords.add(new Double(0));
-        theCoords.add(new Double(ac.getX()));
-        theCoords.add(new Double(ac.getY()));
-        theCoords.add(new Double(ar));
-
-        List<Color> colors = createGradientColors(gp);
-
-        List<Double> bounds = createGradientBounds(gp);
-
-        //Gradients are currently restricted to sRGB
-        PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-        PSGradientFactory gradientFactory = new PSGradientFactory();
-        PSPattern pattern = gradientFactory.createGradient(true, colSpace, colors, bounds, theCoords, matrix);
-
-        gen.write(pattern.toString());
-    }
-
-    private List<Double> createGradientTransform(MultipleGradientPaint gradient) {
-        AffineTransform transform = new AffineTransform(getBaseTransform());
-        transform.concatenate(getTransform());
-        transform.concatenate(gradient.getTransform());
-        List<Double> matrix = new ArrayList<Double>(6);
-        double[] m = new double[6];
-        transform.getMatrix(m);
-        for (double d : m) {
-            matrix.add(Double.valueOf(d));
-        }
-        return matrix;
-    }
-
-    private List<Color> createGradientColors(MultipleGradientPaint gradient) {
-        Color[] svgColors = gradient.getColors();
-        List<Color> gradientColors = new ArrayList<Color>(svgColors.length + 2);
-        float[] fractions = gradient.getFractions();
-        if (fractions[0] > 0f) {
-            gradientColors.add(svgColors[0]);
-        }
-        for (Color c : svgColors) {
-            gradientColors.add(c);
-        }
-        if (fractions[fractions.length - 1] < 1f) {
-            gradientColors.add(svgColors[svgColors.length - 1]);
-        }
-        return gradientColors;
-    }
-
-    private List<Double> createGradientBounds(MultipleGradientPaint gradient) {
-        // TODO is the conversion to double necessary?
-        float[] fractions = gradient.getFractions();
-        List<Double> bounds = new java.util.ArrayList<Double>(fractions.length);
-        for (float offset : fractions) {
-            if (0f < offset && offset < 1f) {
-                bounds.add(Double.valueOf(offset));
-            }
-        }
-        return bounds;
     }
 
     protected AffineTransform getBaseTransform() {
