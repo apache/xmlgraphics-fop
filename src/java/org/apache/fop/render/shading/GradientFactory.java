@@ -62,7 +62,7 @@ public abstract class GradientFactory<P extends Pattern> {
             dx *= scale;
             dy *= scale;
         }
-        List<Double> coords = new java.util.ArrayList<Double>();
+        List<Double> coords = new java.util.ArrayList<Double>(6);
         coords.add(Double.valueOf(center.getX() + dx));
         coords.add(Double.valueOf(center.getY() + dy));
         coords.add(Double.valueOf(0));
@@ -164,28 +164,7 @@ public abstract class GradientFactory<P extends Pattern> {
         }
 
         Function function = makeFunction(3, null, null, functions, bounds, null);
-        Shading shading;
-        if (radial) {
-            if (coords.size() == 6) {
-                shading = makeShading(3, colorspace, null, null, false, coords, null, function, null);
-            } else {    // if the center x, center y, and radius specifiy
-                // the gradient, then assume the same center x, center y,
-                // and radius of zero for the other necessary component
-                List<Double> newCoords = new ArrayList<Double>();
-                newCoords.add(coords.get(0));
-                newCoords.add(coords.get(1));
-                newCoords.add(coords.get(2));
-                newCoords.add(coords.get(0));
-                newCoords.add(coords.get(1));
-                newCoords.add(Double.valueOf(0.0));
-
-                shading = makeShading(3, colorspace, null, null, false, newCoords,
-                        null, function, null);
-            }
-        } else {
-            shading = makeShading(2, colorspace, null, null, false, coords,
-                    null, function, null);
-        }
+        Shading shading = makeShading(radial ? 3 : 2, colorspace, null, null, false, coords, null, function, null);
         return makePattern(2, shading, null, null, matrix);
     }
 
