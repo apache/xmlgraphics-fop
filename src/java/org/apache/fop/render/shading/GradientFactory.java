@@ -125,88 +125,68 @@ public abstract class GradientFactory<P extends Pattern> {
     }
 
     /**
-     * Creates a new gradient
-     * @param radial Determines whether the gradient is radial
-     * @param theColorspace The colorspace used in PDF and Postscript
-     * @param theColors The colors to be used in the gradient
-     * @param theBounds The bounds of each color
-     * @param theCoords The co-ordinates of the gradient
-     * @param theMatrix The matrix for any transformations
-     * @return Returns the Pattern object of the gradient
+     * Creates a new gradient.
+     *
+     * @param radial whether the gradient is linear or radial
+     * @param colorspace the colorspace used in PDF and Postscript
+     * @param colors the colors to be used in the gradient
+     * @param bounds the bounds of each color
+     * @param coords the coordinates of the gradient
+     * @param matrix the transformation matrix
+     * @return the Pattern object of the gradient
      */
-    protected P makeGradient(boolean radial, PDFDeviceColorSpace theColorspace,
-                                   List<Color> theColors, List<Double> theBounds,
-                                   List<Double> theCoords, List<Double> theMatrix) {
-        Shading myShad;
-        Function myfunky;
-        Function myfunc;
-        List<Double> theCzero;
-        List<Double> theCone;
-        double interpolation = 1.000;
-        List<Function> theFunctions = new ArrayList<Function>();
-
-        int currentPosition;
-        int lastPosition = theColors.size() - 1;
-
-
+    protected P makeGradient(boolean radial, PDFDeviceColorSpace colorspace,
+            List<Color> colors, List<Double> bounds, List<Double> coords, List<Double> matrix) {
+        List<Function> functions = new ArrayList<Function>();
         // if 5 elements, the penultimate element is 3.
         // do not go beyond that, because you always need
         // to have a next color when creating the function.
-
-        for (currentPosition = 0; currentPosition < lastPosition;
+        for (int currentPosition = 0, lastPosition = colors.size() - 1; currentPosition < lastPosition;
                 currentPosition++) {    // for every consecutive color pair
-            Color currentColor = theColors.get(currentPosition);
-            Color nextColor = theColors.get(currentPosition + 1);
+            Color currentColor = colors.get(currentPosition);
+            Color nextColor = colors.get(currentPosition + 1);
 
             // colorspace must be consistent, so we simply convert to sRGB where necessary
             if (!currentColor.getColorSpace().isCS_sRGB()) {
                 //Convert to sRGB
                 currentColor = ColorUtil.toSRGBColor(currentColor);
-                theColors.set(currentPosition, currentColor);
+                colors.set(currentPosition, currentColor);
             }
             if (!nextColor.getColorSpace().isCS_sRGB()) {
                 //Convert to sRGB
                 nextColor = ColorUtil.toSRGBColor(nextColor);
-                theColors.set(currentPosition + 1, nextColor);
+                colors.set(currentPosition + 1, nextColor);
             }
+            List<Double> c0 = toColorVector(currentColor);
+            List<Double> c1 = toColorVector(nextColor);
+            Function function = makeFunction(2, null, null, c0, c1, 1.0);
+            functions.add(function);
+        }
 
-            theCzero = toColorVector(currentColor);
-            theCone = toColorVector(nextColor);
-
-            myfunc = makeFunction(2, null, null, theCzero, theCone,
-                    interpolation);
-
-            theFunctions.add(myfunc);
-
-        }                               // end of for every consecutive color pair
-
-        myfunky = makeFunction(3, null, null, theFunctions, theBounds,
-                null);
-
+        Function function = makeFunction(3, null, null, functions, bounds, null);
+        Shading shading;
         if (radial) {
-            if (theCoords.size() == 6) {
-                // make Shading of Type 2 or 3
-                myShad = makeShading(3, theColorspace, null, null, false, theCoords,
-                                    null, myfunky, null);
+            if (coords.size() == 6) {
+                shading = makeShading(3, colorspace, null, null, false, coords, null, function, null);
             } else {    // if the center x, center y, and radius specifiy
                 // the gradient, then assume the same center x, center y,
                 // and radius of zero for the other necessary component
                 List<Double> newCoords = new ArrayList<Double>();
-                newCoords.add(theCoords.get(0));
-                newCoords.add(theCoords.get(1));
-                newCoords.add(theCoords.get(2));
-                newCoords.add(theCoords.get(0));
-                newCoords.add(theCoords.get(1));
+                newCoords.add(coords.get(0));
+                newCoords.add(coords.get(1));
+                newCoords.add(coords.get(2));
+                newCoords.add(coords.get(0));
+                newCoords.add(coords.get(1));
                 newCoords.add(Double.valueOf(0.0));
 
-                myShad = makeShading(3, theColorspace, null, null, false, newCoords,
-                        null, myfunky, null);
+                shading = makeShading(3, colorspace, null, null, false, newCoords,
+                        null, function, null);
             }
         } else {
-            myShad = makeShading(2, theColorspace, null, null, false, theCoords,
-                    null, myfunky, null);
+            shading = makeShading(2, colorspace, null, null, false, coords,
+                    null, function, null);
         }
-        return makePattern(2, myShad, null, null, theMatrix);
+        return makePattern(2, shading, null, null, matrix);
     }
 
     public abstract Function makeFunction(int functionType, List<Double> theDomain,
