@@ -50,6 +50,7 @@ import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -877,20 +878,9 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         theEncode.add(new Double(0));
         theEncode.add(new Double(1));
 
-        float[] fractions = gp.getFractions();
-        Color[] cols = gp.getColors();
-        List<Color> someColors = new java.util.ArrayList<Color>();
-        if (fractions[0] > 0f) {
-            someColors.add(cols[0]);
-        }
-        for (int count = 0; count < cols.length; count++) {
-            Color cc = cols[count];
-            someColors.add(cc);
-        }
-        if (fractions[fractions.length - 1] < 1f) {
-            someColors.add(cols[cols.length - 1]);
-        }
+        List<Color> colors = createGradientColors(gp);
 
+        float[] fractions = gp.getFractions();
         List<Double> theBounds = new java.util.ArrayList<Double>();
         for (int count = 0; count < fractions.length; count++) {
             float offset = fractions[count];
@@ -902,7 +892,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         //Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
-        PDFPattern myPat = gradientFactory.createGradient(false, colSpace, someColors, theBounds,
+        PDFPattern myPat = gradientFactory.createGradient(false, colSpace, colors, theBounds,
                 theCoords, matrix);
         currentStream.write(myPat.getColorSpaceOut(fill));
 
@@ -949,20 +939,9 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         theCoords.add(new Double(ac.getY()));
         theCoords.add(new Double(ar));
 
-        float[] fractions = gp.getFractions();
-        Color[] cols = gp.getColors();
-        List<Color> someColors = new java.util.ArrayList<Color>();
-        if (fractions[0] > 0f) {
-            someColors.add(cols[0]);
-        }
-        for (int count = 0; count < cols.length; count++) {
-            Color cc = cols[count];
-            someColors.add(cc);
-        }
-        if (fractions[fractions.length - 1] < 1f) {
-            someColors.add(cols[cols.length - 1]);
-        }
+        List<Color> colors = createGradientColors(gp);
 
+        float[] fractions = gp.getFractions();
         List<Double> theBounds = new java.util.ArrayList<Double>();
         for (int count = 0; count < fractions.length; count++) {
             float offset = fractions[count];
@@ -974,7 +953,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         //Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
-        PDFPattern myPat = gradientFactory.createGradient(true, colSpace, someColors, theBounds,
+        PDFPattern myPat = gradientFactory.createGradient(true, colSpace, colors, theBounds,
                 theCoords, matrix);
         currentStream.write(myPat.getColorSpaceOut(fill));
 
@@ -994,6 +973,22 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             matrix.add(Double.valueOf(d));
         }
         return matrix;
+    }
+
+    private List<Color> createGradientColors(MultipleGradientPaint gradient) {
+        Color[] svgColors = gradient.getColors();
+        List<Color> gradientColors = new ArrayList<Color>(svgColors.length + 2);
+        float[] fractions = gradient.getFractions();
+        if (fractions[0] > 0f) {
+            gradientColors.add(svgColors[0]);
+        }
+        for (Color c : svgColors) {
+            gradientColors.add(c);
+        }
+        if (fractions[fractions.length - 1] < 1f) {
+            gradientColors.add(svgColors[svgColors.length - 1]);
+        }
+        return gradientColors;
     }
 
     private boolean createPattern(PatternPaint pp, boolean fill) {
