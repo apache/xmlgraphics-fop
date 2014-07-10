@@ -95,11 +95,7 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.pdf.ImageRawCCITTFaxAdapter;
 import org.apache.fop.render.pdf.ImageRawJPEGAdapter;
 import org.apache.fop.render.pdf.ImageRenderedAdapter;
-import org.apache.fop.render.shading.Function;
-import org.apache.fop.render.shading.GradientRegistrar;
 import org.apache.fop.render.shading.PDFGradientFactory;
-import org.apache.fop.render.shading.Pattern;
-import org.apache.fop.render.shading.Shading;
 
 /**
  * <p>PDF Graphics 2D.
@@ -110,7 +106,7 @@ import org.apache.fop.render.shading.Shading;
  *
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
-public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHandler, GradientRegistrar {
+public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHandler {
     private static final AffineTransform IDENTITY_TRANSFORM = new AffineTransform();
 
     /** The number of decimal places. */
@@ -1764,8 +1760,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @return Returns either the function which has already been registered
      * or the current new registered object.
      */
-    public Function registerFunction(Function function) {
-        return pdfDoc.getFactory().registerFunction((PDFFunction)function);
+    public PDFFunction registerFunction(PDFFunction function) {
+        return pdfDoc.getFactory().registerFunction(function);
     }
 
     /**
@@ -1774,9 +1770,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @return Returs either the shading which has already been registered
      * or the current new registered object
      */
-    public Shading registerShading(Shading shading) {
-        assert shading instanceof PDFShading;
-        return pdfDoc.getFactory().registerShading(resourceContext, (PDFShading)shading);
+    public PDFShading registerShading(PDFShading shading) {
+        return pdfDoc.getFactory().registerShading(resourceContext, shading);
     }
 
     /**
@@ -1785,9 +1780,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @return Returns either the pattern which has already been registered
      * or the current new registered object
      */
-    public Pattern registerPattern(Pattern pattern) {
-        assert pattern instanceof PDFPattern;
-        return pdfDoc.getFactory().registerPattern(resourceContext, (PDFPattern)pattern);
+    public PDFPattern registerPattern(PDFPattern pattern) {
+        return pdfDoc.getFactory().registerPattern(resourceContext, pattern);
     }
 
 }

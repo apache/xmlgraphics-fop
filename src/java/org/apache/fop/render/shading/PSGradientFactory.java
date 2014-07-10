@@ -17,7 +17,6 @@
 
 package org.apache.fop.render.shading;
 
-import java.awt.Color;
 import java.util.List;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
@@ -26,14 +25,6 @@ import org.apache.fop.render.ps.svg.PSPattern;
 import org.apache.fop.render.ps.svg.PSShading;
 
 public class PSGradientFactory extends GradientFactory<PSPattern> {
-
-    @Override
-    public PSPattern createGradient(boolean radial, PDFDeviceColorSpace theColorspace,
-            List<Color> theColors, List<Double> theBounds, List<Double> theCoords,
-            List<Double> theMatrix) {
-        return (PSPattern)makeGradient(radial, theColorspace, theColors, theBounds,
-                theCoords, theMatrix);
-    }
 
     public Function makeFunction(int functionType, List<Double> theDomain,
             List<Double> theRange, List<Function> theFunctions,
@@ -63,7 +54,7 @@ public class PSGradientFactory extends GradientFactory<PSPattern> {
     }
 
     @Override
-    public Pattern makePattern(int thePatternType, Shading theShading, List theXUID,
+    public PSPattern makePattern(int thePatternType, Shading theShading, List theXUID,
             StringBuffer theExtGState, List<Double> theMatrix) {
         return new PSPattern(thePatternType, theShading, theXUID, theExtGState, theMatrix);
     }

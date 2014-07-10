@@ -79,7 +79,7 @@ public abstract class GradientFactory<P extends Pattern> {
         List<Double> bounds = createBounds(gradient);
         //Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-        return createGradient(gradient instanceof RadialGradientPaint, colSpace, colors, bounds, coords, matrix);
+        return makeGradient(gradient instanceof RadialGradientPaint, colSpace, colors, bounds, coords, matrix);
     }
 
     private List<Double> createTransform(MultipleGradientPaint gradient,
@@ -134,11 +134,7 @@ public abstract class GradientFactory<P extends Pattern> {
      * @param theMatrix The matrix for any transformations
      * @return Returns the Pattern object of the gradient
      */
-    public abstract P createGradient(boolean radial,
-            PDFDeviceColorSpace theColorspace, List<Color> theColors, List<Double> theBounds,
-            List<Double> theCoords, List<Double> theMatrix);
-
-    protected Pattern makeGradient(boolean radial, PDFDeviceColorSpace theColorspace,
+    protected P makeGradient(boolean radial, PDFDeviceColorSpace theColorspace,
                                    List<Color> theColors, List<Double> theBounds,
                                    List<Double> theCoords, List<Double> theMatrix) {
         Shading myShad;
@@ -226,7 +222,7 @@ public abstract class GradientFactory<P extends Pattern> {
             boolean theAntiAlias, List<Double> theCoords, List<Double> theDomain,
             Function theFunction, List<Integer> theExtend);
 
-    public abstract Pattern makePattern(int thePatternType, Shading theShading, List theXUID,
+    public abstract P makePattern(int thePatternType, Shading theShading, List theXUID,
             StringBuffer theExtGState, List<Double> theMatrix);
 
     private List<Double> toColorVector(Color nextColor) {

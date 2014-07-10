@@ -33,14 +33,11 @@ import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
-import org.apache.fop.render.shading.Function;
-import org.apache.fop.render.shading.GradientRegistrar;
 import org.apache.fop.render.shading.PSGradientFactory;
 import org.apache.fop.render.shading.Pattern;
-import org.apache.fop.render.shading.Shading;
 
 
-public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
+public class PSSVGGraphics2D extends PSGraphics2D {
 
     private static final Log LOG = LogFactory.getLog(PSSVGGraphics2D.class);
 
@@ -109,36 +106,4 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
         return new PSSVGGraphics2D(this);
     }
 
-    /**
-     * Registers a function object against the output format document
-     * @param function The function object to register
-     * @return Returns either the function which has already been registered
-     * or the current new registered object.
-     */
-    public Function registerFunction(Function function) {
-        //Objects aren't needed to be registered in Postscript
-        return function;
-    }
-
-    /**
-     * Registers a shading object against the otuput format document
-     * @param shading The shading object to register
-     * @return Returs either the shading which has already been registered
-     * or the current new registered object
-     */
-    public Shading registerShading(Shading shading) {
-        //Objects aren't needed to be registered in Postscript
-        return shading;
-    }
-
-    /**
-     * Registers a pattern object against the output format document
-     * @param pattern The pattern object to register
-     * @return Returns either the pattern which has already been registered
-     * or the current new registered object
-     */
-    public Pattern registerPattern(Pattern pattern) {
-        // TODO Auto-generated method stub
-        return pattern;
-    }
 }
