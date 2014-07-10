@@ -97,11 +97,6 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
     }
 
     private void handleLinearGradient(LinearGradientPaint gp, PSGenerator gen) throws IOException {
-        MultipleGradientPaint.CycleMethodEnum cycle = gp.getCycleMethod();
-        if (cycle != MultipleGradientPaint.NO_CYCLE) {
-            return;
-        }
-
         List<Double> matrix = createGradientTransform(gp);
 
         Point2D startPoint = gp.getStartPoint();
@@ -125,11 +120,6 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
     }
 
     private void handleRadialGradient(RadialGradientPaint gp, PSGenerator gen) throws IOException {
-        MultipleGradientPaint.CycleMethodEnum cycle = gp.getCycleMethod();
-        if (cycle != MultipleGradientPaint.NO_CYCLE) {
-            return;
-        }
-
         List<Double> matrix = createGradientTransform(gp);
 
         double ar = gp.getRadius();

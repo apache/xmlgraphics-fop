@@ -818,17 +818,23 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                     new Color[] {gpaint.getColor1(), gpaint.getColor2()},
                     gpaint.isCyclic() ? LinearGradientPaint.REPEAT : LinearGradientPaint.NO_CYCLE);
         }
-        if (paint instanceof LinearGradientPaint && !gradientContainsTransparency((LinearGradientPaint) paint)) {
-            return applyLinearGradient(paint, fill);
+        if (paint instanceof LinearGradientPaint && gradientSupported((LinearGradientPaint) paint)) {
+            applyLinearGradient((LinearGradientPaint) paint, fill);
+            return true;
         }
-        if (paint instanceof RadialGradientPaint && !gradientContainsTransparency((RadialGradientPaint) paint)) {
-            return applyRadialGradient(paint, fill);
+        if (paint instanceof RadialGradientPaint && gradientSupported((RadialGradientPaint) paint)) {
+            applyRadialGradient((RadialGradientPaint) paint, fill);
+            return true;
         }
         if (paint instanceof PatternPaint) {
             PatternPaint pp = (PatternPaint)paint;
             return createPattern(pp, fill);
         }
         return false; // unknown paint
+    }
+
+    private boolean gradientSupported(MultipleGradientPaint gradient) {
+        return !(gradientContainsTransparency(gradient) || gradientIsRepeated(gradient));
     }
 
     private boolean gradientContainsTransparency(MultipleGradientPaint gradient) {
@@ -840,20 +846,20 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         return false;
     }
 
-    private boolean applyLinearGradient(Paint paint, boolean fill) {
-        LinearGradientPaint gp = (LinearGradientPaint)paint;
+    private boolean gradientIsRepeated(MultipleGradientPaint gradient) {
+         // For linear gradients it is possible to construct a 'tile' that is repeated with
+         // a PDF pattern, but it would be very tricky as the coordinate system would have
+         // to be rotated so the repeat is axially aligned.
 
-        // This code currently doesn't support 'repeat'.
-        // For linear gradients it is possible to construct
-        // a 'tile' that is repeated with a PDF pattern, but
-        // it would be very tricky as you would have to rotate
-        // the coordinate system so the repeat was axially
-        // aligned.  At this point I'm just going to rasterize it.
-        MultipleGradientPaint.CycleMethodEnum cycle = gp.getCycleMethod();
-        if (cycle != MultipleGradientPaint.NO_CYCLE) {
-            return false;
-        }
+         // For radial gradients there is essentially no way to support repeats in PDF (the
+         // one option would be to 'grow' the outer circle until it fully covers the
+         // bounds and then grow the stops accordingly, the problem is that this may
+         // require an extremely large number of stops for cases where the focus is near
+         // the edge of the outer circle).
+        return (gradient.getCycleMethod() != MultipleGradientPaint.NO_CYCLE);
+    }
 
+    private void applyLinearGradient(LinearGradientPaint gp, boolean fill) {
         List<Double> matrix = createGradientTransform(gp);
 
         Point2D startPoint = gp.getStartPoint();
@@ -874,24 +880,9 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         PDFPattern pattern = gradientFactory.createGradient(false, colSpace, colors, bounds, coords, matrix);
 
         currentStream.write(pattern.getColorSpaceOut(fill));
-        return true;
     }
 
-    private boolean applyRadialGradient(Paint paint, boolean fill) {
-        RadialGradientPaint gp = (RadialGradientPaint)paint;
-
-        // There is essentially no way to support repeats
-        // in PDF for radial gradients (the one option would
-        // be to 'grow' the outer circle until it fully covered
-        // the bounds and then grow the stops accordingly, the
-        // problem is that this may require an extremely large
-        // number of stops for cases where the focus is near
-        // the edge of the outer circle).  so we rasterize.
-        MultipleGradientPaint.CycleMethodEnum cycle = gp.getCycleMethod();
-        if (cycle != MultipleGradientPaint.NO_CYCLE) {
-            return false;
-        }
-
+    private void applyRadialGradient(RadialGradientPaint gp, boolean fill) {
         List<Double> matrix = createGradientTransform(gp);
 
         double ar = gp.getRadius();
@@ -926,7 +917,6 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         PDFPattern pattern = gradientFactory.createGradient(true, colSpace, colors, bounds, theCoords, matrix);
 
         currentStream.write(pattern.getColorSpaceOut(fill));
-        return true;
     }
 
     private List<Double> createGradientTransform(MultipleGradientPaint gp) {
