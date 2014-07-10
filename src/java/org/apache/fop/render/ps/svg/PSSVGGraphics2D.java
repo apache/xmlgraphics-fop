@@ -112,20 +112,13 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
         List<Color> colors = createGradientColors(gp);
 
-        float[] fractions = gp.getFractions();
-        List<Double> theBounds = new java.util.ArrayList<Double>();
-        for (int count = 0; count < fractions.length; count++) {
-            float offset = fractions[count];
-            if (0f < offset && offset < 1f) {
-                theBounds.add(new Double(offset));
-            }
-        }
+        List<Double> bounds = createGradientBounds(gp);
         PDFDeviceColorSpace colSpace;
         colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
         PSGradientFactory gradientFactory = new PSGradientFactory();
         PSPattern myPattern = gradientFactory.createGradient(false, colSpace,
-                colors, theBounds, theCoords, matrix);
+                colors, bounds, theCoords, matrix);
 
         gen.write(myPattern.toString());
 
@@ -163,20 +156,13 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
         List<Color> colors = createGradientColors(gp);
 
-        float[] fractions = gp.getFractions();
-        List<Double> theBounds = new java.util.ArrayList<Double>();
-        for (int count = 0; count < fractions.length; count++) {
-            float offset = fractions[count];
-            if (0f < offset && offset < 1f) {
-                theBounds.add(new Double(offset));
-            }
-        }
+        List<Double> bounds = createGradientBounds(gp);
         PDFDeviceColorSpace colSpace;
         colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
         PSGradientFactory gradientFactory = new PSGradientFactory();
         PSPattern myPattern = gradientFactory.createGradient(true, colSpace,
-                colors, theBounds, theCoords, matrix);
+                colors, bounds, theCoords, matrix);
 
         gen.write(myPattern.toString());
     }
@@ -208,6 +194,18 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
             gradientColors.add(svgColors[svgColors.length - 1]);
         }
         return gradientColors;
+    }
+
+    private List<Double> createGradientBounds(MultipleGradientPaint gradient) {
+        // TODO is the conversion to double necessary?
+        float[] fractions = gradient.getFractions();
+        List<Double> bounds = new java.util.ArrayList<Double>(fractions.length);
+        for (float offset : fractions) {
+            if (0f < offset && offset < 1f) {
+                bounds.add(Double.valueOf(offset));
+            }
+        }
+        return bounds;
     }
 
     private AffineTransform applyTransform(AffineTransform base, double posX, double posY) {
