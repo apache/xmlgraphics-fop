@@ -96,47 +96,44 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
         }
     }
 
-    private void handleLinearGradient(LinearGradientPaint lgp, PSGenerator gen) throws IOException {
-        MultipleGradientPaint.CycleMethodEnum cycle = lgp.getCycleMethod();
+    private void handleLinearGradient(LinearGradientPaint gp, PSGenerator gen) throws IOException {
+        MultipleGradientPaint.CycleMethodEnum cycle = gp.getCycleMethod();
         if (cycle != MultipleGradientPaint.NO_CYCLE) {
             return;
         }
-        float[] fractions = lgp.getFractions();
-        Color[] cols = lgp.getColors();
 
         AffineTransform transform = new AffineTransform(getBaseTransform());
         transform.concatenate(getTransform());
-        transform.concatenate(lgp.getTransform());
+        transform.concatenate(gp.getTransform());
 
-        List theMatrix = new ArrayList();
+        List<Double> theMatrix = new ArrayList<Double>();
         double [] mat = new double[6];
         transform.getMatrix(mat);
         for (int idx = 0; idx < mat.length; idx++) {
             theMatrix.add(Double.valueOf(mat[idx]));
         }
 
-
         List<Double> theCoords = new java.util.ArrayList<Double>();
-        theCoords.add(lgp.getStartPoint().getX());
-        theCoords.add(lgp.getStartPoint().getX());
-        theCoords.add(lgp.getEndPoint().getX());
-        theCoords.add(lgp.getEndPoint().getY());
+        theCoords.add(gp.getStartPoint().getX());
+        theCoords.add(gp.getStartPoint().getX());
+        theCoords.add(gp.getEndPoint().getX());
+        theCoords.add(gp.getEndPoint().getY());
 
 
+        Color[] cols = gp.getColors();
         List<Color> someColors = new java.util.ArrayList<Color>();
+        float[] fractions = gp.getFractions();
         if (fractions[0] > 0f) {
             someColors.add(cols[0]);
         }
         for (int count = 0; count < cols.length; count++) {
-            Color c1 = cols[count];
-            if (c1.getAlpha() != 255) {
-                LOG.warn("Opacity is not currently supported for Postscript output");
-            }
-            someColors.add(c1);
+            Color c = cols[count];
+            someColors.add(c);
         }
         if (fractions[fractions.length - 1] < 1f) {
             someColors.add(cols[cols.length - 1]);
         }
+
         List<Double> theBounds = new java.util.ArrayList<Double>();
         for (int count = 0; count < fractions.length; count++) {
             float offset = fractions[count];
@@ -157,34 +154,26 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
 
 
-    private void handleRadialGradient(RadialGradientPaint rgp, PSGenerator gen) throws IOException {
-        MultipleGradientPaint.CycleMethodEnum cycle = rgp.getCycleMethod();
+    private void handleRadialGradient(RadialGradientPaint gp, PSGenerator gen) throws IOException {
+        MultipleGradientPaint.CycleMethodEnum cycle = gp.getCycleMethod();
         if (cycle != MultipleGradientPaint.NO_CYCLE) {
             return;
         }
 
-        AffineTransform transform;
-        transform = new AffineTransform(getBaseTransform());
+        AffineTransform transform = new AffineTransform(getBaseTransform());
         transform.concatenate(getTransform());
-        transform.concatenate(rgp.getTransform());
+        transform.concatenate(gp.getTransform());
 
-        AffineTransform resultCentre = applyTransform(rgp.getTransform(),
-                rgp.getCenterPoint().getX(), rgp.getCenterPoint().getY());
-        AffineTransform resultFocus = applyTransform(rgp.getTransform(),
-                rgp.getFocusPoint().getX(), rgp.getFocusPoint().getY());
-
-        List<Double> theMatrix = new java.util.ArrayList<Double>();
+        List<Double> theMatrix = new ArrayList<Double>();
         double [] mat = new double[6];
         transform.getMatrix(mat);
         for (int idx = 0; idx < mat.length; idx++) {
             theMatrix.add(Double.valueOf(mat[idx]));
         }
 
-        float[] fractions = rgp.getFractions();
-
-        double ar = rgp.getRadius();
-        Point2D ac = rgp.getCenterPoint();
-        Point2D af = rgp.getFocusPoint();
+        double ar = gp.getRadius();
+        Point2D ac = gp.getCenterPoint();
+        Point2D af = gp.getFocusPoint();
         List<Double> theCoords = new java.util.ArrayList<Double>();
         double dx = af.getX() - ac.getX();
         double dy = af.getY() - ac.getY();
@@ -204,21 +193,15 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
         theCoords.add(new Double(ac.getY()));
         theCoords.add(new Double(ar));
 
-        Color[] cols = rgp.getColors();
+        Color[] cols = gp.getColors();
         List<Color> someColors = new java.util.ArrayList<Color>();
+        float[] fractions = gp.getFractions();
         if (fractions[0] > 0f) {
             someColors.add(cols[0]);
         }
         for (int count = 0; count < cols.length; count++) {
-            Color cc = cols[count];
-            if (cc.getAlpha() != 255) {
-                /* This should never happen because radial gradients with opacity should now
-                 * be rasterized in the PSImageHandlerSVG class. Please see the shouldRaster()
-                 * method for more information. */
-                LOG.warn("Opacity is not currently supported for Postscript output");
-            }
-
-            someColors.add(cc);
+            Color c = cols[count];
+            someColors.add(c);
         }
         if (fractions[fractions.length - 1] < 1f) {
             someColors.add(cols[cols.length - 1]);
