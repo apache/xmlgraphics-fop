@@ -817,10 +817,10 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                     new Color[] {gpaint.getColor1(), gpaint.getColor2()},
                     gpaint.isCyclic() ? LinearGradientPaint.REPEAT : LinearGradientPaint.NO_CYCLE);
         }
-        if (paint instanceof LinearGradientPaint) {
+        if (paint instanceof LinearGradientPaint && !gradientContainsTransparency((LinearGradientPaint) paint)) {
             return applyLinearGradient(paint, fill);
         }
-        if (paint instanceof RadialGradientPaint) {
+        if (paint instanceof RadialGradientPaint && !gradientContainsTransparency((RadialGradientPaint) paint)) {
             return applyRadialGradient(paint, fill);
         }
         if (paint instanceof PatternPaint) {
@@ -828,6 +828,15 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             return createPattern(pp, fill);
         }
         return false; // unknown paint
+    }
+
+    private boolean gradientContainsTransparency(MultipleGradientPaint gradient) {
+        for (Color color : gradient.getColors()) {
+            if (color.getAlpha() != 255) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean applyLinearGradient(Paint paint, boolean fill) {
@@ -876,9 +885,6 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         }
         for (int count = 0; count < cols.length; count++) {
             Color cc = cols[count];
-            if (cc.getAlpha() != 255) {
-                return false;  // PDF can't do alpha
-            }
             someColors.add(cc);
         }
         if (fractions[fractions.length - 1] < 1f) {
@@ -951,9 +957,6 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         }
         for (int count = 0; count < cols.length; count++) {
             Color cc = cols[count];
-            if (cc.getAlpha() != 255) {
-                return false;  // PDF can't do alpha
-            }
             someColors.add(cc);
         }
         if (fractions[fractions.length - 1] < 1f) {
