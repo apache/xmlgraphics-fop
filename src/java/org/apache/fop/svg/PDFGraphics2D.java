@@ -844,19 +844,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             return false;
         }
 
-        // Build proper transform from gradient space to page space
-        // ('Patterns' don't get userspace transform).
-        AffineTransform transform;
-        transform = new AffineTransform(getBaseTransform());
-        transform.concatenate(getTransform());
-        transform.concatenate(gp.getTransform());
-
-        List<Double> theMatrix = new java.util.ArrayList<Double>();
-        double [] mat = new double[6];
-        transform.getMatrix(mat);
-        for (int idx = 0; idx < mat.length; idx++) {
-            theMatrix.add(new Double(mat[idx]));
-        }
+        List<Double> matrix = createGradientTransform(gp);
 
         Point2D p1 = gp.getStartPoint();
         Point2D p2 = gp.getEndPoint();
@@ -909,7 +897,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
         PDFPattern myPat = gradientFactory.createGradient(false, colSpace, someColors, theBounds,
-                theCoords, theMatrix);
+                theCoords, matrix);
         currentStream.write(myPat.getColorSpaceOut(fill));
 
         return true;
@@ -930,19 +918,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             return false;
         }
 
-        // Build proper transform from gradient space to page space
-        // ('Patterns' don't get userspace transform).
-        AffineTransform transform;
-        transform = new AffineTransform(getBaseTransform());
-        transform.concatenate(getTransform());
-        transform.concatenate(gp.getTransform());
-
-        List<Double> theMatrix = new java.util.ArrayList<Double>();
-        double [] mat = new double[6];
-        transform.getMatrix(mat);
-        for (int idx = 0; idx < mat.length; idx++) {
-            theMatrix.add(new Double(mat[idx]));
-        }
+        List<Double> matrix = createGradientTransform(gp);
 
         double ar = gp.getRadius();
         Point2D ac = gp.getCenterPoint();
@@ -996,10 +972,25 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
         PDFPattern myPat = gradientFactory.createGradient(true, colSpace, someColors, theBounds,
-                theCoords, theMatrix);
+                theCoords, matrix);
         currentStream.write(myPat.getColorSpaceOut(fill));
 
         return true;
+    }
+
+    private List<Double> createGradientTransform(MultipleGradientPaint gp) {
+        // Build proper transform from gradient space to page space
+        // ('Patterns' don't get userspace transform).
+        AffineTransform transform = new AffineTransform(getBaseTransform());
+        transform.concatenate(getTransform());
+        transform.concatenate(gp.getTransform());
+        List<Double> matrix = new java.util.ArrayList<Double>(6);
+        double[] m = new double[6];
+        transform.getMatrix(m);
+        for (double d : m) {
+            matrix.add(Double.valueOf(d));
+        }
+        return matrix;
     }
 
     private boolean createPattern(PatternPaint pp, boolean fill) {
