@@ -127,14 +127,6 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
         double endX = end.getTranslateX();
         double endY = end.getTranslateY();
 
-        double width = endX - startX;
-        double height = endY - startY;
-
-        startX = startX + width * fractions[0];
-        endX = endX - width * (1 - fractions[fractions.length - 1]);
-        startY = startY + (height * fractions[0]);
-        endY =  endY - height * (1 - fractions[fractions.length - 1]);
-
         theCoords.add(startX);
         theCoords.add(startY);
         theCoords.add(endX);
@@ -142,6 +134,9 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
 
         List<Color> someColors = new java.util.ArrayList<Color>();
+        if (fractions[0] > 0f) {
+            someColors.add(cols[0]);
+        }
         for (int count = 0; count < cols.length; count++) {
             Color c1 = cols[count];
             if (c1.getAlpha() != 255) {
@@ -149,10 +144,15 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
             }
             someColors.add(c1);
         }
+        if (fractions[fractions.length - 1] < 1f) {
+            someColors.add(cols[cols.length - 1]);
+        }
         List<Double> theBounds = new java.util.ArrayList<Double>();
-        for (int count = 1; count < fractions.length - 1; count++) {
+        for (int count = 0; count < fractions.length; count++) {
             float offset = fractions[count];
-            theBounds.add(Double.valueOf(offset));
+            if (0f < offset && offset < 1f) {
+                theBounds.add(new Double(offset));
+            }
         }
         PDFDeviceColorSpace colSpace;
         colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
@@ -201,13 +201,16 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
         theCoords.add(centreX);
         theCoords.add(centreY);
-        theCoords.add(radius * rgp.getFractions()[0]);
+        theCoords.add(0d);
         theCoords.add(focusX);
         theCoords.add(focusY);
-        theCoords.add(radius * fractions[fractions.length - 1]);
+        theCoords.add(radius);
 
         Color[] cols = rgp.getColors();
         List<Color> someColors = new java.util.ArrayList<Color>();
+        if (fractions[0] > 0f) {
+            someColors.add(cols[0]);
+        }
         for (int count = 0; count < cols.length; count++) {
             Color cc = cols[count];
             if (cc.getAlpha() != 255) {
@@ -219,11 +222,16 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
             someColors.add(cc);
         }
+        if (fractions[fractions.length - 1] < 1f) {
+            someColors.add(cols[cols.length - 1]);
+        }
 
         List<Double> theBounds = new java.util.ArrayList<Double>();
-        for (int count = 1; count < fractions.length - 1; count++) {
+        for (int count = 0; count < fractions.length; count++) {
             float offset = fractions[count];
-            theBounds.add(Double.valueOf(offset));
+            if (0f < offset && offset < 1f) {
+                theBounds.add(new Double(offset));
+            }
         }
         PDFDeviceColorSpace colSpace;
         colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
