@@ -818,179 +818,187 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                     gpaint.isCyclic() ? LinearGradientPaint.REPEAT : LinearGradientPaint.NO_CYCLE);
         }
         if (paint instanceof LinearGradientPaint) {
-            LinearGradientPaint gp = (LinearGradientPaint)paint;
-
-            // This code currently doesn't support 'repeat'.
-            // For linear gradients it is possible to construct
-            // a 'tile' that is repeated with a PDF pattern, but
-            // it would be very tricky as you would have to rotate
-            // the coordinate system so the repeat was axially
-            // aligned.  At this point I'm just going to rasterize it.
-            MultipleGradientPaint.CycleMethodEnum cycle = gp.getCycleMethod();
-            if (cycle != MultipleGradientPaint.NO_CYCLE) {
-                return false;
-            }
-
-            Color[] cols = gp.getColors();
-            float[] fractions = gp.getFractions();
-
-            // Build proper transform from gradient space to page space
-            // ('Patterns' don't get userspace transform).
-            AffineTransform transform;
-            transform = new AffineTransform(getBaseTransform());
-            transform.concatenate(getTransform());
-            transform.concatenate(gp.getTransform());
-
-            List<Double> theMatrix = new java.util.ArrayList<Double>();
-            double [] mat = new double[6];
-            transform.getMatrix(mat);
-            for (int idx = 0; idx < mat.length; idx++) {
-                theMatrix.add(new Double(mat[idx]));
-            }
-
-            Point2D p1 = gp.getStartPoint();
-            Point2D p2 = gp.getEndPoint();
-            List<Double> theCoords = new java.util.ArrayList<Double>();
-            theCoords.add(new Double(p1.getX()));
-            theCoords.add(new Double(p1.getY()));
-            theCoords.add(new Double(p2.getX()));
-            theCoords.add(new Double(p2.getY()));
-
-            List<Boolean> theExtend = new java.util.ArrayList<Boolean>();
-            theExtend.add(Boolean.TRUE);
-            theExtend.add(Boolean.TRUE);
-
-            List<Double> theDomain = new java.util.ArrayList<Double>();
-            theDomain.add(new Double(0));
-            theDomain.add(new Double(1));
-
-            List<Double> theEncode = new java.util.ArrayList<Double>();
-            theEncode.add(new Double(0));
-            theEncode.add(new Double(1));
-            theEncode.add(new Double(0));
-            theEncode.add(new Double(1));
-
-            List<Double> theBounds = new java.util.ArrayList<Double>();
-
-            List<Color> someColors = new java.util.ArrayList<Color>();
-
-            if (fractions[0] != 0f) {
-                someColors.add(cols[0]);
-            }
-            for (int count = 0; count < cols.length; count++) {
-                Color c1 = cols[count];
-                if (c1.getAlpha() != 255) {
-                    return false;  // PDF can't do alpha
-                }
-
-                //PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
-                //                               c1.getBlue());
-                someColors.add(c1);
-                if (0f < fractions[count] && fractions[count] < 1f) {
-                    theBounds.add(new Double(fractions[count]));
-                }
-            }
-            if (fractions[fractions.length - 1] < 1f) {
-                someColors.add(cols[cols.length - 1]);
-            }
-
-            //Gradients are currently restricted to sRGB
-            PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-            PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
-            PDFPattern myPat = gradientFactory.createGradient(false, colSpace, someColors, theBounds,
-                    theCoords, theMatrix);
-            currentStream.write(myPat.getColorSpaceOut(fill));
-
-            return true;
+            return applyLinearGradient(paint, fill);
         }
         if (paint instanceof RadialGradientPaint) {
-            RadialGradientPaint rgp = (RadialGradientPaint)paint;
-
-            // There is essentially no way to support repeats
-            // in PDF for radial gradients (the one option would
-            // be to 'grow' the outer circle until it fully covered
-            // the bounds and then grow the stops accordingly, the
-            // problem is that this may require an extremely large
-            // number of stops for cases where the focus is near
-            // the edge of the outer circle).  so we rasterize.
-            MultipleGradientPaint.CycleMethodEnum cycle = rgp.getCycleMethod();
-            if (cycle != MultipleGradientPaint.NO_CYCLE) {
-                return false;
-            }
-
-            AffineTransform transform;
-            transform = new AffineTransform(getBaseTransform());
-            transform.concatenate(getTransform());
-            transform.concatenate(rgp.getTransform());
-
-            List<Double> theMatrix = new java.util.ArrayList<Double>();
-            double [] mat = new double[6];
-            transform.getMatrix(mat);
-            for (int idx = 0; idx < mat.length; idx++) {
-                theMatrix.add(new Double(mat[idx]));
-            }
-
-            double ar = rgp.getRadius();
-            Point2D ac = rgp.getCenterPoint();
-            Point2D af = rgp.getFocusPoint();
-
-            List<Double> theCoords = new java.util.ArrayList<Double>();
-            double dx = af.getX() - ac.getX();
-            double dy = af.getY() - ac.getY();
-            double d = Math.sqrt(dx * dx + dy * dy);
-            if (d > ar) {
-                // the center point af must be within the circle with
-                // radius ar centered at ac so limit it to that.
-                double scale = (ar * .9999) / d;
-                dx = dx * scale;
-                dy = dy * scale;
-            }
-
-            theCoords.add(new Double(ac.getX() + dx)); // Fx
-            theCoords.add(new Double(ac.getY() + dy)); // Fy
-            theCoords.add(new Double(0));
-            theCoords.add(new Double(ac.getX()));
-            theCoords.add(new Double(ac.getY()));
-            theCoords.add(new Double(ar));
-
-            float[] fractions = rgp.getFractions();
-            Color[] cols = rgp.getColors();
-            List<Color> someColors = new java.util.ArrayList<Color>();
-            if (fractions[0] > 0f) {
-                someColors.add(cols[0]);
-            }
-            for (int count = 0; count < cols.length; count++) {
-                Color cc = cols[count];
-                if (cc.getAlpha() != 255) {
-                    return false;  // PDF can't do alpha
-                }
-
-                someColors.add(cc);
-            }
-            if (fractions[fractions.length - 1] < 1f) {
-                someColors.add(cols[cols.length - 1]);
-            }
-
-            List<Double> theBounds = new java.util.ArrayList<Double>();
-            for (int count = 0; count < fractions.length; count++) {
-                float offset = fractions[count];
-                if (0f < offset && offset < 1f) {
-                    theBounds.add(new Double(offset));
-                }
-            }
-            PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-            PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
-            PDFPattern myPat = gradientFactory.createGradient(true, colSpace, someColors, theBounds,
-                    theCoords, theMatrix);
-            currentStream.write(myPat.getColorSpaceOut(fill));
-
-            return true;
+            return applyRadialGradient(paint, fill);
         }
         if (paint instanceof PatternPaint) {
             PatternPaint pp = (PatternPaint)paint;
             return createPattern(pp, fill);
         }
         return false; // unknown paint
+    }
+
+    private boolean applyLinearGradient(Paint paint, boolean fill) {
+        LinearGradientPaint gp = (LinearGradientPaint)paint;
+
+        // This code currently doesn't support 'repeat'.
+        // For linear gradients it is possible to construct
+        // a 'tile' that is repeated with a PDF pattern, but
+        // it would be very tricky as you would have to rotate
+        // the coordinate system so the repeat was axially
+        // aligned.  At this point I'm just going to rasterize it.
+        MultipleGradientPaint.CycleMethodEnum cycle = gp.getCycleMethod();
+        if (cycle != MultipleGradientPaint.NO_CYCLE) {
+            return false;
+        }
+
+        Color[] cols = gp.getColors();
+        float[] fractions = gp.getFractions();
+
+        // Build proper transform from gradient space to page space
+        // ('Patterns' don't get userspace transform).
+        AffineTransform transform;
+        transform = new AffineTransform(getBaseTransform());
+        transform.concatenate(getTransform());
+        transform.concatenate(gp.getTransform());
+
+        List<Double> theMatrix = new java.util.ArrayList<Double>();
+        double [] mat = new double[6];
+        transform.getMatrix(mat);
+        for (int idx = 0; idx < mat.length; idx++) {
+            theMatrix.add(new Double(mat[idx]));
+        }
+
+        Point2D p1 = gp.getStartPoint();
+        Point2D p2 = gp.getEndPoint();
+        List<Double> theCoords = new java.util.ArrayList<Double>();
+        theCoords.add(new Double(p1.getX()));
+        theCoords.add(new Double(p1.getY()));
+        theCoords.add(new Double(p2.getX()));
+        theCoords.add(new Double(p2.getY()));
+
+        List<Boolean> theExtend = new java.util.ArrayList<Boolean>();
+        theExtend.add(Boolean.TRUE);
+        theExtend.add(Boolean.TRUE);
+
+        List<Double> theDomain = new java.util.ArrayList<Double>();
+        theDomain.add(new Double(0));
+        theDomain.add(new Double(1));
+
+        List<Double> theEncode = new java.util.ArrayList<Double>();
+        theEncode.add(new Double(0));
+        theEncode.add(new Double(1));
+        theEncode.add(new Double(0));
+        theEncode.add(new Double(1));
+
+        List<Double> theBounds = new java.util.ArrayList<Double>();
+
+        List<Color> someColors = new java.util.ArrayList<Color>();
+
+        if (fractions[0] != 0f) {
+            someColors.add(cols[0]);
+        }
+        for (int count = 0; count < cols.length; count++) {
+            Color c1 = cols[count];
+            if (c1.getAlpha() != 255) {
+                return false;  // PDF can't do alpha
+            }
+
+            //PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
+            //                               c1.getBlue());
+            someColors.add(c1);
+            if (0f < fractions[count] && fractions[count] < 1f) {
+                theBounds.add(new Double(fractions[count]));
+            }
+        }
+        if (fractions[fractions.length - 1] < 1f) {
+            someColors.add(cols[cols.length - 1]);
+        }
+
+        //Gradients are currently restricted to sRGB
+        PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
+        PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
+        PDFPattern myPat = gradientFactory.createGradient(false, colSpace, someColors, theBounds,
+                theCoords, theMatrix);
+        currentStream.write(myPat.getColorSpaceOut(fill));
+
+        return true;
+    }
+
+    private boolean applyRadialGradient(Paint paint, boolean fill) {
+        RadialGradientPaint rgp = (RadialGradientPaint)paint;
+
+        // There is essentially no way to support repeats
+        // in PDF for radial gradients (the one option would
+        // be to 'grow' the outer circle until it fully covered
+        // the bounds and then grow the stops accordingly, the
+        // problem is that this may require an extremely large
+        // number of stops for cases where the focus is near
+        // the edge of the outer circle).  so we rasterize.
+        MultipleGradientPaint.CycleMethodEnum cycle = rgp.getCycleMethod();
+        if (cycle != MultipleGradientPaint.NO_CYCLE) {
+            return false;
+        }
+
+        AffineTransform transform;
+        transform = new AffineTransform(getBaseTransform());
+        transform.concatenate(getTransform());
+        transform.concatenate(rgp.getTransform());
+
+        List<Double> theMatrix = new java.util.ArrayList<Double>();
+        double [] mat = new double[6];
+        transform.getMatrix(mat);
+        for (int idx = 0; idx < mat.length; idx++) {
+            theMatrix.add(new Double(mat[idx]));
+        }
+
+        double ar = rgp.getRadius();
+        Point2D ac = rgp.getCenterPoint();
+        Point2D af = rgp.getFocusPoint();
+
+        List<Double> theCoords = new java.util.ArrayList<Double>();
+        double dx = af.getX() - ac.getX();
+        double dy = af.getY() - ac.getY();
+        double d = Math.sqrt(dx * dx + dy * dy);
+        if (d > ar) {
+            // the center point af must be within the circle with
+            // radius ar centered at ac so limit it to that.
+            double scale = (ar * .9999) / d;
+            dx = dx * scale;
+            dy = dy * scale;
+        }
+
+        theCoords.add(new Double(ac.getX() + dx)); // Fx
+        theCoords.add(new Double(ac.getY() + dy)); // Fy
+        theCoords.add(new Double(0));
+        theCoords.add(new Double(ac.getX()));
+        theCoords.add(new Double(ac.getY()));
+        theCoords.add(new Double(ar));
+
+        float[] fractions = rgp.getFractions();
+        Color[] cols = rgp.getColors();
+        List<Color> someColors = new java.util.ArrayList<Color>();
+        if (fractions[0] > 0f) {
+            someColors.add(cols[0]);
+        }
+        for (int count = 0; count < cols.length; count++) {
+            Color cc = cols[count];
+            if (cc.getAlpha() != 255) {
+                return false;  // PDF can't do alpha
+            }
+
+            someColors.add(cc);
+        }
+        if (fractions[fractions.length - 1] < 1f) {
+            someColors.add(cols[cols.length - 1]);
+        }
+
+        List<Double> theBounds = new java.util.ArrayList<Double>();
+        for (int count = 0; count < fractions.length; count++) {
+            float offset = fractions[count];
+            if (0f < offset && offset < 1f) {
+                theBounds.add(new Double(offset));
+            }
+        }
+        PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
+        PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
+        PDFPattern myPat = gradientFactory.createGradient(true, colSpace, someColors, theBounds,
+                theCoords, theMatrix);
+        currentStream.write(myPat.getColorSpaceOut(fill));
+
+        return true;
     }
 
     private boolean createPattern(PatternPaint pp, boolean fill) {
