@@ -856,13 +856,13 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
         List<Double> matrix = createGradientTransform(gp);
 
-        Point2D p1 = gp.getStartPoint();
-        Point2D p2 = gp.getEndPoint();
-        List<Double> theCoords = new java.util.ArrayList<Double>();
-        theCoords.add(new Double(p1.getX()));
-        theCoords.add(new Double(p1.getY()));
-        theCoords.add(new Double(p2.getX()));
-        theCoords.add(new Double(p2.getY()));
+        Point2D startPoint = gp.getStartPoint();
+        Point2D endPoint = gp.getEndPoint();
+        List<Double> coords = new java.util.ArrayList<Double>(4);
+        coords.add(new Double(startPoint.getX()));
+        coords.add(new Double(startPoint.getY()));
+        coords.add(new Double(endPoint.getX()));
+        coords.add(new Double(endPoint.getY()));
 
         List<Color> colors = createGradientColors(gp);
 
@@ -871,10 +871,9 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         //Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
-        PDFPattern myPat = gradientFactory.createGradient(false, colSpace, colors, bounds,
-                theCoords, matrix);
-        currentStream.write(myPat.getColorSpaceOut(fill));
+        PDFPattern pattern = gradientFactory.createGradient(false, colSpace, colors, bounds, coords, matrix);
 
+        currentStream.write(pattern.getColorSpaceOut(fill));
         return true;
     }
 
@@ -898,7 +897,6 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         double ar = gp.getRadius();
         Point2D ac = gp.getCenterPoint();
         Point2D af = gp.getFocusPoint();
-
         List<Double> theCoords = new java.util.ArrayList<Double>();
         double dx = af.getX() - ac.getX();
         double dy = af.getY() - ac.getY();
@@ -925,10 +923,9 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         //Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
-        PDFPattern myPat = gradientFactory.createGradient(true, colSpace, colors, bounds,
-                theCoords, matrix);
-        currentStream.write(myPat.getColorSpaceOut(fill));
+        PDFPattern pattern = gradientFactory.createGradient(true, colSpace, colors, bounds, theCoords, matrix);
 
+        currentStream.write(pattern.getColorSpaceOut(fill));
         return true;
     }
 
