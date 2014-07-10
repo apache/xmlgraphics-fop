@@ -17,7 +17,6 @@
 
 package org.apache.fop.render.shading;
 
-import java.awt.Color;
 import java.util.List;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
@@ -28,35 +27,28 @@ import org.apache.fop.svg.PDFGraphics2D;
 
 public class PDFGradientFactory extends GradientFactory<PDFPattern> {
 
-    private final GradientRegistrar registrar;
+    private final PDFGraphics2D graphics2D;
 
     public PDFGradientFactory(PDFGraphics2D pdfGraphics2D) {
-        this.registrar = pdfGraphics2D;
-    }
-
-    @Override
-    public PDFPattern createGradient(boolean radial, PDFDeviceColorSpace theColorspace, List<Color> theColors,
-            List<Double> theBounds, List<Double> theCoords, List<Double> theMatrix) {
-        return (PDFPattern)makeGradient(radial, theColorspace, theColors, theBounds,
-                theCoords, theMatrix);
+        this.graphics2D = pdfGraphics2D;
     }
 
     @Override
     public Function makeFunction(int functionType, List<Double> theDomain,
             List<Double> theRange, List<Function> theFunctions,
             List<Double> theBounds, List<Double> theEncode) {
-        Function newFunction = new PDFFunction(functionType, theDomain, theRange, theFunctions,
+        PDFFunction newFunction = new PDFFunction(functionType, theDomain, theRange, theFunctions,
                     theBounds, theEncode);
-        newFunction = registrar.registerFunction(newFunction);
+        newFunction = graphics2D.registerFunction(newFunction);
         return newFunction;
     }
 
     public Function makeFunction(int functionType, List<Double> theDomain,
             List<Double> theRange, List<Double> theCZero, List<Double> theCOne,
             double theInterpolationExponentN) {
-        Function newFunction = new PDFFunction(functionType, theDomain, theRange, theCZero,
+        PDFFunction newFunction = new PDFFunction(functionType, theDomain, theRange, theCZero,
                     theCOne, theInterpolationExponentN);
-        newFunction = registrar.registerFunction(newFunction);
+        newFunction = graphics2D.registerFunction(newFunction);
         return newFunction;
     }
 
@@ -65,18 +57,18 @@ public class PDFGradientFactory extends GradientFactory<PDFPattern> {
             PDFDeviceColorSpace theColorSpace, List<Double> theBackground, List<Double> theBBox,
             boolean theAntiAlias, List<Double> theCoords, List<Double> theDomain,
             Function theFunction, List<Integer> theExtend) {
-        Shading newShading = new PDFShading(theShadingType, theColorSpace, theBackground,
+        PDFShading newShading = new PDFShading(theShadingType, theColorSpace, theBackground,
                     theBBox, theAntiAlias, theCoords, theDomain, theFunction, theExtend);
-        newShading = registrar.registerShading(newShading);
+        newShading = graphics2D.registerShading(newShading);
         return newShading;
     }
 
     @Override
-    public Pattern makePattern(int thePatternType, Shading theShading, List theXUID,
+    public PDFPattern makePattern(int thePatternType, Shading theShading, List theXUID,
             StringBuffer theExtGState, List<Double> theMatrix) {
-        Pattern newPattern = new PDFPattern(thePatternType, theShading, theXUID, theExtGState,
+        PDFPattern newPattern = new PDFPattern(thePatternType, theShading, theXUID, theExtGState,
                     theMatrix);
-        newPattern = registrar.registerPattern(newPattern);
+        newPattern = graphics2D.registerPattern(newPattern);
         return newPattern;
     }
 
