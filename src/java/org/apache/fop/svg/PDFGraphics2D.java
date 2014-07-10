@@ -97,7 +97,6 @@ import org.apache.fop.render.pdf.ImageRawCCITTFaxAdapter;
 import org.apache.fop.render.pdf.ImageRawJPEGAdapter;
 import org.apache.fop.render.pdf.ImageRenderedAdapter;
 import org.apache.fop.render.shading.Function;
-import org.apache.fop.render.shading.GradientFactory;
 import org.apache.fop.render.shading.GradientRegistrar;
 import org.apache.fop.render.shading.PDFGradientFactory;
 import org.apache.fop.render.shading.Pattern;
@@ -897,7 +896,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
             //Gradients are currently restricted to sRGB
             PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-            PDFGradientFactory gradientFactory = (PDFGradientFactory)GradientFactory.newInstance(this);
+            PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
             PDFPattern myPat = gradientFactory.createGradient(false, colSpace, someColors, theBounds,
                     theCoords, theMatrix);
             currentStream.write(myPat.getColorSpaceOut(fill));
@@ -980,7 +979,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 }
             }
             PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-            PDFGradientFactory gradientFactory = (PDFGradientFactory) GradientFactory.newInstance(this);
+            PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
             PDFPattern myPat = gradientFactory.createGradient(true, colSpace, someColors, theBounds,
                     theCoords, theMatrix);
             currentStream.write(myPat.getColorSpaceOut(fill));

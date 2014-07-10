@@ -24,8 +24,15 @@ import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFFunction;
 import org.apache.fop.pdf.PDFPattern;
 import org.apache.fop.pdf.PDFShading;
+import org.apache.fop.svg.PDFGraphics2D;
 
 public class PDFGradientFactory extends GradientFactory {
+
+    private final GradientRegistrar registrar;
+
+    public PDFGradientFactory(PDFGraphics2D pdfGraphics2D) {
+        this.registrar = pdfGraphics2D;
+    }
 
     @Override
     public PDFPattern createGradient(boolean radial, PDFDeviceColorSpace theColorspace, List<Color> theColors,

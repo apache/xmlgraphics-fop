@@ -26,25 +26,8 @@ import java.util.List;
 import org.apache.xmlgraphics.java2d.color.ColorUtil;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
-import org.apache.fop.render.ps.svg.PSSVGGraphics2D;
 
 public abstract class GradientFactory {
-
-    static GradientRegistrar registrar;
-
-    /**
-     * Constructor
-     * @param registrar The object used to register new embedded objects in the
-     * output format.
-     */
-    public static GradientFactory newInstance(GradientRegistrar theRegistrar) {
-        registrar = theRegistrar;
-        if (registrar instanceof PSSVGGraphics2D) {
-            return new PSGradientFactory();
-        } else {
-            return new PDFGradientFactory();
-        }
-    }
 
     /**
      * Creates a new gradient

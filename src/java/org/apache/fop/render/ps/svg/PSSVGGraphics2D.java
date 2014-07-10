@@ -40,7 +40,6 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.render.shading.Function;
-import org.apache.fop.render.shading.GradientFactory;
 import org.apache.fop.render.shading.GradientRegistrar;
 import org.apache.fop.render.shading.PSGradientFactory;
 import org.apache.fop.render.shading.Pattern;
@@ -148,7 +147,7 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
         PDFDeviceColorSpace colSpace;
         colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
-        PSGradientFactory gradientFactory = (PSGradientFactory)GradientFactory.newInstance(this);
+        PSGradientFactory gradientFactory = new PSGradientFactory();
         PSPattern myPattern = gradientFactory.createGradient(false, colSpace,
                 someColors, theBounds, theCoords, theMatrix);
 
@@ -235,7 +234,7 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
         PDFDeviceColorSpace colSpace;
         colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
-        PSGradientFactory gradientFactory = (PSGradientFactory)GradientFactory.newInstance(this);
+        PSGradientFactory gradientFactory = new PSGradientFactory();
         PSPattern myPattern = gradientFactory.createGradient(true, colSpace,
                 someColors, theBounds, theCoords, theMatrix);
 
