@@ -844,9 +844,6 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             return false;
         }
 
-        Color[] cols = gp.getColors();
-        float[] fractions = gp.getFractions();
-
         // Build proper transform from gradient space to page space
         // ('Patterns' don't get userspace transform).
         AffineTransform transform;
@@ -883,28 +880,29 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         theEncode.add(new Double(0));
         theEncode.add(new Double(1));
 
-        List<Double> theBounds = new java.util.ArrayList<Double>();
-
+        float[] fractions = gp.getFractions();
+        Color[] cols = gp.getColors();
         List<Color> someColors = new java.util.ArrayList<Color>();
-
-        if (fractions[0] != 0f) {
+        if (fractions[0] > 0f) {
             someColors.add(cols[0]);
         }
         for (int count = 0; count < cols.length; count++) {
-            Color c1 = cols[count];
-            if (c1.getAlpha() != 255) {
+            Color cc = cols[count];
+            if (cc.getAlpha() != 255) {
                 return false;  // PDF can't do alpha
             }
-
-            //PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
-            //                               c1.getBlue());
-            someColors.add(c1);
-            if (0f < fractions[count] && fractions[count] < 1f) {
-                theBounds.add(new Double(fractions[count]));
-            }
+            someColors.add(cc);
         }
         if (fractions[fractions.length - 1] < 1f) {
             someColors.add(cols[cols.length - 1]);
+        }
+
+        List<Double> theBounds = new java.util.ArrayList<Double>();
+        for (int count = 0; count < fractions.length; count++) {
+            float offset = fractions[count];
+            if (0f < offset && offset < 1f) {
+                theBounds.add(new Double(offset));
+            }
         }
 
         //Gradients are currently restricted to sRGB
@@ -918,7 +916,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     private boolean applyRadialGradient(Paint paint, boolean fill) {
-        RadialGradientPaint rgp = (RadialGradientPaint)paint;
+        RadialGradientPaint gp = (RadialGradientPaint)paint;
 
         // There is essentially no way to support repeats
         // in PDF for radial gradients (the one option would
@@ -927,15 +925,17 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         // problem is that this may require an extremely large
         // number of stops for cases where the focus is near
         // the edge of the outer circle).  so we rasterize.
-        MultipleGradientPaint.CycleMethodEnum cycle = rgp.getCycleMethod();
+        MultipleGradientPaint.CycleMethodEnum cycle = gp.getCycleMethod();
         if (cycle != MultipleGradientPaint.NO_CYCLE) {
             return false;
         }
 
+        // Build proper transform from gradient space to page space
+        // ('Patterns' don't get userspace transform).
         AffineTransform transform;
         transform = new AffineTransform(getBaseTransform());
         transform.concatenate(getTransform());
-        transform.concatenate(rgp.getTransform());
+        transform.concatenate(gp.getTransform());
 
         List<Double> theMatrix = new java.util.ArrayList<Double>();
         double [] mat = new double[6];
@@ -944,9 +944,9 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             theMatrix.add(new Double(mat[idx]));
         }
 
-        double ar = rgp.getRadius();
-        Point2D ac = rgp.getCenterPoint();
-        Point2D af = rgp.getFocusPoint();
+        double ar = gp.getRadius();
+        Point2D ac = gp.getCenterPoint();
+        Point2D af = gp.getFocusPoint();
 
         List<Double> theCoords = new java.util.ArrayList<Double>();
         double dx = af.getX() - ac.getX();
@@ -967,8 +967,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         theCoords.add(new Double(ac.getY()));
         theCoords.add(new Double(ar));
 
-        float[] fractions = rgp.getFractions();
-        Color[] cols = rgp.getColors();
+        float[] fractions = gp.getFractions();
+        Color[] cols = gp.getColors();
         List<Color> someColors = new java.util.ArrayList<Color>();
         if (fractions[0] > 0f) {
             someColors.add(cols[0]);
@@ -978,7 +978,6 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             if (cc.getAlpha() != 255) {
                 return false;  // PDF can't do alpha
             }
-
             someColors.add(cc);
         }
         if (fractions[fractions.length - 1] < 1f) {
@@ -992,6 +991,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 theBounds.add(new Double(offset));
             }
         }
+
+        //Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
         PDFPattern myPat = gradientFactory.createGradient(true, colSpace, someColors, theBounds,
