@@ -208,13 +208,6 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
         return bounds;
     }
 
-    private AffineTransform applyTransform(AffineTransform base, double posX, double posY) {
-        AffineTransform result = AffineTransform.getTranslateInstance(posX, posY);
-        AffineTransform orig = base;
-        orig.concatenate(result);
-        return orig;
-    }
-
     protected AffineTransform getBaseTransform() {
         AffineTransform at = new AffineTransform(this.getTransform());
         return at;
