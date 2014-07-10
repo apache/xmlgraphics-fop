@@ -75,11 +75,10 @@ public abstract class GradientFactory<P extends Pattern> {
     private P createGradient(MultipleGradientPaint gradient, List<Double> coords,
             AffineTransform baseTransform, AffineTransform transform) {
         List<Double> matrix = createTransform(gradient, baseTransform, transform);
-        List<Color> colors = createColors(gradient);
         List<Double> bounds = createBounds(gradient);
+        List<Function> functions = createFunctions(gradient);
         //Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-        List<Function> functions = createFunctions(colors);
         Function function = makeFunction(3, null, null, functions, bounds, null);
         Shading shading = makeShading(gradient instanceof LinearGradientPaint ? 2 : 3,
                 colSpace, null, null, false, coords, null, function, null);
@@ -100,22 +99,6 @@ public abstract class GradientFactory<P extends Pattern> {
         return matrix;
     }
 
-    private List<Color> createColors(MultipleGradientPaint gradient) {
-        Color[] svgColors = gradient.getColors();
-        List<Color> gradientColors = new ArrayList<Color>(svgColors.length + 2);
-        float[] fractions = gradient.getFractions();
-        if (fractions[0] > 0f) {
-            gradientColors.add(getsRGBColor(svgColors[0]));
-        }
-        for (Color c : svgColors) {
-            gradientColors.add(getsRGBColor(c));
-        }
-        if (fractions[fractions.length - 1] < 1f) {
-            gradientColors.add(getsRGBColor(svgColors[svgColors.length - 1]));
-        }
-        return gradientColors;
-    }
-
     private Color getsRGBColor(Color c) {
         // Color space must be consistent, so convert to sRGB if necessary
         // TODO really?
@@ -134,7 +117,8 @@ public abstract class GradientFactory<P extends Pattern> {
         return bounds;
     }
 
-    private List<Function> createFunctions(List<Color> colors) {
+    private List<Function> createFunctions(MultipleGradientPaint gradient) {
+        List<Color> colors = createColors(gradient);
         List<Function> functions = new ArrayList<Function>();
         for (int currentPosition = 0, lastPosition = colors.size() - 1;
                 currentPosition < lastPosition;
@@ -147,6 +131,22 @@ public abstract class GradientFactory<P extends Pattern> {
             functions.add(function);
         }
         return functions;
+    }
+
+    private List<Color> createColors(MultipleGradientPaint gradient) {
+        Color[] svgColors = gradient.getColors();
+        List<Color> gradientColors = new ArrayList<Color>(svgColors.length + 2);
+        float[] fractions = gradient.getFractions();
+        if (fractions[0] > 0f) {
+            gradientColors.add(getsRGBColor(svgColors[0]));
+        }
+        for (Color c : svgColors) {
+            gradientColors.add(getsRGBColor(c));
+        }
+        if (fractions[fractions.length - 1] < 1f) {
+            gradientColors.add(getsRGBColor(svgColors[svgColors.length - 1]));
+        }
+        return gradientColors;
     }
 
     public abstract Function makeFunction(int functionType, List<Double> theDomain,
