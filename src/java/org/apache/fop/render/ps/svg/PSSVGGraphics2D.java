@@ -102,16 +102,7 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
             return;
         }
 
-        AffineTransform transform = new AffineTransform(getBaseTransform());
-        transform.concatenate(getTransform());
-        transform.concatenate(gp.getTransform());
-
-        List<Double> theMatrix = new ArrayList<Double>();
-        double [] mat = new double[6];
-        transform.getMatrix(mat);
-        for (int idx = 0; idx < mat.length; idx++) {
-            theMatrix.add(Double.valueOf(mat[idx]));
-        }
+        List<Double> matrix = createGradientTransform(gp);
 
         List<Double> theCoords = new java.util.ArrayList<Double>();
         theCoords.add(gp.getStartPoint().getX());
@@ -146,13 +137,11 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
         PSGradientFactory gradientFactory = new PSGradientFactory();
         PSPattern myPattern = gradientFactory.createGradient(false, colSpace,
-                someColors, theBounds, theCoords, theMatrix);
+                someColors, theBounds, theCoords, matrix);
 
         gen.write(myPattern.toString());
 
     }
-
-
 
     private void handleRadialGradient(RadialGradientPaint gp, PSGenerator gen) throws IOException {
         MultipleGradientPaint.CycleMethodEnum cycle = gp.getCycleMethod();
@@ -160,16 +149,7 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
             return;
         }
 
-        AffineTransform transform = new AffineTransform(getBaseTransform());
-        transform.concatenate(getTransform());
-        transform.concatenate(gp.getTransform());
-
-        List<Double> theMatrix = new ArrayList<Double>();
-        double [] mat = new double[6];
-        transform.getMatrix(mat);
-        for (int idx = 0; idx < mat.length; idx++) {
-            theMatrix.add(Double.valueOf(mat[idx]));
-        }
+        List<Double> matrix = createGradientTransform(gp);
 
         double ar = gp.getRadius();
         Point2D ac = gp.getCenterPoint();
@@ -219,9 +199,22 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
         PSGradientFactory gradientFactory = new PSGradientFactory();
         PSPattern myPattern = gradientFactory.createGradient(true, colSpace,
-                someColors, theBounds, theCoords, theMatrix);
+                someColors, theBounds, theCoords, matrix);
 
         gen.write(myPattern.toString());
+    }
+
+    private List<Double> createGradientTransform(MultipleGradientPaint gradient) {
+        AffineTransform transform = new AffineTransform(getBaseTransform());
+        transform.concatenate(getTransform());
+        transform.concatenate(gradient.getTransform());
+        List<Double> matrix = new ArrayList<Double>(6);
+        double[] m = new double[6];
+        transform.getMatrix(m);
+        for (double d : m) {
+            matrix.add(Double.valueOf(d));
+        }
+        return matrix;
     }
 
     private AffineTransform applyTransform(AffineTransform base, double posX, double posY) {
