@@ -79,7 +79,11 @@ public abstract class GradientFactory<P extends Pattern> {
         List<Double> bounds = createBounds(gradient);
         //Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-        return makeGradient(gradient instanceof RadialGradientPaint, colSpace, colors, bounds, coords, matrix);
+        List<Function> functions = createFunctions(colors);
+        Function function = makeFunction(3, null, null, functions, bounds, null);
+        Shading shading = makeShading(gradient instanceof LinearGradientPaint ? 2 : 3,
+                colSpace, null, null, false, coords, null, function, null);
+        return makePattern(2, shading, null, null, matrix);
     }
 
     private List<Double> createTransform(MultipleGradientPaint gradient,
@@ -128,25 +132,6 @@ public abstract class GradientFactory<P extends Pattern> {
             }
         }
         return bounds;
-    }
-
-    /**
-     * Creates a new gradient.
-     *
-     * @param radial whether the gradient is linear or radial
-     * @param colorspace the colorspace used in PDF and Postscript
-     * @param colors the colors to be used in the gradient
-     * @param bounds the bounds of each color
-     * @param coords the coordinates of the gradient
-     * @param matrix the transformation matrix
-     * @return the Pattern object of the gradient
-     */
-    protected P makeGradient(boolean radial, PDFDeviceColorSpace colorspace,
-            List<Color> colors, List<Double> bounds, List<Double> coords, List<Double> matrix) {
-        List<Function> functions = createFunctions(colors);
-        Function function = makeFunction(3, null, null, functions, bounds, null);
-        Shading shading = makeShading(radial ? 3 : 2, colorspace, null, null, false, coords, null, function, null);
-        return makePattern(2, shading, null, null, matrix);
     }
 
     private List<Function> createFunctions(List<Color> colors) {
