@@ -880,19 +880,12 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
         List<Color> colors = createGradientColors(gp);
 
-        float[] fractions = gp.getFractions();
-        List<Double> theBounds = new java.util.ArrayList<Double>();
-        for (int count = 0; count < fractions.length; count++) {
-            float offset = fractions[count];
-            if (0f < offset && offset < 1f) {
-                theBounds.add(new Double(offset));
-            }
-        }
+        List<Double> bounds = createGradientBounds(gp);
 
         //Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
-        PDFPattern myPat = gradientFactory.createGradient(false, colSpace, colors, theBounds,
+        PDFPattern myPat = gradientFactory.createGradient(false, colSpace, colors, bounds,
                 theCoords, matrix);
         currentStream.write(myPat.getColorSpaceOut(fill));
 
@@ -941,19 +934,12 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
         List<Color> colors = createGradientColors(gp);
 
-        float[] fractions = gp.getFractions();
-        List<Double> theBounds = new java.util.ArrayList<Double>();
-        for (int count = 0; count < fractions.length; count++) {
-            float offset = fractions[count];
-            if (0f < offset && offset < 1f) {
-                theBounds.add(new Double(offset));
-            }
-        }
+        List<Double> bounds = createGradientBounds(gp);
 
         //Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         PDFGradientFactory gradientFactory = new PDFGradientFactory(this);
-        PDFPattern myPat = gradientFactory.createGradient(true, colSpace, colors, theBounds,
+        PDFPattern myPat = gradientFactory.createGradient(true, colSpace, colors, bounds,
                 theCoords, matrix);
         currentStream.write(myPat.getColorSpaceOut(fill));
 
@@ -989,6 +975,18 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             gradientColors.add(svgColors[svgColors.length - 1]);
         }
         return gradientColors;
+    }
+
+    private List<Double> createGradientBounds(MultipleGradientPaint gradient) {
+        // TODO is the conversion to double necessary?
+        float[] fractions = gradient.getFractions();
+        List<Double> bounds = new java.util.ArrayList<Double>(fractions.length);
+        for (float offset : fractions) {
+            if (0f < offset && offset < 1f) {
+                bounds.add(Double.valueOf(offset));
+            }
+        }
+        return bounds;
     }
 
     private boolean createPattern(PatternPaint pp, boolean fill) {
