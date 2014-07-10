@@ -110,21 +110,9 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
         theCoords.add(gp.getEndPoint().getX());
         theCoords.add(gp.getEndPoint().getY());
 
+        List<Color> colors = createGradientColors(gp);
 
-        Color[] cols = gp.getColors();
-        List<Color> someColors = new java.util.ArrayList<Color>();
         float[] fractions = gp.getFractions();
-        if (fractions[0] > 0f) {
-            someColors.add(cols[0]);
-        }
-        for (int count = 0; count < cols.length; count++) {
-            Color c = cols[count];
-            someColors.add(c);
-        }
-        if (fractions[fractions.length - 1] < 1f) {
-            someColors.add(cols[cols.length - 1]);
-        }
-
         List<Double> theBounds = new java.util.ArrayList<Double>();
         for (int count = 0; count < fractions.length; count++) {
             float offset = fractions[count];
@@ -137,7 +125,7 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
         PSGradientFactory gradientFactory = new PSGradientFactory();
         PSPattern myPattern = gradientFactory.createGradient(false, colSpace,
-                someColors, theBounds, theCoords, matrix);
+                colors, theBounds, theCoords, matrix);
 
         gen.write(myPattern.toString());
 
@@ -173,20 +161,9 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
         theCoords.add(new Double(ac.getY()));
         theCoords.add(new Double(ar));
 
-        Color[] cols = gp.getColors();
-        List<Color> someColors = new java.util.ArrayList<Color>();
-        float[] fractions = gp.getFractions();
-        if (fractions[0] > 0f) {
-            someColors.add(cols[0]);
-        }
-        for (int count = 0; count < cols.length; count++) {
-            Color c = cols[count];
-            someColors.add(c);
-        }
-        if (fractions[fractions.length - 1] < 1f) {
-            someColors.add(cols[cols.length - 1]);
-        }
+        List<Color> colors = createGradientColors(gp);
 
+        float[] fractions = gp.getFractions();
         List<Double> theBounds = new java.util.ArrayList<Double>();
         for (int count = 0; count < fractions.length; count++) {
             float offset = fractions[count];
@@ -199,7 +176,7 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
         PSGradientFactory gradientFactory = new PSGradientFactory();
         PSPattern myPattern = gradientFactory.createGradient(true, colSpace,
-                someColors, theBounds, theCoords, matrix);
+                colors, theBounds, theCoords, matrix);
 
         gen.write(myPattern.toString());
     }
@@ -215,6 +192,22 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
             matrix.add(Double.valueOf(d));
         }
         return matrix;
+    }
+
+    private List<Color> createGradientColors(MultipleGradientPaint gradient) {
+        Color[] svgColors = gradient.getColors();
+        List<Color> gradientColors = new ArrayList<Color>(svgColors.length + 2);
+        float[] fractions = gradient.getFractions();
+        if (fractions[0] > 0f) {
+            gradientColors.add(svgColors[0]);
+        }
+        for (Color c : svgColors) {
+            gradientColors.add(c);
+        }
+        if (fractions[fractions.length - 1] < 1f) {
+            gradientColors.add(svgColors[svgColors.length - 1]);
+        }
+        return gradientColors;
     }
 
     private AffineTransform applyTransform(AffineTransform base, double posX, double posY) {
