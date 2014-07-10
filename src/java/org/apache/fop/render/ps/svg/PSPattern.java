@@ -48,6 +48,8 @@ public class PSPattern implements Pattern {
      */
     protected StringBuffer extGState = null;
 
+    private final List<Double> matrix;
+
     /**
      * Creates a radial or axial shading pattern
      * @param thePatternType The pattern type which will be 3 for radial and 2 for axial
@@ -57,12 +59,13 @@ public class PSPattern implements Pattern {
      * @param theExtGState The exit state
      */
     public PSPattern(int thePatternType, Shading theShading, List theXUID,
-                     StringBuffer theExtGState) {
+                     StringBuffer theExtGState, List<Double> matrix) {
         this.patternType = 2;             // thePatternType;
         assert theShading instanceof PSShading;
         this.shading = (PSShading)theShading;
         this.xUID = theXUID;
         this.extGState = theExtGState;    // always null
+        this.matrix = matrix;
     }
 
     /**
@@ -96,7 +99,13 @@ public class PSPattern implements Pattern {
         }
 
         p.append(">> \n");
-        p.append("matrix makepattern setcolor\n");
+        p.append("[ ");
+        for (double m : matrix) {
+            p.append(Double.toString(m)); // TODO refactor so that PSGenerator.formatDouble can be used
+            p.append(" ");
+        }
+        p.append("] ");
+        p.append("makepattern setcolor\n");
 
         return p.toString();
     }

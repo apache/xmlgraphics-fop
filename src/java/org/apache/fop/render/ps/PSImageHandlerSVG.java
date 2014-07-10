@@ -33,8 +33,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
@@ -314,19 +312,6 @@ public class PSImageHandlerSVG implements ImageHandler {
                 }
             }
             String nodeName = curNode.getLocalName();
-            //Special case where rasterization needed for radial gradients
-            if (nodeName != null && nodeName.equals("ellipse")) {
-                String found = "";
-                String ellipseFill = curNode.getAttributes().getNamedItem("fill").getNodeValue();
-                Pattern pattern = Pattern.compile("#(.*?)\\)");
-                Matcher matcher = pattern.matcher(ellipseFill);
-                if (matcher.find()) {
-                    found = matcher.group(1);
-                }
-                if (gradientsFound.get(found) != null) {
-                    return true;
-                }
-            }
             boolean inMatch = false;
             if (!isMatched) {
                 inMatch = nodeName != null && gradMatches.contains(nodeName);

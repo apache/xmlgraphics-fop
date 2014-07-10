@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Paint;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,20 +118,10 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
 
         List<Double> theCoords = new java.util.ArrayList<Double>();
-
-
-        AffineTransform start = applyTransform(lgp.getTransform(),
-                lgp.getStartPoint().getX(), lgp.getStartPoint().getY());
-        AffineTransform end = applyTransform(lgp.getTransform(), lgp.getEndPoint().getX(), lgp.getEndPoint().getY());
-        double startX = start.getTranslateX();
-        double startY = start.getTranslateY();
-        double endX = end.getTranslateX();
-        double endY = end.getTranslateY();
-
-        theCoords.add(startX);
-        theCoords.add(startY);
-        theCoords.add(endX);
-        theCoords.add(endY);
+        theCoords.add(lgp.getStartPoint().getX());
+        theCoords.add(lgp.getStartPoint().getX());
+        theCoords.add(lgp.getEndPoint().getX());
+        theCoords.add(lgp.getEndPoint().getY());
 
 
         List<Color> someColors = new java.util.ArrayList<Color>();
@@ -182,12 +173,6 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
                 rgp.getCenterPoint().getX(), rgp.getCenterPoint().getY());
         AffineTransform resultFocus = applyTransform(rgp.getTransform(),
                 rgp.getFocusPoint().getX(), rgp.getFocusPoint().getY());
-        double scale = Math.sqrt(rgp.getTransform().getDeterminant());
-        double radius = rgp.getRadius() * scale;
-        double centreX = resultCentre.getTranslateX();
-        double centreY = resultCentre.getTranslateY();
-        double focusX = resultFocus.getTranslateX();
-        double focusY = resultFocus.getTranslateY();
 
         List<Double> theMatrix = new java.util.ArrayList<Double>();
         double [] mat = new double[6];
@@ -196,15 +181,29 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
             theMatrix.add(Double.valueOf(mat[idx]));
         }
 
-        List<Double> theCoords = new java.util.ArrayList<Double>();
         float[] fractions = rgp.getFractions();
 
-        theCoords.add(centreX);
-        theCoords.add(centreY);
-        theCoords.add(0d);
-        theCoords.add(focusX);
-        theCoords.add(focusY);
-        theCoords.add(radius);
+        double ar = rgp.getRadius();
+        Point2D ac = rgp.getCenterPoint();
+        Point2D af = rgp.getFocusPoint();
+        List<Double> theCoords = new java.util.ArrayList<Double>();
+        double dx = af.getX() - ac.getX();
+        double dy = af.getY() - ac.getY();
+        double d = Math.sqrt(dx * dx + dy * dy);
+        if (d > ar) {
+            // the center point af must be within the circle with
+            // radius ar centered at ac so limit it to that.
+            double scale = (ar * .9999) / d;
+            dx = dx * scale;
+            dy = dy * scale;
+        }
+
+        theCoords.add(new Double(ac.getX() + dx)); // Fx
+        theCoords.add(new Double(ac.getY() + dy)); // Fy
+        theCoords.add(new Double(0));
+        theCoords.add(new Double(ac.getX()));
+        theCoords.add(new Double(ac.getY()));
+        theCoords.add(new Double(ar));
 
         Color[] cols = rgp.getColors();
         List<Color> someColors = new java.util.ArrayList<Color>();

@@ -65,6 +65,6 @@ public class PSGradientFactory extends GradientFactory {
     @Override
     public Pattern makePattern(int thePatternType, Shading theShading, List theXUID,
             StringBuffer theExtGState, List<Double> theMatrix) {
-        return new PSPattern(thePatternType, theShading, theXUID, theExtGState);
+        return new PSPattern(thePatternType, theShading, theXUID, theExtGState, theMatrix);
     }
 }
