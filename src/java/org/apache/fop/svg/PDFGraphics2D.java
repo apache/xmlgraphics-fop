@@ -864,20 +864,6 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         theCoords.add(new Double(p2.getX()));
         theCoords.add(new Double(p2.getY()));
 
-        List<Boolean> theExtend = new java.util.ArrayList<Boolean>();
-        theExtend.add(Boolean.TRUE);
-        theExtend.add(Boolean.TRUE);
-
-        List<Double> theDomain = new java.util.ArrayList<Double>();
-        theDomain.add(new Double(0));
-        theDomain.add(new Double(1));
-
-        List<Double> theEncode = new java.util.ArrayList<Double>();
-        theEncode.add(new Double(0));
-        theEncode.add(new Double(1));
-        theEncode.add(new Double(0));
-        theEncode.add(new Double(1));
-
         List<Color> colors = createGradientColors(gp);
 
         List<Double> bounds = createGradientBounds(gp);
