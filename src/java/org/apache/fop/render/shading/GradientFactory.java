@@ -101,15 +101,21 @@ public abstract class GradientFactory<P extends Pattern> {
         List<Color> gradientColors = new ArrayList<Color>(svgColors.length + 2);
         float[] fractions = gradient.getFractions();
         if (fractions[0] > 0f) {
-            gradientColors.add(svgColors[0]);
+            gradientColors.add(getsRGBColor(svgColors[0]));
         }
         for (Color c : svgColors) {
-            gradientColors.add(c);
+            gradientColors.add(getsRGBColor(c));
         }
         if (fractions[fractions.length - 1] < 1f) {
-            gradientColors.add(svgColors[svgColors.length - 1]);
+            gradientColors.add(getsRGBColor(svgColors[svgColors.length - 1]));
         }
         return gradientColors;
+    }
+
+    private Color getsRGBColor(Color c) {
+        // Color space must be consistent, so convert to sRGB if necessary
+        // TODO really?
+        return c.getColorSpace().isCS_sRGB() ? c : ColorUtil.toSRGBColor(c);
     }
 
     private List<Double> createBounds(MultipleGradientPaint gradient) {
@@ -137,35 +143,25 @@ public abstract class GradientFactory<P extends Pattern> {
      */
     protected P makeGradient(boolean radial, PDFDeviceColorSpace colorspace,
             List<Color> colors, List<Double> bounds, List<Double> coords, List<Double> matrix) {
+        List<Function> functions = createFunctions(colors);
+        Function function = makeFunction(3, null, null, functions, bounds, null);
+        Shading shading = makeShading(radial ? 3 : 2, colorspace, null, null, false, coords, null, function, null);
+        return makePattern(2, shading, null, null, matrix);
+    }
+
+    private List<Function> createFunctions(List<Color> colors) {
         List<Function> functions = new ArrayList<Function>();
-        // if 5 elements, the penultimate element is 3.
-        // do not go beyond that, because you always need
-        // to have a next color when creating the function.
-        for (int currentPosition = 0, lastPosition = colors.size() - 1; currentPosition < lastPosition;
-                currentPosition++) {    // for every consecutive color pair
+        for (int currentPosition = 0, lastPosition = colors.size() - 1;
+                currentPosition < lastPosition;
+                currentPosition++) {
             Color currentColor = colors.get(currentPosition);
             Color nextColor = colors.get(currentPosition + 1);
-
-            // colorspace must be consistent, so we simply convert to sRGB where necessary
-            if (!currentColor.getColorSpace().isCS_sRGB()) {
-                //Convert to sRGB
-                currentColor = ColorUtil.toSRGBColor(currentColor);
-                colors.set(currentPosition, currentColor);
-            }
-            if (!nextColor.getColorSpace().isCS_sRGB()) {
-                //Convert to sRGB
-                nextColor = ColorUtil.toSRGBColor(nextColor);
-                colors.set(currentPosition + 1, nextColor);
-            }
             List<Double> c0 = toColorVector(currentColor);
             List<Double> c1 = toColorVector(nextColor);
             Function function = makeFunction(2, null, null, c0, c1, 1.0);
             functions.add(function);
         }
-
-        Function function = makeFunction(3, null, null, functions, bounds, null);
-        Shading shading = makeShading(radial ? 3 : 2, colorspace, null, null, false, coords, null, function, null);
-        return makePattern(2, shading, null, null, matrix);
+        return functions;
     }
 
     public abstract Function makeFunction(int functionType, List<Double> theDomain,
