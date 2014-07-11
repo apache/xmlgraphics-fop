@@ -26,18 +26,13 @@ import org.apache.fop.render.ps.svg.PSShading;
 public class PSGradientFactory extends GradientFactory<PSPattern> {
 
     @Override
-    public Shading makeShading(int shadingType,
-            PDFDeviceColorSpace colorSpace, List<Double> background, List<Double> bbox,
-            boolean antiAlias, List<Double> coords, List<Double> domain,
-            Function function, List<Integer> extend) {
-        Shading newShading = new PSShading(shadingType, colorSpace, background, bbox,
-                    antiAlias, coords, domain, function, extend);
-        return newShading;
+    protected Shading makeShading(int shadingType,
+            PDFDeviceColorSpace colorSpace, List<Double> coords, Function function) {
+        return new PSShading(shadingType, colorSpace, null, null, false, coords, null, function, null);
     }
 
     @Override
-    public PSPattern makePattern(int patternType, Shading shading, List xuid,
-            StringBuffer extGState, List<Double> matrix) {
-        return new PSPattern(patternType, shading, xuid, extGState, matrix);
+    protected PSPattern makePattern(int patternType, Shading shading, List<Double> matrix) {
+        return new PSPattern(patternType, shading, null, null, matrix);
     }
 }
