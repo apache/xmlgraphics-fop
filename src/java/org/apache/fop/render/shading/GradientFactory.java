@@ -149,11 +149,11 @@ public abstract class GradientFactory<P extends Pattern> {
         return gradientColors;
     }
 
-    public abstract Shading makeShading(int theShadingType,
-            PDFDeviceColorSpace theColorSpace, List<Double> theBackground, List<Double> theBBox,
-            boolean theAntiAlias, List<Double> theCoords, List<Double> theDomain,
-            Function theFunction, List<Integer> theExtend);
+    public abstract Shading makeShading(int shadingType,
+            PDFDeviceColorSpace colorSpace, List<Double> background, List<Double> bbox,
+            boolean antiAlias, List<Double> coords, List<Double> domain,
+            Function function, List<Integer> extend);
 
-    public abstract P makePattern(int thePatternType, Shading theShading, List theXUID,
-            StringBuffer theExtGState, List<Double> theMatrix);
+    public abstract P makePattern(int patternType, Shading shading, List xuid,
+            StringBuffer extGState, List<Double> matrix);
 }

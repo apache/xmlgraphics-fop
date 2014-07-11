@@ -35,26 +35,25 @@ public class PDFGradientFactory extends GradientFactory<PDFPattern> {
     }
 
     @Override
-    public Shading makeShading(int theShadingType,
-            PDFDeviceColorSpace theColorSpace, List<Double> theBackground, List<Double> theBBox,
-            boolean theAntiAlias, List<Double> theCoords, List<Double> theDomain,
-            Function theFunction, List<Integer> theExtend) {
-        List<PDFFunction> pdfFunctions = new ArrayList<PDFFunction>(theFunction.getFunctions().size());
-        for (Function f : theFunction.getFunctions()) {
+    public Shading makeShading(int shadingType,
+            PDFDeviceColorSpace colorSpace, List<Double> background, List<Double> bbox,
+            boolean antiAlias, List<Double> coords, List<Double> domain,
+            Function function, List<Integer> extend) {
+        List<PDFFunction> pdfFunctions = new ArrayList<PDFFunction>(function.getFunctions().size());
+        for (Function f : function.getFunctions()) {
             pdfFunctions.add(graphics2D.registerFunction(new PDFFunction(f)));
         }
-        PDFFunction pdfFunction = graphics2D.registerFunction(new PDFFunction(theFunction, pdfFunctions));
-        PDFShading newShading = new PDFShading(theShadingType, theColorSpace, theBackground,
-                    theBBox, theAntiAlias, theCoords, theDomain, pdfFunction, theExtend);
+        PDFFunction pdfFunction = graphics2D.registerFunction(new PDFFunction(function, pdfFunctions));
+        PDFShading newShading = new PDFShading(shadingType, colorSpace, background,
+                    bbox, antiAlias, coords, domain, pdfFunction, extend);
         newShading = graphics2D.registerShading(newShading);
         return newShading;
     }
 
     @Override
-    public PDFPattern makePattern(int thePatternType, Shading theShading, List theXUID,
-            StringBuffer theExtGState, List<Double> theMatrix) {
-        PDFPattern newPattern = new PDFPattern(thePatternType, theShading, theXUID, theExtGState,
-                    theMatrix);
+    public PDFPattern makePattern(int patternType, Shading shading, List xuid,
+            StringBuffer extGState, List<Double> matrix) {
+        PDFPattern newPattern = new PDFPattern(patternType, shading, xuid, extGState, matrix);
         newPattern = graphics2D.registerPattern(newPattern);
         return newPattern;
     }

@@ -141,13 +141,13 @@ public class Function {
      *
      * Use null for an optional object parameter if you choose not to use it.
      * For optional int parameters, pass the default.
-     * @param theFunctionType The type of the function, which should be 2.
-     * @param theDomain List objects of Double objects.
+     * @param functionType The type of the function, which should be 2.
+     * @param domain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange List of Doubles that is the Range of the function.
+     * @param range List of Doubles that is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theCZero This is a vector of Double objects which defines the function result
+     * @param cZero This is a vector of Double objects which defines the function result
      * when x=0.
      *
      * This attribute is optional.
@@ -157,21 +157,21 @@ public class Function {
      *
      * This attribute is optional.
      * It's described on page 268 of the PDF 1.3 spec.
-     * @param theInterpolationExponentN This is the inerpolation exponent.
+     * @param interpolationExponentN This is the inerpolation exponent.
      *
      * This attribute is required.
      * PDF Spec page 268
      */
-    public Function(int theFunctionType, List<Double> theDomain, List<Double> theRange,
-                       float[] cZero, float[] cOne, double theInterpolationExponentN) {
+    public Function(int functionType, List<Double> domain, List<Double> range,
+                       float[] cZero, float[] cOne, double interpolationExponentN) {
         this.functionType = 2;    // dang well better be 2;
 
         this.cZero = cZero;
         this.cOne = cOne;
-        this.interpolationExponentN = theInterpolationExponentN;
+        this.interpolationExponentN = interpolationExponentN;
 
-        this.domain = theDomain;
-        this.range = theRange;
+        this.domain = domain;
+        this.range = range;
 
     }
 
@@ -180,19 +180,19 @@ public class Function {
      *
      * Use null for an optional object parameter if you choose not to use it.
      * For optional int parameters, pass the default.
-     * @param theFunctionType This is the function type. It should be 3,
+     * @param functionType This is the function type. It should be 3,
      * for a stitching function.
-     * @param theDomain List objects of Double objects.
+     * @param domain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange List objects of Double objects.
+     * @param range List objects of Double objects.
      * This is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theFunctions A List of the PDFFunction objects that the stitching function stitches.
+     * @param functions A List of the PDFFunction objects that the stitching function stitches.
      *
      * This attributed is required.
      * It is described on page 269 of the PDF spec.
-     * @param theBounds This is a vector of Doubles representing the numbers that,
+     * @param bounds This is a vector of Doubles representing the numbers that,
      * in conjunction with Domain define the intervals to which each function from
      * the 'functions' object applies. It must be in order of increasing magnitude,
      * and each must be within Domain.
@@ -201,7 +201,7 @@ public class Function {
      *
      * This attributed is required.
      * It's described on page 269 of the PDF 1.3 spec.
-     * @param theEncode List objects of Double objects.
+     * @param encode List objects of Double objects.
      * This is the linear mapping of input values intop the domain
      * of the function's sample table. Default is hard to represent in
      * ascii, but basically [0 (Size0 1) 0 (Size1 1)...].
@@ -209,16 +209,16 @@ public class Function {
      *
      * See page 270 in the PDF 1.3 spec.
      */
-    public Function(int theFunctionType, List<Double> theDomain, List<Double> theRange,
-                       List<Function> theFunctions, List<Double> theBounds,
-                       List<Double> theEncode) {
+    public Function(int functionType, List<Double> domain, List<Double> range,
+                       List<Function> functions, List<Double> bounds,
+                       List<Double> encode) {
         this.functionType = 3;    // dang well better be 3;
 
-        this.functions = theFunctions;
-        this.bounds = theBounds;
-        this.encode = theEncode;
-        this.domain = theDomain;
-        this.range = theRange;
+        this.functions = functions;
+        this.bounds = bounds;
+        this.encode = encode;
+        this.domain = domain;
+        this.range = range;
 
     }
 
