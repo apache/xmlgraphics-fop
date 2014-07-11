@@ -17,6 +17,7 @@
 
 package org.apache.fop.render.shading;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
@@ -37,18 +38,14 @@ public class PDFGradientFactory extends GradientFactory<PDFPattern> {
     public Function makeFunction(int functionType, List<Double> theDomain,
             List<Double> theRange, List<Function> theFunctions,
             List<Double> theBounds, List<Double> theEncode) {
-        PDFFunction newFunction = new PDFFunction(functionType, theDomain, theRange, theFunctions,
-                    theBounds, theEncode);
-        newFunction = graphics2D.registerFunction(newFunction);
-        return newFunction;
+        return new Function(functionType, theDomain, theRange, theFunctions, theBounds, theEncode);
     }
 
     public Function makeFunction(int functionType, List<Double> theDomain,
             List<Double> theRange, List<Double> theCZero, List<Double> theCOne,
             double theInterpolationExponentN) {
-        PDFFunction newFunction = new PDFFunction(functionType, theDomain, theRange, theCZero,
+        Function newFunction = new Function(functionType, theDomain, theRange, theCZero,
                     theCOne, theInterpolationExponentN);
-        newFunction = graphics2D.registerFunction(newFunction);
         return newFunction;
     }
 
@@ -57,8 +54,13 @@ public class PDFGradientFactory extends GradientFactory<PDFPattern> {
             PDFDeviceColorSpace theColorSpace, List<Double> theBackground, List<Double> theBBox,
             boolean theAntiAlias, List<Double> theCoords, List<Double> theDomain,
             Function theFunction, List<Integer> theExtend) {
+        List<PDFFunction> pdfFunctions = new ArrayList<PDFFunction>(theFunction.getFunctions().size());
+        for (Function f : theFunction.getFunctions()) {
+            pdfFunctions.add(graphics2D.registerFunction(new PDFFunction(f)));
+        }
+        PDFFunction pdfFunction = graphics2D.registerFunction(new PDFFunction(theFunction, pdfFunctions));
         PDFShading newShading = new PDFShading(theShadingType, theColorSpace, theBackground,
-                    theBBox, theAntiAlias, theCoords, theDomain, theFunction, theExtend);
+                    theBBox, theAntiAlias, theCoords, theDomain, pdfFunction, theExtend);
         newShading = graphics2D.registerShading(newShading);
         return newShading;
     }

@@ -22,7 +22,6 @@ package org.apache.fop.pdf;
 // Java...
 import java.util.List;
 
-import org.apache.fop.render.shading.Function;
 import org.apache.fop.render.shading.Shading;
 import org.apache.fop.render.shading.ShadingPattern;
 
@@ -209,7 +208,7 @@ public class PDFShading extends PDFObject implements Shading {
     public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
             List theBackground, List theBBox,
             boolean theAntiAlias, List theCoords,
-            List theDomain, Function theFunction,
+            List theDomain, PDFFunction theFunction,
             List theExtend) {
         super();
         this.shadingType = theShadingType;    // 2 or 3
@@ -220,8 +219,7 @@ public class PDFShading extends PDFObject implements Shading {
 
         this.coords = theCoords;
         this.domain = theDomain;
-        assert theFunction instanceof PDFFunction;
-        this.function = (PDFFunction)theFunction;
+        this.function = theFunction;
         this.extend = theExtend;
 
     }
