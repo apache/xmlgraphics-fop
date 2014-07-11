@@ -19,11 +19,9 @@
 
 package org.apache.fop.render.shading;
 
-import java.io.UnsupportedEncodingException;
+import java.util.List;
 
-import org.apache.fop.pdf.PDFFunction;
 import org.apache.fop.pdf.PDFNumber;
-import org.apache.fop.render.ps.svg.PSFunction;
 
 /**
  * A class for writing function objects for different output formats
@@ -43,7 +41,7 @@ public class FunctionPattern {
     /**
      * Outputs the function to a byte array
      */
-    public String toWriteableString() {
+    public String toWriteableString(List<String> functionsStrings) {
         int vectorSize = 0;
         int numberOfFunctions = 0;
         int tempInt = 0;
@@ -246,21 +244,12 @@ public class FunctionPattern {
             }
 
             // FUNCTIONS
-            if (function.getFunctions() != null) {
+            if (!function.getFunctions().isEmpty()) {
                 p.append("/Functions [ ");
                 numberOfFunctions = function.getFunctions().size();
-                for (tempInt = 0; tempInt < numberOfFunctions; tempInt++) {
-                    try {
-                        if (function instanceof PSFunction) {
-                            p.append(new String(function.getFunctions().get(tempInt).toByteString(), "UTF-8")
-                                     + " ");
-                        } else {
-                            p.append(((PDFFunction)function.getFunctions().get(tempInt)).referencePDF()
-                                    + " ");
-                        }
-                    } catch (UnsupportedEncodingException ex) {
-                        //This should have been made an enum type to avoid throwing exceptions.
-                    }
+                for (String f : functionsStrings) {
+                    p.append(f);
+                    p.append(' ');
                 }
                 p.append("] \n");
             }
@@ -298,7 +287,7 @@ public class FunctionPattern {
                 }
 
             } else {
-                if (function.getFunctions() != null) {
+                if (!function.getFunctions().isEmpty()) {
                     // if there are n functions,
                     // there must be n-1 bounds.
                     // so let each function handle an equal portion

@@ -20,15 +20,13 @@
 package org.apache.fop.render.ps.svg;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.render.shading.Function;
-import org.apache.fop.render.shading.FunctionDelegate;
 import org.apache.fop.render.shading.FunctionPattern;
 
-public class PSFunction implements Function {
-
-    private FunctionDelegate delegate;
+public class PSFunction extends Function {
 
     /**
      * Creates a Postscript function dictionary
@@ -46,8 +44,7 @@ public class PSFunction implements Function {
     public PSFunction(int theFunctionType, List<Double> theDomain,
             List<Double> theRange, List<Function> theFunctions,
             List<Double> theBounds, List<Double> theEncode) {
-        delegate = new FunctionDelegate(this, theFunctionType, theDomain, theRange, theFunctions,
-                theBounds, theEncode);
+        super(theFunctionType, theDomain, theRange, theFunctions, theBounds, theEncode);
     }
 
     /**
@@ -64,8 +61,7 @@ public class PSFunction implements Function {
     public PSFunction(int theFunctionType, List<Double> theDomain,
             List<Double> theRange, List<Double> theCZero, List<Double> theCOne,
             double theInterpolationExponentN) {
-        delegate = new FunctionDelegate(this, theFunctionType, theDomain, theRange, theCZero,
-                theCOne, theInterpolationExponentN);
+        super(theFunctionType, theDomain, theRange, theCZero, theCOne, theInterpolationExponentN);
     }
 
     /**
@@ -74,70 +70,15 @@ public class PSFunction implements Function {
     public byte[] toByteString() {
         FunctionPattern pattern = new FunctionPattern(this);
         try {
-            return pattern.toWriteableString().getBytes("UTF-8");
+            List<String> functionsStrings = new ArrayList<String>(getFunctions().size());
+            for (Function f : getFunctions()) {
+                functionsStrings.add(new String(((PSFunction) f).toByteString(), "UTF-8"));
+            }
+            return pattern.toWriteableString(functionsStrings).getBytes("UTF-8");
         } catch (UnsupportedEncodingException ex) {
             //This should have been made an enum type to avoid throwing exceptions.
             return new byte[0];
         }
     }
 
-    public int getFunctionType() {
-        return delegate.getFunctionType();
-    }
-
-    public List<Double> getBounds() {
-        return delegate.getBounds();
-    }
-
-    public List<Double> getDomain() {
-        return delegate.getDomain();
-    }
-
-    public List<Double> getSize() {
-        return delegate.getSize();
-    }
-
-    public List<String> getFilter() {
-        return delegate.getFilter();
-    }
-
-    public List<Double> getEncode() {
-        return delegate.getEncode();
-    }
-
-    public List<Function> getFunctions() {
-        return delegate.getFunctions();
-    }
-
-    public int getBitsPerSample() {
-        return delegate.getBitsPerSample();
-    }
-
-    public double getInterpolationExponentN() {
-        return delegate.getInterpolationExponentN();
-    }
-
-    public int getOrder() {
-        return delegate.getOrder();
-    }
-
-    public List<Double> getRange() {
-        return delegate.getRange();
-    }
-
-    public List<Double> getDecode() {
-        return delegate.getDecode();
-    }
-
-    public StringBuffer getDataStream() {
-        return delegate.getDataStream();
-    }
-
-    public List<Double> getCZero() {
-        return delegate.getCZero();
-    }
-
-    public List<Double> getCOne() {
-        return delegate.getCOne();
-    }
 }
