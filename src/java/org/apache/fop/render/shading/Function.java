@@ -25,17 +25,17 @@ public class Function {
     /**
      * Required: The Type of function (0,2,3,4) default is 0.
      */
-    protected int functionType = 0;    // Default
+    private int functionType;
 
     /**
      * Required: 2 * m Array of Double numbers which are possible inputs to the function
      */
-    protected List<Double> domain = null;
+    private List<Double> domain;
 
     /**
      * Required: 2 * n Array of Double numbers which are possible outputs to the function
      */
-    protected List<Double> range = null;
+    private List<Double> range;
 
     /* ********************TYPE 0***************************** */
     // FunctionType 0 specific function guts
@@ -45,19 +45,19 @@ public class Function {
      * Note: This is really more like two seperate integers, sizeDomain, and sizeRange,
      * but since they're expressed as an array in PDF, my implementation reflects that.
      */
-    protected List<Double> size = null;
+    protected List<Double> size;
 
     /**
      * Required for Type 0: Number of Bits used to represent each sample value.
      * Limited to 1,2,4,8,12,16,24, or 32
      */
-    protected int bitsPerSample = 1;
+    private int bitsPerSample = 1;
 
     /**
      * Optional for Type 0: order of interpolation between samples.
      * Limited to linear (1) or cubic (3). Default is 1
      */
-    protected int order = 1;
+    private int order = 1;
 
     /**
      * Optional for Type 0: A 2 * m array of Doubles which provides a
@@ -69,13 +69,13 @@ public class Function {
      * Should be two values per function, usually (0,1),
      * as in [0 1 0 1] for 2 functions.
      */
-    protected List<Double> encode = null;
+    private List<Double> encode;
 
     /**
      * Optional for Type 0: A 2 * n array of Doubles which provides
      * a linear mapping of sample values to the range. Defaults to Range.
      */
-    protected List<Double> decode = null;
+    private List<Double> decode;
 
     /**
      * Optional For Type 0: A stream of sample values
@@ -85,34 +85,34 @@ public class Function {
      * Required For Type 4: Postscript Calculator function
      * composed of arithmetic, boolean, and stack operators + boolean constants
      */
-    protected StringBuffer functionDataStream = null;
+    private StringBuffer functionDataStream;
 
     /**
      * Required (possibly) For Type 0: A vector of Strings for the
      * various filters to be used to decode the stream.
      * These are how the string is compressed. Flate, LZW, etc.
      */
-    protected List<String> filter = null;
+    private List<String> filter;
     /* *************************TYPE 2************************** */
 
     /**
      * Required For Type 2: An Array of n Doubles defining
      * the function result when x=0. Default is [0].
      */
-    protected float[] cZero;
+    private float[] cZero;
 
     /**
      * Required For Type 2: An Array of n Doubles defining
      * the function result when x=1. Default is [1].
      */
-    protected float[] cOne;
+    private float[] cOne;
 
     /**
      * Required for Type 2: The interpolation exponent.
      * Each value x will return n results.
      * Must be greater than 0.
      */
-    protected double interpolationExponentN = 1;
+    private double interpolationExponentN = 1;
 
     /* *************************TYPE 3************************** */
 
@@ -121,7 +121,7 @@ public class Function {
      * form an array of k single input functions making up
      * the stitching function.
      */
-    protected List<Function> functions = null;
+    private List<Function> functions;
 
     /**
      * Optional for Type 3: An array of (k-1) Doubles that,
@@ -134,7 +134,7 @@ public class Function {
      * This makes each function responsible for an equal amount of the stitching function.
      * It makes the gradient even.
      */
-    protected List<Double> bounds = null;
+    private List<Double> bounds;
 
     /**
      * create an complete Function object of Type 2, an Exponential Interpolation function.
