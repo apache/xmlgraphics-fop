@@ -26,8 +26,6 @@ import org.apache.fop.render.shading.Function;
 import org.apache.fop.render.shading.FunctionPattern;
 import org.apache.fop.render.shading.Pattern;
 import org.apache.fop.render.shading.Shading;
-import org.apache.fop.render.shading.ShadingPattern;
-import org.apache.fop.render.shading.ShadingPattern.ShadingRenderer;
 
 public class PSPattern implements Pattern {
 
@@ -79,7 +77,7 @@ public class PSPattern implements Pattern {
     public String toString() {
         int vectorSize = 0;
         int tempInt = 0;
-        StringBuffer p = new StringBuffer(64);
+        StringBuilder p = new StringBuilder(64);
         p.append("/Pattern setcolorspace\n");
         p.append("<< \n/Type /Pattern \n");
 
@@ -116,24 +114,20 @@ public class PSPattern implements Pattern {
         return p.toString();
     }
 
-    private void outputShading(StringBuffer out) {
+    private void outputShading(StringBuilder p) {
         final Function function = shading.getFunction();
-        final ShadingRenderer shadingRenderer = new ShadingRenderer() {
+        Shading.FunctionRenderer functionRenderer = new Shading.FunctionRenderer() {
 
-            public void outputFunction(StringBuffer out) {
-                out.append("/Function ");
+            public void outputFunction(StringBuilder out) {
                 FunctionPattern pattern = new FunctionPattern(function);
                 List<String> functionsStrings = new ArrayList<String>(function.getFunctions().size());
                 for (Function f : function.getFunctions()) {
                     functionsStrings.add(functionToString(f));
                 }
                 out.append(pattern.toWriteableString(functionsStrings));
-                out.append("\n");
             }
         };
-        ShadingPattern pattern = new ShadingPattern(shading, shadingRenderer);
-        out.append(pattern.toString(shading.getColorSpace(), shading.getShadingType(), shading.getBackground(),
-                shading.getBBox(), shading.isAntiAlias()));
+        shading.output(p, functionRenderer);
     }
 
     private String functionToString(Function function) {
