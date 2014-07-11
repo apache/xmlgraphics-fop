@@ -77,12 +77,12 @@ public abstract class GradientFactory<P extends Pattern> {
         List<Double> matrix = createTransform(gradient, baseTransform, transform);
         List<Double> bounds = createBounds(gradient);
         List<Function> functions = createFunctions(gradient);
-        //Gradients are currently restricted to sRGB
-        PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
+        // Gradients are currently restricted to sRGB
+        PDFDeviceColorSpace colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         Function function = new Function(3, null, null, functions, bounds, null);
-        Shading shading = makeShading(gradient instanceof LinearGradientPaint ? 2 : 3,
-                colSpace, null, null, false, coords, null, function, null);
-        return makePattern(2, shading, null, null, matrix);
+        Shading shading = makeShading(gradient instanceof LinearGradientPaint ? 2 : 3, colorSpace,
+                coords, function);
+        return makePattern(2, shading, matrix);
     }
 
     private List<Double> createTransform(MultipleGradientPaint gradient,
@@ -149,11 +149,8 @@ public abstract class GradientFactory<P extends Pattern> {
         return gradientColors;
     }
 
-    public abstract Shading makeShading(int shadingType,
-            PDFDeviceColorSpace colorSpace, List<Double> background, List<Double> bbox,
-            boolean antiAlias, List<Double> coords, List<Double> domain,
-            Function function, List<Integer> extend);
+    protected abstract Shading makeShading(int shadingType, PDFDeviceColorSpace colorSpace,
+            List<Double> coords, Function function);
 
-    public abstract P makePattern(int patternType, Shading shading, List xuid,
-            StringBuffer extGState, List<Double> matrix);
+    protected abstract P makePattern(int patternType, Shading shading, List<Double> matrix);
 }

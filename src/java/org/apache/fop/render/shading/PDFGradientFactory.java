@@ -35,27 +35,22 @@ public class PDFGradientFactory extends GradientFactory<PDFPattern> {
     }
 
     @Override
-    public Shading makeShading(int shadingType,
-            PDFDeviceColorSpace colorSpace, List<Double> background, List<Double> bbox,
-            boolean antiAlias, List<Double> coords, List<Double> domain,
-            Function function, List<Integer> extend) {
+    protected Shading makeShading(int shadingType, PDFDeviceColorSpace colorSpace,
+            List<Double> coords, Function function) {
         List<PDFFunction> pdfFunctions = new ArrayList<PDFFunction>(function.getFunctions().size());
         for (Function f : function.getFunctions()) {
             pdfFunctions.add(graphics2D.registerFunction(new PDFFunction(f)));
         }
         PDFFunction pdfFunction = graphics2D.registerFunction(new PDFFunction(function, pdfFunctions));
-        PDFShading newShading = new PDFShading(shadingType, colorSpace, background,
-                    bbox, antiAlias, coords, domain, pdfFunction, extend);
-        newShading = graphics2D.registerShading(newShading);
-        return newShading;
+        PDFShading shading = new PDFShading(shadingType, colorSpace, null, null, false,
+                coords, null, pdfFunction, null);
+        return graphics2D.registerShading(shading);
     }
 
     @Override
-    public PDFPattern makePattern(int patternType, Shading shading, List xuid,
-            StringBuffer extGState, List<Double> matrix) {
-        PDFPattern newPattern = new PDFPattern(patternType, shading, xuid, extGState, matrix);
-        newPattern = graphics2D.registerPattern(newPattern);
-        return newPattern;
+    protected PDFPattern makePattern(int patternType, Shading shading, List<Double> matrix) {
+        PDFPattern pattern = new PDFPattern(patternType, shading, null, null, matrix);
+        return graphics2D.registerPattern(pattern);
     }
 
 }
