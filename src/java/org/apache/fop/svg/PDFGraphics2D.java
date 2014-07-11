@@ -95,7 +95,7 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.pdf.ImageRawCCITTFaxAdapter;
 import org.apache.fop.render.pdf.ImageRawJPEGAdapter;
 import org.apache.fop.render.pdf.ImageRenderedAdapter;
-import org.apache.fop.render.shading.PDFGradientFactory;
+import org.apache.fop.render.pdf.svg.PDFGradientMaker;
 
 /**
  * <p>PDF Graphics 2D.
@@ -813,14 +813,14 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                     gpaint.isCyclic() ? LinearGradientPaint.REPEAT : LinearGradientPaint.NO_CYCLE);
         }
         if (paint instanceof LinearGradientPaint && gradientSupported((LinearGradientPaint) paint)) {
-            PDFPattern pattern = new PDFGradientFactory(this)
-                    .createLinearGradient((LinearGradientPaint) paint, getBaseTransform(), getTransform());
+            PDFPattern pattern = new PDFGradientMaker(this)
+                    .makeLinearGradient((LinearGradientPaint) paint, getBaseTransform(), getTransform());
             currentStream.write(pattern.getColorSpaceOut(fill));
             return true;
         }
         if (paint instanceof RadialGradientPaint && gradientSupported((RadialGradientPaint) paint)) {
-            PDFPattern pattern = new PDFGradientFactory(this)
-                    .createRadialGradient((RadialGradientPaint) paint, getBaseTransform(), getTransform());
+            PDFPattern pattern = new PDFGradientMaker(this)
+                    .makeRadialGradient((RadialGradientPaint) paint, getBaseTransform(), getTransform());
             currentStream.write(pattern.getColorSpaceOut(fill));
             return true;
         }

@@ -33,7 +33,6 @@ import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
-import org.apache.fop.render.shading.PSGradientFactory;
 import org.apache.fop.render.shading.Pattern;
 
 
@@ -71,16 +70,16 @@ public class PSSVGGraphics2D extends PSGraphics2D {
     protected void applyPaint(Paint paint, boolean fill) {
         super.applyPaint(paint, fill);
         if (paint instanceof LinearGradientPaint) {
-            Pattern pattern = new PSGradientFactory()
-                    .createLinearGradient((LinearGradientPaint) paint, getBaseTransform(), getTransform());
+            Pattern pattern = new PSGradientMaker()
+                    .makeLinearGradient((LinearGradientPaint) paint, getBaseTransform(), getTransform());
             try {
                 gen.write(pattern.toString());
             } catch (IOException ioe) {
                 handleIOException(ioe);
             }
         } else if (paint instanceof RadialGradientPaint) {
-            Pattern pattern = new PSGradientFactory()
-                    .createRadialGradient((RadialGradientPaint) paint, getBaseTransform(), getTransform());
+            Pattern pattern = new PSGradientMaker()
+                    .makeRadialGradient((RadialGradientPaint) paint, getBaseTransform(), getTransform());
             try {
                 gen.write(pattern.toString());
             } catch (IOException ioe) {
