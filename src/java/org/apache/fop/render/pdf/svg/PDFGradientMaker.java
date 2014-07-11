@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.fop.render.shading;
+package org.apache.fop.render.pdf.svg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +24,16 @@ import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFFunction;
 import org.apache.fop.pdf.PDFPattern;
 import org.apache.fop.pdf.PDFShading;
+import org.apache.fop.render.shading.Function;
+import org.apache.fop.render.shading.GradientMaker;
+import org.apache.fop.render.shading.Shading;
 import org.apache.fop.svg.PDFGraphics2D;
 
-public class PDFGradientFactory extends GradientFactory<PDFPattern> {
+public class PDFGradientMaker extends GradientMaker<PDFPattern> {
 
     private final PDFGraphics2D graphics2D;
 
-    public PDFGradientFactory(PDFGraphics2D pdfGraphics2D) {
+    public PDFGradientMaker(PDFGraphics2D pdfGraphics2D) {
         this.graphics2D = pdfGraphics2D;
     }
 

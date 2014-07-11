@@ -15,15 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.fop.render.shading;
+package org.apache.fop.render.ps.svg;
 
 import java.util.List;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
-import org.apache.fop.render.ps.svg.PSPattern;
-import org.apache.fop.render.ps.svg.PSShading;
+import org.apache.fop.render.shading.Function;
+import org.apache.fop.render.shading.GradientMaker;
+import org.apache.fop.render.shading.Shading;
 
-public class PSGradientFactory extends GradientFactory<PSPattern> {
+public class PSGradientMaker extends GradientMaker<PSPattern> {
 
     @Override
     protected Shading makeShading(int shadingType,
