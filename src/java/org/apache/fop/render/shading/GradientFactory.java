@@ -125,8 +125,8 @@ public abstract class GradientFactory<P extends Pattern> {
                 currentPosition++) {
             Color currentColor = colors.get(currentPosition);
             Color nextColor = colors.get(currentPosition + 1);
-            List<Double> c0 = toColorVector(currentColor);
-            List<Double> c1 = toColorVector(nextColor);
+            float[] c0 = currentColor.getColorComponents(null);
+            float[] c1 = nextColor.getColorComponents(null);
             Function function = new Function(2, null, null, c0, c1, 1.0);
             functions.add(function);
         }
@@ -156,13 +156,4 @@ public abstract class GradientFactory<P extends Pattern> {
 
     public abstract P makePattern(int thePatternType, Shading theShading, List theXUID,
             StringBuffer theExtGState, List<Double> theMatrix);
-
-    private List<Double> toColorVector(Color nextColor) {
-        List<Double> vector = new java.util.ArrayList<Double>();
-        float[] comps = nextColor.getColorComponents(null);
-        for (int i = 0, c = comps.length; i < c; i++) {
-            vector.add(Double.valueOf(comps[i]));
-        }
-        return vector;
-    }
 }
