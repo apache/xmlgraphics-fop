@@ -20,7 +20,6 @@ package org.apache.fop.render.pdf.svg;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFFunction;
 import org.apache.fop.pdf.PDFPattern;
 import org.apache.fop.pdf.PDFShading;
@@ -38,21 +37,17 @@ public class PDFGradientMaker extends GradientMaker<PDFPattern> {
     }
 
     @Override
-    protected Shading makeShading(int shadingType, PDFDeviceColorSpace colorSpace,
-            List<Double> coords, Function function) {
+    protected PDFPattern makePattern(int patternType, Shading shading, List<Double> matrix) {
+        Function function = shading.getFunction();
         List<PDFFunction> pdfFunctions = new ArrayList<PDFFunction>(function.getFunctions().size());
         for (Function f : function.getFunctions()) {
             pdfFunctions.add(graphics2D.registerFunction(new PDFFunction(f)));
         }
         PDFFunction pdfFunction = graphics2D.registerFunction(new PDFFunction(function, pdfFunctions));
-        PDFShading shading = new PDFShading(shadingType, colorSpace, null, null, false,
-                coords, null, pdfFunction, null);
-        return graphics2D.registerShading(shading);
-    }
-
-    @Override
-    protected PDFPattern makePattern(int patternType, Shading shading, List<Double> matrix) {
-        PDFPattern pattern = new PDFPattern(patternType, shading, null, null, matrix);
+        PDFShading pdfShading = new PDFShading(shading.getShadingType(), shading.getColorSpace(), shading.getCoords(),
+                pdfFunction);
+        pdfShading = graphics2D.registerShading(pdfShading);
+        PDFPattern pattern = new PDFPattern(patternType, pdfShading, null, null, matrix);
         return graphics2D.registerPattern(pattern);
     }
 
