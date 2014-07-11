@@ -35,21 +35,6 @@ public class PDFGradientFactory extends GradientFactory<PDFPattern> {
     }
 
     @Override
-    public Function makeFunction(int functionType, List<Double> theDomain,
-            List<Double> theRange, List<Function> theFunctions,
-            List<Double> theBounds, List<Double> theEncode) {
-        return new Function(functionType, theDomain, theRange, theFunctions, theBounds, theEncode);
-    }
-
-    public Function makeFunction(int functionType, List<Double> theDomain,
-            List<Double> theRange, List<Double> theCZero, List<Double> theCOne,
-            double theInterpolationExponentN) {
-        Function newFunction = new Function(functionType, theDomain, theRange, theCZero,
-                    theCOne, theInterpolationExponentN);
-        return newFunction;
-    }
-
-    @Override
     public Shading makeShading(int theShadingType,
             PDFDeviceColorSpace theColorSpace, List<Double> theBackground, List<Double> theBBox,
             boolean theAntiAlias, List<Double> theCoords, List<Double> theDomain,

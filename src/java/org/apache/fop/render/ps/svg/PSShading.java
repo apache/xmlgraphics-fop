@@ -19,12 +19,13 @@
 
 package org.apache.fop.render.ps.svg;
 
-import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.render.shading.Function;
+import org.apache.fop.render.shading.FunctionPattern;
 import org.apache.fop.render.shading.Shading;
 import org.apache.fop.render.shading.ShadingPattern;
 
@@ -72,7 +73,7 @@ public class PSShading implements Shading {
      * The object of the color mapping function (usually type 2 or 3).
      * Optional for Type 4,5,6, and 7: When it's nearly the same thing.
      */
-    protected PSFunction function = null;
+    protected Function function;
 
     /**
      * Required for Type 2: An Array of four numbers specifying
@@ -125,8 +126,7 @@ public class PSShading implements Shading {
 
         this.coords = theCoords;
         this.domain = theDomain;
-        assert theFunction instanceof PSFunction;
-        this.function = (PSFunction)theFunction;
+        this.function = theFunction;
         this.extend = theExtend;
     }
 
@@ -187,13 +187,18 @@ public class PSShading implements Shading {
 
         if (this.function != null) {
             p.append("\t/Function ");
-            try {
-                p.append(new String(this.function.toByteString(), "UTF-8") + " \n");
-            } catch (UnsupportedEncodingException ex) {
-                //This should have been made an enum type to avoid throwing exceptions.
-            }
+            p.append(functionToString(function) + " \n");
         }
         return p;
+    }
+
+    private String functionToString(Function function) {
+        FunctionPattern pattern = new FunctionPattern(function);
+        List<String> functionsStrings = new ArrayList<String>(function.getFunctions().size());
+        for (Function f : function.getFunctions()) {
+            functionsStrings.add(functionToString(f));
+        }
+        return pattern.toWriteableString(functionsStrings);
     }
 
     /**

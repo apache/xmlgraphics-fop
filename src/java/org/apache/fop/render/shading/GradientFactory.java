@@ -79,7 +79,7 @@ public abstract class GradientFactory<P extends Pattern> {
         List<Function> functions = createFunctions(gradient);
         //Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-        Function function = makeFunction(3, null, null, functions, bounds, null);
+        Function function = new Function(3, null, null, functions, bounds, null);
         Shading shading = makeShading(gradient instanceof LinearGradientPaint ? 2 : 3,
                 colSpace, null, null, false, coords, null, function, null);
         return makePattern(2, shading, null, null, matrix);
@@ -127,7 +127,7 @@ public abstract class GradientFactory<P extends Pattern> {
             Color nextColor = colors.get(currentPosition + 1);
             List<Double> c0 = toColorVector(currentColor);
             List<Double> c1 = toColorVector(nextColor);
-            Function function = makeFunction(2, null, null, c0, c1, 1.0);
+            Function function = new Function(2, null, null, c0, c1, 1.0);
             functions.add(function);
         }
         return functions;
@@ -148,14 +148,6 @@ public abstract class GradientFactory<P extends Pattern> {
         }
         return gradientColors;
     }
-
-    public abstract Function makeFunction(int functionType, List<Double> theDomain,
-            List<Double> theRange, List<Function> theFunctions,
-            List<Double> theBounds, List<Double> theEncode);
-
-    public abstract Function makeFunction(int functionType, List<Double> theDomain,
-            List<Double> theRange, List<Double> theCZero, List<Double> theCOne,
-            double theInterpolationExponentN);
 
     public abstract Shading makeShading(int theShadingType,
             PDFDeviceColorSpace theColorSpace, List<Double> theBackground, List<Double> theBBox,

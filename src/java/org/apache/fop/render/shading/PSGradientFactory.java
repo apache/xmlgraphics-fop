@@ -20,28 +20,10 @@ package org.apache.fop.render.shading;
 import java.util.List;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
-import org.apache.fop.render.ps.svg.PSFunction;
 import org.apache.fop.render.ps.svg.PSPattern;
 import org.apache.fop.render.ps.svg.PSShading;
 
 public class PSGradientFactory extends GradientFactory<PSPattern> {
-
-    public Function makeFunction(int functionType, List<Double> theDomain,
-            List<Double> theRange, List<Function> theFunctions,
-            List<Double> theBounds, List<Double> theEncode) {
-        Function newFunction = new PSFunction(functionType, theDomain, theRange, theFunctions,
-                    theBounds, theEncode);
-        return newFunction;
-    }
-
-    @Override
-    public Function makeFunction(int functionType, List<Double> theDomain,
-            List<Double> theRange, List<Double> theCZero, List<Double> theCOne,
-            double theInterpolationExponentN) {
-        Function newFunction = new PSFunction(functionType, theDomain, theRange, theCZero,
-                    theCOne, theInterpolationExponentN);
-        return newFunction;
-    }
 
     @Override
     public Shading makeShading(int theShadingType,
