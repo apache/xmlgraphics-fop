@@ -20,9 +20,15 @@ package org.apache.fop.render.shading;
 import java.util.List;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
+import org.apache.fop.pdf.PDFNumber;
 
 
 public class Shading {
+
+    public interface FunctionRenderer {
+
+        void outputFunction(StringBuilder out);
+    }
 
     /**
      * Required: The Type of shading (1,2,3,4,5,6,7)
@@ -206,4 +212,165 @@ public class Shading {
         return verticesPerRow;
     }
 
+    public void output(StringBuilder out, FunctionRenderer functionRenderer) {
+        out.append("<<\n/ShadingType " + shadingType + "\n");
+        if (colorSpace != null) {
+            out.append("/ColorSpace /" + colorSpace.getName() + "\n");
+        }
+
+        if (background != null) {
+            out.append("/Background ");
+            outputDoubles(out, background);
+            out.append("\n");
+        }
+
+        if (bbox != null) {
+            out.append("/BBox");
+            outputDoubles(out, bbox);
+            out.append("\n");
+        }
+
+        if (antiAlias) {
+            out.append("/AntiAlias " + antiAlias + "\n");
+        }
+
+        switch (shadingType) {
+        // Function based shading
+        case 1: outputShadingType1(out, functionRenderer); break;
+        // Axial shading
+        case 2:
+        // Radial shading
+        case 3: outputShadingType2or3(out, functionRenderer); break;
+        // Free-form Gouraud-shaded triangle meshes
+        case 4:
+        // Coons patch meshes
+        case 6:
+        // Tensor product patch meshes
+        case 7: outputShadingType4or6or7(out, functionRenderer); break;
+        // Lattice Free form gouraud-shaded triangle mesh
+        case 5: outputShadingType5(out, functionRenderer); break;
+        default: throw new UnsupportedOperationException("Shading type " + shadingType);
+        }
+
+        out.append(">>");
+    }
+
+    private void outputDoubles(StringBuilder out, List<Double> doubles) {
+        out.append("[ ");
+        for (Double d : doubles) {
+            out.append(PDFNumber.doubleOut(d));
+            out.append(" ");
+        }
+        out.append("]");
+    }
+
+    private void outputShadingType1(StringBuilder out, Shading.FunctionRenderer functionRenderer) {
+        if (domain != null) {
+            out.append("/Domain ");
+            outputDoubles(out, domain);
+            out.append("\n");
+        } else {
+            out.append("/Domain [ 0 1 ] \n");
+        }
+
+        if (matrix != null) {
+            out.append("/Matrix ");
+            outputDoubles(out, matrix);
+            out.append("\n");
+        }
+        outputFunction(out, functionRenderer);
+    }
+
+    private void outputShadingType2or3(StringBuilder out, Shading.FunctionRenderer functionRenderer) {
+        if (coords != null) {
+            out.append("/Coords ");
+            outputDoubles(out, coords);
+            out.append("\n");
+        }
+
+        if (domain != null) {
+            out.append("/Domain ");
+            outputDoubles(out, domain);
+            out.append("\n");
+        } else {
+            out.append("/Domain [ 0 1 ] \n");
+        }
+
+        if (extend != null) {
+            out.append("/Extend [");
+            for (Boolean b : extend) {
+                out.append(b);
+                out.append(" ");
+            }
+            out.append("\n");
+        } else {
+            out.append("/Extend [ true true ] \n");
+        }
+
+        outputFunction(out, functionRenderer);
+    }
+
+    private void outputShadingType4or6or7(StringBuilder out, Shading.FunctionRenderer functionRenderer) {
+        if (bitsPerCoordinate > 0) {
+            out.append("/BitsPerCoordinate " + bitsPerCoordinate + "\n");
+        } else {
+            out.append("/BitsPerCoordinate 1 \n");
+        }
+
+        if (bitsPerComponent > 0) {
+            out.append("/BitsPerComponent " + bitsPerComponent + "\n");
+        } else {
+            out.append("/BitsPerComponent 1 \n");
+        }
+
+        if (bitsPerFlag > 0) {
+            out.append("/BitsPerFlag " + bitsPerFlag + "\n");
+        } else {
+            out.append("/BitsPerFlag 2 \n");
+        }
+
+        if (decode != null) {
+            out.append("/Decode ");
+            outputDoubles(out, decode);
+            out.append("\n");
+        }
+
+        outputFunction(out, functionRenderer);
+    }
+
+    private void outputShadingType5(StringBuilder out, Shading.FunctionRenderer functionRenderer) {
+        if (bitsPerCoordinate > 0) {
+            out.append("/BitsPerCoordinate " + bitsPerCoordinate + "\n");
+        } else {
+            out.append("/BitsPerCoordinate 1 \n");
+        }
+
+        if (bitsPerComponent > 0) {
+            out.append("/BitsPerComponent " + bitsPerComponent + "\n");
+        } else {
+            out.append("/BitsPerComponent 1 \n");
+        }
+
+        if (decode != null) {
+            out.append("/Decode ");
+            outputDoubles(out, decode);
+            out.append("\n");
+        }
+
+        outputFunction(out, functionRenderer);
+
+        if (verticesPerRow > 0) {
+            out.append("/VerticesPerRow " + verticesPerRow + "\n");
+        } else {
+            out.append("/VerticesPerRow 2 \n");
+        }
+    }
+
+    private void outputFunction(StringBuilder out, FunctionRenderer functionRenderer) {
+        if (function != null) {
+            out.append("/Function ");
+            functionRenderer.outputFunction(out);
+            out.append("\n");
+        }
+    }
 }

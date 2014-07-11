@@ -21,10 +21,7 @@ package org.apache.fop.pdf;
 
 import java.util.List;
 
-import org.apache.fop.render.shading.Function;
 import org.apache.fop.render.shading.Shading;
-import org.apache.fop.render.shading.ShadingPattern;
-import org.apache.fop.render.shading.ShadingPattern.ShadingRenderer;
 
 
 /**
@@ -98,19 +95,15 @@ public class PDFShading extends PDFObject {
      * @return the PDF string.
      */
     public String toPDFString() {
-        final ShadingRenderer shadingRenderer = new ShadingRenderer() {
+        Shading.FunctionRenderer functionRenderer = new Shading.FunctionRenderer() {
 
-            public void outputFunction(StringBuffer out) {
-                Function function = shading.getFunction();
-                if (function != null) {
-                    out.append("/Function ");
-                    out.append(pdfFunction.referencePDF() + " \n");
-                }
+            public void outputFunction(StringBuilder out) {
+                out.append(pdfFunction.referencePDF());
             }
         };
-        ShadingPattern pattern = new ShadingPattern(shading, shadingRenderer);
-        return pattern.toString(shading.getColorSpace(), shading.getShadingType(), shading.getBackground(),
-                shading.getBBox(), shading.isAntiAlias());
+        StringBuilder out = new StringBuilder();
+        shading.output(out, functionRenderer);
+        return out.toString();
     }
 
     /** {@inheritDoc} */
