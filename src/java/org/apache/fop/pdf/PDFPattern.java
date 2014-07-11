@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.fop.render.shading.Pattern;
-import org.apache.fop.render.shading.Shading;
 
 /**
  * class representing a PDF Function.
@@ -144,19 +143,18 @@ public class PDFPattern extends PDFPathPaint implements Pattern {
      * Create a type 2 pattern (smooth shading)
      *
      * @param thePatternType the type of the pattern, which is 2, smooth shading
-     * @param theShading the PDF Shading object that comprises this pattern
+     * @param shading the Shading object that comprises this pattern
      * @param theXUID optional:the extended unique Identifier if used.
      * @param theExtGState optional: the extended graphics state, if used.
      * @param theMatrix Optional:List of Doubles that specify the matrix.
      */
-    public PDFPattern(int thePatternType, Shading theShading,
+    public PDFPattern(int thePatternType, PDFShading shading,
                       List theXUID, StringBuffer theExtGState,
                       List theMatrix) {
         super();
 
         this.patternType = 2;             // thePatternType;
-        assert theShading instanceof PDFShading;
-        this.shading = (PDFShading)theShading;
+        this.shading = shading;
         this.xUID = theXUID;
         // this isn't really implemented, so it should always be null.
         // I just don't want to have to add a new parameter once it is implemented.

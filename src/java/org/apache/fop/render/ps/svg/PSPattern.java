@@ -19,10 +19,15 @@
 
 package org.apache.fop.render.ps.svg;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.fop.render.shading.Function;
+import org.apache.fop.render.shading.FunctionPattern;
 import org.apache.fop.render.shading.Pattern;
 import org.apache.fop.render.shading.Shading;
+import org.apache.fop.render.shading.ShadingPattern;
+import org.apache.fop.render.shading.ShadingPattern.ShadingRenderer;
 
 public class PSPattern implements Pattern {
 
@@ -34,7 +39,7 @@ public class PSPattern implements Pattern {
     /**
      * The Shading object comprising the Type 2 pattern
      */
-    protected PSShading shading = null;
+    protected Shading shading;
 
     /**
      * List of Integers represetning the Extended unique Identifier
@@ -61,8 +66,7 @@ public class PSPattern implements Pattern {
     public PSPattern(int thePatternType, Shading theShading, List theXUID,
                      StringBuffer theExtGState, List<Double> matrix) {
         this.patternType = 2;             // thePatternType;
-        assert theShading instanceof PSShading;
-        this.shading = (PSShading)theShading;
+        this.shading = theShading;
         this.xUID = theXUID;
         this.extGState = theExtGState;    // always null
         this.matrix = matrix;
@@ -82,7 +86,9 @@ public class PSPattern implements Pattern {
         p.append("/PatternType " + this.patternType + " \n");
 
         if (this.shading != null) {
-            p.append("/Shading " + this.shading.toString() + " \n");
+            p.append("/Shading ");
+            outputShading(p);
+            p.append(" \n");
         }
 
         if (this.xUID != null) {
@@ -109,4 +115,34 @@ public class PSPattern implements Pattern {
 
         return p.toString();
     }
+
+    private void outputShading(StringBuffer out) {
+        final Function function = shading.getFunction();
+        final ShadingRenderer shadingRenderer = new ShadingRenderer() {
+
+            public void outputFunction(StringBuffer out) {
+                out.append("/Function ");
+                FunctionPattern pattern = new FunctionPattern(function);
+                List<String> functionsStrings = new ArrayList<String>(function.getFunctions().size());
+                for (Function f : function.getFunctions()) {
+                    functionsStrings.add(functionToString(f));
+                }
+                out.append(pattern.toWriteableString(functionsStrings));
+                out.append("\n");
+            }
+        };
+        ShadingPattern pattern = new ShadingPattern(shading, shadingRenderer);
+        out.append(pattern.toString(shading.getColorSpace(), shading.getShadingType(), shading.getBackground(),
+                shading.getBBox(), shading.isAntiAlias()));
+    }
+
+    private String functionToString(Function function) {
+        FunctionPattern pattern = new FunctionPattern(function);
+        List<String> functionsStrings = new ArrayList<String>(function.getFunctions().size());
+        for (Function f : function.getFunctions()) {
+            functionsStrings.add(functionToString(f));
+        }
+        return pattern.toWriteableString(functionsStrings);
+    }
+
 }

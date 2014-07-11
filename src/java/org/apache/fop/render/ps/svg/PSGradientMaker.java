@@ -19,18 +19,10 @@ package org.apache.fop.render.ps.svg;
 
 import java.util.List;
 
-import org.apache.fop.pdf.PDFDeviceColorSpace;
-import org.apache.fop.render.shading.Function;
 import org.apache.fop.render.shading.GradientMaker;
 import org.apache.fop.render.shading.Shading;
 
 public class PSGradientMaker extends GradientMaker<PSPattern> {
-
-    @Override
-    protected Shading makeShading(int shadingType,
-            PDFDeviceColorSpace colorSpace, List<Double> coords, Function function) {
-        return new PSShading(shadingType, colorSpace, null, null, false, coords, null, function, null);
-    }
 
     @Override
     protected PSPattern makePattern(int patternType, Shading shading, List<Double> matrix) {

@@ -80,8 +80,8 @@ public abstract class GradientMaker<P extends Pattern> {
         // Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         Function function = new Function(3, null, null, functions, bounds, null);
-        Shading shading = makeShading(gradient instanceof LinearGradientPaint ? 2 : 3, colorSpace,
-                coords, function);
+        int shadingType = gradient instanceof LinearGradientPaint ? 2 : 3;
+        Shading shading = new Shading(shadingType, colorSpace, coords, function);
         return makePattern(2, shading, matrix);
     }
 
@@ -148,9 +148,6 @@ public abstract class GradientMaker<P extends Pattern> {
         }
         return gradientColors;
     }
-
-    protected abstract Shading makeShading(int shadingType, PDFDeviceColorSpace colorSpace,
-            List<Double> coords, Function function);
 
     protected abstract P makePattern(int patternType, Shading shading, List<Double> matrix);
 

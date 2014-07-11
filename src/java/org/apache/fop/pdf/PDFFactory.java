@@ -377,40 +377,6 @@ public class PDFFactory {
         return pattern;
     }
 
-    /**
-     * Make a smooth shading pattern
-     *
-     * @param res the PDF resource context to add the shading, may be null
-     * @param thePatternType the type of the pattern, which is 2, smooth shading
-     * @param theShading the PDF Shading object that comprises this pattern
-     * @param theXUID optional:the extended unique Identifier if used.
-     * @param theExtGState optional: the extended graphics state, if used.
-     * @param theMatrix Optional:List of Doubles that specify the matrix.
-     * @return the PDF pattern that was created
-     */
-    public PDFPattern makePattern(PDFResourceContext res,
-                                  int thePatternType, PDFShading theShading,
-                                  List theXUID, StringBuffer theExtGState,
-                                  List theMatrix) {
-        PDFPattern pattern = new PDFPattern(2, theShading,
-                                            theXUID, theExtGState, theMatrix);
-
-        PDFPattern oldpatt = getDocument().findPattern(pattern);
-        if (oldpatt == null) {
-            getDocument().registerObject(pattern);
-        } else {
-            pattern = oldpatt;
-        }
-
-        if (res != null) {
-            res.getPDFResources().addPattern(pattern);
-        } else {
-            getDocument().getResources().addPattern(pattern);
-        }
-
-        return (pattern);
-    }
-
 
     /* ============= named destinations and the name dictionary ============ */
 
