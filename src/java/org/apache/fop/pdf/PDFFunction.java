@@ -50,32 +50,30 @@ public class PDFFunction extends PDFObject {
      * Use null for an optional object parameter if you choose not to use it.
      * For optional int parameters, pass the default.
      *
-     * @param theDomain List objects of Double objects.
+     * @param domain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange List of Doubles that is the Range of the function.
+     * @param range List of Doubles that is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theCZero This is a vector of Double objects which defines the function result
+     * @param cZero This is a vector of Double objects which defines the function result
      * when x=0.
      *
      * This attribute is optional.
      * It's described on page 268 of the PDF 1.3 spec.
-     * @param theCOne This is a vector of Double objects which defines the function result
+     * @param cOne This is a vector of Double objects which defines the function result
      * when x=1.
      *
      * This attribute is optional.
      * It's described on page 268 of the PDF 1.3 spec.
-     * @param theInterpolationExponentN This is the inerpolation exponent.
+     * @param interpolationExponentN This is the inerpolation exponent.
      *
      * This attribute is required.
      * PDF Spec page 268
-     * @param theFunctionType The type of the function, which should be 2.
+     * @param functionType The type of the function, which should be 2.
      */
-    public PDFFunction(int theFunctionType, List<Double> theDomain,
-                       List<Double> theRange, float[] theCZero, float[] theCOne,
-                       double theInterpolationExponentN) {
-        this(new Function(theFunctionType, theDomain, theRange,
-                theCZero, theCOne, theInterpolationExponentN));
+    public PDFFunction(int functionType, List<Double> domain, List<Double> range, float[] cZero, float[] cOne,
+                       double interpolationExponentN) {
+        this(new Function(functionType, domain, range, cZero, cOne, interpolationExponentN));
 
     }
 
