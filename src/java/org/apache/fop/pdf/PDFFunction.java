@@ -20,6 +20,7 @@
 package org.apache.fop.pdf;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class PDFFunction extends PDFObject {
      * @param theFunctionType The type of the function, which should be 2.
      */
     public PDFFunction(int theFunctionType, List<Double> theDomain,
-                       List<Double> theRange, List<Double> theCZero, List<Double> theCOne,
+                       List<Double> theRange, float[] theCZero, float[] theCOne,
                        double theInterpolationExponentN) {
         this(new Function(theFunctionType, theDomain, theRange,
                 theCZero, theCOne, theInterpolationExponentN));
@@ -190,18 +191,10 @@ public class PDFFunction extends PDFObject {
         } else if (func.getFilter() != null) {
             return false;
         }
-        if (function.getCZero() != null) {
-            if (!function.getCZero().equals(func.getCZero())) {
-                return false;
-            }
-        } else if (func.getCZero() != null) {
+        if (!Arrays.equals(function.getCZero(), func.getCZero())) {
             return false;
         }
-        if (function.getCOne() != null) {
-            if (!function.getCOne().equals(func.getCOne())) {
-                return false;
-            }
-        } else if (func.getCOne() != null) {
+        if (!Arrays.equals(function.getCOne(), func.getCOne())) {
             return false;
         }
         if (!pdfFunctions.equals(((PDFFunction) obj).pdfFunctions)) {

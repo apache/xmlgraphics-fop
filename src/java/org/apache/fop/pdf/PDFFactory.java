@@ -26,7 +26,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Iterator;
@@ -268,8 +267,8 @@ public class PDFFactory {
      * @return the PDF function that was created
      */
     public PDFFunction makeFunction(int theFunctionType, List theDomain,
-                                    List theRange, List theCZero,
-                                    List theCOne,
+                                    List theRange, float[] theCZero,
+                                    float[] theCOne,
                                     double theInterpolationExponentN) {    // type 2
         PDFFunction function = new PDFFunction(theFunctionType, theDomain,
                                                theRange, theCZero, theCOne,
@@ -1367,14 +1366,9 @@ public class PDFFactory {
         final Double one = new Double(1d);
         List theDomain = Arrays.asList(new Double[] {zero, one});
         List theRange = Arrays.asList(new Double[] {zero, one, zero, one, zero, one});
-        List theCZero = Arrays.asList(new Double[] {one, one, one});
-        List theCOne = new ArrayList();
-        float[] comps = ncs.getRGBColor().getColorComponents(null);
-        for (int i = 0, c = comps.length; i < c; i++) {
-            theCOne.add(new Double(comps[i]));
-        }
-        PDFFunction tintFunction = makeFunction(2, theDomain, theRange,
-                theCZero, theCOne, 1.0d);
+        float[] cZero = new float[] {1f, 1f, 1f};
+        float[] cOne = ncs.getRGBColor().getColorComponents(null);
+        PDFFunction tintFunction = makeFunction(2, theDomain, theRange, cZero, cOne, 1.0d);
         PDFSeparationColorSpace cs = new PDFSeparationColorSpace(colorName, tintFunction);
         getDocument().registerObject(cs);
         if (res != null) {

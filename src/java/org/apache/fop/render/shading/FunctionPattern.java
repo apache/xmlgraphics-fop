@@ -190,10 +190,9 @@ public class FunctionPattern {
             // C0
             if (function.getCZero() != null) {
                 p.append("/C0 [ ");
-                vectorSize = function.getCZero().size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut(function.getCZero().get(tempInt))
-                             + " ");
+                for (float c : function.getCZero()) {
+                    p.append(PDFNumber.doubleOut(c));
+                    p.append(" ");
                 }
                 p.append("] \n");
             }
@@ -201,10 +200,9 @@ public class FunctionPattern {
             // C1
             if (function.getCOne() != null) {
                 p.append("/C1 [ ");
-                vectorSize = function.getCOne().size();
-                for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut(function.getCOne().get(tempInt))
-                             + " ");
+                for (float c : function.getCOne()) {
+                    p.append(PDFNumber.doubleOut(c));
+                    p.append(" ");
                 }
                 p.append("] \n");
             }
