@@ -17,6 +17,35 @@
 
 package org.apache.fop.render.shading;
 
-public interface Pattern {
+import java.util.List;
+
+public class Pattern {
+
+    private final int patternType;
+
+    private final Shading shading;
+
+    private final List<Double> matrix;
+
+    Pattern(int patternType, Shading shading, List<Double> matrix) {
+        this.patternType = patternType;
+        this.shading = shading;
+        this.matrix = matrix;
+    }
+
+    /**
+     * Either one (1) for tiling, or two (2) for shading.
+     */
+    public int getPatternType() {
+        return patternType;
+    }
+
+    public Shading getShading() {
+        return shading;
+    }
+
+    public List<Double> getMatrix() {
+        return matrix;
+    }
 
 }

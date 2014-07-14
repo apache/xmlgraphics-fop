@@ -23,6 +23,8 @@ import java.awt.Graphics;
 import java.awt.Paint;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +35,10 @@ import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
+import org.apache.fop.render.shading.Function;
+import org.apache.fop.render.shading.GradientMaker;
 import org.apache.fop.render.shading.Pattern;
+import org.apache.fop.render.shading.Shading;
 
 
 public class PSSVGGraphics2D extends PSGraphics2D {
@@ -70,22 +75,74 @@ public class PSSVGGraphics2D extends PSGraphics2D {
     protected void applyPaint(Paint paint, boolean fill) {
         super.applyPaint(paint, fill);
         if (paint instanceof LinearGradientPaint) {
-            Pattern pattern = new PSGradientMaker()
-                    .makeLinearGradient((LinearGradientPaint) paint, getBaseTransform(), getTransform());
+            Pattern pattern = GradientMaker.makeLinearGradient((LinearGradientPaint) paint,
+                    getBaseTransform(), getTransform());
             try {
-                gen.write(pattern.toString());
+                gen.write(toString(pattern));
             } catch (IOException ioe) {
                 handleIOException(ioe);
             }
         } else if (paint instanceof RadialGradientPaint) {
-            Pattern pattern = new PSGradientMaker()
-                    .makeRadialGradient((RadialGradientPaint) paint, getBaseTransform(), getTransform());
+            Pattern pattern = GradientMaker.makeRadialGradient((RadialGradientPaint) paint,
+                    getBaseTransform(), getTransform());
             try {
-                gen.write(pattern.toString());
+                gen.write(toString(pattern));
             } catch (IOException ioe) {
                 handleIOException(ioe);
             }
         }
+    }
+
+    /**
+     * Outputs the radial or axial pattern as a string dictionary to insert
+     * into a postscript document.
+     * @param pattern
+     */
+    private String toString(Pattern pattern) {
+        StringBuilder p = new StringBuilder(64);
+        p.append("/Pattern setcolorspace\n");
+        p.append("<< \n/Type /Pattern \n");
+
+        p.append("/PatternType " + pattern.getPatternType() + " \n");
+
+        if (pattern.getShading() != null) {
+            p.append("/Shading ");
+            outputShading(p, pattern.getShading());
+            p.append(" \n");
+        }
+        p.append(">> \n");
+        p.append("[ ");
+        for (double m : pattern.getMatrix()) {
+            p.append(Double.toString(m)); // TODO refactor so that PSGenerator.formatDouble can be used
+            p.append(" ");
+        }
+        p.append("] ");
+        p.append("makepattern setcolor\n");
+
+        return p.toString();
+    }
+
+    private void outputShading(StringBuilder p, Shading shading) {
+        final Function function = shading.getFunction();
+        Shading.FunctionRenderer functionRenderer = new Shading.FunctionRenderer() {
+
+            public void outputFunction(StringBuilder out) {
+                List<String> functionsStrings = new ArrayList<String>(function.getFunctions().size());
+                for (Function f : function.getFunctions()) {
+                    functionsStrings.add(functionToString(f));
+                }
+                out.append(function.toWriteableString(functionsStrings));
+            }
+        };
+        shading.output(p, functionRenderer);
+    }
+
+    private String functionToString(Function function) {
+        List<String> functionsStrings = new ArrayList<String>(function.getFunctions().size());
+        for (Function f : function.getFunctions()) {
+            functionsStrings.add(functionToString(f));
+        }
+        return function.toWriteableString(functionsStrings);
     }
 
     protected AffineTransform getBaseTransform() {

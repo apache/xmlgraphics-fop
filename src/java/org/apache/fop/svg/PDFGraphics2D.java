@@ -49,6 +49,7 @@ import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -95,7 +96,10 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.pdf.ImageRawCCITTFaxAdapter;
 import org.apache.fop.render.pdf.ImageRawJPEGAdapter;
 import org.apache.fop.render.pdf.ImageRenderedAdapter;
-import org.apache.fop.render.pdf.svg.PDFGradientMaker;
+import org.apache.fop.render.shading.Function;
+import org.apache.fop.render.shading.GradientMaker;
+import org.apache.fop.render.shading.Pattern;
+import org.apache.fop.render.shading.Shading;
 
 /**
  * <p>PDF Graphics 2D.
@@ -813,15 +817,17 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                     gpaint.isCyclic() ? LinearGradientPaint.REPEAT : LinearGradientPaint.NO_CYCLE);
         }
         if (paint instanceof LinearGradientPaint && gradientSupported((LinearGradientPaint) paint)) {
-            PDFPattern pattern = new PDFGradientMaker(this)
-                    .makeLinearGradient((LinearGradientPaint) paint, getBaseTransform(), getTransform());
-            currentStream.write(pattern.getColorSpaceOut(fill));
+            Pattern pattern = GradientMaker.makeLinearGradient((LinearGradientPaint) paint,
+                    getBaseTransform(), getTransform());
+            PDFPattern pdfPattern = createPDFPattern(pattern);
+            currentStream.write(pdfPattern.getColorSpaceOut(fill));
             return true;
         }
         if (paint instanceof RadialGradientPaint && gradientSupported((RadialGradientPaint) paint)) {
-            PDFPattern pattern = new PDFGradientMaker(this)
-                    .makeRadialGradient((RadialGradientPaint) paint, getBaseTransform(), getTransform());
-            currentStream.write(pattern.getColorSpaceOut(fill));
+            Pattern pattern = GradientMaker.makeRadialGradient((RadialGradientPaint) paint,
+                    getBaseTransform(), getTransform());
+            PDFPattern pdfPattern = createPDFPattern(pattern);
+            currentStream.write(pdfPattern.getColorSpaceOut(fill));
             return true;
         }
         if (paint instanceof PatternPaint) {
@@ -829,6 +835,21 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             return createPattern(pp, fill);
         }
         return false; // unknown paint
+    }
+
+    PDFPattern createPDFPattern(Pattern pattern) {
+        Shading shading = pattern.getShading();
+        Function function = shading.getFunction();
+        List<PDFFunction> pdfFunctions = new ArrayList<PDFFunction>(function.getFunctions().size());
+        for (Function f : function.getFunctions()) {
+            pdfFunctions.add(registerFunction(new PDFFunction(f)));
+        }
+        PDFFunction pdfFunction = registerFunction(new PDFFunction(function, pdfFunctions));
+        PDFShading pdfShading = new PDFShading(shading.getShadingType(), shading.getColorSpace(), shading.getCoords(),
+                pdfFunction);
+        pdfShading = registerShading(pdfShading);
+        PDFPattern pdfPattern = new PDFPattern(pattern.getPatternType(), pdfShading, null, null, pattern.getMatrix());
+        return registerPattern(pdfPattern);
     }
 
     private boolean gradientSupported(MultipleGradientPaint gradient) {

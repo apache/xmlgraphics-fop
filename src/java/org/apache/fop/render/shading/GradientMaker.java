@@ -33,9 +33,11 @@ import org.apache.xmlgraphics.java2d.color.ColorUtil;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
 
-public abstract class GradientMaker<P extends Pattern> {
+public final class GradientMaker {
 
-    public P makeLinearGradient(LinearGradientPaint gp,
+    private GradientMaker() { }
+
+    public static Pattern makeLinearGradient(LinearGradientPaint gp,
             AffineTransform baseTransform, AffineTransform transform) {
         Point2D startPoint = gp.getStartPoint();
         Point2D endPoint = gp.getEndPoint();
@@ -47,7 +49,7 @@ public abstract class GradientMaker<P extends Pattern> {
         return makeGradient(gp, coords, baseTransform, transform);
     }
 
-    public P makeRadialGradient(RadialGradientPaint gradient,
+    public static Pattern makeRadialGradient(RadialGradientPaint gradient,
             AffineTransform baseTransform, AffineTransform transform) {
         double radius = gradient.getRadius();
         Point2D center = gradient.getCenterPoint();
@@ -72,7 +74,7 @@ public abstract class GradientMaker<P extends Pattern> {
         return makeGradient(gradient, coords, baseTransform, transform);
     }
 
-    private P makeGradient(MultipleGradientPaint gradient, List<Double> coords,
+    private static Pattern makeGradient(MultipleGradientPaint gradient, List<Double> coords,
             AffineTransform baseTransform, AffineTransform transform) {
         List<Double> matrix = makeTransform(gradient, baseTransform, transform);
         List<Double> bounds = makeBounds(gradient);
@@ -82,10 +84,10 @@ public abstract class GradientMaker<P extends Pattern> {
         Function function = new Function(3, null, null, functions, bounds, null);
         int shadingType = gradient instanceof LinearGradientPaint ? 2 : 3;
         Shading shading = new Shading(shadingType, colorSpace, coords, function);
-        return makePattern(2, shading, matrix);
+        return new Pattern(2, shading, matrix);
     }
 
-    private List<Double> makeTransform(MultipleGradientPaint gradient,
+    private static List<Double> makeTransform(MultipleGradientPaint gradient,
             AffineTransform baseTransform, AffineTransform transform) {
         AffineTransform gradientTransform = new AffineTransform(baseTransform);
         gradientTransform.concatenate(transform);
@@ -99,13 +101,13 @@ public abstract class GradientMaker<P extends Pattern> {
         return matrix;
     }
 
-    private Color getsRGBColor(Color c) {
+    private static Color getsRGBColor(Color c) {
         // Color space must be consistent, so convert to sRGB if necessary
         // TODO really?
         return c.getColorSpace().isCS_sRGB() ? c : ColorUtil.toSRGBColor(c);
     }
 
-    private List<Double> makeBounds(MultipleGradientPaint gradient) {
+    private static List<Double> makeBounds(MultipleGradientPaint gradient) {
         // TODO is the conversion to double necessary?
         float[] fractions = gradient.getFractions();
         List<Double> bounds = new java.util.ArrayList<Double>(fractions.length);
@@ -117,7 +119,7 @@ public abstract class GradientMaker<P extends Pattern> {
         return bounds;
     }
 
-    private List<Function> makeFunctions(MultipleGradientPaint gradient) {
+    private static List<Function> makeFunctions(MultipleGradientPaint gradient) {
         List<Color> colors = makeColors(gradient);
         List<Function> functions = new ArrayList<Function>();
         for (int currentPosition = 0, lastPosition = colors.size() - 1;
@@ -133,7 +135,7 @@ public abstract class GradientMaker<P extends Pattern> {
         return functions;
     }
 
-    private List<Color> makeColors(MultipleGradientPaint gradient) {
+    private static List<Color> makeColors(MultipleGradientPaint gradient) {
         Color[] svgColors = gradient.getColors();
         List<Color> gradientColors = new ArrayList<Color>(svgColors.length + 2);
         float[] fractions = gradient.getFractions();
@@ -148,7 +150,5 @@ public abstract class GradientMaker<P extends Pattern> {
         }
         return gradientColors;
     }
-
-    protected abstract P makePattern(int patternType, Shading shading, List<Double> matrix);
 
 }
