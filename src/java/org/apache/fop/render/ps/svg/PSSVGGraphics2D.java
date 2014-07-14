@@ -23,8 +23,6 @@ import java.awt.Graphics;
 import java.awt.Paint;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +34,7 @@ import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.render.gradient.Function;
+import org.apache.fop.render.gradient.Function.SubFunctionRenderer;
 import org.apache.fop.render.gradient.GradientMaker;
 import org.apache.fop.render.gradient.Pattern;
 import org.apache.fop.render.gradient.Shading;
@@ -127,22 +126,18 @@ public class PSSVGGraphics2D extends PSGraphics2D {
         Shading.FunctionRenderer functionRenderer = new Shading.FunctionRenderer() {
 
             public void outputFunction(StringBuilder out) {
-                List<String> functionsStrings = new ArrayList<String>(function.getFunctions().size());
-                for (Function f : function.getFunctions()) {
-                    functionsStrings.add(functionToString(f));
-                }
-                out.append(function.toWriteableString(functionsStrings));
+                SubFunctionRenderer subFunctionRenderer = new Function.SubFunctionRenderer() {
+
+                    public void outputFunction(StringBuilder out, int functionIndex) {
+                        Function subFunction = function.getFunctions().get(functionIndex);
+                        assert subFunction.getFunctions().isEmpty();
+                        out.append(subFunction.toWriteableString(null));
+                    }
+                };
+                out.append(function.toWriteableString(subFunctionRenderer));
             }
         };
         shading.output(p, functionRenderer);
-    }
-
-    private String functionToString(Function function) {
-        List<String> functionsStrings = new ArrayList<String>(function.getFunctions().size());
-        for (Function f : function.getFunctions()) {
-            functionsStrings.add(functionToString(f));
-        }
-        return function.toWriteableString(functionsStrings);
     }
 
     protected AffineTransform getBaseTransform() {

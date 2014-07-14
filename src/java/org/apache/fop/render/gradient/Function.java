@@ -24,6 +24,11 @@ import org.apache.fop.pdf.PDFNumber;
 
 public class Function {
 
+    public interface SubFunctionRenderer {
+
+        void outputFunction(StringBuilder out, int functionIndex);
+    }
+
     /**
      * Required: The Type of function (0,2,3,4) default is 0.
      */
@@ -333,7 +338,7 @@ public class Function {
         return cOne;
     }
 
-    public String toWriteableString(List<String> functionsStrings) {
+    public String toWriteableString(SubFunctionRenderer subFunctionRenderer) {
         StringBuilder out = new StringBuilder(256);
         out.append("<<\n/FunctionType " + functionType + "\n");
         outputDomain(out);
@@ -362,8 +367,8 @@ public class Function {
             outputRange(out);
             if (!functions.isEmpty()) {
                 out.append("/Functions [ ");
-                for (String f : functionsStrings) {
-                    out.append(f);
+                for (int i = 0; i < functions.size(); i++) {
+                    subFunctionRenderer.outputFunction(out, i);
                     out.append(' ');
                 }
                 out.append("]\n");

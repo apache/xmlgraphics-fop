@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.fop.render.gradient.Function;
+import org.apache.fop.render.gradient.Function.SubFunctionRenderer;
 
 /**
  * class representing a PDF Function.
@@ -111,7 +112,13 @@ public class PDFFunction extends PDFObject {
         for (PDFFunction f : pdfFunctions) {
             functionsStrings.add(f.referencePDF());
         }
-        return encode(function.toWriteableString(functionsStrings));
+        SubFunctionRenderer subFunctionRenderer = new SubFunctionRenderer() {
+
+            public void outputFunction(StringBuilder out, int functionIndex) {
+                out.append(pdfFunctions.get(functionIndex).referencePDF());
+            }
+        };
+        return encode(function.toWriteableString(subFunctionRenderer));
     }
 
     /** {@inheritDoc} */
