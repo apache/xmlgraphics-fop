@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.render.shading.Function;
-import org.apache.fop.render.shading.FunctionPattern;
 import org.apache.fop.render.shading.Pattern;
 import org.apache.fop.render.shading.Shading;
 
@@ -119,24 +118,22 @@ public class PSPattern implements Pattern {
         Shading.FunctionRenderer functionRenderer = new Shading.FunctionRenderer() {
 
             public void outputFunction(StringBuilder out) {
-                FunctionPattern pattern = new FunctionPattern(function);
                 List<String> functionsStrings = new ArrayList<String>(function.getFunctions().size());
                 for (Function f : function.getFunctions()) {
                     functionsStrings.add(functionToString(f));
                 }
-                out.append(pattern.toWriteableString(functionsStrings));
+                out.append(function.toWriteableString(functionsStrings));
             }
         };
         shading.output(p, functionRenderer);
     }
 
     private String functionToString(Function function) {
-        FunctionPattern pattern = new FunctionPattern(function);
         List<String> functionsStrings = new ArrayList<String>(function.getFunctions().size());
         for (Function f : function.getFunctions()) {
             functionsStrings.add(functionToString(f));
         }
-        return pattern.toWriteableString(functionsStrings);
+        return function.toWriteableString(functionsStrings);
     }
 
 }

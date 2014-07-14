@@ -20,6 +20,8 @@ package org.apache.fop.render.shading;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.fop.pdf.PDFNumber;
+
 public class Function {
 
     /**
@@ -329,6 +331,185 @@ public class Function {
      */
     public float[] getCOne() {
         return cOne;
+    }
+
+    public String toWriteableString(List<String> functionsStrings) {
+        StringBuilder out = new StringBuilder(256);
+        out.append("<<\n/FunctionType " + functionType + "\n");
+        outputDomain(out);
+        if (this.functionType == 0) {
+            outputSize(out);
+            outputEncode(out);
+            outputBitsPerSample(out);
+            outputOrder(out);
+            outputRange(out);
+            outputDecode(out);
+            if (functionDataStream != null) {
+                out.append("/Length " + (functionDataStream.length() + 1) + "\n");
+            }
+            outputFilter(out);
+            out.append(">>");
+            if (functionDataStream != null) {
+                out.append("\nstream\n" + functionDataStream + "\nendstream");
+            }
+        } else if (functionType == 2) {
+            outputRange(out);
+            outputCZero(out);
+            outputCOne(out);
+            outputInterpolationExponentN(out);
+            out.append(">>");
+        } else if (functionType == 3) {
+            outputRange(out);
+            if (!functions.isEmpty()) {
+                out.append("/Functions [ ");
+                for (String f : functionsStrings) {
+                    out.append(f);
+                    out.append(' ');
+                }
+                out.append("]\n");
+            }
+            outputEncode(out);
+            out.append("/Bounds ");
+            if (bounds != null) {
+                outputDoubles(out, bounds);
+            } else if (!functions.isEmpty()) {
+                // if there are n functions,
+                // there must be n-1 bounds.
+                // so let each function handle an equal portion
+                // of the whole. e.g. if there are 4, then [ 0.25 0.25 0.25 ]
+                int numberOfFunctions = functions.size();
+                String functionsFraction = PDFNumber.doubleOut(Double.valueOf(1.0 / (numberOfFunctions)));
+                out.append("[ ");
+                for (int i = 0; i + 1 < numberOfFunctions; i++) {
+                    out.append(functionsFraction);
+                    out.append(" ");
+                }
+                out.append("]");
+            }
+            out.append("\n>>");
+        } else if (functionType == 4) {
+            outputRange(out);
+            if (functionDataStream != null) {
+                out.append("/Length " + (functionDataStream.length() + 1) + "\n");
+            }
+            out.append(">>");
+            if (functionDataStream != null) {
+                out.append("\nstream\n{ " + functionDataStream + " }\nendstream");
+            }
+        }
+        return out.toString();
+    }
+
+    private void outputDomain(StringBuilder p) {
+        if (domain != null) {
+            p.append("/Domain ");
+            outputDoubles(p, domain);
+            p.append("\n");
+        } else {
+            p.append("/Domain [ 0 1 ]\n");
+        }
+    }
+
+    private void outputSize(StringBuilder out) {
+        if (size != null) {
+            out.append("/Size ");
+            outputDoubles(out, size);
+            out.append("\n");
+        }
+    }
+
+    private void outputBitsPerSample(StringBuilder out) {
+        out.append("/BitsPerSample " + bitsPerSample + "\n");
+    }
+
+    private void outputOrder(StringBuilder out) {
+        if (order == 1 || order == 3) {
+            out.append("\n/Order " + order + "\n");
+        }
+    }
+
+    private void outputRange(StringBuilder out) {
+        if (range != null) {
+            out.append("/Range ");
+            outputDoubles(out, range);
+            out.append("\n");
+        }
+    }
+
+    private void outputEncode(StringBuilder out) {
+        if (encode != null) {
+            out.append("/Encode ");
+            outputDoubles(out, encode);
+            out.append("\n");
+        } else {
+            out.append("/Encode [ ");
+            int size = functions.size();
+            for (int i = 0; i < size; i++) {
+                out.append("0 1 ");
+            }
+            out.append("]\n");
+        }
+    }
+
+    private void outputDecode(StringBuilder out) {
+        if (decode != null) {
+            out.append("/Decode ");
+            outputDoubles(out, decode);
+            out.append("\n");
+        }
+    }
+
+    private void outputFilter(StringBuilder out) {
+        if (filter != null) {
+            int size = filter.size();
+            out.append("/Filter ");
+            if (size == 1) {
+                out.append("/" + filter.get(0) + "\n");
+            } else {
+                out.append("[ ");
+                for (int i = 0; i < size; i++) {
+                    out.append("/" + filter.get(0) + " ");
+                }
+                out.append("]\n");
+            }
+        }
+    }
+
+    private void outputCZero(StringBuilder out) {
+        if (cZero != null) {
+            out.append("/C0 [ ");
+            for (float c : cZero) {
+                out.append(PDFNumber.doubleOut(c));
+                out.append(" ");
+            }
+            out.append("]\n");
+        }
+    }
+
+    private void outputCOne(StringBuilder out) {
+        if (cOne != null) {
+            out.append("/C1 [ ");
+            for (float c : cOne) {
+                out.append(PDFNumber.doubleOut(c));
+                out.append(" ");
+            }
+            out.append("]\n");
+        }
+    }
+
+    private void outputInterpolationExponentN(StringBuilder out) {
+        out.append("/N ");
+        out.append(PDFNumber.doubleOut(Double.valueOf(interpolationExponentN)));
+        out.append("\n");
+    }
+
+    private void outputDoubles(StringBuilder out, List<Double> doubles) {
+        out.append("[ ");
+        for (Double d : doubles) {
+            out.append(PDFNumber.doubleOut(d));
+            out.append(" ");
+        }
+        out.append("]");
     }
 
 }
