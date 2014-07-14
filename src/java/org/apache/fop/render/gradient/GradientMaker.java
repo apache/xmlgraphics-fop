@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.shading;
+package org.apache.fop.render.gradient;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;

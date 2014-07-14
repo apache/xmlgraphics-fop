@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.fop.render.shading.Function;
+import org.apache.fop.render.gradient.Function;
 
 /**
  * class representing a PDF Function.
