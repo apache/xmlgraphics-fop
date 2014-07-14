@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.fop.render.shading;
+package org.apache.fop.render.gradient;
 
 import java.util.List;
 

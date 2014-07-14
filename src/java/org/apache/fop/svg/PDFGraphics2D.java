@@ -93,13 +93,13 @@ import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFShading;
 import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.render.gradient.Function;
+import org.apache.fop.render.gradient.GradientMaker;
+import org.apache.fop.render.gradient.Pattern;
+import org.apache.fop.render.gradient.Shading;
 import org.apache.fop.render.pdf.ImageRawCCITTFaxAdapter;
 import org.apache.fop.render.pdf.ImageRawJPEGAdapter;
 import org.apache.fop.render.pdf.ImageRenderedAdapter;
-import org.apache.fop.render.shading.Function;
-import org.apache.fop.render.shading.GradientMaker;
-import org.apache.fop.render.shading.Pattern;
-import org.apache.fop.render.shading.Shading;
 
 /**
  * <p>PDF Graphics 2D.

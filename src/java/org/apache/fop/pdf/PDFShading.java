@@ -21,7 +21,7 @@ package org.apache.fop.pdf;
 
 import java.util.List;
 
-import org.apache.fop.render.shading.Shading;
+import org.apache.fop.render.gradient.Shading;
 
 
 /**

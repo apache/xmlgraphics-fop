@@ -35,10 +35,10 @@ import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
-import org.apache.fop.render.shading.Function;
-import org.apache.fop.render.shading.GradientMaker;
-import org.apache.fop.render.shading.Pattern;
-import org.apache.fop.render.shading.Shading;
+import org.apache.fop.render.gradient.Function;
+import org.apache.fop.render.gradient.GradientMaker;
+import org.apache.fop.render.gradient.Pattern;
+import org.apache.fop.render.gradient.Shading;
 
 
 public class PSSVGGraphics2D extends PSGraphics2D {
