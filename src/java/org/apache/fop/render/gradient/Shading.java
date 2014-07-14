@@ -20,6 +20,7 @@ package org.apache.fop.render.gradient;
 import java.util.List;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
+import org.apache.fop.render.gradient.GradientMaker.DoubleFormatter;
 
 
 public class Shading {
@@ -211,7 +212,7 @@ public class Shading {
         return verticesPerRow;
     }
 
-    public void output(StringBuilder out, FunctionRenderer functionRenderer) {
+    public void output(StringBuilder out, DoubleFormatter doubleFormatter, FunctionRenderer functionRenderer) {
         out.append("<<\n/ShadingType " + shadingType + "\n");
         if (colorSpace != null) {
             out.append("/ColorSpace /" + colorSpace.getName() + "\n");
@@ -219,13 +220,13 @@ public class Shading {
 
         if (background != null) {
             out.append("/Background ");
-            GradientMaker.outputDoubles(out, background);
+            GradientMaker.outputDoubles(out, doubleFormatter, background);
             out.append("\n");
         }
 
         if (bbox != null) {
             out.append("/BBox");
-            GradientMaker.outputDoubles(out, bbox);
+            GradientMaker.outputDoubles(out, doubleFormatter, bbox);
             out.append("\n");
         }
 
@@ -235,29 +236,30 @@ public class Shading {
 
         switch (shadingType) {
         // Function based shading
-        case 1: outputShadingType1(out, functionRenderer); break;
+        case 1: outputShadingType1(out, doubleFormatter, functionRenderer); break;
         // Axial shading
         case 2:
         // Radial shading
-        case 3: outputShadingType2or3(out, functionRenderer); break;
+        case 3: outputShadingType2or3(out, doubleFormatter, functionRenderer); break;
         // Free-form Gouraud-shaded triangle meshes
         case 4:
         // Coons patch meshes
         case 6:
         // Tensor product patch meshes
-        case 7: outputShadingType4or6or7(out, functionRenderer); break;
+        case 7: outputShadingType4or6or7(out, doubleFormatter, functionRenderer); break;
         // Lattice Free form gouraud-shaded triangle mesh
-        case 5: outputShadingType5(out, functionRenderer); break;
+        case 5: outputShadingType5(out, doubleFormatter, functionRenderer); break;
         default: throw new UnsupportedOperationException("Shading type " + shadingType);
         }
 
         out.append(">>");
     }
 
-    private void outputShadingType1(StringBuilder out, Shading.FunctionRenderer functionRenderer) {
+    private void outputShadingType1(StringBuilder out, DoubleFormatter doubleFormatter,
+            Shading.FunctionRenderer functionRenderer) {
         if (domain != null) {
             out.append("/Domain ");
-            GradientMaker.outputDoubles(out, domain);
+            GradientMaker.outputDoubles(out, doubleFormatter, domain);
             out.append("\n");
         } else {
             out.append("/Domain [ 0 1 ] \n");
@@ -265,22 +267,23 @@ public class Shading {
 
         if (matrix != null) {
             out.append("/Matrix ");
-            GradientMaker.outputDoubles(out, matrix);
+            GradientMaker.outputDoubles(out, doubleFormatter, matrix);
             out.append("\n");
         }
         outputFunction(out, functionRenderer);
     }
 
-    private void outputShadingType2or3(StringBuilder out, Shading.FunctionRenderer functionRenderer) {
+    private void outputShadingType2or3(StringBuilder out, DoubleFormatter doubleFormatter,
+            Shading.FunctionRenderer functionRenderer) {
         if (coords != null) {
             out.append("/Coords ");
-            GradientMaker.outputDoubles(out, coords);
+            GradientMaker.outputDoubles(out, doubleFormatter, coords);
             out.append("\n");
         }
 
         if (domain != null) {
             out.append("/Domain ");
-            GradientMaker.outputDoubles(out, domain);
+            GradientMaker.outputDoubles(out, doubleFormatter, domain);
             out.append("\n");
         } else {
             out.append("/Domain [ 0 1 ] \n");
@@ -300,7 +303,8 @@ public class Shading {
         outputFunction(out, functionRenderer);
     }
 
-    private void outputShadingType4or6or7(StringBuilder out, Shading.FunctionRenderer functionRenderer) {
+    private void outputShadingType4or6or7(StringBuilder out, DoubleFormatter doubleFormatter,
+            Shading.FunctionRenderer functionRenderer) {
         if (bitsPerCoordinate > 0) {
             out.append("/BitsPerCoordinate " + bitsPerCoordinate + "\n");
         } else {
@@ -321,14 +325,15 @@ public class Shading {
 
         if (decode != null) {
             out.append("/Decode ");
-            GradientMaker.outputDoubles(out, decode);
+            GradientMaker.outputDoubles(out, doubleFormatter, decode);
             out.append("\n");
         }
 
         outputFunction(out, functionRenderer);
     }
 
-    private void outputShadingType5(StringBuilder out, Shading.FunctionRenderer functionRenderer) {
+    private void outputShadingType5(StringBuilder out, DoubleFormatter doubleFormatter,
+            Shading.FunctionRenderer functionRenderer) {
         if (bitsPerCoordinate > 0) {
             out.append("/BitsPerCoordinate " + bitsPerCoordinate + "\n");
         } else {
@@ -343,7 +348,7 @@ public class Shading {
 
         if (decode != null) {
             out.append("/Decode ");
-            GradientMaker.outputDoubles(out, decode);
+            GradientMaker.outputDoubles(out, doubleFormatter, decode);
             out.append("\n");
         }
 

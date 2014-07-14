@@ -20,7 +20,7 @@ package org.apache.fop.render.gradient;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.render.gradient.GradientMaker.DoubleFormatter;
 
 public class Function {
 
@@ -338,16 +338,17 @@ public class Function {
         return cOne;
     }
 
-    public String output(StringBuilder out, SubFunctionRenderer subFunctionRenderer) {
+    public String output(StringBuilder out, DoubleFormatter doubleFormatter,
+            SubFunctionRenderer subFunctionRenderer) {
         out.append("<<\n/FunctionType " + functionType + "\n");
-        outputDomain(out);
+        outputDomain(out, doubleFormatter);
         if (this.functionType == 0) {
-            outputSize(out);
-            outputEncode(out);
+            outputSize(out, doubleFormatter);
+            outputEncode(out, doubleFormatter);
             outputBitsPerSample(out);
             outputOrder(out);
-            outputRange(out);
-            outputDecode(out);
+            outputRange(out, doubleFormatter);
+            outputDecode(out, doubleFormatter);
             if (functionDataStream != null) {
                 out.append("/Length " + (functionDataStream.length() + 1) + "\n");
             }
@@ -357,13 +358,13 @@ public class Function {
                 out.append("\nstream\n" + functionDataStream + "\nendstream");
             }
         } else if (functionType == 2) {
-            outputRange(out);
-            outputCZero(out);
-            outputCOne(out);
-            outputInterpolationExponentN(out);
+            outputRange(out, doubleFormatter);
+            outputCZero(out, doubleFormatter);
+            outputCOne(out, doubleFormatter);
+            outputInterpolationExponentN(out, doubleFormatter);
             out.append(">>");
         } else if (functionType == 3) {
-            outputRange(out);
+            outputRange(out, doubleFormatter);
             if (!functions.isEmpty()) {
                 out.append("/Functions [ ");
                 for (int i = 0; i < functions.size(); i++) {
@@ -372,17 +373,17 @@ public class Function {
                 }
                 out.append("]\n");
             }
-            outputEncode(out);
+            outputEncode(out, doubleFormatter);
             out.append("/Bounds ");
             if (bounds != null) {
-                GradientMaker.outputDoubles(out, bounds);
+                GradientMaker.outputDoubles(out, doubleFormatter, bounds);
             } else if (!functions.isEmpty()) {
                 // if there are n functions,
                 // there must be n-1 bounds.
                 // so let each function handle an equal portion
                 // of the whole. e.g. if there are 4, then [ 0.25 0.25 0.25 ]
                 int numberOfFunctions = functions.size();
-                String functionsFraction = PDFNumber.doubleOut(1.0 / numberOfFunctions);
+                String functionsFraction = doubleFormatter.formatDouble(1.0 / numberOfFunctions);
                 out.append("[ ");
                 for (int i = 0; i + 1 < numberOfFunctions; i++) {
                     out.append(functionsFraction);
@@ -392,7 +393,7 @@ public class Function {
             }
             out.append("\n>>");
         } else if (functionType == 4) {
-            outputRange(out);
+            outputRange(out, doubleFormatter);
             if (functionDataStream != null) {
                 out.append("/Length " + (functionDataStream.length() + 1) + "\n");
             }
@@ -404,20 +405,20 @@ public class Function {
         return out.toString();
     }
 
-    private void outputDomain(StringBuilder p) {
+    private void outputDomain(StringBuilder p, DoubleFormatter doubleFormatter) {
         if (domain != null) {
             p.append("/Domain ");
-            GradientMaker.outputDoubles(p, domain);
+            GradientMaker.outputDoubles(p, doubleFormatter, domain);
             p.append("\n");
         } else {
             p.append("/Domain [ 0 1 ]\n");
         }
     }
 
-    private void outputSize(StringBuilder out) {
+    private void outputSize(StringBuilder out, DoubleFormatter doubleFormatter) {
         if (size != null) {
             out.append("/Size ");
-            GradientMaker.outputDoubles(out, size);
+            GradientMaker.outputDoubles(out, doubleFormatter, size);
             out.append("\n");
         }
     }
@@ -432,18 +433,18 @@ public class Function {
         }
     }
 
-    private void outputRange(StringBuilder out) {
+    private void outputRange(StringBuilder out, DoubleFormatter doubleFormatter) {
         if (range != null) {
             out.append("/Range ");
-            GradientMaker.outputDoubles(out, range);
+            GradientMaker.outputDoubles(out, doubleFormatter, range);
             out.append("\n");
         }
     }
 
-    private void outputEncode(StringBuilder out) {
+    private void outputEncode(StringBuilder out, DoubleFormatter doubleFormatter) {
         if (encode != null) {
             out.append("/Encode ");
-            GradientMaker.outputDoubles(out, encode);
+            GradientMaker.outputDoubles(out, doubleFormatter, encode);
             out.append("\n");
         } else {
             out.append("/Encode [ ");
@@ -455,10 +456,10 @@ public class Function {
         }
     }
 
-    private void outputDecode(StringBuilder out) {
+    private void outputDecode(StringBuilder out, DoubleFormatter doubleFormatter) {
         if (decode != null) {
             out.append("/Decode ");
-            GradientMaker.outputDoubles(out, decode);
+            GradientMaker.outputDoubles(out, doubleFormatter, decode);
             out.append("\n");
         }
     }
@@ -479,31 +480,31 @@ public class Function {
         }
     }
 
-    private void outputCZero(StringBuilder out) {
+    private void outputCZero(StringBuilder out, DoubleFormatter doubleFormatter) {
         if (cZero != null) {
             out.append("/C0 [ ");
             for (float c : cZero) {
-                out.append(PDFNumber.doubleOut(c));
+                out.append(doubleFormatter.formatDouble(c));
                 out.append(" ");
             }
             out.append("]\n");
         }
     }
 
-    private void outputCOne(StringBuilder out) {
+    private void outputCOne(StringBuilder out, DoubleFormatter doubleFormatter) {
         if (cOne != null) {
             out.append("/C1 [ ");
             for (float c : cOne) {
-                out.append(PDFNumber.doubleOut(c));
+                out.append(doubleFormatter.formatDouble(c));
                 out.append(" ");
             }
             out.append("]\n");
         }
     }
 
-    private void outputInterpolationExponentN(StringBuilder out) {
+    private void outputInterpolationExponentN(StringBuilder out, DoubleFormatter doubleFormatter) {
         out.append("/N ");
-        out.append(PDFNumber.doubleOut(interpolationExponentN));
+        out.append(doubleFormatter.formatDouble(interpolationExponentN));
         out.append("\n");
     }
 

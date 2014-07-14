@@ -36,6 +36,7 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.fop.render.gradient.Function;
 import org.apache.fop.render.gradient.Function.SubFunctionRenderer;
 import org.apache.fop.render.gradient.GradientMaker;
+import org.apache.fop.render.gradient.GradientMaker.DoubleFormatter;
 import org.apache.fop.render.gradient.Pattern;
 import org.apache.fop.render.gradient.Shading;
 
@@ -77,7 +78,7 @@ public class PSSVGGraphics2D extends PSGraphics2D {
             Pattern pattern = GradientMaker.makeLinearGradient((LinearGradientPaint) paint,
                     getBaseTransform(), getTransform());
             try {
-                gen.write(toString(pattern));
+                gen.write(outputPattern(pattern));
             } catch (IOException ioe) {
                 handleIOException(ioe);
             }
@@ -85,19 +86,14 @@ public class PSSVGGraphics2D extends PSGraphics2D {
             Pattern pattern = GradientMaker.makeRadialGradient((RadialGradientPaint) paint,
                     getBaseTransform(), getTransform());
             try {
-                gen.write(toString(pattern));
+                gen.write(outputPattern(pattern));
             } catch (IOException ioe) {
                 handleIOException(ioe);
             }
         }
     }
 
-    /**
-     * Outputs the radial or axial pattern as a string dictionary to insert
-     * into a postscript document.
-     * @param pattern
-     */
-    private String toString(Pattern pattern) {
+    private String outputPattern(Pattern pattern) {
         StringBuilder p = new StringBuilder(64);
         p.append("/Pattern setcolorspace\n");
         p.append("<< \n/Type /Pattern \n");
@@ -112,7 +108,7 @@ public class PSSVGGraphics2D extends PSGraphics2D {
         p.append(">> \n");
         p.append("[ ");
         for (double m : pattern.getMatrix()) {
-            p.append(Double.toString(m)); // TODO refactor so that PSGenerator.formatDouble can be used
+            p.append(getPSGenerator().formatDouble(m));
             p.append(" ");
         }
         p.append("] ");
@@ -122,6 +118,12 @@ public class PSSVGGraphics2D extends PSGraphics2D {
     }
 
     private void outputShading(StringBuilder out, Shading shading) {
+        final GradientMaker.DoubleFormatter doubleFormatter = new DoubleFormatter() {
+
+            public String formatDouble(double d) {
+                return getPSGenerator().formatDouble(d);
+            }
+        };
         final Function function = shading.getFunction();
         Shading.FunctionRenderer functionRenderer = new Shading.FunctionRenderer() {
 
@@ -131,13 +133,13 @@ public class PSSVGGraphics2D extends PSGraphics2D {
                     public void outputFunction(StringBuilder out, int functionIndex) {
                         Function subFunction = function.getFunctions().get(functionIndex);
                         assert subFunction.getFunctions().isEmpty();
-                        subFunction.output(out, null);
+                        subFunction.output(out, doubleFormatter, null);
                     }
                 };
-                function.output(out, subFunctionRenderer);
+                function.output(out, doubleFormatter, subFunctionRenderer);
             }
         };
-        shading.output(out, functionRenderer);
+        shading.output(out, doubleFormatter, functionRenderer);
     }
 
     protected AffineTransform getBaseTransform() {
