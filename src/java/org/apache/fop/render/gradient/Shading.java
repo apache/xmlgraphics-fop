@@ -20,7 +20,6 @@ package org.apache.fop.render.gradient;
 import java.util.List;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
-import org.apache.fop.pdf.PDFNumber;
 
 
 public class Shading {
@@ -220,13 +219,13 @@ public class Shading {
 
         if (background != null) {
             out.append("/Background ");
-            outputDoubles(out, background);
+            GradientMaker.outputDoubles(out, background);
             out.append("\n");
         }
 
         if (bbox != null) {
             out.append("/BBox");
-            outputDoubles(out, bbox);
+            GradientMaker.outputDoubles(out, bbox);
             out.append("\n");
         }
 
@@ -255,19 +254,10 @@ public class Shading {
         out.append(">>");
     }
 
-    private void outputDoubles(StringBuilder out, List<Double> doubles) {
-        out.append("[ ");
-        for (Double d : doubles) {
-            out.append(PDFNumber.doubleOut(d));
-            out.append(" ");
-        }
-        out.append("]");
-    }
-
     private void outputShadingType1(StringBuilder out, Shading.FunctionRenderer functionRenderer) {
         if (domain != null) {
             out.append("/Domain ");
-            outputDoubles(out, domain);
+            GradientMaker.outputDoubles(out, domain);
             out.append("\n");
         } else {
             out.append("/Domain [ 0 1 ] \n");
@@ -275,7 +265,7 @@ public class Shading {
 
         if (matrix != null) {
             out.append("/Matrix ");
-            outputDoubles(out, matrix);
+            GradientMaker.outputDoubles(out, matrix);
             out.append("\n");
         }
         outputFunction(out, functionRenderer);
@@ -284,13 +274,13 @@ public class Shading {
     private void outputShadingType2or3(StringBuilder out, Shading.FunctionRenderer functionRenderer) {
         if (coords != null) {
             out.append("/Coords ");
-            outputDoubles(out, coords);
+            GradientMaker.outputDoubles(out, coords);
             out.append("\n");
         }
 
         if (domain != null) {
             out.append("/Domain ");
-            outputDoubles(out, domain);
+            GradientMaker.outputDoubles(out, domain);
             out.append("\n");
         } else {
             out.append("/Domain [ 0 1 ] \n");
@@ -331,7 +321,7 @@ public class Shading {
 
         if (decode != null) {
             out.append("/Decode ");
-            outputDoubles(out, decode);
+            GradientMaker.outputDoubles(out, decode);
             out.append("\n");
         }
 
@@ -353,7 +343,7 @@ public class Shading {
 
         if (decode != null) {
             out.append("/Decode ");
-            outputDoubles(out, decode);
+            GradientMaker.outputDoubles(out, decode);
             out.append("\n");
         }
 
