@@ -121,7 +121,7 @@ public class PSSVGGraphics2D extends PSGraphics2D {
         return p.toString();
     }
 
-    private void outputShading(StringBuilder p, Shading shading) {
+    private void outputShading(StringBuilder out, Shading shading) {
         final Function function = shading.getFunction();
         Shading.FunctionRenderer functionRenderer = new Shading.FunctionRenderer() {
 
@@ -131,13 +131,13 @@ public class PSSVGGraphics2D extends PSGraphics2D {
                     public void outputFunction(StringBuilder out, int functionIndex) {
                         Function subFunction = function.getFunctions().get(functionIndex);
                         assert subFunction.getFunctions().isEmpty();
-                        out.append(subFunction.toWriteableString(null));
+                        subFunction.output(out, null);
                     }
                 };
-                out.append(function.toWriteableString(subFunctionRenderer));
+                function.output(out, subFunctionRenderer);
             }
         };
-        shading.output(p, functionRenderer);
+        shading.output(out, functionRenderer);
     }
 
     protected AffineTransform getBaseTransform() {

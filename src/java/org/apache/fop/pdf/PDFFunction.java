@@ -118,7 +118,9 @@ public class PDFFunction extends PDFObject {
                 out.append(pdfFunctions.get(functionIndex).referencePDF());
             }
         };
-        return encode(function.toWriteableString(subFunctionRenderer));
+        StringBuilder out = new StringBuilder();
+        function.output(out, subFunctionRenderer);
+        return encode(out.toString());
     }
 
     /** {@inheritDoc} */
