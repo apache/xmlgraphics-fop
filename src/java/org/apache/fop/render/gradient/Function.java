@@ -375,14 +375,14 @@ public class Function {
             outputEncode(out);
             out.append("/Bounds ");
             if (bounds != null) {
-                outputDoubles(out, bounds);
+                GradientMaker.outputDoubles(out, bounds);
             } else if (!functions.isEmpty()) {
                 // if there are n functions,
                 // there must be n-1 bounds.
                 // so let each function handle an equal portion
                 // of the whole. e.g. if there are 4, then [ 0.25 0.25 0.25 ]
                 int numberOfFunctions = functions.size();
-                String functionsFraction = PDFNumber.doubleOut(Double.valueOf(1.0 / (numberOfFunctions)));
+                String functionsFraction = PDFNumber.doubleOut(1.0 / numberOfFunctions);
                 out.append("[ ");
                 for (int i = 0; i + 1 < numberOfFunctions; i++) {
                     out.append(functionsFraction);
@@ -407,7 +407,7 @@ public class Function {
     private void outputDomain(StringBuilder p) {
         if (domain != null) {
             p.append("/Domain ");
-            outputDoubles(p, domain);
+            GradientMaker.outputDoubles(p, domain);
             p.append("\n");
         } else {
             p.append("/Domain [ 0 1 ]\n");
@@ -417,7 +417,7 @@ public class Function {
     private void outputSize(StringBuilder out) {
         if (size != null) {
             out.append("/Size ");
-            outputDoubles(out, size);
+            GradientMaker.outputDoubles(out, size);
             out.append("\n");
         }
     }
@@ -435,7 +435,7 @@ public class Function {
     private void outputRange(StringBuilder out) {
         if (range != null) {
             out.append("/Range ");
-            outputDoubles(out, range);
+            GradientMaker.outputDoubles(out, range);
             out.append("\n");
         }
     }
@@ -443,7 +443,7 @@ public class Function {
     private void outputEncode(StringBuilder out) {
         if (encode != null) {
             out.append("/Encode ");
-            outputDoubles(out, encode);
+            GradientMaker.outputDoubles(out, encode);
             out.append("\n");
         } else {
             out.append("/Encode [ ");
@@ -458,7 +458,7 @@ public class Function {
     private void outputDecode(StringBuilder out) {
         if (decode != null) {
             out.append("/Decode ");
-            outputDoubles(out, decode);
+            GradientMaker.outputDoubles(out, decode);
             out.append("\n");
         }
     }
@@ -503,17 +503,8 @@ public class Function {
 
     private void outputInterpolationExponentN(StringBuilder out) {
         out.append("/N ");
-        out.append(PDFNumber.doubleOut(Double.valueOf(interpolationExponentN)));
+        out.append(PDFNumber.doubleOut(interpolationExponentN));
         out.append("\n");
-    }
-
-    private void outputDoubles(StringBuilder out, List<Double> doubles) {
-        out.append("[ ");
-        for (Double d : doubles) {
-            out.append(PDFNumber.doubleOut(d));
-            out.append(" ");
-        }
-        out.append("]");
     }
 
 }
