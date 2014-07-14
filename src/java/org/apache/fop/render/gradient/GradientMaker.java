@@ -32,9 +32,13 @@ import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.xmlgraphics.java2d.color.ColorUtil;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
-import org.apache.fop.pdf.PDFNumber;
 
 public final class GradientMaker {
+
+    public interface DoubleFormatter {
+
+        String formatDouble(double d);
+    }
 
     private GradientMaker() { }
 
@@ -152,10 +156,10 @@ public final class GradientMaker {
         return gradientColors;
     }
 
-    static void outputDoubles(StringBuilder out, List<Double> doubles) {
+    static void outputDoubles(StringBuilder out, DoubleFormatter doubleFormatter, List<Double> doubles) {
         out.append("[ ");
         for (Double d : doubles) {
-            out.append(PDFNumber.doubleOut(d));
+            out.append(doubleFormatter.formatDouble(d));
             out.append(" ");
         }
         out.append("]");

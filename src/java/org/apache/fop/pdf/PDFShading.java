@@ -21,6 +21,8 @@ package org.apache.fop.pdf;
 
 import java.util.List;
 
+import org.apache.fop.render.gradient.GradientMaker;
+import org.apache.fop.render.gradient.GradientMaker.DoubleFormatter;
 import org.apache.fop.render.gradient.Shading;
 
 
@@ -102,7 +104,13 @@ public class PDFShading extends PDFObject {
             }
         };
         StringBuilder out = new StringBuilder();
-        shading.output(out, functionRenderer);
+        GradientMaker.DoubleFormatter doubleFormatter = new DoubleFormatter() {
+
+            public String formatDouble(double d) {
+                return PDFNumber.doubleOut(d);
+            }
+        };
+        shading.output(out, doubleFormatter, functionRenderer);
         return out.toString();
     }
 

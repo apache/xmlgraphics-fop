@@ -26,6 +26,8 @@ import java.util.List;
 
 import org.apache.fop.render.gradient.Function;
 import org.apache.fop.render.gradient.Function.SubFunctionRenderer;
+import org.apache.fop.render.gradient.GradientMaker;
+import org.apache.fop.render.gradient.GradientMaker.DoubleFormatter;
 
 /**
  * class representing a PDF Function.
@@ -119,7 +121,13 @@ public class PDFFunction extends PDFObject {
             }
         };
         StringBuilder out = new StringBuilder();
-        function.output(out, subFunctionRenderer);
+        GradientMaker.DoubleFormatter doubleFormatter = new DoubleFormatter() {
+
+            public String formatDouble(double d) {
+                return PDFNumber.doubleOut(d);
+            }
+        };
+        function.output(out, doubleFormatter, subFunctionRenderer);
         return encode(out.toString());
     }
 
