@@ -338,8 +338,7 @@ public class Function {
         return cOne;
     }
 
-    public String toWriteableString(SubFunctionRenderer subFunctionRenderer) {
-        StringBuilder out = new StringBuilder(256);
+    public String output(StringBuilder out, SubFunctionRenderer subFunctionRenderer) {
         out.append("<<\n/FunctionType " + functionType + "\n");
         outputDomain(out);
         if (this.functionType == 0) {
