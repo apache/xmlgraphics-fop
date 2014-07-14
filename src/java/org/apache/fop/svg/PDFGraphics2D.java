@@ -837,7 +837,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         return false; // unknown paint
     }
 
-    PDFPattern createPDFPattern(Pattern pattern) {
+    private PDFPattern createPDFPattern(Pattern pattern) {
         Shading shading = pattern.getShading();
         Function function = shading.getFunction();
         List<PDFFunction> pdfFunctions = new ArrayList<PDFFunction>(function.getFunctions().size());
