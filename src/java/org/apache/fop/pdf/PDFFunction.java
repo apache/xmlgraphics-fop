@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.fop.render.shading.Function;
-import org.apache.fop.render.shading.FunctionPattern;
 
 /**
  * class representing a PDF Function.
@@ -108,12 +107,11 @@ public class PDFFunction extends PDFObject {
 
 
     public byte[] toByteString() {
-        FunctionPattern pattern = new FunctionPattern(function);
         List<String> functionsStrings = new ArrayList<String>(function.getFunctions().size());
         for (PDFFunction f : pdfFunctions) {
             functionsStrings.add(f.referencePDF());
         }
-        return encode(pattern.toWriteableString(functionsStrings));
+        return encode(function.toWriteableString(functionsStrings));
     }
 
     /** {@inheritDoc} */
