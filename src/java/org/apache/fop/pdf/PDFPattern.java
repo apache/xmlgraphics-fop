@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.apache.fop.render.shading.Pattern;
-
 /**
  * class representing a PDF Function.
  *
@@ -35,7 +33,7 @@ import org.apache.fop.render.shading.Pattern;
  *
  * All PDF Functions have a FunctionType (0,2,3, or 4), a Domain, and a Range.
  */
-public class PDFPattern extends PDFPathPaint implements Pattern {
+public class PDFPattern extends PDFPathPaint {
 
     /**
      * The resources associated with this pattern
