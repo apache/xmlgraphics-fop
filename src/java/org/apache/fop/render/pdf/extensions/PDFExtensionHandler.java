@@ -32,8 +32,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 
-// CSOFF: LineLengthCheck
-
 /**
  * ContentHandler (parser) for restoring PDF extension objects from XML.
  */

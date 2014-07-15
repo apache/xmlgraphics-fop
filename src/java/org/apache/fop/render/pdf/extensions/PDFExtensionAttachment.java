@@ -23,8 +23,6 @@ import org.apache.xmlgraphics.util.XMLizable;
 
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 
-// CSOFF: LineLengthCheck
-
 public abstract class PDFExtensionAttachment implements ExtensionAttachment, XMLizable {
 
     /** The category URI for this extension attachment. */
