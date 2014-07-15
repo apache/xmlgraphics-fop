@@ -39,8 +39,6 @@ import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.OFFontLoader;
 import org.apache.fop.fonts.truetype.TTFFile;
 
-// CSOFF: LineLengthCheck
-
 /**
  * A tool which reads TTF files and generates
  * XML font metrics file for use in FOP.
