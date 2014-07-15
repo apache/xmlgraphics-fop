@@ -39,12 +39,12 @@ public class AFPPageOverlay extends AFPExtensionAttachment {
     /**
      * The x coordinate
      */
-    private int x = 0;
+    private int x;
 
     /**
      * The y coordinate
      */
-    private int y = 0;
+    private int y;
 
     /**
      * Default constructor.

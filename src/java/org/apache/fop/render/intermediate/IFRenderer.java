@@ -122,7 +122,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     /** If not null, the XMLRenderer will mimic another renderer by using its font setup. */
     protected Renderer mimic;
 
-    private boolean inPageSequence = false;
+    private boolean inPageSequence;
 
     private Stack graphicContextStack = new Stack();
     private Stack viewportDimensionStack = new Stack();

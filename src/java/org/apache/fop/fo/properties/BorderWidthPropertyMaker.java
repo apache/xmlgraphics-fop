@@ -29,7 +29,7 @@ import org.apache.fop.fo.expr.PropertyException;
  */
 public class BorderWidthPropertyMaker extends LengthProperty.Maker {
 
-    private int borderStyleId = 0;
+    private int borderStyleId;
 
     /**
      * Create a length property which check the value of the border-*-style

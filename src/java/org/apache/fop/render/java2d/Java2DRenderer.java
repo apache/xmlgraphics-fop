@@ -116,16 +116,16 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     protected double scaleFactor = 1;
 
     /** The page width in pixels */
-    protected int pageWidth = 0;
+    protected int pageWidth;
 
     /** The page height in pixels */
-    protected int pageHeight = 0;
+    protected int pageHeight;
 
     /** List of Viewports */
     protected List pageViewportList = new java.util.ArrayList();
 
     /** The 0-based current page number */
-    private int currentPageNumber = 0;
+    private int currentPageNumber;
 
     /** true if anti-aliasing is set */
     protected boolean antialiasing = true;
@@ -134,7 +134,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     protected boolean qualityRendering = true;
 
     /** false: paints a non-transparent white background, true: for a transparent background */
-    protected boolean transparentPageBackground = false;
+    protected boolean transparentPageBackground;
 
     /** The current state, holds a Graphics2D and its context */
     protected Java2DGraphicsState state;
@@ -144,7 +144,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     /** true if the renderer has finished rendering all the pages */
     private boolean renderingDone;
 
-    private GeneralPath currentPath = null;
+    private GeneralPath currentPath;
 
     /**
      * Default constructor

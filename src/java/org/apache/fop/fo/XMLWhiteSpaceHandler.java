@@ -63,7 +63,7 @@ import org.apache.fop.util.CharUtilities;
 public class XMLWhiteSpaceHandler {
 
     /** True if we are in a run of white space */
-    private boolean inWhiteSpace = false;
+    private boolean inWhiteSpace;
     /** True if the last char was a linefeed */
     private boolean afterLinefeed = true;
     /** Counter, increased every time a non-white-space is encountered */
@@ -392,7 +392,7 @@ public class XMLWhiteSpaceHandler {
      * the following child is a block-level FO)
      */
     private class EOLchecker {
-        private boolean nextIsEOL = false;
+        private boolean nextIsEOL;
         private RecursiveCharIterator charIter;
 
         EOLchecker(CharIterator charIter) {

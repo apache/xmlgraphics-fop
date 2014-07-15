@@ -97,46 +97,46 @@ public class Factory {
 
 
     /** the page group count */
-    private int pageGroupCount = 0;
+    private int pageGroupCount;
 
     /** the page count */
-    private int pageCount = 0;
+    private int pageCount;
 
     /** the image count */
-    private int imageCount = 0;
+    private int imageCount;
 
     /** the im image count */
-    private int imImageCount = 0;
+    private int imImageCount;
 
     /** the image segment count */
-    private int imageSegmentCount = 0;
+    private int imageSegmentCount;
 
     /** the graphic count */
-    private int graphicCount = 0;
+    private int graphicCount;
 
     /** the object container count */
-    private int objectContainerCount = 0;
+    private int objectContainerCount;
 
     /** the resource count */
-    private int resourceCount = 0;
+    private int resourceCount;
 
     /** the resource group count */
-    private int resourceGroupCount = 0;
+    private int resourceGroupCount;
 
     /** the overlay count */
-    private int overlayCount = 0;
+    private int overlayCount;
 
     /** the presentation text object count */
-    private int textObjectCount = 0;
+    private int textObjectCount;
 
     /** the active environment group count */
-    private int activeEnvironmentGroupCount = 0;
+    private int activeEnvironmentGroupCount;
 
     /** the document count */
-    private int documentCount = 0;
+    private int documentCount;
 
     /** the object environment group count */
-    private int objectEnvironmentGroupCount = 0;
+    private int objectEnvironmentGroupCount;
 
     /**
      * Main constructor

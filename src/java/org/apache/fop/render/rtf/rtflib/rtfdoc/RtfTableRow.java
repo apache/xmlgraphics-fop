@@ -44,7 +44,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
     private RtfTableCell cell;
 //    private RtfExtraRowSet extraRowSet;
     private int id;
-    private int highestCell = 0;
+    private int highestCell;
 
 
     /** Create an RTF element as a child of given container */

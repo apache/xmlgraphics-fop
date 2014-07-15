@@ -39,7 +39,7 @@ public class MapPageOverlay extends AbstractAFPObject {
     /**
      * The collection of overlays (maximum of 254 stored as byte[])
      */
-    private List overLays = null;
+    private List overLays;
 
     /**
      * Constructor for the Map Page Overlay

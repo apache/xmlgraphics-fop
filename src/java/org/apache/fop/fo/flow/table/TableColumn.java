@@ -51,7 +51,7 @@ public class TableColumn extends TableFObj {
     // End of property values
 
     private boolean implicitColumn;
-    private PropertyList pList = null;
+    private PropertyList pList;
 
     /**
      * Create a TableColumn instance with the given {@link FONode}

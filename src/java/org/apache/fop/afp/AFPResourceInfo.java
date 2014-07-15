@@ -33,22 +33,22 @@ public class AFPResourceInfo {
             = new AFPResourceLevel(ResourceType.PRINT_FILE);
 
     /** the URI of this resource */
-    private String uri = null;
+    private String uri;
 
     /**
      * the image dimension in page coordinates (non-null only when page segments are
      * generated because the cannot be scaled for painting).
      */
-    private Dimension imageDimension = null;
+    private Dimension imageDimension;
 
     /** the reference name of this resource */
-    private String name = null;
+    private String name;
 
     /** the resource level of this resource */
     private AFPResourceLevel level = DEFAULT_LEVEL;
 
     /** true when the resource level was changed */
-    private boolean levelChanged = false;
+    private boolean levelChanged;
 
     /**
      * Sets the data object URI.

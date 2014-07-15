@@ -32,12 +32,12 @@ public class RecursiveCharIterator extends CharIterator {
     /** parent node for whose child nodes this iterator iterates */
     private FONode fobj;
     /** iterator for the child nodes */
-    private Iterator childIter = null;
+    private Iterator childIter;
 
     /** current child object that is being managed by childIter*/
     private FONode curChild;
     /** CharIterator for curChild's characters */
-    private CharIterator curCharIter = null;
+    private CharIterator curCharIter;
 
     /**
      * Constructor which creates an iterator for all child nodes

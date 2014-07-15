@@ -67,7 +67,7 @@ public class BlockContainer extends FObj implements BreakPropertySet, WritingMod
     // End of FO trait values
 
     /** used for FO validation */
-    private boolean blockItemFound = false;
+    private boolean blockItemFound;
 
     /**
      * Creates a new BlockContainer instance as a child of

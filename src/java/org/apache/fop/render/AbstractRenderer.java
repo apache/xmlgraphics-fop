@@ -86,29 +86,29 @@ public abstract class AbstractRenderer
     /**
      * user agent
      */
-    protected FOUserAgent userAgent = null;
+    protected FOUserAgent userAgent;
 
     /**
      * block progression position
      */
-    protected int currentBPPosition = 0;
+    protected int currentBPPosition;
 
     /**
      * inline progression position
      */
-    protected int currentIPPosition = 0;
+    protected int currentIPPosition;
 
     /**
      * the block progression position of the containing block used for
      * absolutely positioned blocks
      */
-    protected int containingBPPosition = 0;
+    protected int containingBPPosition;
 
     /**
      * the inline progression position of the containing block used for
      * absolutely positioned blocks
      */
-    protected int containingIPPosition = 0;
+    protected int containingIPPosition;
 
     /** the currently active PageViewport */
     protected PageViewport currentPageViewport;

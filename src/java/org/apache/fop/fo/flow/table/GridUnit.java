@@ -62,7 +62,7 @@ public class GridUnit {
     private int rowSpanIndex;
 
     /** flags for the grid unit */
-    private byte flags = 0;
+    private byte flags;
 
     /** the border-before specification */
     ConditionalBorder borderBefore;

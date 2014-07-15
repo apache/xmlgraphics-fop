@@ -47,9 +47,9 @@ public class SingleByteFont extends CustomFont {
     private  static Log log = LogFactory.getLog(SingleByteFont.class);
 
     private SingleByteEncoding mapping;
-    private boolean useNativeEncoding = false;
+    private boolean useNativeEncoding;
 
-    private int[] width = null;
+    private int[] width;
 
     private Rectangle[] boundingBoxes;
 

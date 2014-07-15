@@ -50,8 +50,8 @@ import org.apache.fop.fonts.cff.CFFDataReader.Format3FDSelect;
 public class OTFSubSetFile extends OTFFile {
 
     private byte[] output;
-    private int currentPos = 0;
-    private int realSize = 0;
+    private int currentPos;
+    private int realSize;
 
     /** A map containing each glyph to be included in the subset
       * with their existing and new GID's **/
@@ -93,7 +93,7 @@ public class OTFSubSetFile extends OTFFile {
     private List<byte[]> stringIndexData = new ArrayList<byte[]>();
 
     /** The CFF reader object used to read data and offsets from the original font file */
-    private CFFDataReader cffReader = null;
+    private CFFDataReader cffReader;
 
     /** The class used to represent this font **/
     private MultiByteFont mbFont;

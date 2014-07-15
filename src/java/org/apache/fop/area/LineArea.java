@@ -75,7 +75,7 @@ public class LineArea extends Area {
         }
     }
 
-    private LineAdjustingInfo adjustingInfo = null;
+    private LineAdjustingInfo adjustingInfo;
 
     // this class can contain the dominant char styling info
     // this means that many renderers can optimise a bit

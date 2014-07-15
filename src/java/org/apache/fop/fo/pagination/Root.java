@@ -51,19 +51,19 @@ public class Root extends FObj implements CommonAccessibilityHolder {
 
     private LayoutMasterSet layoutMasterSet;
     private Declarations declarations;
-    private BookmarkTree bookmarkTree = null;
+    private BookmarkTree bookmarkTree;
     private List<Destination> destinationList;
     private List<PageSequence> pageSequences;
     private Locale locale;
 
     // temporary until above list populated
-    private boolean pageSequenceFound = false;
+    private boolean pageSequenceFound;
 
     /**
      * Keeps count of page number from over PageSequence instances
      */
-    private int endingPageNumberOfPreviousSequence = 0;
-    private int totalPagesGenerated = 0;
+    private int endingPageNumberOfPreviousSequence;
+    private int totalPagesGenerated;
 
     /**
      * Context class used while building the FO tree.
@@ -73,7 +73,7 @@ public class Root extends FObj implements CommonAccessibilityHolder {
     /**
      * FOEventHandler object for this FO Tree
      */
-    private FOEventHandler foEventHandler = null;
+    private FOEventHandler foEventHandler;
 
     /**
      * Base constructor

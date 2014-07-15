@@ -57,16 +57,16 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     protected static final Log log = LogFactory.getLog(LeafNodeLayoutManager.class);
 
     /** The inline area that this leafnode will add. */
-    protected InlineArea curArea = null;
+    protected InlineArea curArea;
     /** Any border, padding and background properties applying to this area */
-    protected CommonBorderPaddingBackground commonBorderPaddingBackground = null;
+    protected CommonBorderPaddingBackground commonBorderPaddingBackground;
     /** The alignment context applying to this area */
-    protected AlignmentContext alignmentContext = null;
+    protected AlignmentContext alignmentContext;
 
     /** Flag to indicate if something was changed as part of the getChangeKnuthElements sequence */
-    protected boolean somethingChanged = false;
+    protected boolean somethingChanged;
     /** Our area info for the Knuth elements */
-    protected AreaInfo areaInfo = null;
+    protected AreaInfo areaInfo;
 
     /**
      * Store information about the inline area

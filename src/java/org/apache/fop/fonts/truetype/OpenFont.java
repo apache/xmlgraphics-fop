@@ -154,7 +154,7 @@ public abstract class OpenFont {
 
     private static final short FIRST_CHAR = 0;
 
-    protected boolean useKerning = false;
+    protected boolean useKerning;
     private boolean isEmbeddable = true;
     private boolean hasSerifs = true;
     /**
@@ -174,7 +174,7 @@ public abstract class OpenFont {
     /**
      * Offset to last loca
      */
-    protected long lastLoca = 0;
+    protected long lastLoca;
     protected int numberOfGlyphs; // Number of glyphs in font (read from "maxp" table)
 
     /**
@@ -188,32 +188,32 @@ public abstract class OpenFont {
     protected final Set<String> familyNames = new HashSet<String>();
     protected String subFamilyName = "";
 
-    private long italicAngle = 0;
-    private long isFixedPitch = 0;
-    private int fontBBox1 = 0;
-    private int fontBBox2 = 0;
-    private int fontBBox3 = 0;
-    private int fontBBox4 = 0;
-    private int capHeight = 0;
-    private int os2CapHeight = 0;
+    private long italicAngle;
+    private long isFixedPitch;
+    private int fontBBox1;
+    private int fontBBox2;
+    private int fontBBox3;
+    private int fontBBox4;
+    private int capHeight;
+    private int os2CapHeight;
     private int underlinePosition;
     private int underlineThickness;
     private int strikeoutPosition;
     private int strikeoutThickness;
-    private int xHeight = 0;
-    private int os2xHeight = 0;
+    private int xHeight;
+    private int os2xHeight;
     //Effective ascender/descender
-    private int ascender = 0;
-    private int descender = 0;
+    private int ascender;
+    private int descender;
     //Ascender/descender from hhea table
-    private int hheaAscender = 0;
-    private int hheaDescender = 0;
+    private int hheaAscender;
+    private int hheaDescender;
     //Ascender/descender from OS/2 table
-    private int os2Ascender = 0;
-    private int os2Descender = 0;
-    private int usWeightClass = 0;
+    private int os2Ascender;
+    private int os2Descender;
+    private int usWeightClass;
 
-    private short lastChar = 0;
+    private short lastChar;
 
     private int[] ansiWidth;
     private Map<Integer, List<Integer>> ansiIndex;
@@ -226,7 +226,7 @@ public abstract class OpenFont {
     private boolean isCFF;
 
     // advanced typographic table support
-    protected boolean useAdvanced = false;
+    protected boolean useAdvanced;
     protected OTFAdvancedTypographicTableReader advancedTableReader;
 
     /**

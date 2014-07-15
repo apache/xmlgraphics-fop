@@ -86,23 +86,23 @@ public final class FOPropertyMapping implements Constants {
     private static Map<String, Integer> subPropNames = new HashMap<String, Integer>();
     private static Map<Integer, String> propIds = new HashMap<Integer, String>();
 
-    private static PropertyMaker[] generics = null;
+    private static PropertyMaker[] generics;
 
     // The rest is only used during the building of the generics array.
-    private Property[] enums = null;
+    private Property[] enums;
 
-    private PropertyMaker genericColor = null;
-    private PropertyMaker genericBoolean = null;
-    private PropertyMaker genericKeep = null;
-    private PropertyMaker genericCondLength = null;
-    private PropertyMaker genericCondPadding = null;
-    private PropertyMaker genericPadding = null;
-    private PropertyMaker genericCondBorderWidth = null;
-    private PropertyMaker genericBorderWidth = null;
-    private PropertyMaker genericBorderStyle = null;
-    private PropertyMaker genericCondCornerRadius = null;
-    private PropertyMaker genericBreak = null;
-    private PropertyMaker genericSpace = null;
+    private PropertyMaker genericColor;
+    private PropertyMaker genericBoolean;
+    private PropertyMaker genericKeep;
+    private PropertyMaker genericCondLength;
+    private PropertyMaker genericCondPadding;
+    private PropertyMaker genericPadding;
+    private PropertyMaker genericCondBorderWidth;
+    private PropertyMaker genericBorderWidth;
+    private PropertyMaker genericBorderStyle;
+    private PropertyMaker genericCondCornerRadius;
+    private PropertyMaker genericBreak;
+    private PropertyMaker genericSpace;
 
     /**
      * Create the generic property maker templates. These templates

@@ -96,9 +96,9 @@ public abstract class AbstractBreaker {
         private static final long serialVersionUID = -5348831120146774118L;
 
         /** Number of elements to ignore at the beginning of the list. */
-        int ignoreAtStart = 0;
+        int ignoreAtStart;
         /** Number of elements to ignore at the end of the list. */
-        int ignoreAtEnd = 0;
+        int ignoreAtEnd;
 
         /**
          * startOn represents where on the page/which page layout

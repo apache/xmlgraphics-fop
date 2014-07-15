@@ -46,7 +46,7 @@ public class RtfLeader extends RtfContainer {
      * \\ululdbwave Double wave underline.
      */
 
-    private RtfAttributes attrs = null;
+    private RtfAttributes attrs;
 
     /** Private attribute: tab style */
     public static final String LEADER_TABLEAD = "tablead";

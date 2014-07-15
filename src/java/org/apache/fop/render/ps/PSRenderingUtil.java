@@ -46,7 +46,7 @@ public class PSRenderingUtil {
     private FOUserAgent userAgent;
 
     /** Whether or not the safe set page device macro will be used or not */
-    private boolean safeSetPageDevice = false;
+    private boolean safeSetPageDevice;
 
     /**
      * Whether or not PostScript Document Structuring Conventions (DSC) compliant output are
@@ -54,11 +54,11 @@ public class PSRenderingUtil {
      */
     private boolean dscCompliant = true;
 
-    private boolean autoRotateLandscape = false;
+    private boolean autoRotateLandscape;
     private int languageLevel = PSGenerator.DEFAULT_LANGUAGE_LEVEL;
 
     /** Determines whether the PS file is generated in two passes to minimize file size */
-    private boolean optimizeResources = false;
+    private boolean optimizeResources;
 
     /**
      * Determines whether the generated PostScript code is optimized for minimum file size

@@ -71,7 +71,7 @@ import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
 
     /** the root Graphics2D instance for generating PostScript */
-    protected AbstractPSDocumentGraphics2D graphics = null;
+    protected AbstractPSDocumentGraphics2D graphics;
 
     private FontInfo fontInfo;
 

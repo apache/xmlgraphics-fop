@@ -40,7 +40,7 @@ import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 public class Wrapper extends FObjMixed implements CommonAccessibilityHolder {
 
     // used for FO validation
-    private boolean blockOrInlineItemFound = false;
+    private boolean blockOrInlineItemFound;
 
     private CommonAccessibility commonAccessibility;
 

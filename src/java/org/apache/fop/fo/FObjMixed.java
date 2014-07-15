@@ -30,7 +30,7 @@ import org.apache.fop.apps.FOPException;
 public abstract class FObjMixed extends FObj {
 
     /** Represents accumulated, pending FO text. See {@link #flushText()}. */
-    private FOText ft = null;
+    private FOText ft;
 
     /** Used for white-space handling; start CharIterator at node ... */
     protected FONode currentTextNode;
@@ -38,7 +38,7 @@ public abstract class FObjMixed extends FObj {
     /** Used in creating pointers between subsequent {@link FOText} nodes
      *  in the same {@link org.apache.fop.fo.flow.Block}
      *  (for handling text-transform) */
-    protected FOText lastFOTextProcessed = null;
+    protected FOText lastFOTextProcessed;
 
     /**
      * Base constructor

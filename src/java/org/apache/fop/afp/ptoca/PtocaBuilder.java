@@ -51,16 +51,16 @@ public abstract class PtocaBuilder implements PtocaConstants {
     private int currentFont = Integer.MIN_VALUE;
 
     /** the current orientation */
-    private int currentOrientation = 0;
+    private int currentOrientation;
 
     /** the current color */
     private Color currentColor = Color.BLACK;
 
     /** the current variable space increment */
-    private int currentVariableSpaceCharacterIncrement = 0;
+    private int currentVariableSpaceCharacterIncrement;
 
     /** the current inter character adjustment */
-    private int currentInterCharacterAdjustment = 0;
+    private int currentInterCharacterAdjustment;
 
 
     /**

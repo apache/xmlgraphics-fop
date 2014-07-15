@@ -41,7 +41,7 @@ public class PDFPattern extends PDFPathPaint implements Pattern {
     /**
      * The resources associated with this pattern
      */
-    protected PDFResources resources = null;
+    protected PDFResources resources;
 
     /**
      * Either one (1) for tiling, or two (2) for shading.
@@ -51,7 +51,7 @@ public class PDFPattern extends PDFPathPaint implements Pattern {
     /**
      * The name of the pattern such as "Pa1" or "Pattern1"
      */
-    protected String patternName = null;
+    protected String patternName;
 
     /**
      * 1 for colored pattern, 2 for uncolored
@@ -66,7 +66,7 @@ public class PDFPattern extends PDFPathPaint implements Pattern {
     /**
      * List of Doubles representing the Bounding box rectangle
      */
-    protected List bBox = null;
+    protected List bBox;
 
     /**
      * Horizontal spacing
@@ -81,29 +81,29 @@ public class PDFPattern extends PDFPathPaint implements Pattern {
     /**
      * The Shading object comprising the Type 2 pattern
      */
-    protected PDFShading shading = null;
+    protected PDFShading shading;
 
     /**
      * List of Integers represetning the Extended unique Identifier
      */
-    protected List xUID = null;
+    protected List xUID;
 
     /**
      * TODO use PDFGState
      * String representing the extended Graphics state.
      * Probably will never be used like this.
      */
-    protected StringBuffer extGState = null;
+    protected StringBuffer extGState;
 
     /**
      * List of Doubles representing the Transformation matrix.
      */
-    protected List matrix = null;
+    protected List matrix;
 
     /**
      * The stream of a pattern
      */
-    protected StringBuffer patternDataStream = null;
+    protected StringBuffer patternDataStream;
 
     /**
      * Create a tiling pattern (type 1).

@@ -35,10 +35,10 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup implement
     private static final String DEFAULT_NAME = "REG00001";
 
     /** the pre-process presentation objects contained in this resource environment group */
-    private List/*<PreprocessPresentationObject>*/ preProcessPresentationObjects = null;
+    private List/*<PreprocessPresentationObject>*/ preProcessPresentationObjects;
 
     /** the resource environment group state */
-    private boolean complete = false;
+    private boolean complete;
 
     /**
      * Default constructor

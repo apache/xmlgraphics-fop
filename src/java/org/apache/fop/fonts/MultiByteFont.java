@@ -72,7 +72,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     /** Contains the character bounding boxes for all characters in the font */
     protected Rectangle[] boundingBoxes;
 
-    private boolean isOTFFile = false;
+    private boolean isOTFFile;
 
     // since for most users the most likely glyphs are in the first cmap segments we store their mapping.
     private static final int NUM_MOST_LIKELY_GLYPHS = 256;

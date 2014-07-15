@@ -43,13 +43,13 @@ public class PDFEmbeddedFileAttachment extends PDFExtensionAttachment {
     private static final String ATT_DESC = "desc";
 
     /** filename attribute */
-    private String filename = null;
+    private String filename;
 
     /** description attribute (optional) */
-    private String desc = null;
+    private String desc;
 
     /** source name attribute */
-    private String src = null;
+    private String src;
 
     /**
      * No-argument contructor.

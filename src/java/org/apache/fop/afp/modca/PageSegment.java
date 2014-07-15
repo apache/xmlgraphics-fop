@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class PageSegment extends AbstractNamedAFPObject {
 
-    private List/*<AbstractAFPObject>*/ objects = null;
+    private List/*<AbstractAFPObject>*/ objects;
 
     /**
      * Main constructor

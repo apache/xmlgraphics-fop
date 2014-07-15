@@ -46,16 +46,16 @@ import org.apache.fop.fo.FOTreeBuilder;
 public class Fop {
 
     // desired output format: MIME type such as "application/pdf", "application/postscript" etc.
-    private String outputFormat = null;
+    private String outputFormat;
 
     // output stream to send results to
-    private OutputStream stream = null;
+    private OutputStream stream;
 
     // FOUserAgent object to set processing options
     private final FOUserAgent foUserAgent;
 
     // FOTreeBuilder object to maintain reference for access to results
-    private FOTreeBuilder foTreeBuilder = null;
+    private FOTreeBuilder foTreeBuilder;
 
     /**
      * Constructor for use with already-created FOUserAgents. It uses MIME types to select the

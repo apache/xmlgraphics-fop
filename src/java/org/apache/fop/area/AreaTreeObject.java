@@ -35,10 +35,10 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 public abstract class AreaTreeObject implements Cloneable {
 
     /** Foreign attributes */
-    protected Map<QName, String> foreignAttributes = null;
+    protected Map<QName, String> foreignAttributes;
 
     /** Extension attachments */
-    protected List<ExtensionAttachment> extensionAttachments = null;
+    protected List<ExtensionAttachment> extensionAttachments;
 
     /** {@inheritDoc} */
     public Object clone() throws CloneNotSupportedException {

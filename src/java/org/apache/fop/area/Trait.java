@@ -491,13 +491,13 @@ public final class Trait implements Serializable {
         private static final long serialVersionUID = 8452078676273242870L;
 
         /** The background color if any. */
-        private Color color = null;
+        private Color color;
 
         /** The background image url if any. */
-        private String url = null;
+        private String url;
 
         /** The background image if any. */
-        private ImageInfo imageInfo = null;
+        private ImageInfo imageInfo;
 
         /** Background repeat enum for images. */
         private int repeat;

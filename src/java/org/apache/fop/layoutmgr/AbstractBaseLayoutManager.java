@@ -39,9 +39,9 @@ public abstract class AbstractBaseLayoutManager
     implements LayoutManager, PercentBaseContext {
 
     /** Indicator if this LM generates reference areas. */
-    protected boolean generatesReferenceArea = false;
+    protected boolean generatesReferenceArea;
     /** Indicator if this LM generates block areas. */
-    protected boolean generatesBlockArea = false;
+    protected boolean generatesBlockArea;
     /** The formatting object for this LM. */
     protected final FObj fobj;
 

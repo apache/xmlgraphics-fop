@@ -25,13 +25,13 @@ package org.apache.fop.afp.modca;
 public abstract class AbstractDescriptor extends AbstractTripletStructuredObject {
 
     /** width of this descriptor */
-    protected int width = 0;
+    protected int width;
     /** height of this descriptor */
-    protected int height = 0;
+    protected int height;
     /** width resolution of this descriptor */
-    protected int widthRes = 0;
+    protected int widthRes;
     /** height resolution of this descriptor */
-    protected int heightRes = 0;
+    protected int heightRes;
 
     /**
      * Default constructor

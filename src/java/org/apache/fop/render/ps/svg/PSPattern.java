@@ -34,19 +34,19 @@ public class PSPattern implements Pattern {
     /**
      * The Shading object comprising the Type 2 pattern
      */
-    protected PSShading shading = null;
+    protected PSShading shading;
 
     /**
      * List of Integers represetning the Extended unique Identifier
      */
-    protected List xUID = null;
+    protected List xUID;
 
     /**
      * TODO use PDFGState
      * String representing the extended Graphics state.
      * Probably will never be used like this.
      */
-    protected StringBuffer extGState = null;
+    protected StringBuffer extGState;
 
     /**
      * Creates a radial or axial shading pattern

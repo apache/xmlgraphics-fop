@@ -42,7 +42,7 @@ public class PDFShading extends PDFObject implements Shading {
     /**
      * The name of the Shading e.g. "Shading1"
      */
-    protected String shadingName = null;
+    protected String shadingName;
 
     /**
      * Required: The Type of shading (1,2,3,4,5,6,7)
@@ -52,24 +52,24 @@ public class PDFShading extends PDFObject implements Shading {
     /**
      * A ColorSpace representing the colorspace. "DeviceRGB" is an example.
      */
-    protected PDFDeviceColorSpace colorSpace = null;
+    protected PDFDeviceColorSpace colorSpace;
 
     /**
      * The background color. Since shading is opaque,
      * this is very rarely used.
      */
-    protected List background = null;
+    protected List background;
 
     /**
      * Optional: A List specifying the clipping rectangle
      */
-    protected List bBox = null;
+    protected List bBox;
 
     /**
      * Optional: A flag whether or not to filter the shading function
      * to prevent aliasing artifacts. Default is false.
      */
-    protected boolean antiAlias = false;
+    protected boolean antiAlias;
 
     /**
      * Optional for Type 1: Array of four numbers, xmin, xmax, ymin, ymax.
@@ -79,19 +79,19 @@ public class PDFShading extends PDFObject implements Shading {
      * Optional for Type 3: An array of two numbers between which the blend
      *                      varies between start and end points. Default is 0, 1.
      */
-    protected List domain = null;
+    protected List domain;
 
     /**
      * Optional for Type 1: A transformation matrix
      */
-    protected List matrix = null;
+    protected List matrix;
 
     /**
      * Required for Type 1, 2, and 3:
      * The object of the color mapping function (usually type 2 or 3).
      * Optional for Type 4,5,6, and 7: When it's nearly the same thing.
      */
-    protected PDFFunction function = null;
+    protected PDFFunction function;
 
     /**
      * Required for Type 2: An Array of four numbers specifying
@@ -100,7 +100,7 @@ public class PDFShading extends PDFObject implements Shading {
      *                      specifying the centers and radii of
      *                      the starting and ending circles.
      */
-    protected List coords = null;
+    protected List coords;
 
     /**
      * Required for Type 2+3: An Array of two boolean values specifying
@@ -108,14 +108,14 @@ public class PDFShading extends PDFObject implements Shading {
      * and end points, respectively.
      * Default is false, false.
      */
-    protected List extend = null;
+    protected List extend;
 
     /**
      * Required for Type 4,5,6, and 7: Specifies the number of bits used
      * to represent each vertex coordinate.
      * Allowed to be 1,2,4,8,12,16,24, or 32.
      */
-    protected int bitsPerCoordinate = 0;
+    protected int bitsPerCoordinate;
 
     /**
      * Required for Type 4,5,6, and 7: Specifies the number of bits used
@@ -123,7 +123,7 @@ public class PDFShading extends PDFObject implements Shading {
      * Allowed to be 2,4,or 8, while the Edge flag itself is allowed to
      * be 0,1 or 2.
      */
-    protected int bitsPerFlag = 0;
+    protected int bitsPerFlag;
 
     /**
      * Required for Type 4,5,6, and 7: Array of Doubles which specifies
@@ -132,20 +132,20 @@ public class PDFShading extends PDFObject implements Shading {
      * the spec.
      * Page 303 in PDF Spec 1.3
      */
-    protected List decode = null;
+    protected List decode;
 
     /**
      * Required for Type 4,5,6, and 7: Specifies the number of bits used
      * to represent each color coordinate.
      * Allowed to be 1,2,4,8,12, or 16
      */
-    protected int bitsPerComponent = 0;
+    protected int bitsPerComponent;
 
     /**
      * Required for Type 5:The number of vertices in each "row" of
      * the lattice; it must be greater than or equal to 2.
      */
-    protected int verticesPerRow = 0;
+    protected int verticesPerRow;
 
     /**
      * Constructor for type function based shading

@@ -48,7 +48,7 @@ public final class Registry {
                = Collections.synchronizedMap(new HashMap<String, ObjectType>());
 
     /** singleton instance */
-    private static Registry instance = null;
+    private static Registry instance;
 
     /**
      * Returns a single instance of a MO:DCA Registry

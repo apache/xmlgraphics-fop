@@ -45,7 +45,7 @@ import javax.media.jai.PlanarImage;
 public class JAIMonochromeBitmapConverter implements
         MonochromeBitmapConverter {
 
-    private boolean isErrorDiffusion = false;
+    private boolean isErrorDiffusion;
 
     /** {@inheritDoc} */
     public void setHint(String name, String value) {

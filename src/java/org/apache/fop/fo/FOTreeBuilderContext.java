@@ -46,7 +46,7 @@ public class FOTreeBuilderContext {
     /**
      * Indicates whether processing descendants of a marker
      */
-    private boolean inMarker = false;
+    private boolean inMarker;
 
     /**
      * Returns the set of ID references.

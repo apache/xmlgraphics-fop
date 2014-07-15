@@ -123,9 +123,9 @@ public abstract class BreakingAlgorithm {
     /** Force the algorithm to find a set of breakpoints, even if no feasible breakpoints
      * exist.
      */
-    private boolean force =  false;
+    private boolean force;
     /** If set to true, doesn't ignore break possibilities which are definitely too short. */
-    protected boolean considerTooShort = false;
+    protected boolean considerTooShort;
 
     /** When in forced mode, the best node leading to a too long line. The line will be
      * too long anyway, but this one will lead to a paragraph with fewest demerits.
@@ -162,12 +162,12 @@ public abstract class BreakingAlgorithm {
     /**
      * The lowest available line in the set of active nodes.
      */
-    protected int startLine = 0;
+    protected int startLine;
 
     /**
      * The highest + 1 available line in the set of active nodes.
      */
-    protected int endLine = 0;
+    protected int endLine;
 
     /**
      * The total width of all elements handled so far.
@@ -177,12 +177,12 @@ public abstract class BreakingAlgorithm {
     /**
      * The total stretch of all elements handled so far.
      */
-    protected int totalStretch = 0;
+    protected int totalStretch;
 
     /**
      * The total shrink of all elements handled so far.
      */
-    protected int totalShrink = 0;
+    protected int totalShrink;
 
     /**
      * Best records.
@@ -268,7 +268,7 @@ public abstract class BreakingAlgorithm {
          * Holds the number of subsequent recovery attempty that are made to get content fit
          * into a line.
          */
-        public int fitRecoveryCounter = 0;
+        public int fitRecoveryCounter;
 
         /**
          * Construct node.

@@ -57,8 +57,8 @@ public class ListItem extends FObj implements BreakPropertySet, CommonAccessibil
     //     private int relativeAlign;
     // End of property values
 
-    private ListItemLabel label = null;
-    private ListItemBody body = null;
+    private ListItemLabel label;
+    private ListItemBody body;
 
     /**
      * Base constructor

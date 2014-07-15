@@ -36,7 +36,7 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
 
     private static final long serialVersionUID = -1758090835371647980L;
 
-    private boolean resolved = false;
+    private boolean resolved;
     private String pageIDRef;
     private String text;
     private boolean pageType;

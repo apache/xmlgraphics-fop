@@ -66,7 +66,7 @@ public class BlockContainerLayoutManager extends SpacedBorderedPaddedBlockLayout
 
     // When viewport should grow with the content.
     private boolean autoHeight = true;
-    private boolean inlineElementList = false;
+    private boolean inlineElementList;
 
     /* holds the (one-time use) fo:block space-before
     and -after properties.  Large fo:blocks are split
@@ -81,8 +81,8 @@ public class BlockContainerLayoutManager extends SpacedBorderedPaddedBlockLayout
     private MinOptMax foBlockSpaceAfter;
 
     private int horizontalOverflow;
-    private double contentRectOffsetX = 0;
-    private double contentRectOffsetY = 0;
+    private double contentRectOffsetX;
+    private double contentRectOffsetY;
 
     /**
      * Create a new block container layout manager.

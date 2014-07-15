@@ -47,13 +47,13 @@ public abstract class TablePart extends TableCellContainer {
     // End of property values
 
     /** table rows found */
-    protected boolean tableRowsFound = false;
+    protected boolean tableRowsFound;
     /** table cells found */
-    protected boolean tableCellsFound = false;
+    protected boolean tableCellsFound;
 
     private boolean firstRow = true;
 
-    private boolean rowsStarted = false;
+    private boolean rowsStarted;
 
     private boolean lastCellEndsRow = true;
 

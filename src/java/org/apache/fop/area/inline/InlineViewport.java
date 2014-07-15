@@ -40,7 +40,7 @@ public class InlineViewport extends InlineArea implements Viewport {
     // contents could be container, foreign object or image
     private Area content;
     // clipping for the viewport
-    private boolean clip = false;
+    private boolean clip;
     // position of the child area relative to this area
     private Rectangle2D contentPosition;
 

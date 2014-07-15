@@ -39,16 +39,16 @@ import org.apache.fop.apps.FOPException;
 
 public class RtfTable extends RtfContainer {
     private RtfTableRow row;
-    private int highestRow = 0;
-    private Boolean isNestedTable = null;
-    private RtfAttributes borderAttributes = null;
+    private int highestRow;
+    private Boolean isNestedTable;
+    private RtfAttributes borderAttributes;
 
     /** Added by Boris Poudérous on 07/22/2002 in order to process
      *  number-columns-spanned attribute */
     private ITableColumnsInfo tableContext;
 
     /** Shows the table depth necessary for nested tables */
-    private int nestedTableDepth = 0;
+    private int nestedTableDepth;
 
     /** Create an RTF element as a child of given container */
     RtfTable(IRtfTableContainer parent, Writer w, ITableColumnsInfo tc)
@@ -154,7 +154,7 @@ public class RtfTable extends RtfContainer {
       return this.tableContext;
     }
 
-    private RtfAttributes headerAttribs = null;
+    private RtfAttributes headerAttribs;
 
     /**
      * Added by Normand Masse

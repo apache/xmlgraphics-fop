@@ -47,7 +47,7 @@ public class Inline extends InlineLevel {
     //     private int wrapOption;
     // End of property values
     // used for FO validation
-    private boolean blockOrInlineItemFound = false;
+    private boolean blockOrInlineItemFound;
     private boolean canHaveBlockLevelChildren = true;
 
     /**

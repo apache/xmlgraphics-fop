@@ -51,7 +51,7 @@ public class TableRowIterator {
 
     private Iterator rowGroupsIter;
 
-    private int rowIndex = 0;
+    private int rowIndex;
 
     /**
      * Creates a new TableRowIterator.

@@ -39,7 +39,7 @@ public class ImageObject extends AbstractDataObject {
     private static final int MAX_DATA_LEN = 8192;
 
     /** the image segment */
-    private ImageSegment imageSegment = null;
+    private ImageSegment imageSegment;
 
     /**
      * Constructor for the image object with the specified name,

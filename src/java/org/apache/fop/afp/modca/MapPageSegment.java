@@ -39,7 +39,7 @@ public class MapPageSegment extends AbstractAFPObject {
     /**
      * The collection of page segments (maximum of 127 stored as String)
      */
-    private Set pageSegments = null;
+    private Set pageSegments;
 
     /**
      * Constructor for the Map Page Overlay

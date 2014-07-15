@@ -38,11 +38,11 @@ public abstract class ElementMapping {
     public static final String DEFAULT = "<default>";
 
     /** The HashMap table of formatting objects defined by the ElementMapping */
-    protected HashMap<String, Maker> foObjs = null;
+    protected HashMap<String, Maker> foObjs;
     //Please don't change that to java.util.Map as that can break extensions.
 
     /** The namespace for the ElementMapping */
-    protected String namespaceURI = null;
+    protected String namespaceURI;
 
     /**
      * Returns a HashMap of maker objects for this element mapping

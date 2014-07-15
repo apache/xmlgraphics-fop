@@ -48,12 +48,12 @@ class PropertyTokenizer {
     static final int TOK_INTEGER = TOK_FLOAT + 1;
 
     protected int currentToken = TOK_EOF;
-    protected String currentTokenValue = null;
-    protected int currentUnitLength = 0;
+    protected String currentTokenValue;
+    protected int currentUnitLength;
 
-    private int currentTokenStartIndex = 0;
+    private int currentTokenStartIndex;
     private /* final */ String expr;
-    private int exprIndex = 0;
+    private int exprIndex;
     private int exprLength;
 
     /**

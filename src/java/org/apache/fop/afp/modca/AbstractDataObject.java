@@ -38,7 +38,7 @@ public abstract class AbstractDataObject extends AbstractNamedAFPObject
         implements Startable, Completable {
 
     /** the object environment group */
-    protected ObjectEnvironmentGroup objectEnvironmentGroup = null;
+    protected ObjectEnvironmentGroup objectEnvironmentGroup;
 
     /** the object factory */
     protected final Factory factory;

@@ -56,8 +56,8 @@ public abstract class PropertyList {
     private static boolean[] inheritableProperty;
 
     /** reference to the parent FO's propertyList **/
-    protected PropertyList parentPropertyList = null;
-    private FObj fobj = null;
+    protected PropertyList parentPropertyList;
+    private FObj fobj;
 
     private static Log log = LogFactory.getLog(PropertyList.class);
 

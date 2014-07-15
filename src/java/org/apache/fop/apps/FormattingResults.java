@@ -28,8 +28,8 @@ import org.apache.fop.fo.pagination.AbstractPageSequence;
  */
 public class FormattingResults {
 
-    private int pageCount = 0;
-    private List pageSequences = null;
+    private int pageCount;
+    private List pageSequences;
 
     /**
      * Constructor for the FormattingResults object

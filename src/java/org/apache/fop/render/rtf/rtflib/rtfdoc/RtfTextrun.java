@@ -49,7 +49,7 @@ public class RtfTextrun extends RtfContainer {
     /** Constant for a odd page break */
     public static final int BREAK_ODD_PAGE = 4;
 
-    private boolean bSuppressLastPar = false;
+    private boolean bSuppressLastPar;
     private RtfListItem rtfListItem;
 
     /**

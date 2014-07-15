@@ -38,24 +38,24 @@ public class PSShading implements Shading {
     /**
      * A ColorSpace representing the colorspace. "DeviceRGB" is an example.
      */
-    protected PDFDeviceColorSpace colorSpace = null;
+    protected PDFDeviceColorSpace colorSpace;
 
     /**
      * The background color. Since shading is opaque,
      * this is very rarely used.
      */
-    protected List background = null;
+    protected List background;
 
     /**
      * Optional: A List specifying the clipping rectangle
      */
-    protected List bBox = null;
+    protected List bBox;
 
     /**
      * Optional: A flag whether or not to filter the shading function
      * to prevent aliasing artifacts. Default is false.
      */
-    protected boolean antiAlias = false;
+    protected boolean antiAlias;
 
     /**
      * Optional for Type 1: Array of four numbers, xmin, xmax, ymin, ymax.
@@ -65,14 +65,14 @@ public class PSShading implements Shading {
      * Optional for Type 3: An array of two numbers between which the blend
      *                      varies between start and end points. Default is 0, 1.
      */
-    protected List domain = null;
+    protected List domain;
 
     /**
      * Required for Type 1, 2, and 3:
      * The object of the color mapping function (usually type 2 or 3).
      * Optional for Type 4,5,6, and 7: When it's nearly the same thing.
      */
-    protected PSFunction function = null;
+    protected PSFunction function;
 
     /**
      * Required for Type 2: An Array of four numbers specifying
@@ -81,7 +81,7 @@ public class PSShading implements Shading {
      *                      specifying the centers and radii of
      *                      the starting and ending circles.
      */
-    protected List coords = null;
+    protected List coords;
 
     /**
      * Required for Type 2+3: An Array of two boolean values specifying
@@ -89,7 +89,7 @@ public class PSShading implements Shading {
      * and end points, respectively.
      * Default is false, false.
      */
-    protected List extend = null;
+    protected List extend;
 
     /**
      * Constructor for Type 2 and 3

@@ -52,7 +52,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     private ArrayList exception;
     private char hyphenChar;
     private String errMsg;
-    private boolean hasClasses = false;
+    private boolean hasClasses;
 
     static final int ELEM_CLASSES = 1;
     static final int ELEM_EXCEPTIONS = 2;

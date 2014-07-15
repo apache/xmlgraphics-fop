@@ -65,7 +65,7 @@ public class AFPResourceManager {
     private final AFPDataObjectFactory dataObjectFactory;
 
     /** Maintain a reference count of instream objects for referencing purposes */
-    private int instreamObjectCount = 0;
+    private int instreamObjectCount;
 
     /** Mapping of resourceInfo to AbstractCachedObject */
     private final Map<AFPResourceInfo, AbstractCachedObject> includeObjectCache

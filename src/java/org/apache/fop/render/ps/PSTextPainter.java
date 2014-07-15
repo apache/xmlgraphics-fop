@@ -259,8 +259,8 @@ public class PSTextPainter extends NativeTextPainter {
         private AffineTransform textTransform;
         private List<Point2D> relativePositions = new LinkedList<Point2D>();
         private StringBuffer currentGlyphs = new StringBuffer();
-        private int horizChanges = 0;
-        private int vertChanges = 0;
+        private int horizChanges;
+        private int vertChanges;
 
         public void reset() {
             textTransform = null;

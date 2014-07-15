@@ -46,23 +46,23 @@ public class FontInfo {
     protected static final Log log = LogFactory.getLog(FontInfo.class);
 
     /** Map containing fonts that have been used */
-    private Map<String, Typeface> usedFonts = null; //(String = font key)
+    private Map<String, Typeface> usedFonts; //(String = font key)
 
     /** look up a font-triplet to find a font-name */
-    private Map<FontTriplet, String> triplets = null; //(String = font key)
+    private Map<FontTriplet, String> triplets; //(String = font key)
 
     /** look up a font-triplet to find its priority
      *  (only used inside addFontProperties()) */
-    private Map<FontTriplet, Integer> tripletPriorities = null; //Map<FontTriplet,Integer>
+    private Map<FontTriplet, Integer> tripletPriorities; //Map<FontTriplet,Integer>
 
     /** look up a font-name to get a font (that implements FontMetrics at least) */
-    private Map<String, Typeface> fonts = null; //(String = font key)
+    private Map<String, Typeface> fonts; //(String = font key)
 
     /** Cache for Font instances. */
-    private Map<FontTriplet, Map<Integer, Font>> fontInstanceCache = null;
+    private Map<FontTriplet, Map<Integer, Font>> fontInstanceCache;
 
     /** Event listener for font events */
-    private FontEventListener eventListener = null;
+    private FontEventListener eventListener;
 
     /**
      * Main constructor

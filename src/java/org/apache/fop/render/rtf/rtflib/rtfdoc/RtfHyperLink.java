@@ -47,10 +47,10 @@ implements IRtfTextContainer,
     //////////////////////////////////////////////////
 
     /** The url of the image */
-    protected String url = null;
+    protected String url;
 
     /** RtfText */
-    protected RtfText mText = null;
+    protected RtfText mText;
 
     //////////////////////////////////////////////////
     // @@ Construction

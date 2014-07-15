@@ -62,7 +62,7 @@ class CollapsingBorderResolver implements BorderResolver {
 
     /* TODO Temporary hack for resolved borders in header */
     /* Currently the normal border is always used. */
-    private List/*<GridUnit>*/ headerLastRow = null;
+    private List/*<GridUnit>*/ headerLastRow;
     /* End of temporary hack */
 
     /**

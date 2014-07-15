@@ -398,7 +398,7 @@ public class AdvancedMessageFormat {
 
         protected List<Part> parts = new java.util.ArrayList<Part>();
         private boolean conditional;
-        private boolean hasSections = false;
+        private boolean hasSections;
 
         public CompositePart(boolean conditional) {
             this.conditional = conditional;
