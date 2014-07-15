@@ -35,8 +35,8 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 public final class ParagraphKeeptogetherContext {
 
-    private static int paraKeepTogetherOpen = 0;
-    private static boolean paraResetProperties = false;
+    private static int paraKeepTogetherOpen;
+    private static boolean paraResetProperties;
 
     private ParagraphKeeptogetherContext() {
     }

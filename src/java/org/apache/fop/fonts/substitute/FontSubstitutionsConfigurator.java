@@ -28,7 +28,7 @@ import org.apache.fop.apps.FOPException;
  */
 public class FontSubstitutionsConfigurator {
 
-    private Configuration cfg = null;
+    private Configuration cfg;
 
     /**
      * Main constructor

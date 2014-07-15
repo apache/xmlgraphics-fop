@@ -35,12 +35,12 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
     /**
      * The corresponding padding-* propIds
      */
-    private int[] paddingCorresponding = null;
+    private int[] paddingCorresponding;
 
     /**
      * The corresponding border-*-width propIds
      */
-    private int[] borderWidthCorresponding = null;
+    private int[] borderWidthCorresponding;
 
     /**
      * Create a start-indent or end-indent property maker.

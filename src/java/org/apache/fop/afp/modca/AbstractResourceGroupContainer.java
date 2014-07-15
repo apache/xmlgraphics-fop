@@ -36,10 +36,10 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject
 implements Streamable {
 
     /** The container started state */
-    protected boolean started = false;
+    protected boolean started;
 
     /** the resource group object */
-    protected ResourceGroup resourceGroup = null;
+    protected ResourceGroup resourceGroup;
 
     /**
      * Default constructor

@@ -42,17 +42,17 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
     /**
      * The x coordinate
      */
-    private int x = 0;
+    private int x;
 
     /**
      * The y coordinate
      */
-    private int y = 0;
+    private int y;
 
     /**
      * The orientation
      */
-    private int orientation = 0;
+    private int orientation;
 
     /**
      * Constructor for the Include Page Overlay

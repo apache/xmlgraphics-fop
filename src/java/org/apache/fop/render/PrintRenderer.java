@@ -53,7 +53,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
     protected FontInfo fontInfo;
 
     /** list of fonts */
-    protected List<EmbedFontInfo> embedFontInfoList = null;
+    protected List<EmbedFontInfo> embedFontInfoList;
 
     /**
      * Adds a font list to current list of fonts

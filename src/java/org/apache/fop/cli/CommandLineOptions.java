@@ -89,31 +89,31 @@ public class CommandLineOptions {
     /* for area tree XML output, only down to block area level */
     private Boolean suppressLowLevelAreas = Boolean.FALSE;
     /* user configuration file */
-    private File userConfigFile = null;
+    private File userConfigFile;
     /* input fo file */
-    private File fofile = null;
+    private File fofile;
     /* xsltfile (xslt transformation as input) */
-    private File xsltfile = null;
+    private File xsltfile;
     /* xml file (xslt transformation as input) */
-    private File xmlfile = null;
+    private File xmlfile;
     /* area tree input file */
-    private File areatreefile = null;
+    private File areatreefile;
     /* intermediate format input file */
-    private File iffile = null;
+    private File iffile;
     /* area tree input file */
-    private File imagefile = null;
+    private File imagefile;
     /* output file */
-    private File outfile = null;
+    private File outfile;
     /* input mode */
     private int inputmode = NOT_SET;
     /* output mode */
-    private String outputmode = null;
+    private String outputmode;
     /* true if System.in (stdin) should be used for the input file */
-    private boolean useStdIn = false;
+    private boolean useStdIn;
     /* true if System.out (stdout) should be used for the output file */
-    private boolean useStdOut = false;
+    private boolean useStdOut;
     /* true if a catalog resolver should be used for entity and uri resolution */
-    private boolean useCatalogResolver = false;
+    private boolean useCatalogResolver;
     /* rendering options (for the user agent) */
     private Map renderingOptions = new java.util.HashMap();
     /* target resolution (for the user agent) */
@@ -121,11 +121,11 @@ public class CommandLineOptions {
 
     private boolean strictValidation = true;
     /* control memory-conservation policy */
-    private boolean conserveMemoryPolicy = false;
+    private boolean conserveMemoryPolicy;
     /* true if a complex script features are enabled */
     private boolean useComplexScriptFeatures = true;
     /* set to true if -dpi used in command line */
-    private boolean overrideTargetResolution = false;
+    private boolean overrideTargetResolution;
 
     private FopFactory factory;
     private FOUserAgent foUserAgent;
@@ -134,11 +134,11 @@ public class CommandLineOptions {
 
     private Log log;
 
-    private Vector xsltParams = null;
+    private Vector xsltParams;
 
-    private String mimicRenderer = null;
+    private String mimicRenderer;
 
-    private boolean flushCache = false;
+    private boolean flushCache;
 
     private URI baseURI = new File(".").getAbsoluteFile().toURI();
 

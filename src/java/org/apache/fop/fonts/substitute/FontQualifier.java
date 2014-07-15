@@ -41,13 +41,13 @@ public class FontQualifier {
     private static Log log = LogFactory.getLog(FontQualifier.class);
 
     /** font family attribute value */
-    private AttributeValue fontFamilyAttributeValue = null;
+    private AttributeValue fontFamilyAttributeValue;
 
     /** font style attribute value */
-    private AttributeValue fontStyleAttributeValue = null;
+    private AttributeValue fontStyleAttributeValue;
 
     /** font weight attribute value */
-    private AttributeValue fontWeightAttributeValue = null;
+    private AttributeValue fontWeightAttributeValue;
 
     /**
      * Default constructor

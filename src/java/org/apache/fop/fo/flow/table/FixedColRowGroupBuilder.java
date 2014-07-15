@@ -37,7 +37,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     /** Number of columns in the corresponding table. */
     private int numberOfColumns;
 
-    private TableRow currentTableRow = null;
+    private TableRow currentTableRow;
 
     /** 0-based, index in the row group. */
     private int currentRowIndex;

@@ -50,9 +50,9 @@ import org.apache.fop.layoutmgr.TraitSetter;
 class RowPainter {
     private static Log log = LogFactory.getLog(RowPainter.class);
     private int colCount;
-    private int currentRowOffset = 0;
+    private int currentRowOffset;
     /** Currently handled row (= last encountered row). */
-    private EffRow currentRow = null;
+    private EffRow currentRow;
     private LayoutContext layoutContext;
     /**
      * Index of the first row of the current part present on the current page.
@@ -79,7 +79,7 @@ class RowPainter {
     private CellPart[] lastCellParts;
 
     /** y-offset of the current table part. */
-    private int tablePartOffset = 0;
+    private int tablePartOffset;
     /** See {@link RowPainter#registerPartBackgroundArea(Block)}. */
     private CommonBorderPaddingBackground tablePartBackground;
     /** See {@link RowPainter#registerPartBackgroundArea(Block)}. */

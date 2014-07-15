@@ -61,7 +61,7 @@ public class ListBlock extends FObj implements BreakPropertySet, CommonAccessibi
     private Length orphanContentLimit;
 
     // used for child node validation
-    private boolean hasListItem = false;
+    private boolean hasListItem;
 
     /**
      * Base constructor

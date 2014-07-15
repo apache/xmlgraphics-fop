@@ -28,9 +28,9 @@ public class PDFGoToRemote extends PDFAction {
      * the file specification
      */
     private PDFReference pdfFileSpec;
-    private int pageReference = 0;
-    private String destination = null;
-    private boolean newWindow = false;
+    private int pageReference;
+    private String destination;
+    private boolean newWindow;
 
     /**
      * Create an GoToR object.

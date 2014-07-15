@@ -38,9 +38,9 @@ import org.apache.batik.gvt.font.FontFamilyResolver;
  */
 public class SimpleSVGUserAgent extends UserAgentAdapter {
 
-    private AffineTransform currentTransform = null;
+    private AffineTransform currentTransform;
 
-    private float pixelUnitToMillimeter = 0.0f;
+    private float pixelUnitToMillimeter;
 
     private final FontFamilyResolver fontFamilyResolver;
 

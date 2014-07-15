@@ -53,12 +53,12 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
     /**
      * The current presentation text data
      */
-    private PresentationTextData currentPresentationTextData = null;
+    private PresentationTextData currentPresentationTextData;
 
     /**
      * The presentation text data list
      */
-    private List/*<PresentationTextData>*/ presentationTextDataList = null;
+    private List/*<PresentationTextData>*/ presentationTextDataList;
 
     private PtocaBuilder builder = new DefaultBuilder();
 

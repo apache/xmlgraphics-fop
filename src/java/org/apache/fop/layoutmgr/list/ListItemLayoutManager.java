@@ -71,10 +71,10 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
     private ListItemContentLayoutManager label;
     private ListItemContentLayoutManager body;
 
-    private Block curBlockArea = null;
+    private Block curBlockArea;
 
-    private List<ListElement> labelList = null;
-    private List<ListElement> bodyList = null;
+    private List<ListElement> labelList;
+    private List<ListElement> bodyList;
 
     private Keep keepWithNextPendingOnLabel;
     private Keep keepWithNextPendingOnBody;

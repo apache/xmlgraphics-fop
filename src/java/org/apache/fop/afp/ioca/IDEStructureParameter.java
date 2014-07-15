@@ -40,10 +40,10 @@ public class IDEStructureParameter implements Streamable {
     public static final byte COLOR_MODEL_YCBCR = (byte)0x12;
 
     /** additive/subtractive setting for ASFLAG */
-    private boolean subtractive = false;
+    private boolean subtractive;
 
     /** setting for GRAYCODE flag */
-    private boolean grayCoding = false;
+    private boolean grayCoding;
 
     /** the image color model */
     private byte colorModel = COLOR_MODEL_RGB;

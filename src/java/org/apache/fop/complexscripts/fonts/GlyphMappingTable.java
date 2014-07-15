@@ -125,9 +125,9 @@ public class GlyphMappingTable {
 
     /** range mapping table base class */
     protected abstract static class RangeMappingTable extends GlyphMappingTable {
-        private int[] sa = null;                                                // array of range (inclusive) starts
-        private int[] ea = null;                                                // array of range (inclusive) ends
-        private int[] ma = null;                                                // array of range mapped values
+        private int[] sa;                                                // array of range (inclusive) starts
+        private int[] ea;                                                // array of range (inclusive) ends
+        private int[] ma;                                                // array of range mapped values
         private int miMax = -1;
         /**
          * Construct range mapping table.

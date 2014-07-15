@@ -31,9 +31,9 @@ public class StreamedResourceGroup extends ResourceGroup implements Completable 
     /** the outputstream to write to */
     private final OutputStream os;
 
-    private boolean started = false;
+    private boolean started;
 
-    private boolean complete = false;
+    private boolean complete;
 
     /**
      * Main constructor

@@ -34,7 +34,7 @@ public class InlineKnuthSequence extends KnuthSequence  {
 
     private static final long serialVersionUID = 1354774188859946549L;
 
-    private boolean isClosed = false;
+    private boolean isClosed;
 
     /**
      * Creates a new and empty list.

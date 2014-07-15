@@ -161,7 +161,7 @@ public class TIFFRenderer extends Java2DRenderer {
 
         private int count;
 
-        private int current = 0;
+        private int current;
 
         /**
          * Main constructor

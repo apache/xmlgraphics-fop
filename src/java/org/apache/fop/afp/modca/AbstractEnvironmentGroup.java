@@ -33,7 +33,7 @@ public abstract class AbstractEnvironmentGroup extends AbstractNamedAFPObject {
     protected final List mapDataResources = null;
 
     /** the collection of MapPageOverlay objects */
-    protected List mapPageOverlays = null;
+    protected List mapPageOverlays;
 
     /**
      * Main constructor

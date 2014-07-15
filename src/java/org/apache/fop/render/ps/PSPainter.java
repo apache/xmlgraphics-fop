@@ -70,7 +70,7 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
 
     private BorderPainter borderPainter;
 
-    private boolean inTextMode = false;
+    private boolean inTextMode;
 
     /**
      * Default constructor.

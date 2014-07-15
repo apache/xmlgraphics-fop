@@ -35,9 +35,9 @@ import java.util.SortedSet;
  */
 public class TTFSubSetFile extends TTFFile {
 
-    private byte[] output = null;
-    private int realSize = 0;
-    private int currentPos = 0;
+    private byte[] output;
+    private int realSize;
+    private int currentPos;
 
     /*
      * Offsets in name table to be filled out by table.
@@ -45,8 +45,8 @@ public class TTFSubSetFile extends TTFFile {
      */
     private Map<OFTableName, Integer> offsets = new HashMap<OFTableName, Integer>();
 
-    private int checkSumAdjustmentOffset = 0;
-    private int locaOffset = 0;
+    private int checkSumAdjustmentOffset;
+    private int locaOffset;
 
     /** Stores the glyph offsets so that we can end strings at glyph boundaries */
     private int[] glyphOffsets;

@@ -32,7 +32,7 @@ public class GraphicsAreaBegin extends AbstractGraphicsDrawingOrder {
     private static final int NO_BOUNDARY = 0;
 
     /** draw boundary lines around this area */
-    private boolean drawBoundary = false;
+    private boolean drawBoundary;
 
     /**
      * Sets whether boundary lines are drawn

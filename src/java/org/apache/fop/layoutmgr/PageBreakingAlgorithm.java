@@ -43,33 +43,33 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private final PageProvider pageProvider;
     private final PageBreakingLayoutListener layoutListener;
     /** List of PageBreakPosition elements. */
-    private LinkedList<PageBreakPosition> pageBreaks = null;
+    private LinkedList<PageBreakPosition> pageBreaks;
 
     /** Footnotes which are cited between the currently considered active node (previous
      * break) and the current considered break. Its type is
      * List&lt;List&lt;KnuthElement&gt;&gt;, it contains the sequences of KnuthElement
      * representing the footnotes bodies.
      */
-    private List<List<KnuthElement>> footnotesList = null;
+    private List<List<KnuthElement>> footnotesList;
     /** Cumulated bpd of unhandled footnotes. */
-    private List<Integer> lengthList = null;
+    private List<Integer> lengthList;
     /** Length of all the footnotes which will be put on the current page. */
-    private int totalFootnotesLength = 0;
+    private int totalFootnotesLength;
     /**
      * Length of all the footnotes which have already been inserted, up to the currently
      * considered element. That is, footnotes from the currently considered page plus
      * footnotes from its preceding pages.
      */
-    private int insertedFootnotesLength = 0;
+    private int insertedFootnotesLength;
 
     /** True if footnote citations have been met since the beginning of the page sequence. */
-    private boolean footnotesPending = false;
+    private boolean footnotesPending;
     /** True if the elements met after the previous break point contain footnote citations. */
-    private boolean newFootnotes = false;
+    private boolean newFootnotes;
     /** Index of the first footnote met after the previous break point. */
-    private int firstNewFootnoteIndex = 0;
+    private int firstNewFootnoteIndex;
     /** Index of the last footnote inserted on the current page. */
-    private int footnoteListIndex = 0;
+    private int footnoteListIndex;
     /** Index of the last element of the last footnote inserted on the current page. */
     private int footnoteElementIndex = -1;
 
@@ -77,20 +77,20 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private final int splitFootnoteDemerits = 5000;
     // demerits for a page break that defers a whole footnote to the following page
     private final int deferredFootnoteDemerits = 10000;
-    private MinOptMax footnoteSeparatorLength = null;
+    private MinOptMax footnoteSeparatorLength;
 
     // the method noBreakBetween(int, int) uses these variables
     // to store parameters and result of the last call, in order
     // to reuse them and take less time
     private int storedPrevBreakIndex = -1;
     private int storedBreakIndex = -1;
-    private boolean storedValue = false;
+    private boolean storedValue;
 
     //Controls whether overflows should be warned about or not
-    private boolean autoHeight = false;
+    private boolean autoHeight;
 
     //Controls whether a single part should be forced if possible (ex. block-container)
-    private boolean favorSinglePart = false;
+    private boolean favorSinglePart;
 
     private int ipdDifference;
     private KnuthNode bestNodeForIPDChange;

@@ -34,7 +34,7 @@ public class DestinationData extends AbstractOffDocumentItem implements Resolvab
     private String[] idRefs;
 
     // PageViewport that the idRef item refers to
-    private PageViewport pageRef = null;
+    private PageViewport pageRef;
 
     /**
      * Create a new pdf destination data object.

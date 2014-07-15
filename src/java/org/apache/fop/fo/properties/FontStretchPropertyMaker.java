@@ -32,7 +32,7 @@ public class FontStretchPropertyMaker
 
     /* Ordered list of absolute font stretch properties so we can easily find the next /
      * previous one */
-    private Property[] orderedFontStretchValues = null;
+    private Property[] orderedFontStretchValues;
 
     /**
      * Create an enum property which can handle relative font stretches

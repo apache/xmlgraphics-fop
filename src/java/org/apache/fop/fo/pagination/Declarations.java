@@ -41,7 +41,7 @@ import org.apache.fop.fo.ValidationException;
  */
 public class Declarations extends FObj {
 
-    private Map<String, ColorProfile> colorProfiles = null;
+    private Map<String, ColorProfile> colorProfiles;
 
     /**
      * @param parent FONode that is the parent of this object

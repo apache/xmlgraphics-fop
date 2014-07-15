@@ -831,10 +831,10 @@ public class PCLGenerator {
         private byte[] rle; //compressed (RLE)
         private byte[] uncompressed; //uncompressed
         private int lastcount = -1;
-        private byte lastbyte = 0;
-        private int rlewidth = 0;
-        private byte ib = 0; //current image bits
-        private int x = 0;
+        private byte lastbyte;
+        private int rlewidth;
+        private byte ib; //current image bits
+        private int x;
         private boolean zeroRow = true;
 
         public Encoder(RenderedImage img) {

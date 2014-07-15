@@ -29,7 +29,7 @@ public class LMiter implements ListIterator<LayoutManager> {
     /** list of layout managers */
     protected List<LayoutManager> listLMs;
     /** current position in iteration */
-    protected int curPos = 0;
+    protected int curPos;
     /** The LayoutManager to which this LMiter is attached **/
     private LayoutManager lp;
 

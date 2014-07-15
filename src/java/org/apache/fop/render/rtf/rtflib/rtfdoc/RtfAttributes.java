@@ -185,7 +185,7 @@ public class RtfAttributes implements Cloneable {
         return values.keySet().iterator();
     }
 
-    private Attributes xslAttributes = null;
+    private Attributes xslAttributes;
 
     /**
      * Added by Normand Masse

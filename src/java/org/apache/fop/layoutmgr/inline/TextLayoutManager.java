@@ -98,9 +98,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     private final MinOptMax[] letterSpaceAdjustArray; //size = textArray.length + 1
 
     /** Font used for the space between words. */
-    private Font spaceFont = null;
+    private Font spaceFont;
     /** Start index of next TextArea */
-    private int nextStart = 0;
+    private int nextStart;
     /** size of a space character (U+0020) glyph in current font */
     private int spaceCharIPD;
     private MinOptMax wordSpaceIPD;
@@ -108,24 +108,24 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     /** size of the hyphen character glyph in current font */
     private int hyphIPD;
 
-    private boolean hasChanged = false;
+    private boolean hasChanged;
     private int[] returnedIndices = {0, 0};
-    private int changeOffset = 0;
-    private int thisStart = 0;
-    private int tempStart = 0;
+    private int changeOffset;
+    private int thisStart;
+    private int tempStart;
     private List changeList = new LinkedList();
 
-    private AlignmentContext alignmentContext = null;
+    private AlignmentContext alignmentContext;
 
     /**
      * The width to be reserved for border and padding at the start of the line.
      */
-    private int lineStartBAP = 0;
+    private int lineStartBAP;
 
     /**
      * The width to be reserved for border and padding at the end of the line.
      */
-    private int lineEndBAP = 0;
+    private int lineEndBAP;
 
     private boolean keepTogether;
 

@@ -51,7 +51,7 @@ public class PDFOutline extends PDFObject {
     private int count;
 
     // whether to show this outline item's child outline items
-    private boolean openItem = false;
+    private boolean openItem;
 
     /**
      * title to display for the bookmark entry

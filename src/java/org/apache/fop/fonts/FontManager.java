@@ -44,10 +44,10 @@ public class FontManager {
     private FontCacheManager fontCacheManager;
 
     /** Font substitutions */
-    private FontSubstitutions fontSubstitutions = null;
+    private FontSubstitutions fontSubstitutions;
 
     /** Allows enabling kerning on the base 14 fonts, default is false */
-    private boolean enableBase14Kerning = false;
+    private boolean enableBase14Kerning;
 
     /** FontTriplet matcher for fonts that shall be referenced rather than embedded. */
     private FontTriplet.Matcher referencedFontsMatcher;

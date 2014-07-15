@@ -48,7 +48,7 @@ public class RtfTableCell
     private boolean setCenter;
     private boolean setRight;
     private int id;
-    private RtfParagraphBreak lastBreak = null;
+    private RtfParagraphBreak lastBreak;
     private int lastBreakDepth = Integer.MIN_VALUE;
 
     private static final String TABLE_CELL_PARAGRAPH = "cell";

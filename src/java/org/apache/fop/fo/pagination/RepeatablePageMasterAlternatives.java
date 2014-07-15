@@ -47,11 +47,11 @@ public class RepeatablePageMasterAlternatives extends FObj
 
     private static final int INFINITE = -1;
 
-    private int numberConsumed = 0;
+    private int numberConsumed;
 
     private List<ConditionalPageMasterReference> conditionalPageMasterRefs;
-    private boolean hasPagePositionLast = false;
-    private boolean hasPagePositionOnly = false;
+    private boolean hasPagePositionLast;
+    private boolean hasPagePositionOnly;
 
     /**
      * Base constructor

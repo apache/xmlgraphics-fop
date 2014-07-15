@@ -88,17 +88,17 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
     private ColumnNumberManager columnNumberManager = new ColumnNumberManager();
 
     /** the table-header and -footer */
-    private TableHeader tableHeader = null;
-    private TableFooter tableFooter = null;
+    private TableHeader tableHeader;
+    private TableFooter tableFooter;
 
     /** used for validation */
-    private boolean tableColumnFound = false;
-    private boolean tableHeaderFound = false;
-    private boolean tableFooterFound = false;
-    private boolean tableBodyFound = false;
+    private boolean tableColumnFound;
+    private boolean tableHeaderFound;
+    private boolean tableFooterFound;
+    private boolean tableBodyFound;
 
-    private boolean hasExplicitColumns = false;
-    private boolean columnsFinalized = false;
+    private boolean hasExplicitColumns;
+    private boolean columnsFinalized;
     private RowGroupBuilder rowGroupBuilder;
 
     /**

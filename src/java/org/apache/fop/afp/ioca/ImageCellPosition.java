@@ -32,10 +32,10 @@ import org.apache.fop.afp.util.BinaryUtils;
 public class ImageCellPosition extends AbstractAFPObject {
 
     /** offset of image cell in X direction */
-    private int xOffset = 0;
+    private int xOffset;
 
     /** offset of image cell in Y direction */
-    private int yOffset = 0;
+    private int yOffset;
 
     /** size of image cell in X direction */
     private final byte[] xSize = new byte[] {(byte)0xFF, (byte)0xFF};

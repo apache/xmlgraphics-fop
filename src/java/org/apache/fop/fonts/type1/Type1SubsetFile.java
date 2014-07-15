@@ -53,10 +53,10 @@ public class Type1SubsetFile {
     /* The subset list of char strings */
     private HashMap<String, byte[]> subsetCharStrings;
     /* The list of character names in the subset font */
-    private List<String> charNames = null;
+    private List<String> charNames;
     /* A list of unique subroutines references */
     private LinkedHashMap<Integer, byte[]> uniqueSubs;
-    private SingleByteFont sbfont = null;
+    private SingleByteFont sbfont;
     /* New line character */
     private String eol = "\n";
     /* An option to determine whether the subroutines are subset */
@@ -66,7 +66,7 @@ public class Type1SubsetFile {
     private List<PSElement> headerSection;
     private List<PSElement> mainSection;
     //Determines whether the current font uses standard encoding
-    private boolean standardEncoding = false;
+    private boolean standardEncoding;
 
     //Type 1 operators
     private static final int OP_SEAC = 6;
@@ -587,7 +587,7 @@ public class Type1SubsetFile {
     public static final class BytesNumber {
         private int number;
         private int numBytes;
-        private String name = null;
+        private String name;
 
         public BytesNumber(int number, int numBytes) {
             this.number = number;

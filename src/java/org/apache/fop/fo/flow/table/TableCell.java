@@ -60,7 +60,7 @@ public class TableCell extends TableFObj implements CommonAccessibilityHolder {
     // End of property values
 
     /** used for FO validation */
-    private boolean blockItemFound = false;
+    private boolean blockItemFound;
 
     private boolean hasRetrieveTableMarker;
 

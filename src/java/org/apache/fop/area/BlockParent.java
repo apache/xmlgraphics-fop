@@ -38,19 +38,19 @@ public class BlockParent extends Area {
      * Used for relative (serves as left-offset trait) and absolute positioning
      * (serves as left-position trait).
      */
-    protected int xOffset = 0;
+    protected int xOffset;
 
     /**
      * The y offset position of this block parent.
      * Used for relative (serves as top-offset trait) and absolute positioning
      * (serves as top-position trait).
      */
-    protected int yOffset = 0;
+    protected int yOffset;
 
     /**
      * The children of this block parent area.
      */
-    protected List<Area> children = null;
+    protected List<Area> children;
 
     /** {@inheritDoc} */
     @Override

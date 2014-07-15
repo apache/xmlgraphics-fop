@@ -67,7 +67,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
     private PCLGenerator gen;
 
     private PCLPageDefinition currentPageDefinition;
-    private int currentPrintDirection = 0;
+    private int currentPrintDirection;
     //private GeneralPath currentPath = null;
 
     private Stack<GraphicContext> graphicContextStack = new Stack<GraphicContext>();

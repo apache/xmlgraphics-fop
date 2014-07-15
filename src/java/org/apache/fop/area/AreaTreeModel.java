@@ -37,8 +37,8 @@ import org.apache.commons.logging.LogFactory;
  * the life of the area tree model.
  */
 public class AreaTreeModel {
-    private List<PageSequence> pageSequenceList = null;
-    private int currentPageIndex = 0;
+    private List<PageSequence> pageSequenceList;
+    private int currentPageIndex;
 
     /** the current page sequence */
     protected PageSequence currentPageSequence;

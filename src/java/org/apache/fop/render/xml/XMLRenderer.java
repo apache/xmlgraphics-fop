@@ -112,8 +112,8 @@ public class XMLRenderer extends AbstractXMLRenderer {
     /** XML MIME type */
     public static final String XML_MIME_TYPE = MimeConstants.MIME_FOP_AREA_TREE;
 
-    private boolean startedSequence = false;
-    private boolean compactFormat = false;
+    private boolean startedSequence;
+    private boolean compactFormat;
 
     /** If not null, the XMLRenderer will mimic another renderer by using its font setup. */
     protected Renderer mimic;

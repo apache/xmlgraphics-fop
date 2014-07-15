@@ -31,7 +31,7 @@ public class BlockViewport extends Block implements Viewport  {
     private static final long serialVersionUID = -7840580922580735157L;
 
     // clipping for this viewport
-    private boolean clip = false;
+    private boolean clip;
     // transform if rotated or absolute
     private CTM viewportCTM;
 

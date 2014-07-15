@@ -93,22 +93,22 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     private static final int Y3 = 5;
 
     /** graphics object */
-    private GraphicsObject graphicsObj = null;
+    private GraphicsObject graphicsObj;
 
     /** Fallback text handler */
     protected TextHandler fallbackTextHandler = new StrokingTextHandler();
 
     /** Custom text handler */
-    protected TextHandler customTextHandler = null;
+    protected TextHandler customTextHandler;
 
     /** AFP resource manager */
-    private AFPResourceManager resourceManager = null;
+    private AFPResourceManager resourceManager;
 
     /** AFP resource info */
-    private AFPResourceInfo resourceInfo = null;
+    private AFPResourceInfo resourceInfo;
 
     /** Current AFP state */
-    private AFPPaintingState paintingState = null;
+    private AFPPaintingState paintingState;
 
     /** AFP graphics configuration */
     private final GraphicsConfigurationWithTransparency graphicsConfig = new GraphicsConfigurationWithTransparency();

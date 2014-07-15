@@ -41,12 +41,12 @@ public final class RtfFontManager {
     //////////////////////////////////////////////////
 
     /** Singelton instance */
-    private static RtfFontManager instance = null;
+    private static RtfFontManager instance;
 
     /** Index table for the fonts */
-    private Hashtable fontIndex = null;
+    private Hashtable fontIndex;
     /** Used fonts to this vector */
-    private Vector fontTable = null;
+    private Vector fontTable;
 
 
     //////////////////////////////////////////////////

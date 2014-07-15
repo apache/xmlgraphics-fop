@@ -52,7 +52,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
 
     private ImageEncodingHelper encodingHelper;
 
-    private PDFFilter pdfFilter = null;
+    private PDFFilter pdfFilter;
     private String maskRef;
     private PDFReference softMask;
 

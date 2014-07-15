@@ -76,7 +76,7 @@ class ActiveCell {
 
     private Keep keepWithNext;
 
-    private int spanIndex = 0;
+    private int spanIndex;
 
     private Step previousStep;
     private Step nextStep;

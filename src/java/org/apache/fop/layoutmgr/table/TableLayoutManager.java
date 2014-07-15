@@ -75,7 +75,7 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
     private static Log log = LogFactory.getLog(TableLayoutManager.class);
 
     private TableContentLayoutManager contentLM;
-    private ColumnSetup columns = null;
+    private ColumnSetup columns;
 
     private Block curBlockArea;
 

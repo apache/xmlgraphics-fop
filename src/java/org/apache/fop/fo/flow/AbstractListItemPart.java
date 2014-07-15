@@ -45,7 +45,7 @@ public abstract class AbstractListItemPart extends FObj implements CommonAccessi
     // End of property values
 
     /** used for FO validation */
-    private boolean blockItemFound = false;
+    private boolean blockItemFound;
 
     /**
      * Base constructor

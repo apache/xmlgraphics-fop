@@ -72,11 +72,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      */
     private static Log log = LogFactory.getLog(InlineLayoutManager.class);
 
-    private CommonMarginInline inlineProps = null;
-    private CommonBorderPaddingBackground borderProps = null;
+    private CommonMarginInline inlineProps;
+    private CommonBorderPaddingBackground borderProps;
 
-    private boolean areaCreated = false;
-    private LayoutManager lastChildLM = null; // Set when return last breakposs;
+    private boolean areaCreated;
+    private LayoutManager lastChildLM; // Set when return last breakposs;
 
     private Font font;
 
@@ -93,7 +93,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     /** The keep-together property */
     //private KeepProperty keepTogether;
 
-    private AlignmentContext alignmentContext = null;
+    private AlignmentContext alignmentContext;
 
     /**
      * Create an inline layout manager.

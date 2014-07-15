@@ -39,7 +39,7 @@ public abstract class AbstractTextArea extends InlineParent {
          * and the default width of a space according to the font
          * (this is equivalent to the property word-spacing.optimum)
          */
-        protected int spaceDifference = 0;
+        protected int spaceDifference;
 
         /**
          * Constructor
@@ -53,10 +53,10 @@ public abstract class AbstractTextArea extends InlineParent {
         }
     }
 
-    private int textWordSpaceAdjust = 0;
-    private int textLetterSpaceAdjust = 0;
-    private TextAdjustingInfo textAdjustingInfo = null;
-    private int baselineOffset = 0;
+    private int textWordSpaceAdjust;
+    private int textLetterSpaceAdjust;
+    private TextAdjustingInfo textAdjustingInfo;
+    private int baselineOffset;
 
     /**
      * Default constructor

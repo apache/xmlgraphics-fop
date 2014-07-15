@@ -43,7 +43,7 @@ public class StructuredFieldReader {
     /**
      * The input stream to read
      */
-    private InputStream inputStream = null;
+    private InputStream inputStream;
 
     /**
      * The constructor for the StructuredFieldReader

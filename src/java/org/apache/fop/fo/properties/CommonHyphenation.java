@@ -43,7 +43,7 @@ public final class CommonHyphenation {
     private static final PropertyCache<CommonHyphenation> CACHE =
             new PropertyCache<CommonHyphenation>();
 
-    private int hash = 0;
+    private int hash;
 
     /** The "language" property */
     public final StringProperty language;

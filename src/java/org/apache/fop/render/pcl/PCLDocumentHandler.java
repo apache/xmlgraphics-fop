@@ -64,9 +64,9 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     private PCLPageDefinition currentPageDefinition;
 
     /** contains the pageWith of the last printed page */
-    private long pageWidth = 0;
+    private long pageWidth;
     /** contains the pageHeight of the last printed page */
-    private long pageHeight = 0;
+    private long pageHeight;
 
     /** the current page image (only set when all-bitmap painting is activated) */
     private BufferedImage currentImage;

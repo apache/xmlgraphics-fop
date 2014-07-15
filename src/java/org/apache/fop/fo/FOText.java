@@ -71,19 +71,19 @@ public class FOText extends FONode implements CharSequence, TextFragment {
      * Points to the previous FOText object created within the current
      * block. If this is "null", this is the first such object.
      */
-    private FOText prevFOTextThisBlock = null;
+    private FOText prevFOTextThisBlock;
 
     /**
      * Points to the next FOText object created within the current
      * block. If this is "null", this is the last such object.
      */
-    private FOText nextFOTextThisBlock = null;
+    private FOText nextFOTextThisBlock;
 
     /**
      * Points to the ancestor Block object. This is used to keep track of
      * which FOText nodes are descendants of the same block.
      */
-    private Block ancestorBlock = null;
+    private Block ancestorBlock;
 
     /** Holds the text decoration values. May be null */
     private CommonTextDecoration textDecoration;
@@ -507,10 +507,10 @@ public class FOText extends FONode implements CharSequence, TextFragment {
 
     private class TextCharIterator extends CharIterator {
 
-        private int currentPosition = 0;
+        private int currentPosition;
 
-        private boolean canRemove = false;
-        private boolean canReplace = false;
+        private boolean canRemove;
+        private boolean canReplace;
 
         public TextCharIterator() {
         }

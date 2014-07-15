@@ -39,7 +39,7 @@ public class RegionViewport extends Area implements Viewport {
     // this rectangle is relative to the page
     private RegionReference regionReference;
     private Rectangle2D viewArea;
-    private boolean clip = false;
+    private boolean clip;
 
     /**
      * Create a new region-viewport-area

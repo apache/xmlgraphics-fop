@@ -51,17 +51,17 @@ import org.apache.fop.tools.anttasks.FileCompare;
  */
 public class TestConverter {
 
-    private boolean failOnly = false;
+    private boolean failOnly;
     private String outputFormat = MimeConstants.MIME_FOP_AREA_TREE;
     private File destdir;
-    private File compare = null;
+    private File compare;
     private String baseDir = "./";
     private Map differ = new java.util.HashMap();
 
     /**
      * logging instance
      */
-    protected SimpleLog logger = null;
+    protected SimpleLog logger;
 
     /**
      * This main method can be used to run the test converter from

@@ -51,12 +51,12 @@ import org.apache.fop.traits.MinOptMax;
  */
 public class LeaderLayoutManager extends LeafNodeLayoutManager {
     private Leader fobj;
-    private Font font = null;
+    private Font font;
 
-    private List contentList = null;
-    private ContentLayoutManager clm = null;
+    private List contentList;
+    private ContentLayoutManager clm;
 
-    private int contentAreaIPD = 0;
+    private int contentAreaIPD;
 
     /**
      * Constructor

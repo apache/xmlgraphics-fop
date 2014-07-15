@@ -59,9 +59,9 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
     protected Page curPage;
 
     /** the current page number */
-    protected int currentPageNum = 0;
+    protected int currentPageNum;
     /** The stating page number */
-    protected int startPageNum = 0;
+    protected int startPageNum;
 
     /**
      * Constructor

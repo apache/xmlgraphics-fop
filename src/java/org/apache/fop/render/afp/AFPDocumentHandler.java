@@ -92,7 +92,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     private Map<String, String> roundedCornerNameCache
             = new HashMap<String, String>();
 
-    private int roundedCornerCount = 0;
+    private int roundedCornerCount;
 
     private static enum Location {
         ELSEWHERE, IN_DOCUMENT_HEADER, FOLLOWING_PAGE_SEQUENCE, IN_PAGE_HEADER

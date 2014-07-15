@@ -39,7 +39,7 @@ public class PDFPages extends PDFObject {
     /**
      * the number of /Page objects
      */
-    protected int count = 0;
+    protected int count;
 
     // private PDFPages parent;
 

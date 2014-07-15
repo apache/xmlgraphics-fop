@@ -29,8 +29,8 @@ package org.apache.fop.layoutmgr.inline;
  */
 public class HyphContext {
     private int[] hyphPoints;
-    private int currentOffset = 0;
-    private int currentIndex = 0;
+    private int currentOffset;
+    private int currentIndex;
 
     /**
      * @param hyphPoints number of hyphenation points

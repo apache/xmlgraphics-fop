@@ -68,7 +68,7 @@ public final class ColorUtil {
      * <p>
      * Important: The use of this color map assumes that all Color instances are immutable!
      */
-    private static Map<String, Color> colorMap = null;
+    private static Map<String, Color> colorMap;
 
     /** Logger instance */
     protected static final Log log = LogFactory.getLog(ColorUtil.class);

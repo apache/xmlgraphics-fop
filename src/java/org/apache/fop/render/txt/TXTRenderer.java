@@ -97,7 +97,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     private final String pageEnding = "\f";
 
     /** Equals true, if current page is first. */
-    private boolean firstPage = false;
+    private boolean firstPage;
 
     /** Manager for storing border's information. */
     private BorderManager bm;

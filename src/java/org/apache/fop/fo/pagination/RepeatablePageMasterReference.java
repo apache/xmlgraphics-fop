@@ -48,7 +48,7 @@ public class RepeatablePageMasterReference extends FObj
 
     private static final int INFINITE = -1;
 
-    private int numberConsumed = 0;
+    private int numberConsumed;
 
     /**
      * Base constructor

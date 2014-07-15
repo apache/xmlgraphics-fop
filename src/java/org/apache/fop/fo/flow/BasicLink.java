@@ -58,7 +58,7 @@ public class BasicLink extends InlineLevel implements StructureTreeElementHolder
     // End of property values
 
     // used only for FO validation
-    private boolean blockOrInlineItemFound = false;
+    private boolean blockOrInlineItemFound;
 
     /**
      * Construct a BasicLink instance with the given {@link FONode}

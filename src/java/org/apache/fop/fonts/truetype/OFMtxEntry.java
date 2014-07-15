@@ -33,7 +33,7 @@ class OFMtxEntry {
     private List unicodeIndex = new java.util.ArrayList();
     private int[] boundingBox = new int[4];
     private long offset;
-    private byte found = 0;
+    private byte found;
 
     /**
      * Returns a String representation of this object.

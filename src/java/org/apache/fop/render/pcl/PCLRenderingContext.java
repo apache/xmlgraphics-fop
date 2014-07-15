@@ -35,7 +35,7 @@ public abstract class PCLRenderingContext extends AbstractRenderingContext {
 
     private PCLGenerator generator;
     private PCLRenderingUtil pclUtil;
-    private boolean sourceTransparency = false;
+    private boolean sourceTransparency;
 
     /**
      * Main constructor.

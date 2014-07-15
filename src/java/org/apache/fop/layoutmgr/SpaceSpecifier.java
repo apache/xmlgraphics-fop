@@ -33,7 +33,7 @@ import org.apache.fop.traits.SpaceVal;
 public class SpaceSpecifier implements Cloneable {
 
     private boolean startsReferenceArea;
-    private boolean hasForcing = false;
+    private boolean hasForcing;
     private List spaceVals = new ArrayList();
 
     /**

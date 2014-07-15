@@ -60,7 +60,7 @@ public final class RtfStyleSheetTable {
     //////////////////////////////////////////////////
 
     /** Singelton instance */
-    private static RtfStyleSheetTable instance = null;
+    private static RtfStyleSheetTable instance;
 
 
     //////////////////////////////////////////////////
@@ -69,13 +69,13 @@ public final class RtfStyleSheetTable {
 
 
     /** Table of styles */
-    private Hashtable styles = null;
+    private Hashtable styles;
 
     /** Used, style attributes to this vector */
-    private Hashtable attrTable = null;
+    private Hashtable attrTable;
 
     /** Used, style names to this vector */
-    private Vector nameTable = null;
+    private Vector nameTable;
 
     /** Default style */
     private String defaultStyleName = STANDARD_STYLE;

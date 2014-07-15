@@ -50,9 +50,9 @@ public class PDFFilterList {
 
     private List<PDFFilter> filters = new java.util.ArrayList<PDFFilter>();
 
-    private boolean ignoreASCIIFilters = false;
+    private boolean ignoreASCIIFilters;
 
-    private boolean disableAllFilters = false;
+    private boolean disableAllFilters;
 
     /**
      * Default constructor.

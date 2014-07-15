@@ -68,22 +68,22 @@ public class DataStream {
     protected static final Log LOG = LogFactory.getLog("org.apache.xmlgraphics.afp");
 
     /** Boolean completion indicator */
-    private boolean complete = false;
+    private boolean complete;
 
     /** The AFP document object */
-    private Document document = null;
+    private Document document;
 
     /** The current page group object */
-    private PageGroup currentPageGroup = null;
+    private PageGroup currentPageGroup;
 
     /** The current page object */
-    private PageObject currentPageObject = null;
+    private PageObject currentPageObject;
 
     /** The current overlay object */
-    private Overlay currentOverlay = null;
+    private Overlay currentOverlay;
 
     /** The current page */
-    private AbstractPageObject currentPage = null;
+    private AbstractPageObject currentPage;
 
     /** The MO:DCA interchange set in use (default to MO:DCA-P IS/2 set) */
     private InterchangeSet interchangeSet
