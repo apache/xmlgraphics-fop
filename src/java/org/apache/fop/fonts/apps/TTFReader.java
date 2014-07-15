@@ -205,7 +205,8 @@ public class TTFReader extends AbstractFontReader {
      * @return The TTF as an object, null if the font is incompatible.
      * @throws IOException In case of an I/O problem
      */
-    public TTFFile loadTTF(String fileName, String fontName, boolean useKerning, boolean useAdvanced) throws IOException {
+    public TTFFile loadTTF(String fileName, String fontName, boolean useKerning, boolean useAdvanced)
+            throws IOException {
         TTFFile ttfFile = new TTFFile(useKerning, useAdvanced);
         log.info("Reading " + fileName + "...");
         InputStream stream = new FileInputStream(fileName);
