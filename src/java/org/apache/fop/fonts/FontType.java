@@ -49,6 +49,10 @@ public class FontType {
      */
     public static final FontType TRUETYPE    = new FontType("TrueType", 5);
 
+    public static final FontType TYPE1C       = new FontType("Type1C", 6);
+
+    public static final FontType CIDTYPE0       = new FontType("CIDFontType0", 7);
+
     private final String name;
     private final int value;
 

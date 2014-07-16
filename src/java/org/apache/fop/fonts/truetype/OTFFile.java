@@ -147,7 +147,7 @@ public class OTFFile extends OpenFont {
      * @return The byte data found in the CFF table
      */
     public static byte[] getCFFData(FontFileReader fontFile) throws IOException {
-        byte[] cff = new byte[0];
+        byte[] cff = fontFile.getAllBytes();
         CFFDataInput input = new CFFDataInput(fontFile.getAllBytes());
         input.readBytes(4); //OTTO
         short numTables = input.readShort();

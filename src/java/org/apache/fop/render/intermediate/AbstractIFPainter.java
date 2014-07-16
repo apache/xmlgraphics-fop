@@ -245,7 +245,7 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
         if (log.isTraceEnabled()) {
             log.trace("Using ImageHandler: " + handler.getClass().getName());
         }
-
+        context.putHint("fontinfo", getFontInfo());
         handler.handleImage(context, effImage, rect);
     }
 

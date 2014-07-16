@@ -324,7 +324,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         boolean embed = true;
         if (font.getEmbeddingMode() == EmbeddingMode.SUBSET) {
             Type1SubsetFile subset = new Type1SubsetFile();
-            byte[] byteSubset = subset.createSubset(fontStream, font, "");
+            byte[] byteSubset = subset.createSubset(fontStream, font);
             fontStream = new ByteArrayInputStream(byteSubset);
         }
         embedType1Font(gen, fontStream);
