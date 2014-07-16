@@ -31,7 +31,7 @@ import java.util.Scanner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-class PostscriptParser {
+public class PostscriptParser {
 
     protected static final Log LOG = LogFactory.getLog(PostscriptParser.class);
     /* Patterns used to identify Postscript elements */
