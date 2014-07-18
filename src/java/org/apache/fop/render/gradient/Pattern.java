@@ -15,12 +15,37 @@
  * limitations under the License.
  */
 
-package org.apache.fop.render.shading;
+package org.apache.fop.render.gradient;
 
+import java.util.List;
 
-public interface Shading {
-    StringBuffer handleShadingType1(StringBuffer p);
-    StringBuffer handleShadingType2or3(StringBuffer p);
-    StringBuffer handleShadingType4or6or7(StringBuffer p);
-    StringBuffer handleShadingType5(StringBuffer p);
+public class Pattern {
+
+    private final int patternType;
+
+    private final Shading shading;
+
+    private final List<Double> matrix;
+
+    Pattern(int patternType, Shading shading, List<Double> matrix) {
+        this.patternType = patternType;
+        this.shading = shading;
+        this.matrix = matrix;
+    }
+
+    /**
+     * Either one (1) for tiling, or two (2) for shading.
+     */
+    public int getPatternType() {
+        return patternType;
+    }
+
+    public Shading getShading() {
+        return shading;
+    }
+
+    public List<Double> getMatrix() {
+        return matrix;
+    }
+
 }

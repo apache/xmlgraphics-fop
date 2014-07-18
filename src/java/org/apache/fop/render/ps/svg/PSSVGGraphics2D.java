@@ -19,34 +19,29 @@
 
 package org.apache.fop.render.ps.svg;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Paint;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.batik.ext.awt.LinearGradientPaint;
-import org.apache.batik.ext.awt.MultipleGradientPaint;
 import org.apache.batik.ext.awt.RadialGradientPaint;
 
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
-import org.apache.fop.pdf.PDFDeviceColorSpace;
-import org.apache.fop.render.shading.Function;
-import org.apache.fop.render.shading.GradientFactory;
-import org.apache.fop.render.shading.GradientRegistrar;
-import org.apache.fop.render.shading.PSGradientFactory;
-import org.apache.fop.render.shading.Pattern;
-import org.apache.fop.render.shading.Shading;
+import org.apache.fop.render.gradient.Function;
+import org.apache.fop.render.gradient.Function.SubFunctionRenderer;
+import org.apache.fop.render.gradient.GradientMaker;
+import org.apache.fop.render.gradient.GradientMaker.DoubleFormatter;
+import org.apache.fop.render.gradient.Pattern;
+import org.apache.fop.render.gradient.Shading;
 
 
-public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
+public class PSSVGGraphics2D extends PSGraphics2D {
 
     private static final Log LOG = LogFactory.getLog(PSSVGGraphics2D.class);
 
@@ -79,167 +74,72 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
 
     protected void applyPaint(Paint paint, boolean fill) {
         super.applyPaint(paint, fill);
-        if (paint instanceof RadialGradientPaint) {
-            RadialGradientPaint rgp = (RadialGradientPaint)paint;
+        if (paint instanceof LinearGradientPaint) {
+            Pattern pattern = GradientMaker.makeLinearGradient((LinearGradientPaint) paint,
+                    getBaseTransform(), getTransform());
             try {
-                handleRadialGradient(rgp, gen);
+                gen.write(outputPattern(pattern));
             } catch (IOException ioe) {
                 handleIOException(ioe);
             }
-        } else if (paint instanceof LinearGradientPaint) {
-            LinearGradientPaint lgp = (LinearGradientPaint)paint;
+        } else if (paint instanceof RadialGradientPaint) {
+            Pattern pattern = GradientMaker.makeRadialGradient((RadialGradientPaint) paint,
+                    getBaseTransform(), getTransform());
             try {
-                handleLinearGradient(lgp, gen);
+                gen.write(outputPattern(pattern));
             } catch (IOException ioe) {
                 handleIOException(ioe);
             }
         }
     }
 
-    private void handleLinearGradient(LinearGradientPaint lgp, PSGenerator gen) throws IOException {
-        MultipleGradientPaint.CycleMethodEnum cycle = lgp.getCycleMethod();
-        if (cycle != MultipleGradientPaint.NO_CYCLE) {
-            return;
+    private String outputPattern(Pattern pattern) {
+        StringBuilder p = new StringBuilder(64);
+        p.append("/Pattern setcolorspace\n");
+        p.append("<< \n/Type /Pattern \n");
+
+        p.append("/PatternType " + pattern.getPatternType() + " \n");
+
+        if (pattern.getShading() != null) {
+            p.append("/Shading ");
+            outputShading(p, pattern.getShading());
+            p.append(" \n");
         }
-        float[] fractions = lgp.getFractions();
-        Color[] cols = lgp.getColors();
-
-        AffineTransform transform = new AffineTransform(getBaseTransform());
-        transform.concatenate(getTransform());
-        transform.concatenate(lgp.getTransform());
-
-        List theMatrix = new ArrayList();
-        double [] mat = new double[6];
-        transform.getMatrix(mat);
-        for (int idx = 0; idx < mat.length; idx++) {
-            theMatrix.add(Double.valueOf(mat[idx]));
+        p.append(">> \n");
+        p.append("[ ");
+        for (double m : pattern.getMatrix()) {
+            p.append(getPSGenerator().formatDouble(m));
+            p.append(" ");
         }
+        p.append("] ");
+        p.append("makepattern setcolor\n");
 
-
-        List<Double> theCoords = new java.util.ArrayList<Double>();
-
-
-        AffineTransform start = applyTransform(lgp.getTransform(),
-                lgp.getStartPoint().getX(), lgp.getStartPoint().getY());
-        AffineTransform end = applyTransform(lgp.getTransform(), lgp.getEndPoint().getX(), lgp.getEndPoint().getY());
-        double startX = start.getTranslateX();
-        double startY = start.getTranslateY();
-        double endX = end.getTranslateX();
-        double endY = end.getTranslateY();
-
-        double width = endX - startX;
-        double height = endY - startY;
-
-        startX = startX + width * fractions[0];
-        endX = endX - width * (1 - fractions[fractions.length - 1]);
-        startY = startY + (height * fractions[0]);
-        endY =  endY - height * (1 - fractions[fractions.length - 1]);
-
-        theCoords.add(startX);
-        theCoords.add(startY);
-        theCoords.add(endX);
-        theCoords.add(endY);
-
-
-        List<Color> someColors = new java.util.ArrayList<Color>();
-        for (int count = 0; count < cols.length; count++) {
-            Color c1 = cols[count];
-            if (c1.getAlpha() != 255) {
-                LOG.warn("Opacity is not currently supported for Postscript output");
-            }
-            someColors.add(c1);
-        }
-        List<Double> theBounds = new java.util.ArrayList<Double>();
-        for (int count = 1; count < fractions.length - 1; count++) {
-            float offset = fractions[count];
-            theBounds.add(Double.valueOf(offset));
-        }
-        PDFDeviceColorSpace colSpace;
-        colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-
-        PSGradientFactory gradientFactory = (PSGradientFactory)GradientFactory.newInstance(this);
-        PSPattern myPattern = gradientFactory.createGradient(false, colSpace,
-                someColors, theBounds, theCoords, theMatrix);
-
-        gen.write(myPattern.toString());
-
+        return p.toString();
     }
 
+    private void outputShading(StringBuilder out, Shading shading) {
+        final GradientMaker.DoubleFormatter doubleFormatter = new DoubleFormatter() {
 
-
-    private void handleRadialGradient(RadialGradientPaint rgp, PSGenerator gen) throws IOException {
-        MultipleGradientPaint.CycleMethodEnum cycle = rgp.getCycleMethod();
-        if (cycle != MultipleGradientPaint.NO_CYCLE) {
-            return;
-        }
-
-        AffineTransform transform;
-        transform = new AffineTransform(getBaseTransform());
-        transform.concatenate(getTransform());
-        transform.concatenate(rgp.getTransform());
-
-        AffineTransform resultCentre = applyTransform(rgp.getTransform(),
-                rgp.getCenterPoint().getX(), rgp.getCenterPoint().getY());
-        AffineTransform resultFocus = applyTransform(rgp.getTransform(),
-                rgp.getFocusPoint().getX(), rgp.getFocusPoint().getY());
-        double scale = Math.sqrt(rgp.getTransform().getDeterminant());
-        double radius = rgp.getRadius() * scale;
-        double centreX = resultCentre.getTranslateX();
-        double centreY = resultCentre.getTranslateY();
-        double focusX = resultFocus.getTranslateX();
-        double focusY = resultFocus.getTranslateY();
-
-        List<Double> theMatrix = new java.util.ArrayList<Double>();
-        double [] mat = new double[6];
-        transform.getMatrix(mat);
-        for (int idx = 0; idx < mat.length; idx++) {
-            theMatrix.add(Double.valueOf(mat[idx]));
-        }
-
-        List<Double> theCoords = new java.util.ArrayList<Double>();
-        float[] fractions = rgp.getFractions();
-
-        theCoords.add(centreX);
-        theCoords.add(centreY);
-        theCoords.add(radius * rgp.getFractions()[0]);
-        theCoords.add(focusX);
-        theCoords.add(focusY);
-        theCoords.add(radius * fractions[fractions.length - 1]);
-
-        Color[] cols = rgp.getColors();
-        List<Color> someColors = new java.util.ArrayList<Color>();
-        for (int count = 0; count < cols.length; count++) {
-            Color cc = cols[count];
-            if (cc.getAlpha() != 255) {
-                /* This should never happen because radial gradients with opacity should now
-                 * be rasterized in the PSImageHandlerSVG class. Please see the shouldRaster()
-                 * method for more information. */
-                LOG.warn("Opacity is not currently supported for Postscript output");
+            public String formatDouble(double d) {
+                return getPSGenerator().formatDouble(d);
             }
+        };
+        final Function function = shading.getFunction();
+        Shading.FunctionRenderer functionRenderer = new Shading.FunctionRenderer() {
 
-            someColors.add(cc);
-        }
+            public void outputFunction(StringBuilder out) {
+                SubFunctionRenderer subFunctionRenderer = new Function.SubFunctionRenderer() {
 
-        List<Double> theBounds = new java.util.ArrayList<Double>();
-        for (int count = 1; count < fractions.length - 1; count++) {
-            float offset = fractions[count];
-            theBounds.add(Double.valueOf(offset));
-        }
-        PDFDeviceColorSpace colSpace;
-        colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-
-        PSGradientFactory gradientFactory = (PSGradientFactory)GradientFactory.newInstance(this);
-        PSPattern myPattern = gradientFactory.createGradient(true, colSpace,
-                someColors, theBounds, theCoords, theMatrix);
-
-        gen.write(myPattern.toString());
-    }
-
-    private AffineTransform applyTransform(AffineTransform base, double posX, double posY) {
-        AffineTransform result = AffineTransform.getTranslateInstance(posX, posY);
-        AffineTransform orig = base;
-        orig.concatenate(result);
-        return orig;
+                    public void outputFunction(StringBuilder out, int functionIndex) {
+                        Function subFunction = function.getFunctions().get(functionIndex);
+                        assert subFunction.getFunctions().isEmpty();
+                        subFunction.output(out, doubleFormatter, null);
+                    }
+                };
+                function.output(out, doubleFormatter, subFunctionRenderer);
+            }
+        };
+        shading.output(out, doubleFormatter, functionRenderer);
     }
 
     protected AffineTransform getBaseTransform() {
@@ -259,36 +159,4 @@ public class PSSVGGraphics2D extends PSGraphics2D implements GradientRegistrar {
         return new PSSVGGraphics2D(this);
     }
 
-    /**
-     * Registers a function object against the output format document
-     * @param function The function object to register
-     * @return Returns either the function which has already been registered
-     * or the current new registered object.
-     */
-    public Function registerFunction(Function function) {
-        //Objects aren't needed to be registered in Postscript
-        return function;
-    }
-
-    /**
-     * Registers a shading object against the otuput format document
-     * @param shading The shading object to register
-     * @return Returs either the shading which has already been registered
-     * or the current new registered object
-     */
-    public Shading registerShading(Shading shading) {
-        //Objects aren't needed to be registered in Postscript
-        return shading;
-    }
-
-    /**
-     * Registers a pattern object against the output format document
-     * @param pattern The pattern object to register
-     * @return Returns either the pattern which has already been registered
-     * or the current new registered object
-     */
-    public Pattern registerPattern(Pattern pattern) {
-        // TODO Auto-generated method stub
-        return pattern;
-    }
 }

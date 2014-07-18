@@ -732,6 +732,7 @@ list of possible build targets.
         <include name="**/*.fo"/>
         <include name="**/BidiTestData*.ser"/>
         <include name="**/*.afp"/>
+        <include name="**/*.ps"/>
         <include name="**/*.xsl"/>
       </fileset>
       <fileset dir="${build.dir}/test-gensrc">
