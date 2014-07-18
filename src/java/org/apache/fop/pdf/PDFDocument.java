@@ -543,7 +543,9 @@ public class PDFDocument {
             PDFObject pdfObject = (PDFObject)this.encryption;
             addTrailerObject(pdfObject);
             try {
-                versionController.setPDFVersion(encryption.getPDFVersion());
+                if (encryption.getPDFVersion().compareTo(versionController.getPDFVersion()) > 0) {
+                    versionController.setPDFVersion(encryption.getPDFVersion());
+                }
             } catch (IllegalStateException ise) {
                 log.warn("Configured encryption requires PDF version " + encryption.getPDFVersion()
                         + " but version has been set to " + versionController.getPDFVersion() + ".");
