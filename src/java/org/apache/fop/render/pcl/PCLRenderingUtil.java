@@ -54,19 +54,19 @@ public class PCLRenderingUtil {
      * Controls whether all text should be painted as text. This is a fallback setting in case
      * the mixture of native and bitmapped text does not provide the necessary quality.
      */
-    private boolean allTextAsBitmaps = false;
+    private boolean allTextAsBitmaps;
 
     /**
      * Controls whether an RGB canvas is used when converting Java2D graphics to bitmaps.
      * This can be used to work around problems with Apache Batik, for example, but setting
      * this to true will increase memory consumption.
      */
-    private boolean useColorCanvas = false;
+    private boolean useColorCanvas;
 
     /**
      * Controls whether the generation of PJL commands gets disabled.
      */
-    private boolean disabledPJL = false;
+    private boolean disabledPJL;
 
     PCLRenderingUtil(FOUserAgent userAgent) {
         this.userAgent = userAgent;

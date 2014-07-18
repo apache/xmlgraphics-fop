@@ -38,7 +38,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
     /**
      *  The first subproperty maker which has a setByShorthand of true.
      */
-    private PropertyMaker shorthandMaker = null;
+    private PropertyMaker shorthandMaker;
 
     /**
      * Construct an instance of a CompoundPropertyMaker for the given property.

@@ -32,9 +32,9 @@ public class PDFGoTo extends PDFAction {
      * the pageReference
      */
     private String pageReference;
-    private String destination = null;
-    private float xPosition = 0;
-    private float yPosition = 0;
+    private String destination;
+    private float xPosition;
+    private float yPosition;
 
     /**
      * create a /GoTo object.

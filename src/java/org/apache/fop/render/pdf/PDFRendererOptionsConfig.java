@@ -31,6 +31,7 @@ import org.apache.fop.pdf.Version;
 
 import static org.apache.fop.render.pdf.PDFRendererOption.DISABLE_SRGB_COLORSPACE;
 import static org.apache.fop.render.pdf.PDFRendererOption.FILTER_LIST;
+import static org.apache.fop.render.pdf.PDFRendererOption.MERGE_FONTS;
 import static org.apache.fop.render.pdf.PDFRendererOption.OUTPUT_PROFILE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_A_MODE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_X_MODE;
@@ -119,5 +120,9 @@ public final class PDFRendererOptionsConfig {
 
     public Version getPDFVersion() {
         return (Version) properties.get(VERSION);
+    }
+
+    public Boolean getMergeFontsEnabled() {
+        return (Boolean)properties.get(MERGE_FONTS);
     }
 }

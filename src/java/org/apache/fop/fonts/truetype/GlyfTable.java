@@ -37,7 +37,7 @@ public class GlyfTable {
 
     private final Set<Long> remappedComposites;
 
-    private final Map<Integer, Integer> subset;
+    protected final Map<Integer, Integer> subset;
 
     private final FontFileReader in;
 
@@ -45,10 +45,10 @@ public class GlyfTable {
     private Set<Integer> compositeGlyphs = new TreeSet<Integer>();
 
     /** All the glyphs that are composed, but do not appear in the subset. */
-    private Set<Integer> composedGlyphs = new TreeSet<Integer>();
+    protected Set<Integer> composedGlyphs = new TreeSet<Integer>();
 
-    GlyfTable(FontFileReader in, OFMtxEntry[] metrics, OFDirTabEntry dirTableEntry,
-            Map<Integer, Integer> glyphs) throws IOException {
+    protected GlyfTable(FontFileReader in, OFMtxEntry[] metrics, OFDirTabEntry dirTableEntry,
+                        Map<Integer, Integer> glyphs) throws IOException {
         mtxTab = metrics;
         tableOffset = dirTableEntry.getOffset();
         remappedComposites = new HashSet<Long>();
@@ -121,7 +121,7 @@ public class GlyfTable {
      *
      * @throws IOException an I/O error
      */
-    void populateGlyphsWithComposites() throws IOException {
+    protected void populateGlyphsWithComposites() throws IOException {
         for (int indexInOriginal : subset.keySet()) {
             scanGlyphsRecursively(indexInOriginal);
         }
@@ -166,7 +166,7 @@ public class GlyfTable {
      * Adds to the subset, all the glyphs that are composed by a glyph, but do not appear themselves
      * in the subset.
      */
-    private void addAllComposedGlyphsToSubset() {
+    protected void addAllComposedGlyphsToSubset() {
         int newIndex = subset.size();
         for (int composedGlyph : composedGlyphs) {
             subset.put(composedGlyph, newIndex++);

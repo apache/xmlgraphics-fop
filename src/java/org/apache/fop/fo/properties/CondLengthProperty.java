@@ -41,7 +41,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
     private Property length;
     private EnumProperty conditionality;
 
-    private boolean isCached = false;
+    private boolean isCached;
     private int hash = -1;
 
     /**

@@ -89,7 +89,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     private static final TempResourceURIGenerator TEMP_URI_GENERATOR
             = new TempResourceURIGenerator("ps-optimize");
 
-    private int currentPageNumber = 0;
+    private int currentPageNumber;
     private PageDefinition currentPageDefinition;
 
     /** Is used to determine the document's bounding box */

@@ -75,7 +75,7 @@ import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 public class PDFTranscoder extends AbstractFOPTranscoder {
 
     /** Graphics2D instance that is used to paint to */
-    protected PDFDocumentGraphics2D graphics = null;
+    protected PDFDocumentGraphics2D graphics;
 
     /**
      * Constructs a new {@link PDFTranscoder}.

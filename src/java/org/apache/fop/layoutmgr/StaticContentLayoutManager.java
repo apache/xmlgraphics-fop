@@ -41,7 +41,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     private Block targetBlock;
     private SideRegion regionFO;
 
-    private int contentAreaIPD = 0;
+    private int contentAreaIPD;
     private int contentAreaBPD = -1;
 
     /**

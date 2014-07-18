@@ -180,7 +180,7 @@ public abstract class AbstractFOPImageElementBridge extends SVGImageElementBridg
         /** parsed url */
         protected final ParsedURL purl;
         /** original graphics mode */
-        protected GraphicsNode origGraphicsNode = null;
+        protected GraphicsNode origGraphicsNode;
 
         /**
          * Create a new image node for drawing natively handled images

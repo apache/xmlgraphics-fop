@@ -30,10 +30,10 @@ import org.apache.fop.afp.util.BinaryUtils;
  */
 public class ImageSizeParameter extends AbstractAFPObject {
 
-    private int hSize = 0;
-    private int vSize = 0;
-    private int hRes = 0;
-    private int vRes = 0;
+    private int hSize;
+    private int vSize;
+    private int hRes;
+    private int vRes;
 
     /**
      * Constructor for a ImageSizeParameter for the specified

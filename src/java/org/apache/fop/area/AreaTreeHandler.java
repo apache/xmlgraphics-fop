@@ -65,7 +65,7 @@ public class AreaTreeHandler extends FOEventHandler {
     private static Log log = LogFactory.getLog(AreaTreeHandler.class);
 
     // Recorder of debug statistics
-    private Statistics statistics = null;
+    private Statistics statistics;
 
     // The LayoutManager maker
     private LayoutManagerMaker lmMaker;
@@ -87,7 +87,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     private TopLevelLayoutManager prevPageSeqLM;
 
-    private int idGen = 0;
+    private int idGen;
 
     /**
      * Constructor.

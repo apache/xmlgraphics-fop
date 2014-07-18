@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class ActionSet {
 
-    private int lastGeneratedID = 0;
+    private int lastGeneratedID;
     private Map actionRegistry = new java.util.HashMap();
 
     /**

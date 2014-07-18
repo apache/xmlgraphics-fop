@@ -292,7 +292,7 @@ public class MapCodedFont extends AbstractStructuredObject {
         /**
          * The scale (only specified for outline fonts)
          */
-        private int scale = 0;
+        private int scale;
     }
 
 }

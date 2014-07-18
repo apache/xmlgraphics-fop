@@ -46,7 +46,7 @@ public abstract class PDFObject implements PDFWritable {
     /**
      * the object's generation (0 in new documents)
      */
-    private int generation = 0;
+    private int generation;
 
     /**
      * the parent PDFDocument

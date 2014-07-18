@@ -51,32 +51,31 @@ public class Type1SubsetFile {
 
     protected static final Log LOG = LogFactory.getLog(Type1SubsetFile.class);
     /* The subset list of char strings */
-    private HashMap<String, byte[]> subsetCharStrings;
+    protected HashMap<String, byte[]> subsetCharStrings;
     /* The list of character names in the subset font */
-    private List<String> charNames = null;
+    protected List<String> charNames;
     /* A list of unique subroutines references */
-    private LinkedHashMap<Integer, byte[]> uniqueSubs;
-    private SingleByteFont sbfont = null;
+    protected LinkedHashMap<Integer, byte[]> uniqueSubs;
+    private SingleByteFont sbfont;
     /* New line character */
-    private String eol = "\n";
+    protected String eol = "\n";
     /* An option to determine whether the subroutines are subset */
-    private boolean subsetSubroutines = true;
+    protected boolean subsetSubroutines = true;
     private byte[] fullFont;
     //List of parsed Postscript elements
-    private List<PSElement> headerSection;
-    private List<PSElement> mainSection;
+    protected List<PSElement> headerSection;
+    protected List<PSElement> mainSection;
     //Determines whether the current font uses standard encoding
-    private boolean standardEncoding = false;
+    protected boolean standardEncoding;
 
     //Type 1 operators
     private static final int OP_SEAC = 6;
     private static final int OP_CALLSUBR = 10;
     private static final int OP_CALLOTHERSUBR = 16;
 
-    public byte[] createSubset(InputStream in, SingleByteFont sbfont,
-            String fontPrefix) throws IOException {
+    public byte[] createSubset(InputStream in, SingleByteFont sbfont) throws IOException {
         fullFont = IOUtils.toByteArray(in);
-        byte[] subsetFont = createSubset(sbfont, fontPrefix, true);
+        byte[] subsetFont = createSubset(sbfont, true);
         //This should never happen but ensure that subset is shorter than original font
         return (subsetFont.length == 0 || subsetFont.length > fullFont.length)
                 ? fullFont : subsetFont;
@@ -84,17 +83,14 @@ public class Type1SubsetFile {
 
     /**
      * Creates a new subset from the given type 1 font input stream
-     * @param in The type 1 font to subset
      * @param sbfont The font object containing information such as the
      * characters from which to create the subset
-     * @param fontPrefix The prefix used in identifying the subset font
-     * @param allSubroutines This option will force the subset to include all
+     * @param subsetSubroutines This option will force the subset to include all
      * subroutines.
      * @return Returns the subset as a byte array
      * @throws IOException
      */
-    private byte[] createSubset(SingleByteFont sbfont,
-            String fontPrefix, boolean subsetSubroutines) throws IOException {
+    private byte[] createSubset(SingleByteFont sbfont, boolean subsetSubroutines) throws IOException {
         this.subsetSubroutines = subsetSubroutines;
         InputStream in = new ByteArrayInputStream(fullFont);
         //Initialise resources used for the font creation
@@ -132,8 +128,8 @@ public class Type1SubsetFile {
 
         //Process and write the main section
         PSElement charStrings = getElement("/CharStrings", mainSection);
-        int result = readMainSection(mainSection, decoded, subsetEncodingEntries, charStrings);
-        if (result == 0) {
+        boolean result = readMainSection(mainSection, decoded, subsetEncodingEntries, charStrings);
+        if (!result) {
             /* This check handles the case where a font uses a postscript method to return a
              * subroutine index. As there is currently no java postscript interpreter and writing
              * one would be very difficult it prevents us from handling this eventuality. The way
@@ -142,16 +138,16 @@ public class Type1SubsetFile {
             uniqueSubs.clear();
             subsetCharStrings.clear();
             charNames.clear();
-            return createSubset(sbfont, fontPrefix, false);
+            return createSubset(sbfont, false);
         }
 
         //Write header section
-        ByteArrayOutputStream boasHeader = writeHeader(pfbData, encoding, subsetEncodingEntries);
+        ByteArrayOutputStream boasHeader = writeHeader(pfbData, encoding);
 
         ByteArrayOutputStream boasMain = writeMainSection(decoded, mainSection, charStrings);
         byte[] mainSectionBytes = boasMain.toByteArray();
         mainSectionBytes = BinaryCoder.encodeBytes(mainSectionBytes, 55665, 4);
-        boasMain = new ByteArrayOutputStream();
+        boasMain.reset();
         boasMain.write(mainSectionBytes);
 
         ByteArrayOutputStream baosTrailer = new ByteArrayOutputStream();
@@ -160,8 +156,8 @@ public class Type1SubsetFile {
         return stitchFont(boasHeader, boasMain, baosTrailer);
     }
 
-    byte[] stitchFont(ByteArrayOutputStream boasHeader, ByteArrayOutputStream boasMain,
-            ByteArrayOutputStream boasTrailer) throws IOException {
+    protected byte[] stitchFont(ByteArrayOutputStream boasHeader, ByteArrayOutputStream boasMain,
+                                ByteArrayOutputStream boasTrailer) throws IOException {
         int headerLength = boasHeader.size();
         int mainLength = boasMain.size();
 
@@ -205,7 +201,7 @@ public class Type1SubsetFile {
                 /* If no matches are found, create a new entry for the character so
                  * that it can be added even if it's not in the current encoding. */
                 if (matches.size() == 0) {
-                    matches = new ArrayList<String>();
+                    matches.clear();
                     if (glyph == 0) {
                         matches.add("dup 0 /.notdef put");
                     } else {
@@ -237,7 +233,7 @@ public class Type1SubsetFile {
         return subsetEncodingEntries;
     }
 
-    private List<String> searchEntries(HashMap<Integer, String> encodingEntries, int glyph) {
+    protected List<String> searchEntries(HashMap<Integer, String> encodingEntries, int glyph) {
         List<String> matches = new ArrayList<String>();
         for (Entry<Integer, String> entry : encodingEntries.entrySet()) {
             String tag = getEntryPart(entry.getValue(), 3);
@@ -249,15 +245,13 @@ public class Type1SubsetFile {
         return matches;
     }
 
-    private ByteArrayOutputStream writeHeader(PFBData pfbData, PSElement encoding,
-            List<String> subsetEncodingEntries) throws UnsupportedEncodingException,
-            IOException {
+    protected ByteArrayOutputStream writeHeader(PFBData pfbData, PSElement encoding) throws IOException {
         ByteArrayOutputStream boasHeader = new ByteArrayOutputStream();
         boasHeader.write(pfbData.getHeaderSegment(), 0, encoding.getStartPoint() - 1);
 
         if (!standardEncoding) {
             //Write out the new encoding table for the subset font
-            String encodingArray = eol + String.format("/Encoding %d array", 256) + eol
+            String encodingArray = eol + "/Encoding 256 array" + eol
                     + "0 1 255 {1 index exch /.notdef put } for" + eol;
             byte[] encodingDefinition = encodingArray.getBytes("ASCII");
             boasHeader.write(encodingDefinition, 0, encodingDefinition.length);
@@ -287,7 +281,7 @@ public class Type1SubsetFile {
         return boas;
     }
 
-    private int readMainSection(List<PSElement> mainSection, byte[] decoded,
+    private boolean readMainSection(List<PSElement> mainSection, byte[] decoded,
             List<String> subsetEncodingEntries, PSElement charStrings) {
         subsetEncodingEntries.add(0, "dup 0 /.notdef put");
         /* Reads and parses the charStrings section to subset the charString
@@ -322,19 +316,19 @@ public class Type1SubsetFile {
                 /* Recursively scan the charString array for subroutines and if found, copy the
                  * entry to our subset entries and update any references. */
                 charStringEntry = createSubsetCharStrings(decoded, charStringEntry, subroutines,
-                        subsetEncodingEntries, tag);
+                        subsetEncodingEntries);
             }
             if (charStringEntry.length == 0) {
-                return 0;
+                return false;
             }
             charStringEntry = BinaryCoder.encodeBytes(charStringEntry, 4330, skipBytes);
             subsetCharStrings.put(tag, charStringEntry);
         }
-        return 1;
+        return true;
     }
 
     private byte[] createSubsetCharStrings(byte[] decoded, byte[] data, PSFixedArray subroutines,
-            List<String> subsetEncodingEntries, String glyphName) {
+            List<String> subsetEncodingEntries) {
         List<BytesNumber> operands = new ArrayList<BytesNumber>();
         for (int i = 0; i < data.length; i++) {
             int cur = data[i] & 0xFF;
@@ -348,11 +342,11 @@ public class Type1SubsetFile {
                     if (uniqueSubs.get(operands.get(operands.size() - 1).getNumber()) == null) {
                         uniqueSubs.put(operands.get(operands.size() - 1).getNumber(), new byte[0]);
                         data = addSubroutine(subroutines, operands, decoded, subsetEncodingEntries,
-                                glyphName, data, i, 1, -1, operands.get(
+                                data, i, 1, -1, operands.get(
                                         operands.size() - 1).getNumber());
                     } else {
                         data = addSubroutine(subroutines, operands, decoded, subsetEncodingEntries,
-                                glyphName, data, i, 1, getSubrIndex(operands.get(
+                                data, i, 1, getSubrIndex(operands.get(
                                         operands.size() - 1).getNumber()), operands.get(
                                                 operands.size() - 1).getNumber());
                     }
@@ -390,7 +384,7 @@ public class Type1SubsetFile {
                             return new byte[0];
                         }
                         data = addSubroutine(subroutines, operands, decoded, subsetEncodingEntries,
-                                glyphName, data, i, 2, -1, operands.get(0).getNumber());
+                                data, i, 2, -1, operands.get(0).getNumber());
                     }
                 }
                 if (data.length == 0) {
@@ -431,14 +425,14 @@ public class Type1SubsetFile {
     }
 
     private byte[] addSubroutine(PSFixedArray subroutines, List<BytesNumber> operands, byte[] decoded,
-            List<String> subsetEncodingEntries, String glyphName, byte[] data, int i, int opLength,
+            List<String> subsetEncodingEntries, byte[] data, int i, int opLength,
             int existingSubrRef, int subrID) {
         if (existingSubrRef == -1) {
             int[] subrData = subroutines.getBinaryEntryByIndex(subrID);
             byte[] subroutine = getBinaryEntry(subrData, decoded);
             subroutine = BinaryCoder.decodeBytes(subroutine, 4330, 4);
             subroutine = createSubsetCharStrings(decoded, subroutine, subroutines,
-                    subsetEncodingEntries, glyphName);
+                    subsetEncodingEntries);
             if (subroutine.length == 0) {
                 return new byte[0];
             }
@@ -451,8 +445,8 @@ public class Type1SubsetFile {
         return data;
     }
 
-    private ByteArrayOutputStream writeMainSection(byte[] decoded, List<PSElement> mainSection,
-            PSElement charStrings) throws IOException {
+    protected ByteArrayOutputStream writeMainSection(byte[] decoded, List<PSElement> mainSection,
+                                                     PSElement charStrings) throws IOException {
         ByteArrayOutputStream main = new ByteArrayOutputStream();
         PSElement subrs = getElement("/Subrs", mainSection);
 
@@ -470,11 +464,9 @@ public class Type1SubsetFile {
             writeString(eol + String.format("/Subrs %d array", uniqueSubs.size()), main);
             int count = 0;
             for (Entry<Integer, byte[]> entry : uniqueSubs.entrySet()) {
-                byte[] newSubrBytes = (eol + String.format("dup %d %d %s ", count++,
-                        entry.getValue().length, rd)).getBytes("ASCII");
-                newSubrBytes = concatArray(newSubrBytes, entry.getValue());
-                newSubrBytes = concatArray(newSubrBytes, String.format(" %s", np).getBytes("ASCII"));
-                main.write(newSubrBytes);
+                writeString(eol + String.format("dup %d %d %s ", count++, entry.getValue().length, rd), main);
+                main.write(entry.getValue());
+                writeString(" " + np, main);
             }
             writeString(eol + nd, main);
         } else {
@@ -498,8 +490,8 @@ public class Type1SubsetFile {
         return main;
     }
 
-    private String findVariable(byte[] decoded, List<PSElement> elements, String[] matches,
-            String fallback) throws UnsupportedEncodingException {
+    protected String findVariable(byte[] decoded, List<PSElement> elements, String[] matches,
+                                  String fallback) throws UnsupportedEncodingException {
         for (PSElement element : elements) {
             if (element instanceof PSSubroutine) {
                 byte[] var = new byte[element.getEndPoint() - element.getStartPoint()];
@@ -575,8 +567,8 @@ public class Type1SubsetFile {
         sbfont.mapUsedGlyphName(charIndex, charName);
     }
 
-    private void writeString(String entry, ByteArrayOutputStream boas)
-            throws UnsupportedEncodingException, IOException {
+    protected void writeString(String entry, ByteArrayOutputStream boas)
+            throws IOException {
         byte[] byteEntry = entry.getBytes("ASCII");
         boas.write(byteEntry);
     }
@@ -587,7 +579,7 @@ public class Type1SubsetFile {
     public static final class BytesNumber {
         private int number;
         private int numBytes;
-        private String name = null;
+        private String name;
 
         public BytesNumber(int number, int numBytes) {
             this.number = number;
@@ -696,7 +688,7 @@ public class Type1SubsetFile {
      * @param decoded The array from which to copy a section of data
      * @return Returns the copy of the data section
      */
-    byte[] getBinaryEntry(int[] position, byte[] decoded) {
+    protected byte[] getBinaryEntry(int[] position, byte[] decoded) {
         int start = position[0];
         int finish = position[1];
         byte[] line = new byte[finish - start];
@@ -704,7 +696,7 @@ public class Type1SubsetFile {
         return line;
     }
 
-    private String getEntryPart(String entry, int part) {
+    protected String getEntryPart(String entry, int part) {
         Scanner s = new Scanner(entry).useDelimiter(" ");
         for (int i = 1; i < part; i++) {
             s.next();
@@ -712,21 +704,13 @@ public class Type1SubsetFile {
         return s.next();
     }
 
-    private PSElement getElement(String elementID, List<PSElement> elements) {
+    protected PSElement getElement(String elementID, List<PSElement> elements) {
         for (PSElement element : elements) {
             if (element.getOperator().equals(elementID)) {
                 return element;
             }
         }
         return null;
-    }
-
-    /**
-     * Gets the list of subset character names
-     * @return Returns the subset character names
-     */
-    public List<String> getCharNames() {
-        return charNames;
     }
 
     /**

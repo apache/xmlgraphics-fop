@@ -116,10 +116,10 @@ public class PreviewPanel extends JPanel {
      */
     protected Renderable renderable;
     /** The number of the page which is currently selected */
-    private int currentPage = 0;
+    private int currentPage;
 
     /** The index of the first page displayed on screen. */
-    private int firstPage = 0;
+    private int firstPage;
 
     /** The number of pages concurrently displayed on screen. */
     private int pageRange = 1;
@@ -128,13 +128,13 @@ public class PreviewPanel extends JPanel {
     private int displayMode = SINGLE;
 
     /** The component(s) that hold the rendered page(s) */
-    private ImageProxyPanel[] pagePanels = null;
+    private ImageProxyPanel[] pagePanels;
 
     /**
      * Panel showing the page panels in a grid. Usually the dimensions
      * of the grid are 1x1, nx1 or nx2.
      */
-    private JPanel gridPanel = null;
+    private JPanel gridPanel;
 
     /** Asynchronous reloader thread, used when reload() method is called. */
     private Reloader reloader;
@@ -283,9 +283,9 @@ public class PreviewPanel extends JPanel {
         /** The viewport to be scrolled */
         private final JViewport viewport;
         /** Starting position of a mouse drag - X co-ordinate */
-        private int startPosX = 0;
+        private int startPosX;
         /** Starting position of a mouse drag - Y co-ordinate */
-        private int startPosY = 0;
+        private int startPosY;
 
         ViewportScroller(JViewport vp) {
             viewport = vp;

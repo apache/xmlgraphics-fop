@@ -37,7 +37,7 @@ public class PSSetPageDevice extends PSExtensionAttachment {
     /**
      * name attribute
      */
-    protected String name = null;
+    protected String name;
 
     /**
      * default constructor

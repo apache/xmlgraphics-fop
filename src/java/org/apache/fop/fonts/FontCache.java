@@ -75,14 +75,14 @@ public final class FontCache implements Serializable {
      * TTC file may contain more than 1 font.
      * @serial
      */
-    private Map<String, CachedFontFile> fontfileMap = null;
+    private Map<String, CachedFontFile> fontfileMap;
 
     /**
      * mapping of font url -> file modified date (for all fonts that have failed
      * to load)
      * @serial
      */
-    private Map<String, Long> failedFontMap = null;
+    private Map<String, Long> failedFontMap;
 
     /**
      * Default constructor
@@ -494,7 +494,7 @@ public final class FontCache implements Serializable {
         /** file modify date (if available) */
         private long lastModified = -1;
 
-        private Map<String, EmbedFontInfo> filefontsMap = null;
+        private Map<String, EmbedFontInfo> filefontsMap;
 
         public CachedFontFile(long lastModified) {
             setLastModified(lastModified);

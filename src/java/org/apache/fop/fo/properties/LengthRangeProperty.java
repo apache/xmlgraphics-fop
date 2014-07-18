@@ -38,8 +38,8 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
     private static final int MINSET = 1;
     private static final int OPTSET = 2;
     private static final int MAXSET = 4;
-    private int bfSet = 0;    // bit field
-    private boolean consistent = false;
+    private int bfSet;    // bit field
+    private boolean consistent;
 
     /**
      * Converts this <code>LengthRangeProperty</code> to a <code>MinOptMax</code>.

@@ -34,15 +34,15 @@ public class MIFElement {
     /** name */
     protected String name;
     /** value string */
-    protected String valueStr = null;
+    protected String valueStr;
     /** value elements */
-    protected List valueElements = null;
+    protected List valueElements;
     /** true if started */
-    protected boolean started = false;
+    protected boolean started;
     /** true if finishing */
-    protected boolean finish = false;
+    protected boolean finish;
     /** true if finished */
-    protected boolean finished = false;
+    protected boolean finished;
 
     /**
      * @param name a name

@@ -6009,4 +6009,11 @@
       <Method name="hasValueOfElementName"/>
       <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
    </Match>
+   <Match>
+     <Class name="org.apache.fop.pdf.PDFCFFStream"/>
+     <Or>
+        <Bug pattern="EI_EXPOSE_REP"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+     </Or>
+   </Match>
 </FindBugsFilter>

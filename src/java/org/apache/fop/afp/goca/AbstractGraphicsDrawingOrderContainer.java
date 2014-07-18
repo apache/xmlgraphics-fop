@@ -41,10 +41,10 @@ implements StructuredData, Completable, Startable {
         = new java.util.ArrayList/*<StructuredDataObject>*/();
 
     /** object is complete */
-    private boolean complete = false;
+    private boolean complete;
 
     /** object has started */
-    private boolean started = false;
+    private boolean started;
 
     /**
      * Default constructor

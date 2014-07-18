@@ -105,10 +105,11 @@ public class PDFFont extends PDFDictionary {
     public static PDFFont createFont(String fontname,
                                      FontType subtype, String basefont,
                                      Object encoding) {
-        if (subtype == FontType.TYPE0) {
+        if (subtype == FontType.TYPE0 || subtype == FontType.CIDTYPE0) {
             return new PDFFontType0(fontname, basefont,
                                     encoding);
         } else if ((subtype == FontType.TYPE1)
+                || (subtype == FontType.TYPE1C)
                 || (subtype == FontType.MMTYPE1)) {
             return new PDFFontType1(fontname, basefont,
                                     encoding);

@@ -44,7 +44,7 @@ public class Flow extends FObj implements CommonAccessibilityHolder {
     private CommonAccessibility commonAccessibility;
 
     /** used for FO validation */
-    private boolean blockItemFound = false;
+    private boolean blockItemFound;
 
     /**
      * Create a Flow instance that is a child of the given {@link FONode}.

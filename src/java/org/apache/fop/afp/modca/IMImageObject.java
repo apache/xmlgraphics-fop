@@ -45,22 +45,22 @@ public class IMImageObject extends AbstractNamedAFPObject {
     /**
      * The image output control
      */
-    private ImageOutputControl imageOutputControl = null;
+    private ImageOutputControl imageOutputControl;
 
     /**
      * The image input descriptor
      */
-    private ImageInputDescriptor imageInputDescriptor = null;
+    private ImageInputDescriptor imageInputDescriptor;
 
     /**
      * The image cell position
      */
-    private ImageCellPosition imageCellPosition = null;
+    private ImageCellPosition imageCellPosition;
 
     /**
      * The image rastor data
      */
-    private ImageRasterData imageRasterData = null;
+    private ImageRasterData imageRasterData;
 
     /**
      * Constructor for the image object with the specified name,

@@ -60,7 +60,7 @@ public class FOTreeBuilder extends DefaultHandler {
     protected ElementMappingRegistry elementMappingRegistry;
 
     /** The root of the formatting object tree */
-    protected Root rootFObj = null;
+    protected Root rootFObj;
 
     /** Main DefaultHandler that handles the FO namespace. */
     protected MainFOHandler mainFOHandler;
@@ -80,7 +80,7 @@ public class FOTreeBuilder extends DefaultHandler {
     /** The user agent for this processing run. */
     private FOUserAgent userAgent;
 
-    private boolean used = false;
+    private boolean used;
     private boolean empty = true;
 
     private int depth;
@@ -242,13 +242,13 @@ public class FOTreeBuilder extends DefaultHandler {
     private class MainFOHandler extends DefaultHandler {
 
         /** Current formatting object being handled */
-        protected FONode currentFObj = null;
+        protected FONode currentFObj;
 
         /** Current propertyList for the node being handled */
         protected PropertyList currentPropertyList;
 
         /** Current marker nesting-depth */
-        private int nestedMarkerDepth = 0;
+        private int nestedMarkerDepth;
 
         /** {@inheritDoc} */
         public void startElement(String namespaceURI, String localName, String rawName,

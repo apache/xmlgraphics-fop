@@ -37,7 +37,7 @@ import org.apache.fop.pdf.PDFFilterList;
  */
 public class ImageRawCCITTFaxAdapter extends AbstractImageAdapter {
 
-    private PDFFilter pdfFilter = null;
+    private PDFFilter pdfFilter;
 
     /**
      * Creates a new PDFImage from an Image instance.

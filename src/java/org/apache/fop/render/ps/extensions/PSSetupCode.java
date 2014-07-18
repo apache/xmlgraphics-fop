@@ -37,7 +37,7 @@ public class PSSetupCode extends PSExtensionAttachment {
     /**
      * name attribute
      */
-    protected String name = null;
+    protected String name;
 
     /**
      * No-argument contructor.

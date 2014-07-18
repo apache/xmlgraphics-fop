@@ -48,7 +48,7 @@ public abstract class CollapsingBorderModel {
     //public static final int LAST_ROW_IN_GROUP       = 8;
 
     //These statics are used singleton-style. No MT issues here.
-    private static CollapsingBorderModel collapse = null;
+    private static CollapsingBorderModel collapse;
     // private static CollapsingBorderModel collapseWithPrecedence = null;
 
     /**

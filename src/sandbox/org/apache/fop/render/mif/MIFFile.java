@@ -34,35 +34,35 @@ import java.util.List;
 public class MIFFile extends MIFElement {
 
     /** colorCatalog */
-    protected MIFElement colorCatalog = null;
+    protected MIFElement colorCatalog;
     /** pgfCatalog */
-    protected PGFElement pgfCatalog = null;
+    protected PGFElement pgfCatalog;
     /** fontCatalog */
-    protected MIFElement fontCatalog = null;
+    protected MIFElement fontCatalog;
     /** rulingCatalog */
-    protected RulingElement rulingCatalog = null;
+    protected RulingElement rulingCatalog;
     /** tblCatalog */
-    protected MIFElement tblCatalog = null;
+    protected MIFElement tblCatalog;
     /** views */
-    protected MIFElement views = null;
+    protected MIFElement views;
     /** variableFormats */
-    protected MIFElement variableFormats = null;
+    protected MIFElement variableFormats;
     /** xRefFormats */
-    protected MIFElement xRefFormats = null;
+    protected MIFElement xRefFormats;
     /** document */
-    protected MIFElement document = null;
+    protected MIFElement document;
     /** bookComponent */
-    protected MIFElement bookComponent = null;
+    protected MIFElement bookComponent;
     /** initialAutoNums */
-    protected MIFElement initialAutoNums = null;
+    protected MIFElement initialAutoNums;
     /** aFrames */
-    protected MIFElement aFrames = null;
+    protected MIFElement aFrames;
     /** tbls */
-    protected MIFElement tbls = null;
+    protected MIFElement tbls;
     /** pages */
     protected List pages = new java.util.ArrayList();
     /** textFlows */
-    protected List textFlows = null;
+    protected List textFlows;
 
 
     /** default constructor */

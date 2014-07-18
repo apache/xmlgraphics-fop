@@ -20,6 +20,7 @@
 package org.apache.fop.fonts;
 
 import java.awt.Rectangle;
+import java.io.InputStream;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
 import java.util.BitSet;
@@ -53,7 +54,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     private int defaultWidth;
     private CIDFontType cidType = CIDFontType.CIDTYPE2;
 
-    private final CIDSet cidSet;
+    protected final CIDSet cidSet;
 
     /* advanced typographic support */
     private GlyphDefinitionTable gdef;
@@ -72,7 +73,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     /** Contains the character bounding boxes for all characters in the font */
     protected Rectangle[] boundingBoxes;
 
-    private boolean isOTFFile = false;
+    private boolean isOTFFile;
 
     // since for most users the most likely glyphs are in the first cmap segments we store their mapping.
     private static final int NUM_MOST_LIKELY_GLYPHS = 256;
@@ -222,13 +223,13 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         if (idx < NUM_MOST_LIKELY_GLYPHS && mostLikelyGlyphs[idx] != 0) {
             return mostLikelyGlyphs[idx];
         }
-        for (int i = 0; (i < cmap.length) && retIdx == 0; i++) {
-            if (cmap[i].getUnicodeStart() <= idx
-                    && cmap[i].getUnicodeEnd() >= idx) {
-
-                retIdx = cmap[i].getGlyphStartIndex()
+        for (CMapSegment i : cmap) {
+            if (retIdx == 0
+                    && i.getUnicodeStart() <= idx
+                    && i.getUnicodeEnd() >= idx) {
+                retIdx = i.getGlyphStartIndex()
                     + idx
-                    - cmap[i].getUnicodeStart();
+                    - i.getUnicodeStart();
                 if (idx < NUM_MOST_LIKELY_GLYPHS) {
                     mostLikelyGlyphs[idx] = retIdx;
                 }
@@ -241,14 +242,9 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * Add a private use mapping {PU,GI} to the existing character map.
      * N.B. Does not insert in order, merely appends to end of existing map.
      */
-    private synchronized void addPrivateUseMapping(int pu, int gi) {
+    protected synchronized void addPrivateUseMapping(int pu, int gi) {
         assert findGlyphIndex(pu) == SingleByteEncoding.NOT_FOUND_CODE_POINT;
-        CMapSegment[] oldCmap = cmap;
-        int cmapLength = oldCmap.length;
-        CMapSegment[] newCmap = new CMapSegment [ cmapLength + 1 ];
-        System.arraycopy(oldCmap, 0, newCmap, 0, cmapLength);
-        newCmap [ cmapLength ] = new CMapSegment(pu, pu, gi);
-        cmap = newCmap;
+        cmap.add(new CMapSegment(pu, pu, gi));
     }
 
     /**
@@ -306,8 +302,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     // [TBD] - needs optimization, i.e., change from linear search to binary search
     private int findCharacterFromGlyphIndex(int gi, boolean augment) {
         int cc = 0;
-        for (int i = 0, n = cmap.length; i < n; i++) {
-            CMapSegment segment = cmap [ i ];
+        for (CMapSegment segment : cmap) {
             int s = segment.getGlyphStartIndex();
             int e = s + (segment.getUnicodeEnd() - segment.getUnicodeStart());
             if ((gi >= s) && (gi <= e)) {
@@ -330,10 +325,10 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         bitset.set(0);
         bitset.set(1);
         bitset.set(2);
-        for (int i = 0; i < cmap.length; i++) {
-            int start = cmap[i].getUnicodeStart();
-            int end = cmap[i].getUnicodeEnd();
-            int glyphIndex = cmap[i].getGlyphStartIndex();
+        for (CMapSegment i : cmap) {
+            int start = i.getUnicodeStart();
+            int end = i.getUnicodeEnd();
+            int glyphIndex = i.getGlyphStartIndex();
             while (start++ < end + 1) {
                 bitset.set(glyphIndex++);
             }
@@ -344,10 +339,10 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     protected char[] getChars() {
         // the width array is set when the font is built
         char[] chars = new char[width.length];
-        for (int i = 0; i < cmap.length; i++) {
-            int start = cmap[i].getUnicodeStart();
-            int end = cmap[i].getUnicodeEnd();
-            int glyphIndex = cmap[i].getGlyphStartIndex();
+        for (CMapSegment i : cmap) {
+            int start = i.getUnicodeStart();
+            int end = i.getUnicodeEnd();
+            int glyphIndex = i.getGlyphStartIndex();
             while (start < end + 1) {
                 chars[glyphIndex++] = (char) start++;
             }
@@ -642,5 +637,12 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         return cb;
     }
 
+    public Map<Integer, Integer> getWidthsMap() {
+        return null;
+    }
+
+    public InputStream getCmapStream() {
+        return null;
+    }
 }
 

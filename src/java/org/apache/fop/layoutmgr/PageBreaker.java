@@ -52,9 +52,9 @@ public class PageBreaker extends AbstractBreaker {
      * The FlowLayoutManager object, which processes
      * the single fo:flow of the fo:page-sequence
      */
-    private FlowLayoutManager childFLM = null;
+    private FlowLayoutManager childFLM;
 
-    private StaticContentLayoutManager footnoteSeparatorLM = null;
+    private StaticContentLayoutManager footnoteSeparatorLM;
 
     /**
      * Construct page breaker.

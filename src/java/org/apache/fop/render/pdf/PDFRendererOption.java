@@ -66,6 +66,12 @@ public enum PDFRendererOption implements RendererConfigOption {
             return Boolean.valueOf(value);
         }
     },
+    MERGE_FONTS("merge-fonts", false) {
+        @Override
+        Boolean deserialize(String value) {
+            return Boolean.valueOf(value);
+        }
+    },
     /** Rendering Options key for the ICC profile for the output intent. */
     OUTPUT_PROFILE("output-profile") {
         @Override

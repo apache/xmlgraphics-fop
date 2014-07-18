@@ -30,9 +30,9 @@ import static org.junit.Assert.assertTrue;
 
 public class OTFFileTestCase {
     protected OTFFile sourceSansProBold;
-    protected FontFileReader sourceSansReader = null;
+    protected FontFileReader sourceSansReader;
     protected OTFFile alexBrush;
-    protected FontFileReader alexBrushReader = null;
+    protected FontFileReader alexBrushReader;
 
     /**
      * Initializes fonts used for the testing of reading OTF CFF

@@ -69,7 +69,7 @@ public class TableContext implements ITableColumnsInfo {
      */
     private final List colFirstSpanningCol = new java.util.ArrayList();
 
-    private boolean bNextRowBelongsToHeader = false;
+    private boolean bNextRowBelongsToHeader;
 
     /**
      *

@@ -28,8 +28,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.complexscripts.fonts.Positionable;
 import org.apache.fop.complexscripts.fonts.Substitutable;
 
-// CSOFF: LineLengthCheck
-
 /**
  * This class holds font state information and provides access to the font
  * metrics.

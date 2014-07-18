@@ -69,8 +69,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private TableRowIterator footerIter;
     private LinkedList headerList;
     private LinkedList footerList;
-    private int headerNetHeight = 0;
-    private int footerNetHeight = 0;
+    private int headerNetHeight;
+    private int footerNetHeight;
 
     private int startXOffset;
     private int usedBPD;

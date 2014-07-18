@@ -31,7 +31,7 @@ public class KeepValue {
     /** constant for a user-settable keep-with value (??) */
     public static final String KEEP_WITH_VALUE = "KEEP_WITH_VALUE";
     private String type = KEEP_WITH_AUTO;
-    private int value = 0;
+    private int value;
 
     /**
      * Constructor

@@ -30,10 +30,10 @@ import org.apache.fop.afp.util.BinaryUtils;
 public abstract class AbstractGraphicsCoord extends AbstractGraphicsDrawingOrder {
 
     /** array of x/y coordinates */
-    protected int[] coords = null;
+    protected int[] coords;
 
     /** if true, then uses relative drawing order */
-    protected boolean relative = false;
+    protected boolean relative;
 
     /**
      * Constructor

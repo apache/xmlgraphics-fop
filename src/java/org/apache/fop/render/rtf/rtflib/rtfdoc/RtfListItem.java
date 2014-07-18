@@ -43,7 +43,7 @@ public class RtfListItem extends RtfContainer
     private RtfList parentList;
     private RtfParagraph paragraph;
     private RtfListStyle listStyle;
-    private int number = 0;
+    private int number;
 
     /**
      * special RtfParagraph that writes list item setup code before its content

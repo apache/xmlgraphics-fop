@@ -37,7 +37,7 @@ public class KnuthBlockBox extends KnuthBox {
     private int bpd;
     private List<FootnoteBodyLayoutManager> footnoteList;
     /** List of Knuth elements. This is a list of LinkedList elements. */
-    private List elementLists = null;
+    private List elementLists;
 
     /**
      * Creates a new box.

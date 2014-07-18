@@ -75,7 +75,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
     /**
      * The fo:flow object for this page-sequence.
      */
-    private Flow mainFlow = null;
+    private Flow mainFlow;
 
     /**
      * Create a PageSequence instance that is a child of the

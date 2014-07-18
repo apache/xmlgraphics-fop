@@ -50,7 +50,7 @@ extends RtfContainer {
     private RtfDocumentArea docArea;
 //    private ConverterLogChannel m_log;
     private RtfContainer listTableContainer;
-    private int listNum = 0;
+    private int listNum;
 
     /**
      * Create an RTF file that outputs to the given Writer

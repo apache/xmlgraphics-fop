@@ -52,9 +52,9 @@ public class TableCaption extends FObj implements CommonAccessibilityHolder {
     // End of property values
 
     /** used for FO validation */
-    private boolean blockItemFound = false;
+    private boolean blockItemFound;
 
-    static boolean notImplementedWarningGiven = false;
+    static boolean notImplementedWarningGiven;
 
     /**
      * Create a TableCaption instance with the given {@link FONode}

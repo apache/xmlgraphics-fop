@@ -61,7 +61,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     private Area holder;
     private int stackSize;
     private LayoutManager parentLM;
-    private InlineLevelLayoutManager childLM = null;
+    private InlineLevelLayoutManager childLM;
 
     /**
      * Constructs a new ContentLayoutManager

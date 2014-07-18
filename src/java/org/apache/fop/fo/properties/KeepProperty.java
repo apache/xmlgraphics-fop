@@ -33,7 +33,7 @@ public final class KeepProperty extends Property implements CompoundDatatype {
     private static final PropertyCache<KeepProperty> CACHE
             = new PropertyCache<KeepProperty>();
 
-    private boolean isCachedValue = false;
+    private boolean isCachedValue;
     private Property withinLine;
     private Property withinColumn;
     private Property withinPage;

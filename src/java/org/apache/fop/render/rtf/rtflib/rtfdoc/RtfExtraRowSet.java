@@ -58,7 +58,7 @@ public class RtfExtraRowSet extends RtfContainer {
     /** Parent table context
      * (added by Boris Poudérous on july 2002 in order to process nested tables)
      */
-    private ITableColumnsInfo parentITableColumnsInfo = null;
+    private ITableColumnsInfo parentITableColumnsInfo;
 
     /** While a top-level RtfTableRow is being rendered, we build a list of
      *  RtfTableCells that must be rendered in extra rows.

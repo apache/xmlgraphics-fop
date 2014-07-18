@@ -30,7 +30,7 @@ public final class DebugHelper {
     private DebugHelper() {
     }
 
-    private static boolean elObserversRegistered = false;
+    private static boolean elObserversRegistered;
 
     /**
      * Registers the default element list observers used for debugging.

@@ -28,7 +28,7 @@ import org.apache.fop.fonts.FontInfo;
  */
 public class Base14FontCollection implements FontCollection {
 
-    private boolean kerning = false;
+    private boolean kerning;
 
     /**
      * Main constructor

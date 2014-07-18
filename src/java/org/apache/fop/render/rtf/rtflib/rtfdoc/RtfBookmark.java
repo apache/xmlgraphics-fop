@@ -42,7 +42,7 @@ public class RtfBookmark extends RtfElement {
     //////////////////////////////////////////////////
 
     /** Name of the bokkmark */
-    private String bookmark = null;
+    private String bookmark;
     /** Word 2000 supports a length of 40 characters only */
     public static final int MAX_BOOKMARK_LENGTH = 40;
     /** Word 2000 converts '.' in bookmarks to "_", thats why we control this replacement. */

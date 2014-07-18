@@ -81,26 +81,26 @@ public class InlineArea extends Area {
     /**
      * offset position from before edge of parent area
      */
-    protected int blockProgressionOffset = 0;
+    protected int blockProgressionOffset;
 
     /**
      * parent area
      * it is needed in order to recompute adjust ratio and indents
      * when a page-number or a page-number-citation is resolved
      */
-    private Area parentArea = null;
+    private Area parentArea;
 
     /**
      * ipd variation of child areas: if this area has not already
      * been added and cannot notify its parent area, store the variation
      * and wait for the parent area to be set
      */
-    private int storedIPDVariation = 0;
+    private int storedIPDVariation;
 
     /**
      * The adjustment information object
      */
-    protected InlineAdjustingInfo adjustingInfo = null;
+    protected InlineAdjustingInfo adjustingInfo;
 
     /**
      * Default constructor for inline area.

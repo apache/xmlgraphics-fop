@@ -14,34 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.fop.pdf;
 
-/* $Id$ */
-
-package org.apache.fop.render.pdf.extensions;
-
-import org.apache.xmlgraphics.util.XMLizable;
-
-import org.apache.fop.fo.extensions.ExtensionAttachment;
-
-public abstract class PDFExtensionAttachment implements ExtensionAttachment, XMLizable {
-
-    /** The category URI for this extension attachment. */
-    public static final String CATEGORY = "apache:fop:extensions:pdf";
-
-    /** The prefix to use with qualified names for this extension attachment. */
-    public static final String PREFIX = "pdf";
-
-    /**
-     * Default constructor.
-     */
-    public PDFExtensionAttachment() {
-    }
-
-    public String getPrefix() {
-        return PREFIX;
-    }
-
-    public String getCategory() {
-        return CATEGORY;
-    }
+public interface RefPDFFont {
+    PDFDictionary getRef();
 }

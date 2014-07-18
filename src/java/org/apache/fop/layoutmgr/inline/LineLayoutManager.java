@@ -168,7 +168,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     private LineLayoutPossibilities lineLayouts;
     private LineLayoutPossibilities[] lineLayoutsList;
-    private int ipd = 0;
+    private int ipd;
     /**
      * When layout must be re-started due to a change of IPD, there is no need
      * to perform hyphenation on the remaining Knuth sequence once again.
@@ -196,9 +196,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private static final long serialVersionUID = 5862072380375189105L;
 
         /** Number of elements to ignore at the beginning of the list. */
-        private int ignoreAtStart = 0;
+        private int ignoreAtStart;
         /** Number of elements to ignore at the end of the list. */
-        private int ignoreAtEnd = 0;
+        private int ignoreAtEnd;
 
         // space at the end of the last line (in millipoints)
         private MinOptMax lineFiller;

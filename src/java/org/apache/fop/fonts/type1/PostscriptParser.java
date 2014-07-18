@@ -31,7 +31,7 @@ import java.util.Scanner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-class PostscriptParser {
+public class PostscriptParser {
 
     protected static final Log LOG = LogFactory.getLog(PostscriptParser.class);
     /* Patterns used to identify Postscript elements */
@@ -177,12 +177,12 @@ class PostscriptParser {
         /* The tokens parsed from the current element */
         protected List<String> tokens;
         /* Determines whether binary data is currently being read / parsed */
-        protected boolean readBinary = false;
+        protected boolean readBinary;
         /* The location of the element within the binary data */
         private int startPoint = -1;
         protected int endPoint = -1;
         /* A flag to determine if unexpected postscript has been found in the element */
-        private boolean foundUnexpected = false;
+        private boolean foundUnexpected;
 
         public PSElement(String operator, int startPoint) {
             this.operator = operator;
@@ -327,8 +327,8 @@ class PostscriptParser {
 
         private String entry = "";
         private String token = "";
-        private boolean finished = false;
-        protected int binaryLength = 0;
+        private boolean finished;
+        protected int binaryLength;
         /* A list containing each entry and it's contents in the array */
         private HashMap<Integer, String> entries;
         private static final String READ_ONLY = "readonly";
@@ -441,7 +441,7 @@ class PostscriptParser {
      * An object representing a Postscript array with a variable number of entries
      */
     public class PSVariableArray extends PSElement {
-        private int level = 0;
+        private int level;
         private List<String> arrayItems;
         private String entry = "";
 
@@ -536,7 +536,7 @@ class PostscriptParser {
         private HashMap<String, String> entries;
         private String entry = "";
         private String token = "";
-        protected int binaryLength = 0;
+        protected int binaryLength;
 
         public PSDictionary(String operator, int startPoint) {
             super(operator, startPoint);

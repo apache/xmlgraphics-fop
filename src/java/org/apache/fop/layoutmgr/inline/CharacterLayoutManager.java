@@ -49,7 +49,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     private MinOptMax letterSpaceIPD;
     private int hyphIPD;
     private Font font;
-    private CommonBorderPaddingBackground borderProps = null;
+    private CommonBorderPaddingBackground borderProps;
 
     /**
      * Constructor

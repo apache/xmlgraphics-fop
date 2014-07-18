@@ -62,7 +62,7 @@ import org.apache.fop.afp.goca.GraphicsSetProcessColor;
 public class GraphicsObject extends AbstractDataObject {
 
     /** the graphics data */
-    private GraphicsData currentData = null;
+    private GraphicsData currentData;
 
     /** list of objects contained within this container */
     protected List<GraphicsData> objects
@@ -73,7 +73,7 @@ public class GraphicsObject extends AbstractDataObject {
 
 
     /** color  converter  */
-    private ColorConverter colorConverter = null;
+    private ColorConverter colorConverter;
 
     /**
      * Default constructor

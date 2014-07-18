@@ -31,7 +31,7 @@ import org.apache.fop.fonts.Typeface;
 public class FopCharacterSet extends CharacterSet {
 
     /** The character set for this font */
-    private Typeface charSet = null;
+    private Typeface charSet;
 
     /**
      * Constructor for the CharacterSetMetric object, the character set is used

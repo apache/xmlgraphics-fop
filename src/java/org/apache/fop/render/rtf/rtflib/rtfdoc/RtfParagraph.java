@@ -50,8 +50,8 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
     private RtfPageNumber pageNumber;
     private RtfPageNumberCitation pageNumberCitation;
     // Above line added by Boris POUDEROUS on 2002/07/09
-    private boolean keepn = false;
-    private boolean resetProperties = false;
+    private boolean keepn;
+    private boolean resetProperties;
 
     /* needed for importing Rtf into FrameMaker
        FrameMaker is not as forgiving as word in rtf
@@ -59,7 +59,7 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
            after a table.  /pard is probably needed in other places
            also, this is just a hack to make FrameMaker import Jfor rtf
            correctly */
-    private boolean writeForBreak = false;
+    private boolean writeForBreak;
 
     /** Set of attributes that must be copied at the start of a paragraph */
     private static final String[] PARA_ATTRIBUTES = {"intbl"};

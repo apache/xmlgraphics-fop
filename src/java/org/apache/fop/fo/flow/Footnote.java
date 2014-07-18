@@ -37,7 +37,7 @@ public class Footnote extends FObj implements CommonAccessibilityHolder {
 
     private CommonAccessibility commonAccessibility;
 
-    private Inline footnoteCitation = null;
+    private Inline footnoteCitation;
     private FootnoteBody footnoteBody;
 
     /**

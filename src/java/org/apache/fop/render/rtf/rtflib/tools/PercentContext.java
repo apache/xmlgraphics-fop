@@ -45,7 +45,7 @@ public class PercentContext implements PercentBaseContext {
     private Map tableUnitMap = new java.util.HashMap();
 
     /** Variable to check if a base width is set */
-    private boolean baseWidthSet = false;
+    private boolean baseWidthSet;
 
     /**
      * Returns the available width for a specific FObj

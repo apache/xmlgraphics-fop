@@ -67,7 +67,7 @@ public class RelativeNumericProperty extends Property implements Length {
     /**
      * The second operand.
      */
-    private Numeric op2 = null;
+    private Numeric op2;
     /**
      * The dimension of the result.
      */

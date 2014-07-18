@@ -35,7 +35,7 @@ public class InlineBlockParent extends InlineArea {
     /**
      * The list of inline areas added to this inline parent.
      */
-    protected Block child = null;
+    protected Block child;
 
     /**
      * Create a new inline block parent to add areas to.

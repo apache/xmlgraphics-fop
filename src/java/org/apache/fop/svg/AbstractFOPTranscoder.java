@@ -90,7 +90,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
 
     private Log logger;
     private EntityResolver resolver;
-    private Configuration cfg = null;
+    private Configuration cfg;
     private ImageManager imageManager;
     private ImageSessionContext imageSessionContext;
 

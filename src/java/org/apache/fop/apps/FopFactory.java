@@ -103,7 +103,7 @@ public final class FopFactory implements ImageContext {
     /**
      * Map of configured names of hyphenation pattern file names: ll_CC => name
      */
-    private Map/*<String,String>*/ hyphPatNames = null;
+    private Map/*<String,String>*/ hyphPatNames;
 
     /**
      * FOP has the ability, for some FO's, to continue processing even if the

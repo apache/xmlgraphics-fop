@@ -31,7 +31,7 @@ import java.io.ObjectOutputStream;
  */
 public class SerializeHyphPattern {
 
-    private boolean errorDump = false;
+    private boolean errorDump;
 
     /**
      * Controls the amount of error information dumped.

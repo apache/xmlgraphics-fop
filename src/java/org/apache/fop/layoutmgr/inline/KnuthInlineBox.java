@@ -28,8 +28,8 @@ import org.apache.fop.layoutmgr.Position;
  */
 public class KnuthInlineBox extends KnuthBox {
 
-    private FootnoteBodyLayoutManager footnoteBodyLM = null;
-    private AlignmentContext alignmentContext = null;
+    private FootnoteBodyLayoutManager footnoteBodyLM;
+    private AlignmentContext alignmentContext;
 
     /**
      * Create a new KnuthBox.

@@ -40,7 +40,7 @@ public class RtfSpaceManager {
      * inside, then the next block should has increased value of space-before
      * property.
      */
-    private int accumulatedSpace = 0;
+    private int accumulatedSpace;
 
     /**
      * Construct a newly allocated <code>RtfSpaceManager</code> object.

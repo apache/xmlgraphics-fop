@@ -62,7 +62,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable {
     private String pageKey;
 
     private int pageNumber = -1;
-    private String pageNumberString = null;
+    private String pageNumberString;
     private int pageIndex = -1; //-1 = undetermined
     private boolean blank;
 
@@ -77,7 +77,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable {
     private Map<String, List<Resolvable>> unresolvedIDRefs
             = new java.util.HashMap<String, List<Resolvable>>();
 
-    private Map<String, List<PageViewport>> pendingResolved = null;
+    private Map<String, List<PageViewport>> pendingResolved;
 
     private Markers pageMarkers;
 

@@ -67,7 +67,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
     /**
      * Will be notified when rendering progresses
      */
-    protected StatusListener statusListener = null;
+    protected StatusListener statusListener;
 
 
     /**

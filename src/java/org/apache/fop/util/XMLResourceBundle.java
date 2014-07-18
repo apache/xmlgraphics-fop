@@ -335,7 +335,7 @@ public class XMLResourceBundle extends ResourceBundle {
 
         private StringBuffer valueBuffer = new StringBuffer();
         private Stack elementStack = new Stack();
-        private String currentKey = null;
+        private String currentKey;
 
         private boolean isOwnNamespace(String uri) {
             return ("".equals(uri));

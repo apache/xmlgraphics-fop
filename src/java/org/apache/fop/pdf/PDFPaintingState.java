@@ -248,17 +248,17 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
 
         private static final long serialVersionUID = 3527950647293177764L;
 
-        private Paint paint = null;
-        private Paint backPaint = null;
+        private Paint paint;
+        private Paint backPaint;
         //private int lineCap = 0; //Disabled the ones that are not used, yet
         //private int lineJoin = 0;
         //private float miterLimit = 0;
         //private int dashOffset = 0;
-        private Shape clip = null;
-        private PDFGState gstate = null;
+        private Shape clip;
+        private PDFGState gstate;
 
         //text state
-        private float characterSpacing = 0f;
+        private float characterSpacing;
 
         /** {@inheritDoc} */
         @Override

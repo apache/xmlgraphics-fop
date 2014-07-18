@@ -45,7 +45,7 @@ public abstract class PDFFilter {
     /**
      * Marker to know if this filter has already been applied to the data
      */
-    private boolean applied = false;
+    private boolean applied;
 
     /**
      * Check if this filter has been applied.

@@ -64,8 +64,8 @@ public class InputHandler implements ErrorListener, Renderable {
     protected File sourcefile;
     private File stylesheet;  // for XML/XSLT usage
     private Vector xsltParams; // for XML/XSLT usage
-    private EntityResolver entityResolver = null;
-    private URIResolver uriResolver = null;
+    private EntityResolver entityResolver;
+    private URIResolver uriResolver;
 
     /** the logger */
     protected Log log = LogFactory.getLog(InputHandler.class);

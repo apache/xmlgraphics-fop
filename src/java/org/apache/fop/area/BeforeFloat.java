@@ -30,7 +30,7 @@ public class BeforeFloat extends BlockParent {
 
     // this is an optional block area that will be rendered
     // as the separator only if there are float areas
-    private Block separator = null;
+    private Block separator;
 
     /**
      * Set the separator area for this before float.

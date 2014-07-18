@@ -47,7 +47,7 @@ public abstract class PDFTextUtil {
     /** PDF text rendering mode: Add text to path for clipping */
     public static final int TR_CLIP = 7;
 
-    private boolean inTextObject = false;
+    private boolean inTextObject;
     private String startText;
     private String endText;
     private boolean useMultiByte;

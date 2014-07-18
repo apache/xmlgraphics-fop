@@ -47,7 +47,7 @@ public class IFConcatenator {
 
     private IFDocumentHandler targetHandler;
 
-    private int nextPageIndex = 0;
+    private int nextPageIndex;
     private boolean inFirstDocument = true;
 
     /**
@@ -109,7 +109,7 @@ public class IFConcatenator {
 
     private class IFPageSequenceFilter extends IFDocumentHandlerProxy {
 
-        private boolean inPageSequence = false;
+        private boolean inPageSequence;
 
         public IFPageSequenceFilter(IFDocumentHandler delegate) {
             super(delegate);

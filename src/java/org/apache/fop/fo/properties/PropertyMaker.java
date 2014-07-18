@@ -50,16 +50,16 @@ public class PropertyMaker implements Cloneable {
     /** the property ID */
     protected int propId;
     private boolean inherited = true;
-    private Map enums = null;
-    private Map keywords = null;
+    private Map enums;
+    private Map keywords;
     /** the default value for the maker */
-    protected String defaultValue = null;
+    protected String defaultValue;
     /** Indicates whether the property is context-dependant and therefore can't be cached. */
-    protected boolean contextDep = false;
+    protected boolean contextDep;
     /** Indicates whether the property is set through a shorthand. */
-    protected boolean setByShorthand = false;
+    protected boolean setByShorthand;
     private int percentBase = -1;
-    private PropertyMaker[] shorthands = null;
+    private PropertyMaker[] shorthands;
     private ShorthandParser datatypeParser;
 
     /** default property **/

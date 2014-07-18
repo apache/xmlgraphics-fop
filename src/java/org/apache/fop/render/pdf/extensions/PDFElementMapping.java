@@ -22,8 +22,6 @@ package org.apache.fop.render.pdf.extensions;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FONode;
 
-// CSOFF: LineLengthCheck
-
 /**
  * This class provides the element mapping for the PDF-specific extensions.
  */

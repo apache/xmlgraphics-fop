@@ -30,7 +30,7 @@ public class Footnote extends BlockParent {
 
     private static final long serialVersionUID = -7907428219886367161L;
 
-    private Block separator = null;
+    private Block separator;
 
     // footnote has an optional separator
     // and a list of sub block areas that can be added/removed
