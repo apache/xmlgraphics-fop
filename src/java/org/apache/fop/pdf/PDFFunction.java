@@ -168,39 +168,11 @@ public class PDFFunction extends PDFObject {
         } else if (func.getRange() != null) {
             return false;
         }
-        if (function.getSize() != null) {
-            if (!function.getSize().equals(func.getSize())) {
-                return false;
-            }
-        } else if (func.getSize() != null) {
-            return false;
-        }
         if (function.getEncode() != null) {
             if (!function.getEncode().equals(func.getEncode())) {
                 return false;
             }
         } else if (func.getEncode() != null) {
-            return false;
-        }
-        if (function.getDecode() != null) {
-            if (!function.getDecode().equals(func.getDecode())) {
-                return false;
-            }
-        } else if (func.getDecode() != null) {
-            return false;
-        }
-        if (function.getDataStream() != null) {
-            if (!function.getDataStream().equals(func.getDataStream())) {
-                return false;
-            }
-        } else if (func.getDataStream() != null) {
-            return false;
-        }
-        if (function.getFilter() != null) {
-            if (!function.getFilter().equals(func.getFilter())) {
-                return false;
-            }
-        } else if (func.getFilter() != null) {
             return false;
         }
         if (!Arrays.equals(function.getCZero(), func.getCZero())) {

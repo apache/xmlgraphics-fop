@@ -46,16 +46,6 @@ public class Function {
      */
     private List<Double> range;
 
-    /* ********************TYPE 0***************************** */
-    // FunctionType 0 specific function guts
-
-    /**
-     * Required: Array containing the Integer size of the Domain and Range, respectively.
-     * Note: This is really more like two seperate integers, sizeDomain, and sizeRange,
-     * but since they're expressed as an array in PDF, my implementation reflects that.
-     */
-    protected List<Double> size;
-
     /**
      * Required for Type 0: Number of Bits used to represent each sample value.
      * Limited to 1,2,4,8,12,16,24, or 32
@@ -80,28 +70,6 @@ public class Function {
      */
     private List<Double> encode;
 
-    /**
-     * Optional for Type 0: A 2 * n array of Doubles which provides
-     * a linear mapping of sample values to the range. Defaults to Range.
-     */
-    private List<Double> decode;
-
-    /**
-     * Optional For Type 0: A stream of sample values
-     */
-
-    /**
-     * Required For Type 4: Postscript Calculator function
-     * composed of arithmetic, boolean, and stack operators + boolean constants
-     */
-    private StringBuffer functionDataStream;
-
-    /**
-     * Required (possibly) For Type 0: A vector of Strings for the
-     * various filters to be used to decode the stream.
-     * These are how the string is compressed. Flate, LZW, etc.
-     */
-    private List<String> filter;
     /* *************************TYPE 2************************** */
 
     /**
@@ -259,13 +227,6 @@ public class Function {
     }
 
     /**
-     * The function size
-     */
-    public List<Double> getSize() {
-        return size;
-    }
-
-    /**
      * Gets the function encoding
      */
     public List<Double> getEncode() {
@@ -281,13 +242,6 @@ public class Function {
         } else {
             return functions;
         }
-    }
-
-    /**
-     * Gets the function filter
-     */
-    public List<String> getFilter() {
-        return filter;
     }
 
     /**
@@ -319,20 +273,6 @@ public class Function {
     }
 
     /**
-     * Gets the function decoding
-     */
-    public List<Double> getDecode() {
-        return decode;
-    }
-
-    /**
-     * Gets the function data stream
-     */
-    public StringBuffer getDataStream() {
-        return functionDataStream;
-    }
-
-    /**
      * Gets the function C0 value (color for gradient)
      */
     public float[] getCZero() {
@@ -351,20 +291,11 @@ public class Function {
         out.append("<<\n/FunctionType " + functionType + "\n");
         outputDomain(out, doubleFormatter);
         if (this.functionType == 0) {
-            outputSize(out, doubleFormatter);
             outputEncode(out, doubleFormatter);
             outputBitsPerSample(out);
             outputOrder(out);
             outputRange(out, doubleFormatter);
-            outputDecode(out, doubleFormatter);
-            if (functionDataStream != null) {
-                out.append("/Length " + (functionDataStream.length() + 1) + "\n");
-            }
-            outputFilter(out);
             out.append(">>");
-            if (functionDataStream != null) {
-                out.append("\nstream\n" + functionDataStream + "\nendstream");
-            }
         } else if (functionType == 2) {
             outputRange(out, doubleFormatter);
             outputCZero(out, doubleFormatter);
@@ -402,13 +333,7 @@ public class Function {
             out.append("\n>>");
         } else if (functionType == 4) {
             outputRange(out, doubleFormatter);
-            if (functionDataStream != null) {
-                out.append("/Length " + (functionDataStream.length() + 1) + "\n");
-            }
             out.append(">>");
-            if (functionDataStream != null) {
-                out.append("\nstream\n{ " + functionDataStream + " }\nendstream");
-            }
         }
         return out.toString();
     }
@@ -417,14 +342,6 @@ public class Function {
         p.append("/Domain ");
         GradientMaker.outputDoubles(p, doubleFormatter, domain);
         p.append("\n");
-    }
-
-    private void outputSize(StringBuilder out, DoubleFormatter doubleFormatter) {
-        if (size != null) {
-            out.append("/Size ");
-            GradientMaker.outputDoubles(out, doubleFormatter, size);
-            out.append("\n");
-        }
     }
 
     private void outputBitsPerSample(StringBuilder out) {
@@ -449,30 +366,6 @@ public class Function {
         out.append("/Encode ");
         GradientMaker.outputDoubles(out, doubleFormatter, encode);
         out.append("\n");
-    }
-
-    private void outputDecode(StringBuilder out, DoubleFormatter doubleFormatter) {
-        if (decode != null) {
-            out.append("/Decode ");
-            GradientMaker.outputDoubles(out, doubleFormatter, decode);
-            out.append("\n");
-        }
-    }
-
-    private void outputFilter(StringBuilder out) {
-        if (filter != null) {
-            int size = filter.size();
-            out.append("/Filter ");
-            if (size == 1) {
-                out.append("/" + filter.get(0) + "\n");
-            } else {
-                out.append("[ ");
-                for (int i = 0; i < size; i++) {
-                    out.append("/" + filter.get(0) + " ");
-                }
-                out.append("]\n");
-            }
-        }
     }
 
     private void outputCZero(StringBuilder out, DoubleFormatter doubleFormatter) {

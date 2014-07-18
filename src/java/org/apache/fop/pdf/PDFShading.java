@@ -47,10 +47,6 @@ public class PDFShading extends PDFObject {
     private final Shading shading;
 
     private final PDFFunction pdfFunction;
-    /**
-     * A ColorSpace representing the colorspace. "DeviceRGB" is an example.
-     */
-    protected PDFDeviceColorSpace colorSpace;
 
     /**
      * Constructor for Type 2 and 3
@@ -155,27 +151,6 @@ public class PDFShading extends PDFObject {
         } else if (other.getColorSpace() != null) {
             return false;
         }
-        if (shading.getBackground() != null) {
-            if (!shading.getBackground().equals(other.getBackground())) {
-                return false;
-            }
-        } else if (other.getBackground() != null) {
-            return false;
-        }
-        if (shading.getBBox() != null) {
-            if (!shading.getBBox().equals(other.getBBox())) {
-                return false;
-            }
-        } else if (other.getBBox() != null) {
-            return false;
-        }
-        if (shading.getMatrix() != null) {
-            if (!shading.getMatrix().equals(other.getMatrix())) {
-                return false;
-            }
-        } else if (other.getMatrix() != null) {
-            return false;
-        }
         if (shading.getCoords() != null) {
             if (!shading.getCoords().equals(other.getCoords())) {
                 return false;
@@ -188,13 +163,6 @@ public class PDFShading extends PDFObject {
                 return false;
             }
         } else if (other.getExtend() != null) {
-            return false;
-        }
-        if (shading.getDecode() != null) {
-            if (!shading.getDecode().equals(other.getDecode())) {
-                return false;
-            }
-        } else if (other.getDecode() != null) {
             return false;
         }
         if (shading.getFunction() != null) {

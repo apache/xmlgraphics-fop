@@ -47,10 +47,10 @@ public final class GradientMaker {
         Point2D startPoint = gp.getStartPoint();
         Point2D endPoint = gp.getEndPoint();
         List<Double> coords = new java.util.ArrayList<Double>(4);
-        coords.add(new Double(startPoint.getX()));
-        coords.add(new Double(startPoint.getY()));
-        coords.add(new Double(endPoint.getX()));
-        coords.add(new Double(endPoint.getY()));
+        coords.add(Double.valueOf(startPoint.getX()));
+        coords.add(Double.valueOf(startPoint.getY()));
+        coords.add(Double.valueOf(endPoint.getX()));
+        coords.add(Double.valueOf(endPoint.getY()));
         return makeGradient(gp, coords, baseTransform, transform);
     }
 
