@@ -143,7 +143,7 @@ public class Function {
      * This makes each function responsible for an equal amount of the stitching function.
      * It makes the gradient even.
      */
-    private List<Double> bounds;
+    private List<Float> bounds;
 
     /**
      * create an complete Function object of Type 2, an Exponential Interpolation function.
@@ -211,7 +211,7 @@ public class Function {
      * See page 270 in the PDF 1.3 spec.
      */
     public Function(List<Double> domain, List<Double> range, List<Function> functions,
-                       List<Double> bounds, List<Double> encode) {
+                       List<Float> bounds, List<Double> encode) {
         this(3, domain, range);
         this.functions = functions;
         this.bounds = bounds;
@@ -247,7 +247,7 @@ public class Function {
     /**
      * Gets the function bounds
      */
-    public List<Double> getBounds() {
+    public List<Float> getBounds() {
         return bounds;
     }
 
