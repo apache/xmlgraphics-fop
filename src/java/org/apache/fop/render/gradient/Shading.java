@@ -74,16 +74,6 @@ public class Shading {
     private final List<Double> background;
 
     /**
-     * Optional for Type 1: Array of four numbers, xmin, xmax, ymin, ymax.
-     *                      Default is [0 1 0 1]
-     * Optional for Type 2: An array of two numbers between which the blend
-     *                      varies between start and end points. Default is 0, 1.
-     * Optional for Type 3: An array of two numbers between which the blend
-     *                      varies between start and end points. Default is 0, 1.
-     */
-    private final List<Double> domain;
-
-    /**
      * Required for Type 4,5,6, and 7: Array of Doubles which specifies
      * how to decode coordinate and color component values.
      * Each type has a differing number of decode array members, so check
@@ -142,7 +132,6 @@ public class Shading {
         this.bbox = null;
         this.antiAlias = false;
         this.coords = coords;
-        this.domain = Arrays.asList(0.0, 1.0);
         this.function = function;
         this.extend = Arrays.asList(true, true);
         this.matrix = null;
@@ -179,10 +168,6 @@ public class Shading {
 
     public List<Double> getBackground() {
         return background;
-    }
-
-    public List<Double> getDomain() {
-        return domain;
     }
 
     public List<Double> getDecode() {
@@ -258,10 +243,6 @@ public class Shading {
 
     private void outputShadingType1(StringBuilder out, DoubleFormatter doubleFormatter,
             Shading.FunctionRenderer functionRenderer) {
-        out.append("/Domain ");
-        GradientMaker.outputDoubles(out, doubleFormatter, domain);
-        out.append("\n");
-
         if (matrix != null) {
             out.append("/Matrix ");
             GradientMaker.outputDoubles(out, doubleFormatter, matrix);
@@ -277,10 +258,6 @@ public class Shading {
             GradientMaker.outputDoubles(out, doubleFormatter, coords);
             out.append("\n");
         }
-
-        out.append("/Domain ");
-        GradientMaker.outputDoubles(out, doubleFormatter, domain);
-        out.append("\n");
 
         out.append("/Extend [ ");
         for (Boolean b : extend) {

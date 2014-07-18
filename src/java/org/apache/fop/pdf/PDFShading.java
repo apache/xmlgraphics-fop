@@ -165,13 +165,6 @@ public class PDFShading extends PDFObject {
         } else if (other.getBBox() != null) {
             return false;
         }
-        if (shading.getDomain() != null) {
-            if (!shading.getDomain().equals(other.getDomain())) {
-                return false;
-            }
-        } else if (other.getDomain() != null) {
-            return false;
-        }
         if (shading.getMatrix() != null) {
             if (!shading.getMatrix().equals(other.getMatrix())) {
                 return false;

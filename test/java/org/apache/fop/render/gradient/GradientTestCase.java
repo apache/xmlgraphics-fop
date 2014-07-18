@@ -72,11 +72,6 @@ public class GradientTestCase {
             return this;
         }
 
-        ShadingChecker domain(Double... expectedDomain) {
-            assertArrayEquals(expectedDomain, shading.getDomain().toArray());
-            return this;
-        }
-
         ShadingChecker extend(Boolean... expectedExtend) {
             assertArrayEquals(expectedExtend, shading.getExtend().toArray());
             return this;
@@ -138,7 +133,6 @@ public class GradientTestCase {
         ShadingChecker shadingChecker = patternChecker.shading()
                 .shadingType(2)
                 .coords(0.0, 0.0, 100.0, 100.0)
-                .domain(0.0, 1.0)
                 .extend(true, true);
         FunctionChecker functionChecker = shadingChecker.function()
                 .functionType(3)
