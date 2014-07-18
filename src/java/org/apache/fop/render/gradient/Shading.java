@@ -58,31 +58,6 @@ public class Shading {
     private final Function function;
 
     /**
-     * Optional: A List specifying the clipping rectangle
-     */
-    private final List<Double> bbox;
-
-    /**
-     * Optional for Type 1: A transformation matrix
-     */
-    private final List<Double> matrix;
-
-    /**
-     * The background color. Since shading is opaque,
-     * this is very rarely used.
-     */
-    private final List<Double> background;
-
-    /**
-     * Required for Type 4,5,6, and 7: Array of Doubles which specifies
-     * how to decode coordinate and color component values.
-     * Each type has a differing number of decode array members, so check
-     * the spec.
-     * Page 303 in PDF Spec 1.3
-     */
-    private final List<Double> decode;
-
-    /**
      * Required for Type 2+3: An Array of two boolean values specifying
      * whether to extend the start and end colors past the start
      * and end points, respectively.
@@ -128,14 +103,10 @@ public class Shading {
             List<Double> coords, Function function) {
         this.shadingType = shadingType;
         this.colorSpace = colorSpace;
-        this.background = null;
-        this.bbox = null;
         this.antiAlias = false;
         this.coords = coords;
         this.function = function;
         this.extend = Arrays.asList(true, true);
-        this.matrix = null;
-        this.decode = null;
         this.bitsPerCoordinate = 0;
         this.bitsPerFlag = 0;
         this.bitsPerComponent = 0;
@@ -156,22 +127,6 @@ public class Shading {
 
     public Function getFunction() {
         return function;
-    }
-
-    public List<Double> getBBox() {
-        return bbox;
-    }
-
-    public List<Double> getMatrix() {
-        return matrix;
-    }
-
-    public List<Double> getBackground() {
-        return background;
-    }
-
-    public List<Double> getDecode() {
-        return decode;
     }
 
     public List<Boolean> getExtend() {
@@ -204,18 +159,6 @@ public class Shading {
             out.append("/ColorSpace /" + colorSpace.getName() + "\n");
         }
 
-        if (background != null) {
-            out.append("/Background ");
-            GradientMaker.outputDoubles(out, doubleFormatter, background);
-            out.append("\n");
-        }
-
-        if (bbox != null) {
-            out.append("/BBox");
-            GradientMaker.outputDoubles(out, doubleFormatter, bbox);
-            out.append("\n");
-        }
-
         if (antiAlias) {
             out.append("/AntiAlias " + antiAlias + "\n");
         }
@@ -243,11 +186,6 @@ public class Shading {
 
     private void outputShadingType1(StringBuilder out, DoubleFormatter doubleFormatter,
             Shading.FunctionRenderer functionRenderer) {
-        if (matrix != null) {
-            out.append("/Matrix ");
-            GradientMaker.outputDoubles(out, doubleFormatter, matrix);
-            out.append("\n");
-        }
         outputFunction(out, functionRenderer);
     }
 
@@ -289,12 +227,6 @@ public class Shading {
             out.append("/BitsPerFlag 2 \n");
         }
 
-        if (decode != null) {
-            out.append("/Decode ");
-            GradientMaker.outputDoubles(out, doubleFormatter, decode);
-            out.append("\n");
-        }
-
         outputFunction(out, functionRenderer);
     }
 
@@ -310,12 +242,6 @@ public class Shading {
             out.append("/BitsPerComponent " + bitsPerComponent + "\n");
         } else {
             out.append("/BitsPerComponent 1 \n");
-        }
-
-        if (decode != null) {
-            out.append("/Decode ");
-            GradientMaker.outputDoubles(out, doubleFormatter, decode);
-            out.append("\n");
         }
 
         outputFunction(out, functionRenderer);
