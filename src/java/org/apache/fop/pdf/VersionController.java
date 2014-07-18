@@ -69,7 +69,9 @@ public abstract class VersionController {
 
         @Override
         public void setPDFVersion(Version version) {
-            throw new IllegalStateException("Cannot change the version of this PDF document.");
+            if (super.version.compareTo(version) != 0) {
+                throw new IllegalStateException("Cannot change the version of this PDF document.");
+            }
         }
 
         @Override
