@@ -86,7 +86,7 @@ public final class GradientMaker {
         List<Function> functions = makeFunctions(gradient);
         // Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-        Function function = new Function(3, null, null, functions, bounds, null);
+        Function function = new Function(null, null, functions, bounds, null);
         int shadingType = gradient instanceof LinearGradientPaint ? 2 : 3;
         Shading shading = new Shading(shadingType, colorSpace, coords, function);
         return new Pattern(2, shading, matrix);
@@ -134,7 +134,7 @@ public final class GradientMaker {
             Color nextColor = colors.get(currentPosition + 1);
             float[] c0 = currentColor.getColorComponents(null);
             float[] c1 = nextColor.getColorComponents(null);
-            Function function = new Function(2, null, null, c0, c1, 1.0);
+            Function function = new Function(null, null, c0, c1, 1.0);
             functions.add(function);
         }
         return functions;
