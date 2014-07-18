@@ -17,6 +17,7 @@
 
 package org.apache.fop.render.gradient;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -214,7 +215,20 @@ public class Function {
         this(3, domain, range);
         this.functions = functions;
         this.bounds = bounds;
-        this.encode = encode;
+        this.encode = makeEncode(encode);
+    }
+
+    private List<Double> makeEncode(List<Double> encode) {
+        if (encode != null) {
+            return encode;
+        } else {
+            encode = new ArrayList<Double>(functions.size() * 2);
+            for (int i = 0; i < functions.size(); i++) {
+                encode.add(0.0);
+                encode.add(1.0);
+            }
+            return encode;
+        }
     }
 
     private Function(int functionType, List<Double> domain, List<Double> range) {
@@ -432,18 +446,9 @@ public class Function {
     }
 
     private void outputEncode(StringBuilder out, DoubleFormatter doubleFormatter) {
-        if (encode != null) {
-            out.append("/Encode ");
-            GradientMaker.outputDoubles(out, doubleFormatter, encode);
-            out.append("\n");
-        } else {
-            out.append("/Encode [ ");
-            int size = functions.size();
-            for (int i = 0; i < size; i++) {
-                out.append("0 1 ");
-            }
-            out.append("]\n");
-        }
+        out.append("/Encode ");
+        GradientMaker.outputDoubles(out, doubleFormatter, encode);
+        out.append("\n");
     }
 
     private void outputDecode(StringBuilder out, DoubleFormatter doubleFormatter) {

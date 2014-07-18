@@ -100,6 +100,16 @@ public class GradientTestCase {
             return this;
         }
 
+        FunctionChecker bounds(Double... expectedBounds) {
+            assertArrayEquals(expectedBounds, function.getBounds().toArray());
+            return this;
+        }
+
+        FunctionChecker encode(Double... expectedEncode) {
+            assertArrayEquals(expectedEncode, function.getEncode().toArray());
+            return this;
+        }
+
         FunctionChecker cZero(float... expectedCZero) {
             assertArrayEquals(expectedCZero, function.getCZero(), 0f);
             return this;
@@ -137,6 +147,8 @@ public class GradientTestCase {
         FunctionChecker functionChecker = shadingChecker.function()
                 .functionType(3)
                 .domain(0.0, 1.0)
+                .bounds()
+                .encode(0.0, 1.0)
                 .functions(1);
         functionChecker.function(0)
                 .functionType(2)
