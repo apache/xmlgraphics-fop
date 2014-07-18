@@ -82,7 +82,7 @@ public final class GradientMaker {
     private static Pattern makeGradient(MultipleGradientPaint gradient, List<Double> coords,
             AffineTransform baseTransform, AffineTransform transform) {
         List<Double> matrix = makeTransform(gradient, baseTransform, transform);
-        List<Double> bounds = makeBounds(gradient);
+        List<Float> bounds = makeBounds(gradient);
         List<Function> functions = makeFunctions(gradient);
         // Gradients are currently restricted to sRGB
         PDFDeviceColorSpace colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
@@ -112,13 +112,12 @@ public final class GradientMaker {
         return c.getColorSpace().isCS_sRGB() ? c : ColorUtil.toSRGBColor(c);
     }
 
-    private static List<Double> makeBounds(MultipleGradientPaint gradient) {
-        // TODO is the conversion to double necessary?
+    private static List<Float> makeBounds(MultipleGradientPaint gradient) {
         float[] fractions = gradient.getFractions();
-        List<Double> bounds = new java.util.ArrayList<Double>(fractions.length);
+        List<Float> bounds = new java.util.ArrayList<Float>(fractions.length);
         for (float offset : fractions) {
             if (0f < offset && offset < 1f) {
-                bounds.add(Double.valueOf(offset));
+                bounds.add(offset);
             }
         }
         return bounds;
@@ -156,10 +155,11 @@ public final class GradientMaker {
         return gradientColors;
     }
 
-    static void outputDoubles(StringBuilder out, DoubleFormatter doubleFormatter, List<Double> doubles) {
+    static void outputDoubles(StringBuilder out, DoubleFormatter doubleFormatter,
+            List<? extends Number> numbers) {
         out.append("[ ");
-        for (Double d : doubles) {
-            out.append(doubleFormatter.formatDouble(d));
+        for (Number n : numbers) {
+            out.append(doubleFormatter.formatDouble(n.doubleValue()));
             out.append(" ");
         }
         out.append("]");
