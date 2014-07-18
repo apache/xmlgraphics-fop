@@ -243,36 +243,31 @@ public class PDFFactory {
     /**
      * make a type Exponential interpolation function
      * (for shading usually)
-     *
-     * @param theDomain List objects of Double objects.
+     * @param domain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange List of Doubles that is the Range of the function.
+     * @param range List of Doubles that is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theCZero This is a vector of Double objects which defines the function result
+     * @param cZero This is a vector of Double objects which defines the function result
      * when x=0.
      *
      * This attribute is optional.
      * It's described on page 268 of the PDF 1.3 spec.
-     * @param theCOne This is a vector of Double objects which defines the function result
+     * @param cOne This is a vector of Double objects which defines the function result
      * when x=1.
      *
      * This attribute is optional.
      * It's described on page 268 of the PDF 1.3 spec.
-     * @param theInterpolationExponentN This is the inerpolation exponent.
+     * @param interpolationExponentN This is the inerpolation exponent.
      *
      * This attribute is required.
      * PDF Spec page 268
-     * @param theFunctionType The type of the function, which should be 2.
+     *
      * @return the PDF function that was created
      */
-    public PDFFunction makeFunction(int theFunctionType, List theDomain,
-                                    List theRange, float[] theCZero,
-                                    float[] theCOne,
-                                    double theInterpolationExponentN) {    // type 2
-        PDFFunction function = new PDFFunction(theFunctionType, theDomain,
-                                               theRange, theCZero, theCOne,
-                                               theInterpolationExponentN);
+    public PDFFunction makeFunction(List domain, List range, float[] cZero, float[] cOne,
+                                    double interpolationExponentN) {
+        PDFFunction function = new PDFFunction(domain, range, cZero, cOne, interpolationExponentN);
         function = registerFunction(function);
         return function;
     }
@@ -1330,11 +1325,11 @@ public class PDFFactory {
         String colorName = ncs.getColorName();
         final Double zero = new Double(0d);
         final Double one = new Double(1d);
-        List theDomain = Arrays.asList(new Double[] {zero, one});
-        List theRange = Arrays.asList(new Double[] {zero, one, zero, one, zero, one});
+        List domain = Arrays.asList(new Double[] {zero, one});
+        List range = Arrays.asList(new Double[] {zero, one, zero, one, zero, one});
         float[] cZero = new float[] {1f, 1f, 1f};
         float[] cOne = ncs.getRGBColor().getColorComponents(null);
-        PDFFunction tintFunction = makeFunction(2, theDomain, theRange, cZero, cOne, 1.0d);
+        PDFFunction tintFunction = makeFunction(domain, range, cZero, cOne, 1.0d);
         PDFSeparationColorSpace cs = new PDFSeparationColorSpace(colorName, tintFunction);
         getDocument().registerObject(cs);
         if (res != null) {

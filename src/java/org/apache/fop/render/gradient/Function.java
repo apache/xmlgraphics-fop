@@ -149,7 +149,6 @@ public class Function {
      *
      * Use null for an optional object parameter if you choose not to use it.
      * For optional int parameters, pass the default.
-     * @param functionType The type of the function, which should be 2.
      * @param domain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
@@ -170,8 +169,8 @@ public class Function {
      * This attribute is required.
      * PDF Spec page 268
      */
-    public Function(int functionType, List<Double> domain, List<Double> range,
-                       float[] cZero, float[] cOne, double interpolationExponentN) {
+    public Function(List<Double> domain, List<Double> range, float[] cZero, float[] cOne,
+            double interpolationExponentN) {
         this(2, domain, range);
         this.cZero = cZero;
         this.cOne = cOne;
@@ -183,8 +182,6 @@ public class Function {
      *
      * Use null for an optional object parameter if you choose not to use it.
      * For optional int parameters, pass the default.
-     * @param functionType This is the function type. It should be 3,
-     * for a stitching function.
      * @param domain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
@@ -212,9 +209,8 @@ public class Function {
      *
      * See page 270 in the PDF 1.3 spec.
      */
-    public Function(int functionType, List<Double> domain, List<Double> range,
-                       List<Function> functions, List<Double> bounds,
-                       List<Double> encode) {
+    public Function(List<Double> domain, List<Double> range, List<Function> functions,
+                       List<Double> bounds, List<Double> encode) {
         this(3, domain, range);
         this.functions = functions;
         this.bounds = bounds;

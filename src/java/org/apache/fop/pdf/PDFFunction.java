@@ -71,11 +71,10 @@ public class PDFFunction extends PDFObject {
      *
      * This attribute is required.
      * PDF Spec page 268
-     * @param functionType The type of the function, which should be 2.
      */
-    public PDFFunction(int functionType, List<Double> domain, List<Double> range, float[] cZero, float[] cOne,
-                       double interpolationExponentN) {
-        this(new Function(functionType, domain, range, cZero, cOne, interpolationExponentN));
+    public PDFFunction(List<Double> domain, List<Double> range, float[] cZero, float[] cOne,
+            double interpolationExponentN) {
+        this(new Function(domain, range, cZero, cOne, interpolationExponentN));
 
     }
 
