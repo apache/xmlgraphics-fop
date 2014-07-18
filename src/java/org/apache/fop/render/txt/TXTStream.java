@@ -29,7 +29,7 @@ public class TXTStream {
 
     private static final String DEFAULT_ENCODING = "UTF-8";
 
-    private OutputStream out = null;
+    private OutputStream out;
     private boolean doOutput = true;
     private String encoding = DEFAULT_ENCODING;
 

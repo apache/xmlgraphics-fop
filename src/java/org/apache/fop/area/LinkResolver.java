@@ -30,10 +30,10 @@ public class LinkResolver implements Resolvable, Serializable {
 
     private static final long serialVersionUID = -7102134165192960718L;
 
-    private boolean resolved = false;
+    private boolean resolved;
     private String idRef;
     private Area area;
-    private transient List<Resolvable> dependents = null;
+    private transient List<Resolvable> dependents;
 
     /**
      * Create a new link resolver.

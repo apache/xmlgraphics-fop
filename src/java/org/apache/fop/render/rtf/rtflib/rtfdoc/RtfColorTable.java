@@ -53,14 +53,14 @@ public final class RtfColorTable {
     //////////////////////////////////////////////////
 
     /** Singelton instance */
-    private static RtfColorTable instance = null;
+    private static RtfColorTable instance;
 
     /** Index table for the colors */
-    private Hashtable colorIndex = null;
+    private Hashtable colorIndex;
     /** Used colors to this vector */
-    private Vector colorTable = null;
+    private Vector colorTable;
         /** Map of color names to color numbers */
-        private Hashtable namedColors = null;
+        private Hashtable namedColors;
 
 
     //////////////////////////////////////////////////

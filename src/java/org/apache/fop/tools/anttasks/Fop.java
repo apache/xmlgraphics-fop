@@ -79,8 +79,8 @@ public class Fop extends Task {
     private File userConfig;
     private int messageType = Project.MSG_VERBOSE;
     private boolean logFiles = true;
-    private boolean force = false;
-    private boolean relativebase = false;
+    private boolean force;
+    private boolean relativebase;
     private boolean throwExceptions = true;
 
     /**
@@ -389,7 +389,7 @@ class FOPTaskStarter {
     /**
      * logging instance
      */
-    protected Log logger = null;
+    protected Log logger;
 
 
     /**

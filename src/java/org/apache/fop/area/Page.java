@@ -59,17 +59,17 @@ public class Page extends AreaTreeObject implements Serializable {
     private static final long serialVersionUID = 6272157047421543866L;
 
     // contains before, start, body, end and after regions
-    private RegionViewport regionBefore = null;
-    private RegionViewport regionStart = null;
-    private RegionViewport regionBody = null;
-    private RegionViewport regionEnd = null;
-    private RegionViewport regionAfter = null;
+    private RegionViewport regionBefore;
+    private RegionViewport regionStart;
+    private RegionViewport regionBody;
+    private RegionViewport regionEnd;
+    private RegionViewport regionAfter;
 
     // temporary map of unresolved objects used when serializing the page
-    private Map<String, List<Resolvable>> unresolved = null;
+    private Map<String, List<Resolvable>> unresolved;
 
     /** Set to true to make this page behave as if it were not empty. */
-    private boolean fakeNonEmpty = false;
+    private boolean fakeNonEmpty;
 
     /**
      *  Empty constructor

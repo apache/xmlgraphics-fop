@@ -58,15 +58,15 @@ public abstract class FObj extends FONode implements Constants {
     protected FONode lastChild;
 
     /** The list of extension attachments, null if none */
-    private List<ExtensionAttachment> extensionAttachments = null;
+    private List<ExtensionAttachment> extensionAttachments;
 
     /** The map of foreign attributes, null if none */
-    private Map<QName, String> foreignAttributes = null;
+    private Map<QName, String> foreignAttributes;
 
     /** Used to indicate if this FO is either an Out Of Line FO (see rec)
      *  or a descendant of one. Used during FO validation.
      */
-    private boolean isOutOfLineFODescendant = false;
+    private boolean isOutOfLineFODescendant;
 
     /** Markers added to this element. */
     private Map<String, Marker> markers;

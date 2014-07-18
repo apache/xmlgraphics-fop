@@ -46,7 +46,7 @@ import org.apache.fop.pdf.PDFFilterList;
  */
 public class ImageRawJPEGAdapter extends AbstractImageAdapter {
 
-    private PDFFilter pdfFilter = null;
+    private PDFFilter pdfFilter;
 
     /**
      * Creates a new PDFImage from an Image instance.

@@ -43,7 +43,7 @@ public class RasterFont extends AFPFont {
     private final SortedMap<Integer, CharacterSet> charSets = new TreeMap<Integer, CharacterSet>();
     private Map<Integer, CharacterSet> substitutionCharSets;
 
-    private CharacterSet charSet = null;
+    private CharacterSet charSet;
 
     /**
      * Constructor for the raster font requires the name, weight and style

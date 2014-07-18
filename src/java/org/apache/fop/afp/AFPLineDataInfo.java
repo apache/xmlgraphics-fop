@@ -43,7 +43,7 @@ public class AFPLineDataInfo {
     private Color color;
 
     /** the rotation */
-    private int rotation = 0;
+    private int rotation;
 
     /**
      * Default constructor

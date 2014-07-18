@@ -64,7 +64,7 @@ import org.apache.fop.svg.font.AggregatingFontFamilyResolver;
  */
 public class AFPSVGHandler extends AbstractGenericSVGHandler {
 
-    private boolean paintAsBitmap = false;
+    private boolean paintAsBitmap;
 
     /** {@inheritDoc} */
     public void handleXML(RendererContext context,

@@ -42,8 +42,8 @@ public class RtfList extends RtfContainer {
     private RtfListTable listTable;
     private final boolean hasTableParent;
     private RtfListStyle defaultListStyle;
-    private Integer listTemplateId = null;
-    private Integer listId = null;
+    private Integer listTemplateId;
+    private Integer listId;
     private static Random listIdGenerator = new Random(0);
 
     /** Create an RTF list as a child of given container with given attributes */

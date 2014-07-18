@@ -48,7 +48,7 @@ public class AFPTextHandler extends FOPTextHandlerAdapter {
     private static Log log = LogFactory.getLog(AFPTextHandler.class);
 
     /** Overriding FontState */
-    protected Font overrideFont = null;
+    protected Font overrideFont;
 
     /** Font information */
     private final FontInfo fontInfo;

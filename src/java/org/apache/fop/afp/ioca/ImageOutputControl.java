@@ -34,19 +34,19 @@ import org.apache.fop.afp.util.BinaryUtils;
 public class ImageOutputControl extends AbstractAFPObject {
 
     /** the orientation of the image */
-    private int orientation = 0;
+    private int orientation;
 
     /**
      * Specifies the offset, along the X-axis, of the IM image object area
      * origin to the origin of the including page
      */
-    private int xCoord = 0;
+    private int xCoord;
 
     /**
      * Specifies the offset, along the Y-axis, of the IM image object area
      * origin to the origin of the including page
      */
-    private int yCoord = 0;
+    private int yCoord;
 
     /** map an image point to a single presentation device */
     private boolean singlePoint = true;

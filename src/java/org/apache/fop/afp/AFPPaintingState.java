@@ -42,13 +42,13 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     private static Log log = LogFactory.getLog("org.apache.xmlgraphics.afp");
 
     /** the portrait rotation */
-    private int portraitRotation = 0;
+    private int portraitRotation;
 
     /** the landscape rotation */
     private int landscapeRotation = 270;
 
     /** color image support */
-    private boolean colorImages = false;
+    private boolean colorImages;
 
     /** dithering quality setting (0.0f..1.0f) */
     private float ditheringQuality;
@@ -63,9 +63,9 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
      * true if certain image formats may be embedded unchanged in their native
      * format.
      */
-    private boolean nativeImagesSupported = false;
+    private boolean nativeImagesSupported;
 
-    private boolean canEmbedJpeg = false;
+    private boolean canEmbedJpeg;
 
     /**
      * true if CMYK images (requires IOCA FS45 suppport on the target platform)
@@ -88,7 +88,7 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     /** determines whether GOCA is enabled or disabled  */
     private boolean gocaEnabled = true;
     /** determines whether to stroke text in GOCA mode or to use text operators where possible */
-    private boolean strokeGocaText = false;
+    private boolean strokeGocaText;
 
 
     /** use page segment with F11 and F45 images*/
@@ -600,19 +600,19 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
      */
     private class AFPPagePaintingState implements Cloneable {
         /** page width */
-        private int width = 0;
+        private int width;
 
         /** page height */
-        private int height = 0;
+        private int height;
 
         /** page fonts */
         private AFPPageFonts fonts = new AFPPageFonts();
 
         /** page font count */
-        private int fontCount = 0;
+        private int fontCount;
 
         /** page orientation */
-        private int orientation = 0;
+        private int orientation;
 
         /**
          * Returns the page width
@@ -726,9 +726,9 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
         private static final long serialVersionUID = -1789481244175275686L;
 
         /** The current fill status */
-        private boolean filled = false;
+        private boolean filled;
 
-        private String imageUri = null;
+        private String imageUri;
 
         /** {@inheritDoc} */
         @Override

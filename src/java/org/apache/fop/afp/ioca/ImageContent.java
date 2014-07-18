@@ -57,10 +57,10 @@ public class ImageContent extends AbstractStructuredObject {
     public static final byte COMPID_JPEG = (byte)0x83;
 
     /** the image size parameter */
-    private ImageSizeParameter imageSizeParameter = null;
+    private ImageSizeParameter imageSizeParameter;
 
     /** the IDE Structure parameter */
-    private IDEStructureParameter ideStructureParameter = null;
+    private IDEStructureParameter ideStructureParameter;
 
     /** the image encoding */
     private byte encoding = (byte)0x03;

@@ -46,19 +46,19 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         = new java.util.ArrayList/*<MapCodedFonts>*/();
 
     /** the collection of MapPageSegments objects */
-    private List mapPageSegments = null;
+    private List mapPageSegments;
 
     /** the Object Area Descriptor for the active environment group */
-    private ObjectAreaDescriptor objectAreaDescriptor = null;
+    private ObjectAreaDescriptor objectAreaDescriptor;
 
     /** the Object Area Position for the active environment group */
-    private ObjectAreaPosition objectAreaPosition = null;
+    private ObjectAreaPosition objectAreaPosition;
 
     /** the PresentationTextDescriptor for the active environment group */
-    private PresentationTextDescriptor presentationTextDataDescriptor = null;
+    private PresentationTextDescriptor presentationTextDataDescriptor;
 
     /** the PageDescriptor for the active environment group */
-    private PageDescriptor pageDescriptor = null;
+    private PageDescriptor pageDescriptor;
 
     /** the resource manager */
     private final Factory factory;

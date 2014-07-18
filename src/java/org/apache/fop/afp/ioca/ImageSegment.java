@@ -40,7 +40,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
     /**
      * The ImageContent for the image segment
      */
-    private ImageContent imageContent = null;
+    private ImageContent imageContent;
 
     private final Factory factory;
 

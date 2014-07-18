@@ -39,8 +39,6 @@ import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.OFFontLoader;
 import org.apache.fop.fonts.truetype.TTFFile;
 
-// CSOFF: LineLengthCheck
-
 /**
  * A tool which reads TTF files and generates
  * XML font metrics file for use in FOP.
@@ -207,7 +205,8 @@ public class TTFReader extends AbstractFontReader {
      * @return The TTF as an object, null if the font is incompatible.
      * @throws IOException In case of an I/O problem
      */
-    public TTFFile loadTTF(String fileName, String fontName, boolean useKerning, boolean useAdvanced) throws IOException {
+    public TTFFile loadTTF(String fileName, String fontName, boolean useKerning, boolean useAdvanced)
+            throws IOException {
         TTFFile ttfFile = new TTFFile(useKerning, useAdvanced);
         log.info("Reading " + fileName + "...");
         InputStream stream = new FileInputStream(fileName);

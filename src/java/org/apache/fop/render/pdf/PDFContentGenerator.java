@@ -281,7 +281,7 @@ public class PDFContentGenerator {
         }
     }
 
-    private int ocNameIndex = 0;
+    private int ocNameIndex;
 
     private void beginOptionalContent(String layerId) {
         String name;

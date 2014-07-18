@@ -59,29 +59,29 @@ public class Java2DFontMetrics {
     /**
      * The width of all 256 character, if requested
      */
-    private int[] width = null;
+    private int[] width;
 
     /**
      * The typical height of a small cap latter (often derived from "x", value in mpt)
      */
-    private int xHeight = 0;
+    private int xHeight;
 
     /**
      * The highest point of the font above the baseline (usually derived from "d", value in mpt)
      */
-    private int ascender = 0;
+    private int ascender;
 
     /**
      * The lowest point of the font under the baseline (usually derived from "p", value in mpt)
      */
-    private int descender = 0;
+    private int descender;
 
     /**
      * Buffered font.
      * f1 is bufferd for metric measurements during layout.
      * fSized is buffered for display purposes
      */
-    private Font f1 = null;    // , fSized = null;
+    private Font f1;    // , fSized;
 
     /**
      * The family type of the font last used
@@ -91,17 +91,17 @@ public class Java2DFontMetrics {
     /**
      * The style of the font last used
      */
-    private int style = 0;
+    private int style;
 
     /**
      * The size of the font last used
      */
-    private float size = 0;
+    private float size;
 
     /**
      * The FontMetrics object used to calculate character width etc.
      */
-    private FontMetrics fmt = null;
+    private FontMetrics fmt;
 
     /** A LineMetrics to access high-resolution metrics information. */
     private LineMetrics lineMetrics;

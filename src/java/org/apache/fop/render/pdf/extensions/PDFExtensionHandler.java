@@ -32,8 +32,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 
-// CSOFF: LineLengthCheck
-
 /**
  * ContentHandler (parser) for restoring PDF extension objects from XML.
  */
@@ -170,7 +168,8 @@ public class PDFExtensionHandler extends DefaultHandler implements ContentHandle
                     } else if (dictionary.getDictionaryType() != PDFDictionaryType.Dictionary) {
                         this.returnedObject = new PDFDictionaryAttachment(dictionary);
                     } else {
-                        throw new SAXException(new IllegalStateException("generic dictionary not permitted at outer level"));
+                        throw new SAXException(
+                                new IllegalStateException("generic dictionary not permitted at outer level"));
                     }
                 } else {
                     throw new SAXException(new IllegalStateException("collections stack is empty or not a dictionary"));

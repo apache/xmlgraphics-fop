@@ -94,28 +94,28 @@ public final class LayoutContext {
     private List pendingBeforeMarks;
 
     /** Current hyphenation context. May be null. */
-    private HyphContext hyphContext = null;
+    private HyphContext hyphContext;
 
     /** Alignment in BP direction */
     private int bpAlignment = Constants.EN_START;
 
     /** Stretch or shrink value when making areas. */
-    private double ipdAdjust = 0.0;
+    private double ipdAdjust;
 
     /** Stretch or shrink value when adding spaces. */
-    private double dSpaceAdjust = 0.0;
+    private double dSpaceAdjust;
 
-    private AlignmentContext alignmentContext = null;
+    private AlignmentContext alignmentContext;
 
     /** Amount of space before / start */
-    private int spaceBefore = 0;
+    private int spaceBefore;
     /** Amount of space after / end */
-    private int spaceAfter = 0;
+    private int spaceAfter;
 
     /** Amount of space to reserve at the beginning of each line */
-    private int lineStartBorderAndPaddingWidth = 0;
+    private int lineStartBorderAndPaddingWidth;
     /** Amount of space to reserve at the end of each line */
-    private int lineEndBorderAndPaddingWidth = 0;
+    private int lineEndBorderAndPaddingWidth;
 
     private int breakBefore;
     private int breakAfter;

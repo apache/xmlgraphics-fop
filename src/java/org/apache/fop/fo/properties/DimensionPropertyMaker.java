@@ -28,7 +28,7 @@ import org.apache.fop.fo.expr.PropertyException;
  */
 public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
 
-    private int[][] extraCorresponding = null;
+    private int[][] extraCorresponding;
 
     /**
      * Instantiate a dimension property maker.

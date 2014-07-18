@@ -97,12 +97,12 @@ public class FOUserAgent {
 
     private float targetResolution = FopFactoryConfig.DEFAULT_TARGET_RESOLUTION;
     private Map rendererOptions = new java.util.HashMap();
-    private File outputFile = null;
-    private IFDocumentHandler documentHandlerOverride = null;
-    private Renderer rendererOverride = null;
-    private FOEventHandler foEventHandlerOverride = null;
+    private File outputFile;
+    private IFDocumentHandler documentHandlerOverride;
+    private Renderer rendererOverride;
+    private FOEventHandler foEventHandlerOverride;
     private boolean locatorEnabled = true; // true by default (for error messages).
-    private boolean conserveMemoryPolicy = false;
+    private boolean conserveMemoryPolicy;
     private EventBroadcaster eventBroadcaster = new FOPEventBroadcaster();
     private StructureTreeEventHandler structureTreeEventHandler
             = DummyStructureTreeEventHandler.INSTANCE;
@@ -115,21 +115,21 @@ public class FOUserAgent {
     /** Creator:  Metadata element for the user that created the
      * document. (Some renderers can store this in the document.)
      */
-    protected String creator = null;
+    protected String creator;
 
     /** Creation Date:  Override of the date the document was created.
      * (Some renderers can store this in the document.)
      */
-    protected Date creationDate = null;
+    protected Date creationDate;
 
     /** Author of the content of the document. */
-    protected String author = null;
+    protected String author;
     /** Title of the document. */
-    protected String title = null;
+    protected String title;
     /** Subject of the document. */
-    protected String subject = null;
+    protected String subject;
     /** Set of keywords applicable to this document. */
-    protected String keywords = null;
+    protected String keywords;
 
     private final ImageSessionContext imageSessionContext;
 

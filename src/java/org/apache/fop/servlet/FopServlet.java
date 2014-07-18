@@ -84,9 +84,9 @@ public class FopServlet extends HttpServlet {
     protected static final String XSLT_REQUEST_PARAM = "xslt";
 
     /** The TransformerFactory used to create Transformer instances */
-    protected TransformerFactory transFactory = null;
+    protected TransformerFactory transFactory;
     /** The FopFactory used to create Fop instances */
-    protected FopFactory fopFactory = null;
+    protected FopFactory fopFactory;
     /** URIResolver for use by this servlet */
     protected URIResolver uriResolver;
 

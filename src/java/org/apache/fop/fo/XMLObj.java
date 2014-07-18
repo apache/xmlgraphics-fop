@@ -42,7 +42,7 @@ import org.apache.fop.util.XMLConstants;
 public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
     // temp reference for attributes
-    private Attributes attr = null;
+    private Attributes attr;
 
     /** DOM element representing this node */
     protected Element element;

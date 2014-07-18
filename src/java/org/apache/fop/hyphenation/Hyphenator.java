@@ -45,10 +45,10 @@ public final class Hyphenator {
     /** logging instance */
     protected static final Log log = LogFactory.getLog(Hyphenator.class);
 
-    private static HyphenationTreeCache hTreeCache = null;
+    private static HyphenationTreeCache hTreeCache;
 
     /** Enables a dump of statistics. Note: If activated content is sent to System.out! */
-    private static boolean statisticsDump = false;
+    private static boolean statisticsDump;
 
     /**
      * Creates a new hyphenator.

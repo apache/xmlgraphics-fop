@@ -622,7 +622,7 @@ public abstract class CharacterSetBuilder {
         private int dpi;
         private int unitsPerEm;
 
-        private boolean isRelative = false;
+        private boolean isRelative;
 
         public int getDpi() {
             return dpi;

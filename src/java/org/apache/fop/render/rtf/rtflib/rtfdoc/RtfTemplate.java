@@ -36,9 +36,9 @@ import java.io.IOException;
 public final class RtfTemplate  {
 
     /** Singelton instance */
-    private static RtfTemplate instance = null;
+    private static RtfTemplate instance;
 
-    private String templateFilePath = null;
+    private String templateFilePath;
 
     /**
      * Constructor.

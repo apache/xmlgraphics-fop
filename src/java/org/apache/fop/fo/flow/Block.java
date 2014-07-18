@@ -51,8 +51,8 @@ public class Block extends FObjMixed implements BreakPropertySet,
         CommonAccessibilityHolder {
 
     // used for FO validation
-    private boolean blockOrInlineItemFound = false;
-    private boolean initialPropertySetFound = false;
+    private boolean blockOrInlineItemFound;
+    private boolean initialPropertySetFound;
 
     // The value of FO traits (refined properties) that apply to fo:block.
     private CommonAccessibility commonAccessibility;

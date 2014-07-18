@@ -47,7 +47,7 @@ public final class ValidationPercentBaseContext implements PercentBaseContext {
         return 100000;
     }
 
-    private static PercentBaseContext pseudoContextForValidation = null;
+    private static PercentBaseContext pseudoContextForValidation;
 
     /** @return a base context for validation purposes. See class description. */
     public static PercentBaseContext getPseudoContext() {

@@ -35,7 +35,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
     private List<BookmarkData> subData = new java.util.ArrayList<BookmarkData>();
 
     // bookmark-title for this fo:bookmark
-    private String bookmarkTitle = null;
+    private String bookmarkTitle;
 
     // indicator of whether to initially display/hide child bookmarks of this object
     private boolean showChildren = true;
@@ -44,7 +44,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
     private String idRef;
 
     // PageViewport that the idRef item refers to
-    private PageViewport pageRef = null;
+    private PageViewport pageRef;
 
     // unresolved idrefs by this bookmark and child bookmarks below it
     private Map<String, List<Resolvable>> unresolvedIDRefs

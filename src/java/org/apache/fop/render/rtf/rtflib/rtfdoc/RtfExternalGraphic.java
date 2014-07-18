@@ -226,7 +226,7 @@ public class RtfExternalGraphic extends RtfElement {
     /**
      * The url of the image
      */
-    protected URL url = null;
+    protected URL url;
 
     /**
      * The height of the image (in pixels)
@@ -246,7 +246,7 @@ public class RtfExternalGraphic extends RtfElement {
     /**
      * Flag whether the desired height is a percentage
      */
-    protected boolean perCentH = false;
+    protected boolean perCentH;
 
     /**
      * The width of the image (in pixels)
@@ -266,12 +266,12 @@ public class RtfExternalGraphic extends RtfElement {
     /**
      * Flag whether the desired width is a percentage
      */
-    protected boolean perCentW = false;
+    protected boolean perCentW;
 
     /**
      * Flag whether the image size shall be adjusted
      */
-    protected boolean scaleUniform = false;
+    protected boolean scaleUniform;
 
     /** cropping on left/top/right/bottom edges for \piccrop*N */
     private int[] cropValues = new int[4];
@@ -282,7 +282,7 @@ public class RtfExternalGraphic extends RtfElement {
      protected int graphicCompressionRate = 80;
 
      /** The image data */
-     private byte[] imagedata = null;
+     private byte[] imagedata;
 
      /** The image format */
      private FormatBase imageformat;

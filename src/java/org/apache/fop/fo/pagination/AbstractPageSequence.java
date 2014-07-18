@@ -53,7 +53,7 @@ public abstract class AbstractPageSequence extends FObj implements CommonAccessi
     private PageNumberGenerator pageNumberGenerator;
 
     /** starting page number */
-    protected int startingPageNumber = 0;
+    protected int startingPageNumber;
 
     /**
      * Create an AbstractPageSequence that is a child

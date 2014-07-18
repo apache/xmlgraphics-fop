@@ -81,12 +81,12 @@ public class PDFInfo extends PDFObject {
      */
     private String producer;
 
-    private String title = null;
-    private String author = null;
-    private String subject = null;
-    private String keywords = null;
-    private Date creationDate = null;
-    private Date modDate = null;
+    private String title;
+    private String author;
+    private String subject;
+    private String keywords;
+    private Date creationDate;
+    private Date modDate;
 
     private Map<PDFName, String> customProperties;
 

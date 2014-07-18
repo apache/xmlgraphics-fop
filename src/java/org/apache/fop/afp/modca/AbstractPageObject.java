@@ -52,10 +52,10 @@ import org.apache.fop.afp.ptoca.PtocaProducer;
 public abstract class AbstractPageObject extends AbstractNamedAFPObject implements Completable {
 
     /** The active environment group for the page */
-    protected ActiveEnvironmentGroup activeEnvironmentGroup = null;
+    protected ActiveEnvironmentGroup activeEnvironmentGroup;
 
     /** The current presentation text object */
-    private PresentationTextObject currentPresentationTextObject = null;
+    private PresentationTextObject currentPresentationTextObject;
 
     /** The list of objects within this resource container */
     protected List/*<AbstractStructuredObject>*/ objects = new java.util.ArrayList();
@@ -67,10 +67,10 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
     private int height;
 
     /** The page rotation */
-    protected int rotation = 0;
+    protected int rotation;
 
     /** The page state */
-    protected boolean complete = false;
+    protected boolean complete;
 
     /** The width resolution */
     private int widthRes;

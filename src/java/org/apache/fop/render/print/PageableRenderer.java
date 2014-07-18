@@ -61,7 +61,7 @@ public class PageableRenderer extends Java2DRenderer implements Pageable {
 
 
     /** first valid page number (1-based) */
-    protected int startNumber = 0;
+    protected int startNumber;
     /** last valid page number (1-based) */
     protected int endNumber = -1;
 

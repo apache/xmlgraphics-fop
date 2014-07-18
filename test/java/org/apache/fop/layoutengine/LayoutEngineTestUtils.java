@@ -59,7 +59,7 @@ public final class LayoutEngineTestUtils {
 
     private static class FilenameHandler extends DefaultHandler {
         private StringBuffer buffer = new StringBuffer(128);
-        private boolean readingFilename = false;
+        private boolean readingFilename;
         private List<String> filenames;
 
         public FilenameHandler(List<String> filenames) {

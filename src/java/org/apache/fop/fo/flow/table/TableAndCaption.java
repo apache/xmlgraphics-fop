@@ -55,11 +55,11 @@ public class TableAndCaption extends FObj implements CommonAccessibilityHolder {
     //     private int textAlign;
     // End of property values
 
-    static boolean notImplementedWarningGiven = false;
+    static boolean notImplementedWarningGiven;
 
     /** used for FO validation */
-    private boolean tableCaptionFound = false;
-    private boolean tableFound = false;
+    private boolean tableCaptionFound;
+    private boolean tableFound;
 
     /**
      * Create a TableAndCaption instance with the given {@link FONode}

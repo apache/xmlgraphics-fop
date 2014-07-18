@@ -42,11 +42,15 @@ public class PDFShading extends PDFObject {
     /**
      * The name of the Shading e.g. "Shading1"
      */
-    protected String shadingName = null;
+    protected String shadingName;
 
     private final Shading shading;
 
     private final PDFFunction pdfFunction;
+    /**
+     * A ColorSpace representing the colorspace. "DeviceRGB" is an example.
+     */
+    protected PDFDeviceColorSpace colorSpace;
 
     /**
      * Constructor for Type 2 and 3

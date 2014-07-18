@@ -29,7 +29,7 @@ import org.apache.fop.afp.AFPEventProducer;
 public abstract class AbstractOutlineFont extends AFPFont {
 
     /** The character set for this font */
-    protected CharacterSet charSet = null;
+    protected CharacterSet charSet;
 
     private final AFPEventProducer eventProducer;
 

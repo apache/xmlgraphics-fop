@@ -46,7 +46,7 @@ public abstract class Typeface implements FontMetrics {
      * is used as the trigger). This could just as well be a boolean but is a
      * long out of statistical interest.
      */
-    private long charMapOps = 0;
+    private long charMapOps;
 
     /** An optional event listener that receives events such as missing glyphs etc. */
     protected FontEventListener eventListener;

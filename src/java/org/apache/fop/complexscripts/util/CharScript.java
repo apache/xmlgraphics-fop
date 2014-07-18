@@ -849,8 +849,8 @@ public final class CharScript {
         }
     }
 
-    private static Map<Integer, String> scriptTagsMap = null;
-    private static Map<String, Integer> scriptCodeMap = null;
+    private static Map<Integer, String> scriptTagsMap;
+    private static Map<String, Integer> scriptCodeMap;
 
     private static void putScriptTag(Map tm, Map cm, int code, String tag) {
         assert tag != null;

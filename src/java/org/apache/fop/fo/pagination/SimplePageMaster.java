@@ -59,11 +59,11 @@ public class SimplePageMaster extends FObj {
     private Map<String, Region> regions;
 
      // used for node validation
-    private boolean hasRegionBody = false;
-    private boolean hasRegionBefore = false;
-    private boolean hasRegionAfter = false;
-    private boolean hasRegionStart = false;
-    private boolean hasRegionEnd = false;
+    private boolean hasRegionBody;
+    private boolean hasRegionBefore;
+    private boolean hasRegionAfter;
+    private boolean hasRegionStart;
+    private boolean hasRegionEnd;
 
     /**
      * Base constructor

@@ -60,7 +60,7 @@ public abstract class AbstractPDFStream extends PDFObject {
         return dictionary;
     }
 
-    protected Object get(String key) {
+    public Object get(String key) {
         return dictionary.get(key);
     }
 

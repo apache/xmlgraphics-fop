@@ -61,10 +61,10 @@ public class IncludeObject extends AbstractNamedAFPObject {
     private byte objectType = TYPE_OTHER;
 
     /** the X-axis origin of the object area */
-    private int xoaOset = 0;
+    private int xoaOset;
 
     /** the Y-axis origin of the object area */
-    private int yoaOset = 0;
+    private int yoaOset;
 
     /** the orientation of the referenced object */
     private AxisOrientation oaOrent = AxisOrientation.RIGHT_HANDED_0;

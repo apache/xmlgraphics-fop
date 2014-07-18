@@ -30,7 +30,7 @@ public abstract class LocalBreaker extends AbstractBreaker {
     protected BlockStackingLayoutManager lm;
     private int displayAlign;
     private int ipd;
-    private int overflow = 0;
+    private int overflow;
 
     public LocalBreaker(BlockStackingLayoutManager lm, int ipd, int displayAlign) {
         this.lm = lm;

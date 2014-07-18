@@ -59,7 +59,7 @@ public class FOPTestbed extends AbstractLogEnabled
     private Processor foprocessor;
     private boolean writeToDevNull;
 
-    private int counter = 0;
+    private int counter;
 
     private List results = Collections.synchronizedList(new java.util.LinkedList());
 

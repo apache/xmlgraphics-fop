@@ -32,7 +32,7 @@ public final class ElementListObserver {
     private ElementListObserver() {
     }
 
-    private static List activeObservers = null;
+    private static List activeObservers;
 
     /**
      * Adds a new Observer to the list.

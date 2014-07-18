@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class ResultCollector {
 
-    private static ResultCollector instance = null;
+    private static ResultCollector instance;
 
     private List<String> results = new ArrayList<String>();
 

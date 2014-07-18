@@ -56,7 +56,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
     protected PCLGenerator gen;
 
     private final boolean failOnUnsupportedFeature = true;
-    private boolean clippingDisabled = false;
+    private boolean clippingDisabled;
 
     /**
      * Create a new PCLGraphics2D.

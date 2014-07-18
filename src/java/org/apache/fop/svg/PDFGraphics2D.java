@@ -145,13 +145,13 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     /**
      * The PDF graphics state level that this svg is being drawn into.
      */
-    protected int baseLevel = 0;
+    protected int baseLevel;
 
     /**
      * The count of natively handled images added to document so they receive
      * unique keys.
      */
-    protected int nativeCount = 0;
+    protected int nativeCount;
 
     /**
      * The current font information.
@@ -162,7 +162,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * The override font state used when drawing text and the font cannot be
      * set using java fonts.
      */
-    protected Font ovFontState = null;
+    protected Font ovFontState;
 
     /**
      * the current stream to add PDF commands to
@@ -185,7 +185,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * the pdf document objects to reduce memory.
      * Especially with images.
      */
-    protected OutputStream outputStream = null;
+    protected OutputStream outputStream;
 
     private TransparencyIgnoredEventListener transparencyIgnoredEventListener;
 

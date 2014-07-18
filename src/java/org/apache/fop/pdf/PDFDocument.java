@@ -167,6 +167,8 @@ public class PDFDocument {
 
     private boolean accessibilityEnabled;
 
+    private boolean mergeFontsEnabled;
+
     /**
      * Creates an empty PDF document.
      *
@@ -1080,6 +1082,14 @@ public class PDFDocument {
             trailerDictionary.setEncryption(encryption);
         }
         return trailerDictionary;
+    }
+
+    public boolean isMergeFontsEnabled() {
+        return mergeFontsEnabled;
+    }
+
+    public void setMergeFontsEnabled(boolean mergeFontsEnabled) {
+        this.mergeFontsEnabled = mergeFontsEnabled;
     }
 
     private interface TrailerOutputHelper {

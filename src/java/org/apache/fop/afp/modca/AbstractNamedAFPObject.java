@@ -34,7 +34,7 @@ public abstract class AbstractNamedAFPObject extends AbstractTripletStructuredOb
     /**
      * The actual name of the object
      */
-    protected String name = null;
+    protected String name;
 
     /**
      * Default constructor

@@ -107,7 +107,7 @@ public class EmbeddedSVGImageHandler implements ImageHandler, SVGConstants {
             DOMSource src = new DOMSource(svg.getDocument());
             SAXResult res = new SAXResult(new DelegatingFragmentContentHandler(handler) {
 
-                private boolean topLevelSVGFound = false;
+                private boolean topLevelSVGFound;
 
                 private void setAttribute(AttributesImpl atts, String localName, String value) {
                     int index;

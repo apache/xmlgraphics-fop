@@ -47,7 +47,7 @@ public class NativeTextHandler implements PSTextHandler {
     protected Font font;
 
     /** Overriding FontState */
-    protected Font overrideFont = null;
+    protected Font overrideFont;
 
     /** the current (internal) font name */
     protected String currentFontName;

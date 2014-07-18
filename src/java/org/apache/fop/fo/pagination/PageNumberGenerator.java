@@ -21,8 +21,6 @@ package org.apache.fop.fo.pagination;
 
 import org.apache.fop.complexscripts.util.NumberConverter;
 
-// CSOFF: LineLengthCheck
-
 /**
  * <p>This class uses the 'format', 'groupingSeparator', 'groupingSize',
  * and 'letterValue' properties on fo:page-sequence to return a String
@@ -49,8 +47,10 @@ public class PageNumberGenerator {
      * @param language (may be null or empty, which is treated as null)
      * @param country (may be null or empty, which is treated as null)
      */
-    public PageNumberGenerator(String format, int groupingSeparator, int groupingSize, int letterValue, String features, String language, String country) {
-        this.converter = new NumberConverter(format, groupingSeparator, groupingSize, letterValue, features, language, country);
+    public PageNumberGenerator(String format, int groupingSeparator, int groupingSize,
+            int letterValue, String features, String language, String country) {
+        this.converter = new NumberConverter(format, groupingSeparator, groupingSize,
+                letterValue, features, language, country);
     }
 
     /**

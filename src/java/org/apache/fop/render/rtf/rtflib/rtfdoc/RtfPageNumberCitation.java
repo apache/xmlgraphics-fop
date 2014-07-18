@@ -49,7 +49,7 @@ public class RtfPageNumberCitation extends RtfContainer {
     public static final String RTF_FIELD_RESULT = "fldrslt";
 
     // The 'id' of the referenced page
-    private String id = null;
+    private String id;
 
     /** Create an RTF page number citation as a child of given container with default attributes */
     RtfPageNumberCitation(RtfContainer parent, Writer w, String id)

@@ -35,7 +35,7 @@ public class PreprocessPresentationObject extends AbstractTripletStructuredObjec
     private static final byte TYPE_IMAGE = (byte)0xFB;
 
     private byte objType = TYPE_OTHER;
-    private byte objOrent = 0; // object always processed at 0 degree orientation
+    private byte objOrent; // object always processed at 0 degree orientation
     private int objXOffset = -1;
     private int objYOffset = -1;
 

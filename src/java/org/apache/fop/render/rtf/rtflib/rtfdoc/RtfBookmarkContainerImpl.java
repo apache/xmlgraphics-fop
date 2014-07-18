@@ -42,7 +42,7 @@ public class RtfBookmarkContainerImpl extends RtfContainer implements IRtfBookma
     //////////////////////////////////////////////////
 
     /** Rtf bookmark */
-    private RtfBookmark mBookmark = null;
+    private RtfBookmark mBookmark;
 
 
     //////////////////////////////////////////////////

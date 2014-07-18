@@ -50,7 +50,7 @@ public class ColumnSetup {
     private List columns = new java.util.ArrayList();
     private List colWidths = new java.util.ArrayList();
 
-    private int maxColIndexReferenced = 0;
+    private int maxColIndexReferenced;
 
     /**
      * Main Constructor.

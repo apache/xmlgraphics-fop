@@ -35,7 +35,7 @@ public abstract class AbstractResourceEnvironmentGroupContainer
     /**
      * The resource environment group used to store complex resources
      */
-    protected ResourceEnvironmentGroup resourceEnvironmentGroup = null;
+    protected ResourceEnvironmentGroup resourceEnvironmentGroup;
 
     /**
      * Main constructor

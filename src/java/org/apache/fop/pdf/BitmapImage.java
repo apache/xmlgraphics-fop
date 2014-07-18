@@ -34,7 +34,7 @@ public class BitmapImage implements PDFImage {
     private PDFDeviceColorSpace colorSpace;
     private byte[] bitmaps;
     private PDFReference maskRef;
-    private PDFColor transparent = null;
+    private PDFColor transparent;
     private String key;
     private PDFDocument pdfDoc;
     private PDFFilter pdfFilter;

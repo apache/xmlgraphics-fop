@@ -154,7 +154,7 @@ public abstract class OpenFont {
 
     private static final short FIRST_CHAR = 0;
 
-    protected boolean useKerning = false;
+    protected boolean useKerning;
     private boolean isEmbeddable = true;
     private boolean hasSerifs = true;
     /**
@@ -168,13 +168,13 @@ public abstract class OpenFont {
     protected List<UnicodeMapping> unicodeMappings;
 
     private int upem;                                // unitsPerEm from "head" table
-    private int nhmtx;                               // Number of horizontal metrics
+    protected int nhmtx;                               // Number of horizontal metrics
     private PostScriptVersion postScriptVersion;
     protected int locaFormat;
     /**
      * Offset to last loca
      */
-    protected long lastLoca = 0;
+    protected long lastLoca;
     protected int numberOfGlyphs; // Number of glyphs in font (read from "maxp" table)
 
     /**
@@ -187,33 +187,34 @@ public abstract class OpenFont {
     protected String notice = "";
     protected final Set<String> familyNames = new HashSet<String>();
     protected String subFamilyName = "";
+    protected boolean cid = true;
 
-    private long italicAngle = 0;
-    private long isFixedPitch = 0;
-    private int fontBBox1 = 0;
-    private int fontBBox2 = 0;
-    private int fontBBox3 = 0;
-    private int fontBBox4 = 0;
-    private int capHeight = 0;
-    private int os2CapHeight = 0;
+    private long italicAngle;
+    private long isFixedPitch;
+    private int fontBBox1;
+    private int fontBBox2;
+    private int fontBBox3;
+    private int fontBBox4;
+    private int capHeight;
+    private int os2CapHeight;
     private int underlinePosition;
     private int underlineThickness;
     private int strikeoutPosition;
     private int strikeoutThickness;
-    private int xHeight = 0;
-    private int os2xHeight = 0;
+    private int xHeight;
+    private int os2xHeight;
     //Effective ascender/descender
-    private int ascender = 0;
-    private int descender = 0;
+    private int ascender;
+    private int descender;
     //Ascender/descender from hhea table
-    private int hheaAscender = 0;
-    private int hheaDescender = 0;
+    private int hheaAscender;
+    private int hheaDescender;
     //Ascender/descender from OS/2 table
-    private int os2Ascender = 0;
-    private int os2Descender = 0;
-    private int usWeightClass = 0;
+    private int os2Ascender;
+    private int os2Descender;
+    private int usWeightClass;
 
-    private short lastChar = 0;
+    private short lastChar;
 
     private int[] ansiWidth;
     private Map<Integer, List<Integer>> ansiIndex;
@@ -226,7 +227,7 @@ public abstract class OpenFont {
     private boolean isCFF;
 
     // advanced typographic table support
-    protected boolean useAdvanced = false;
+    protected boolean useAdvanced;
     protected OTFAdvancedTypographicTableReader advancedTableReader;
 
     /**
@@ -393,7 +394,9 @@ public abstract class OpenFont {
 
         unicodeMappings = new ArrayList<OpenFont.UnicodeMapping>();
 
-        seekTab(fontFile, OFTableName.CMAP, 2);
+        if (!seekTab(fontFile, OFTableName.CMAP, 2)) {
+            return true;
+        }
         int numCMap = fontFile.readTTFUShort();    // Number of cmap subtables
         long cmapUniOffset = 0;
         long symbolMapOffset = 0;
@@ -796,7 +799,9 @@ public abstract class OpenFont {
         int unicodeStart;
         int glyphStart;
         int unicodeEnd;
-
+        if (unicodeMappings.isEmpty()) {
+            return;
+        }
         Iterator<UnicodeMapping> e = unicodeMappings.iterator();
         UnicodeMapping um = e.next();
         UnicodeMapping lastMapping = um;
@@ -1229,7 +1234,7 @@ public abstract class OpenFont {
             }
         }
 
-        if (nhmtx < mtxSize) {
+        if (cid && nhmtx < mtxSize) {
             // Fill in the missing widths
             int lastWidth = mtxTab[nhmtx - 1].getWx();
             for (int i = nhmtx; i < mtxSize; i++) {

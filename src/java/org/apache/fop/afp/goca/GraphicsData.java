@@ -36,7 +36,7 @@ public final class GraphicsData extends AbstractGraphicsDrawingOrderContainer {
     //+16 to avoid unnecessary, practically empty GraphicsData instances.
 
     /** the graphics segment */
-    private GraphicsChainedSegment currentSegment = null;
+    private GraphicsChainedSegment currentSegment;
 
     private boolean segmentedData;
 

@@ -141,13 +141,13 @@ public class RTFHandler extends FOEventHandler {
     private RtfDocumentArea docArea;
     private boolean bDefer;              //true, if each called handler shall be
                                          //processed at later time.
-    private boolean bPrevHeaderSpecified = false; //true, if there has been a
+    private boolean bPrevHeaderSpecified; //true, if there has been a
                                                   //header in any page-sequence
-    private boolean bPrevFooterSpecified = false; //true, if there has been a
+    private boolean bPrevFooterSpecified; //true, if there has been a
                                                   //footer in any page-sequence
-    private boolean bHeaderSpecified = false;  //true, if there is a header
+    private boolean bHeaderSpecified;  //true, if there is a header
                                                //in current page-sequence
-    private boolean bFooterSpecified = false;  //true, if there is a footer
+    private boolean bFooterSpecified;  //true, if there is a footer
                                                //in current page-sequence
     private BuilderContext builderContext = new BuilderContext(null);
 

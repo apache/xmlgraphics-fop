@@ -30,10 +30,10 @@ import java.io.Writer;
  */
 public class RtfFootnote extends RtfContainer
         implements IRtfTextrunContainer, IRtfListContainer {
-    RtfTextrun textrunInline = null;
-    RtfContainer body = null;
-    RtfList list = null;
-    boolean bBody = false;
+    RtfTextrun textrunInline;
+    RtfContainer body;
+    RtfList list;
+    boolean bBody;
 
     /**
      * Create an RTF list item as a child of given container with default attributes.

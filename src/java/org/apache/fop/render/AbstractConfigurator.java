@@ -34,7 +34,7 @@ public abstract class AbstractConfigurator {
     private static final String MIME = "mime";
 
     /** fop factory configuration */
-    protected FOUserAgent userAgent = null;
+    protected FOUserAgent userAgent;
 
     /**
      * Default constructor

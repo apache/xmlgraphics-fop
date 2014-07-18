@@ -66,7 +66,7 @@ public class AFPResourceLevel {
         }
     }
 
-    private URI extUri = null;
+    private URI extUri;
     private final ResourceType resourceType;
 
     /**

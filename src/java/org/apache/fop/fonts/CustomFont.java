@@ -22,9 +22,11 @@ package org.apache.fop.fonts;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -74,6 +76,8 @@ public abstract class CustomFont extends Typeface
     private Map<Integer, Map<Integer, Integer>> kerning;
 
     private boolean useKerning = true;
+    /** the character map, mapping Unicode ranges to glyph indices. */
+    protected List<CMapSegment> cmap = new ArrayList<CMapSegment>();
     private boolean useAdvanced = true;
 
     /**
@@ -82,8 +86,7 @@ public abstract class CustomFont extends Typeface
     public CustomFont(InternalResourceResolver resourceResolver) {
         this.resourceResolver = resourceResolver;
     }
-    /** the character map, mapping Unicode ranges to glyph indices. */
-    protected CMapSegment[] cmap;
+
 
     /** {@inheritDoc} */
     public String getFontName() {
@@ -503,8 +506,10 @@ public abstract class CustomFont extends Typeface
      * @param cmap the character map
      */
     public void setCMap(CMapSegment[] cmap) {
-        this.cmap = new CMapSegment[cmap.length];
-        System.arraycopy(cmap, 0, this.cmap, 0, cmap.length);
+        this.cmap.clear();
+        for (CMapSegment c : cmap) {
+            this.cmap.add(c);
+        }
     }
 
     /**
@@ -513,9 +518,7 @@ public abstract class CustomFont extends Typeface
      * @return the character map
      */
     public CMapSegment[] getCMap() {
-        CMapSegment[] copy = new CMapSegment[cmap.length];
-        System.arraycopy(this.cmap, 0, copy, 0, this.cmap.length);
-        return copy;
+        return cmap.toArray(new CMapSegment[cmap.size()]);
     }
 
     public int getUnderlinePosition(int size) {
