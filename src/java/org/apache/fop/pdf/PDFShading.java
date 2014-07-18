@@ -19,12 +19,12 @@
 
 package org.apache.fop.pdf;
 
-// Java...
 import java.util.List;
 
-import org.apache.fop.render.shading.Function;
-import org.apache.fop.render.shading.Shading;
-import org.apache.fop.render.shading.ShadingPattern;
+import org.apache.fop.render.gradient.GradientMaker;
+import org.apache.fop.render.gradient.GradientMaker.DoubleFormatter;
+import org.apache.fop.render.gradient.Shading;
+
 
 /**
  * class representing a PDF Smooth Shading object.
@@ -36,7 +36,7 @@ import org.apache.fop.render.shading.ShadingPattern;
  *
  * All PDF Functions have a shadingType (0,2,3, or 4), a Domain, and a Range.
  */
-public class PDFShading extends PDFObject implements Shading {
+public class PDFShading extends PDFObject {
     // Guts common to all function types
 
     /**
@@ -44,266 +44,23 @@ public class PDFShading extends PDFObject implements Shading {
      */
     protected String shadingName;
 
-    /**
-     * Required: The Type of shading (1,2,3,4,5,6,7)
-     */
-    protected int shadingType = 3;    // Default
+    private final Shading shading;
 
-    /**
-     * A ColorSpace representing the colorspace. "DeviceRGB" is an example.
-     */
-    protected PDFDeviceColorSpace colorSpace;
-
-    /**
-     * The background color. Since shading is opaque,
-     * this is very rarely used.
-     */
-    protected List background;
-
-    /**
-     * Optional: A List specifying the clipping rectangle
-     */
-    protected List bBox;
-
-    /**
-     * Optional: A flag whether or not to filter the shading function
-     * to prevent aliasing artifacts. Default is false.
-     */
-    protected boolean antiAlias;
-
-    /**
-     * Optional for Type 1: Array of four numbers, xmin, xmax, ymin, ymax.
-     *                      Default is [0 1 0 1]
-     * Optional for Type 2: An array of two numbers between which the blend
-     *                      varies between start and end points. Default is 0, 1.
-     * Optional for Type 3: An array of two numbers between which the blend
-     *                      varies between start and end points. Default is 0, 1.
-     */
-    protected List domain;
-
-    /**
-     * Optional for Type 1: A transformation matrix
-     */
-    protected List matrix;
-
-    /**
-     * Required for Type 1, 2, and 3:
-     * The object of the color mapping function (usually type 2 or 3).
-     * Optional for Type 4,5,6, and 7: When it's nearly the same thing.
-     */
-    protected PDFFunction function;
-
-    /**
-     * Required for Type 2: An Array of four numbers specifying
-     *                      the starting and ending coordinate pairs
-     * Required for Type 3: An Array of six numbers [x0,y0,r0,x1,y1,r1]
-     *                      specifying the centers and radii of
-     *                      the starting and ending circles.
-     */
-    protected List coords;
-
-    /**
-     * Required for Type 2+3: An Array of two boolean values specifying
-     * whether to extend the start and end colors past the start
-     * and end points, respectively.
-     * Default is false, false.
-     */
-    protected List extend;
-
-    /**
-     * Required for Type 4,5,6, and 7: Specifies the number of bits used
-     * to represent each vertex coordinate.
-     * Allowed to be 1,2,4,8,12,16,24, or 32.
-     */
-    protected int bitsPerCoordinate;
-
-    /**
-     * Required for Type 4,5,6, and 7: Specifies the number of bits used
-     * to represent the edge flag for each vertex.
-     * Allowed to be 2,4,or 8, while the Edge flag itself is allowed to
-     * be 0,1 or 2.
-     */
-    protected int bitsPerFlag;
-
-    /**
-     * Required for Type 4,5,6, and 7: Array of Doubles which specifies
-     * how to decode coordinate and color component values.
-     * Each type has a differing number of decode array members, so check
-     * the spec.
-     * Page 303 in PDF Spec 1.3
-     */
-    protected List decode;
-
-    /**
-     * Required for Type 4,5,6, and 7: Specifies the number of bits used
-     * to represent each color coordinate.
-     * Allowed to be 1,2,4,8,12, or 16
-     */
-    protected int bitsPerComponent;
-
-    /**
-     * Required for Type 5:The number of vertices in each "row" of
-     * the lattice; it must be greater than or equal to 2.
-     */
-    protected int verticesPerRow;
-
-    /**
-     * Constructor for type function based shading
-     *
-     * @param theShadingType The type of shading object, which should be 1 for function
-     * based shading.
-     * @param theColorSpace The colorspace is 'DeviceRGB' or something similar.
-     * @param theBackground An array of color components appropriate to the
-     * colorspace key specifying a single color value.
-     * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox List of double's representing a rectangle
-     * in the coordinate space that is current at the
-     * time of shading is imaged. Temporary clipping
-     * boundary.
-     * @param theAntiAlias Whether or not to anti-alias.
-     * @param theDomain Optional vector of Doubles specifying the domain.
-     * @param theMatrix List of Doubles specifying the matrix.
-     * If it's a pattern, then the matrix maps it to pattern space.
-     * If it's a shading, then it maps it to current user space.
-     * It's optional, the default is the identity matrix
-     * @param theFunction The PDF Function that maps an (x,y) location to a color
-     */
-    public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
-            List theBackground, List theBBox,
-            boolean theAntiAlias, List theDomain,
-            List theMatrix, PDFFunction theFunction) {
-        super();
-        this.shadingType = theShadingType;    // 1
-        this.colorSpace = theColorSpace;
-        this.background = theBackground;
-        this.bBox = theBBox;
-        this.antiAlias = theAntiAlias;
-
-        this.domain = theDomain;
-        this.matrix = theMatrix;
-        this.function = theFunction;
-
-    }
+    private final PDFFunction pdfFunction;
 
     /**
      * Constructor for Type 2 and 3
      *
-     * @param theShadingType 2 or 3 for axial or radial shading
-     * @param theColorSpace "DeviceRGB" or similar.
-     * @param theBackground theBackground An array of color components appropriate to the
-     * colorspace key specifying a single color value.
-     * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox List of double's representing a rectangle
-     * in the coordinate space that is current at the
-     * time of shading is imaged. Temporary clipping
-     * boundary.
-     * @param theAntiAlias Default is false
-     * @param theCoords List of four (type 2) or 6 (type 3) Double
-     * @param theDomain List of Doubles specifying the domain
-     * @param theFunction the Stitching (PDFfunction type 3) function,
+     * @param shadingType 2 or 3 for axial or radial shading
+     * @param colorSpace "DeviceRGB" or similar.
+     * @param coords List of four (type 2) or 6 (type 3) Double
+     * @param pdfFunction the Stitching (PDFfunction type 3) function,
      *                    even if it's stitching a single function
-     * @param theExtend List of Booleans of whether to extend the start
-     *                  and end colors past the start and end points
-     * The default is [false, false]
      */
-    public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
-            List theBackground, List theBBox,
-            boolean theAntiAlias, List theCoords,
-            List theDomain, Function theFunction,
-            List theExtend) {
-        super();
-        this.shadingType = theShadingType;    // 2 or 3
-        this.colorSpace = theColorSpace;
-        this.background = theBackground;
-        this.bBox = theBBox;
-        this.antiAlias = theAntiAlias;
-
-        this.coords = theCoords;
-        this.domain = theDomain;
-        assert theFunction instanceof PDFFunction;
-        this.function = (PDFFunction)theFunction;
-        this.extend = theExtend;
-
-    }
-
-    /**
-     * Constructor for Type 4,6, or 7
-     *
-     * @param theShadingType 4, 6, or 7 depending on whether it's
-     * Free-form gouraud-shaded triangle meshes, coons patch meshes,
-     * or tensor product patch meshes, respectively.
-     * @param theColorSpace "DeviceRGB" or similar.
-     * @param theBackground theBackground An array of color components appropriate to the
-     * colorspace key specifying a single color value.
-     * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox List of double's representing a rectangle
-     * in the coordinate space that is current at the
-     * time of shading is imaged. Temporary clipping
-     * boundary.
-     * @param theAntiAlias Default is false
-     * @param theBitsPerCoordinate 1,2,4,8,12,16,24 or 32.
-     * @param theBitsPerComponent 1,2,4,8,12, and 16
-     * @param theBitsPerFlag 2,4,8.
-     * @param theDecode List of Doubles see PDF 1.3 spec pages 303 to 312.
-     * @param theFunction the PDFFunction
-     */
-    public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
-            List theBackground, List theBBox,
-            boolean theAntiAlias, int theBitsPerCoordinate,
-            int theBitsPerComponent, int theBitsPerFlag,
-            List theDecode, PDFFunction theFunction) {
-        super();
-
-        this.shadingType = theShadingType;    // 4,6 or 7
-        this.colorSpace = theColorSpace;
-        this.background = theBackground;
-        this.bBox = theBBox;
-        this.antiAlias = theAntiAlias;
-
-        this.bitsPerCoordinate = theBitsPerCoordinate;
-        this.bitsPerComponent = theBitsPerComponent;
-        this.bitsPerFlag = theBitsPerFlag;
-        this.decode = theDecode;
-        this.function = theFunction;
-    }
-
-    /**
-     * Constructor for type 5
-     *
-     * @param theShadingType 5 for lattice-Form Gouraud shaded-triangle mesh
-     * @param theColorSpace "DeviceRGB" or similar.
-     * @param theBackground theBackground An array of color components appropriate to the
-     * colorspace key specifying a single color value.
-     * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox List of double's representing a rectangle
-     * in the coordinate space that is current at the
-     * time of shading is imaged. Temporary clipping
-     * boundary.
-     * @param theAntiAlias Default is false
-     * @param theBitsPerCoordinate 1,2,4,8,12,16, 24, or 32
-     * @param theBitsPerComponent 1,2,4,8,12,24,32
-     * @param theDecode List of Doubles. See page 305 in PDF 1.3 spec.
-     * @param theVerticesPerRow number of vertices in each "row" of the lattice.
-     * @param theFunction The PDFFunction that's mapped on to this shape
-     */
-    public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
-            List theBackground, List theBBox,
-            boolean theAntiAlias, int theBitsPerCoordinate,
-            int theBitsPerComponent, List theDecode,
-            int theVerticesPerRow, PDFFunction theFunction) {
-        super();
-        this.shadingType = theShadingType;    // 5
-        this.colorSpace = theColorSpace;
-        this.background = theBackground;
-        this.bBox = theBBox;
-        this.antiAlias = theAntiAlias;
-
-        this.bitsPerCoordinate = theBitsPerCoordinate;
-        this.bitsPerComponent = theBitsPerComponent;
-        this.decode = theDecode;
-        this.verticesPerRow = theVerticesPerRow;
-        this.function = theFunction;
-
+    public PDFShading(int shadingType, PDFDeviceColorSpace colorSpace,
+            List coords, PDFFunction pdfFunction) {
+        shading = new Shading(shadingType, colorSpace, coords, pdfFunction.getFunction());
+        this.pdfFunction = pdfFunction;
     }
 
     /**
@@ -340,8 +97,21 @@ public class PDFShading extends PDFObject implements Shading {
      * @return the PDF string.
      */
     public String toPDFString() {
-        ShadingPattern pattern = new ShadingPattern(this);
-        return pattern.toString(colorSpace, shadingType, background, bBox, antiAlias);
+        Shading.FunctionRenderer functionRenderer = new Shading.FunctionRenderer() {
+
+            public void outputFunction(StringBuilder out) {
+                out.append(pdfFunction.referencePDF());
+            }
+        };
+        StringBuilder out = new StringBuilder();
+        GradientMaker.DoubleFormatter doubleFormatter = new DoubleFormatter() {
+
+            public String formatDouble(double d) {
+                return PDFNumber.doubleOut(d);
+            }
+        };
+        shading.output(out, doubleFormatter, functionRenderer);
+        return out.toString();
     }
 
     /** {@inheritDoc} */
@@ -355,257 +125,54 @@ public class PDFShading extends PDFObject implements Shading {
         if (!(obj instanceof PDFShading)) {
             return false;
         }
-        PDFShading shad = (PDFShading)obj;
-        if (shadingType != shad.shadingType) {
+        Shading other = ((PDFShading) obj).shading;
+        if (shading.getShadingType() != other.getShadingType()) {
             return false;
         }
-        if (antiAlias != shad.antiAlias) {
+        if (shading.isAntiAlias() != other.isAntiAlias()) {
             return false;
         }
-        if (bitsPerCoordinate != shad.bitsPerCoordinate) {
+        if (shading.getBitsPerCoordinate() != other.getBitsPerCoordinate()) {
             return false;
         }
-        if (bitsPerFlag != shad.bitsPerFlag) {
+        if (shading.getBitsPerFlag() != other.getBitsPerFlag()) {
             return false;
         }
-        if (bitsPerComponent != shad.bitsPerComponent) {
+        if (shading.getBitsPerComponent() != other.getBitsPerComponent()) {
             return false;
         }
-        if (verticesPerRow != shad.verticesPerRow) {
+        if (shading.getVerticesPerRow() != other.getVerticesPerRow()) {
             return false;
         }
-        if (colorSpace != null) {
-            if (!colorSpace.equals(shad.colorSpace)) {
+        if (shading.getColorSpace() != null) {
+            if (!shading.getColorSpace().equals(other.getColorSpace())) {
                 return false;
             }
-        } else if (shad.colorSpace != null) {
+        } else if (other.getColorSpace() != null) {
             return false;
         }
-        if (background != null) {
-            if (!background.equals(shad.background)) {
+        if (shading.getCoords() != null) {
+            if (!shading.getCoords().equals(other.getCoords())) {
                 return false;
             }
-        } else if (shad.background != null) {
+        } else if (other.getCoords() != null) {
             return false;
         }
-        if (bBox != null) {
-            if (!bBox.equals(shad.bBox)) {
+        if (shading.getExtend() != null) {
+            if (!shading.getExtend().equals(other.getExtend())) {
                 return false;
             }
-        } else if (shad.bBox != null) {
+        } else if (other.getExtend() != null) {
             return false;
         }
-        if (domain != null) {
-            if (!domain.equals(shad.domain)) {
+        if (shading.getFunction() != null) {
+            if (!shading.getFunction().equals(other.getFunction())) {
                 return false;
             }
-        } else if (shad.domain != null) {
-            return false;
-        }
-        if (matrix != null) {
-            if (!matrix.equals(shad.matrix)) {
-                return false;
-            }
-        } else if (shad.matrix != null) {
-            return false;
-        }
-        if (coords != null) {
-            if (!coords.equals(shad.coords)) {
-                return false;
-            }
-        } else if (shad.coords != null) {
-            return false;
-        }
-        if (extend != null) {
-            if (!extend.equals(shad.extend)) {
-                return false;
-            }
-        } else if (shad.extend != null) {
-            return false;
-        }
-        if (decode != null) {
-            if (!decode.equals(shad.decode)) {
-                return false;
-            }
-        } else if (shad.decode != null) {
-            return false;
-        }
-        if (function != null) {
-            if (!function.equals(shad.function)) {
-                return false;
-            }
-        } else if (shad.function != null) {
+        } else if (other.getFunction() != null) {
             return false;
         }
         return true;
     }
 
-    /**
-     * A method to write a type 1 shading object
-     * @param p The StringBuffer to write the shading object
-     * @return Returns the StringBuffer to which the shading object was written
-     */
-    public StringBuffer handleShadingType1(StringBuffer p) {
-        if (this.domain != null) {
-            p.append("/Domain [ ");
-            for (int domainIndex = 0; domainIndex < domain.size(); domainIndex++) {
-                p.append(PDFNumber.doubleOut((Double)this.domain.get(domainIndex))
-                         + " ");
-            }
-            p.append("] \n");
-        } else {
-            p.append("/Domain [ 0 1 ] \n");
-        }
-
-        if (this.matrix != null) {
-            p.append("/Matrix [ ");
-            for (int matrixIndex = 0; matrixIndex < matrix.size(); matrixIndex++) {
-                p.append(PDFNumber.doubleOut((Double)this.matrix.get(matrixIndex))
-                         + " ");
-            }
-            p.append("] \n");
-        }
-
-        if (this.function != null) {
-            p.append("/Function ");
-            p.append(this.function.referencePDF() + " \n");
-        }
-        return p;
-    }
-
-    /**
-     * A method to write a type 2 or 3 shading object
-     * @param p The StringBuffer to write the shading object
-     * @return Returns the StringBuffer to which the shading object was written
-     */
-    public StringBuffer handleShadingType2or3(StringBuffer p) {
-        // 3 is radial shading (circular gradient)
-        if (this.coords != null) {
-            p.append("/Coords [ ");
-            for (int coordIndex = 0; coordIndex < coords.size(); coordIndex++) {
-                p.append(PDFNumber.doubleOut((Double)this.coords.get(coordIndex))
-                         + " ");
-            }
-            p.append("] \n");
-        }
-
-        // DOMAIN
-        if (this.domain != null) {
-            p.append("/Domain [ ");
-            for (int domainIndex = 0; domainIndex < domain.size(); domainIndex++) {
-                p.append(PDFNumber.doubleOut((Double)this.domain.get(domainIndex))
-                         + " ");
-            }
-            p.append("] \n");
-        } else {
-            p.append("/Domain [ 0 1 ] \n");
-        }
-
-        if (this.extend != null) {
-            p.append("/Extend [ ");
-            for (int extendIndex = 0; extendIndex < extend.size(); extendIndex++) {
-                p.append((this.extend.get(extendIndex)) + " ");
-            }
-
-            p.append("] \n");
-        } else {
-            p.append("/Extend [ true true ] \n");
-        }
-
-
-        if (this.function != null) {
-            p.append("/Function ");
-            p.append(this.function.referencePDF() + " \n");
-        }
-
-        return p;
-    }
-
-    /**
-     * A method to write a type 4, 6 or 7 shading object
-     * @param p The StringBuffer to write the shading object
-     * @return Returns the StringBuffer to which the shading object was written
-     */
-    public StringBuffer handleShadingType4or6or7(StringBuffer p) {
-        // 6:coons patch meshes
-        // 7://tensor product patch meshes (which no one ever uses)
-        if (this.bitsPerCoordinate > 0) {
-            p.append("/BitsPerCoordinate " + this.bitsPerCoordinate
-                     + " \n");
-        } else {
-            p.append("/BitsPerCoordinate 1 \n");
-        }
-
-        if (this.bitsPerComponent > 0) {
-            p.append("/BitsPerComponent " + this.bitsPerComponent
-                     + " \n");
-        } else {
-            p.append("/BitsPerComponent 1 \n");
-        }
-
-        if (this.bitsPerFlag > 0) {
-            p.append("/BitsPerFlag " + this.bitsPerFlag + " \n");
-        } else {
-            p.append("/BitsPerFlag 2 \n");
-        }
-
-        if (this.decode != null) {
-            p.append("/Decode [ ");
-            for (int decodeIndex = 0; decodeIndex < decode.size(); decodeIndex++) {
-                p.append((this.decode.get(decodeIndex)) + " ");
-            }
-
-            p.append("] \n");
-        }
-
-        if (this.function != null) {
-            p.append("/Function ");
-            p.append(this.function.referencePDF() + " \n");
-        }
-
-        return p;
-    }
-
-    /**
-     * A method to write a type 5 shading object
-     * @param p The StringBuffer to write the shading object
-     * @return Returns the StringBuffer to which the shading object was written
-     */
-    public StringBuffer handleShadingType5(StringBuffer p) {
-        if (this.bitsPerCoordinate > 0) {
-            p.append("/BitsPerCoordinate " + this.bitsPerCoordinate
-                     + " \n");
-        } else {
-            p.append("/BitsPerCoordinate 1 \n");
-        }
-
-        if (this.bitsPerComponent > 0) {
-            p.append("/BitsPerComponent " + this.bitsPerComponent
-                     + " \n");
-        } else {
-            p.append("/BitsPerComponent 1 \n");
-        }
-
-        if (this.decode != null) {
-            p.append("/Decode [ ");
-            for (int decodeIndex = 0; decodeIndex < decode.size(); decodeIndex++) {
-                p.append((this.decode.get(decodeIndex)) + " ");
-            }
-
-            p.append("] \n");
-        }
-
-        if (this.function != null) {
-            p.append("/Function ");
-            p.append(this.function.referencePDF() + " \n");
-        }
-
-        if (this.verticesPerRow > 0) {
-            p.append("/VerticesPerRow " + this.verticesPerRow + " \n");
-        } else {
-            p.append("/VerticesPerRow 2 \n");
-        }
-
-        return p;
-    }
 }
