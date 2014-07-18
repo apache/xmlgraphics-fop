@@ -17,6 +17,7 @@
 
 package org.apache.fop.render.gradient;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -171,15 +172,10 @@ public class Function {
      */
     public Function(int functionType, List<Double> domain, List<Double> range,
                        float[] cZero, float[] cOne, double interpolationExponentN) {
-        this.functionType = 2;    // dang well better be 2;
-
+        this(2, domain, range);
         this.cZero = cZero;
         this.cOne = cOne;
         this.interpolationExponentN = interpolationExponentN;
-
-        this.domain = domain;
-        this.range = range;
-
     }
 
     /**
@@ -219,14 +215,16 @@ public class Function {
     public Function(int functionType, List<Double> domain, List<Double> range,
                        List<Function> functions, List<Double> bounds,
                        List<Double> encode) {
-        this.functionType = 3;    // dang well better be 3;
-
+        this(3, domain, range);
         this.functions = functions;
         this.bounds = bounds;
         this.encode = encode;
-        this.domain = domain;
-        this.range = range;
+    }
 
+    private Function(int functionType, List<Double> domain, List<Double> range) {
+        this.functionType = functionType;
+        this.domain = (domain == null) ? Arrays.asList(0.0, 1.0) : domain;
+        this.range = range;
     }
 
     /**
@@ -406,13 +404,9 @@ public class Function {
     }
 
     private void outputDomain(StringBuilder p, DoubleFormatter doubleFormatter) {
-        if (domain != null) {
-            p.append("/Domain ");
-            GradientMaker.outputDoubles(p, doubleFormatter, domain);
-            p.append("\n");
-        } else {
-            p.append("/Domain [ 0 1 ]\n");
-        }
+        p.append("/Domain ");
+        GradientMaker.outputDoubles(p, doubleFormatter, domain);
+        p.append("\n");
     }
 
     private void outputSize(StringBuilder out, DoubleFormatter doubleFormatter) {

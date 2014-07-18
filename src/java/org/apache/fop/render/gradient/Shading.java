@@ -17,6 +17,7 @@
 
 package org.apache.fop.render.gradient;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.fop.pdf.PDFDeviceColorSpace;
@@ -141,9 +142,9 @@ public class Shading {
         this.bbox = null;
         this.antiAlias = false;
         this.coords = coords;
-        this.domain = null;
+        this.domain = Arrays.asList(0.0, 1.0);
         this.function = function;
-        this.extend = null;
+        this.extend = Arrays.asList(true, true);
         this.matrix = null;
         this.decode = null;
         this.bitsPerCoordinate = 0;
@@ -257,13 +258,9 @@ public class Shading {
 
     private void outputShadingType1(StringBuilder out, DoubleFormatter doubleFormatter,
             Shading.FunctionRenderer functionRenderer) {
-        if (domain != null) {
-            out.append("/Domain ");
-            GradientMaker.outputDoubles(out, doubleFormatter, domain);
-            out.append("\n");
-        } else {
-            out.append("/Domain [ 0 1 ] \n");
-        }
+        out.append("/Domain ");
+        GradientMaker.outputDoubles(out, doubleFormatter, domain);
+        out.append("\n");
 
         if (matrix != null) {
             out.append("/Matrix ");
@@ -281,24 +278,16 @@ public class Shading {
             out.append("\n");
         }
 
-        if (domain != null) {
-            out.append("/Domain ");
-            GradientMaker.outputDoubles(out, doubleFormatter, domain);
-            out.append("\n");
-        } else {
-            out.append("/Domain [ 0 1 ] \n");
-        }
+        out.append("/Domain ");
+        GradientMaker.outputDoubles(out, doubleFormatter, domain);
+        out.append("\n");
 
-        if (extend != null) {
-            out.append("/Extend [");
-            for (Boolean b : extend) {
-                out.append(b);
-                out.append(" ");
-            }
-            out.append("\n");
-        } else {
-            out.append("/Extend [ true true ] \n");
+        out.append("/Extend [ ");
+        for (Boolean b : extend) {
+            out.append(b);
+            out.append(" ");
         }
+        out.append("]\n");
 
         outputFunction(out, functionRenderer);
     }
