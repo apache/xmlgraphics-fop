@@ -87,8 +87,10 @@ public class VersionControllerTestCase {
                     .getFixedVersionController(originalVersion);
             try {
                 fixedVC.setPDFVersion(setVersion);
-                fail("The FixedVersionController should throw an exception if an attempt to change "
+                if (setVersion.compareTo(originalVersion) != 0) {
+                    fail("The FixedVersionController should throw an exception if an attempt to change "
                         + "the version is made");
+                }
             } catch (IllegalStateException e) {
                 // PASS
             }
