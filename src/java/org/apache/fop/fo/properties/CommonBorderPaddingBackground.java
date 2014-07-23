@@ -38,6 +38,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * Stores all common border and padding properties.
@@ -823,10 +824,10 @@ public class CommonBorderPaddingBackground {
         if (obj instanceof CommonBorderPaddingBackground) {
             CommonBorderPaddingBackground cbpb = (CommonBorderPaddingBackground)obj;
             return (this.backgroundAttachment == cbpb.backgroundAttachment
-                    && this.backgroundColor == cbpb.backgroundColor
-                    && this.backgroundImage.equals(cbpb.backgroundImage)
-                    && this.backgroundPositionHorizontal == cbpb.backgroundPositionHorizontal
-                    && this.backgroundPositionVertical == cbpb.backgroundPositionVertical
+                    && CompareUtil.equal(backgroundColor, cbpb.backgroundColor)
+                    && CompareUtil.equal(backgroundImage, cbpb.backgroundImage)
+                    && CompareUtil.equal(backgroundPositionHorizontal, backgroundPositionHorizontal)
+                    && CompareUtil.equal(backgroundPositionVertical, cbpb.backgroundPositionVertical)
                     && this.backgroundRepeat == cbpb.backgroundRepeat
                     && Arrays.equals(borderInfo, cbpb.borderInfo)
                     && Arrays.equals(padding, cbpb.padding));
