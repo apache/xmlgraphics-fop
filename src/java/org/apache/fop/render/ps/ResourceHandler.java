@@ -150,6 +150,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
             int pageCount, Rectangle2D documentBoundingBox)
                     throws DSCException, IOException {
         DSCParser parser = new DSCParser(in);
+        parser.setCheckEOF(false);
 
         PSGenerator gen = new PSGenerator(out);
         parser.addListener(new DefaultNestedDocumentHandler(gen));

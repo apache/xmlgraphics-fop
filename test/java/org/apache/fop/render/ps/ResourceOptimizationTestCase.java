@@ -83,6 +83,7 @@ public class ResourceOptimizationTestCase extends AbstractPostScriptTest {
         in = new java.io.BufferedInputStream(in);
         try {
             DSCParser parser = new DSCParser(in);
+            parser.setCheckEOF(false);
 
             //The first form is for arrow_down_small.png (to be reused)
             PSResource form1 = new PSResource(PSResource.TYPE_FORM, "FOPForm:1");
