@@ -1300,8 +1300,6 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("after", getEnumProperty(EN_AFTER, "AFTER"));
         m.addEnum("center", getEnumProperty(EN_CENTER, "CENTER"));
         m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
-/*LF*/  m.addEnum("distribute", getEnumProperty(EN_X_DISTRIBUTE, "DISTRIBUTE"));
-/*LF*/  m.addEnum("fill", getEnumProperty(EN_X_FILL, "FILL"));
         m.setDefault("auto");
         addPropertyMaker("display-align", m);
 
@@ -1496,12 +1494,6 @@ public final class FOPropertyMapping implements Constants {
         l.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         l.setDefault("auto");
         addPropertyMaker("width", l);
-
-        // fox:block-progression-unit (**CUSTOM EXTENSION**)
-        l  = new LengthProperty.Maker(PR_X_BLOCK_PROGRESSION_UNIT);
-        l.setInherited(false);
-        l.setDefault("0pt");
-        addPropertyMaker("fox:block-progression-unit", l);
     }
 
     private Property calcWritingModeDependent(int pv, int wm) {
