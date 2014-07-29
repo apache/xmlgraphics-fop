@@ -760,74 +760,72 @@ public interface Constants {
     int PR_XML_LANG = 268;
     /** Property constant */
     int PR_Z_INDEX = 269;
-    /** Property constant - FOP proprietary: Custom extension for line alignment */
-    int PR_X_BLOCK_PROGRESSION_UNIT = 270;
     /** Property constant - FOP proprietary: limit for widow content in lists and tables */
-    int PR_X_WIDOW_CONTENT_LIMIT = 271;
+    int PR_X_WIDOW_CONTENT_LIMIT = 270;
     /** Property constant - FOP proprietary: limit for orphan content in lists and tables */
-    int PR_X_ORPHAN_CONTENT_LIMIT = 272;
+    int PR_X_ORPHAN_CONTENT_LIMIT = 271;
     /**
      * Property constant - FOP proprietary: disable balancing of columns in
      * multi-column layouts.
      */
-    int PR_X_DISABLE_COLUMN_BALANCING = 273;
+    int PR_X_DISABLE_COLUMN_BALANCING = 272;
     /**
      * Property constant - FOP proprietary: alternative text for e-g and i-f-o.
      * Used for accessibility.
      */
-    int PR_X_ALT_TEXT = 274;
+    int PR_X_ALT_TEXT = 273;
     /** Property constant - FOP proprietary prototype (in XSL-FO 2.0 Requirements) */
-    int PR_X_XML_BASE = 275;
+    int PR_X_XML_BASE = 274;
 
     /** Property constant FOP proprietary*/
-    int PR_X_BORDER_BEFORE_RADIUS_START = 276;
+    int PR_X_BORDER_BEFORE_RADIUS_START = 275;
     /** Property constant FOP proprietary*/
-    int PR_X_BORDER_BEFORE_RADIUS_END = 277;
+    int PR_X_BORDER_BEFORE_RADIUS_END = 276;
     /** Property constant FOP proprietary*/
-    int PR_X_BORDER_AFTER_RADIUS_START = 278;
+    int PR_X_BORDER_AFTER_RADIUS_START = 277;
     /** Property constant FOP proprietary*/
-    int PR_X_BORDER_AFTER_RADIUS_END = 279;
+    int PR_X_BORDER_AFTER_RADIUS_END = 278;
     /** Property constant FOP proprietary*/
-    int PR_X_BORDER_START_RADIUS_BEFORE = 280;
+    int PR_X_BORDER_START_RADIUS_BEFORE = 279;
     /** Property constant FOP proprietary*/
-    int PR_X_BORDER_START_RADIUS_AFTER = 281;
+    int PR_X_BORDER_START_RADIUS_AFTER = 280;
     /** Property constant FOP proprietary*/
-    int PR_X_BORDER_END_RADIUS_BEFORE = 282;
+    int PR_X_BORDER_END_RADIUS_BEFORE = 281;
     /** Property constant FOP proprietary*/
-    int PR_X_BORDER_END_RADIUS_AFTER = 283;
+    int PR_X_BORDER_END_RADIUS_AFTER = 282;
     /** Property constant FOP proprietary*/
-    int PR_X_BORDER_RADIUS = 284;
+    int PR_X_BORDER_RADIUS = 283;
     /** Property constant FOP proprietary*/
-    int PR_X_BORDER_BEFORE_START_RADIUS = 285;
+    int PR_X_BORDER_BEFORE_START_RADIUS = 284;
     /** Property constant FOP proprietary*/
-    int PR_X_BORDER_BEFORE_END_RADIUS = 286;
+    int PR_X_BORDER_BEFORE_END_RADIUS = 285;
     /** Property constant FOP proprietary*/
-    int PR_X_BORDER_AFTER_START_RADIUS = 287;
+    int PR_X_BORDER_AFTER_START_RADIUS = 286;
     /** Property constant FOP proprietary*/
-    int PR_X_BORDER_AFTER_END_RADIUS = 288;
+    int PR_X_BORDER_AFTER_END_RADIUS = 287;
 
     /**
      * Property constant - FOP proprietary extension (see NumberConverter) used
      * to perform additional control over number conversion when generating page
      * numbers.
      */
-    int PR_X_NUMBER_CONVERSION_FEATURES = 289;
+    int PR_X_NUMBER_CONVERSION_FEATURES = 288;
 
     /** Scope for table header */
-    int PR_X_HEADER_COLUMN = 290;
+    int PR_X_HEADER_COLUMN = 289;
 
     /** For specifying PDF optional content group (layer) binding. */
-    int PR_X_LAYER = 291;
+    int PR_X_LAYER = 290;
 
     /** Property constant */
-    int PR_X_AUTO_TOGGLE = 292;
+    int PR_X_AUTO_TOGGLE = 291;
 
     /** Used for scaling of background images */
-    int PR_X_BACKGROUND_IMAGE_WIDTH = 293;
-    int PR_X_BACKGROUND_IMAGE_HEIGHT = 294;
+    int PR_X_BACKGROUND_IMAGE_WIDTH = 292;
+    int PR_X_BACKGROUND_IMAGE_HEIGHT = 293;
 
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 294;
+    int PROPERTY_COUNT = 293;
 
     // compound property constants
 
@@ -1177,98 +1175,94 @@ public interface Constants {
     int EN_WIDER = 160;
     /** Enumeration constant */
     int EN_WRAP = 161;
-    /** Enumeration constant - non-standard for display-align */
-    int EN_X_FILL = 162;
-    /** Enumeration constant - non-standard for display-align */
-    int EN_X_DISTRIBUTE = 163;
     /** Enumeration constant */
-    int EN_ITALIC = 164;
+    int EN_ITALIC = 162;
     /** Enumeration constant */
-    int EN_OBLIQUE = 165;
+    int EN_OBLIQUE = 163;
     /** Enumeration constant */
-    int EN_BACKSLANT = 166;
+    int EN_BACKSLANT = 164;
     /** Enumeration constant */
-    int EN_BOLDER = 167;
+    int EN_BOLDER = 165;
     /** Enumeration constant */
-    int EN_LIGHTER = 168;
+    int EN_LIGHTER = 166;
     /** Enumeration constant */
-    int EN_100 = 169;
+    int EN_100 = 167;
     /** Enumeration constant */
-    int EN_200 = 170;
+    int EN_200 = 168;
     /** Enumeration constant */
-    int EN_300 = 171;
+    int EN_300 = 169;
     /** Enumeration constant */
-    int EN_400 = 172;
+    int EN_400 = 170;
     /** Enumeration constant */
-    int EN_500 = 173;
+    int EN_500 = 171;
     /** Enumeration constant */
-    int EN_600 = 174;
+    int EN_600 = 172;
     /** Enumeration constant */
-    int EN_700 = 175;
+    int EN_700 = 173;
     /** Enumeration constant */
-    int EN_800 = 176;
+    int EN_800 = 174;
     /** Enumeration constant */
-    int EN_900 = 177;
+    int EN_900 = 175;
     /** Enumeration constant -- page-break-shorthand */
-    int EN_AVOID = 178;
+    int EN_AVOID = 176;
     /** Enumeration constant -- white-space shorthand */
-    int EN_PRE = 179;
+    int EN_PRE = 177;
     /** Enumeration constant -- font shorthand */
-    int EN_CAPTION = 180;
+    int EN_CAPTION = 178;
     /** Enumeration constant -- font shorthand */
-    int EN_ICON = 181;
+    int EN_ICON = 179;
     /** Enumeration constant -- font shorthand */
-    int EN_MENU = 182;
+    int EN_MENU = 180;
     /** Enumeration constant -- font shorthand */
-    int EN_MESSAGE_BOX = 183;
+    int EN_MESSAGE_BOX = 181;
     /** Enumeration constant -- font shorthand */
-    int EN_SMALL_CAPTION = 184;
+    int EN_SMALL_CAPTION = 182;
     /** Enumeration constant -- font shorthand */
-    int EN_STATUS_BAR = 185;
+    int EN_STATUS_BAR = 183;
     /** Enumeration constant -- for page-position, XSL 1.1 */
-    int EN_ONLY = 186;
+    int EN_ONLY = 184;
     /** Enumeration constant -- for instream-foreign-object and external-graphic, XSL 1.1 */
-    int EN_SCALE_DOWN_TO_FIT = 187;
+    int EN_SCALE_DOWN_TO_FIT = 185;
     /** Enumeration constant -- for instream-foreign-object and external-graphic, XSL 1.1 */
-    int EN_SCALE_UP_TO_FIT = 188;
+    int EN_SCALE_UP_TO_FIT = 186;
     /** Enumeration constant -- for fo:basic-link show-destination */
-    int EN_REPLACE = 189;
+    int EN_REPLACE = 187;
     /** Enumeration constant -- for fo:basic-link show-destination */
-    int EN_NEW = 190;
+    int EN_NEW = 188;
     /** Enumeration constant -- for fo:retrieve-table-marker */
-    int EN_FIRST_STARTING = 191;
+    int EN_FIRST_STARTING = 189;
     /** Enumeration constant -- for fo:retrieve-table-marker */
-    int EN_LAST_STARTING = 192;
+    int EN_LAST_STARTING = 190;
     /** Enumeration constant -- for fo:retrieve-table-marker */
-    int EN_LAST_ENDING = 193;
+    int EN_LAST_ENDING = 191;
     /** Enumeration constant -- for fo:retrieve-table-marker */
-    int EN_TABLE = 194;
+    int EN_TABLE = 192;
     /** Enumeration constant -- for fo:retrieve-table-marker */
-    int EN_TABLE_FRAGMENT = 195;
+    int EN_TABLE_FRAGMENT = 193;
     /** Enumeration constant -- XSL 1.1 */
-    int EN_MERGE = 196;
+    int EN_MERGE = 194;
     /** Enumeration constant -- XSL 1.1 */
-    int EN_LEAVE_SEPARATE = 197;
+    int EN_LEAVE_SEPARATE = 195;
     /** Enumeration constant -- XSL 1.1 */
-    int EN_LINK = 198;
+    int EN_LINK = 196;
     /** Enumeration constant -- XSL 1.1 */
-    int EN_NO_LINK = 199;
+    int EN_NO_LINK = 197;
     /** Enumeration constant -- XSL 1.1 */
-    int EN_ALTERNATE = 200;
+    int EN_ALTERNATE = 198;
     /** Enumeration constant -- for *-direction traits */
-    int EN_LR = 201; // left to right
+    int EN_LR = 199; // left to right
     /** Enumeration constant -- for *-direction traits */
-    int EN_RL = 202; // right to left
+    int EN_RL = 200; // right to left
     /** Enumeration constant -- for *-direction traits */
-    int EN_TB = 203; // top to bottom
+    int EN_TB = 201; // top to bottom
     /** Enumeration constant -- for *-direction traits */
-    int EN_BT = 204; // bottom to top
+    int EN_BT = 202; // bottom to top
     /** Enumeration constant */
-    int EN_TB_LR = 205; // for top-to-bottom, left-to-right writing mode
+    int EN_TB_LR = 203; // for top-to-bottom, left-to-right writing mode
     /** Enumeration constant -- for fo:retrieve-table-marker */
-    int EN_FIRST_INCLUDING_CARRYOVER = 206;
+    int EN_FIRST_INCLUDING_CARRYOVER = 204;
     /** Enumeration constant -- for auto-toggle */
-    int EN_SELECT_FIRST_FITTING = 207;
+    int EN_SELECT_FIRST_FITTING = 205;
     /** Number of enumeration constants defined */
-    int ENUM_COUNT = 207;
+    int ENUM_COUNT = 205;
 }

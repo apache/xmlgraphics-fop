@@ -161,18 +161,12 @@ public abstract class AbstractBreaker {
             if (this.size() > ignoreAtStart) {
                 // add the elements representing the space at the end of the last line
                 // and the forced break
-                if (getDisplayAlign() == Constants.EN_X_DISTRIBUTE && isSinglePartFavored()) {
-                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
-                                false, breakPosition, false));
-                    ignoreAtEnd = 1;
-                } else {
-                    this.add(new KnuthPenalty(0, KnuthElement.INFINITE,
-                                false, null, false));
-                    this.add(new KnuthGlue(0, 10000000, 0, null, false));
-                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
-                                false, breakPosition, false));
-                    ignoreAtEnd = 3;
-                }
+                this.add(new KnuthPenalty(0, KnuthElement.INFINITE,
+                        false, null, false));
+                this.add(new KnuthGlue(0, 10000000, 0, null, false));
+                this.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
+                        false, breakPosition, false));
+                ignoreAtEnd = 3;
                 return this;
             } else {
                 this.clear();
@@ -359,20 +353,8 @@ public abstract class AbstractBreaker {
     public void doLayout(int flowBPD, boolean autoHeight) {
         LayoutContext childLC = createLayoutContext();
         childLC.setStackLimitBP(MinOptMax.getInstance(flowBPD));
-
-        if (getCurrentDisplayAlign() == Constants.EN_X_FILL) {
-            //EN_X_FILL is non-standard (by LF)
-            alignment = Constants.EN_JUSTIFY;
-        } else if (getCurrentDisplayAlign() == Constants.EN_X_DISTRIBUTE) {
-            //EN_X_DISTRIBUTE is non-standard (by LF)
-            alignment = Constants.EN_JUSTIFY;
-        } else {
-            alignment = Constants.EN_START;
-        }
+        alignment = Constants.EN_START;
         alignmentLast = Constants.EN_START;
-        if (isSinglePartFavored() && alignment == Constants.EN_JUSTIFY) {
-            alignmentLast = Constants.EN_JUSTIFY;
-        }
         childLC.setBPAlignment(alignment);
 
         BlockSequence blockList;
@@ -409,32 +391,23 @@ public abstract class AbstractBreaker {
                          alignment, alignmentLast, footnoteSeparatorLength,
                          isPartOverflowRecoveryActivated(), autoHeight, isSinglePartFavored());
 
-                BlockSequence effectiveList;
-                if (getCurrentDisplayAlign() == Constants.EN_X_FILL) {
-                    /* justification */
-                    effectiveList = justifyBoxes(blockList, alg, flowBPD);
-                } else {
-                    /* no justification */
-                    effectiveList = blockList;
-                }
-
                 alg.setConstantLineWidth(flowBPD);
-                int optimalPageCount = alg.findBreakingPoints(effectiveList, 1, true,
+                int optimalPageCount = alg.findBreakingPoints(blockList, 1, true,
                         BreakingAlgorithm.ALL_BREAKS);
                 if (Math.abs(alg.getIPDdifference()) > 1) {
-                    addAreas(alg, optimalPageCount, blockList, effectiveList);
+                    addAreas(alg, optimalPageCount, blockList, blockList);
                     // *** redo Phase 1 ***
                     log.trace("IPD changes after page " + optimalPageCount);
                     blockLists.clear();
                     nextSequenceStartsOn = getNextBlockListChangedIPD(childLC, alg,
-                                                                      effectiveList);
+                                                                      blockList);
                     blockListIndex = -1;
                 } else {
                     log.debug("PLM> optimalPageCount= " + optimalPageCount
                             + " pageBreaks.size()= " + alg.getPageBreaks().size());
 
                     //*** Phase 3: Add areas ***
-                    doPhase3(alg, optimalPageCount, blockList, effectiveList);
+                    doPhase3(alg, optimalPageCount, blockList, blockList);
                 }
             }
         }
@@ -580,34 +553,7 @@ public abstract class AbstractBreaker {
                     childLC.setSpaceBefore(pbp.difference / 2);
                 } else if (pbp.difference != 0 && displayAlign == Constants.EN_AFTER) {
                     childLC.setSpaceBefore(pbp.difference);
-                } else if (pbp.difference != 0 && displayAlign == Constants.EN_X_DISTRIBUTE
-                        && p < (partCount - 1)) {
-                    // count the boxes whose width is not 0
-                    int boxCount = 0;
-                    @SuppressWarnings("unchecked")
-                    ListIterator<KnuthElement> effectiveListIterator = effectiveList
-                            .listIterator(startElementIndex);
-                    while (effectiveListIterator.nextIndex() <= endElementIndex) {
-                        KnuthElement tempEl = effectiveListIterator.next();
-                        if (tempEl.isBox() && tempEl.getWidth() > 0) {
-                            boxCount++;
-                        }
-                    }
-                    // split the difference
-                    if (boxCount >= 2) {
-                        childLC.setSpaceAfter(pbp.difference / (boxCount - 1));
-                    }
                 }
-
-                /* *** *** non-standard extension *** *** */
-                if (displayAlign == Constants.EN_X_FILL) {
-                    int averageLineLength = optimizeLineLength(effectiveList,
-                            startElementIndex, endElementIndex);
-                    if (averageLineLength != 0) {
-                        childLC.setStackLimitBP(MinOptMax.getInstance(averageLineLength));
-                    }
-                }
-                /* *** *** non-standard extension *** *** */
 
                 // Handle SpaceHandling(Break)Positions, see SpaceResolver!
                 SpaceResolver.performConditionalsNotification(effectiveList,
@@ -823,274 +769,6 @@ public abstract class AbstractBreaker {
         nextSequenceStartsOn = getNextBlockList(childLC, Constants.EN_COLUMN,
                 positionAtBreak, restartAtLM, firstElements);
         return nextSequenceStartsOn;
-    }
-
-    /**
-     * Returns the average width of all the lines in the given range.
-     * @param effectiveList effective block list to work on
-     * @param startElementIndex index of the element starting the range
-     * @param endElementIndex   index of the element ending the range
-     * @return the average line length, 0 if there's no content
-     */
-    private int optimizeLineLength(KnuthSequence effectiveList, int startElementIndex,
-            int endElementIndex) {
-        ListIterator<KnuthElement> effectiveListIterator;
-        // optimize line length
-        int boxCount = 0;
-        int accumulatedLineLength = 0;
-        int greatestMinimumLength = 0;
-        effectiveListIterator = effectiveList.listIterator(startElementIndex);
-        while (effectiveListIterator.nextIndex() <= endElementIndex) {
-            KnuthElement tempEl = effectiveListIterator
-                    .next();
-            if (tempEl instanceof KnuthBlockBox) {
-                KnuthBlockBox blockBox = (KnuthBlockBox) tempEl;
-                if (blockBox.getBPD() > 0) {
-                    log.debug("PSLM> nominal length of line = " + blockBox.getBPD());
-                    log.debug("      range = "
-                            + blockBox.getIPDRange());
-                    boxCount++;
-                    accumulatedLineLength += ((KnuthBlockBox) tempEl)
-                            .getBPD();
-                }
-                if (blockBox.getIPDRange().getMin() > greatestMinimumLength) {
-                    greatestMinimumLength = blockBox
-                            .getIPDRange().getMin();
-                }
-            }
-        }
-        int averageLineLength = 0;
-        if (accumulatedLineLength > 0 && boxCount > 0) {
-            averageLineLength = accumulatedLineLength / boxCount;
-            log.debug("Average line length = " + averageLineLength);
-            if (averageLineLength < greatestMinimumLength) {
-                averageLineLength = greatestMinimumLength;
-                log.debug("  Correction to: " + averageLineLength);
-            }
-        }
-        return averageLineLength;
-    }
-
-    /**
-     * Justifies the boxes and returns them as a new KnuthSequence.
-     * @param blockList block list to justify
-     * @param alg reference to the algorithm instance
-     * @param availableBPD the available BPD
-     * @return the effective list
-     */
-    private BlockSequence justifyBoxes(
-        BlockSequence blockList, PageBreakingAlgorithm alg, int availableBPD) {
-        int optimalPageCount;
-        alg.setConstantLineWidth(availableBPD);
-        optimalPageCount = alg.findBreakingPoints(blockList, /*availableBPD,*/
-                1, true, BreakingAlgorithm.ALL_BREAKS);
-        log.debug("PLM> optimalPageCount= " + optimalPageCount);
-
-        //
-        ListIterator<KnuthElement> sequenceIterator = blockList.listIterator();
-        ListIterator<PageBreakPosition> breakIterator = alg.getPageBreaks().listIterator();
-        KnuthElement thisElement = null;
-        PageBreakPosition thisBreak;
-        int adjustedDiff; // difference already adjusted
-
-        while (breakIterator.hasNext()) {
-            thisBreak = breakIterator.next();
-            if (log.isDebugEnabled()) {
-                log.debug("| first page: break= "
-                        + thisBreak.getLeafPos() + " difference= "
-                        + thisBreak.difference + " ratio= "
-                        + thisBreak.bpdAdjust);
-            }
-            adjustedDiff = 0;
-
-            // glue and penalty items at the beginning of the page must
-            // be ignored:
-            // the first element returned by sequenceIterator.next()
-            // inside the
-            // while loop must be a box
-            KnuthElement firstElement;
-            while (sequenceIterator.hasNext()) {
-                firstElement = sequenceIterator.next();
-                if (!firstElement.isBox()) {
-                    log.debug("PLM> ignoring glue or penalty element "
-                              + "at the beginning of the sequence");
-                    if (firstElement.isGlue()) {
-                        ((BlockLevelLayoutManager) firstElement
-                         .getLayoutManager())
-                            .discardSpace((KnuthGlue) firstElement);
-                    }
-                } else {
-                    break;
-                }
-            }
-            sequenceIterator.previous();
-
-            // scan the sub-sequence representing a page,
-            // collecting information about potential adjustments
-            MinOptMax lineNumberMaxAdjustment = MinOptMax.ZERO;
-            MinOptMax spaceMaxAdjustment = MinOptMax.ZERO;
-            LinkedList<KnuthGlue> blockSpacesList = new LinkedList<KnuthGlue>();
-            LinkedList<KnuthGlue> unconfirmedList = new LinkedList<KnuthGlue>();
-            LinkedList<KnuthGlue> adjustableLinesList = new LinkedList<KnuthGlue>();
-            boolean bBoxSeen = false;
-            while (sequenceIterator.hasNext()
-                    && sequenceIterator.nextIndex() <= thisBreak.getLeafPos()) {
-                thisElement = sequenceIterator.next();
-                if (thisElement.isGlue()) {
-                    // glue elements are used to represent adjustable
-                    // lines
-                    // and adjustable spaces between blocks
-                    KnuthGlue thisGlue = (KnuthGlue) thisElement;
-                    Adjustment adjustment = thisGlue.getAdjustmentClass();
-                    if (adjustment.equals(Adjustment.SPACE_BEFORE_ADJUSTMENT)
-                            || adjustment.equals(Adjustment.SPACE_AFTER_ADJUSTMENT)) {
-                        // potential space adjustment
-                        // glue items before the first box or after the
-                        // last one
-                        // must be ignored
-                        unconfirmedList.add(thisGlue);
-                    } else if (adjustment.equals(Adjustment.LINE_NUMBER_ADJUSTMENT)) {
-                        // potential line number adjustment
-                        lineNumberMaxAdjustment
-                                = lineNumberMaxAdjustment.plusMax(thisElement.getStretch());
-                        lineNumberMaxAdjustment
-                                = lineNumberMaxAdjustment.minusMin(thisElement.getShrink());
-                        adjustableLinesList.add(thisGlue);
-                    } else if (adjustment.equals(Adjustment.LINE_HEIGHT_ADJUSTMENT)) {
-                        // potential line height adjustment
-                    }
-                } else if (thisElement.isBox()) {
-                    if (!bBoxSeen) {
-                        // this is the first box met in this page
-                        bBoxSeen = true;
-                    } else {
-                        while (!unconfirmedList.isEmpty()) {
-                            // glue items in unconfirmedList were not after
-                            // the last box
-                            // in this page; they must be added to
-                            // blockSpaceList
-                            KnuthGlue blockSpace = unconfirmedList.removeFirst();
-                            spaceMaxAdjustment
-                                = spaceMaxAdjustment.plusMax(blockSpace.getStretch());
-                            spaceMaxAdjustment
-                                = spaceMaxAdjustment.minusMin(blockSpace.getShrink());
-                            blockSpacesList.add(blockSpace);
-                        }
-                    }
-                }
-            }
-            log.debug("| line number adj= "
-                    + lineNumberMaxAdjustment);
-            log.debug("| space adj      = "
-                    + spaceMaxAdjustment);
-
-            if (thisElement.isPenalty() && thisElement.getWidth() > 0) {
-                log.debug("  mandatory variation to the number of lines!");
-                ((BlockLevelLayoutManager) thisElement
-                        .getLayoutManager()).negotiateBPDAdjustment(
-                        thisElement.getWidth(), thisElement);
-            }
-
-            if (thisBreak.bpdAdjust != 0
-                    && (thisBreak.difference > 0 && thisBreak.difference <= spaceMaxAdjustment
-                            .getMax())
-                    || (thisBreak.difference < 0 && thisBreak.difference >= spaceMaxAdjustment
-                            .getMin())) {
-                // modify only the spaces between blocks
-                adjustedDiff += adjustBlockSpaces(
-                        blockSpacesList,
-                        thisBreak.difference,
-                        (thisBreak.difference > 0 ? spaceMaxAdjustment.getMax()
-                                : -spaceMaxAdjustment.getMin()));
-                log.debug("single space: "
-                        + (adjustedDiff == thisBreak.difference
-                                || thisBreak.bpdAdjust == 0 ? "ok"
-                                : "ERROR"));
-            } else if (thisBreak.bpdAdjust != 0) {
-                adjustedDiff += adjustLineNumbers(
-                        adjustableLinesList,
-                        thisBreak.difference,
-                        (thisBreak.difference > 0 ? lineNumberMaxAdjustment.getMax()
-                                : -lineNumberMaxAdjustment.getMin()));
-                adjustedDiff += adjustBlockSpaces(
-                        blockSpacesList,
-                        thisBreak.difference - adjustedDiff,
-                        ((thisBreak.difference - adjustedDiff) > 0 ? spaceMaxAdjustment.getMax()
-                                : -spaceMaxAdjustment.getMin()));
-                log.debug("lines and space: "
-                        + (adjustedDiff == thisBreak.difference
-                                || thisBreak.bpdAdjust == 0 ? "ok"
-                                : "ERROR"));
-
-            }
-        }
-
-        // create a new sequence: the new elements will contain the
-        // Positions
-        // which will be used in the addAreas() phase
-        BlockSequence effectiveList = new BlockSequence(blockList.getStartOn(),
-                                                blockList.getDisplayAlign());
-        effectiveList.addAll(getCurrentChildLM().getChangedKnuthElements(
-                blockList.subList(0, blockList.size() - blockList.ignoreAtEnd),
-                /* 0, */0));
-        //effectiveList.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
-        // false, new Position(this), false));
-        effectiveList.endSequence();
-
-        ElementListObserver.observe(effectiveList, "breaker-effective", null);
-
-        alg.getPageBreaks().clear(); //Why this?
-        return effectiveList;
-    }
-
-    private int adjustBlockSpaces(LinkedList<KnuthGlue> spaceList, int difference, int total) {
-        if (log.isDebugEnabled()) {
-            log.debug("AdjustBlockSpaces: difference " + difference + " / " + total
-                    + " on " + spaceList.size() + " spaces in block");
-        }
-        ListIterator<KnuthGlue> spaceListIterator = spaceList.listIterator();
-        int adjustedDiff = 0;
-        int partial = 0;
-        while (spaceListIterator.hasNext()) {
-            KnuthGlue blockSpace = spaceListIterator.next();
-            partial += (difference > 0 ? blockSpace.getStretch() : blockSpace.getShrink());
-            if (log.isDebugEnabled()) {
-                log.debug("available = " + partial +  " / " + total);
-                log.debug("competenza  = "
-                        + (((int)((float) partial * difference / total)) - adjustedDiff)
-                        + " / " + difference);
-            }
-            int newAdjust = ((BlockLevelLayoutManager) blockSpace.getLayoutManager())
-                .negotiateBPDAdjustment(
-                ((int) ((float) partial * difference / total)) - adjustedDiff, blockSpace);
-            adjustedDiff += newAdjust;
-        }
-        return adjustedDiff;
-    }
-
-    private int adjustLineNumbers(LinkedList<KnuthGlue> lineList, int difference, int total) {
-        if (log.isDebugEnabled()) {
-            log.debug("AdjustLineNumbers: difference "
-                      + difference
-                      + " / "
-                      + total
-                      + " on "
-                      + lineList.size()
-                      + " elements");
-        }
-
-        ListIterator<KnuthGlue> lineListIterator = lineList.listIterator();
-        int adjustedDiff = 0;
-        int partial = 0;
-        while (lineListIterator.hasNext()) {
-            KnuthGlue line = lineListIterator.next();
-            partial += (difference > 0 ? line.getStretch() : line.getShrink());
-            int newAdjust = ((BlockLevelLayoutManager) line.getLayoutManager())
-                .negotiateBPDAdjustment(
-                ((int) ((float) partial * difference / total)) - adjustedDiff, line);
-            adjustedDiff += newAdjust;
-        }
-        return adjustedDiff;
     }
 
 }
