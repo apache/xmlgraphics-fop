@@ -66,6 +66,7 @@ public class GradientTestCase {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PSSVGGraphics2D svgGraphics2D = new PSSVGGraphics2D(false, new PSGenerator(out));
         svgGraphics2D.setGraphicContext(new GraphicContext());
+        svgGraphics2D.translate(100, 100);
         svgGraphics2D.applyPaint(gradient, true);
         byte[] actual = out.toByteArray();
         byte[] expected = IOUtils.toByteArray(getClass().getResourceAsStream(expectedResourceName));
