@@ -76,7 +76,7 @@ public class PSSVGGraphics2D extends PSGraphics2D {
         super.applyPaint(paint, fill);
         if (paint instanceof LinearGradientPaint) {
             Pattern pattern = GradientMaker.makeLinearGradient((LinearGradientPaint) paint,
-                    getBaseTransform(), getTransform());
+                    new AffineTransform(), new AffineTransform());
             try {
                 gen.write(outputPattern(pattern));
             } catch (IOException ioe) {
@@ -84,7 +84,7 @@ public class PSSVGGraphics2D extends PSGraphics2D {
             }
         } else if (paint instanceof RadialGradientPaint) {
             Pattern pattern = GradientMaker.makeRadialGradient((RadialGradientPaint) paint,
-                    getBaseTransform(), getTransform());
+                    new AffineTransform(), new AffineTransform());
             try {
                 gen.write(outputPattern(pattern));
             } catch (IOException ioe) {
@@ -140,11 +140,6 @@ public class PSSVGGraphics2D extends PSGraphics2D {
             }
         };
         shading.output(out, doubleFormatter, functionRenderer);
-    }
-
-    protected AffineTransform getBaseTransform() {
-        AffineTransform at = new AffineTransform(this.getTransform());
-        return at;
     }
 
     /**
