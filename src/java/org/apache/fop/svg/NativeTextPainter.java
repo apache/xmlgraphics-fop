@@ -23,6 +23,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
@@ -38,6 +39,8 @@ import org.apache.batik.bridge.SVGGVTFont;
 import org.apache.batik.gvt.font.FontFamilyResolver;
 import org.apache.batik.gvt.font.GVTGlyphVector;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
+import org.apache.batik.gvt.text.GlyphLayout;
+import org.apache.batik.gvt.text.TextLayoutFactory;
 import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.text.TextSpanLayout;
 
@@ -45,6 +48,7 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 import org.apache.fop.svg.font.FOPGVTFont;
+import org.apache.fop.svg.text.ComplexGlyphLayout;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -271,6 +275,23 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
     @Override
     protected FontFamilyResolver getFontFamilyResolver() {
         return this.fontFamilyResolver;
+    }
+
+    private static final TextLayoutFactory COMPLEX_SCRIPT_TEXT_LAYOUT_FACTORY =
+        new TextLayoutFactory() {
+            public TextSpanLayout createTextLayout(AttributedCharacterIterator aci,
+                int [] charMap, Point2D offset, FontRenderContext frc) {
+                if (ComplexGlyphLayout.mayRequireComplexLayout(aci)) {
+                    return new ComplexGlyphLayout(aci, charMap, offset, frc);
+                } else {
+                    return new GlyphLayout(aci, charMap, offset, frc);
+                }
+            }
+        };
+
+    @Override
+    protected TextLayoutFactory getTextLayoutFactory() {
+        return COMPLEX_SCRIPT_TEXT_LAYOUT_FACTORY;
     }
 
 }

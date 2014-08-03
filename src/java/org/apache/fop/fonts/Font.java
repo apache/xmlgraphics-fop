@@ -20,6 +20,7 @@
 package org.apache.fop.fonts;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -402,20 +403,22 @@ public class Font implements Substitutable, Positionable {
     }
 
     /** {@inheritDoc} */
-    public CharSequence performSubstitution(CharSequence cs, String script, String language) {
+    public CharSequence performSubstitution(CharSequence cs,
+        String script, String language, List associations) {
         if (metric instanceof Substitutable) {
             Substitutable s = (Substitutable) metric;
-            return s.performSubstitution(cs, script, language);
+            return s.performSubstitution(cs, script, language, associations);
         } else {
             throw new UnsupportedOperationException();
         }
     }
 
     /** {@inheritDoc} */
-    public CharSequence reorderCombiningMarks(CharSequence cs, int[][] gpa, String script, String language) {
+    public CharSequence reorderCombiningMarks(CharSequence cs, int[][] gpa,
+        String script, String language, List associations) {
         if (metric instanceof Substitutable) {
             Substitutable s = (Substitutable) metric;
-            return s.reorderCombiningMarks(cs, gpa, script, language);
+            return s.reorderCombiningMarks(cs, gpa, script, language, associations);
         } else {
             throw new UnsupportedOperationException();
         }

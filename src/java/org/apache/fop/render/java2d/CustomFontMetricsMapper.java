@@ -24,6 +24,7 @@ import java.awt.FontFormatException;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -261,9 +262,9 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
     /**
      * {@inheritDoc}
      */
-    public CharSequence performSubstitution(CharSequence cs, String script, String language) {
+    public CharSequence performSubstitution(CharSequence cs, String script, String language, List associations) {
         if (typeface instanceof Substitutable) {
-            return ((Substitutable) typeface).performSubstitution(cs, script, language);
+            return ((Substitutable) typeface).performSubstitution(cs, script, language, associations);
         } else {
             return cs;
         }
@@ -272,9 +273,10 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
     /**
      * {@inheritDoc}
      */
-    public CharSequence reorderCombiningMarks(CharSequence cs, int[][] gpa, String script, String language) {
+    public CharSequence reorderCombiningMarks(CharSequence cs, int[][] gpa,
+        String script, String language, List associations) {
         if (typeface instanceof Substitutable) {
-            return ((Substitutable) typeface).reorderCombiningMarks(cs, gpa, script, language);
+            return ((Substitutable) typeface).reorderCombiningMarks(cs, gpa, script, language, associations);
         } else {
             return cs;
         }

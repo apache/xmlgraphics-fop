@@ -20,6 +20,7 @@
 package org.apache.fop.svg.font;
 
 import java.awt.font.FontRenderContext;
+import java.text.AttributedString;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 
@@ -27,6 +28,7 @@ import org.apache.batik.gvt.font.GVTFont;
 import org.apache.batik.gvt.font.GVTFontFamily;
 import org.apache.batik.gvt.font.GVTGlyphVector;
 import org.apache.batik.gvt.font.GVTLineMetrics;
+import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontMetrics;
@@ -83,8 +85,11 @@ public class FOPGVTFont implements GVTFont {
     }
 
     public GVTGlyphVector createGlyphVector(FontRenderContext frc, CharacterIterator ci) {
-        // TODO Batik does manual glyph shaping for Arabic. Replace with complex scripts implementation
-        return new FOPGVTGlyphVector(this, ci, frc);
+        if (!font.performsSubstitution() && !font.performsPositioning()) {
+            return new FOPGVTGlyphVector(this, ci, frc);
+        } else {
+            return new ComplexGlyphVector(this, ci, frc);
+        }
     }
 
     public GVTGlyphVector createGlyphVector(FontRenderContext frc,
@@ -93,9 +98,24 @@ public class FOPGVTFont implements GVTFont {
         throw new UnsupportedOperationException("Not implemented");
     }
 
-    public GVTGlyphVector createGlyphVector(FontRenderContext frc, String str) {
-        StringCharacterIterator sci = new StringCharacterIterator(str);
+    public GVTGlyphVector createGlyphVector(FontRenderContext frc, String text) {
+        StringCharacterIterator sci = new StringCharacterIterator(text);
         return createGlyphVector(frc, sci);
+    }
+
+    public GVTGlyphVector createGlyphVector(FontRenderContext frc, String text, String script, String language) {
+        if ((script != null) || (language != null)) {
+            AttributedString as = new AttributedString(text);
+            if (script != null) {
+                as.addAttribute(GVTAttributedCharacterIterator.TextAttribute.SCRIPT, script);
+            }
+            if (language != null) {
+                as.addAttribute(GVTAttributedCharacterIterator.TextAttribute.LANGUAGE, language);
+            }
+            return createGlyphVector(frc, as.getIterator());
+        } else {
+            return createGlyphVector(frc, text);
+        }
     }
 
     public FOPGVTFont deriveFont(float size) {

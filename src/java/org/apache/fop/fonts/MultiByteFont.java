@@ -25,6 +25,7 @@ import java.nio.CharBuffer;
 import java.nio.IntBuffer;
 import java.util.BitSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -487,10 +488,14 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /** {@inheritDoc} */
-    public CharSequence performSubstitution(CharSequence cs, String script, String language) {
+    public CharSequence performSubstitution(CharSequence cs, String script, String language, List associations) {
         if (gsub != null) {
-            GlyphSequence igs = mapCharsToGlyphs(cs);
+            GlyphSequence igs = mapCharsToGlyphs(cs, associations);
             GlyphSequence ogs = gsub.substitute(igs, script, language);
+            if (associations != null) {
+                associations.clear();
+                associations.addAll(ogs.getAssociations());
+            }
             CharSequence ocs = mapGlyphsToChars(ogs);
             return ocs;
         } else {
@@ -500,10 +505,14 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
 
     /** {@inheritDoc} */
     public CharSequence reorderCombiningMarks(
-        CharSequence cs, int[][] gpa, String script, String language) {
+        CharSequence cs, int[][] gpa, String script, String language, List associations) {
         if (gdef != null) {
-            GlyphSequence igs = mapCharsToGlyphs(cs);
+            GlyphSequence igs = mapCharsToGlyphs(cs, associations);
             GlyphSequence ogs = gdef.reorderCombiningMarks(igs, gpa, script, language);
+            if (associations != null) {
+                associations.clear();
+                associations.addAll(ogs.getAssociations());
+            }
             CharSequence ocs = mapGlyphsToChars(ogs);
             return ocs;
         } else {
@@ -520,7 +529,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     public int[][]
         performPositioning(CharSequence cs, String script, String language, int fontSize) {
         if (gpos != null) {
-            GlyphSequence gs = mapCharsToGlyphs(cs);
+            GlyphSequence gs = mapCharsToGlyphs(cs, null);
             int[][] adjustments = new int [ gs.getGlyphCount() ] [ 4 ];
             if (gpos.position(gs, script, language, fontSize, this.width, adjustments)) {
                 return scaleAdjustments(adjustments, fontSize);
@@ -559,7 +568,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * @param cs a CharSequence containing UTF-16 encoded Unicode characters
      * @returns a CharSequence containing glyph indices
      */
-    private GlyphSequence mapCharsToGlyphs(CharSequence cs) {
+    private GlyphSequence mapCharsToGlyphs(CharSequence cs, List associations) {
         IntBuffer cb = IntBuffer.allocate(cs.length());
         IntBuffer gb = IntBuffer.allocate(cs.length());
         int gi;
@@ -598,7 +607,12 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         }
         cb.flip();
         gb.flip();
-        return new GlyphSequence(cb, gb, null);
+        if ((associations != null) && (associations.size() == cs.length())) {
+            associations = new java.util.ArrayList(associations);
+        } else {
+            associations = null;
+        }
+        return new GlyphSequence(cb, gb, associations);
     }
 
     /**

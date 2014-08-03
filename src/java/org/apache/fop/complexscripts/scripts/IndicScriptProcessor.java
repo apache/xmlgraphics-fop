@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.complexscripts.fonts.GlyphTable;
+import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.CharScript;
 import org.apache.fop.complexscripts.util.GlyphContextTester;
 import org.apache.fop.complexscripts.util.GlyphSequence;
@@ -488,21 +489,21 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
         protected GlyphSequence[] segmentize(GlyphSequence gs, Segment[] sa) {
             int   ng = gs.getGlyphCount();
             int[] ga = gs.getGlyphArray(false);
-            GlyphSequence.CharAssociation[] aa = gs.getAssociations(0, -1);
+            CharAssociation[] aa = gs.getAssociations(0, -1);
             Vector<GlyphSequence> nsv = new Vector<GlyphSequence>();
             for (int i = 0, ns = sa.length; i < ns; i++) {
                 Segment s = sa [ i ];
                 Vector<Integer> ngv = new Vector<Integer>(ng);
-                Vector<GlyphSequence.CharAssociation> nav = new Vector<GlyphSequence.CharAssociation>(ng);
+                Vector<CharAssociation> nav = new Vector<CharAssociation>(ng);
                 for (int j = 0; j < ng; j++) {
-                    GlyphSequence.CharAssociation ca = aa [ j ];
+                    CharAssociation ca = aa [ j ];
                     if (ca.contained(s.getOffset(), s.getCount())) {
                         ngv.add(ga [ j ]);
                         nav.add(ca);
                     }
                 }
                 if (ngv.size() > 0) {
-                    nsv.add(new GlyphSequence(gs, null, toIntArray(ngv), null, null, nav.toArray(new GlyphSequence.CharAssociation [ nav.size() ]), null));
+                    nsv.add(new GlyphSequence(gs, null, toIntArray(ngv), null, null, nav.toArray(new CharAssociation [ nav.size() ]), null));
                 }
             }
             if (nsv.size() > 0) {

@@ -33,11 +33,13 @@ import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.batik.gvt.font.GVTFont;
 import org.apache.batik.gvt.font.GVTGlyphMetrics;
 import org.apache.batik.gvt.font.GVTGlyphVector;
 import org.apache.batik.gvt.font.GVTLineMetrics;
+import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontMetrics;
@@ -47,7 +49,7 @@ import org.apache.fop.traits.MinOptMax;
 
 class FOPGVTGlyphVector implements GVTGlyphVector {
 
-    private final CharacterIterator charIter;
+    protected final CharacterIterator charIter;
 
     private final FOPGVTFont font;
 
@@ -57,9 +59,11 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
 
     private final FontRenderContext frc;
 
-    private int[] glyphs;
+    protected int[] glyphs;
 
-    private float[] positions;
+    protected List associations;
+
+    protected float[] positions;
 
     private Rectangle2D[] boundingBoxes;
 
@@ -86,20 +90,37 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
         MinOptMax letterSpaceIPD = MinOptMax.ZERO;
         MinOptMax[] letterSpaceAdjustments = new MinOptMax[charIter.getEndIndex() - charIter.getBeginIndex()];
         GlyphMapping mapping = GlyphMapping.doGlyphMapping(text, charIter.getBeginIndex(), charIter.getEndIndex(),
-                f, letterSpaceIPD, letterSpaceAdjustments, '\0', '\0', false, 0 /* TODO */);
-        glyphs = buildGlyphs(f, mapping.mapping != null ? new StringCharacterIterator(mapping.mapping) : charIter);
-        buildGlyphPositions(mapping, letterSpaceAdjustments);
+            f, letterSpaceIPD, letterSpaceAdjustments, '\0', '\0', false, 0, true);
+        maybeReverse(mapping);
+        CharacterIterator glyphAsCharIter =
+            mapping.mapping != null ? new StringCharacterIterator(mapping.mapping) : charIter;
+        this.glyphs = buildGlyphs(f, glyphAsCharIter);
+        this.associations = mapping.associations;
+        this.positions = buildGlyphPositions(glyphAsCharIter, mapping.gposAdjustments, letterSpaceAdjustments);
         this.glyphVisibilities = new boolean[this.glyphs.length];
         Arrays.fill(glyphVisibilities, true);
         this.glyphTransforms = new AffineTransform[this.glyphs.length];
+    }
+
+    protected void maybeReverse(GlyphMapping mapping) {
     }
 
     private static class SVGTextFragment implements TextFragment {
 
         private final CharacterIterator charIter;
 
+        private String script;
+
+        private String language;
+
         SVGTextFragment(CharacterIterator charIter) {
             this.charIter = charIter;
+            if (charIter instanceof AttributedCharacterIterator) {
+                AttributedCharacterIterator aci = (AttributedCharacterIterator) charIter;
+                aci.first();
+                this.script = (String) aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.SCRIPT);
+                this.language = (String) aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.LANGUAGE);
+            }
         }
 
         public CharSequence subSequence(int startIndex, int endIndex) {
@@ -111,11 +132,19 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
         }
 
         public String getScript() {
-            return "DFLT"; // TODO pass on script value from SVG
+            if (script != null) {
+                return script;
+            } else {
+                return "auto";
+            }
         }
 
         public String getLanguage() {
-            return "dflt"; // TODO pass on language value from SVG
+            if (language != null) {
+                return language;
+            } else {
+                return "none";
+            }
         }
 
         public char charAt(int index) {
@@ -123,42 +152,69 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
         }
     }
 
-    private int[] buildGlyphs(Font font, final CharacterIterator charIter) {
-        int[] glyphs = new int[charIter.getEndIndex() - charIter.getBeginIndex()];
+    private int[] buildGlyphs(Font font, final CharacterIterator glyphAsCharIter) {
+        int[] glyphs = new int[glyphAsCharIter.getEndIndex() - glyphAsCharIter.getBeginIndex()];
         int index = 0;
-        for (char c = charIter.first();  c != CharacterIterator.DONE; c = charIter.next()) {
+        for (char c = glyphAsCharIter.first();  c != CharacterIterator.DONE; c = glyphAsCharIter.next()) {
             glyphs[index] = font.mapChar(c);
             index++;
         }
         return glyphs;
     }
 
-    private void buildGlyphPositions(GlyphMapping ai, MinOptMax[] letterSpaceAdjustments) {
-        positions = new float[2 * glyphs.length + 2];
-        if (ai.gposAdjustments != null) {
-            assert ai.gposAdjustments.length == glyphs.length;
-            for (int glyphIndex = 0; glyphIndex < glyphs.length; glyphIndex++) {
-                int n = 2 * glyphIndex;
-                if (ai.gposAdjustments[glyphIndex] != null) {
-                    for (int p = 0; p < 4; p++) {
-                        positions[n + p] += ai.gposAdjustments[glyphIndex][p] / 1000f;
-                    }
-                }
-                positions[n + 2] += positions[n] + getGlyphWidth(glyphIndex);
+    private static final int[] PA_ZERO = new int[4];
+
+    /**
+     * Build glyph position array.
+     * @param glyphAsCharIter iterator for mapped glyphs as char codes (not glyph codes)
+     * @param dp optionally null glyph position adjustments array
+     * @param lsa optionally null letter space adjustments array
+     * @return array of floats that denote [X,Y] position pairs for each glyph including
+     * including an implied subsequent glyph; i.e., returned array contains one more pair
+     * than the numbers of glyphs, where the position denoted by this last pair represents
+     * the position after the last glyph has incurred advancement
+     */
+    private float[] buildGlyphPositions(final CharacterIterator glyphAsCharIter, int[][] dp, MinOptMax[] lsa) {
+        int numGlyphs = glyphAsCharIter.getEndIndex() - glyphAsCharIter.getBeginIndex();
+        float[] positions = new float[2 * (numGlyphs + 1)];
+        float xc = 0f;
+        float yc = 0f;
+        if (dp != null) {
+            for (int i = 0; i < numGlyphs + 1; ++i) {
+                int[] pa = ((i >= dp.length) || (dp[i] == null)) ? PA_ZERO : dp[i];
+                float xo = xc + ((float) pa[0]) / 1000f;
+                float yo = yc - ((float) pa[1]) / 1000f;
+                float xa = getGlyphWidth(i) + ((float) pa[2]) / 1000f;
+                float ya = ((float) pa[3]) / 1000f;
+                int k = 2 * i;
+                positions[k + 0] = xo;
+                positions[k + 1] = yo;
+                xc += xa;
+                yc += ya;
             }
-        } else {
-            for (int i = 0, n = 2; i < glyphs.length; i++, n += 2) {
-                int kern = i < glyphs.length - 1 && letterSpaceAdjustments[i + 1] != null
-                        ? letterSpaceAdjustments[i + 1].getOpt()
-                        : 0;
-                positions[n] = positions[n - 2] + getGlyphWidth(i) + kern / 1000f;
-                positions[n + 1] = 0;
+        } else if (lsa != null) {
+            for (int i = 0; i < numGlyphs + 1; ++i) {
+                MinOptMax sa = (((i + 1) >= lsa.length) || (lsa[i + 1] == null)) ? MinOptMax.ZERO : lsa[i + 1];
+                float xo = xc;
+                float yo = yc;
+                float xa = getGlyphWidth(i) + sa.getOpt() / 1000f;
+                float ya = 0;
+                int k = 2 * i;
+                positions[k + 0] = xo;
+                positions[k + 1] = yo;
+                xc += xa;
+                yc += ya;
             }
         }
+        return positions;
     }
 
     private float getGlyphWidth(int index) {
-        return fontMetrics.getWidth(glyphs[index], fontSize) / 1000000f;
+        if (index < glyphs.length) {
+            return fontMetrics.getWidth(glyphs[index], fontSize) / 1000000f;
+        } else {
+            return 0f;
+        }
     }
 
     public GVTFont getFont() {

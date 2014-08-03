@@ -50,7 +50,7 @@ public class GlyphLayoutTestCase extends FOPGVTGlyphVectorTest {
 
     private void testGlyphLayout(boolean useAdvanced) {
         FOPGVTFont font = loadFont(useAdvanced);
-        glyphVector = (FOPGVTGlyphVector) font.createGlyphVector(null, "L\u201DP,V.F,A\u2019LT.");
+        glyphVector = (FOPGVTGlyphVector) font.createGlyphVector(null, "L\u201DP,V.F,A\u2019LT.", "DFLT", "dflt");
         glyphVector.performDefaultLayout();
         // Values in font units (unitsPerEm = 2048), glyph width - kern
         int[] widths = {
