@@ -142,6 +142,16 @@
     </Or>
   </Match>
   <Match>
+    <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+    <And>
+      <Class name="org.apache.fop.svg.font.FOPGVTGlyphVector"/>
+      <Or>
+        <Field name="glyphTransforms"/>
+        <Field name="glyphVisibilities"/>
+      </Or>
+    </And>
+  </Match>
+  <Match>
     <Bug pattern="DM_DEFAULT_ENCODING"/>
     <Or>
       <And>
@@ -5463,7 +5473,7 @@
      <Bug pattern="EI_EXPOSE_REP"/>
    </Match>
    <Match>
-     <Class name="org.apache.fop.complexscripts.util.GlyphSequence$CharAssociation"/>
+     <Class name="org.apache.fop.complexscripts.util.CharAssociation"/>
      <Method name="getSubIntervals"/>
      <Bug pattern="EI_EXPOSE_REP"/>
    </Match>

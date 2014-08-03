@@ -23,6 +23,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.GlyphContextTester;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.GlyphTester;
@@ -417,7 +418,7 @@ public class GlyphProcessingState {
      * @return character association of glyph at current position
      * @throws IndexOutOfBoundsException if offset results in an invalid index into input glyph sequence
      */
-    public GlyphSequence.CharAssociation getAssociation(int offset) throws IndexOutOfBoundsException {
+    public CharAssociation getAssociation(int offset) throws IndexOutOfBoundsException {
         int i = index + offset;
         if ((i >= 0) && (i < indexLast)) {
             return igs.getAssociation(i);
@@ -431,7 +432,7 @@ public class GlyphProcessingState {
      * @return character association of glyph at current position
      * @throws IndexOutOfBoundsException if no glyph available
      */
-    public GlyphSequence.CharAssociation getAssociation() throws IndexOutOfBoundsException {
+    public CharAssociation getAssociation() throws IndexOutOfBoundsException {
         return getAssociation(0);
     }
 
@@ -722,7 +723,7 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public GlyphSequence.CharAssociation[] getAssociations(int offset, int count, boolean reverseOrder, GlyphTester ignoreTester, GlyphSequence.CharAssociation[] associations, int[] counts)
+    public CharAssociation[] getAssociations(int offset, int count, boolean reverseOrder, GlyphTester ignoreTester, CharAssociation[] associations, int[] counts)
         throws IndexOutOfBoundsException {
         if (count < 0) {
             count = getGlyphsAvailable(offset, reverseOrder, ignoreTester) [ 0 ];
@@ -736,7 +737,7 @@ public class GlyphProcessingState {
             throw new IndexOutOfBoundsException("will attempt index at " + (start - count));
         }
         if (associations == null) {
-            associations = new GlyphSequence.CharAssociation [ count ];
+            associations = new CharAssociation [ count ];
         } else if (associations.length != count) {
             throw new IllegalArgumentException("associations array is non-null, but its length (" + associations.length + "), is not equal to count (" + count + ")");
         }
@@ -747,7 +748,7 @@ public class GlyphProcessingState {
         }
     }
 
-    private GlyphSequence.CharAssociation[] getAssociationsForward(int start, int count, GlyphTester ignoreTester, GlyphSequence.CharAssociation[] associations, int[] counts)
+    private CharAssociation[] getAssociationsForward(int start, int count, GlyphTester ignoreTester, CharAssociation[] associations, int[] counts)
         throws IndexOutOfBoundsException {
         int counted = 0;
         int ignored = 0;
@@ -775,7 +776,7 @@ public class GlyphProcessingState {
         return associations;
     }
 
-    private GlyphSequence.CharAssociation[] getAssociationsReverse(int start, int count, GlyphTester ignoreTester, GlyphSequence.CharAssociation[] associations, int[] counts)
+    private CharAssociation[] getAssociationsReverse(int start, int count, GlyphTester ignoreTester, CharAssociation[] associations, int[] counts)
         throws IndexOutOfBoundsException {
         int counted = 0;
         int ignored = 0;
@@ -813,7 +814,7 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public GlyphSequence.CharAssociation[] getAssociations(int offset, int count) throws IndexOutOfBoundsException {
+    public CharAssociation[] getAssociations(int offset, int count) throws IndexOutOfBoundsException {
         return getAssociations(offset, count, offset < 0, ignoreDefault, null, null);
     }
 
@@ -833,7 +834,7 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public GlyphSequence.CharAssociation[] getIgnoredAssociations(int offset, int count, boolean reverseOrder, GlyphTester ignoreTester, GlyphSequence.CharAssociation[] associations, int[] counts)
+    public CharAssociation[] getIgnoredAssociations(int offset, int count, boolean reverseOrder, GlyphTester ignoreTester, CharAssociation[] associations, int[] counts)
         throws IndexOutOfBoundsException {
         return getAssociations(offset, count, reverseOrder, new NotGlyphTester(ignoreTester), associations, counts);
     }
@@ -848,7 +849,7 @@ public class GlyphProcessingState {
      * @throws IndexOutOfBoundsException if offset or count results in an
      * invalid index into input glyph sequence
      */
-    public GlyphSequence.CharAssociation[] getIgnoredAssociations(int offset, int count) throws IndexOutOfBoundsException {
+    public CharAssociation[] getIgnoredAssociations(int offset, int count) throws IndexOutOfBoundsException {
         return getIgnoredAssociations(offset, count, offset < 0, ignoreDefault, null, null);
     }
 

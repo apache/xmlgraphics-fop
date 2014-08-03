@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -402,10 +403,10 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     /**
      * {@inheritDoc}
      */
-    public CharSequence performSubstitution(CharSequence cs, String script, String language) {
+    public CharSequence performSubstitution(CharSequence cs, String script, String language, List associations) {
         load(true);
         if (realFontDescriptor instanceof Substitutable) {
-            return ((Substitutable)realFontDescriptor).performSubstitution(cs, script, language);
+            return ((Substitutable)realFontDescriptor).performSubstitution(cs, script, language, associations);
         } else {
             return cs;
         }
@@ -415,13 +416,13 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      * {@inheritDoc}
      */
     public CharSequence reorderCombiningMarks(
-        CharSequence cs, int[][] gpa, String script, String language) {
+        CharSequence cs, int[][] gpa, String script, String language, List associations) {
         if (!isMetricsLoaded) {
             load(true);
         }
         if (realFontDescriptor instanceof Substitutable) {
             return ((Substitutable)realFontDescriptor)
-                .reorderCombiningMarks(cs, gpa, script, language);
+                .reorderCombiningMarks(cs, gpa, script, language, associations);
         } else {
             return cs;
         }

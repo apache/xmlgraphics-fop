@@ -19,6 +19,9 @@
 
 package org.apache.fop.fonts;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -47,18 +50,19 @@ public class GlyphMapping {
     public final Font font;
     public final int level;
     public final int[][] gposAdjustments;
-    public final String mapping;
+    public String mapping;
+    public List associations;
 
     public GlyphMapping(int startIndex, int endIndex, int wordSpaceCount, int letterSpaceCount,
             MinOptMax areaIPD, boolean isHyphenated, boolean isSpace, boolean breakOppAfter,
             Font font, int level, int[][] gposAdjustments) {
         this(startIndex, endIndex, wordSpaceCount, letterSpaceCount, areaIPD, isHyphenated,
-                isSpace, breakOppAfter, font, level, gposAdjustments, null);
+             isSpace, breakOppAfter, font, level, gposAdjustments, null, null);
     }
 
     public GlyphMapping(int startIndex, int endIndex, int wordSpaceCount, int letterSpaceCount,
             MinOptMax areaIPD, boolean isHyphenated, boolean isSpace, boolean breakOppAfter,
-            Font font, int level, int[][] gposAdjustments, String mapping) {
+            Font font, int level, int[][] gposAdjustments, String mapping, List associations) {
         assert startIndex <= endIndex;
         this.startIndex = startIndex;
         this.endIndex = endIndex;
@@ -73,15 +77,17 @@ public class GlyphMapping {
         this.level = level;
         this.gposAdjustments = gposAdjustments;
         this.mapping = mapping;
+        this.associations = associations;
     }
 
     public static GlyphMapping doGlyphMapping(TextFragment text, int startIndex, int endIndex,
             Font font, MinOptMax letterSpaceIPD, MinOptMax[] letterSpaceAdjustArray,
-            char precedingChar, char breakOpportunityChar, final boolean endsWithHyphen, int level) {
+            char precedingChar, char breakOpportunityChar, final boolean endsWithHyphen, int level,
+            boolean retainAssociations) {
         GlyphMapping mapping;
         if (font.performsSubstitution() || font.performsPositioning()) {
             mapping = processWordMapping(text, startIndex, endIndex, font,
-                    breakOpportunityChar, endsWithHyphen, level);
+                    breakOpportunityChar, endsWithHyphen, level, retainAssociations);
         } else {
             mapping = processWordNoMapping(text, startIndex, endIndex, font,
                     letterSpaceIPD, letterSpaceAdjustArray, precedingChar, breakOpportunityChar, endsWithHyphen,
@@ -92,7 +98,7 @@ public class GlyphMapping {
 
     private static GlyphMapping processWordMapping(TextFragment text, int startIndex,
             int endIndex, final Font font, final char breakOpportunityChar,
-            final boolean endsWithHyphen, int level) {
+            final boolean endsWithHyphen, int level, boolean retainAssociations) {
         int e = endIndex; // end index of word in FOText character buffer
         int nLS = 0; // # of letter spaces
         String script = text.getScript();
@@ -105,11 +111,11 @@ public class GlyphMapping {
                         + " }");
         }
 
-        // 1. extract unmapped character sequence
+        // 1. extract unmapped character sequence.
         CharSequence ics = text.subSequence(startIndex, e);
 
         // 2. if script is not specified (by FO property) or it is specified as 'auto',
-        // then compute dominant script
+        // then compute dominant script.
         if ((script == null) || "auto".equals(script)) {
             script = CharScript.scriptTagFromCode(CharScript.dominantScript(ics));
         }
@@ -117,10 +123,12 @@ public class GlyphMapping {
             language = "dflt";
         }
 
-        // 3. perform mapping of chars to glyphs ... to glyphs ... to chars
-        CharSequence mcs = font.performSubstitution(ics, script, language);
+        // 3. perform mapping of chars to glyphs ... to glyphs ... to chars, retaining
+        // associations if requested.
+        List associations = retainAssociations ? new java.util.ArrayList() : null;
+        CharSequence mcs = font.performSubstitution(ics, script, language, associations);
 
-        // 4. compute glyph position adjustments on (substituted) characters
+        // 4. compute glyph position adjustments on (substituted) characters.
         int[][] gpa;
         if (font.performsPositioning()) {
             // handle GPOS adjustments
@@ -133,10 +141,10 @@ public class GlyphMapping {
         }
 
         // 5. reorder combining marks so that they precede (within the mapped char sequence) the
-        // base to which they are applied; N.B. position adjustments (gpa) are reordered in place
-        mcs = font.reorderCombiningMarks(mcs, gpa, script, language);
+        // base to which they are applied; N.B. position adjustments (gpa) are reordered in place.
+        mcs = font.reorderCombiningMarks(mcs, gpa, script, language, associations);
 
-        // 6. compute word ipd based on final position adjustments
+        // 6. compute word ipd based on final position adjustments.
         MinOptMax ipd = MinOptMax.ZERO;
         for (int i = 0, n = mcs.length(); i < n; i++) {
             int c = mcs.charAt(i);
@@ -155,7 +163,7 @@ public class GlyphMapping {
 
         return new GlyphMapping(startIndex, e, 0, nLS, ipd, endsWithHyphen, false,
                 breakOpportunityChar != 0, font, level, gpa,
-                CharUtilities.isSameSequence(mcs, ics) ? null : mcs.toString());
+                CharUtilities.isSameSequence(mcs, ics) ? null : mcs.toString(), associations);
     }
 
     /**
@@ -309,6 +317,27 @@ public class GlyphMapping {
 
     public void addToAreaIPD(MinOptMax idp) {
         areaIPD = areaIPD.plus(idp);
+    }
+
+    public void reverse() {
+        if (mapping.length() > 0) {
+            mapping = new StringBuffer(mapping).reverse().toString();
+        }
+        if (associations != null) {
+            Collections.reverse(associations);
+        }
+        if (gposAdjustments != null) {
+            reverse(gposAdjustments);
+        }
+    }
+
+    private static void reverse(int[][] aa) {
+        for (int i = 0, n = aa.length, m = n / 2; i < m; i++) {
+            int k = n - i - 1;
+            int[] t = aa [ k ];
+            aa [ k ] = aa [ i ];
+            aa [ i ] = t;
+        }
     }
 
     public String toString() {

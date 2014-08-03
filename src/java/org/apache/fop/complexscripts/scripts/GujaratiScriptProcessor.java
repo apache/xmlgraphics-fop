@@ -22,6 +22,7 @@ package org.apache.fop.complexscripts.scripts;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 
 // CSOFF: LineLengthCheck
@@ -82,7 +83,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
     }
 
     private static boolean containsPreBaseMatra(GlyphSequence gs, int k) {
-        GlyphSequence.CharAssociation a = gs.getAssociation(k);
+        CharAssociation a = gs.getAssociation(k);
         int[] ca = gs.getCharacterArray(false);
         for (int i = a.getStart(), e = a.getEnd(); i < e; i++) {
             if (isPreM(ca [ i ])) {
@@ -93,7 +94,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
     }
 
     private static boolean containsConsonant(GlyphSequence gs, int k) {
-        GlyphSequence.CharAssociation a = gs.getAssociation(k);
+        CharAssociation a = gs.getAssociation(k);
         int[] ca = gs.getCharacterArray(false);
         for (int i = a.getStart(), e = a.getEnd(); i < e; i++) {
             if (isC(ca [ i ])) {
@@ -159,7 +160,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
     }
 
     private static boolean containsMatra(GlyphSequence gs, int k) {
-        GlyphSequence.CharAssociation a = gs.getAssociation(k);
+        CharAssociation a = gs.getAssociation(k);
         int[] ca = gs.getCharacterArray(false);
         for (int i = a.getStart(), e = a.getEnd(); i < e; i++) {
             if (isM(ca [ i ])) {
@@ -170,7 +171,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
     }
 
     private static boolean containsOtherMark(GlyphSequence gs, int k) {
-        GlyphSequence.CharAssociation a = gs.getAssociation(k);
+        CharAssociation a = gs.getAssociation(k);
         int[] ca = gs.getCharacterArray(false);
         for (int i = a.getStart(), e = a.getEnd(); i < e; i++) {
             switch (typeOf(ca [ i ])) {

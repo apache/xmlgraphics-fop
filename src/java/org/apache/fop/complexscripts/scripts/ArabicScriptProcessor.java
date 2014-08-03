@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.complexscripts.bidi.BidiClass;
 import org.apache.fop.complexscripts.bidi.BidiConstants;
 import org.apache.fop.complexscripts.fonts.GlyphDefinitionTable;
+import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.GlyphContextTester;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
@@ -147,7 +148,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
     }
 
     private static boolean inFinalContext(String script, String language, String feature, GlyphSequence gs, int index, int flags) {
-        GlyphSequence.CharAssociation a = gs.getAssociation(index);
+        CharAssociation a = gs.getAssociation(index);
         int[] ca = gs.getCharacterArray(false);
         int   nc = gs.getCharacterCount();
         if (nc == 0) {
@@ -168,7 +169,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
     }
 
     private static boolean inInitialContext(String script, String language, String feature, GlyphSequence gs, int index, int flags) {
-        GlyphSequence.CharAssociation a = gs.getAssociation(index);
+        CharAssociation a = gs.getAssociation(index);
         int[] ca = gs.getCharacterArray(false);
         int   nc = gs.getCharacterCount();
         if (nc == 0) {
@@ -187,7 +188,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
     }
 
     private static boolean inIsolateContext(String script, String language, String feature, GlyphSequence gs, int index, int flags) {
-        GlyphSequence.CharAssociation a = gs.getAssociation(index);
+        CharAssociation a = gs.getAssociation(index);
         int   nc = gs.getCharacterCount();
         if (nc == 0) {
             return false;
@@ -199,7 +200,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
     }
 
     private static boolean inLigatureContext(String script, String language, String feature, GlyphSequence gs, int index, int flags) {
-        GlyphSequence.CharAssociation a = gs.getAssociation(index);
+        CharAssociation a = gs.getAssociation(index);
         int[] ca = gs.getCharacterArray(false);
         int   nc = gs.getCharacterCount();
         if (nc == 0) {
@@ -218,7 +219,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
     }
 
     private static boolean inMedialContext(String script, String language, String feature, GlyphSequence gs, int index, int flags) {
-        GlyphSequence.CharAssociation a = gs.getAssociation(index);
+        CharAssociation a = gs.getAssociation(index);
         int[] ca = gs.getCharacterArray(false);
         int   nc = gs.getCharacterCount();
         if (nc == 0) {

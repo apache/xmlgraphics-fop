@@ -23,6 +23,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 
@@ -128,7 +129,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * @param a character association that applies to glyph
      * @param predication a predication value to add to association A if predications enabled
      */
-    public void putGlyph(int glyph, GlyphSequence.CharAssociation a, Object predication) {
+    public void putGlyph(int glyph, CharAssociation a, Object predication) {
         if (!ogb.hasRemaining()) {
             ogb = growBuffer(ogb);
         }
@@ -145,7 +146,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * @param associations array of character associations that apply to glyphs
      * @param predication optional predicaion object to be associated with glyphs' associations
      */
-    public void putGlyphs(int[] glyphs, GlyphSequence.CharAssociation[] associations, Object predication) {
+    public void putGlyphs(int[] glyphs, CharAssociation[] associations, Object predication) {
         assert glyphs != null;
         assert associations != null;
         assert associations.length >= glyphs.length;

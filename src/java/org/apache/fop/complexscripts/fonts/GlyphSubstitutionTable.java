@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.complexscripts.scripts.ScriptProcessor;
+import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.GlyphTester;
 
@@ -382,7 +383,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
             } else {
                 int[] ga = getGlyphsForCoverageIndex(ci, gi);
                 if (ga != null) {
-                    ss.putGlyphs(ga, GlyphSequence.CharAssociation.replicate(ss.getAssociation(), ga.length), Boolean.TRUE);
+                    ss.putGlyphs(ga, CharAssociation.replicate(ss.getAssociation(), ga.length), Boolean.TRUE);
                     ss.consume(1);
                 }
                 return true;
@@ -581,9 +582,9 @@ public class GlyphSubstitutionTable extends GlyphTable {
                             nga = counts[0];
                             ngi = counts[1];
                             // fetch associations of matched component glyphs
-                            GlyphSequence.CharAssociation[] laa = ss.getAssociations(0, nga);
+                            CharAssociation[] laa = ss.getAssociations(0, nga);
                             // output ligature glyph and its association
-                            ss.putGlyph(go, GlyphSequence.CharAssociation.join(laa), Boolean.TRUE);
+                            ss.putGlyph(go, CharAssociation.join(laa), Boolean.TRUE);
                             // fetch and output ignored glyphs (if necessary)
                             if (ngi > 0) {
                                 ss.putGlyphs(ss.getIgnoredGlyphs(0, ngi), ss.getIgnoredAssociations(0, ngi), null);

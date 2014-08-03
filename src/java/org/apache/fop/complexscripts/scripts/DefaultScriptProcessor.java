@@ -20,6 +20,7 @@
 package org.apache.fop.complexscripts.scripts;
 
 import org.apache.fop.complexscripts.fonts.GlyphDefinitionTable;
+import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 
@@ -92,18 +93,18 @@ public class DefaultScriptProcessor extends ScriptProcessor {
         }
         // only reorder if there is at least one mark and at least one non-mark glyph
         if ((nm > 0) && ((ng - nm) > 0)) {
-            GlyphSequence.CharAssociation[] aa = gs.getAssociations(0, -1);
+            CharAssociation[] aa = gs.getAssociations(0, -1);
             int[] nga = new int [ ng ];
             int[][] npa = (gpa != null) ? new int [ ng ][] : null;
-            GlyphSequence.CharAssociation[] naa = new GlyphSequence.CharAssociation [ ng ];
+            CharAssociation[] naa = new CharAssociation [ ng ];
             int k = 0;
-            GlyphSequence.CharAssociation ba = null;
+            CharAssociation ba = null;
             int bg = -1;
             int[] bpa = null;
             for (int i = 0; i < ng; i++) {
                 int gid = ga [ i ];
                 int[] pa = (gpa != null) ? gpa [ i ] : null;
-                GlyphSequence.CharAssociation ca = aa [ i ];
+                CharAssociation ca = aa [ i ];
                 if (gdef.isGlyphClass(gid, GlyphDefinitionTable.GLYPH_CLASS_MARK)) {
                     nga [ k ] = gid;
                     naa [ k ] = ca;
