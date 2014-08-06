@@ -216,9 +216,6 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         renderingDone = true;
         int numberOfPages = currentPageNumber;
         // TODO set all vars to null for gc
-        if (numberOfPages == 0) {
-            new FOPException("No page could be rendered");
-        }
     }
 
     /** @return true if the renderer is not currently processing */

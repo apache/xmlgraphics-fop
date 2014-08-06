@@ -52,8 +52,16 @@ import org.apache.fop.fo.properties.PropertyMaker;
  */
 public abstract class PropertyList {
 
-
     private static boolean[] inheritableProperty;
+
+    static {
+        inheritableProperty = new boolean[Constants.PROPERTY_COUNT + 1];
+        PropertyMaker maker = null;
+        for (int prop = 1; prop <= Constants.PROPERTY_COUNT; prop++) {
+            maker = findMaker(prop);
+            inheritableProperty[prop] = (maker != null && maker.isInherited());
+        }
+    }
 
     /** reference to the parent FO's propertyList **/
     protected PropertyList parentPropertyList;
@@ -620,15 +628,6 @@ public abstract class PropertyList {
      * @return isInherited value from the requested Property.Maker
      */
     private boolean isInherited(int propId) {
-        if (inheritableProperty == null) {
-            inheritableProperty = new boolean[Constants.PROPERTY_COUNT + 1];
-            PropertyMaker maker = null;
-            for (int prop = 1; prop <= Constants.PROPERTY_COUNT; prop++) {
-                maker = findMaker(prop);
-                inheritableProperty[prop] = (maker != null && maker.isInherited());
-            }
-        }
-
         return inheritableProperty[propId];
     }
 
@@ -636,8 +635,7 @@ public abstract class PropertyList {
      * @param propId Id of property
      * @return the Property.Maker for this property
      */
-    private PropertyMaker findMaker(int propId) {
-
+    private static PropertyMaker findMaker(int propId) {
         if (propId < 1 || propId > Constants.PROPERTY_COUNT) {
             return null;
         } else {

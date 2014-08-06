@@ -219,18 +219,16 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
      * @param context the renderer context
      * @param doc the svg document
      */
-    protected void renderSVGDocument(RendererContext context,
-            Document doc) {
+    protected void renderSVGDocument(RendererContext context, Document doc) {
+        assert context != null;
         PSInfo psInfo = getPSInfo(context);
         int xOffset = psInfo.currentXPosition;
         int yOffset = psInfo.currentYPosition;
         PSGenerator gen = psInfo.psGenerator;
 
         boolean paintAsBitmap = false;
-        if (context != null) {
-            Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
-            paintAsBitmap = ImageHandlerUtil.isConversionModeBitmap(foreign);
-        }
+        Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
+        paintAsBitmap = ImageHandlerUtil.isConversionModeBitmap(foreign);
         if (paintAsBitmap) {
             try {
                 super.renderSVGDocument(context, doc);

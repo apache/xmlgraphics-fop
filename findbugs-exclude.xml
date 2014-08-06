@@ -9,16 +9,17 @@
     <Bug pattern="CI_CONFUSED_INHERITANCE"/>
   </Match>
   <Match>
-    <!-- 1 warning -->
     <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.render.intermediate.IFGraphicContext"/>
+        <Method name="clone"/>
+      </And>
+    </Or>
   </Match>
   <Match>
     <!-- 15 warnings -->
     <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
-  </Match>
-  <Match>
-    <!-- 1 warning -->
-    <Bug pattern="DE_MIGHT_IGNORE"/>
   </Match>
   <Match>
     <!-- 27 warnings -->
@@ -53,10 +54,6 @@
     <Bug pattern="DM_NUMBER_CTOR"/>
   </Match>
   <Match>
-    <!-- 1 warning -->
-    <Bug pattern="DM_STRING_CTOR"/>
-  </Match>
-  <Match>
     <!-- 2 warnings -->
     <Bug pattern="DM_STRING_TOSTRING"/>
   </Match>
@@ -81,20 +78,17 @@
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
   <Match>
-    <!-- 1 warning -->
     <Bug pattern="EQ_ALWAYS_TRUE"/>
-  </Match>
-  <Match>
-    <!-- 1 warning -->
-    <Bug pattern="EQ_COMPARETO_USE_OBJECT_EQUALS"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.fo.properties.ToBeImplementedProperty"/>
+        <Method name="equals"/>
+      </And>
+    </Or>
   </Match>
   <Match>
     <!-- 2 warnings -->
     <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
-  </Match>
-  <Match>
-    <!-- 1 warning -->
-    <Bug pattern="EQ_UNUSUAL"/>
   </Match>
   <Match>
     <!-- 3 warnings -->
@@ -107,18 +101,6 @@
   <Match>
     <!-- 12 warnings -->
     <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
-  </Match>
-  <Match>
-    <!-- 1 warning -->
-    <Bug pattern="ICAST_IDIV_CAST_TO_DOUBLE"/>
-  </Match>
-  <Match>
-    <!-- 1 warning -->
-    <Bug pattern="ICAST_INT_CAST_TO_FLOAT_PASSED_TO_ROUND"/>
-  </Match>
-  <Match>
-    <!-- 1 warning -->
-    <Bug pattern="IM_AVERAGE_COMPUTATION_COULD_OVERFLOW"/>
   </Match>
   <Match>
     <!-- 2 warnings -->
@@ -137,16 +119,17 @@
     <Bug pattern="LI_LAZY_INIT_STATIC"/>
   </Match>
   <Match>
-    <!-- 1 warning -->
-    <Bug pattern="LI_LAZY_INIT_UPDATE_STATIC"/>
-  </Match>
-  <Match>
     <!-- 2 warnings -->
     <Bug pattern="MF_CLASS_MASKS_FIELD"/>
   </Match>
   <Match>
-    <!-- 1 warning -->
     <Bug pattern="MS_EXPOSE_REP"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.fo.FOPropertyMapping"/>
+        <Method name="getGenericMappings"/>
+      </And>
+    </Or>
   </Match>
   <Match>
     <!-- 12 warnings -->
@@ -167,14 +150,6 @@
   <Match>
     <!-- 5 warnings -->
     <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
-  </Match>
-  <Match>
-    <!-- 1 warning -->
-    <Bug pattern="NP_GUARANTEED_DEREF"/>
-  </Match>
-  <Match>
-    <!-- 1 warning -->
-    <Bug pattern="NP_IMMEDIATE_DEREFERENCE_OF_READLINE"/>
   </Match>
   <Match>
     <!-- 4 warnings -->
@@ -205,20 +180,12 @@
     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
   </Match>
   <Match>
-    <!-- 1 warning -->
-    <Bug pattern="RC_REF_COMPARISON_BAD_PRACTICE_BOOLEAN"/>
-  </Match>
-  <Match>
     <!-- 10 warnings -->
     <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
   </Match>
   <Match>
     <!-- 3 warnings -->
     <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
-  </Match>
-  <Match>
-    <!-- 1 warning -->
-    <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
   </Match>
   <Match>
     <!-- 23 warnings -->
@@ -229,20 +196,8 @@
     <Bug pattern="RI_REDUNDANT_INTERFACES"/>
   </Match>
   <Match>
-    <!-- 1 warning -->
-    <Bug pattern="RR_NOT_CHECKED"/>
-  </Match>
-  <Match>
-    <!-- 1 warning -->
-    <Bug pattern="RV_EXCEPTION_NOT_THROWN"/>
-  </Match>
-  <Match>
     <!-- 11 warnings -->
     <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
-  </Match>
-  <Match>
-    <!-- 1 warning -->
-    <Bug pattern="SA_FIELD_SELF_COMPARISON"/>
   </Match>
   <Match>
     <!-- 2 warnings -->
@@ -261,10 +216,6 @@
     <Bug pattern="SE_BAD_FIELD_STORE"/>
   </Match>
   <Match>
-    <!-- 1 warning -->
-    <Bug pattern="SE_COMPARATOR_SHOULD_BE_SERIALIZABLE"/>
-  </Match>
-  <Match>
     <!-- 6 warnings -->
     <Bug pattern="SE_INNER_CLASS"/>
   </Match>
@@ -277,20 +228,12 @@
     <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
   </Match>
   <Match>
-    <!-- 1 warning -->
-    <Bug pattern="SF_SWITCH_NO_DEFAULT"/>
-  </Match>
-  <Match>
     <!-- 21 warnings -->
     <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
   </Match>
   <Match>
     <!-- 20 warnings -->
     <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
-  </Match>
-  <Match>
-    <!-- 1 warning -->
-    <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS"/>
   </Match>
   <Match>
     <!-- 5 warnings -->
@@ -307,10 +250,6 @@
   <Match>
     <!-- 3 warnings -->
     <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
-  </Match>
-  <Match>
-    <!-- 1 warning -->
-    <Bug pattern="UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS"/>
   </Match>
   <Match>
     <!-- 6 warnings -->

@@ -146,10 +146,13 @@ public class AdvancedMessageFormat {
                     i++;
                     ch = pattern.charAt(i);
                 }
-                //no break here! Must be right before "default" section
+                sb.append(ch);
+                i++;
+                break;
             default:
                 sb.append(ch);
                 i++;
+                break;
             }
         }
         if (sb.length() > 0) {

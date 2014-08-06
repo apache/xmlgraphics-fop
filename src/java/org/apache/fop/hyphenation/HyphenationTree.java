@@ -641,24 +641,44 @@ public class HyphenationTree extends TernaryTree
                     + "b:\tbenchmark\n"
                     + "q:\tquit\n\n"
                     + "Command:");
-            String token = in.readLine().trim();
+            String token = in.readLine();
+            if (token == null) {
+                break;
+            }
+            token = token.trim();
             if (token.equals("f")) {
                 System.out.print("Pattern: ");
-                token = in.readLine().trim();
+                token = in.readLine();
+                if (token == null) {
+                    break;
+                }
+                token = token.trim();
                 System.out.println("Values: " + ht.findPattern(token));
             } else if (token.equals("s")) {
                 System.out.print("Minimun value: ");
-                token = in.readLine().trim();
+                token = in.readLine();
+                if (token == null) {
+                    break;
+                }
+                token = token.trim();
                 minCharCount = Integer.parseInt(token);
             } else if (token.equals("l")) {
                 ht = new HyphenationTree();
                 System.out.print("XML file name: ");
-                token = in.readLine().trim();
+                token = in.readLine();
+                if (token == null) {
+                    break;
+                }
+                token = token.trim();
                 ht.loadPatterns(token);
             } else if (token.equals("L")) {
                 ObjectInputStream ois = null;
                 System.out.print("Object file name: ");
-                token = in.readLine().trim();
+                token = in.readLine();
+                if (token == null) {
+                    break;
+                }
+                token = token.trim();
                 try {
                     ois = new ObjectInputStream(new FileInputStream(token));
                     ht = (HyphenationTree)ois.readObject();
@@ -675,7 +695,11 @@ public class HyphenationTree extends TernaryTree
                 }
             } else if (token.equals("w")) {
                 System.out.print("Object file name: ");
-                token = in.readLine().trim();
+                token = in.readLine();
+                if (token == null) {
+                    break;
+                }
+                token = token.trim();
                 ObjectOutputStream oos = null;
                 try {
                     oos = new ObjectOutputStream(new FileOutputStream(token));
@@ -698,7 +722,11 @@ public class HyphenationTree extends TernaryTree
                 }
             } else if (token.equals("h")) {
                 System.out.print("Word: ");
-                token = in.readLine().trim();
+                token = in.readLine();
+                if (token == null) {
+                    break;
+                }
+                token = token.trim();
                 System.out.print("Hyphenation points: ");
                 System.out.println(ht.hyphenate(token, minCharCount,
                                                 minCharCount));
@@ -708,7 +736,11 @@ public class HyphenationTree extends TernaryTree
                     break;
                 }
                 System.out.print("Word list filename: ");
-                token = in.readLine().trim();
+                token = in.readLine();
+                if (token == null) {
+                    break;
+                }
+                token = token.trim();
                 long starttime = 0;
                 int counter = 0;
                 BufferedReader reader = null;

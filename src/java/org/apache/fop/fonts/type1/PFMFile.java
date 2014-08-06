@@ -91,8 +91,7 @@ public class PFMFile {
         }
         bufin.reset();
         byte[] b = new byte[16];
-        bufin.read(b);
-        if (new String(b, "US-ASCII").equalsIgnoreCase("StartFontMetrics")) {
+        if ((bufin.read(b) == b.length) && new String(b, "US-ASCII").equalsIgnoreCase("StartFontMetrics")) {
             //Found the header of a AFM file!
             IOUtils.closeQuietly(in);
             throw new IOException("Cannot parse PFM file. You probably specified the AFM file"

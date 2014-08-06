@@ -113,7 +113,12 @@ public class RtfExtraRowSet extends RtfContainer {
         }
 
         public boolean equals(Object o) {
-            return o != null && this.compareTo(o) == 0;
+            if (o instanceof PositionedCell) {
+                PositionedCell pc = (PositionedCell) o;
+                return (pc.rowIndex == rowIndex) && (pc.xOffset == xOffset);
+            } else {
+                return false;
+            }
         }
     }
 

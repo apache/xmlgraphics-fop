@@ -200,7 +200,7 @@ public class RtfLeader extends RtfContainer {
             // Depending on font-size 15 -> 1cm = 7,5 spaces
             // TODO for rule-thickness this has to be done better
 
-            for (double d = (Integer.parseInt(tabwidth) / 560) * 7.5; d >= 1; d--) {
+            for (double d = (Integer.parseInt(tabwidth) / 560.0) * 7.5; d >= 1; d--) {
                 RtfStringConverter.getInstance().writeRtfString(writer, " ");
             }
 

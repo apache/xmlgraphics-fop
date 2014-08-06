@@ -589,7 +589,7 @@ public class TernaryTree implements Cloneable, Serializable {
 
         /** @return next element */
         public Object nextElement() {
-            String res = new String(curkey);
+            String res = curkey;
             cur = up();
             run();
             return res;

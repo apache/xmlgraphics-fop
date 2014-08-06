@@ -164,7 +164,7 @@ public class CommandLineOptions {
         try {
             optionsParsed = parseOptions(args);
             if (optionsParsed) {
-                if (showConfiguration == Boolean.TRUE) {
+                if (showConfiguration.equals(Boolean.TRUE)) {
                     dumpConfiguration();
                 }
                 checkSettings();

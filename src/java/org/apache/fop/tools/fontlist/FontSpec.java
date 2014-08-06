@@ -95,10 +95,29 @@ public class FontSpec implements Comparable {
         return this.metrics;
     }
 
-    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        return metrics.getFullName().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof FontSpec) {
+            FontSpec other = (FontSpec)o;
+            return metrics.getFullName().equals(other.metrics.getFullName());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public int compareTo(Object o) {
-        FontSpec other = (FontSpec)o;
-        return metrics.getFullName().compareTo(other.metrics.getFullName());
+        if (o instanceof FontSpec) {
+            FontSpec other = (FontSpec)o;
+            return metrics.getFullName().compareTo(other.metrics.getFullName());
+        } else {
+            return 1;
+        }
     }
 
 }

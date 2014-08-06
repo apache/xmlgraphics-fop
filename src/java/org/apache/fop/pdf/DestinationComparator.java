@@ -23,10 +23,12 @@ package org.apache.fop.pdf;
  * Comparator class to enable comparing (and
  * hence sorting) of PDFDestination objects.
  */
-public class DestinationComparator implements java.util.Comparator {
+public class DestinationComparator implements java.util.Comparator, java.io.Serializable {
 /*  public int compare (PDFDestination dest1, PDFDestination dest2) {
     return dest1.getIDRef().compareTo(dest2.getIDRef());
   }*/
+
+    static final long serialVersionUID = 0L;
 
     /** {@inheritDoc} */
     public int compare(Object obj1, Object obj2) {

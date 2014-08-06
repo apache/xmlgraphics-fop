@@ -23,9 +23,8 @@ the location of this file.
   <!-- Target resolution in dpi (dots/pixels per inch) for specifying the target resolution for generated bitmaps, default: 72dpi -->
   <target-resolution>72</target-resolution>
   
-  <!-- Default page-height and page-width, in case
-       value is specified as auto -->
-  <default-page-settings height="11in" width="8.26in"/>
+  <!-- Default page-height and page-width, in case value is specified as auto -->
+  <default-page-settings height="11.00in" width="8.50in"/>
   
   <!-- Information for specific renderers -->
   <!-- Uses renderer mime type for renderers -->
@@ -78,6 +77,10 @@ the location of this file.
           <font-triplet name="ArialMT" style="normal" weight="bold"/>
         </font>
         -->
+
+        <!-- auto-detect fonts -->
+        <auto-detect/>
+
       </fonts>
 
       <!-- This option lets you specify additional options on an XML handler -->
@@ -403,11 +406,11 @@ the location of this file.
         
         example:
          <font>
-        	<afp-font type="CIDKeyed" encoding="UnicodeBigUnmarked"  
-        	codepage="T1120000" characterset="CZJHMNU" 
-        	base-uri="fonts" />
-         	<font-triplet name="J-Heisei Mincho" style="normal" weight="normal" />
-     	 </font>
+                <afp-font type="CIDKeyed" encoding="UnicodeBigUnmarked"  
+                codepage="T1120000" characterset="CZJHMNU" 
+                base-uri="fonts" />
+                <font-triplet name="J-Heisei Mincho" style="normal" weight="normal" />
+         </font>
         -->
         
         
@@ -461,4 +464,3 @@ the location of this file.
   </renderers>
 
 </fop>
-

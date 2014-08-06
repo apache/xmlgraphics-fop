@@ -318,13 +318,13 @@ public class AlignmentContext implements Constants {
             case EN_BASELINE: //Nothing to do
                 break;
             case EN_SUB:
-                baselineShiftValue = Math.round(-(xHeight / 2)
-                                + parentAlignmentContext.getActualBaselineOffset(EN_ALPHABETIC)
+                baselineShiftValue = Math.round(-((float)xHeight / 2)
+                                + (float)parentAlignmentContext.getActualBaselineOffset(EN_ALPHABETIC)
                                 );
                 break;
             case EN_SUPER:
-                baselineShiftValue = Math.round(parentAlignmentContext.getXHeight()
-                                + parentAlignmentContext.getActualBaselineOffset(EN_ALPHABETIC)
+                baselineShiftValue = Math.round((float)parentAlignmentContext.getXHeight()
+                                + (float)parentAlignmentContext.getActualBaselineOffset(EN_ALPHABETIC)
                                 );
                 break;
             case 0: // A <length> or <percentage> value
