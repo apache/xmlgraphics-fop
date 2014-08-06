@@ -64,6 +64,7 @@ public class CommonTextDecoration {
 
     private static CommonTextDecoration calcTextDecoration(PropertyList pList)
                 throws PropertyException {
+        assert pList != null;
         CommonTextDecoration deco = null;
         PropertyList parentList = pList.getParentPropertyList();
         if (parentList != null) {
@@ -78,9 +79,7 @@ public class CommonTextDecoration {
             while (i.hasNext()) {
                 Property prop = (Property)i.next();
                 int propEnum = prop.getEnum();
-                FOUserAgent ua = (pList == null)
-                        ? null
-                        : (pList.getFObj() == null ? null : pList.getFObj().getUserAgent());
+                FOUserAgent ua = pList.getFObj() == null ? null : pList.getFObj().getUserAgent();
                 if (propEnum == Constants.EN_NONE) {
                     if (deco != null) {
                         deco.decoration = 0;

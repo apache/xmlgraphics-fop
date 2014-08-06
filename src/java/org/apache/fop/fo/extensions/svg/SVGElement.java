@@ -130,9 +130,6 @@ public class SVGElement extends SVGObj {
             public float getFontSize() {
                 return 12;
             }
-
-            public void deselectAll() {
-            }
         };
         SVGOMElement e = (SVGOMElement)svgRoot;
         e.setSVGContext(dc);

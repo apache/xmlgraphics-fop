@@ -174,7 +174,11 @@ public final class Hyphenator {
                 is = contextClassLoader.getResourceAsStream("hyph/" + key
                                                             + ".hyp");
             }
-        } catch (Exception e) {
+        } catch (NoSuchMethodException e) {
+            //ignore, fallback further down
+        } catch (IllegalAccessException e) {
+            //ignore, fallback further down
+        } catch (java.lang.reflect.InvocationTargetException e) {
             //ignore, fallback further down
         }
 

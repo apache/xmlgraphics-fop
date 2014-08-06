@@ -109,7 +109,7 @@ public class PageableRenderer extends Java2DRenderer implements Pageable {
         if (o != null) {
             this.endNumber = getPositiveInteger(o);
         }
-        if (this.endNumber >= 0 && this.endNumber < this.endNumber) {
+        if (this.endNumber >= 0 && this.endNumber < this.startNumber) {
             this.endNumber = this.startNumber;
         }
     }

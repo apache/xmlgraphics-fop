@@ -266,16 +266,16 @@ public abstract class OpenFont {
     /**
      * Key-value helper class.
      */
-    final class UnicodeMapping implements Comparable {
+    final static class UnicodeMapping implements Comparable {
 
         private final int unicodeIndex;
         private final int glyphIndex;
 
-        UnicodeMapping(int glyphIndex, int unicodeIndex) {
+        UnicodeMapping(OpenFont font, int glyphIndex, int unicodeIndex) {
             this.unicodeIndex = unicodeIndex;
             this.glyphIndex = glyphIndex;
-            glyphToUnicodeMap.put(new Integer(glyphIndex), new Integer(unicodeIndex));
-            unicodeToGlyphMap.put(new Integer(unicodeIndex), new Integer(glyphIndex));
+            font.glyphToUnicodeMap.put(new Integer(glyphIndex), new Integer(unicodeIndex));
+            font.unicodeToGlyphMap.put(new Integer(unicodeIndex), new Integer(glyphIndex));
         }
 
         /**
@@ -533,7 +533,7 @@ public abstract class OpenFont {
                             glyphIdx = (fontFile.readTTFUShort() + cmapDeltas[i])
                                        & 0xffff;
                             //mtxTab[glyphIdx].setName(mtxTab[glyphIdx].getName() + " - "+(char)j);
-                            unicodeMappings.add(new UnicodeMapping(glyphIdx, j));
+                            unicodeMappings.add(new UnicodeMapping(this, glyphIdx, j));
                             mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
 
                             if (encodingID == 0 && j >= 0xF020 && j <= 0xF0FF) {
@@ -543,7 +543,7 @@ public abstract class OpenFont {
                                 int mapped = j - 0xF000;
                                 if (!eightBitGlyphs.get(mapped)) {
                                     //Only map if Unicode code point hasn't been mapped before
-                                    unicodeMappings.add(new UnicodeMapping(glyphIdx, mapped));
+                                    unicodeMappings.add(new UnicodeMapping(this, glyphIdx, mapped));
                                     mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(mapped));
                                 }
                             }
@@ -582,7 +582,7 @@ public abstract class OpenFont {
                                                    + mtxTab.length);
                             }
 
-                            unicodeMappings.add(new UnicodeMapping(glyphIdx, j));
+                            unicodeMappings.add(new UnicodeMapping(this, glyphIdx, j));
                             if (glyphIdx < mtxTab.length) {
                                 mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
                             } else {
