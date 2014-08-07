@@ -40,7 +40,7 @@ public class PageNumberCitationLayoutManager extends AbstractPageNumberCitationL
 
     @Override
     protected PageViewport getCitedPage() {
-        return getPSLM().getFirstPVWithID(fobj.getRefId());
+        return getPSLM().getFirstPVWithID(citation.getRefId());
     }
 
     @Override

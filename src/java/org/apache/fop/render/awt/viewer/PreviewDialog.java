@@ -626,7 +626,7 @@ public class PreviewDialog extends JFrame implements StatusListener {
         }
 
         public void run() {
-            processStatus.setText(message.toString());
+            processStatus.setText(message);
         }
     }
 

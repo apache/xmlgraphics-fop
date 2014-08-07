@@ -31,6 +31,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.impl.SimpleLog;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -295,11 +296,15 @@ public class TestConverter {
                                        outname + makeResultExtension());
 
             outputFile.getParentFile().mkdirs();
-            OutputStream outStream = new java.io.BufferedOutputStream(
-                                 new java.io.FileOutputStream(outputFile));
-            logger.debug("ddir:" + destdir + " on:" + outputFile.getName());
-            inputHandler.renderTo(userAgent, outputFormat, outStream);
-            outStream.close();
+            OutputStream outStream = null;
+            try {
+                outStream = new java.io.BufferedOutputStream(
+                    new java.io.FileOutputStream(outputFile));
+                logger.debug("ddir:" + destdir + " on:" + outputFile.getName());
+                inputHandler.renderTo(userAgent, outputFormat, outStream);
+            } finally {
+                IOUtils.closeQuietly(outStream);
+            }
 
             // check difference
             if (compare != null) {

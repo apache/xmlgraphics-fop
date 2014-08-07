@@ -40,8 +40,8 @@ public class PageNumberCitationLastLayoutManager extends AbstractPageNumberCitat
 
     @Override
     protected PageViewport getCitedPage() {
-        if (getPSLM().associateLayoutManagerID(fobj.getRefId())) {
-            return getPSLM().getLastPVWithID(fobj.getRefId());
+        if (getPSLM().associateLayoutManagerID(citation.getRefId())) {
+            return getPSLM().getLastPVWithID(citation.getRefId());
         } else {
             return null;
         }

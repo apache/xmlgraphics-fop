@@ -104,7 +104,7 @@ public abstract class AbstractPageSequence extends FObj implements CommonAccessi
                     startingPageNumber++;
                 }
             } else if (pageNumberType == EN_AUTO_EVEN) {
-                if (startingPageNumber % 2 == 1) {
+                if (startingPageNumber % 2 != 0) {
                     startingPageNumber++;
                 }
             }

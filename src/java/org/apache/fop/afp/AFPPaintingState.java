@@ -57,7 +57,7 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     private float bitmapEncodingQuality;
 
     /** color image handler */
-    private ColorConverter colorConverter = GrayScaleColorConverter.getInstance();
+    private transient ColorConverter colorConverter = GrayScaleColorConverter.getInstance();
 
     /**
      * true if certain image formats may be embedded unchanged in their native

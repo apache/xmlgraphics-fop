@@ -21,6 +21,7 @@ package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 
 /**
@@ -57,19 +58,17 @@ public class OFDirTabEntry {
 
         offset = in.readTTFULong();
         length = in.readTTFULong();
-        String tagStr = new String(tag, "ISO-8859-1");
 
-        return tagStr;
+        return getTagString();
     }
 
 
     @Override
     public String toString() {
-        return "Read dir tab ["
-            + tag[0] + " " + tag[1] + " " + tag[2] + " " + tag[3] + "]"
+        return "Read dir tab [" + Arrays.toString(tag) + "]"
             + " offset: " + offset
             + " length: " + length
-            + " name: " + tag;
+            + " name: " + getTagString();
     }
 
     /**

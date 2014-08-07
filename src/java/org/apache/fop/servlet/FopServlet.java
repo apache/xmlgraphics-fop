@@ -88,7 +88,7 @@ public class FopServlet extends HttpServlet {
     /** The FopFactory used to create Fop instances */
     protected FopFactory fopFactory;
     /** URIResolver for use by this servlet */
-    protected URIResolver uriResolver;
+    protected transient URIResolver uriResolver;
 
     /**
      * {@inheritDoc}

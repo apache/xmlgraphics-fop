@@ -266,7 +266,7 @@ public abstract class OpenFont {
     /**
      * Key-value helper class.
      */
-    final static class UnicodeMapping implements Comparable {
+    static final class UnicodeMapping implements Comparable {
 
         private final int unicodeIndex;
         private final int glyphIndex;

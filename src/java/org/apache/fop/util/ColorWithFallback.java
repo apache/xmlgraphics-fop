@@ -82,4 +82,23 @@ public class ColorWithFallback extends ColorWithAlternatives {
         return this.fallback;
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode() ^ fallback.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (!super.equals(obj)) {
+            return false;
+        } else if (obj instanceof ColorWithFallback) {
+            ColorWithFallback other = (ColorWithFallback) obj;
+            return other.fallback.equals(fallback);
+        } else {
+            return false;
+        }
+    }
+
 }

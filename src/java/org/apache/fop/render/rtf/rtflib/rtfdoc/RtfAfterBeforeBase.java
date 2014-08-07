@@ -41,14 +41,12 @@ abstract class RtfAfterBeforeBase
 extends RtfContainer
 implements IRtfParagraphContainer, IRtfExternalGraphicContainer, IRtfTableContainer,
         IRtfTextrunContainer {
-    protected RtfAttributes attrib;
     private RtfParagraph para;
     private RtfExternalGraphic externalGraphic;
     private RtfTable table;
 
     RtfAfterBeforeBase(RtfSection parent, Writer w, RtfAttributes attrs) throws IOException {
         super((RtfContainer)parent, w, attrs);
-        attrib = attrs;
     }
 
     public RtfParagraph newParagraph() throws IOException {
