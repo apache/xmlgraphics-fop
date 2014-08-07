@@ -548,7 +548,7 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
                 + ", fontName=" + fontName
                 + ", fontSize=" + fontSize
                 + ", lineWidth=" + lineWidth
-                + ", dashArray=" + dashArray
+                + ", dashArray=" + Arrays.toString(dashArray)
                 + ", transform=" + transform
                 + ", layer=" + layer;
         }

@@ -1277,7 +1277,7 @@ public final class Glyphs {
      * @return the name of the glyph
      */
     public static String charToGlyphName(char ch) {
-        return stringToGlyph(new Character(ch).toString());
+        return stringToGlyph(Character.toString(ch));
     }
 
     /**

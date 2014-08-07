@@ -34,10 +34,6 @@
     <Bug pattern="DM_BOOLEAN_CTOR"/>
   </Match>
   <Match>
-    <!-- 2 warnings -->
-    <Bug pattern="DM_BOXED_PRIMITIVE_TOSTRING"/>
-  </Match>
-  <Match>
     <!-- 29 warnings -->
     <Bug pattern="DM_CONVERT_CASE"/>
   </Match>
@@ -54,20 +50,8 @@
     <Bug pattern="DM_NUMBER_CTOR"/>
   </Match>
   <Match>
-    <!-- 2 warnings -->
-    <Bug pattern="DM_STRING_TOSTRING"/>
-  </Match>
-  <Match>
     <!-- 4 warnings -->
     <Bug pattern="DM_STRING_VOID_CTOR"/>
-  </Match>
-  <Match>
-    <!-- 2 warnings -->
-    <Bug pattern="DMI_INVOKING_TOSTRING_ON_ARRAY"/>
-  </Match>
-  <Match>
-    <!-- 2 warnings -->
-    <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
   </Match>
   <Match>
     <!-- 84 warnings -->
@@ -87,10 +71,6 @@
     </Or>
   </Match>
   <Match>
-    <!-- 2 warnings -->
-    <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
-  </Match>
-  <Match>
     <!-- 3 warnings -->
     <Bug pattern="ES_COMPARING_PARAMETER_STRING_WITH_EQ"/>
   </Match>
@@ -103,10 +83,6 @@
     <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
   </Match>
   <Match>
-    <!-- 2 warnings -->
-    <Bug pattern="IM_BAD_CHECK_FOR_ODD"/>
-  </Match>
-  <Match>
     <!-- 3 warnings -->
     <Bug pattern="IS2_INCONSISTENT_SYNC"/>
   </Match>
@@ -117,10 +93,6 @@
   <Match>
     <!-- 9 warnings -->
     <Bug pattern="LI_LAZY_INIT_STATIC"/>
-  </Match>
-  <Match>
-    <!-- 2 warnings -->
-    <Bug pattern="MF_CLASS_MASKS_FIELD"/>
   </Match>
   <Match>
     <Bug pattern="MS_EXPOSE_REP"/>
@@ -160,20 +132,12 @@
     <Bug pattern="NP_NULL_ON_SOME_PATH"/>
   </Match>
   <Match>
-    <!-- 2 warnings -->
-    <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
-  </Match>
-  <Match>
     <!-- 3 warnings -->
     <Bug pattern="NS_DANGEROUS_NON_SHORT_CIRCUIT"/>
   </Match>
   <Match>
     <!-- 4 warnings -->
     <Bug pattern="OS_OPEN_STREAM"/>
-  </Match>
-  <Match>
-    <!-- 2 warnings -->
-    <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH"/>
   </Match>
   <Match>
     <!-- 46 warnings -->
@@ -200,20 +164,8 @@
     <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
   </Match>
   <Match>
-    <!-- 2 warnings -->
-    <Bug pattern="SBSC_USE_STRINGBUFFER_CONCATENATION"/>
-  </Match>
-  <Match>
     <!-- 33 warnings -->
     <Bug pattern="SE_BAD_FIELD"/>
-  </Match>
-  <Match>
-    <!-- 2 warnings -->
-    <Bug pattern="SE_BAD_FIELD_INNER_CLASS"/>
-  </Match>
-  <Match>
-    <!-- 2 warnings -->
-    <Bug pattern="SE_BAD_FIELD_STORE"/>
   </Match>
   <Match>
     <!-- 6 warnings -->

@@ -130,13 +130,17 @@ public abstract class AbstractGraphicsCoord extends AbstractGraphicsDrawingOrder
 
     /** {@inheritDoc} */
     public String toString() {
-        String coordsStr = "";
+        StringBuffer sb = new StringBuffer();
         for (int i = 0; i < coords.length; i++) {
-            coordsStr += (i % 2 == 0) ? "x" : "y";
-            coordsStr += (i / 2) + "=" + coords[i] + ",";
+            if (sb.length() > 0) {
+                sb.append(',');
+            }
+            sb.append((i % 2 == 0) ? 'x' : 'y');
+            sb.append(i / 2);
+            sb.append('=');
+            sb.append(coords[i]);
         }
-        coordsStr = coordsStr.substring(0, coordsStr.length() - 1);
-        return getName() + "{" + coordsStr + "}";
+        return getName() + "{" + sb.toString() + "}";
     }
 
     /**

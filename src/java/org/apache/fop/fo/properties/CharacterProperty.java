@@ -90,7 +90,7 @@ public final class CharacterProperty extends Property {
      * @return this.character cast as a String
      */
     public String getString() {
-        return new Character(character).toString();
+        return Character.toString(character);
     }
 
     @Override

@@ -128,10 +128,11 @@ public class ImageProxyPanel extends JPanel {
                 image = (BufferedImage)imageRef.get();
             }
 
-            int x = (getWidth() - image.getWidth()) / 2;
-            int y = (getHeight() - image.getHeight()) / 2;
-
-            graphics.drawImage(image, x, y, image.getWidth(), image.getHeight(), null);
+            if (image != null) {
+                int x = (getWidth() - image.getWidth()) / 2;
+                int y = (getHeight() - image.getHeight()) / 2;
+                graphics.drawImage(image, x, y, image.getWidth(), image.getHeight(), null);
+            }
         } catch (FOPException fopEx) {
             fopEx.printStackTrace();
         }

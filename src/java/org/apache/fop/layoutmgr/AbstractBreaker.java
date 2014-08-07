@@ -91,7 +91,7 @@ public abstract class AbstractBreaker {
      * Helper class, extending the functionality of the
      * basic {@link BlockKnuthSequence}.
      */
-    public class BlockSequence extends BlockKnuthSequence {
+    public static class BlockSequence extends BlockKnuthSequence {
 
         private static final long serialVersionUID = -5348831120146774118L;
 

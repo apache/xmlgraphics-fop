@@ -38,7 +38,8 @@ import org.apache.fop.traits.MinOptMax;
 public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLayoutManager {
 
     /** The page number citation object */
-    protected AbstractPageNumberCitation fobj;
+    protected AbstractPageNumberCitation citation;
+
     /** Font for the page-number-citation */
     protected Font font;
 
@@ -55,15 +56,15 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
      */
     public AbstractPageNumberCitationLayoutManager(AbstractPageNumberCitation node) {
         super(node);
-        fobj = node;
+        citation = node;
     }
 
     /** {@inheritDoc} */
     public void initialize() {
-        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
-        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
-        font = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
-        setCommonBorderPaddingBackground(fobj.getCommonBorderPaddingBackground());
+        FontInfo fi = citation.getFOEventHandler().getFontInfo();
+        FontTriplet[] fontkeys = citation.getCommonFont().getFontState(fi);
+        font = fi.getFontInstance(fontkeys[0], citation.getCommonFont().fontSize.getValue(this));
+        setCommonBorderPaddingBackground(citation.getCommonBorderPaddingBackground());
     }
 
     /**
@@ -72,11 +73,11 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
     protected AlignmentContext makeAlignmentContext(LayoutContext context) {
         return new AlignmentContext(
                 font
-                , fobj.getLineHeight().getOptimum(this).getLength().getValue(this)
-                , fobj.getAlignmentAdjust()
-                , fobj.getAlignmentBaseline()
-                , fobj.getBaselineShift()
-                , fobj.getDominantBaseline()
+                , citation.getLineHeight().getOptimum(this).getLength().getValue(this)
+                , citation.getAlignmentAdjust()
+                , citation.getAlignmentBaseline()
+                , citation.getBaselineShift()
+                , citation.getDominantBaseline()
                 , context.getAlignmentContext()
             );
     }
@@ -114,7 +115,7 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
     protected InlineArea getEffectiveArea(LayoutContext layoutContext) {
         InlineArea area = getPageNumberCitationArea();
         if (!layoutContext.treatAsArtifact()) {
-            TraitSetter.addStructureTreeElement(area, fobj.getStructureTreeElement());
+            TraitSetter.addStructureTreeElement(area, citation.getStructureTreeElement());
         }
         return area;
     }
@@ -125,9 +126,9 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
             text = new TextArea();
             text.addWord(citationString, 0);
         } else {
-            UnresolvedPageNumber unresolved = new UnresolvedPageNumber(fobj.getRefId(), font,
+            UnresolvedPageNumber unresolved = new UnresolvedPageNumber(citation.getRefId(), font,
                     getReferenceType());
-            getPSLM().addUnresolvedArea(fobj.getRefId(), unresolved);
+            getPSLM().addUnresolvedArea(citation.getRefId(), unresolved);
             text = unresolved;
         }
         setTraits(text);
@@ -141,7 +142,7 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
     protected abstract boolean getReferenceType();
 
     private void setTraits(TextArea text) {
-        TraitSetter.setProducerID(text, fobj.getId());
+        TraitSetter.setProducerID(text, citation.getId());
         int bidiLevel = getBidiLevel();
         text.setBidiLevel(bidiLevel);
         int width = getStringWidth(citationString); // TODO: [GA] !I18N!
@@ -149,15 +150,15 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
         text.setBPD(font.getAscender() - font.getDescender());
         text.setBaselineOffset(font.getAscender());
         TraitSetter.addFontTraits(text, font);
-        text.addTrait(Trait.COLOR, fobj.getColor());
-        TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
+        text.addTrait(Trait.COLOR, citation.getColor());
+        TraitSetter.addTextDecoration(text, citation.getTextDecoration());
     }
 
     /**
      * @return bidi level governing abstract page number citation
      */
     protected int getBidiLevel() {
-        return fobj.getBidiLevel();
+        return citation.getBidiLevel();
     }
 
 }

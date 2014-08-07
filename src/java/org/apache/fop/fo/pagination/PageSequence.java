@@ -271,7 +271,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
         if (pageSequenceMaster == null) {
             return simplePageMaster;
         }
-        boolean isOddPage = ((page % 2) == 1);
+        boolean isOddPage = ((page % 2) != 0);
         if (log.isDebugEnabled()) {
             log.debug("getNextSimplePageMaster(page=" + page
                     + " isOdd=" + isOddPage

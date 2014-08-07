@@ -61,7 +61,7 @@ public class PDFJavaScriptLaunchAction extends PDFAction {
 
         PDFJavaScriptLaunchAction launch = (PDFJavaScriptLaunchAction) obj;
 
-        if (!launch.script.toString().equals(script.toString())) {
+        if (!launch.script.equals(script)) {
             return false;
         }
 

@@ -25,6 +25,8 @@ import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -125,10 +127,15 @@ public final class Main {
      */
     public static void startFOPWithDynamicClasspath(String[] args) {
         try {
-            URL[] urls = getJARList();
+            final URL[] urls = getJARList();
             //System.out.println("CCL: "
             //    + Thread.currentThread().getContextClassLoader().toString());
-            ClassLoader loader = new java.net.URLClassLoader(urls, null);
+            ClassLoader loader = (ClassLoader)
+                AccessController.doPrivileged(new PrivilegedAction() {
+                    public Object run() {
+                        return new java.net.URLClassLoader(urls, null);
+                    }
+                });
             Thread.currentThread().setContextClassLoader(loader);
             Class clazz = Class.forName("org.apache.fop.cli.Main", true, loader);
             //System.out.println("CL: " + clazz.getClassLoader().toString());

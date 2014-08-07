@@ -191,7 +191,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     // this class represents a paragraph
-    private class Paragraph extends InlineKnuthSequence {
+    private static class Paragraph extends InlineKnuthSequence {
 
         private static final long serialVersionUID = 5862072380375189105L;
 
@@ -239,7 +239,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
             // add the element representing text indentation
             // at the beginning of the first paragraph
-            if (isFirstInBlock && knuthParagraphs.size() == 0
+            if (layoutManager.isFirstInBlock && layoutManager.knuthParagraphs.size() == 0
                         && textIndent != 0) {
                 this.add(new KnuthInlineBox(textIndent, null,
                                       null, false));
@@ -250,7 +250,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         public void endParagraph() {
             KnuthSequence finishedPar = this.endSequence();
             if (finishedPar != null) {
-                knuthParagraphs.add(finishedPar);
+                layoutManager.knuthParagraphs.add(finishedPar);
             }
         }
 

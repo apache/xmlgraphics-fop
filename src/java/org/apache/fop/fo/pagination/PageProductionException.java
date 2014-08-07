@@ -36,7 +36,7 @@ public class PageProductionException extends RuntimeException {
     private static final long serialVersionUID = -5126033718398975158L;
 
     private String localizedMessage;
-    private Locator locator;
+    private transient Locator locator;
 
 
     /**

@@ -25,6 +25,8 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -138,9 +140,14 @@ public class RunTest extends Task {
         // return;
         // } else {
         try {
-            ClassLoader loader = new URLClassLoader(createUrls(referenceJar));
+            final URL[] urls = createUrls(referenceJar);
+            ClassLoader loader = (ClassLoader)
+                AccessController.doPrivileged(new PrivilegedAction() {
+                    public Object run() {
+                        return new URLClassLoader(urls);
+                    }
+                });
             boolean failed = false;
-
             try {
                 Class cla = Class.forName("org.apache.fop.apps.Fop", true,
                                     loader);

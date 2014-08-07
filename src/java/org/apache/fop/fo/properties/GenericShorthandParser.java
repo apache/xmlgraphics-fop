@@ -83,17 +83,20 @@ public class GenericShorthandParser implements ShorthandParser {
                                                PropertyList propertyList)
                     throws PropertyException {
         Property prop = null;
-        String vProperty = "";
+        StringBuffer vProperty = new StringBuffer();
         // Try each of the stored values in turn
         Iterator iprop = property.getList().iterator();
         while (iprop.hasNext() && prop == null) {
             Property p = (Property)iprop.next();
             if (p.getNCname() != null) {
-                vProperty += p.getNCname() + " ";
+                if (vProperty.length() > 0) {
+                    vProperty.append(' ');
+                }
+                vProperty.append(p.getNCname());
             }
             prop = maker.convertShorthandProperty(propertyList, p, null);
         }
-        propertyList.validatePropertyValue(vProperty.trim(), prop, property);
+        propertyList.validatePropertyValue(vProperty.toString(), prop, property);
         return prop;
     }
 
