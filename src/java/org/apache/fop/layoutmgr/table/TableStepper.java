@@ -419,7 +419,9 @@ public class TableStepper {
         for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
             ActiveCell activeCell = (ActiveCell) iter.next();
             if (activeCell.endsOnRow(activeRowIndex)) {
-                rowFinished &= activeCell.finishes(step);
+                if (!activeCell.finishes(step)) {
+                    rowFinished = false;
+                }
             }
         }
         if (rowFinished) {

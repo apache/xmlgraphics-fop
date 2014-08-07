@@ -62,6 +62,15 @@ public class ImageProxyPanel extends JPanel {
     public ImageProxyPanel(AWTRenderer renderer, int page) {
         this.renderer = renderer;
         this.page = page;
+        try {
+            Dimension size = renderer.getPageImageSize(page);
+            Insets insets = getInsets();
+            size.width += insets.left + insets.right;
+            size.height += insets.top + insets.bottom;
+            this.size = size;
+        } catch (Exception e) {
+            this.size = new Dimension(10, 10);
+        }
         // Allows single panel to appear behind page display.
         // Important for textured L&Fs.
         setOpaque(false);
@@ -78,17 +87,6 @@ public class ImageProxyPanel extends JPanel {
      * @return the size of the page plus the border.
      */
     public Dimension getPreferredSize() {
-        if (size == null) {
-            try {
-                Insets insets = getInsets();
-                size = renderer.getPageImageSize(page);
-                size = new Dimension(size.width + insets.left + insets.right,
-                                                         size.height + insets.top + insets.bottom);
-            } catch (FOPException fopEx) {
-                // Arbitary size. Doesn't really matter what's returned here.
-                return new Dimension(10, 10);
-            }
-        }
         return size;
     }
 
@@ -96,7 +94,7 @@ public class ImageProxyPanel extends JPanel {
      * Sets the number of the page to be displayed and refreshes the display.
      * @param pg the page number
      */
-    public void setPage(int pg) {
+    public synchronized void setPage(int pg) {
         if (page != pg) {
             page = pg;
             imageRef = null;

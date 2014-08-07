@@ -147,7 +147,7 @@ public class NativeTextHandler implements PSTextHandler {
         final int l = text.length();
         for (int i = 0; i < l; i++) {
             final char ch = text.charAt(i);
-            final char mch = this.font.mapChar(ch);
+            final char mch = font.mapChar(ch);
             PSGenerator.escapeChar(mch, target);
         }
     }
@@ -157,13 +157,13 @@ public class NativeTextHandler implements PSTextHandler {
     }
 
     private void establishCurrentFont() throws IOException {
-        if ((currentFontName != this.font.getFontName())
-                || (currentFontSize != this.font.getFontSize())) {
+        if (!currentFontName.equals(font.getFontName())
+                || (currentFontSize != font.getFontSize())) {
             PSGenerator gen = getPSGenerator();
-            gen.writeln("/" + this.font.getFontTriplet().getName() + " "
+            gen.writeln("/" + font.getFontTriplet().getName() + " "
                     + gen.formatDouble(font.getFontSize() / 1000f) + " F");
-            currentFontName = this.font.getFontName();
-            currentFontSize = this.font.getFontSize();
+            currentFontName = font.getFontName();
+            currentFontSize = font.getFontSize();
         }
     }
 

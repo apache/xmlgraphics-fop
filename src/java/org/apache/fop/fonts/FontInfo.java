@@ -245,13 +245,13 @@ public class FontInfo {
 
         // only if the font may be substituted
         // fallback 1: try the same font-family and weight with default style
-        if (internalFontKey == null && style != Font.STYLE_NORMAL) {
+        if (internalFontKey == null && !style.equals(Font.STYLE_NORMAL)) {
             key = createFontKey(family, Font.STYLE_NORMAL, weight);
             internalFontKey = getInternalFontKey(key);
         }
 
         // fallback 2: try the same font-family with default style and try to adjust weight
-        if (internalFontKey == null && style != Font.STYLE_NORMAL) {
+        if (internalFontKey == null && !style.equals(Font.STYLE_NORMAL)) {
             key = findAdjustWeight(family, Font.STYLE_NORMAL, weight);
             if (key != null) {
                 internalFontKey = getInternalFontKey(key);

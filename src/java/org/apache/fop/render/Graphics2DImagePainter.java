@@ -24,6 +24,7 @@ package org.apache.fop.render;
  * a Graphics2D instance can implement this interface to paint themselves.
  * @deprecated use {@link org.apache.xmlgraphics.java2d.Graphics2DImagePainter} directly!
  */
+// @SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
 public interface Graphics2DImagePainter
         extends org.apache.xmlgraphics.java2d.Graphics2DImagePainter {
 

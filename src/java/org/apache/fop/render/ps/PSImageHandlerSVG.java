@@ -138,8 +138,6 @@ public class PSImageHandlerSVG implements ImageHandler {
             float sx = pos.width / w;
             float sy = pos.height / h;
 
-            ctx = null;
-
             gen.commentln("%FOPBeginSVG");
             gen.saveGraphicsState();
             final boolean clip = false;

@@ -78,7 +78,7 @@ public class ToBeImplementedProperty extends Property {
          * Since a PropertyCache is not used here, returning true helps the PropertyCache when a non
          * implemented property is part of an implemented one.
          */
-        // FBOFF: EQ_ALWAYS_TRUE
+        // @SuppressFBWarnings("EQ_ALWAYS_TRUE")
         return true;
     }
 }

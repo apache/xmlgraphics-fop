@@ -42,14 +42,13 @@ public class FileCompare {
     private String referenceDirectory;
     private String testDirectory;
     private String[] filenameList;
-    private String filenames;
 
     /**
      * Sets directory for test files.
      * @param testDirectory the test directory
      */
     public void setTestDirectory(String testDirectory) {
-        if (!(testDirectory.endsWith("/") | testDirectory.endsWith("\\"))) {
+        if (!(testDirectory.endsWith("/") || testDirectory.endsWith("\\"))) {
             testDirectory += File.separator;
         }
         this.testDirectory = testDirectory;
@@ -61,7 +60,7 @@ public class FileCompare {
      */
     public void setReferenceDirectory(String referenceDirectory) {
         if (!(referenceDirectory.endsWith("/")
-                | referenceDirectory.endsWith("\\"))) {
+                || referenceDirectory.endsWith("\\"))) {
             referenceDirectory += File.separator;
         }
         this.referenceDirectory = referenceDirectory;

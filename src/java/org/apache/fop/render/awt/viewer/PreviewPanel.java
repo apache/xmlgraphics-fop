@@ -320,7 +320,7 @@ public class PreviewPanel extends JPanel {
 
         // ***** MouseListener *****
 
-        public void mousePressed(MouseEvent e) {
+        public synchronized void mousePressed(MouseEvent e) {
             startPosX = e.getX();
             startPosY = e.getY();
         }
@@ -357,6 +357,7 @@ public class PreviewPanel extends JPanel {
                     // This page intentionally left blank
                     // Makes 0th/1st page on rhs
                     gridPanel.add(new JLabel(""));
+                    // @SuppressFBWarnings("SF_SWITCH_FALLTHROUGH")
                 case CONTINUOUS:
                     currentPage = 0;
                     firstPage = 0;

@@ -261,11 +261,13 @@ class Java2DGraphicsPainter implements GraphicsPainter {
             closePath();
             getG2D().fill(currentPath);
             currentPath = null;
+            break;
 
         case Constants.EN_NONE:
             // No rule is drawn
             break;
         default:
+            break;
         } // end switch
         restoreGraphicsState();
     }
