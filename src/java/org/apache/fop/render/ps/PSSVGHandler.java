@@ -278,8 +278,6 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
         float sx = psInfo.getWidth() / w;
         float sy = psInfo.getHeight() / h;
 
-        ctx = null;
-
         try {
             gen.commentln("%FOPBeginSVG");
             gen.saveGraphicsState();

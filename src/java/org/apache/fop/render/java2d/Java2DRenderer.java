@@ -893,11 +893,13 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             closePath();
             state.getGraph().fill(currentPath);
             currentPath = null;
+            break;
 
         case EN_NONE:
             // No rule is drawn
             break;
         default:
+            break;
         } // end switch
 
         super.renderLeader(area);

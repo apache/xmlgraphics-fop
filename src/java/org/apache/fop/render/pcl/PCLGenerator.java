@@ -715,6 +715,7 @@ public class PCLGenerator {
         boolean monochrome = isMonochromeImage(img);
         if (!monochrome) {
             //Transparency mask disabled. Doesn't work reliably
+            /*
             final boolean transparencyDisabled = true;
             RenderedImage mask = (transparencyDisabled ? null : getMask(img, effDim));
             if (mask != null) {
@@ -724,11 +725,12 @@ public class PCLGenerator {
                 paintMonochromeBitmap(mask, effResolution);
                 popCursorPos();
             }
+            */
 
             RenderedImage red = BitmapImageUtil.convertToMonochrome(
                     img, effDim, this.ditheringQuality);
             selectCurrentPattern(0, 0); //Solid black
-            setTransparencyMode(sourceTransparency || mask != null, true);
+            setTransparencyMode(sourceTransparency /*|| mask != null*/, true);
             paintMonochromeBitmap(red, effResolution);
         } else {
             RenderedImage effImg = img;

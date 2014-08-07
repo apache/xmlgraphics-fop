@@ -22,6 +22,7 @@ package org.apache.fop.apps;
 /**
  * Frequently used MIME types for various file formats used when working with Apache FOP.
  */
+// @SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
 public interface MimeConstants extends org.apache.xmlgraphics.util.MimeConstants {
 
     /** Apache FOP's AWT preview (non-standard MIME type) */

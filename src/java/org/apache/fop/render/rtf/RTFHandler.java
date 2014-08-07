@@ -1101,7 +1101,7 @@ public class RTFHandler extends FOEventHandler {
         } catch (ImageException ie) {
             ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
-            eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
+            eventProducer.imageError(this, uri, ie, null);
         } catch (FileNotFoundException fe) {
             ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());

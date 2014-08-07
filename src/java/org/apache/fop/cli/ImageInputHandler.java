@@ -52,7 +52,7 @@ public class ImageInputHandler extends InputHandler {
     protected Source createXSLTSource() {
         Source src = super.createXSLTSource();
         if (src == null) {
-            src = new StreamSource(getClass().getResource("image2fo.xsl").toExternalForm());
+            src = new StreamSource(ImageInputHandler.class.getResource("image2fo.xsl").toExternalForm());
         }
         return src;
     }

@@ -37,8 +37,6 @@ import java.io.Writer;
 public class RtfPageArea
 extends RtfContainer {
     private RtfPage currentPage;
-    private RtfNull nullChild;
-    private RtfAttributes childAttributes;
 
     /** Create an RTF element as a child of given container */
     RtfPageArea(RtfFile f, Writer w) throws IOException {

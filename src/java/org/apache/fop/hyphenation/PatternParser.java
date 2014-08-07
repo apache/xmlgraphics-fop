@@ -261,7 +261,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         parser = createParser();
         parser.setContentHandler(this);
         parser.setErrorHandler(this);
-        InputStream stream = this.getClass().getResourceAsStream("classes.xml");
+        InputStream stream = PatternParser.class.getResourceAsStream("classes.xml");
         InputSource source = new InputSource(stream);
         try {
             parser.parse(source);

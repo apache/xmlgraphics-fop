@@ -331,8 +331,8 @@ public class RtfTextrun extends RtfContainer {
      * @throws IOException for I/O problems
      */
     public void addBookmark(String id) throws IOException {
-       if (id != "") {
-            // if id is not empty, add boormark
+       if (id.length() > 0) {
+            // if id is not empty, add bookmark
            new RtfBookmark(this, writer, id);
        }
     }

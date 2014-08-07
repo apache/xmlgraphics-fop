@@ -101,7 +101,6 @@ public class PDFImageHandlerSVG implements ImageHandler {
         GraphicsNode root;
         try {
             root = builder.build(ctx, clonedDoc);
-            builder = null;
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());

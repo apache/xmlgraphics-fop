@@ -343,7 +343,7 @@ public final class FOPropertyMapping implements Constants {
             addSubpropMakerName("precedence", CP_PRECEDENCE);
         }
 
-        // SuppressFBWarnings("MS_EXPOSE_REP")
+        // @SuppressFBWarnings("MS_EXPOSE_REP")
         return generics;
     }
 

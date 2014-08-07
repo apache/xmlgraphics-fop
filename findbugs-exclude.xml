@@ -26,10 +26,6 @@
     <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
   </Match>
   <Match>
-    <!-- 3 warnings -->
-    <Bug pattern="DLS_DEAD_LOCAL_STORE_OF_NULL"/>
-  </Match>
-  <Match>
     <!-- 4 warnings -->
     <Bug pattern="DM_BOOLEAN_CTOR"/>
   </Match>
@@ -71,20 +67,8 @@
     </Or>
   </Match>
   <Match>
-    <!-- 3 warnings -->
-    <Bug pattern="ES_COMPARING_PARAMETER_STRING_WITH_EQ"/>
-  </Match>
-  <Match>
-    <!-- 3 warnings -->
-    <Bug pattern="ES_COMPARING_STRINGS_WITH_EQ"/>
-  </Match>
-  <Match>
     <!-- 12 warnings -->
     <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
-  </Match>
-  <Match>
-    <!-- 3 warnings -->
-    <Bug pattern="IS2_INCONSISTENT_SYNC"/>
   </Match>
   <Match>
     <!-- 6 warnings -->
@@ -116,8 +100,12 @@
     <Bug pattern="NM_CONFUSING"/>
   </Match>
   <Match>
-    <!-- 3 warnings -->
     <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
+    <Or>
+      <Class name="org.apache.fop.apps.MimeConstants"/>
+      <Class name="org.apache.fop.events.EventListener"/>
+      <Class name="org.apache.fop.render.Graphics2DImagePainter"/>
+    </Or>
   </Match>
   <Match>
     <!-- 5 warnings -->
@@ -132,10 +120,6 @@
     <Bug pattern="NP_NULL_ON_SOME_PATH"/>
   </Match>
   <Match>
-    <!-- 3 warnings -->
-    <Bug pattern="NS_DANGEROUS_NON_SHORT_CIRCUIT"/>
-  </Match>
-  <Match>
     <!-- 4 warnings -->
     <Bug pattern="OS_OPEN_STREAM"/>
   </Match>
@@ -146,10 +130,6 @@
   <Match>
     <!-- 10 warnings -->
     <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
-  </Match>
-  <Match>
-    <!-- 3 warnings -->
-    <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
   </Match>
   <Match>
     <!-- 23 warnings -->
@@ -176,8 +156,13 @@
     <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
   </Match>
   <Match>
-    <!-- 3 warnings -->
     <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.render.awt.viewer.PreviewPanel$Reloader"/>
+        <Method name="run"/>
+      </And>
+    </Or>
   </Match>
   <Match>
     <!-- 21 warnings -->
@@ -200,20 +185,12 @@
     <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
   </Match>
   <Match>
-    <!-- 3 warnings -->
-    <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
-  </Match>
-  <Match>
     <!-- 6 warnings -->
     <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
   </Match>
   <Match>
     <!-- 12 warnings -->
     <Bug pattern="URF_UNREAD_FIELD"/>
-  </Match>
-  <Match>
-    <!-- 3 warnings -->
-    <Bug pattern="UUF_UNUSED_FIELD"/>
   </Match>
   <Match>
     <!-- 58 warnings -->

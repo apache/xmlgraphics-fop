@@ -420,18 +420,14 @@ public class Marker extends FObjMixed {
 
             if (o instanceof MarkerAttribute) {
                 MarkerAttribute attr = (MarkerAttribute) o;
-                return ((attr.namespace == this.namespace)
-                            || (attr.namespace != null
-                                    && attr.namespace.equals(this.namespace)))
-                    && ((attr.qname == this.qname)
-                            || (attr.qname != null
-                                    && attr.qname.equals(this.qname)))
-                    && ((attr.name == this.name)
-                            || (attr.name != null
-                                    && attr.name.equals(this.name)))
-                    && ((attr.value == this.value)
-                            || (attr.value != null
-                                    && attr.value.equals(this.value)));
+                return (attr.namespace != null
+                                    && attr.namespace.equals(this.namespace))
+                    && (attr.qname != null
+                                    && attr.qname.equals(this.qname))
+                    && (attr.name != null
+                                    && attr.name.equals(this.name))
+                    && (attr.value != null
+                                    && attr.value.equals(this.value));
             } else {
                 return false;
             }

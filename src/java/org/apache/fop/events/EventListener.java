@@ -22,6 +22,7 @@ package org.apache.fop.events;
 /**
  * This interface is implemented by clients who want to listen for events.
  */
+// @SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
 public interface EventListener extends java.util.EventListener {
 
     /**

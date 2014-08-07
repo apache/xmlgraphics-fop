@@ -64,7 +64,7 @@ public class PreviewDialogAboutBox extends Dialog implements ActionListener {
         JPanel insetsPanel3 = new JPanel();
         okButton = new JButton();
         JLabel imageControl1 = new JLabel();
-        imageControl1.setIcon(new ImageIcon(getClass().getResource("images/fop.gif")));
+        imageControl1.setIcon(new ImageIcon(PreviewDialogAboutBox.class.getResource("images/fop.gif")));
         JLabel label1 = new JLabel(translator.getString("About.Product"));
         JLabel label2 = new JLabel(translator.getString("About.Version")
                                             + " " + Version.getVersion());

@@ -56,8 +56,8 @@ public class IFGraphicContext extends GraphicContext {
     /**
      * {@inheritDoc}
      */
+    // @SuppressFBWarnings("CN_IDIOM_NO_SUPER_CALL")
     public Object clone() {
-        // FBOFF: CN_IDIOM_NO_SUPER_CALL
         return new IFGraphicContext(this);
     }
 

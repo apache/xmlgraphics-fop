@@ -81,7 +81,7 @@ public class FontListSerializer {
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry)iter.next();
             String familyName = (String)entry.getKey();
-            if (singleFamily != null && familyName != singleFamily) {
+            if (singleFamily != null && !singleFamily.equals(familyName)) {
                 continue;
             }
             atts.clear();
