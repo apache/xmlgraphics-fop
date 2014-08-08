@@ -117,35 +117,35 @@ public class TIFFRenderer extends Java2DRenderer {
                 = BitmapRendererEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
             eventProducer.noImageWriterFound(this, getMimeType());
-        }
-        if (writer.supportsMultiImageWriter()) {
-            MultiImageWriter multiWriter = writer.createMultiImageWriter(outputStream);
-            try {
-                // Write all pages/images
-                while (pageImagesItr.hasNext()) {
-                    RenderedImage img = (RenderedImage) pageImagesItr.next();
-                    multiWriter.writeImage(img, imageSettings.getWriterParams());
-                }
-            } finally {
-                multiWriter.close();
-            }
         } else {
-            RenderedImage renderedImage = null;
-            if (pageImagesItr.hasNext()) {
-                renderedImage = (RenderedImage) pageImagesItr.next();
+            if (writer.supportsMultiImageWriter()) {
+                MultiImageWriter multiWriter = writer.createMultiImageWriter(outputStream);
+                try {
+                    // Write all pages/images
+                    while (pageImagesItr.hasNext()) {
+                        RenderedImage img = (RenderedImage) pageImagesItr.next();
+                        multiWriter.writeImage(img, imageSettings.getWriterParams());
+                    }
+                } finally {
+                    multiWriter.close();
+                }
+            } else {
+                RenderedImage renderedImage = null;
+                if (pageImagesItr.hasNext()) {
+                    renderedImage = (RenderedImage) pageImagesItr.next();
+                }
+                writer.writeImage(renderedImage, outputStream, imageSettings.getWriterParams());
+                if (pageImagesItr.hasNext()) {
+                    BitmapRendererEventProducer eventProducer
+                        = BitmapRendererEventProducer.Provider.get(
+                                getUserAgent().getEventBroadcaster());
+                    eventProducer.stoppingAfterFirstPageNoFilename(this);
+                }
             }
-            writer.writeImage(renderedImage, outputStream, imageSettings.getWriterParams());
-            if (pageImagesItr.hasNext()) {
-                BitmapRendererEventProducer eventProducer
-                    = BitmapRendererEventProducer.Provider.get(
-                            getUserAgent().getEventBroadcaster());
-                eventProducer.stoppingAfterFirstPageNoFilename(this);
-            }
+            // Cleaning
+            outputStream.flush();
+            clearViewportList();
         }
-
-        // Cleaning
-        outputStream.flush();
-        clearViewportList();
         log.debug("TIFF encoding done.");
     }
 

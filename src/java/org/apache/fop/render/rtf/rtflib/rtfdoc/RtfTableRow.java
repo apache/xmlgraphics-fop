@@ -168,7 +168,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         }
 
         //check for keep-together
-        if (attrib != null && attrib.isSet(ITableAttributes.ROW_KEEP_TOGETHER)) {
+        if (attrib.isSet(ITableAttributes.ROW_KEEP_TOGETHER)) {
             writeControlWord(ROW_KEEP_TOGETHER);
         }
 

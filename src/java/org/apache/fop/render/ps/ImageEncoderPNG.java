@@ -65,6 +65,10 @@ public class ImageEncoderPNG implements ImageEncoder {
     public void writeTo(OutputStream out) throws IOException {
         // TODO: refactor this code with equivalent PDF code
         InputStream in = ((ImageRawStream) image).createInputStream();
+        InflaterInputStream infStream = null;
+        DataInputStream dataStream = null;
+        ByteArrayOutputStream baos = null;
+        DeflaterOutputStream dos = null;
         try {
             if (numberOfInterleavedComponents == 1 || numberOfInterleavedComponents == 3) {
                 // means we have Gray, RGB, or Palette
@@ -73,8 +77,8 @@ public class ImageEncoderPNG implements ImageEncoder {
                 // means we have Gray + alpha or RGB + alpha
                 int numBytes = numberOfInterleavedComponents - 1; // 1 for Gray, 3 for RGB
                 int numColumns = image.getSize().getWidthPx();
-                InflaterInputStream infStream = new InflaterInputStream(in, new Inflater());
-                DataInputStream dataStream = new DataInputStream(infStream);
+                infStream = new InflaterInputStream(in, new Inflater());
+                dataStream = new DataInputStream(infStream);
                 int offset = 0;
                 int bytesPerRow = numberOfInterleavedComponents * numColumns;
                 int filter;
@@ -83,8 +87,8 @@ public class ImageEncoderPNG implements ImageEncoder {
                 // TODO: not using the baos below and using the original out instead (as happens in PDF)
                 // would be preferable but that does not work with the rest of the postscript code; this
                 // needs to be revisited
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                DeflaterOutputStream dos = new DeflaterOutputStream(/* out */baos, new Deflater());
+                baos = new ByteArrayOutputStream();
+                dos = new DeflaterOutputStream(/* out */baos, new Deflater());
                 while ((filter = dataStream.read()) != -1) {
                     byte[] bytes = new byte[bytesPerRow];
                     dataStream.readFully(bytes, 0, bytesPerRow);
@@ -99,6 +103,10 @@ public class ImageEncoderPNG implements ImageEncoder {
                 IOUtils.copy(new ByteArrayInputStream(baos.toByteArray()), out);
             }
         } finally {
+            IOUtils.closeQuietly(dos);
+            IOUtils.closeQuietly(baos);
+            IOUtils.closeQuietly(dataStream);
+            IOUtils.closeQuietly(infStream);
             IOUtils.closeQuietly(in);
         }
     }

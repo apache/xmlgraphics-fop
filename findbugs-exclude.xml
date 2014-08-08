@@ -26,10 +26,6 @@
     <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
   </Match>
   <Match>
-    <!-- 4 warnings -->
-    <Bug pattern="DM_BOOLEAN_CTOR"/>
-  </Match>
-  <Match>
     <!-- 29 warnings -->
     <Bug pattern="DM_CONVERT_CASE"/>
   </Match>
@@ -44,10 +40,6 @@
   <Match>
     <!-- 88 warnings -->
     <Bug pattern="DM_NUMBER_CTOR"/>
-  </Match>
-  <Match>
-    <!-- 4 warnings -->
-    <Bug pattern="DM_STRING_VOID_CTOR"/>
   </Match>
   <Match>
     <!-- 84 warnings -->
@@ -110,18 +102,6 @@
   <Match>
     <!-- 5 warnings -->
     <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
-  </Match>
-  <Match>
-    <!-- 4 warnings -->
-    <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
-  </Match>
-  <Match>
-    <!-- 4 warnings -->
-    <Bug pattern="NP_NULL_ON_SOME_PATH"/>
-  </Match>
-  <Match>
-    <!-- 4 warnings -->
-    <Bug pattern="OS_OPEN_STREAM"/>
   </Match>
   <Match>
     <!-- 46 warnings -->

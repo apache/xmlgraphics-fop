@@ -168,9 +168,9 @@ public class TableContext implements ITableColumnsInfo {
             while (colIndex >= colFirstSpanningCol.size()) {
                 setNextFirstSpanningCol(false);
             }
-            colFirstSpanningCol.set(colIndex, new Boolean(bFirstSpanningCol));
+            colFirstSpanningCol.set(colIndex, Boolean.valueOf(bFirstSpanningCol));
         } else {
-            colFirstSpanningCol.add(new Boolean(bFirstSpanningCol));
+            colFirstSpanningCol.add(Boolean.valueOf(bFirstSpanningCol));
         }
     }
 
@@ -181,7 +181,7 @@ public class TableContext implements ITableColumnsInfo {
      */
     public void setNextFirstSpanningCol(
             boolean bFirstSpanningCol) {
-        colFirstSpanningCol.add(new Boolean(bFirstSpanningCol));
+        colFirstSpanningCol.add(Boolean.valueOf(bFirstSpanningCol));
     }
 
     /**
@@ -202,7 +202,7 @@ public class TableContext implements ITableColumnsInfo {
 
             if (i.intValue() == 0) {
                 colRowSpanningAttrs.set(z, null);
-                colFirstSpanningCol.set(z, new Boolean(false));
+                colFirstSpanningCol.set(z, Boolean.valueOf(false));
             }
         }
     }

@@ -119,13 +119,15 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
             ByteArrayOutputStream baos = null;
             DeflaterOutputStream dos = null;
             InputStream in = null;
+            InflaterInputStream infStream = null;
+            DataInputStream dataStream = null;
             try {
                 baos = new ByteArrayOutputStream();
                 dos = new DeflaterOutputStream(baos, new Deflater());
                 in = ((ImageRawStream) image).createInputStream();
                 try {
-                    InflaterInputStream infStream = new InflaterInputStream(in, new Inflater());
-                    DataInputStream dataStream = new DataInputStream(infStream);
+                    infStream = new InflaterInputStream(in, new Inflater());
+                    dataStream = new DataInputStream(infStream);
                     // offset is the byte offset of the alpha component
                     int offset = numberOfInterleavedComponents - 1; // 1 for GA, 3 for RGBA
                     int numColumns = image.getSize().getWidthPx();
@@ -159,12 +161,13 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
                 }
                 BitmapImage alphaMask = new BitmapImage("Mask:" + this.getKey(), image.getSize().getWidthPx(),
                         image.getSize().getHeightPx(), baos.toByteArray(), null);
-                IOUtils.closeQuietly(baos);
                 alphaMask.setPDFFilter(transFlate);
                 alphaMask.disallowMultipleFilters();
                 alphaMask.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
                 softMask = doc.addImage(null, alphaMask).makeReference();
             } finally {
+                IOUtils.closeQuietly(infStream);
+                IOUtils.closeQuietly(dataStream);
                 IOUtils.closeQuietly(in);
                 IOUtils.closeQuietly(dos);
                 IOUtils.closeQuietly(baos);
@@ -216,7 +219,9 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
     /** {@inheritDoc} */
     public void outputContents(OutputStream out) throws IOException {
         InputStream in = ((ImageRawStream) image).createInputStream();
-
+        InflaterInputStream infStream = null;
+        DataInputStream dataStream = null;
+        DeflaterOutputStream dos = null;
         try {
             if (numberOfInterleavedComponents == 1 || numberOfInterleavedComponents == 3) {
                 // means we have Gray, RGB, or Palette
@@ -226,14 +231,14 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
                 // TODO: since we have alpha here do this when the alpha channel is extracted
                 int numBytes = numberOfInterleavedComponents - 1; // 1 for Gray, 3 for RGB
                 int numColumns = image.getSize().getWidthPx();
-                InflaterInputStream infStream = new InflaterInputStream(in, new Inflater());
-                DataInputStream dataStream = new DataInputStream(infStream);
+                infStream = new InflaterInputStream(in, new Inflater());
+                dataStream = new DataInputStream(infStream);
                 int offset = 0;
                 int bytesPerRow = numberOfInterleavedComponents * numColumns;
                 int filter;
                 // here we need to inflate the PNG pixel data, which includes alpha, separate the alpha
                 // channel and then deflate the RGB channels back again
-                DeflaterOutputStream dos = new DeflaterOutputStream(out, new Deflater());
+                dos = new DeflaterOutputStream(out, new Deflater());
                 while ((filter = dataStream.read()) != -1) {
                     byte[] bytes = new byte[bytesPerRow];
                     dataStream.readFully(bytes, 0, bytesPerRow);
@@ -244,9 +249,11 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
                     }
                     offset = 0;
                 }
-                dos.close();
             }
         } finally {
+            IOUtils.closeQuietly(dos);
+            IOUtils.closeQuietly(dataStream);
+            IOUtils.closeQuietly(infStream);
             IOUtils.closeQuietly(in);
         }
     }

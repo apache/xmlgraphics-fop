@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.List;
-import java.util.Vector;
 
 import org.xml.sax.SAXException;
 
@@ -678,8 +677,7 @@ class FOPTaskStarter {
 
     private void render(File xmlFile, File xsltFile, File outFile, String outputFormat) {
         //TODO: implement support for XSLT params
-        final Vector xsltParams = null;
-        InputHandler inputHandler = new InputHandler(xmlFile, xsltFile, xsltParams);
+        InputHandler inputHandler = new InputHandler(xmlFile, xsltFile, null);
         try {
             renderInputHandler(inputHandler, outFile, outputFormat);
         } catch (Exception ex) {
