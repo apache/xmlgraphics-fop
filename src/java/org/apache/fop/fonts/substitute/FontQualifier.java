@@ -285,7 +285,7 @@ public class FontQualifier {
      * {@inheritDoc}
      */
     public String toString() {
-        String str = new String();
+        String str = "";
         if (fontFamilyAttributeValue != null) {
             str += "font-family=" + fontFamilyAttributeValue;
         }

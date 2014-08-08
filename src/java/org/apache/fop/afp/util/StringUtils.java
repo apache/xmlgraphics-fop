@@ -39,7 +39,7 @@ public final class StringUtils {
     public static String lpad(String input, char padding, int length) {
 
         if (input == null) {
-            input = new String();
+            input = "";
         }
 
         if (input.length() >= length) {
@@ -66,7 +66,7 @@ public final class StringUtils {
     public static String rpad(String input, char padding, int length) {
 
         if (input == null) {
-            input = new String();
+            input = "";
         }
 
         if (input.length() >= length) {

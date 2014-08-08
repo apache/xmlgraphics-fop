@@ -78,6 +78,7 @@ public class TestConverter {
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
             System.out.println("test suite file name required");
+            return;
         }
         TestConverter tc = new TestConverter();
 
@@ -284,8 +285,8 @@ public class TestConverter {
             FopFactory fopFactory = FopFactory.newInstance(baseUri);
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
-            userAgent.getRendererOptions().put("fineDetail", new Boolean(false));
-            userAgent.getRendererOptions().put("consistentOutput", new Boolean(true));
+            userAgent.getRendererOptions().put("fineDetail", Boolean.valueOf(false));
+            userAgent.getRendererOptions().put("consistentOutput", Boolean.valueOf(true));
             userAgent.setProducer("Testsuite Converter");
 
             String outname = res;
@@ -311,7 +312,7 @@ public class TestConverter {
                 File f1 = new File(destdir, outname + ".at.xml");
                 File f2 = new File(compare, outname + ".at.xml");
                 if (!compareFiles(f1, f2)) {
-                    differ.put(outname + ".at.xml", new Boolean(pass));
+                    differ.put(outname + ".at.xml", Boolean.valueOf(pass));
                 }
             }
         } catch (Exception e) {

@@ -58,7 +58,7 @@ public final class ImageUtil {
      *         number  The digits as integer
      */
     public static int getInt(String value) {
-        String retString = new String();
+        String retString = "";
         StringBuffer s = new StringBuffer(value);
         int len = s.length();
 

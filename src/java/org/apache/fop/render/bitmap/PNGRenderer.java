@@ -118,11 +118,12 @@ public class PNGRenderer extends Java2DRenderer {
                 = BitmapRendererEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
             eventProducer.noImageWriterFound(this, getMimeType());
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Writing image using " + writer.getClass().getName());
+            }
+            writer.writeImage(image, os, params);
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Writing image using " + writer.getClass().getName());
-        }
-        writer.writeImage(image, os, params);
     }
 
     /**

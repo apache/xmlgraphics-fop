@@ -34,7 +34,6 @@ import org.apache.fop.fonts.DefaultFontConfigurator;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.FontCacheManagerFactory;
 import org.apache.fop.fonts.FontDetectorFactory;
-import org.apache.fop.fonts.FontEventListener;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontSetup;
@@ -97,12 +96,11 @@ public class PDFDocumentGraphics2DConfigurator {
             //TODO Make use of fontBaseURL, font substitution and referencing configuration
             //Requires a change to the expected configuration layout
 
-            final FontEventListener listener = null;
             DefaultFontConfig.DefaultFontConfigParser parser
                     = new DefaultFontConfig.DefaultFontConfigParser();
             DefaultFontConfig fontInfoConfig = parser.parse(cfg, strict);
             DefaultFontConfigurator fontInfoConfigurator
-                    = new DefaultFontConfigurator(fontManager, listener, strict);
+                    = new DefaultFontConfigurator(fontManager, null, strict);
             List<EmbedFontInfo> fontInfoList = fontInfoConfigurator.configure(fontInfoConfig);
             fontManager.saveCache();
             FontSetup.setup(fontInfo, fontInfoList, resourceResolver, useComplexScriptFeatures);
