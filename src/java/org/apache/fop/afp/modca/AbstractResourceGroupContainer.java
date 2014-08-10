@@ -26,14 +26,12 @@ import java.util.Iterator;
 
 import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.Factory;
-import org.apache.fop.afp.Streamable;
 
 
 /**
  * An abstract container of resource objects
  */
-public abstract class AbstractResourceGroupContainer extends AbstractPageObject
-implements Streamable {
+public abstract class AbstractResourceGroupContainer extends AbstractPageObject {
 
     /** The container started state */
     protected boolean started;

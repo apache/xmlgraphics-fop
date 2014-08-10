@@ -1,13 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FindBugsFilter>
-  <Match>
-    <!-- 131 warnings -->
-    <Bug pattern="BC_UNCONFIRMED_CAST"/>
-  </Match>
-  <Match>
-    <!-- 8 warnings -->
-    <Bug pattern="CI_CONFUSED_INHERITANCE"/>
-  </Match>
+
+  <!--
+  !
+  ! This file is divided into two parts:
+  ! 1. APPROVED EXCLUSIONS
+  ! 2. TEMPORARY (UNAPPROVED) EXCLUSIONS
+  !
+  ! Approved exclusions come in two sub-types:
+  ! 1. general exclusion of a named bug pattern, meaning that all instances that matches the bug
+  !    pattern identifier are excluded;
+  ! 2. specific exclusions for a named bug pattern, meaning that all instance exclusions are
+  !    explicitly enumerated;
+  !
+  ! All specific exclusions must be accompanied inline (i.e., in the affected source code) by
+  ! a commented out annotation of the form:
+  !
+  ! // @SuppressFBWarnings("pattern identifier")
+  !
+  ! where pattern identifier is one of findbugs' named patterns. At an appropriate point in the
+  ! future, these commented out annotations will be uncommented and exclusion patterns removed
+  ! from this file.
+  !
+  ! Temporary (unapproved) exclusions are short-term work arounds that should be removed as
+  ! soon as possible by either (1) fixing (eliminating) cause of warning, or (2) conversion to
+  ! approved exclusion.
+  !
+  ! The organization of pattern matches employs the following levels (from top down):
+  ! 1. bug pattern
+  ! 2. or clause matching instances
+  ! 3. class name, if applies to class/interface
+  ! 4. and clause matching class/instance and single or or clause of multiple {method,field} members
+  !
+  ! for example,
+  !
+  ! <Match>
+  !   <Bug pattern="pattern identifier"/>
+  !   <Or>
+  !     <And>
+  !       <Class name="dotted class name"/>
+  !       <Member name="unqualified member name"/>
+  !     </And>
+  !   </Or>
+  ! </Match>
+  !
+  -->
+
+  <!-- START - APPROVED EXCLUSIONS -->
   <Match>
     <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
     <Or>
@@ -16,6 +55,94 @@
         <Method name="clone"/>
       </And>
     </Or>
+  </Match>
+  <Match>
+    <Bug pattern="DM_EXIT"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.cli.CommandLineOptions"/>
+        <Or>
+          <Method name="parseCustomOutputOption"/>
+          <Method name="parseOptions"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.cli.Main"/>
+        <Or>
+          <Method name="startFOP"/>
+          <Method name="startFOPWithDynamicClasspath"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.tools.fontlist.FontListMain"/>
+        <Or>
+          <Method name="parseArguments"/>
+        </Or>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="EQ_ALWAYS_TRUE"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.fo.properties.ToBeImplementedProperty"/>
+        <Method name="equals"/>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="MS_EXPOSE_REP"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.fo.FOPropertyMapping"/>
+        <Method name="getGenericMappings"/>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
+    <Or>
+      <Class name="org.apache.fop.apps.MimeConstants"/>
+      <Class name="org.apache.fop.events.EventListener"/>
+      <Class name="org.apache.fop.render.Graphics2DImagePainter"/>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+    <Or>
+      <Class name="org.apache.fop.render.ps.PSFontUtils"/>
+      <Class name="org.apache.fop.render.ps.PSImageUtils"/>
+      <Class name="org.apache.fop.svg.GraphicsConfiguration"/>
+      <Class name="org.apache.fop.svg.PDFTextUtil"/>
+      <Class name="org.apache.fop.util.QName"/>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="SE_INNER_CLASS"/>
+    <Or>
+      <Class name="org.apache.fop.afp.AFPPaintingState$AFPData"/>
+      <Class name="org.apache.fop.area.inline.AbstractTextArea$TextAdjustingInfo"/>
+      <Class name="org.apache.fop.area.inline.InlineArea$InlineAdjustingInfo"/>
+      <Class name="org.apache.fop.area.LineArea$LineAdjustingInfo"/>
+      <Class name="org.apache.fop.pdf.PDFPaintingState$PDFData"/>
+      <Class name="org.apache.fop.util.AbstractPaintingState$StateStack"/>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.render.awt.viewer.PreviewPanel$Reloader"/>
+        <Method name="run"/>
+      </And>
+    </Or>
+  </Match>
+  <!-- END - APPROVED EXCLUSIONS -->
+
+  <!-- START - TEMPORARY (UNAPPROVED) EXCLUSIONS -->
+  <Match>
+    <!-- 131 warnings -->
+    <Bug pattern="BC_UNCONFIRMED_CAST"/>
   </Match>
   <Match>
     <!-- 15 warnings -->
@@ -28,10 +155,6 @@
   <Match>
     <!-- 29 warnings -->
     <Bug pattern="DM_CONVERT_CASE"/>
-  </Match>
-  <Match>
-    <!-- 5 warnings -->
-    <Bug pattern="DM_EXIT"/>
   </Match>
   <Match>
     <!-- 20 warnings -->
@@ -50,34 +173,8 @@
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
   <Match>
-    <Bug pattern="EQ_ALWAYS_TRUE"/>
-    <Or>
-      <And>
-        <Class name="org.apache.fop.fo.properties.ToBeImplementedProperty"/>
-        <Method name="equals"/>
-      </And>
-    </Or>
-  </Match>
-  <Match>
     <!-- 12 warnings -->
     <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
-  </Match>
-  <Match>
-    <!-- 6 warnings -->
-    <Bug pattern="ITA_INEFFICIENT_TO_ARRAY"/>
-  </Match>
-  <Match>
-    <!-- 9 warnings -->
-    <Bug pattern="LI_LAZY_INIT_STATIC"/>
-  </Match>
-  <Match>
-    <Bug pattern="MS_EXPOSE_REP"/>
-    <Or>
-      <And>
-        <Class name="org.apache.fop.fo.FOPropertyMapping"/>
-        <Method name="getGenericMappings"/>
-      </And>
-    </Or>
   </Match>
   <Match>
     <!-- 12 warnings -->
@@ -92,18 +189,6 @@
     <Bug pattern="NM_CONFUSING"/>
   </Match>
   <Match>
-    <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
-    <Or>
-      <Class name="org.apache.fop.apps.MimeConstants"/>
-      <Class name="org.apache.fop.events.EventListener"/>
-      <Class name="org.apache.fop.render.Graphics2DImagePainter"/>
-    </Or>
-  </Match>
-  <Match>
-    <!-- 5 warnings -->
-    <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
-  </Match>
-  <Match>
     <!-- 46 warnings -->
     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
   </Match>
@@ -116,33 +201,12 @@
     <Bug pattern="REC_CATCH_EXCEPTION"/>
   </Match>
   <Match>
-    <!-- 8 warnings -->
-    <Bug pattern="RI_REDUNDANT_INTERFACES"/>
-  </Match>
-  <Match>
     <!-- 11 warnings -->
     <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
   </Match>
   <Match>
     <!-- 33 warnings -->
     <Bug pattern="SE_BAD_FIELD"/>
-  </Match>
-  <Match>
-    <!-- 6 warnings -->
-    <Bug pattern="SE_INNER_CLASS"/>
-  </Match>
-  <Match>
-    <!-- 9 warnings -->
-    <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
-  </Match>
-  <Match>
-    <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
-    <Or>
-      <And>
-        <Class name="org.apache.fop.render.awt.viewer.PreviewPanel$Reloader"/>
-        <Method name="run"/>
-      </And>
-    </Or>
   </Match>
   <Match>
     <!-- 21 warnings -->
@@ -153,22 +217,6 @@
     <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
   </Match>
   <Match>
-    <!-- 5 warnings -->
-    <Bug pattern="SR_NOT_CHECKED"/>
-  </Match>
-  <Match>
-    <!-- 6 warnings -->
-    <Bug pattern="SS_SHOULD_BE_STATIC"/>
-  </Match>
-  <Match>
-    <!-- 8 warnings -->
-    <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
-  </Match>
-  <Match>
-    <!-- 6 warnings -->
-    <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
-  </Match>
-  <Match>
     <!-- 12 warnings -->
     <Bug pattern="URF_UNREAD_FIELD"/>
   </Match>
@@ -176,12 +224,6 @@
     <!-- 58 warnings -->
     <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
   </Match>
-  <Match>
-    <!-- 5 warnings -->
-    <Bug pattern="UWF_UNWRITTEN_FIELD"/>
-  </Match>
-  <Match>
-    <!-- 6 warnings -->
-    <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
-  </Match>
+  <!-- END - TEMPORARY (UNAPPROVED) EXCLUSIONS -->
+
 </FindBugsFilter>

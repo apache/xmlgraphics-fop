@@ -30,7 +30,7 @@ import org.apache.fop.afp.util.BinaryUtils;
 public final class GraphicsChainedSegment extends AbstractGraphicsDrawingOrderContainer {
 
     /** The maximum segment data length */
-    protected static final int MAX_DATA_LEN = 8192;
+    public static final int MAX_DATA_LEN = 8192;
 
     private byte[] predecessorNameBytes;
     private boolean appended;

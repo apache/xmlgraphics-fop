@@ -21,7 +21,6 @@ package org.apache.fop.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 import org.apache.fop.afp.Completable;
 
@@ -35,7 +34,8 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup implement
     private static final String DEFAULT_NAME = "REG00001";
 
     /** the pre-process presentation objects contained in this resource environment group */
-    private List/*<PreprocessPresentationObject>*/ preProcessPresentationObjects;
+    // never written
+    // private List/*<PreprocessPresentationObject>*/ preProcessPresentationObjects;
 
     /** the resource environment group state */
     private boolean complete;
@@ -47,13 +47,15 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup implement
         this(DEFAULT_NAME);
     }
 
-    private List/*<PreprocessPresentationObject>*/ getPreprocessPresentationObjects() {
+    /* not used
+    private List getPreprocessPresentationObjects() {
         if (preProcessPresentationObjects == null) {
             this.preProcessPresentationObjects
-                = new java.util.ArrayList/*<PreprocessPresentationObject>*/();
+                = new java.util.ArrayList();
         }
         return this.preProcessPresentationObjects;
     }
+    */
 
     /**
      * Constructor for the ResourceEnvironmentGroup, this takes a
@@ -92,7 +94,7 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup implement
     protected void writeContent(OutputStream os) throws IOException {
         writeObjects(mapDataResources, os);
         writeObjects(mapPageOverlays, os);
-        writeObjects(preProcessPresentationObjects, os);
+        // writeObjects(preProcessPresentationObjects, os); always empty list
     }
 
     /** {@inheritDoc} */

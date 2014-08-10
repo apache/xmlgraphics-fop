@@ -141,9 +141,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     protected void addChildToArea(Area childArea,
                                      BlockParent parentArea) {
         // This should be a block-level Area (Block in the generic sense)
-        if (!(childArea instanceof Block)) {
+        /* if (!(childArea instanceof Block)) {
             //log.error("Child not a Block in BlockStackingLM!");
-        }
+        } */
 
         parentArea.addBlock((Block) childArea);
         flush(); // hand off current area to parent

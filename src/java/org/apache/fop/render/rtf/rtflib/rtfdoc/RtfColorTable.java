@@ -53,14 +53,14 @@ public final class RtfColorTable {
     //////////////////////////////////////////////////
 
     /** Singelton instance */
-    private static RtfColorTable instance;
+    private static RtfColorTable instance = new RtfColorTable();
 
     /** Index table for the colors */
     private Hashtable colorIndex;
     /** Used colors to this vector */
     private Vector colorTable;
-        /** Map of color names to color numbers */
-        private Hashtable namedColors;
+    /** Map of color names to color numbers */
+    private Hashtable namedColors;
 
 
     //////////////////////////////////////////////////
@@ -73,7 +73,7 @@ public final class RtfColorTable {
     private RtfColorTable() {
         colorTable = new Vector();
         colorIndex = new Hashtable();
-                namedColors = new Hashtable();
+        namedColors = new Hashtable();
 
         init();
     }
@@ -84,10 +84,6 @@ public final class RtfColorTable {
      * @return The instance of RTFColorTable
      */
     public static RtfColorTable getInstance() {
-        if (instance == null) {
-            instance = new RtfColorTable();
-        }
-
         return instance;
     }
 
@@ -124,19 +120,19 @@ public final class RtfColorTable {
         getColorNumber(192, 192, 192);
     }
 
-        /** define a named color for getColorNumber(String) */
-        private void addNamedColor(String name, int colorNumber) {
-            namedColors.put(name.toLowerCase(), new Integer(colorNumber));
-        }
+    /** define a named color for getColorNumber(String) */
+    private void addNamedColor(String name, int colorNumber) {
+        namedColors.put(name.toLowerCase(), new Integer(colorNumber));
+    }
 
     //////////////////////////////////////////////////
     // @@ Public methods
     //////////////////////////////////////////////////
 
-        /**
-         * @param name a named color
-         * @return the RTF number of a named color, or null if name not found
-         */
+    /**
+     * @param name a named color
+     * @return the RTF number of a named color, or null if name not found
+     */
     public Integer getColorNumber(String name) {
         return ((Integer)namedColors.get(name.toLowerCase()));
     }

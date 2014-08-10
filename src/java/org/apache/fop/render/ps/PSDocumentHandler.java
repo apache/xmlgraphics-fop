@@ -295,9 +295,9 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     public void startPage(int index, String name, String pageMasterName, Dimension size)
                 throws IFException {
         try {
-            if (this.currentPageNumber == 0) {
+            /* if (this.currentPageNumber == 0) {
                 //writeHeader();
-            }
+            } */
 
             this.currentPageNumber++;
 

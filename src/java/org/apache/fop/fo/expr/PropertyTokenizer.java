@@ -333,6 +333,7 @@ class PropertyTokenizer {
      * as defined by XSL (space, newline, CR, tab).
      * @param c The character to check
      */
+    /* not used
     private static boolean isSpace(char c) {
         switch (c) {
         case ' ':
@@ -344,6 +345,7 @@ class PropertyTokenizer {
             return false;
         }
     }
+    */
 
     /**
      * Return a  boolean value indicating whether the argument is a valid name

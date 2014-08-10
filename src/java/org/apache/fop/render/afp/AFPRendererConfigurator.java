@@ -38,14 +38,12 @@ import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
 import org.apache.fop.render.afp.AFPFontConfig.AFPFontConfigData;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
-import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.util.LogUtil;
 
 /**
  * AFP Renderer configurator
  */
-public class AFPRendererConfigurator extends PrintRendererConfigurator implements
-        IFDocumentHandlerConfigurator {
+public class AFPRendererConfigurator extends PrintRendererConfigurator {
     private static Log log = LogFactory.getLog(AFPRendererConfigurator.class);
 
     private final AFPEventProducer eventProducer;

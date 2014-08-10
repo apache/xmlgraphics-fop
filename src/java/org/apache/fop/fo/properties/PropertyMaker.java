@@ -510,12 +510,6 @@ public class PropertyMaker implements Cloneable {
                 }
             }
         }
-        if (pret != null) {
-            /*
-             * log.debug("Return shorthand value " + pret.getString() +
-             * " for " + getPropName());
-             */
-        }
         return pret;
     }
 

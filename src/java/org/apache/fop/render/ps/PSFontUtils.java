@@ -70,6 +70,7 @@ import org.apache.fop.util.HexEncoder;
 /**
  * Utility code for font handling in PostScript.
  */
+// @SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_SUPERCLASS")
 public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
 
     /** logging instance */
@@ -192,8 +193,9 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.commentln("%FOPBeginFontReencode");
 
         //Rewrite font encodings
-        for (String key : fonts.keySet()) {
-            Typeface tf = fonts.get(key);
+        for (Map.Entry<String, Typeface> e : fonts.entrySet()) {
+            String key = e.getKey();
+            Typeface tf = e.getValue();
             if (tf instanceof LazyFont) {
                 tf = ((LazyFont)tf).getRealFont();
                 if (tf == null) {

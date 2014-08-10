@@ -84,11 +84,8 @@ public final class FontCache implements Serializable {
      */
     private Map<String, Long> failedFontMap;
 
-    /**
-     * Default constructor
-     */
-    public FontCache() {
-        //nop
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
     }
 
     private static File getUserHome() {

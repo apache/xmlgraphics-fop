@@ -54,8 +54,7 @@ public class OFDirTabEntry {
         tag[2] = in.readTTFByte();
         tag[3] = in.readTTFByte();
 
-        in.skip(4);    // Skip checksum
-
+        checksum = in.readTTFLong();
         offset = in.readTTFULong();
         length = in.readTTFULong();
 

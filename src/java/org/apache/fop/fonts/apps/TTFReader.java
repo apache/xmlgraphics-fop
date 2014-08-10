@@ -462,11 +462,12 @@ public class TTFReader extends AbstractFontReader {
                 h2 = ttf.getAnsiKerning().get(kpx1);
             }
 
-            for (Integer kpx2 : h2.keySet()) {
+            for (Map.Entry<Integer, Integer> e : h2.entrySet()) {
+                Integer kpx2 = e.getKey();
                 if (isCid || kpx2.intValue() < 256) {
                     el2 = doc.createElement("pair");
                     el2.setAttribute("kpx2", kpx2.toString());
-                    Integer val = h2.get(kpx2);
+                    Integer val = e.getValue();
                     el2.setAttribute("kern", val.toString());
                     el.appendChild(el2);
                 }

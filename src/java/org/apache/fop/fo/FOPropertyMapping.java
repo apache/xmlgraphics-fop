@@ -287,62 +287,61 @@ public final class FOPropertyMapping implements Constants {
         return enums[enumValue];
     }
 
+    static {
+        /* this method was never called before */
+        generics = new PropertyMaker[PROPERTY_COUNT + 1];
+        FOPropertyMapping gp = new FOPropertyMapping();
+
+        /* Create the shorthand first. They are
+         * referenced by the real properties.
+         */
+        gp.createShorthandProperties();
+        gp.createGenerics();
+        gp.createAccessibilityProperties();
+        gp.createAbsolutePositionProperties();
+        gp.createAuralProperties();
+        gp.createBorderPaddingBackgroundProperties();
+        gp.createFontProperties();
+        gp.createHyphenationProperties();
+        gp.createMarginBlockProperties();
+        gp.createMarginInlineProperties();
+        gp.createRelativePosProperties();
+        gp.createAreaAlignmentProperties();
+        gp.createAreaDimensionProperties();
+        gp.createBlockAndLineProperties();
+        gp.createCharacterProperties();
+        gp.createColorProperties();
+        gp.createFloatProperties();
+        gp.createKeepsAndBreaksProperties();
+        gp.createLayoutProperties();
+        gp.createLeaderAndRuleProperties();
+        gp.createDynamicProperties();
+        gp.createMarkersProperties();
+        gp.createNumberToStringProperties();
+        gp.createPaginationAndLayoutProperties();
+        gp.createTableProperties();
+        gp.createWritingModeProperties();
+        gp.createMiscProperties();
+
+        // Hardcode the subproperties.
+        addSubpropMakerName("length", CP_LENGTH);
+        addSubpropMakerName("conditionality", CP_CONDITIONALITY);
+        addSubpropMakerName("block-progression-direction", CP_BLOCK_PROGRESSION_DIRECTION);
+        addSubpropMakerName("inline-progression-direction", CP_INLINE_PROGRESSION_DIRECTION);
+        addSubpropMakerName("within-line", CP_WITHIN_LINE);
+        addSubpropMakerName("within-column", CP_WITHIN_COLUMN);
+        addSubpropMakerName("within-page", CP_WITHIN_PAGE);
+        addSubpropMakerName("minimum", CP_MINIMUM);
+        addSubpropMakerName("maximum", CP_MAXIMUM);
+        addSubpropMakerName("optimum", CP_OPTIMUM);
+        addSubpropMakerName("precedence", CP_PRECEDENCE);
+    }
+
     /**
      * Return the array of Makers.
      * @return the maker array.
      */
     public static PropertyMaker[] getGenericMappings() {
-
-        if (generics == null) {
-            /* this method was never called before */
-            generics = new PropertyMaker[PROPERTY_COUNT + 1];
-            FOPropertyMapping gp = new FOPropertyMapping();
-
-            /* Create the shorthand first. They are
-             * referenced by the real properties.
-             */
-            gp.createShorthandProperties();
-            gp.createGenerics();
-            gp.createAccessibilityProperties();
-            gp.createAbsolutePositionProperties();
-            gp.createAuralProperties();
-            gp.createBorderPaddingBackgroundProperties();
-            gp.createFontProperties();
-            gp.createHyphenationProperties();
-            gp.createMarginBlockProperties();
-            gp.createMarginInlineProperties();
-            gp.createRelativePosProperties();
-            gp.createAreaAlignmentProperties();
-            gp.createAreaDimensionProperties();
-            gp.createBlockAndLineProperties();
-            gp.createCharacterProperties();
-            gp.createColorProperties();
-            gp.createFloatProperties();
-            gp.createKeepsAndBreaksProperties();
-            gp.createLayoutProperties();
-            gp.createLeaderAndRuleProperties();
-            gp.createDynamicProperties();
-            gp.createMarkersProperties();
-            gp.createNumberToStringProperties();
-            gp.createPaginationAndLayoutProperties();
-            gp.createTableProperties();
-            gp.createWritingModeProperties();
-            gp.createMiscProperties();
-
-            // Hardcode the subproperties.
-            addSubpropMakerName("length", CP_LENGTH);
-            addSubpropMakerName("conditionality", CP_CONDITIONALITY);
-            addSubpropMakerName("block-progression-direction", CP_BLOCK_PROGRESSION_DIRECTION);
-            addSubpropMakerName("inline-progression-direction", CP_INLINE_PROGRESSION_DIRECTION);
-            addSubpropMakerName("within-line", CP_WITHIN_LINE);
-            addSubpropMakerName("within-column", CP_WITHIN_COLUMN);
-            addSubpropMakerName("within-page", CP_WITHIN_PAGE);
-            addSubpropMakerName("minimum", CP_MINIMUM);
-            addSubpropMakerName("maximum", CP_MAXIMUM);
-            addSubpropMakerName("optimum", CP_OPTIMUM);
-            addSubpropMakerName("precedence", CP_PRECEDENCE);
-        }
-
         // @SuppressFBWarnings("MS_EXPOSE_REP")
         return generics;
     }

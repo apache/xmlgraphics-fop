@@ -19,6 +19,8 @@
 
 package org.apache.fop.fonts;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 
@@ -40,6 +42,10 @@ public class FontTriplet implements Comparable<FontTriplet>, Serializable {
 
     //This is only a cache
     private transient String key;
+
+    public FontTriplet() {
+        this(null, null, 0);
+    }
 
     /**
      * Creates a new font triplet.
@@ -63,6 +69,10 @@ public class FontTriplet implements Comparable<FontTriplet>, Serializable {
         this.style = style;
         this.weight = weight;
         this.priority = priority;
+    }
+
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
     }
 
     /** @return the font name */

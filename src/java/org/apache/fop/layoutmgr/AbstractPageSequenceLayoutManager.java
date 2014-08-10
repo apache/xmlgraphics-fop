@@ -376,9 +376,9 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
             if (currentPageNum % 2 == 0) { // we are now on an even page
                 curPage = makeNewPage(true);
             }
-        } else if (forcePageCount == Constants.EN_NO_FORCE) {
+        } /*  else if (forcePageCount == Constants.EN_NO_FORCE) {
             // i hope: nothing special at all
-        }
+        } */
 
         if (curPage != null) {
             finishPage();

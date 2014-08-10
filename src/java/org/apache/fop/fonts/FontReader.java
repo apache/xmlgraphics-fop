@@ -294,7 +294,7 @@ public class FontReader extends DefaultHandler {
             multiFont.setWidthArray(wds);
 
         } else if ("bfranges".equals(localName)) {
-            multiFont.setCMap(bfranges.toArray(new CMapSegment[0]));
+            multiFont.setCMap(bfranges.toArray(new CMapSegment[bfranges.size()]));
         }
         text.setLength(0); //Reset text buffer (see characters())
     }

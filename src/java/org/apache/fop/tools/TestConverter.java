@@ -226,9 +226,9 @@ public class TestConverter {
                 runTestCase(node);
             } else if (nodename.equals("test")) {
                 runTest(tcase, node);
-            } else if (nodename.equals("result")) {
+            } /* else if (nodename.equals("result")) {
                 //nop
-            }
+            } */
 
         }
 

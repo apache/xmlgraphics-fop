@@ -61,9 +61,11 @@ public final class URISpecification {
     private static final String PUNCT = ",;:$&+=";
     private static final String RESERVED = PUNCT + "?/[]@";
 
+    /* not used
     private static boolean isValidURIChar(char ch) {
         return true;
     }
+    */
 
     private static boolean isDigit(char ch) {
         return (ch >= '0' && ch <= '9');

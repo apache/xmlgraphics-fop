@@ -361,13 +361,13 @@ public class Marker extends FObjMixed {
                 = new PropertyCache<MarkerAttribute>();
 
         /** namespace */
-        protected String namespace;
+        private String namespace;
         /** qualfied name */
-        protected String qname;
+        private String qname;
         /** local name */
-        protected String name;
+        private String name;
         /** value */
-        protected String value;
+        private String value;
 
         /**
          * Main constructor

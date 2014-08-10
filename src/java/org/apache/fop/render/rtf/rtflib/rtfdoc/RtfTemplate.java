@@ -36,7 +36,7 @@ import java.io.IOException;
 public final class RtfTemplate  {
 
     /** Singelton instance */
-    private static RtfTemplate instance;
+    private static RtfTemplate instance = new RtfTemplate();
 
     private String templateFilePath;
 
@@ -54,10 +54,6 @@ public final class RtfTemplate  {
      * @return The instance of RtfTemplate
      */
     public static RtfTemplate getInstance() {
-        if (instance == null) {
-            instance = new RtfTemplate();
-        }
-
         return instance;
     }
 

@@ -55,7 +55,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
     /** The PCL generator */
     protected PCLGenerator gen;
 
-    private final boolean failOnUnsupportedFeature = true;
+    private static final boolean FAIL_ON_UNSUPPORTED_FEATURE = true;
     private boolean clippingDisabled;
 
     /**
@@ -120,7 +120,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
      * @param msg the error message to be displayed
      */
     protected void handleUnsupportedFeature(String msg) {
-        if (this.failOnUnsupportedFeature) {
+        if (this.FAIL_ON_UNSUPPORTED_FEATURE) {
             throw new UnsupportedOperationException(msg);
         }
     }

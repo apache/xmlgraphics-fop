@@ -397,6 +397,7 @@ public class CommandLineOptions {
                 i = i + parseUnknownOption(args, i);
             } else {
                 printUsage(System.err);
+                // @SuppressFBWarnings("DM_EXIT")
                 System.exit(1);
             }
         }
@@ -702,6 +703,7 @@ public class CommandLineOptions {
                 for (int j = 0; j < mimes.length; j++) {
                     System.out.println("  " + mimes[j]);
                 }
+                // @SuppressFBWarnings("DM_EXIT")
                 System.exit(0);
             }
         }

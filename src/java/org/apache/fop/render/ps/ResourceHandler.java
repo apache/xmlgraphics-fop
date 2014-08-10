@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.ps;
 
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +37,6 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.ps.DSCConstants;
-import org.apache.xmlgraphics.ps.FormGenerator;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.dsc.DSCException;
@@ -334,6 +332,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
         }
     }
 
+    /* not used
     private static FormGenerator createMissingForm(String formName, final Dimension2D dimensions) {
         FormGenerator formGen = new FormGenerator(formName, null, dimensions) {
 
@@ -357,6 +356,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
         };
         return formGen;
     }
+    */
 
     private class IncludeResourceListener implements DSCListener {
 

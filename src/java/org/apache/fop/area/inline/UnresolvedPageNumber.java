@@ -19,6 +19,8 @@
 
 package org.apache.fop.area.inline;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.List;
 
 import org.apache.fop.area.PageViewport;
@@ -49,6 +51,10 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
     //Transient fields
     private transient Font font;
 
+    public UnresolvedPageNumber() {
+        this(null, null, FIRST);
+    }
+
     /**
      * Create a new unresolved page number.
      *
@@ -72,6 +78,10 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
         font = f;
         text = "?";
         pageType = type;
+    }
+
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
     }
 
     /**

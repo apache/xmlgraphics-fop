@@ -384,6 +384,7 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
     /**
      * A stack implementation which holds state objects
      */
+    // @SuppressFBWarnings("SE_INNER_CLASS")
     public class StateStack<E> extends java.util.Stack<E> {
 
         private static final long serialVersionUID = 4897178211223823041L;

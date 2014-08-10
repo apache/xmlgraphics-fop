@@ -67,7 +67,9 @@ public class FontPatternExtractor {
             DataInputStream din = new DataInputStream(bin);
             long len = din.readInt() & 0xFFFFFFFFL;
             println("Length: " + len);
-            din.skip(4); //checksum
+            if (din.skip(4) != 4) { //checksum
+                throw new IOException("premature EOF when skipping checksum");
+            }
             int tidLen = din.readUnsignedShort() - 2;
             byte[] tid = new byte[tidLen];
             din.readFully(tid);

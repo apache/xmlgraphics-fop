@@ -43,7 +43,7 @@ import org.apache.fop.apps.io.InternalResourceResolver;
 public final class Hyphenator {
 
     /** logging instance */
-    protected static final Log log = LogFactory.getLog(Hyphenator.class);
+    private static final Log log = LogFactory.getLog(Hyphenator.class);
 
     private static HyphenationTreeCache hTreeCache;
 

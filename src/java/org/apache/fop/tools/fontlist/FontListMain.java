@@ -257,6 +257,7 @@ public final class FontListMain {
             int idx = 0;
             if ("--help".equals(args[idx]) || "-?".equals(args[idx]) || "-h".equals(args[idx])) {
                 printHelp();
+                // @SuppressFBWarnings("DM_EXIT")
                 System.exit(0);
             }
             if (idx < args.length - 1 && "-c".equals(args[idx])) {

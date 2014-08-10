@@ -20,6 +20,8 @@
 package org.apache.fop.afp;
 
 import java.awt.Point;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,8 +36,7 @@ import org.apache.fop.util.AbstractPaintingState;
  * This keeps information about the current painting state when writing to an
  * AFP datastream.
  */
-public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState implements
-        Cloneable {
+public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState {
 
     private static final long serialVersionUID = 8206711712452344473L;
 
@@ -57,7 +58,7 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     private float bitmapEncodingQuality;
 
     /** color image handler */
-    private transient ColorConverter colorConverter = GrayScaleColorConverter.getInstance();
+    private transient ColorConverter colorConverter;
 
     /**
      * true if certain image formats may be embedded unchanged in their native
@@ -98,13 +99,23 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     private boolean fs45;
 
     /** the current page */
-    private transient AFPPagePaintingState pagePaintingState = new AFPPagePaintingState();
+    private transient AFPPagePaintingState pagePaintingState;
 
     // /** reference orientation */
     // private int orientation = 0;
 
     /** a unit converter */
-    private final transient AFPUnitConverter unitConv = new AFPUnitConverter(this);
+    private final transient AFPUnitConverter unitConv;
+
+    public AFPPaintingState() {
+        colorConverter = GrayScaleColorConverter.getInstance();
+        pagePaintingState = new AFPPagePaintingState();
+        unitConv = new AFPUnitConverter(this);
+    }
+
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
+    }
 
     /**
      * Sets the rotation to be used for portrait pages, valid values are 0
@@ -722,6 +733,7 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     /**
      * Block level state data
      */
+    // @SuppressFBWarnings("SE_INNER_CLASS")
     private class AFPData extends org.apache.fop.util.AbstractPaintingState.AbstractData {
         private static final long serialVersionUID = -1789481244175275686L;
 

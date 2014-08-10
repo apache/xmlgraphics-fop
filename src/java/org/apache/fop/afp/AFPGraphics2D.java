@@ -32,7 +32,6 @@ import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.TexturePaint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -333,14 +332,14 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
             return true;
         }
         LOG.debug("NYI: applyPaint() " + paint + " fill=" + fill);
-        if (paint instanceof TexturePaint) {
+//      if (paint instanceof TexturePaint) {
 //            TexturePaint texturePaint = (TexturePaint)paint;
 //            BufferedImage bufferedImage = texturePaint.getImage();
 //            AffineTransform at = paintingState.getTransform();
 //            int x = (int)Math.round(at.getTranslateX());
 //            int y = (int)Math.round(at.getTranslateY());
 //            drawImage(bufferedImage, x, y, null);
-        }
+//      }
         return false;
     }
 

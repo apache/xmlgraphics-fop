@@ -21,20 +21,12 @@ package org.apache.fop.render.pcl;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.ByteLookupTable;
-import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.IndexColorModel;
-import java.awt.image.LookupOp;
 import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.awt.image.WritableRaster;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -45,7 +37,6 @@ import java.util.Locale;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
-import org.apache.xmlgraphics.image.GraphicsUtil;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.util.bitmap.BitmapImageUtil;
@@ -82,7 +73,7 @@ public class PCLGenerator {
      * true: Standard PCL shades are used (poor quality). false: user-defined pattern are used
      * to create custom dither patterns for better grayscale quality.
      */
-    private final boolean usePCLShades = false;
+    private static final boolean USE_PCL_SHADES = false;
 
     /**
      * Main constructor.
@@ -390,7 +381,7 @@ public class PCLGenerator {
             //y += h;
         }
         setPatternTransparencyMode(false);
-        if (usePCLShades
+        if (USE_PCL_SHADES
                 || Color.black.equals(col)
                 || Color.white.equals(col)) {
             writeCommand("*c" + formatDouble4(w / 100.0) + "h"
@@ -521,7 +512,7 @@ public class PCLGenerator {
         } else if (Color.white.equals(col)) {
             selectCurrentPattern(0, 1); //white
         } else {
-            if (usePCLShades) {
+            if (USE_PCL_SHADES) {
                 selectCurrentPattern(convertToPCLShade(col), 2);
             } else {
                 defineGrayscalePattern(col, 32, DitherUtil.DITHER_MATRIX_4X4);
@@ -647,6 +638,7 @@ public class PCLGenerator {
         }
     }
 
+    /* not used
     private RenderedImage getMask(RenderedImage img, Dimension targetDim) {
         ColorModel cm = img.getColorModel();
         if (cm.hasAlpha()) {
@@ -685,6 +677,7 @@ public class PCLGenerator {
             return null;
         }
     }
+    */
 
     /**
      * Paint a bitmap at the current cursor position. The bitmap is converted to a monochrome

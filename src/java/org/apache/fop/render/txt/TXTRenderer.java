@@ -91,10 +91,10 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
      * Every line except the last line on a page (which will end with
      * pageEnding) will be terminated with this string.
      */
-    private final String lineEnding = "\r\n";
+    private static final String LINE_ENDING = "\r\n";
 
     /** Every page except the last one will end with this string. */
-    private final String pageEnding = "\f";
+    private static final String PAGE_ENDING = "\f";
 
     /** Equals true, if current page is first. */
     private boolean firstPage;
@@ -211,7 +211,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
         if (firstPage) {
             firstPage = false;
         } else {
-            currentStream.add(pageEnding);
+            currentStream.add(PAGE_ENDING);
         }
 
         Rectangle2D bounds = page.getViewArea();
@@ -286,7 +286,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
                 currentStream.add(outr.toString());
             }
             if (row < pageHeight) {
-                currentStream.add(lineEnding);
+                currentStream.add(LINE_ENDING);
             }
         }
     }
