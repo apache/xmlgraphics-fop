@@ -77,7 +77,7 @@ public class FileCompare {
             filenameListTmp.add(tokens.nextToken());
         }
         filenameList = new String[filenameListTmp.size()];
-        filenameList = (String[])filenameListTmp.toArray(new String[0]);
+        filenameList = (String[])filenameListTmp.toArray(new String[filenameListTmp.size()]);
     }
 
     /**

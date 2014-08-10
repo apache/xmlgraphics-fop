@@ -29,7 +29,6 @@ import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
-import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.java2d.Base14FontCollection;
 import org.apache.fop.render.java2d.ConfiguredFontCollection;
 import org.apache.fop.render.java2d.InstalledFontCollection;
@@ -38,8 +37,7 @@ import org.apache.fop.render.java2d.Java2DFontMetrics;
 /**
  * PCL Renderer configurator
  */
-public class PCLRendererConfigurator extends PrintRendererConfigurator
-        implements IFDocumentHandlerConfigurator {
+public class PCLRendererConfigurator extends PrintRendererConfigurator {
 
     /**
      * Default constructor

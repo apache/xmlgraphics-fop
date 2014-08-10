@@ -44,6 +44,7 @@ public class LineArea extends Area {
      * that can be used in order to re-compute adjustement and / or indents when a
      * page-number or a page-number-citation is resolved
      */
+    // @SuppressFBWarnings("SE_INNER_CLASS")
     private final class LineAdjustingInfo implements Serializable {
 
         private static final long serialVersionUID = -6103629976229458273L;

@@ -19,8 +19,8 @@
 
 package org.apache.fop.pdf;
 
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Class representing a /ExtGState object.
@@ -186,10 +186,10 @@ public class PDFGState extends PDFObject {
         if (vals1.size() != vals2.size()) {
             return false;
         }
-        for (Iterator iter = vals1.keySet().iterator(); iter.hasNext();) {
-            Object str = iter.next();
+        for (Map.Entry<Object, Object> e : (Set<Map.Entry<Object, Object>>) vals2.entrySet()) {
+            Object str = e.getKey();
             Object obj1 = vals1.get(str);
-            if (!obj1.equals(vals2.get(str))) {
+            if (!obj1.equals(e.getValue())) {
                 return false;
             }
         }

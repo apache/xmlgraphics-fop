@@ -41,7 +41,7 @@ public final class RtfFontManager {
     //////////////////////////////////////////////////
 
     /** Singelton instance */
-    private static RtfFontManager instance;
+    private static RtfFontManager instance = new RtfFontManager();
 
     /** Index table for the fonts */
     private Hashtable fontIndex;
@@ -69,10 +69,6 @@ public final class RtfFontManager {
      * @return The instance of RtfFontManager
      */
     public static RtfFontManager getInstance() {
-        if (instance == null) {
-            instance = new RtfFontManager();
-        }
-
         return instance;
     }
 

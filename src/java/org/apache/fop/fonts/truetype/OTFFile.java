@@ -53,7 +53,7 @@ public class OTFFile extends OpenFont {
     protected void updateBBoxAndOffset() throws IOException {
         List<Mapping> gidMappings = getGIDMappings(fileFont);
         Map<Integer, String> sidNames = constructNameMap(gidMappings);
-        UnicodeMapping[] mappings = unicodeMappings.toArray(new UnicodeMapping[0]);
+        UnicodeMapping[] mappings = unicodeMappings.toArray(new UnicodeMapping[unicodeMappings.size()]);
         for (int i = 0; i < mappings.length; i++) {
             int glyphIdx = mappings[i].getGlyphIndex();
             Mapping m = gidMappings.get(glyphIdx);

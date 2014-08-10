@@ -41,7 +41,7 @@ import java.util.Map;
  */
 
 class RtfHeader extends RtfContainer {
-    private final String charset = "ansi";
+    private static final String CHARSET = "ansi";
     private final Map userProperties = new HashMap();
 
     /** Create an RTF header */
@@ -54,7 +54,7 @@ class RtfHeader extends RtfContainer {
 
     /** Overridden to write our own data before our children's data */
     protected void writeRtfContent() throws IOException {
-        writeControlWord(charset);
+        writeControlWord(CHARSET);
         writeUserProperties();
         RtfColorTable.getInstance().writeColors(this);
         super.writeRtfContent();

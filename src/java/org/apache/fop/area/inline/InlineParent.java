@@ -19,6 +19,8 @@
 
 package org.apache.fop.area.inline;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -50,6 +52,10 @@ public class InlineParent extends InlineArea {
      * allocation-rectangle.
      */
     private int maxAfterEdge;
+
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
+    }
 
     @Override
     public void addChildArea(Area c) {

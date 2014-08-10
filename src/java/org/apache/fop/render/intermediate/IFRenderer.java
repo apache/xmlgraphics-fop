@@ -400,9 +400,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         GoToXYAction action = (GoToXYAction)actionSet.get(targetID);
         //GoToXYAction action = (GoToXYAction)idGoTos.get(targetID);
         if (action == null) {
-            if (pageIndex < 0) {
+            /* if (pageIndex < 0) {
                 //pageIndex = page
-            }
+            } */
             Point position = (Point)idPositions.get(targetID);
             // can the GoTo already be fully filled in?
             if (pageIndex >= 0 && position != null) {
@@ -1094,7 +1094,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
         renderTextWithAdjustments(s, (int[]) null, false, font, textArea);
 
-        if (textUtil.combined && space.isAdjustable()) {
+        /* COMBINED is always false
+        if (textUtil.COMBINED && space.isAdjustable()) {
             //Used for justified text, for example
             int tws = textArea.getTextWordSpaceAdjust()
                          + 2 * textArea.getTextLetterSpaceAdjust();
@@ -1102,6 +1103,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 textUtil.adjust(tws);
             }
         }
+        */
         super.renderSpace(space);
     }
 
@@ -1124,10 +1126,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             char ch = s.charAt(i);
             textUtil.addChar(ch);
             int glyphAdjust = 0;
-            if (textUtil.combined && font.hasChar(ch)) {
+            /* COMBINED is always false
+            if (textUtil.COMBINED && font.hasChar(ch)) {
                 int tls = (i < l - 1 ? parentArea.getTextLetterSpaceAdjust() : 0);
                 glyphAdjust += tls;
             }
+            */
             if (dx != null && i < l) {
                 glyphAdjust += dx[i];
             }
@@ -1147,7 +1151,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     private void renderTextWithAdjustments(String s,
                               int[][] dp, boolean reversed,
                               Font font, AbstractTextArea parentArea) {
-        assert !textUtil.combined;
+        // assert !textUtil.COMBINED;
         for (int i = 0, n = s.length(); i < n; i++) {
             textUtil.addChar(s.charAt(i));
             if (dp != null) {
@@ -1164,7 +1168,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         private int starty;
         private int tls;
         private int tws;
-        private final boolean combined = false;
+        // private final static boolean COMBINED = false; // no longer referenced
 
         void addChar(char ch) {
             text.append(ch);
@@ -1221,13 +1225,13 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         void flush() {
             if (text.length() > 0) {
                 try {
-                    if (combined) {
+                    /* if (COMBINED) { // COMBINED is always false
                         painter.drawText(startx, starty, 0, 0,
                                          trimAdjustments(dp, text.length()), text.toString());
-                    } else {
+                    } else { */
                         painter.drawText(startx, starty, tls, tws,
                                          trimAdjustments(dp, text.length()), text.toString());
-                    }
+                    /* } */
                 } catch (IFException e) {
                     handleIFException(e);
                 }

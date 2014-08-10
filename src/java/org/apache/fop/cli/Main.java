@@ -144,6 +144,7 @@ public final class Main {
         } catch (Exception e) {
             System.err.println("Unable to start FOP:");
             e.printStackTrace();
+            // @SuppressFBWarnings("DM_EXIT")
             System.exit(-1);
         }
     }
@@ -166,6 +167,7 @@ public final class Main {
         try {
             options = new CommandLineOptions();
             if (!options.parse(args)) {
+                // @SuppressFBWarnings("DM_EXIT")
                 System.exit(0);
             }
 

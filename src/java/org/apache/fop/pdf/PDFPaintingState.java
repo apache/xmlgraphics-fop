@@ -244,6 +244,7 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
         return (PDFData)getData();
     }
 
+    // @SuppressFBWarnings("SE_INNER_CLASS")
     private class PDFData extends org.apache.fop.util.AbstractPaintingState.AbstractData {
 
         private static final long serialVersionUID = 3527950647293177764L;

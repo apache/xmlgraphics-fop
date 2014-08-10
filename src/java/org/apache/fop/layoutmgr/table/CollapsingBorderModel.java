@@ -47,8 +47,7 @@ public abstract class CollapsingBorderModel {
     /** Indicates that the cell is/end in the last row of a body/table-header/table-footer */
     //public static final int LAST_ROW_IN_GROUP       = 8;
 
-    //These statics are used singleton-style. No MT issues here.
-    private static CollapsingBorderModel collapse;
+    private static CollapsingBorderModel collapse = new CollapsingBorderModelEyeCatching();
     // private static CollapsingBorderModel collapseWithPrecedence = null;
 
     /**
@@ -58,9 +57,6 @@ public abstract class CollapsingBorderModel {
     public static CollapsingBorderModel getBorderModelFor(int borderCollapse) {
         switch (borderCollapse) {
             case Constants.EN_COLLAPSE:
-                if (collapse == null) {
-                    collapse = new CollapsingBorderModelEyeCatching();
-                }
                 return collapse;
             case Constants.EN_COLLAPSE_WITH_PRECEDENCE:
                 throw new UnsupportedOperationException("collapse-with-precedence not yet supported");

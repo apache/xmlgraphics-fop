@@ -641,6 +641,7 @@ public abstract class OpenFont {
     /**
      * Print first char/last char
      */
+    /* not used
     private void printMaxMin() {
         int min = 255;
         int max = 0;
@@ -655,6 +656,7 @@ public abstract class OpenFont {
         log.info("Min: " + min);
         log.info("Max: " + max);
     }
+    */
 
 
     /**
@@ -1606,9 +1608,10 @@ public abstract class OpenFont {
                 Map<Integer, Integer> akpx = new HashMap<Integer, Integer>();
                 Map<Integer, Integer> ckpx = kerningTab.get(unicodeKey1);
 
-                for (Integer unicodeKey2 : ckpx.keySet()) {
+                for (Map.Entry<Integer, Integer> e : ckpx.entrySet()) {
+                    Integer unicodeKey2 = e.getKey();
                     Integer cidKey2 = unicodeToGlyph(unicodeKey2.intValue());
-                    Integer kern = ckpx.get(unicodeKey2);
+                    Integer kern = e.getValue();
 
                     Iterator uniMap = mtxTab[cidKey2.intValue()].getUnicodeIndex().listIterator();
                     while (uniMap.hasNext()) {
@@ -1828,7 +1831,7 @@ public abstract class OpenFont {
                 ret.add(new Integer(i));
             }
         }
-        return ret.toArray(new Integer[0]);
+        return ret.toArray(new Integer[ret.size()]);
     }
 
     /**

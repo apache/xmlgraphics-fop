@@ -37,6 +37,7 @@ import org.apache.fop.render.RenderingContext;
 /**
  * Utility code for rendering images in PostScript.
  */
+// @SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_SUPERCLASS")
 public class PSImageUtils extends org.apache.xmlgraphics.ps.PSImageUtils {
 
     /**

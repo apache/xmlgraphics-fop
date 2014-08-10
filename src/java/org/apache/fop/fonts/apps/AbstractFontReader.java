@@ -38,18 +38,12 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractFontReader {
 
     /** Logger instance */
-    protected static Log log;
+    protected static final Log log = LogFactory.getLog(AbstractFontReader.class);
 
     /**
      * Main constructor.
      */
     protected AbstractFontReader() {
-        // Create logger if necessary here to allow embedding of TTFReader in
-        // other applications. There is a possible but harmless synchronization
-        // issue.
-        if (log == null) {
-            log = LogFactory.getLog(AbstractFontReader.class);
-        }
     }
 
     /**
@@ -78,7 +72,7 @@ public abstract class AbstractFontReader {
                 arguments.add(args[i]);
             }
         }
-        return (String[])arguments.toArray(new String[0]);
+        return (String[])arguments.toArray(new String[arguments.size()]);
     }
 
     /**

@@ -24,14 +24,12 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.DefaultRendererConfigurator;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
-import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
 
 /**
  * Postscript renderer config
  */
-public class PSRendererConfigurator extends DefaultRendererConfigurator
-        implements IFDocumentHandlerConfigurator {
+public class PSRendererConfigurator extends DefaultRendererConfigurator {
 
     /**
      * Default constructor

@@ -28,8 +28,8 @@ import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -105,10 +105,9 @@ public class RunTest extends Task {
                 System.out.println("====================================");
                 System.out.println("The following files differ:");
                 boolean broke = false;
-                for (Iterator keys = diff.keySet().iterator();
-                        keys.hasNext();) {
-                    Object fname = keys.next();
-                    Boolean pass = (Boolean)diff.get(fname);
+                for (Map.Entry<Object, Object> e : (Set<Map.Entry<Object, Object>>) diff.entrySet()) {
+                    Object fname = e.getKey();
+                    Boolean pass = (Boolean)e.getValue();
                     System.out.println("file: " + fname
                                        + " - reference success: " + pass);
                     if (pass.booleanValue()) {

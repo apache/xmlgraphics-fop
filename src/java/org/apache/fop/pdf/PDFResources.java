@@ -122,8 +122,9 @@ public class PDFResources extends PDFDictionary {
      */
    public void addFonts(PDFDocument doc, FontInfo fontInfo) {
         Map<String, Typeface> usedFonts = fontInfo.getUsedFonts();
-        for (String f : usedFonts.keySet()) {
-            Typeface font = usedFonts.get(f);
+        for (Map.Entry<String, Typeface> e : usedFonts.entrySet()) {
+            String f = e.getKey();
+            Typeface font = e.getValue();
 
             //Check if the font actually had any mapping operations. If not, it is an indication
             //that it has never actually been used and therefore doesn't have to be embedded.

@@ -19,6 +19,8 @@
 
 package org.apache.fop.area;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,10 @@ public class LinkResolver implements Resolvable, Serializable {
     private Area area;
     private transient List<Resolvable> dependents;
 
+    public LinkResolver() {
+        this(null, null);
+    }
+
     /**
      * Create a new link resolver.
      *
@@ -44,6 +50,10 @@ public class LinkResolver implements Resolvable, Serializable {
     public LinkResolver(String id, Area a) {
         idRef = id;
         area = a;
+    }
+
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
     }
 
     /**

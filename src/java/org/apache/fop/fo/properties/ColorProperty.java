@@ -38,7 +38,7 @@ public final class ColorProperty extends Property  {
     /**
      * The color represented by this property.
      */
-    protected final Color color;
+    private final Color color;
 
 
     /**

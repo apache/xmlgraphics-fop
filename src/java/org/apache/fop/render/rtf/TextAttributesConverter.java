@@ -215,10 +215,10 @@ final class TextAttributesConverter {
 
         attrFontColor(fobj.getColor(), attrib);
 
-        if (fobj.getLeaderPatternWidth() != null) {
+        /* if (fobj.getLeaderPatternWidth() != null) {
             //TODO calculate pattern width not possible for white spaces, because its using
             //underlines for tab it would work with LEADER_PATTERN_WIDTH (expndtw)
-        }
+        } */
 
         switch(fobj.getLeaderPattern()) {
         case Constants.EN_DOTS:

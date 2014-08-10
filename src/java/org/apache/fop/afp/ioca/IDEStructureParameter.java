@@ -43,7 +43,7 @@ public class IDEStructureParameter implements Streamable {
     private boolean subtractive;
 
     /** setting for GRAYCODE flag */
-    private boolean grayCoding;
+    // private boolean grayCoding; // never written
 
     /** the image color model */
     private byte colorModel = COLOR_MODEL_RGB;
@@ -133,9 +133,11 @@ public class IDEStructureParameter implements Streamable {
         if (subtractive) {
             flags |= 1 << 7;
         }
+        /* graCoding is never written
         if (grayCoding) {
             flags |= 1 << 6;
         }
+        */
 
         DataOutputStream dout = new DataOutputStream(os);
         dout.writeByte(0x9B); //ID

@@ -29,6 +29,7 @@ import java.awt.image.VolatileImage;
  * for JDK 1.3 because there is no VolatileImage there.
  *
  */
+// @SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_SUPERCLASS")
 public abstract class GraphicsConfiguration extends java.awt.GraphicsConfiguration {
 
     /**

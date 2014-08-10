@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.fontbox.cff.CFFStandardString;
 import org.apache.fontbox.cff.encoding.CFFEncoding;
@@ -386,7 +387,8 @@ public class OTFSubSetFile extends OTFFile {
 
             List<Integer> uniqueGroups = new ArrayList<Integer>();
             for (int gid : subsetGlyphs.keySet()) {
-                Integer[] ranges = fdSelect.getRanges().keySet().toArray(new Integer[0]);
+                Set<Integer> rangeKeys = fdSelect.getRanges().keySet();
+                Integer[] ranges = rangeKeys.toArray(new Integer[rangeKeys.size()]);
                 for (int i = 0; i < ranges.length; i++) {
                     int nextRange = -1;
                     if (i < ranges.length - 1) {

@@ -60,7 +60,7 @@ public final class RtfStyleSheetTable {
     //////////////////////////////////////////////////
 
     /** Singelton instance */
-    private static RtfStyleSheetTable instance;
+    private static RtfStyleSheetTable instance = new RtfStyleSheetTable();
 
 
     //////////////////////////////////////////////////
@@ -100,10 +100,6 @@ public final class RtfStyleSheetTable {
      * @return The instance of RtfStyleSheetTable
      */
     public static RtfStyleSheetTable getInstance() {
-        if (instance == null) {
-            instance = new RtfStyleSheetTable();
-        }
-
         return instance;
     }
 

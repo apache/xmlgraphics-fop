@@ -133,8 +133,9 @@ public class ImageRawJPEGAdapter extends AbstractImageAdapter {
                         // Check for ICC profile
                         byte[] iccString = new byte[11];
                         din.readFully(iccString);
-                        din.skipBytes(1); //string terminator (null byte)
-
+                        if (din.skipBytes(1) != 1) { //string terminator (null byte)
+                            throw new IOException("premature EOF when skipping terminator byte");
+                        }
                         if ("ICC_PROFILE".equals(new String(iccString, "US-ASCII"))) {
                             skipICCProfile = (this.image.getICCProfile() != null);
                         }

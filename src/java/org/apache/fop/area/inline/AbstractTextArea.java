@@ -31,6 +31,7 @@ public abstract class AbstractTextArea extends InlineParent {
      * that can be used in order to re-compute adjustments when a
      * page-number or a page-number-citation is resolved
      */
+    // @SuppressFBWarnings("SE_INNER_CLASS")
     protected class TextAdjustingInfo extends InlineAdjustingInfo {
 
         private static final long serialVersionUID = -2412095162983479947L;

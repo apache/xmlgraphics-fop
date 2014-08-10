@@ -27,7 +27,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,8 +44,7 @@ import org.apache.commons.io.IOUtils;
  *
  * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
-public class HyphenationTree extends TernaryTree
-            implements PatternConsumer, Serializable {
+public class HyphenationTree extends TernaryTree implements PatternConsumer {
 
     private static final long serialVersionUID = -7842107987915665573L;
 
@@ -76,6 +74,10 @@ public class HyphenationTree extends TernaryTree
         classmap = new TernaryTree();
         vspace = new ByteVector();
         vspace.alloc(1);    // this reserves index 0, which we don't use
+    }
+
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
     }
 
     /**

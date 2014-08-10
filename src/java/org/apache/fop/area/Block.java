@@ -19,8 +19,9 @@
 
 package org.apache.fop.area;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Locale;
-
 
 // block areas hold either more block areas or line
 // areas can also be used as a block spacer
@@ -63,11 +64,19 @@ public class Block extends BlockParent {
     private int positioning = STACK;
 
     /** if true, allow BPD update */
-    protected transient boolean allowBPDUpdate = true;
+    protected transient boolean allowBPDUpdate;
 
     private Locale locale;
 
     private String location;
+
+    public Block() {
+        allowBPDUpdate = true;
+    }
+
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
+    }
 
     /**
      * Add the block to this block area.

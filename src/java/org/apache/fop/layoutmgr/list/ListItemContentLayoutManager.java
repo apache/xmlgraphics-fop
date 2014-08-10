@@ -48,7 +48,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager imp
     private Block curBlockArea;
 
     private int xOffset;
-    private int itemIPD;
+    // private int itemIPD; // FIXME: never written!
 
     /**
      * Create a new Cell layout manager.
@@ -178,8 +178,8 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager imp
             curBlockArea.setPositioning(Block.ABSOLUTE);
             // set position
             curBlockArea.setXOffset(xOffset);
-            //TODO: Check - itemIPD never set?
-            curBlockArea.setIPD(itemIPD);
+            // FIXME - itemIPD is never written!
+            curBlockArea.setIPD(/*itemIPD*/0);
             //curBlockArea.setHeight();
             curBlockArea.setBidiLevel(getPartFO().getBidiLevel());
 

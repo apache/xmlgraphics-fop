@@ -118,26 +118,38 @@ public class PFMFile {
      * @throws IOException In case of an I/O problem
      */
     private void loadHeader(PFMInputStream inStream) throws IOException {
-        inStream.skip(80);
+        if (inStream.skip(80) != 80) {
+            throw new IOException("premature EOF when skipping 80 bytes");
+        }
         dfItalic = inStream.readByte();
-        inStream.skip(2);
+        if (inStream.skip(2) != 2) {
+            throw new IOException("premature EOF when skipping 2 bytes");
+        }
         inStream.readShort(); // dfWeight =
         dfCharSet = inStream.readByte();
-        inStream.skip(4);
+        if (inStream.skip(4) != 4) {
+            throw new IOException("premature EOF when skipping 4 bytes");
+        }
         dfPitchAndFamily = inStream.readByte();
         dfAvgWidth = inStream.readShort();
         dfMaxWidth = inStream.readShort();
         dfFirstChar = inStream.readByte();
         dfLastChar = inStream.readByte();
-        inStream.skip(8);
+        if (inStream.skip(8) != 8) {
+            throw new IOException("premature EOF when skipping 8 bytes");
+        }
         long faceOffset = inStream.readInt();
 
         inStream.reset();
-        inStream.skip(faceOffset);
+        if (inStream.skip(faceOffset) != faceOffset) {
+            throw new IOException("premature EOF when skipping faceOffset bytes");
+        }
         windowsName = inStream.readString();
 
         inStream.reset();
-        inStream.skip(117);
+        if (inStream.skip(117) != 117) {
+            throw new IOException("premature EOF when skipping 117 bytes");
+        }
     }
 
     /**
@@ -153,29 +165,41 @@ public class PFMFile {
         }
         final long extMetricsOffset = inStream.readInt();
         final long extentTableOffset = inStream.readInt();
-        inStream.skip(4); //Skip dfOriginTable
+        if (inStream.skip(4) != 4) { //Skip dfOriginTable
+            throw new IOException("premature EOF when skipping dfOriginTable bytes");
+        }
         final long kernPairOffset = inStream.readInt();
-        inStream.skip(4); //Skip dfTrackKernTable
+        if (inStream.skip(4) != 4) { //Skip dfTrackKernTable
+            throw new IOException("premature EOF when skipping dfTrackKernTable bytes");
+        }
         long driverInfoOffset = inStream.readInt();
 
         if (kernPairOffset > 0) {
             inStream.reset();
-            inStream.skip(kernPairOffset);
+            if (inStream.skip(kernPairOffset) != kernPairOffset) {
+                throw new IOException("premature EOF when skipping kernPairOffset bytes");
+            }
             loadKernPairs(inStream);
         }
 
         inStream.reset();
-        inStream.skip(driverInfoOffset);
+        if (inStream.skip(driverInfoOffset) != driverInfoOffset) {
+            throw new IOException("premature EOF when skipping driverInfoOffset bytes");
+        }
         postscriptName = inStream.readString();
 
         if (extMetricsOffset != 0) {
             inStream.reset();
-            inStream.skip(extMetricsOffset);
+            if (inStream.skip(extMetricsOffset) != extMetricsOffset) {
+                throw new IOException("premature EOF when skipping extMetricsOffset bytes");
+            }
             loadExtMetrics(inStream);
         }
         if (extentTableOffset != 0) {
             inStream.reset();
-            inStream.skip(extentTableOffset);
+            if (inStream.skip(extentTableOffset) != extentTableOffset) {
+                throw new IOException("premature EOF when skipping extentTableOffset bytes");
+            }
             loadExtentTable(inStream);
         }
 
@@ -231,8 +255,10 @@ public class PFMFile {
             log.warn("Size of extension block was expected to be "
                 + "52 bytes, but was " + size + " bytes.");
         }
-        inStream.skip(12); //Skip etmPointSize, etmOrientation, etmMasterHeight,
-                           //etmMinScale, etmMaxScale, emtMasterUnits
+        if (inStream.skip(12) != 12) { //Skip etmPointSize, etmOrientation, etmMasterHeight,
+                                       //etmMinScale, etmMaxScale, emtMasterUnits
+            throw new IOException("premature EOF when skipping etmPointSize, ... bytes");
+        }
         etmCapHeight = inStream.readShort();
         etmXHeight = inStream.readShort();
         etmLowerCaseAscent = inStream.readShort();

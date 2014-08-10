@@ -44,7 +44,6 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
 import org.apache.fop.layoutmgr.AreaAdditionUtil;
-import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
@@ -69,8 +68,7 @@ import org.apache.fop.util.ListUtil;
  * LayoutManager for a table-cell FO.
  * A cell contains blocks. These blocks fill the cell.
  */
-public class TableCellLayoutManager extends BlockStackingLayoutManager
-            implements BlockLevelLayoutManager {
+public class TableCellLayoutManager extends BlockStackingLayoutManager {
 
     /**
      * logging instance

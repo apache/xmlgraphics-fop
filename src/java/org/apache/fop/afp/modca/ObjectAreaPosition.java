@@ -42,8 +42,8 @@ public class ObjectAreaPosition extends AbstractAFPObject {
     private final int x;
     private final int y;
     private final int rotation;
-    private int xOffset;
-    private int yOffset;
+    // private int xOffset; // never written
+    // private int yOffset; // never written
     private byte refCSys = 0x01; //Page or overlay coordinate system
 
     /**
@@ -108,12 +108,12 @@ public class ObjectAreaPosition extends AbstractAFPObject {
         byte yorient = (byte)(rotation / 2 + 45);
         data[19] = yorient; // YoaOrent
 
-        byte[] xoffset = BinaryUtils.convert(xOffset, 3);
+        byte[] xoffset = BinaryUtils.convert(/*xOffset*/ 0, 3);
         data[22] = xoffset[0]; // XocaOSet
         data[23] = xoffset[1];
         data[24] = xoffset[2];
 
-        byte[] yoffset = BinaryUtils.convert(yOffset, 3);
+        byte[] yoffset = BinaryUtils.convert(/*yOffset*/ 0, 3);
         data[25] = yoffset[0]; // YocaOSet
         data[26] = yoffset[1];
         data[27] = yoffset[2];
@@ -136,7 +136,7 @@ public class ObjectAreaPosition extends AbstractAFPObject {
             + ", y=" + y
             + ", rotation=" + rotation
             + ", rotation=" + rotation
-            + ", xOffset=" + xOffset
-            + ", yOffset=" + yOffset;
+            + ", xOffset=" + /*xOffset*/ 0
+            + ", yOffset=" + /*yOffset*/ 0;
     }
 }

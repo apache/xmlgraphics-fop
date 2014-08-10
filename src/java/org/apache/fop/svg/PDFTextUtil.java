@@ -27,6 +27,7 @@ import org.apache.fop.fonts.Typeface;
  * Utility class for generating PDF text objects. It needs to be subclassed to add writing
  * functionality (see {@link #write(String)}).
  */
+// @SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_SUPERCLASS")
 public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
 
     private FontInfo fontInfo;

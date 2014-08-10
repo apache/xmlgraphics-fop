@@ -71,7 +71,7 @@ public final class ColorUtil {
     private static Map<String, Color> colorMap;
 
     /** Logger instance */
-    protected static final Log log = LogFactory.getLog(ColorUtil.class);
+    private static final Log log = LogFactory.getLog(ColorUtil.class);
 
     static {
         initializeColorMap();
