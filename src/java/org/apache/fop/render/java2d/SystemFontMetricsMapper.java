@@ -21,6 +21,7 @@ package org.apache.fop.render.java2d;
 
 // Java
 import java.awt.Rectangle;
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,6 +45,8 @@ public class SystemFontMetricsMapper extends Typeface implements FontMetricsMapp
      */
     private final Java2DFontMetrics java2DFontMetrics;
 
+    private final URI fontFileURI;
+
     /**
      * The java name of the font.
      * #  Make the family name immutable.
@@ -63,11 +66,21 @@ public class SystemFontMetricsMapper extends Typeface implements FontMetricsMapp
      * @param java2DFontMetrics metric calculations delegated to this
      */
     public SystemFontMetricsMapper(String family, int style, Java2DFontMetrics java2DFontMetrics) {
+        URI uri;
+        try {
+            uri = new URI("system:" + family.toLowerCase());
+        } catch (java.net.URISyntaxException e) {
+            uri = null;
+        }
+        this.fontFileURI = uri;
         this.family = family;
-
         this.style = style;
-
         this.java2DFontMetrics = java2DFontMetrics;
+    }
+
+    /** {@inheritDoc} */
+    public final URI getFontURI() {
+        return null;
     }
 
     /** {@inheritDoc} */

@@ -141,6 +141,7 @@ public class OFFontLoader extends FontLoader {
             returnFont = singleFont;
         }
 
+        returnFont.setFontURI(fontFileURI);
         returnFont.setFontName(otf.getPostScriptName());
         returnFont.setFullName(otf.getFullName());
         returnFont.setFamilyNames(otf.getFamilyNames());

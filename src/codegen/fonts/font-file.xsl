@@ -36,6 +36,7 @@
 package org.apache.fop.fonts.base14;
 
 import java.awt.Rectangle;
+import java.net.URI;
 <xsl:if test="count(kerning) &gt; 0">
 import java.util.Map;
 </xsl:if>
@@ -46,6 +47,7 @@ import org.apache.fop.fonts.CodePointMapping;
 import org.apache.fop.fonts.Typeface;
 
 public class <xsl:value-of select="class-name"/> extends Base14Font {
+    private final static URI fontFileURI;
     private final static String fontName = "<xsl:value-of select="font-name"/>";
     private final static String fullName = "<xsl:value-of select="full-name"/>";
     private final static Set familyNames;
@@ -69,6 +71,12 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
     private boolean enableKerning = false;
 
     static {
+        URI uri = null;
+        try {
+            uri = new URI("base14:" + fontName.toLowerCase());
+        } catch (java.net.URISyntaxException e) {
+        }
+        fontFileURI = uri;
         width = new int[256];
         boundingBoxes = new Rectangle[256];
         <xsl:apply-templates select="char-metrics"/>
@@ -92,6 +100,10 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
 
     public String getEncodingName() {
         return encoding;
+    }
+
+    public URI getFontURI() {
+        return fontFileURI;
     }
 
     public String getFontName() {

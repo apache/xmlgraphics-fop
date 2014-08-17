@@ -42,6 +42,7 @@ public abstract class CustomFont extends Typeface
     /** Fallback thickness for underline and strikeout when not provided by the font. */
     private static final int DEFAULT_LINE_THICKNESS = 50;
 
+    private URI fontFileURI;
     private String fontName;
     private String fullName;
     private Set<String> familyNames;
@@ -87,6 +88,11 @@ public abstract class CustomFont extends Typeface
         this.resourceResolver = resourceResolver;
     }
 
+
+    /** {@inheritDoc} */
+    public URI getFontURI() {
+        return fontFileURI;
+    }
 
     /** {@inheritDoc} */
     public String getFontName() {
@@ -324,6 +330,11 @@ public abstract class CustomFont extends Typeface
     }
 
     /* ---- MutableFont interface ---- */
+
+    /** {@inheritDoc} */
+    public void setFontURI(URI uri) {
+        this.fontFileURI = uri;
+    }
 
     /** {@inheritDoc} */
     public void setFontName(String name) {

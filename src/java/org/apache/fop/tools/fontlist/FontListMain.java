@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
@@ -66,6 +67,7 @@ public final class FontListMain {
 
     private FopFactory fopFactory;
 
+    private boolean verbose;
     private File configFile;
     private File outputFile;
     private String configMime = MimeConstants.MIME_PDF;
@@ -168,22 +170,42 @@ public final class FontListMain {
     private void writeToConsole(SortedMap fontFamilies)
             throws TransformerConfigurationException, SAXException, IOException {
         Iterator iter = fontFamilies.entrySet().iterator();
+        StringBuffer sb = new StringBuffer();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry)iter.next();
             String firstFamilyName = (String)entry.getKey();
-            System.out.println(firstFamilyName + ":");
+            sb.append(firstFamilyName);
+            sb.append(':');
+            sb.append('\n');
             List list = (List)entry.getValue();
             Iterator fonts = list.iterator();
             while (fonts.hasNext()) {
                 FontSpec f = (FontSpec)fonts.next();
-                System.out.println("  " + f.getKey() + " " + f.getFamilyNames());
+                sb.append("  ");
+                sb.append(f.getKey());
+                sb.append(' ');
+                sb.append(f.getFamilyNames());
+                if (verbose) {
+                    URI uri = f.getFontMetrics().getFontURI();
+                    if (uri != null) {
+                        sb.append(' ');
+                        sb.append('(');
+                        sb.append(uri.toString());
+                        sb.append(')');
+                    }
+                }
+                sb.append('\n');
                 Iterator triplets = f.getTriplets().iterator();
                 while (triplets.hasNext()) {
                     FontTriplet triplet = (FontTriplet)triplets.next();
-                    System.out.println("    " + triplet.toString());
+                    sb.append("    ");
+                    sb.append(triplet.toString());
+                    sb.append('\n');
                 }
             }
         }
+        System.out.print(sb.toString());
+        System.out.flush();
     }
 
     private void writeOutput(SortedMap fontFamilies)
@@ -231,7 +253,7 @@ public final class FontListMain {
         PrintStream out = System.out;
         out.println("USAGE");
         out.println("  java [vmargs] " + className
-                + " [-c <config-file>] [-f <mime>] [[output-dir|output-file] [font-family]]");
+                + "[-v] [-c <config-file>] [-f <mime>] [[output-dir|output-file] [font-family]]");
         out.println();
         out.println("PARAMETERS");
         out.println("  config-file: an optional FOP configuration file");
@@ -259,6 +281,10 @@ public final class FontListMain {
                 printHelp();
                 // @SuppressFBWarnings("DM_EXIT")
                 System.exit(0);
+            }
+            if ("-v".equals(args[idx])) {
+                verbose = true;
+                idx += 1;
             }
             if (idx < args.length - 1 && "-c".equals(args[idx])) {
                 String filename = args[idx + 1];

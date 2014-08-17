@@ -20,13 +20,13 @@
 package org.apache.fop.afp.fonts;
 
 import java.awt.Rectangle;
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.Typeface;
-
 
 /**
  * All implementations of AFP fonts should extend this base class,
@@ -50,6 +50,11 @@ public abstract class AFPFont extends Typeface {
     public AFPFont(String name, boolean embeddable) {
         this.name = name;
         this.embeddable = embeddable;
+    }
+
+    /** {@inheritDoc} */
+    public URI getFontURI() {
+        return null;
     }
 
     /** {@inheritDoc} */

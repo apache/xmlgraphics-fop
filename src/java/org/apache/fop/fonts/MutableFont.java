@@ -31,6 +31,12 @@ import java.util.Set;
 public interface MutableFont {
 
     /**
+     * Sets the URI from which this font is or will be loaded.
+     * @param uri URI from which font is or will be loaded
+     */
+    void setFontURI(URI uri);
+
+    /**
      * Sets the "PostScript" font name (Example: "Helvetica-BoldOblique").
      * @param name font name
      */
