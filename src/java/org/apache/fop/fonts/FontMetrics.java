@@ -20,15 +20,20 @@
 package org.apache.fop.fonts;
 
 import java.awt.Rectangle;
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
-
-
 
 /**
  * Main interface for access to font metrics.
  */
 public interface FontMetrics {
+
+    /**
+     * Returns the URI of the font file from which these metrics were loaded.
+     * @return the font file's URI
+     */
+    URI getFontURI();
 
     /**
      * Returns the "PostScript" font name (Example: "Helvetica-BoldOblique").

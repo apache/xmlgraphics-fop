@@ -24,6 +24,7 @@ import java.awt.FontFormatException;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -158,6 +159,11 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
     /** {@inheritDoc} */
     public final String getFontName() {
         return typeface.getFontName();
+    }
+
+    /** {@inheritDoc} */
+    public final URI getFontURI() {
+        return typeface.getFontURI();
     }
 
     /** {@inheritDoc} */
