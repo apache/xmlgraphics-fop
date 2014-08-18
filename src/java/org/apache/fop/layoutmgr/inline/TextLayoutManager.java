@@ -934,7 +934,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 && prevMapping.endIndex > 0 ? foText.charAt(prevMapping.endIndex - 1) : 0;
         GlyphMapping mapping = GlyphMapping.doGlyphMapping(foText, thisStart, lastIndex, font,
                 letterSpaceIPD, letterSpaceAdjustArray, precedingChar, breakOpportunityChar,
-                endsWithHyphen, level, false);
+                endsWithHyphen, level, false, false);
         prevMapping = mapping;
         addGlyphMapping(mapping);
         tempStart = nextStart;
