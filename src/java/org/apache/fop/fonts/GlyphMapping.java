@@ -83,22 +83,22 @@ public class GlyphMapping {
     public static GlyphMapping doGlyphMapping(TextFragment text, int startIndex, int endIndex,
             Font font, MinOptMax letterSpaceIPD, MinOptMax[] letterSpaceAdjustArray,
             char precedingChar, char breakOpportunityChar, final boolean endsWithHyphen, int level,
-            boolean retainAssociations) {
+            boolean dontOptimizeForIdentityMapping, boolean retainAssociations) {
         GlyphMapping mapping;
         if (font.performsSubstitution() || font.performsPositioning()) {
             mapping = processWordMapping(text, startIndex, endIndex, font,
-                    breakOpportunityChar, endsWithHyphen, level, retainAssociations);
+                breakOpportunityChar, endsWithHyphen, level, dontOptimizeForIdentityMapping, retainAssociations);
         } else {
             mapping = processWordNoMapping(text, startIndex, endIndex, font,
-                    letterSpaceIPD, letterSpaceAdjustArray, precedingChar, breakOpportunityChar, endsWithHyphen,
-                    level);
+                letterSpaceIPD, letterSpaceAdjustArray, precedingChar, breakOpportunityChar, endsWithHyphen, level);
         }
         return mapping;
     }
 
     private static GlyphMapping processWordMapping(TextFragment text, int startIndex,
             int endIndex, final Font font, final char breakOpportunityChar,
-            final boolean endsWithHyphen, int level, boolean retainAssociations) {
+            final boolean endsWithHyphen, int level,
+            boolean dontOptimizeForIdentityMapping, boolean retainAssociations) {
         int e = endIndex; // end index of word in FOText character buffer
         int nLS = 0; // # of letter spaces
         String script = text.getScript();
@@ -163,7 +163,8 @@ public class GlyphMapping {
 
         return new GlyphMapping(startIndex, e, 0, nLS, ipd, endsWithHyphen, false,
                 breakOpportunityChar != 0, font, level, gpa,
-                CharUtilities.isSameSequence(mcs, ics) ? null : mcs.toString(), associations);
+                !dontOptimizeForIdentityMapping && CharUtilities.isSameSequence(mcs, ics) ? null : mcs.toString(),
+                associations);
     }
 
     /**
@@ -320,6 +321,9 @@ public class GlyphMapping {
     }
 
     public void reverse() {
+        if (mapping == null) {
+            return;
+        }
         if (mapping.length() > 0) {
             mapping = new StringBuffer(mapping).reverse().toString();
         }
