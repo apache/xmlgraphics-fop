@@ -564,7 +564,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
             xObject = addRenderedImage(key, buf);
         } else {
-            resourceContext.getPDFResources().addXObject(xObject);
+            resourceContext.addXObject(xObject);
         }
 
         AffineTransform at = new AffineTransform();
@@ -1025,7 +1025,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         PDFXObject imageInfo = pdfDoc.getXObject(
             "TempImage:" + pctx.toString());
         if (imageInfo != null) {
-            resourceContext.getPDFResources().addXObject(imageInfo);
+            resourceContext.addXObject(imageInfo);
         } else {
             Raster r = pctx.getRaster(devX, devY, devW, devH);
             WritableRaster wr = (WritableRaster)r;
@@ -1176,7 +1176,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         if (xObject == null) {
             xObject = addRenderedImage(key, img);
         } else {
-            resourceContext.getPDFResources().addXObject(xObject);
+            resourceContext.addXObject(xObject);
         }
 
         useXObject(xObject, xform, img.getWidth(), img.getHeight());

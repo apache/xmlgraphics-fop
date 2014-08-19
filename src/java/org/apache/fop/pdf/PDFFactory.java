@@ -303,9 +303,7 @@ public class PDFFactory {
 
         // add this shading to resources
         if (res != null) {
-            res.getPDFResources().addShading(shading);
-        } else {
-            getDocument().getResources().addShading(shading);
+            res.addShading(shading);
         }
         return shading;
     }
@@ -348,9 +346,7 @@ public class PDFFactory {
         }
 
         if (res != null) {
-            res.getPDFResources().addPattern(pattern);
-        } else {
-            getDocument().getResources().addPattern(pattern);
+            res.addPattern(pattern);
         }
 
         return (pattern);
@@ -365,9 +361,7 @@ public class PDFFactory {
         }
 
         if (res != null) {
-            res.getPDFResources().addPattern(pattern);
-        } else {
-            getDocument().getResources().addPattern(pattern);
+            res.addPattern(pattern);
         }
         return pattern;
     }

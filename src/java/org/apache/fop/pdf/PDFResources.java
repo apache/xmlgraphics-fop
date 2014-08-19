@@ -51,32 +51,20 @@ public class PDFResources extends PDFDictionary {
      * Set of XObjects
      */
     protected Set<PDFXObject> xObjects = new LinkedHashSet<PDFXObject>();
-
-    /**
-     * Set of patterns
-     */
-    protected Set<PDFPattern> patterns = new LinkedHashSet<PDFPattern>();
-
-    /**
-     * Set of shadings
-     */
-    protected Set<PDFShading> shadings = new LinkedHashSet<PDFShading>();
-
-    /**
-     * Set of ExtGStates
-     */
-    protected Set<PDFGState> gstates = new LinkedHashSet<PDFGState>();
-
     /** Map of color spaces (key: color space name) */
     protected Map<PDFName, PDFColorSpace> colorSpaces = new LinkedHashMap<PDFName, PDFColorSpace>();
 
     /** Map of ICC color spaces (key: ICC profile description) */
     protected Map<String, PDFICCBasedColorSpace> iccColorSpaces = new LinkedHashMap<String, PDFICCBasedColorSpace>();
 
+    private PDFResources parent;
+    private PDFDictionary fontsObj;
+    private Map<String, PDFDictionary> fontsObjDict = new LinkedHashMap<String, PDFDictionary>();
+
     /** Named properties */
     protected Map<String, PDFReference> properties = new LinkedHashMap<String, PDFReference>();
 
-    private PDFResources parent;
+    protected Set<PDFResourceContext> contexts = new LinkedHashSet<PDFResourceContext>();
 
     /**
      * create a /Resources object.
@@ -87,6 +75,10 @@ public class PDFResources extends PDFDictionary {
         /* generic creation of object */
         super();
         setObjectNumber(objnum);
+    }
+
+    public void addContext(PDFResourceContext c) {
+        contexts.add(c);
     }
 
     public void setParentResources(PDFResources p) {
@@ -103,15 +95,22 @@ public class PDFResources extends PDFDictionary {
      * @param font the PDFFont to add
      */
     public void addFont(PDFFont font) {
-        fonts.put(font.getName(), font);
+        addFont(font.getName(), font);
     }
 
     public void addFont(String name, PDFDictionary font) {
-        fonts.put(name, font);
+        if (fontsObj != null) {
+            fontsObj.put(name, font);
+            fontsObjDict.put(name, font);
+        } else {
+            fonts.put(name, font);
+        }
     }
 
-    public Map<String, PDFDictionary> getFonts() {
-        return fonts;
+    public void createFontsAsObj() {
+        fontsObj = new PDFDictionary();
+        getDocument().registerTrailerObject(fontsObj);
+        put("Font", fontsObj);
     }
 
     /**
@@ -122,9 +121,8 @@ public class PDFResources extends PDFDictionary {
      */
    public void addFonts(PDFDocument doc, FontInfo fontInfo) {
         Map<String, Typeface> usedFonts = fontInfo.getUsedFonts();
-        for (Map.Entry<String, Typeface> e : usedFonts.entrySet()) {
-            String f = e.getKey();
-            Typeface font = e.getValue();
+        for (String f : usedFonts.keySet()) {
+            Typeface font = usedFonts.get(f);
 
             //Check if the font actually had any mapping operations. If not, it is an indication
             //that it has never actually been used and therefore doesn't have to be embedded.
@@ -141,34 +139,7 @@ public class PDFResources extends PDFDictionary {
                     f, font.getEmbedFontName(), encoding, font, desc));
             }
         }
-    }
-
-    /**
-     * Add a PDFGState to the resources.
-     *
-     * @param gs the PDFGState to add
-     */
-    public void addGState(PDFGState gs) {
-        this.gstates.add(gs);
-    }
-
-    /**
-     * Add a Shading to the resources.
-     *
-     * @param theShading the shading to add
-     */
-    public void addShading(PDFShading theShading) {
-        this.shadings.add(theShading);
-    }
-
-    /**
-     * Add the pattern to the resources.
-     *
-     * @param thePattern the pattern to add
-     */
-    public void addPattern(PDFPattern thePattern) {
-        this.patterns.add(thePattern);
-    }
+   }
 
     /**
      * Add an XObject to the resources.
@@ -239,21 +210,40 @@ public class PDFResources extends PDFDictionary {
     }
 
     private void populateDictionary() {
-        if (!this.fonts.isEmpty() || (parent != null && !parent.getFonts().isEmpty())) {
+        if (parent != null && parent.fontsObj != null) {
+            put("Font", parent.fontsObj);
+        }
+        if (!this.fonts.isEmpty() || (parent != null && !parent.fonts.isEmpty())) {
             PDFDictionary dict = new PDFDictionary(this);
             /* construct PDF dictionary of font object references */
             for (Map.Entry<String, PDFDictionary> entry : fonts.entrySet()) {
                 dict.put(entry.getKey(), entry.getValue());
             }
             if (parent != null) {
-                for (Map.Entry<String, PDFDictionary> entry : parent.getFonts().entrySet()) {
+                for (Map.Entry<String, PDFDictionary> entry : parent.fonts.entrySet()) {
+                    dict.put(entry.getKey(), entry.getValue());
+                }
+                for (Map.Entry<String, PDFDictionary> entry : parent.fontsObjDict.entrySet()) {
                     dict.put(entry.getKey(), entry.getValue());
                 }
             }
             put("Font", dict);
         }
 
-        if (!this.shadings.isEmpty()) {
+        Set<PDFPattern> patterns = new LinkedHashSet<PDFPattern>();
+        Set<PDFShading> shadings = new LinkedHashSet<PDFShading>();
+        Set<PDFGState> gstates = new LinkedHashSet<PDFGState>();
+        for (PDFResourceContext c : contexts) {
+            xObjects.addAll(c.getXObjects());
+            patterns.addAll(c.getPatterns());
+            shadings.addAll(c.getShadings());
+            gstates.addAll(c.getGStates());
+        }
+        if (parent != null) {
+            xObjects.addAll(parent.xObjects);
+        }
+
+        if (!shadings.isEmpty()) {
             PDFDictionary dict = new PDFDictionary(this);
             for (PDFShading shading : shadings) {
                 dict.put(shading.getName(), shading);
@@ -261,7 +251,7 @@ public class PDFResources extends PDFDictionary {
             put("Shading", dict);
         }
 
-        if (!this.patterns.isEmpty()) {
+        if (!patterns.isEmpty()) {
             PDFDictionary dict = new PDFDictionary(this);
             for (PDFPattern pattern : patterns) {
                 dict.put(pattern.getName(), pattern);
@@ -276,15 +266,18 @@ public class PDFResources extends PDFDictionary {
         procset.add(new PDFName("Text"));
         put("ProcSet", procset);
 
-        if (this.xObjects != null && !this.xObjects.isEmpty()) {
-            PDFDictionary dict = new PDFDictionary(this);
+        if (!xObjects.isEmpty()) {
+            PDFDictionary dict = (PDFDictionary) get("XObject");
+            if (dict == null) {
+                dict = new PDFDictionary(this);
+            }
             for (PDFXObject xObject : xObjects) {
                 dict.put(xObject.getName().toString(), xObject);
             }
             put("XObject", dict);
         }
 
-        if (!this.gstates.isEmpty()) {
+        if (!gstates.isEmpty()) {
             PDFDictionary dict = new PDFDictionary(this);
             for (PDFGState gstate : gstates) {
                 dict.put(gstate.getName(), gstate);
