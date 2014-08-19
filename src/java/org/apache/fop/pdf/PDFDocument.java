@@ -402,6 +402,19 @@ public class PDFDocument {
     }
 
     /**
+     * Registers a {@link PDFObject} in this PDF document at end.
+     * The object is assigned a new object number.
+     *
+     * @param obj {@link PDFObject} to add
+     * @return the added {@link PDFObject} added (with its object number set)
+     */
+    <T extends PDFObject> T registerTrailerObject(T obj) {
+        assignObjectNumber(obj);
+        addTrailerObject(obj);
+        return obj;
+    }
+
+    /**
      * Assigns the {@link PDFObject} an object number,
      * and sets the parent of the {@link PDFObject} to this document.
      *
@@ -827,7 +840,7 @@ public class PDFDocument {
         PDFImageXObject xObject = (PDFImageXObject)this.xObjectsMap.get(key);
         if (xObject != null) {
             if (res != null) {
-                res.getPDFResources().addXObject(xObject);
+                res.addXObject(xObject);
             }
             return xObject;
         }
@@ -839,7 +852,7 @@ public class PDFDocument {
         registerObject(xObject);
         this.resources.addXObject(xObject);
         if (res != null) {
-            res.getPDFResources().addXObject(xObject);
+            res.addXObject(xObject);
         }
         this.xObjectsMap.put(key, xObject);
         return xObject;
@@ -867,7 +880,7 @@ public class PDFDocument {
         PDFFormXObject xObject = (PDFFormXObject)xObjectsMap.get(key);
         if (xObject != null) {
             if (res != null) {
-                res.getPDFResources().addXObject(xObject);
+                res.addXObject(xObject);
             }
             return xObject;
         }
@@ -879,7 +892,7 @@ public class PDFDocument {
         registerObject(xObject);
         this.resources.addXObject(xObject);
         if (res != null) {
-            res.getPDFResources().addXObject(xObject);
+            res.addXObject(xObject);
         }
         this.xObjectsMap.put(key, xObject);
         return xObject;
@@ -1092,6 +1105,9 @@ public class PDFDocument {
 
     public void setMergeFontsEnabled(boolean mergeFontsEnabled) {
         this.mergeFontsEnabled = mergeFontsEnabled;
+        if (mergeFontsEnabled) {
+            getResources().createFontsAsObj();
+        }
     }
 
     private interface TrailerOutputHelper {

@@ -19,6 +19,9 @@
 
 package org.apache.fop.pdf;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * The PDF resource context.
  *
@@ -34,6 +37,10 @@ package org.apache.fop.pdf;
  * only the object ID of the parent, rather than the parent itself.
  */
 public class PDFResourceContext extends PDFDictionary {
+    private Set<PDFXObject> xObjects = new LinkedHashSet<PDFXObject>();
+    private Set<PDFPattern> patterns = new LinkedHashSet<PDFPattern>();
+    private Set<PDFShading> shadings = new LinkedHashSet<PDFShading>();
+    private Set<PDFGState> gstates = new LinkedHashSet<PDFGState>();
 
     /**
      * Creates a new ResourceContext.
@@ -45,6 +52,16 @@ public class PDFResourceContext extends PDFDictionary {
 
         /* set fields using parameters */
         put("Resources", resources);
+
+        resources.addContext(this);
+    }
+
+    public void addXObject(PDFXObject xObject) {
+        xObjects.add(xObject);
+    }
+
+    public Set<PDFXObject> getXObjects() {
+        return xObjects;
     }
 
     /**
@@ -85,7 +102,11 @@ public class PDFResourceContext extends PDFDictionary {
      * @param gstate the GState to add
      */
     public void addGState(PDFGState gstate) {
-        getPDFResources().addGState(gstate);
+        gstates.add(gstate);
+    }
+
+    public Set<PDFGState> getGStates() {
+        return gstates;
     }
 
     /**
@@ -94,7 +115,18 @@ public class PDFResourceContext extends PDFDictionary {
      * @param shading the shading to add
      */
     public void addShading(PDFShading shading) {
-        getPDFResources().addShading(shading);
+        shadings.add(shading);
     }
 
+    public Set<PDFShading> getShadings() {
+        return shadings;
+    }
+
+    public Set<PDFPattern> getPatterns() {
+        return patterns;
+    }
+
+    public void addPattern(PDFPattern pattern) {
+        patterns.add(pattern);
+    }
 }
