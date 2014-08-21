@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 import org.apache.xmlgraphics.xmp.Metadata;
+import org.apache.xmlgraphics.xmp.schemas.DublinCoreSchema;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 
@@ -246,7 +248,11 @@ class PDFRenderingUtil {
         Metadata docXMP = metadata.getMetadata();
         Metadata fopXMP = PDFMetadata.createXMPFromPDFDocument(pdfDoc);
         //Merge FOP's own metadata into the one from the XSL-FO document
-        fopXMP.mergeInto(docXMP);
+        List<Class> exclude = new ArrayList<Class>();
+        if (pdfDoc.getProfile().getPDFAMode().isPart1()) {
+            exclude.add(DublinCoreSchema.class);
+        }
+        fopXMP.mergeInto(docXMP, exclude);
         XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(docXMP);
         //Metadata was changed so update metadata date
         xmpBasic.setMetadataDate(new java.util.Date());

@@ -358,7 +358,10 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     }
 
     public StructureTreeElement startNode(String name, Attributes attributes, StructureTreeElement parent) {
-        assert parent == null || parent instanceof PDFStructElem;
+        if (!isPDFA1Safe(name)) {
+            return null;
+		}
+		assert parent == null || parent instanceof PDFStructElem;
         PDFStructElem parentElem = parent == null ? ancestors.getFirst() : (PDFStructElem) parent;
         PDFStructElem structElem = createStructureElement(name, parentElem, attributes,
                 pdfFactory, eventBroadcaster);
@@ -367,7 +370,16 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     }
 
     public void endNode(String name) {
-        ancestors.removeFirst();
+        if (isPDFA1Safe(name)) {
+            ancestors.removeFirst();
+        }
+    }
+
+    private boolean isPDFA1Safe(String name) {
+        return !(pdfFactory.getDocument().getProfile().getPDFAMode().isPart1()
+                && (name.equals("table-body")
+                || name.equals("table-header")
+                || name.equals("table-footer")));
     }
 
     public StructureTreeElement startImageNode(String name, Attributes attributes, StructureTreeElement parent) {
