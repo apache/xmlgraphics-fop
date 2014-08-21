@@ -360,8 +360,8 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     public StructureTreeElement startNode(String name, Attributes attributes, StructureTreeElement parent) {
         if (!isPDFA1Safe(name)) {
             return null;
-		}
-		assert parent == null || parent instanceof PDFStructElem;
+        }
+        assert parent == null || parent instanceof PDFStructElem;
         PDFStructElem parentElem = parent == null ? ancestors.getFirst() : (PDFStructElem) parent;
         PDFStructElem structElem = createStructureElement(name, parentElem, attributes,
                 pdfFactory, eventBroadcaster);
