@@ -19,7 +19,6 @@
 
 package org.apache.fop.fonts;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -318,30 +317,6 @@ public class GlyphMapping {
 
     public void addToAreaIPD(MinOptMax idp) {
         areaIPD = areaIPD.plus(idp);
-    }
-
-    public void reverse() {
-        if (mapping == null) {
-            return;
-        }
-        if (mapping.length() > 0) {
-            mapping = new StringBuffer(mapping).reverse().toString();
-        }
-        if (associations != null) {
-            Collections.reverse(associations);
-        }
-        if (gposAdjustments != null) {
-            reverse(gposAdjustments);
-        }
-    }
-
-    private static void reverse(int[][] aa) {
-        for (int i = 0, n = aa.length, m = n / 2; i < m; i++) {
-            int k = n - i - 1;
-            int[] t = aa [ k ];
-            aa [ k ] = aa [ i ];
-            aa [ i ] = t;
-        }
     }
 
     public String toString() {

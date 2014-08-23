@@ -26,10 +26,7 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.text.AttributedCharacterIterator;
-import java.util.List;
 
-import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.text.TextPaintInfo;
 
 import org.apache.fop.fonts.FontInfo;
@@ -183,14 +180,6 @@ class PDFTextPainter extends NativeTextPainter {
             textUtil.writeTextMatrix(transform);
         }
         textUtil.writeTJMappedChar(glyph);
-    }
-
-    @Override
-    public List computeTextRuns(TextNode node,
-                                AttributedCharacterIterator nodeACI,
-                                AttributedCharacterIterator [] chunkACIs) {
-        // skip Batik's bidi reordering and use identity character index maps
-        return super.computeTextRuns(node, nodeACI, chunkACIs, (int[][]) null);
     }
 
 }

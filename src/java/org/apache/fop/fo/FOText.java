@@ -21,6 +21,8 @@ package org.apache.fop.fo;
 
 import java.awt.Color;
 import java.nio.CharBuffer;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
@@ -47,6 +49,9 @@ public class FOText extends FONode implements CharSequence, TextFragment {
 
     /** the <code>CharBuffer</code> containing the text */
     private CharBuffer charBuffer;
+
+    // cached iterator
+    private CharacterIterator charIterator;
 
     // The value of FO traits (refined properties) that apply to #PCDATA
     // (aka implicit sequence of fo:character)
@@ -649,14 +654,37 @@ public class FOText extends FONode implements CharSequence, TextFragment {
         return country;
     }
 
-    /** @return the language trait */
+    @Override
+    public synchronized CharacterIterator getIterator() {
+        if (charIterator != null) {
+            charIterator = new StringCharacterIterator(toString());
+        }
+        return charIterator;
+    }
+
+    @Override
+    public int getBeginIndex() {
+        return 0;
+    }
+
+    @Override
+    public int getEndIndex() {
+        return length();
+    }
+
+    @Override
     public String getLanguage() {
         return language;
     }
 
-    /** @return the script trait */
+    @Override
     public String getScript() {
         return script;
+    }
+
+    @Override
+    public int getBidiLevel() {
+        return length() > 0 ? bidiLevelAt(0) : -1;
     }
 
     /** {@inheritDoc} */

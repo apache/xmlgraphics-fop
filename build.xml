@@ -564,6 +564,9 @@ list of possible build targets.
       <include name="org/apache/fop/apps/FOPException.class"/>
       <include name="org/apache/fop/apps/io/**"/>
       <include name="org/apache/fop/area/AreaTreeControl*"/>
+      <include name="org/apache/fop/complexscripts/bidi/BidiClass.class"/>
+      <include name="org/apache/fop/complexscripts/bidi/BidiConstants.class"/>
+      <include name="org/apache/fop/complexscripts/bidi/UnicodeBidiAlgorithm.class"/>
       <include name="org/apache/fop/complexscripts/fonts/*.class"/>
       <include name="org/apache/fop/complexscripts/util/GlyphTester.class"/>
       <include name="org/apache/fop/events/EventProducer.class"/>
@@ -573,7 +576,9 @@ list of possible build targets.
       <include name="org/apache/fop/svg/**"/>
       <include name="org/apache/fop/fonts/**"/>
       <include name="org/apache/fop/render/shading/**"/>
+      <include name="org/apache/fop/traits/Direction.class"/>
       <include name="org/apache/fop/traits/MinOptMax.class"/>
+      <include name="org/apache/fop/traits/TraitEnum.class"/>
       <include name="org/apache/fop/util/CMYKColorSpace*.class"/>
       <include name="org/apache/fop/util/Color*.class"/>
       <include name="org/apache/fop/util/ASCII*.class"/>

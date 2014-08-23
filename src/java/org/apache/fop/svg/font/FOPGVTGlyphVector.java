@@ -49,9 +49,9 @@ import org.apache.fop.traits.MinOptMax;
 
 class FOPGVTGlyphVector implements GVTGlyphVector {
 
-    protected final CharacterIterator charIter;
+    protected final TextFragment text;
 
-    private final FOPGVTFont font;
+    protected final FOPGVTFont font;
 
     private final int fontSize;
 
@@ -65,18 +65,18 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
 
     protected float[] positions;
 
-    private Rectangle2D[] boundingBoxes;
+    protected Rectangle2D[] boundingBoxes;
 
-    private GeneralPath outline;
+    protected GeneralPath outline;
 
-    private AffineTransform[] glyphTransforms;
+    protected AffineTransform[] glyphTransforms;
 
-    private boolean[] glyphVisibilities;
+    protected boolean[] glyphVisibilities;
 
-    private Rectangle2D logicalBounds;
+    protected Rectangle2D logicalBounds;
 
     FOPGVTGlyphVector(FOPGVTFont font, final CharacterIterator iter, FontRenderContext frc) {
-        this.charIter = iter;
+        this.text = new SVGTextFragment(iter);
         this.font = font;
         Font f = font.getFont();
         this.fontSize = f.getFontSize();
@@ -86,23 +86,18 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
 
     public void performDefaultLayout() {
         Font f = font.getFont();
-        TextFragment text = new SVGTextFragment(charIter);
         MinOptMax letterSpaceIPD = MinOptMax.ZERO;
-        MinOptMax[] letterSpaceAdjustments = new MinOptMax[charIter.getEndIndex() - charIter.getBeginIndex()];
-        GlyphMapping mapping = GlyphMapping.doGlyphMapping(text, charIter.getBeginIndex(), charIter.getEndIndex(),
-            f, letterSpaceIPD, letterSpaceAdjustments, '\0', '\0', false, 0, true, true);
-        maybeReverse(mapping);
+        MinOptMax[] letterSpaceAdjustments = new MinOptMax[text.getEndIndex() - text.getBeginIndex()];
+        GlyphMapping mapping = GlyphMapping.doGlyphMapping(text, text.getBeginIndex(), text.getEndIndex(),
+            f, letterSpaceIPD, letterSpaceAdjustments, '\0', '\0', false, text.getBidiLevel(), true, true);
         CharacterIterator glyphAsCharIter =
-            mapping.mapping != null ? new StringCharacterIterator(mapping.mapping) : charIter;
+            mapping.mapping != null ? new StringCharacterIterator(mapping.mapping) : text.getIterator();
         this.glyphs = buildGlyphs(f, glyphAsCharIter);
         this.associations = mapping.associations;
         this.positions = buildGlyphPositions(glyphAsCharIter, mapping.gposAdjustments, letterSpaceAdjustments);
         this.glyphVisibilities = new boolean[this.glyphs.length];
         Arrays.fill(glyphVisibilities, true);
         this.glyphTransforms = new AffineTransform[this.glyphs.length];
-    }
-
-    protected void maybeReverse(GlyphMapping mapping) {
     }
 
     private static class SVGTextFragment implements TextFragment {
@@ -113,6 +108,8 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
 
         private String language;
 
+        private int level = -1;
+
         SVGTextFragment(CharacterIterator charIter) {
             this.charIter = charIter;
             if (charIter instanceof AttributedCharacterIterator) {
@@ -120,9 +117,27 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
                 aci.first();
                 this.script = (String) aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.SCRIPT);
                 this.language = (String) aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.LANGUAGE);
+                Integer level = (Integer) aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.BIDI_LEVEL);
+                if (level != null) {
+                    this.level = level.intValue();
+                }
             }
         }
 
+        public CharacterIterator getIterator() {
+            return charIter;
+        }
+
+        public int getBeginIndex() {
+            return charIter.getBeginIndex();
+        }
+
+        public int getEndIndex() {
+            return charIter.getEndIndex();
+        }
+
+        // TODO - [GA] the following appears to be broken because it ignores
+        // sttart and end index arguments
         public CharSequence subSequence(int startIndex, int endIndex) {
             StringBuilder sb = new StringBuilder();
             for (char c = charIter.first(); c != CharacterIterator.DONE; c = charIter.next()) {
@@ -145,6 +160,10 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
             } else {
                 return "none";
             }
+        }
+
+        public int getBidiLevel() {
+            return level;
         }
 
         public char charAt(int index) {
@@ -223,6 +242,10 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
 
     public FontRenderContext getFontRenderContext() {
         return frc;
+    }
+
+    public void setGlyphCode(int glyphIndex, int glyphCode) {
+        glyphs[glyphIndex] = glyphCode;
     }
 
     public int getGlyphCode(int glyphIndex) {
@@ -370,6 +393,13 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
     public int getCharacterCount(int startGlyphIndex, int endGlyphIndex) {
         // TODO Not that simple if complex scripts are involved
         return endGlyphIndex - startGlyphIndex + 1;
+    }
+
+    public boolean isReversed() {
+        return false;
+    }
+
+    public void maybeReverse(boolean mirror) {
     }
 
     public void draw(Graphics2D graphics2d, AttributedCharacterIterator aci) {

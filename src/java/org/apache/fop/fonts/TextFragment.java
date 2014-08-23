@@ -19,13 +19,53 @@
 
 package org.apache.fop.fonts;
 
+import java.text.CharacterIterator;
+
+/**
+ * Encapsulates a sub-sequence (fragement) of a text iterator (or other text source),
+ * where begin index and end index are indices into larger text iterator that denote
+ * [begin,end) of sub-sequence range. Additionally associated with a designated script
+ * (or "auto"), a designated language (or "none"), and a (single) bidi level (or -1
+ * if not known).
+ */
 public interface TextFragment {
 
+    /**
+     * Obtain reference to underlying iterator.
+     */
+    CharacterIterator getIterator();
+
+    /**
+     * Obtain beginning index (inclusive) of sub-sequence of fragment in overall text source.
+     */
+    int getBeginIndex();
+
+    /**
+     * Obtain ending index (exclusive) of sub-sequence of fragment in overall text source.
+     */
+    int getEndIndex();
+
+    /**
+     * Obtain associated script (if designated) or "auto" if not.
+     */
     String getScript();
 
+    /**
+     * Obtain associated language (if designated) or "none" if not.
+     */
     String getLanguage();
 
-    char charAt(int index);
+    /**
+     * Obtain associated bidi level (if known) or -1 if not.
+     */
+    int getBidiLevel();
+
+    /**
+     * Obtain character at specified index within this fragment's sub-sequence,
+     * where index 0 corresponds to beginning index in overal text source, and
+     * subSequenceIndex must be less than ending index - beginning index.
+     */
+    char charAt(int subSequenceIndex);
 
     CharSequence subSequence(int startIndex, int endIndex);
 }

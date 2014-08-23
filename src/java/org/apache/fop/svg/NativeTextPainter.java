@@ -31,14 +31,17 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.batik.bridge.SVGGVTFont;
+import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.font.FontFamilyResolver;
 import org.apache.batik.gvt.font.GVTGlyphVector;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
+import org.apache.batik.gvt.renderer.StrokingTextPainter.TextChunk;
 import org.apache.batik.gvt.text.GlyphLayout;
 import org.apache.batik.gvt.text.TextLayoutFactory;
 import org.apache.batik.gvt.text.TextPaintInfo;
@@ -48,6 +51,7 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 import org.apache.fop.svg.font.FOPGVTFont;
+import org.apache.fop.svg.text.BidiAttributedCharacterIterator;
 import org.apache.fop.svg.text.ComplexGlyphLayout;
 import org.apache.fop.util.CharUtilities;
 
@@ -211,6 +215,114 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
             runaci.next();
         }
         return chars;
+    }
+
+    // Use FOP's bidi algorithm implementation and sub-divide each chunk into runs
+    // that respect bidi level boundaries. N.B. batik does not sub-divide chunks at
+    // bidi level boundaries because it performs eager reordering. In FOP, we need
+    // to perform lazy reordering after character to glyph mapping occurs since
+    // that mapping process requires logical (not visual) ordered input.
+    @Override
+    public List computeTextRuns(TextNode node, AttributedCharacterIterator nodeACI,
+        AttributedCharacterIterator [] chunkACIs) {
+        nodeACI.first();
+        int defaultBidiLevel = (nodeACI.getAttribute(WRITING_MODE) == WRITING_MODE_RTL) ? 1 : 0;
+        for (int i = 0, n = chunkACIs.length; i < n; ++i) {
+            chunkACIs[i] = new BidiAttributedCharacterIterator(chunkACIs[i], defaultBidiLevel);
+        }
+        return super.computeTextRuns(node, nodeACI, chunkACIs, (int[][]) null);
+    }
+
+    // We want to sub-divide text chunks into distinct runs at bidi level boundaries.
+    @Override
+    protected Set getTextRunBoundaryAttributes() {
+        Set textRunBoundaryAttributes = super.getTextRunBoundaryAttributes();
+        if (!textRunBoundaryAttributes.contains(BIDI_LEVEL)) {
+            textRunBoundaryAttributes.add(BIDI_LEVEL);
+        }
+        return textRunBoundaryAttributes;
+    }
+
+    // Perform reordering of runs.
+    @Override
+    protected List reorderTextRuns(TextChunk chunk, List runs) {
+        // 1. determine min/max bidi levels for runs
+        int mn = -1;
+        int mx = -1;
+        for (TextRun r : (List<TextRun>) runs) {
+            int level = r.getBidiLevel();
+            if (level >= 0) {
+                if ((mn < 0) || (level < mn)) {
+                    mn = level;
+                }
+                if ((mx < 0) || (level > mx)) {
+                    mx = level;
+                }
+            }
+        }
+
+        // 2. reorder from maximum level to minimum odd level
+        if (mx > 0) {
+            for (int l1 = mx, l2 = ((mn & 1) == 0) ? (mn + 1) : mn; l1 >= l2; l1--) {
+                runs = reorderRuns(runs, l1);
+            }
+        }
+
+        // 3. reverse glyphs (and perform mirroring) in runs as needed
+        boolean mirror = true;
+        reverseGlyphs(runs, mirror);
+
+        return runs;
+    }
+
+    private List reorderRuns(List runs, int level) {
+        assert level >= 0;
+        List runsNew = new java.util.ArrayList();
+        for (int i = 0, n = runs.size(); i < n; i++) {
+            TextRun tri = (TextRun) runs.get(i);
+            if (tri.getBidiLevel() < level) {
+                runsNew.add(tri);
+            } else {
+                int s = i;
+                int e = s;
+                while (e < n) {
+                    TextRun tre = (TextRun) runs.get(e);
+                    if (tre.getBidiLevel() < level) {
+                        break;
+                    } else {
+                        e++;
+                    }
+                }
+                if (s < e) {
+                    runsNew.addAll(reverseRuns(runs, s, e));
+                }
+                i = e - 1;
+            }
+        }
+        if (!runsNew.equals(runs)) {
+            runs = runsNew;
+        }
+        return runs;
+    }
+
+    private List reverseRuns(List runs, int s, int e) {
+        int n = e - s;
+        List runsNew = new java.util.ArrayList(n);
+        if (n > 0) {
+            for (int i = 0; i < n; i++) {
+                int k = (n - i - 1);
+                TextRun tr = (TextRun) runs.get(s + k);
+                tr.reverse();
+                runsNew.add(tr);
+            }
+        }
+        return runsNew;
+    }
+
+    private void reverseGlyphs(List runs, boolean mirror) {
+        for (TextRun r : (List<TextRun>) runs) {
+            r.maybeReverseGlyphs(mirror);
+        }
     }
 
     protected abstract void preparePainting(Graphics2D g2d);
