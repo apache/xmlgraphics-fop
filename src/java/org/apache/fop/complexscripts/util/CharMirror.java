@@ -38,10 +38,25 @@ public final class CharMirror {
      */
     public static String mirror(String s) {
         StringBuffer sb = new StringBuffer(s);
-        for (int i = 0, n = sb.length(); i < n; i++) {
+        for (int i = 0, n = sb.length(); i < n; ++i) {
             sb.setCharAt(i, (char) mirror(sb.charAt(i)));
         }
         return sb.toString();
+    }
+
+    /**
+     * Determine if string has a mirrorable character.
+     * @param s a string whose characters are to be tested for mirrorability
+     * @return true if some character can be mirrored
+     */
+    public static boolean hasMirrorable(String s) {
+        for (int i = 0, n = s.length(); i < n; ++i) {
+            char c = s.charAt(i);
+            if (Arrays.binarySearch(mirroredCharacters, c) >= 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static int[] mirroredCharacters = {

@@ -54,6 +54,10 @@
         <Class name="org.apache.fop.render.intermediate.IFGraphicContext"/>
         <Method name="clone"/>
       </And>
+      <And>
+        <Class name="org.apache.fop.svg.text.BidiAttributedCharacterIterator"/>
+        <Method name="clone"/>
+      </And>
     </Or>
   </Match>
   <Match>
