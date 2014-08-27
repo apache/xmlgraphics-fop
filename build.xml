@@ -1052,10 +1052,10 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Checkstyle                                                          -->
 <!-- =================================================================== -->
-  <property name="checkstyle.fop.location" value="${lib-tools}/checkstyle-5.5-all.jar" />
+  <property name="checkstyle.location" value="${lib-tools}/checkstyle-5.5-all.jar" />
   <property name="checkstyle.config" value="${basedir}/checkstyle-5.5.xml" />
   <path id="checkstyle-classpath">
-    <pathelement location="${checkstyle.fop.location}"/>
+    <pathelement location="${checkstyle.location}"/>
   </path>
   <condition property="checkstyle.avail">
     <and>
@@ -1067,7 +1067,7 @@ NOTE:
   </condition>
   <target name="checkstyle-avail" unless="checkstyle.avail">
     <echo message="Checkstyle support NOT present. Please download it from http://checkstyle.sf.net/ and"/>
-    <echo message="... please provide ${checkstyle.fop.location}"/>
+    <echo message="... please provide ${checkstyle.location}"/>
     <echo message="... please provide ${checkstyle.config}"/>
   </target>
   <target name="checkstyle" depends="package, checkstyle-avail" if="checkstyle.avail" description="Runs Checkstyle for a code quality report">
@@ -1515,7 +1515,7 @@ NOTE:
 <!-- Special target for Gump                                             -->
 <!-- =================================================================== -->
   <target name="gump" depends="package,transcoder-pkg"/>
-  <target name="gump-test" depends="junit-all,checkstyle">
+  <target name="gump-test" depends="junit-all">
     <fail>
       <condition>
         <or>
