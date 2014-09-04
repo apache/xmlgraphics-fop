@@ -264,6 +264,9 @@
   <Match>
     <Bug pattern="RC_REF_COMPARISON_BAD_PRACTICE"/>
   </Match>
+  <Match>
+    <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+  </Match>
   
   <!-- END - TEMPORARY (UNAPPROVED) EXCLUSIONS -->
 
