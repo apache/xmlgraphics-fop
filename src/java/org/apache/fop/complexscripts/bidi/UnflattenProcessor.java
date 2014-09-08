@@ -31,6 +31,7 @@ import org.apache.fop.area.inline.BasicLinkArea;
 import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.area.inline.ResolvedPageNumber;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
@@ -214,7 +215,9 @@ class UnflattenProcessor {
         }
     }
     private void pushTextContainer(TextArea tc, InlineArea ia) {
-        if (tc instanceof UnresolvedPageNumber) {
+        if (tc instanceof ResolvedPageNumber) {
+            tcNew = tc;
+        } else if (tc instanceof UnresolvedPageNumber) {
             tcNew = tc;
         } else {
             if (tcNew == null) {

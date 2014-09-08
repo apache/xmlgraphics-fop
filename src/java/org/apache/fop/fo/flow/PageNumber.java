@@ -20,17 +20,21 @@
 package org.apache.fop.fo.flow;
 
 import java.awt.Color;
+import java.util.Stack;
 
 import org.xml.sax.Locator;
 
 import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.StringCharIterator;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -203,6 +207,26 @@ public class PageNumber extends FObj
     @Override
     public boolean isDelimitedTextRangeBoundary(int boundary) {
         return false;
+    }
+
+    @Override
+    protected Stack<DelimitedTextRange> collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges,
+        DelimitedTextRange currentRange) {
+        if (currentRange != null) {
+            currentRange.append(new StringCharIterator(defaultPageNumberString()), this);
+        }
+        return ranges;
+    }
+
+    private String defaultPageNumberString() {
+        if (findAncestor(FO_PAGE_SEQUENCE) > 0) {
+            for (FONode p = getParent(); p != null; p = p.getParent()) {
+                if (p instanceof PageSequence) {
+                    return ((PageSequence)p).makeFormattedPageNumber(1);
+                }
+            }
+        }
+        return "1";
     }
 
 }

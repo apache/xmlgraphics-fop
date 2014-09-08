@@ -260,8 +260,10 @@ public class InlineArea extends Area {
                     + ": increase by " + ipdVariation + " mpt.");
         }
 
-        increaseIPD(ipdVariation);
-        notifyIPDVariation(ipdVariation);
+        if (ipdVariation != 0) {
+            increaseIPD(ipdVariation);
+            notifyIPDVariation(ipdVariation);
+        }
     }
 
     /**

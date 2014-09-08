@@ -41,7 +41,6 @@ import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fo.properties.StructureTreeElementHolder;
-import org.apache.fop.util.CharUtilities;
 
 /**
  * Common base class for the <a href="http://www.w3.org/TR/xsl/#fo_page-number-citation">
@@ -209,7 +208,7 @@ public abstract class AbstractPageNumberCitation extends FObj
     protected Stack<DelimitedTextRange> collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges,
         DelimitedTextRange currentRange) {
         if (currentRange != null) {
-            currentRange.append(CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this);
+            currentRange.append('1', this);
         }
         return ranges;
     }
