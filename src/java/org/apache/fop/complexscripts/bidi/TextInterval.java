@@ -26,6 +26,7 @@ import org.apache.fop.fo.flow.AbstractPageNumberCitation;
 import org.apache.fop.fo.flow.BidiOverride;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.Leader;
+import org.apache.fop.fo.flow.PageNumber;
 
 // CSOFF: LineLengthCheck
 
@@ -92,6 +93,8 @@ class TextInterval {
             ((AbstractGraphics) fn) .setBidiLevel(level);
         } else if (fn instanceof Leader) {
             ((Leader) fn) .setBidiLevel(level);
+        } else if (fn instanceof PageNumber) {
+            ((PageNumber) fn) .setBidiLevel(level);
         }
     }
     public boolean equals(Object o) {
@@ -129,6 +132,8 @@ class TextInterval {
             c = 'G';
         } else if (fn instanceof Leader) {
             c = 'L';
+        } else if (fn instanceof PageNumber) {
+            c = '#';
         } else {
             c = '?';
         }

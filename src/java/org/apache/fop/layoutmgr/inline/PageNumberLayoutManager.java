@@ -21,7 +21,7 @@ package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.ResolvedPageNumber;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -57,10 +57,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         setCommonBorderPaddingBackground(fobj.getCommonBorderPaddingBackground());
     }
 
-    /**
-     * {@inheritDoc}
-     *                                                      #makeAlignmentContext(LayoutContext)
-     */
+    /** {@inheritDoc} */
     protected AlignmentContext makeAlignmentContext(LayoutContext context) {
         return new AlignmentContext(
                 font
@@ -76,49 +73,50 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
     /** {@inheritDoc} */
     public InlineArea get(LayoutContext context) {
         // get page string from parent, build area
-        TextArea text = new TextArea();
+        ResolvedPageNumber pn = new ResolvedPageNumber();
         String str = getCurrentPV().getPageNumberString();
         int width = getStringWidth(str);
-        text.addWord(str, 0);
-        text.setIPD(width);
-        text.setBPD(font.getAscender() - font.getDescender());
-        text.setBaselineOffset(font.getAscender());
-        TraitSetter.addFontTraits(text, font);
-        text.addTrait(Trait.COLOR, fobj.getColor());
-        TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
-
-        return text;
+        int level = getBidiLevel();
+        pn.addWord(str, 0, level);
+        pn.setBidiLevel(level);
+        pn.setIPD(width);
+        pn.setBPD(font.getAscender() - font.getDescender());
+        pn.setBaselineOffset(font.getAscender());
+        TraitSetter.addFontTraits(pn, font);
+        pn.addTrait(Trait.COLOR, fobj.getColor());
+        TraitSetter.addTextDecoration(pn, fobj.getTextDecoration());
+        return pn;
     }
 
     /** {@inheritDoc} */
     protected InlineArea getEffectiveArea(LayoutContext layoutContext) {
-        TextArea baseArea = (TextArea)curArea;
+        ResolvedPageNumber baseArea = (ResolvedPageNumber)curArea;
         //TODO Maybe replace that with a clone() call or better, a copy constructor
         //TODO or even better: delay area creation until addAreas() stage
-        //TextArea is cloned because the LM is reused in static areas and the area can't be.
-        TextArea ta = new TextArea();
-        TraitSetter.setProducerID(ta, fobj.getId());
-        ta.setIPD(baseArea.getIPD());
-        ta.setBPD(baseArea.getBPD());
-        ta.setBlockProgressionOffset(baseArea.getBlockProgressionOffset());
-        ta.setBaselineOffset(baseArea.getBaselineOffset());
-        ta.addTrait(Trait.COLOR, fobj.getColor()); //only to initialize the trait map
-        ta.getTraits().putAll(baseArea.getTraits());
+        //ResolvedPageNumber is cloned because the LM is reused in static areas and the area can't be.
+        ResolvedPageNumber pn = new ResolvedPageNumber();
+        TraitSetter.setProducerID(pn, fobj.getId());
+        pn.setIPD(baseArea.getIPD());
+        pn.setBPD(baseArea.getBPD());
+        pn.setBlockProgressionOffset(baseArea.getBlockProgressionOffset());
+        pn.setBaselineOffset(baseArea.getBaselineOffset());
+        pn.addTrait(Trait.COLOR, fobj.getColor()); //only to initialize the trait map
+        pn.getTraits().putAll(baseArea.getTraits());
         if (!layoutContext.treatAsArtifact()) {
-            TraitSetter.addStructureTreeElement(ta, fobj.getStructureTreeElement());
+            TraitSetter.addStructureTreeElement(pn, fobj.getStructureTreeElement());
         }
-        updateContent(ta);
-        return ta;
+        updateContent(pn);
+        return pn;
     }
 
-    private void updateContent(TextArea area) {
+    private void updateContent(ResolvedPageNumber pn) {
         // get the page number of the page actually being built
-        area.removeText();
-        area.addWord(getCurrentPV().getPageNumberString(), 0);
+        pn.removeText();
+        pn.addWord(getCurrentPV().getPageNumberString(), 0, getBidiLevel());
         // update the ipd of the area
-        area.handleIPDVariation(getStringWidth(area.getText()) - area.getIPD());
+        pn.handleIPDVariation(getStringWidth(pn.getText()) - pn.getIPD());
         // update the width stored in the AreaInfo object
-        areaInfo.ipdArea = MinOptMax.getInstance(area.getIPD());
+        areaInfo.ipdArea = MinOptMax.getInstance(pn.getIPD());
     }
 
     /**
@@ -131,6 +129,10 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
             width += font.getCharWidth(str.charAt(count));
         }
         return width;
+    }
+
+    protected int getBidiLevel() {
+        return fobj.getBidiLevel();
     }
 
 }
