@@ -154,10 +154,10 @@ public class InlineRun {
     }
     /**
      * Determine if run needs mirroring.
-     * @return true if run is homogenous and odd (i.e., right to left)
+     * @return true if run is homogenous and (positive) odd (i.e., right to left)
      */
     public boolean maybeNeedsMirroring() {
-        return (minLevel == maxLevel) && ((minLevel & 1) != 0);
+        return (minLevel == maxLevel) && (minLevel > 0) && ((minLevel & 1) != 0);
     }
     /**
      * Reverse run (by incrementing reversal count, not actually reversing).
