@@ -680,13 +680,6 @@ public abstract class AbstractRenderer
                 currentIPPosition += line.getStartIndent();
             } else {
                 currentIPPosition += line.getEndIndent();
-                // if line's content overflows line area, then
-                // ensure that overflow is drawn (extends)
-                // outside of left side of line area
-                int overflow = computeInlinesOverflow(line);
-                if (overflow > 0) {
-                    currentIPPosition -= overflow;
-                }
             }
         } else {
             currentIPPosition += line.getStartIndent();
@@ -696,16 +689,6 @@ public abstract class AbstractRenderer
             renderInlineArea(inline);
         }
         currentBPPosition = saveBP;
-    }
-
-    private int computeInlinesOverflow(LineArea line) {
-        List children = line.getInlineAreas();
-        int ipdConsumed = 0;
-        for (int i = 0, l = children.size(); i < l; i++) {
-            InlineArea inline = (InlineArea) children.get(i);
-            ipdConsumed += inline.getIPD();
-        }
-        return ipdConsumed - line.getIPD();
     }
 
     /**
