@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable;
+import org.apache.fop.complexscripts.fonts.GlyphTable;
 import org.apache.fop.complexscripts.util.CharScript;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.CharUtilities;
@@ -128,15 +129,14 @@ public class GlyphMapping {
         CharSequence mcs = font.performSubstitution(ics, script, language, associations);
 
         // 4. compute glyph position adjustments on (substituted) characters.
-        int[][] gpa;
+        int[][] gpa = null;
         if (font.performsPositioning()) {
             // handle GPOS adjustments
             gpa = font.performPositioning(mcs, script, language);
-        } else if (font.hasKerning()) {
+        }
+        if (useKerningAdjustments(font, script, language)) {
             // handle standard (non-GPOS) kerning adjustments
-            gpa = getKerningAdjustments(mcs, font);
-        } else {
-            gpa = null;
+            gpa = getKerningAdjustments(mcs, font, gpa);
         }
 
         // 5. reorder combining marks so that they precede (within the mapped char sequence) the
@@ -166,6 +166,10 @@ public class GlyphMapping {
                 associations);
     }
 
+    private static boolean useKerningAdjustments(final Font font, String script, String language) {
+        return font.hasKerning() && !font.hasFeature(GlyphTable.GLYPH_TABLE_TYPE_POSITIONING, script, language, "kern");
+    }
+
     /**
      * Given a mapped character sequence MCS, obtain glyph position adjustments from the
      * font's kerning data.
@@ -174,7 +178,7 @@ public class GlyphMapping {
      * @param font applicable font
      * @return glyph position adjustments (or null if no kerning)
      */
-    private static int[][] getKerningAdjustments(CharSequence mcs, final Font font) {
+    private static int[][] getKerningAdjustments(CharSequence mcs, final Font font, int[][] gpa) {
         int nc = mcs.length();
         // extract kerning array
         int[] ka = new int[nc]; // kerning array
@@ -196,10 +200,12 @@ public class GlyphMapping {
         }
         // if non-zero kerning, then create and return glyph position adjustment array
         if (hasKerning) {
-            int[][] gpa = new int[nc][4];
+            if (gpa == null) {
+                gpa = new int[nc][4];
+            }
             for (int i = 0, n = nc; i < n; i++) {
                 if (i > 0) {
-                    gpa [i - 1][GlyphPositioningTable.Value.IDX_X_ADVANCE] = ka[i];
+                    gpa [i - 1][GlyphPositioningTable.Value.IDX_X_ADVANCE] += ka[i];
                 }
             }
             return gpa;

@@ -35,6 +35,7 @@ import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.complexscripts.fonts.GlyphDefinitionTable;
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable;
 import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable;
+import org.apache.fop.complexscripts.fonts.GlyphTable;
 import org.apache.fop.complexscripts.fonts.Positionable;
 import org.apache.fop.complexscripts.fonts.Substitutable;
 import org.apache.fop.complexscripts.util.GlyphSequence;
@@ -649,6 +650,21 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         }
         cb.flip();
         return cb;
+    }
+
+    @Override
+    public boolean hasFeature(int tableType, String script, String language, String feature) {
+        GlyphTable table;
+        if (tableType == GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION) {
+            table = getGSUB();
+        } else if (tableType == GlyphTable.GLYPH_TABLE_TYPE_POSITIONING) {
+            table = getGPOS();
+        } else if (tableType == GlyphTable.GLYPH_TABLE_TYPE_DEFINITION) {
+            table = getGDEF();
+        } else {
+            table = null;
+        }
+        return (table != null) && table.hasFeature(script, language, feature);
     }
 
     public Map<Integer, Integer> getWidthsMap() {
