@@ -223,7 +223,11 @@ public class GlyphTable {
             }
             matchedLookups.put(lsm, lm);
         }
-        return lm;
+        if (lm.isEmpty() && !OTFScript.isDefault(script) && !OTFScript.isWildCard(script)) {
+            return matchLookups(OTFScript.DEFAULT, OTFLanguage.DEFAULT, feature);
+        } else {
+            return lm;
+        }
     }
 
     /**
@@ -272,6 +276,19 @@ public class GlyphTable {
             }
         }
         return (UseSpec[]) uss.toArray(new UseSpec [ uss.size() ]);
+    }
+
+    /**
+     * Determine if table supports specific feature, i.e., supports at least one lookup.
+     *
+     * @param script to qualify feature lookup
+     * @param language to qualify feature lookup
+     * @param feature to test
+     * @return true if feature supported (has at least one lookup)
+     */
+    public boolean hasFeature(String script, String language, String feature) {
+        UseSpec[] usa = assembleLookups(new String[] { feature }, matchLookups(script, language, feature));
+        return usa.length > 0;
     }
 
     /** {@inheritDoc} */
@@ -350,8 +367,8 @@ public class GlyphTable {
          * @param script a script identifier
          * @param language a language identifier
          * @param feature a feature identifier
-         * @param permitEmpty if true the permit empty script, language, or feature
-         * @param permitWildcard if true the permit wildcard script, language, or feature
+         * @param permitEmpty if true then permit empty script, language, or feature
+         * @param permitWildcard if true then permit wildcard script, language, or feature
          */
         LookupSpec(String script, String language, String feature, boolean permitEmpty, boolean permitWildcard) {
             if ((script == null) || (!permitEmpty && (script.length() == 0))) {

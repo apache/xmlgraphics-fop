@@ -103,6 +103,11 @@ public abstract class Typeface implements FontMetrics {
         return getAscender(size);
     }
 
+    /** {@inheritDoc} */
+    public boolean hasFeature(int tableType, String script, String language, String feature) {
+        return false;
+    }
+
     /**
      * Sets the font event listener that can be used to receive events about particular events
      * in this class.

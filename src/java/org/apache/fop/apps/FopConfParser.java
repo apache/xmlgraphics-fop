@@ -141,7 +141,7 @@ public class FopConfParser {
         this(new FileInputStream(fopConfFile), fopConfFile.toURI(), resourceResolver);
     }
 
-    private FopConfParser(InputStream fopConfStream, URI baseURI, EnvironmentProfile enviro)
+    public FopConfParser(InputStream fopConfStream, URI baseURI, EnvironmentProfile enviro)
             throws SAXException, IOException {
         DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
         Configuration cfg;

@@ -26,9 +26,9 @@ import org.apache.fop.check.ChecksFactory;
 /**
  * A factory class for creating {@link LayoutEngineCheck} instances.
  */
-final class LayoutEngineChecksFactory extends ChecksFactory<LayoutEngineCheck> {
+public final class LayoutEngineChecksFactory extends ChecksFactory<LayoutEngineCheck> {
 
-    LayoutEngineChecksFactory() {
+    public LayoutEngineChecksFactory() {
         registerCheckFactory("true", new CheckFactory<LayoutEngineCheck>() {
 
             public LayoutEngineCheck createCheck(Element element) {

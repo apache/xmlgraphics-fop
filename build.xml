@@ -898,9 +898,12 @@ list of possible build targets.
   <target name="junit-complexscripts" depends="junit-compile">
     <junit-run title="complexscripts" testsuite="org.apache.fop.complexscripts.ComplexScriptsTestSuite" outfile="TEST-complexscripts"/>
   </target>
+  <target name="junit-complexscripts-layout" depends="junit-compile" if="junit.present">
+    <junit-run title="standard layout engine" testsuite="org.apache.fop.complexscripts.layout.ComplexScriptsLayoutTestSuite" outfile="TEST-complexscripts-layout"/>
+  </target>
   <target name="junit-reduced" depends="junit-userconfig, junit-basic, junit-transcoder, 
     junit-text-linebreak, junit-fotree, junit-fonts, junit-render-pdf, junit-render-ps, 
-    junit-complexscripts"/>
+    junit-complexscripts, junit-complexscripts-layout"/>
   <target name="junit" depends="junit-all" description="Runs all of FOP's JUnit tests" 
     if="junit.present">
     <fail><condition><or><isset property="fop.junit.error"/><isset 

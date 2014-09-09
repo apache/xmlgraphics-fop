@@ -116,14 +116,12 @@ public class TestAssistant {
     }
 
     public FopFactory getFopFactory(Document testDoc) {
-        boolean base14KerningEnabled = isBase14KerningEnabled(testDoc);
-        boolean strictValidation = isStrictValidation(testDoc);
         EnvironmentProfile envProfile = EnvironmentalProfileFactory.createRestrictedIO(
                 testDir.getParentFile().toURI(),
                 ResourceResolverFactory.createDefaultResourceResolver());
         FopFactoryBuilder builder = new FopFactoryBuilder(envProfile);
-        builder.setStrictFOValidation(strictValidation);
-        builder.getFontManager().setBase14KerningEnabled(base14KerningEnabled);
+        builder.setStrictFOValidation(isStrictValidation(testDoc));
+        builder.getFontManager().setBase14KerningEnabled(isBase14KerningEnabled(testDoc));
         return builder.build();
     }
 

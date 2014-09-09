@@ -317,6 +317,12 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
         return realFont.getKerningInfo();
     }
 
+    /** {@inheritDoc} */
+    public boolean hasFeature(int tableType, String script, String language, String feature) {
+        load(true);
+        return realFont.hasFeature(tableType, script, language, feature);
+    }
+
     // ---- FontDescriptor interface ----
     /**
      * {@inheritDoc}

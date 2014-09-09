@@ -160,6 +160,11 @@ public class Font implements Substitutable, Positionable {
         return metric.hasKerningInfo();
     }
 
+    /** @return true if the font has feature (i.e., at least one lookup matches) */
+    public boolean hasFeature(int tableType, String script, String language, String feature) {
+        return metric.hasFeature(tableType, script, language, feature);
+    }
+
     /**
      * Returns the font's kerning table
      * @return the kerning table

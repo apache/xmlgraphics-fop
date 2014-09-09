@@ -135,8 +135,8 @@ public interface FontMetrics {
     Rectangle getBoundingBox(int glyphIndex, int size);
 
     /**
-     * Indicates if the font has kering information.
-     * @return True, if kerning is available.
+     * Indicates if the font has kerning information.
+     * @return true if kerning is available.
      */
     boolean hasKerningInfo();
 
@@ -180,4 +180,14 @@ public interface FontMetrics {
      */
     int getStrikeoutThickness(int size);
 
+    /**
+     * Determine if metrics supports specific feature in specified font table.
+     *
+     * @param tableType type of table (GSUB, GPOS, ...), see GlyphTable.GLYPH_TABLE_TYPE_*
+     * @param script to qualify feature lookup
+     * @param language to qualify feature lookup
+     * @param feature to test
+     * @return true if feature supported (and has at least one lookup)
+     */
+    boolean hasFeature(int tableType, String script, String language, String feature);
 }
