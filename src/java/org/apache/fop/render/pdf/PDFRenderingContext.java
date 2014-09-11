@@ -19,10 +19,13 @@
 
 package org.apache.fop.render.pdf;
 
+import java.util.Map;
+
 import org.apache.xmlgraphics.util.MimeConstants;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.render.AbstractRenderingContext;
 import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
@@ -36,6 +39,7 @@ public class PDFRenderingContext extends AbstractRenderingContext {
     private FontInfo fontInfo;
     private PDFPage page;
     private MarkedContentInfo mci;
+    private Map<Integer, PDFArray> pageNumbers;
 
     /**
      * Main constructor.
@@ -87,5 +91,13 @@ public class PDFRenderingContext extends AbstractRenderingContext {
 
     MarkedContentInfo getMarkedContentInfo() {
         return mci;
+    }
+
+    public Map<Integer, PDFArray> getPageNumbers() {
+        return pageNumbers;
+    }
+
+    public void setPageNumbers(Map<Integer, PDFArray> pageNumbers) {
+        this.pageNumbers = pageNumbers;
     }
 }

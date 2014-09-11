@@ -188,6 +188,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         PDFRenderingContext pdfContext = new PDFRenderingContext(
                 getUserAgent(), generator, getDocumentHandler().getCurrentPage(), getFontInfo());
         pdfContext.setMarkedContentInfo(imageMCI);
+        pdfContext.setPageNumbers(getDocumentHandler().getPageNumbers());
         return pdfContext;
     }
 

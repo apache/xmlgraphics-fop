@@ -38,6 +38,7 @@ import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.pdf.PDFAnnotList;
+import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFResources;
@@ -93,6 +94,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     private final PDFDocumentNavigationHandler documentNavigationHandler
             = new PDFDocumentNavigationHandler(this);
+
+    private Map<Integer, PDFArray> pageNumbers = new HashMap<Integer, PDFArray>();
 
     /**
      * Default constructor.
@@ -351,5 +354,9 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             structureTreeBuilder = new PDFStructureTreeBuilder();
         }
         return structureTreeBuilder;
+    }
+
+    public Map<Integer, PDFArray> getPageNumbers() {
+        return pageNumbers;
     }
 }
