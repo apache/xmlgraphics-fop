@@ -103,6 +103,14 @@ public class Font implements Substitutable, Positionable {
     }
 
     /**
+     * Determines whether the font is a multibyte font.
+     * @return True if it is multibyte
+     */
+    public boolean isMultiByte() {
+        return getFontMetrics().isMultiByte();
+    }
+
+    /**
      * Returns the font's ascender.
      * @return the ascender
      */

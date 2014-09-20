@@ -47,6 +47,18 @@ public class FOPGVTFontFamily implements GVTFontFamily {
         this.fontFace = fontFace;
     }
 
+    public FontInfo getFontInfo() {
+        return fontInfo;
+    }
+
+    public FontTriplet getFontTriplet() {
+        return fontTriplet;
+    }
+
+    public String getFontKey() {
+        return fontInfo.getInternalFontKey(fontTriplet);
+    }
+
     public String getFamilyName() {
         return familyName;
     }

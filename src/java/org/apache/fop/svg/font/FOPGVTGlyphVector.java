@@ -47,7 +47,7 @@ import org.apache.fop.fonts.GlyphMapping;
 import org.apache.fop.fonts.TextFragment;
 import org.apache.fop.traits.MinOptMax;
 
-class FOPGVTGlyphVector implements GVTGlyphVector {
+public class FOPGVTGlyphVector implements GVTGlyphVector {
 
     protected final TextFragment text;
 
@@ -62,6 +62,8 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
     protected int[] glyphs;
 
     protected List associations;
+
+    protected int[][] gposAdjustments;
 
     protected float[] positions;
 
@@ -94,6 +96,7 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
             mapping.mapping != null ? new StringCharacterIterator(mapping.mapping) : text.getIterator();
         this.glyphs = buildGlyphs(f, glyphAsCharIter);
         this.associations = mapping.associations;
+        this.gposAdjustments = mapping.gposAdjustments;
         this.positions = buildGlyphPositions(glyphAsCharIter, mapping.gposAdjustments, letterSpaceAdjustments);
         this.glyphVisibilities = new boolean[this.glyphs.length];
         Arrays.fill(glyphVisibilities, true);
@@ -302,6 +305,10 @@ class FOPGVTGlyphVector implements GVTGlyphVector {
     public Rectangle2D getGlyphCellBounds(int glyphIndex) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
+    }
+
+    public int[][] getGlyphPositionAdjustments() {
+        return gposAdjustments;
     }
 
     public Point2D getGlyphPosition(int glyphIndex) {
