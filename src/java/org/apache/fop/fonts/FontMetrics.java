@@ -190,4 +190,11 @@ public interface FontMetrics {
      * @return true if feature supported (and has at least one lookup)
      */
     boolean hasFeature(int tableType, String script, String language, String feature);
+
+    /**
+     * Determines whether the font is a multibyte font.
+     * @return True if it is multibyte
+     */
+    boolean isMultiByte();
+
 }

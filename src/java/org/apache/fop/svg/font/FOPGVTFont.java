@@ -31,7 +31,9 @@ import org.apache.batik.gvt.font.GVTLineMetrics;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.fonts.FontTriplet;
 
 public class FOPGVTFont implements GVTFont {
 
@@ -120,6 +122,18 @@ public class FOPGVTFont implements GVTFont {
 
     public FOPGVTFont deriveFont(float size) {
         throw new UnsupportedOperationException("Not implemented");
+    }
+
+    public FontInfo getFontInfo() {
+        return ((FOPGVTFontFamily) fontFamily).getFontInfo();
+    }
+
+    public String getFontKey() {
+        return ((FOPGVTFontFamily) fontFamily).getFontKey();
+    }
+
+    public FontTriplet getFontTriplet() {
+        return ((FOPGVTFontFamily) fontFamily).getFontTriplet();
     }
 
     public String getFamilyName() {

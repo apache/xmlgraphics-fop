@@ -51,6 +51,7 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 import org.apache.fop.svg.font.FOPGVTFont;
+import org.apache.fop.svg.font.FOPGVTGlyphVector;
 import org.apache.fop.svg.text.BidiAttributedCharacterIterator;
 import org.apache.fop.svg.text.ComplexGlyphLayout;
 import org.apache.fop.util.CharUtilities;
@@ -63,8 +64,6 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
 
     /** the logger for this class */
     protected static final Log log = LogFactory.getLog(NativeTextPainter.class);
-
-    private static final boolean DEBUG = false;
 
     /** the font collection */
     protected final FontInfo fontInfo;
@@ -99,9 +98,9 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
      * @throws IOException if an I/O error occurs while rendering the text
      */
     protected final void paintTextRun(TextRun textRun, Graphics2D g2d) throws IOException {
+        logTextRun(textRun);
         AttributedCharacterIterator runaci = textRun.getACI();
         runaci.first();
-
         tpi = (TextPaintInfo) runaci.getAttribute(PAINT_INFO);
         if (tpi == null || !tpi.visible) {
             return;
@@ -109,36 +108,36 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
         if (tpi.composite != null) {
             g2d.setComposite(tpi.composite);
         }
-
-        //------------------------------------
         TextSpanLayout layout = textRun.getLayout();
-        logTextRun(runaci, layout);
-        runaci.first(); //Reset ACI
-
-        GeneralPath debugShapes = null;
-        if (DEBUG) {
-            debugShapes = new GeneralPath();
-        }
-
-        preparePainting(g2d);
-
         GVTGlyphVector gv = layout.getGlyphVector();
         if (!(gv.getFont() instanceof FOPGVTFont)) {
             assert gv.getFont() == null || gv.getFont() instanceof SVGGVTFont;
             //Draw using Java2D when no native fonts are available
             textRun.getLayout().draw(g2d);
             return;
+        } else {
+            GeneralPath debugShapes = log.isDebugEnabled() ? new GeneralPath() : null;
+            preparePainting(g2d);
+            saveGraphicsState();
+            setInitialTransform(g2d.getTransform());
+            clip(g2d.getClip());
+            beginTextObject();
+            writeGlyphs((FOPGVTGlyphVector) gv, debugShapes);
+            endTextObject();
+            restoreGraphicsState();
+            if (debugShapes != null) {
+                g2d.setStroke(new BasicStroke(0));
+                g2d.setColor(Color.LIGHT_GRAY);
+                g2d.draw(debugShapes);
+            }
         }
-        font = ((FOPGVTFont) gv.getFont()).getFont();
+    }
 
-        saveGraphicsState();
-        setInitialTransform(g2d.getTransform());
-        clip(g2d.getClip());
-        beginTextObject();
-
+    protected void writeGlyphs(FOPGVTGlyphVector gv, GeneralPath debugShapes) throws IOException {
         AffineTransform localTransform = new AffineTransform();
         Point2D prevPos = null;
         AffineTransform prevGlyphTransform = null;
+        font = ((FOPGVTFont) gv.getFont()).getFont();
         for (int index = 0, c = gv.getNumGlyphs(); index < c; index++) {
             if (!gv.isGlyphVisible(index)) {
                 continue;
@@ -149,7 +148,7 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
             if (log.isTraceEnabled()) {
                 log.trace("pos " + glyphPos + ", transform " + glyphTransform);
             }
-            if (DEBUG) {
+            if (debugShapes != null) {
                 Shape sh = gv.getGlyphLogicalBounds(index);
                 if (sh == null) {
                     sh = new Ellipse2D.Double(glyphPos.getX(), glyphPos.getY(), 2, 2);
@@ -172,14 +171,6 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
             prevGlyphTransform = glyphTransform;
 
             writeGlyph(glyph, localTransform);
-        }
-        endTextObject();
-        restoreGraphicsState();
-        if (DEBUG) {
-            //Paint debug shapes
-            g2d.setStroke(new BasicStroke(0));
-            g2d.setColor(Color.LIGHT_GRAY);
-            g2d.draw(debugShapes);
         }
     }
 
@@ -348,7 +339,10 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
      * @param runaci an attributed character iterator
      * @param layout a text span layout
      */
-    protected final void logTextRun(AttributedCharacterIterator runaci, TextSpanLayout layout) {
+    protected final void logTextRun(TextRun textRun) {
+        AttributedCharacterIterator runaci = textRun.getACI();
+        TextSpanLayout layout = textRun.getLayout();
+        runaci.first();
         if (log.isTraceEnabled()) {
             int charCount = runaci.getEndIndex() - runaci.getBeginIndex();
             log.trace("================================================");

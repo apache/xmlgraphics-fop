@@ -64,6 +64,9 @@ class ComplexGlyphVector extends FOPGVTGlyphVector {
                     if (associations != null) {
                         Collections.reverse(associations);
                     }
+                    if (gposAdjustments != null) {
+                        reverse(gposAdjustments);
+                    }
                     if (positions != null) {
                         reverse(positions);
                     }
@@ -139,6 +142,15 @@ class ComplexGlyphVector extends FOPGVTGlyphVector {
         }
     }
 
+    private static void reverse(int[][] iaa) {
+        for (int i = 0, n = iaa.length, m = n / 2; i < m; i++) {
+            int k = n - i - 1;
+            int[] t = iaa [ k ];
+            iaa [ k ] = iaa [ i ];
+            iaa [ i ] = t;
+        }
+    }
+
     private static void reverse(float[] fa) {
         int skip = 2;
         int numPositions = fa.length / skip;
@@ -153,8 +165,12 @@ class ComplexGlyphVector extends FOPGVTGlyphVector {
             }
         }
         float runAdvanceX = fa [ 0 ];
-        for (int i = 0, n = fa.length; i < n; i += 2) {
-            fa [ i ] = runAdvanceX - fa [ i ];
+        for (int i = 0, n = numPositions; i < n; ++i) {
+            int k = i * 2;
+            fa [ k + 0 ] = runAdvanceX - fa [ k + 0 ];
+            if (i > 0) {
+                fa [ k - 1 ] = fa [ k + 1 ];
+            }
         }
     }
 
