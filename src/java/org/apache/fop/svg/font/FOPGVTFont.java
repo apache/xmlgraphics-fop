@@ -129,11 +129,11 @@ public class FOPGVTFont implements GVTFont {
     }
 
     public String getFontKey() {
-        return ((FOPGVTFontFamily) fontFamily).getFontKey();
+        return font.getFontName();
     }
 
     public FontTriplet getFontTriplet() {
-        return ((FOPGVTFontFamily) fontFamily).getFontTriplet();
+        return font.getFontTriplet();
     }
 
     public String getFamilyName() {
