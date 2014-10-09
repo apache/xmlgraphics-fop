@@ -24,17 +24,39 @@ package org.apache.fop.util;
  */
 public final class CompareUtil {
 
+    private static final Object TIE_LOCK = new Object();
+
     private CompareUtil() {
     }
 
     /**
      * Compares two objects for equality.
+     * In order to prevent lock-ordering deadlocks the following strategy is used:
+     * when two non null objects are passed to the method, the comparison
+     * is done by calling the {@link Object#equals(Object)} method of the object
+     * with the lower hash code ({@link System#identityHashCode(Object)});
+     * in the rare case that two different objects have the same hash code, a lock
+     * is used.
      *
      * @param o1 an object
      * @param o2 another object
      * @return true if either o1 and o2 are null or if o1.equals(o2)
      */
     public static boolean equal(Object o1, Object o2) {
+        int o1Hash = System.identityHashCode(o1);
+        int o2Hash = System.identityHashCode(o1);
+        if (o1Hash == o2Hash && o1 != o2 && o1Hash != 0) {
+            // in the rare case of different objects with the same hash code,
+            // the tieLock object is used to synchronize access
+            synchronized (TIE_LOCK) {
+                return o1.equals(o2);
+            }
+        }
+        if (o1Hash > o2Hash) {
+            Object tmp = o1;
+            o1 = o2;
+            o2 = tmp;
+        }
         return o1 == null ? o2 == null : o1 == o2 || o1.equals(o2);
     }
 
