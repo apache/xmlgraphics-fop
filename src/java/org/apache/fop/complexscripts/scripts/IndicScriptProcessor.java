@@ -216,7 +216,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     }
 
     private GlyphSequence[] syllabize(GlyphSequence gs, String script, String language) {
-        return Syllabizer.getSyllabizer(script, language, getSyllabizerClass()) .syllabize(gs);
+        return Syllabizer.getSyllabizer(script, language, getSyllabizerClass()).syllabize(gs);
     }
 
     private GlyphSequence unsyllabize(GlyphSequence gs, GlyphSequence[] sa) {
@@ -405,7 +405,8 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
             String sid = makeSyllabizerId(script, language);
             Syllabizer s = syllabizers.get(sid);
             if (s == null) {
-                if ((s = makeSyllabizer(script, language, syllabizerClass)) == null) {
+                if ((syllabizerClass == null) || ((s = makeSyllabizer(script, language, syllabizerClass)) == null)) {
+                    log.warn("No syllabizer available for script '" + script + "', language '" + language + "', using default Indic syllabizer.");
                     s = new DefaultSyllabizer(script, language);
                 }
                 syllabizers.put(sid, s);
