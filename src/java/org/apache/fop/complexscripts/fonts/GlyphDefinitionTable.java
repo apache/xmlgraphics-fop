@@ -96,14 +96,15 @@ public class GlyphDefinitionTable extends GlyphTable {
      * method since when the segment is reversed by BIDI processing, marks are automatically reordered to precede
      * their base glyph.
      * @param gs an input glyph sequence
+     * @param widths associated advance widths (also reordered)
      * @param gpa associated glyph position adjustments (also reordered)
      * @param script a script identifier
      * @param language a language identifier
      * @return the reordered (output) glyph sequence
      */
-    public GlyphSequence reorderCombiningMarks(GlyphSequence gs, int[][] gpa, String script, String language) {
+    public GlyphSequence reorderCombiningMarks(GlyphSequence gs, int[] widths, int[][] gpa, String script, String language) {
         ScriptProcessor sp = ScriptProcessor.getInstance(script);
-        return sp.reorderCombiningMarks(this, gs, gpa, script, language);
+        return sp.reorderCombiningMarks(this, gs, widths, gpa, script, language);
     }
 
     /** {@inheritDoc} */

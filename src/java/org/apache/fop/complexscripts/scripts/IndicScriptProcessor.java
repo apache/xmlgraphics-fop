@@ -126,6 +126,9 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
         case CharScript.SCRIPT_GURMUKHI:
         case CharScript.SCRIPT_GURMUKHI_2:
             return new GurmukhiScriptProcessor(script);
+        case CharScript.SCRIPT_TAMIL:
+        case CharScript.SCRIPT_TAMIL_2:
+            return new TamilScriptProcessor(script);
         // [TBD] implement other script processors
         default:
             return new IndicScriptProcessor(script);
@@ -460,22 +463,30 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
             Vector<Segment> sv = new Vector<Segment>(nc);
             for (int s = 0, e = nc; s < e; ) {
                 int i;
-                if ((i = findStartOfSyllable(ca, s, e)) > s) {
-                    // from s to i is non-syllable segment
-                    sv.add(new Segment(s, i, Segment.OTHER));
+                if ((i = findStartOfSyllable(ca, s, e)) < e) {
+                    if (s < i) {
+                        // from s to i is non-syllable segment
+                        sv.add(new Segment(s, i, Segment.OTHER));
+                    }
                     s = i; // move s to start of syllable
-                } else if (i > s) {
-                    // from s to e is non-syllable segment
-                    sv.add(new Segment(s, e, Segment.OTHER));
+                } else {
+                    if (s < e) {
+                        // from s to e is non-syllable segment
+                        sv.add(new Segment(s, e, Segment.OTHER));
+                    }
                     s = e; // move s to end of input sequence
                 }
                 if ((i = findEndOfSyllable(ca, s, e)) > s) {
-                    // from s to i is syllable segment
-                    sv.add(new Segment(s, i, Segment.SYLLABLE));
+                    if (s < i) {
+                        // from s to i is syllable segment
+                        sv.add(new Segment(s, i, Segment.SYLLABLE));
+                    }
                     s = i; // move s to end of syllable
                 } else {
-                    // from s to e is non-syllable segment
-                    sv.add(new Segment(s, e, Segment.OTHER));
+                    if (s < e) {
+                        // from s to e is non-syllable segment
+                        sv.add(new Segment(s, e, Segment.OTHER));
+                    }
                     s = e; // move s to end of input sequence
                 }
             }

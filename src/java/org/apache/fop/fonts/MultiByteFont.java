@@ -38,6 +38,7 @@ import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable;
 import org.apache.fop.complexscripts.fonts.GlyphTable;
 import org.apache.fop.complexscripts.fonts.Positionable;
 import org.apache.fop.complexscripts.fonts.Substitutable;
+import org.apache.fop.complexscripts.util.CharNormalize;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.util.CharUtilities;
 
@@ -491,7 +492,8 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     /** {@inheritDoc} */
     public CharSequence performSubstitution(CharSequence cs, String script, String language, List associations) {
         if (gsub != null) {
-            GlyphSequence igs = mapCharsToGlyphs(cs, associations);
+            CharSequence  ncs = normalize(cs, associations);
+            GlyphSequence igs = mapCharsToGlyphs(ncs, associations);
             GlyphSequence ogs = gsub.substitute(igs, script, language);
             if (associations != null) {
                 associations.clear();
@@ -509,7 +511,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         CharSequence cs, int[][] gpa, String script, String language, List associations) {
         if (gdef != null) {
             GlyphSequence igs = mapCharsToGlyphs(cs, associations);
-            GlyphSequence ogs = gdef.reorderCombiningMarks(igs, gpa, script, language);
+            GlyphSequence ogs = gdef.reorderCombiningMarks(igs, getUnscaledWidths(igs), gpa, script, language);
             if (associations != null) {
                 associations.clear();
                 associations.addAll(ogs.getAssociations());
@@ -519,6 +521,16 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         } else {
             return cs;
         }
+    }
+
+    protected int[] getUnscaledWidths(GlyphSequence gs) {
+        int[] widths = new int[gs.getGlyphCount()];
+        for (int i = 0, n = widths.length; i < n; ++i) {
+            if (i < width.length) {
+                widths[i] = width[i];
+            }
+        }
+        return widths;
     }
 
     /** {@inheritDoc} */
@@ -650,6 +662,37 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         }
         cb.flip();
         return cb;
+    }
+
+    private CharSequence normalize(CharSequence cs, List associations) {
+        return hasDecomposable(cs) ? decompose(cs, associations) : cs;
+    }
+
+    private boolean hasDecomposable(CharSequence cs) {
+        for (int i = 0, n = cs.length(); i < n; i++) {
+            int cc = cs.charAt(i);
+            if (CharNormalize.isDecomposable(cc)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private CharSequence decompose(CharSequence cs, List associations) {
+        StringBuffer sb = new StringBuffer(cs.length());
+        int[] daBuffer = new int[CharNormalize.maximumDecompositionLength()];
+        for (int i = 0, n = cs.length(); i < n; i++) {
+            int cc = cs.charAt(i);
+            int[] da = CharNormalize.decompose(cc, daBuffer);
+            for (int j = 0; j < da.length; j++) {
+                if (da[j] > 0) {
+                    sb.append((char) da[j]);
+                } else {
+                    break;
+                }
+            }
+        }
+        return sb;
     }
 
     @Override
