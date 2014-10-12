@@ -80,14 +80,15 @@ public class DefaultScriptProcessor extends ScriptProcessor {
 
     @Override
     /** {@inheritDoc} */
-    public GlyphSequence reorderCombiningMarks(GlyphDefinitionTable gdef, GlyphSequence gs, int[][] gpa, String script, String language) {
+    public GlyphSequence reorderCombiningMarks(GlyphDefinitionTable gdef, GlyphSequence gs, int[] unscaledWidths, int[][] gpa, String script, String language) {
         int   ng  = gs.getGlyphCount();
         int[] ga  = gs.getGlyphArray(false);
         int   nm  = 0;
         // count combining marks
         for (int i = 0; i < ng; i++) {
             int gid = ga [ i ];
-            if (gdef.isGlyphClass(gid, GlyphDefinitionTable.GLYPH_CLASS_MARK)) {
+            int gw = unscaledWidths [ i ];
+            if (isReorderedMark(gdef, ga, unscaledWidths, i)) {
                 nm++;
             }
         }
@@ -105,7 +106,7 @@ public class DefaultScriptProcessor extends ScriptProcessor {
                 int gid = ga [ i ];
                 int[] pa = (gpa != null) ? gpa [ i ] : null;
                 CharAssociation ca = aa [ i ];
-                if (gdef.isGlyphClass(gid, GlyphDefinitionTable.GLYPH_CLASS_MARK)) {
+                if (isReorderedMark(gdef, ga, unscaledWidths, i)) {
                     nga [ k ] = gid;
                     naa [ k ] = ca;
                     if (npa != null) {
@@ -147,6 +148,10 @@ public class DefaultScriptProcessor extends ScriptProcessor {
         } else {
             return gs;
         }
+    }
+
+    protected boolean isReorderedMark(GlyphDefinitionTable gdef, int[] glyphs, int[] unscaledWidths, int index) {
+        return gdef.isGlyphClass(glyphs[index], GlyphDefinitionTable.GLYPH_CLASS_MARK) && (unscaledWidths[index] != 0);
     }
 
 }

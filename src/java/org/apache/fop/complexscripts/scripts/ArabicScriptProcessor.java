@@ -141,7 +141,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
 
     /** {@inheritDoc} */
     @Override
-    public GlyphSequence reorderCombiningMarks(GlyphDefinitionTable gdef, GlyphSequence gs, int[][] gpa, String script, String language) {
+    public GlyphSequence reorderCombiningMarks(GlyphDefinitionTable gdef, GlyphSequence gs, int[] widths, int[][] gpa, String script, String language) {
         // a side effect of BIDI reordering is to order combining marks before their base, so we need to override the default here to
         // prevent double reordering
         return gs;

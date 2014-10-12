@@ -22,7 +22,6 @@ package org.apache.fop.complexscripts.scripts;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.complexscripts.fonts.GlyphDefinitionTable;
 import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 
@@ -536,11 +535,6 @@ public class GurmukhiScriptProcessor extends IndicScriptProcessor {
     }
     static boolean hasN(int c) {
         return hasFlag(c, C_N);
-    }
-
-    @Override
-    public GlyphSequence reorderCombiningMarks(GlyphDefinitionTable gdef, GlyphSequence gs, int[][] gpa, String script, String language) {
-        return super.reorderCombiningMarks(gdef, gs, gpa, script, language);
     }
 
 }

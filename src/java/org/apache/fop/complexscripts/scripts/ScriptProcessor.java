@@ -123,12 +123,13 @@ public abstract class ScriptProcessor {
      * their base glyph.
      * @param gdef the glyph definition table that applies
      * @param gs an input glyph sequence
+     * @param unscaledWidths associated unscaled advance widths (also reordered)
      * @param gpa associated glyph position adjustments (also reordered)
      * @param script a script identifier
      * @param language a language identifier
      * @return the reordered (output) glyph sequence
      */
-    public GlyphSequence reorderCombiningMarks(GlyphDefinitionTable gdef, GlyphSequence gs, int[][] gpa, String script, String language) {
+    public GlyphSequence reorderCombiningMarks(GlyphDefinitionTable gdef, GlyphSequence gs, int[] unscaledWidths, int[][] gpa, String script, String language) {
         return gs;
     }
 
