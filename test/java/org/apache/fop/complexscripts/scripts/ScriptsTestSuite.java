@@ -23,12 +23,16 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import org.apache.fop.complexscripts.scripts.arabic.ArabicTestCase;
+import org.apache.fop.complexscripts.scripts.arabic.ArabicJoinersTestCase;
+import org.apache.fop.complexscripts.scripts.arabic.ArabicWordFormsTestCase;
 
 /**
  * Test suite for script specific functionality related to complex scripts.
  */
 @RunWith(Suite.class)
-@SuiteClasses(ArabicTestCase.class)
+@SuiteClasses({
+    ArabicJoinersTestCase.class,
+    ArabicWordFormsTestCase.class
+})
 public class ScriptsTestSuite {
 }

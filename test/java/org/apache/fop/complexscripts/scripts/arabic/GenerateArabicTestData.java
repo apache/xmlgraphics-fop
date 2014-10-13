@@ -40,7 +40,7 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 /**
  * Tests for functionality related to the arabic script.
  */
-public final class GenerateArabicTestData implements ArabicTestConstants {
+public final class GenerateArabicTestData implements ArabicWordFormsConstants {
 
     private GenerateArabicTestData() {
     }
