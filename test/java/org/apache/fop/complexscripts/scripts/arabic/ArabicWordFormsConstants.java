@@ -22,7 +22,7 @@ package org.apache.fop.complexscripts.scripts.arabic;
 /**
  * Constants for test functionality related to the arabic script.
  */
-public interface ArabicTestConstants {
+public interface ArabicWordFormsConstants {
 
     String WF_FILE_SCRIPT = "arab";
     String WF_FILE_LANGUAGE = "dflt";

@@ -44,7 +44,7 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 /**
  * Tests for functionality related to the arabic script.
  */
-public class ArabicTestCase implements ArabicTestConstants {
+public class ArabicWordFormsTestCase implements ArabicWordFormsConstants {
 
     @Test
     public void testArabicWordForms() {

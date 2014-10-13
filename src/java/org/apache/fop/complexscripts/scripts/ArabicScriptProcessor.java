@@ -33,6 +33,7 @@ import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.GlyphContextTester;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
+import org.apache.fop.util.CharUtilities;
 
 // CSOFF: LineLengthCheck
 
@@ -158,9 +159,11 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
             int e = a.getEnd();
             if (!hasFinalPrecedingContext(ca, nc, s, e)) {
                 return false;
-            } else if (forcesFinalThisContext(ca, nc, s, e)) {
+            } else if (!hasFinalThisContext(ca, nc, s, e)) {
+                return false;
+            } else if (forceFinalThisContext(ca, nc, s, e)) {
                 return true;
-            } else if (!hasFinalFollowingContext(ca, nc, s, e)) {
+            } else if (!hasFinalSucceedingContext(ca, nc, s, e)) {
                 return false;
             } else {
                 return true;
@@ -179,7 +182,9 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
             int e = a.getEnd();
             if (!hasInitialPrecedingContext(ca, nc, s, e)) {
                 return false;
-            } else if (!hasInitialFollowingContext(ca, nc, s, e)) {
+            } else if (!hasInitialThisContext(ca, nc, s, e)) {
+                return false;
+            } else if (!hasInitialSucceedingContext(ca, nc, s, e)) {
                 return false;
             } else {
                 return true;
@@ -210,7 +215,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
             int e = a.getEnd();
             if (!hasLigaturePrecedingContext(ca, nc, s, e)) {
                 return false;
-            } else if (!hasLigatureFollowingContext(ca, nc, s, e)) {
+            } else if (!hasLigatureSucceedingContext(ca, nc, s, e)) {
                 return false;
             } else {
                 return true;
@@ -231,7 +236,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
                 return false;
             } else if (!hasMedialThisContext(ca, nc, s, e)) {
                 return false;
-            } else if (!hasMedialFollowingContext(ca, nc, s, e)) {
+            } else if (!hasMedialSucceedingContext(ca, nc, s, e)) {
                 return false;
             } else {
                 return true;
@@ -240,7 +245,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
     }
 
     private static boolean hasFinalPrecedingContext(int[] ca, int nc, int s, int e) {
-        int chp = 0;
+        int chp = 0;    // preceding non-NSM char in [0,s) searching back from s
         int clp = 0;
         for (int i = s; i > 0; i--) {
             int k = i - 1;
@@ -253,7 +258,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
             }
         }
         if (clp != BidiConstants.AL) {
-            return false;
+            return isZWJ(chp);
         } else if (hasIsolateInitial(chp)) {
             return false;
         } else {
@@ -261,8 +266,8 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         }
     }
 
-    private static boolean forcesFinalThisContext(int[] ca, int nc, int s, int e) {
-        int chl = 0;
+    private static boolean hasFinalThisContext(int[] ca, int nc, int s, int e) {
+        int chl = 0;    // last non-{NSM,ZWJ} char in [s,e)
         int cll = 0;
         for (int i = 0, n = e - s; i < n; i++) {
             int k = n - i - 1;
@@ -270,7 +275,31 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
             if ((j >= 0) && (j < nc)) {
                 chl = ca [ j ];
                 cll = BidiClass.getBidiClass(chl);
-                if (cll != BidiConstants.NSM) {
+                if ((cll != BidiConstants.NSM) && !isZWJ(chl)) {
+                    break;
+                }
+            }
+        }
+        if (cll != BidiConstants.AL) {
+            return false;
+        }
+        if (hasIsolateFinal(chl)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private static boolean forceFinalThisContext(int[] ca, int nc, int s, int e) {
+        int chl = 0;    // last non-{NSM,ZWJ} char in [s,e)
+        int cll = 0;
+        for (int i = 0, n = e - s; i < n; i++) {
+            int k = n - i - 1;
+            int j = s + k;
+            if ((j >= 0) && (j < nc)) {
+                chl = ca [ j ];
+                cll = BidiClass.getBidiClass(chl);
+                if ((cll != BidiConstants.NSM) && !isZWJ(chl)) {
                     break;
                 }
             }
@@ -285,19 +314,19 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         }
     }
 
-    private static boolean hasFinalFollowingContext(int[] ca, int nc, int s, int e) {
-        int chf = 0;
-        int clf = 0;
+    private static boolean hasFinalSucceedingContext(int[] ca, int nc, int s, int e) {
+        int chs = 0;    // succeeding non-NSM char in [e,nc) searching forward from e
+        int cls = 0;
         for (int i = e, n = nc; i < n; i++) {
-            chf = ca [ i ];
-            clf = BidiClass.getBidiClass(chf);
-            if (clf != BidiConstants.NSM) {
+            chs = ca [ i ];
+            cls = BidiClass.getBidiClass(chs);
+            if (cls != BidiConstants.NSM) {
                 break;
             }
         }
-        if (clf != BidiConstants.AL) {
-            return true;
-        } else if (hasIsolateFinal(chf)) {
+        if (cls != BidiConstants.AL) {
+            return !isZWJ(chs);
+        } else if (hasIsolateFinal(chs)) {
             return true;
         } else {
             return false;
@@ -305,7 +334,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
     }
 
     private static boolean hasInitialPrecedingContext(int[] ca, int nc, int s, int e) {
-        int chp = 0;
+        int chp = 0;    // preceding non-NSM char in [0,s) searching back from s
         int clp = 0;
         for (int i = s; i > 0; i--) {
             int k = i - 1;
@@ -318,7 +347,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
             }
         }
         if (clp != BidiConstants.AL) {
-            return true;
+            return !isZWJ(chp);
         } else if (hasIsolateInitial(chp)) {
             return true;
         } else {
@@ -326,19 +355,42 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         }
     }
 
-    private static boolean hasInitialFollowingContext(int[] ca, int nc, int s, int e) {
-        int chf = 0;
+    private static boolean hasInitialThisContext(int[] ca, int nc, int s, int e) {
+        int chf = 0;    // first non-{NSM,ZWJ} char in [s,e)
         int clf = 0;
-        for (int i = e, n = nc; i < n; i++) {
-            chf = ca [ i ];
-            clf = BidiClass.getBidiClass(chf);
-            if (clf != BidiConstants.NSM) {
-                break;
+        for (int i = 0, n = e - s; i < n; i++) {
+            int k = s + i;
+            if ((k >= 0) && (k < nc)) {
+                chf = ca [ s + i ];
+                clf = BidiClass.getBidiClass(chf);
+                if ((clf != BidiConstants.NSM) && !isZWJ(chf)) {
+                    break;
+                }
             }
         }
         if (clf != BidiConstants.AL) {
             return false;
-        } else if (hasIsolateFinal(chf)) {
+        }
+        if (hasIsolateInitial(chf)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private static boolean hasInitialSucceedingContext(int[] ca, int nc, int s, int e) {
+        int chs = 0;    // succeeding non-NSM char in [e,nc) searching forward from e
+        int cls = 0;
+        for (int i = e, n = nc; i < n; i++) {
+            chs = ca [ i ];
+            cls = BidiClass.getBidiClass(chs);
+            if (cls != BidiConstants.NSM) {
+                break;
+            }
+        }
+        if (cls != BidiConstants.AL) {
+            return isZWJ(chs);
+        } else if (hasIsolateFinal(chs)) {
             return false;
         } else {
             return true;
@@ -346,7 +398,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
     }
 
     private static boolean hasMedialPrecedingContext(int[] ca, int nc, int s, int e) {
-        int chp = 0;
+        int chp = 0;    // preceding non-NSM char in [0,s) searching back from s
         int clp = 0;
         for (int i = s; i > 0; i--) {
             int k = i - 1;
@@ -359,7 +411,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
             }
         }
         if (clp != BidiConstants.AL) {
-            return false;
+            return isZWJ(chp);
         } else if (hasIsolateInitial(chp)) {
             return false;
         } else {
@@ -368,14 +420,14 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
     }
 
     private static boolean hasMedialThisContext(int[] ca, int nc, int s, int e) {
-        int chf = 0;    // first non-NSM char in [s,e)
+        int chf = 0;    // first non-{NSM,ZWJ} char in [s,e)
         int clf = 0;
         for (int i = 0, n = e - s; i < n; i++) {
             int k = s + i;
             if ((k >= 0) && (k < nc)) {
                 chf = ca [ s + i ];
                 clf = BidiClass.getBidiClass(chf);
-                if (clf != BidiConstants.NSM) {
+                if ((clf != BidiConstants.NSM) && !isZWJ(chf)) {
                     break;
                 }
             }
@@ -383,7 +435,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         if (clf != BidiConstants.AL) {
             return false;
         }
-        int chl = 0;    // last non-NSM char in [s,e)
+        int chl = 0;    // last non-{NSM,ZWJ} char in [s,e)
         int cll = 0;
         for (int i = 0, n = e - s; i < n; i++) {
             int k = n - i - 1;
@@ -391,7 +443,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
             if ((j >= 0) && (j < nc)) {
                 chl = ca [ j ];
                 cll = BidiClass.getBidiClass(chl);
-                if (cll != BidiConstants.NSM) {
+                if ((cll != BidiConstants.NSM) && !isZWJ(chl)) {
                     break;
                 }
             }
@@ -408,19 +460,19 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         }
     }
 
-    private static boolean hasMedialFollowingContext(int[] ca, int nc, int s, int e) {
-        int chf = 0;
-        int clf = 0;
+    private static boolean hasMedialSucceedingContext(int[] ca, int nc, int s, int e) {
+        int chs = 0;    // succeeding non-NSM char in [e,nc) searching forward from e
+        int cls = 0;
         for (int i = e, n = nc; i < n; i++) {
-            chf = ca [ i ];
-            clf = BidiClass.getBidiClass(chf);
-            if (clf != BidiConstants.NSM) {
+            chs = ca [ i ];
+            cls = BidiClass.getBidiClass(chs);
+            if (cls != BidiConstants.NSM) {
                 break;
             }
         }
-        if (clf != BidiConstants.AL) {
-            return false;
-        } else if (hasIsolateFinal(chf)) {
+        if (cls != BidiConstants.AL) {
+            return isZWJ(chs);
+        } else if (hasIsolateFinal(chs)) {
             return false;
         } else {
             return true;
@@ -431,17 +483,18 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         return true;
     }
 
-    private static boolean hasLigatureFollowingContext(int[] ca, int nc, int s, int e) {
-        int chf = 0;
-        int clf = 0;
+    private static boolean hasLigatureSucceedingContext(int[] ca, int nc, int s, int e) {
+        int chs = 0;    // succeeding non-NSM char in [e,nc) searching forward from e
+        int cls = 0;
         for (int i = e, n = nc; i < n; i++) {
-            chf = ca [ i ];
-            clf = BidiClass.getBidiClass(chf);
-            if (clf != BidiConstants.NSM) {
+            chs = ca [ i ];
+            cls = BidiClass.getBidiClass(chs);
+            // TBD - does ZWJ have impact here?
+            if (cls != BidiConstants.NSM) {
                 break;
             }
         }
-        if (clf == BidiConstants.AL) {
+        if (cls == BidiConstants.AL) {
             return true;
         } else  {
             return false;
@@ -452,7 +505,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
      * Ordered array of Unicode scalars designating those Arabic (Script) Letters
      * which exhibit an isolated form in word initial position.
      */
-    private static int[] isolatedInitials = {
+    private static final int[] ISOLATED_INITIALS = {
         0x0621, // HAMZA
         0x0622, // ALEF WITH MADDA ABOVE
         0x0623, // ALEF WITH HAMZA ABOVE
@@ -502,19 +555,23 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
     };
 
     private static boolean hasIsolateInitial(int ch) {
-        return Arrays.binarySearch(isolatedInitials, ch) >= 0;
+        return Arrays.binarySearch(ISOLATED_INITIALS, ch) >= 0;
     }
 
     /**
      * Ordered array of Unicode scalars designating those Arabic (Script) Letters
      * which exhibit an isolated form in word final position.
      */
-    private static int[] isolatedFinals = {
+    private static final int[] ISOLATED_FINALS = {
         0x0621  // HAMZA
     };
 
     private static boolean hasIsolateFinal(int ch) {
-        return Arrays.binarySearch(isolatedFinals, ch) >= 0;
+        return Arrays.binarySearch(ISOLATED_FINALS, ch) >= 0;
+    }
+
+    private static boolean isZWJ(int ch) {
+        return ch == CharUtilities.ZERO_WIDTH_JOINER;
     }
 
 }
