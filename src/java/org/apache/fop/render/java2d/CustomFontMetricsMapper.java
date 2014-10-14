@@ -268,9 +268,10 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
     /**
      * {@inheritDoc}
      */
-    public CharSequence performSubstitution(CharSequence cs, String script, String language, List associations) {
+    public CharSequence performSubstitution(CharSequence cs, String script, String language, List associations,
+                                            boolean retainControls) {
         if (typeface instanceof Substitutable) {
-            return ((Substitutable) typeface).performSubstitution(cs, script, language, associations);
+            return ((Substitutable) typeface).performSubstitution(cs, script, language, associations, retainControls);
         } else {
             return cs;
         }

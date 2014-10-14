@@ -417,10 +417,10 @@ public class Font implements Substitutable, Positionable {
 
     /** {@inheritDoc} */
     public CharSequence performSubstitution(CharSequence cs,
-        String script, String language, List associations) {
+        String script, String language, List associations, boolean retainControls) {
         if (metric instanceof Substitutable) {
             Substitutable s = (Substitutable) metric;
-            return s.performSubstitution(cs, script, language, associations);
+            return s.performSubstitution(cs, script, language, associations, retainControls);
         } else {
             throw new UnsupportedOperationException();
         }

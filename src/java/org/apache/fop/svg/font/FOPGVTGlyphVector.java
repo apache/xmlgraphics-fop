@@ -90,8 +90,10 @@ public class FOPGVTGlyphVector implements GVTGlyphVector {
         Font f = font.getFont();
         MinOptMax letterSpaceIPD = MinOptMax.ZERO;
         MinOptMax[] letterSpaceAdjustments = new MinOptMax[text.getEndIndex() - text.getBeginIndex()];
+        boolean retainControls = false;
         GlyphMapping mapping = GlyphMapping.doGlyphMapping(text, text.getBeginIndex(), text.getEndIndex(),
-            f, letterSpaceIPD, letterSpaceAdjustments, '\0', '\0', false, text.getBidiLevel(), true, true);
+            f, letterSpaceIPD, letterSpaceAdjustments, '\0', '\0',
+            false, text.getBidiLevel(), true, true, retainControls);
         CharacterIterator glyphAsCharIter =
             mapping.mapping != null ? new StringCharacterIterator(mapping.mapping) : text.getIterator();
         this.glyphs = buildGlyphs(f, glyphAsCharIter);
