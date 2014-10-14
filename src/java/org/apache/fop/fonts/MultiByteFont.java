@@ -38,6 +38,7 @@ import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable;
 import org.apache.fop.complexscripts.fonts.GlyphTable;
 import org.apache.fop.complexscripts.fonts.Positionable;
 import org.apache.fop.complexscripts.fonts.Substitutable;
+import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.CharNormalize;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.util.CharUtilities;
@@ -490,7 +491,8 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /** {@inheritDoc} */
-    public CharSequence performSubstitution(CharSequence cs, String script, String language, List associations) {
+    public CharSequence performSubstitution(CharSequence cs, String script, String language, List associations,
+                                            boolean retainControls) {
         if (gsub != null) {
             CharSequence  ncs = normalize(cs, associations);
             GlyphSequence igs = mapCharsToGlyphs(ncs, associations);
@@ -498,6 +500,9 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
             if (associations != null) {
                 associations.clear();
                 associations.addAll(ogs.getAssociations());
+            }
+            if (!retainControls) {
+                ogs = elideControls(ogs);
             }
             CharSequence ocs = mapGlyphsToChars(ogs);
             return ocs;
@@ -693,6 +698,66 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
             }
         }
         return sb;
+    }
+
+    private static GlyphSequence elideControls(GlyphSequence gs) {
+        if (hasElidableControl(gs)) {
+            int[] ca = gs.getCharacterArray(false);
+            IntBuffer ngb = IntBuffer.allocate(gs.getGlyphCount());
+            List nal = new java.util.ArrayList(gs.getGlyphCount());
+            for (int i = 0, n = gs.getGlyphCount(); i < n; ++i) {
+                CharAssociation a = gs.getAssociation(i);
+                int s = a.getStart();
+                int e = a.getEnd();
+                while (s < e) {
+                    int ch = ca [ s ];
+                    if (isElidableControl(ch)) {
+                        break;
+                    } else {
+                        ++s;
+                    }
+                }
+                if (s == e) {
+                    ngb.put(gs.getGlyph(i));
+                    nal.add(a);
+                }
+            }
+            ngb.flip();
+            return new GlyphSequence(gs.getCharacters(), ngb, nal, gs.getPredications());
+        } else {
+            return gs;
+        }
+    }
+
+    private static boolean hasElidableControl(GlyphSequence gs) {
+        int[] ca = gs.getCharacterArray(false);
+        for (int i = 0, n = ca.length; i < n; ++i) {
+            int ch = ca [ i ];
+            if (isElidableControl(ch)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isElidableControl(int ch) {
+        if (ch < 0x0020) {
+            return true;
+        } else if ((ch >= 0x80) && (ch < 0x00A0)) {
+            return true;
+        } else if ((ch >= 0x2000) && (ch <= 0x206F)) {
+            if ((ch >= 0x200B) && (ch <= 0x200F)) {
+                return true;
+            } else if ((ch >= 0x2028) && (ch <= 0x202E)) {
+                return true;
+            } else if ((ch >= 0x2066) && (ch <= 0x206F)) {
+                return true;
+            } else {
+                return ch == 0x2060;
+            }
+        } else {
+            return false;
+        }
     }
 
     @Override

@@ -761,6 +761,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         char ch = 0;
         int level = -1;
         int prevLevel = -1;
+        boolean retainControls = false;
         while (nextStart < foText.length()) {
             ch = foText.charAt(nextStart);
             level = foText.bidiLevelAt(nextStart);
@@ -799,7 +800,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                      || ((prevLevel != -1) && (level != prevLevel))) {
                     // this.foText.charAt(lastIndex) == CharUtilities.SOFT_HYPHEN
                     prevMapping = processWord(alignment, sequence, prevMapping, ch,
-                            breakOpportunity, true, prevLevel);
+                        breakOpportunity, true, prevLevel, retainControls);
                 }
             } else if (inWhitespace) {
                 if (ch != CharUtilities.SPACE || breakOpportunity) {
@@ -850,7 +851,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         // Process any last elements
         if (inWord) {
-            processWord(alignment, sequence, prevMapping, ch, false, false, prevLevel);
+            processWord(alignment, sequence, prevMapping, ch, false, false, prevLevel, retainControls);
         } else if (inWhitespace) {
             processWhitespace(alignment, sequence, !keepTogether, prevLevel);
         } else if (mapping != null) {
@@ -918,7 +919,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private GlyphMapping processWord(final int alignment, final KnuthSequence sequence,
             GlyphMapping prevMapping, final char ch, final boolean breakOpportunity,
-            final boolean checkEndsWithHyphen, int level) {
+            final boolean checkEndsWithHyphen, int level, boolean retainControls) {
 
         //Word boundary found, process widths and kerning
         int lastIndex = nextStart;
@@ -934,7 +935,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 && prevMapping.endIndex > 0 ? foText.charAt(prevMapping.endIndex - 1) : 0;
         GlyphMapping mapping = GlyphMapping.doGlyphMapping(foText, thisStart, lastIndex, font,
                 letterSpaceIPD, letterSpaceAdjustArray, precedingChar, breakOpportunityChar,
-                endsWithHyphen, level, false, false);
+                endsWithHyphen, level, false, false, retainControls);
         prevMapping = mapping;
         addGlyphMapping(mapping);
         tempStart = nextStart;

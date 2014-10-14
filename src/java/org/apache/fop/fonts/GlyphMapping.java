@@ -83,11 +83,12 @@ public class GlyphMapping {
     public static GlyphMapping doGlyphMapping(TextFragment text, int startIndex, int endIndex,
             Font font, MinOptMax letterSpaceIPD, MinOptMax[] letterSpaceAdjustArray,
             char precedingChar, char breakOpportunityChar, final boolean endsWithHyphen, int level,
-            boolean dontOptimizeForIdentityMapping, boolean retainAssociations) {
+            boolean dontOptimizeForIdentityMapping, boolean retainAssociations, boolean retainControls) {
         GlyphMapping mapping;
         if (font.performsSubstitution() || font.performsPositioning()) {
             mapping = processWordMapping(text, startIndex, endIndex, font,
-                breakOpportunityChar, endsWithHyphen, level, dontOptimizeForIdentityMapping, retainAssociations);
+                breakOpportunityChar, endsWithHyphen, level,
+                dontOptimizeForIdentityMapping, retainAssociations, retainControls);
         } else {
             mapping = processWordNoMapping(text, startIndex, endIndex, font,
                 letterSpaceIPD, letterSpaceAdjustArray, precedingChar, breakOpportunityChar, endsWithHyphen, level);
@@ -98,7 +99,7 @@ public class GlyphMapping {
     private static GlyphMapping processWordMapping(TextFragment text, int startIndex,
             int endIndex, final Font font, final char breakOpportunityChar,
             final boolean endsWithHyphen, int level,
-            boolean dontOptimizeForIdentityMapping, boolean retainAssociations) {
+        boolean dontOptimizeForIdentityMapping, boolean retainAssociations, boolean retainControls) {
         int e = endIndex; // end index of word in FOText character buffer
         int nLS = 0; // # of letter spaces
         String script = text.getScript();
@@ -126,7 +127,7 @@ public class GlyphMapping {
         // 3. perform mapping of chars to glyphs ... to glyphs ... to chars, retaining
         // associations if requested.
         List associations = retainAssociations ? new java.util.ArrayList() : null;
-        CharSequence mcs = font.performSubstitution(ics, script, language, associations);
+        CharSequence mcs = font.performSubstitution(ics, script, language, associations, retainControls);
 
         // 4. compute glyph position adjustments on (substituted) characters.
         int[][] gpa = null;

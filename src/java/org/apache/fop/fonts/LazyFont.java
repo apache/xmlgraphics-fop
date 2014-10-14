@@ -415,10 +415,12 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     /**
      * {@inheritDoc}
      */
-    public CharSequence performSubstitution(CharSequence cs, String script, String language, List associations) {
+    public CharSequence performSubstitution(CharSequence cs, String script, String language, List associations,
+                                            boolean retainControls) {
         load(true);
         if (realFontDescriptor instanceof Substitutable) {
-            return ((Substitutable)realFontDescriptor).performSubstitution(cs, script, language, associations);
+            return ((Substitutable)realFontDescriptor).performSubstitution(cs,
+                script, language, associations, retainControls);
         } else {
             return cs;
         }

@@ -46,10 +46,11 @@ public interface Substitutable {
      * @param script a script identifier
      * @param language a language identifier
      * @param associations optional list to receive list of character associations
+     * @param retainControls if true, then retain control characters and their glyph mappings, otherwise remove
      * @return output sequence (represented as a character sequence, where each character in the returned sequence
      * denotes "font characters", i.e., character codes that map directly (1-1) to their associated glyphs
      */
-    CharSequence performSubstitution(CharSequence cs, String script, String language, List associations);
+    CharSequence performSubstitution(CharSequence cs, String script, String language, List associations, boolean retainControls);
 
     /**
      * Reorder combining marks in character sequence so that they precede (within the sequence) the base
