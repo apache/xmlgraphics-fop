@@ -680,6 +680,9 @@ public abstract class AbstractBreaker {
                     throw new IllegalStateException("Invalid break class: "
                             + breakPenalty.getBreakClass());
                 }
+                if (ElementListUtils.isEmptyBox(returnedList)) {
+                    ListUtil.removeLast(returnedList);
+                }
             }
             blockList.addAll(returnedList);
             BlockSequence seq;
