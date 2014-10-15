@@ -226,4 +226,13 @@ public final class ElementListUtils {
         return prevBreak;
     }
 
+    public static boolean isEmptyBox(List elements) {
+        if (elements.size() == 1 && elements.get(0) instanceof KnuthBox) {
+            KnuthBox kb = (KnuthBox) elements.get(0);
+            if (kb.getWidth() == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
