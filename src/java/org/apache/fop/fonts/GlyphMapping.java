@@ -278,10 +278,8 @@ public class GlyphMapping {
         wordIPD = wordIPD.plus(letterSpaceIPD.mult(letterSpaces));
 
         // create and return the AreaInfo object
-        return new GlyphMapping(startIndex, endIndex, 0,
-                            letterSpaces, wordIPD,
-                            endsWithHyphen,
-                            false, breakOpportunityChar != 0, font, level, null);
+        return new GlyphMapping(startIndex, endIndex, 0, letterSpaces, wordIPD, endsWithHyphen, false,
+                (breakOpportunityChar != 0) && !isSpace(breakOpportunityChar), font, level, null);
     }
 
     private static void addToLetterAdjust(MinOptMax[] letterSpaceAdjustArray, int index, int width) {
