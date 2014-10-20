@@ -67,6 +67,17 @@ public abstract class AbstractBreaker {
         }
     }
 
+    public static class FloatPosition extends LeafPosition {
+        double bpdAdjust; // Percentage to adjust (stretch or shrink)
+        int difference;
+
+        FloatPosition(LayoutManager lm, int breakIndex, double bpdA, int diff) {
+            super(lm, breakIndex);
+            bpdAdjust = bpdA;
+            difference = diff;
+        }
+    }
+
     /**
      * Helper method, mainly used to improve debug/trace output
      * @param breakClassId  the {@link Constants} enum value.
@@ -195,9 +206,12 @@ public abstract class AbstractBreaker {
     }
 
     // used by doLayout and getNextBlockList*
-    private List<BlockSequence> blockLists;
+    protected List<BlockSequence> blockLists;
 
     private boolean empty = true;
+    /** blockListIndex of the current BlockSequence in blockLists */
+    protected int blockListIndex;
+
 
     /** desired text alignment */
     protected int alignment;
@@ -372,7 +386,7 @@ public abstract class AbstractBreaker {
 
             //*** Phases 2 and 3 ***
             log.debug("PLM> blockLists.size() = " + blockLists.size());
-            for (int blockListIndex = 0; blockListIndex < blockLists.size(); blockListIndex++) {
+            for (blockListIndex = 0; blockListIndex < blockLists.size(); blockListIndex++) {
                 blockList = blockLists.get(blockListIndex);
 
                 //debug code start
@@ -394,7 +408,10 @@ public abstract class AbstractBreaker {
                 alg.setConstantLineWidth(flowBPD);
                 int optimalPageCount = alg.findBreakingPoints(blockList, 1, true,
                         BreakingAlgorithm.ALL_BREAKS);
-                if (Math.abs(alg.getIPDdifference()) > 1) {
+
+                if (alg.handlingFloat()) {
+                    nextSequenceStartsOn = handleFloatLayout(alg, optimalPageCount, blockList, childLC);
+                } else if (Math.abs(alg.getIPDdifference()) > 1) {
                     addAreas(alg, optimalPageCount, blockList, blockList);
                     // *** redo Phase 1 ***
                     log.trace("IPD changes after page " + optimalPageCount);
@@ -476,14 +493,14 @@ public abstract class AbstractBreaker {
         for (int p = startPart; p < startPart + partCount; p++) {
             PageBreakPosition pbp = alg.getPageBreaks().get(p);
 
-            //Check the last break position for forced breaks
+            // Check the last break position for forced breaks
             int lastBreakClass;
             if (p == 0) {
                 lastBreakClass = effectiveList.getStartOn();
             } else {
                 ListElement lastBreakElement = effectiveList.getElement(endElementIndex);
                 if (lastBreakElement.isPenalty()) {
-                    KnuthPenalty pen = (KnuthPenalty)lastBreakElement;
+                    KnuthPenalty pen = (KnuthPenalty) lastBreakElement;
                     if (pen.getPenalty() == KnuthPenalty.INFINITE) {
                         /**
                          * That means that there was a keep.within-page="always", but that
@@ -500,14 +517,12 @@ public abstract class AbstractBreaker {
                 }
             }
 
-            //the end of the new part
+            // the end of the new part
             endElementIndex = pbp.getLeafPos();
 
             // ignore the first elements added by the
             // PageSequenceLayoutManager
-            startElementIndex += (startElementIndex == 0)
-                    ? effectiveList.ignoreAtStart
-                    : 0;
+            startElementIndex += (startElementIndex == 0) ? effectiveList.ignoreAtStart : 0;
 
             log.debug("PLM> part: " + (p + 1)
                     + ", start at pos " + startElementIndex
@@ -518,20 +533,17 @@ public abstract class AbstractBreaker {
 
             int displayAlign = getCurrentDisplayAlign();
 
-            //The following is needed by SpaceResolver.performConditionalsNotification()
-            //further down as there may be important Position elements in the element list trailer
+            // The following is needed by SpaceResolver.performConditionalsNotification()
+            // further down as there may be important Position elements in the element list trailer
             int notificationEndElementIndex = endElementIndex;
 
             // ignore the last elements added by the
             // PageSequenceLayoutManager
-            endElementIndex -= (endElementIndex == (originalList.size() - 1))
-                    ? effectiveList.ignoreAtEnd
-                    : 0;
+            endElementIndex -= (endElementIndex == (originalList.size() - 1)) ? effectiveList.ignoreAtEnd : 0;
 
             // ignore the last element in the page if it is a KnuthGlue
             // object
-            if (((KnuthElement) effectiveList.get(endElementIndex))
-                    .isGlue()) {
+            if (((KnuthElement) effectiveList.get(endElementIndex)).isGlue()) {
                 endElementIndex--;
             }
 
@@ -556,13 +568,12 @@ public abstract class AbstractBreaker {
                 }
 
                 // Handle SpaceHandling(Break)Positions, see SpaceResolver!
-                SpaceResolver.performConditionalsNotification(effectiveList,
-                        startElementIndex, notificationEndElementIndex, lastBreak);
+                SpaceResolver.performConditionalsNotification(effectiveList, startElementIndex,
+                        notificationEndElementIndex, lastBreak);
                 // Add areas now!
-                addAreas(new KnuthPossPosIter(effectiveList,
-                        startElementIndex, endElementIndex + 1), childLC);
+                addAreas(new KnuthPossPosIter(effectiveList, startElementIndex, endElementIndex + 1), childLC);
             } else {
-                //no content for this part
+                // no content for this part
                 handleEmptyContent();
             }
 
@@ -570,6 +581,10 @@ public abstract class AbstractBreaker {
 
             lastBreak = endElementIndex;
             startElementIndex = pbp.getLeafPos() + 1;
+        }
+        if (alg.handlingFloat()) {
+            addAreasForFloats(alg, startPart, partCount, originalList, effectiveList, childLC, lastBreak,
+                    startElementIndex, endElementIndex);
         }
     }
     /**
@@ -774,4 +789,14 @@ public abstract class AbstractBreaker {
         return nextSequenceStartsOn;
     }
 
+    protected int handleFloatLayout(PageBreakingAlgorithm alg, int optimalPageCount, BlockSequence blockList,
+            LayoutContext childLC) {
+        throw new IllegalStateException();
+    }
+
+    protected void addAreasForFloats(PageBreakingAlgorithm alg, int startPart, int partCount,
+            BlockSequence originalList, BlockSequence effectiveList, final LayoutContext childLC,
+            int lastBreak, int startElementIndex, int endElementIndex) {
+        throw new IllegalStateException();
+    }
 }

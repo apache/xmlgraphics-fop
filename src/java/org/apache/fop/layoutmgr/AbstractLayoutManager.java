@@ -537,4 +537,11 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
         }
         ((AbstractLayoutManager) lm).possiblyRegisterMarkersForTables(markers, isStarting, isFirst, isLast);
     }
+
+    public boolean handlingFloat() {
+        if (parentLayoutManager != null && parentLayoutManager instanceof AbstractLayoutManager) {
+            return ((AbstractLayoutManager) parentLayoutManager).handlingFloat();
+        }
+        return false;
+    }
 }

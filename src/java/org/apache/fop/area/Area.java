@@ -111,6 +111,8 @@ public class Area extends AreaTreeObject implements Serializable {
     /** the area's block-progression-dimension */
     protected int bpd;
 
+    protected int effectiveIPD = -1;
+
     /**
      * Resolved bidirectional level for area.
      */
@@ -206,6 +208,10 @@ public class Area extends AreaTreeObject implements Serializable {
      */
     public int getAllocIPD() {
         return getBorderAndPaddingWidthStart() + getIPD() + getBorderAndPaddingWidthEnd();
+    }
+
+    public int getEffectiveAllocIPD() {
+        return getBorderAndPaddingWidthStart() + getEffectiveIPD() + getBorderAndPaddingWidthEnd();
     }
 
     /**
@@ -498,5 +504,15 @@ public class Area extends AreaTreeObject implements Serializable {
         sb.append(", bpd=").append(Integer.toString(getBPD()));
         sb.append("}");
         return sb.toString();
+    }
+
+    public int getEffectiveIPD() {
+        return 0;
+    }
+
+    public void activateEffectiveIPD() {
+        if (effectiveIPD != -1) {
+            ipd = effectiveIPD;
+        }
     }
 }

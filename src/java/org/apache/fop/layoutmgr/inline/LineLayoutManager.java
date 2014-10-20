@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr.inline;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +51,7 @@ import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.BreakingAlgorithm;
 import org.apache.fop.layoutmgr.ElementListObserver;
+import org.apache.fop.layoutmgr.FloatContentLayoutManager;
 import org.apache.fop.layoutmgr.FootenoteUtil;
 import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
@@ -963,13 +965,19 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 /* "normal" vertical alignment: create a sequence whose boxes
                    represent effective lines, and contain LineBreakPositions */
                 int startIndex = 0;
+                int previousEndIndex = 0;
                 for (int i = 0;
                         i < llPoss.getChosenLineCount();
                         i++) {
+                    int orphans = fobj.getOrphans();
+                    int widows = fobj.getWidows();
+                    if (handlingFloat()) {
+                        orphans = 1;
+                        widows = 1;
+                    }
                     if (returnList.size() > 0
                             && i > 0 //if i==0 break generated above already
-                            && i >= fobj.getOrphans()
-                            && i <= llPoss.getChosenLineCount() - fobj.getWidows()) {
+                            && i >= orphans && i <= llPoss.getChosenLineCount() - widows) {
                         // penalty allowing a page break between lines
                         Keep keep = getKeepTogether();
                         returnList.add(new BreakElement(
@@ -983,14 +991,28 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     // whose citations are in this line
                     List<FootnoteBodyLayoutManager> footnoteList = FootenoteUtil.getFootnotes(
                             seq, startIndex, endIndex);
+                    List<FloatContentLayoutManager> floats = FloatContentLayoutManager.checkForFloats(seq,
+                            startIndex, endIndex);
                     startIndex = endIndex + 1;
                     LineBreakPosition lbp = (LineBreakPosition) llPoss.getChosenPosition(i);
                     if (baselineOffset < 0) {
                         baselineOffset = lbp.spaceBefore + lbp.baseline;
                     }
-                    returnList.add(new KnuthBlockBox(
-                                   lbp.lineHeight + lbp.spaceBefore + lbp.spaceAfter,
-                                    footnoteList, lbp, false));
+                    if (floats.isEmpty()) {
+                        returnList.add(new KnuthBlockBox(lbp.lineHeight + lbp.spaceBefore + lbp.spaceAfter,
+                                footnoteList, lbp, false));
+                    } else {
+                        // add a line with height zero and no content and attach float to it
+                        returnList.add(new KnuthBlockBox(0, Collections.emptyList(), null, false, floats));
+                        // add a break element to signal that we should restart LB at this break
+                        Keep keep = getKeepTogether();
+                        returnList.add(new BreakElement(new LeafPosition(this, p, previousEndIndex), keep
+                                .getPenalty(), keep.getContext(), context));
+                        // add the original line where the float was but without the float now
+                        returnList.add(new KnuthBlockBox(lbp.lineHeight + lbp.spaceBefore + lbp.spaceAfter,
+                                footnoteList, lbp, false));
+                    }
+                    previousEndIndex = endIndex;
                 }
             }
         }
@@ -1196,10 +1218,15 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         for (int p = 0; p < knuthParagraphs.size(); p++) {
             LineLayoutPossibilities llPoss = lineLayoutsList[p];
             //log.debug("demerits of the chosen layout: " + llPoss.getChosenDemerits());
+            int orphans = fobj.getOrphans();
+            int widows = fobj.getWidows();
+            if (handlingFloat()) {
+                orphans = 1;
+                widows = 1;
+            }
             for (int i = 0; i < llPoss.getChosenLineCount(); i++) {
-                if (!((BlockLevelLayoutManager) parentLayoutManager).mustKeepTogether()
-                    && i >= fobj.getOrphans()
-                    && i <= llPoss.getChosenLineCount() - fobj.getWidows()) {
+                if (!((BlockLevelLayoutManager) parentLayoutManager).mustKeepTogether() && i >= orphans
+                        && i <= llPoss.getChosenLineCount() - widows) {
                     // null penalty allowing a page break between lines
                     returnList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
                 }

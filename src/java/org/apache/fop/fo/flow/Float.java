@@ -34,11 +34,10 @@ import org.apache.fop.fo.ValidationException;
  */
 public class Float extends FObj {
     // The value of properties relevant for fo:float (commented out for performance.
-    //     private int float_;
-    //     private int clear;
+    private int foFloat;
+    private int clear;
     // End of property values
-
-    private static boolean notImplementedWarningGiven;
+    private boolean inWhiteSpace;
 
     /**
      * Base constructor
@@ -47,17 +46,13 @@ public class Float extends FObj {
      */
     public Float(FONode parent) {
         super(parent);
-
-        if (!notImplementedWarningGiven) {
-            getFOValidationEventProducer().unimplementedFeature(this, getName(),
-                    getName(), getLocator());
-            notImplementedWarningGiven = true;
-        }
     }
 
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
-        // No active properties -> Nothing to do.
+        super.bind(pList);
+        foFloat = pList.get(PR_FLOAT).getEnum();
+        clear = pList.get(PR_CLEAR).getEnum();
     }
 
     /**
@@ -91,5 +86,17 @@ public class Float extends FObj {
      */
     public int getNameId() {
         return FO_FLOAT;
+    }
+
+    public int getFloat() {
+        return foFloat;
+    }
+
+    public void setInWhiteSpace(boolean iws) {
+        inWhiteSpace = iws;
+    }
+
+    public boolean getInWhiteSpace() {
+        return inWhiteSpace;
     }
 }

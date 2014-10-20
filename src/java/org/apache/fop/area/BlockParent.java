@@ -123,4 +123,25 @@ public class BlockParent extends Area {
     public int getYOffset() {
         return yOffset;
     }
+
+    public int getEffectiveIPD() {
+        int maxIPD = 0;
+        if (children != null) {
+            for (Area area : children) {
+                int effectiveIPD = area.getEffectiveIPD();
+                if (effectiveIPD > maxIPD) {
+                    maxIPD = effectiveIPD;
+                }
+            }
+        }
+        return maxIPD;
+    }
+
+    public void activateEffectiveIPD() {
+        if (children != null) {
+            for (Area area : children) {
+                area.activateEffectiveIPD();
+            }
+        }
+    }
 }

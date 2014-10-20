@@ -20,6 +20,8 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -32,6 +34,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.StaticContent;
+import org.apache.fop.layoutmgr.BreakingAlgorithm.KnuthNode;
 import org.apache.fop.layoutmgr.PageBreakingAlgorithm.PageBreakingLayoutListener;
 import org.apache.fop.traits.MinOptMax;
 
@@ -47,6 +50,10 @@ public class PageBreaker extends AbstractBreaker {
     private PageProvider pageProvider;
     private Block separatorArea;
     private boolean spanAllActive;
+    private boolean handlingStartOfFloat;
+    private boolean handlingEndOfFloat;
+    private int floatHeight;
+    private int floatYOffset;
 
     /**
      * The FlowLayoutManager object, which processes
@@ -69,7 +76,7 @@ public class PageBreaker extends AbstractBreaker {
 
     /** {@inheritDoc} */
     protected void updateLayoutContext(LayoutContext context) {
-        int flowIPD = pslm.getCurrentPV().getCurrentSpan().getColumnWidth();
+        int flowIPD = pslm.getCurrentColumnWidth();
         context.setRefIPD(flowIPD);
     }
 
@@ -140,18 +147,20 @@ public class PageBreaker extends AbstractBreaker {
     /** {@inheritDoc} */
     protected int getNextBlockList(LayoutContext childLC, int nextSequenceStartsOn,
             Position positionAtIPDChange, LayoutManager restartLM, List firstElements) {
-        if (!firstPart) {
-            // if this is the first page that will be created by
-            // the current BlockSequence, it could have a break
-            // condition that must be satisfied;
-            // otherwise, we may simply need a new page
-            handleBreakTrait(nextSequenceStartsOn);
-        }
-        firstPart = false;
-        pageBreakHandled = true;
+        if (!handlingFloat()) {
+            if (!firstPart) {
+                // if this is the first page that will be created by
+                // the current BlockSequence, it could have a break
+                // condition that must be satisfied;
+                // otherwise, we may simply need a new page
+                handleBreakTrait(nextSequenceStartsOn);
+            }
+            firstPart = false;
+            pageBreakHandled = true;
 
-        pageProvider.setStartOfNextElementList(pslm.getCurrentPageNum(),
-                pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex(), this.spanAllActive);
+            pageProvider.setStartOfNextElementList(pslm.getCurrentPageNum(), pslm.getCurrentPV()
+                    .getCurrentSpan().getCurrentFlowIndex(), this.spanAllActive);
+        }
         return super.getNextBlockList(childLC, nextSequenceStartsOn, positionAtIPDChange,
                 restartLM, firstElements);
     }
@@ -234,6 +243,7 @@ public class PageBreaker extends AbstractBreaker {
             // handle the footnote separator
             handleFootnoteSeparator();
         }
+
         return contentList;
     }
 
@@ -615,5 +625,195 @@ public class PageBreaker extends AbstractBreaker {
         } else {
             return true;
         }
+    }
+
+    protected boolean handlingStartOfFloat() {
+        return handlingStartOfFloat;
+    }
+
+    protected void handleStartOfFloat(int fHeight, int fYOffset) {
+        handlingStartOfFloat = true;
+        handlingEndOfFloat = false;
+        floatHeight = fHeight;
+        floatYOffset = fYOffset;
+        childFLM.handleFloatOn();
+    }
+
+    protected int getFloatHeight() {
+        return floatHeight;
+    }
+
+    protected int getFloatYOffset() {
+        return floatYOffset;
+    }
+
+    protected boolean handlingEndOfFloat() {
+        return handlingEndOfFloat;
+    }
+
+    protected void handleEndOfFloat(int fHeight) {
+        handlingEndOfFloat = true;
+        handlingStartOfFloat = false;
+        floatHeight = fHeight;
+        childFLM.handleFloatOff();
+    }
+
+    protected boolean handlingFloat() {
+        return (handlingStartOfFloat || handlingEndOfFloat);
+    }
+
+    public int getOffsetDueToFloat() {
+        handlingEndOfFloat = false;
+        return floatHeight + floatYOffset;
+    }
+
+    protected int handleFloatLayout(PageBreakingAlgorithm alg, int optimalPageCount, BlockSequence blockList,
+            LayoutContext childLC) {
+        pageBreakHandled = true;
+        List firstElements = Collections.EMPTY_LIST;
+        KnuthNode floatNode = alg.getBestFloatEdgeNode();
+        int floatPosition = floatNode.position;
+        KnuthElement floatElem = alg.getElement(floatPosition);
+        Position positionAtBreak = floatElem.getPosition();
+        if (!(positionAtBreak instanceof SpaceResolver.SpaceHandlingBreakPosition)) {
+            throw new UnsupportedOperationException("Don't know how to restart at position" + positionAtBreak);
+        }
+        /* Retrieve the original position wrapped into this space position */
+        positionAtBreak = positionAtBreak.getPosition();
+        addAreas(alg, optimalPageCount, blockList, blockList);
+        blockLists.clear();
+        blockListIndex = -1;
+        LayoutManager restartAtLM = null;
+        if (positionAtBreak != null && positionAtBreak.getIndex() == -1) {
+            Position position;
+            Iterator iter = blockList.listIterator(floatPosition + 1);
+            do {
+                KnuthElement nextElement = (KnuthElement) iter.next();
+                position = nextElement.getPosition();
+            } while (position == null || position instanceof SpaceResolver.SpaceHandlingPosition
+                    || position instanceof SpaceResolver.SpaceHandlingBreakPosition
+                    && position.getPosition().getIndex() == -1);
+            LayoutManager surroundingLM = positionAtBreak.getLM();
+            while (position.getLM() != surroundingLM) {
+                position = position.getPosition();
+            }
+            restartAtLM = position.getPosition().getLM();
+        }
+        int nextSequenceStartsOn = getNextBlockList(childLC, Constants.EN_COLUMN, positionAtBreak,
+                restartAtLM, firstElements);
+        return nextSequenceStartsOn;
+    }
+
+    protected void addAreasForFloats(PageBreakingAlgorithm alg, int startPart, int partCount,
+            BlockSequence originalList, BlockSequence effectiveList, final LayoutContext childLC,
+            int lastBreak, int startElementIndex, int endElementIndex) {
+        FloatPosition pbp = alg.getFloatPosition();
+
+        // Check the last break position for forced breaks
+        int lastBreakClass;
+        if (startElementIndex == 0) {
+            lastBreakClass = effectiveList.getStartOn();
+        } else {
+            ListElement lastBreakElement = effectiveList.getElement(endElementIndex);
+            if (lastBreakElement.isPenalty()) {
+                KnuthPenalty pen = (KnuthPenalty) lastBreakElement;
+                if (pen.getPenalty() == KnuthPenalty.INFINITE) {
+                    /**
+                     * That means that there was a keep.within-page="always", but that
+                     * it's OK to break at a column. TODO The break class is being
+                     * abused to implement keep.within-column and keep.within-page.
+                     * This is very misleading and must be revised.
+                     */
+                    lastBreakClass = Constants.EN_COLUMN;
+                } else {
+                    lastBreakClass = pen.getBreakClass();
+                }
+            } else {
+                lastBreakClass = Constants.EN_COLUMN;
+            }
+        }
+
+        // the end of the new part
+        endElementIndex = pbp.getLeafPos();
+
+        // ignore the first elements added by the
+        // PageSequenceLayoutManager
+        startElementIndex += (startElementIndex == 0) ? effectiveList.ignoreAtStart : 0;
+
+        log.debug("PLM> part: " + (startPart + partCount + 1) + ", start at pos " + startElementIndex
+                + ", break at pos " + endElementIndex + ", break class = "
+                + getBreakClassName(lastBreakClass));
+
+        startPart(effectiveList, lastBreakClass);
+
+        int displayAlign = getCurrentDisplayAlign();
+
+        // The following is needed by SpaceResolver.performConditionalsNotification()
+        // further down as there may be important Position elements in the element list trailer
+        int notificationEndElementIndex = endElementIndex;
+
+        // ignore the last elements added by the
+        // PageSequenceLayoutManager
+        endElementIndex -= (endElementIndex == (originalList.size() - 1)) ? effectiveList.ignoreAtEnd : 0;
+
+        // ignore the last element in the page if it is a KnuthGlue
+        // object
+        if (((KnuthElement) effectiveList.get(endElementIndex)).isGlue()) {
+            endElementIndex--;
+        }
+
+        // ignore KnuthGlue and KnuthPenalty objects
+        // at the beginning of the line
+        startElementIndex = alg.par.getFirstBoxIndex(startElementIndex);
+
+        if (startElementIndex <= endElementIndex) {
+            if (log.isDebugEnabled()) {
+                log.debug("     addAreas from " + startElementIndex + " to " + endElementIndex);
+            }
+            // set the space adjustment ratio
+            childLC.setSpaceAdjust(pbp.bpdAdjust);
+            // add space before if display-align is center or bottom
+            // add space after if display-align is distribute and
+            // this is not the last page
+            if (pbp.difference != 0 && displayAlign == Constants.EN_CENTER) {
+                childLC.setSpaceBefore(pbp.difference / 2);
+            } else if (pbp.difference != 0 && displayAlign == Constants.EN_AFTER) {
+                childLC.setSpaceBefore(pbp.difference);
+            }
+
+            // Handle SpaceHandling(Break)Positions, see SpaceResolver!
+            SpaceResolver.performConditionalsNotification(effectiveList, startElementIndex,
+                    notificationEndElementIndex, lastBreak);
+            // Add areas of lines, in the current page, before the float or during float
+            addAreas(new KnuthPossPosIter(effectiveList, startElementIndex, endElementIndex + 1), childLC);
+            // add areas for the float, if applicable
+            if (alg.handlingStartOfFloat()) {
+                for (int k = startElementIndex; k < endElementIndex + 1; k++) {
+                    ListElement le = effectiveList.getElement(k);
+                    if (le instanceof KnuthBlockBox) {
+                        KnuthBlockBox kbb = (KnuthBlockBox) le;
+                        for (FloatContentLayoutManager fclm : kbb.getFloatContentLMs()) {
+                            fclm.processAreas(childLC);
+                            int floatHeight = fclm.getFloatHeight();
+                            int floatYOffset = fclm.getFloatYOffset();
+                            PageSequenceLayoutManager pslm = (PageSequenceLayoutManager) getTopLevelLM();
+                            pslm.recordStartOfFloat(floatHeight, floatYOffset);
+                        }
+                    }
+                }
+            }
+            if (alg.handlingEndOfFloat()) {
+                PageSequenceLayoutManager pslm = (PageSequenceLayoutManager) getTopLevelLM();
+                pslm.setEndIntrusionAdjustment(0);
+                pslm.setStartIntrusionAdjustment(0);
+                int effectiveFloatHeight = alg.getFloatHeight();
+                pslm.recordEndOfFloat(effectiveFloatHeight);
+            }
+        } else {
+            // no content for this part
+            handleEmptyContent();
+        }
+
+        pageBreakHandled = true;
     }
 }

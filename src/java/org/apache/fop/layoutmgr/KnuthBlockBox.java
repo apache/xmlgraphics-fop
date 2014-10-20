@@ -36,6 +36,7 @@ public class KnuthBlockBox extends KnuthBox {
      */
     private int bpd;
     private List<FootnoteBodyLayoutManager> footnoteList;
+    private List<FloatContentLayoutManager> floatContentLMs;
     /** List of Knuth elements. This is a list of LinkedList elements. */
     private List elementLists;
 
@@ -53,6 +54,7 @@ public class KnuthBlockBox extends KnuthBox {
         ipdRange = range;
         bpd = bpdim;
         footnoteList = new LinkedList<FootnoteBodyLayoutManager>();
+        floatContentLMs = new LinkedList<FloatContentLayoutManager>();
     }
 
     /**
@@ -69,6 +71,16 @@ public class KnuthBlockBox extends KnuthBox {
         ipdRange = MinOptMax.ZERO;
         bpd = 0;
         footnoteList = new LinkedList<FootnoteBodyLayoutManager>(list);
+        floatContentLMs = new LinkedList<FloatContentLayoutManager>();
+    }
+
+    public KnuthBlockBox(int width, List list, Position pos, boolean auxiliary,
+            List<FloatContentLayoutManager> fclms) {
+        super(width, pos, auxiliary);
+        ipdRange = MinOptMax.ZERO;
+        bpd = 0;
+        footnoteList = new LinkedList<FootnoteBodyLayoutManager>(list);
+        floatContentLMs = new LinkedList<FloatContentLayoutManager>(fclms);
     }
 
     /**
@@ -121,5 +133,13 @@ public class KnuthBlockBox extends KnuthBox {
      */
     public int getBPD() {
         return bpd;
+    }
+
+    public List<FloatContentLayoutManager> getFloatContentLMs() {
+        return floatContentLMs;
+    }
+
+    public boolean hasFloatAnchors() {
+        return (floatContentLMs.size() > 0);
     }
 }
