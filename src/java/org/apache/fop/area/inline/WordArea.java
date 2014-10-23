@@ -155,10 +155,11 @@ public class WordArea extends InlineArea {
     public List collectInlineRuns(List runs) {
         assert runs != null;
         InlineRun r;
-        if (getBidiLevels() != null) {
-            r = new InlineRun(this, getBidiLevels());
+        int[] levels = getBidiLevels();
+        if ((levels != null) && (levels.length > 0)) {
+            r = new InlineRun(this, levels);
         } else {
-            r = new InlineRun(this, -1, word.length());
+            r = new InlineRun(this, getBidiLevel(), word.length());
         }
         runs.add(r);
         return runs;

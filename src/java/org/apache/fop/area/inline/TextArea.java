@@ -91,7 +91,7 @@ public class TextArea extends AbstractTextArea {
     public void addWord(
         String word, int ipd, int[] letterAdjust, int[] levels,
           int[][] gposAdjustments, int blockProgressionOffset) {
-        int minWordLevel = findMinLevel(levels);
+        int minWordLevel = findMinLevel(levels, getBidiLevel());
         WordArea wordArea = new WordArea(
             blockProgressionOffset, minWordLevel, word, letterAdjust, levels, gposAdjustments);
         wordArea.setIPD(ipd);
@@ -167,7 +167,7 @@ public class TextArea extends AbstractTextArea {
         return sb.toString();
     }
 
-    private void updateLevel(int newLevel) {
+    public void updateLevel(int newLevel) {
         if (newLevel >= 0) {
             int curLevel = getBidiLevel();
             if (curLevel >= 0) {
@@ -180,7 +180,7 @@ public class TextArea extends AbstractTextArea {
         }
     }
 
-    private static int findMinLevel(int[] levels) {
+    private static int findMinLevel(int[] levels, int defaultLevel) {
         if (levels != null) {
             int lMin = Integer.MAX_VALUE;
             for (int i = 0, n = levels.length; i < n; i++) {
@@ -195,7 +195,7 @@ public class TextArea extends AbstractTextArea {
                 return lMin;
             }
         } else {
-            return -1;
+            return defaultLevel;
         }
     }
 
