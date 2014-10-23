@@ -443,6 +443,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             int wordCharLength = 0;
             for (int wordIndex = firstIndex; wordIndex <= lastIndex; wordIndex++) {
                 mapping = getGlyphMapping(wordIndex);
+                textArea.updateLevel(mapping.level);
                 if (mapping.isSpace) {
                     addSpaces();
                 } else {

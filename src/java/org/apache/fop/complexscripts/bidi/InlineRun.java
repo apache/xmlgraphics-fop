@@ -293,7 +293,7 @@ public class InlineRun {
         return lb.toString();
     }
     private static int[] makeLevels(int level, int count) {
-        int[] levels = new int [ count ];
+        int[] levels = new int [ count > 0 ? count : 1 ];
         Arrays.fill(levels, level);
         return levels;
     }
