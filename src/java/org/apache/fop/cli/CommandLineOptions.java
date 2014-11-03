@@ -142,6 +142,8 @@ public class CommandLineOptions {
 
     private URI baseURI = new File(".").getAbsoluteFile().toURI();
 
+    private String cacheName;
+
     /**
      * Construct a command line option object.
      */
@@ -288,7 +290,7 @@ public class CommandLineOptions {
             } else if (args[i].equals("-flush")) {
                 flushCache = true;
             } else if (args[i].equals("-cache")) {
-                parseCacheOption(args, i);
+                i = i + parseCacheOption(args, i);
             } else if (args[i].equals("-dpi")) {
                 i = i + parseResolution(args, i);
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
@@ -410,7 +412,7 @@ public class CommandLineOptions {
             throw new FOPException("if you use '-cache', you must specify "
               + "the name of the font cache file");
         } else {
-            factory.getFontManager().setCacheFile(URI.create(args[i + 1]));
+            cacheName = args[i + 1];
             return 1;
         }
     }
@@ -1037,6 +1039,9 @@ public class CommandLineOptions {
             }
         }
         factory = fopFactoryBuilder.build();
+        if (cacheName != null) {
+            factory.getFontManager().setCacheFile(URI.create(cacheName));
+        }
      }
 
     /**
