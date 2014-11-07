@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks floats.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master margin="0.25in" master-name="page" page-height="11in" page-width="8.5in">
+      <fo:region-body />
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>
+Did you know... (taken from Wikipedia main page on November 6th, 2014, with the order slightly changed to better show the wrapping around the float)
+      </fo:block>
+      <fo:block>
+From Wikipedia's new and recently improved content:
+      </fo:block>
+      <fo:block>
+        <fo:float float="end">
+          <fo:block border="1pt solid red" padding="5pt" end-indent="0pt" start-indent="0pt">
+            <fo:block-container inline-progression-dimension="120pt">
+              <fo:block background-color="yellow">
+The former dean's house at the University of Wisconsin (this is the alt text of the image in the Wikipedia page)
+              </fo:block>
+            </fo:block-container>
+          </fo:block>
+        </fo:float>
+      </fo:block>
+      <fo:block>
+        <fo:list-block>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>&#x2022;</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+... that the Queen Anne house (pictured) at the Allen Centennial Gardens was home to four deans of the University of Wisconsin–Madison College of Agricultural and Life Sciences?
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>&#x2022;</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+... that rhapsodomancy was so vague, Virgil wrote against it in The Aeneid?
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>&#x2022;</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+... that Australian physician Claudia Burton Bradley was one of the first diabetics to be treated with insulin?
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>&#x2022;</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+... that Green Bay Packers offensive lineman David Bakhtiari was the first rookie in Packers history to start every game at left tackle in a season since the start of the 16-game season?
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>&#x2022;</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+... that in the Byzantine Empire, the office of orphanotrophos, head of the imperial orphanage, ranked among the higher offices of state?
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>&#x2022;</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+... that the stream Shingle Run is actually named after sawmills?
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>&#x2022;</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+... that while testifying in a 2004 lawsuit involving the meaning of the word steakburger, a corporate CEO was grilled on the witness stand?
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+        </fo:list-block>
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <!-- first float -->
+    <eval expected="450000" xpath="//pageViewport[1]/page/regionViewport[1]//flow[1]/block[4]/@left-offset" />
+    <eval expected="... that the Queen Anne house (pictured) at the Allen Centennial Gardens" xpath="//pageViewport[1]/page/regionViewport[1]//flow[1]/block[6]/block[1]/block[1]/block[2]/block[1]/lineArea[1]" />
+    <eval expected="... that Green Bay Packers offensive lineman David Bakhtiari was the first" xpath="//pageViewport[1]/page/regionViewport[1]//flow[1]/block[6]/block[1]/block[4]/block[2]/block[1]/lineArea[1]" />
+    <eval expected="rookie in Packers history to start every game at left tackle in a season since the start of the 16-game" xpath="//pageViewport[1]/page/regionViewport[1]//flow[1]/block[7]/block[1]/block[1]/block[1]/block[1]/lineArea[1]" />
+  </checks>
+</testcase>
+
+

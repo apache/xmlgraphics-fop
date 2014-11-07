@@ -36,6 +36,7 @@ import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.layoutmgr.BreakingAlgorithm.KnuthNode;
 import org.apache.fop.layoutmgr.PageBreakingAlgorithm.PageBreakingLayoutListener;
+import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -685,19 +686,23 @@ public class PageBreaker extends AbstractBreaker {
         blockListIndex = -1;
         LayoutManager restartAtLM = null;
         if (positionAtBreak != null && positionAtBreak.getIndex() == -1) {
-            Position position;
-            Iterator iter = blockList.listIterator(floatPosition + 1);
-            do {
-                KnuthElement nextElement = (KnuthElement) iter.next();
-                position = nextElement.getPosition();
-            } while (position == null || position instanceof SpaceResolver.SpaceHandlingPosition
-                    || position instanceof SpaceResolver.SpaceHandlingBreakPosition
-                    && position.getPosition().getIndex() == -1);
-            LayoutManager surroundingLM = positionAtBreak.getLM();
-            while (position.getLM() != surroundingLM) {
-                position = position.getPosition();
+            if (positionAtBreak instanceof ListItemLayoutManager.ListItemPosition) {
+                restartAtLM = positionAtBreak.getLM();
+            } else {
+                Position position;
+                Iterator iter = blockList.listIterator(floatPosition + 1);
+                do {
+                    KnuthElement nextElement = (KnuthElement) iter.next();
+                    position = nextElement.getPosition();
+                } while (position == null || position instanceof SpaceResolver.SpaceHandlingPosition
+                        || position instanceof SpaceResolver.SpaceHandlingBreakPosition
+                        && position.getPosition().getIndex() == -1);
+                LayoutManager surroundingLM = positionAtBreak.getLM();
+                while (position.getLM() != surroundingLM) {
+                    position = position.getPosition();
+                }
+                restartAtLM = position.getPosition().getLM();
             }
-            restartAtLM = position.getPosition().getLM();
         }
         int nextSequenceStartsOn = getNextBlockList(childLC, Constants.EN_COLUMN, positionAtBreak,
                 restartAtLM, firstElements);
