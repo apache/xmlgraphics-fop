@@ -144,10 +144,16 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
             throws FOPException, URISyntaxException {
         String embed = font.getEmbedURI();
         String metrics = font.getMetrics();
-        String subFont = font.getSubFont();
-        URI metricsUri = metrics == null ? null : InternalResourceResolver.cleanURI(metrics);
+        String afm = font.getAfm();
+        String pfm = font.getPfm();
         URI embedUri = InternalResourceResolver.cleanURI(embed);
+        URI metricsUri = metrics == null ? null : InternalResourceResolver.cleanURI(metrics);
+        URI afmUri = (afm == null) ? null : InternalResourceResolver.cleanURI(afm);
+        URI pfmUri = (pfm == null) ? null : InternalResourceResolver.cleanURI(pfm);
+        FontUris fontUris = (afmUri != null || pfmUri != null) ? new FontUris(embedUri, metricsUri, afmUri,
+                pfmUri) : new FontUris(embedUri, metricsUri);
 
+        String subFont = font.getSubFont();
         List<FontTriplet> tripletList = font.getTripletList();
 
         // no font triplet info
@@ -160,8 +166,8 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
         }
         EncodingMode encodingMode = EncodingMode.getValue(font.getEncodingMode());
         EmbeddingMode embeddingMode = EmbeddingMode.getValue(font.getEmbeddingMode());
-        EmbedFontInfo embedFontInfo = new EmbedFontInfo(metricsUri, font.isKerning(),
-                font.isAdvanced(), tripletList, embedUri, subFont, encodingMode, embeddingMode);
+        EmbedFontInfo embedFontInfo = new EmbedFontInfo(fontUris, font.isKerning(), font.isAdvanced(),
+                tripletList, subFont, encodingMode, embeddingMode);
         if (fontCache != null) {
             if (!fontCache.containsFont(embedFontInfo)) {
                 fontCache.addFont(embedFontInfo, resourceResolver);

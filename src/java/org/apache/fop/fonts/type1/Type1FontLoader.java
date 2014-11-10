@@ -22,7 +22,6 @@ package org.apache.fop.fonts.type1;
 import java.awt.geom.RectangularShape;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +36,7 @@ import org.apache.fop.fonts.CodePointMapping;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontType;
+import org.apache.fop.fonts.FontUris;
 import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
 
@@ -51,6 +51,8 @@ public class Type1FontLoader extends FontLoader {
 
     private EmbeddingMode embeddingMode;
 
+    private final FontUris fontUris;
+
     /**
      * Constructs a new Type 1 font loader.
      * @param fontFileURI the URI to the PFB file of a Type 1 font
@@ -59,10 +61,11 @@ public class Type1FontLoader extends FontLoader {
      * @param resourceResolver the font resolver used to resolve URIs
      * @throws IOException In case of an I/O error
      */
-    public Type1FontLoader(URI fontFileURI, boolean embedded, EmbeddingMode embeddingMode,
+    public Type1FontLoader(FontUris fontUris, boolean embedded, EmbeddingMode embeddingMode,
             boolean useKerning, InternalResourceResolver resourceResolver) throws IOException {
-        super(fontFileURI, embedded, useKerning, true, resourceResolver);
+        super(fontUris.getEmbed(), embedded, useKerning, true, resourceResolver);
         this.embeddingMode = embeddingMode;
+        this.fontUris = fontUris;
     }
 
     private String getPFMURI(String pfbURI) {
@@ -83,18 +86,26 @@ public class Type1FontLoader extends FontLoader {
         InputStream afmIn = null;
         String fontFileStr = fontFileURI.toASCIIString();
         String partialAfmUri = fontFileStr.substring(0, fontFileStr.length() - 4);
-        String afmUri = null;
-        for (String afmExtension : AFM_EXTENSIONS) {
-            try {
-                afmUri = partialAfmUri + afmExtension;
-                afmIn = resourceResolver.getResource(afmUri);
-                if (afmIn != null) {
-                    break;
+        String afmUri = (fontUris.getAfm() != null) ? fontUris.getAfm().toASCIIString() : null;
+        if (afmUri == null) {
+            for (String afmExtension : AFM_EXTENSIONS) {
+                try {
+                    afmUri = partialAfmUri + afmExtension;
+                    afmIn = resourceResolver.getResource(afmUri);
+                    if (afmIn != null) {
+                        break;
+                    }
+                } catch (IOException ioe) {
+                    // Ignore, AFM probably not available under the URI
+                } catch (URISyntaxException e) {
+                    // Ignore, AFM probably not available under the URI
                 }
-            } catch (IOException ioe) {
-                // Ignore, AFM probably not available under the URI
+            }
+        } else {
+            try {
+                afmIn = resourceResolver.getResource(afmUri);
             } catch (URISyntaxException e) {
-                // Ignore, AFM probably not available under the URI
+                throw new IOException(e);
             }
         }
         if (afmIn != null) {
@@ -106,7 +117,8 @@ public class Type1FontLoader extends FontLoader {
             }
         }
 
-        String pfmUri = getPFMURI(fontFileStr);
+        String pfmUri = (fontUris.getPfm() == null) ? getPFMURI(fontFileStr) : fontUris.getPfm()
+                .toASCIIString();
         InputStream pfmIn = null;
         try {
             pfmIn = resourceResolver.getResource(pfmUri);
