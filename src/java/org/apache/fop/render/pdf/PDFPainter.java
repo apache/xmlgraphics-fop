@@ -408,7 +408,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                 if (CharUtilities.isFixedWidthSpace(orgChar)) {
                     //Fixed width space are rendered as spaces so copy/paste works in a reader
                     ch = font.mapChar(CharUtilities.SPACE);
-                    int spaceDiff = font.getCharWidth(ch) - font.getCharWidth(orgChar);
+                    int spaceDiff = font.getCharWidth(CharUtilities.SPACE) - font.getCharWidth(orgChar);
                     glyphAdjust = -spaceDiff;
                 } else {
                     ch = font.mapChar(orgChar);
