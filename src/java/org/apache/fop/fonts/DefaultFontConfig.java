@@ -108,11 +108,13 @@ public final class DefaultFontConfig implements FontConfig {
                             strict);
                     continue;
                 }
-                Font font = new Font(fontCfg.getAttribute("metrics-url", null), embed,
-                        fontCfg.getAttribute("sub-font", null), fontCfg.getAttributeAsBoolean(
-                                "kerning", true), fontCfg.getAttributeAsBoolean("advanced", true),
-                        fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()),
-                        fontCfg.getAttribute("embedding-mode", EncodingMode.AUTO.getName()));
+                Font font = new Font(fontCfg.getAttribute("metrics-url", null), embed, fontCfg.getAttribute(
+                        "embed-url-afm", null), fontCfg.getAttribute("embed-url-pfm", null),
+                        fontCfg.getAttribute("sub-font", null),
+                        fontCfg.getAttributeAsBoolean("kerning", true), fontCfg.getAttributeAsBoolean(
+                                "advanced", true), fontCfg.getAttribute("encoding-mode",
+                                EncodingMode.AUTO.getName()), fontCfg.getAttribute("embedding-mode",
+                                EncodingMode.AUTO.getName()));
                 instance.fonts.add(font);
                 boolean hasTriplets = false;
                 for (Configuration tripletCfg : fontCfg.getChildren("font-triplet")) {
@@ -269,6 +271,10 @@ public final class DefaultFontConfig implements FontConfig {
 
         private final String embedUri;
 
+        private String afm;
+
+        private String pfm;
+
         private final String subFont;
 
         private final boolean kerning;
@@ -289,10 +295,12 @@ public final class DefaultFontConfig implements FontConfig {
             return Collections.unmodifiableList(tripletList);
         }
 
-        private Font(String metrics, String embed, String subFont, boolean kerning,
+        private Font(String metrics, String embed, String afm, String pfm, String subFont, boolean kerning,
                 boolean advanced, String encodingMode, String embeddingMode) {
             this.metrics = metrics;
             this.embedUri = embed;
+            this.afm = afm;
+            this.pfm = pfm;
             this.subFont = subFont;
             this.kerning = kerning;
             this.advanced = advanced;
@@ -338,6 +346,14 @@ public final class DefaultFontConfig implements FontConfig {
 
         public String getEmbeddingMode() {
             return embeddingMode;
+        }
+
+        public String getAfm() {
+            return afm;
+        }
+
+        public String getPfm() {
+            return pfm;
         }
     }
 }
