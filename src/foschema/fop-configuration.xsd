@@ -283,8 +283,6 @@
     </xsd:sequence>
     <xsd:attribute name="metrics-url" type="xsd:anyURI" use="optional"/>
     <xsd:attribute name="embed-url" type="xsd:anyURI" use="optional"/>
-    <xsd:attribute name="embed-url-afm" type="xsd:anyURI" use="optional"/>
-    <xsd:attribute name="embed-url-pfm" type="xsd:anyURI" use="optional"/>
     <xsd:attribute name="sub-font" type="xsd:string" use="optional"/>
     <xsd:attribute name="embedding-mode" use="optional">
       <xsd:simpleType>

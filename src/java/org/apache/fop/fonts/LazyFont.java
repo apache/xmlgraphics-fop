@@ -43,8 +43,8 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
 
     private static Log log = LogFactory.getLog(LazyFont.class);
 
-    private final FontUris fontUris;
-
+    private final URI metricsURI;
+    private final URI fontEmbedURI;
     private final boolean useKerning;
     private final boolean useAdvanced;
     private final EncodingMode encodingMode;
@@ -64,8 +64,8 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      */
     public LazyFont(EmbedFontInfo fontInfo, InternalResourceResolver resourceResolver,
             boolean useComplexScripts) {
-
-        this.fontUris = fontInfo.getFontUris();
+        this.metricsURI = fontInfo.getMetricsURI();
+        this.fontEmbedURI = fontInfo.getEmbedURI();
         this.useKerning = fontInfo.getKerning();
         if (resourceResolver != null) {
             this.useAdvanced = useComplexScripts;
@@ -85,8 +85,8 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     public String toString() {
         StringBuffer sbuf = new StringBuffer(super.toString());
         sbuf.append('{');
-        sbuf.append("metrics-url=" + fontUris.getMetrics());
-        sbuf.append(",embed-url=" + fontUris.getEmbed());
+        sbuf.append("metrics-url=" + metricsURI);
+        sbuf.append(",embed-url=" + fontEmbedURI);
         sbuf.append(",kerning=" + useKerning);
         sbuf.append(",advanced=" + useAdvanced);
         sbuf.append('}');
@@ -96,36 +96,36 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     private void load(boolean fail) {
         if (!isMetricsLoaded) {
             try {
-                if (fontUris.getMetrics() != null) {
+                if (metricsURI != null) {
                     /**@todo Possible thread problem here */
                     FontReader reader = null;
-                    InputStream in = resourceResolver.getResource(fontUris.getMetrics());
+                    InputStream in = resourceResolver.getResource(metricsURI);
                     InputSource src = new InputSource(in);
-                    src.setSystemId(fontUris.getMetrics().toASCIIString());
+                    src.setSystemId(metricsURI.toASCIIString());
                     reader = new FontReader(src, resourceResolver);
                     reader.setKerningEnabled(useKerning);
                     reader.setAdvancedEnabled(useAdvanced);
                     if (this.embedded) {
-                        reader.setFontEmbedURI(fontUris.getEmbed());
+                        reader.setFontEmbedURI(fontEmbedURI);
                     }
                     realFont = reader.getFont();
                 } else {
-                    if (fontUris.getEmbed() == null) {
+                    if (fontEmbedURI == null) {
                         throw new RuntimeException("Cannot load font. No font URIs available.");
                     }
-                    realFont = FontLoader.loadFont(fontUris, subFontName, embedded,
+                    realFont = FontLoader.loadFont(fontEmbedURI, subFontName, embedded,
                             embeddingMode, encodingMode, useKerning, useAdvanced, resourceResolver);
                 }
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;
                 }
             } catch (FOPException fopex) {
-                log.error("Failed to read font metrics file " + fontUris.getMetrics(), fopex);
+                log.error("Failed to read font metrics file " + metricsURI, fopex);
                 if (fail) {
                     throw new RuntimeException(fopex);
                 }
             } catch (IOException ioex) {
-                log.error("Failed to read font metrics file " + fontUris.getMetrics(), ioex);
+                log.error("Failed to read font metrics file " + metricsURI, ioex);
                 if (fail) {
                     throw new RuntimeException(ioex);
                 }
@@ -498,5 +498,6 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
         }
         return realFont.isMultiByte();
     }
+
 }
 
