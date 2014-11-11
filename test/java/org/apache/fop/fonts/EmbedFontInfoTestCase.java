@@ -52,8 +52,8 @@ public class EmbedFontInfoTestCase {
     public void setUp() {
         List<FontTriplet> triplets = new ArrayList<FontTriplet>();
         triplets.add(triplet);
-        FontUris fontUris = new FontUris(embedURI, metricsURI);
-        sut = new EmbedFontInfo(fontUris, kerning, useAdvanced, triplets, subFontName, encMode, embedMode);
+        sut = new EmbedFontInfo(metricsURI, kerning, useAdvanced, triplets, embedURI, subFontName,
+                encMode, embedMode);
     }
 
     @Test
@@ -82,9 +82,8 @@ public class EmbedFontInfoTestCase {
 
     @Test
     public void testQuirkyBoundaryCasesIsEmbedded() {
-        FontUris fontUris = new FontUris(null, metricsURI);
-        sut = new EmbedFontInfo(fontUris, kerning, useAdvanced, sut.getFontTriplets(), subFontName, encMode,
-                embedMode);
+        sut = new EmbedFontInfo(metricsURI, kerning, useAdvanced, sut.getFontTriplets(), null,
+                subFontName, encMode, embedMode);
         sut.setEmbedded(true);
         assertFalse(sut.isEmbedded());
 

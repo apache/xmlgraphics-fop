@@ -34,6 +34,8 @@ public class EmbedFontInfo implements Serializable {
     /** Serialization Version UID */
     private static final long serialVersionUID = 8755432068669997369L;
 
+    protected final URI metricsURI;
+    protected final URI embedURI;
     /** false, to disable kerning */
     protected final boolean kerning;
     /** false, to disable advanced typographic features */
@@ -53,8 +55,6 @@ public class EmbedFontInfo implements Serializable {
 
     private transient boolean embedded = true;
 
-    private FontUris fontUris;
-
     /**
      * Main constructor
      * @param metricsURI the URI of the XML resource containing font metrics
@@ -65,42 +65,26 @@ public class EmbedFontInfo implements Serializable {
      * @param subFontName the sub-fontname used for TrueType Collections (null otherwise)
      * @param encodingMode the encoding mode to use for this font
      */
-    public EmbedFontInfo(FontUris fontUris, boolean kerning, boolean advanced,
-            List<FontTriplet> fontTriplets, String subFontName,
+    public EmbedFontInfo(URI metricsURI, boolean kerning, boolean advanced,
+            List<FontTriplet> fontTriplets, URI embedURI, String subFontName,
             EncodingMode encodingMode, EmbeddingMode embeddingMode) {
+        this.metricsURI = metricsURI;
+        this.embedURI = embedURI;
         this.kerning = kerning;
         this.advanced = advanced;
         this.fontTriplets = fontTriplets;
         this.subFontName = subFontName;
         this.encodingMode = encodingMode;
         this.embeddingMode = embeddingMode;
-        this.fontUris = fontUris;
     }
 
     /**
-<<<<<<< HEAD
-=======
-     * Main constructor
-     * @param metricsURI the URI of the XML resource containing font metrics
-     * @param kerning True if kerning should be enabled
-     * @param fontTriplets List of font triplets to associate with this font
-     * @param embedURI Path to the embeddable font file (may be null)
-     * @param subFontName the sub-fontname used for TrueType Collections (null otherwise)
-     */
-    public EmbedFontInfo(FontUris fontUris, boolean kerning, boolean advanced,
-            List<FontTriplet> fontTriplets, String subFontName) {
-        this(fontUris, kerning, advanced, fontTriplets, subFontName, EncodingMode.AUTO,
-                EmbeddingMode.AUTO);
-    }
-
-    /**
->>>>>>> 9c3c942... added uris for afm and pfm font files
      * Returns the URI of the metrics XML resource
      *
      * @return the metrics file path
      */
     public URI getMetricsURI() {
-        return fontUris.getMetrics();
+        return metricsURI;
     }
 
     /**
@@ -109,7 +93,7 @@ public class EmbedFontInfo implements Serializable {
      * @return the font resource URI
      */
     public URI getEmbedURI() {
-        return fontUris.getEmbed();
+        return embedURI;
     }
 
     /**
@@ -166,7 +150,7 @@ public class EmbedFontInfo implements Serializable {
      * @return true if the font is embedded, false if it is referenced.
      */
     public boolean isEmbedded() {
-        if (fontUris.getEmbed() == null) {
+        if (embedURI == null) {
             return false;
         } else {
             return this.embedded;
@@ -205,7 +189,7 @@ public class EmbedFontInfo implements Serializable {
 
     /** {@inheritDoc} */
     public String toString() {
-        return "metrics-uri=" + fontUris.getMetrics() + ", embed-uri=" + fontUris.getEmbed()
+        return "metrics-uri=" + metricsURI + ", embed-uri=" + embedURI
             + ", kerning=" + kerning
             + ", advanced=" + advanced
             + ", enc-mode=" + encodingMode
@@ -214,7 +198,4 @@ public class EmbedFontInfo implements Serializable {
             + (isEmbedded() ? "" : ", NOT embedded");
     }
 
-    public FontUris getFontUris() {
-        return fontUris;
-    }
 }
