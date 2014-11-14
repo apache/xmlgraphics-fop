@@ -31,7 +31,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.FloatPosition;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
-import org.apache.fop.layoutmgr.BreakingAlgorithm.KnuthNode;
 import org.apache.fop.layoutmgr.WhitespaceManagementPenalty.Variant;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.ListUtil;

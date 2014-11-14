@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr.list;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -40,15 +41,16 @@ import org.apache.fop.layoutmgr.BreakOpportunity;
 import org.apache.fop.layoutmgr.BreakOpportunityHelper;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.FloatContentLayoutManager;
 import org.apache.fop.layoutmgr.FootenoteUtil;
 import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
-import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
@@ -294,8 +296,34 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
         context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
         this.keepWithNextPendingOnBody = childLC.getKeepWithNextPending();
 
+        List<ListElement> returnedList = new LinkedList<ListElement>();
+        if (!labelList.isEmpty() && labelList.get(0) instanceof KnuthBlockBox) {
+            KnuthBlockBox kbb = (KnuthBlockBox) labelList.get(0);
+            if (kbb.getWidth() == 0 && kbb.hasFloatAnchors()) {
+                List<FloatContentLayoutManager> floats = kbb.getFloatContentLMs();
+                returnedList.add(new KnuthBlockBox(0, Collections.emptyList(), null, false, floats));
+                Keep keep = getKeepTogether();
+                returnedList.add(new BreakElement(new LeafPosition(this, 0), keep.getPenalty(), keep
+                        .getContext(), context));
+                labelList.remove(0);
+                labelList.remove(0);
+            }
+        }
+        if (!bodyList.isEmpty() && bodyList.get(0) instanceof KnuthBlockBox) {
+            KnuthBlockBox kbb = (KnuthBlockBox) bodyList.get(0);
+            if (kbb.getWidth() == 0 && kbb.hasFloatAnchors()) {
+                List<FloatContentLayoutManager> floats = kbb.getFloatContentLMs();
+                returnedList.add(new KnuthBlockBox(0, Collections.emptyList(), null, false, floats));
+                Keep keep = getKeepTogether();
+                returnedList.add(new BreakElement(new LeafPosition(this, 0), keep.getPenalty(), keep
+                        .getContext(), context));
+                bodyList.remove(0);
+                bodyList.remove(0);
+            }
+        }
+
         // create a combined list
-        List returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList, context);
+        returnedList.addAll(getCombinedKnuthElementsForListItem(labelList, bodyList, context));
 
         // "wrap" the Position inside each element
         wrapPositionElements(returnedList, returnList, true);
@@ -395,14 +423,26 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
                 footnoteList.addAll(FootenoteUtil.getFootnotes(elementLists[i], start[i], end[i]));
             }
 
+            LinkedList<FloatContentLayoutManager> floats = new LinkedList<FloatContentLayoutManager>();
+            for (int i = 0; i < elementLists.length; i++) {
+                floats.addAll(FloatContentLayoutManager.checkForFloats(elementLists[i], start[i], end[i]));
+            }
+
             // add the new elements
             addedBoxHeight += boxHeight;
             ListItemPosition stepPosition = new ListItemPosition(this, start[0], end[0], start[1], end[1]);
             stepPosition.setOriginalLabelPosition(originalLabelPosition);
             stepPosition.setOriginalBodyPosition(originalBodyPosition);
-            if (footnoteList.isEmpty()) {
-                returnList.add(new KnuthBox(boxHeight, stepPosition, false));
+
+            if (floats.isEmpty()) {
+                returnList.add(new KnuthBlockBox(boxHeight, footnoteList, stepPosition, false));
             } else {
+                // add a line with height zero and no content and attach float to it
+                returnList.add(new KnuthBlockBox(0, Collections.emptyList(), stepPosition, false, floats));
+                // add a break element to signal that we should restart LB at this break
+                Keep keep = getKeepTogether();
+                returnList.add(new BreakElement(stepPosition, keep.getPenalty(), keep.getContext(), context));
+                // add the original line where the float was but without the float now
                 returnList.add(new KnuthBlockBox(boxHeight, footnoteList, stepPosition, false));
             }
 
@@ -580,6 +620,10 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
                 // pos contains a ListItemPosition created by this ListBlockLM
                 positionList.add(pos.getPosition());
             }
+        }
+        if (positionList.isEmpty()) {
+            reset();
+            return;
         }
 
         registerMarkers(true, isFirst(firstPos), isLast(lastPos));

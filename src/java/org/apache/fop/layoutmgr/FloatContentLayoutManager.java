@@ -71,6 +71,7 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
         floatContentArea.setIPD(effectiveContentIPD);
         childArea.activateEffectiveIPD();
         if (side == Constants.EN_END || side == Constants.EN_RIGHT) {
+            xOffset += getStartIndent();
             floatContentArea.setXOffset(xOffset + contentIPD - effectiveContentIPD);
         } else if (side == Constants.EN_START || side == Constants.EN_LEFT) {
             floatContentArea.setXOffset(xOffset);
@@ -124,5 +125,17 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
 
     public int getFloatYOffset() {
         return yOffset;
+    }
+
+    private int getStartIndent() {
+        int startIndent = 0;
+        LayoutManager lm = getParent();
+        while (!(lm instanceof BlockLayoutManager)) {
+            lm = lm.getParent();
+        }
+        if (lm instanceof BlockLayoutManager) {
+            startIndent = ((BlockLayoutManager) lm).startIndent;
+        }
+        return startIndent;
     }
 }
