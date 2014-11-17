@@ -53,7 +53,7 @@ public class FloatLayoutManager extends InlineStackingLayoutManager {
 
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
 
-        if (!floatContentAreaAdded) {
+        if (!floatContentAreaAdded && !floatContent.isDisabled()) {
             floatContentLM = new FloatContentLayoutManager(floatContent);
             floatContentLM.setParent(this);
             floatContentLM.initialize();

@@ -20,6 +20,7 @@
 package org.apache.fop.fo.flow;
 
 // XML
+import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -38,6 +39,7 @@ public class Float extends FObj {
     private int clear;
     // End of property values
     private boolean inWhiteSpace;
+    private boolean disabled;
 
     /**
      * Base constructor
@@ -98,5 +100,19 @@ public class Float extends FObj {
 
     public boolean getInWhiteSpace() {
         return inWhiteSpace;
+    }
+
+    public void processNode(String elementName, Locator locator, Attributes attlist, PropertyList pList)
+            throws FOPException {
+        if (findAncestor(FO_TABLE) > 0) {
+            disabled = true;
+            getFOValidationEventProducer().unimplementedFeature(this, "fo:table", getName(), getLocator());
+        } else {
+            super.processNode(elementName, locator, attlist, pList);
+        }
+    }
+
+    public boolean isDisabled() {
+        return disabled;
     }
 }
