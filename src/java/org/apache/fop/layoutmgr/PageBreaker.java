@@ -56,6 +56,19 @@ public class PageBreaker extends AbstractBreaker {
     private int floatHeight;
     private int floatYOffset;
 
+    private List relayedFootnotesList;
+    private List relayedLengthList;
+    private int relayedTotalFootnotesLength;
+    private int relayedInsertedFootnotesLength;
+    private boolean relayedFootnotesPending;
+    private boolean relayedNewFootnotes;
+    private int relayedFirstNewFootnoteIndex;
+    private int relayedFootnoteListIndex;
+    private int relayedFootnoteElementIndex = -1;
+    private MinOptMax relayedFootnoteSeparatorLength;
+    private int previousFootnoteListIndex = -2;
+    private int previousFootnoteElementIndex = -2;
+
     /**
      * The FlowLayoutManager object, which processes
      * the single fo:flow of the fo:page-sequence
@@ -814,11 +827,51 @@ public class PageBreaker extends AbstractBreaker {
                 int effectiveFloatHeight = alg.getFloatHeight();
                 pslm.recordEndOfFloat(effectiveFloatHeight);
             }
+            if (alg.handlingFloat()) {
+                PageSequenceLayoutManager pslm = (PageSequenceLayoutManager) getTopLevelLM();
+                alg.relayFootnotes(pslm);
+            }
         } else {
             // no content for this part
             handleEmptyContent();
         }
 
         pageBreakHandled = true;
+    }
+
+    public void holdFootnotes(List fl, List ll, int tfl, int ifl, boolean fp, boolean nf, int fnfi, int fli,
+            int fei, MinOptMax fsl, int pfli, int pfei) {
+        relayedFootnotesList = fl;
+        relayedLengthList = ll;
+        relayedTotalFootnotesLength = tfl;
+        relayedInsertedFootnotesLength = ifl;
+        relayedFootnotesPending = fp;
+        relayedNewFootnotes = nf;
+        relayedFirstNewFootnoteIndex = fnfi;
+        relayedFootnoteListIndex = fli;
+        relayedFootnoteElementIndex = fei;
+        relayedFootnoteSeparatorLength = fsl;
+        previousFootnoteListIndex = pfli;
+        previousFootnoteElementIndex = pfei;
+    }
+
+    public void retrieveFootones(PageBreakingAlgorithm alg) {
+        if (relayedFootnotesList != null && relayedFootnotesList.size() > 0) {
+            alg.loadFootnotes(relayedFootnotesList, relayedLengthList, relayedTotalFootnotesLength,
+                    relayedInsertedFootnotesLength, relayedFootnotesPending, relayedNewFootnotes,
+                    relayedFirstNewFootnoteIndex, relayedFootnoteListIndex, relayedFootnoteElementIndex,
+                    relayedFootnoteSeparatorLength, previousFootnoteListIndex,
+                    previousFootnoteElementIndex);
+            relayedFootnotesList = null;
+            relayedLengthList = null;
+            relayedTotalFootnotesLength = 0;
+            relayedInsertedFootnotesLength = 0;
+            relayedFootnotesPending = false;
+            relayedNewFootnotes = false;
+            relayedFirstNewFootnoteIndex = 0;
+            relayedFootnoteListIndex = 0;
+            relayedFootnoteElementIndex = -1;
+            relayedFootnoteSeparatorLength = null;
+        }
     }
 }

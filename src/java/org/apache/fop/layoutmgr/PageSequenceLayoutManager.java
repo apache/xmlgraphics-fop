@@ -36,6 +36,7 @@ import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.layoutmgr.inline.ContentLayoutManager;
+import org.apache.fop.traits.MinOptMax;
 
 /**
  * LayoutManager for a PageSequence.  This class is instantiated by
@@ -344,5 +345,16 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         int flowIPD = getCurrentPV().getCurrentSpan().getColumnWidth();
         flowIPD -= startIntrusionAdjustment + endIntrusionAdjustment;
         return flowIPD;
+    }
+
+    public void holdFootnotes(List fl, List ll, int tfl, int ifl, boolean fp, boolean nf, int fnfi, int fli,
+            int fei, MinOptMax fsl, int pfli, int pfei) {
+        if (fl != null && fl.size() > 0) {
+            pageBreaker.holdFootnotes(fl, ll, tfl, ifl, fp, nf, fnfi, fli, fei, fsl, pfli, pfei);
+        }
+    }
+
+    public void retrieveFootnotes(PageBreakingAlgorithm alg) {
+        pageBreaker.retrieveFootones(alg);
     }
 }

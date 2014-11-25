@@ -103,10 +103,12 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     // just one float for now...
     private boolean handlingStartOfFloat;
     private boolean handlingEndOfFloat;
-    private int floatYOffset;
     private int floatHeight;
     private KnuthNode bestFloatEdgeNode;
     private FloatPosition floatPosition;
+    private int previousFootnoteListIndex = -2;
+    private int previousFootnoteElementIndex = -2;
+    private boolean relayingFootnotes;
 
     /**
      * Construct a page breaking algorithm.
@@ -246,11 +248,14 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         footnoteElementIndex = -1;
         if (topLevelLM instanceof PageSequenceLayoutManager) {
             PageSequenceLayoutManager pslm = (PageSequenceLayoutManager) topLevelLM;
+            if (pslm.handlingStartOfFloat() || pslm.handlingEndOfFloat()) {
+                pslm.retrieveFootnotes(this);
+            }
             if (pslm.handlingStartOfFloat()) {
                 floatHeight = Math.min(pslm.getFloatHeight(), lineWidth - pslm.getFloatYOffset());
             }
             if (pslm.handlingEndOfFloat()) {
-                totalWidth += pslm.getOffsetDueToFloat();
+                totalWidth += pslm.getOffsetDueToFloat() + insertedFootnotesLength;
             }
         }
     }
@@ -1088,17 +1093,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 difference = 0;
             }
         }
-        // compute the indexes of the first footnote list and the first element in that list
-        int firstListIndex = ((KnuthPageNode) bestActiveNode.previous).footnoteListIndex;
-        int firstElementIndex = ((KnuthPageNode) bestActiveNode.previous).footnoteElementIndex;
-        if (footnotesList != null
-                && firstElementIndex == getFootnoteList(firstListIndex).size() - 1) {
-            // advance to the next list
-            firstListIndex++;
-            firstElementIndex = 0;
-        } else {
-            firstElementIndex++;
-        }
 
         // add nodes at the beginning of the list, as they are found
         // backwards, from the last one to the first one
@@ -1109,6 +1103,24 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         if (handlingFloat() && floatPosition == null) {
             floatPosition = new FloatPosition(this.topLevelLM, bestActiveNode.position, ratio, difference);
         } else {
+            boolean useRelayedFootnotes = relayingFootnotes && bestActiveNode.previous.position == 0;
+            // compute the indexes of the first footnote list and the first element in that list
+            int firstListIndex = (useRelayedFootnotes) ? previousFootnoteListIndex
+                    : ((KnuthPageNode) bestActiveNode.previous).footnoteListIndex;
+            int firstElementIndex = (useRelayedFootnotes) ? previousFootnoteElementIndex
+                    : ((KnuthPageNode) bestActiveNode.previous).footnoteElementIndex;
+            if (useRelayedFootnotes) {
+                previousFootnoteListIndex = -2;
+                previousFootnoteElementIndex = -2;
+                relayingFootnotes = false;
+            }
+            if (footnotesList != null && firstElementIndex == getFootnoteList(firstListIndex).size() - 1) {
+                // advance to the next list
+                firstListIndex++;
+                firstElementIndex = 0;
+            } else {
+                firstElementIndex++;
+            }
             insertPageBreakAsFirst(new PageBreakPosition(this.topLevelLM, bestActiveNode.position,
                     firstListIndex, firstElementIndex, ((KnuthPageNode) bestActiveNode).footnoteListIndex,
                     ((KnuthPageNode) bestActiveNode).footnoteElementIndex, ratio, difference));
@@ -1266,13 +1278,14 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     protected void createForcedNodes(KnuthNode node, int line, int elementIdx, int difference, double r,
             double demerits, int fitnessClass, int availableShrink, int availableStretch, int newWidth,
             int newStretch, int newShrink) {
-        super.createForcedNodes(node, line, elementIdx, difference, r, demerits, fitnessClass,
-                availableShrink, availableStretch, newWidth, newStretch, newShrink);
         if (handlingFloat()) {
             if (bestFloatEdgeNode == null || demerits <= bestFloatEdgeNode.totalDemerits) {
                 bestFloatEdgeNode = createNode(elementIdx, line + 1, fitnessClass, newWidth, newStretch,
                         newShrink, r, availableShrink, availableStretch, difference, demerits, node);
             }
+        } else {
+            super.createForcedNodes(node, line, elementIdx, difference, r, demerits, fitnessClass,
+                    availableShrink, availableStretch, newWidth, newStretch, newShrink);
         }
     }
 
@@ -1318,5 +1331,33 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     protected void disableFloatHandling() {
         handlingEndOfFloat = false;
         handlingStartOfFloat = false;
+    }
+
+    public void loadFootnotes(List fl, List ll, int tfl, int ifl, boolean fp, boolean nf, int fnfi, int fli,
+            int fei, MinOptMax fsl, int pfli, int pfei) {
+        footnotesList = fl;
+        lengthList = ll;
+        totalFootnotesLength = tfl;
+        insertedFootnotesLength = ifl;
+        footnotesPending = fp;
+        newFootnotes = nf;
+        firstNewFootnoteIndex = fnfi;
+        footnoteListIndex = fli;
+        footnoteElementIndex = fei;
+        footnoteSeparatorLength = fsl;
+        previousFootnoteListIndex = pfli;
+        previousFootnoteElementIndex = pfei;
+        relayingFootnotes = !(previousFootnoteListIndex == -2 && previousFootnoteElementIndex == -2);
+    }
+
+    public void relayFootnotes(PageSequenceLayoutManager pslm) {
+        if (!relayingFootnotes) {
+            previousFootnoteListIndex = ((KnuthPageNode) bestFloatEdgeNode.previous).footnoteListIndex;
+            previousFootnoteElementIndex = ((KnuthPageNode) bestFloatEdgeNode.previous).footnoteElementIndex;
+        }
+        pslm.holdFootnotes(footnotesList, lengthList, totalFootnotesLength, insertedFootnotesLength,
+                footnotesPending, newFootnotes, firstNewFootnoteIndex, footnoteListIndex,
+                footnoteElementIndex, footnoteSeparatorLength, previousFootnoteListIndex,
+                previousFootnoteElementIndex);
     }
 }
