@@ -786,5 +786,10 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
         breakBefore = BreakUtil.compareBreakClasses(breakBefore, body.getBreakBefore());
         return breakBefore;
     }
+
+    /** {@inheritDoc} */
+    public boolean isRestartable() {
+        return true;
+    }
 }
 

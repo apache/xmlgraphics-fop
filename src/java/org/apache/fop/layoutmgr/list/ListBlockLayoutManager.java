@@ -277,5 +277,9 @@ public class ListBlockLayoutManager extends SpacedBorderedPaddedBlockLayoutManag
         return getListBlockFO().getKeepWithNext();
     }
 
+    /** {@inheritDoc} */
+    public boolean isRestartable() {
+        return true;
+    }
 }
 
