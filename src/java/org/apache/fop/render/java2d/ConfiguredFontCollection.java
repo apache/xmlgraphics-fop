@@ -33,6 +33,7 @@ import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.FontUris;
 import org.apache.fop.fonts.LazyFont;
 
 /**
@@ -81,10 +82,10 @@ public class ConfiguredFontCollection implements FontCollection {
                     InputStream fontSource = resourceResolver.getResource(fontURI);
                     font = new CustomFontMetricsMapper(fontMetrics, fontSource);
                 } else {
-                    CustomFont fontMetrics = FontLoader.loadFont(fontURI, null, true,
+                    FontUris fontUris = new FontUris(fontURI, null);
+                    CustomFont fontMetrics = FontLoader.loadFont(fontUris, null, true,
                             configFontInfo.getEmbeddingMode(), configFontInfo.getEncodingMode(),
-                            configFontInfo.getKerning(), configFontInfo.getAdvanced(),
-                            resourceResolver);
+                            configFontInfo.getKerning(), configFontInfo.getAdvanced(), resourceResolver);
                     font = new CustomFontMetricsMapper(fontMetrics);
                 }
 

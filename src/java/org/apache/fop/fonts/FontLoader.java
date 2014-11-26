@@ -89,20 +89,20 @@ public abstract class FontLoader {
      * @return the newly loaded font
      * @throws IOException In case of an I/O error
      */
-    public static CustomFont loadFont(URI fontFileURI, String subFontName,
+    public static CustomFont loadFont(FontUris fontUris, String subFontName,
             boolean embedded, EmbeddingMode embeddingMode, EncodingMode encodingMode,
             boolean useKerning, boolean useAdvanced, InternalResourceResolver resourceResolver) throws IOException {
-        boolean type1 = isType1(fontFileURI);
+        boolean type1 = isType1(fontUris.getEmbed());
         FontLoader loader;
         if (type1) {
             if (encodingMode == EncodingMode.CID) {
                 throw new IllegalArgumentException(
                         "CID encoding mode not supported for Type 1 fonts");
             }
-            loader = new Type1FontLoader(fontFileURI, embedded, embeddingMode, useKerning,
+            loader = new Type1FontLoader(fontUris, embedded, embeddingMode, useKerning,
                     resourceResolver);
         } else {
-            loader = new OFFontLoader(fontFileURI, subFontName, embedded, embeddingMode,
+            loader = new OFFontLoader(fontUris.getEmbed(), subFontName, embedded, embeddingMode,
                     encodingMode, useKerning, useAdvanced, resourceResolver);
         }
         return loader.getFont();

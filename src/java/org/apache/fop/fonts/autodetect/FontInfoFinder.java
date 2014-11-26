@@ -40,6 +40,7 @@ import org.apache.fop.fonts.FontCache;
 import org.apache.fop.fonts.FontEventListener;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.FontUris;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.truetype.FontFileReader;
@@ -141,14 +142,15 @@ public class FontInfoFinder {
      */
     private EmbedFontInfo getFontInfoFromCustomFont(URI fontUri, CustomFont customFont,
             FontCache fontCache, InternalResourceResolver resourceResolver) {
+        FontUris fontUris = new FontUris(fontUri, null);
         List<FontTriplet> fontTripletList = new java.util.ArrayList<FontTriplet>();
         generateTripletsFromFont(customFont, fontTripletList);
         String subFontName = null;
         if (customFont instanceof MultiByteFont) {
             subFontName = ((MultiByteFont) customFont).getTTCName();
         }
-        EmbedFontInfo fontInfo = new EmbedFontInfo(null, customFont.isKerningEnabled(),
-                customFont.isAdvancedEnabled(), fontTripletList, fontUri, subFontName,
+        EmbedFontInfo fontInfo = new EmbedFontInfo(fontUris, customFont.isKerningEnabled(),
+                customFont.isAdvancedEnabled(), fontTripletList, subFontName,
                 EncodingMode.AUTO, EmbeddingMode.AUTO);
         fontInfo.setPostScriptName(customFont.getFontName());
         if (fontCache != null) {
@@ -248,8 +250,9 @@ public class FontInfoFinder {
         } else {
             // The normal case
             try {
-                customFont = FontLoader.loadFont(fontURI, null, true, EmbeddingMode.AUTO,
-                        EncodingMode.AUTO, useKerning, useAdvanced, resourceResolver);
+                FontUris fontUris = new FontUris(fontURI, null);
+                customFont = FontLoader.loadFont(fontUris, null, true, EmbeddingMode.AUTO, EncodingMode.AUTO,
+                        useKerning, useAdvanced, resourceResolver);
                 if (this.eventListener != null) {
                     customFont.setEventListener(this.eventListener);
                 }

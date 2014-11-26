@@ -47,7 +47,8 @@ public class DejaVuLGCSerifTestCase {
     @Before
     public void setUp() throws Exception {
         File file = new File("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
-        font = FontLoader.loadFont(file.toURI(), "", true, EmbeddingMode.AUTO, EncodingMode.AUTO,
+        FontUris fontUris = new FontUris(file.toURI(), null);
+        font = FontLoader.loadFont(fontUris, "", true, EmbeddingMode.AUTO, EncodingMode.AUTO,
                 false, false, resolver);
     }
 
