@@ -184,5 +184,21 @@ public class Block extends BlockParent {
         return location;
     }
 
+    // maybe this can be done in the parent?
+    public int getEffectiveIPD() {
+        int eIPD = super.getEffectiveIPD();
+        if (eIPD != 0) {
+            effectiveIPD = eIPD;
+        }
+        return eIPD;
+    }
+
+    // maybe this can be done in the parent?
+    public void activateEffectiveIPD() {
+        super.activateEffectiveIPD();
+        if (effectiveIPD != -1) {
+            ipd = effectiveIPD;
+        }
+    }
 }
 

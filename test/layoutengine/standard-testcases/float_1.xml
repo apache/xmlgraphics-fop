@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks floats.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master margin="50pt" master-name="page" page-height="800pt" page-width="600pt">
+      <fo:region-body background-color="yellow" />
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>
+Elstree Reservoir[edit]
+The dam was built in 1795 by French prisoners of war.[34] English watercolour landscape painter John Hassell writes:
+"At the top of Stanmore Hill we enter on Bushy Heath, and at some distance on the right in the valley catch a view of the celebrated reservoir, the property of the Grand Junction Company, on Aidenham Common, at the foot of the village of Elstree. This noble sheet of water occupies a space of considerable extent on the verge of Aidenham Common, which thirty years ago was a barren waste; here the improvements in agriculture are indeed conspicuous, for at this place a poor, sandy, meagre, wretched soil has now by good husbandry been converted into rich pasturage.
+"The reservoir has all the appearance of a lake; and when the timber that surrounds it shall have arrived at maturity, it will be a most delightful spot. From this immense sheet of water, in event of drought or a deficiency of upland waters, the lower parts of the Grand Junction and the Paddington Canals can have an immediate supply. The feeder from this reservoir enters the main stream near Rickmansworth, above Batchworth Mills, and supplies the millers' below with 300 locks of water, to whose interest the Duke of Northumberland is a perpetual trustee."[35]
+In 1886, the Photographic Society of Great Britain featured an exhibition of photos of Elstree Reservoir by Edgar Clifton.[36] During World War I, then Major Keith Caldwell with No. 74 Squadron RAF, used Elstree Reservoir for target practice.[37] In 1918, one of the pilots accidentally killed a local resident when his machine gun misfired.[38]
+      </fo:block>
+      <fo:block>
+Elstree Reservoir[edit]
+The dam was built in 1795 by French prisoners of war.[34] English watercolour landscape painter John Hassell writes:
+"At the top of Stanmore Hill we enter on Bushy Heath, and at some distance on the right in the valley catch a view of the celebrated reservoir, the property of the Grand Junction Company, on Aidenham Common, at the foot of the village of Elstree. This noble sheet of water occupies a space of considerable extent on the verge of Aidenham Common, which thirty years ago was a barren waste; here the improvements in agriculture are indeed conspicuous, for at this place a poor, sandy, meagre, wretched soil has now by good husbandry been converted into rich pasturage.
+"The reservoir has all the appearance of a lake; and when the timber that surrounds it shall have arrived at maturity, it will be a most delightful spot. From this immense sheet of water, in event of drought or a deficiency of upland waters, the lower parts of the Grand Junction and the Paddington Canals can have an immediate supply. The feeder from this reservoir enters the main stream near Rickmansworth, above Batchworth Mills, and supplies the millers' below with 300 locks of water, to whose interest the Duke of Northumberland is a perpetual trustee."[35]
+In 1886, the Photographic Society of Great Britain featured an exhibition of photos of Elstree Reservoir by Edgar Clifton.[36] During World War I, then Major Keith Caldwell with No. 74 Squadron RAF, used Elstree Reservoir for target practice.[37] In 1918, one of the pilots accidentally killed a local resident when his machine gun misfired.[38]
+      </fo:block>
+      <fo:block>
+Elstree Reservoir[edit]
+The dam was built in 1795 by French prisoners of war.[34] English watercolour landscape painter John Hassell writes:
+"At the top of Stanmore Hill we enter on Bushy Heath, and at some distance on the right in the valley catch a view of the celebrated reservoir, the property of the Grand Junction Company, on Aidenham Common, at the foot of the village of Elstree. This noble sheet of water occupies a space of considerable extent on the verge of Aidenham Common, which thirty years ago was a barren waste; here the improvements in agriculture are indeed conspicuous, for at this place a poor, sandy, meagre, wretched soil has now by good husbandry been converted into rich pasturage.
+"The reservoir has all the appearance of a lake; and when the timber that surrounds it shall have arrived at maturity, it will be a most delightful spot. From this immense sheet of water, in event of drought or a deficiency of upland waters, the lower parts of the Grand Junction and the Paddington Canals can have an immediate supply. The feeder from this reservoir enters the main stream near Rickmansworth, above Batchworth Mills, and supplies the millers' below with 300 locks of water, to whose interest the Duke of Northumberland is a perpetual trustee."[35]
+In 1886, the Photographic Society of Great Britain featured an exhibition of photos of Elstree Reservoir by Edgar Clifton.[36] During World War I, then Major Keith Caldwell with No. 74 Squadron RAF, used Elstree Reservoir for target practice.[37] In 1918, one of the pilots accidentally killed a local resident when his machine gun misfired.[38]
+      </fo:block>
+      <fo:block>
+        Put some content before the float but enough to make the float go to the third line of this block. Just enought content to place the float in the second line is not desirable. <fo:inline color="red">This is the last content before the float and the float is right now.</fo:inline>
+        <fo:float float="start">
+          <fo:block border="1pt solid red" padding="10pt" color="blue" end-indent="0pt" start-indent="0pt">
+            <fo:block-container inline-progression-dimension="100pt">
+              <fo:block background-color="orange">
+                This is a normal block that is confined to the block container inside a side float. The background is orange.
+              </fo:block>
+            </fo:block-container>
+          </fo:block>
+        </fo:float>
+        <fo:inline color="blue">This is the first content after the float.</fo:inline> This paragraph contains a side float and the content of the paragraph needs to be wrapped around the float... this is very complicated but the current implementation can handle the simpler cases.
+      </fo:block>
+      <fo:block>
+Elstree Reservoir[edit]
+The dam was built in 1795 by French prisoners of war.[34] English watercolour landscape painter John Hassell writes:
+"At the top of Stanmore Hill we enter on Bushy Heath, and at some distance on the right in the valley catch a view of the celebrated reservoir, the property of the Grand Junction Company, on Aidenham Common, at the foot of the village of Elstree. This noble sheet of water occupies a space of considerable extent on the verge of Aidenham Common, which thirty years ago was a barren waste; here the improvements in agriculture are indeed conspicuous, for at this place a poor, sandy, meagre, wretched soil has now by good husbandry been converted into rich pasturage.
+"The reservoir has all the appearance of a lake; and when the timber that surrounds it shall have arrived at maturity, it will be a most delightful spot. From this immense sheet of water, in event of drought or a deficiency of upland waters, the lower parts of the Grand Junction and the Paddington Canals can have an immediate supply. The feeder from this reservoir enters the main stream near Rickmansworth, above Batchworth Mills, and supplies the millers' below with 300 locks of water, to whose interest the Duke of Northumberland is a perpetual trustee."[35]
+In 1886, the Photographic Society of Great Britain featured an exhibition of photos of Elstree Reservoir by Edgar Clifton.[36] During World War I, then Major Keith Caldwell with No. 74 Squadron RAF, used Elstree Reservoir for target practice.[37] In 1918, one of the pilots accidentally killed a local resident when his machine gun misfired.[38]
+      </fo:block>
+      <fo:block>
+        Put some content before the float but enough to make the float go to the third line of this block. Just enought content to place the float in the second line is not desirable. <fo:inline color="red">This is the last content before the float and the float is right now.</fo:inline>
+        <fo:float float="end">
+          <fo:block border="1pt solid red" padding="10pt" color="blue" end-indent="0pt" start-indent="0pt">
+            <fo:block-container inline-progression-dimension="90pt">
+              <fo:block background-color="pink">
+                This is a normal block that is confined to the block container inside a side float. The background is pink.
+              </fo:block>
+            </fo:block-container>
+          </fo:block>
+        </fo:float>
+        <fo:inline color="blue">This is the first content after the float.</fo:inline> This paragraph contains a side float and the content of the paragraph needs to be wrapped around the float... this is very complicated but the current implementation can handle the simpler cases.
+      </fo:block>
+      <fo:block>
+Elstree Reservoir[edit]
+The dam was built in 1795 by French prisoners of war.[34] English watercolour landscape painter John Hassell writes:
+"At the top of Stanmore Hill we enter on Bushy Heath, and at some distance on the right in the valley catch a view of the celebrated reservoir, the property of the Grand Junction Company, on Aidenham Common, at the foot of the village of Elstree. This noble sheet of water occupies a space of considerable extent on the verge of Aidenham Common, which thirty years ago was a barren waste; here the improvements in agriculture are indeed conspicuous, for at this place a poor, sandy, meagre, wretched soil has now by good husbandry been converted into rich pasturage.
+"The reservoir has all the appearance of a lake; and when the timber that surrounds it shall have arrived at maturity, it will be a most delightful spot. From this immense sheet of water, in event of drought or a deficiency of upland waters, the lower parts of the Grand Junction and the Paddington Canals can have an immediate supply. The feeder from this reservoir enters the main stream near Rickmansworth, above Batchworth Mills, and supplies the millers' below with 300 locks of water, to whose interest the Duke of Northumberland is a perpetual trustee."[35]
+In 1886, the Photographic Society of Great Britain featured an exhibition of photos of Elstree Reservoir by Edgar Clifton.[36] During World War I, then Major Keith Caldwell with No. 74 Squadron RAF, used Elstree Reservoir for target practice.[37] In 1918, one of the pilots accidentally killed a local resident when his machine gun misfired.[38]
+      </fo:block>
+      <fo:block>
+        Put some content before the float but enough to make the float go to the third line of this block. Just enought content to place the float in the second line is not desirable. <fo:inline color="red">This is the last content before the float and the float is right now.</fo:inline>
+        <fo:float float="start">
+          <fo:block border="1pt solid red" padding="10pt" color="blue" end-indent="0pt" start-indent="0pt">
+            <fo:block-container inline-progression-dimension="110pt">
+              <fo:block background-color="green">
+                This is a normal block that is confined to the block container inside a side float. The background is green.
+              </fo:block>
+            </fo:block-container>
+            <fo:block>This line is not constrained by a width.</fo:block>
+          </fo:block>
+        </fo:float>
+        <fo:inline color="blue">This is the first content after the float.</fo:inline> This paragraph contains a side float and the content of the paragraph needs to be wrapped around the float... this is very complicated but the current implementation can handle the simpler cases.
+      </fo:block>
+      <fo:block>
+Elstree Reservoir[edit]
+The dam was built in 1795 by French prisoners of war.[34] English watercolour landscape painter John Hassell writes:
+"At the top of Stanmore Hill we enter on Bushy Heath, and at some distance on the right in the valley catch a view of the celebrated reservoir, the property of the Grand Junction Company, on Aidenham Common, at the foot of the village of Elstree. This noble sheet of water occupies a space of considerable extent on the verge of Aidenham Common, which thirty years ago was a barren waste; here the improvements in agriculture are indeed conspicuous, for at this place a poor, sandy, meagre, wretched soil has now by good husbandry been converted into rich pasturage.
+"The reservoir has all the appearance of a lake; and when the timber that surrounds it shall have arrived at maturity, it will be a most delightful spot. From this immense sheet of water, in event of drought or a deficiency of upland waters, the lower parts of the Grand Junction and the Paddington Canals can have an immediate supply. The feeder from this reservoir enters the main stream near Rickmansworth, above Batchworth Mills, and supplies the millers' below with 300 locks of water, to whose interest the Duke of Northumberland is a perpetual trustee."[35]
+In 1886, the Photographic Society of Great Britain featured an exhibition of photos of Elstree Reservoir by Edgar Clifton.[36] During World War I, then Major Keith Caldwell with No. 74 Squadron RAF, used Elstree Reservoir for target practice.[37] In 1918, one of the pilots accidentally killed a local resident when his machine gun misfired.[38]
+      </fo:block>
+      <fo:block>
+Elstree Reservoir[edit]
+The dam was built in 1795 by French prisoners of war.[34] English watercolour landscape painter John Hassell writes:
+"At the top of Stanmore Hill we enter on Bushy Heath, and at some distance on the right in the valley catch a view of the celebrated reservoir, the property of the Grand Junction Company, on Aidenham Common, at the foot of the village of Elstree. This noble sheet of water occupies a space of considerable extent on the verge of Aidenham Common, which thirty years ago was a barren waste; here the improvements in agriculture are indeed conspicuous, for at this place a poor, sandy, meagre, wretched soil has now by good husbandry been converted into rich pasturage.
+"The reservoir has all the appearance of a lake; and when the timber that surrounds it shall have arrived at maturity, it will be a most delightful spot. From this immense sheet of water, in event of drought or a deficiency of upland waters, the lower parts of the Grand Junction and the Paddington Canals can have an immediate supply. The feeder from this reservoir enters the main stream near Rickmansworth, above Batchworth Mills, and supplies the millers' below with 300 locks of water, to whose interest the Duke of Northumberland is a perpetual trustee."[35]
+In 1886, the Photographic Society of Great Britain featured an exhibition of photos of Elstree Reservoir by Edgar Clifton.[36] During World War I, then Major Keith Caldwell with No. 74 Squadron RAF, used Elstree Reservoir for target practice.[37] In 1918, one of the pilots accidentally killed a local resident when his machine gun misfired.[38]
+      </fo:block>
+      <fo:block>
+        Put some content before the float but enough to make the float go to the third line of this block. Just enought content to place the float in the second line is not desirable. <fo:inline color="red">This is the last content before the float and the float is right now.</fo:inline>
+        <fo:float float="start">
+          <fo:block border="1pt solid red" padding="10pt" color="blue" end-indent="0pt" start-indent="0pt">
+            <fo:block background-color="red">
+              The background is red.
+            </fo:block>
+          </fo:block>
+        </fo:float>
+        <fo:inline color="blue">This is the first content after the float.</fo:inline> This paragraph contains a side float and the content of the paragraph needs to be wrapped around the float... this is very complicated but the current implementation can handle the simpler cases.
+      </fo:block>
+      <fo:block>
+Elstree Reservoir[edit]
+The dam was built in 1795 by French prisoners of war.[34] English watercolour landscape painter John Hassell writes:
+"At the top of Stanmore Hill we enter on Bushy Heath, and at some distance on the right in the valley catch a view of the celebrated reservoir, the property of the Grand Junction Company, on Aidenham Common, at the foot of the village of Elstree. This noble sheet of water occupies a space of considerable extent on the verge of Aidenham Common, which thirty years ago was a barren waste; here the improvements in agriculture are indeed conspicuous, for at this place a poor, sandy, meagre, wretched soil has now by good husbandry been converted into rich pasturage.
+"The reservoir has all the appearance of a lake; and when the timber that surrounds it shall have arrived at maturity, it will be a most delightful spot. From this immense sheet of water, in event of drought or a deficiency of upland waters, the lower parts of the Grand Junction and the Paddington Canals can have an immediate supply. The feeder from this reservoir enters the main stream near Rickmansworth, above Batchworth Mills, and supplies the millers' below with 300 locks of water, to whose interest the Duke of Northumberland is a perpetual trustee."[35]
+In 1886, the Photographic Society of Great Britain featured an exhibition of photos of Elstree Reservoir by Edgar Clifton.[36] During World War I, then Major Keith Caldwell with No. 74 Squadron RAF, used Elstree Reservoir for target practice.[37] In 1918, one of the pilots accidentally killed a local resident when his machine gun misfired.[38]
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <!-- first float -->
+    <eval expected="11000" xpath="//pageViewport[2]/page/regionViewport[1]//flow[1]/block[3]/@left-offset" />
+    <eval expected="40692" xpath="//pageViewport[2]/page/regionViewport[1]//flow[1]/block[3]/block[1]/block[1]/block[1]/block[1]/lineArea[7]/text/@ipd" />
+    <eval expected="orange." xpath="//pageViewport[2]/page/regionViewport[1]//flow[1]/block[3]/block[1]/block[1]/block[1]/block[1]/lineArea[7]" />
+    <eval expected="122000" xpath="//pageViewport[2]/page/regionViewport[1]//flow[1]/block[4]/@left-offset" />
+    <eval expected="last content before the float and the float is right now. This is the first" xpath="//pageViewport[2]/page/regionViewport[1]//flow[1]/block[4]/lineArea[1]" />
+    <eval expected="reservoir, the property of the Grand Junction Company, on Aidenham Common, at the foot" xpath="//pageViewport[2]/page/regionViewport[1]//flow[1]/block[6]/lineArea[1]" />
+    <!-- second float -->
+    <eval expected="399000" xpath="//pageViewport[2]/page/regionViewport[1]//flow[1]/block[8]/@left-offset" />
+    <eval expected="25344" xpath="//pageViewport[2]/page/regionViewport[1]//flow[1]/block[8]/block[1]/block[1]/block[1]/block[1]/lineArea[8]/text/@ipd" />
+    <eval expected="pink." xpath="//pageViewport[2]/page/regionViewport[1]//flow[1]/block[8]/block[1]/block[1]/block[1]/block[1]/lineArea[8]" />
+    <eval expected="last content before the float and the float is right now. This is the first" xpath="//pageViewport[2]/page/regionViewport[1]//flow[1]/block[9]/lineArea[1]" />
+    <eval expected="the foot of the village of Elstree. This noble sheet of water occupies a space of considerable" xpath="//pageViewport[2]/page/regionViewport[1]//flow[1]/block[11]/lineArea[1]" />
+    <!-- third float -->
+    <eval expected="11000" xpath="//pageViewport[3]/page/regionViewport[1]//flow[1]/block[3]/@left-offset" />
+    <eval expected="34020" xpath="//pageViewport[3]/page/regionViewport[1]//flow[1]/block[3]/block[1]/block[1]/block[1]/block[1]/lineArea[7]/text/@ipd" />
+    <eval expected="green." xpath="//pageViewport[3]/page/regionViewport[1]//flow[1]/block[3]/block[1]/block[1]/block[1]/block[1]/lineArea[7]" />
+    <eval expected="224752" xpath="//pageViewport[3]/page/regionViewport[1]//flow[1]/block[4]/@left-offset" />
+    <eval expected="last content before the float and the float is right" xpath="//pageViewport[3]/page/regionViewport[1]//flow[1]/block[4]/lineArea[1]" />
+    <eval expected="at some distance on the right in the valley catch a view of the celebrated reservoir, the" xpath="//pageViewport[3]/page/regionViewport[1]//flow[1]/block[6]/lineArea[1]" />
+    <!-- fourth float -->
+    <eval expected="11000" xpath="//pageViewport[4]/page/regionViewport[1]//flow[1]/block[3]/@left-offset" />
+    <eval expected="122724" xpath="//pageViewport[4]/page/regionViewport[1]//flow[1]/block[3]/block[1]/block[1]/lineArea[1]/text/@ipd" />
+    <eval expected="The background is red." xpath="//pageViewport[4]/page/regionViewport[1]//flow[1]/block[3]/block[1]/block[1]/lineArea[1]" />
+    <eval expected="144724" xpath="//pageViewport[4]/page/regionViewport[1]//flow[1]/block[4]/@left-offset" />
+    <eval expected="last content before the float and the float is right now. This is the" xpath="//pageViewport[4]/page/regionViewport[1]//flow[1]/block[4]/lineArea[1]" />
+    <eval expected="float... this is very complicated but the current implementation can handle the simpler cases." xpath="//pageViewport[4]/page/regionViewport[1]//flow[1]/block[5]/lineArea[1]" />
+  </checks>
+</testcase>

@@ -283,5 +283,19 @@ public class LineArea extends Area {
             // been handled, modifying the line indent
         }
     }
+
+    public int getEffectiveIPD() {
+        int maxIPD = 0;
+        if (inlineAreas != null) {
+            for (Area area : inlineAreas) {
+                int effectiveIPD = area.getEffectiveIPD();
+                if (effectiveIPD > maxIPD) {
+                    maxIPD = effectiveIPD;
+                }
+            }
+        }
+        return maxIPD;
+    }
+
 }
 

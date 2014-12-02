@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr.list;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -95,10 +96,11 @@ public class ListBlockLayoutManager extends SpacedBorderedPaddedBlockLayoutManag
     }
 
     /** {@inheritDoc} */
-    @Override
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+            Position restartPosition, LayoutManager restartAtLM) {
         resetSpaces();
-        List returnList = super.getNextKnuthElements(context, alignment);
+        List returnList;
+        returnList = super.getNextKnuthElements(context, alignment, lmStack, restartPosition, restartAtLM);
 
         //fox:widow-content-limit
         int widowRowLimit = getListBlockFO().getWidowContentLimit().getValue();
@@ -275,5 +277,9 @@ public class ListBlockLayoutManager extends SpacedBorderedPaddedBlockLayoutManag
         return getListBlockFO().getKeepWithNext();
     }
 
+    /** {@inheritDoc} */
+    public boolean isRestartable() {
+        return true;
+    }
 }
 

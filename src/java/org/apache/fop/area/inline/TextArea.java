@@ -209,5 +209,8 @@ public class TextArea extends AbstractTextArea {
         }
     }
 
+    public int getEffectiveIPD() {
+        return getIPD();
+    }
 }
 

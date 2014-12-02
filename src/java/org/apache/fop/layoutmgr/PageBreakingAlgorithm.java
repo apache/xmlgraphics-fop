@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.layoutmgr.AbstractBreaker.FloatPosition;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
 import org.apache.fop.layoutmgr.WhitespaceManagementPenalty.Variant;
 import org.apache.fop.traits.MinOptMax;
@@ -98,6 +99,16 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     //Used to keep track of switches in keep-context
     private int currentKeepContext = Constants.EN_AUTO;
     private KnuthNode lastBeforeKeepContextSwitch;
+
+    // just one float for now...
+    private boolean handlingStartOfFloat;
+    private boolean handlingEndOfFloat;
+    private int floatHeight;
+    private KnuthNode bestFloatEdgeNode;
+    private FloatPosition floatPosition;
+    private int previousFootnoteListIndex = -2;
+    private int previousFootnoteElementIndex = -2;
+    private boolean relayingFootnotes;
 
     /**
      * Construct a page breaking algorithm.
@@ -235,6 +246,18 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         insertedFootnotesLength = 0;
         footnoteListIndex = 0;
         footnoteElementIndex = -1;
+        if (topLevelLM instanceof PageSequenceLayoutManager) {
+            PageSequenceLayoutManager pslm = (PageSequenceLayoutManager) topLevelLM;
+            if (pslm.handlingStartOfFloat() || pslm.handlingEndOfFloat()) {
+                pslm.retrieveFootnotes(this);
+            }
+            if (pslm.handlingStartOfFloat()) {
+                floatHeight = Math.min(pslm.getFloatHeight(), lineWidth - pslm.getFloatYOffset());
+            }
+            if (pslm.handlingEndOfFloat()) {
+                totalWidth += pslm.getOffsetDueToFloat() + insertedFootnotesLength;
+            }
+        }
     }
 
     /**
@@ -351,6 +374,12 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 newFootnotes = true;
                 firstNewFootnoteIndex = footnotesList.size() - 1;
             }
+        }
+        if (box instanceof KnuthBlockBox && ((KnuthBlockBox) box).hasFloatAnchors()) {
+            handlingStartOfFloat = true;
+        }
+        if (floatHeight != 0 && totalWidth >= floatHeight) {
+            handlingEndOfFloat = true;
         }
     }
 
@@ -1064,17 +1093,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 difference = 0;
             }
         }
-        // compute the indexes of the first footnote list and the first element in that list
-        int firstListIndex = ((KnuthPageNode) bestActiveNode.previous).footnoteListIndex;
-        int firstElementIndex = ((KnuthPageNode) bestActiveNode.previous).footnoteElementIndex;
-        if (footnotesList != null
-                && firstElementIndex == getFootnoteList(firstListIndex).size() - 1) {
-            // advance to the next list
-            firstListIndex++;
-            firstElementIndex = 0;
-        } else {
-            firstElementIndex++;
-        }
 
         // add nodes at the beginning of the list, as they are found
         // backwards, from the last one to the first one
@@ -1082,12 +1100,31 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             log.debug("BBA> difference=" + difference + " ratio=" + ratio
                     + " position=" + bestActiveNode.position);
         }
-        insertPageBreakAsFirst(new PageBreakPosition(this.topLevelLM,
-                bestActiveNode.position,
-                firstListIndex, firstElementIndex,
-                ((KnuthPageNode) bestActiveNode).footnoteListIndex,
-                ((KnuthPageNode) bestActiveNode).footnoteElementIndex,
-                ratio, difference));
+        if (handlingFloat() && floatPosition == null) {
+            floatPosition = new FloatPosition(this.topLevelLM, bestActiveNode.position, ratio, difference);
+        } else {
+            boolean useRelayedFootnotes = relayingFootnotes && bestActiveNode.previous.position == 0;
+            // compute the indexes of the first footnote list and the first element in that list
+            int firstListIndex = (useRelayedFootnotes) ? previousFootnoteListIndex
+                    : ((KnuthPageNode) bestActiveNode.previous).footnoteListIndex;
+            int firstElementIndex = (useRelayedFootnotes) ? previousFootnoteElementIndex
+                    : ((KnuthPageNode) bestActiveNode.previous).footnoteElementIndex;
+            if (useRelayedFootnotes) {
+                previousFootnoteListIndex = -2;
+                previousFootnoteElementIndex = -2;
+                relayingFootnotes = false;
+            }
+            if (footnotesList != null && firstElementIndex == getFootnoteList(firstListIndex).size() - 1) {
+                // advance to the next list
+                firstListIndex++;
+                firstElementIndex = 0;
+            } else {
+                firstElementIndex++;
+            }
+            insertPageBreakAsFirst(new PageBreakPosition(this.topLevelLM, bestActiveNode.position,
+                    firstListIndex, firstElementIndex, ((KnuthPageNode) bestActiveNode).footnoteListIndex,
+                    ((KnuthPageNode) bestActiveNode).footnoteElementIndex, ratio, difference));
+        }
     }
 
     /** {@inheritDoc} */
@@ -1232,5 +1269,95 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             return 0;
         }
         return pageProvider.compareIPDs(line);
+    }
+
+    protected boolean handlingFloat() {
+        return (handlingStartOfFloat || handlingEndOfFloat);
+    }
+
+    protected void createForcedNodes(KnuthNode node, int line, int elementIdx, int difference, double r,
+            double demerits, int fitnessClass, int availableShrink, int availableStretch, int newWidth,
+            int newStretch, int newShrink) {
+        if (handlingFloat()) {
+            if (bestFloatEdgeNode == null || demerits <= bestFloatEdgeNode.totalDemerits) {
+                bestFloatEdgeNode = createNode(elementIdx, line + 1, fitnessClass, newWidth, newStretch,
+                        newShrink, r, availableShrink, availableStretch, difference, demerits, node);
+            }
+        } else {
+            super.createForcedNodes(node, line, elementIdx, difference, r, demerits, fitnessClass,
+                    availableShrink, availableStretch, newWidth, newStretch, newShrink);
+        }
+    }
+
+    protected int handleFloat() {
+        calculateBreakPoints(bestFloatEdgeNode, par, bestFloatEdgeNode.line);
+        activeLines = null;
+        return bestFloatEdgeNode.line - 1;
+    }
+
+    protected KnuthNode getBestFloatEdgeNode() {
+        return bestFloatEdgeNode;
+    }
+
+    protected FloatPosition getFloatPosition() {
+        return floatPosition;
+    }
+
+    protected int getFloatHeight() {
+        return floatHeight;
+    }
+
+    protected boolean handlingStartOfFloat() {
+        return handlingStartOfFloat;
+    }
+
+    protected boolean handlingEndOfFloat() {
+        return handlingEndOfFloat;
+    }
+
+    /**
+     * Deactivate the given node
+     *
+     * @param node  the node
+     * @param line  the line number
+     */
+    protected void deactivateNode(KnuthNode node, int line) {
+        super.deactivateNode(node, line);
+        if (handlingEndOfFloat) {
+            floatHeight = totalWidth;
+        }
+    }
+
+    protected void disableFloatHandling() {
+        handlingEndOfFloat = false;
+        handlingStartOfFloat = false;
+    }
+
+    public void loadFootnotes(List fl, List ll, int tfl, int ifl, boolean fp, boolean nf, int fnfi, int fli,
+            int fei, MinOptMax fsl, int pfli, int pfei) {
+        footnotesList = fl;
+        lengthList = ll;
+        totalFootnotesLength = tfl;
+        insertedFootnotesLength = ifl;
+        footnotesPending = fp;
+        newFootnotes = nf;
+        firstNewFootnoteIndex = fnfi;
+        footnoteListIndex = fli;
+        footnoteElementIndex = fei;
+        footnoteSeparatorLength = fsl;
+        previousFootnoteListIndex = pfli;
+        previousFootnoteElementIndex = pfei;
+        relayingFootnotes = !(previousFootnoteListIndex == -2 && previousFootnoteElementIndex == -2);
+    }
+
+    public void relayFootnotes(PageSequenceLayoutManager pslm) {
+        if (!relayingFootnotes) {
+            previousFootnoteListIndex = ((KnuthPageNode) bestFloatEdgeNode.previous).footnoteListIndex;
+            previousFootnoteElementIndex = ((KnuthPageNode) bestFloatEdgeNode.previous).footnoteElementIndex;
+        }
+        pslm.holdFootnotes(footnotesList, lengthList, totalFootnotesLength, insertedFootnotesLength,
+                footnotesPending, newFootnotes, firstNewFootnoteIndex, footnoteListIndex,
+                footnoteElementIndex, footnoteSeparatorLength, previousFootnoteListIndex,
+                previousFootnoteElementIndex);
     }
 }

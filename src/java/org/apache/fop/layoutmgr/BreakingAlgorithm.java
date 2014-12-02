@@ -558,6 +558,9 @@ public abstract class BreakingAlgorithm {
                     elementIndex, previousIsBox, allowedBreaks).isBox();
 
             if (activeNodeCount == 0) {
+                if (handlingFloat()) {
+                    return handleFloat();
+                }
                 if (getIPDdifference() != 0) {
                     return handleIpdChange();
                 }
@@ -945,8 +948,11 @@ public abstract class BreakingAlgorithm {
                     log.trace("\tline=" + line);
                 }
 
+                if (element.isForcedBreak() && handlingFloat()) {
+                    disableFloatHandling(); // so that we do not create a float edge position later
+                }
                 // The line would be too long.
-                if (r < -1 || element.isForcedBreak()) {
+                if (r < -1 || element.isForcedBreak() || handlingFloat()) {
                     deactivateNode(node, line);
                 }
 
@@ -1028,6 +1034,13 @@ public abstract class BreakingAlgorithm {
             }
         }
 
+        createForcedNodes(node, line, elementIdx, difference, r, demerits, fitnessClass, availableShrink,
+                availableStretch, newWidth, newStretch, newShrink);
+    }
+
+    protected void createForcedNodes(KnuthNode node, int line, int elementIdx, int difference, double r,
+            double demerits, int fitnessClass, int availableShrink, int availableStretch, int newWidth,
+            int newStretch, int newShrink) {
         if (r <= -1) {
             log.debug("Considering tooLong, demerits=" + demerits);
             if (lastTooLong == null || demerits < lastTooLong.totalDemerits) {
@@ -1042,10 +1055,9 @@ public abstract class BreakingAlgorithm {
         } else {
             if (lastTooShort == null || demerits <= lastTooShort.totalDemerits) {
                 if (considerTooShort) {
-                    //consider possibilities which are too short
-                    best.addRecord(demerits, node, r,
-                            availableShrink, availableStretch,
-                            difference, fitnessClass);
+                    // consider possibilities which are too short
+                    best.addRecord(demerits, node, r, availableShrink, availableStretch, difference,
+                            fitnessClass);
                 }
                 lastTooShort = createNode(elementIdx, line + 1, fitnessClass,
                         newWidth, newStretch, newShrink,
@@ -1451,4 +1463,15 @@ public abstract class BreakingAlgorithm {
         return this.alignmentLast;
     }
 
+    protected boolean handlingFloat() {
+        return false;
+    }
+
+    protected int handleFloat() {
+        throw new IllegalStateException();
+    }
+
+    protected void disableFloatHandling() {
+        throw new IllegalStateException();
+    }
 }

@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr.list;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -225,15 +226,15 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager imp
         return Keep.KEEP_AUTO;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
+    /** {@inheritDoc} */
+    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+            Position restartPosition, LayoutManager restartAtLM) {
         List<ListElement> elements = new LinkedList<ListElement>();
         do {
-            elements.addAll(super.getNextKnuthElements(context, alignment));
+            elements.addAll(super.getNextKnuthElements(context, alignment, lmStack, restartPosition,
+                    restartAtLM));
         } while (!isFinished());
         return elements;
     }
-
 }
 
