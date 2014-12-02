@@ -22,10 +22,15 @@ package org.apache.fop.afp;
 import java.io.OutputStream;
 
 import org.apache.fop.afp.goca.GraphicsData;
+import org.apache.fop.afp.ioca.BandImage;
 import org.apache.fop.afp.ioca.ImageContent;
 import org.apache.fop.afp.ioca.ImageRasterData;
 import org.apache.fop.afp.ioca.ImageSegment;
 import org.apache.fop.afp.ioca.ImageSizeParameter;
+import org.apache.fop.afp.ioca.Tile;
+import org.apache.fop.afp.ioca.TilePosition;
+import org.apache.fop.afp.ioca.TileSize;
+import org.apache.fop.afp.ioca.TileTOC;
 import org.apache.fop.afp.modca.ActiveEnvironmentGroup;
 import org.apache.fop.afp.modca.ContainerDataDescriptor;
 import org.apache.fop.afp.modca.Document;
@@ -628,4 +633,23 @@ public class Factory {
         return imageSizeParameter;
     }
 
+    public TileTOC createTileTOC() {
+        return new TileTOC();
+    }
+
+    public TileSize createTileSize(int dataWidth, int dataHeight, int dataWidthRes, int dataHeightRes) {
+        return new TileSize(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
+    }
+
+    public TilePosition createTilePosition() {
+        return new TilePosition();
+    }
+
+    public Tile createTile() {
+        return new Tile();
+    }
+
+    public BandImage createBandImage() {
+        return new BandImage();
+    }
 }
