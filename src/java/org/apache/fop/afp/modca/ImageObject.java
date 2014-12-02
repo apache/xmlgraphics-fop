@@ -19,17 +19,20 @@
 
 package org.apache.fop.afp.modca;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import org.apache.xmlgraphics.util.MimeConstants;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.Factory;
+import org.apache.fop.afp.ioca.BandImage;
 import org.apache.fop.afp.ioca.ImageSegment;
+import org.apache.fop.afp.ioca.Tile;
+import org.apache.fop.afp.ioca.TilePosition;
+import org.apache.fop.afp.ioca.TileSize;
 
 /**
  * An IOCA Image Data Object
@@ -76,8 +79,21 @@ public class ImageObject extends AbstractDataObject {
         ImageDataDescriptor imageDataDescriptor
             = factory.createImageDataDescriptor(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
 
-        if (MimeConstants.MIME_AFP_IOCA_FS45.equals(imageObjectInfo.getMimeType())) {
+        boolean setImageSize = true;
+        if (MimeConstants.MIME_AFP_IOCA_FS45.equals(imageObjectInfo.getMimeType()) ) {
             imageDataDescriptor.setFunctionSet(ImageDataDescriptor.FUNCTION_SET_FS45);
+            if (imageObjectInfo.getBitsPerPixel() == 32 ) {
+                 setImageSize = false;
+                 Tile tile = factory.createTile();
+                 TilePosition tilePosition = factory.createTilePosition();
+                 TileSize tileSize = factory.createTileSize(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
+                 BandImage bandImage = factory.createBandImage();
+                 tile.setPosition(tilePosition);
+                 tile.setSize(tileSize);
+                 tile.setBandImage(bandImage);
+                 getImageSegment().setTileTOC();
+                 getImageSegment().addTile(tile);
+            }
         } else if (imageObjectInfo.getBitsPerPixel() == 1) {
             imageDataDescriptor.setFunctionSet(ImageDataDescriptor.FUNCTION_SET_FS10);
         }
@@ -85,7 +101,10 @@ public class ImageObject extends AbstractDataObject {
         getObjectEnvironmentGroup().setMapImageObject(
                 new MapImageObject(dataObjectInfo.getMappingOption()));
 
-        getImageSegment().setImageSize(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
+        if (setImageSize) {
+            // not used for FS45
+            getImageSegment().setImageSize(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
+        }
     }
 
     /**
@@ -175,4 +194,5 @@ public class ImageObject extends AbstractDataObject {
         copySF(data, Type.END, Category.IMAGE);
         os.write(data);
     }
+
 }

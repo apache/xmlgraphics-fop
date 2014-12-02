@@ -74,6 +74,10 @@ public class ImageContent extends AbstractStructuredObject {
     /** the image data */
     private byte[] data;
 
+    private TileTOC tileTOC;
+
+    private Tile tile; // change to tiles
+
     /**
      * Main Constructor
      */
@@ -171,7 +175,11 @@ public class ImageContent extends AbstractStructuredObject {
      * @param imageData the image data
      */
     public void setImageData(byte[] imageData) {
-        this.data = imageData;
+        if (tile != null) {
+            tile.setImageData(imageData);
+        } else {
+            this.data = imageData;
+        }
     }
 
     private static final int MAX_DATA_LEN = 65535;
@@ -183,30 +191,47 @@ public class ImageContent extends AbstractStructuredObject {
             imageSizeParameter.writeToStream(os);
         }
 
+        if (tileTOC != null) {
+            tileTOC.writeToStream(os);
+        }
+
         // TODO convert to triplet/parameter class
-        os.write(getImageEncodingParameter());
+        if (tile == null) {
+            os.write(getImageEncodingParameter());
 
-        os.write(getImageIDESizeParameter());
+            os.write(getImageIDESizeParameter());
+        } else {
+            tile.setImageEncodingParameter(this.encoding);
+            tile.setImageIDESizeParameter(this.ideSize);
+        }
 
-        if (getIDEStructureParameter() != null) {
-            getIDEStructureParameter().writeToStream(os);
+        if (tile == null) {
+            if (getIDEStructureParameter() != null) {
+                getIDEStructureParameter().writeToStream(os);
+            }
+        } else {
+            if (getIDEStructureParameter() != null) {
+                tile.setIDEStructureParameter(getIDEStructureParameter());
+            }
         }
 
         boolean useFS10 = (this.ideSize == 1);
-        if (!useFS10) {
+        if (!useFS10 && tileTOC == null) {
             os.write(getExternalAlgorithmParameter());
         }
 
-        final byte[] dataHeader = new byte[] {
-                (byte)0xFE, // ID
-                (byte)0x92, // ID
-                0x00, // length
-                0x00  // length
-            };
-        final int lengthOffset = 2;
+        if (tile != null) {
+            tile.writeToStream(os);
+        }
 
         // Image Data
         if (data != null) {
+            final byte[] dataHeader = new byte[] {(byte) 0xFE, // ID
+                    (byte) 0x92, // ID
+                    0x00, // length
+                    0x00 // length
+            };
+            final int lengthOffset = 2;
             writeChunksToStream(data, dataHeader, lengthOffset, MAX_DATA_LEN, os);
         }
     }
@@ -291,4 +316,11 @@ public class ImageContent extends AbstractStructuredObject {
         }
     }
 
+    public void setTileTOC(TileTOC toc) {
+        this.tileTOC = toc;
+    }
+
+    public void addTile(Tile tile) {
+        this.tile = tile;
+    }
 }

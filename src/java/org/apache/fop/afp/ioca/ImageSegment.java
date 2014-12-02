@@ -175,4 +175,14 @@ public class ImageSegment extends AbstractNamedAFPObject {
         };
         os.write(data);
     }
+
+    public void setTileTOC() {
+        TileTOC toc = factory.createTileTOC();
+        getImageContent().setTileTOC(toc);
+    }
+
+    public void addTile(Tile tile) {
+        getImageContent().addTile(tile);
+    }
+
 }
