@@ -41,6 +41,7 @@ import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.ExternalGraphic;
+import org.apache.fop.fo.flow.Float;
 import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InlineContainer;
@@ -74,6 +75,7 @@ import org.apache.fop.layoutmgr.inline.BidiLayoutManager;
 import org.apache.fop.layoutmgr.inline.CharacterLayoutManager;
 import org.apache.fop.layoutmgr.inline.ContentLayoutManager;
 import org.apache.fop.layoutmgr.inline.ExternalGraphicLayoutManager;
+import org.apache.fop.layoutmgr.inline.FloatLayoutManager;
 import org.apache.fop.layoutmgr.inline.FootnoteLayoutManager;
 import org.apache.fop.layoutmgr.inline.InlineContainerLayoutManager;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
@@ -113,7 +115,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         registerMaker(FObjMixed.class, new Maker());
         registerMaker(BidiOverride.class, new BidiOverrideLayoutManagerMaker());
         registerMaker(Inline.class, new InlineLayoutManagerMaker());
-        registerMaker(Footnote.class, new FootnodeLayoutManagerMaker());
+        registerMaker(Footnote.class, new FootnoteLayoutManagerMaker());
         registerMaker(InlineContainer.class,
                    new InlineContainerLayoutManagerMaker());
         registerMaker(BasicLink.class, new BasicLinkLayoutManagerMaker());
@@ -146,6 +148,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         registerMaker(Title.class, new InlineLayoutManagerMaker());
         registerMaker(MultiCase.class, new MultiCaseLayoutManagerMaker());
         registerMaker(MultiSwitch.class, new MultiSwitchLayoutManagerMaker());
+        registerMaker(Float.class, new FloatLayoutManagerMaker());
     }
 
     /**
@@ -267,7 +270,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
 
     /** a layout manager maker */
-    public static class FootnodeLayoutManagerMaker extends Maker {
+    public static class FootnoteLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
         public void make(FONode node, List lms) {
             lms.add(new FootnoteLayoutManager((Footnote) node));
@@ -460,6 +463,12 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         @Override
         public void make(FONode node, List lms) {
             lms.add(new MultiCaseLayoutManager((MultiCase) node));
+        }
+    }
+
+    public static class FloatLayoutManagerMaker extends Maker {
+        public void make(FONode node, List lms) {
+            lms.add(new FloatLayoutManager((Float) node));
         }
     }
 

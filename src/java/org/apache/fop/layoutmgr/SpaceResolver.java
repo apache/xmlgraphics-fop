@@ -696,7 +696,7 @@ public final class SpaceResolver {
                 beforeBreak.notifyBreakSituation(true, RelSide.BEFORE);
             }
         }
-        el = (KnuthElement)effectiveList.get(endElementIndex);
+        el = endElementIndex > -1 ? (KnuthElement) effectiveList.get(endElementIndex) : null;
         if (el != null && el.isPenalty()) {
             Position pos = el.getPosition();
             if (pos instanceof SpaceResolver.SpaceHandlingBreakPosition) {

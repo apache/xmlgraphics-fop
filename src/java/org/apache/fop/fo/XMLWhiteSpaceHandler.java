@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Stack;
 
 import org.apache.fop.fo.flow.Block;
+import org.apache.fop.fo.flow.Float;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -157,6 +158,10 @@ public class XMLWhiteSpaceHandler {
 
         charIter = new RecursiveCharIterator(fo, firstTextNode);
         inWhiteSpace = false;
+        if (firstTextNode.siblings != null && firstTextNode.siblings[0] != null
+                && firstTextNode.siblings[0].getNameId() == Constants.FO_FLOAT) {
+            inWhiteSpace = ((Float) firstTextNode.siblings[0]).getInWhiteSpace();
+        }
 
         if (fo == currentBlock
                 || currentBlock == null
@@ -231,6 +236,9 @@ public class XMLWhiteSpaceHandler {
                 charIter = null;
                 firstWhiteSpaceInSeq = null;
             }
+        }
+        if (nextChild instanceof Float) {
+            ((Float) nextChild).setInWhiteSpace(inWhiteSpace);
         }
     }
 

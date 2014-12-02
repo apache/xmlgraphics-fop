@@ -49,6 +49,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
     /** Array of areas currently being filled stored by area class */
     private final BlockParent[] currentAreas = new BlockParent[Area.CLASS_MAX];
 
+    private boolean handlingFloat;
+
     /**
      * This is the top level layout manager.
      * It is created by the PageSequence FO.
@@ -374,6 +376,10 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
      */
     @Override
     public void addChildArea(Area childArea) {
+        if (childArea instanceof BlockParent && handlingFloat()) {
+            BlockParent bp = (BlockParent) childArea;
+            bp.setXOffset(getPSLM().getStartIntrusionAdjustment());
+        }
         getParentArea(childArea);
         addChildToArea(childArea,
                           this.currentAreas[childArea.getAreaClass()]);
@@ -385,7 +391,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         BlockParent parentArea = null;
         int aclass = childArea.getAreaClass();
 
-        if (aclass == Area.CLASS_NORMAL) {
+        if (aclass == Area.CLASS_NORMAL || aclass == Area.CLASS_SIDE_FLOAT) {
             parentArea = getCurrentPV().getCurrentFlow();
         } else if (aclass == Area.CLASS_BEFORE_FLOAT) {
             parentArea = getCurrentPV().getBodyRegion().getBeforeFloat();
@@ -407,7 +413,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
      */
     @Override
     public int getContentAreaIPD() {
-        return getCurrentPV().getCurrentSpan().getColumnWidth();
+        int flowIPD = getPSLM().getCurrentColumnWidth();
+        return flowIPD;
     }
 
     /**
@@ -425,5 +432,16 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         return true;
     }
 
+    public void handleFloatOn() {
+        handlingFloat = true;
+    }
+
+    public void handleFloatOff() {
+        handlingFloat = false;
+    }
+
+    public boolean handlingFloat() {
+        return handlingFloat;
+    }
 }
 

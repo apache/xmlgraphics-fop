@@ -19,8 +19,7 @@
 <testcase>
   <info>
     <p>
-      This test checks that non-restartable elements still show up at IPD change, even if not 
-      re-laid out.
+      This test checks that a list can be relaid out when a change in ipd happens across pages.
     </p>
   </info>
   <fo>
@@ -140,13 +139,13 @@
     <eval expected="olden"  xpath="//pageSequence[1]/pageViewport[2]//flow/block[2]//lineArea[1]/text/word[2]"/>
 
     <!-- Second page sequence – list -->
-    <eval expected="300000" xpath="//pageSequence[2]/pageViewport[2]//flow/block[1]/@ipd"/>
+    <eval expected="500000" xpath="//pageSequence[2]/pageViewport[2]//flow/block[1]/@ipd"/>
     <eval expected="b2_4"   xpath="//pageSequence[2]/pageViewport[2]//flow/block[1]/block/block[2]/block/@prod-id"/>
     <eval expected="In"     xpath="//pageSequence[2]/pageViewport[2]//flow/block[1]/block/block[2]/block/lineArea[1]/text/word[1]"/>
     <eval expected="olden"  xpath="//pageSequence[2]/pageViewport[2]//flow/block[1]/block/block[2]/block/lineArea[1]/text/word[2]"/>
-    <eval expected="was"    xpath="//pageSequence[2]/pageViewport[2]//flow/block[1]/block/block[2]/block/lineArea[4]/text/word[position()=last()-1]"/>
+    <eval expected="was"    xpath="//pageSequence[2]/pageViewport[2]//flow/block[1]/block/block[2]/block/lineArea[3]/text/word[position()=last()-1]"/>
     <eval expected="astonished…"
-                            xpath="//pageSequence[2]/pageViewport[2]//flow/block[1]/block/block[2]/block/lineArea[4]/text/word[position()=last()]"/>
+                            xpath="//pageSequence[2]/pageViewport[2]//flow/block[1]/block/block[2]/block/lineArea[3]/text/word[position()=last()]"/>
 
     <eval expected="b2_5"   xpath="//pageSequence[2]/pageViewport[2]//flow/block[2]/@prod-id"/>
     <eval expected="500000" xpath="//pageSequence[2]/pageViewport[2]//flow/block[2]/@ipd"/>

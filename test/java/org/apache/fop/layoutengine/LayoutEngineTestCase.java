@@ -323,7 +323,11 @@ public class LayoutEngineTestCase {
             throw new RuntimeException("No available area tree check");
         }
         for (LayoutEngineCheck check : checks) {
-            check.check(result);
+            try {
+                check.check(result);
+            } catch (RuntimeException rte) {
+                throw new RuntimeException("Layout test (" + testFile.getName() + "): " + rte.getMessage());
+            }
         }
     }
 

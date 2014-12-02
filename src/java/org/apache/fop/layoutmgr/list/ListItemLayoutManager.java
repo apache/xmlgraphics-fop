@@ -20,9 +20,11 @@
 package org.apache.fop.layoutmgr.list;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,15 +41,16 @@ import org.apache.fop.layoutmgr.BreakOpportunity;
 import org.apache.fop.layoutmgr.BreakOpportunityHelper;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.FloatContentLayoutManager;
 import org.apache.fop.layoutmgr.FootenoteUtil;
 import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
-import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
@@ -79,11 +82,13 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
     private Keep keepWithNextPendingOnLabel;
     private Keep keepWithNextPendingOnBody;
 
-    private class ListItemPosition extends Position {
+    public class ListItemPosition extends Position {
         private int labelFirstIndex;
         private int labelLastIndex;
         private int bodyFirstIndex;
         private int bodyLastIndex;
+        private Position originalLabelPosition;
+        private Position originalBodyPosition;
 
         public ListItemPosition(LayoutManager lm, int labelFirst, int labelLast,
                 int bodyFirst, int bodyLast) {
@@ -123,6 +128,22 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
             sb.append(" body:").append(bodyFirstIndex).append("-").append(bodyLastIndex);
             sb.append(")");
             return sb.toString();
+        }
+
+        public Position getOriginalLabelPosition() {
+            return originalLabelPosition;
+        }
+
+        public void setOriginalLabelPosition(Position originalLabelPosition) {
+            this.originalLabelPosition = originalLabelPosition;
+        }
+
+        public Position getOriginalBodyPosition() {
+            return originalBodyPosition;
+        }
+
+        public void setOriginalBodyPosition(Position originalBodyPosition) {
+            this.originalBodyPosition = originalBodyPosition;
         }
     }
 
@@ -188,8 +209,8 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
     }
 
     /** {@inheritDoc} */
-    @Override
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+            Position restartPosition, LayoutManager restartAtLM) {
         referenceIPD = context.getRefIPD();
         LayoutContext childLC;
 
@@ -205,7 +226,30 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
         childLC = makeChildLayoutContext(context);
         childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
         label.initialize();
-        labelList = label.getNextKnuthElements(childLC, alignment);
+        boolean labelDone = false;
+        Stack labelLMStack = null;
+        Position labelRestartPosition = null;
+        LayoutManager labelRestartLM = null;
+        if (restartPosition != null && restartPosition instanceof ListItemPosition) {
+            ListItemPosition lip = (ListItemPosition) restartPosition;
+            if (lip.labelLastIndex <= lip.labelFirstIndex) {
+                labelDone = true;
+            } else {
+                labelRestartPosition = lip.getOriginalLabelPosition();
+                labelRestartLM = labelRestartPosition.getLM();
+                LayoutManager lm = labelRestartLM;
+                labelLMStack = new Stack();
+                while (lm != this) {
+                    labelLMStack.push(lm);
+                    lm = lm.getParent();
+                    if (lm instanceof ListItemContentLayoutManager) {
+                        lm = lm.getParent();
+                    }
+                }
+            }
+        }
+        labelList = !labelDone ? label.getNextKnuthElements(childLC, alignment, labelLMStack,
+                labelRestartPosition, labelRestartLM) : new LinkedList<KnuthElement>();
 
         //Space resolution as if the contents were placed in a new reference area
         //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)
@@ -219,7 +263,30 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
         childLC = makeChildLayoutContext(context);
         childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
         body.initialize();
-        bodyList = body.getNextKnuthElements(childLC, alignment);
+        boolean bodyDone = false;
+        Stack bodyLMStack = null;
+        Position bodyRestartPosition = null;
+        LayoutManager bodyRestartLM = null;
+        if (restartPosition != null && restartPosition instanceof ListItemPosition) {
+            ListItemPosition lip = (ListItemPosition) restartPosition;
+            if (lip.bodyLastIndex <= lip.bodyFirstIndex) {
+                bodyDone = true;
+            } else {
+                bodyRestartPosition = lip.getOriginalBodyPosition();
+                bodyRestartLM = bodyRestartPosition.getLM();
+                LayoutManager lm = bodyRestartLM;
+                bodyLMStack = new Stack();
+                while (lm != this) {
+                    bodyLMStack.push(lm);
+                    lm = lm.getParent();
+                    if (lm instanceof ListItemContentLayoutManager) {
+                        lm = lm.getParent();
+                    }
+                }
+            }
+        }
+        bodyList = !bodyDone ? body.getNextKnuthElements(childLC, alignment, bodyLMStack,
+                bodyRestartPosition, bodyRestartLM) : new LinkedList<KnuthElement>();
 
         //Space resolution as if the contents were placed in a new reference area
         //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)
@@ -229,8 +296,34 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
         context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
         this.keepWithNextPendingOnBody = childLC.getKeepWithNextPending();
 
+        List<ListElement> returnedList = new LinkedList<ListElement>();
+        if (!labelList.isEmpty() && labelList.get(0) instanceof KnuthBlockBox) {
+            KnuthBlockBox kbb = (KnuthBlockBox) labelList.get(0);
+            if (kbb.getWidth() == 0 && kbb.hasFloatAnchors()) {
+                List<FloatContentLayoutManager> floats = kbb.getFloatContentLMs();
+                returnedList.add(new KnuthBlockBox(0, Collections.emptyList(), null, false, floats));
+                Keep keep = getKeepTogether();
+                returnedList.add(new BreakElement(new LeafPosition(this, 0), keep.getPenalty(), keep
+                        .getContext(), context));
+                labelList.remove(0);
+                labelList.remove(0);
+            }
+        }
+        if (!bodyList.isEmpty() && bodyList.get(0) instanceof KnuthBlockBox) {
+            KnuthBlockBox kbb = (KnuthBlockBox) bodyList.get(0);
+            if (kbb.getWidth() == 0 && kbb.hasFloatAnchors()) {
+                List<FloatContentLayoutManager> floats = kbb.getFloatContentLMs();
+                returnedList.add(new KnuthBlockBox(0, Collections.emptyList(), null, false, floats));
+                Keep keep = getKeepTogether();
+                returnedList.add(new BreakElement(new LeafPosition(this, 0), keep.getPenalty(), keep
+                        .getContext(), context));
+                bodyList.remove(0);
+                bodyList.remove(0);
+            }
+        }
+
         // create a combined list
-        List returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList, context);
+        returnedList.addAll(getCombinedKnuthElementsForListItem(labelList, bodyList, context));
 
         // "wrap" the Position inside each element
         wrapPositionElements(returnedList, returnList, true);
@@ -298,7 +391,9 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
             int additionalPenaltyHeight = 0;
             int stepPenalty = 0;
             int breakClass = EN_AUTO;
-            KnuthElement endEl = (KnuthElement)elementLists[0].get(end[0]);
+            KnuthElement endEl = elementLists[0].size() > 0 ? (KnuthElement) elementLists[0].get(end[0])
+                    : null;
+            Position originalLabelPosition = endEl != null ? endEl.getPosition().getPosition() : null;
             if (endEl instanceof KnuthPenalty) {
                 additionalPenaltyHeight = endEl.getWidth();
                 stepPenalty = endEl.getPenalty() == -KnuthElement.INFINITE ? -KnuthElement.INFINITE : Math
@@ -306,7 +401,8 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
                 breakClass = BreakUtil.compareBreakClasses(breakClass,
                         ((KnuthPenalty) endEl).getBreakClass());
             }
-            endEl = (KnuthElement)elementLists[1].get(end[1]);
+            endEl = elementLists[1].size() > 0 ? (KnuthElement) elementLists[1].get(end[1]) : null;
+            Position originalBodyPosition = endEl != null ? endEl.getPosition().getPosition() : null;
             if (endEl instanceof KnuthPenalty) {
                 additionalPenaltyHeight = Math.max(
                         additionalPenaltyHeight, endEl.getWidth());
@@ -327,13 +423,26 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
                 footnoteList.addAll(FootenoteUtil.getFootnotes(elementLists[i], start[i], end[i]));
             }
 
+            LinkedList<FloatContentLayoutManager> floats = new LinkedList<FloatContentLayoutManager>();
+            for (int i = 0; i < elementLists.length; i++) {
+                floats.addAll(FloatContentLayoutManager.checkForFloats(elementLists[i], start[i], end[i]));
+            }
+
             // add the new elements
             addedBoxHeight += boxHeight;
-            ListItemPosition stepPosition = new ListItemPosition(this,
-                    start[0], end[0], start[1], end[1]);
-            if (footnoteList.isEmpty()) {
-                returnList.add(new KnuthBox(boxHeight, stepPosition, false));
+            ListItemPosition stepPosition = new ListItemPosition(this, start[0], end[0], start[1], end[1]);
+            stepPosition.setOriginalLabelPosition(originalLabelPosition);
+            stepPosition.setOriginalBodyPosition(originalBodyPosition);
+
+            if (floats.isEmpty()) {
+                returnList.add(new KnuthBlockBox(boxHeight, footnoteList, stepPosition, false));
             } else {
+                // add a line with height zero and no content and attach float to it
+                returnList.add(new KnuthBlockBox(0, Collections.emptyList(), stepPosition, false, floats));
+                // add a break element to signal that we should restart LB at this break
+                Keep keep = getKeepTogether();
+                returnList.add(new BreakElement(stepPosition, keep.getPenalty(), keep.getContext(), context));
+                // add the original line where the float was but without the float now
                 returnList.add(new KnuthBlockBox(boxHeight, footnoteList, stepPosition, false));
             }
 
@@ -512,6 +621,10 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
                 positionList.add(pos.getPosition());
             }
         }
+        if (positionList.isEmpty()) {
+            reset();
+            return;
+        }
 
         registerMarkers(true, isFirst(firstPos), isLast(lastPos));
 
@@ -674,5 +787,9 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
         return breakBefore;
     }
 
+    /** {@inheritDoc} */
+    public boolean isRestartable() {
+        return true;
+    }
 }
 

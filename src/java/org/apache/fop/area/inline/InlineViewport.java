@@ -149,4 +149,7 @@ public class InlineViewport extends InlineArea implements Viewport {
         this.content = (Area) in.readObject();
     }
 
+    public int getEffectiveIPD() {
+        return getIPD();
+    }
 }

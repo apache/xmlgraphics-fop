@@ -93,5 +93,9 @@ public class BlockViewport extends Block implements Viewport  {
             return null;
         }
     }
+
+    public int getEffectiveIPD() {
+        return getIPD();
+    }
 }
 

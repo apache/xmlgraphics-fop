@@ -36,6 +36,7 @@ import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.layoutmgr.inline.ContentLayoutManager;
+import org.apache.fop.traits.MinOptMax;
 
 /**
  * LayoutManager for a PageSequence.  This class is instantiated by
@@ -55,6 +56,9 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
 
     /** Footnotes coming from repeated table footers, to be added after any other footnote. */
     private List<List<KnuthElement>> tableFooterFootnotes;
+
+    private int startIntrusionAdjustment;
+    private int endIntrusionAdjustment;
 
     /**
      * Constructor
@@ -293,4 +297,64 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         }
     }
 
+    public void setStartIntrusionAdjustment(int sia) {
+        startIntrusionAdjustment = sia;
+    }
+
+    public void setEndIntrusionAdjustment(int eia) {
+        endIntrusionAdjustment = eia;
+    }
+
+    public int getStartIntrusionAdjustment() {
+        return startIntrusionAdjustment;
+    }
+
+    public int getEndIntrusionAdjustment() {
+        return endIntrusionAdjustment;
+    }
+
+    public void recordEndOfFloat(int fHeight) {
+        pageBreaker.handleEndOfFloat(fHeight);
+    }
+
+    public boolean handlingEndOfFloat() {
+        return pageBreaker.handlingEndOfFloat();
+    }
+
+    public int getOffsetDueToFloat() {
+        return pageBreaker.getOffsetDueToFloat();
+    }
+
+    public void recordStartOfFloat(int fHeight, int fYOffset) {
+        pageBreaker.handleStartOfFloat(fHeight, fYOffset);
+    }
+
+    public boolean handlingStartOfFloat() {
+        return pageBreaker.handlingStartOfFloat();
+    }
+
+    public int getFloatHeight() {
+        return pageBreaker.getFloatHeight();
+    }
+
+    public int getFloatYOffset() {
+        return pageBreaker.getFloatYOffset();
+    }
+
+    public int getCurrentColumnWidth() {
+        int flowIPD = getCurrentPV().getCurrentSpan().getColumnWidth();
+        flowIPD -= startIntrusionAdjustment + endIntrusionAdjustment;
+        return flowIPD;
+    }
+
+    public void holdFootnotes(List fl, List ll, int tfl, int ifl, boolean fp, boolean nf, int fnfi, int fli,
+            int fei, MinOptMax fsl, int pfli, int pfei) {
+        if (fl != null && fl.size() > 0) {
+            pageBreaker.holdFootnotes(fl, ll, tfl, ifl, fp, nf, fnfi, fli, fei, fsl, pfli, pfei);
+        }
+    }
+
+    public void retrieveFootnotes(PageBreakingAlgorithm alg) {
+        pageBreaker.retrieveFootones(alg);
+    }
 }
