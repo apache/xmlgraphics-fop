@@ -27,10 +27,10 @@ import org.apache.fop.afp.util.BinaryUtils;
 
 public class TileSize extends AbstractAFPObject {
 
-    private int hSize = 0;
-    private int vSize = 0;
-//    private int hRes = 0; // hRes and vRes not used yet -probably need them in the future
-//    private int vRes = 0;
+    private int hSize;
+    private int vSize;
+//    private int hRes; // hRes and vRes not used yet -probably need them in the future
+//    private int vRes;
 
     public TileSize(int hsize, int vsize, int hresol, int vresol) {
         this.hSize = hsize;

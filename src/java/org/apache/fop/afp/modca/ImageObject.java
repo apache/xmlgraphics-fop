@@ -80,9 +80,9 @@ public class ImageObject extends AbstractDataObject {
             = factory.createImageDataDescriptor(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
 
         boolean setImageSize = true;
-        if (MimeConstants.MIME_AFP_IOCA_FS45.equals(imageObjectInfo.getMimeType()) ) {
+        if (MimeConstants.MIME_AFP_IOCA_FS45.equals(imageObjectInfo.getMimeType())) {
             imageDataDescriptor.setFunctionSet(ImageDataDescriptor.FUNCTION_SET_FS45);
-            if (imageObjectInfo.getBitsPerPixel() == 32 ) {
+            if (imageObjectInfo.getBitsPerPixel() == 32) {
                  setImageSize = false;
                  Tile tile = factory.createTile();
                  TilePosition tilePosition = factory.createTilePosition();
