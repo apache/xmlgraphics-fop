@@ -150,7 +150,7 @@ list of possible build targets.
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
   <property name="version" value="svn-trunk"/>
-  <property name="year" value="1999-2012"/>
+  <property name="year" value="1999-2014"/>
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="javac.deprecation" value="on"/>
@@ -624,7 +624,7 @@ list of possible build targets.
   <target name="transcoder-pkg" depends="remove-cache, uptodate-transcoder-pkg, compile" description="Generates the jar for the transcoder package for Batik" unless="transcoder.pkg.uptodate">
     <echo message="Creating the jar file ${build.dir}/fop-transcoder.jar"/>
     <property name="fop-transcoder.name" value="FOP Transcoder Package"/>
-    <property name="fop-transcoder.version" value="1.0beta2"/>
+    <property name="fop-transcoder.version" value="${version}"/>
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
@@ -652,12 +652,6 @@ list of possible build targets.
         <include name="org/apache/commons/io/*.class"/>
         <include name="org/apache/commons/io/filefilter/*.class"/>
         <include name="org/apache/commons/io/output/*.class"/>
-<!-- TODO Remove the following lines once Batik switches over to using XML Graphics Commons -->
-        <include name="org/apache/xmlgraphics/java2d/**"/>
-        <include name="org/apache/xmlgraphics/ps/**"/>
-        <include name="org/apache/xmlgraphics/fonts/**"/>
-        <include name="org/apache/xmlgraphics/util/**"/>
-        <include name="org/apache/xmlgraphics/image/loader/**"/>
       </patternset>
       <fileset refid="transcoder-lib-files"/>
     </unjar>

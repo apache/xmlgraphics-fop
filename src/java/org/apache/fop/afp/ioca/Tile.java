@@ -28,8 +28,8 @@ import org.apache.fop.afp.util.BinaryUtils;
 public class Tile extends AbstractStructuredObject {
 
     private static final int MAX_DATA_LEN = 8191;
-    private TilePosition tilePosition = null;
-    private TileSize tileSize = null;
+    private TilePosition tilePosition;
+    private TileSize tileSize;
     private BandImage bandImage;
     private byte[] data;
 
