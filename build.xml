@@ -575,7 +575,7 @@ list of possible build targets.
       <include name="org/apache/fop/image/loader/batik/BatikImageFlavors*.class"/>
       <include name="org/apache/fop/svg/**"/>
       <include name="org/apache/fop/fonts/**"/>
-      <include name="org/apache/fop/render/shading/**"/>
+      <include name="org/apache/fop/render/gradient/**"/>
       <include name="org/apache/fop/traits/Direction.class"/>
       <include name="org/apache/fop/traits/MinOptMax.class"/>
       <include name="org/apache/fop/traits/TraitEnum.class"/>
