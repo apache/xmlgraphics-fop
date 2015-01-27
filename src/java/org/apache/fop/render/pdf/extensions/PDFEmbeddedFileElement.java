@@ -99,10 +99,7 @@ public class PDFEmbeddedFileElement extends AbstractPDFExtensionElement {
         return ELEMENT;
     }
 
-    /**
-     * Instantiates extension attachment object.
-     * @return extension attachment
-     */
+    @Override
     protected ExtensionAttachment instantiateExtensionAttachment() {
         return new PDFEmbeddedFileAttachment();
     }
