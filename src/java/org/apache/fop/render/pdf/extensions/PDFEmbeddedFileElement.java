@@ -30,6 +30,7 @@ import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 
 /**
  * Extension element for pdf:embedded-file.
@@ -96,5 +97,13 @@ public class PDFEmbeddedFileElement extends AbstractPDFExtensionElement {
     @Override
     public String getLocalName() {
         return ELEMENT;
+    }
+
+    /**
+     * Instantiates extension attachment object.
+     * @return extension attachment
+     */
+    protected ExtensionAttachment instantiateExtensionAttachment() {
+        return new PDFEmbeddedFileAttachment();
     }
 }
