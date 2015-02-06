@@ -422,6 +422,7 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                         char orgChar = text.charAt(i);
 
                         MultiByteFont mbFont = (MultiByteFont)tf;
+                        mbFont.mapChar(orgChar);
                         int origGlyphIdx = mbFont.findGlyphIndex(orgChar);
                         int newGlyphIdx = mbFont.getUsedGlyphs().get(origGlyphIdx);
                         int encoding = newGlyphIdx / 256;
