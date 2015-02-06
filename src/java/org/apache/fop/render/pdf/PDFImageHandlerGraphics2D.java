@@ -85,7 +85,7 @@ public class PDFImageHandlerGraphics2D extends AbstractImageHandlerGraphics2D {
         final boolean textAsShapes = false;
         PDFGraphics2D graphics = new PDFGraphics2D(textAsShapes,
                 pdfContext.getFontInfo(), generator.getDocument(),
-                generator.getResourceContext(), pdfContext.getPage().referencePDF(),
+                generator.getResourceContext(), pdfContext.getPage().makeReference(),
                 "", 0.0f, null);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 

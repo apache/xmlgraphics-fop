@@ -21,8 +21,12 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.output.CountingOutputStream;
 
@@ -30,7 +34,7 @@ import org.apache.commons.io.output.CountingOutputStream;
  * Class representing a PDF dictionary object
  */
 public class PDFDictionary extends PDFObject {
-
+    private boolean visited;
     /**
      * the entry map
      */
@@ -134,4 +138,28 @@ public class PDFDictionary extends PDFObject {
         textBuffer.append(">>");
     }
 
+    @Override
+    public void getChildren(Set<PDFObject> children) {
+        if (!visited) {
+            visited = true;
+            Map<String, Object> childrenMap = new HashMap<String, Object>(entries);
+            childrenMap.remove("Parent");
+            getChildren(childrenMap.values(), children);
+            visited = false;
+        }
+    }
+
+    public static void getChildren(Collection<Object> values, Set<PDFObject> children) {
+        for (Object x : values) {
+            if (x instanceof PDFReference) {
+                x = ((PDFReference) x).getObject();
+            }
+            if (x instanceof PDFObject) {
+                if (((PDFObject) x).hasObjectNumber()) {
+                    children.add((PDFObject) x);
+                }
+                ((PDFObject) x).getChildren(children);
+            }
+        }
+    }
 }

@@ -29,6 +29,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import org.apache.fop.pdf.PDFObjectNumber;
+
 public class CrossReferenceStreamTestCase extends CrossReferenceObjectTest {
 
     private List<Long> uncompressedObjectOffsets;
@@ -54,7 +56,7 @@ public class CrossReferenceStreamTestCase extends CrossReferenceObjectTest {
     @Test
     public void testWithObjectStreams1() throws IOException {
         List<CompressedObjectReference> compressedObjectReferences =
-                Arrays.asList(new CompressedObjectReference(2, 1, 0));
+                Arrays.asList(new CompressedObjectReference(new PDFObjectNumber(2), new PDFObjectNumber(1), 0));
         test(Arrays.asList(0L, null), compressedObjectReferences);
     }
 
@@ -72,8 +74,8 @@ public class CrossReferenceStreamTestCase extends CrossReferenceObjectTest {
         for (int index = 0; index < numCompressedObjects; index++) {
             indirectObjectOffsets.add(null);
             int obNum = numIndirectObjects + index + 1;
-            compressedObjectReferences.add(new CompressedObjectReference(obNum,
-                    numIndirectObjects, index));
+            compressedObjectReferences.add(new CompressedObjectReference(new PDFObjectNumber(obNum),
+                    new PDFObjectNumber(numIndirectObjects), index));
         }
         test(indirectObjectOffsets, compressedObjectReferences);
     }
@@ -108,7 +110,7 @@ public class CrossReferenceStreamTestCase extends CrossReferenceObjectTest {
             objectReferences.add(offset == null ? null : new UncompressedObjectReference(offset));
         }
         for (CompressedObjectReference ref : compressedObjectReferences) {
-            objectReferences.set(ref.getObjectNumber() - 1, ref);
+            objectReferences.set(ref.getObjectNumber().getNumber() - 1, ref);
         }
         int maxObjectNumber = objectReferences.size() + 1;
         ByteArrayOutputStream stream = new ByteArrayOutputStream();

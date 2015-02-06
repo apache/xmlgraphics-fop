@@ -21,6 +21,7 @@ package org.apache.fop.pdf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Set;
 
 import org.apache.fop.fonts.CIDFontType;
 
@@ -299,6 +300,21 @@ public class PDFCIDFont extends PDFObject {
             log.error("Ignored I/O exception", ioe);
         }
         return bout.toByteArray();
+    }
+
+    @Override
+    public void getChildren(Set<PDFObject> children) {
+        super.getChildren(children);
+        if (cidMap != null) {
+            children.add(cidMap);
+            cidMap.getChildren(children);
+        }
+        children.add(descriptor);
+        descriptor.getChildren(children);
+        if (cmap != null) {
+            children.add(cmap);
+            cmap.getChildren(children);
+        }
     }
 
 }

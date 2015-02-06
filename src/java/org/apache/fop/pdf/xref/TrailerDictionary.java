@@ -87,7 +87,7 @@ public class TrailerDictionary {
         return this;
     }
 
-    PDFDictionary getDictionary() {
+    public PDFDictionary getDictionary() {
         return dictionary;
     }
 

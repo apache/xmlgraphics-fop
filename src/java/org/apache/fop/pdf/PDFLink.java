@@ -21,6 +21,7 @@ package org.apache.fop.pdf;
 
 // Java
 import java.awt.geom.Rectangle2D;
+import java.util.Set;
 
 /**
  * class representing an /Annot object of /Subtype /Link
@@ -141,6 +142,15 @@ public class PDFLink extends PDFObject {
         }
 
         return true;
+    }
+
+    @Override
+    public void getChildren(Set<PDFObject> children) {
+        super.getChildren(children);
+        if (action.hasObjectNumber()) {
+            children.add(action);
+        }
+        action.getChildren(children);
     }
 }
 

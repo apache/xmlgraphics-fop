@@ -105,7 +105,7 @@ public class PDFFactory {
      */
     public PDFRoot makeRoot(PDFPages pages) {
         //Make a /Pages object. This object is written in the trailer.
-        PDFRoot pdfRoot = new PDFRoot(++this.document.objectcount, pages);
+        PDFRoot pdfRoot = new PDFRoot(document, pages);
         pdfRoot.setDocument(getDocument());
         getDocument().addTrailerObject(pdfRoot);
         return pdfRoot;
@@ -117,7 +117,7 @@ public class PDFFactory {
      * @return a new PDF Pages object for adding pages to
      */
     public PDFPages makePages() {
-        PDFPages pdfPages = new PDFPages(++(this.document.objectcount));
+        PDFPages pdfPages = new PDFPages(getDocument());
         pdfPages.setDocument(getDocument());
         getDocument().addTrailerObject(pdfPages);
         return pdfPages;
@@ -129,7 +129,7 @@ public class PDFFactory {
      * @return a new PDF resources object
      */
     public PDFResources makeResources() {
-        PDFResources pdfResources = new PDFResources(++this.document.objectcount);
+        PDFResources pdfResources = new PDFResources(getDocument());
         pdfResources.setDocument(getDocument());
         getDocument().addTrailerObject(pdfResources);
         return pdfResources;
@@ -197,7 +197,14 @@ public class PDFFactory {
          * create a PDFPage with the next object number, the given
          * resources, contents and dimensions
          */
-        PDFPage page = new PDFPage(resources, pageIndex, mediaBox, cropBox, bleedBox, trimBox);
+        PDFResources res = getDocument().getFactory().makeResources();
+        if (getDocument().isLinearizationEnabled()) {
+            getDocument().trailerObjects.remove(resources);
+        }
+        res.setParentResources(resources);
+
+        PDFPage page = new PDFPage(res, pageIndex, mediaBox, cropBox, bleedBox, trimBox);
+        res.setParent(page);
 
         getDocument().assignObjectNumber(page);
         getDocument().getPages().addPage(page);
@@ -763,7 +770,7 @@ public class PDFFactory {
      * @return the new PDF outline object
      */
     public PDFOutline makeOutline(PDFOutline parent, String label,
-                                  String actionRef, boolean showSubItems) {
+                                  PDFReference actionRef, boolean showSubItems) {
         PDFOutline pdfOutline = new PDFOutline(label, actionRef, showSubItems);
         if (parent != null) {
             parent.addOutline(pdfOutline);
@@ -785,7 +792,7 @@ public class PDFFactory {
                                   PDFAction pdfAction, boolean showSubItems) {
         return pdfAction == null
                  ? null
-                 : makeOutline(parent, label, pdfAction.getAction(), showSubItems);
+                 : makeOutline(parent, label, new PDFReference(pdfAction.getAction()), showSubItems);
     }
 
     // This one is obsolete now, at least it isn't called from anywhere inside FOP
@@ -804,7 +811,7 @@ public class PDFFactory {
                                   boolean showSubItems) {
 
         String goToRef = getGoToReference(destination, yoffset);
-        return makeOutline(parent, label, goToRef, showSubItems);
+        return makeOutline(parent, label, new PDFReference(goToRef), showSubItems);
     }
 
 

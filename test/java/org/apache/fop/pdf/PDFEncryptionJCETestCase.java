@@ -286,7 +286,7 @@ public class PDFEncryptionJCETestCase {
     public final void testMake() {
         PDFEncryption testEncryptionObj = createEncryptionObject(new PDFEncryptionParams());
         assertTrue(testEncryptionObj instanceof PDFEncryptionJCE);
-        assertEquals(1, ((PDFEncryptionJCE) testEncryptionObj).getObjectNumber());
+        assertEquals(1, ((PDFEncryptionJCE) testEncryptionObj).getObjectNumber().getNumber());
     }
 
     @Test
@@ -608,7 +608,7 @@ public class PDFEncryptionJCETestCase {
                 };
             }
         };
-        return (PDFEncryptionJCE) PDFEncryptionJCE.make(1, params, doc);
+        return (PDFEncryptionJCE) PDFEncryptionJCE.make(new PDFObjectNumber(1), params, doc);
     }
 
     private void runEncryptionTests() throws IOException {

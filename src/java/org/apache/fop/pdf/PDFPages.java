@@ -50,11 +50,9 @@ public class PDFPages extends PDFObject {
      * It must also be allocated an object ID (so that the kids
      * can refer to the parent) so that the XRef table needs to
      * be updated before this object is written.
-     *
-     * @param objnum the object's number
      */
-    public PDFPages(int objnum) {
-        setObjectNumber(objnum);
+    public PDFPages(PDFDocument document) {
+        setObjectNumber(document);
     }
 
     /**
@@ -81,9 +79,9 @@ public class PDFPages extends PDFObject {
                 throw new IllegalStateException("A page already exists at index "
                         + idx + " (zero-based).");
             }
-            this.kids.set(idx, page.referencePDF());
+            this.kids.set(idx, page.makeReference());
         } else {
-            this.kids.add(page.referencePDF());
+            this.kids.add(page.makeReference());
         }
     }
 

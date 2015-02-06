@@ -41,6 +41,7 @@ import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.render.extensions.prepress.PageBoundaries;
 import org.apache.fop.render.extensions.prepress.PageScale;
@@ -180,9 +181,13 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** {@inheritDoc} */
     public void endDocument() throws IFException {
+        pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
         try {
-            pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
-            pdfDoc.outputTrailer(this.outputStream);
+            if (pdfDoc.isLinearizationEnabled()) {
+                generator.flushPDFDoc();
+            } else {
+                pdfDoc.outputTrailer(this.outputStream);
+            }
             this.pdfDoc = null;
 
             pdfResources = null;
@@ -286,8 +291,11 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 this.pdfDoc.addObject(annots);
             }
             this.pdfDoc.addObject(currentPage);
-            this.generator.flushPDFDoc();
-            this.generator = null;
+
+            if (!pdfDoc.isLinearizationEnabled()) {
+                this.generator.flushPDFDoc();
+                this.generator = null;
+            }
         } catch (IOException ioe) {
             throw new IFException("I/O error in endPage()", ioe);
         }
@@ -329,17 +337,15 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     static final class PageReference {
 
-        private final String pageRef;
+        private final PDFReference pageRef;
         private final Dimension pageDimension;
 
         private PageReference(PDFPage page, Dimension dim) {
-            // Avoid keeping references to PDFPage as memory usage is
-            // considerably increased when handling thousands of pages.
-            this.pageRef = page.makeReference().toString();
+            this.pageRef = page.makeReference();
             this.pageDimension = new Dimension(dim);
         }
 
-        public String getPageRef() {
+        public PDFReference getPageRef() {
             return this.pageRef;
         }
 

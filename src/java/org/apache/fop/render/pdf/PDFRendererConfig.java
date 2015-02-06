@@ -56,6 +56,7 @@ import static org.apache.fop.render.pdf.PDFEncryptionOption.OWNER_PASSWORD;
 import static org.apache.fop.render.pdf.PDFEncryptionOption.USER_PASSWORD;
 import static org.apache.fop.render.pdf.PDFRendererOption.DISABLE_SRGB_COLORSPACE;
 import static org.apache.fop.render.pdf.PDFRendererOption.FILTER_LIST;
+import static org.apache.fop.render.pdf.PDFRendererOption.LINEARIZATION;
 import static org.apache.fop.render.pdf.PDFRendererOption.MERGE_FONTS;
 import static org.apache.fop.render.pdf.PDFRendererOption.OUTPUT_PROFILE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_A_MODE;
@@ -137,6 +138,7 @@ public final class PDFRendererConfig implements RendererConfig {
                 parseAndPut(OUTPUT_PROFILE, cfg);
                 parseAndPut(DISABLE_SRGB_COLORSPACE, cfg);
                 parseAndPut(MERGE_FONTS, cfg);
+                parseAndPut(LINEARIZATION, cfg);
 
                 parseAndPut(VERSION, cfg);
             } catch (ConfigurationException e) {

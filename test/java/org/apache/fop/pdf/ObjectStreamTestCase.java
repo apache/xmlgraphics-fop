@@ -86,13 +86,14 @@ public class ObjectStreamTestCase {
 
     private String getExpectedOutput() {
         int numObs = compressedObjects.size();
-        int objectStreamNumber = objectStream.getObjectNumber();
+        int objectStreamNumber = objectStream.getObjectNumber().getNumber();
         int offsetsLength = 9;
         StringBuilder expected = new StringBuilder();
         expected.append("<<\n");
         ObjectStream previous = (ObjectStream) objectStream.get("Extends");
         if (previous != null) {
             expected.append("  /Extends ").append(previous.getObjectNumber()).append(" 0 R\n");
+            objectStreamNumber++;
         }
         expected.append("  /Type /ObjStm\n")
                 .append("  /N ").append(numObs).append("\n")

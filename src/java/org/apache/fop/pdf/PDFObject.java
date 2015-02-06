@@ -22,6 +22,7 @@ package org.apache.fop.pdf;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,7 +42,8 @@ public abstract class PDFObject implements PDFWritable {
     /**
      * the object's number
      */
-    private int objnum;
+    private boolean hasObjNum;
+    private PDFObjectNumber objNum = new PDFObjectNumber();
 
     /**
      * the object's generation (0 in new documents)
@@ -60,11 +62,11 @@ public abstract class PDFObject implements PDFWritable {
      * Returns the object's number.
      * @return the PDF Object number
      */
-    public int getObjectNumber() {
-        if (this.objnum == 0) {
+    public PDFObjectNumber getObjectNumber() {
+        if (!hasObjNum) {
             throw new IllegalStateException("Object has no number assigned: " + this.toString());
         }
-        return this.objnum;
+        return objNum;
     }
 
     /**
@@ -88,21 +90,31 @@ public abstract class PDFObject implements PDFWritable {
      * @return True if it has an object number
      */
     public boolean hasObjectNumber() {
-        return this.objnum > 0;
+        return hasObjNum;
     }
 
     /**
      * Sets the object number
-     * @param objnum the object number
      */
-    public void setObjectNumber(int objnum) {
-        this.objnum = objnum;
+    public void setObjectNumber(PDFDocument document) {
+        objNum.setDocument(document);
+        hasObjNum = true;
         PDFDocument doc = getDocument();
         setParent(null);
         setDocument(doc); //Restore reference to PDFDocument after setting parent to null
         if (log.isTraceEnabled()) {
-            log.trace("Assigning " + this + " object number " + objnum);
+            log.trace("Assigning " + this + " object number " + objNum);
         }
+    }
+
+    public void setObjectNumber(PDFObjectNumber objectNumber) {
+        objNum = objectNumber;
+        hasObjNum = true;
+    }
+
+    public void setObjectNumber(int objectNumber) {
+        objNum = new PDFObjectNumber(objectNumber);
+        hasObjNum = true;
     }
 
     /**
@@ -184,8 +196,7 @@ public abstract class PDFObject implements PDFWritable {
             throw new IllegalArgumentException(
                     "Cannot reference this object. It doesn't have an object number");
         }
-        String ref = getObjectNumber() + " " + getGeneration() + " R";
-        return ref;
+        return makeReference().toString();
     }
 
     /**
@@ -343,5 +354,8 @@ public abstract class PDFObject implements PDFWritable {
      */
     protected boolean contentEquals(PDFObject o) {
         return this.equals(o);
+    }
+
+    public void getChildren(Set<PDFObject> children) {
     }
 }

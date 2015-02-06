@@ -31,6 +31,7 @@ import org.apache.fop.pdf.PDFFactory;
 import org.apache.fop.pdf.PDFGoTo;
 import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFOutline;
+import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFStructElem;
 import org.apache.fop.render.intermediate.IFDocumentNavigationHandler;
 import org.apache.fop.render.intermediate.IFException;
@@ -87,7 +88,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
             parent = getPDFDoc().getOutlineRoot();
         }
         PDFAction action = getAction(bookmark.getAction());
-        String actionRef = (action != null ? action.makeReference().toString() : null);
+        PDFReference actionRef = (action != null ? action.makeReference() : null);
         PDFOutline pdfOutline = getPDFDoc().getFactory().makeOutline(parent,
             bookmark.getTitle(), actionRef, bookmark.isShown());
         Iterator iter = bookmark.getChildBookmarks().iterator();
@@ -194,7 +195,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
             p2d = new Point2D.Double(
                     action.getTargetLocation().x / 1000.0,
                     (pageRef.getPageDimension().height - action.getTargetLocation().y) / 1000.0);
-            String pdfPageRef = pageRef.getPageRef();
+            PDFReference pdfPageRef = pageRef.getPageRef();
             pdfGoTo.setPageReference(pdfPageRef);
             pdfGoTo.setPosition(p2d);
 

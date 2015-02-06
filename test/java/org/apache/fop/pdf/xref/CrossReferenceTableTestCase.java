@@ -53,7 +53,7 @@ public class CrossReferenceTableTestCase extends CrossReferenceObjectTest {
 
     @Override
     protected CrossReferenceObject createCrossReferenceObject() {
-        return new CrossReferenceTable(trailerDictionary, STARTXREF, offsets);
+        return new CrossReferenceTable(trailerDictionary, STARTXREF, offsets, 0, offsets.size(), offsets.size());
     }
 
     @Override

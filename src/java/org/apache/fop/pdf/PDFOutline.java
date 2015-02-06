@@ -22,6 +22,7 @@ package org.apache.fop.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>This represents a single Outline object in a PDF, including the root Outlines
@@ -58,7 +59,7 @@ public class PDFOutline extends PDFObject {
      */
     private String title;
 
-    private String actionRef;
+    private PDFReference actionRef;
 
     /**
      * Create a PDF outline with the title and action.
@@ -67,7 +68,7 @@ public class PDFOutline extends PDFObject {
      * @param action the action for this outline
      * @param openItem indicator of whether child items are visible or not
      */
-    public PDFOutline(String title, String action, boolean openItem) {
+    public PDFOutline(String title, PDFReference action, boolean openItem) {
         super();
         subentries = new java.util.ArrayList();
         count = 0;
@@ -170,4 +171,19 @@ public class PDFOutline extends PDFObject {
         return bout.toByteArray();
     }
 
+    @Override
+    public void getChildren(Set<PDFObject> children) {
+        if (parent != null) {
+            children.add(parent);
+        }
+        if (first != null && last != null) {
+            children.add(first);
+            children.add(last);
+            first.getChildren(children);
+            last.getChildren(children);
+        }
+        if (actionRef != null) {
+            children.add(actionRef.getObject());
+        }
+    }
 }
