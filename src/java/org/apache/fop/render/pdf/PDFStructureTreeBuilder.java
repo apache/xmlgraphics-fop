@@ -71,7 +71,7 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         addBuilder("character", new LanguageHolderBuilder(StandardStructureTypes.InlineLevelStructure.SPAN));
         addBuilder("external-graphic",          new ImageBuilder());
         addBuilder("instream-foreign-object",   new ImageBuilder());
-        addBuilder("inline",                    StandardStructureTypes.InlineLevelStructure.SPAN);
+        addBuilder("inline",                    new InlineHolderBuilder());
         addBuilder("inline-container",          StandardStructureTypes.Grouping.DIV);
         addBuilder("page-number",               StandardStructureTypes.InlineLevelStructure.QUOTE);
         addBuilder("page-number-citation",      StandardStructureTypes.InlineLevelStructure.QUOTE);
@@ -213,6 +213,21 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
             }
         }
 
+    }
+
+    private static class InlineHolderBuilder extends DefaultStructureElementBuilder {
+
+        InlineHolderBuilder() {
+            super(StandardStructureTypes.InlineLevelStructure.SPAN);
+        }
+
+        @Override
+        protected void setAttributes(PDFStructElem structElem, Attributes attributes) {
+            String text = attributes.getValue(ExtensionElementMapping.URI, "abbreviation");
+            if (text != null && !text.equals("")) {
+                structElem.put("E", text);
+            }
+        }
     }
 
     private static class ImageBuilder extends DefaultStructureElementBuilder {

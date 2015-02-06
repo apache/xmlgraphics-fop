@@ -85,6 +85,11 @@ public class FO2StructureTreeConverterTestCase {
     }
 
     @Test
+    public void testAbbreviationProperty() throws Exception {
+        testConverter("abb.fo");
+    }
+
+    @Test
     public void testTableFooters() throws Exception {
         testConverter("table-footers.fo");
     }

@@ -498,7 +498,15 @@ class StructureTreeEventTrigger extends FOEventHandler {
 
 
     private StructureTreeElement startElement(FONode node) {
-        return startElement(node, new AttributesImpl());
+        AttributesImpl attributes = new AttributesImpl();
+        if (node instanceof Inline) {
+            Inline in = (Inline)node;
+            if (!in.getAbbreviation().equals("")) {
+                addAttribute(attributes, ExtensionElementMapping.URI, "abbreviation",
+                        ExtensionElementMapping.STANDARD_PREFIX, in.getAbbreviation());
+            }
+        }
+        return startElement(node, attributes);
     }
 
     private void startElementWithID(FONode node) {
