@@ -31,11 +31,26 @@ public abstract class LocalBreaker extends AbstractBreaker {
     private int displayAlign;
     private int ipd;
     private int overflow;
+    private boolean repeatedHeader;
+    private boolean isDescendantOfTableFooter;
+    private boolean repeatedFooter;
+
+    public void setRepeatedFooter(boolean repeatedFooter) {
+        this.repeatedFooter = repeatedFooter;
+    }
+
+    public void setDescendantOfTableFooter(boolean isDescendantOfTableFooter) {
+        this.isDescendantOfTableFooter = isDescendantOfTableFooter;
+    }
 
     public LocalBreaker(BlockStackingLayoutManager lm, int ipd, int displayAlign) {
         this.lm = lm;
         this.ipd = ipd;
         this.displayAlign = displayAlign;
+    }
+
+    public void setRepeatedHeader(boolean repeatedHeader) {
+        this.repeatedHeader = repeatedHeader;
     }
 
     /** {@inheritDoc} */
@@ -109,6 +124,15 @@ public abstract class LocalBreaker extends AbstractBreaker {
     }
 
     protected void addAreas(PositionIterator posIter, LayoutContext context) {
+        if (isDescendantOfTableFooter) {
+            if (repeatedHeader) {
+                context.setTreatAsArtifact(true);
+            }
+        } else {
+            if (repeatedFooter) {
+                context.setTreatAsArtifact(true);
+            }
+        }
         AreaAdditionUtil.addAreas(lm, posIter, context);
     }
 

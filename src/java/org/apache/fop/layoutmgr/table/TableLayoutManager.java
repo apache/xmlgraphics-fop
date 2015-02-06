@@ -99,6 +99,8 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
 
     private boolean hasRetrieveTableMarker;
 
+    private boolean repeatedHeader;
+
     private List<List<KnuthElement>> headerFootnotes = Collections.emptyList();
 
     private List<List<KnuthElement>> footerFootnotes = Collections.emptyList();
@@ -558,6 +560,9 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
         areAllTCLMsSaved = true;
         for (int i = 0; i < savedTCLMs.size(); i++) {
             TableCellLayoutManager tclm = savedTCLMs.get(i);
+            if (this.repeatedHeader) {
+                tclm.setHasRepeatedHeader(true);
+            }
             tclm.repeatAddAreas();
         }
     }
@@ -650,6 +655,10 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
 
     void setFooterFootnotes(List<List<KnuthElement>> footnotes) {
         this.footerFootnotes = footnotes;
+    }
+
+    public void setRepeateHeader(boolean repeateHeader) {
+        this.repeatedHeader = repeateHeader;
     }
 
     List<List<KnuthElement>> getFooterFootnotes() {
