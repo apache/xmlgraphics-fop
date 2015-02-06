@@ -78,6 +78,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private TableStepper stepper;
 
     private boolean headerIsBeingRepeated;
+    private boolean  atLeastOnce;
 
     /**
      * Main constructor
@@ -478,7 +479,9 @@ public class TableContentLayoutManager implements PercentBaseContext {
 
         // if there are TCLMs saved because they have a RetrieveTableMarker, we repeat the header areas now;
         // this can also be done after the areas for the footer are added but should be the same as here
+        tableLM.setRepeateHeader(atLeastOnce);
         tableLM.repeatAddAreasForSavedTableHeaderTableCellLayoutManagers();
+        atLeastOnce = true;
 
         if (footerElements != null) {
             boolean ancestorTreatAsArtifact = layoutContext.treatAsArtifact();

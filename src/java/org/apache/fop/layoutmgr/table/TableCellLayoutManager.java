@@ -88,6 +88,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
     private boolean isDescendantOfTableFooter;
     private boolean isDescendantOfTableHeader;
     private boolean hasRetrieveTableMarker;
+    private boolean hasRepeatedHeader;
 
     // place holder for the addAreas arguments
     private boolean savedAddAreasArguments;
@@ -140,6 +141,9 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
         return getTableCell().getTable();
     }
 
+    public void setHasRepeatedHeader(boolean hasRepeatedHeader) {
+        this.hasRepeatedHeader = hasRepeatedHeader;
+    }
 
     /** {@inheritDoc} */
     protected int getIPIndents() {
@@ -534,6 +538,12 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
                 recreateChildrenLMs();
                 int displayAlign = ((TableCell) this.getFObj()).getDisplayAlign();
                 TableCellBreaker breaker = new TableCellBreaker(this, cellIPD, displayAlign);
+                breaker.setDescendantOfTableFooter(isDescendantOfTableHeader);
+                if (isDescendantOfTableHeader) {
+                    breaker.setRepeatedHeader(hasRepeatedHeader);
+                } else {
+                    breaker.setRepeatedFooter(layoutContext.treatAsArtifact());
+                }
                 breaker.doLayout(usedBPD, false);
                 // this is needed so the next time the LMs are recreated they look like the originals; this
                 // is due to the fact that during the doLayout() above the FO tree changes when the
