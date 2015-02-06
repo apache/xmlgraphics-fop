@@ -1,0 +1,17 @@
+<?xml version="1.0" standalone="no"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" 
+  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="220pt" page-width="320pt" margin="10pt">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page" language="en" country="GB">
+    <fo:flow flow-name="xsl-region-body">
+        <fo:block>Apache <fo:inline fox:abbreviation ="Formatting Objects Processor">FOP</fo:inline> is a print
+         formatter driven by XSL
+         </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
