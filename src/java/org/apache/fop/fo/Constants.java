@@ -824,8 +824,11 @@ public interface Constants {
     int PR_X_BACKGROUND_IMAGE_WIDTH = 292;
     int PR_X_BACKGROUND_IMAGE_HEIGHT = 293;
 
+    /**For specifying extended text for abbreviation */
+    int PR_X_ABBREVIATION = 294;
+
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 293;
+    int PROPERTY_COUNT = 294;
 
     // compound property constants
 

@@ -53,6 +53,7 @@ public class ExtensionElementMapping extends ElementMapping {
         //These are FOP's extension properties for accessibility
         PROPERTY_ATTRIBUTES.add("alt-text");
         PROPERTY_ATTRIBUTES.add("header");
+        PROPERTY_ATTRIBUTES.add("abbreviation");
         //fox:border-*-radius-*
         PROPERTY_ATTRIBUTES.add("border-before-radius-start");
         PROPERTY_ATTRIBUTES.add("border-before-radius-end");

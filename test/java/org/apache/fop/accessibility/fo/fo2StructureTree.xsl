@@ -151,7 +151,7 @@
 
 
   <!-- Keep the relevant attributes, discard everything else -->
-  <xsl:template match="@fox:alt-text|@role">
+  <xsl:template match="@fox:alt-text|@role|@fox:abbreviation">
     <xsl:copy-of select="."/>
   </xsl:template>
 

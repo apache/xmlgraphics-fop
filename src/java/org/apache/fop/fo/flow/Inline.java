@@ -49,6 +49,7 @@ public class Inline extends InlineLevel {
     // used for FO validation
     private boolean blockOrInlineItemFound;
     private boolean canHaveBlockLevelChildren = true;
+    private String abbreviation;
 
     /**
      * Base constructor
@@ -66,6 +67,9 @@ public class Inline extends InlineLevel {
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
+        if (getUserAgent().isAccessibilityEnabled()) {
+            abbreviation = pList.get(PR_X_ABBREVIATION).getString();
+        }
     }
 
     /** {@inheritDoc} */
@@ -156,5 +160,9 @@ public class Inline extends InlineLevel {
      */
     public int getNameId() {
         return FO_INLINE;
+    }
+
+    public String getAbbreviation() {
+        return abbreviation;
     }
 }
