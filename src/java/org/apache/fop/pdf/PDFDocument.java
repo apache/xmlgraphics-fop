@@ -78,18 +78,18 @@ public class PDFDocument {
     private Log log = LogFactory.getLog("org.apache.fop.pdf");
 
     /** the current character position */
-    private long position;
+    protected long position;
 
     /** the character position of each object */
-    private List<Long> indirectObjectOffsets = new ArrayList<Long>();
+    protected List<Long> indirectObjectOffsets = new ArrayList<Long>();
 
-    private Collection<PDFStructElem> structureTreeElements;
+    protected List<PDFStructElem> structureTreeElements;
 
     /** List of objects to write in the trailer */
-    private List<PDFObject> trailerObjects = new ArrayList<PDFObject>();
+    protected List<PDFObject> trailerObjects = new ArrayList<PDFObject>();
 
     /** the objects themselves */
-    private List<PDFObject> objects = new LinkedList<PDFObject>();
+    protected List<PDFObject> objects = new LinkedList<PDFObject>();
 
     /** Controls the PDF version of this document */
     private VersionController versionController;
@@ -128,6 +128,8 @@ public class PDFDocument {
     /** the counter for XObject numbering */
     private int xObjectCount;
 
+    protected int gStateObjectCount;
+
     /* TODO: Should be modified (works only for image subtype) */
     private Map<String, PDFXObject> xObjectsMap = new HashMap<String, PDFXObject>();
 
@@ -155,6 +157,8 @@ public class PDFDocument {
 
     private List<PDFLaunch> launches = new ArrayList<PDFLaunch>();
 
+    protected List<PDFPage> pageObjs = new ArrayList<PDFPage>();
+
     private List<PDFLayer> layers;
 
     private List<PDFNavigator> navigators;
@@ -168,6 +172,10 @@ public class PDFDocument {
     private boolean accessibilityEnabled;
 
     private boolean mergeFontsEnabled;
+
+    private boolean linearizationEnabled;
+
+    protected boolean outputStarted;
 
     /**
      * Creates an empty PDF document.
@@ -348,6 +356,14 @@ public class PDFDocument {
     }
 
     /**
+     * Get the Structural Tree Collection for this document
+     * @return
+     */
+    public List<PDFStructElem> getStructureTreeElements() {
+        return structureTreeElements;
+    }
+
+    /**
      * Creates and returns a StructTreeRoot object.
      *
      * @param parentTree the value of the ParenTree entry
@@ -398,6 +414,9 @@ public class PDFDocument {
     public PDFObject registerObject(PDFObject obj) {
         assignObjectNumber(obj);
         addObject(obj);
+        if (obj instanceof AbstractPDFStream) {
+            ((AbstractPDFStream) obj).registerChildren();
+        }
         return obj;
     }
 
@@ -421,6 +440,9 @@ public class PDFDocument {
      * @param obj {@link PDFObject} to assign a number to
      */
     public void assignObjectNumber(PDFObject obj) {
+        if (outputStarted && isLinearizationEnabled()) {
+            throw new IllegalStateException("Can't assign number after start of output");
+        }
         if (obj == null) {
             throw new NullPointerException("obj must not be null");
         }
@@ -436,7 +458,7 @@ public class PDFDocument {
                     + "PDFObject already has a parent PDFDocument");
         }
 
-        obj.setObjectNumber(++this.objectcount);
+        obj.setObjectNumber(this);
 
         if (currentParent == null) {
             obj.setDocument(this);
@@ -485,6 +507,7 @@ public class PDFDocument {
         }
         if (obj instanceof PDFPage) {
             this.pages.notifyKidRegistered((PDFPage)obj);
+            pageObjs.add((PDFPage) obj);
         }
         if (obj instanceof PDFLaunch) {
             this.launches.add((PDFLaunch) obj);
@@ -551,7 +574,7 @@ public class PDFDocument {
     public void setEncryption(PDFEncryptionParams params) {
         getProfile().verifyEncryptionAllowed();
         fileIDGenerator = FileIDGenerator.getRandomFileIDGenerator();
-        this.encryption = PDFEncryptionManager.newInstance(++this.objectcount, params, this);
+        this.encryption = PDFEncryptionManager.newInstance(params, this);
         if (this.encryption != null) {
             PDFObject pdfObject = (PDFObject)this.encryption;
             addTrailerObject(pdfObject);
@@ -965,6 +988,7 @@ public class PDFDocument {
      * @throws IOException if there is an exception writing to the output stream
      */
     public void output(OutputStream stream) throws IOException {
+        outputStarted = true;
         //Write out objects until the list is empty. This approach (used with a
         //LinkedList) allows for output() methods to create and register objects
         //on the fly even during serialization.
@@ -974,9 +998,29 @@ public class PDFDocument {
         }
     }
 
-    private void streamIndirectObject(PDFObject o, OutputStream stream) throws IOException {
+    protected void writeTrailer(OutputStream stream, int first, int last, int size, long mainOffset, long startxref)
+            throws IOException {
+        TrailerOutputHelper trailerOutputHelper = mayCompressStructureTreeElements()
+                ? new CompressedTrailerOutputHelper()
+                : new UncompressedTrailerOutputHelper();
+        if (structureTreeElements != null) {
+            trailerOutputHelper.outputStructureTreeElements(stream);
+        }
+        TrailerDictionary trailerDictionary = createTrailerDictionary(mainOffset != 0);
+        if (mainOffset != 0) {
+            trailerDictionary.getDictionary().put("Prev", mainOffset);
+        }
+        trailerOutputHelper.outputCrossReferenceObject(stream, trailerDictionary, first, last, size);
+        String trailer = "\nstartxref\n" + startxref + "\n%%EOF\n";
+        stream.write(encode(trailer));
+    }
+
+    protected int streamIndirectObject(PDFObject o, OutputStream stream) throws IOException {
+        outputStarted = true;
         recordObjectOffset(o);
-        this.position += outputIndirectObject(o, stream);
+        int len = outputIndirectObject(o, stream);
+        this.position += len;
+        return len;
     }
 
     private void streamIndirectObjects(Collection<? extends PDFObject> objects, OutputStream stream)
@@ -987,7 +1031,7 @@ public class PDFDocument {
     }
 
     private void recordObjectOffset(PDFObject object) {
-        int index = object.getObjectNumber() - 1;
+        int index = object.getObjectNumber().getNumber() - 1;
         while (indirectObjectOffsets.size() <= index) {
             indirectObjectOffsets.add(null);
         }
@@ -1076,23 +1120,26 @@ public class PDFDocument {
             trailerOutputHelper.outputStructureTreeElements(stream);
         }
         streamIndirectObjects(trailerObjects, stream);
-        TrailerDictionary trailerDictionary = createTrailerDictionary();
-        long startxref = trailerOutputHelper.outputCrossReferenceObject(stream, trailerDictionary);
+        TrailerDictionary trailerDictionary = createTrailerDictionary(true);
+        long startxref = trailerOutputHelper.outputCrossReferenceObject(stream, trailerDictionary, 0,
+                indirectObjectOffsets.size(), indirectObjectOffsets.size());
         String trailer = "\nstartxref\n" + startxref + "\n%%EOF\n";
         stream.write(encode(trailer));
     }
 
     private boolean mayCompressStructureTreeElements() {
         return accessibilityEnabled
-                && versionController.getPDFVersion().compareTo(Version.V1_5) >= 0;
+                && versionController.getPDFVersion().compareTo(Version.V1_5) >= 0
+                && !isLinearizationEnabled();
     }
 
-    private TrailerDictionary createTrailerDictionary() {
+    private TrailerDictionary createTrailerDictionary(boolean addRoot) {
         FileIDGenerator gen = getFileIDGenerator();
-        TrailerDictionary trailerDictionary = new TrailerDictionary(this)
-                .setRoot(root)
-                .setInfo(info)
-                .setFileID(gen.getOriginalFileID(), gen.getUpdatedFileID());
+        TrailerDictionary trailerDictionary = new TrailerDictionary(this);
+        if (addRoot) {
+            trailerDictionary.setRoot(root).setInfo(info);
+        }
+        trailerDictionary.setFileID(gen.getOriginalFileID(), gen.getUpdatedFileID());
         if (isEncryptionActive()) {
             trailerDictionary.setEncryption(encryption);
         }
@@ -1117,7 +1164,8 @@ public class PDFDocument {
         /**
          * @return the offset of the cross-reference object (the value of startxref)
          */
-        long outputCrossReferenceObject(OutputStream stream, TrailerDictionary trailerDictionary)
+        long outputCrossReferenceObject(OutputStream stream, TrailerDictionary trailerDictionary,
+                                        int first, int last, int size)
                 throws IOException;
     }
 
@@ -1129,9 +1177,9 @@ public class PDFDocument {
         }
 
         public long outputCrossReferenceObject(OutputStream stream,
-                TrailerDictionary trailerDictionary) throws IOException {
+                TrailerDictionary trailerDictionary, int first, int last, int size) throws IOException {
             new CrossReferenceTable(trailerDictionary, position,
-                    indirectObjectOffsets).output(stream);
+                    indirectObjectOffsets, first, last, size).output(stream);
             return position;
         }
     }
@@ -1150,7 +1198,7 @@ public class PDFDocument {
         }
 
         public long outputCrossReferenceObject(OutputStream stream,
-                TrailerDictionary trailerDictionary) throws IOException {
+                TrailerDictionary trailerDictionary, int first, int last, int size) throws IOException {
             // Outputting the object streams should not have created new indirect objects
             assert objects.isEmpty();
             new CrossReferenceStream(PDFDocument.this, ++objectcount, trailerDictionary, position,
@@ -1175,4 +1223,13 @@ public class PDFDocument {
         }
         return fileIDGenerator;
     }
+
+    public boolean isLinearizationEnabled() {
+        return linearizationEnabled;
+    }
+
+    public void setLinearizationEnabled(boolean b) {
+        linearizationEnabled = b;
+    }
+
 }

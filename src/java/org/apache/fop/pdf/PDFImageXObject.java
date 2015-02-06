@@ -22,6 +22,7 @@ package org.apache.fop.pdf;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Set;
 
 /* modified by JKT to integrate with 0.12.0 */
 /* modified by Eric SCHAEFFER to integrate with 0.13.0 */
@@ -169,6 +170,16 @@ public class PDFImageXObject extends PDFXObject {
     /** {@inheritDoc} */
     protected boolean multipleFiltersAllowed() {
         return pdfimage.multipleFiltersAllowed();
+    }
+
+    @Override
+    public void getChildren(Set<PDFObject> children) {
+        super.getChildren(children);
+        PDFICCStream pdfICCStream = pdfimage.getICCStream();
+        if (pdfICCStream != null) {
+            children.add(pdfICCStream);
+            pdfICCStream.getChildren(children);
+        }
     }
 
 }

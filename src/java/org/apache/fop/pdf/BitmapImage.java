@@ -51,7 +51,7 @@ public class BitmapImage implements PDFImage {
      * @param mask the transparency mask reference if any
      */
     public BitmapImage(String k, int width, int height, byte[] data,
-                  String mask) {
+                  PDFReference mask) {
         this.key = k;
         this.height = height;
         this.width = width;
@@ -59,7 +59,7 @@ public class BitmapImage implements PDFImage {
         this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         this.bitmaps = data;
         if (mask != null) {
-            maskRef = new PDFReference(mask);
+            maskRef = mask;
         }
     }
 

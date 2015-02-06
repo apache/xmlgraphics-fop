@@ -31,7 +31,7 @@ public class PDFGoTo extends PDFAction {
     /**
      * the pageReference
      */
-    private String pageReference;
+    private PDFReference pageReference;
     private String destination;
     private float xPosition;
     private float yPosition;
@@ -43,7 +43,9 @@ public class PDFGoTo extends PDFAction {
      */
     public PDFGoTo(String pageReference) {
         super();
-        setPageReference(pageReference);
+        if (pageReference != null) {
+            setPageReference(new PDFReference(pageReference));
+        }
     }
 
     /**
@@ -63,7 +65,7 @@ public class PDFGoTo extends PDFAction {
      *
      * @param pageReference the new page reference to use
      */
-    public void setPageReference(String pageReference) {
+    public void setPageReference(PDFReference pageReference) {
         this.pageReference = pageReference;
     }
 

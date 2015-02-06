@@ -21,6 +21,7 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Set;
 
 import org.apache.commons.io.output.CountingOutputStream;
 
@@ -36,7 +37,9 @@ public abstract class AbstractPDFStream extends PDFObject {
     /** The filters that should be applied */
     private PDFFilterList filters;
 
-    private final boolean encodeOnTheFly;
+    private boolean encodeOnTheFly;
+
+    private PDFNumber refLength = new PDFNumber();
 
     protected AbstractPDFStream() {
         this(true);
@@ -220,11 +223,11 @@ public abstract class AbstractPDFStream extends PDFObject {
         StringBuilder textBuffer = new StringBuilder(64);
 
         StreamCache encodedStream = null;
-        PDFNumber refLength = null;
         final Object lengthEntry;
         if (encodeOnTheFly) {
-            refLength = new PDFNumber();
-            getDocumentSafely().registerObject(refLength);
+            if (!refLength.hasObjectNumber()) {
+                registerChildren();
+            }
             lengthEntry = refLength;
         } else {
             encodedStream = encodeStream();
@@ -280,5 +283,19 @@ public abstract class AbstractPDFStream extends PDFObject {
      */
     protected boolean multipleFiltersAllowed() {
         return true;
+    }
+
+    @Override
+    public void getChildren(Set<PDFObject> children) {
+        dictionary.getChildren(children);
+        if (encodeOnTheFly) {
+            children.add(refLength);
+        }
+    }
+
+    public void registerChildren() {
+        if (encodeOnTheFly) {
+            getDocument().registerObject(refLength);
+        }
     }
 }

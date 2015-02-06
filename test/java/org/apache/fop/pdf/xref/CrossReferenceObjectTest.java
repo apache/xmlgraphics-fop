@@ -52,7 +52,7 @@ public abstract class CrossReferenceObjectTest {
         pdfDocument = new PDFDocument("Apache FOP");
         Map<String, List<String>> filterMap = pdfDocument.getFilterMap();
         filterMap.put("default", Arrays.asList("null"));
-        PDFRoot root = new PDFRoot(1, new PDFPages(10));
+        PDFRoot root = new PDFRoot(pdfDocument, new PDFPages(pdfDocument));
         PDFInfo info = new PDFInfo();
         info.setObjectNumber(2);
         byte[] fileID =

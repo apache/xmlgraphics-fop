@@ -105,13 +105,17 @@ public class PDFGState extends PDFObject {
     }
 
     private Map values = new java.util.HashMap();
+    private int objNum;
 
     /**
      * Returns the name of this object
      * @return the name
      */
     public String getName() {
-        return "GS" + getObjectNumber();
+        if (objNum == 0) {
+            objNum = ++getDocument().gStateObjectCount;
+        }
+        return "GS" + objNum;
     }
 
     /**

@@ -171,7 +171,7 @@ public class PDFImageHandlerSVG implements ImageHandler {
 
         PDFGraphics2D graphics = new PDFGraphics2D(true, pdfContext.getFontInfo(),
                 generator.getDocument(),
-                generator.getResourceContext(), pdfContext.getPage().referencePDF(),
+                generator.getResourceContext(), pdfContext.getPage().makeReference(),
                 "", 0, new TransparencyIgnoredEventListener(pdfContext, imageSVG));
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 

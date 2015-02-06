@@ -27,6 +27,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 
+import org.apache.fop.pdf.PDFObjectNumber;
+
 public class CompressedObjectReferenceTestCase extends ObjectReferenceTest {
 
     @Test
@@ -41,7 +43,7 @@ public class CompressedObjectReferenceTestCase extends ObjectReferenceTest {
 
     private void runTest(List<Integer> expectedObjectStreamBytes, int index) throws IOException {
         int objectStreamNumber = (int) computeNumberFromBytes(expectedObjectStreamBytes);
-        sut = new CompressedObjectReference(0, objectStreamNumber, index);
+        sut = new CompressedObjectReference(new PDFObjectNumber(0), new PDFObjectNumber(objectStreamNumber), index);
         byte[] expected = createExpectedOutput((byte) 2, expectedObjectStreamBytes, index);
         byte[] actual = getActualOutput();
         assertArrayEquals(expected, actual);

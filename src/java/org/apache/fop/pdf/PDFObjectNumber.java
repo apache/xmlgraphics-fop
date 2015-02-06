@@ -16,34 +16,31 @@
  */
 
 /* $Id$ */
-
 package org.apache.fop.pdf;
 
-import java.io.IOException;
-import java.io.OutputStream;
+public class PDFObjectNumber {
+    private int num;
+    private PDFDocument doc;
 
-/**
- * Represents a PDF object that may appear in an object stream. An object stream is a PDF
- * stream whose content is a sequence of PDF objects. See Section 3.4.6 of the PDF 1.5
- * Reference.
- */
-interface CompressedObject {
+    public PDFObjectNumber() {
+    }
+    public PDFObjectNumber(int num) {
+        this.num = num;
+    }
 
-    /**
-     * Returns the object number of this indirect object. Note that a compressed object
-     * must have a generation number of 0.
-     *
-     * @return the object number.
-     */
-    PDFObjectNumber getObjectNumber();
+    public void setDocument(PDFDocument doc) {
+        this.doc = doc;
+    }
 
-    /**
-     * Outputs this object's content into the given stream.
-     *
-     * @param outputStream a stream, likely to be provided by the containing object stream
-     * @return the number of bytes written to the stream
-     * @throws IOException
-     */
-    int output(OutputStream outputStream) throws IOException;
+    public int getNumber() {
+        if (num == 0 && doc != null) {
+//            assert doc.outputStarted;
+            num = ++doc.objectcount;
+        }
+        return num;
+    }
 
+    public String toString() {
+        return String.valueOf(getNumber());
+    }
 }

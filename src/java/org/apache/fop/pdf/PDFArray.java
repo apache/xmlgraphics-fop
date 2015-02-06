@@ -21,7 +21,9 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.output.CountingOutputStream;
 
@@ -213,4 +215,14 @@ public class PDFArray extends PDFObject {
         return cout.getCount();
     }
 
+    @Override
+    public void getChildren(Set<PDFObject> children) {
+        List<Object> contents = new ArrayList<Object>();
+        for (Object c : values) {
+            if (!(c instanceof PDFReference)) {
+                contents.add(c);
+            }
+        }
+        PDFDictionary.getChildren(contents, children);
+    }
 }
