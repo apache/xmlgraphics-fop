@@ -296,7 +296,7 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
             int breakBefore = BreakUtil.compareBreakClasses(getTable().getBreakBefore(),
                     childLC.getBreakBefore());
             if (breakBefore != Constants.EN_AUTO) {
-                returnList.add(0, new BreakElement(getAuxiliaryPosition(), 0,
+                returnList.add(0, new BreakElement(new LeafPosition(getParent(), 0), 0,
                         -KnuthElement.INFINITE, breakBefore, context));
             }
         }
@@ -305,7 +305,7 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
         int breakAfter = BreakUtil.compareBreakClasses(getTable().getBreakAfter(),
                 childLC.getBreakAfter());
         if (breakAfter != Constants.EN_AUTO) {
-            returnList.add(new BreakElement(getAuxiliaryPosition(),
+            returnList.add(new BreakElement(new LeafPosition(getParent(), 0),
                     0, -KnuthElement.INFINITE, breakAfter, context));
         }
 
