@@ -679,7 +679,7 @@ public class OTFSubSetFile extends OTFFile {
                 operand.clearNumber();
             } else if ((b0 >= 0 && b0 <= 27) || (b0 >= 29 && b0 <= 31)) {
                 operand.clearNumber();
-                if (b0 == 19 || b0 == 20) {
+                if (b0 == 19) {
                     dataPos += 1;
                 }
             } else if (b0 == 28 || (b0 >= 32 && b0 <= 255)) {
