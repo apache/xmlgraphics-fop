@@ -68,7 +68,7 @@
   <checks>
     <eval expected="Before the table" xpath="//pageViewport[1]//flow/block[1]//text"/>
     <!-- Test does not really matter, just make sure document is processed successfully -->
-    <eval expected="150000"           xpath="//pageViewport[2]//flow/block[1]/@ipd"/>
+    <eval expected="200000"           xpath="//pageViewport[2]//flow/block[1]/@ipd"/>
     <eval expected="22000"            xpath="//pageViewport[2]//flow/block[1]/@bpd"/>
   </checks>
 </testcase>
