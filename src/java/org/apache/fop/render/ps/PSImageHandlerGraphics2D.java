@@ -30,6 +30,7 @@ import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.java2d.GeneralGraphics2DImagePainter;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.FormGenerator;
@@ -84,7 +85,9 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
         gen.concatMatrix(sx, 0, 0, sy, fx, fy);
 
         final boolean textAsShapes = false;
-        PSGraphics2D graphics = new PSGraphics2D(textAsShapes, gen);
+        PSGraphics2D graphics = (painter instanceof GeneralGraphics2DImagePainter)
+                ? (PSGraphics2D) ((GeneralGraphics2DImagePainter) painter).getGraphics(textAsShapes, gen)
+                : new PSGraphics2D(textAsShapes, gen);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
         AffineTransform transform = new AffineTransform();
         // scale to viewbox

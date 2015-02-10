@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.xmlgraphics.java2d.GeneralGraphics2DImagePainter;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
@@ -94,7 +95,9 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
         gen.concatMatrix(sx, 0, 0, sy, fx, fy);
 
         final boolean textAsShapes = false;
-        PSGraphics2D graphics = new PSGraphics2D(textAsShapes, gen);
+        PSGraphics2D graphics = (painter instanceof GeneralGraphics2DImagePainter)
+                ? (PSGraphics2D) ((GeneralGraphics2DImagePainter) painter).getGraphics(textAsShapes, gen)
+                : new PSGraphics2D(textAsShapes, gen);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
         AffineTransform transform = new AffineTransform();
         // scale to viewbox
