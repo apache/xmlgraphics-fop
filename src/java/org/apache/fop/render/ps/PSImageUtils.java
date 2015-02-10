@@ -48,6 +48,9 @@ public class PSImageUtils extends org.apache.xmlgraphics.ps.PSImageUtils {
      * @return true if the image shall be inlined, false if forms shall be used.
      */
     public static boolean isImageInlined(ImageInfo info, PSRenderingContext renderingContext) {
+        if (info.getMimeType().equals("application/pdf")) {
+            return true;
+        }
         String uri = info.getOriginalURI();
         if (uri == null || "".equals(uri)) {
             return true;

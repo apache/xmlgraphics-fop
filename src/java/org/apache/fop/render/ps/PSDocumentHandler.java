@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -142,7 +143,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         return new PSRendererConfigurator(getUserAgent(), new PSRendererConfigParser());
     }
 
-    PSRenderingUtil getPSUtil() {
+    public PSRenderingUtil getPSUtil() {
         return this.psUtil;
     }
 
@@ -160,12 +161,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             }
 
             //Setup for PostScript generation
-            this.gen = new PSGenerator(out) {
-                /** Need to subclass PSGenerator to have better URI resolution */
-                public Source resolveURI(String uri) {
-                    return getUserAgent().resolveURI(uri);
-                }
-            };
+            this.gen = new FOPPSGeneratorImpl(out);
             this.gen.setPSLevel(psUtil.getLanguageLevel());
             this.currentPageNumber = 0;
             this.documentBoundingBox = new Rectangle2D.Double();
@@ -176,6 +172,37 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             pageDeviceDictionary.put("/ImagingBBox", "null");
         } catch (IOException e) {
             throw new IFException("I/O error in startDocument()", e);
+        }
+    }
+
+    public interface FOPPSGenerator {
+        PSDocumentHandler getHandler();
+        BufferedOutputStream getTempStream(URI uri) throws IOException;
+        Map<Integer, URI> getImages();
+    }
+
+    public class FOPPSGeneratorImpl extends PSGenerator implements FOPPSGenerator {
+        private Map<Integer, URI> images = new HashMap<Integer, URI>();
+        public FOPPSGeneratorImpl(OutputStream out) {
+            super(out);
+        }
+
+        /** Need to subclass PSGenerator to have better URI resolution */
+        @Override
+        public Source resolveURI(String uri) {
+            return getUserAgent().resolveURI(uri);
+        }
+
+        public PSDocumentHandler getHandler() {
+            return PSDocumentHandler.this;
+        }
+
+        public BufferedOutputStream getTempStream(URI uri) throws IOException {
+            return new BufferedOutputStream(getUserAgent().getResourceResolver().getOutputStream(uri));
+        }
+
+        public Map<Integer, URI> getImages() {
+            return images;
         }
     }
 
@@ -558,7 +585,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
      * @param uri the image URI
      * @return a PSResource instance
      */
-    protected PSResource getFormForImage(String uri) {
+    public PSResource getFormForImage(String uri) {
         if (uri == null || "".equals(uri)) {
             throw new IllegalArgumentException("uri must not be empty or null");
         }
