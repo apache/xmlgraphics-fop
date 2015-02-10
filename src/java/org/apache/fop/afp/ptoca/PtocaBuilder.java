@@ -33,6 +33,8 @@ import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 import org.apache.fop.afp.fonts.CharactersetEncoder.EncodedChars;
 import org.apache.fop.afp.modca.AxisOrientation;
 import org.apache.fop.afp.ptoca.TransparentDataControlSequence.TransparentData;
+import org.apache.fop.util.OCAColor;
+import org.apache.fop.util.OCAColorSpace;
 
 /**
  * Generator class for PTOCA data structures.
@@ -300,6 +302,12 @@ public abstract class PtocaBuilder implements PtocaConstants {
             int a = Math.round(colorComponents[1] * 255f) - 128;
             int b = Math.round(colorComponents[2] * 255f) - 128;
             writeBytes(l, a, b); // l*, a* and b*
+        } else if (cs instanceof OCAColorSpace) {
+            // Color space - 0x40 = OCA, all else are reserved and must be zero
+            writeBytes(0x00, 0x40, 0x00, 0x00, 0x00, 0x00);
+            writeBytes(16, 0, 0, 0); // Number of bits in each component
+            int ocaColor = ((OCAColor) col).getOCA();
+            writeBytes((ocaColor & 0xFF00) >> 8, ocaColor & 0xFF);
         } else {
             // Color space - 0x01 = RGB, all else are reserved and must be zero
             writeBytes(0x00, 0x01, 0x00, 0x00, 0x00, 0x00);
