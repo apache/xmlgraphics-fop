@@ -68,6 +68,7 @@ public final class PropertyParser extends PropertyTokenizer {
         FUNCTION_TABLE.put("rgb-named-color", new RGBNamedColorFunction()); //since XSL-FO 2.0
         FUNCTION_TABLE.put("cie-lab-color", new CIELabColorFunction()); //since XSL-FO 2.0
         FUNCTION_TABLE.put("cmyk", new CMYKColorFunction()); //non-standard!!!
+        FUNCTION_TABLE.put("oca", new OCAColorFunction()); //non-standard!!!
 
         /**
          * * NOT YET IMPLEMENTED!!!

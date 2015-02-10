@@ -42,6 +42,7 @@ import org.apache.xmlgraphics.java2d.color.profile.NamedColorProfileParser;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.util.OCAColor.OCAColorValue;
 
 /**
  * Generic Color helper class.
@@ -137,6 +138,8 @@ public final class ColorUtil {
                 parsedColor = parseAsCIELabColor(foUserAgent, value);
             } else if (value.startsWith("cmyk")) {
                 parsedColor = parseAsCMYK(value);
+            } else if (value.startsWith("oca")) {
+                parsedColor = parseAsOCA(value);
             }
 
             if (parsedColor == null) {
@@ -622,6 +625,42 @@ public final class ColorUtil {
                     + ". Must be cmyk(c,m,y,k)");
         }
         return parsedColor;
+    }
+
+    private static Color parseAsOCA(String value) throws PropertyException {
+        int poss = value.indexOf("(");
+        int pose = value.indexOf(")");
+        if (poss != -1 && pose != -1) {
+            value = value.substring(poss + 1, pose);
+            OCAColorValue colorValue;
+            if (value.equals("blue")) {
+                colorValue = OCAColorValue.BLUE;
+            } else if (value.equals("red")) {
+                colorValue = OCAColorValue.RED;
+            } else if (value.equals("magenta")) {
+                colorValue = OCAColorValue.MAGENTA;
+            } else if (value.equals("green")) {
+                colorValue = OCAColorValue.GREEN;
+            } else if (value.equals("cyan")) {
+                colorValue = OCAColorValue.CYAN;
+            } else if (value.equals("yellow")) {
+                colorValue = OCAColorValue.YELLOW;
+            } else if (value.equals("black")) {
+                colorValue = OCAColorValue.BLACK;
+            } else if (value.equals("brown")) {
+                colorValue = OCAColorValue.BROWN;
+            } else if (value.equals("medium-color")) {
+                colorValue = OCAColorValue.MEDIUM_COLOR;
+            } else if (value.equals("device-default")) {
+                colorValue = OCAColorValue.DEVICE_DEFAULT;
+            } else {
+                throw new PropertyException("Unknwon OCA color: " + value);
+            }
+            return new OCAColor(colorValue);
+        } else {
+            throw new PropertyException("Unknown color format: " + value
+                    + ". Must be oca(color-name)");
+        }
     }
 
     /**
