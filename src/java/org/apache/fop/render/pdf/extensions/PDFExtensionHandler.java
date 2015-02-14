@@ -154,7 +154,7 @@ public class PDFExtensionHandler extends DefaultHandler implements ContentHandle
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (PDFExtensionAttachment.CATEGORY.equals(uri)) {
             if (PDFEmbeddedFileAttachment.ELEMENT.equals(localName)) {
-                String name = lastAttributes.getValue("name");
+                String name = lastAttributes.getValue("filename");
                 String src = lastAttributes.getValue("src");
                 String desc = lastAttributes.getValue("description");
                 this.lastAttributes = null;
