@@ -40,7 +40,7 @@ public class PDFEmbeddedFileAttachment extends PDFExtensionAttachment {
     private static final String ATT_SRC = "src";
 
     /** a description of the file to be embedded */
-    private static final String ATT_DESC = "desc";
+    private static final String ATT_DESC = "description";
 
     /** filename attribute */
     private String filename;
