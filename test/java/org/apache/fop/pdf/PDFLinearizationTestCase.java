@@ -18,9 +18,12 @@
 /* $Id$ */
 package org.apache.fop.pdf;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,10 +31,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.transform.stream.StreamResult;
+
 import org.junit.Assert;
 import org.junit.Test;
 
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.pdf.PDFContentGenerator;
+import org.apache.fop.render.pdf.PDFDocumentHandler;
+import org.apache.fop.render.pdf.PDFPainter;
 
 public class PDFLinearizationTestCase {
     private int objectLeast;
@@ -50,12 +61,37 @@ public class PDFLinearizationTestCase {
             Rectangle2D.Float f = new Rectangle2D.Float();
             PDFPage page = new PDFPage(resources, i, f, f, f, f);
             doc.registerObject(page);
-//            doc.registerObject(gen.getStream());
+            doc.registerObject(gen.getStream());
             page.setContents(gen.getStream());
         }
         gen.flushPDFDoc();
         byte[] data = out.toByteArray();
         checkPDF(data);
+    }
+
+    @Test
+    public void testImage() throws Exception {
+        String fopxconf = "<fop version=\"1.0\"><renderers>"
+                + "<renderer mime=\"application/pdf\">"
+                + "<linearization>true</linearization>"
+                + "</renderer></renderers></fop>";
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI(),
+                new ByteArrayInputStream(fopxconf.getBytes()));
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        IFContext ifContext = new IFContext(foUserAgent);
+        PDFDocumentHandler documentHandler = new PDFDocumentHandler(ifContext);
+        documentHandler.getConfigurator().configure(documentHandler);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        documentHandler.setFontInfo(new FontInfo());
+        documentHandler.setResult(new StreamResult(out));
+        documentHandler.startDocument();
+        documentHandler.startPage(0, "", "", new Dimension());
+        PDFPainter pdfPainter = new PDFPainter(documentHandler, null);
+        pdfPainter.drawImage("test/resources/fop/svg/logo.jpg", new Rectangle());
+        documentHandler.endPage();
+        Assert.assertFalse(out.toString().contains("/Subtype /Image"));
+        documentHandler.endDocument();
+        Assert.assertTrue(out.toString().contains("/Subtype /Image"));
     }
 
     private void checkPDF(byte[] data) throws IOException {

@@ -475,7 +475,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     private void flushPDFDocument() {
-        if (outputStream != null) {
+        if (outputStream != null && !pdfDoc.isLinearizationEnabled()) {
             try {
                 this.pdfDoc.output(outputStream);
             } catch (IOException ioe) {
