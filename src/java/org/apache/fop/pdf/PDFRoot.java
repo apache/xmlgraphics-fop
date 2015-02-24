@@ -50,6 +50,9 @@ public class PDFRoot extends PDFDictionary {
      */
     public static final int PAGEMODE_FULLSCREEN = 3;
 
+    private final PDFDocument document;
+
+
     private static final PDFName[] PAGEMODE_NAMES = new PDFName[] {
         new PDFName("UseNone"),
         new PDFName("UseOutlines"),
@@ -67,9 +70,9 @@ public class PDFRoot extends PDFDictionary {
      * @param objnum the object's number
      * @param pages the PDFPages object
      */
-    public PDFRoot(int objnum, PDFPages pages) {
-        super();
-        setObjectNumber(objnum);
+    public PDFRoot(PDFDocument document, PDFPages pages) {
+        this.document = document;
+        setObjectNumber(document);
         put("Type", new PDFName("Catalog"));
         setRootPages(pages);
         setLanguage("x-unknown");

@@ -52,7 +52,7 @@ public class PDFResources extends PDFDictionary {
      */
     protected Set<PDFXObject> xObjects = new LinkedHashSet<PDFXObject>();
     /** Map of color spaces (key: color space name) */
-    protected Map<PDFName, PDFColorSpace> colorSpaces = new LinkedHashMap<PDFName, PDFColorSpace>();
+    protected Map<LazyName, PDFColorSpace> colorSpaces = new LinkedHashMap<LazyName, PDFColorSpace>();
 
     /** Map of ICC color spaces (key: ICC profile description) */
     protected Map<String, PDFICCBasedColorSpace> iccColorSpaces = new LinkedHashMap<String, PDFICCBasedColorSpace>();
@@ -68,13 +68,11 @@ public class PDFResources extends PDFDictionary {
 
     /**
      * create a /Resources object.
-     *
-     * @param objnum the object's number
      */
-    public PDFResources(int objnum) {
+    public PDFResources(PDFDocument doc) {
         /* generic creation of object */
         super();
-        setObjectNumber(objnum);
+        setObjectNumber(doc);
     }
 
     public void addContext(PDFResourceContext c) {
@@ -156,12 +154,22 @@ public class PDFResources extends PDFDictionary {
      * @param colorSpace the color space
      */
     public void addColorSpace(PDFColorSpace colorSpace) {
-        this.colorSpaces.put(new PDFName(colorSpace.getName()), colorSpace);
+        this.colorSpaces.put(new LazyName(colorSpace), colorSpace);
         if (colorSpace instanceof PDFICCBasedColorSpace) {
             PDFICCBasedColorSpace icc = (PDFICCBasedColorSpace)colorSpace;
             String desc = ColorProfileUtil.getICCProfileDescription(
                     icc.getICCStream().getICCProfile());
             this.iccColorSpaces.put(desc, icc);
+        }
+    }
+
+    static class LazyName {
+        private PDFColorSpace colorSpace;
+        public LazyName(PDFColorSpace colorSpace) {
+            this.colorSpace = colorSpace;
+        }
+        public PDFName getName() {
+            return new PDFName(colorSpace.getName());
         }
     }
 
@@ -181,8 +189,12 @@ public class PDFResources extends PDFDictionary {
      * @return the requested color space or null if it wasn't found
      */
     public PDFColorSpace getColorSpace(PDFName name) {
-        PDFColorSpace cs = this.colorSpaces.get(name);
-        return cs;
+        for (Map.Entry<LazyName, PDFColorSpace> x : colorSpaces.entrySet()) {
+            if (x.getKey().getName().equals(name)) {
+                return x.getValue();
+            }
+        }
+        return null;
     }
 
     /**
@@ -303,4 +315,43 @@ public class PDFResources extends PDFDictionary {
         }
     }
 
+    @Override
+    public void getChildren(Set<PDFObject> children) {
+        getChildren(children, false);
+    }
+
+    private void getChildren(Set<PDFObject> children, boolean isParent) {
+        super.getChildren(children);
+        for (PDFDictionary f : fonts.values()) {
+            children.add(f);
+            f.getChildren(children);
+        }
+        for (PDFResourceContext c : contexts) {
+            for (PDFXObject x : c.getXObjects()) {
+                children.add(x);
+                x.getChildren(children);
+            }
+            for (PDFPattern x : c.getPatterns()) {
+                children.add(x);
+                x.getChildren(children);
+            }
+            for (PDFShading x : c.getShadings()) {
+                children.add(x);
+                x.getChildren(children);
+            }
+            for (PDFGState x : c.getGStates()) {
+                children.add(x);
+                x.getChildren(children);
+            }
+        }
+        if (!isParent) {
+            for (PDFColorSpace x : colorSpaces.values()) {
+                children.add((PDFObject)x);
+                ((PDFObject)x).getChildren(children);
+            }
+        }
+        if (parent != null) {
+            parent.getChildren(children, true);
+        }
+    }
 }

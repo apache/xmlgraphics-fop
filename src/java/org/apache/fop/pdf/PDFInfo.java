@@ -22,7 +22,7 @@ package org.apache.fop.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -317,7 +317,7 @@ public class PDFInfo extends PDFObject {
             throw new IllegalArgumentException(key + " is a reserved keyword");
         }
         if (customProperties == null) {
-            customProperties = new HashMap<PDFName, String>();
+            customProperties = new LinkedHashMap<PDFName, String>();
         }
         customProperties.put(new PDFName(key), value);
     }

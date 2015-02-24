@@ -621,11 +621,11 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
 
     private class EncryptionFilter extends PDFFilter {
 
-        private int streamNumber;
+        private PDFObjectNumber streamNumber;
 
         private int streamGeneration;
 
-        EncryptionFilter(int streamNumber, int streamGeneration) {
+        EncryptionFilter(PDFObjectNumber streamNumber, int streamGeneration) {
             this.streamNumber  = streamNumber;
             this.streamGeneration = streamGeneration;
         }
@@ -658,7 +658,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
                 out.flush();
                 return new CipherOutputStream(out, cipher);
             } else {
-                byte[] key = createEncryptionKey(streamNumber, streamGeneration);
+                byte[] key = createEncryptionKey(streamNumber.getNumber(), streamGeneration);
                 Cipher cipher = initCipher(key);
                 return new CipherOutputStream(out, cipher);
             }
@@ -666,7 +666,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
 
     }
 
-    private PDFEncryptionJCE(int objectNumber, PDFEncryptionParams params, PDFDocument pdf) {
+    private PDFEncryptionJCE(PDFObjectNumber objectNumber, PDFEncryptionParams params, PDFDocument pdf) {
         setObjectNumber(objectNumber);
         try {
             if (params.getEncryptionLengthInBits() == 256) {
@@ -692,7 +692,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
      * @return the newly created encryption object
      */
     public static PDFEncryption make(
-            int objectNumber, PDFEncryptionParams params, PDFDocument pdf) {
+            PDFObjectNumber objectNumber, PDFEncryptionParams params, PDFDocument pdf) {
         return new PDFEncryptionJCE(objectNumber, params, pdf);
     }
 
@@ -714,7 +714,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             System.arraycopy(encryptedData, 0, storedData, 16, encryptedData.length);
             return storedData;
         } else {
-            byte[] key = createEncryptionKey(o.getObjectNumber(), o.getGeneration());
+            byte[] key = createEncryptionKey(o.getObjectNumber().getNumber(), o.getGeneration());
             return encryptWithKey(key, data);
         }
     }

@@ -88,6 +88,7 @@ import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFPaintingState;
 import org.apache.fop.pdf.PDFPattern;
+import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFShading;
@@ -132,7 +133,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     /**
      * The PDF reference of the current page.
      */
-    protected String pageRef;
+    protected PDFReference pageRef;
 
     /**
      * The PDF painting state
@@ -212,7 +213,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @param size the current font size
      */
     public PDFGraphics2D(boolean textAsShapes, FontInfo fi, PDFDocument doc,
-                         PDFResourceContext page, String pref, String font, float size,
+                         PDFResourceContext page, PDFReference pref, String font, float size,
                          TransparencyIgnoredEventListener listener) {
         this(textAsShapes);
         pdfDoc = doc;
@@ -331,7 +332,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * Gets the PDF reference of the current page.
      * @return the PDF reference of the current page
      */
-    public String getPageReference() {
+    public PDFReference getPageReference() {
         return this.pageRef;
     }
 
@@ -422,7 +423,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             if (linkType != PDFLink.EXTERNAL) {
                 String pdfdest = "/FitR " + dest;
                 resourceContext.addAnnotation(
-                    pdfDoc.getFactory().makeLink(rect, getPageReference(), pdfdest));
+                    pdfDoc.getFactory().makeLink(rect, getPageReference().toString(), pdfdest));
             } else {
                 resourceContext.addAnnotation(
                     pdfDoc.getFactory().makeLink(rect, dest, linkType, 0));
@@ -474,7 +475,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     private void flushPDFDocument() {
-        if (outputStream != null) {
+        if (outputStream != null && !pdfDoc.isLinearizationEnabled()) {
             try {
                 this.pdfDoc.output(outputStream);
             } catch (IOException ioe) {
@@ -1068,13 +1069,13 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 }
             }
 
-            String maskRef = null;
+            PDFReference maskRef = null;
             if (mask != null) {
                 BitmapImage fopimg = new BitmapImage(
                     "TempImageMask:" + pctx.toString(), devW, devH, mask, null);
                 fopimg.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
                 PDFImageXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
-                maskRef = xobj.referencePDF();
+                maskRef = xobj.makeReference();
 
                 flushPDFDocument();
             }

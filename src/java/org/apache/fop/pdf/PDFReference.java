@@ -31,7 +31,7 @@ import java.lang.ref.SoftReference;
  */
 public class PDFReference implements PDFWritable {
 
-    private int objectNumber;
+    private PDFObjectNumber objectNumber;
     private int generation;
 
     private Reference<PDFObject> objReference;
@@ -56,7 +56,7 @@ public class PDFReference implements PDFWritable {
         }
         String[] parts = ref.split(" ");
         assert parts.length == 3;
-        this.objectNumber = Integer.parseInt(parts[0]);
+        this.objectNumber = new PDFObjectNumber(Integer.parseInt(parts[0]));
         this.generation = Integer.parseInt(parts[1]);
         assert "R".equals(parts[2]);
     }
@@ -81,7 +81,7 @@ public class PDFReference implements PDFWritable {
      * Returns the object number.
      * @return the object number
      */
-    public int getObjectNumber() {
+    public PDFObjectNumber getObjectNumber() {
         return this.objectNumber;
     }
 
@@ -103,7 +103,7 @@ public class PDFReference implements PDFWritable {
 
     /** {@inheritDoc} */
     public void outputInline(OutputStream out, StringBuilder textBuffer) {
-        textBuffer.append(getObjectNumber()).append(' ').append(getGeneration()).append(" R");
+        textBuffer.append(getObjectNumber().getNumber()).append(' ').append(getGeneration()).append(" R");
     }
 
 }

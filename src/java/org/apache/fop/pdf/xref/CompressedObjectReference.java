@@ -22,15 +22,17 @@ package org.apache.fop.pdf.xref;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import org.apache.fop.pdf.PDFObjectNumber;
+
 /**
  * A reference to an indirect object stored in an object stream. Contains the relevant
  * information to add to a cross-reference stream.
  */
 public class CompressedObjectReference implements ObjectReference {
 
-    private final int objectNumber;
+    private final PDFObjectNumber objectNumber;
 
-    private final int objectStreamNumber;
+    private final PDFObjectNumber objectStreamNumber;
 
     private final int index;
 
@@ -42,7 +44,7 @@ public class CompressedObjectReference implements ObjectReference {
      * object is to be found
      * @param index the index of the compressed object in the object stream
      */
-    public CompressedObjectReference(int objectNumber, int objectStreamNumber, int index) {
+    public CompressedObjectReference(PDFObjectNumber objectNumber, PDFObjectNumber objectStreamNumber, int index) {
         this.objectNumber = objectNumber;
         this.objectStreamNumber = objectStreamNumber;
         this.index = index;
@@ -50,16 +52,16 @@ public class CompressedObjectReference implements ObjectReference {
 
     public void output(DataOutputStream out) throws IOException {
         out.write(2);
-        out.writeLong(objectStreamNumber);
+        out.writeLong(objectStreamNumber.getNumber());
         out.write(0);
         out.write(index);
     }
 
-    public int getObjectNumber() {
+    public PDFObjectNumber getObjectNumber() {
         return objectNumber;
     }
 
-    public int getObjectStreamNumber() {
+    public PDFObjectNumber getObjectStreamNumber() {
         return objectStreamNumber;
     }
 

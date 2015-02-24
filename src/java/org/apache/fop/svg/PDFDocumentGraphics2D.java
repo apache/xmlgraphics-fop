@@ -337,7 +337,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
                 width, height);
         resourceContext = page;
         pdfContext.setCurrentPage(page);
-        pageRef = page.referencePDF();
+        pageRef = page.makeReference();
 
         currentStream.write("q\n");
         AffineTransform at = new AffineTransform(1.0, 0.0, 0.0, -1.0,
