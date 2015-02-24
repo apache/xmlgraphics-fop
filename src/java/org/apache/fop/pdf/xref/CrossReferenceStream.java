@@ -31,6 +31,7 @@ import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFName;
+import org.apache.fop.pdf.PDFObjectNumber;
 import org.apache.fop.pdf.PDFStream;
 
 /**
@@ -60,7 +61,10 @@ public class CrossReferenceStream extends CrossReferenceObject {
             objectReferences.add(offset == null ? null : new UncompressedObjectReference(offset));
         }
         for (CompressedObjectReference ref : compressedObjectReferences) {
-            this.objectReferences.set(ref.getObjectNumber() - 1, ref);
+            while (ref.getObjectNumber().getNumber() > objectReferences.size()) {
+                objectReferences.add(null);
+            }
+            this.objectReferences.set(ref.getObjectNumber().getNumber() - 1, ref);
         }
     }
 
@@ -77,7 +81,7 @@ public class CrossReferenceStream extends CrossReferenceObject {
             }
 
         };
-        helperStream.setObjectNumber(objectNumber);
+        helperStream.setObjectNumber(new PDFObjectNumber(objectNumber));
         helperStream.setDocument(document);
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         DataOutputStream data = new DataOutputStream(byteArray);

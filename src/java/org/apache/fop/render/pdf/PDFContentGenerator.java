@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import org.apache.fop.pdf.PDFColorHandler;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilterList;
+import org.apache.fop.pdf.PDFLinearization;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFPaintingState;
 import org.apache.fop.pdf.PDFReference;
@@ -148,6 +149,9 @@ public class PDFContentGenerator {
      * @throws IOException if an error occurs while flushing the PDF objects
      */
     public void flushPDFDoc() throws IOException {
+        if (document.isLinearizationEnabled()) {
+            new PDFLinearization(document).outputPages(outputStream);
+        }
         this.document.output(this.outputStream);
     }
 

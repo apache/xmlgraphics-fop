@@ -171,7 +171,9 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                 prepareImageMCID(structElem);
             }
             drawImageUsingURI(uri, rect);
-            flushPDFDoc();
+            if (!getDocumentHandler().getPDFDocument().isLinearizationEnabled()) {
+                flushPDFDoc();
+            }
         }
     }
 
@@ -228,7 +230,9 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             prepareImageMCID(structElem);
         }
         drawImageUsingDocument(doc, rect);
-        flushPDFDoc();
+        if (!getDocumentHandler().getPDFDocument().isLinearizationEnabled()) {
+            flushPDFDoc();
+        }
     }
 
     private void flushPDFDoc() throws IFException {

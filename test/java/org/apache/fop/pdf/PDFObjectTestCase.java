@@ -58,10 +58,10 @@ public class PDFObjectTestCase {
     @Test
     public void testSetObjectNumber() {
         pdfObjectUnderTest.setObjectNumber(1);
-        assertEquals(1, pdfObjectUnderTest.getObjectNumber());
+        assertEquals(1, pdfObjectUnderTest.getObjectNumber().getNumber());
 
         pdfObjectUnderTest.setObjectNumber(5);
-        assertEquals(5, pdfObjectUnderTest.getObjectNumber());
+        assertEquals(5, pdfObjectUnderTest.getObjectNumber().getNumber());
     }
 
     /**
@@ -157,12 +157,12 @@ public class PDFObjectTestCase {
         PDFDictionary dict = new PDFDictionary();
         dict.setObjectNumber(7);
         PDFReference ref = dict.makeReference();
-        assertEquals(ref.getObjectNumber(), 7);
+        assertEquals(ref.getObjectNumber().getNumber(), 7);
         assertEquals(ref.getGeneration(), 0);
         assertEquals(ref.toString(), "7 0 R");
 
         ref = new PDFReference("8 0 R");
-        assertEquals(ref.getObjectNumber(), 8);
+        assertEquals(ref.getObjectNumber().getNumber(), 8);
         assertEquals(ref.getGeneration(), 0);
         assertEquals(ref.toString(), "8 0 R");
     }

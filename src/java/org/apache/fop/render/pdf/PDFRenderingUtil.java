@@ -588,6 +588,7 @@ class PDFRenderingUtil {
 
         this.pdfDoc.enableAccessibility(userAgent.isAccessibilityEnabled());
         pdfDoc.setMergeFontsEnabled(rendererConfig.getMergeFontsEnabled());
+        pdfDoc.setLinearizationEnabled(rendererConfig.getLinearizationEnabled());
 
         return this.pdfDoc;
     }

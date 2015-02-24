@@ -46,7 +46,7 @@ public class ObjectStreamManagerTestCase {
         int objectStreamNumber2 = assertSameObjectStream(expectedCapacity, expectedCapacity * 2);
         int objectStreamNumber3 = assertSameObjectStream(expectedCapacity * 2, numCompressedObjects);
         assertDifferent(objectStreamNumber1, objectStreamNumber2, objectStreamNumber3);
-        assertEquals(objectStreamNumber3, pdfDocument.previous.getObjectNumber());
+        assertEquals(objectStreamNumber3, pdfDocument.previous.getObjectNumber().getNumber());
     }
 
     private void createCompressObjectReferences(int numObjects) {
@@ -82,8 +82,8 @@ public class ObjectStreamManagerTestCase {
     private CompressedObject createCompressedObject(final int objectNumber) {
         return new CompressedObject() {
 
-            public int getObjectNumber() {
-                return objectNumber;
+            public PDFObjectNumber getObjectNumber() {
+                return new PDFObjectNumber(objectNumber);
             }
 
             public int output(OutputStream outputStream) throws IOException {
@@ -101,7 +101,7 @@ public class ObjectStreamManagerTestCase {
     }
 
     private int getObjectStreamNumber(int index) {
-        return compressedObjectReferences.get(index).getObjectStreamNumber();
+        return compressedObjectReferences.get(index).getObjectStreamNumber().getNumber();
     }
 
     private void assertDifferent(int objectStreamNumber1, int objectStreamNumber2,

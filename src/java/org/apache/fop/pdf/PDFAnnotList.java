@@ -21,6 +21,7 @@ package org.apache.fop.pdf;
 
 // Java
 import java.util.List;
+import java.util.Set;
 
 /**
  * class representing an object which is a list of annotations.
@@ -73,4 +74,9 @@ public class PDFAnnotList extends PDFObject {
      * 19 0 R
      * ]
      */
+
+    @Override
+    public void getChildren(Set<PDFObject> children) {
+        PDFDictionary.getChildren(links, children);
+    }
 }

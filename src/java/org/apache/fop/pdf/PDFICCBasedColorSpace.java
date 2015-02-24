@@ -23,6 +23,7 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
@@ -155,4 +156,10 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
         return sRGBProfile;
     }
 
+    @Override
+    public void getChildren(Set<PDFObject> children) {
+        super.getChildren(children);
+        children.add(iccStream);
+        iccStream.getChildren(children);
+    }
 }
