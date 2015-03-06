@@ -36,7 +36,6 @@ import org.apache.fop.fo.flow.AbstractGraphics;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 
-
 /**
  * Tests that the fox:alt-text property is correctly set on objects that support it.
  */

@@ -31,7 +31,6 @@ import static org.junit.Assert.fail;
 
 import org.apache.commons.io.output.CountingOutputStream;
 
-
 /**
  * Test case for {@link PDFDictionary}.
  */

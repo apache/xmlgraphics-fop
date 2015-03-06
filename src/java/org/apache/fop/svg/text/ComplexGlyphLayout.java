@@ -23,10 +23,10 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.Point2D;
 import java.text.AttributedCharacterIterator;
 
+import org.apache.batik.bridge.GlyphLayout;
 import org.apache.batik.gvt.font.GVTFont;
 import org.apache.batik.gvt.font.GVTGlyphVector;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
-import org.apache.batik.gvt.text.GlyphLayout;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.svg.font.FOPGVTFont;

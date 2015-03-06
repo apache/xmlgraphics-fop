@@ -22,8 +22,8 @@ package org.apache.fop.svg;
 import java.text.AttributedCharacterIterator;
 import java.util.List;
 
-import org.apache.batik.gvt.TextNode;
-import org.apache.batik.gvt.flow.FlowTextPainter;
+import org.apache.batik.bridge.FlowTextPainter;
+import org.apache.batik.bridge.TextNode;
 
 import org.apache.fop.fonts.FontInfo;
 

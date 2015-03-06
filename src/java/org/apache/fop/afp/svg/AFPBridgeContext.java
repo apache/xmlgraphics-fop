@@ -22,11 +22,11 @@ package org.apache.fop.afp.svg;
 import java.awt.geom.AffineTransform;
 
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.DefaultFontFamilyResolver;
 import org.apache.batik.bridge.DocumentLoader;
+import org.apache.batik.bridge.FontFamilyResolver;
+import org.apache.batik.bridge.TextPainter;
 import org.apache.batik.bridge.UserAgent;
-import org.apache.batik.gvt.TextPainter;
-import org.apache.batik.gvt.font.DefaultFontFamilyResolver;
-import org.apache.batik.gvt.font.FontFamilyResolver;
 
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;

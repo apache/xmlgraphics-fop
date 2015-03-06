@@ -19,7 +19,7 @@
 
 package org.apache.fop.afp.svg;
 
-import org.apache.batik.gvt.TextPainter;
+import org.apache.batik.bridge.TextPainter;
 
 import org.apache.fop.svg.AbstractFOPTextElementBridge;
 

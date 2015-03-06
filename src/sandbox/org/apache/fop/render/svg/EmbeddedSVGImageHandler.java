@@ -30,7 +30,6 @@ import javax.xml.transform.sax.SAXResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;

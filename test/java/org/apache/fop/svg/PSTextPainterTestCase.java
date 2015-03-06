@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import org.apache.commons.io.output.NullOutputStream;
 
-import org.apache.batik.gvt.TextPainter;
+import org.apache.batik.bridge.TextPainter;
 
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;

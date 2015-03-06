@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.batik.bridge.FontFace;
-import org.apache.batik.gvt.font.FontFamilyResolver;
+import org.apache.batik.bridge.FontFamilyResolver;
 import org.apache.batik.gvt.font.GVTFontFamily;
 
 public class AggregatingFontFamilyResolver implements FontFamilyResolver {

@@ -28,7 +28,6 @@ import static org.junit.Assert.assertEquals;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;
 
-
 public class TableColumnColumnNumberTestCase extends AbstractTableTest {
 
     /**

@@ -24,8 +24,8 @@ import java.awt.geom.AffineTransform;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.SVGTextElementBridge;
+import org.apache.batik.bridge.TextPainter;
 import org.apache.batik.bridge.UserAgent;
-import org.apache.batik.gvt.TextPainter;
 
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;

@@ -32,13 +32,12 @@ import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfiguration;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.anim.dom.SVGDOMImplementation;
+import org.apache.batik.bridge.FontFamilyResolver;
 import org.apache.batik.dom.util.DocumentFactory;
-import org.apache.batik.gvt.font.FontFamilyResolver;
 import org.apache.batik.transcoder.ErrorHandler;
 import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.TranscoderException;

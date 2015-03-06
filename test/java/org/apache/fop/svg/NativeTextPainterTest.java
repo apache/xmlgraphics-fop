@@ -26,11 +26,11 @@ import java.io.IOException;
 
 import org.w3c.dom.Document;
 
+import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.apache.batik.bridge.TextPainter;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.gvt.TextPainter;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;

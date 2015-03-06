@@ -21,10 +21,10 @@ package org.apache.fop.image.loader.batik;
 
 import java.awt.geom.AffineTransform;
 
+import org.apache.batik.anim.dom.SVGOMDocument;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.UserAgent;
-import org.apache.batik.dom.svg.SVGOMDocument;
 
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;

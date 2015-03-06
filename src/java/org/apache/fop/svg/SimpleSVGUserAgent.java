@@ -28,8 +28,8 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
 
+import org.apache.batik.bridge.FontFamilyResolver;
 import org.apache.batik.bridge.UserAgentAdapter;
-import org.apache.batik.gvt.font.FontFamilyResolver;
 
 /**
  * A simple SVG user agent.

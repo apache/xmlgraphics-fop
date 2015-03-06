@@ -23,7 +23,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-
 /**
  * JUnit test case for the LineBreakStatus class
  */

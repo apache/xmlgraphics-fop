@@ -249,7 +249,7 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
             }
         }
         labelList = !labelDone ? label.getNextKnuthElements(childLC, alignment, labelLMStack,
-                labelRestartPosition, labelRestartLM) : new LinkedList<KnuthElement>();
+                labelRestartPosition, labelRestartLM) : (List) new LinkedList<KnuthElement>();
 
         //Space resolution as if the contents were placed in a new reference area
         //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)
@@ -286,7 +286,7 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
             }
         }
         bodyList = !bodyDone ? body.getNextKnuthElements(childLC, alignment, bodyLMStack,
-                bodyRestartPosition, bodyRestartLM) : new LinkedList<KnuthElement>();
+                bodyRestartPosition, bodyRestartLM) : (List) new LinkedList<KnuthElement>();
 
         //Space resolution as if the contents were placed in a new reference area
         //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)

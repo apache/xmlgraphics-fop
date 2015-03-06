@@ -34,7 +34,6 @@ import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
-
 import org.apache.xmlgraphics.util.DoubleFormatUtil;
 
 /**

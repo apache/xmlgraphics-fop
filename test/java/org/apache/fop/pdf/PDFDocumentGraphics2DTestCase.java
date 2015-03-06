@@ -25,6 +25,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;

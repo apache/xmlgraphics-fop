@@ -23,9 +23,9 @@ import org.w3c.dom.Element;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.SVGTextElementBridge;
+import org.apache.batik.bridge.TextNode;
+import org.apache.batik.bridge.TextPainter;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.gvt.TextNode;
-import org.apache.batik.gvt.TextPainter;
 
 /**
  * <p>Bridge class for the &lt;text> element.

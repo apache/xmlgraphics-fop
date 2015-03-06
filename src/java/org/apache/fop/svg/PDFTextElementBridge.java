@@ -19,7 +19,7 @@
 
 package org.apache.fop.svg;
 
-import org.apache.batik.gvt.TextPainter;
+import org.apache.batik.bridge.TextPainter;
 
 /**
  * <p>Bridge class for the &lt;text> element.

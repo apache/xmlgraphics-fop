@@ -24,7 +24,7 @@ import java.io.StringWriter;
 
 import org.junit.Test;
 
-import org.apache.batik.gvt.TextPainter;
+import org.apache.batik.bridge.TextPainter;
 
 import org.apache.xmlgraphics.java2d.GraphicContext;
 
