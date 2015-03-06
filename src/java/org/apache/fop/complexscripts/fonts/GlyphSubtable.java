@@ -20,7 +20,6 @@
 package org.apache.fop.complexscripts.fonts;
 
 import java.lang.ref.WeakReference;
-
 import java.util.List;
 import java.util.Map;
 

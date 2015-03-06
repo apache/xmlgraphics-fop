@@ -22,12 +22,11 @@ package org.apache.fop.svg;
 import java.io.IOException;
 
 import org.w3c.dom.Document;
-
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 
 /**
  * This is a special subclass to allow setting a special EntityResolver.

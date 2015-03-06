@@ -22,11 +22,11 @@ package org.apache.fop.render.ps;
 import java.text.AttributedCharacterIterator;
 import java.util.List;
 
+import org.apache.batik.bridge.FlowTextPainter;
+import org.apache.batik.bridge.TextNode;
+import org.apache.batik.bridge.TextPainter;
 import org.apache.batik.bridge.svg12.SVGFlowRootElementBridge;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.gvt.TextNode;
-import org.apache.batik.gvt.TextPainter;
-import org.apache.batik.gvt.flow.FlowTextPainter;
 
 import org.apache.fop.fonts.FontInfo;
 

@@ -21,7 +21,7 @@ package org.apache.fop.svg;
 
 import java.awt.geom.AffineTransform;
 
-import org.apache.batik.gvt.font.FontFamilyResolver;
+import org.apache.batik.bridge.FontFamilyResolver;
 
 import org.apache.fop.apps.FOUserAgent;
 

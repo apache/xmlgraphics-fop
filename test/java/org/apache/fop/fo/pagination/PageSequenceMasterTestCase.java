@@ -36,7 +36,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 
-
 /**
  * Unit Test for PageSequenceMaster
  *

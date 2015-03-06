@@ -19,7 +19,7 @@
 
 package org.apache.fop.svg.font;
 
-import org.apache.batik.gvt.font.FontFamilyResolver;
+import org.apache.batik.bridge.FontFamilyResolver;
 
 public interface FOPFontFamilyResolver extends FontFamilyResolver {
 

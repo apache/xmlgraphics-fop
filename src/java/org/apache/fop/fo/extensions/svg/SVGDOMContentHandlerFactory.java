@@ -26,12 +26,11 @@ import javax.xml.transform.sax.TransformerHandler;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.anim.dom.SVGDOMImplementation;
 
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.DelegatingContentHandler;

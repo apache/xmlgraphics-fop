@@ -19,10 +19,10 @@
 
 package org.apache.fop.svg;
 
+import org.apache.batik.bridge.TextNode;
+import org.apache.batik.bridge.TextPainter;
 import org.apache.batik.extension.svg.BatikFlowTextElementBridge;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.gvt.TextNode;
-import org.apache.batik.gvt.TextPainter;
 
 import org.apache.fop.fonts.FontInfo;
 

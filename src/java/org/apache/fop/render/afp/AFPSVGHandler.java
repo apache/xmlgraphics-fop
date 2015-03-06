@@ -26,10 +26,10 @@ import java.io.IOException;
 
 import org.w3c.dom.Document;
 
+import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.bridge.DefaultFontFamilyResolver;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.gvt.font.DefaultFontFamilyResolver;
 
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;

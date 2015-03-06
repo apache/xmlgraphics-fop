@@ -20,7 +20,6 @@
 package org.apache.fop.fo.properties;
 
 import java.awt.Color;
-
 import java.util.Iterator;
 import java.util.List;
 

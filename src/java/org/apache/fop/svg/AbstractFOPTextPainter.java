@@ -32,11 +32,11 @@ import java.text.CharacterIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.batik.gvt.TextNode;
-import org.apache.batik.gvt.TextPainter;
-import org.apache.batik.gvt.renderer.StrokingTextPainter;
+import org.apache.batik.bridge.Mark;
+import org.apache.batik.bridge.StrokingTextPainter;
+import org.apache.batik.bridge.TextNode;
+import org.apache.batik.bridge.TextPainter;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
-import org.apache.batik.gvt.text.Mark;
 import org.apache.batik.gvt.text.TextPaintInfo;
 
 import org.apache.fop.afp.AFPGraphics2D;

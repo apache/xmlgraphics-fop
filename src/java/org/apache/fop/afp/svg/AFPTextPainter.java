@@ -21,8 +21,8 @@ package org.apache.fop.afp.svg;
 
 import java.awt.Graphics2D;
 
-import org.apache.batik.gvt.font.FontFamilyResolver;
-import org.apache.batik.gvt.renderer.StrokingTextPainter;
+import org.apache.batik.bridge.FontFamilyResolver;
+import org.apache.batik.bridge.StrokingTextPainter;
 
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.svg.AbstractFOPTextPainter;

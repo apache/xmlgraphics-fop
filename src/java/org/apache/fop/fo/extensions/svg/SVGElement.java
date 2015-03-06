@@ -27,11 +27,11 @@ import java.net.URI;
 
 import org.w3c.dom.Element;
 
+import org.apache.batik.anim.dom.SVGDOMImplementation;
+import org.apache.batik.anim.dom.SVGOMDocument;
+import org.apache.batik.anim.dom.SVGOMElement;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.dom.svg.SVGContext;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.dom.svg.SVGOMDocument;
-import org.apache.batik.dom.svg.SVGOMElement;
 import org.apache.batik.dom.util.XMLSupport;
 import org.apache.batik.util.SVGConstants;
 

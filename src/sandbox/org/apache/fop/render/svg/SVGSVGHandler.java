@@ -26,7 +26,7 @@ import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGElement;
 import org.w3c.dom.svg.SVGSVGElement;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.dom.util.XMLSupport;
 

@@ -36,16 +36,15 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.batik.bridge.FontFamilyResolver;
+import org.apache.batik.bridge.GlyphLayout;
 import org.apache.batik.bridge.SVGGVTFont;
-import org.apache.batik.gvt.TextNode;
-import org.apache.batik.gvt.font.FontFamilyResolver;
+import org.apache.batik.bridge.StrokingTextPainter;
+import org.apache.batik.bridge.TextLayoutFactory;
+import org.apache.batik.bridge.TextNode;
+import org.apache.batik.bridge.TextSpanLayout;
 import org.apache.batik.gvt.font.GVTGlyphVector;
-import org.apache.batik.gvt.renderer.StrokingTextPainter;
-import org.apache.batik.gvt.renderer.StrokingTextPainter.TextChunk;
-import org.apache.batik.gvt.text.GlyphLayout;
-import org.apache.batik.gvt.text.TextLayoutFactory;
 import org.apache.batik.gvt.text.TextPaintInfo;
-import org.apache.batik.gvt.text.TextSpanLayout;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;

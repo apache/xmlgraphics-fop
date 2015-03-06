@@ -22,7 +22,7 @@ package org.apache.fop.image.loader.batik;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.anim.dom.SVGDOMImplementation;
 
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;

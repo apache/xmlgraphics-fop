@@ -65,7 +65,6 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import org.apache.fop.DebugHelper;
-
 import org.apache.fop.apps.EnvironmentProfile;
 import org.apache.fop.apps.EnvironmentalProfileFactory;
 import org.apache.fop.apps.FOUserAgent;

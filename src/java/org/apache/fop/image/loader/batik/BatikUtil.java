@@ -38,7 +38,7 @@ public final class BatikUtil {
      */
     public static boolean isBatikAvailable() {
         try {
-            Class.forName("org.apache.batik.dom.svg.SVGDOMImplementation");
+            Class.forName("org.apache.batik.anim.dom.SVGDOMImplementation");
             return true;
         } catch (Exception e) {
             //ignore

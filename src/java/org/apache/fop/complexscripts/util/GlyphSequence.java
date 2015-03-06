@@ -20,7 +20,6 @@
 package org.apache.fop.complexscripts.util;
 
 import java.nio.IntBuffer;
-
 import java.util.ArrayList;
 import java.util.List;
 
