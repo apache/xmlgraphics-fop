@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +77,7 @@ public class PDFFactory {
     private Log log = LogFactory.getLog(PDFFactory.class);
 
     private int subsetFontCounter = -1;
+    private Map<String, PDFDPart> dparts = new HashMap<String, PDFDPart>();
 
     /**
      * Creates a new PDFFactory.
@@ -1487,4 +1489,24 @@ public class PDFFactory {
         return navigator;
     }
 
+    public void makeDPart(PDFPage page, String pageMasterName) {
+        PDFDPartRoot root = getDocument().getRoot().getDPartRoot();
+        PDFDPart dPart;
+        if (dparts.containsKey(pageMasterName)) {
+            dPart = dparts.get(pageMasterName);
+        } else {
+            dPart = new PDFDPart(root.dpart);
+            root.add(dPart);
+            getDocument().registerTrailerObject(dPart);
+            dparts.put(pageMasterName, dPart);
+        }
+        dPart.addPage(page);
+        page.put("DPart", dPart);
+    }
+
+    public PDFDPartRoot makeDPartRoot() {
+        PDFDPartRoot pdfdPartRoot = new PDFDPartRoot(getDocument());
+        getDocument().registerTrailerObject(pdfdPartRoot);
+        return pdfdPartRoot;
+    }
 }

@@ -60,6 +60,7 @@ import static org.apache.fop.render.pdf.PDFRendererOption.LINEARIZATION;
 import static org.apache.fop.render.pdf.PDFRendererOption.MERGE_FONTS;
 import static org.apache.fop.render.pdf.PDFRendererOption.OUTPUT_PROFILE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_A_MODE;
+import static org.apache.fop.render.pdf.PDFRendererOption.PDF_VT_MODE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_X_MODE;
 import static org.apache.fop.render.pdf.PDFRendererOption.VERSION;
 
@@ -134,6 +135,7 @@ public final class PDFRendererConfig implements RendererConfig {
                 buildFilterMapFromConfiguration(cfg);
                 parseAndPut(PDF_A_MODE, cfg);
                 parseAndPut(PDF_X_MODE, cfg);
+                parseAndPut(PDF_VT_MODE, cfg);
                 configureEncryptionParams(cfg, userAgent, strict);
                 parseAndPut(OUTPUT_PROFILE, cfg);
                 parseAndPut(DISABLE_SRGB_COLORSPACE, cfg);

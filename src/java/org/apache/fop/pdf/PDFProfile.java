@@ -43,6 +43,8 @@ public class PDFProfile {
      */
     protected PDFXMode pdfXMode = PDFXMode.DISABLED;
 
+    protected PDFVTMode pdfVTMode = PDFVTMode.DISABLED;
+
     private PDFDocument doc;
 
     /**
@@ -59,11 +61,14 @@ public class PDFProfile {
     protected void validateProfileCombination() {
         if (pdfAMode != PDFAMode.DISABLED) {
             if (pdfAMode == PDFAMode.PDFA_1B) {
-                if (pdfXMode != PDFXMode.DISABLED && pdfXMode != PDFXMode.PDFX_3_2003) {
+                if (pdfXMode != PDFXMode.DISABLED && pdfXMode != PDFXMode.PDFX_3_2003 && pdfXMode != PDFXMode.PDFX_4) {
                     throw new PDFConformanceException(
                             pdfAMode + " and " + pdfXMode + " are not compatible!");
                 }
             }
+        }
+        if (pdfVTMode != PDFVTMode.DISABLED && pdfXMode != PDFXMode.PDFX_4) {
+            throw new PDFConformanceException(pdfVTMode.name() + " requires " + PDFXMode.PDFX_4.getName() + " enabled");
         }
     }
 
@@ -99,9 +104,17 @@ public class PDFProfile {
         return this.pdfXMode;
     }
 
+    public PDFVTMode getPDFVTMode() {
+        return this.pdfVTMode;
+    }
+
     /** @return true if any PDF/X mode is active */
     public boolean isPDFXActive() {
         return getPDFXMode() != PDFXMode.DISABLED;
+    }
+
+    public boolean isPDFVTActive() {
+        return getPDFVTMode() != PDFVTMode.DISABLED;
     }
 
     /**
@@ -113,6 +126,18 @@ public class PDFProfile {
             mode = PDFXMode.DISABLED;
         }
         this.pdfXMode = mode;
+        validateProfileCombination();
+    }
+
+    /**
+     * Sets the PDF/X mode
+     * @param mode the PDF/X mode
+     */
+    public void setPDFVTMode(PDFVTMode mode) {
+        if (mode == null) {
+            mode = PDFVTMode.DISABLED;
+        }
+        this.pdfVTMode = mode;
         validateProfileCombination();
     }
 
@@ -186,7 +211,7 @@ public class PDFProfile {
         if (pdfAMode.isPart1()) {
             return getPDFAMode();
         }
-        if (isPDFXActive()) {
+        if (getPDFXMode() == PDFXMode.PDFX_3_2003) {
             return getPDFXMode();
         }
         return null;
@@ -194,7 +219,7 @@ public class PDFProfile {
 
     /** Checks if the right PDF version is set. */
     public void verifyPDFVersion() {
-        final String err = "PDF version must be 1.4 for {0}";
+        String err = "PDF version must be 1.4 for {0}";
         if (getPDFAMode().isPart1()
                 && !Version.V1_4.equals(getDocument().getPDFVersion())) {
             throw new PDFConformanceException(format(err, getPDFAMode()));
@@ -252,12 +277,12 @@ public class PDFProfile {
 
     /** @return true if the ModDate Info entry must be present. */
     public boolean isModDateRequired() {
-        return getPDFXMode() == PDFXMode.PDFX_3_2003;
+        return getPDFXMode() != PDFXMode.DISABLED;
     }
 
     /** @return true if the Trapped Info entry must be present. */
     public boolean isTrappedEntryRequired() {
-        return getPDFXMode() == PDFXMode.PDFX_3_2003;
+        return getPDFXMode() != PDFXMode.DISABLED;
     }
 
     /** @return true if annotations are allowed */

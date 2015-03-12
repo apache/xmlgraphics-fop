@@ -71,7 +71,7 @@ public class PDFDictionaryExtension extends PDFCollectionExtension {
     @Override
     public void addEntry(PDFCollectionEntryExtension entry) {
         if ((entry.getKey() == null) || (entry.getKey().length() == 0)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("pdf:dictionary key is empty");
         } else {
             entries.add(entry);
         }

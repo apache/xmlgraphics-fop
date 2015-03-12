@@ -20,9 +20,11 @@
 package org.apache.fop.pdf;
 
 // Java
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
+import java.util.UUID;
 
 /* modified by JKT to integrate with 0.12.0 */
 /* modified by Eric SCHAEFFER to integrate with 0.13.0 */
@@ -63,6 +65,11 @@ public class PDFImageXObject extends PDFXObject {
      * @return the length of the data written
      */
     public int output(OutputStream stream) throws IOException {
+        if (getDocument().getProfile().isPDFVTActive()) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            pdfimage.outputContents(baos);
+            put("GTS_XID", "uuid:" + UUID.nameUUIDFromBytes(baos.toByteArray()));
+        }
         int length = super.output(stream);
 
         // let it gc

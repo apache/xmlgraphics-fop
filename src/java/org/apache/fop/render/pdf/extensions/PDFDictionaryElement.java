@@ -107,6 +107,10 @@ public class PDFDictionaryElement extends PDFCollectionEntryElement {
             // handled in PDFPageElement subclass
         } else if (localName.equals("info")) {
             // handled in PDFDocumentInformationElement subclass
+        } else if (localName.equals("vt")) {
+            // handled in PDFVTElement subclass
+        } else if (localName.equals("pagepiece")) {
+            // handled in PDFPagePieceElement subclass
         } else if (localName.equals("dictionary")) {
             if (!PDFDictionaryType.hasValueOfElementName(parent.getLocalName()) && !PDFObjectType.Array.elementName().equals(parent.getLocalName())) {
                 invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(), null);

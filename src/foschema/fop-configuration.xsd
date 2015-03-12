@@ -94,6 +94,9 @@
     </xsd:annotation>
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <xsd:choice>
+        <xsd:element name="pdf-a-mode" type="xsd:string" minOccurs="0"/>
+        <xsd:element name="pdf-x-mode" type="xsd:string" minOccurs="0"/>
+        <xsd:element name="pdf-vt-mode" type="xsd:string" minOccurs="0"/>
         <xsd:element name="version" type="xsd:float" minOccurs="0"/>
         <xsd:element name="endianness" type="xsd:string" minOccurs="0">
           <xsd:annotation>
@@ -271,6 +274,7 @@
         </xsd:element>
         <xsd:element name="resource-group-file" type="xsd:string" minOccurs="0"/>
         <xsd:element name="default-resource-levels" minOccurs="0"/>
+        <xsd:element name="merge-fonts" minOccurs="0"/>
       </xsd:choice>
     </xsd:sequence>
     <xsd:attribute name="mime" type="MimeConstants" use="required"/>

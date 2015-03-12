@@ -67,6 +67,10 @@ public class PDFElementMapping extends ElementMapping {
             foObjs.put(PDFObjectType.String.elementName(), new PDFCollectionEntryElementMaker(PDFObjectType.String));
             // pdf:info
             foObjs.put(PDFDictionaryType.Info.elementName(), new PDFDocumentInformationElementMaker());
+            // pdf:vt
+            foObjs.put(PDFDictionaryType.VT.elementName(), new PDFVTElementMaker());
+            // pdf:pagepiece
+            foObjs.put(PDFDictionaryType.PagePiece.elementName(), new PDFPagePieceElementMaker());
         }
     }
 
@@ -140,4 +144,15 @@ public class PDFElementMapping extends ElementMapping {
         }
     }
 
+    static class PDFVTElementMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new PDFVTElement(parent);
+        }
+    }
+
+    static class PDFPagePieceElementMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new PDFPagePieceElement(parent);
+        }
+    }
 }

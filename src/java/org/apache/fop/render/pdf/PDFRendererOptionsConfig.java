@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionParams;
+import org.apache.fop.pdf.PDFVTMode;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.Version;
 
@@ -35,6 +36,7 @@ import static org.apache.fop.render.pdf.PDFRendererOption.LINEARIZATION;
 import static org.apache.fop.render.pdf.PDFRendererOption.MERGE_FONTS;
 import static org.apache.fop.render.pdf.PDFRendererOption.OUTPUT_PROFILE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_A_MODE;
+import static org.apache.fop.render.pdf.PDFRendererOption.PDF_VT_MODE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_X_MODE;
 import static org.apache.fop.render.pdf.PDFRendererOption.VERSION;
 
@@ -105,6 +107,10 @@ public final class PDFRendererOptionsConfig {
 
     public PDFXMode getPDFXMode() {
         return (PDFXMode) properties.get(PDF_X_MODE);
+    }
+
+    public PDFVTMode getPDFVTMode() {
+        return (PDFVTMode) properties.get(PDF_VT_MODE);
     }
 
     public PDFEncryptionParams getEncryptionParameters() {

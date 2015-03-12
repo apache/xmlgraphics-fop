@@ -52,6 +52,8 @@ public class PDFRoot extends PDFDictionary {
 
     private final PDFDocument document;
 
+    private PDFDPartRoot dPartRoot;
+
 
     private static final PDFName[] PAGEMODE_NAMES = new PDFName[] {
         new PDFName("UseNone"),
@@ -317,5 +319,13 @@ public class PDFRoot extends PDFDictionary {
      */
     public PDFDictionary getMarkInfo() {
         return (PDFDictionary)get("MarkInfo");
+    }
+
+    public PDFDPartRoot getDPartRoot() {
+        if (dPartRoot == null) {
+            dPartRoot = getDocument().getFactory().makeDPartRoot();
+            put("DPartRoot", dPartRoot.makeReference());
+        }
+        return dPartRoot;
     }
 }
