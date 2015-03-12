@@ -197,15 +197,7 @@ public class PDFFactory {
          * create a PDFPage with the next object number, the given
          * resources, contents and dimensions
          */
-        PDFResources res = getDocument().getFactory().makeResources();
-        if (getDocument().isLinearizationEnabled()) {
-            getDocument().trailerObjects.remove(resources);
-        }
-        res.setParentResources(resources);
-
-        PDFPage page = new PDFPage(res, pageIndex, mediaBox, cropBox, bleedBox, trimBox);
-        res.setParent(page);
-
+        PDFPage page = new PDFPage(resources, pageIndex, mediaBox, cropBox, bleedBox, trimBox);
         getDocument().assignObjectNumber(page);
         getDocument().getPages().addPage(page);
         return page;
