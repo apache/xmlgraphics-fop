@@ -288,7 +288,7 @@ public class PDFLinearizationTestCase {
         }
     }
 
-    private Map<String, StringBuilder> readObjs(InputStream inputStream) throws IOException {
+    public static Map<String, StringBuilder> readObjs(InputStream inputStream) throws IOException {
         Map<String, StringBuilder> objs = new LinkedHashMap<String, StringBuilder>();
         StringBuilder sb = new StringBuilder();
         String key = null;

@@ -27,15 +27,18 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
+import org.apache.xmlgraphics.util.DateFormatUtil;
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.DublinCoreSchema;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
@@ -162,6 +165,7 @@ class PDFRenderingUtil {
     private void updatePDFProfiles() {
         pdfDoc.getProfile().setPDFAMode(rendererConfig.getPDFAMode());
         pdfDoc.getProfile().setPDFXMode(rendererConfig.getPDFXMode());
+        pdfDoc.getProfile().setPDFVTMode(rendererConfig.getPDFVTMode());
     }
 
     private void addsRGBColorSpace() throws IOException {
@@ -466,6 +470,18 @@ class PDFRenderingUtil {
             for (PDFCollectionEntryExtension entry : extension.getEntries()) {
                 info.put(entry.getKey(), entry.getValueAsString());
             }
+        } else if (type == PDFDictionaryType.VT) {
+            if (currentPage.get("DPart") != null) {
+                augmentDictionary((PDFDictionary)currentPage.get("DPart"), extension);
+            }
+        } else if (type == PDFDictionaryType.PagePiece) {
+            String date = DateFormatUtil.formatPDFDate(new Date(), TimeZone.getDefault());
+            if (currentPage.get("PieceInfo") == null) {
+                currentPage.put("PieceInfo", new PDFDictionary());
+                currentPage.put("LastModified", date);
+            }
+            PDFDictionary d = augmentDictionary((PDFDictionary)currentPage.get("PieceInfo"), extension);
+            d.put("LastModified", date);
         } else {
             throw new IllegalStateException();
         }
@@ -474,8 +490,20 @@ class PDFRenderingUtil {
     private PDFDictionary augmentDictionary(PDFDictionary dictionary, PDFDictionaryExtension extension) {
         for (PDFCollectionEntryExtension entry : extension.getEntries()) {
             if (entry instanceof PDFDictionaryExtension) {
-                dictionary.put(entry.getKey(),
-                        augmentDictionary(new PDFDictionary(dictionary), (PDFDictionaryExtension) entry));
+                String[] keys = entry.getKey().split("/");
+                for (int i = 0; i < keys.length; i++) {
+                    if (keys[i].isEmpty()) {
+                        throw new IllegalStateException("pdf:dictionary key: " + entry.getKey() + " not valid");
+                    }
+                    if (i == keys.length - 1) {
+                        dictionary.put(keys[i],
+                                augmentDictionary(new PDFDictionary(dictionary), (PDFDictionaryExtension) entry));
+                    } else {
+                        PDFDictionary d = new PDFDictionary();
+                        dictionary.put(keys[i], d);
+                        dictionary = d;
+                    }
+                }
             } else if (entry instanceof PDFArrayExtension) {
                 dictionary.put(entry.getKey(), augmentArray(new PDFArray(dictionary), (PDFArrayExtension) entry));
             } else {

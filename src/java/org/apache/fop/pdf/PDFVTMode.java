@@ -16,50 +16,30 @@
  */
 
 /* $Id$ */
-
 package org.apache.fop.pdf;
 
-/** Enum class for PDF/X modes. */
-public enum PDFXMode {
-
-    /** PDF/X disabled */
-    DISABLED("PDF/X disabled"),
-    /** PDF/X-3:2003 enabled */
-    PDFX_3_2003("PDF/X-3:2003"),
-    PDFX_4("PDF/X-4");
+public enum PDFVTMode {
+    DISABLED("PDF/VT disabled"),
+    PDFVT_1("PDF/VT-1");
 
     private String name;
 
-    /**
-     * Constructor to add a new named item.
-     * @param name Name of the item.
-     */
-    private PDFXMode(String name) {
-        this.name = name;
-    }
-
-    /** @return the name of the enum */
-    public String getName() {
-        return this.name;
+    PDFVTMode(String s) {
+        name = s;
     }
 
     /**
      * Returns the mode enum object given a String.
+     *
      * @param s the string
-     * @return the PDFAMode enum object (DISABLED will be returned if no match is found)
+     * @return the PDFVTMode enum object (DISABLED will be returned if no match is found)
      */
-    public static PDFXMode getValueOf(String s) {
-        for (PDFXMode mode : values()) {
+    public static PDFVTMode getValueOf(String s) {
+        for (PDFVTMode mode : values()) {
             if (mode.name.equalsIgnoreCase(s)) {
                 return mode;
             }
         }
         return DISABLED;
     }
-
-    /** {@inheritDoc} */
-    public String toString() {
-        return name;
-    }
-
 }

@@ -243,6 +243,9 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 toPDFCoordSystem(cropBox, boxTransform),
                 toPDFCoordSystem(bleedBox, boxTransform),
                 toPDFCoordSystem(trimBox, boxTransform));
+        if (pdfDoc.getProfile().isPDFVTActive()) {
+            pdfDoc.getFactory().makeDPart(currentPage, pageMasterName);
+        }
         if (accessEnabled) {
             logicalStructureHandler.startPage(currentPage);
         }

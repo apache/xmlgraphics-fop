@@ -22,6 +22,7 @@ package org.apache.fop.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.UUID;
 
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -37,6 +38,12 @@ import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFAdapter;
 import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFSchema;
 import org.apache.xmlgraphics.xmp.schemas.pdf.PDFAAdapter;
 import org.apache.xmlgraphics.xmp.schemas.pdf.PDFAXMPSchema;
+import org.apache.xmlgraphics.xmp.schemas.pdf.PDFVTAdapter;
+import org.apache.xmlgraphics.xmp.schemas.pdf.PDFVTXMPSchema;
+import org.apache.xmlgraphics.xmp.schemas.pdf.PDFXAdapter;
+import org.apache.xmlgraphics.xmp.schemas.pdf.PDFXXMPSchema;
+import org.apache.xmlgraphics.xmp.schemas.pdf.XAPMMAdapter;
+import org.apache.xmlgraphics.xmp.schemas.pdf.XAPMMXMPSchema;
 
 /**
  * Special PDFStream for Metadata.
@@ -161,11 +168,35 @@ public class PDFMetadata extends PDFStream {
             pdfa.setPart(pdfaMode.getPart());
             pdfa.setConformance(String.valueOf(pdfaMode.getConformanceLevel()));
         }
+        AdobePDFAdapter adobePDF = AdobePDFSchema.getAdapter(meta);
+        PDFXMode pdfxMode = pdfDoc.getProfile().getPDFXMode();
+        if (pdfxMode != PDFXMode.DISABLED) {
+            PDFXAdapter pdfx = PDFXXMPSchema.getAdapter(meta);
+            pdfx.setVersion(pdfxMode.getName());
+
+            XAPMMAdapter xapmm = XAPMMXMPSchema.getAdapter(meta);
+            xapmm.setVersion("1");
+            xapmm.setDocumentID("uuid:" + UUID.randomUUID().toString());
+            xapmm.setInstanceID("uuid:" + UUID.randomUUID().toString());
+            xapmm.setRenditionClass("default");
+            adobePDF.setTrapped("False");
+        }
+        PDFProfile profile = pdfDoc.getProfile();
+        PDFVTMode pdfvtMode = profile.getPDFVTMode();
+        if (pdfvtMode != PDFVTMode.DISABLED) {
+            PDFVTAdapter pdfvt = PDFVTXMPSchema.getAdapter(meta);
+            pdfvt.setVersion("PDF/VT-1");
+            if (info.getModDate() != null) {
+                pdfvt.setModifyDate(info.getModDate());
+            } else if (profile.isModDateRequired()) {
+                //if modify date is needed but none is in the Info object, use creation date
+                pdfvt.setModifyDate(info.getCreationDate());
+            }
+        }
 
         //XMP Basic Schema
         XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(meta);
         xmpBasic.setCreateDate(info.getCreationDate());
-        PDFProfile profile = pdfDoc.getProfile();
         if (info.getModDate() != null) {
             xmpBasic.setModifyDate(info.getModDate());
         } else if (profile.isModDateRequired()) {
@@ -176,7 +207,7 @@ public class PDFMetadata extends PDFStream {
             xmpBasic.setCreatorTool(info.getCreator());
         }
 
-        AdobePDFAdapter adobePDF = AdobePDFSchema.getAdapter(meta);
+
         if (info.getKeywords() != null) {
             adobePDF.setKeywords(info.getKeywords());
         }

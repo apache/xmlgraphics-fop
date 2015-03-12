@@ -32,7 +32,9 @@ public enum PDFDictionaryType {
     Navigator("navigator", true),       // navigation node dictionary element
     Page("page"),                       // page dictionary element
     /** Document Information Dictionary */
-    Info("info");
+    Info("info"),
+    VT("vt"),
+    PagePiece("pagepiece");
 
     private String elementName;
     private boolean usesIDAttribute;

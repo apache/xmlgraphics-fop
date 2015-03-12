@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.pdf.PDFAMode;
+import org.apache.fop.pdf.PDFVTMode;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.Version;
 import org.apache.fop.render.RendererConfigOption;
@@ -47,6 +48,13 @@ public enum PDFRendererOption implements RendererConfigOption {
         @Override
         PDFXMode deserialize(String value) {
             return PDFXMode.getValueOf(value);
+        }
+    },
+    /** Rendering Options key for the PDF/VT mode, default: {@link PDFVTMode#DISABLED} */
+    PDF_VT_MODE("pdf-vt-mode", PDFVTMode.DISABLED) {
+        @Override
+        PDFVTMode deserialize(String value) {
+            return PDFVTMode.getValueOf(value);
         }
     },
     /** PDF version entry: specify the version of the PDF document created, datatype: String */
