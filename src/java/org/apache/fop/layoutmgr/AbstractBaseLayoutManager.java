@@ -63,6 +63,9 @@ public abstract class AbstractBaseLayoutManager
      * @param fo the formatting object for this layout manager
      */
     public AbstractBaseLayoutManager(FObj fo) {
+        if (fo == null) {
+            throw new IllegalStateException("Null formatting object found.");
+        }
         this.fobj = fo;
         setGeneratesReferenceArea(fo.generatesReferenceAreas());
     }
