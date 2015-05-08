@@ -82,9 +82,6 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
      */
     public AbstractLayoutManager(FObj fo) {
         super(fo);
-        if (fo == null) {
-            throw new IllegalStateException("Null formatting object found.");
-        }
         markers = fo.getMarkers();
         fobjIter = fo.getChildNodes();
         childLMiter = new LMiter(this);
