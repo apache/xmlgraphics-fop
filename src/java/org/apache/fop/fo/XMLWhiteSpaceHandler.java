@@ -78,7 +78,7 @@ public class XMLWhiteSpaceHandler {
     private RecursiveCharIterator charIter;
 
     private List pendingInlines;
-    private Stack nestedBlockStack = new java.util.Stack();
+    private Stack nestedBlockStack = new java.util.Stack<Block>();
     private CharIterator firstWhiteSpaceInSeq;
 
     /**
@@ -225,7 +225,7 @@ public class XMLWhiteSpaceHandler {
                 if (inWhiteSpace) {
                     /* means there is at least one trailing space in the
                        inline FO that is about to end */
-                    addPendingInline(fo);
+                    addPendingInline();
                 }
             } else {
                 /* end of block: clear the references and pop the
@@ -366,11 +366,11 @@ public class XMLWhiteSpaceHandler {
         }
     }
 
-    private void addPendingInline(FObjMixed fo) {
+    private void addPendingInline() {
         if (pendingInlines == null) {
             pendingInlines = new java.util.ArrayList(5);
         }
-        pendingInlines.add(new PendingInline(fo, firstWhiteSpaceInSeq));
+        pendingInlines.add(new PendingInline(firstWhiteSpaceInSeq));
     }
 
     private void handlePendingInlines() {
@@ -440,11 +440,9 @@ public class XMLWhiteSpaceHandler {
      * character in the sequence of trailing white-space
      */
     private class PendingInline {
-        protected FObjMixed fo;
         protected CharIterator firstTrailingWhiteSpace;
 
-        PendingInline(FObjMixed fo, CharIterator firstTrailingWhiteSpace) {
-            this.fo = fo;
+        PendingInline(CharIterator firstTrailingWhiteSpace) {
             this.firstTrailingWhiteSpace = firstTrailingWhiteSpace;
         }
     }
