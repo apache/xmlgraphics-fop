@@ -30,12 +30,6 @@
     </xsl:call-template>
   </xsl:template>
 
-  <!-- Those elements do not retrieve the id property.
-    This will have to be fixed at some point. -->
-  <xsl:template match="fo:footnote|fo:footnote-body">
-    <xsl:call-template name="process.node"/>
-  </xsl:template>
-
   <xsl:template name="process.node">
     <xsl:param name="id" select="''"/>
     <event>

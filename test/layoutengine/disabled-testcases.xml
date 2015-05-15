@@ -200,7 +200,7 @@
     <name>Soft hyphen with normal hyphenation enabled</name>
     <file>block_shy_linebreaking_hyph.xml</file>
     <description>A soft hyphen should be a preferred as break compared to a
-    normal hyphenation point but is not.</description>
+    normal hyphenation point but is not. Background info: see JIRA FOP-2466.</description>
   </testcase>
   <testcase>
     <name>Page-keep not respected in multi-column layout</name>
@@ -218,5 +218,11 @@
     <file>simple-page-master_writing-mode_rl_region-body_writing-mode-lr.xml</file>
     <description>Test erroneously depends upon incorrect implementation of writing-mode trait
     derivation on fo:region-*.</description>
+  </testcase>
+  <testcase>
+    <name>Footnotes and "id" property</name>
+    <file>footnote_id.xml</file>
+    <description>The "id" for fo:footnote and fo:footnote-body is properly
+    processed, but implementation in the layout engine remains incomplete/</description>
   </testcase>
 </disabled-testcases>

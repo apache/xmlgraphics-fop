@@ -50,11 +50,13 @@ public class FootnoteBody extends FObj implements CommonAccessibilityHolder {
 
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         commonAccessibility = CommonAccessibility.getInstance(pList);
     }
 
     /** {@inheritDoc} */
     public void startOfNode() throws FOPException {
+        super.startOfNode();
         getFOEventHandler().startFootnoteBody(this);
     }
 
