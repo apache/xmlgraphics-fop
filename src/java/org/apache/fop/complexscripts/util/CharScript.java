@@ -148,8 +148,6 @@ public final class CharScript {
             return true;
         } else if ((c >= 0x007E) && (c <= 0x007E)) {      // basic latin punctuation
             return true;
-        } else if ((c >= 0x007E) && (c <= 0x007E)) {      // basic latin punctuation
-            return true;
         } else if ((c >= 0x00A1) && (c <= 0x00BF)) {      // latin supplement punctuation
             return true;
         } else if ((c >= 0x00D7) && (c <= 0x00D7)) {      // latin supplement punctuation
