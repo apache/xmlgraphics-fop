@@ -38,7 +38,9 @@
               <fo:inline font-size="6.95pt" vertical-align="super">1) </fo:inline>
                 <fo:footnote-body id="fnb1">
                   <fo:block text-align="left">
-                    <fo:inline font-size="6.95pt" vertical-align="super">1) </fo:inline>http://xmlgrapics.apache.org/fop/</fo:block>
+                    <fo:inline font-size="6.95pt" vertical-align="super">1) </fo:inline>
+                    http://xmlgrapics.apache.org/fop/
+                  </fo:block>
                 </fo:footnote-body>
             </fo:footnote>
           </fo:block>
@@ -63,6 +65,6 @@
     <!-- Check fo:footnote-body @id -->
     <!-- TODO - figure out where @prod-id should go -->
     <true xpath="((//page)[2]//block)[2]/lineArea[1]/inlineparent[1]/@internal-link" />
-    <eval expected="(P1,fnb1)" xpath="((//page)[2]//block)[1]/lineArea[1]/inlineparent[2]/@internal-link"/>
+    <eval expected="(P1,fnb1)" xpath="((//page)[2]//block)[2]/lineArea[1]/inlineparent[1]/@internal-link"/>
   </checks>
 </testcase>
