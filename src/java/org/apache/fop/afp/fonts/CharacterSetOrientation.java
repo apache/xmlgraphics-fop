@@ -26,19 +26,18 @@ import java.awt.Rectangle;
  * of character shapes by defining their characteristics, which include
  * Font-Description information for identifying the characters, Font-Metric
  * information for positioning the characters, and Character-Shape
- * information for presenting the character images.
+ * information for presenting the character images.<br>
  *
  * Presenting a graphic character on a presentation surface requires
  * that you communicate this information clearly to rotate and position
- * characters correctly on the physical or logical page.
+ * characters correctly on the physical or logical page.<br>
  *
  * This class provides font metric information for a particular font
- * as by the orientation.
+ * as by the orientation.<br>
  *
  * This information is obtained directly from the AFP font files which must
  * be installed in the classpath under in the location specified by the path
  * attribute in the afp-font.xml file.
- * <p/>
  */
 public class CharacterSetOrientation {
 
@@ -83,7 +82,11 @@ public class CharacterSetOrientation {
     /**
      * Constructor for the CharacterSetOrientation, the orientation is
      * expressed as the degrees rotation (i.e 0, 90, 180, 270)
-     * @param orientation the character set orientation
+     *
+     * @param orientation   the character set orientation
+     * @param spaceIncrement    the space increment
+     * @param emSpaceIncrement  the em space increment
+     * @param nomCharIncrement  the nominal character increment
      */
     public CharacterSetOrientation(int orientation, int spaceIncrement, int emSpaceIncrement,
             int nomCharIncrement) {
@@ -131,14 +134,18 @@ public class CharacterSetOrientation {
     }
 
     /**
-     * TODO
+     * {@asf.todo}
+     *
+     * @return  the underscore width
      */
     public int getUnderscoreWidth() {
         return underscoreWidth;
     }
 
     /**
-     * TODO
+     * {@asf.todo}
+     *
+     * @return  the underscore position
      */
     public int getUnderscorePosition() {
         return underscorePosition;
@@ -165,6 +172,7 @@ public class CharacterSetOrientation {
      * Get the width (in 1/1000ths of a point size) of the character
      * identified by the parameter passed.
      * @param character the Unicode character to evaluate
+     * @param size  the font size
      * @return the widths of the character
      */
     public int getWidth(char character, int size) {
@@ -180,6 +188,7 @@ public class CharacterSetOrientation {
      * Get the character box (rectangle with dimensions in 1/1000ths of a point size) of the character
      * identified by the parameter passed.
      * @param character the Unicode character to evaluate
+     * @param size  the font size
      * @return the character box
      */
     public Rectangle getCharacterBox(char character, int size) {
@@ -258,6 +267,7 @@ public class CharacterSetOrientation {
      * identified by the parameter passed.
      * @param character the Unicode character for which the width is being set
      * @param width the widths of the character
+     * @param   characterBox    the character box
      */
     public void setCharacterMetrics(char character, int width, Rectangle characterBox) {
         characterMetrics.put((int) character, new CharacterMetrics(width, characterBox));

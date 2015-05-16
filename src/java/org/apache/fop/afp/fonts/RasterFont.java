@@ -32,8 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * A font where each character is stored as an array of pixels (a bitmap). Such
  * fonts are not easily scalable, in contrast to vectored fonts. With this type
  * of font, the font metrics information is held in character set files (one for
- * each size and style). <p/>
- *
+ * each size and style).
  */
 public class RasterFont extends AFPFont {
 
@@ -49,8 +48,8 @@ public class RasterFont extends AFPFont {
      * Constructor for the raster font requires the name, weight and style
      * attribute to be available as this forms the key to the font.
      *
-     * @param name
-     *            the name of the font
+     * @param name the name of the font
+     * @param embeddable {@code true} if the font is embeddable
      */
     public RasterFont(String name, boolean embeddable) {
         super(name, embeddable);

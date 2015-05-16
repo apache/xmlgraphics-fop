@@ -74,6 +74,8 @@ public class AFPResourceManager {
 
     /**
      * Main constructor
+     *
+     * @param resourceResolver  the associated {@link InternalResourceResolver} instance
      */
     public AFPResourceManager(InternalResourceResolver resourceResolver) {
         this.factory = new Factory();
@@ -263,19 +265,21 @@ public class AFPResourceManager {
     }
 
     /**
-     * TODO
-     * @param resourceInfo
-     * @return
+     * Returns {@code true} if the passed {@link AFPResourceInfo} instance is already cached.
+     *
+     * @param resourceInfo  the resource info to check
+     * @return  {@code true} if the object is cached
      */
     public boolean isObjectCached(AFPResourceInfo resourceInfo) {
         return includeObjectCache.containsKey(resourceInfo);
     }
 
     /**
-     * TODO
-     * @param resourceInfo
-     * @param areaInfo
-     * @return
+     * {@asf.todo}
+     *
+     * @param resourceInfo  the resource info to check
+     * @param areaInfo  the area info to check
+     * @return  {@code true} if ...
      */
     public boolean includeCachedObject(AFPResourceInfo resourceInfo, AFPObjectAreaInfo areaInfo) {
 

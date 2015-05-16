@@ -38,16 +38,16 @@ import org.apache.fop.afp.util.StringUtils;
  * font description information for identifying the characters, font metric
  * information for positioning the characters, and character shape information
  * for presenting the character images.
- * <p/>
+ * <br>
  * Presenting a graphic character on a presentation surface requires
  * information on the rotation and position of character on the physical
  * or logical page.
- * <p/>
+ * <br>
  * This class proivdes font metric information for a particular font
  * as identified by the character set name. This information is obtained
  * directly from the AFP font files which must be installed in the path
  * specified in the afp-fonts xml definition file.
- * <p/>
+ * <br>
  */
 public class CharacterSet {
 
@@ -167,14 +167,18 @@ public class CharacterSet {
     }
 
     /**
-     * TODO
+     * Return the width to use for an underscore (_) character.
+     *
+     * @return  the width of an underscore character
      */
     public int getUnderscoreWidth() {
         return getCharacterSetOrientation().getUnderscoreWidth();
     }
 
     /**
-     * TODO
+     * Return the position for an underscore (_) character.
+     *
+     * @return the position of an underscore character
      */
     public int getUnderscorePosition() {
         return getCharacterSetOrientation().getUnderscorePosition();
@@ -226,6 +230,7 @@ public class CharacterSet {
      * identified by the parameter passed.
      *
      * @param character the Unicode character from which the width will be calculated
+     * @param size  the font size
      * @return the width of the character
      */
     public int getWidth(char character, int size) {
@@ -255,6 +260,7 @@ public class CharacterSet {
         try {
             nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
         } catch (UnsupportedEncodingException usee) {
+            // @SuppressFBWarnings("DM_DEFAULT_ENCODING")
             nameBytes = name.getBytes();
             LOG.warn(
                 "UnsupportedEncodingException translating the name " + name);

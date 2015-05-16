@@ -26,7 +26,7 @@ import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.fonts.Typeface;
 
 /**
- * A Character set for a normal FOP font<p/>
+ * A Character set for a normal FOP font
  */
 public class FopCharacterSet extends CharacterSet {
 

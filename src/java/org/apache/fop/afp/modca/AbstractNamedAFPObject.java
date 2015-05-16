@@ -82,6 +82,7 @@ public abstract class AbstractNamedAFPObject extends AbstractTripletStructuredOb
         try {
             nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
         } catch (UnsupportedEncodingException usee) {
+            // @SuppressFBWarnings("DM_DEFAULT_ENCODING")
             nameBytes = name.getBytes();
             LOG.warn(
                 "Constructor:: UnsupportedEncodingException translating the name "

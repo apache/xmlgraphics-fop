@@ -24,14 +24,14 @@ import org.apache.batik.bridge.TextPainter;
 import org.apache.fop.svg.AbstractFOPTextElementBridge;
 
 /**
- * Bridge class for the &lt;text> element.
+ * Bridge class for the &lt;text&gt; element.
  * This bridge will use the direct text painter if the text
  * for the element is simple.
  */
 public class AFPTextElementBridge extends AbstractFOPTextElementBridge {
 
     /**
-     * Constructs a new bridge for the &lt;text> element.
+     * Constructs a new bridge for the &lt;text&gt; element.
      *
      * @param textPainter the text painter to use
      */

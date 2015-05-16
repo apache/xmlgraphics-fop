@@ -38,7 +38,6 @@ import org.apache.fop.afp.ioca.ImageRasterData;
  * structured field that defines the position of the image cell relative to
  * the origin of the entire image. Each ICP also specifies the size of the
  * image cell and a fill rectangle into which the cell is replicated.
- * <p/>
  */
 public class IMImageObject extends AbstractNamedAFPObject {
 

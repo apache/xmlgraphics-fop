@@ -46,9 +46,9 @@ import org.apache.fop.fonts.Typeface;
 
 /**
  * The CharacterSetBuilder is responsible building the a CharacterSet instance that holds
- *  the font metric data.  The data is either read from disk and passed to a CharacterSet (*)
- *  or a FopCharacterSet is instantiated that is composed of a Typeface instance configured
- *  with this data.<p/>
+ * the font metric data.  The data is either read from disk and passed to a CharacterSet (*)
+ * or a FopCharacterSet is instantiated that is composed of a Typeface instance configured
+ * with this data.<br>
  * -*- For referenced fonts CharacterSetBuilder is responsible for reading the font attributes
  * from binary code page files and the character set metric files. In IBM font structure, a
  * code page maps each character of text to the characters in a character set.
@@ -58,11 +58,10 @@ import org.apache.fop.fonts.Typeface;
  * outline pattern) of the character in the character set specified. The image
  * in the character set is the image that is printed in the document. To be a
  * valid code page for a particular character set, all character IDs in the code
- * page must be included in that character set. <p/>This class will read the
- * font information from the binary code page files and character set metric
- * files in order to determine the correct metrics to use when rendering the
- * formatted object. <p/>
- *
+ * page must be included in that character set.<br>
+ * This class will read the font information from the binary code page files and character
+ * set metric files in order to determine the correct metrics to use when rendering the
+ * formatted object.
  */
 public abstract class CharacterSetBuilder {
 
@@ -139,7 +138,7 @@ public abstract class CharacterSetBuilder {
     /**
      * Returns an InputStream to a given file path and filename
      *
-     * * @param accessor the resource accessor
+     * @param accessor the resource accessor
      * @param uriStr the URI
      * @param eventProducer for handling AFP related events
      * @return an inputStream

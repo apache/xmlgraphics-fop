@@ -30,13 +30,12 @@ import java.io.InputStream;
  * components and to provide commands and information to applications using
  * the data. Structured fields may contain one or more parameters. Each
  * parameter provides one value from a set of values defined by the architecture.
- * <p/>
+ * <br>
  * MO:DCA structured fields consist of two parts: an introducer that identifies
  * the length and type of the structured field, and data that provides the
  * structured field's effect. The data is contained in a set of parameters,
  * which can consist of other data structures and data elements. The maximum
  * length of a structured field is 32767 bytes.
- * <p/>
  */
 public class StructuredFieldReader {
 

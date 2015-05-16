@@ -57,6 +57,7 @@ public class AFPBridgeContext extends AbstractFOPBridgeContext {
      * @param linkTransform AffineTransform to properly place links,
      *                      may be null
      * @param g2d an AFPGraphics 2D implementation
+     * @param eventBroadCaster the associated event broadcaster
      */
     public AFPBridgeContext(UserAgent userAgent, FontInfo fontInfo,
             ImageManager imageManager, ImageSessionContext imageSessionContext,
