@@ -45,7 +45,6 @@ import org.apache.fop.afp.util.BinaryUtils;
  * embedded in, the same page or page group. The Tag Logical Element structured
  * field does not provide any presentation specifications and therefore has no
  * effect on the appearance of a document when it is presented.
- * <p/>
  */
 public class TagLogicalElement extends AbstractTripletStructuredObject {
 

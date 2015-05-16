@@ -30,10 +30,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.afp.AFPEventProducer;
 
 /**
- * Implementation of AbstractOutlineFont that supports double-byte fonts (CID Keyed font (Type 0)).
+ * Implementation of {@link AbstractOutlineFont} that supports double-byte fonts (CID Keyed font (Type 0)).
  * The width of characters that are not prescribed a width metrics in the font resource use
  * a fallback width.  The default width is 1 em.  A character can be supplied and queried for the
- *  fallback width of all non-ideograph characters.<p />
+ * fallback width of all non-ideograph characters.
  */
 public class DoubleByteFont extends AbstractOutlineFont {
 

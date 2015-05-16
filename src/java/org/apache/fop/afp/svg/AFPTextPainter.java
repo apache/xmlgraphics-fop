@@ -41,6 +41,7 @@ public class AFPTextPainter extends AbstractFOPTextPainter {
     /**
      * Create a new text painter with the given font information.
      * @param nativeTextHandler the NativeTextHandler instance used for text painting
+     * @param fopFontFamilyResolver the font resolver
      */
     public AFPTextPainter(FOPTextHandler nativeTextHandler, FontFamilyResolver fopFontFamilyResolver) {
         super(nativeTextHandler, new FOPStrokingTextPainter(fopFontFamilyResolver));

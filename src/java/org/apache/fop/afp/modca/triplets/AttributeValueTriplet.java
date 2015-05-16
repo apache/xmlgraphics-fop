@@ -53,7 +53,6 @@ public class AttributeValueTriplet extends AbstractTriplet {
         try {
             tleByteValue = attVal.getBytes(AFPConstants.EBCIDIC_ENCODING);
         } catch (UnsupportedEncodingException usee) {
-            tleByteValue = attVal.getBytes();
             throw new IllegalArgumentException(attVal + " encoding failed");
         }
         System.arraycopy(tleByteValue, 0, data, 4, tleByteValue.length);

@@ -21,7 +21,6 @@ package org.apache.fop.afp.fonts;
 
 /**
  * A runtime exception for handling fatal errors in processing fonts.
- * <p/>
  */
 public class FontRuntimeException extends RuntimeException {
 

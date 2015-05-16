@@ -31,7 +31,6 @@ import org.apache.fop.fonts.Typeface;
 /**
  * All implementations of AFP fonts should extend this base class,
  * the object implements the FontMetrics information.
- * <p/>
  */
 public abstract class AFPFont extends Typeface {
 
