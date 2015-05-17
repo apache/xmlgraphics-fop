@@ -743,7 +743,7 @@ list of possible build targets.
   <target name="junit-transcoder" depends="junit-compile" description="Runs FOP's JUnit transcoder tests" if="junit.present">
     <path id="transcoder-classpath">
       <pathelement location="${build.unit.tests.dir}"/>
-      <path refid="libs-build-classpath"/>
+      <path refid="libs-tools-build-classpath"/>
       <fileset dir="${build.dir}">
         <include name="fop-transcoder.jar"/>
       </fileset>
