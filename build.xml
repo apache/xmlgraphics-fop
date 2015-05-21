@@ -150,7 +150,7 @@ list of possible build targets.
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
   <property name="version" value="svn-trunk"/>
-  <property name="year" value="1999-2014"/>
+  <property name="year" value="1999-2015"/>
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="javac.deprecation" value="on"/>
