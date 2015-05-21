@@ -103,11 +103,12 @@ Because of changes to the API, the version number has been bumped to 2.0.
 Major Changes in Version 2.0
 ----------------------------
 
-* Float support
+* Side float support
 * Whitespace Management Extension
 * fo:inline-container partial support
 * Improved support for complex scripts
 * PDF Linearization
+* Support OpenType CFF fonts
 * Subset support for Type 1 fonts
 * Support for AES 256 PDF encryption
 * SVG graphics can use FOP custom fonts
