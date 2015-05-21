@@ -77,6 +77,7 @@ list of possible build targets.
       <include name="lib/batik*"/>
       <include name="lib/commons-io*"/>
       <include name="lib/commons-logging*"/>
+      <include name="lib/fontbox*"/>
       <include name="lib/serializer*"/>
       <include name="lib/xalan*"/>
       <include name="lib/xerces*"/>
