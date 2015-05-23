@@ -67,6 +67,7 @@ public class TableCaption extends FObj implements CommonAccessibilityHolder {
         if (!notImplementedWarningGiven) {
             getFOValidationEventProducer().unimplementedFeature(this, getName(),
                     "fo:table-caption", getLocator());
+            // @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
             notImplementedWarningGiven = true;
         }
     }

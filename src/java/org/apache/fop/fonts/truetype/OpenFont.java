@@ -1603,10 +1603,12 @@ public abstract class OpenFont {
             // Create winAnsiEncoded kerning table from kerningTab
             // (could probably be simplified, for now we remap back to CID indexes and
             // then to winAnsi)
-            for (Integer unicodeKey1 : kerningTab.keySet()) {
-                Integer cidKey1 = unicodeToGlyph(unicodeKey1.intValue());
+
+            for (Map.Entry<Integer, Map<Integer, Integer>> e1 : kerningTab.entrySet()) {
+                Integer unicodeKey1 = e1.getKey();
+                Integer cidKey1 = unicodeToGlyph(unicodeKey1);
                 Map<Integer, Integer> akpx = new HashMap<Integer, Integer>();
-                Map<Integer, Integer> ckpx = kerningTab.get(unicodeKey1);
+                Map<Integer, Integer> ckpx = e1.getValue();
 
                 for (Map.Entry<Integer, Integer> e : ckpx.entrySet()) {
                     Integer unicodeKey2 = e.getKey();
@@ -1693,6 +1695,7 @@ public abstract class OpenFont {
                 return (int) (o1.getValue().getOffset() - o2.getValue().getOffset());
             }
         });
+        // @SuppressFBWarnings("DMI_ENTRY_SETS_MAY_REUSE_ENTRY_OBJECTS")
         sortedSet.addAll(directoryTabs.entrySet());
         return sortedSet;
     }

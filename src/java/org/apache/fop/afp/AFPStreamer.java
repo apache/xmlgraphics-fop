@@ -160,10 +160,10 @@ public class AFPStreamer implements Streamable {
      */
     // write out any external resource groups
     public void close() throws IOException {
-        Iterator it = pathResourceGroupMap.values().iterator();
-        while (it.hasNext()) {
-            StreamedResourceGroup resourceGroup = (StreamedResourceGroup)it.next();
-            resourceGroup.close();
+        for (ResourceGroup resourceGroup : pathResourceGroupMap.values()) {
+            // TODO - Why not a Map<URI, StreamedResourceGroup>, if all the elements are expected to be of that type?
+            assert (resourceGroup instanceof StreamedResourceGroup);
+            ((StreamedResourceGroup) resourceGroup).close();
         }
         // close any open print-file resource group
         if (printFileResourceGroup != null) {

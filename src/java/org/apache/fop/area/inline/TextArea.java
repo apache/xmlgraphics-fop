@@ -144,12 +144,13 @@ public class TextArea extends AbstractTextArea {
      * @return the text string
      */
     public String getText() {
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         // assemble the text
         for (InlineArea inline : inlines) {
             if (inline instanceof WordArea) {
                 text.append(((WordArea) inline).getWord());
             } else {
+                assert (inline instanceof SpaceArea);
                 text.append(((SpaceArea) inline).getSpace());
             }
         }

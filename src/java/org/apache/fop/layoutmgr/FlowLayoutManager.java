@@ -239,9 +239,10 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
         log.debug(" FLM.negotiateBPDAdjustment> " + adj);
 
-        if (lastElement.getPosition() instanceof NonLeafPosition) {
+        Position lastPosition = lastElement.getPosition();
+        if (lastPosition instanceof NonLeafPosition) {
             // this element was not created by this FlowLM
-            NonLeafPosition savedPos = (NonLeafPosition)lastElement.getPosition();
+            NonLeafPosition savedPos = (NonLeafPosition) lastPosition;
             lastElement.setPosition(savedPos.getPosition());
             int returnValue = ((BlockLevelLayoutManager)lastElement.getLayoutManager())
                     .negotiateBPDAdjustment(adj, lastElement);
@@ -258,9 +259,10 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
     public void discardSpace(KnuthGlue spaceGlue) {
         log.debug(" FLM.discardSpace> ");
 
-        if (spaceGlue.getPosition() instanceof NonLeafPosition) {
+        Position gluePosition = spaceGlue.getPosition();
+        if (gluePosition instanceof NonLeafPosition) {
             // this element was not created by this FlowLM
-            NonLeafPosition savedPos = (NonLeafPosition)spaceGlue.getPosition();
+            NonLeafPosition savedPos = (NonLeafPosition) gluePosition;
             spaceGlue.setPosition(savedPos.getPosition());
             ((BlockLevelLayoutManager) spaceGlue.getLayoutManager()).discardSpace(spaceGlue);
             spaceGlue.setPosition(savedPos);

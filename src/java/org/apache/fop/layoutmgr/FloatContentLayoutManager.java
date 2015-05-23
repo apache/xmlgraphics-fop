@@ -133,7 +133,7 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
         while (!(lm instanceof BlockLayoutManager)) {
             lm = lm.getParent();
         }
-        if (lm instanceof BlockLayoutManager) {
+        if (lm != null) {
             startIndent = ((BlockLayoutManager) lm).startIndent;
         }
         return startIndent;

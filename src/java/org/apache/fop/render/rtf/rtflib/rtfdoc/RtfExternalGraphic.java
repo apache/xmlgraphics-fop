@@ -234,11 +234,6 @@ public class RtfExternalGraphic extends RtfElement {
     protected int height = -1;
 
     /**
-     * The desired percent value of the height
-     */
-    protected int heightPercent = -1;
-
-    /**
      * The desired height (in twips)
      */
     protected int heightDesired = -1;
@@ -252,11 +247,6 @@ public class RtfExternalGraphic extends RtfElement {
      * The width of the image (in pixels)
      */
     protected int width = -1;
-
-    /**
-     * The desired percent value of the width
-     */
-    protected int widthPercent = -1;
 
     /**
      * The desired width (in twips)

@@ -272,11 +272,12 @@ public class InlineArea extends Area {
      * @param ipdVariation the difference between new and old ipd
      */
     protected void notifyIPDVariation(int ipdVariation) {
-        if (getParentArea() instanceof InlineArea) {
-            ((InlineArea) getParentArea()).handleIPDVariation(ipdVariation);
-        } else if (getParentArea() instanceof LineArea) {
-            ((LineArea) getParentArea()).handleIPDVariation(ipdVariation);
-        } else if (getParentArea() == null) {
+        Area parentArea = getParentArea();
+        if (parentArea instanceof InlineArea) {
+            ((InlineArea) parentArea).handleIPDVariation(ipdVariation);
+        } else if (parentArea instanceof LineArea) {
+            ((LineArea) parentArea).handleIPDVariation(ipdVariation);
+        } else if (parentArea == null) {
             // parent area not yet set: store the variations
             storedIPDVariation += ipdVariation;
         }
