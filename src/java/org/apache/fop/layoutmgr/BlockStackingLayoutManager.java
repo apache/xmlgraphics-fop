@@ -618,10 +618,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 }
             }
         } else if (innerPosition != null && innerPosition.getLM() != this) {
+            Position lastPosition = lastElement.getPosition();
+            assert (lastPosition instanceof NonLeafPosition);
             // this adjustment concerns another LM
-            NonLeafPosition savedPos = (NonLeafPosition) lastElement.getPosition();
+            NonLeafPosition savedPos = (NonLeafPosition) lastPosition;
             lastElement.setPosition(innerPosition);
-            int returnValue = ((BlockLevelLayoutManager)lastElement.getLayoutManager())
+            int returnValue = ((BlockLevelLayoutManager) lastElement.getLayoutManager())
                     .negotiateBPDAdjustment(adj, lastElement);
             lastElement.setPosition(savedPos);
             return returnValue;
@@ -635,7 +637,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /** {@inheritDoc} */
     public void discardSpace(KnuthGlue spaceGlue) {
         assert (spaceGlue != null && spaceGlue.getPosition() != null);
-        Position innerPosition = spaceGlue.getPosition().getPosition();
+        Position mainPosition = spaceGlue.getPosition();
+        Position innerPosition = mainPosition.getPosition();
 
         if (innerPosition == null || innerPosition.getLM() == this) {
             // if this block has block-progression-unit > 0, innerPosition can be
@@ -652,8 +655,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 //TODO Why are both cases handled in the same way?
             }
         } else {
+            assert (mainPosition instanceof NonLeafPosition);
             // this element was not created by this BlockLM
-            NonLeafPosition savedPos = (NonLeafPosition)spaceGlue.getPosition();
+            NonLeafPosition savedPos = (NonLeafPosition) mainPosition;
             spaceGlue.setPosition(innerPosition);
             ((BlockLevelLayoutManager) spaceGlue.getLayoutManager()).discardSpace(spaceGlue);
             spaceGlue.setPosition(savedPos);

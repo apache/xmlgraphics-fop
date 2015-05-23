@@ -53,12 +53,14 @@ public class SerializeHyphPattern {
                 return name.endsWith(extension);
             }
         });
-        for (int j = 0; j < sourceFiles.length; j++) {
-            File infile = new File(sourceDir, sourceFiles[j]);
-            String outfilename = sourceFiles[j].substring(0, sourceFiles[j].length()
-                                                          - extension.length()) + ".hyp";
-            File outfile = new File(targetDir, outfilename);
-            serializeFile(infile, outfile);
+        if (sourceFiles != null) {
+            for (String sourceFile : sourceFiles) {
+                File infile = new File(sourceDir, sourceFile);
+                String outfilename = sourceFile.substring(0, sourceFile.length()
+                        - extension.length()) + ".hyp";
+                File outfile = new File(targetDir, outfilename);
+                serializeFile(infile, outfile);
+            }
         }
     }
 
@@ -73,6 +75,7 @@ public class SerializeHyphPattern {
             HyphenationTree hTree = buildPatternFile(infile);
             // serialize class
             try {
+                // @SuppressFBWarnings("OS_OPEN_STREAM_EXCEPTION_PATH")
                 ObjectOutputStream out = new ObjectOutputStream(
                         new java.io.BufferedOutputStream(
                         new java.io.FileOutputStream(outfile)));

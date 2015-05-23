@@ -27,6 +27,7 @@ import org.apache.fop.fo.PropertyList;
  * Public "structure" allows direct member access.
  */
 public class CommonAural {
+    // @SuppressFBWarnings("UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD")
     /**
      * The "azimuth" property.
      */

@@ -134,6 +134,15 @@ public class RegionReference extends Area {
         addChildArea(block);
     }
 
+    /**
+     * indicates whether the main reference area has any child areas added to it
+     *
+     * @return whether the main reference area has any child areas added to it
+     */
+    public boolean isEmpty() {
+        return true;
+    }
+
     /** {@inheritDoc} */
     public Object clone() throws CloneNotSupportedException {
         RegionReference rr = (RegionReference) super.clone();

@@ -55,7 +55,7 @@ public abstract class RtfElement {
 
     /** Create an RTF element as a child of given container with given attributes */
     RtfElement(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException {
-
+        // @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
         id = idCounter++;
         this.parent = parent;
         attrib = (attr != null ? attr : new RtfAttributes());

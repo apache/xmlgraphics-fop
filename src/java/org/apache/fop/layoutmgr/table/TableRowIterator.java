@@ -43,9 +43,6 @@ public class TableRowIterator {
     /** Selects the table-footer elements for iteration. */
     public static final int FOOTER = 2;
 
-    /** The table on which this instance operates. */
-    protected Table table;
-
     /** Part of the table over which to iterate. One of BODY, HEADER or FOOTER. */
     private int tablePart;
 
@@ -59,7 +56,6 @@ public class TableRowIterator {
      * @param tablePart indicates what part of the table to iterate over (HEADER, FOOTER, BODY)
      */
     public TableRowIterator(Table table, int tablePart) {
-        this.table = table;
         this.tablePart = tablePart;
         switch(tablePart) {
             case HEADER:

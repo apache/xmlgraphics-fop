@@ -252,8 +252,7 @@ public class Page extends AreaTreeObject implements Serializable {
         } else if (regionBody == null) {
             return true;
         } else {
-            BodyRegion body = (BodyRegion)regionBody.getRegionReference();
-            return body.isEmpty();
+            return regionBody.getRegionReference().isEmpty();
         }
     }
 

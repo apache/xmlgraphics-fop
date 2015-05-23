@@ -86,6 +86,14 @@
     </Or>
   </Match>
   <Match>
+    <!-- Only OK as long as the type of the base map remains plain HashMap... -->
+    <Bug pattern="DMI_ENTRY_SETS_MAY_REUSE_ENTRY_OBJECTS"/>
+    <And>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont"/>
+      <Method name="sortDirTabMap"/>
+    </And>
+  </Match>
+  <Match>
     <Bug pattern="EQ_ALWAYS_TRUE"/>
     <Or>
       <And>
@@ -122,6 +130,14 @@
     </Or>
   </Match>
   <Match>
+    <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH"/>
+    <!-- TODO - fix potential file descriptor leak -->
+    <And>
+      <Class name="org.apache.fop.hyphenation.SerializeHyphPattern"/>
+      <Method name="serializeFile"/>
+    </And>
+  </Match>
+  <Match>
     <Bug pattern="SE_INNER_CLASS"/>
     <Or>
       <Class name="org.apache.fop.afp.AFPPaintingState$AFPData"/>
@@ -141,6 +157,40 @@
       </And>
     </Or>
   </Match>
+  <Match>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+    <Or>
+      <!-- TODO - fix later -->
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement"/>
+      <!-- FOs not yet implemented -->
+      <Class name="org.apache.fop.fo.flow.MultiProperties"/>
+      <Class name="org.apache.fop.fo.flow.MultiPropertySet"/>
+      <Class name="org.apache.fop.fo.flow.MultiToggle"/>
+      <Class name="org.apache.fop.fo.flow.table.TableAndCaption"/>
+      <Class name="org.apache.fop.fo.flow.table.TableCaption"/>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+    <Or>
+      <!-- TODO - Implementation incomplete? 
+                  If not, remove unused field(s) and unused accessors -->
+      <Class name="org.apache.fop.complexscripts.fonts.GlyphProcessingState"/>
+      <Class name="org.apache.fop.layoutmgr.inline.InlineStackingLayoutManager"/>
+      <Class name="org.apache.fop.pdf.PDFCMap"/>
+      <Class name="org.apache.fop.render.pdf.PDFSVGHandler$PDFInfo"/>
+      <Class name="org.apache.fop.svg.PDFGraphics2D"/>
+      <!-- Properties not yet implemented -->
+      <Class name="org.apache.fop.fo.flow.MultiToggle"/>
+      <Class name="org.apache.fop.fo.properties.CommonMarginInline"/>
+      <Class name="org.apache.fop.fo.properties.CommonRelativePosition"/>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD"/>
+    <!-- Properties not yet implemented -->
+    <Class name="org.apache.fop.fo.properties.CommonAural"/>
+  </Match>
   <!-- END - APPROVED EXCLUSIONS -->
 
   <!-- START - TEMPORARY (UNAPPROVED) EXCLUSIONS -->
@@ -159,6 +209,10 @@
   <Match>
     <!-- 29 warnings -->
     <Bug pattern="DM_CONVERT_CASE"/>
+  </Match>
+  <Match>
+    <!-- 17 warnings -->
+    <Bug pattern="DM_DEFAULT_ENCODING"/>
   </Match>
   <Match>
     <!-- 20 warnings -->

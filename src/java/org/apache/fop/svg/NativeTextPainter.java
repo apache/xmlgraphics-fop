@@ -216,11 +216,11 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
     public List computeTextRuns(TextNode node, AttributedCharacterIterator nodeACI,
         AttributedCharacterIterator [] chunkACIs) {
         nodeACI.first();
-        int defaultBidiLevel = (nodeACI.getAttribute(WRITING_MODE) == WRITING_MODE_RTL) ? 1 : 0;
+        int defaultBidiLevel = (((Integer) nodeACI.getAttribute(WRITING_MODE)).intValue() == WRITING_MODE_RTL) ? 1 : 0;
         for (int i = 0, n = chunkACIs.length; i < n; ++i) {
             chunkACIs[i] = new BidiAttributedCharacterIterator(chunkACIs[i], defaultBidiLevel);
         }
-        return super.computeTextRuns(node, nodeACI, chunkACIs, (int[][]) null);
+        return super.computeTextRuns(node, nodeACI, chunkACIs, null);
     }
 
     // We want to sub-divide text chunks into distinct runs at bidi level boundaries.
