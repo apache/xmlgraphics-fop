@@ -160,6 +160,7 @@ list of possible build targets.
   <property name="javac.fork" value="no"/>
   <property name="junit.fork" value="yes"/>
   <property name="junit.haltonfailure" value="off"/>
+  <property name="junit.maxmemory" value="256m"/>
   <property name="junit.printsummary" value="off"/>
   <property name="junit.formatter.brief" value="on"/>
   <property name="javadoc.packages" value="org.apache.fop.*"/>
@@ -225,7 +226,7 @@ list of possible build targets.
     <junit haltonfailure="${junit.haltonfailure}"
       fork="${junit.fork}"
       printsummary="${junit.printsummary}"
-      maxmemory="256m"/>
+      maxmemory="${junit.maxmemory}"/>
   </presetdef>
   
   <!-- =================================================================== -->
@@ -815,9 +816,9 @@ list of possible build targets.
         <classpath>
           <path refid="@{classpath}"/>
         </classpath>
-	<assertions>
-	  <enable/>
-	</assertions>
+        <assertions>
+          <enable/>
+        </assertions>
         <test name="@{testsuite}" todir="${junit.reports.dir}" outfile="@{outfile}"/>
       </junit>
     </sequential>
