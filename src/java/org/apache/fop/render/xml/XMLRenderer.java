@@ -514,7 +514,8 @@ public class XMLRenderer extends AbstractXMLRenderer {
                 renderRegion(region);
                 endElement("regionStart");
             } else if (region.getRegionClass() == FO_REGION_BODY) {
-                BodyRegion body = (BodyRegion)region;
+                assert (region instanceof BodyRegion);
+                BodyRegion body = (BodyRegion) region;
                 if (body.getColumnCount() != 1) {
                     addAttribute("columnGap", body.getColumnGap());
                     addAttribute("columnCount", body.getColumnCount());

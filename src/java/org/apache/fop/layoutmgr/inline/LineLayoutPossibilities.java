@@ -24,8 +24,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.layoutmgr.Position;
-
 /**
  * Line layout possibilities.
  */
@@ -37,12 +35,12 @@ public class LineLayoutPossibilities {
     private final class Possibility {
         private int lineCount;
         private double demerits;
-        private List breakPositions;
+        private List<LineLayoutManager.LineBreakPosition> breakPositions;
 
         private Possibility(int lc, double dem) {
             lineCount = lc;
             demerits = dem;
-            breakPositions = new java.util.ArrayList(lc);
+            breakPositions = new java.util.ArrayList<LineLayoutManager.LineBreakPosition>(lc);
         }
 
         private int getLineCount() {
@@ -53,15 +51,15 @@ public class LineLayoutPossibilities {
             return demerits;
         }
 
-        private void addBreakPosition(Position pos) {
+        private void addBreakPosition(LineLayoutManager.LineBreakPosition pos) {
             // Positions are always added with index 0 because
             // they are created backward, from the last one to
             // the first one
             breakPositions.add(0, pos);
         }
 
-        private Position getBreakPosition(int i) {
-            return (Position)breakPositions.get(i);
+        private LineLayoutManager.LineBreakPosition getBreakPosition(int i) {
+            return breakPositions.get(i);
         }
     }
 
@@ -181,7 +179,7 @@ public class LineLayoutPossibilities {
      * @param pos a position
      * @param i an index into posibilities list
      */
-    public void addBreakPosition(Position pos, int i) {
+    public void addBreakPosition(LineLayoutManager.LineBreakPosition pos, int i) {
         ((Possibility)possibilitiesList.get(i)).addBreakPosition(pos);
     }
 
@@ -245,7 +243,7 @@ public class LineLayoutPossibilities {
      * @param i the break position index
      * @return the chosen position
      */
-    public Position getChosenPosition(int i) {
+    public LineLayoutManager.LineBreakPosition getChosenPosition(int i) {
         return ((Possibility)possibilitiesList.get(chosenIndex)).getBreakPosition(i);
     }
 

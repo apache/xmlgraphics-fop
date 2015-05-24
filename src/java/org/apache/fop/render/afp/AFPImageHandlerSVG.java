@@ -78,7 +78,9 @@ public class AFPImageHandlerSVG implements ImageHandler {
         ImageXMLDOM imageSVG = (ImageXMLDOM)image;
         FOUserAgent userAgent = afpContext.getUserAgent();
 
-        AFPGraphicsObjectInfo graphicsObjectInfo = (AFPGraphicsObjectInfo)createDataObjectInfo();
+        AFPDataObjectInfo info = createDataObjectInfo();
+        assert (info instanceof AFPGraphicsObjectInfo);
+        AFPGraphicsObjectInfo graphicsObjectInfo = (AFPGraphicsObjectInfo) info;
         AFPResourceInfo resourceInfo = graphicsObjectInfo.getResourceInfo();
         setDefaultToInlineResourceLevel(graphicsObjectInfo);
 

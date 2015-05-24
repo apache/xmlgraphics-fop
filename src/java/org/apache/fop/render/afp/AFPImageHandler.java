@@ -31,6 +31,7 @@ import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPUnitConverter;
 import org.apache.fop.render.ImageHandlerBase;
+import org.apache.fop.render.RendererContext;
 
 /**
  * A base abstract AFP image handler
@@ -71,8 +72,9 @@ public abstract class AFPImageHandler implements ImageHandlerBase {
                 (int)Math.round(position.getWidth()),
                 (int)Math.round(position.getHeight()));
 
-        AFPRendererContext rendererContext
-            = (AFPRendererContext)rendererImageInfo.getRendererContext();
+        RendererContext context = rendererImageInfo.getRendererContext();
+        assert (context instanceof AFPRendererContext);
+        AFPRendererContext rendererContext = (AFPRendererContext) context;
         AFPInfo afpInfo = rendererContext.getInfo();
         AFPPaintingState paintingState = afpInfo.getPaintingState();
 

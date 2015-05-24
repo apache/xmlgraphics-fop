@@ -301,6 +301,7 @@ public abstract class AbstractRenderer
         startVParea(regionReference.getCTM(), port.getClipRectangle());
         // do after starting viewport area
         if (regionReference.getRegionClass() == FO_REGION_BODY) {
+            assert (regionReference instanceof BodyRegion);
             renderBodyRegion((BodyRegion) regionReference);
         } else {
             renderRegion(regionReference);

@@ -48,6 +48,42 @@
 
   <!-- START - APPROVED EXCLUSIONS -->
   <Match>
+    <Bug pattern="BC_BAD_CAST_TO_CONCRETE_COLLECTION"/>
+    <!-- TODO - Not sure what to do with those two... Seems messy/hacky -->
+    <And>
+      <Class name="org.apache.fop.area.AreaTreeObject"/>
+      <Method name="clone"/>
+    </And>
+  </Match>    
+  <Match>
+    <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
+    <!-- TODO - See if these can be solved in a better way -->
+    <Or>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.PageBreakingAlgorithm"/>
+        <Or>
+          <Method name="createFootnotePages"/>
+          <Method name="finish"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.rtf.RTFHandler"/>
+        <Or>
+          <Method name="endCell"/>
+          <Method name="endFootnoteBody"/>
+          <Method name="endPart"/>
+          <Method name="endRow"/>
+          <Method name="startCell"/>
+          <Method name="startFootnoteBody"/>
+          <Method name="startListItem"/>
+          <Method name="startListLabel"/>
+          <Method name="startPart"/>
+          <Method name="startRow"/>
+        </Or>
+      </And>
+    </Or>
+  </Match>
+  <Match>
     <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
     <Or>
       <And>

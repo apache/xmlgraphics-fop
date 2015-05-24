@@ -52,7 +52,9 @@ public class PDFReferenceElement extends PDFCollectionEntryElement {
         } else if (refid.length() == 0) {
             invalidPropertyValueError(ATT_REFID, refid, null);
         } else {
-            ((PDFReferenceExtension) getExtension()).setReferenceId(refid);
+            PDFCollectionEntryExtension extension = getExtension();
+            assert (extension instanceof PDFReferenceExtension);
+            ((PDFReferenceExtension) extension).setReferenceId(refid);
         }
     }
 }

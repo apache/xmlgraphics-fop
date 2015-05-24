@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.area.Area;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.LineArea;
@@ -112,7 +113,9 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
             try {
                 ContentLayoutManager clm = getLayoutManagerMaker()
                     .makeContentLayoutManager(this, getPageSequence().getTitleFO());
-                title = (LineArea) clm.getParentArea(null);
+                Area parentArea = clm.getParentArea(null);
+                assert (parentArea instanceof LineArea);
+                title = (LineArea) parentArea;
             } catch (IllegalStateException e) {
                 // empty title; do nothing
             }

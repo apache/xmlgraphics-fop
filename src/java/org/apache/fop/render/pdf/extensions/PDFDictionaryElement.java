@@ -64,8 +64,9 @@ public class PDFDictionaryElement extends PDFCollectionEntryElement {
     }
 
     public PDFDictionaryExtension getDictionaryExtension() {
-        assert getExtension() instanceof PDFDictionaryExtension;
-        return (PDFDictionaryExtension) getExtension();
+        PDFCollectionEntryExtension extension = getExtension();
+        assert extension instanceof PDFDictionaryExtension;
+        return (PDFDictionaryExtension) extension;
     }
 
     @Override
