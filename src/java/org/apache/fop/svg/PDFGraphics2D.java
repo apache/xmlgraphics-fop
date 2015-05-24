@@ -1029,7 +1029,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             resourceContext.addXObject(imageInfo);
         } else {
             Raster r = pctx.getRaster(devX, devY, devW, devH);
-            WritableRaster wr = (WritableRaster)r;
+            assert (r instanceof WritableRaster);
+            WritableRaster wr = (WritableRaster) r;
             wr = wr.createWritableTranslatedChild(0, 0);
 
             ColorModel pcm = pctx.getColorModel();

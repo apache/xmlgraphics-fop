@@ -941,6 +941,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     @Override
     protected void finish() {
         for (int i = startLine; i < endLine; i++) {
+            // @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
             for (KnuthPageNode node = (KnuthPageNode) getNode(i);
                  node != null;
                  node = (KnuthPageNode) node.next) {
@@ -978,6 +979,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 // footnoteElementIndex has already been set in getFootnoteSplit()
             } else {
                 // cannot add any content: create a new node and start again
+                // @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
                 KnuthPageNode node = (KnuthPageNode)
                                      createNode(lastNode.position, prevNode.line + 1, 1,
                                                 insertedFootnotesLength - prevNode.insertedFootnotes,
@@ -992,6 +994,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             }
         }
         // create the last node
+        // @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
         KnuthPageNode node = (KnuthPageNode)
                              createNode(lastNode.position, prevNode.line + 1, 1,
                                         totalFootnotesLength - prevNode.insertedFootnotes, 0, 0,

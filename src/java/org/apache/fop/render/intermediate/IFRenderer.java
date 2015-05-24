@@ -197,8 +197,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     private void handleIFExceptionWithIOException(IFException ife) throws IOException {
-        if (ife.getCause() instanceof IOException) {
-            throw (IOException)ife.getCause();
+        Throwable cause = ife.getCause();
+        if (cause instanceof IOException) {
+            throw (IOException) cause;
         } else {
             handleIFException(ife);
         }
@@ -1072,15 +1073,17 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         String s = word.getWord();
 
         int[][] dp = word.getGlyphPositionAdjustments();
+        Area parentArea = word.getParentArea();
+        assert (parentArea instanceof AbstractTextArea);
         if (dp == null) {
             renderTextWithAdjustments(s, word.getLetterAdjustArray(), word.isReversed(),
-                    font, (AbstractTextArea)word.getParentArea());
+                    font, (AbstractTextArea) parentArea);
         } else if (IFUtil.isDPOnlyDX(dp)) {
             renderTextWithAdjustments(s, IFUtil.convertDPToDX(dp), word.isReversed(),
-                    font, (AbstractTextArea)word.getParentArea());
+                    font, (AbstractTextArea) parentArea);
         } else {
             renderTextWithAdjustments(s, dp, word.isReversed(),
-                    font, (AbstractTextArea)word.getParentArea());
+                    font, (AbstractTextArea) parentArea);
         }
 
         super.renderWord(word);
@@ -1091,7 +1094,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         Font font = getFontFromArea(space.getParentArea());
         String s = space.getSpace();
 
-        AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
+        Area parentArea = space.getParentArea();
+        assert (parentArea instanceof AbstractTextArea);
+        AbstractTextArea textArea = (AbstractTextArea) parentArea;
         renderTextWithAdjustments(s, (int[]) null, false, font, textArea);
 
         /* COMBINED is always false

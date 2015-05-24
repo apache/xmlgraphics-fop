@@ -41,13 +41,18 @@ public abstract class AreaTreeObject implements Cloneable {
     protected List<ExtensionAttachment> extensionAttachments;
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     public Object clone() throws CloneNotSupportedException {
         AreaTreeObject ato = (AreaTreeObject) super.clone();
         if (foreignAttributes != null) {
-            ato.foreignAttributes = (Map) ((HashMap) foreignAttributes).clone();
+            // @SuppressFBWarnings("BC_BAD_CAST_TO_CONCRETE_COLLECTION")
+            ato.foreignAttributes = (Map<QName, String>)
+                    ((HashMap<QName, String>)foreignAttributes).clone();
         }
         if (extensionAttachments != null) {
-            ato.extensionAttachments = (List) ((ArrayList) extensionAttachments).clone();
+            // @SuppressFBWarnings("BC_BAD_CAST_TO_CONCRETE_COLLECTION")
+            ato.extensionAttachments = (List<ExtensionAttachment>)
+                    ((ArrayList<ExtensionAttachment>) extensionAttachments).clone();
         }
         return ato;
     }

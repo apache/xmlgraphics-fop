@@ -82,7 +82,9 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler implements ImageH
             throws IOException {
         AFPRenderingContext afpContext = (AFPRenderingContext)context;
 
-        AFPGraphicsObjectInfo graphicsObjectInfo = (AFPGraphicsObjectInfo)createDataObjectInfo();
+        AFPDataObjectInfo info = createDataObjectInfo();
+        assert (info instanceof AFPGraphicsObjectInfo);
+        AFPGraphicsObjectInfo graphicsObjectInfo = (AFPGraphicsObjectInfo) info;
 
         // set resource information
 

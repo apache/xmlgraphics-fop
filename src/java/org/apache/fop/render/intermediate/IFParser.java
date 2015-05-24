@@ -107,14 +107,16 @@ public class IFParser implements IFConstants {
 
             transformer.transform(src, res);
         } catch (TransformerException te) {
+            Throwable cause = te.getCause();
             //Unpack original IFException if applicable
-            if (te.getCause() instanceof SAXException) {
-                SAXException se = (SAXException)te.getCause();
-                if (se.getCause() instanceof IFException) {
-                    throw (IFException)se.getCause();
+            if (cause instanceof SAXException) {
+                SAXException se = (SAXException) cause;
+                cause = se.getCause();
+                if (cause instanceof IFException) {
+                    throw (IFException) cause;
                 }
-            } else if (te.getCause() instanceof IFException) {
-                throw (IFException)te.getCause();
+            } else if (cause instanceof IFException) {
+                throw (IFException) cause;
             }
             throw te;
         }
@@ -375,9 +377,10 @@ public class IFParser implements IFConstants {
         }
 
         private void handleIFException(IFException ife) throws SAXException {
-            if (ife.getCause() instanceof SAXException) {
+            Throwable cause = ife.getCause();
+            if (cause instanceof SAXException) {
                 //unwrap
-                throw (SAXException)ife.getCause();
+                throw (SAXException) cause;
             } else {
                 //wrap
                 throw new SAXException(ife);

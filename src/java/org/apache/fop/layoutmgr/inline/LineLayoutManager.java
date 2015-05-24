@@ -108,7 +108,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * Each value holds the start and end indexes into a List of
      * inline break positions.
      */
-    private static class LineBreakPosition extends LeafPosition {
+    static class LineBreakPosition extends LeafPosition {
         private final int parIndex; // index of the Paragraph this Position refers to
         private final int startIndex; //index of the first element this Position refers to
         private final int availableShrink;
@@ -986,7 +986,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                     keep.getContext(),
                                     context));
                     }
-                    endIndex = ((LineBreakPosition) llPoss.getChosenPosition(i)).getLeafPos();
+                    endIndex = llPoss.getChosenPosition(i).getLeafPos();
                     // create a list of the FootnoteBodyLM handling footnotes
                     // whose citations are in this line
                     List<FootnoteBodyLayoutManager> footnoteList = FootenoteUtil.getFootnotes(
@@ -994,7 +994,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     List<FloatContentLayoutManager> floats = FloatContentLayoutManager.checkForFloats(seq,
                             startIndex, endIndex);
                     startIndex = endIndex + 1;
-                    LineBreakPosition lbp = (LineBreakPosition) llPoss.getChosenPosition(i);
+                    LineBreakPosition lbp = llPoss.getChosenPosition(i);
                     if (baselineOffset < 0) {
                         baselineOffset = lbp.spaceBefore + lbp.baseline;
                     }
@@ -1186,7 +1186,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     /** {@inheritDoc} */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
-        LeafPosition pos = (LeafPosition)lastElement.getPosition();
+        Position lastPos = lastElement.getPosition();
+        assert (lastPos instanceof LeafPosition);
+        LeafPosition pos = (LeafPosition) lastPos;
         //if (lastElement.isPenalty()) {
         //    totalAdj += lastElement.getWidth();
         //}
@@ -1230,7 +1232,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     // null penalty allowing a page break between lines
                     returnList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
                 }
-                LineBreakPosition lbp = (LineBreakPosition) llPoss.getChosenPosition(i);
+                LineBreakPosition lbp = llPoss.getChosenPosition(i);
                 //log.debug("LLM.getChangedKnuthElements> lineWidth= "
                 // + lbp.lineWidth + " difference= " + lbp.difference);
                 //log.debug("                             shrink= "
