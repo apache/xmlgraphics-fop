@@ -687,6 +687,7 @@ public class RTFHandler extends FOEventHandler {
         try {
             RtfAttributes atts = TableAttributesConverter.convertTablePartAttributes(part);
 
+            // @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
             RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class, true, this);
             tbl.setHeaderAttribs(atts);
         } catch (IOException ioe) {
@@ -703,6 +704,7 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
+            // @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
             RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class, true, this);
             tbl.setHeaderAttribs(null);
         } catch (IOException ioe) {
@@ -738,6 +740,7 @@ public class RTFHandler extends FOEventHandler {
 
         try {
             // create an RtfTableRow in the current RtfTable
+            // @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
             final RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class,
                     true, null);
 
@@ -768,6 +771,7 @@ public class RTFHandler extends FOEventHandler {
 
         try {
             TableContext tctx = builderContext.getTableContext();
+            // @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
             final RtfTableRow row = (RtfTableRow)builderContext.getContainer(RtfTableRow.class,
                     true, null);
 
@@ -805,6 +809,7 @@ public class RTFHandler extends FOEventHandler {
 
         try {
             TableContext tctx = builderContext.getTableContext();
+            // @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
             final RtfTableRow row = (RtfTableRow)builderContext.getContainer(RtfTableRow.class,
                     true, null);
 
@@ -894,7 +899,8 @@ public class RTFHandler extends FOEventHandler {
             return;
         }
         try {
-            RtfTableCell cell = (RtfTableCell) builderContext.getContainer(RtfTableCell.class, false, this);
+            // @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
+            RtfTableCell cell = (RtfTableCell)builderContext.getContainer(RtfTableCell.class, false, this);
             cell.finish();
 
         } catch (Exception e) {
@@ -949,6 +955,7 @@ public class RTFHandler extends FOEventHandler {
 
         // create an RtfListItem in the current RtfList
         try {
+            // @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
             RtfList list = (RtfList)builderContext.getContainer(
                     RtfList.class, true, this);
 
@@ -995,6 +1002,7 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
+            // @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
             RtfListItem item
                 = (RtfListItem)builderContext.getContainer(RtfListItem.class, true, this);
 
@@ -1325,6 +1333,7 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
+            // @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
             RtfFootnote rtfFootnote
                 = (RtfFootnote)builderContext.getContainer(
                     RtfFootnote.class,
@@ -1346,6 +1355,7 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
+            // @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
             RtfFootnote rtfFootnote
                 = (RtfFootnote)builderContext.getContainer(
                     RtfFootnote.class,
