@@ -894,7 +894,7 @@ public class RTFHandler extends FOEventHandler {
             return;
         }
         try {
-            RtfTableCell cell = (RtfTableCell)builderContext.getContainer(RtfTableCell.class, false, this);
+            RtfTableCell cell = (RtfTableCell) builderContext.getContainer(RtfTableCell.class, false, this);
             cell.finish();
 
         } catch (Exception e) {
