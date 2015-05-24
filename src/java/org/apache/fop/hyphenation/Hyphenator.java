@@ -64,6 +64,14 @@ public final class Hyphenator {
     }
 
     /**
+     * Clears the default hyphenation tree cache.<br>
+     * This method can be used if the underlying data files are changed at runtime.
+     */
+    public static synchronized void clearHyphenationTreeCache() {
+        hTreeCache = new HyphenationTreeCache();
+    }
+
+    /**
      * Returns a hyphenation tree for a given language and country,
      * with fallback from (lang,country) to (lang).
      * The hyphenation trees are cached.
