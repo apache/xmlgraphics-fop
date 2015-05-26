@@ -1154,7 +1154,7 @@ NOTE:
       </classpath>
     </taskdef>
     <findbugs home="${findbugs.home.dir}" output="${findbugs.output.format}" reportLevel="low" effort="max"
-              outputFile="${build.dir}/report_findbugs.${findbugs.output.extension}" excludeFilter="findbugs-exclude.xml" jvmargs="-Xmx1024m">
+              outputFile="${build.dir}/report_findbugs.${findbugs.output.extension}" excludeFilter="findbugs-exclude.xml" jvmargs="-Xmx1024m" warningsProperty="findbugs.warnings">
       <sourcePath path="${src.java.dir}"/>
       <class location="${build.classes.dir}"/>
       <auxClasspath>
@@ -1167,6 +1167,7 @@ NOTE:
         </path>
       </auxClasspath>
     </findbugs>
+    <fail if="findbugs.warnings"/>
   </target>
   <target name="findbugs-xml" depends="findbugs-avail" if="findbugs.present" description="Runs findbugs for a code quality report in XML">
     <property name="findbugs.output.format" value="xml"/>
