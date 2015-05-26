@@ -28,6 +28,7 @@ import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -226,14 +227,16 @@ public class RunTest extends Task {
      * @return a list of urls to the runtime jar files.
      */
     private URL[] createUrls(String mainJar) throws MalformedURLException {
-        ArrayList urls = new ArrayList();
+        List<URL> urls = new ArrayList<URL>();
         urls.add(new File(mainJar).toURI().toURL());
         File[] libFiles = new File("lib").listFiles();
-        for (int i = 0; i < libFiles.length; i++) {
-            if (libFiles[i].getPath().endsWith(".jar")) {
-                urls.add(libFiles[i].toURI().toURL());
+        if (libFiles != null) {
+            for (File libFile : libFiles) {
+                if (libFile.getPath().endsWith(".jar")) {
+                    urls.add(libFile.toURI().toURL());
+                }
             }
         }
-        return (URL[]) urls.toArray(new URL[urls.size()]);
+        return urls.toArray(new URL[urls.size()]);
     }
 }

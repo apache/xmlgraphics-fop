@@ -107,7 +107,9 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
             throws IOException {
         AFPRenderingContext afpContext = (AFPRenderingContext)context;
 
-        AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo)createDataObjectInfo();
+        AFPDataObjectInfo info = createDataObjectInfo();
+        assert (info instanceof AFPImageObjectInfo);
+        AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo) info;
         AFPPaintingState paintingState = afpContext.getPaintingState();
 
         // set resource information

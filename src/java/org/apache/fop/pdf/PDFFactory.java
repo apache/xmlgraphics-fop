@@ -1265,7 +1265,9 @@ public class PDFFactory {
             log.error("Failed to embed font [" + desc + "] " + desc.getEmbedFontName(), ioe);
             return null;
         } finally {
-            IOUtils.closeQuietly(in);
+            if (in != null) {
+                IOUtils.closeQuietly(in);
+            }
         }
     }
 

@@ -158,6 +158,7 @@ public class TableStepper {
         for (int i = 0; i < columnCount; i++) {
             GridUnit gu = row.getGridUnit(i);
             if (!gu.isEmpty() && gu.isPrimary()) {
+                assert (gu instanceof PrimaryGridUnit);
                 activeCellList.add(new ActiveCell((PrimaryGridUnit) gu, row, rowIndex,
                         previousRowsLength, getTableLM()));
             }

@@ -388,6 +388,7 @@ class PDFRenderingUtil {
             } else if (type == PDFObjectType.Number) {
                 array.add(new PDFNumber(entry.getValueAsNumber()));
             } else if (type == PDFObjectType.Reference) {
+                assert (entry instanceof PDFReferenceExtension);
                 array.add(resolveReference((PDFReferenceExtension) entry));
             } else if (type == PDFObjectType.String) {
                 array.add(entry.getValue());
@@ -423,6 +424,7 @@ class PDFRenderingUtil {
             } else if (type == PDFObjectType.Number) {
                 dictionary.put(key, new PDFNumber(entry.getValueAsNumber()));
             } else if (type == PDFObjectType.Reference) {
+                assert (entry instanceof PDFReferenceExtension);
                 dictionary.put(key, resolveReference((PDFReferenceExtension) entry));
             } else if (type == PDFObjectType.String) {
                 dictionary.put(key, entry.getValue());

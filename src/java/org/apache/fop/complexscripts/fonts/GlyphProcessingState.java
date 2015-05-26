@@ -119,6 +119,7 @@ public class GlyphProcessingState {
      * @param language language identifier
      * @param feature feature identifier
      * @param sct script context tester (or null)
+     * @return this instance
      */
     protected GlyphProcessingState reset(GlyphSequence gs, String script, String language, String feature, ScriptContextTester sct) {
         this.gdef = null;
@@ -130,7 +131,7 @@ public class GlyphProcessingState {
         this.indexLast = gs.getGlyphCount();
         this.consumed = 0;
         this.lookupFlags = 0;
-        this.classMatchSet = 0;
+        this.classMatchSet = 0; // @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
         this.sct = sct;
         this.gct = (sct != null) ? sct.getTester(feature) : null;
         this.ignoreBase = new GlyphTester() { public boolean test(int gi, int flags) { return isIgnoredBase(gi, flags); } };

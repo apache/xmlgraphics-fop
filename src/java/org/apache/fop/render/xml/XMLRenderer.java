@@ -202,7 +202,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
                     continue;
                 }
                 Object value = traitEntry.getValue();
-                if (key == Trait.FONT) {
+                if (((Integer) key).intValue() == Trait.FONT) {
                     FontTriplet triplet = (FontTriplet)value;
                     addAttribute("font-name", triplet.getName());
                     addAttribute("font-style", triplet.getStyle());
@@ -245,8 +245,9 @@ public class XMLRenderer extends AbstractXMLRenderer {
                 } else if (clazz.equals(Color.class)) {
                     Color c = (Color)value;
                     addAttribute(name, ColorUtil.colorToString(c));
-                } else if (key == Trait.START_INDENT || key == Trait.END_INDENT) {
-                    if (((Integer)value).intValue() != 0) {
+                } else if (((Integer) key).intValue() == Trait.START_INDENT
+                        || ((Integer) key).intValue() == Trait.END_INDENT) {
+                    if ((Integer) value != 0) {
                         addAttribute(name, value.toString());
                     }
                 } else {
@@ -513,7 +514,8 @@ public class XMLRenderer extends AbstractXMLRenderer {
                 renderRegion(region);
                 endElement("regionStart");
             } else if (region.getRegionClass() == FO_REGION_BODY) {
-                BodyRegion body = (BodyRegion)region;
+                assert (region instanceof BodyRegion);
+                BodyRegion body = (BodyRegion) region;
                 if (body.getColumnCount() != 1) {
                     addAttribute("columnGap", body.getColumnGap());
                     addAttribute("columnCount", body.getColumnCount());

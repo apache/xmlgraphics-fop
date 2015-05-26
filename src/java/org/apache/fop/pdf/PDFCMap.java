@@ -365,7 +365,7 @@ public class PDFCMap extends PDFStream {
     /**
      * font's writing direction
      */
-    protected byte wMode = WMODE_HORIZONTAL;
+    protected byte wMode = WMODE_HORIZONTAL; // @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 
     /**
      * base CMap (String or PDFStream)
@@ -381,8 +381,8 @@ public class PDFCMap extends PDFStream {
     public PDFCMap(String name, PDFCIDSystemInfo sysInfo) {
         super();
         this.name = name;
-        this.sysInfo = sysInfo;
-        this.base = null;
+        this.sysInfo = sysInfo;  // @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+        this.base = null;  // @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     }
 
     /**

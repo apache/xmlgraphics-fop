@@ -364,8 +364,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable {
      * This will retrieve a marker with the class name
      * and position.
      *
-     * @param name The class name of the marker to retrieve
-     * @param pos the position to retrieve
+     * @param rm    the retrieve-marker instance
      * @return Object the marker found or null
      */
     public Marker resolveMarker(AbstractRetrieveMarker rm) {
@@ -409,8 +408,8 @@ public class PageViewport extends AreaTreeObject implements Resolvable {
         page = (Page) in.readObject();
         unresolvedIDRefs = page.getUnresolvedReferences();
         if (unresolvedIDRefs != null && pendingResolved != null) {
-            for (String id : pendingResolved.keySet()) {
-                resolveIDRef(id, pendingResolved.get(id));
+            for (Map.Entry<String, List<PageViewport>> e : pendingResolved.entrySet()) {
+                resolveIDRef(e.getKey(), e.getValue());
             }
             pendingResolved = null;
         }
@@ -457,7 +456,9 @@ public class PageViewport extends AreaTreeObject implements Resolvable {
      * @return BodyRegion object
      */
     public BodyRegion getBodyRegion() {
-        return (BodyRegion) getPage().getRegionViewport(FO_REGION_BODY).getRegionReference();
+        RegionReference regionReference = getPage().getRegionViewport(FO_REGION_BODY).getRegionReference();
+        assert (regionReference instanceof BodyRegion);
+        return (BodyRegion) regionReference;
     }
 
     /**

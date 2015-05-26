@@ -54,6 +54,7 @@ public class MultiProperties extends FObj {
         if (!notImplementedWarningGiven) {
             getFOValidationEventProducer().unimplementedFeature(this, getName(),
                     getName(), getLocator());
+            // @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
             notImplementedWarningGiven = true;
         }
     }

@@ -133,7 +133,6 @@ public class GraphicsSetProcessColor extends AbstractGraphicsDrawingOrder {
             dout.writeByte(a);
             dout.writeByte(b);
         } else {
-            IOUtils.closeQuietly(dout);
             IOUtils.closeQuietly(baout);
             throw new IllegalStateException();
         }
