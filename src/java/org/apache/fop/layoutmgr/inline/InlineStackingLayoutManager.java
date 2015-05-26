@@ -63,7 +63,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
      */
     protected InlineStackingLayoutManager(FObj node) {
         super(node);
-        extraBPD = MinOptMax.ZERO;
+        extraBPD = MinOptMax.ZERO;  // @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     }
 
     /**

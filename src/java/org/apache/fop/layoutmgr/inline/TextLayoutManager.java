@@ -209,7 +209,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
          */
         GlyphMapping lastMapping = null;
         while (posIter.hasNext()) {
-            final LeafPosition tbpNext = (LeafPosition) posIter.next();
+            Position nextPos = posIter.next();
+            assert (nextPos instanceof LeafPosition);
+            final LeafPosition tbpNext = (LeafPosition) nextPos;
             if (tbpNext == null) {
                 continue; //Ignore elements without Positions
             }
@@ -961,7 +963,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         ListIterator oldListIterator = oldList.listIterator();
         KnuthElement knuthElement = (KnuthElement) oldListIterator.next();
         Position pos = knuthElement.getPosition();
-        LeafPosition leafPos = (LeafPosition) pos.getPosition(depth);
+        Position innerPosition = pos.getPosition(depth);
+        assert (innerPosition instanceof LeafPosition);
+        LeafPosition leafPos = (LeafPosition) innerPosition;
         int index = leafPos.getLeafPos();
         //element could refer to '-1' position, for non-collapsed spaces (?)
         if (index > -1) {
@@ -1082,14 +1086,18 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         ListIterator oldListIter;
         for (oldListIter = oldList.listIterator(); oldListIter.hasNext();) {
             Position pos = ((KnuthElement) oldListIter.next()).getPosition();
-            startPos = (LeafPosition) pos.getPosition(depth);
+            Position innerPosition = pos.getPosition(depth);
+            assert (innerPosition == null || innerPosition instanceof LeafPosition);
+            startPos = (LeafPosition) innerPosition;
             if (startPos != null && startPos.getLeafPos() != -1) {
                 break;
             }
         }
         for (oldListIter = oldList.listIterator(oldList.size()); oldListIter.hasPrevious();) {
             Position pos = ((KnuthElement) oldListIter.previous()).getPosition();
-            endPos = (LeafPosition) pos.getPosition(depth);
+            Position innerPosition = pos.getPosition(depth);
+            assert (innerPosition instanceof LeafPosition);
+            endPos = (LeafPosition) innerPosition;
             if (endPos != null && endPos.getLeafPos() != -1) {
                 break;
             }

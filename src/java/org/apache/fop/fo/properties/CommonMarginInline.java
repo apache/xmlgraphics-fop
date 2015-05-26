@@ -30,7 +30,7 @@ import org.apache.fop.fo.expr.PropertyException;
  * Public "structure" allows direct member access.
  */
 public class CommonMarginInline {
-
+    // @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     /**
      * The "margin-top" property.
      */

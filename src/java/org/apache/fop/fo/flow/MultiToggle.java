@@ -31,12 +31,12 @@ import org.apache.fop.fo.properties.StringProperty;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_multi-toggle">
- * <code>fo:multi-toggle<code></a> property.
+ * <code>fo:multi-toggle</code></a> property.
  */
 public class MultiToggle extends FObj {
     // The value of properties relevant for fo:multi-toggle (commented out for performance).
     //     private CommonAccessibility commonAccessibility;
-     public StringProperty prSwitchTo;
+    public StringProperty prSwitchTo; // @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     // End of property values
 
     private static boolean notImplementedWarningGiven;
@@ -52,6 +52,7 @@ public class MultiToggle extends FObj {
         if (!notImplementedWarningGiven) {
             getFOValidationEventProducer().unimplementedFeature(this, getName(),
                     getName(), getLocator());
+            // @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
             notImplementedWarningGiven = true;
         }
     }

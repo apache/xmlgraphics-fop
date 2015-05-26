@@ -269,6 +269,7 @@ class RowPainter {
                 } else {
                     borderAfterWhich = ConditionalBorder.REST;
                 }
+                assert (currentGU instanceof EmptyGridUnit);
                 addAreaForEmptyGridUnit((EmptyGridUnit)currentGU,
                         currentRow.getIndex(), i,
                         actualRowHeight,

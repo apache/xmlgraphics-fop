@@ -44,8 +44,9 @@ public class PDFArrayElement extends PDFCollectionEntryElement {
     }
 
     public PDFArrayExtension getArrayExtension() {
-        assert getExtension() instanceof PDFArrayExtension;
-        return (PDFArrayExtension) getExtension();
+        PDFCollectionEntryExtension extension = getExtension();
+        assert (extension instanceof PDFArrayExtension);
+        return (PDFArrayExtension) extension;
     }
 
     @Override

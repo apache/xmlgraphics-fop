@@ -43,7 +43,7 @@ import org.apache.fop.render.awt.AWTRenderer;
 public class ImageProxyPanel extends JPanel {
 
     /** The reference to the BufferedImage storing the page data */
-    private Reference imageRef;
+    private transient Reference imageRef;
 
     /** The maximum and preferred size of the panel */
     private Dimension size;
