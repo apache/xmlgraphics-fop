@@ -64,7 +64,11 @@ public class TagLogicalElement extends AbstractTripletStructuredObject {
     }
 
     private void setAttributeValue(String value) {
-        addTriplet(new AttributeValueTriplet(value));
+        if (state.encoding != -1) {
+            addTriplet(new AttributeValueTriplet(value, state.encoding));
+        }  else {
+            addTriplet(new AttributeValueTriplet(value));
+        }
     }
 
     private void setEncoding(int encoding) {
