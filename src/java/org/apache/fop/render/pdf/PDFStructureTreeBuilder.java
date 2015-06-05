@@ -47,7 +47,7 @@ import org.apache.fop.pdf.StructureType;
 import org.apache.fop.util.LanguageTags;
 import org.apache.fop.util.XMLUtil;
 
-class PDFStructureTreeBuilder implements StructureTreeEventHandler {
+public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
 
     private static final String ROLE = "role";
 
@@ -347,7 +347,7 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
                 new AttributesImpl(), pdfFactory, eventBroadcaster);
     }
 
-    private static PDFStructElem createStructureElement(String name, StructureHierarchyMember parent,
+    public static PDFStructElem createStructureElement(String name, StructureHierarchyMember parent,
                 Attributes attributes, PDFFactory pdfFactory, EventBroadcaster eventBroadcaster) {
             StructureElementBuilder builder = BUILDERS.get(name);
             if (builder == null) {

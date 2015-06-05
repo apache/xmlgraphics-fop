@@ -27,7 +27,7 @@ import org.apache.fop.pdf.PDFObject;
 import org.apache.fop.pdf.PDFStructElem;
 import org.apache.fop.pdf.StructureType;
 
-class PageSequenceStructElem extends PDFStructElem {
+public class PageSequenceStructElem extends PDFStructElem {
 
     private List<PDFStructElem> regionBefores = new ArrayList<PDFStructElem>();
 
@@ -36,6 +36,8 @@ class PageSequenceStructElem extends PDFStructElem {
     private List<PDFStructElem> regionStarts = new ArrayList<PDFStructElem>();
 
     private List<PDFStructElem> regionEnds = new ArrayList<PDFStructElem>();
+
+    private List<PDFStructElem> footnoteSeparator = new ArrayList<PDFStructElem>();
 
     PageSequenceStructElem(PDFObject parent, StructureType structureType) {
         super(parent, structureType);
@@ -50,6 +52,8 @@ class PageSequenceStructElem extends PDFStructElem {
             regionStarts.add(content);
         } else if (flowName.equals("xsl-region-end")) {
             regionEnds.add(content);
+        } else if (flowName.equals("xsl-footnote-separator")) {
+            footnoteSeparator.add(content);
         } else {
             addKid(content);
         }
@@ -63,6 +67,7 @@ class PageSequenceStructElem extends PDFStructElem {
         addRegions(k, regionStarts);
         addRegions(k, kids);
         addRegions(k, regionEnds);
+        addRegions(k, footnoteSeparator);
         addRegions(k, regionAfters);
         put("K", k);
         return true;
