@@ -231,7 +231,7 @@ public abstract class AbstractPDFStream extends PDFObject {
             lengthEntry = refLength;
         } else {
             encodedStream = encodeStream();
-            lengthEntry = Integer.valueOf(encodedStream.getSize() + 1);
+            lengthEntry = encodedStream.getSize();
         }
 
         populateStreamDict(lengthEntry);

@@ -98,7 +98,7 @@ public class ObjectStreamTestCase {
         expected.append("  /Type /ObjStm\n")
                 .append("  /N ").append(numObs).append("\n")
                 .append("  /First ").append(offsetsLength).append('\n')
-                .append("  /Length ").append(OBJECT_CONTENT.length() * 2 + offsetsLength + 1).append('\n')
+                .append("  /Length ").append(OBJECT_CONTENT.length() * 2 + offsetsLength).append('\n')
                 .append(">>\n")
                 .append("stream\n");
         int offset = 0;
