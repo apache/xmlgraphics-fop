@@ -123,7 +123,7 @@ public class CrossReferenceStreamTestCase extends CrossReferenceObjectTest {
                 .append("  /Type /XRef\n")
                 .append("  /Size ").append(Integer.toString(maxObjectNumber + 1)).append('\n')
                 .append("  /W [1 8 2]\n")
-                .append("  /Length ").append(Integer.toString((maxObjectNumber + 1) * 11 + 1)).append('\n')
+                .append("  /Length ").append(Integer.toString((maxObjectNumber + 1) * 11)).append('\n')
                 .append(">>\n")
                 .append("stream\n");
         stream.write(getBytes(expected));
