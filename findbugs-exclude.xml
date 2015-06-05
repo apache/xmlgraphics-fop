@@ -227,6 +227,17 @@
     <!-- Properties not yet implemented -->
     <Class name="org.apache.fop.fo.properties.CommonAural"/>
   </Match>
+   <Match>
+     <Class name="org.apache.fop.render.pdf.ImageRawPNGAdapter"/>
+     <Or>
+       <Method name="outputContents"/>
+       <Method name="setup"/>
+     </Or>
+     <Or>
+       <Bug pattern="OS_OPEN_STREAM"/>
+       <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH"/>
+     </Or>
+   </Match> 
   <!-- END - APPROVED EXCLUSIONS -->
 
   <!-- START - TEMPORARY (UNAPPROVED) EXCLUSIONS -->

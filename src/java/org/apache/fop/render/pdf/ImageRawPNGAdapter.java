@@ -116,62 +116,52 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
             // TODO: Implement code to combine image with background color if transparency is not allowed
             // here we need to inflate the PNG pixel data, which includes alpha, separate the alpha channel
             // and then deflate it back again
-            ByteArrayOutputStream baos = null;
-            DeflaterOutputStream dos = null;
-            InputStream in = null;
-            InflaterInputStream infStream = null;
-            DataInputStream dataStream = null;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DeflaterOutputStream dos = new DeflaterOutputStream(baos, new Deflater());
+            InputStream in = ((ImageRawStream) image).createInputStream();
             try {
-                baos = new ByteArrayOutputStream();
-                dos = new DeflaterOutputStream(baos, new Deflater());
-                in = ((ImageRawStream) image).createInputStream();
-                try {
-                    infStream = new InflaterInputStream(in, new Inflater());
-                    dataStream = new DataInputStream(infStream);
-                    // offset is the byte offset of the alpha component
-                    int offset = numberOfInterleavedComponents - 1; // 1 for GA, 3 for RGBA
-                    int numColumns = image.getSize().getWidthPx();
-                    int bytesPerRow = numberOfInterleavedComponents * numColumns;
-                    int filter;
-                    // read line by line; the first byte holds the filter
-                    while ((filter = dataStream.read()) != -1) {
-                        byte[] bytes = new byte[bytesPerRow];
-                        dataStream.readFully(bytes, 0, bytesPerRow);
-                        dos.write((byte) filter);
-                        for (int j = 0; j < numColumns; j++) {
-                            dos.write(bytes, offset, 1);
-                            offset += numberOfInterleavedComponents;
-                        }
-                        offset = numberOfInterleavedComponents - 1;
+                InflaterInputStream infStream = new InflaterInputStream(in, new Inflater());
+                DataInputStream dataStream = new DataInputStream(infStream);
+                // offset is the byte offset of the alpha component
+                int offset = numberOfInterleavedComponents - 1; // 1 for GA, 3 for RGBA
+                int numColumns = image.getSize().getWidthPx();
+                int bytesPerRow = numberOfInterleavedComponents * numColumns;
+                int filter;
+                // read line by line; the first byte holds the filter
+                while ((filter = dataStream.read()) != -1) {
+                    byte[] bytes = new byte[bytesPerRow];
+                    dataStream.readFully(bytes, 0, bytesPerRow);
+                    dos.write((byte) filter);
+                    for (int j = 0; j < numColumns; j++) {
+                        dos.write(bytes, offset, 1);
+                        offset += numberOfInterleavedComponents;
                     }
-                } catch (IOException e) {
-                    throw new RuntimeException("Error processing transparency channel:", e);
+                    offset = numberOfInterleavedComponents - 1;
                 }
-                // set up alpha channel compression
-                FlateFilter transFlate;
-                try {
-                    transFlate = new FlateFilter();
-                    transFlate.setApplied(true);
-                    transFlate.setPredictor(FlateFilter.PREDICTION_PNG_OPT);
-                    transFlate.setColors(1);
-                    transFlate.setColumns(image.getSize().getWidthPx());
-                    transFlate.setBitsPerComponent(this.getBitsPerComponent());
-                } catch (PDFFilterException e) {
-                    throw new RuntimeException("FlateFilter configuration error", e);
-                }
-                BitmapImage alphaMask = new BitmapImage("Mask:" + this.getKey(), image.getSize().getWidthPx(),
-                        image.getSize().getHeightPx(), baos.toByteArray(), null);
-                alphaMask.setPDFFilter(transFlate);
-                alphaMask.disallowMultipleFilters();
-                alphaMask.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
-                softMask = doc.addImage(null, alphaMask).makeReference();
+                dos.close();
+            } catch (IOException e) {
+                throw new RuntimeException("Error processing transparency channel:", e);
             } finally {
-                IOUtils.closeQuietly(infStream);
-                IOUtils.closeQuietly(dataStream);
                 IOUtils.closeQuietly(in);
-                IOUtils.closeQuietly(dos);
-                IOUtils.closeQuietly(baos);
             }
+            // set up alpha channel compression
+            FlateFilter transFlate;
+            try {
+                transFlate = new FlateFilter();
+                transFlate.setApplied(true);
+                transFlate.setPredictor(FlateFilter.PREDICTION_PNG_OPT);
+                transFlate.setColors(1);
+                transFlate.setColumns(image.getSize().getWidthPx());
+                transFlate.setBitsPerComponent(this.getBitsPerComponent());
+            } catch (PDFFilterException e) {
+                throw new RuntimeException("FlateFilter configuration error", e);
+            }
+            BitmapImage alphaMask = new BitmapImage("Mask:" + this.getKey(), image.getSize().getWidthPx(),
+                    image.getSize().getHeightPx(), baos.toByteArray(), null);
+            alphaMask.setPDFFilter(transFlate);
+            alphaMask.disallowMultipleFilters();
+            alphaMask.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
+            softMask = doc.addImage(null, alphaMask).makeReference();
         }
     }
 
@@ -219,9 +209,7 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
     /** {@inheritDoc} */
     public void outputContents(OutputStream out) throws IOException {
         InputStream in = ((ImageRawStream) image).createInputStream();
-        InflaterInputStream infStream = null;
-        DataInputStream dataStream = null;
-        DeflaterOutputStream dos = null;
+
         try {
             if (numberOfInterleavedComponents == 1 || numberOfInterleavedComponents == 3) {
                 // means we have Gray, RGB, or Palette
@@ -231,14 +219,14 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
                 // TODO: since we have alpha here do this when the alpha channel is extracted
                 int numBytes = numberOfInterleavedComponents - 1; // 1 for Gray, 3 for RGB
                 int numColumns = image.getSize().getWidthPx();
-                infStream = new InflaterInputStream(in, new Inflater());
-                dataStream = new DataInputStream(infStream);
+                InflaterInputStream infStream = new InflaterInputStream(in, new Inflater());
+                DataInputStream dataStream = new DataInputStream(infStream);
                 int offset = 0;
                 int bytesPerRow = numberOfInterleavedComponents * numColumns;
                 int filter;
                 // here we need to inflate the PNG pixel data, which includes alpha, separate the alpha
                 // channel and then deflate the RGB channels back again
-                dos = new DeflaterOutputStream(out, new Deflater());
+                DeflaterOutputStream dos = new DeflaterOutputStream(out, new Deflater());
                 while ((filter = dataStream.read()) != -1) {
                     byte[] bytes = new byte[bytesPerRow];
                     dataStream.readFully(bytes, 0, bytesPerRow);
@@ -249,11 +237,9 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
                     }
                     offset = 0;
                 }
+                dos.close();
             }
         } finally {
-            IOUtils.closeQuietly(dos);
-            IOUtils.closeQuietly(dataStream);
-            IOUtils.closeQuietly(infStream);
             IOUtils.closeQuietly(in);
         }
     }
