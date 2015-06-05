@@ -713,8 +713,8 @@
     <eval expected="2" xpath="//lineArea[starts-with(., '[rbwt:t][rpwt:f-i-c]( Nevada )')]/ancestor::pageViewport/@nr" />
     <eval expected="2" xpath="//lineArea[starts-with(., '[rbwt:p][rpwt:f-i-c]( Nevada )')]/ancestor::pageViewport/@nr" />
     <eval expected="3" xpath="//lineArea[starts-with(., '[rbwt:t][rpwt:f-i-c]( Oregon )')]/ancestor::pageViewport/@nr" />
-    <eval expected="[rbwt:t][rpwt:f-i-c]( California )" xpath="//pageViewport[2]/page/regionViewport[3]//flow[1]/block[1]/block[17]/block[1]/lineArea" />
-    <eval expected="[rbwt:t][rpwt:f-i-c]( Oregon )" xpath="//pageViewport[3]/page/regionViewport[3]//flow[1]/block[1]/block[15]/block[1]/lineArea" />
-    <eval expected="[rbwt:t][rpwt:f-i-c]( Washington )" xpath="//pageViewport[4]/page/regionViewport[3]//flow[1]/block[1]/block[5]/block[1]/lineArea" />
+    <eval expected="[rbwt:t][rpwt:f-i-c]( California )" xpath="//pageViewport[2]/page/regionViewport[2]//flow[1]/block[1]/block[17]/block[1]/lineArea" />
+    <eval expected="[rbwt:t][rpwt:f-i-c]( Oregon )" xpath="//pageViewport[3]/page/regionViewport[2]//flow[1]/block[1]/block[15]/block[1]/lineArea" />
+    <eval expected="[rbwt:t][rpwt:f-i-c]( Washington )" xpath="//pageViewport[4]/page/regionViewport[2]//flow[1]/block[1]/block[5]/block[1]/lineArea" />
   </checks>
 </testcase>
