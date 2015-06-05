@@ -32,6 +32,8 @@ import org.apache.fop.afp.AFPConstants;
 public class AttributeValueTriplet extends AbstractTriplet {
     private String attVal;
 
+    private int userEncoding = -1; //no encoding by default
+
     /**
      * Main constructor
      *
@@ -40,6 +42,11 @@ public class AttributeValueTriplet extends AbstractTriplet {
     public AttributeValueTriplet(String attVal) {
         super(ATTRIBUTE_VALUE);
         this.attVal = truncate(attVal, MAX_LENGTH - 4);
+    }
+
+    public AttributeValueTriplet(String attVal, int userEncoding) {
+        this(attVal);
+        this.userEncoding = userEncoding;
     }
 
     /** {@inheritDoc} */
@@ -51,7 +58,11 @@ public class AttributeValueTriplet extends AbstractTriplet {
         // convert name and value to ebcdic
         byte[] tleByteValue = null;
         try {
-            tleByteValue = attVal.getBytes(AFPConstants.EBCIDIC_ENCODING);
+            if (this.userEncoding != -1) {
+                tleByteValue = attVal.getBytes("Cp" + userEncoding);
+            } else {
+                tleByteValue = attVal.getBytes(AFPConstants.EBCIDIC_ENCODING);
+            }
         } catch (UnsupportedEncodingException usee) {
             throw new IllegalArgumentException(attVal + " encoding failed");
         }
