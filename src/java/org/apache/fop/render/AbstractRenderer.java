@@ -265,15 +265,15 @@ public abstract class AbstractRenderer
         if (viewport != null) {
             renderRegionViewport(viewport);
         }
+        viewport = page.getRegionViewport(FO_REGION_BODY);
+        if (viewport != null) {
+            renderRegionViewport(viewport);
+        }
         viewport = page.getRegionViewport(FO_REGION_END);
         if (viewport != null) {
             renderRegionViewport(viewport);
         }
         viewport = page.getRegionViewport(FO_REGION_AFTER);
-        if (viewport != null) {
-            renderRegionViewport(viewport);
-        }
-        viewport = page.getRegionViewport(FO_REGION_BODY);
         if (viewport != null) {
             renderRegionViewport(viewport);
         }

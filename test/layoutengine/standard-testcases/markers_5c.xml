@@ -83,15 +83,15 @@
   <checks>
     <!-- page 1 -->
     <eval expected="0.00" xpath="//pageViewport[1]/page/regionViewport[1]/regionBefore/block[2]/lineArea"/>
-    <eval expected="3.00" xpath="//pageViewport[1]/page/regionViewport[2]/regionAfter/block[1]/lineArea"/>
-    <eval expected="1: 1.00" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/lineArea"/>
-    <eval expected="2: 1.00" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[2]/lineArea"/>
-    <eval expected="3: 1.00" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[3]/lineArea"/>
+    <eval expected="3.00" xpath="//pageViewport[1]/page/regionViewport[3]/regionAfter/block[1]/lineArea"/>
+    <eval expected="1: 1.00" xpath="//pageViewport[1]/page/regionViewport[2]/regionBody/mainReference/span/flow/block[1]/lineArea"/>
+    <eval expected="2: 1.00" xpath="//pageViewport[1]/page/regionViewport[2]/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <eval expected="3: 1.00" xpath="//pageViewport[1]/page/regionViewport[2]/regionBody/mainReference/span/flow/block[3]/lineArea"/>
 
     <!-- page 2 -->
     <eval expected="3.00" xpath="//pageViewport[2]/page/regionViewport[1]/regionBefore/block[2]/lineArea"/>
-    <eval expected="6.00" xpath="//pageViewport[2]/page/regionViewport[2]/regionAfter/block[1]/lineArea"/>
-    <eval expected="5: 1.00" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[2]/lineArea"/>
-    <eval expected="6: 1.00" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[3]/lineArea"/>
+    <eval expected="6.00" xpath="//pageViewport[2]/page/regionViewport[3]/regionAfter/block[1]/lineArea"/>
+    <eval expected="5: 1.00" xpath="//pageViewport[2]/page/regionViewport[2]/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <eval expected="6: 1.00" xpath="//pageViewport[2]/page/regionViewport[2]/regionBody/mainReference/span/flow/block[3]/lineArea"/>
   </checks>
 </testcase>

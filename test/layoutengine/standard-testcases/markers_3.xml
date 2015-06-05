@@ -113,10 +113,10 @@
   </fo>
   <checks>
     <!-- First check that the page breaking is correct -->
-    <eval expected="7" xpath="count(//pageSequence[1]/pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block/block/lineArea)"/>
-    <eval expected="1" xpath="count(//pageSequence[1]/pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block/block/lineArea)"/>
-    <eval expected="7" xpath="count(//pageSequence[2]/pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block/block/lineArea)"/>
-    <eval expected="2" xpath="count(//pageSequence[2]/pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block/block/lineArea)"/>
+    <eval expected="7" xpath="count(//pageSequence[1]/pageViewport[1]/page/regionViewport[2]/regionBody/mainReference/span/flow/block/block/lineArea)"/>
+    <eval expected="1" xpath="count(//pageSequence[1]/pageViewport[2]/page/regionViewport[2]/regionBody/mainReference/span/flow/block/block/lineArea)"/>
+    <eval expected="7" xpath="count(//pageSequence[2]/pageViewport[1]/page/regionViewport[2]/regionBody/mainReference/span/flow/block/block/lineArea)"/>
+    <eval expected="2" xpath="count(//pageSequence[2]/pageViewport[2]/page/regionViewport[2]/regionBody/mainReference/span/flow/block/block/lineArea)"/>
 
     <!-- Now we can check the markers -->
     <true xpath="boolean(//pageSequence[1]/pageViewport[1]/page/regionViewport[1]/regionBefore/block[2]/lineArea/text[. = '[PAGE]'])"/> 

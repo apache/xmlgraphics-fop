@@ -85,28 +85,28 @@
     <eval expected="270000" xpath="//page/regionViewport[2]/regionStart/@bpd"/>
     <eval expected="[1.0 0.0 0.0 1.0 10800.0 54000.0]" xpath="//page/regionViewport[2]/regionStart/@ctm"/>
     <!-- region end -->
-    <eval expected="color=#ffa500" xpath="//page/regionViewport[3]/@background"/>
-    <eval expected="21600" xpath="//page/regionViewport[3]/@ipd"/>
-    <eval expected="270000" xpath="//page/regionViewport[3]/@bpd"/>
-    <eval expected="183600 54000 21600 270000" xpath="//page/regionViewport[3]/@rect"/>
-    <eval expected="21600" xpath="//page/regionViewport[3]/regionEnd/@ipd"/>
-    <eval expected="270000" xpath="//page/regionViewport[3]/regionEnd/@bpd"/>
-    <eval expected="[1.0 0.0 0.0 1.0 183600.0 54000.0]" xpath="//page/regionViewport[3]/regionEnd/@ctm"/>
+    <eval expected="color=#ffa500" xpath="//page/regionViewport[4]/@background"/>
+    <eval expected="21600" xpath="//page/regionViewport[4]/@ipd"/>
+    <eval expected="270000" xpath="//page/regionViewport[4]/@bpd"/>
+    <eval expected="183600 54000 21600 270000" xpath="//page/regionViewport[4]/@rect"/>
+    <eval expected="21600" xpath="//page/regionViewport[4]/regionEnd/@ipd"/>
+    <eval expected="270000" xpath="//page/regionViewport[4]/regionEnd/@bpd"/>
+    <eval expected="[1.0 0.0 0.0 1.0 183600.0 54000.0]" xpath="//page/regionViewport[4]/regionEnd/@ctm"/>
     <!-- region after -->
-    <eval expected="color=#008000" xpath="//page/regionViewport[4]/@background"/>
-    <eval expected="194400" xpath="//page/regionViewport[4]/@ipd"/>
-    <eval expected="18000" xpath="//page/regionViewport[4]/@bpd"/>
-    <eval expected="10800 324000 194400 18000" xpath="//page/regionViewport[4]/@rect"/>
-    <eval expected="194400" xpath="//page/regionViewport[4]/regionAfter/@ipd"/>
-    <eval expected="18000" xpath="//page/regionViewport[4]/regionAfter/@bpd"/>
-    <eval expected="[1.0 0.0 0.0 1.0 10800.0 324000.0]" xpath="//page/regionViewport[4]/regionAfter/@ctm"/>
+    <eval expected="color=#008000" xpath="//page/regionViewport[5]/@background"/>
+    <eval expected="194400" xpath="//page/regionViewport[5]/@ipd"/>
+    <eval expected="18000" xpath="//page/regionViewport[5]/@bpd"/>
+    <eval expected="10800 324000 194400 18000" xpath="//page/regionViewport[5]/@rect"/>
+    <eval expected="194400" xpath="//page/regionViewport[5]/regionAfter/@ipd"/>
+    <eval expected="18000" xpath="//page/regionViewport[5]/regionAfter/@bpd"/>
+    <eval expected="[1.0 0.0 0.0 1.0 10800.0 324000.0]" xpath="//page/regionViewport[5]/regionAfter/@ctm"/>
     <!-- region body -->
-    <eval expected="color=#ffff00" xpath="//page/regionViewport[5]/@background"/>
-    <eval expected="162000" xpath="//page/regionViewport[5]/@ipd"/>
-    <eval expected="270000" xpath="//page/regionViewport[5]/@bpd"/>
-    <eval expected="21600 54000 162000 270000" xpath="//page/regionViewport[5]/@rect"/>
-    <eval expected="162000" xpath="//page/regionViewport[5]/regionBody/@ipd"/>
-    <eval expected="270000" xpath="//page/regionViewport[5]/regionBody/@bpd"/>
-    <eval expected="[1.0 0.0 0.0 1.0 21600.0 54000.0]" xpath="//page/regionViewport[5]/regionBody/@ctm"/>
+    <eval expected="color=#ffff00" xpath="//page/regionViewport[3]/@background"/>
+    <eval expected="162000" xpath="//page/regionViewport[3]/@ipd"/>
+    <eval expected="270000" xpath="//page/regionViewport[3]/@bpd"/>
+    <eval expected="21600 54000 162000 270000" xpath="//page/regionViewport[3]/@rect"/>
+    <eval expected="162000" xpath="//page/regionViewport[3]/regionBody/@ipd"/>
+    <eval expected="270000" xpath="//page/regionViewport[3]/regionBody/@bpd"/>
+    <eval expected="[1.0 0.0 0.0 1.0 21600.0 54000.0]" xpath="//page/regionViewport[3]/regionBody/@ctm"/>
   </checks>
 </testcase>
