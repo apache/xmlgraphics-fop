@@ -161,4 +161,26 @@ public class PDFDictionary extends PDFObject {
             }
         }
     }
+
+    public Set<String> keySet() {
+        return entries.keySet();
+    }
+
+    /**
+     * @see java.util.Map#containsKey(Object)
+     *
+     * @param name The key to find in the map.
+     * @return true if the map contains this key.
+     */
+    public boolean containsKey(String name) {
+        return this.entries.containsKey(name);
+    }
+
+    /**
+     * Removes the mapping for the specified key
+     * @param name  key whose mapping is to be removed
+     */
+    public void remove(String name) {
+        entries.remove(name);
+    }
 }
