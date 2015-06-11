@@ -25,6 +25,7 @@ import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Locale;
@@ -32,6 +33,12 @@ import java.util.Set;
 
 import org.w3c.dom.Document;
 
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+
+import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
@@ -166,14 +173,40 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                 placeImage(rect, xobject);
             }
         } else {
-            if (accessEnabled) {
-                PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
-                prepareImageMCID(structElem);
-            }
             drawImageUsingURI(uri, rect);
             if (!getDocumentHandler().getPDFDocument().isLinearizationEnabled()) {
                 flushPDFDoc();
             }
+        }
+    }
+
+    @Override
+    protected void drawImageUsingURI(String uri, Rectangle rect) {
+        ImageManager manager = getUserAgent().getImageManager();
+        ImageInfo info = null;
+        try {
+            ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
+            info = manager.getImageInfo(uri, sessionContext);
+            if (accessEnabled) {
+                PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
+                String mimeType = info.getMimeType();
+                if (!mimeType.equalsIgnoreCase("application/pdf")) {
+                    prepareImageMCID(structElem);
+                }
+            }
+            drawImageUsingImageHandler(info, rect);
+        } catch (ImageException ie) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
+        } catch (FileNotFoundException fe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
+        } catch (IOException ioe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }
     }
 
@@ -191,6 +224,8 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                 getUserAgent(), generator, getDocumentHandler().getCurrentPage(), getFontInfo());
         pdfContext.setMarkedContentInfo(imageMCI);
         pdfContext.setPageNumbers(getDocumentHandler().getPageNumbers());
+        pdfContext.setPdfLogicalStructureHandler(logicalStructureHandler);
+        pdfContext.setCurrentSessionStructElem((PDFStructElem) getContext().getStructureTreeElement());
         return pdfContext;
     }
 

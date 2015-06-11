@@ -47,6 +47,12 @@ public class PDFStructElem extends StructureHierarchyMember
     private List<PDFDictionary> attributes;
 
     /**
+     * Creates PDFStructElem with no entries.
+     */
+    public PDFStructElem() {
+    }
+
+    /**
      * Creates a new structure element.
      *
      * @param parent parent of this element
@@ -170,6 +176,22 @@ public class PDFStructElem extends StructureHierarchyMember
         }
     }
 
+    public void addKidInSpecificOrder(int position, PDFStructElem kid) {
+        if (kids == null) {
+            addKid(kid);
+        } else {
+            if ((kids.size() - 1) < position) {
+                kids.add(kid);
+            } else if (kids.get(position) == null) {
+                kids.set(position, kid);
+            } else {
+                if (!kids.contains(kid)) {
+                    kids.add(position, kid);
+                }
+            }
+        }
+    }
+
     /**
      * Attaches all valid kids to the kids array.
      *
@@ -215,6 +237,10 @@ public class PDFStructElem extends StructureHierarchyMember
             attributes = new ArrayList<PDFDictionary>(2);
         }
         attributes.add(attribute);
+    }
+
+    public List<PDFObject> getKids() {
+        return this.kids;
     }
 
     /**

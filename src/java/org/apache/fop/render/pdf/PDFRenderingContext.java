@@ -27,6 +27,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFStructElem;
 import org.apache.fop.render.AbstractRenderingContext;
 import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 
@@ -40,6 +41,8 @@ public class PDFRenderingContext extends AbstractRenderingContext {
     private PDFPage page;
     private MarkedContentInfo mci;
     private Map<Integer, PDFArray> pageNumbers;
+    private PDFLogicalStructureHandler pdfLogicalStructureHandler;
+    private PDFStructElem currentSessionStructElem;
 
     /**
      * Main constructor.
@@ -99,5 +102,21 @@ public class PDFRenderingContext extends AbstractRenderingContext {
 
     public void setPageNumbers(Map<Integer, PDFArray> pageNumbers) {
         this.pageNumbers = pageNumbers;
+    }
+
+    public PDFLogicalStructureHandler getPdfLogicalStructureHandler() {
+        return pdfLogicalStructureHandler;
+    }
+
+    public void setPdfLogicalStructureHandler(PDFLogicalStructureHandler pdfLogicalStructureHandler) {
+        this.pdfLogicalStructureHandler = pdfLogicalStructureHandler;
+    }
+
+    public PDFStructElem getCurrentSessionStructElem() {
+        return currentSessionStructElem;
+    }
+
+    public void setCurrentSessionStructElem(PDFStructElem currentSessionStructElem) {
+        this.currentSessionStructElem = currentSessionStructElem;
     }
 }

@@ -32,7 +32,7 @@ import org.apache.fop.pdf.PDFStructElem;
 /**
  * Handles the creation of the logical structure in the PDF document.
  */
-class PDFLogicalStructureHandler {
+public class PDFLogicalStructureHandler {
 
     private static final PDFName MCR = new PDFName("MCR");
 
@@ -92,11 +92,15 @@ class PDFLogicalStructureHandler {
         this.pdfDoc = pdfDoc;
     }
 
-    PDFParentTree getParentTree() {
+    public PDFArray getPageParentTree() {
+        return this.pageParentTreeArray;
+    }
+
+    public PDFParentTree getParentTree() {
         return parentTree;
     }
 
-    private int getNextParentTreeKey() {
+    public int getNextParentTreeKey() {
         return parentTreeKey++;
     }
 
