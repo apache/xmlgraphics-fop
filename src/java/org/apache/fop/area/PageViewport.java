@@ -278,6 +278,19 @@ public class PageViewport extends AreaTreeObject implements Resolvable {
     }
 
     /**
+     * Replace the old view port. This copies all ID related fields from the old view port
+     * to the current one.
+     * @param oldViewPort old view port
+     */
+    public void replace(PageViewport oldViewPort) {
+        this.idFirsts.addAll(oldViewPort.idFirsts);
+        this.unresolvedIDRefs.putAll(oldViewPort.unresolvedIDRefs);
+        if (oldViewPort.pendingResolved != null) {
+            this.pendingResolved.putAll(oldViewPort.pendingResolved);
+        }
+    }
+
+    /**
      * Add an idref to this page.
      * All idrefs found for child areas of this {@link PageViewport} are added
      * to unresolvedIDRefs, for subsequent resolution by {@link AreaTreeHandler}

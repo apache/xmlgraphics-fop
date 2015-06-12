@@ -238,4 +238,22 @@ public class IDTracker {
         // add Resolvable object to this HashSet
         todo.add(res);
     }
+
+    /**
+     * Replace all id locations pointing to the old page view port with a new one. This is
+     * necessary when a layouted page is replaced with a new one (e.g. last page handling).
+     * @param oldPageViewPort old page view port
+     * @param newPageViewPort new page view port
+     */
+    public void replacePageViewPort(PageViewport oldPageViewPort, PageViewport newPageViewPort) {
+
+        for (List<PageViewport> viewPortList : idLocations.values()) {
+            for (int i = 0, len = viewPortList.size(); i < len; i++) {
+                PageViewport currPV = viewPortList.get(i);
+                if (currPV == oldPageViewPort) {
+                    viewPortList.set(i, newPageViewPort);
+                }
+            }
+        }
+    }
 }

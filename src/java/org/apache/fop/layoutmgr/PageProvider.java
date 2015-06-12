@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.area.AreaTreeHandler;
+import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SimplePageMaster;
@@ -311,7 +312,11 @@ public class PageProvider implements Constants {
         }
         if (replace) {
             discardCacheStartingWith(intIndex);
+            PageViewport oldPageVP = page.getPageViewport();
             page = cacheNextPage(index, isBlank, isLastPage, this.spanAllForCurrentElementList);
+            PageViewport newPageVP = page.getPageViewport();
+            newPageVP.replace(oldPageVP);
+            this.areaTreeHandler.getIDTracker().replacePageViewPort(oldPageVP, newPageVP);
         }
         return page;
     }
