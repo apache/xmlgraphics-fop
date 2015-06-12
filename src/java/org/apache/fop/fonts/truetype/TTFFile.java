@@ -188,6 +188,14 @@ public class TTFFile extends OpenFont {
                     : (fontFile.readTTFUShort() << 1));
     }
 
+    /**
+     * Gets the last location of the glyf table
+     * @return The last location as a long
+     */
+    public long getLastGlyfLocation() {
+        return lastLoca;
+    }
+
     @Override
     protected void initializeFont(FontFileReader in) throws IOException {
         fontFile = in;

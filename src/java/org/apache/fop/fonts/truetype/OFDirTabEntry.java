@@ -30,7 +30,7 @@ import java.util.Arrays;
 public class OFDirTabEntry {
 
     private byte[] tag = new byte[4];
-    private int checksum;
+    private long checksum;
     private long offset;
     private long length;
 
@@ -74,7 +74,7 @@ public class OFDirTabEntry {
      * Returns the checksum.
      * @return int
      */
-    public int getChecksum() {
+    public long getChecksum() {
         return checksum;
     }
 
