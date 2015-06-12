@@ -141,6 +141,15 @@ public class PCLGenerator {
     }
 
     /**
+     * Writes raw bytes to the output stream
+     * @param bytes The bytes
+     * @throws IOException In case of an I/O error
+     */
+    public void writeBytes(byte[] bytes) throws IOException {
+        out.write(bytes);
+    }
+
+    /**
      * Formats a double value with two decimal positions for PCL output.
      *
      * @param value value to format

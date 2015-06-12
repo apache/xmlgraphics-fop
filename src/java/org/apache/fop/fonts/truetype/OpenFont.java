@@ -355,7 +355,7 @@ public abstract class OpenFont {
                   long offset) throws IOException {
         OFDirTabEntry dt = dirTabs.get(tableName);
         if (dt == null) {
-            log.error("Dirtab " + tableName.getName() + " not found.");
+            log.info("Dirtab " + tableName.getName() + " not found.");
             return false;
         } else {
             in.seekSet(dt.getOffset() + offset);
@@ -966,6 +966,15 @@ public abstract class OpenFont {
     }
 
     /**
+     * Returns the original bounding box values from the HEAD table
+     * @return An array of bounding box values
+     */
+    public int[] getBBoxRaw() {
+        int[] bbox = {fontBBox1, fontBBox2, fontBBox3, fontBBox4};
+        return bbox;
+    }
+
+    /**
      * Returns the LowerCaseAscent attribute of the font.
      * @return int The LowerCaseAscent
      */
@@ -1045,6 +1054,18 @@ public abstract class OpenFont {
      */
     public int getCharWidth(int idx) {
         return convertTTFUnit2PDFUnit(ansiWidth[idx]);
+    }
+
+    /**
+     * Returns the width of a given character in raw units
+     * @param idx Index of the character
+     * @return int Width in it's raw form stored in the font
+     */
+    public int getCharWidthRaw(int idx) {
+        if (ansiWidth != null) {
+            return ansiWidth[idx];
+        }
+        return -1;
     }
 
     /**
@@ -1978,5 +1999,9 @@ public abstract class OpenFont {
         } finally {
             IOUtils.closeQuietly(stream);
         }
+    }
+
+    public String getCopyrightNotice() {
+        return notice;
     }
 }

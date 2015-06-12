@@ -47,7 +47,7 @@ public class GlyfTable {
     /** All the glyphs that are composed, but do not appear in the subset. */
     protected Set<Integer> composedGlyphs = new TreeSet<Integer>();
 
-    protected GlyfTable(FontFileReader in, OFMtxEntry[] metrics, OFDirTabEntry dirTableEntry,
+    public GlyfTable(FontFileReader in, OFMtxEntry[] metrics, OFDirTabEntry dirTableEntry,
                         Map<Integer, Integer> glyphs) throws IOException {
         mtxTab = metrics;
         tableOffset = dirTableEntry.getOffset();
@@ -202,7 +202,7 @@ public class GlyfTable {
         } while (GlyfFlags.hasMoreComposites(flags));
     }
 
-    private boolean isComposite(int indexInOriginal) throws IOException {
+    public boolean isComposite(int indexInOriginal) throws IOException {
         int numberOfContours = in.readTTFShort(tableOffset + mtxTab[indexInOriginal].getOffset());
         return numberOfContours < 0;
     }
@@ -215,7 +215,7 @@ public class GlyfTable {
      * @return the set of glyph indices this glyph composes
      * @throws IOException an I/O error
      */
-    private Set<Integer> retrieveComposedGlyphs(int indexInOriginal)
+    public Set<Integer> retrieveComposedGlyphs(int indexInOriginal)
             throws IOException {
         Set<Integer> composedGlyphs = new HashSet<Integer>();
         long offset = tableOffset + mtxTab[indexInOriginal].getOffset() + 10;
