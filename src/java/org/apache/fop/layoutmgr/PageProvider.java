@@ -23,11 +23,12 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.Region;
+import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 
 /**
@@ -303,6 +304,15 @@ public class PageProvider implements Constants {
         if (page.getPageViewport().isBlank() != isBlank) {
             log.debug("blank condition doesn't match. Replacing PageViewport.");
             replace = true;
+        }
+        if (page.getPageViewport().getCurrentSpan().getColumnCount() == 1
+                && !this.spanAllForCurrentElementList) {
+            RegionBody rb = (RegionBody)page.getSimplePageMaster().getRegion(Region.FO_REGION_BODY);
+            int colCount = rb.getColumnCount();
+            if (colCount > 1) {
+                log.debug("Span doesn't match. Replacing PageViewport.");
+                replace = true;
+            }
         }
         if ((isLastPage && indexOfCachedLastPage != intIndex)
                 || (!isLastPage && indexOfCachedLastPage >= 0)) {
