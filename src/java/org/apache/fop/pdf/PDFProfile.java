@@ -37,6 +37,8 @@ public class PDFProfile {
      */
     protected PDFAMode pdfAMode = PDFAMode.DISABLED;
 
+    protected PDFUAMode pdfUAMode = PDFUAMode.DISABLED;
+
     /**
      * Indicates the PDF/X mode currently active. Defaults to "no restrictions", i.e.
      * PDF/X not active.
@@ -82,6 +84,10 @@ public class PDFProfile {
         return this.pdfAMode;
     }
 
+    public PDFUAMode getPDFUAMode() {
+        return this.pdfUAMode;
+    }
+
     /** @return true if any PDF/A mode is active */
     public boolean isPDFAActive() {
         return getPDFAMode() != PDFAMode.DISABLED;
@@ -96,6 +102,14 @@ public class PDFProfile {
             mode = PDFAMode.DISABLED;
         }
         this.pdfAMode = mode;
+        validateProfileCombination();
+    }
+
+    public void setPDFUAMode(PDFUAMode mode) {
+        if (mode == null) {
+            mode = PDFUAMode.DISABLED;
+        }
+        this.pdfUAMode = mode;
         validateProfileCombination();
     }
 
@@ -150,6 +164,8 @@ public class PDFProfile {
             sb.append(getPDFAMode());
         } else if (isPDFXActive()) {
             sb.append(getPDFXMode());
+        } else if (getPDFUAMode().isEnabled()) {
+            sb.append(getPDFUAMode());
         } else {
             sb.append(super.toString());
         }
@@ -234,25 +250,28 @@ public class PDFProfile {
      * Checks a few things required for tagged PDF.
      */
     public void verifyTaggedPDF() {
-        if (getPDFAMode().isLevelA()) {
+        if (getPDFAMode().isLevelA() || getPDFUAMode().isEnabled()) {
             final String err = "{0} requires the {1} dictionary entry to be set";
+            String mode = getPDFAMode().toString();
+            if (getPDFUAMode().isEnabled()) {
+                mode = getPDFUAMode().toString();
+            }
             PDFDictionary markInfo = getDocument().getRoot().getMarkInfo();
             if (markInfo == null) {
                 throw new PDFConformanceException(format(
-                        "{0} requires that the accessibility option in the configuration file be enabled",
-                        getPDFAMode()));
+                        "{0} requires that the accessibility option in the configuration file be enabled", mode));
             }
             if (!Boolean.TRUE.equals(markInfo.get("Marked"))) {
                 throw new PDFConformanceException(format(err,
-                        new Object[] {getPDFAMode(), "Marked"}));
+                        new Object[] {mode, "Marked"}));
             }
             if (getDocument().getRoot().getStructTreeRoot() == null) {
                 throw new PDFConformanceException(format(err,
-                        new Object[] {getPDFAMode(), "StructTreeRoot"}));
+                        new Object[] {mode, "StructTreeRoot"}));
             }
             if (getDocument().getRoot().getLanguage() == null) {
                 throw new PDFConformanceException(format(err,
-                        new Object[] {getPDFAMode(), "Lang"}));
+                        new Object[] {mode, "Lang"}));
             }
         }
     }
@@ -264,13 +283,16 @@ public class PDFProfile {
 
     /** @return true if all fonts need to be embedded. */
     public boolean isFontEmbeddingRequired() {
-        return isPDFAActive() || isPDFXActive();
+        return isPDFAActive() || isPDFXActive() || getPDFUAMode().isEnabled();
     }
 
     /** Checks if a title may be absent. */
     public void verifyTitleAbsent() {
+        final String err = "{0} requires the title to be set.";
+        if (getPDFUAMode().isEnabled()) {
+            throw new PDFConformanceException(format(err, getPDFUAMode()));
+        }
         if (isPDFXActive()) {
-            final String err = "{0} requires the title to be set.";
             throw new PDFConformanceException(format(err, getPDFXMode()));
         }
     }

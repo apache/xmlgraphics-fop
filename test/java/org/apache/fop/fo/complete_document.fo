@@ -38,7 +38,7 @@
     </fo:static-content>
     <fo:flow flow-name="xsl-region-body">
       <fo:block id="4">This is a link to the <fo:wrapper id="5" color="blue"><fo:basic-link id="6" 
-            internal-destination="second-start">next page-sequence</fo:basic-link></fo:wrapper> 
+            internal-destination="second-start" fox:alt-text="">next page-sequence</fo:basic-link></fo:wrapper> 
         (which starts on page <fo:page-number-citation id="7" ref-id="second-start"/> and ends on 
         page <fo:page-number-citation-last id="8" ref-id="second-end"/>).</fo:block>
       <fo:block id="9" font-family="sans-serif" font-weight="bold" space-before="1em" 
@@ -46,7 +46,7 @@
       <fo:block id="11">This block of text contains a footnote<fo:footnote id="12"><fo:inline id="13" 
             baseline-shift="super" font-size="70%">1</fo:inline><fo:footnote-body id="14"><fo:block 
               id="15">A footnote with a link to the  <fo:wrapper id="16" color="blue"><fo:basic-link 
-                  id="17" external-destination="http://xmlgraphics.apache.org/fop/">FOP 
+                  id="17" external-destination="http://xmlgraphics.apache.org/fop/" fox:alt-text="">FOP 
                   website</fo:basic-link></fo:wrapper></fo:block></fo:footnote-body></fo:footnote> 
         call.</fo:block>
       <fo:table id="18" space-before="1em" width="100%" table-layout="fixed">

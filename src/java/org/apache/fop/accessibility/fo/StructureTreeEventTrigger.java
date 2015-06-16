@@ -33,9 +33,9 @@ import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.InternalElementMapping;
-import org.apache.fop.fo.flow.AbstractGraphics;
 import org.apache.fop.fo.flow.AbstractRetrieveMarker;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
@@ -384,7 +384,7 @@ class StructureTreeEventTrigger extends FOEventHandler {
 
     @Override
     public void startLink(BasicLink basicLink) {
-        startElementWithID(basicLink);
+        startElementWithIDAndAltText(basicLink, basicLink.getAltText());
     }
 
     @Override
@@ -394,13 +394,13 @@ class StructureTreeEventTrigger extends FOEventHandler {
 
     @Override
     public void image(ExternalGraphic eg) {
-        startElementWithIDAndAltText(eg);
+        startElementWithIDAndAltText(eg, eg.getAltText());
         endElement(eg);
     }
 
     @Override
     public void startInstreamForeignObject(InstreamForeignObject ifo) {
-        startElementWithIDAndAltText(ifo);
+        startElementWithIDAndAltText(ifo, ifo.getAltText());
     }
 
     @Override
@@ -523,12 +523,12 @@ class StructureTreeEventTrigger extends FOEventHandler {
                         node.getParent().getStructureTreeElement()));
     }
 
-    private void startElementWithIDAndAltText(AbstractGraphics node) {
+    private void startElementWithIDAndAltText(FObj node, String altText) {
         AttributesImpl attributes = new AttributesImpl();
         String localName = node.getLocalName();
-        addRole(node, attributes);
+        addRole((CommonAccessibilityHolder)node, attributes);
         addAttribute(attributes, ExtensionElementMapping.URI, "alt-text",
-                ExtensionElementMapping.STANDARD_PREFIX, node.getAltText());
+                ExtensionElementMapping.STANDARD_PREFIX, altText);
         node.setStructureTreeElement(
                 structureTreeEventHandler.startImageNode(localName, attributes,
                         node.getParent().getStructureTreeElement()));
