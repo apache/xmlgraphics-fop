@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
