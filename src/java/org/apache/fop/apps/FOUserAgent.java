@@ -106,6 +106,7 @@ public class FOUserAgent {
     private EventBroadcaster eventBroadcaster = new FOPEventBroadcaster();
     private StructureTreeEventHandler structureTreeEventHandler
             = DummyStructureTreeEventHandler.INSTANCE;
+    private boolean pdfUAEnabled;
 
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
@@ -578,6 +579,14 @@ public class FOUserAgent {
      */
     public EventBroadcaster getEventBroadcaster() {
         return this.eventBroadcaster;
+    }
+
+    public boolean isPdfUAEnabled() {
+        return pdfUAEnabled;
+    }
+
+    public void setPdfUAEnabled(boolean pdfUAEnabled) {
+        this.pdfUAEnabled = pdfUAEnabled;
     }
 
     private class FOPEventBroadcaster extends DefaultEventBroadcaster {

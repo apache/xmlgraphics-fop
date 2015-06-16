@@ -44,6 +44,9 @@ import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
+import org.apache.fop.pdf.PDFArray;
+import org.apache.fop.pdf.PDFDictionary;
+import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFStructElem;
 import org.apache.fop.pdf.PDFTextUtil;
@@ -173,10 +176,25 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                 placeImage(rect, xobject);
             }
         } else {
+            addStructTreeBBox(rect);
             drawImageUsingURI(uri, rect);
             if (!getDocumentHandler().getPDFDocument().isLinearizationEnabled()) {
                 flushPDFDoc();
             }
+        }
+    }
+
+    private void addStructTreeBBox(Rectangle rect) {
+        if (accessEnabled && getDocumentHandler().getPDFDocument().getProfile().getPDFUAMode().isEnabled()) {
+            PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
+            PDFDictionary d = new PDFDictionary();
+            int x = rect.x / 1000;
+            int y = rect.y / 1000;
+            int w = rect.width / 1000;
+            int h = rect.height / 1000;
+            d.put("BBox", new PDFArray(x, y, w, h));
+            d.put("O", new PDFName("Layout"));
+            structElem.put("A", d);
         }
     }
 
@@ -263,6 +281,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         if (accessEnabled) {
             PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
             prepareImageMCID(structElem);
+            addStructTreeBBox(rect);
         }
         drawImageUsingDocument(doc, rect);
         if (!getDocumentHandler().getPDFDocument().isLinearizationEnabled()) {
@@ -315,6 +334,9 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         }
         if (rect.width != 0 && rect.height != 0) {
             generator.endTextObject();
+            if (accessEnabled && getUserAgent().isPdfUAEnabled()) {
+                generator.beginMarkedContentSequence(null, 0, null);
+            }
             if (fill != null) {
                 if (fill instanceof Color) {
                     generator.updateColor((Color)fill, true, null);
@@ -336,6 +358,9 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             }*/
             sb.append('\n');
             generator.add(sb.toString());
+            if (accessEnabled && getUserAgent().isPdfUAEnabled()) {
+                generator.endMarkedContentSequence();
+            }
         }
     }
 
@@ -345,22 +370,31 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             BorderProps left, BorderProps right, Color innerBackgroundColor) throws IFException {
         if (top != null || bottom != null || left != null || right != null) {
             generator.endTextObject();
+            if (accessEnabled && getUserAgent().isPdfUAEnabled()) {
+                generator.beginMarkedContentSequence(null, 0, null);
+            }
             this.borderPainter.drawBorders(rect, top, bottom, left, right, innerBackgroundColor);
+            if (accessEnabled && getUserAgent().isPdfUAEnabled()) {
+                generator.endMarkedContentSequence();
+            }
         }
     }
-
-
-
 
     /** {@inheritDoc} */
     @Override
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
         throws IFException {
         generator.endTextObject();
+        if (accessEnabled && getUserAgent().isPdfUAEnabled()) {
+            generator.beginMarkedContentSequence(null, 0, null);
+        }
         try {
             this.graphicsPainter.drawLine(start, end, width, color, style);
         } catch (IOException ioe) {
             throw new IFException("Cannot draw line", ioe);
+        }
+        if (accessEnabled && getUserAgent().isPdfUAEnabled()) {
+            generator.endMarkedContentSequence();
         }
     }
 

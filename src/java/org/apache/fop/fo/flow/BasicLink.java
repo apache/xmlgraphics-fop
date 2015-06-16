@@ -50,6 +50,7 @@ public class BasicLink extends InlineLevel implements StructureTreeElementHolder
     // private ToBeImplementedProperty indicateDestination;
     private String internalDestination;
     private int showDestination;
+    private String altText;
     // private ToBeImplementedProperty targetProcessingContext;
     // private ToBeImplementedProperty targetPresentationContext;
     // private ToBeImplementedProperty targetStylesheet;
@@ -92,6 +93,12 @@ public class BasicLink extends InlineLevel implements StructureTreeElementHolder
         } else if (externalDestination.length() == 0) {
             // slightly stronger than spec "should be specified"
             getFOValidationEventProducer().missingLinkDestination(this, getName(), locator);
+        }
+        if (getUserAgent().isAccessibilityEnabled()) {
+            altText = pList.get(PR_X_ALT_TEXT).getString();
+            if (altText.equals("") && getUserAgent().isPdfUAEnabled()) {
+                getFOValidationEventProducer().altTextMissing(this, getLocalName(), getLocator());
+            }
         }
     }
 
@@ -211,5 +218,9 @@ public class BasicLink extends InlineLevel implements StructureTreeElementHolder
      */
     public int getNameId() {
         return FO_BASIC_LINK;
+    }
+
+    public String getAltText() {
+        return altText;
     }
 }

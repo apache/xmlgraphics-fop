@@ -91,7 +91,7 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         addBuilder("list-item-body",            StandardStructureTypes.List.LBODY);
         addBuilder("list-item-label",           StandardStructureTypes.List.LBL);
         // Dynamic Effects: Link and Multi Formatting Objects
-        addBuilder("basic-link",                StandardStructureTypes.InlineLevelStructure.LINK);
+        addBuilder("basic-link",                new LinkBuilder());
         // Out-of-Line Formatting Objects
         addBuilder("float",                     StandardStructureTypes.Grouping.DIV);
         addBuilder("footnote",                  StandardStructureTypes.InlineLevelStructure.NOTE);
@@ -247,6 +247,22 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
 
     }
 
+    private static class LinkBuilder extends DefaultStructureElementBuilder {
+        LinkBuilder() {
+            super(StandardStructureTypes.InlineLevelStructure.LINK);
+        }
+
+        @Override
+        protected void setAttributes(PDFStructElem structElem, Attributes attributes) {
+            super.setAttributes(structElem, attributes);
+            String altTextNode = attributes.getValue(ExtensionElementMapping.URI, "alt-text");
+            if (altTextNode == null) {
+                altTextNode = "No alternate text specified";
+            }
+            structElem.put("Alt", altTextNode);
+        }
+    }
+
     private static class TableBuilder extends DefaultStructureElementBuilder {
 
         TableBuilder() {
@@ -391,7 +407,8 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     }
 
     private boolean isPDFA1Safe(String name) {
-        return !(pdfFactory.getDocument().getProfile().getPDFAMode().isPart1()
+        return !((pdfFactory.getDocument().getProfile().getPDFAMode().isPart1()
+                || pdfFactory.getDocument().getProfile().getPDFUAMode().isEnabled())
                 && (name.equals("table-body")
                 || name.equals("table-header")
                 || name.equals("table-footer")));

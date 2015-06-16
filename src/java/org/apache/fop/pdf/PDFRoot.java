@@ -82,6 +82,11 @@ public class PDFRoot extends PDFDictionary {
 
     /** {@inheritDoc} */
     public int output(OutputStream stream) throws IOException {
+        if (document.getProfile().getPDFUAMode().isEnabled()) {
+            PDFDictionary d = new PDFDictionary();
+            d.put("DisplayDocTitle", true);
+            put("ViewerPreferences", d);
+        }
         getDocument().getProfile().verifyTaggedPDF();
         return super.output(stream);
     }

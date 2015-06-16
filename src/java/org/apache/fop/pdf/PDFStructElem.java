@@ -243,6 +243,14 @@ public class PDFStructElem extends StructureHierarchyMember
         return this.kids;
     }
 
+    public int output(OutputStream stream) throws IOException {
+        if (getDocument().getProfile().getPDFUAMode().isEnabled()
+                && entries.containsKey("Alt") && "".equals(get("Alt"))) {
+            put("Alt", "No alternate text specified");
+        }
+        return super.output(stream);
+    }
+
     /**
      * Class representing a placeholder for a PDF Structure Element.
      */

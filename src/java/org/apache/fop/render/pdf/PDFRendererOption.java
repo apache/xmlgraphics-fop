@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.pdf.PDFAMode;
+import org.apache.fop.pdf.PDFUAMode;
 import org.apache.fop.pdf.PDFVTMode;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.Version;
@@ -41,6 +42,12 @@ public enum PDFRendererOption implements RendererConfigOption {
         @Override
         PDFAMode deserialize(String value) {
             return PDFAMode.getValueOf(value);
+        }
+    },
+    PDF_UA_MODE("pdf-ua-mode", PDFUAMode.DISABLED) {
+        @Override
+        PDFUAMode deserialize(String value) {
+            return PDFUAMode.getValueOf(value);
         }
     },
     /** Rendering Options key for the PDF/X mode, default: {@link PDFXMode#DISABLED} */

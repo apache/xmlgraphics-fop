@@ -38,6 +38,8 @@ import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFAdapter;
 import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFSchema;
 import org.apache.xmlgraphics.xmp.schemas.pdf.PDFAAdapter;
 import org.apache.xmlgraphics.xmp.schemas.pdf.PDFAXMPSchema;
+import org.apache.xmlgraphics.xmp.schemas.pdf.PDFUAAdapter;
+import org.apache.xmlgraphics.xmp.schemas.pdf.PDFUAXMPSchema;
 import org.apache.xmlgraphics.xmp.schemas.pdf.PDFVTAdapter;
 import org.apache.xmlgraphics.xmp.schemas.pdf.PDFVTXMPSchema;
 import org.apache.xmlgraphics.xmp.schemas.pdf.PDFXAdapter;
@@ -160,6 +162,12 @@ public class PDFMetadata extends PDFStream {
 
         //Somewhat redundant but some PDF/A checkers issue a warning without this.
         dc.setFormat("application/pdf");
+
+        PDFUAMode pdfuaMode = pdfDoc.getProfile().getPDFUAMode();
+        if (pdfuaMode.isEnabled()) {
+            PDFUAAdapter pdfua = PDFUAXMPSchema.getAdapter(meta);
+            pdfua.setPart(pdfuaMode.getPart());
+        }
 
         //PDF/A identification
         PDFAMode pdfaMode = pdfDoc.getProfile().getPDFAMode();

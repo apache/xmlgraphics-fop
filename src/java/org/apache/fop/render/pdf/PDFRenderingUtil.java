@@ -164,6 +164,8 @@ class PDFRenderingUtil {
 
     private void updatePDFProfiles() {
         pdfDoc.getProfile().setPDFAMode(rendererConfig.getPDFAMode());
+        pdfDoc.getProfile().setPDFUAMode(rendererConfig.getPDFUAMode());
+        userAgent.setPdfUAEnabled(pdfDoc.getProfile().getPDFUAMode().isEnabled());
         pdfDoc.getProfile().setPDFXMode(rendererConfig.getPDFXMode());
         pdfDoc.getProfile().setPDFVTMode(rendererConfig.getPDFVTMode());
     }
