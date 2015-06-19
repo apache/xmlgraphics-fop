@@ -46,7 +46,7 @@ public class PrimaryGridUnit extends GridUnit {
     private int colIndex;
 
     /** Links to the spanned grid units. (List of GridUnit arrays, one array represents a row) */
-    private List rows;
+    private List<GridUnit[]> rows;
     /** The calculated size of the cell's content. (cached value) */
     private int contentLength = -1;
 
@@ -95,11 +95,13 @@ public class PrimaryGridUnit extends GridUnit {
     }
 
     /** {@inheritDoc} */
+    @Override
     public PrimaryGridUnit getPrimary() {
         return this;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isPrimary() {
         return true;
     }
@@ -171,10 +173,9 @@ public class PrimaryGridUnit extends GridUnit {
             }
         } else {
             int width = 0;
-            GridUnit[] row = (GridUnit[]) rows.get(rowIndex);
-            for (int i = 0; i < row.length; i++) {
+            for (GridUnit gu : rows.get(rowIndex)) {
                 width = Math.max(width,
-                        row[i].getBorderBefore(which).getRetainedWidth());
+                        gu.getBorderBefore(which).getRetainedWidth());
             }
             return width / 2;
         }
@@ -217,10 +218,10 @@ public class PrimaryGridUnit extends GridUnit {
             }
         } else {
             int width = 0;
-            GridUnit[] row = (GridUnit[]) rows.get(rowIndex);
-            for (int i = 0; i < row.length; i++) {
+            GridUnit[] row = rows.get(rowIndex);
+            for (GridUnit gu : row) {
                 width = Math.max(width,
-                        row[i].getBorderAfter(which).getRetainedWidth());
+                        gu.getBorderAfter(which).getRetainedWidth());
             }
             return width / 2;
         }
@@ -238,7 +239,7 @@ public class PrimaryGridUnit extends GridUnit {
         return getAfterBorderWidth(getCell().getNumberRowsSpanned() - 1, which);
     }
 
-    /** @return the length of the cell content. */
+    /** @return the length of the cell content */
     public int getContentLength() {
         if (contentLength < 0) {
             contentLength = ElementListUtils.calcContentLength(elements);
@@ -251,7 +252,7 @@ public class PrimaryGridUnit extends GridUnit {
      *
      * @return a list of GridUnit[], each array corresponds to a row
      */
-    public List getRows() {
+    public List<GridUnit[]> getRows() {
         return this.rows;
     }
 
@@ -261,7 +262,7 @@ public class PrimaryGridUnit extends GridUnit {
      */
     public void addRow(GridUnit[] row) {
         if (rows == null) {
-            rows = new java.util.ArrayList();
+            rows = new java.util.ArrayList<GridUnit[]>();
         }
         rows.add(row);
     }
@@ -306,8 +307,7 @@ public class PrimaryGridUnit extends GridUnit {
             widths[0] = getCell().getCommonBorderPaddingBackground().getBorderStartWidth(false);
             widths[1] = getCell().getCommonBorderPaddingBackground().getBorderEndWidth(false);
         } else {
-            for (int i = 0; i < rows.size(); i++) {
-                GridUnit[] gridUnits = (GridUnit[])rows.get(i);
+            for (GridUnit[] gridUnits : rows) {
                 widths[0] = Math.max(widths[0],
                         gridUnits[0].borderStart.getBorderInfo().getRetainedWidth());
                 widths[1] = Math.max(widths[1], gridUnits[gridUnits.length - 1].borderEnd
@@ -319,7 +319,7 @@ public class PrimaryGridUnit extends GridUnit {
 
     /** {@inheritDoc} */
     public String toString() {
-        StringBuffer sb = new StringBuffer(super.toString());
+        StringBuilder sb = new StringBuilder(super.toString());
         sb.append(" rowIndex=").append(rowIndex);
         sb.append(" colIndex=").append(colIndex);
         return sb.toString();
