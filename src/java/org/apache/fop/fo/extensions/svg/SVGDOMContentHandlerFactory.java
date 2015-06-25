@@ -30,6 +30,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import org.apache.batik.anim.dom.SVG12DOMImplementation;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 
 import org.apache.fop.util.ContentHandlerFactory;
@@ -100,14 +101,7 @@ public class SVGDOMContentHandlerFactory implements ContentHandlerFactory {
                     || ver.equals("1.0") || ver.equals("1.1")) {
                 return SVGDOMImplementation.getDOMImplementation();
             } else if (ver.equals("1.2")) {
-                try {
-                    Class clazz = Class.forName(
-                            "org.apache.batik.dom.svg12.SVG12DOMImplementation");
-                    return (DOMImplementation)clazz.getMethod(
-                            "getDOMImplementation", (Class[])null).invoke(null, (Object[])null);
-                } catch (Exception e) {
-                    return SVGDOMImplementation.getDOMImplementation();
-                }
+                return SVG12DOMImplementation.getDOMImplementation();
             }
             throw new RuntimeException("Unsupport SVG version '" + ver + "'");
         }
