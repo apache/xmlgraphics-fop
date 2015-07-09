@@ -644,14 +644,6 @@ public class FontInfo {
      * Diagnostic method for logging all registered fonts to System.out.
      */
     public void dumpAllTripletsToSystemOut() {
-        System.out.print(toString());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
         SortedSet<String> entries = new TreeSet<String>();
         for (FontTriplet triplet : this.triplets.keySet()) {
             String key = getInternalFontKey(triplet);
@@ -662,6 +654,6 @@ public class FontInfo {
         for (String str : entries) {
             stringBuffer.append(str);
         }
-        return stringBuffer.toString();
+        System.out.println(stringBuffer.toString());
     }
 }
