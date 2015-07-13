@@ -225,14 +225,22 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
     protected int getForcedLastPageNum(final int lastPageNum) {
         int forcedLastPageNum = lastPageNum;
         int relativeLastPage = lastPageNum - startPageNum + 1;
-        if (relativeLastPage % 2 != 0
-                && (getPageSequence().getForcePageCount() ==  Constants.EN_EVEN
-                 || getPageSequence().getForcePageCount() ==  Constants.EN_END_ON_EVEN)) {
-            forcedLastPageNum++;
-        } else if (relativeLastPage % 2 == 0 && (
-                getPageSequence().getForcePageCount() ==  Constants.EN_ODD
-                ||  getPageSequence().getForcePageCount() ==  Constants.EN_END_ON_ODD)) {
-            forcedLastPageNum++;
+        if (getPageSequence().getForcePageCount() ==  Constants.EN_EVEN) {
+            if (relativeLastPage % 2 != 0) {
+                forcedLastPageNum++;
+            }
+        } else if (getPageSequence().getForcePageCount() ==  Constants.EN_ODD) {
+            if (relativeLastPage % 2 == 0) {
+                forcedLastPageNum++;
+            }
+        } else if (getPageSequence().getForcePageCount() ==  Constants.EN_END_ON_EVEN) {
+            if (lastPageNum % 2 != 0) {
+                forcedLastPageNum++;
+            }
+        } else if (getPageSequence().getForcePageCount() ==  Constants.EN_END_ON_ODD) {
+            if (lastPageNum % 2 == 0) {
+                forcedLastPageNum++;
+            }
         }
         return forcedLastPageNum;
     }
