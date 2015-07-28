@@ -21,7 +21,9 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -244,11 +246,28 @@ public class PDFStructElem extends StructureHierarchyMember
     }
 
     public int output(OutputStream stream) throws IOException {
-        if (getDocument().getProfile().getPDFUAMode().isEnabled()
-                && entries.containsKey("Alt") && "".equals(get("Alt"))) {
-            put("Alt", "No alternate text specified");
+        if (getDocument().getProfile().getPDFUAMode().isEnabled()) {
+            if (entries.containsKey("Alt") && "".equals(get("Alt"))) {
+                put("Alt", "No alternate text specified");
+            } else if (kids != null) {
+                for (PDFObject kid : kids) {
+                    if (kid instanceof PDFStructElem
+                            && !(kid instanceof Placeholder)
+                            && structureType.toString().equals("P")
+                            && isBSLE(((PDFStructElem) kid).getStructureType().toString())) {
+                        structureType = StandardStructureTypes.Grouping.DIV;
+                        put("S", StandardStructureTypes.Grouping.DIV.getName());
+                        break;
+                    }
+                }
+            }
         }
         return super.output(stream);
+    }
+
+    private boolean isBSLE(String type) {
+        String[] blseValues = {"Table", "L", "P"};
+        return Arrays.asList(blseValues).contains(type);
     }
 
     /**
