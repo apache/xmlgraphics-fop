@@ -377,12 +377,8 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
             Font font = getFontInfo().getFontInstance(triplet, sizeMillipoints);
 
             PSFontResource res = getDocumentHandler().getPSResourceForFontKey(fontKey);
-            if (tf instanceof MultiByteFont && ((MultiByteFont)tf).isOTFFile()) {
-                generator.writeln("/" + res.getName() + ".0 "
-                        + generator.formatDouble(sizeMillipoints / 1000f) + " F");
-            } else {
-                useFont(fontKey, sizeMillipoints);
-            }
+            boolean otf = tf instanceof MultiByteFont && ((MultiByteFont)tf).isOTFFile();
+            useFont(fontKey, sizeMillipoints, otf);
 
             if (dp != null && dp[0] != null) {
                 x += dp[0][0];
@@ -406,9 +402,9 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                                     letterSpacing, wordSpacing, dp, font, tf, false);
                         }
                         if (encoding == 0) {
-                            useFont(fontKey, sizeMillipoints);
+                            useFont(fontKey, sizeMillipoints, false);
                         } else {
-                            useFont(fontKey + "_" + Integer.toString(encoding), sizeMillipoints);
+                            useFont(fontKey + "_" + Integer.toString(encoding), sizeMillipoints, false);
                         }
                         currentEncoding = encoding;
                         start = i;
@@ -438,7 +434,7 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                         }
                     }
                 } else {
-                    useFont(fontKey, sizeMillipoints);
+                    useFont(fontKey, sizeMillipoints, false);
                 }
             }
             writeText(text, start, textLen - start, letterSpacing, wordSpacing, dp, font, tf,
@@ -580,10 +576,16 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
         return lineStart;
     }
 
-    private void useFont(String key, int size) throws IOException {
+    private void useFont(String key, int size, boolean otf) throws IOException {
         PSFontResource res = getDocumentHandler().getPSResourceForFontKey(key);
         PSGenerator generator = getGenerator();
-        generator.useFont("/" + res.getName(), size / 1000f);
+        if (otf) {
+            String name = "/" + res.getName() + ".0";
+            generator.getCurrentState().useFont(name, size);
+            generator.writeln(name + ' ' + generator.formatDouble(size / 1000f) + " F");
+        } else {
+            generator.useFont("/" + res.getName(), size / 1000f);
+        }
         res.notifyResourceUsageOnPage(generator.getResourceTracker());
     }
 }
