@@ -108,6 +108,12 @@ public class PDFExtensionHandler extends DefaultHandler implements ContentHandle
             } else if (PDFDictionaryType.Info.elementName().equals(localName)) {
                 PDFDocumentInformationExtension info = new PDFDocumentInformationExtension();
                 collections.push(info);
+            } else if (PDFDictionaryType.VT.elementName().equals(localName)) {
+                PDFVTExtension dictionary = new PDFVTExtension();
+                collections.push(dictionary);
+            } else if (PDFDictionaryType.PagePiece.elementName().equals(localName)) {
+                PDFPagePieceExtension dictionary = new PDFPagePieceExtension();
+                collections.push(dictionary);
             } else if (PDFObjectType.hasValueOfElementName(localName)) {
                 PDFCollectionEntryExtension entry;
                 if (PDFObjectType.Reference.elementName().equals(localName)) {

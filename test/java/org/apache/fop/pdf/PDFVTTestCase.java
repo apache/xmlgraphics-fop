@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -34,6 +35,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Assert;
@@ -48,6 +50,12 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFException;
+import org.apache.fop.render.intermediate.IFParser;
+import org.apache.fop.render.intermediate.IFSerializer;
+import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.render.pdf.PDFContentGenerator;
 
 public class PDFVTTestCase {
@@ -100,18 +108,63 @@ public class PDFVTTestCase {
     }
 
     @Test
-    public void textFO() throws IOException, SAXException, TransformerException {
+    public void textFO() throws IOException, SAXException, TransformerException, IFException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI(),
-                new FileInputStream("test/java/org/apache/fop/pdf/PDFVT.xconf"));
+        foToOutput(out, MimeConstants.MIME_PDF);
+        checkPDF(out);
+    }
+
+    @Test
+    public void textIF() throws IOException, SAXException, TransformerException, IFException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        foToOutput(out, MimeConstants.MIME_FOP_IF);
+        iFToPDF(new ByteArrayInputStream(out.toByteArray()));
+    }
+
+
+    private void foToOutput(ByteArrayOutputStream out, String mimeFopIf)
+        throws IOException, SAXException, TransformerException {
+        FopFactory fopFactory = getFopFactory();
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
-        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
+        if (mimeFopIf.equals(MimeConstants.MIME_FOP_IF)) {
+            IFSerializer serializer = new IFSerializer(new IFContext(userAgent));
+            IFDocumentHandler targetHandler
+                    = userAgent.getRendererFactory().createDocumentHandler(userAgent, MimeConstants.MIME_PDF);
+            serializer.mimicDocumentHandler(targetHandler);
+            userAgent.setDocumentHandlerOverride(serializer);
+        }
+
+        Fop fop = fopFactory.newFop(mimeFopIf, userAgent, out);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         Source src = new StreamSource(new FileInputStream("test/java/org/apache/fop/pdf/PDFVT.fo"));
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
+    }
 
+    private FopFactory getFopFactory() throws IOException, SAXException {
+        return FopFactory.newInstance(new File(".").toURI(),
+                new FileInputStream("test/java/org/apache/fop/pdf/PDFVT.xconf"));
+    }
+
+    private void iFToPDF(InputStream is) throws IOException, SAXException, TransformerException, IFException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        FOUserAgent userAgent = getFopFactory().newFOUserAgent();
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Source src = new StreamSource(is);
+        IFDocumentHandler documentHandler
+                = userAgent.getRendererFactory().createDocumentHandler(userAgent, MimeConstants.MIME_PDF);
+        documentHandler.setResult(new StreamResult(out));
+        IFUtil.setupFonts(documentHandler);
+        IFParser parser = new IFParser();
+        Result res = new SAXResult(parser.getContentHandler(documentHandler, userAgent));
+        transformer.transform(src, res);
+
+        checkPDF(out);
+    }
+
+    private void checkPDF(ByteArrayOutputStream out) throws IOException {
         Map<String, StringBuilder> objs =
                 PDFLinearizationTestCase.readObjs(new ByteArrayInputStream(out.toByteArray()));
         String dpart = getObj(objs.values(), "/DParts");
