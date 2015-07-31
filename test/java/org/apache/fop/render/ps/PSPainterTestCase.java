@@ -18,11 +18,16 @@ package org.apache.fop.render.ps;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.transform.stream.StreamResult;
+
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.verification.VerificationMode;
@@ -38,15 +43,19 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
 
@@ -160,5 +169,70 @@ public class PSPainterTestCase {
         } catch (Exception e) {
             fail("something broke...");
         }
+    }
+
+    @Test
+    public void testOTF() throws IFException, IOException {
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        final IFState state = IFState.create();
+        PSDocumentHandler dh = new PSDocumentHandler(new IFContext(ua)) {
+            protected PSFontResource getPSResourceForFontKey(String key) {
+                return new PSFontResource() {
+                    String getName() {
+                        return state.getFontFamily();
+                    }
+                    void notifyResourceUsageOnPage(ResourceTracker resourceTracker) {
+                    }
+                };
+            }
+        };
+        FontInfo fi = new FontInfo();
+        addFont(fi, "OTFFont", true);
+        addFont(fi, "TTFFont", false);
+
+        dh.setFontInfo(fi);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        dh.setResult(new StreamResult(bos));
+        dh.startDocument();
+        state.setFontSize(10);
+        state.setTextColor(Color.BLACK);
+        state.setFontStyle("");
+        PSPainter p = new PSPainter(dh, state) {
+            protected String getFontKey(FontTriplet triplet) throws IFException {
+                return state.getFontFamily();
+            }
+        };
+
+        state.setFontFamily("TTFFont");
+        p.drawText(0, 0, 0, 0, null, "test1");
+
+        state.setFontFamily("OTFFont");
+        p.drawText(0, 0, 0, 0, null, "test2");
+        p.drawText(0, 0, 0, 0, null, "test3");
+
+        state.setFontFamily("TTFFont");
+        p.drawText(0, 0, 0, 0, null, "test4");
+
+        Assert.assertTrue(bos.toString(), bos.toString().endsWith("BT\n"
+                + "/TTFFont 0.01 F\n"
+                + "1 0 0 -1 0 0 Tm\n"
+                + "<00000000000000000000> t\n"
+                + "/OTFFont.0 0.01 F\n"
+                + "1 0 0 -1 0 0 Tm\n"
+                + "<FFFFFFFFFF> t\n"
+                + "/OTFFont.0 0.01 F\n"
+                + "1 0 0 -1 0 0 Tm\n"
+                + "<FFFFFFFFFF> t\n"
+                + "/TTFFont 0.01 F\n"
+                + "1 0 0 -1 0 0 Tm\n"
+                + "<00000000000000000000> t\n"));
+    }
+
+    private void addFont(FontInfo fi, String name, boolean otf) {
+        fi.addFontProperties(name, name, "", 0);
+        MultiByteFont mbf = new MultiByteFont(null, EmbeddingMode.AUTO);
+        mbf.setWidthArray(new int[100]);
+        mbf.setIsOTFFile(otf);
+        fi.addMetrics(name, mbf);
     }
 }
