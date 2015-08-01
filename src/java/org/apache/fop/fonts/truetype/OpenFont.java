@@ -1274,7 +1274,7 @@ public abstract class OpenFont {
         case 0x00020000:
             log.debug("PostScript format 2");
             postScriptVersion = PostScriptVersion.V2;
-            int numGlyphStrings = 0;
+            int numGlyphStrings = 257;
 
             // Read Number of Glyphs
             int l = fontFile.readTTFUShort();
@@ -1283,9 +1283,8 @@ public abstract class OpenFont {
             for (int i = 0; i < l; i++) {
                 mtxTab[i].setIndex(fontFile.readTTFUShort());
 
-                if (mtxTab[i].getIndex() > 257) {
-                    //Index is not in the Macintosh standard set
-                    numGlyphStrings++;
+                if (mtxTab[i].getIndex() > numGlyphStrings) {
+                    numGlyphStrings = mtxTab[i].getIndex();
                 }
 
                 if (log.isTraceEnabled()) {
@@ -1294,7 +1293,7 @@ public abstract class OpenFont {
             }
 
             // firstChar=minIndex;
-            String[] psGlyphsBuffer = new String[numGlyphStrings];
+            String[] psGlyphsBuffer = new String[numGlyphStrings - 257];
             if (log.isDebugEnabled()) {
                 log.debug("Reading " + numGlyphStrings
                         + " glyphnames, that are not in the standard Macintosh"
