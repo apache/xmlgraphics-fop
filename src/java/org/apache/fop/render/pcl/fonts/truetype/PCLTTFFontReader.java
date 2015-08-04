@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.fop.fonts.CustomFont;
+import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.OFDirTabEntry;
@@ -121,13 +123,15 @@ public class PCLTTFFontReader extends PCLFontReader {
     protected void loadFont() throws IOException {
         if (typeface instanceof CustomFontMetricsMapper) {
             CustomFontMetricsMapper fontMetrics = (CustomFontMetricsMapper) typeface;
-            CustomFont customFont = (CustomFont) fontMetrics.getRealFont();
-            fontStream = customFont.getInputStream();
+            CustomFont font = (CustomFont) fontMetrics.getRealFont();
+            setFont((CustomFont) fontMetrics.getRealFont());
+            String fontName = font.getFullName();
+            fontStream = font.getInputStream();
             reader = new FontFileReader(fontStream);
 
             ttfFont = new TTFFile();
             String header = OFFontLoader.readHeader(reader);
-            ttfFont.readFont(reader, header, customFont.getFullName());
+            ttfFont.readFont(reader, header, fontName);
             readFontTables();
         } else {
             // TODO - Handle when typeface is not in the expected format for a PCL TrueType object
@@ -453,11 +457,12 @@ public class PCLTTFFontReader extends PCLFontReader {
         return 0; // TrueType fonts must be set to zero
     }
 
-    public List<PCLFontSegment> getFontSegments() throws IOException {
+    public List<PCLFontSegment> getFontSegments(Map<Character, Integer> mappedGlyphs)
+            throws IOException {
         List<PCLFontSegment> fontSegments = new ArrayList<PCLFontSegment>();
         fontSegments.add(new PCLFontSegment(SegmentID.CC, getCharacterComplement()));
         fontSegments.add(new PCLFontSegment(SegmentID.PA, pclByteWriter.toByteArray(os2Table.getPanose())));
-        fontSegments.add(new PCLFontSegment(SegmentID.GT, getGlobalTrueTypeData()));
+        fontSegments.add(new PCLFontSegment(SegmentID.GT, getGlobalTrueTypeData(mappedGlyphs)));
         fontSegments.add(new PCLFontSegment(SegmentID.CP, ttfFont.getCopyrightNotice().getBytes("US-ASCII")));
         fontSegments.add(new PCLFontSegment(SegmentID.NULL, new byte[0]));
         return fontSegments;
@@ -475,9 +480,9 @@ public class PCLTTFFontReader extends PCLFontReader {
         return ccUnicode;
     }
 
-    private byte[] getGlobalTrueTypeData() throws IOException {
+    private byte[] getGlobalTrueTypeData(Map<Character, Integer> mappedGlyphs) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Map<OFDirTabEntry, Integer> tableOffsets = new HashMap<OFDirTabEntry, Integer>();
+        List<TableOffset> tableOffsets = new ArrayList<TableOffset>();
         // Version
         baos.write(pclByteWriter.unsignedInt(1)); // Major
         baos.write(pclByteWriter.unsignedInt(0)); // Minor
@@ -505,9 +510,9 @@ public class PCLTTFFontReader extends PCLFontReader {
         // Add default data tables
         writeTrueTypeTable(baos, OFTableName.HEAD, tableOffsets);
         writeTrueTypeTable(baos, OFTableName.HHEA, tableOffsets);
-        writeTrueTypeTable(baos, OFTableName.HMTX, tableOffsets);
+        byte[] hmtxTable = createHmtx(mappedGlyphs);
+        writeSubsetHMTX(baos, OFTableName.HMTX, tableOffsets, hmtxTable);
         writeTrueTypeTable(baos, OFTableName.MAXP, tableOffsets);
-
         // Write the blank GDIR directory which is built in memory on the printer
         writeGDIR(baos);
 
@@ -516,23 +521,46 @@ public class PCLTTFFontReader extends PCLFontReader {
         writeTrueTypeTable(baos, OFTableName.FPGM, tableOffsets);
         writeTrueTypeTable(baos, OFTableName.PREP, tableOffsets);
 
-        baos = copyTables(tableOffsets, baos);
+        baos = copyTables(tableOffsets, baos, hmtxTable, mappedGlyphs.size());
 
         return baos.toByteArray();
     }
 
+    private static class TableOffset {
+        private long originOffset;
+        private long originLength;
+        private int newOffset;
+
+        public TableOffset(long originOffset, long originLength, int newOffset) {
+            this.originOffset = originOffset;
+            this.originLength = originLength;
+            this.newOffset = newOffset;
+        }
+
+        public long getOriginOffset() {
+            return originOffset;
+        }
+
+        public long getOriginLength() {
+            return originLength;
+        }
+
+        public int getNewOffset() {
+            return newOffset;
+        }
+    }
+
     private void writeTrueTypeTable(ByteArrayOutputStream baos, OFTableName table,
-            Map<OFDirTabEntry, Integer> tableOffsets) throws IOException, UnsupportedEncodingException {
+            List<TableOffset> tableOffsets) throws IOException, UnsupportedEncodingException {
         OFDirTabEntry tabEntry = ttfFont.getDirectoryEntry(table);
         if (tabEntry != null) {
             baos.write(tabEntry.getTag());
             baos.write(pclByteWriter.unsignedLongInt(tabEntry.getChecksum()));
-            tableOffsets.put(tabEntry, baos.size());
+            TableOffset newTableOffset = new TableOffset(tabEntry.getOffset(),
+                    tabEntry.getLength(), baos.size());
+            tableOffsets.add(newTableOffset);
             baos.write(pclByteWriter.unsignedLongInt(0)); // Offset to be set later
-            long length = (tabEntry.getLength() > HMTX_RESTRICT_SIZE)
-                    ? HMTX_RESTRICT_SIZE
-                    : tabEntry.getLength();
-            baos.write(pclByteWriter.unsignedLongInt(length));
+            baos.write(pclByteWriter.unsignedLongInt(tabEntry.getLength()));
         }
     }
 
@@ -543,24 +571,33 @@ public class PCLTTFFontReader extends PCLFontReader {
         baos.write(pclByteWriter.unsignedLongInt(0)); // Length
     }
 
-    private ByteArrayOutputStream copyTables(Map<OFDirTabEntry, Integer> tableOffsets, ByteArrayOutputStream baos)
+    private ByteArrayOutputStream copyTables(List<TableOffset> tableOffsets,
+            ByteArrayOutputStream baos, byte[] hmtxTable, int hmtxSize)
             throws IOException {
         Map<Integer, byte[]> offsetValues = new HashMap<Integer, byte[]>();
-        //for (OFDirTabEntry table : tableOffsets.keySet()) {
-        for (Entry<OFDirTabEntry, Integer> table : tableOffsets.entrySet()) {
-            byte[] tableData = reader.getBytes((int) table.getKey().getOffset(), (int) table.getKey().getLength());
-            if (tableData.length > HMTX_RESTRICT_SIZE) {
-                byte[] truncated = new byte[HMTX_RESTRICT_SIZE];
-                System.arraycopy(tableData, 0, truncated, 0, HMTX_RESTRICT_SIZE);
-                tableData = truncated;
+        for (TableOffset tableOffset : tableOffsets) {
+            offsetValues.put(tableOffset.getNewOffset(), pclByteWriter.unsignedLongInt(baos.size()));
+            if (tableOffset.getOriginOffset() == -1) { // Update the offset in the table directory
+                baos.write(hmtxTable);
+            } else {
+                byte[] tableData = reader.getBytes((int) tableOffset.getOriginOffset(),
+                        (int) tableOffset.getOriginLength());
+                int index = tableOffsets.indexOf(tableOffset);
+                if (index == 1) {
+                    tableData = updateHHEA(tableData, hmtxSize + 33);
+                }
+
+                // Write the table data to the end of the TrueType segment output
+                baos.write(tableData);
             }
-            // Update the offset in the table directory
-            offsetValues.put(table.getValue(), pclByteWriter.unsignedLongInt(baos.size()));
-            // Write the table data to the end of the TrueType segment output
-            baos.write(tableData);
         }
         baos = updateOffsets(baos, offsetValues);
         return baos;
+    }
+
+    private byte[] updateHHEA(byte[] tableData, int hmtxSize) {
+        writeUShort(tableData, tableData.length - 2, hmtxSize);
+        return tableData;
     }
 
     private ByteArrayOutputStream updateOffsets(ByteArrayOutputStream baos, Map<Integer, byte[]> offsets)
@@ -615,5 +652,80 @@ public class PCLTTFFontReader extends PCLFontReader {
     @Override
     public FontFileReader getFontFileReader() {
         return reader;
+    }
+
+    private void writeSubsetHMTX(ByteArrayOutputStream baos, OFTableName table,
+            List<TableOffset> tableOffsets, byte[] hmtxTable) throws IOException {
+        OFDirTabEntry tabEntry = ttfFont.getDirectoryEntry(table);
+        if (tabEntry != null) {
+            baos.write(tabEntry.getTag());
+            // Override the original checksum for the subset version
+            baos.write(pclByteWriter.unsignedLongInt(getCheckSum(hmtxTable, 0, hmtxTable.length)));
+            TableOffset newTableOffset = new TableOffset(-1, hmtxTable.length, baos.size());
+            tableOffsets.add(newTableOffset);
+            baos.write(pclByteWriter.unsignedLongInt(0)); // Offset to be set later
+            baos.write(pclByteWriter.unsignedLongInt(hmtxTable.length));
+        }
+    }
+
+    protected static int getCheckSum(byte[] data, int start, int size) {
+        // All the tables here are aligned on four byte boundaries
+        // Add remainder to size if it's not a multiple of 4
+        int remainder = size % 4;
+        if (remainder != 0) {
+            size += remainder;
+        }
+
+        long sum = 0;
+
+        for (int i = 0; i < size; i += 4) {
+            long l = 0;
+            for (int j = 0; j < 4; j++) {
+                l <<= 8;
+                if (data.length > (start + i + j)) {
+                    l |= data[start + i + j] & 0xff;
+                }
+            }
+            sum += l;
+        }
+        return (int) sum;
+    }
+
+    protected byte[] createHmtx(Map<Character, Integer> mappedGlyphs) throws IOException {
+        byte[] hmtxTable = new byte[((mappedGlyphs.size() + 32) * 4)];
+        OFDirTabEntry entry = ttfFont.getDirectoryEntry(OFTableName.HMTX);
+
+        if (entry != null) {
+            for (Entry<Character, Integer> glyphSubset : mappedGlyphs.entrySet()) {
+                char unicode = glyphSubset.getKey();
+                int originalIndex = 0;
+                int softFontGlyphIndex = glyphSubset.getValue();
+                if (font instanceof MultiByteFont) {
+                    originalIndex = ((MultiByteFont) font).getGIDFromChar(unicode);
+
+                    writeUShort(hmtxTable, (softFontGlyphIndex) * 4,
+                            ttfFont.getMtx().get(originalIndex).getWx());
+                    writeUShort(hmtxTable, (softFontGlyphIndex) * 4 + 2,
+                            ttfFont.getMtx().get(originalIndex).getLsb());
+                } else {
+                    originalIndex = ((SingleByteFont) font).getGIDFromChar(unicode);
+
+                    writeUShort(hmtxTable, (softFontGlyphIndex) * 4,
+                            ((SingleByteFont) font).getWidth(originalIndex, 1));
+                    writeUShort(hmtxTable, (softFontGlyphIndex) * 4 + 2, 0);
+                }
+            }
+        }
+        return hmtxTable;
+    }
+
+    /**
+     * Appends a USHORT to the output array, updates currentPost but not realSize
+     */
+    private void writeUShort(byte[] out, int offset, int s) {
+        byte b1 = (byte) ((s >> 8) & 0xff);
+        byte b2 = (byte) (s & 0xff);
+        out[offset] = b1;
+        out[offset + 1] = b2;
     }
 }

@@ -426,6 +426,24 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /**
+     * Returns the character from it's original glyph index in the font
+     * @param glyphIndex The original index of the character
+     * @return The character
+     */
+    public char getUnicodeFromGID(int glyphIndex) {
+        return cidSet.getUnicodeFromGID(glyphIndex);
+    }
+
+    /**
+     * Gets the original glyph index in the font from a character.
+     * @param ch The character
+     * @return The glyph index in the font
+     */
+    public int getGIDFromChar(char ch) {
+        return cidSet.getGIDFromChar(ch);
+    }
+
+    /**
      * Establishes the glyph definition table.
      * @param gdef the glyph definition table to be used by this font
      */

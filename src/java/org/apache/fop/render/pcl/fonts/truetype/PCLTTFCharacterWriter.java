@@ -109,19 +109,21 @@ public class PCLTTFCharacterWriter extends PCLCharacterWriter {
 
             font.writeCharacter(unicode);
 
-            PCLCharacterDefinition newChar = new PCLCharacterDefinition(charIndex, font.getUnicodeCodePoint(unicode),
+            PCLCharacterDefinition newChar = new PCLCharacterDefinition(
+                    font.getCharCode((char) unicode),
                     PCLCharacterFormat.TrueType,
-                    PCLCharacterClass.TrueType, glyphData, pclByteWriter);
+                    PCLCharacterClass.TrueType, glyphData, pclByteWriter, false);
 
             // Handle composite character definitions
             GlyfTable glyfTable = new GlyfTable(fontReader, mtx.toArray(new OFMtxEntry[mtx.size()]),
                     tabEntry, subsetGlyphs);
             if (glyfTable.isComposite(charIndex)) {
-                Set<Integer> composite = glyfTable.retrieveComposedGlyphs(charIndex);
-                for (Integer compositeIndex : composite) {
+                Set<Integer> composites = glyfTable.retrieveComposedGlyphs(charIndex);
+                for (Integer compositeIndex : composites) {
                     byte[] compositeData = getGlyphData(compositeIndex);
-                    newChar.addCompositeGlyph(new PCLCharacterDefinition(compositeIndex, 65535,
-                            PCLCharacterFormat.TrueType, PCLCharacterClass.TrueType, compositeData, pclByteWriter));
+                    newChar.addCompositeGlyph(new PCLCharacterDefinition(compositeIndex,
+                            PCLCharacterFormat.TrueType,
+                            PCLCharacterClass.TrueType, compositeData, pclByteWriter, true));
                 }
             }
 

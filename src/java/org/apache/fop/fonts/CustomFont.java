@@ -568,4 +568,16 @@ public abstract class CustomFont extends Typeface
         this.strikeoutThickness = strikeoutThickness;
     }
 
+    /**
+     * Returns a Map of used Glyphs.
+     * @return Map Map of used Glyphs
+     */
+    public abstract Map<Integer, Integer> getUsedGlyphs();
+
+    /**
+     * Returns the character from it's original glyph index in the font
+     * @param glyphIndex The original index of the character
+     * @return The character
+     */
+    public abstract char getUnicodeFromGID(int glyphIndex);
 }

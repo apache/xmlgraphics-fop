@@ -57,6 +57,18 @@ public class CIDFull implements CIDSet {
     }
 
     /** {@inheritDoc} */
+    @Override
+    public char getUnicodeFromGID(int glyphIndex) {
+        return ' ';
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int getGIDFromChar(char ch) {
+        return ch;
+    }
+
+    /** {@inheritDoc} */
     public char getUnicode(int index) {
         initGlyphIndices();
         if (glyphIndices.get(index)) {
@@ -109,5 +121,4 @@ public class CIDFull implements CIDSet {
     public int[] getWidths() {
         return font.getWidths();
     }
-
 }

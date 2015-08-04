@@ -30,6 +30,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -62,6 +63,7 @@ import org.apache.fop.render.java2d.Java2DPainter;
 import org.apache.fop.render.pcl.fonts.PCLCharacterWriter;
 import org.apache.fop.render.pcl.fonts.PCLSoftFont;
 import org.apache.fop.render.pcl.fonts.PCLSoftFontManager;
+import org.apache.fop.render.pcl.fonts.PCLSoftFontManager.PCLTextSegment;
 import org.apache.fop.render.pcl.fonts.truetype.PCLTTFCharacterWriter;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
@@ -337,24 +339,35 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
                 // TrueType conversion to a soft font (PCL 5 Technical Reference - Chapter 11)
                 if (!drawAsBitmaps && isTrueType(tf)) {
                     boolean madeSF = false;
-                    if (sfManager.getSoftFont(tf) == null) {
+                    if (sfManager.getSoftFont(tf, text) == null) {
                         madeSF = true;
                         ByteArrayOutputStream baos = sfManager.makeSoftFont(tf);
                         if (baos != null) {
                             gen.writeBytes(baos.toByteArray());
                         }
                     }
-                    int fontID = sfManager.getSoftFontID(tf);
                     String formattedSize = gen.formatDouble2(state.getFontSize() / 1000.0);
                     gen.writeCommand(String.format("(s%sV", formattedSize));
-                    gen.writeCommand(String.format("(%dX", fontID));
-                    PCLSoftFont softFont = sfManager.getSoftFont(tf);
-                    PCLCharacterWriter charWriter = new PCLTTFCharacterWriter(softFont);
-                    if (!madeSF) {
-                        gen.writeBytes(sfManager.writeFontIDCommand(fontID));
+                    List<PCLTextSegment> textSegments = sfManager.getTextSegments(text, tf);
+                    if (textSegments.isEmpty()) {
+                        textSegments.add(new PCLTextSegment(sfManager.getSoftFontID(tf), text));
                     }
-                    gen.writeBytes(charWriter.writeCharacterDefinitions(text));
-                    drawTextUsingSoftFont(x, y, letterSpacing, wordSpacing, dp, text, triplet, softFont);
+                    boolean first = true;
+                    for (PCLTextSegment textSegment : textSegments) {
+                        gen.writeCommand(String.format("(%dX", textSegment.getFontID()));
+                        PCLSoftFont softFont = sfManager.getSoftFontFromID(textSegment.getFontID());
+                        PCLCharacterWriter charWriter = new PCLTTFCharacterWriter(softFont);
+                        gen.writeBytes(sfManager.assignFontID(textSegment.getFontID()));
+                        gen.writeBytes(charWriter.writeCharacterDefinitions(textSegment.getText()));
+                        if (first) {
+                            drawTextUsingSoftFont(x, y, letterSpacing, wordSpacing, dp,
+                                    textSegment.getText(), triplet, softFont);
+                            first = false;
+                        } else {
+                            drawTextUsingSoftFont(-1, -1, letterSpacing, wordSpacing, dp,
+                                    textSegment.getText(), triplet, softFont);
+                        }
+                    }
                 } else {
                     drawTextAsBitmap(x, y, letterSpacing, wordSpacing, dp, text, triplet);
                     if (DEBUG) {
@@ -482,7 +495,9 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
             gen.selectGrayscale(textColor);
         }
 
-        setCursorPos(x, y);
+        if (x != -1 && y != -1) {
+            setCursorPos(x, y);
+        }
 
         float fontSize = state.getFontSize() / 1000f;
         Font font = getFontInfo().getFontInstance(triplet, state.getFontSize());
@@ -519,8 +534,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
             if (glyphAdjust != 0) {
                 gen.getOutputStream().write(sb.toString().getBytes(gen.getTextEncoding()));
                 for (int j = 0; j < current.length(); j++) {
-                    gen.getOutputStream().write(
-                            softFont.getUnicodeCodePoint((int) current.charAt(j)));
+                    gen.getOutputStream().write(softFont.getCharCode(current.charAt(j)));
                 }
                 sb = new StringBuffer();
 
@@ -533,7 +547,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
         if (!current.equals("")) {
             gen.getOutputStream().write(sb.toString().getBytes(gen.getTextEncoding()));
             for (int i = 0; i < current.length(); i++) {
-                gen.getOutputStream().write(softFont.getUnicodeCodePoint((int) current.charAt(i)));
+                gen.getOutputStream().write(softFont.getCharCode(current.charAt(i)));
             }
         }
     }

@@ -38,13 +38,17 @@ public class PCLSoftFont {
     private FontFileReader reader;
     /** Map containing unicode character and it's soft font codepoint **/
     private Map<Integer, Integer> charsWritten;
+    private Map<Character, Integer> mappedChars;
     private Map<Integer, Integer> charMtxPositions;
+    private boolean multiByteFont;
     private int charCount = 32;
 
-    public PCLSoftFont(int fontID, Typeface font) {
+    public PCLSoftFont(int fontID, Typeface font, boolean multiByteFont) {
         this.fontID = fontID;
         this.font = font;
         charsWritten = new HashMap<Integer, Integer>();
+        mappedChars = new HashMap<Character, Integer>();
+        this.multiByteFont = multiByteFont;
     }
 
     public Typeface getTypeface() {
@@ -92,7 +96,11 @@ public class PCLSoftFont {
     }
 
     public int getUnicodeCodePoint(int unicode) {
-        return charsWritten.get(unicode);
+        if (charsWritten.containsKey(unicode)) {
+            return charsWritten.get(unicode);
+        } else {
+            return -1;
+        }
     }
 
     public boolean hasPreviouslyWritten(int unicode) {
@@ -124,5 +132,29 @@ public class PCLSoftFont {
 
     public int getCharCount() {
         return charCount;
+    }
+
+    public void setMappedChars(Map<Character, Integer> mappedChars) {
+        this.mappedChars = mappedChars;
+    }
+
+    public Map<Character, Integer> getMappedChars() {
+        return mappedChars;
+    }
+
+    public int getCharIndex(char ch) {
+        if (mappedChars.containsKey(ch)) {
+            return mappedChars.get(ch);
+        } else {
+            return -1;
+        }
+    }
+
+    public int getCharCode(char ch) {
+        if (multiByteFont) {
+            return getCharIndex(ch);
+        } else {
+            return getUnicodeCodePoint(ch);
+        }
     }
 }

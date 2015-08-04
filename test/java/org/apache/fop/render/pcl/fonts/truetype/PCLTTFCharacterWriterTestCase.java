@@ -46,7 +46,7 @@ public class PCLTTFCharacterWriterTestCase {
     public void verifyCharacterDefinition() throws Exception {
         CustomFont sbFont = mock(CustomFont.class);
         when(customFont.getRealFont()).thenReturn(sbFont);
-        softFont = new PCLSoftFont(1, customFont);
+        softFont = new PCLSoftFont(1, customFont, false);
         TTFFile openFont = new TTFFile();
         FontFileReader reader = new FontFileReader(new FileInputStream(new File(TEST_FONT_A)));
         String header = OFFontLoader.readHeader(reader);
