@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PCLCharacterDefinition {
-    private int glyphID;
     private int charCode;
     private int charDefinitionSize;
     private byte[] glyfData;
@@ -34,15 +33,17 @@ public class PCLCharacterDefinition {
     private PCLCharacterClass charClass;
     private PCLByteWriterUtil pclByteWriter;
     private List<PCLCharacterDefinition> composites;
+    private boolean isComposite;
 
-    public PCLCharacterDefinition(int glyphID, int charCode, PCLCharacterFormat charFormat,
-            PCLCharacterClass charClass, byte[] glyfData, PCLByteWriterUtil pclByteWriter) {
-        this.glyphID = glyphID;
+    public PCLCharacterDefinition(int charCode, PCLCharacterFormat charFormat,
+            PCLCharacterClass charClass, byte[] glyfData, PCLByteWriterUtil pclByteWriter,
+            boolean isComposite) {
         this.charCode = charCode;
         this.charFormat = charFormat;
         this.charClass = charClass;
         this.glyfData = glyfData;
         this.pclByteWriter = pclByteWriter;
+        this.isComposite = isComposite;
         // Glyph Data + (Descriptor Size) + (Character Data Size) + (Glyph ID) must
         // be less than 32767 otherwise it will result in a continuation structure.
         charDefinitionSize = glyfData.length + 4 + 2 + 2;
@@ -51,7 +52,7 @@ public class PCLCharacterDefinition {
     }
 
     public byte[] getCharacterCommand() throws IOException {
-        return pclByteWriter.writeCommand(String.format("*c%dE", charCode));
+        return pclByteWriter.writeCommand(String.format("*c%dE", (isComposite) ? 65535 : charCode));
     }
 
     public byte[] getCharacterDefinitionCommand() throws IOException {
@@ -93,7 +94,7 @@ public class PCLCharacterDefinition {
         baos.write(pclByteWriter.unsignedByte(2)); // Descriptor size (from this byte to character data)
         baos.write(pclByteWriter.unsignedByte(charClass.getValue()));
         baos.write(pclByteWriter.unsignedInt(glyfData.length + 4));
-        baos.write(pclByteWriter.unsignedInt(glyphID));
+        baos.write(pclByteWriter.unsignedInt(charCode));
     }
 
     public void addCompositeGlyph(PCLCharacterDefinition composite) {

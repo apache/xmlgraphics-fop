@@ -18,9 +18,12 @@
 /* $Id$ */
 package org.apache.fop.render.pcl.fonts;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +36,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.apache.fop.fonts.CustomFont;
+import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.render.java2d.CustomFontMetricsMapper;
 import org.apache.fop.render.pcl.fonts.PCLFontSegment.SegmentID;
 import org.apache.fop.render.pcl.fonts.truetype.PCLTTFFontReader;
@@ -53,7 +57,13 @@ public class PCLTTFFontReaderTestCase {
         CustomFont sbFont = mock(CustomFont.class);
         when(sbFont.getInputStream()).thenReturn(new FileInputStream(new File(TEST_FONT_A)));
         when(customFont.getRealFont()).thenReturn(sbFont);
+        SingleByteFont font = mock(SingleByteFont.class);
+        when(font.getGIDFromChar('h')).thenReturn(104);
+        when(font.getGIDFromChar('e')).thenReturn(101);
+        when(font.getGIDFromChar('l')).thenReturn(108);
+        when(font.getGIDFromChar('o')).thenReturn(111);
         PCLTTFFontReader reader = new MockPCLTTFFontReader(customFont, byteWriter);
+        reader.setFont(font);
         verifyFontData(reader);
         validateOffsets(reader);
         validateFontSegments(reader);
@@ -103,7 +113,13 @@ public class PCLTTFFontReaderTestCase {
      * @throws IOException
      */
     private void validateFontSegments(PCLTTFFontReader reader) throws IOException {
-        List<PCLFontSegment> segments = reader.getFontSegments();
+        HashMap<Character, Integer> mappedChars = new HashMap<Character, Integer>();
+        mappedChars.put('H', 1);
+        mappedChars.put('e', 1);
+        mappedChars.put('l', 1);
+        mappedChars.put('o', 1);
+
+        List<PCLFontSegment> segments = reader.getFontSegments(mappedChars);
         assertEquals(segments.size(), 5);
         for (PCLFontSegment segment : segments) {
             if (segment.getIdentifier() == SegmentID.PA) {
@@ -111,10 +127,72 @@ public class PCLTTFFontReaderTestCase {
                 assertEquals(segment.getData().length, 10);
                 byte[] panose = {2, 6, 6, 3, 5, 6, 5, 2, 2, 4};
                 assertArrayEquals(segment.getData(), panose);
+            } else if (segment.getIdentifier() == SegmentID.GT) {
+                verifyGlobalTrueTypeData(segment, mappedChars.size());
             } else if (segment.getIdentifier() == SegmentID.NULL) {
                 // Terminating segment
                 assertEquals(segment.getData().length, 0);
             }
         }
+    }
+
+    private void verifyGlobalTrueTypeData(PCLFontSegment segment, int mappedCharsSize)
+            throws IOException {
+        byte[] ttfData = segment.getData();
+        int currentPos = 0;
+        //Version
+        assertEquals(readInt(new byte[]{ttfData[currentPos++], ttfData[currentPos++]}), 1);
+        assertEquals(readInt(new byte[]{ttfData[currentPos++], ttfData[currentPos++]}), 0);
+        //Number of tables
+        int numTables = readInt(new byte[]{ttfData[currentPos++], ttfData[currentPos++]});
+        assertEquals(numTables, 8);
+        //Search range
+        assertEquals(readInt(new byte[]{ttfData[currentPos++], ttfData[currentPos++]}), 128);
+        //Entry Selector
+        assertEquals(readInt(new byte[]{ttfData[currentPos++], ttfData[currentPos++]}), 3);
+        //Range shift
+        assertEquals(readInt(new byte[]{ttfData[currentPos++], ttfData[currentPos++]}), 0);
+        String[] validTags = {"head", "hhea", "hmtx", "maxp", "gdir"};
+        int matches = 0;
+        for (int i = 0; i < numTables; i++) {
+            String tag = readTag(new byte[]{ttfData[currentPos++], ttfData[currentPos++],
+                    ttfData[currentPos++], ttfData[currentPos++]});
+            if (Arrays.asList(validTags).contains(tag)) {
+                matches++;
+            }
+            if (tag.equals("hmtx")) {
+                currentPos += 4;
+                int offset = readLong(new byte[]{ttfData[currentPos++], ttfData[currentPos++],
+                        ttfData[currentPos++], ttfData[currentPos++]});
+                int length = readLong(new byte[]{ttfData[currentPos++], ttfData[currentPos++],
+                        ttfData[currentPos++], ttfData[currentPos++]});
+                verifyHmtx(ttfData, offset, length, mappedCharsSize);
+            } else {
+                currentPos += 12;
+            }
+        }
+        assertEquals(matches, 5);
+    }
+
+    private void verifyHmtx(byte[] ttfData, int offset, int length, int mappedCharsSize)
+            throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(ttfData);
+        byte[] subsetHmtx = new byte[length];
+        bais.skip(offset);
+        bais.read(subsetHmtx);
+        assertEquals(subsetHmtx.length, (mappedCharsSize + 32) * 4);
+    }
+
+    private int readInt(byte[] bytes) {
+        return ((0xFF & bytes[0]) << 8) | (0xFF & bytes[1]);
+    }
+
+    private int readLong(byte[] bytes) {
+        return ((0xFF & bytes[0]) << 24) | ((0xFF & bytes[1]) << 16) | ((0xFF & bytes[2]) << 8)
+                | (0xFF & bytes[3]);
+    }
+
+    private String readTag(byte[] tag) {
+        return new String(tag);
     }
 }

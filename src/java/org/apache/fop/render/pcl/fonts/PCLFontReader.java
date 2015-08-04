@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.OpenFont;
@@ -31,10 +32,15 @@ public abstract class PCLFontReader {
 
     protected Typeface typeface;
     protected PCLByteWriterUtil pclByteWriter;
+    protected CustomFont font;
 
     public PCLFontReader(Typeface font, PCLByteWriterUtil pclByteWriter) {
         this.typeface = font;
         this.pclByteWriter = pclByteWriter;
+    }
+
+    public void setFont(CustomFont mbFont) {
+        this.font = mbFont;
     }
 
     /** Header Data **/
@@ -77,7 +83,8 @@ public abstract class PCLFontReader {
     public abstract int getVariety();
 
     /** Segmented Font Data **/
-    public abstract List<PCLFontSegment> getFontSegments() throws IOException;
+    public abstract List<PCLFontSegment> getFontSegments(Map<Character, Integer> mappedGlyphs)
+            throws IOException;
 
     /** Character Definitions **/
     public abstract Map<Integer, int[]> getCharacterOffsets() throws IOException;
