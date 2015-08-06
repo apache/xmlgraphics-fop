@@ -150,6 +150,10 @@ public class FullyQualifiedNameTriplet extends AbstractTriplet {
     /** the actual fully qualified name */
     private final String fqName;
 
+    private String encoding = AFPConstants.EBCIDIC_ENCODING;
+
+    private int charlen = 1;
+
     /**
      * Main constructor
      *
@@ -157,11 +161,15 @@ public class FullyQualifiedNameTriplet extends AbstractTriplet {
      * @param format the fully qualified name format
      * @param fqName the fully qualified name
      */
-    public FullyQualifiedNameTriplet(byte type, byte format, String fqName) {
+    public FullyQualifiedNameTriplet(byte type, byte format, String fqName, boolean utf16be) {
         super(FULLY_QUALIFIED_NAME);
         this.type = type;
         this.format = format;
         this.fqName = fqName;
+        if (utf16be) {
+            encoding = "UTF-16BE";
+            charlen = 2;
+        }
     }
 
     /**
@@ -180,7 +188,7 @@ public class FullyQualifiedNameTriplet extends AbstractTriplet {
 
     /** {@inheritDoc} */
     public int getDataLength() {
-        return 4 + fqName.length();
+        return 4 + (fqName.length() * charlen);
     }
 
     /** {@inheritDoc} */
@@ -191,7 +199,6 @@ public class FullyQualifiedNameTriplet extends AbstractTriplet {
 
         // FQName
         byte[] fqNameBytes;
-        String encoding = AFPConstants.EBCIDIC_ENCODING;
         if (format == FORMAT_URL) {
             encoding = AFPConstants.US_ASCII_ENCODING;
         }

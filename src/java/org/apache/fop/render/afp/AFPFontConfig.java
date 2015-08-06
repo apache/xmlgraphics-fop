@@ -20,6 +20,8 @@
 package org.apache.fop.render.afp;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,12 +44,16 @@ import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.events.EventProducer;
+import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.FontConfig;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontManagerConfigurator;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.FontTriplet.Matcher;
+import org.apache.fop.fonts.FontType;
+import org.apache.fop.fonts.FontUris;
 import org.apache.fop.fonts.FontUtil;
+import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
 
 /**
@@ -154,6 +160,13 @@ public final class AFPFontConfig implements FontConfig {
                         triplet.getAttribute("style"), weight);
                 tripletList.add(fontTriplet);
             }
+
+            String tturi = fontCfg.getAttribute("embed-url", null);
+            if (tturi != null) {
+                fontFromType(tripletList, "truetype", null, "UTF-16BE", fontCfg, eventProducer, tturi);
+                return;
+            }
+
             //build the fonts
             Configuration[] config = fontCfg.getChildren("afp-font");
             if (config.length == 0) {
@@ -199,8 +212,9 @@ public final class AFPFontConfig implements FontConfig {
                         embedURI);
             } else if ("CIDKeyed".equalsIgnoreCase(type)) {
                 config = getCIDKeyedFont(fontTriplets, type, codepage, encoding, cfg,
-                        eventProducer,
-                        embedURI);
+                        eventProducer, embedURI);
+            } else if ("truetype".equalsIgnoreCase(type)) {
+                config = getTruetypeFont(fontTriplets, type, codepage, encoding, cfg, eventProducer, embedURI);
             } else {
                 LOG.error("No or incorrect type attribute: " + type);
             }
@@ -238,6 +252,19 @@ public final class AFPFontConfig implements FontConfig {
             String base14 = cfg.getAttribute("base14-font", null);
             return new OutlineFontConfig(fontTriplets, type, codepage, encoding, characterset,
                     name, base14, isEmbbedable(fontTriplets), uri);
+        }
+
+        private TrueTypeFontConfig getTruetypeFont(List<FontTriplet> fontTriplets, String type, String codepage,
+                                                   String encoding, Configuration cfg, AFPEventProducer eventProducer,
+                                                   String uri) throws ConfigurationException {
+            String name = cfg.getAttribute("name", null);
+            if (name == null) {
+                eventProducer.fontConfigMissing(this, "font name attribute", cfg.getLocation());
+                return null;
+            }
+            String subfont = cfg.getAttribute("sub-font", null);
+            return new TrueTypeFontConfig(fontTriplets, type, codepage, encoding, "",
+                    name, subfont, isEmbbedable(fontTriplets), uri);
         }
 
         private RasterFontConfig getRasterFont(List<FontTriplet> triplets, String type,
@@ -281,12 +308,12 @@ public final class AFPFontConfig implements FontConfig {
     }
 
     abstract static class AFPFontConfigData {
-        private final List<FontTriplet> triplets;
+        protected final List<FontTriplet> triplets;
         private final String codePage;
         private final String encoding;
         private final String name;
         private final boolean embeddable;
-        private final String uri;
+        protected final String uri;
 
         AFPFontConfigData(List<FontTriplet> triplets, String type, String codePage,
                 String encoding, String name, boolean embeddable, String uri) {
@@ -331,6 +358,55 @@ public final class AFPFontConfig implements FontConfig {
                     characterset, super.codePage, super.encoding, charsetType, accessor, eventProducer);
             return getFontInfo(new DoubleByteFont(super.codePage, super.embeddable, characterSet,
                     eventProducer), this);
+        }
+    }
+
+    static final class TrueTypeFontConfig extends AFPFontConfigData {
+        private String characterset;
+        private String subfont;
+
+        private TrueTypeFontConfig(List<FontTriplet> triplets, String type, String codePage,
+                                   String encoding, String characterset, String name, String subfont,
+                                   boolean embeddable, String uri) {
+            super(triplets, type, codePage, encoding, name, embeddable, uri);
+            this.characterset = characterset;
+            this.subfont = subfont;
+        }
+
+        @Override
+        AFPFontInfo getFontInfo(InternalResourceResolver resourceResolver, AFPEventProducer eventProducer)
+                throws IOException {
+            Typeface tf;
+            try {
+                tf = new LazyFont(new EmbedFontInfo(
+                        new FontUris(new URI(uri), null)
+                        , false, true, null, subfont), resourceResolver, false).getRealFont();
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
+            AFPResourceAccessor accessor = getAccessor(resourceResolver);
+            CharacterSet characterSet = CharacterSetBuilder.getDoubleByteInstance().build(characterset, super.codePage,
+                    super.encoding, tf, accessor, eventProducer);
+            OutlineFont font = new AFPTrueTypeFont(super.name, super.embeddable, characterSet,
+                    eventProducer, subfont);
+            return getFontInfo(font, this);
+        }
+    }
+
+    public static class AFPTrueTypeFont extends OutlineFont {
+        private String ttc;
+        public AFPTrueTypeFont(String name, boolean embeddable, CharacterSet charSet, AFPEventProducer eventProducer,
+                               String ttc) {
+            super(name, embeddable, charSet, eventProducer);
+            this.ttc = ttc;
+        }
+
+        public FontType getFontType() {
+            return FontType.TRUETYPE;
+        }
+
+        public String getTTC() {
+            return ttc;
         }
     }
 

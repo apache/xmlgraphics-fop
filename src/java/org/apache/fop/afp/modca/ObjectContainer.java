@@ -36,7 +36,7 @@ import org.apache.fop.afp.util.BinaryUtils;
 public class ObjectContainer extends AbstractDataObject {
 
     /** the object container data maximum length */
-    private static final int MAX_DATA_LEN = 32759;
+    private static final int MAX_DATA_LEN = 8192;
 
     private byte[] data;
 

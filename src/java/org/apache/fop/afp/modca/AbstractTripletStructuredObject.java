@@ -103,7 +103,7 @@ public abstract class AbstractTripletStructuredObject extends AbstractStructured
      *
      * @param triplet the triplet to add
      */
-    protected void addTriplet(AbstractTriplet triplet) {
+    public void addTriplet(AbstractTriplet triplet) {
         triplets.add(triplet);
     }
 
@@ -131,7 +131,11 @@ public abstract class AbstractTripletStructuredObject extends AbstractStructured
      * @param fqName the fully qualified name of this resource
      */
     public void setFullyQualifiedName(byte fqnType, byte fqnFormat, String fqName) {
-        addTriplet(new FullyQualifiedNameTriplet(fqnType, fqnFormat, fqName));
+        addTriplet(new FullyQualifiedNameTriplet(fqnType, fqnFormat, fqName, false));
+    }
+
+    public void setFullyQualifiedName(byte fqnType, byte fqnFormat, String fqName, boolean utf16be) {
+        addTriplet(new FullyQualifiedNameTriplet(fqnType, fqnFormat, fqName, utf16be));
     }
 
     /** @return the fully qualified name of this triplet or null if it does not exist */

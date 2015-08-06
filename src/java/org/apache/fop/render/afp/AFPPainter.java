@@ -68,6 +68,7 @@ import org.apache.fop.afp.ptoca.PtocaProducer;
 import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
@@ -973,11 +974,18 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                         builder.setVariableSpaceCharacterIncrement(varSpaceCharacterIncrement);
 
                         boolean fixedSpaceMode = false;
+                        int ttPos = p.x;
 
                         for (int i = 0; i < l; i++) {
                             char orgChar = text.charAt(i);
                             float glyphAdjust = 0;
-                            if (CharUtilities.isFixedWidthSpace(orgChar)) {
+                            if (afpFont.getFontType() == FontType.TRUETYPE) {
+                                flushText(builder, sb, charSet);
+                                fixedSpaceMode = true;
+                                int charWidth = font.getCharWidth(orgChar);
+                                sb.append(orgChar);
+                                glyphAdjust += charWidth;
+                            } else if (CharUtilities.isFixedWidthSpace(orgChar)) {
                                 flushText(builder, sb, charSet);
                                 builder.setVariableSpaceCharacterIncrement(
                                         fixedSpaceCharacterIncrement);
@@ -1005,7 +1013,11 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                                 glyphAdjust += dx[i + 1];
                             }
 
-                            if (glyphAdjust != 0) {
+                            if (afpFont.getFontType() == FontType.TRUETYPE) {
+                                flushText(builder, sb, charSet);
+                                ttPos += Math.round(unitConv.mpt2units(glyphAdjust));
+                                builder.absoluteMoveInline(ttPos);
+                            } else if (glyphAdjust != 0) {
                                 flushText(builder, sb, charSet);
                                 int increment = Math.round(unitConv.mpt2units(glyphAdjust));
                                 builder.relativeMoveInline(increment);
