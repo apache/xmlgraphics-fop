@@ -232,6 +232,12 @@ public abstract class CharacterSetBuilder {
                 eventProducer);
     }
 
+    public CharacterSet build(String characterSetName, String codePageName, String encoding,
+                              Typeface typeface, AFPResourceAccessor accessor, AFPEventProducer eventProducer)
+        throws IOException {
+        return new FopCharacterSet(codePageName, encoding, characterSetName, typeface, accessor, eventProducer);
+    }
+
     private CharacterSet processFont(String characterSetName, String codePageName, String encoding,
             CharacterSetType charsetType, AFPResourceAccessor accessor, AFPEventProducer eventProducer)
             throws IOException {

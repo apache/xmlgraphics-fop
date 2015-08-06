@@ -21,7 +21,11 @@ package org.apache.fop.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.fop.afp.modca.triplets.AbstractTriplet;
+import org.apache.fop.afp.modca.triplets.Triplet;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
@@ -29,6 +33,7 @@ import org.apache.fop.afp.util.BinaryUtils;
  * required for presentation.
  */
 public class MapDataResource extends AbstractTripletStructuredObject {
+    private List<List<AbstractTriplet>> tripletsList = new ArrayList<List<AbstractTriplet>>();
 
     /**
      * Main constructor
@@ -36,23 +41,45 @@ public class MapDataResource extends AbstractTripletStructuredObject {
     public MapDataResource() {
     }
 
+    public void finishElement() {
+        tripletsList.add(triplets);
+        triplets = new ArrayList<AbstractTriplet>();
+    }
+
+    @Override
+    protected int getTripletDataLength() {
+        int dataLength = 0;
+        for (List<AbstractTriplet> l : tripletsList) {
+            dataLength += getTripletDataLength(l) + 2;
+        }
+        return dataLength;
+    }
+
+    private int getTripletDataLength(List<AbstractTriplet> l) {
+        int dataLength = 0;
+        for (Triplet triplet : l) {
+            dataLength += triplet.getDataLength();
+        }
+        return dataLength;
+    }
+
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
         super.writeStart(os);
-        byte[] data = new byte[11];
+        byte[] data = new byte[9];
         copySF(data, Type.MAP, Category.DATA_RESOURCE);
 
         int tripletDataLen = getTripletDataLength();
 
-        byte[] len = BinaryUtils.convert(10 + tripletDataLen, 2);
+        byte[] len = BinaryUtils.convert(8 + tripletDataLen, 2);
         data[1] = len[0];
         data[2] = len[1];
-
-        len = BinaryUtils.convert(2 + tripletDataLen, 2);
-        data[9] = len[0];
-        data[10] = len[1];
-
         os.write(data);
-        writeTriplets(os);
+
+        for (List<AbstractTriplet> l : tripletsList) {
+            len = BinaryUtils.convert(2 + getTripletDataLength(l), 2);
+            os.write(len);
+            writeObjects(l, os);
+        }
     }
 }

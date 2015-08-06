@@ -36,15 +36,21 @@ import org.apache.fop.afp.fonts.AFPFont;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.modca.AbstractNamedAFPObject;
 import org.apache.fop.afp.modca.AbstractPageObject;
+import org.apache.fop.afp.modca.ActiveEnvironmentGroup;
 import org.apache.fop.afp.modca.IncludeObject;
 import org.apache.fop.afp.modca.IncludedResourceObject;
+import org.apache.fop.afp.modca.ObjectContainer;
 import org.apache.fop.afp.modca.PageSegment;
 import org.apache.fop.afp.modca.Registry;
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.ResourceObject;
+import org.apache.fop.afp.modca.triplets.EncodingTriplet;
+import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.afp.util.AFPResourceUtil;
 import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.fonts.FontType;
+import org.apache.fop.render.afp.AFPFontConfig;
 
 /**
  * Manages the creation and storage of document resources
@@ -330,12 +336,19 @@ public class AFPResourceManager {
             //Embed fonts (char sets and code pages)
             if (charSet.getResourceAccessor() != null) {
                 AFPResourceAccessor accessor = charSet.getResourceAccessor();
-                createIncludedResource(
-                        charSet.getName(), accessor,
-                        ResourceObject.TYPE_FONT_CHARACTER_SET);
-                createIncludedResource(
-                        charSet.getCodePage(), accessor,
-                        ResourceObject.TYPE_CODE_PAGE);
+                if (afpFont.getFontType() == FontType.TRUETYPE) {
+
+                    createIncludedResource(afpFont.getFontName(), accessor.resolveURI("."), accessor,
+                            ResourceObject.TYPE_OBJECT_CONTAINER, true,
+                            ((AFPFontConfig.AFPTrueTypeFont) afpFont).getTTC());
+                } else {
+                    createIncludedResource(
+                            charSet.getName(), accessor,
+                            ResourceObject.TYPE_FONT_CHARACTER_SET);
+                    createIncludedResource(
+                            charSet.getCodePage(), accessor,
+                            ResourceObject.TYPE_CODE_PAGE);
+                }
             }
         }
     }
@@ -366,7 +379,7 @@ public class AFPResourceManager {
                     + " (" + e.getMessage() + ")");
         }
 
-        createIncludedResource(resourceName, uri, accessor, resourceObjectType);
+        createIncludedResource(resourceName, uri, accessor, resourceObjectType, false, null);
     }
 
     /**
@@ -378,7 +391,7 @@ public class AFPResourceManager {
      * @throws IOException if an I/O error occurs while loading the resource
      */
     public void createIncludedResource(String resourceName, URI uri, AFPResourceAccessor accessor,
-                byte resourceObjectType) throws IOException {
+                                       byte resourceObjectType, boolean truetype, String ttc) throws IOException {
         AFPResourceLevel resourceLevel = new AFPResourceLevel(ResourceType.PRINT_FILE);
 
         AFPResourceInfo resourceInfo = new AFPResourceInfo();
@@ -391,15 +404,46 @@ public class AFPResourceManager {
             if (log.isDebugEnabled()) {
                 log.debug("Adding included resource: " + resourceName);
             }
-            IncludedResourceObject resourceContent = new IncludedResourceObject(
-                        resourceName, accessor, uri);
-
-            ResourceObject resourceObject = factory.createResource(resourceName);
-            resourceObject.setDataObject(resourceContent);
-            resourceObject.setType(resourceObjectType);
 
             ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
-            resourceGroup.addObject(resourceObject);
+
+            if (truetype) {
+                ResourceObject res = factory.createResource();
+                res.setType(ResourceObject.TYPE_OBJECT_CONTAINER);
+
+                ActiveEnvironmentGroup.setupTruetypeMDR(res, false);
+
+                ObjectContainer oc = factory.createObjectContainer();
+                InputStream is;
+                try {
+                    is = accessor.createInputStream(new URI("."));
+                } catch (URISyntaxException e) {
+                    throw new IOException(e);
+                }
+
+                if (ttc != null) {
+                    oc.setData(extractTTC(ttc, is));
+                } else {
+                    oc.setData(IOUtils.toByteArray(is));
+                }
+
+                ActiveEnvironmentGroup.setupTruetypeMDR(oc, true);
+
+                res.addTriplet(new EncodingTriplet(1200));
+
+                res.setFullyQualifiedName(FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
+                        FullyQualifiedNameTriplet.FORMAT_CHARSTR, resourceName, true);
+
+                res.setDataObject(oc);
+                resourceGroup.addObject(res);
+            } else {
+                ResourceObject resourceObject = factory.createResource(resourceName);
+                IncludedResourceObject resourceContent = new IncludedResourceObject(
+                        resourceName, accessor, uri);
+                resourceObject.setDataObject(resourceContent);
+                resourceObject.setType(resourceObjectType);
+                resourceGroup.addObject(resourceObject);
+            }
 
             //TODO what is the data object?
             cachedObject = new CachedObject(resourceName, null);
@@ -409,6 +453,23 @@ public class AFPResourceManager {
         } else {
             //skip, already created
         }
+    }
+
+    private byte[] extractTTC(String ttc, InputStream is) throws IOException {
+//        TrueTypeCollection trueTypeCollection = new TrueTypeCollection(is);
+//        for (TrueTypeFont ttf : trueTypeCollection.getFonts()) {
+//            String name = ttf.getNaming().getFontFamily();
+//            if (name.equals(ttc)) {
+//                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//                TTFSubsetter s = new TTFSubsetter(ttf, null);
+//                for (int i = 0; i < 256 * 256; i++) {
+//                    s.addCharCode(i);
+//                }
+//                s.writeToStream(bos);
+//                return bos.toByteArray();
+//            }
+//        }
+        throw new IOException(ttc + " not supported");
     }
 
     /**

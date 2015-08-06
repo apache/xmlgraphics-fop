@@ -23,8 +23,17 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.fonts.AFPFont;
+import org.apache.fop.afp.modca.triplets.AbstractTriplet;
+import org.apache.fop.afp.modca.triplets.EncodingTriplet;
+import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
+import org.apache.fop.afp.modca.triplets.ObjectClassificationTriplet;
+import org.apache.fop.afp.util.BinaryUtils;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.fonts.FontType;
+import org.apache.fop.render.afp.AFPFontConfig;
 
 /**
  * An Active Environment Group (AEG) is associated with each page,
@@ -62,6 +71,8 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
 
     /** the resource manager */
     private final Factory factory;
+
+    private MapDataResource mdr;
 
     /**
      * Constructor for the ActiveEnvironmentGroup, this takes a
@@ -169,24 +180,97 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
      * @param orientation the orientation of the font (e.g. 0, 90, 180, 270)
      */
     public void createFont(int fontRef, AFPFont font, int size, int orientation) {
-        MapCodedFont mapCodedFont = getCurrentMapCodedFont();
-        if (mapCodedFont == null) {
-            mapCodedFont = factory.createMapCodedFont();
-            mapCodedFonts.add(mapCodedFont);
-        }
+        if (font.getFontType() == FontType.TRUETYPE) {
+            if (mdr == null) {
+                mdr = factory.createMapDataResource();
+                mapCodedFonts.add(mdr);
+            }
+            mdr.addTriplet(new EncodingTriplet(1200));
+            String name = font.getFontName();
+            if (((AFPFontConfig.AFPTrueTypeFont)font).getTTC() != null) {
+                name = ((AFPFontConfig.AFPTrueTypeFont)font).getTTC();
+            }
+            mdr.setFullyQualifiedName(FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_EXTERNAL_RESOURCE_REF,
+                    FullyQualifiedNameTriplet.FORMAT_CHARSTR, name, true);
+            mdr.addTriplet(new FontFullyQualifiedNameTriplet((byte) fontRef));
 
-        try {
-            mapCodedFont.addFont(fontRef, font, size, orientation);
-        } catch (MaximumSizeExceededException msee) {
-            mapCodedFont = factory.createMapCodedFont();
-            mapCodedFonts.add(mapCodedFont);
+            setupTruetypeMDR(mdr, false);
+            mdr.addTriplet(new DataObjectFontTriplet(size / 1000));
+            mdr.finishElement();
+        } else {
+            MapCodedFont mapCodedFont = getCurrentMapCodedFont();
+            if (mapCodedFont == null) {
+                mapCodedFont = factory.createMapCodedFont();
+                mapCodedFonts.add(mapCodedFont);
+            }
 
             try {
                 mapCodedFont.addFont(fontRef, font, size, orientation);
-            } catch (MaximumSizeExceededException ex) {
-                // Should never happen (but log just in case)
-                LOG.error("createFont():: resulted in a MaximumSizeExceededException");
+            } catch (MaximumSizeExceededException msee) {
+                mapCodedFont = factory.createMapCodedFont();
+                mapCodedFonts.add(mapCodedFont);
+
+                try {
+                    mapCodedFont.addFont(fontRef, font, size, orientation);
+                } catch (MaximumSizeExceededException ex) {
+                    // Should never happen (but log just in case)
+                    LOG.error("createFont():: resulted in a MaximumSizeExceededException");
+                }
             }
+        }
+    }
+
+    public static void setupTruetypeMDR(AbstractTripletStructuredObject mdr, boolean res) {
+        AFPDataObjectInfo dataInfo = new AFPDataObjectInfo();
+        dataInfo.setMimeType(MimeConstants.MIME_AFP_TRUETYPE);
+        mdr.setObjectClassification(ObjectClassificationTriplet.CLASS_DATA_OBJECT_FONT,
+                dataInfo.getObjectType(), res, false, res);
+    }
+
+    public static class FontFullyQualifiedNameTriplet extends AbstractTriplet {
+        private byte fqName;
+        public FontFullyQualifiedNameTriplet(byte fqName) {
+            super(FULLY_QUALIFIED_NAME);
+            this.fqName = fqName;
+        }
+
+        public int getDataLength() {
+            return 5;
+        }
+
+        public void writeToStream(OutputStream os) throws IOException {
+            byte[] data = getData();
+            data[2] = FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_INTERNAL_RESOURCE_REF;
+            data[3] = FullyQualifiedNameTriplet.FORMAT_CHARSTR;
+            data[4] = fqName;
+            os.write(data);
+        }
+    }
+
+    static class DataObjectFontTriplet extends AbstractTriplet {
+        private int pointSize;
+
+        public DataObjectFontTriplet(int size) {
+            super(DATA_OBJECT_FONT_DESCRIPTOR);
+            pointSize = size;
+        }
+
+        public int getDataLength() {
+            return 16;
+        }
+
+        public void writeToStream(OutputStream os) throws IOException {
+            byte[] data = getData();
+            data[3] = 0x20;
+            byte[] pointSizeBytes = BinaryUtils.convert(pointSize * 20, 2);
+            data[4] = pointSizeBytes[0]; //vfs
+            data[5] = pointSizeBytes[1];
+//            data[6] = pointSizeBytes[0]; //hsf
+//            data[7] = pointSizeBytes[1];
+            //charrot
+            data[11] = 0x03; //encenv
+            data[13] = 0x01; //encid
+            os.write(data);
         }
     }
 

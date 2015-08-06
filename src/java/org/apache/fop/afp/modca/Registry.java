@@ -174,24 +174,24 @@ public final class Registry {
                         MimeConstants.MIME_PCL
                 )
         );
+        mimeObjectTypeMap.put(
+                MimeConstants.MIME_AFP_TRUETYPE,
+                new ObjectType(
+                        COMPID_TRUETYPE_OPENTYPE_FONT_RESOURCE_OBJECT,
+                        new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x33},
+                        "TrueType/OpenType Font Resource Object",
+                        true,
+                        MimeConstants.MIME_AFP_TRUETYPE
+                )
+        );
 //        mimeObjectTypeMap.put(
-//                null,
-//                new ObjectType(
-//                        COMPID_TRUETYPE_OPENTYPE_FONT_RESOURCE_OBJECT,
-//                        new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x33},
-//                        "TrueType/OpenType Font Resource Object",
-//                        true,
-//                        null
-//                )
-//        );
-//        mimeObjectTypeMap.put(
-//                null,
+//                MimeConstants.MIME_AFP_TTC,
 //                new ObjectType(
 //                        COMPID_TRUETYPE_OPENTYPE_FONT_COLLECTION_RESOURCE_OBJECT,
 //                        new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x35},
 //                        "TrueType/OpenType Font Collection Resource Object",
 //                        true,
-//                        null
+//                        MimeConstants.MIME_AFP_TTC
 //                )
 //        );
     }

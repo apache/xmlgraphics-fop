@@ -108,8 +108,12 @@ public class CharacterSet {
 
         // the character set name must be 8 chars long
         this.name = padName(name);
-        // the code page name must be 8 chars long
-        this.codePage = padName(codePage);
+        if (codePage == null) {
+            this.codePage = null;
+        } else {
+            // the code page name must be 8 chars long
+            this.codePage = padName(codePage);
+        }
 
         this.encoding = encoding;
         this.encoder = charsetType.getEncoder(encoding);

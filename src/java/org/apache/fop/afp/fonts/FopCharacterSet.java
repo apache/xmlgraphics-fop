@@ -49,6 +49,12 @@ public class FopCharacterSet extends CharacterSet {
         this.charSet = charSet;
     }
 
+    public FopCharacterSet(String codePage, String encoding, String name, Typeface charSet,
+                           AFPResourceAccessor accessor, AFPEventProducer eventProducer) {
+        super(codePage, encoding, CharacterSetType.SINGLE_BYTE, name, accessor, eventProducer);
+        this.charSet = charSet;
+    }
+
     /**
      * Ascender height is the distance from the character baseline to the
      * top of the character box. A negative ascender height signifies that
