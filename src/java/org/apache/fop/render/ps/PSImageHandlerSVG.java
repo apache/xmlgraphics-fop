@@ -103,7 +103,7 @@ public class PSImageHandlerSVG implements ImageHandler {
             PSImageUtils.writeImage(encoder, imgDim, imgDescription, targetRect, cm, gen, ri, mi.getMaskColor());
         } else {
             //Controls whether text painted by Batik is generated using text or path operations
-            boolean strokeText = false;
+            boolean strokeText = shouldStrokeText(imageSVG.getDocument().getChildNodes());
             //TODO Configure text stroking
 
             SVGUserAgent ua = new SVGUserAgent(context.getUserAgent(),
@@ -325,6 +325,19 @@ public class PSImageHandlerSVG implements ImageHandler {
             }
         }
         return opacityFound;
+    }
+
+    public static boolean shouldStrokeText(NodeList childNodes) {
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node curNode = childNodes.item(i);
+            if (shouldStrokeText(curNode.getChildNodes())) {
+                return true;
+            }
+            if ("text".equals(curNode.getLocalName())) {
+                return curNode.getAttributes().getNamedItem("filter") != null;
+            }
+        }
+        return false;
     }
 
     /** {@inheritDoc} */
