@@ -55,7 +55,7 @@ final class HardcodedFonts {
         return selectFont(gen, name, size);
     }
 
-    private static boolean selectFont(PCLGenerator gen, String name, int size) throws IOException {
+    protected static boolean selectFont(PCLGenerator gen, String name, int size) throws IOException {
         int fontcode = 0;
         if (name.length() > 1 && name.charAt(0) == 'F') {
             try {

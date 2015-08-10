@@ -28,7 +28,9 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -42,16 +44,27 @@ import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
+import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.FontType;
+import org.apache.fop.fonts.LazyFont;
+import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
+import org.apache.fop.render.java2d.CustomFontMetricsMapper;
 import org.apache.fop.render.java2d.FontMetricsMapper;
 import org.apache.fop.render.java2d.Java2DPainter;
+import org.apache.fop.render.pcl.fonts.PCLCharacterWriter;
+import org.apache.fop.render.pcl.fonts.PCLSoftFont;
+import org.apache.fop.render.pcl.fonts.PCLSoftFontManager;
+import org.apache.fop.render.pcl.fonts.PCLSoftFontManager.PCLTextSegment;
+import org.apache.fop.render.pcl.fonts.truetype.PCLTTFCharacterWriter;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
@@ -72,6 +85,8 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
 
     private Stack<GraphicContext> graphicContextStack = new Stack<GraphicContext>();
     private GraphicContext graphicContext = new GraphicContext();
+
+    private PCLSoftFontManager sfManager = new PCLSoftFontManager();
 
     /**
      * Main constructor.
@@ -315,21 +330,79 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
             //TODO Ignored: state.getFontVariant()
             //TODO Opportunity for font caching if font state is more heavily used
             String fontKey = getFontKey(triplet);
-            boolean pclFont = getPCLUtil().isAllTextAsBitmaps() ? false
-                        : HardcodedFonts.setFont(gen, fontKey, state.getFontSize(), text);
+            Typeface tf = getTypeface(fontKey);
+            boolean drawAsBitmaps = getPCLUtil().isAllTextAsBitmaps();
+            boolean pclFont = HardcodedFonts.setFont(gen, fontKey, state.getFontSize(), text);
             if (pclFont) {
                 drawTextNative(x, y, letterSpacing, wordSpacing, dp, text, triplet);
             } else {
-                drawTextAsBitmap(x, y, letterSpacing, wordSpacing, dp, text, triplet);
-                if (DEBUG) {
-                    state.setTextColor(Color.GRAY);
-                    HardcodedFonts.setFont(gen, "F1", state.getFontSize(), text);
-                    drawTextNative(x, y, letterSpacing, wordSpacing, dp, text, triplet);
+                // TrueType conversion to a soft font (PCL 5 Technical Reference - Chapter 11)
+                if (!drawAsBitmaps && isTrueType(tf)) {
+                    boolean madeSF = false;
+                    if (sfManager.getSoftFont(tf, text) == null) {
+                        madeSF = true;
+                        ByteArrayOutputStream baos = sfManager.makeSoftFont(tf);
+                        if (baos != null) {
+                            gen.writeBytes(baos.toByteArray());
+                        }
+                    }
+                    String formattedSize = gen.formatDouble2(state.getFontSize() / 1000.0);
+                    gen.writeCommand(String.format("(s%sV", formattedSize));
+                    List<PCLTextSegment> textSegments = sfManager.getTextSegments(text, tf);
+                    if (textSegments.isEmpty()) {
+                        textSegments.add(new PCLTextSegment(sfManager.getSoftFontID(tf), text));
+                    }
+                    boolean first = true;
+                    for (PCLTextSegment textSegment : textSegments) {
+                        gen.writeCommand(String.format("(%dX", textSegment.getFontID()));
+                        PCLSoftFont softFont = sfManager.getSoftFontFromID(textSegment.getFontID());
+                        PCLCharacterWriter charWriter = new PCLTTFCharacterWriter(softFont);
+                        gen.writeBytes(sfManager.assignFontID(textSegment.getFontID()));
+                        gen.writeBytes(charWriter.writeCharacterDefinitions(textSegment.getText()));
+                        if (first) {
+                            drawTextUsingSoftFont(x, y, letterSpacing, wordSpacing, dp,
+                                    textSegment.getText(), triplet, softFont);
+                            first = false;
+                        } else {
+                            drawTextUsingSoftFont(-1, -1, letterSpacing, wordSpacing, dp,
+                                    textSegment.getText(), triplet, softFont);
+                        }
+                    }
+                } else {
+                    drawTextAsBitmap(x, y, letterSpacing, wordSpacing, dp, text, triplet);
+                    if (DEBUG) {
+                        state.setTextColor(Color.GRAY);
+                        HardcodedFonts.setFont(gen, "F1", state.getFontSize(), text);
+                        drawTextNative(x, y, letterSpacing, wordSpacing, dp, text, triplet);
+                    }
                 }
             }
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawText()", ioe);
         }
+    }
+
+    private boolean isTrueType(Typeface tf) {
+        if (tf.getFontType().equals(FontType.TRUETYPE)) {
+            return true;
+        } else if (tf instanceof CustomFontMetricsMapper) {
+            Typeface realFont = ((CustomFontMetricsMapper) tf).getRealFont();
+            if (realFont instanceof MultiByteFont) {
+                return ((MultiByteFont) realFont).getCIDType().equals(CIDFontType.CIDTYPE2);
+            }
+        }
+        return false;
+    }
+
+    private Typeface getTypeface(String fontName) {
+        if (fontName == null) {
+            throw new NullPointerException("fontName must not be null");
+        }
+        Typeface tf = getFontInfo().getFonts().get(fontName);
+        if (tf instanceof LazyFont) {
+            tf = ((LazyFont)tf).getRealFont();
+        }
+        return tf;
     }
 
     private void drawTextNative(int x, int y, int letterSpacing, int wordSpacing, int[][] dp,
@@ -414,25 +487,87 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
 
     }
 
+    private void drawTextUsingSoftFont(int x, int y, int letterSpacing, int wordSpacing, int[][] dp,
+            String text, FontTriplet triplet, PCLSoftFont softFont) throws IOException {
+        Color textColor = state.getTextColor();
+        if (textColor != null) {
+            gen.setTransparencyMode(true, false);
+            gen.selectGrayscale(textColor);
+        }
+
+        if (x != -1 && y != -1) {
+            setCursorPos(x, y);
+        }
+
+        float fontSize = state.getFontSize() / 1000f;
+        Font font = getFontInfo().getFontInstance(triplet, state.getFontSize());
+        int l = text.length();
+        int[] dx = IFUtil.convertDPToDX(dp);
+        int dxl = (dx != null ? dx.length : 0);
+
+        StringBuffer sb = new StringBuffer(Math.max(16, l));
+        if (dx != null && dxl > 0 && dx[0] != 0) {
+            sb.append("\u001B&a+").append(gen.formatDouble2(dx[0] / 100.0)).append('H');
+        }
+        String current = "";
+        for (int i = 0; i < l; i++) {
+            char orgChar = text.charAt(i);
+            float glyphAdjust = 0;
+            if (!font.hasChar(orgChar)) {
+                if (CharUtilities.isFixedWidthSpace(orgChar)) {
+                    //Fixed width space are rendered as spaces so copy/paste works in a reader
+                    char ch = font.mapChar(CharUtilities.SPACE);
+                    int spaceDiff = font.getCharWidth(ch) - font.getCharWidth(orgChar);
+                    glyphAdjust = -(10 * spaceDiff / fontSize);
+                }
+            }
+
+            if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
+                glyphAdjust += wordSpacing;
+            }
+            current += orgChar;
+            glyphAdjust += letterSpacing;
+            if (dx != null && i < dxl - 1) {
+                glyphAdjust += dx[i + 1];
+            }
+
+            if (glyphAdjust != 0) {
+                gen.getOutputStream().write(sb.toString().getBytes(gen.getTextEncoding()));
+                for (int j = 0; j < current.length(); j++) {
+                    gen.getOutputStream().write(softFont.getCharCode(current.charAt(j)));
+                }
+                sb = new StringBuffer();
+
+                String command = (glyphAdjust > 0) ? "\u001B&a+" : "\u001B&a";
+                sb.append(command).append(gen.formatDouble2(glyphAdjust / 100.0)).append('H');
+
+                current = "";
+            }
+        }
+        if (!current.equals("")) {
+            gen.getOutputStream().write(sb.toString().getBytes(gen.getTextEncoding()));
+            for (int i = 0; i < current.length(); i++) {
+                gen.getOutputStream().write(softFont.getCharCode(current.charAt(i)));
+            }
+        }
+    }
+
     private static final double SAFETY_MARGIN_FACTOR = 0.05;
 
-    private Rectangle getTextBoundingBox(int x, int y,
-            int letterSpacing, int wordSpacing, int[][] dp,
-            String text,
-            Font font, FontMetricsMapper metrics) {
+    private Rectangle getTextBoundingBox(int x, int y, int letterSpacing, int wordSpacing,
+            int[][] dp, String text, Font font, FontMetricsMapper metrics) {
         int maxAscent = metrics.getMaxAscent(font.getFontSize()) / 1000;
-        int descent = metrics.getDescender(font.getFontSize()) / 1000; //is negative
-        int safetyMargin = (int)(SAFETY_MARGIN_FACTOR * font.getFontSize());
-        Rectangle boundingRect = new Rectangle(
-                x, y - maxAscent - safetyMargin,
-                0, maxAscent - descent + 2 * safetyMargin);
+        int descent = metrics.getDescender(font.getFontSize()) / 1000; // is negative
+        int safetyMargin = (int) (SAFETY_MARGIN_FACTOR * font.getFontSize());
+        Rectangle boundingRect = new Rectangle(x, y - maxAscent - safetyMargin, 0, maxAscent
+                - descent + 2 * safetyMargin);
 
         int l = text.length();
         int[] dx = IFUtil.convertDPToDX(dp);
         int dxl = (dx != null ? dx.length : 0);
 
         if (dx != null && dxl > 0 && dx[0] != 0) {
-            boundingRect.setLocation(boundingRect.x - (int)Math.ceil(dx[0] / 10f), boundingRect.y);
+            boundingRect.setLocation(boundingRect.x - (int) Math.ceil(dx[0] / 10f), boundingRect.y);
         }
         float width = 0.0f;
         for (int i = 0; i < l; i++) {
@@ -451,19 +586,17 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
             width += cw + glyphAdjust;
         }
         int extraWidth = font.getFontSize() / 3;
-        boundingRect.setSize(
-                (int)Math.ceil(width) + extraWidth,
-                boundingRect.height);
+        boundingRect.setSize((int) Math.ceil(width) + extraWidth, boundingRect.height);
         return boundingRect;
     }
 
-    private void drawTextAsBitmap(final int x, final int y,
-            final int letterSpacing, final int wordSpacing, final int[][] dp,
-            final String text, FontTriplet triplet) throws IFException {
-        //Use Java2D to paint different fonts via bitmap
+    private void drawTextAsBitmap(final int x, final int y, final int letterSpacing,
+            final int wordSpacing, final int[][] dp, final String text, FontTriplet triplet)
+            throws IFException {
+        // Use Java2D to paint different fonts via bitmap
         final Font font = getFontInfo().getFontInstance(triplet, state.getFontSize());
 
-        //for cursive fonts, so the text isn't clipped
+        // for cursive fonts, so the text isn't clipped
         FontMetricsMapper mapper;
         try {
             mapper = (FontMetricsMapper) getFontInfo().getMetricsFor(font.getFontName());
@@ -473,11 +606,11 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
         final int maxAscent = mapper.getMaxAscent(font.getFontSize()) / 1000;
         final int ascent = mapper.getAscender(font.getFontSize()) / 1000;
         final int descent = mapper.getDescender(font.getFontSize()) / 1000;
-        int safetyMargin = (int)(SAFETY_MARGIN_FACTOR * font.getFontSize());
+        int safetyMargin = (int) (SAFETY_MARGIN_FACTOR * font.getFontSize());
         final int baselineOffset = maxAscent + safetyMargin;
 
-        final Rectangle boundingBox = getTextBoundingBox(x, y,
-                letterSpacing, wordSpacing, dp, text, font, mapper);
+        final Rectangle boundingBox = getTextBoundingBox(x, y, letterSpacing, wordSpacing, dp,
+                text, font, mapper);
         final Dimension dim = boundingBox.getSize();
 
         Graphics2DImagePainter painter = new Graphics2DImagePainter() {
@@ -485,7 +618,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
             public void paint(Graphics2D g2d, Rectangle2D area) {
                 if (DEBUG) {
                     g2d.setBackground(Color.LIGHT_GRAY);
-                    g2d.clearRect(0, 0, (int)area.getWidth(), (int)area.getHeight());
+                    g2d.clearRect(0, 0, (int) area.getWidth(), (int) area.getHeight());
                 }
                 g2d.translate(-x, -y + baselineOffset);
 
@@ -501,7 +634,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
                 try {
                     painter.drawText(x, y, letterSpacing, wordSpacing, dp, text);
                 } catch (IFException e) {
-                    //This should never happen with the Java2DPainter
+                    // This should never happen with the Java2DPainter
                     throw new RuntimeException("Unexpected error while painting text", e);
                 }
             }

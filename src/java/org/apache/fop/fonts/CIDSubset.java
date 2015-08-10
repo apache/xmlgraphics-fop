@@ -53,6 +53,12 @@ public class CIDSubset implements CIDSet {
      */
     private Map<Integer, Character> usedCharsIndex = new HashMap<Integer, Character>();
 
+    /**
+     * A map between the original character and it's GID in the original font.
+     */
+    private Map<Character, Integer> charToGIDs = new HashMap<Character, Integer>();
+
+
     private final MultiByteFont font;
 
     public CIDSubset(MultiByteFont mbf) {
@@ -93,6 +99,7 @@ public class CIDSubset implements CIDSet {
             usedGlyphs.put(glyphIndex, selector);
             usedGlyphsIndex.put(selector, glyphIndex);
             usedCharsIndex.put(selector, unicode);
+            charToGIDs.put(unicode, glyphIndex);
             usedGlyphsCount++;
             return selector;
         } else {
@@ -103,6 +110,17 @@ public class CIDSubset implements CIDSet {
     /** {@inheritDoc} */
     public Map<Integer, Integer> getGlyphs() {
         return Collections.unmodifiableMap(this.usedGlyphs);
+    }
+
+    /** {@inheritDoc} */
+    public char getUnicodeFromGID(int glyphIndex) {
+        int selector = usedGlyphs.get(glyphIndex);
+        return usedCharsIndex.get(selector);
+    }
+
+    /** {@inheritDoc} */
+    public int getGIDFromChar(char ch) {
+        return charToGIDs.get(ch);
     }
 
     /** {@inheritDoc} */

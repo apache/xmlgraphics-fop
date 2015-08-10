@@ -44,6 +44,20 @@ public interface CIDSet {
     char getUnicode(int index);
 
     /**
+     * Gets the unicode character from the original font glyph index
+     * @param glyphIndex The original glyph index of the character in the font
+     * @return The character represented by the passed GID
+     */
+    char getUnicodeFromGID(int glyphIndex);
+
+    /**
+     * Returns the glyph index from the original font from a character
+     * @param ch The character
+     * @return The glyph index in the original font.
+     */
+    int getGIDFromChar(char ch);
+
+    /**
      * Maps a character to a character selector for a font subset. If the character isn't in the
      * subset, yet, it is added and a new character selector returned. Otherwise, the already
      * allocated character selector is returned from the existing map/subset.

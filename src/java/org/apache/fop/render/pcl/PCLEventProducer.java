@@ -53,4 +53,13 @@ public interface PCLEventProducer extends EventProducer {
      */
     void paperTypeUnavailable(Object source, long pageWidth, long pageHeight, String fallbackPaper);
 
+    /**
+     * The font type is not supported for PCL output.
+     * @param source The event source
+     * @param fontName The name of the font not supported
+     * @param supportedTypes The types of fonts currently supported
+     * @event.severity ERROR
+     */
+    void fontTypeNotSupported(Object source, String fontName, String supportedTypes);
+
 }
