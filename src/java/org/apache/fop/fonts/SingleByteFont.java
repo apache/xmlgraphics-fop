@@ -63,6 +63,7 @@ public class SingleByteFont extends CustomFont {
     private LinkedHashMap<Integer, String> usedGlyphNames;
     private Map<Integer, Integer> usedGlyphs;
     private Map<Integer, Character> usedCharsIndex;
+    private Map<Character, Integer> charGIDMappings;
 
     public SingleByteFont(InternalResourceResolver resourceResolver) {
         super(resourceResolver);
@@ -76,6 +77,7 @@ public class SingleByteFont extends CustomFont {
             usedGlyphNames = new LinkedHashMap<Integer, String>();
             usedGlyphs = new HashMap<Integer, Integer>();
             usedCharsIndex = new HashMap<Integer, Character>();
+            charGIDMappings = new HashMap<Character, Integer>();
 
             // The zeroth value is reserved for .notdef
             usedGlyphs.put(0, 0);
@@ -234,6 +236,7 @@ public class SingleByteFont extends CustomFont {
             int selector = usedGlyphsCount;
             usedGlyphs.put(glyphIndex, selector);
             usedCharsIndex.put(selector, unicode);
+            charGIDMappings.put(unicode, glyphIndex);
             usedGlyphsCount++;
             return selector;
         } else {
@@ -517,6 +520,15 @@ public class SingleByteFont extends CustomFont {
 
     public char getUnicodeFromSelector(int selector) {
         return getUnicode(selector);
+    }
+
+    public int getGIDFromChar(char ch) {
+        return charGIDMappings.get(ch);
+    }
+
+    public char getUnicodeFromGID(int glyphIndex) {
+        int selector = usedGlyphs.get(glyphIndex);
+        return usedCharsIndex.get(selector);
     }
 
     public void mapUsedGlyphName(int gid, String value) {

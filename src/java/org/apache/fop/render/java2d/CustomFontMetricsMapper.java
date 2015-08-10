@@ -289,4 +289,8 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
         }
     }
 
+    public Typeface getRealFont() {
+        return typeface;
+    }
+
 }
