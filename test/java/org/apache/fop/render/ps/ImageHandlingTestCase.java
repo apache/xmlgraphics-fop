@@ -18,18 +18,27 @@
 /* $Id$ */
 
 package org.apache.fop.render.ps;
+
+import java.awt.Rectangle;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Test;
 
+import org.w3c.dom.Document;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.IOUtils;
 
+import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
+
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.ps.DSCConstants;
+import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.dsc.DSCException;
 import org.apache.xmlgraphics.ps.dsc.DSCParser;
@@ -39,6 +48,8 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCCommentTitle;
 import org.apache.xmlgraphics.ps.dsc.events.DSCEvent;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.IFContext;
 
 /**
@@ -159,4 +170,26 @@ public class ImageHandlingTestCase extends AbstractPostScriptTest {
         return sb.toString();
     }
 
+    @Test
+    public void testPSImageHandlerSVG() throws IOException {
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        String svg = "<svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" "
+                + "width=\"210mm\" height=\"297mm\" font-size=\"20\" stroke-width=\"0.1mm\" font-family=\"Arial\">\n"
+                + "  <filter id=\"drop-shadow-font\" width=\"150%\" height=\"150%\">\n"
+                + "    <feGaussianBlur in=\"SourceAlpha\" result=\"blur\" stdDeviation=\"1\"/>\n"
+                + "    <feOffset in=\"blur\" result=\"offsetBlur\" dy=\"1\" dx=\"1\"/>\n"
+                + "    <feBlend in=\"SourceGraphic\" in2=\"offsetBlur\" mode=\"normal\"/>\n"
+                + "  </filter>\n"
+                + "  <text x=\"4.9mm\" filter=\"url(#drop-shadow-font)\" y=\"10.5mm\" fill=\"black\" "
+                + "rotate=\"30 30 0 15\">Hello SVG with FOP</text>\n"
+                + "</svg>";
+        SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(null);
+        Document doc = factory.createDocument(null, IOUtils.toInputStream(svg));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        new PSImageHandlerSVG().handleImage(
+                new PSRenderingContext(ua, new PSGenerator(bos), new FontInfo()),
+                new ImageXMLDOM(null, doc, ""),
+                new Rectangle());
+        assertTrue(bos.toString().contains("/DataSource Data"));
+    }
 }

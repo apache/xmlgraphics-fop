@@ -49,6 +49,7 @@ import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
+import org.apache.fop.render.ps.PSImageHandlerSVG;
 import org.apache.fop.svg.PDFAElementBridge;
 import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
@@ -85,7 +86,7 @@ public class PDFImageHandlerSVG implements ImageHandler {
         GVTBuilder builder = new GVTBuilder();
 
         //Controls whether text painted by Batik is generated using text or path operations
-        boolean strokeText = false;
+        boolean strokeText = PSImageHandlerSVG.shouldStrokeText(imageSVG.getDocument().getChildNodes());
         //TODO connect with configuration elsewhere.
 
         BridgeContext ctx = new PDFBridgeContext(ua,
