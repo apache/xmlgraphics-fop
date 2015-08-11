@@ -32,12 +32,12 @@ public class PCLTTFTable {
 
     protected void skipShort(FontFileReader reader, int skips)
             throws IOException {
-        reader.skip(skips * 2);
+        reader.skip(skips * 2L);
     }
 
     protected void skipLong(FontFileReader reader, int skips)
             throws IOException {
-        reader.skip(skips * 4);
+        reader.skip(skips * 4L);
     }
 
     protected void skipByte(FontFileReader reader, int skips)
