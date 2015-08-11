@@ -33,7 +33,11 @@ public enum PDFAMode {
     /** PDF/A-2b enabled. */
     PDFA_2B(2, 'B'),
     /** PDF/A-2u enabled. */
-    PDFA_2U(2, 'U');
+    PDFA_2U(2, 'U'),
+
+    PDFA_3A(3, 'A'),
+    PDFA_3B(3, 'B'),
+    PDFA_3U(3, 'U');
 
     private final String name;
 
