@@ -144,6 +144,9 @@ public class PDFMetadata extends PDFStream {
 
         //Dublin Core
         DublinCoreAdapter dc = DublinCoreSchema.getAdapter(meta);
+        //PDF/A identification
+        PDFAMode pdfaMode = pdfDoc.getProfile().getPDFAMode();
+        dc.setCompact(pdfaMode.getPart() != 3);
         if (info.getAuthor() != null) {
             dc.addCreator(info.getAuthor());
         }
@@ -169,8 +172,6 @@ public class PDFMetadata extends PDFStream {
             pdfua.setPart(pdfuaMode.getPart());
         }
 
-        //PDF/A identification
-        PDFAMode pdfaMode = pdfDoc.getProfile().getPDFAMode();
         if (pdfaMode.isEnabled()) {
             PDFAAdapter pdfa = PDFAXMPSchema.getAdapter(meta);
             pdfa.setPart(pdfaMode.getPart());
