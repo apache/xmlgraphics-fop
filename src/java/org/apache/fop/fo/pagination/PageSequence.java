@@ -193,7 +193,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
      * @throws org.apache.fop.fo.ValidationException if the fo:flow maps
      * to an invalid page-region
      */
-     private void addFlow(Flow flow) throws ValidationException {
+    private void addFlow(Flow flow) throws ValidationException {
         String flowName = flow.getFlowName();
 
         if (hasFlowName(flowName)) {
@@ -201,12 +201,18 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
                     flowName, flow.getLocator());
         }
 
-        if (!getRoot().getLayoutMasterSet().regionNameExists(flowName)
-            && !flowName.equals("xsl-before-float-separator")
-            && !flowName.equals("xsl-footnote-separator")) {
+        if (!hasRegion(flowName) && !flowName.equals("xsl-before-float-separator")
+                && !flowName.equals("xsl-footnote-separator")) {
             getFOValidationEventProducer().flowNameNotMapped(this, flow.getName(),
                     flowName, flow.getLocator());
         }
+    }
+
+    private boolean hasRegion(String flowName) {
+        LayoutMasterSet set = getRoot().getLayoutMasterSet();
+        PageSequenceMaster psm = set.getPageSequenceMaster(masterReference);
+        return (psm != null) ? psm.getLayoutMasterSet().regionNameExists(flowName)
+                : set.getSimplePageMaster(masterReference).regionNameExists(flowName);
     }
 
     /**

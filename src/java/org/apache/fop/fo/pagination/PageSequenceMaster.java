@@ -117,6 +117,10 @@ public class PageSequenceMaster extends FObj {
         subSequenceSpecifiers.add(pageMasterReference);
     }
 
+    public LayoutMasterSet getLayoutMasterSet() {
+        return layoutMasterSet;
+    }
+
     /**
      * Returns the next subsequence specifier
      * @return a subsequence specifier
