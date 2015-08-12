@@ -490,9 +490,13 @@ public class OTFSubSetFile extends OTFFile {
             privateDictOffsets.add(privateDictOffset);
             byte[] fdPrivateDictByteData = curFDFont.getPrivateDictData();
             if (fdPrivateDict.get("Subrs") != null) {
+                int encodingValue = 0;
+                if (fdPrivateDict.get("Subrs").getOperandLength() == 1) {
+                    encodingValue = 139;
+                }
                 fdPrivateDictByteData = updateOffset(fdPrivateDictByteData, fdPrivateDict.get("Subrs").getOffset(),
                         fdPrivateDict.get("Subrs").getOperandLength(),
-                        fdPrivateDictByteData.length);
+                        fdPrivateDictByteData.length + encodingValue);
             }
             writeBytes(fdPrivateDictByteData);
             writeIndex(fdSubrs.get(i));
