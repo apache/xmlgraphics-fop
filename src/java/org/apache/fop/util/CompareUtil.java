@@ -44,7 +44,7 @@ public final class CompareUtil {
      */
     public static boolean equal(Object o1, Object o2) {
         int o1Hash = System.identityHashCode(o1);
-        int o2Hash = System.identityHashCode(o1);
+        int o2Hash = System.identityHashCode(o2);
         if (o1Hash == o2Hash && o1 != o2 && o1Hash != 0) {
             // in the rare case of different objects with the same hash code,
             // the tieLock object is used to synchronize access
