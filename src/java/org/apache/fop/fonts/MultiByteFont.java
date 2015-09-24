@@ -237,6 +237,9 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
                 if (idx < NUM_MOST_LIKELY_GLYPHS) {
                     mostLikelyGlyphs[idx] = retIdx;
                 }
+                if (retIdx != 0) {
+                    break;
+                }
             }
         }
         return retIdx;
