@@ -106,6 +106,8 @@ public class FOUserAgent {
     private EventBroadcaster eventBroadcaster = new FOPEventBroadcaster();
     private StructureTreeEventHandler structureTreeEventHandler
             = DummyStructureTreeEventHandler.INSTANCE;
+    private String pageWidth;
+    private String pageHeight;
 
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
@@ -142,6 +144,8 @@ public class FOUserAgent {
      */
     FOUserAgent(final FopFactory factory, InternalResourceResolver resourceResolver) {
         this.factory = factory;
+        pageWidth = factory.getPageWidth();
+        pageHeight = factory.getPageHeight();
         this.resourceResolver = resourceResolver;
         setTargetResolution(factory.getTargetResolution());
         setAccessibility(factory.isAccessibilityEnabled());
@@ -504,9 +508,21 @@ public class FOUserAgent {
      *
      * @return the page-height, as a String
      * @see FopFactory#getPageHeight()
+     * @see #setPageHeight
      */
     public String getPageHeight() {
-        return factory.getPageHeight();
+        return pageHeight;
+    }
+
+    /**
+     * Sets the default page-height to use as fallback,
+     * in case page-height="auto"
+     *
+     * @param pageHeight the new page-height, as a String
+     * @see #getPageHeight
+     */
+    public void setPageHeight(String pageHeight) {
+        this.pageHeight = pageHeight;
     }
 
     /**
@@ -515,9 +531,21 @@ public class FOUserAgent {
      *
      * @return the page-width, as a String
      * @see FopFactory#getPageWidth()
+     * @see #setPageWidth
      */
     public String getPageWidth() {
-        return factory.getPageWidth();
+        return pageWidth;
+    }
+
+    /**
+     * Sets the default page-width to use as fallback,
+     * in case page-width="auto"
+     *
+     * @param pageWidth the page-width, as a String
+     * @see #getPageWidth
+     */
+    public void setPageWidth(String pageWidth) {
+        this.pageWidth = pageWidth;
     }
 
     /**
