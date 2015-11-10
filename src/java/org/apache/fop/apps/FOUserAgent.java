@@ -39,6 +39,7 @@ import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
+import org.apache.xmlgraphics.image.loader.util.SoftMapCache;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.Version;
@@ -803,5 +804,9 @@ public class FOUserAgent {
     /** @see FopFactory#getHyphenationPatternNames() */
     public Map<String, String> getHyphenationPatternNames() {
         return factory.getHyphenationPatternNames();
+    }
+
+    public SoftMapCache getPDFObjectCache() {
+        return factory.getPDFObjectCache();
     }
 }

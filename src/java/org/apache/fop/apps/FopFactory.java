@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext.FallbackResolver;
+import org.apache.xmlgraphics.image.loader.util.SoftMapCache;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
@@ -81,6 +82,8 @@ public final class FopFactory implements ImageContext {
             = new ContentHandlerFactoryRegistry();
 
     private final ColorSpaceCache colorSpaceCache;
+
+    private final SoftMapCache pdfObjectCache = new SoftMapCache(true);
 
     private final FopFactoryConfig config;
 
@@ -432,5 +435,9 @@ public final class FopFactory implements ImageContext {
      */
     public ColorSpaceCache getColorSpaceCache() {
         return this.colorSpaceCache;
+    }
+
+    public SoftMapCache getPDFObjectCache() {
+        return pdfObjectCache;
     }
 }
