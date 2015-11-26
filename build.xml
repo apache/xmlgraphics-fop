@@ -760,7 +760,7 @@ list of possible build targets.
     -->
     <path id="transcoder-all-classpath">
       <pathelement location="${build.unit.tests.dir}"/>
-      <path refid="libs-build-classpath"/>
+      <path refid="libs-tools-build-classpath"/>
       <fileset dir="build">
         <include name="fop-transcoder-allinone.jar"/>
       </fileset>
@@ -975,6 +975,7 @@ NOTE:
         <pathelement path="${src.sandbox.dir}"/>
         <pathelement path="${build.gensrc.dir}"/>
       </sourcepath>
+      <tag name="asf.todo" scope="all" description="TODO"/>
       <tag name="event.severity" scope="all" description="Event severity level:"/>
       <group title="Control and Startup">
         <package name="org.apache.fop"/>
