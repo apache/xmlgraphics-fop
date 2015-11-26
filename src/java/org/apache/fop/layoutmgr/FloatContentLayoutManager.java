@@ -38,30 +38,40 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
     private int side;
     private int yOffset;
 
+    /**
+     * {@asf.todo - Add info}
+     *
+     * @param node the {@link Float} associated with this instance
+     */
     public FloatContentLayoutManager(Float node) {
         super(node);
         generatesReferenceArea = true;
         side = node.getFloat();
     }
 
+    @Override
     public Keep getKeepTogether() {
         return getParentKeepTogether();
     }
 
+    @Override
     public Keep getKeepWithNext() {
         return Keep.KEEP_AUTO;
     }
 
+    @Override
     public Keep getKeepWithPrevious() {
         return Keep.KEEP_ALWAYS;
     }
 
+    @Override
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         floatContentArea = new SideFloat();
         AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
         flush();
     }
 
+    @Override
     public void addChildArea(Area childArea) {
         floatContentArea.addChildArea(childArea);
         floatContentArea.setBPD(childArea.getAllocBPD());
@@ -89,6 +99,14 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
         }
     }
 
+    /**
+     * {@asf.todo - Add info}
+     *
+     * @param elemenList
+     * @param startIndex
+     * @param endIndex
+     * @return
+     */
     public static List<FloatContentLayoutManager> checkForFloats(List<ListElement> elemenList,
             int startIndex, int endIndex) {
         ListIterator<ListElement> iter = elemenList.listIterator(startIndex);
@@ -108,10 +126,16 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
         }
     }
 
+    @Override
     protected CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return null;
     }
 
+    /**
+     * {@asf.todo - Add info}
+     *
+     * @param layoutContext
+     */
     public void processAreas(LayoutContext layoutContext) {
         if (getParent() instanceof FloatLayoutManager) {
             FloatLayoutManager flm = (FloatLayoutManager) getParent();
@@ -119,23 +143,27 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
         }
     }
 
+    /**
+     * @return the height of the float content area
+     */
     public int getFloatHeight() {
         return floatContentArea.getAllocBPD();
     }
 
+    /**
+     * @return the y-offset of the float content
+     */
     public int getFloatYOffset() {
         return yOffset;
     }
 
     private int getStartIndent() {
-        int startIndent = 0;
+        int startIndent;
         LayoutManager lm = getParent();
         while (!(lm instanceof BlockLayoutManager)) {
             lm = lm.getParent();
         }
-        if (lm != null) {
-            startIndent = ((BlockLayoutManager) lm).startIndent;
-        }
+        startIndent = ((BlockLayoutManager) lm).startIndent;
         return startIndent;
     }
 }
