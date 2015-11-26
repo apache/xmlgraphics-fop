@@ -158,10 +158,10 @@ public class AFPResourceInfo {
         }
 
         AFPResourceInfo ri = (AFPResourceInfo)obj;
-        return (uri != null && uri.equals(ri.uri))
-            && (imageDimension == ri.imageDimension || imageDimension != null && imageDimension.equals(ri.imageDimension))
-            && (name != null && name.equals(ri.name))
-            && (level != null && level.equals(ri.level));
+        return (uri == ri.uri || uri != null && uri.equals(ri.uri))
+                && (imageDimension == ri.imageDimension ||imageDimension != null && imageDimension.equals(ri.imageDimension))
+                && (name == ri.name ||name != null && name.equals(ri.name))
+                && (level == ri.level ||level != null && level.equals(ri.level));
     }
 
     /** {@inheritDoc} */
