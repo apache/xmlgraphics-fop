@@ -23,6 +23,7 @@ import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,6 +31,7 @@ import java.io.OutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.image.GraphicsUtil;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
@@ -124,8 +126,11 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
             //TODO Implement code to combine image with background color if transparency is not
             //allowed (need BufferedImage support for that)
 
-            AlphaRasterImage alphaImage = new AlphaRasterImage("Mask:" + getKey(), ri);
-            this.softMask = doc.addImage(null, alphaImage).makeReference();
+            Raster raster = GraphicsUtil.getAlphaRaster(ri);
+            if (raster != null) {
+                AlphaRasterImage alphaImage = new AlphaRasterImage("Mask:" + getKey(), raster);
+                this.softMask = doc.addImage(null, alphaImage).makeReference();
+            }
         }
     }
 
