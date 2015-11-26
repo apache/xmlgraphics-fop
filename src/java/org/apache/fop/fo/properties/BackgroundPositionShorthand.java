@@ -29,7 +29,7 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
- * Class encapsulating functionality for the <a href="http://www.w3.org/TR/xsl/#background-position>
+ * Class encapsulating functionality for the <a href="http://www.w3.org/TR/xsl/#background-position">
  * <code>background-position</code></a> shorthand.
  */
 
