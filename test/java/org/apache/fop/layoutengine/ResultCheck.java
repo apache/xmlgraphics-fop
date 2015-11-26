@@ -50,7 +50,7 @@ public class ResultCheck implements LayoutEngineCheck {
             throw new RuntimeException("No such property test: " + property);
         }
         if (!expected.equals(actual)) {
-            throw new RuntimeException(
+            throw new AssertionError(
                     "Expected property to evaluate to '" + expected + "', but got '"
                     + actual + "' (" + this + ")");
         }

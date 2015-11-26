@@ -325,6 +325,8 @@ public class LayoutEngineTestCase {
         for (LayoutEngineCheck check : checks) {
             try {
                 check.check(result);
+            } catch (AssertionError ae) {
+                throw new AssertionError("Layout test (" + testFile.getName() + "): " + ae.getMessage());
             } catch (RuntimeException rte) {
                 throw new RuntimeException("Layout test (" + testFile.getName() + "): " + rte.getMessage());
             }
