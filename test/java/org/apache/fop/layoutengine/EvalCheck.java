@@ -77,13 +77,13 @@ public class EvalCheck implements LayoutEngineCheck, IFCheck {
             double v1 = Double.parseDouble(expected);
             double v2 = Double.parseDouble(actual);
             if (Math.abs(v1 - v2) > tolerance) {
-                throw new RuntimeException(
+                throw new AssertionError(
                         "Expected XPath expression to evaluate to '" + expected + "', but got '"
                         + actual + "' (" + this + ", outside tolerance)");
             }
         } else {
             if (!expected.equals(actual)) {
-                throw new RuntimeException(
+                throw new AssertionError(
                         "Expected XPath expression to evaluate to '" + expected + "', but got '"
                         + actual + "' (" + this + ")");
             }

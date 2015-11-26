@@ -28,8 +28,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.KnuthBox;
-import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 
@@ -73,7 +73,7 @@ public class ElementListCheck implements LayoutEngineCheck {
             if (node instanceof Element) {
                 pos++;
                 Element domEl = (Element)node;
-                KnuthElement knuthEl = (KnuthElement)elementList.getElementList().get(pos);
+                ListElement knuthEl = (ListElement) elementList.getElementList().get(pos);
                 if ("skip".equals(domEl.getLocalName())) {
                     pos += Integer.parseInt(getElementText(domEl)) - 1;
                 } else if ("box".equals(domEl.getLocalName())) {
@@ -82,22 +82,23 @@ public class ElementListCheck implements LayoutEngineCheck {
                                 + " at position " + pos
                                 + " but got: " + knuthEl.getClass().getName());
                     }
+                    KnuthBox box = (KnuthBox) knuthEl;
                     if (domEl.getAttribute("w").length() > 0) {
                         int w = Integer.parseInt(domEl.getAttribute("w"));
-                        if (w != knuthEl.getWidth()) {
+                        if (w != box.getWidth()) {
                             fail("Expected w=" + w
                                     + " at position " + pos
-                                    + " but got: " + knuthEl.getWidth());
+                                    + " but got: " + box.getWidth());
                         }
                     }
                     if ("true".equals(domEl.getAttribute("aux"))) {
-                        if (!knuthEl.isAuxiliary()) {
+                        if (!box.isAuxiliary()) {
                             fail("Expected auxiliary box"
                                     + " at position " + pos);
                         }
                     }
                     if ("false".equals(domEl.getAttribute("aux"))) {
-                        if (knuthEl.isAuxiliary()) {
+                        if (box.isAuxiliary()) {
                             fail("Expected a normal, not an auxiliary box"
                                     + " at position " + pos);
                         }
@@ -111,24 +112,24 @@ public class ElementListCheck implements LayoutEngineCheck {
                     KnuthPenalty pen = (KnuthPenalty)knuthEl;
                     if (domEl.getAttribute("w").length() > 0) {
                         int w = Integer.parseInt(domEl.getAttribute("w"));
-                        if (w != knuthEl.getWidth()) {
+                        if (w != pen.getWidth()) {
                             fail("Expected w=" + w
                                     + " at position " + pos
-                                    + " but got: " + knuthEl.getWidth());
+                                    + " but got: " + pen.getWidth());
                         }
                     }
                     if (domEl.getAttribute("p").length() > 0) {
                         if ("<0".equals(domEl.getAttribute("p"))) {
-                            if (knuthEl.getPenalty() >= 0) {
+                            if (pen.getPenalty() >= 0) {
                                 fail("Expected p<0"
                                         + " at position " + pos
-                                        + " but got: " + knuthEl.getPenalty());
+                                        + " but got: " + pen.getPenalty());
                             }
                         } else if (">0".equals(domEl.getAttribute("p"))) {
-                            if (knuthEl.getPenalty() <= 0) {
+                            if (pen.getPenalty() <= 0) {
                                 fail("Expected p>0"
                                         + " at position " + pos
-                                        + " but got: " + knuthEl.getPenalty());
+                                        + " but got: " + pen.getPenalty());
                             }
                         } else {
                             int p;
@@ -143,10 +144,10 @@ public class ElementListCheck implements LayoutEngineCheck {
                             } else {
                                 p = Integer.parseInt(domEl.getAttribute("p"));
                             }
-                            if (p != knuthEl.getPenalty()) {
+                            if (p != pen.getPenalty()) {
                                 fail("Expected p=" + p
                                         + " at position " + pos
-                                        + " but got: " + knuthEl.getPenalty());
+                                        + " but got: " + pen.getPenalty());
                             }
                         }
                     }
@@ -181,26 +182,26 @@ public class ElementListCheck implements LayoutEngineCheck {
                     KnuthGlue glue = (KnuthGlue)knuthEl;
                     if (domEl.getAttribute("w").length() > 0) {
                         int w = Integer.parseInt(domEl.getAttribute("w"));
-                        if (w != knuthEl.getWidth()) {
+                        if (w != glue.getWidth()) {
                             fail("Expected w=" + w
                                     + " at position " + pos
-                                    + " but got: " + knuthEl.getWidth());
+                                    + " but got: " + glue.getWidth());
                         }
                     }
                     if (domEl.getAttribute("y").length() > 0) {
                         int stretch = Integer.parseInt(domEl.getAttribute("y"));
-                        if (stretch != knuthEl.getStretch()) {
+                        if (stretch != glue.getStretch()) {
                             fail("Expected y=" + stretch
                                     + " (stretch) at position " + pos
-                                    + " but got: " + knuthEl.getStretch());
+                                    + " but got: " + glue.getStretch());
                         }
                     }
                     if (domEl.getAttribute("z").length() > 0) {
                         int shrink = Integer.parseInt(domEl.getAttribute("z"));
-                        if (shrink != knuthEl.getShrink()) {
+                        if (shrink != glue.getShrink()) {
                             fail("Expected z=" + shrink
                                     + " (shrink) at position " + pos
-                                    + " but got: " + knuthEl.getShrink());
+                                    + " but got: " + glue.getShrink());
                         }
                     }
                 } else {
@@ -220,7 +221,7 @@ public class ElementListCheck implements LayoutEngineCheck {
     }
 
     private void fail(String msg) {
-        throw new RuntimeException(msg + " (" + this + ")");
+        throw new AssertionError(msg + " (" + this + ")");
     }
 
     private boolean haveID() {

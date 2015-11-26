@@ -73,9 +73,9 @@ public class TrueCheck implements LayoutEngineCheck, IFCheck {
         }
         if (!XBoolean.S_TRUE.equals(res)) {
             if (failureMessage != null) {
-                throw new RuntimeException(failureMessage);
+                throw new AssertionError(failureMessage);
             } else {
-                throw new RuntimeException(
+                throw new AssertionError(
                         "Expected XPath expression to evaluate to 'true', but got '"
                         + res + "' (" + this + ")");
             }
