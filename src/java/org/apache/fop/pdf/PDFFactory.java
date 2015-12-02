@@ -981,27 +981,31 @@ public class PDFFactory {
                     //No ToUnicode CMap necessary if PDF 1.4, chapter 5.9 (page 368) is to be
                     //believed.
                 } else if (mapping.getName().equals("FOPPDFEncoding")) {
-                    String[] charNameMap = mapping.getCharNameMap();
-                    char[] intmap = mapping.getUnicodeCharMap();
-                    PDFArray differences = new PDFArray();
-                    int len = intmap.length;
-                    if (charNameMap.length < len) {
-                        len = charNameMap.length;
-                    }
-                    int last = 0;
-                    for (int i = 0; i < len; i++) {
-                        if (intmap[i] - 1 != last) {
-                            differences.add(intmap[i]);
+                    if (fonttype == FontType.TRUETYPE) {
+                        font.setEncoding("WinAnsiEncoding");
+                    } else {
+                        String[] charNameMap = mapping.getCharNameMap();
+                        char[] intmap = mapping.getUnicodeCharMap();
+                        PDFArray differences = new PDFArray();
+                        int len = intmap.length;
+                        if (charNameMap.length < len) {
+                            len = charNameMap.length;
                         }
-                        last = intmap[i];
-                        differences.add(new PDFName(charNameMap[i]));
-                    }
-                    PDFEncoding pdfEncoding = new PDFEncoding(singleByteFont.getEncodingName());
-                    getDocument().registerObject(pdfEncoding);
-                    pdfEncoding.setDifferences(differences);
-                    font.setEncoding(pdfEncoding);
-                    if (mapping.getUnicodeCharMap() != null) {
-                        generateToUnicodeCmap(nonBase14, mapping);
+                        int last = 0;
+                        for (int i = 0; i < len; i++) {
+                            if (intmap[i] - 1 != last) {
+                                differences.add(intmap[i]);
+                            }
+                            last = intmap[i];
+                            differences.add(new PDFName(charNameMap[i]));
+                        }
+                        PDFEncoding pdfEncoding = new PDFEncoding(singleByteFont.getEncodingName());
+                        getDocument().registerObject(pdfEncoding);
+                        pdfEncoding.setDifferences(differences);
+                        font.setEncoding(pdfEncoding);
+                        if (mapping.getUnicodeCharMap() != null) {
+                            generateToUnicodeCmap(nonBase14, mapping);
+                        }
                     }
                 } else {
                     Object pdfEncoding = createPDFEncoding(mapping,
