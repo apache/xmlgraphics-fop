@@ -523,6 +523,7 @@ public class IFParser implements IFConstants {
                 establishForeignAttributes(foreignAttributes);
                 documentHandler.startPage(index, name, pageMasterName,
                         new Dimension(width, height));
+                documentHandler.getContext().setPageNumber(Integer.parseInt(name));
                 resetForeignAttributes();
             }
 

@@ -188,7 +188,7 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
         if (conversionMode != null) {
             hints.put(ImageHandlerUtil.CONVERSION_MODE, conversionMode);
         }
-
+        hints.put("page-number", documentHandler.getContext().getPageNumber());
         return hints;
     }
 

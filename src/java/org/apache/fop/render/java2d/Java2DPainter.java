@@ -41,6 +41,7 @@ import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.render.intermediate.GraphicsPainter;
 import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
@@ -51,7 +52,7 @@ import org.apache.fop.util.CharUtilities;
  * {@link org.apache.fop.render.intermediate.IFPainter} implementation that paints on a Graphics2D
  * instance.
  */
-public class Java2DPainter extends AbstractIFPainter<Java2DDocumentHandler> {
+public class Java2DPainter extends AbstractIFPainter<IFDocumentHandler> {
 
     /** the IF context */
     protected IFContext ifContext;
@@ -74,7 +75,11 @@ public class Java2DPainter extends AbstractIFPainter<Java2DDocumentHandler> {
      * @param fontInfo the font information
      */
     public Java2DPainter(Graphics2D g2d, IFContext context, FontInfo fontInfo) {
-        this(g2d, context, fontInfo, null);
+        this(g2d, context, fontInfo, new Java2DDocumentHandler());
+    }
+
+    public Java2DPainter(Graphics2D g2d, IFContext context, FontInfo fontInfo, IFDocumentHandler documentHandler) {
+        this(g2d, context, fontInfo, null, documentHandler);
     }
 
     /**
@@ -86,7 +91,12 @@ public class Java2DPainter extends AbstractIFPainter<Java2DDocumentHandler> {
      * @param state the IF state object
      */
     public Java2DPainter(Graphics2D g2d, IFContext context, FontInfo fontInfo, IFState state) {
-        super(new Java2DDocumentHandler());
+        this(g2d, context, fontInfo, state, new Java2DDocumentHandler());
+    }
+
+    public Java2DPainter(Graphics2D g2d, IFContext context, FontInfo fontInfo, IFState state,
+                         IFDocumentHandler documentHandler) {
+        super(documentHandler);
         this.ifContext = context;
         if (state != null) {
             this.state = state.push();

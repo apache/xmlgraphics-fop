@@ -251,7 +251,7 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         graphics2D.scale(scale / 1000f, scale / 1000f);
         graphics2D.translate(-printArea.x, -printArea.y);
 
-        return new Java2DPainter(graphics2D, getContext(), getFontInfo());
+        return new Java2DPainter(graphics2D, getContext(), getFontInfo(), this);
     }
 
     private BufferedImage createBufferedImage(int bitmapWidth, int bitmapHeight) {

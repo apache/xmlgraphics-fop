@@ -573,6 +573,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
             establishForeignAttributes(page.getForeignAttributes());
             documentHandler.getContext().setPageIndex(page.getPageIndex());
+            documentHandler.getContext().setPageNumber(page.getPageNumber());
             documentHandler.startPage(page.getPageIndex(), page.getPageNumberString(),
                     page.getSimplePageMasterName(), dim);
             resetForeignAttributes();
