@@ -57,6 +57,8 @@ public class IFContext {
 
     private int pageIndex = -1;
 
+    private int pageNumber = -1;
+
     /**
      * Main constructor.
      * @param ua the user agent
@@ -234,4 +236,11 @@ public class IFContext {
         return this.pageIndex;
     }
 
+    public int getPageNumber() {
+        return pageNumber;
+    }
+
+    public void setPageNumber(int pageNumber) {
+        this.pageNumber = pageNumber;
+    }
 }
