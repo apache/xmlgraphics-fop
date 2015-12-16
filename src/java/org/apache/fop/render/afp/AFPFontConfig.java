@@ -364,41 +364,45 @@ public final class AFPFontConfig implements FontConfig {
     static final class TrueTypeFontConfig extends AFPFontConfigData {
         private String characterset;
         private String subfont;
+        private String fontUri;
 
         private TrueTypeFontConfig(List<FontTriplet> triplets, String type, String codePage,
                                    String encoding, String characterset, String name, String subfont,
                                    boolean embeddable, String uri) {
-            super(triplets, type, codePage, encoding, name, embeddable, uri);
+            super(triplets, type, codePage, encoding, name, embeddable, null);
             this.characterset = characterset;
             this.subfont = subfont;
+            this.fontUri = uri;
         }
 
         @Override
         AFPFontInfo getFontInfo(InternalResourceResolver resourceResolver, AFPEventProducer eventProducer)
                 throws IOException {
-            Typeface tf;
             try {
-                tf = new LazyFont(new EmbedFontInfo(
-                        new FontUris(new URI(uri), null)
+                Typeface tf = new LazyFont(new EmbedFontInfo(
+                        new FontUris(new URI(fontUri), null)
                         , false, true, null, subfont), resourceResolver, false).getRealFont();
+
+                AFPResourceAccessor accessor = getAccessor(resourceResolver);
+                CharacterSet characterSet = CharacterSetBuilder.getDoubleByteInstance().build(characterset,
+                        super.codePage, super.encoding, tf, accessor, eventProducer);
+                OutlineFont font = new AFPTrueTypeFont(super.name, super.embeddable, characterSet,
+                            eventProducer, subfont, new URI(fontUri));
+                return getFontInfo(font, this);
             } catch (URISyntaxException e) {
                 throw new IOException(e);
             }
-            AFPResourceAccessor accessor = getAccessor(resourceResolver);
-            CharacterSet characterSet = CharacterSetBuilder.getDoubleByteInstance().build(characterset, super.codePage,
-                    super.encoding, tf, accessor, eventProducer);
-            OutlineFont font = new AFPTrueTypeFont(super.name, super.embeddable, characterSet,
-                    eventProducer, subfont);
-            return getFontInfo(font, this);
         }
     }
 
     public static class AFPTrueTypeFont extends OutlineFont {
         private String ttc;
+        private URI uri;
         public AFPTrueTypeFont(String name, boolean embeddable, CharacterSet charSet, AFPEventProducer eventProducer,
-                               String ttc) {
+                               String ttc, URI uri) {
             super(name, embeddable, charSet, eventProducer);
             this.ttc = ttc;
+            this.uri = uri;
         }
 
         public FontType getFontType() {
@@ -407,6 +411,10 @@ public final class AFPFontConfig implements FontConfig {
 
         public String getTTC() {
             return ttc;
+        }
+
+        public URI getUri() {
+            return uri;
         }
     }
 
