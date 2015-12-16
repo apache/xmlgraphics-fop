@@ -338,7 +338,8 @@ public class AFPResourceManager {
                 AFPResourceAccessor accessor = charSet.getResourceAccessor();
                 if (afpFont.getFontType() == FontType.TRUETYPE) {
 
-                    createIncludedResource(afpFont.getFontName(), accessor.resolveURI("."), accessor,
+                    createIncludedResource(afpFont.getFontName(),
+                            ((AFPFontConfig.AFPTrueTypeFont) afpFont).getUri(), accessor,
                             ResourceObject.TYPE_OBJECT_CONTAINER, true,
                             ((AFPFontConfig.AFPTrueTypeFont) afpFont).getTTC());
                 } else {
@@ -414,12 +415,7 @@ public class AFPResourceManager {
                 ActiveEnvironmentGroup.setupTruetypeMDR(res, false);
 
                 ObjectContainer oc = factory.createObjectContainer();
-                InputStream is;
-                try {
-                    is = accessor.createInputStream(new URI("."));
-                } catch (URISyntaxException e) {
-                    throw new IOException(e);
-                }
+                InputStream is = accessor.createInputStream(uri);
 
                 if (ttc != null) {
                     oc.setData(extractTTC(ttc, is));

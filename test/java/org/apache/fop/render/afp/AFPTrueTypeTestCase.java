@@ -24,6 +24,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -40,17 +43,22 @@ import org.xml.sax.SAXException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.apache.xmlgraphics.io.Resource;
+import org.apache.xmlgraphics.io.ResourceResolver;
+
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.fonts.FopCharacterSet;
 import org.apache.fop.afp.modca.PageObject;
+import org.apache.fop.apps.EnvironmentalProfileFactory;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopConfParser;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -60,8 +68,10 @@ import org.apache.fop.render.intermediate.IFException;
 import junit.framework.Assert;
 
 public class AFPTrueTypeTestCase {
+    private String font;
+
     @Test
-    public void testAFPTrueType() throws IOException, SAXException, TransformerException {
+    public void testAFPTrueType() throws IOException, SAXException, TransformerException, URISyntaxException {
         String fopxconf = "<fop version=\"1.0\">\n"
                 + "  <renderers>\n"
                 + "    <renderer mime=\"application/x-afp\">\n"
@@ -88,7 +98,9 @@ public class AFPTrueTypeTestCase {
                 + "</fo:root>";
 
         FopFactoryBuilder confBuilder = new FopConfParser(
-                new ByteArrayInputStream(fopxconf.getBytes()), new File(".").toURI()).getFopFactoryBuilder();
+                new ByteArrayInputStream(fopxconf.getBytes()),
+                EnvironmentalProfileFactory.createRestrictedIO(new URI("."),
+                        new MyResourceResolver())).getFopFactoryBuilder();
         FopFactory fopFactory = confBuilder.build();
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -131,6 +143,22 @@ public class AFPTrueTypeTestCase {
                 + "END DOCUMENT DOC00001\n";
 
         Assert.assertEquals(sb.toString(), format);
+        Assert.assertEquals("test/resources/fonts/ttf/DejaVuLGCSerif.ttf", font);
+    }
+
+    class MyResourceResolver implements ResourceResolver {
+        private ResourceResolver defaultResourceResolver = ResourceResolverFactory.createDefaultResourceResolver();
+        public Resource getResource(URI uri) throws IOException {
+            if (!"tmp".equals(uri.getScheme())) {
+                font = uri.getPath();
+                uri = new File(".", uri.getPath()).toURI();
+            }
+            return defaultResourceResolver.getResource(uri);
+        }
+
+        public OutputStream getOutputStream(URI uri) throws IOException {
+            return defaultResourceResolver.getOutputStream(uri);
+        }
     }
 
     @Test
@@ -174,7 +202,7 @@ public class AFPTrueTypeTestCase {
             MultiByteFont font = new MultiByteFont(null, EmbeddingMode.AUTO);
             font.setWidthArray(new int[100]);
             f.addMetrics("any", new AFPFontConfig.AFPTrueTypeFont("", true,
-                    new FopCharacterSet("", "UTF-16BE", "", font, null, null), null, null));
+                    new FopCharacterSet("", "UTF-16BE", "", font, null, null), null, null, null));
             return f;
         }
     }
