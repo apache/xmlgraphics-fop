@@ -113,6 +113,9 @@ public class Function {
      */
     private List<Float> bounds;
 
+    private byte[] datasource;
+    private List<Integer> size;
+
     /**
      * create an complete Function object of Type 2, an Exponential Interpolation function.
      *
@@ -186,6 +189,14 @@ public class Function {
         this.encode = makeEncode(encode);
     }
 
+    public void setCZero(float[] cZero) {
+        this.cZero = cZero;
+    }
+
+    public void setCOne(float[] cOne) {
+        this.cOne = cOne;
+    }
+
     private List<Double> makeEncode(List<Double> encode) {
         if (encode != null) {
             return encode;
@@ -203,6 +214,15 @@ public class Function {
         this.functionType = functionType;
         this.domain = (domain == null) ? Arrays.asList(0.0, 1.0) : domain;
         this.range = range;
+    }
+
+    public Function(List<Double> domain, List<Double> range, List<Double> encode, byte[] datasource, int bitsPerSample,
+                    List<Integer> size) {
+        this(0, domain, range);
+        this.encode = encode;
+        this.datasource = datasource;
+        this.bitsPerSample = bitsPerSample;
+        this.size = size;
     }
 
     /**
@@ -295,6 +315,17 @@ public class Function {
             outputBitsPerSample(out);
             outputOrder(out);
             outputRange(out, doubleFormatter);
+            out.append("\n/DataSource <");
+            for (byte b : datasource) {
+                out.append(String.format("%02x", b & 0xff));
+            }
+            out.append(">\n");
+            out.append("/Size [");
+            for (Integer i : size) {
+                out.append(i);
+                out.append(" ");
+            }
+            out.append("]\n");
             out.append(">>");
         } else if (functionType == 2) {
             outputRange(out, doubleFormatter);
