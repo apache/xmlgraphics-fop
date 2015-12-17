@@ -27,7 +27,7 @@ public class Pattern {
 
     private final List<Double> matrix;
 
-    Pattern(int patternType, Shading shading, List<Double> matrix) {
+    public Pattern(int patternType, Shading shading, List<Double> matrix) {
         this.patternType = patternType;
         this.shading = shading;
         this.matrix = matrix;
