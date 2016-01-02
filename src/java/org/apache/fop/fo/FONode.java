@@ -20,7 +20,6 @@
 package org.apache.fop.fo;
 
 // Java
-import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Stack;
@@ -321,9 +320,9 @@ public abstract class FONode implements Cloneable {
      * has been reached.
      * The default implementation simply calls {@link #finalizeNode()}, without
      * sending any event to the {@link FOEventHandler}.
-     * <br/><i>Note: the recommended way to override this method in subclasses is</i>
-     * <br/><br/><code>super.endOfNode(); // invoke finalizeNode()
-     * <br/>getFOEventHandler().endXXX(); // send endOfNode() notification</code>
+     * <p><i>Note: the recommended way to override this method in subclasses is</i></p>
+     * <p><code>super.endOfNode(); // invoke finalizeNode()</code></p>
+     * <p><code>getFOEventHandler().endXXX(); // send endOfNode() notification</code></p>
      *
      * @throws FOPException if there's a problem during processing
      */
@@ -622,7 +621,7 @@ public abstract class FONode implements Cloneable {
      *
      * @param propertyName the name of the property.
      * @param propertyValue the value of the property.
-     * * @param e optional property parsing exception.
+     * @param e optional property parsing exception.
      * @throws ValidationException the validation error provoked by the method call
      */
     protected void invalidPropertyValueError(String propertyName, String propertyValue, Exception e)
@@ -936,7 +935,7 @@ public abstract class FONode implements Cloneable {
      * @param ranges a stack of delimited text ranges
      * @return the (possibly) updated stack of delimited text ranges
      */
-    public Stack collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges) {
+    public Stack<DelimitedTextRange> collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges) {
         // if boundary before, then push new range
         if (isRangeBoundaryBefore()) {
             maybeNewRange(ranges);
@@ -965,9 +964,11 @@ public abstract class FONode implements Cloneable {
      * @param currentRange the current range or null (if none)
      * @return the (possibly) updated stack of delimited text ranges
      */
-    protected Stack collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges, DelimitedTextRange currentRange) {
-        for (Iterator it = getChildNodes(); (it != null) && it.hasNext();) {
-            ranges = ((FONode) it.next()).collectDelimitedTextRanges(ranges);
+    protected Stack<DelimitedTextRange> collectDelimitedTextRanges(
+            Stack<DelimitedTextRange> ranges, DelimitedTextRange currentRange) {
+
+        for (FONodeIterator it = getChildNodes(); (it != null) && it.hasNext();) {
+            ranges = it.next().collectDelimitedTextRanges(ranges);
         }
         return ranges;
     }
@@ -1011,9 +1012,10 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
-     * Base iterator interface over a FO's children
+     * Base iterator interface over a FO's children, offering three methods on top of the base interface
+     * methods {@see java.util.ListIterator}.
      */
-    public interface FONodeIterator extends ListIterator {
+    public interface FONodeIterator extends ListIterator<FONode> {
 
         /**
          * Returns the parent node for this iterator's list
@@ -1021,23 +1023,7 @@ public abstract class FONode implements Cloneable {
          *
          * @return  the parent node
          */
-        FObj parentNode();
-
-        /**
-         * Convenience method with return type of FONode
-         * (semantically equivalent to: <code>(FONode) next();</code>)
-         *
-         * @return the next node (if any), as a type FONode
-         */
-        FONode nextNode();
-
-        /**
-         * Convenience method with return type of FONode
-         * (semantically equivalent to: <code>(FONode) previous();</code>)
-         *
-         * @return the previous node (if any), as a type FONode
-         */
-        FONode previousNode();
+        FObj parent();
 
         /**
          * Returns the first node in the list, and decreases the index,
@@ -1046,7 +1032,7 @@ public abstract class FONode implements Cloneable {
          *
          * @return the first node in the list
          */
-        FONode firstNode();
+        FONode first();
 
         /**
          * Returns the last node in the list, and advances the
@@ -1055,7 +1041,7 @@ public abstract class FONode implements Cloneable {
          *
          * @return the last node in the list
          */
-        FONode lastNode();
+        FONode last();
 
     }
 

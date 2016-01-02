@@ -198,7 +198,7 @@ public abstract class FObj extends FONode implements Constants {
      */
     private void checkId(String id) throws ValidationException {
         if (!inMarker() && !id.equals("")) {
-            Set idrefs = getBuilderContext().getIDReferences();
+            Set<String> idrefs = getBuilderContext().getIDReferences();
             if (!idrefs.contains(id)) {
                 idrefs.add(id);
             } else {
@@ -270,7 +270,7 @@ public abstract class FObj extends FONode implements Constants {
             if (firstChild != null) {
                 firstChild.siblings[0] = null;
             }
-        } else {
+        } else if (child.siblings != null) {
             FONode prevChild = child.siblings[0];
             prevChild.siblings[1] = nextChild;
             if (nextChild != null) {
@@ -338,7 +338,7 @@ public abstract class FObj extends FONode implements Constants {
                 return it;
             } else {
                 while (it.hasNext()
-                        && it.nextNode().siblings[1] != childNode) {
+                        && it.next().siblings[1] != childNode) {
                     //nop
                 }
                 if (it.hasNext()) {
@@ -373,8 +373,8 @@ public abstract class FObj extends FONode implements Constants {
         String mcname = marker.getMarkerClassName();
         if (firstChild != null) {
             // check for empty childNodes
-            for (Iterator iter = getChildNodes(); iter.hasNext();) {
-                FONode node = (FONode) iter.next();
+            for (Iterator<FONode> iter = getChildNodes(); iter.hasNext();) {
+                FONode node = iter.next();
                 if (node instanceof FObj
                         || (node instanceof FOText
                                 && ((FOText) node).willCreateArea())) {
@@ -414,7 +414,7 @@ public abstract class FObj extends FONode implements Constants {
 
     /** {@inheritDoc} */
     protected String getContextInfoAlt() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (getLocalName() != null) {
             sb.append(getName());
             sb.append(", ");
@@ -448,7 +448,7 @@ public abstract class FObj extends FONode implements Constants {
             if (iter == null) {
                 return null;
             }
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             while (iter.hasNext()) {
                 FONode node = (FONode) iter.next();
                 String s = node.gatherContextInfo();
@@ -466,7 +466,7 @@ public abstract class FObj extends FONode implements Constants {
     /**
      * Convenience method for validity checking.  Checks if the
      * incoming node is a member of the "%block;" parameter entity
-     * as defined in Sect. 6.2 of the XSL 1.0 & 1.1 Recommendations
+     * as defined in Sect. 6.2 of the XSL 1.0 &amp; 1.1 Recommendations
      *
      * @param nsURI namespace URI of incoming node
      * @param lName local name (i.e., no prefix) of incoming node
@@ -486,7 +486,7 @@ public abstract class FObj extends FONode implements Constants {
     /**
      * Convenience method for validity checking.  Checks if the
      * incoming node is a member of the "%inline;" parameter entity
-     * as defined in Sect. 6.2 of the XSL 1.0 & 1.1 Recommendations
+     * as defined in Sect. 6.2 of the XSL 1.0 &amp; 1.1 Recommendations
      *
      * @param nsURI namespace URI of incoming node
      * @param lName local name (i.e., no prefix) of incoming node
@@ -528,7 +528,7 @@ public abstract class FObj extends FONode implements Constants {
     /**
      * Convenience method for validity checking.  Checks if the
      * incoming node is a member of the neutral item list
-     * as defined in Sect. 6.2 of the XSL 1.0 & 1.1 Recommendations
+     * as defined in Sect. 6.2 of the XSL 1.0 &amp; 1.1 Recommendations
      * @param nsURI namespace URI of incoming node
      * @param lName local name (i.e., no prefix) of incoming node
      * @return true if a member, false if not
@@ -619,16 +619,16 @@ public abstract class FObj extends FONode implements Constants {
      * @param bidiLevel a non-negative bidi embedding level
      */
     public void setBidiLevel(int bidiLevel) {
+
         assert bidiLevel >= 0;
-        if (bidiLevel >= 0) {
-            if ((this.bidiLevel < 0) || (bidiLevel < this.bidiLevel)) {
-                this.bidiLevel = bidiLevel;
-                if ((parent != null) && !isBidiPropagationBoundary()) {
-                    FObj foParent = (FObj) parent;
-                    int parentBidiLevel = foParent.getBidiLevel();
-                    if ((parentBidiLevel < 0) || (bidiLevel < parentBidiLevel)) {
-                        foParent.setBidiLevel(bidiLevel);
-                    }
+
+        if ((this.bidiLevel < 0) || (bidiLevel < this.bidiLevel)) {
+            this.bidiLevel = bidiLevel;
+            if ((parent != null) && !isBidiPropagationBoundary()) {
+                FObj foParent = (FObj) parent;
+                int parentBidiLevel = foParent.getBidiLevel();
+                if ((parentBidiLevel < 0) || (bidiLevel < parentBidiLevel)) {
+                    foParent.setBidiLevel(bidiLevel);
                 }
             }
         }
@@ -765,12 +765,12 @@ public abstract class FObj extends FONode implements Constants {
         }
 
         /** {@inheritDoc} */
-        public FObj parentNode() {
+        public FObj parent() {
             return parentNode;
         }
 
         /** {@inheritDoc} */
-        public Object next() {
+        public FONode next() {
             if (currentNode != null) {
                 if (currentIndex != 0) {
                     if (currentNode.siblings != null
@@ -789,7 +789,7 @@ public abstract class FObj extends FONode implements Constants {
         }
 
         /** {@inheritDoc} */
-        public Object previous() {
+        public FONode previous() {
             if (currentNode.siblings != null
                     && currentNode.siblings[0] != null) {
                 currentIndex--;
@@ -802,9 +802,8 @@ public abstract class FObj extends FONode implements Constants {
         }
 
         /** {@inheritDoc} */
-        public void set(Object o) {
+        public void set(FONode newNode) {
             if ((flags & F_SET_ALLOWED) == F_SET_ALLOWED) {
-                FONode newNode = (FONode) o;
                 if (currentNode == parentNode.firstChild) {
                     parentNode.firstChild = newNode;
                 } else {
@@ -823,8 +822,7 @@ public abstract class FObj extends FONode implements Constants {
         }
 
         /** {@inheritDoc} */
-        public void add(Object o) {
-            FONode newNode = (FONode) o;
+        public void add(FONode newNode) {
             if (currentIndex == -1) {
                 if (currentNode != null) {
                     FONode.attachSiblings(newNode, currentNode);
@@ -838,9 +836,9 @@ public abstract class FObj extends FONode implements Constants {
             } else {
                 if (currentNode.siblings != null
                         && currentNode.siblings[1] != null) {
-                    FONode.attachSiblings((FONode) o, currentNode.siblings[1]);
+                    FONode.attachSiblings(newNode, currentNode.siblings[1]);
                 }
-                FONode.attachSiblings(currentNode, (FONode) o);
+                FONode.attachSiblings(currentNode, newNode);
                 if (currentNode == parentNode.lastChild) {
                     parentNode.lastChild = newNode;
                 }
@@ -894,7 +892,7 @@ public abstract class FObj extends FONode implements Constants {
         }
 
         /** {@inheritDoc} */
-        public FONode lastNode() {
+        public FONode last() {
             while (currentNode != null
                     && currentNode.siblings != null
                     && currentNode.siblings[1] != null) {
@@ -905,20 +903,10 @@ public abstract class FObj extends FONode implements Constants {
         }
 
         /** {@inheritDoc} */
-        public FONode firstNode() {
+        public FONode first() {
             currentNode = parentNode.firstChild;
             currentIndex = 0;
             return currentNode;
-        }
-
-        /** {@inheritDoc} */
-        public FONode nextNode() {
-            return (FONode) next();
-        }
-
-        /** {@inheritDoc} */
-        public FONode previousNode() {
-            return (FONode) previous();
         }
     }
 }
