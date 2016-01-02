@@ -444,13 +444,13 @@ public abstract class FObj extends FONode implements Constants {
         if (getLocator() != null) {
             return super.gatherContextInfo();
         } else {
-            ListIterator iter = getChildNodes();
+            FONodeIterator iter = getChildNodes();
             if (iter == null) {
                 return null;
             }
             StringBuilder sb = new StringBuilder();
             while (iter.hasNext()) {
-                FONode node = (FONode) iter.next();
+                FONode node = iter.next();
                 String s = node.gatherContextInfo();
                 if (s != null) {
                     if (sb.length() > 0) {

@@ -1017,6 +1017,43 @@ public abstract class FONode implements Cloneable {
      */
     public interface FONodeIterator extends ListIterator<FONode> {
 
+        /** @return the next node */
+        FONode next();
+
+        /** @return the previous node */
+        FONode previous();
+
+        /**
+         * Replace the node at the current index with the given <code>newNode</code>.
+         *
+         * @param newNode the new node
+         */
+        void set(FONode newNode);
+
+        /**
+         * Add the given <code>newNode</code> at the current position.
+         *
+         * @param newNode the new node
+         */
+        void add(FONode newNode);
+
+        /** @return <code>true</code> if there is a next node, <code>false</code> otherwise */
+        boolean hasNext();
+
+        /** @return <code>true</code> if there is a previous node, <code>false</code> otherwise */
+        boolean hasPrevious();
+
+        /** @return the current index */
+        int nextIndex();
+
+        /** @return the previous index */
+        int previousIndex();
+
+        /**
+         * Removes the node at the current position.
+         */
+        void remove();
+
         /**
          * Returns the parent node for this iterator's list
          * of child nodes
