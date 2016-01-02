@@ -68,7 +68,7 @@ public class TableRowIterator {
                 List rowGroupsList = new LinkedList();
                 // TODO this is ugly
                 for (FONodeIterator iter = table.getChildNodes(); iter.hasNext();) {
-                    FONode node = iter.nextNode();
+                    FONode node = iter.next();
                     if (node instanceof TableBody) {
                         rowGroupsList.addAll(((TableBody) node).getRowGroups());
                     }
