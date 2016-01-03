@@ -25,6 +25,7 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.flow.table.TableCell;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_retrieve-table-marker">
@@ -78,6 +79,33 @@ public class RetrieveTableMarker extends AbstractRetrieveMarker {
     public void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endRetrieveTableMarker(this);
+    }
+
+    /**
+     * Overridden to flag the ancestor table-cell.
+     *
+     * @param ancestorID    ID of node name to check for (e.g., FO_ROOT)
+     * @return number of levels above FO where ancestor exists,
+     *         -1 if not found
+     */
+    @Override
+    protected int findAncestor(int ancestorID) {
+        int found = 1;
+        FONode temp = getParent();
+        while (temp != null) {
+            if (temp instanceof TableCell
+                    && (ancestorID == FO_TABLE_HEADER || ancestorID == FO_TABLE_FOOTER)) {
+                // note that if the retrieve-table-marker is not in a table-header/footer an exception is
+                // thrown, so no need to reset this flag in that case
+                ((TableCell) temp).flagAsHavingRetrieveTableMarker();
+            }
+            if (temp.getNameId() == ancestorID) {
+                return found;
+            }
+            found += 1;
+            temp = temp.getParent();
+        }
+        return -1;
     }
 
     /**
