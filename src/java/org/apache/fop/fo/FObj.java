@@ -21,7 +21,6 @@ package org.apache.fop.fo;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,7 +35,6 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.flow.Marker;
-import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 
@@ -327,7 +325,7 @@ public abstract class FObj extends FONode implements Constants {
      * at the passed-in node (= first call to iterator.next() will
      * return childNode)
      * @param childNode First node in the iterator
-     * @return A ListIterator or null if childNode isn't a child of
+     * @return A FONodeIterator or null if childNode isn't a child of
      * this FObj.
      */
     public FONodeIterator getChildNodes(FONode childNode) {
@@ -372,7 +370,7 @@ public abstract class FObj extends FONode implements Constants {
         String mcname = marker.getMarkerClassName();
         if (firstChild != null) {
             // check for empty childNodes
-            for (Iterator<FONode> iter = getChildNodes(); iter.hasNext();) {
+            for (FONodeIterator iter = getChildNodes(); iter.hasNext();) {
                 FONode node = iter.next();
                 if (node instanceof FObj
                         || (node instanceof FOText
@@ -553,11 +551,6 @@ public abstract class FObj extends FONode implements Constants {
         int found = 1;
         FONode temp = getParent();
         while (temp != null) {
-            if (temp instanceof TableCell && (ancestorID == FO_TABLE_HEADER || ancestorID == FO_TABLE_FOOTER)) {
-                // note that if the retrieve-table-marker is not in a table-header/footer an exception is
-                // thrown, so no need to reset this flag in that case
-                ((TableCell) temp).flagAsHavingRetrieveTableMarker();
-            }
             if (temp.getNameId() == ancestorID) {
                 return found;
             }
