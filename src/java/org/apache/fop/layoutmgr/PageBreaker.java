@@ -51,6 +51,8 @@ public class PageBreaker extends AbstractBreaker {
     private PageProvider pageProvider;
     private Block separatorArea;
     private boolean spanAllActive;
+    private boolean layoutRedone;
+    private int previousIndex;
     private boolean handlingStartOfFloat;
     private boolean handlingEndOfFloat;
     private int floatHeight;
@@ -161,7 +163,7 @@ public class PageBreaker extends AbstractBreaker {
     /** {@inheritDoc} */
     protected int getNextBlockList(LayoutContext childLC, int nextSequenceStartsOn,
             Position positionAtIPDChange, LayoutManager restartLM, List firstElements) {
-        if (!handlingFloat()) {
+        if (!layoutRedone && !handlingFloat()) {
             if (!firstPart) {
                 // if this is the first page that will be created by
                 // the current BlockSequence, it could have a break
@@ -330,19 +332,53 @@ public class PageBreaker extends AbstractBreaker {
             return;
         }
 
-        boolean lastPageMasterDefined = pslm.getPageSequence().hasPagePositionLast()
-                || pslm.getPageSequence().hasPagePositionOnly() && pslm.isOnFirstPage(partCount - 1);
-        if (!hasMoreContent()) {
-            //last part is reached
-            if (lastPageMasterDefined) {
-                //last-page condition
-                redoLayout(alg, partCount, originalList, effectiveList);
-                return;
-            }
+        if (shouldRedoLayout(partCount)) {
+            redoLayout(alg, partCount, originalList, effectiveList);
+            return;
         }
 
         //nothing special: just add the areas now
         addAreas(alg, partCount, originalList, effectiveList);
+    }
+
+    protected void prepareToRedoLayout(PageBreakingAlgorithm alg, int partCount,
+            BlockSequence originalList,
+            BlockSequence effectiveList) {
+        int newStartPos = 0;
+        int restartPoint = pageProvider.getStartingPartIndexForLastPage(partCount);
+        if (restartPoint > 0 && !layoutRedone) {
+            // Add definitive areas for the parts before the
+            // restarting point
+            addAreas(alg, restartPoint, originalList, effectiveList);
+            // Get page break from which we restart
+            PageBreakPosition pbp = alg.getPageBreaks().get(restartPoint - 1);
+            newStartPos = alg.par.getFirstBoxIndex(pbp.getLeafPos() + 1);
+            // Handle page break right here to avoid any side-effects
+            if (newStartPos > 0) {
+                handleBreakTrait(Constants.EN_PAGE);
+            }
+        }
+        pageBreakHandled = true;
+        // Update so the available BPD is reported correctly
+        int currentPageNum = pslm.getCurrentPageNum();
+        int currentColumn = pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex();
+        pageProvider.setStartOfNextElementList(currentPageNum, currentColumn, spanAllActive);
+
+        // Make sure we only add the areas we haven't added already
+        effectiveList.ignoreAtStart = newStartPos;
+        if (!layoutRedone) {
+            // Handle special page-master for last page
+            setLastPageIndex(currentPageNum);
+//          BodyRegion lastBody = pageProvider.getPage(false, currentPageNum).getPageViewport().getBodyRegion();
+            pslm.setCurrentPage(pageProvider.getPage(false, currentPageNum));
+            previousIndex = pageProvider.getIndexOfCachedLastPage();
+        } else {
+            setLastPageIndex(currentPageNum + 1);
+//            pslm.setCurrentPage(previousPage);
+            pageProvider.discardCacheStartingWith(previousIndex);
+            pslm.setCurrentPage(pageProvider.getPage(false, currentPageNum));
+        }
+        layoutRedone = true;
     }
 
     /**
@@ -565,6 +601,7 @@ public class PageBreaker extends AbstractBreaker {
             return;
         case Constants.EN_COLUMN:
         case Constants.EN_AUTO:
+        case Constants.EN_PAGE:
         case -1:
             PageViewport pv = curPage.getPageViewport();
 
@@ -580,26 +617,35 @@ public class PageBreaker extends AbstractBreaker {
                 log.trace("Forcing new page with span");
                 curPage = pslm.makeNewPage(false);
                 curPage.getPageViewport().createSpan(true);
-            } else if (pv.getCurrentSpan().hasMoreFlows()) {
-                log.trace("Moving to next flow");
-                pv.getCurrentSpan().moveToNextFlow();
             } else {
-                log.trace("Making new page");
-                /*curPage = */pslm.makeNewPage(false);
+                if (breakVal == Constants.EN_PAGE) {
+                    handleBreakBeforeFollowingPage(breakVal);
+                } else {
+                    if (pv.getCurrentSpan().hasMoreFlows()) {
+                        log.trace("Moving to next flow");
+                        pv.getCurrentSpan().moveToNextFlow();
+                    } else {
+                        log.trace("Making new page");
+                        pslm.makeNewPage(false);
+                    }
+                }
             }
             return;
-        case Constants.EN_PAGE:
         default:
-            log.debug("handling break-before after page " + pslm.getCurrentPageNum()
-                + " breakVal=" + getBreakClassName(breakVal));
-            if (needBlankPageBeforeNew(breakVal)) {
-                log.trace("Inserting blank page");
-                /*curPage = */pslm.makeNewPage(true);
-            }
-            if (needNewPage(breakVal)) {
-                log.trace("Making new page");
-                /*curPage = */pslm.makeNewPage(false);
-            }
+            handleBreakBeforeFollowingPage(breakVal);
+        }
+    }
+
+    private void handleBreakBeforeFollowingPage(int breakVal) {
+        log.debug("handling break-before after page " + pslm.getCurrentPageNum() + " breakVal="
+                + getBreakClassName(breakVal));
+        if (needBlankPageBeforeNew(breakVal)) {
+            log.trace("Inserting blank page");
+            /* curPage = */pslm.makeNewPage(true);
+        }
+        if (needNewPage(breakVal)) {
+            log.trace("Making new page");
+            /* curPage = */pslm.makeNewPage(false);
         }
     }
 
@@ -639,6 +685,36 @@ public class PageBreaker extends AbstractBreaker {
         } else {
             return true;
         }
+    }
+
+    protected boolean shouldRedoLayout() {
+        return shouldRedoLayout(-1);
+    }
+
+    protected boolean shouldRedoLayout(int partCount) {
+        boolean lastPageMasterDefined = pslm.getPageSequence().hasPagePositionLast();
+        if (!lastPageMasterDefined && partCount != -1) {
+            lastPageMasterDefined = pslm.getPageSequence().hasPagePositionOnly() && pslm.isOnFirstPage(partCount - 1);
+        }
+        return (!hasMoreContent() && lastPageMasterDefined && !layoutRedone);
+    }
+
+    protected boolean wasLayoutRedone() {
+        return layoutRedone;
+    }
+
+    protected boolean lastPageHasIPDChange() {
+        boolean lastPageMasterDefined = pslm.getPageSequence().hasPagePositionLast();
+        boolean onlyPageMasterDefined = pslm.getPageSequence().hasPagePositionOnly();
+        if (lastPageMasterDefined && !onlyPageMasterDefined) {
+            // code not very robust and unable to handle situations were only and last are defined
+            int currentIPD = this.pageProvider.getCurrentIPD();
+            int lastPageIPD = this.pageProvider.getLastPageIPD();
+            if (lastPageIPD != -1 && currentIPD != lastPageIPD) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected boolean handlingStartOfFloat() {

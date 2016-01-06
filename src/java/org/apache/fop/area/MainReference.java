@@ -59,12 +59,8 @@ public class MainReference extends Area {
             //Remove the current one if it is empty
             spanAreas.remove(spanAreas.size() - 1);
         }
-        RegionViewport rv = parent.getRegionViewport();
-        int ipdWidth = parent.getIPD()
-            - rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
-
         Span newSpan = new Span(((spanAll) ? 1 : getColumnCount()),
-                getColumnGap(), ipdWidth);
+                getColumnGap(), parent.getContentIPD());
         spanAreas.add(newSpan);
         return getCurrentSpan();
     }

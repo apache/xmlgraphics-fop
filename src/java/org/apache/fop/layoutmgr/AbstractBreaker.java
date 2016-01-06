@@ -42,6 +42,10 @@ public abstract class AbstractBreaker {
     /** logging instance */
     protected static final Log log = LogFactory.getLog(AbstractBreaker.class);
 
+    private LayoutManager originalRestartAtLM;
+    private Position positionAtBreak;
+    private List firstElementsForRestart;
+
     /**
      * A page break position.
      */
@@ -408,17 +412,36 @@ public abstract class AbstractBreaker {
                 alg.setConstantLineWidth(flowBPD);
                 int optimalPageCount = alg.findBreakingPoints(blockList, 1, true,
                         BreakingAlgorithm.ALL_BREAKS);
-
+                boolean ipdChangesOnNextPage = (alg.getIPDdifference() != 0);
+                boolean onLastPageAndIPDChanges = false;
+                if (!ipdChangesOnNextPage) {
+                    onLastPageAndIPDChanges = (lastPageHasIPDChange() && !thereIsANonRestartableLM(alg)
+                            && (shouldRedoLayout() || (wasLayoutRedone() && optimalPageCount > 1)));
+                }
                 if (alg.handlingFloat()) {
                     nextSequenceStartsOn = handleFloatLayout(alg, optimalPageCount, blockList, childLC);
-                } else if (Math.abs(alg.getIPDdifference()) > 1) {
-                    addAreas(alg, optimalPageCount, blockList, blockList);
-                    // *** redo Phase 1 ***
-                    log.trace("IPD changes after page " + optimalPageCount);
+                } else if (ipdChangesOnNextPage || onLastPageAndIPDChanges) {
+                    boolean visitedBefore = false;
+                    if (onLastPageAndIPDChanges) {
+                        visitedBefore = wasLayoutRedone();
+                        prepareToRedoLayout(alg, optimalPageCount, blockList, blockList);
+                    }
+
+                    firstElementsForRestart = null;
+                    LayoutManager restartAtLM = getRestartAtLM(alg, ipdChangesOnNextPage, onLastPageAndIPDChanges,
+                            visitedBefore, blockList, 1);
+                    if (restartAtLM == null) {
+                        firstElementsForRestart = null;
+                        restartAtLM = getRestartAtLM(alg, ipdChangesOnNextPage, onLastPageAndIPDChanges,
+                                visitedBefore, blockList, 0);
+                    }
+                    if (ipdChangesOnNextPage) {
+                        addAreas(alg, optimalPageCount, blockList, blockList);
+                    }
                     blockLists.clear();
-                    nextSequenceStartsOn = getNextBlockListChangedIPD(childLC, alg,
-                                                                      blockList);
                     blockListIndex = -1;
+                    nextSequenceStartsOn = getNextBlockList(childLC, Constants.EN_COLUMN, positionAtBreak,
+                            restartAtLM, firstElementsForRestart);
                 } else {
                     log.debug("PLM> optimalPageCount= " + optimalPageCount
                             + " pageBreaks.size()= " + alg.getPageBreaks().size());
@@ -431,6 +454,92 @@ public abstract class AbstractBreaker {
 
         // done
         blockLists = null;
+    }
+
+    private LayoutManager getRestartAtLM(PageBreakingAlgorithm alg, boolean ipdChangesOnNextPage,
+                                         boolean onLastPageAndIPDChanges, boolean visitedBefore,
+                                         BlockSequence blockList, int start) {
+        KnuthNode optimalBreak = ipdChangesOnNextPage ? alg.getBestNodeBeforeIPDChange() : alg
+                .getBestNodeForLastPage();
+        if (onLastPageAndIPDChanges && visitedBefore && this.originalRestartAtLM == null) {
+            optimalBreak = null;
+        }
+
+        int positionIndex = (optimalBreak != null) ? optimalBreak.position : start;
+        KnuthElement elementAtBreak = alg.getElement(positionIndex);
+        if (elementAtBreak.getPosition() == null) {
+            elementAtBreak = alg.getElement(0);
+        }
+        positionAtBreak = elementAtBreak.getPosition();
+        /* Retrieve the original position wrapped into this space position */
+        positionAtBreak = positionAtBreak.getPosition();
+        if (ipdChangesOnNextPage || (positionAtBreak != null && positionAtBreak.getIndex() > -1)) {
+            firstElementsForRestart = Collections.EMPTY_LIST;
+            if (ipdChangesOnNextPage) {
+                if (containsNonRestartableLM(positionAtBreak)) {
+                    if (alg.getIPDdifference() > 0) {
+                        EventBroadcaster eventBroadcaster = getCurrentChildLM().getFObj()
+                                .getUserAgent().getEventBroadcaster();
+                        BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider
+                                .get(eventBroadcaster);
+                        eventProducer.nonRestartableContentFlowingToNarrowerPage(this);
+                    }
+                    firstElementsForRestart = new LinkedList();
+                    boolean boxFound = false;
+                    Iterator iter = blockList.listIterator(positionIndex + 1);
+                    Position position = null;
+                    while (iter.hasNext()
+                            && (position == null || containsNonRestartableLM(position))) {
+                        positionIndex++;
+                        KnuthElement element = (KnuthElement) iter.next();
+                        position = element.getPosition();
+                        if (element.isBox()) {
+                            boxFound = true;
+                            firstElementsForRestart.add(element);
+                        } else if (boxFound) {
+                            firstElementsForRestart.add(element);
+                        }
+                    }
+                    if (position instanceof SpaceResolver.SpaceHandlingBreakPosition) {
+                                    /* Retrieve the original position wrapped into this space position */
+                        positionAtBreak = position.getPosition();
+                    } else {
+                        positionAtBreak = null;
+                    }
+                }
+            }
+        }
+        LayoutManager restartAtLM = null;
+        if (ipdChangesOnNextPage || !(positionAtBreak != null && positionAtBreak.getIndex() > -1)) {
+            if (positionAtBreak != null && positionAtBreak.getIndex() == -1) {
+                Position position;
+                Iterator iter = blockList.listIterator(positionIndex + 1);
+                do {
+                    KnuthElement nextElement = (KnuthElement) iter.next();
+                    position = nextElement.getPosition();
+                } while (position == null
+                        || position instanceof SpaceResolver.SpaceHandlingPosition
+                        || position instanceof SpaceResolver.SpaceHandlingBreakPosition
+                        && position.getPosition().getIndex() == -1);
+                LayoutManager surroundingLM = positionAtBreak.getLM();
+                while (position.getLM() != surroundingLM) {
+                    position = position.getPosition();
+                }
+                restartAtLM = position.getPosition().getLM();
+            }
+            if (onLastPageAndIPDChanges && restartAtLM != null) {
+                if (originalRestartAtLM == null) {
+                    originalRestartAtLM = restartAtLM;
+                } else {
+                    restartAtLM = originalRestartAtLM;
+                }
+                firstElementsForRestart = Collections.EMPTY_LIST;
+            }
+        }
+        if (onLastPageAndIPDChanges && !visitedBefore && positionAtBreak.getPosition() != null) {
+            restartAtLM = positionAtBreak.getPosition().getLM();
+        }
+        return restartAtLM;
     }
 
     /**
@@ -709,84 +818,39 @@ public abstract class AbstractBreaker {
         return nextSequenceStartsOn;
     }
 
-    /**
-     * @param childLC LayoutContext to use
-     * @param alg the pagebreaking algorithm
-     * @param effectiveList the list of Knuth elements to be reused
-     * @return the page on which the next content should appear after a hard break
-     */
-    private int getNextBlockListChangedIPD(LayoutContext childLC, PageBreakingAlgorithm alg,
-                    BlockSequence effectiveList) {
-        int nextSequenceStartsOn;
-        KnuthNode optimalBreak = alg.getBestNodeBeforeIPDChange();
-        int positionIndex = optimalBreak.position;
-        log.trace("IPD changes at index " + positionIndex);
-        KnuthElement elementAtBreak = alg.getElement(positionIndex);
-        Position positionAtBreak = elementAtBreak.getPosition();
-        if (!(positionAtBreak instanceof SpaceResolver.SpaceHandlingBreakPosition)) {
-            throw new UnsupportedOperationException(
-                    "Don't know how to restart at position " + positionAtBreak);
-        }
-        /* Retrieve the original position wrapped into this space position */
-        positionAtBreak = positionAtBreak.getPosition();
-        LayoutManager restartAtLM = null;
-        List<KnuthElement> firstElements = Collections.emptyList();
-        if (containsNonRestartableLM(positionAtBreak)) {
-            if (alg.getIPDdifference() > 0) {
-                EventBroadcaster eventBroadcaster = getCurrentChildLM().getFObj()
-                        .getUserAgent().getEventBroadcaster();
-                BlockLevelEventProducer eventProducer
-                        = BlockLevelEventProducer.Provider.get(eventBroadcaster);
-                eventProducer.nonRestartableContentFlowingToNarrowerPage(this);
-            }
-            firstElements = new LinkedList<KnuthElement>();
-            boolean boxFound = false;
-            Iterator<KnuthElement> iter = effectiveList.listIterator(positionIndex + 1);
-            Position position = null;
-            while (iter.hasNext()
-                    && (position == null || containsNonRestartableLM(position))) {
-                positionIndex++;
-                KnuthElement element = iter.next();
-                position = element.getPosition();
-                if (element.isBox()) {
-                    boxFound = true;
-                    firstElements.add(element);
-                } else if (boxFound) {
-                    firstElements.add(element);
-                }
-            }
-            if (position instanceof SpaceResolver.SpaceHandlingBreakPosition) {
-                /* Retrieve the original position wrapped into this space position */
-                positionAtBreak = position.getPosition();
-            } else {
-                positionAtBreak = null;
-            }
-        }
-        if (positionAtBreak != null && positionAtBreak.getIndex() == -1) {
-            /*
-             * This is an indication that we are between two blocks
-             * (possibly surrounded by another block), not inside a
-             * paragraph.
-             */
-            Position position;
-            Iterator<KnuthElement> iter = effectiveList.listIterator(positionIndex + 1);
-            do {
-                KnuthElement nextElement = iter.next();
-                position = nextElement.getPosition();
-            } while (position == null
-                    || position instanceof SpaceResolver.SpaceHandlingPosition
-                    || position instanceof SpaceResolver.SpaceHandlingBreakPosition
-                        && position.getPosition().getIndex() == -1);
-            LayoutManager surroundingLM = positionAtBreak.getLM();
-            while (position.getLM() != surroundingLM) {
-                position = position.getPosition();
-            }
-            restartAtLM = position.getPosition().getLM();
-        }
+    protected boolean shouldRedoLayout() {
+        return false;
+    }
 
-        nextSequenceStartsOn = getNextBlockList(childLC, Constants.EN_COLUMN,
-                positionAtBreak, restartAtLM, firstElements);
-        return nextSequenceStartsOn;
+    protected void prepareToRedoLayout(PageBreakingAlgorithm alg, int partCount,
+            BlockSequence originalList, BlockSequence effectiveList) {
+        return;
+    }
+
+    protected boolean wasLayoutRedone() {
+        return false;
+    }
+
+    private boolean thereIsANonRestartableLM(PageBreakingAlgorithm alg) {
+        KnuthNode optimalBreak = alg.getBestNodeForLastPage();
+        if (optimalBreak != null) {
+            int positionIndex = optimalBreak.position;
+            KnuthElement elementAtBreak = alg.getElement(positionIndex);
+            Position positionAtBreak = elementAtBreak.getPosition();
+            if (!(positionAtBreak instanceof SpaceResolver.SpaceHandlingBreakPosition)) {
+                return false;
+            }
+            /* Retrieve the original position wrapped into this space position */
+            positionAtBreak = positionAtBreak.getPosition();
+            if (positionAtBreak != null && containsNonRestartableLM(positionAtBreak)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean lastPageHasIPDChange() {
+        return false;
     }
 
     protected int handleFloatLayout(PageBreakingAlgorithm alg, int optimalPageCount, BlockSequence blockList,

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that the definition of a special page-master for the last page does not 
+      interfere with the changing IPD code.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+      <fo:layout-master-set>
+        <fo:simple-page-master margin-right="0mm" margin-top="4mm" margin-left="7mm" margin-bottom="8mm" master-name="PageFront" page-width="210mm" page-height="297mm">
+          <fo:region-body margin-right="20mm" region-name="letterPageBody" margin-top="46mm" margin-left="26mm" margin-bottom="10mm"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master margin-right="0mm" margin-top="4mm" margin-left="7mm" master-name="PageRest" page-width="210mm" page-height="297mm" margin-bottom="8mm">
+          <fo:region-body margin-right="20mm" margin-top="35mm" margin-left="13mm" region-name="letterPageBody" margin-bottom="10mm"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master margin-right="0mm" master-name="PageBlank" margin-top="4mm" margin-left="7mm" page-width="210mm" page-height="297mm" margin-bottom="8mm">
+          <fo:region-body margin-right="20mm" margin-top="38mm" margin-bottom="12mm" margin-left="26mm" region-name="letterPageBody"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="LetterPages">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference page-position="first" master-reference="PageFront"/>
+            <fo:conditional-page-master-reference page-position="rest" master-reference="PageRest"/>
+            <fo:conditional-page-master-reference blank-or-not-blank="not-blank" odd-or-even="even" page-position="last" master-reference="PageRest"/>
+            <fo:conditional-page-master-reference blank-or-not-blank="blank" odd-or-even="even" page-position="last" master-reference="PageBlank"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence format="1" id="th_default_sequence1" initial-page-number="auto" force-page-count="end-on-even" master-reference="LetterPages">
+
+        <fo:flow flow-name="letterPageBody">
+          <fo:block>
+            <fo:table table-layout="fixed">
+              <fo:table-body>
+                <fo:table-row height="30mm">
+                  <fo:table-cell width="157mm">
+                    <fo:block/>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row height="199mm" display-align="after">
+                  <fo:table-cell width="157mm">
+                    <fo:block margin-bottom="0mm"/>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+          </fo:block>
+          <fo:block>
+            <fo:block font-size="9pt">
+              <fo:leader/>
+              <fo:block break-before="page"/>
+            </fo:block>
+          </fo:block>
+
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="" xpath="//pageViewport[1]//flow/block[2]//text"/>
+    <eval expected="" xpath="//pageViewport[2]//flow/block[1]//text"/>
+  </checks>
+</testcase>

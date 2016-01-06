@@ -74,7 +74,7 @@
     <checks>
         <eval expected="(P2,par2)" xpath="((/areaTree/pageSequence/pageViewport)[4]//inlineparent[@internal-link])[1]/@internal-link"/>
         <eval expected="(P3,par3)" xpath="((/areaTree/pageSequence/pageViewport)[4]//inlineparent[@internal-link])[2]/@internal-link"/>
-        <eval expected="(P5,title)" xpath="/areaTree/bookmarkTree/bookmark/@internal-link"/>
+        <eval expected="(P6,title)" xpath="/areaTree/bookmarkTree/bookmark/@internal-link"/>
         <eval expected="4" xpath="count(/areaTree/pageSequence/pageViewport)"/>
     </checks>
 </testcase>
