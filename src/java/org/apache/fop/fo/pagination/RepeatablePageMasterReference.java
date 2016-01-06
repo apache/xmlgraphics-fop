@@ -101,6 +101,11 @@ public class RepeatablePageMasterReference extends FObj
         return master;
     }
 
+    public SimplePageMaster getLastPageMaster(boolean isOddPage, boolean isFirstPage, boolean isEmptyPage,
+                                              BlockLevelEventProducer blockLevelEventProducer) {
+        return getNextPageMaster(isOddPage, isFirstPage, true, isEmptyPage);
+    }
+
     /**
      * Get the value of the <code>maximum-repeats</code> property.
      * @return the "maximum-repeats" property

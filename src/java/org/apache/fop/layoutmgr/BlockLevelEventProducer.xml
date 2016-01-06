@@ -31,4 +31,6 @@
   <message key="missingSubsequencesInPageSequenceMaster">No subsequences in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
   <message key="noMatchingPageMaster">No simple-page-master matching "{pageMasterName}" in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
   <message key="nonRestartableContentFlowingToNarrowerPage">Content that cannot handle IPD changes is flowing to a narrower page. Part of it may be clipped by the page border.</message>
+  <message key="layoutHasReachedParts">A layout has reached {partCount} part(s).</message>
+  <message key="lastPageMasterReferenceMissing">page-position="last" master reference missing.{{locator}}</message>
 </catalogue>

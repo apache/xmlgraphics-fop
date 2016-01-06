@@ -201,8 +201,8 @@ public class PageProvider implements Constants {
             return 0;
         } else {
             Page nextPage = getPage(false, column.pageIndex + 1, RELTO_CURRENT_ELEMENT_LIST);
-            return column.page.getPageViewport().getBodyRegion().getIPD()
-                    - nextPage.getPageViewport().getBodyRegion().getIPD();
+            return column.page.getPageViewport().getBodyRegion().getColumnIPD()
+                    - nextPage.getPageViewport().getBodyRegion().getColumnIPD();
         }
     }
 
@@ -332,7 +332,7 @@ public class PageProvider implements Constants {
         return page;
     }
 
-    private void discardCacheStartingWith(int index) {
+    protected void discardCacheStartingWith(int index) {
         while (index < cachedPages.size()) {
             this.cachedPages.remove(cachedPages.size() - 1);
             if (!pageSeq.goToPreviousSimplePageMaster()) {
@@ -352,7 +352,36 @@ public class PageProvider implements Constants {
         page.getPageViewport().setForeignAttributes(spm.getForeignAttributes());
         page.getPageViewport().setWritingModeTraits(pageSeq);
         cachedPages.add(page);
+        if (isLastPage) {
+            pageSeq.getRoot().setLastSeq(pageSeq);
+        } else if (!isFirstPage) {
+            pageSeq.getRoot().setLastSeq(null);
+        }
         return page;
+    }
+
+    public int getIndexOfCachedLastPage() {
+        return indexOfCachedLastPage;
+    }
+
+    public int getLastPageIndex() {
+        return lastPageIndex;
+    }
+
+    public int getLastPageIPD() {
+        int index = this.cachedPages.size();
+        boolean isFirstPage = (startPageOfPageSequence == index);
+        SimplePageMaster spm = pageSeq.getLastSimplePageMaster(index, isFirstPage, false);
+        Page page = new Page(spm, index, "", false, false);
+        if (pageSeq.getRoot().getLastSeq() != null && pageSeq.getRoot().getLastSeq() != pageSeq) {
+            return -1;
+        }
+        return page.getPageViewport().getBodyRegion().getColumnIPD();
+    }
+
+    public int getCurrentIPD() {
+        return getPageFromColumnIndex(startColumnOfCurrentElementList).getPageViewport().getBodyRegion()
+                .getColumnIPD();
     }
 
     /**

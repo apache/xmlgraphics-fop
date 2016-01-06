@@ -75,6 +75,16 @@ public class Root extends FObj implements CommonAccessibilityHolder {
      */
     private FOEventHandler foEventHandler;
 
+    private PageSequence lastSeq;
+
+    public void setLastSeq(PageSequence seq) {
+        lastSeq = seq;
+    }
+
+    public PageSequence getLastSeq() {
+          return lastSeq;
+    }
+
     /**
      * Base constructor
      *
