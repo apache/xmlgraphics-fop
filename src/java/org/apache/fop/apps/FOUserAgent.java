@@ -134,6 +134,7 @@ public class FOUserAgent {
     protected String keywords;
 
     private final ImageSessionContext imageSessionContext;
+    private final SoftMapCache pdfObjectCache = new SoftMapCache(true);
 
     /**
      * Main constructor. <b>This constructor should not be called directly. Please use the
@@ -807,6 +808,6 @@ public class FOUserAgent {
     }
 
     public SoftMapCache getPDFObjectCache() {
-        return factory.getPDFObjectCache();
+        return pdfObjectCache;
     }
 }
