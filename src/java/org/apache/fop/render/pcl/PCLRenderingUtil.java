@@ -50,12 +50,7 @@ public class PCLRenderingUtil {
     /** Controls the dithering quality when rendering gray or color images. */
     private float ditheringQuality = 0.5f;
 
-    /**
-     * Controls whether an RGB canvas is used when converting Java2D graphics to bitmaps.
-     * This can be used to work around problems with Apache Batik, for example, but setting
-     * this to true will increase memory consumption.
-     */
-    private boolean useColorCanvas;
+    private boolean useColor;
 
     /**
      * Controls whether the generation of PJL commands gets disabled.
@@ -142,12 +137,12 @@ public class PCLRenderingUtil {
         return this.allTextAsBitmaps;
     }
 
-    /**
-     * Indicates whether a color canvas is used when creating bitmap images.
-     * @return true if a color canvas is used.
-     */
-    public boolean isColorCanvasEnabled() {
-        return this.useColorCanvas;
+    public void setColorEnabled(boolean useColor) {
+        this.useColor = useColor;
+    }
+
+    public boolean isColorEnabled() {
+        return useColor;
     }
 
     /**
