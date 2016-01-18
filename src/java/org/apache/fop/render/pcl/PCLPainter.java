@@ -211,7 +211,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
                 }
                 try {
                     setCursorPos(rect.x, rect.y);
-                    gen.fillRect(rect.width, rect.height, fillColor);
+                    gen.fillRect(rect.width, rect.height, fillColor, getPCLUtil().isColorEnabled());
                 } catch (IOException ioe) {
                     throw new IFException("I/O error in fillRect()", ioe);
                 }
@@ -410,7 +410,11 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
         Color textColor = state.getTextColor();
         if (textColor != null) {
             gen.setTransparencyMode(true, false);
-            gen.selectGrayscale(textColor);
+            if (getDocumentHandler().getPCLUtil().isColorEnabled()) {
+                gen.selectColor(textColor);
+            } else {
+                gen.selectGrayscale(textColor);
+            }
         }
 
         gen.setTransparencyMode(true, true);
@@ -492,7 +496,11 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
         Color textColor = state.getTextColor();
         if (textColor != null) {
             gen.setTransparencyMode(true, false);
-            gen.selectGrayscale(textColor);
+            if (getDocumentHandler().getPCLUtil().isColorEnabled()) {
+                gen.selectColor(textColor);
+            } else {
+                gen.selectGrayscale(textColor);
+            }
         }
 
         if (x != -1 && y != -1) {

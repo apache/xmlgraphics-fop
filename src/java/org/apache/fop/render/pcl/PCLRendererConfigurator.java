@@ -67,7 +67,9 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator {
         if (config.isTextRendering() != null) {
             pclUtil.setAllTextAsBitmaps(config.isTextRendering());
         }
-
+        if (config.isColorEnabled() != null) {
+            pclUtil.setColorEnabled(config.isColorEnabled());
+        }
     }
 
     @Override

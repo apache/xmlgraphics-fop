@@ -139,7 +139,7 @@ public class PCLImageHandlerGraphics2D implements ImageHandler {
             }
 
             gen.paintBitmap(imgRend.getRenderedImage(), new Dimension(pos.width, pos.height),
-                    pclContext.isSourceTransparencyEnabled());
+                    pclContext.isSourceTransparencyEnabled(), pclContext.getPCLUtil());
         }
     }
 

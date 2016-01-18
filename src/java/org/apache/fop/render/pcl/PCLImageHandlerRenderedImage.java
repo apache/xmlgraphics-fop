@@ -66,7 +66,7 @@ public class PCLImageHandlerRenderedImage implements ImageHandler {
         Point2D transPoint = pclContext.transformedPoint(pos.x, pos.y);
         gen.setCursorPos(transPoint.getX(), transPoint.getY());
         gen.paintBitmap(ri, new Dimension(pos.width, pos.height),
-                pclContext.isSourceTransparencyEnabled());
+                pclContext.isSourceTransparencyEnabled(), pclContext.getPCLUtil());
     }
 
     /** {@inheritDoc} */
