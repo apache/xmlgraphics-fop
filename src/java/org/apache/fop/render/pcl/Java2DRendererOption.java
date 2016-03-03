@@ -27,7 +27,8 @@ public enum Java2DRendererOption implements RendererConfigOption {
 
     RENDERING_MODE("rendering", PCLRenderingMode.class),
     TEXT_RENDERING("text-rendering", Boolean.class),
-    DISABLE_PJL("disable-pjl", Boolean.class);
+    DISABLE_PJL("disable-pjl", Boolean.class),
+    MODE_COLOR("color", Boolean.class);
 
     private final String name;
 

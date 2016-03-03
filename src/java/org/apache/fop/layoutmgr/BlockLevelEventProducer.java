@@ -202,4 +202,21 @@ public interface BlockLevelEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void nonRestartableContentFlowingToNarrowerPage(Object source);
+
+    /**
+     * A feasible layout has reached the given number of parts (columns or pages).
+     *
+     * @param source the event source
+     * @param partCount the number of parts that the layout has reached
+     * @event.severity INFO
+     */
+    void layoutHasReachedParts(Object source, int partCount);
+
+    /**
+     * Last page master reference missing.
+     *
+     * @param source the event source
+     * @event.severity WARN
+     */
+    void lastPageMasterReferenceMissing(Object source, Locator loc);
 }

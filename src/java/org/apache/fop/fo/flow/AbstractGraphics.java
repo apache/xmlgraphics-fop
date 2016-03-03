@@ -61,7 +61,6 @@ public abstract class AbstractGraphics extends FObj
     private int displayAlign;
     private int dominantBaseline;
     private Length height;
-    private String id;
     private LengthRangeProperty inlineProgressionDimension;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
@@ -92,6 +91,7 @@ public abstract class AbstractGraphics extends FObj
 
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         commonAccessibility = CommonAccessibility.getInstance(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
@@ -104,7 +104,6 @@ public abstract class AbstractGraphics extends FObj
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         height = pList.get(PR_HEIGHT).getLength();
-        id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
@@ -124,13 +123,6 @@ public abstract class AbstractGraphics extends FObj
     /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
-    }
-
-    /**
-     * @return the "id" property.
-     */
-    public String getId() {
-        return id;
     }
 
     /** @return the {@link CommonBorderPaddingBackground} */

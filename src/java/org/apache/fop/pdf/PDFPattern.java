@@ -321,7 +321,7 @@ public class PDFPattern extends PDFPathPaint {
         if (pdfStream != null) {
             length += pdfStream.outputStreamData(encodedStream, stream);
         }
-
+        patternDataStream = null;
         return length;
     }
 

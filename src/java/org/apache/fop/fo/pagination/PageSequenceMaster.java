@@ -254,6 +254,24 @@ public class PageSequenceMaster extends FObj {
         return FO_PAGE_SEQUENCE_MASTER;
     }
 
+    public SimplePageMaster getLastSimplePageMaster(boolean isOddPage, boolean isFirstPage, boolean isBlank,
+            String flowName) {
+        if (currentSubSequence == null) {
+            currentSubSequence = getNextSubSequence();
+            if (currentSubSequence == null) {
+                blockLevelEventProducer.missingSubsequencesInPageSequenceMaster(this, masterName,
+                        getLocator());
+            }
+            if (currentSubSequence.isInfinite() && !currentSubSequence.canProcess(flowName)) {
+                throw new PageProductionException(
+                        "The current sub-sequence will not terminate whilst processing the main flow");
+            }
+        }
+
+        SimplePageMaster pageMaster = currentSubSequence.getLastPageMaster(isOddPage, isFirstPage, isBlank,
+                blockLevelEventProducer);
+        return pageMaster;
+    }
 
 }
 

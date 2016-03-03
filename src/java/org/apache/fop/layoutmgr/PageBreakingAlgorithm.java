@@ -95,6 +95,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     private int ipdDifference;
     private KnuthNode bestNodeForIPDChange;
+    public KnuthNode bestNodeForLastPage;
 
     //Used to keep track of switches in keep-context
     private int currentKeepContext = Constants.EN_AUTO;
@@ -1258,6 +1259,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                  * the IPD change. No need to do any special handling.
                  */
                 ipdDifference = 0;
+            } else if (line > 0 /*&& (bestNodeForLastPage == null
+                     || node.totalDemerits < bestNodeForLastPage.totalDemerits)*/) {
+                bestNodeForLastPage = node;
             }
             super.addNode(line, node);
         }
@@ -1272,6 +1276,10 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             return 0;
         }
         return pageProvider.compareIPDs(line);
+    }
+
+    KnuthNode getBestNodeForLastPage() {
+        return bestNodeForLastPage;
     }
 
     protected boolean handlingFloat() {

@@ -32,6 +32,7 @@ import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.render.RendererConfig;
 
 import static org.apache.fop.render.pcl.Java2DRendererOption.DISABLE_PJL;
+import static org.apache.fop.render.pcl.Java2DRendererOption.MODE_COLOR;
 import static org.apache.fop.render.pcl.Java2DRendererOption.RENDERING_MODE;
 import static org.apache.fop.render.pcl.Java2DRendererOption.TEXT_RENDERING;
 
@@ -65,6 +66,10 @@ public final class PCLRendererConfig implements RendererConfig {
         return getParam(DISABLE_PJL, Boolean.class);
     }
 
+    public Boolean isColorEnabled() {
+        return getParam(MODE_COLOR, Boolean.class);
+    }
+
     private <T> T getParam(Java2DRendererOption option, Class<T> type) {
         assert option.getType().equals(type);
         return type.cast(params.get(option));
@@ -90,6 +95,12 @@ public final class PCLRendererConfig implements RendererConfig {
 
         private void configure(Configuration cfg, PCLRendererConfig config) throws FOPException {
             if (cfg != null) {
+                Configuration imagesCfg = cfg.getChild("images");
+                String imageMode = imagesCfg.getAttribute("mode", null);
+                if ("color".equalsIgnoreCase(imageMode)) {
+                    config.setParam(MODE_COLOR, true);
+                }
+
                 String rendering = cfg.getChild(RENDERING_MODE.getName()).getValue(null);
                 if (rendering != null) {
                     try {

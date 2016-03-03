@@ -274,7 +274,7 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             try {
                 Rectangle printArea = this.currentPageDefinition.getLogicalPageRect();
                 gen.setCursorPos(0, 0);
-                gen.paintBitmap(this.currentImage, printArea.getSize(), true);
+                gen.paintBitmap(this.currentImage, printArea.getSize(), true, pclUtil);
             } catch (IOException ioe) {
                 throw new IFException("I/O error while encoding page image", ioe);
             } finally {

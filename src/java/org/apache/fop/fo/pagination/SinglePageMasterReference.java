@@ -100,6 +100,11 @@ public class SinglePageMasterReference extends FObj
         }
     }
 
+    public SimplePageMaster getLastPageMaster(boolean isOddPage, boolean isFirstPage, boolean isBlankPage,
+                                              BlockLevelEventProducer blockLevelEventProducer) {
+        return getNextPageMaster(isOddPage, isFirstPage, true, isBlankPage);
+    }
+
     /** {@inheritDoc} */
     public void reset() {
         this.state = FIRST;

@@ -78,7 +78,7 @@ public class Declarations extends FObj {
     public void endOfNode() throws FOPException {
         if (firstChild != null) {
             for (FONodeIterator iter = getChildNodes(); iter.hasNext();) {
-                FONode node = iter.nextNode();
+                FONode node = iter.next();
                 if (node.getName().equals("fo:color-profile")) {
                     ColorProfile cp = (ColorProfile)node;
                     if (!"".equals(cp.getColorProfileName())) {

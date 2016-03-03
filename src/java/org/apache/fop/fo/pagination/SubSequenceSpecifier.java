@@ -20,6 +20,7 @@
 package org.apache.fop.fo.pagination;
 
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 
 /**
  * Classes that implement this interface can be added to a {@link PageSequenceMaster},
@@ -42,6 +43,10 @@ public interface SubSequenceSpecifier {
                                  boolean isLastPage,
                                  boolean isBlankPage)
                                     throws PageProductionException;
+
+    SimplePageMaster getLastPageMaster(boolean isOddPage, boolean isFirstPage, boolean isBlankPage,
+                                       BlockLevelEventProducer blockLevelEventProducer)
+            throws PageProductionException;
 
     /**
      * Called before a new page sequence is rendered so subsequences can reset

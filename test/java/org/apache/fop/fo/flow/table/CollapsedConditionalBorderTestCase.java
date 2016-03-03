@@ -140,7 +140,7 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTest {
         do {
             String baseErrorMsge = "table " + Integer.toString(tableNum) + " (0-based), ";
             Table table = (Table) tableIterator.next();
-            TablePart part = (TablePart) table.getChildNodes().nextNode();
+            TablePart part = (TablePart) table.getChildNodes().next();
             GridUnit gu = getGridUnit(part);
 
             String errorMsge = baseErrorMsge + "border-before";
@@ -182,7 +182,7 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTest {
                     resolvedBordersHF[tableNum][borderNum++]);
 
             FONodeIterator bodyIter = table.getChildNodes();
-            TableBody body = (TableBody) bodyIter.nextNode();
+            TableBody body = (TableBody) bodyIter.next();
             gu = getGridUnit(body);
             checkBorder(errorMsge, gu.borderBefore.normal,
                     resolvedBordersHF[tableNum][borderNum++]);
@@ -197,7 +197,7 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTest {
             checkBorder(errorMsge, gu.borderAfter.rest,
                     resolvedBordersHF[tableNum][borderNum++]);
 
-            body = (TableBody) bodyIter.nextNode();
+            body = (TableBody) bodyIter.next();
             gu = getGridUnit(body);
             checkBorder(errorMsge, gu.borderBefore.normal,
                     resolvedBordersHF[tableNum][borderNum++]);
