@@ -454,4 +454,14 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
         this.flowMap.clear();
     }
 
+    public SimplePageMaster getLastSimplePageMaster(int page, boolean isFirstPage, boolean isBlank) {
+        boolean isOddPage = ((page % 2) != 0); // please findbugs...
+        log.debug("getNextSimplePageMaster(page=" + page + " isOdd=" + isOddPage + " isFirst="
+                + isFirstPage + " isLast=true" + " isBlank=" + isBlank + ")");
+        if (pageSequenceMaster == null) {
+            return simplePageMaster;
+        }
+        return pageSequenceMaster.getLastSimplePageMaster(isOddPage, isFirstPage, isBlank, getMainFlow()
+                .getFlowName());
+    }
 }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that the definition of a special page-master for the last page with a
+      different width that the previous "rest" page causes FOP to redo the line breaking layout.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="Page-Portrait" page-width="3in" page-height="4.5in" margin-bottom="0in" margin-right="0in" margin-top="0in" margin-left="0in">
+      <fo:region-body margin-bottom="0.5in" margin-right="0.5in" margin-top="0.5in" margin-left="0.5in" region-name="letterPageBody"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="Page_Landscape" page-width="4.5in" page-height="3in" margin-bottom="0in" margin-right="0in" margin-top="0in" margin-left="0in">
+      <fo:region-body margin-bottom="0.5in" margin-right="0.5in" margin-top="0.5in" margin-left="0.5in" region-name="letterPageBody"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="LetterPages">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference page-position="first" master-reference="Page-Portrait"/>
+        <fo:conditional-page-master-reference master-reference="Page_Landscape" page-position="rest"/>
+        <fo:conditional-page-master-reference master-reference="Page-Portrait" page-position="last"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="LetterPages">
+    <fo:flow flow-name="letterPageBody">
+        <fo:block>This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing.</fo:block>
+        <fo:block>This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing. This is just some generic text to use for testing.</fo:block>
+        <fo:block>Check this works!</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="text to use for testing. This"  xpath="//pageViewport[3]//flow/block[1]/lineArea[2]//text"/>
+  </checks>
+</testcase>

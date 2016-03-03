@@ -81,6 +81,15 @@ public class BodyRegion extends RegionReference {
         return this.columnGap;
     }
 
+    int getContentIPD() {
+        RegionViewport rv = getRegionViewport();
+        return getIPD() - rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
+    }
+
+    public int getColumnIPD() {
+        return (getContentIPD() - (columnCount - 1) * columnGap) / columnCount;
+    }
+
     /**
      * Get the main reference area.
      *

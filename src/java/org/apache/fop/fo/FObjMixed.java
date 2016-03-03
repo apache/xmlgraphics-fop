@@ -149,7 +149,7 @@ public abstract class FObjMixed extends FObj {
                     = this.getChildNodes(this.currentTextNode);
             FONode node;
             while (nodeIter.hasNext()) {
-                node = nodeIter.nextNode();
+                node = nodeIter.next();
                 assert (node instanceof FOText
                         || node.getNameId() == FO_CHARACTER);
                 if (node.getNameId() == FO_CHARACTER) {

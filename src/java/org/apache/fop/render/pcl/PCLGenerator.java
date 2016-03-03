@@ -21,12 +21,19 @@ package org.apache.fop.render.pcl;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
+import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.SinglePixelPackedSampleModel;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -380,7 +387,7 @@ public class PCLGenerator {
      * @param col the fill color
      * @throws IOException In case of an I/O error
      */
-    protected void fillRect(int w, int h, Color col) throws IOException {
+    protected void fillRect(int w, int h, Color col, boolean colorEnabled) throws IOException {
         if ((w == 0) || (h == 0)) {
             return;
         }
@@ -399,12 +406,19 @@ public class PCLGenerator {
             writeCommand("*c" + lineshade + "G");
             writeCommand("*c2P"); //Shaded fill
         } else {
-            defineGrayscalePattern(col, 32, DitherUtil.DITHER_MATRIX_4X4);
+            if (colorEnabled) {
+                selectColor(col);
+                writeCommand("*c" + formatDouble4(w / 100.0) + "h"
+                        + formatDouble4(h / 100.0) + "V");
+                writeCommand("*c0P"); //Solid fill
+            } else {
+                defineGrayscalePattern(col, 32, DitherUtil.DITHER_MATRIX_4X4);
 
-            writeCommand("*c" + formatDouble4(w / 100.0) + "h"
-                              + formatDouble4(h / 100.0) + "V");
-            writeCommand("*c32G");
-            writeCommand("*c4P"); //User-defined pattern
+                writeCommand("*c" + formatDouble4(w / 100.0) + "h"
+                                  + formatDouble4(h / 100.0) + "V");
+                writeCommand("*c32G");
+                writeCommand("*c4P"); //User-defined pattern
+            }
         }
         // Reset pattern transparency mode.
         setPatternTransparencyMode(true);
@@ -528,6 +542,13 @@ public class PCLGenerator {
                 selectCurrentPattern(32, 4);
             }
         }
+    }
+
+    public void selectColor(Color col) throws IOException {
+        writeCommand("*v6W");
+        writeBytes(new byte[]{0, 1, 1, 8, 8, 8});
+        writeCommand(String.format("*v%da%db%dc0I", col.getRed(), col.getGreen(), col.getBlue()));
+        writeCommand("*v0S");
     }
 
     /**
@@ -696,13 +717,15 @@ public class PCLGenerator {
      * @param sourceTransparency true if the background should not be erased
      * @throws IOException In case of an I/O error
      */
-    public void paintBitmap(RenderedImage img, Dimension targetDim, boolean sourceTransparency)
-                throws IOException {
+    public void paintBitmap(RenderedImage img, Dimension targetDim, boolean sourceTransparency,
+                            PCLRenderingUtil pclUtil) throws IOException {
+        final boolean printerSupportsColor = pclUtil.isColorEnabled();
+        boolean monochrome = isMonochromeImage(img);
         double targetHResolution = img.getWidth() / UnitConv.mpt2in(targetDim.width);
         double targetVResolution = img.getHeight() / UnitConv.mpt2in(targetDim.height);
         double targetResolution = Math.max(targetHResolution, targetVResolution);
         int resolution = (int)Math.round(targetResolution);
-        int effResolution = calculatePCLResolution(resolution, true);
+        int effResolution = calculatePCLResolution(resolution, !(printerSupportsColor && !monochrome));
         Dimension orgDim = new Dimension(img.getWidth(), img.getHeight());
         Dimension effDim;
         if (targetResolution == effResolution) {
@@ -713,27 +736,30 @@ public class PCLGenerator {
                     (int)Math.ceil(UnitConv.mpt2px(targetDim.height, effResolution)));
         }
         boolean scaled = !orgDim.equals(effDim);
-
-        boolean monochrome = isMonochromeImage(img);
         if (!monochrome) {
-            //Transparency mask disabled. Doesn't work reliably
-            /*
-            final boolean transparencyDisabled = true;
-            RenderedImage mask = (transparencyDisabled ? null : getMask(img, effDim));
-            if (mask != null) {
-                pushCursorPos();
-                selectCurrentPattern(0, 1); //Solid white
-                setTransparencyMode(true, true);
-                paintMonochromeBitmap(mask, effResolution);
-                popCursorPos();
-            }
-            */
+            if (printerSupportsColor) {
+                selectCurrentPattern(0, 0); //Solid black
+                renderImageAsColor(img, effResolution);
+            } else {
+                //Transparency mask disabled. Doesn't work reliably
+                /*
+                final boolean transparencyDisabled = true;
+                RenderedImage mask = (transparencyDisabled ? null : getMask(img, effDim));
+                if (mask != null) {
+                    pushCursorPos();
+                    selectCurrentPattern(0, 1); //Solid white
+                    setTransparencyMode(true, true);
+                    paintMonochromeBitmap(mask, effResolution);
+                    popCursorPos();
+                }
+                */
 
-            RenderedImage red = BitmapImageUtil.convertToMonochrome(
-                    img, effDim, this.ditheringQuality);
-            selectCurrentPattern(0, 0); //Solid black
-            setTransparencyMode(sourceTransparency /*|| mask != null*/, true);
-            paintMonochromeBitmap(red, effResolution);
+                RenderedImage red = BitmapImageUtil.convertToMonochrome(
+                        img, effDim, this.ditheringQuality);
+                selectCurrentPattern(0, 0); //Solid black
+                setTransparencyMode(sourceTransparency /*|| mask != null*/, true);
+                paintMonochromeBitmap(red, effResolution);
+            }
         } else {
             RenderedImage effImg = img;
             if (scaled) {
@@ -755,6 +781,90 @@ public class PCLGenerator {
         return (int)greyVal;
     }
 
+    private void renderImageAsColor(RenderedImage imgOrg, int dpi) throws IOException {
+        BufferedImage img = new BufferedImage(imgOrg.getWidth(), imgOrg.getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = img.createGraphics();
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, imgOrg.getWidth(), imgOrg.getHeight());
+        g.drawImage((Image) imgOrg, 0, 0, null);
+
+        if (!isValidPCLResolution(dpi)) {
+            throw new IllegalArgumentException("Invalid PCL resolution: " + dpi);
+        }
+        int w = img.getWidth();
+        ColorModel cm = img.getColorModel();
+        if (cm instanceof DirectColorModel) {
+            writeCommand("*v6W");           // ImagingMode
+            out.write(new byte[]{0, 3, 0, 8, 8, 8});
+        } else {
+            IndexColorModel icm = (IndexColorModel)cm;
+            writeCommand("*v6W");     // ImagingMode
+            out.write(new byte[]{0, 1, (byte)icm.getMapSize(), 8, 8, 8});
+
+            byte[] reds = new byte[256];
+            byte[] greens = new byte[256];
+            byte[] blues = new byte[256];
+
+            icm.getReds(reds);
+            icm.getGreens(greens);
+            icm.getBlues(blues);
+            for (int i = 0; i < icm.getMapSize(); i++) {
+                writeCommand("*v" + (reds[i] & 0xFF) + "A");    //ColorComponentOne
+                writeCommand("*v" + (greens[i] & 0xFF) + "B");  //ColorComponentTwo
+                writeCommand("*v" + (blues[i] & 0xFF) + "C");   //ColorComponentThree
+                writeCommand("*v" + i + "I");          //AssignColorIndex
+            }
+        }
+        setRasterGraphicsResolution(dpi);
+        writeCommand("*r0f" + img.getHeight() + "t" + (w) + "S");
+        writeCommand("*r1A");
+
+        Raster raster = img.getData();
+
+        ColorEncoder encoder = new ColorEncoder(img);
+        // Transfer graphics data
+        if (cm.getTransferType() == DataBuffer.TYPE_BYTE) {
+            DataBufferByte dataBuffer = (DataBufferByte)raster.getDataBuffer();
+             if (img.getSampleModel() instanceof MultiPixelPackedSampleModel && dataBuffer.getNumBanks() == 1) {
+                byte[] buf = dataBuffer.getData();
+                MultiPixelPackedSampleModel sampleModel = (MultiPixelPackedSampleModel)img.getSampleModel();
+                int scanlineStride = sampleModel.getScanlineStride();
+                int idx = 0;
+                for (int y = 0, maxy = img.getHeight(); y < maxy; y++) {
+                    for (int x = 0; x < scanlineStride; x++) {
+                        encoder.add8Bits(buf[idx]);
+                        idx++;
+                    }
+                    encoder.endLine();
+                }
+             } else {
+                 throw new IOException("Unsupported image");
+             }
+        } else if (cm.getTransferType() == DataBuffer.TYPE_INT) {
+             DataBufferInt dataBuffer = (DataBufferInt)raster.getDataBuffer();
+             if (img.getSampleModel() instanceof SinglePixelPackedSampleModel && dataBuffer.getNumBanks() == 1) {
+                int[] buf = dataBuffer.getData();
+                SinglePixelPackedSampleModel sampleModel = (SinglePixelPackedSampleModel)img.getSampleModel();
+                int scanlineStride = sampleModel.getScanlineStride();
+                int idx = 0;
+                for (int y = 0, maxy = img.getHeight(); y < maxy; y++) {
+                    for (int x = 0; x < scanlineStride; x++) {
+                        encoder.add8Bits((byte)(buf[idx] >> 16));
+                        encoder.add8Bits((byte)(buf[idx] >> 8));
+                        encoder.add8Bits((byte)(buf[idx] >> 0));
+                        idx++;
+                    }
+                    encoder.endLine();
+                }
+             } else {
+                 throw new IOException("Unsupported image");
+             }
+        } else {
+            throw new IOException("Unsupported image");
+        }
+        // End raster graphics
+        writeCommand("*rB");
+    }
     /**
      * Paint a bitmap at the current cursor position. The bitmap must be a monochrome
      * (1-bit) bitmap image.
@@ -919,6 +1029,238 @@ public class PCLGenerator {
         }
 
 
+    }
+
+    private class ColorEncoder {
+        private int imgw;
+        private int bytewidth;
+        private byte ib; //current image bits
+
+        private int currentIndex;
+        private int len;
+        private int shiftBit = 0x80;
+        private int whiteLines;
+        final byte[] zeros;
+        final byte[] buff1;
+        final byte[] buff2;
+        final byte[] encodedRun;
+        final byte[] encodedTagged;
+        final byte[] encodedDelta;
+        byte[] seed;
+        byte[] current;
+        int compression;
+        int seedLen;
+
+        public ColorEncoder(RenderedImage img) {
+            imgw = img.getWidth();
+            bytewidth = imgw * 3 + 1;
+
+            zeros         = new byte[bytewidth];
+            buff1         = new byte[bytewidth];
+            buff2         = new byte[bytewidth];
+            encodedRun    = new byte[bytewidth];
+            encodedTagged = new byte[bytewidth];
+            encodedDelta  = new byte[bytewidth];
+
+            seed    = buff1;
+            current = buff2;
+
+            seedLen = 0;
+            compression = (-1);
+            System.arraycopy(zeros, 0, seed, 0, zeros.length);
+
+        }
+
+        private int runCompression(byte[] buff, int len) {
+            int bytes = 0;
+
+            try {
+                for (int i = 0; i < len;) {
+                    int sameCount;
+                    byte seed = current[i++];
+
+                    for (sameCount = 1; i < len && current[i] == seed; i++) {
+                        sameCount++;
+                    }
+
+                    for (; sameCount > 256; sameCount -= 256) {
+                        buff[bytes++] = (byte)255;
+                        buff[bytes++] = seed;
+                    }
+                    if (sameCount > 0) {
+                        buff[bytes++] = (byte)(sameCount - 1);
+                        buff[bytes++] = seed;
+                    }
+
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                return len + 1;
+            }
+            return bytes;
+        }
+
+        private int deltaCompression(byte[] seed, byte[] buff, int len) {
+            int bytes = 0;
+
+            try {
+                for (int i = 0; i < len;) {
+                    int sameCount;
+                    int diffCount;
+
+                    for (sameCount = 0; i < len && current[i] == seed[i]; i++) {
+                        sameCount++;
+                    }
+                    for (diffCount = 0; i < len && current[i] != seed[i]; i++) {
+                        diffCount++;
+                    }
+
+                    for (; diffCount != 0;) {
+                        int diffToWrite = (diffCount > 8) ?  8 : diffCount;
+                        int sameToWrite = (sameCount > 31) ? 31 : sameCount;
+
+                        buff[bytes++] = (byte)(((diffToWrite - 1) << 5) | sameToWrite);
+                        sameCount -= sameToWrite;
+                        if (sameToWrite == 31) {
+                            for (; sameCount >= 255; sameCount -= 255) {
+                                buff[bytes++] = (byte)255;
+                            }
+                            buff[bytes++] = (byte)sameCount;
+                            sameCount = 0;
+                        }
+
+                        System.arraycopy(current, i - diffCount, buff, bytes, diffToWrite);
+                        bytes += diffToWrite;
+
+                        diffCount -= diffToWrite;
+                    }
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                return len + 1;
+            }
+            return bytes;
+        }
+
+        private int tiffCompression(byte[] encodedTagged, int len) {
+            int literalCount = 0;
+            int bytes = 0;
+
+            try {
+                for (int from = 0; from < len;) {
+                    int repeatLength;
+                    int repeatValue = current[from];
+
+                    for (repeatLength = 1; repeatLength < 128
+                            && from + repeatLength < len
+                            && current[from + repeatLength] == repeatValue;) {
+                        repeatLength++;
+                    }
+
+                    if (literalCount == 128 || (repeatLength > 2 && literalCount > 0)) {
+                        encodedTagged[bytes++] = (byte)(literalCount - 1);
+                        System.arraycopy(current, from - literalCount, encodedTagged, bytes, literalCount);
+                        bytes += literalCount;
+                        literalCount = 0;
+                    }
+                    if (repeatLength > 2) {
+                        encodedTagged[bytes++] = (byte)(1 - repeatLength);
+                        encodedTagged[bytes++] = current[from];
+                        from += repeatLength;
+                    } else {
+                        literalCount++;
+                        from++;
+                    }
+                }
+                if (literalCount > 0) {
+                    encodedTagged[bytes++] = (byte)(literalCount - 1);
+                    System.arraycopy(current, (3 * len) - literalCount, encodedTagged, bytes, literalCount);
+                    bytes += literalCount;
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                return len + 1;
+            }
+            return bytes;
+        }
+
+        public void addBit(boolean bit) {
+            //Set image bit for black
+            if (bit) {
+                ib |= shiftBit;
+            }
+            shiftBit >>= 1;
+            if (shiftBit == 0) {
+                add8Bits(ib);
+                shiftBit = 0x80;
+                ib = 0;
+            }
+        }
+
+        public void add8Bits(byte b) {
+            current[currentIndex++] = b;
+            if (b != 0) {
+                len = currentIndex;
+            }
+        }
+
+        public void endLine() throws IOException {
+            if (len == 0) {
+                whiteLines++;
+            } else {
+                if (whiteLines > 0) {
+                    writeCommand("*b" + whiteLines + "Y");
+                    whiteLines = 0;
+                }
+
+                int unencodedCount = len;
+                int runCount = runCompression(encodedRun, len);
+                int tiffCount = tiffCompression(encodedTagged, len);
+                int deltaCount = deltaCompression(seed, encodedDelta, Math.max(len, seedLen));
+
+                int bestCount = Math.min(unencodedCount, Math.min(runCount, Math.min(tiffCount, deltaCount)));
+                int bestCompression;
+
+                if (bestCount == unencodedCount) {
+                    bestCompression = 0;
+                } else if (bestCount == runCount) {
+                    bestCompression = 1;
+                } else if (bestCount == tiffCount) {
+                    bestCompression = 2;
+                } else {
+                    bestCompression = 3;
+                }
+
+                if (compression != bestCompression) {
+                    compression = bestCompression;
+                    writeCommand("*b" + compression + "M");
+                }
+
+                if (bestCompression == 0) {
+                    writeCommand("*b" + unencodedCount + "W");
+                    out.write(current, 0, unencodedCount);
+                } else if (bestCompression == 1) {
+                    writeCommand("*b" + runCount + "W");
+                    out.write(encodedRun, 0, runCount);
+                } else if (bestCompression == 2) {
+                    writeCommand("*b" + tiffCount + "W");
+                    out.write(encodedTagged, 0, tiffCount);
+                } else if (bestCompression == 3) {
+                    writeCommand("*b" + deltaCount + "W");
+                    out.write(encodedDelta, 0, deltaCount);
+                }
+
+                if (current == buff1) {
+                    seed    = buff1;
+                    current = buff2;
+                } else {
+                    seed    = buff2;
+                    current = buff1;
+                }
+                seedLen = len;
+            }
+            shiftBit = 0x80;
+            ib = 0;
+            len = 0;
+            currentIndex = 0;
+        }
     }
 
 }

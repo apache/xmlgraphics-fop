@@ -383,6 +383,11 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
         if (curPage != null) {
             finishPage();
         }
+
+        while (forcePageCount != Constants.EN_NO_FORCE && getCurrentPageNum() < getLastPageNumber()) {
+            curPage = makeNewPage(true);
+            finishPage();
+        }
     }
 
     /** {@inheritDoc} */
@@ -390,4 +395,7 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
         throw new IllegalStateException();
     }
 
+    protected int getLastPageNumber() {
+        return currentPageNum;
+    }
 }

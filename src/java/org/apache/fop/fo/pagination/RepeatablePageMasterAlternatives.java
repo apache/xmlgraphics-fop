@@ -31,6 +31,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.Property;
+import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_repeatable-page-master-alternatives">
@@ -136,6 +137,22 @@ public class RepeatablePageMasterAlternatives extends FObj
         return null;
     }
 
+    public SimplePageMaster getLastPageMaster(boolean isOddPage, boolean isFirstPage, boolean isBlankPage,
+                                              BlockLevelEventProducer blockLevelEventProducer) {
+        for (ConditionalPageMasterReference cpmr : conditionalPageMasterRefs) {
+            if (cpmr.isValid(isOddPage, isFirstPage, true, isBlankPage)) {
+                return cpmr.getMaster();
+            }
+        }
+        blockLevelEventProducer.lastPageMasterReferenceMissing(this, getLocator());
+        for (ConditionalPageMasterReference cpmr : conditionalPageMasterRefs) {
+            if (cpmr.isValid(isOddPage, isFirstPage, false, isBlankPage)) {
+                return cpmr.getMaster();
+            }
+        }
+        throw new PageProductionException("Last page master not found: oddpage=" + isOddPage
+                + " firstpage=" + isFirstPage + " blankpage=" + isBlankPage);
+    }
 
     /**
      * Adds a new conditional page master reference.

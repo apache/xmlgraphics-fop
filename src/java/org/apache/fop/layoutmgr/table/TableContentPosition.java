@@ -124,4 +124,8 @@ class TableContentPosition extends Position {
         sb.append(")");
         return sb.toString();
     }
+
+    public Position getPosition() {
+        return this;
+    }
 }

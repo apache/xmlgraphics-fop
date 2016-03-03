@@ -254,6 +254,16 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         return pageProvider.isOnFirstPage(partIndex);
     }
 
+    protected int getLastPageNumber() {
+        return pageProvider.getLastPageIndex();
+    }
+
+    protected int getWidthOfCurrentPage() {
+        if (curPage != null) {
+            return (int) curPage.getPageViewport().getViewArea().getWidth();
+        }
+        return 0;
+    }
     /**
      * Registers the given footnotes so that they can be added to the current page, before any other footnote.
      *

@@ -93,6 +93,23 @@ http://xmlgraphics.apache.org/fop/stable/running.html
   RELEASE NOTES
 ==============================================================================
 
+Version 2.1
+===========
+
+Major Changes in Version 2.1
+----------------------------
+
+* Add PreloaderRawPNG to handle images ImageIO cant
+* Support Barcode4J page number
+* Support CMYK JPEG in AFP
+* Support IPD change on last page
+* Support PDF/UA
+* Support TrueType fonts in PCL
+* Support Truetype for AFP
+* Support for PDF/A-3
+
+This release also contains a number of bug fixes.
+
 Version 2.0
 ===========
 
