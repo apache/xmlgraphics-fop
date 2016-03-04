@@ -392,22 +392,20 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 addedPositions = 0;
             }
 
-            if (log.isWarnEnabled()) {
-                int lack = difference + bestActiveNode.availableShrink;
-                // if this LLM is nested inside a BlockContainerLayoutManager that is constraining
-                // the available width and thus responsible for the overflow then we do not issue
-                // warning event here and instead let the BCLM handle that at a later stage
-                if (lack < 0 && !handleOverflow(-lack)) {
-                    InlineLevelEventProducer eventProducer
-                        = InlineLevelEventProducer.Provider.get(
-                            getFObj().getUserAgent().getEventBroadcaster());
-                    if (curChildLM.getFObj() == null) {
-                        eventProducer.lineOverflows(this, getFObj().getName(), bestActiveNode.line,
-                                -lack, getFObj().getLocator());
-                    } else {
-                        eventProducer.lineOverflows(this, curChildLM.getFObj().getName(), bestActiveNode.line,
-                            -lack, curChildLM.getFObj().getLocator());
-                    }
+            int lack = difference + bestActiveNode.availableShrink;
+            // if this LLM is nested inside a BlockContainerLayoutManager that is constraining
+            // the available width and thus responsible for the overflow then we do not issue
+            // warning event here and instead let the BCLM handle that at a later stage
+            if (lack < 0 && !handleOverflow(-lack)) {
+                InlineLevelEventProducer eventProducer
+                    = InlineLevelEventProducer.Provider.get(
+                        getFObj().getUserAgent().getEventBroadcaster());
+                if (curChildLM.getFObj() == null) {
+                    eventProducer.lineOverflows(this, getFObj().getName(), bestActiveNode.line,
+                            -lack, getFObj().getLocator());
+                } else {
+                    eventProducer.lineOverflows(this, curChildLM.getFObj().getName(), bestActiveNode.line,
+                        -lack, curChildLM.getFObj().getLocator());
                 }
             }
 
