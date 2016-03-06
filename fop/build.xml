@@ -147,6 +147,9 @@ list of possible build targets.
   <patternset id="exclude-jce-dependencies">
     <exclude name="org/apache/fop/pdf/PDFEncryptionJCE.java" unless="jce.present"/>
   </patternset>
+  <patternset id="exclude-codegen">
+    <exclude name="org/apache/fop/tools/Event*.java"/>
+  </patternset>
   <property name="Name" value="Apache FOP"/>
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
@@ -328,6 +331,7 @@ list of possible build targets.
       <patternset includes="**/*.java"/>
       <patternset refid="exclude-jce-dependencies"/>
       <patternset refid="exclude-jai"/>
+      <patternset refid="exclude-codegen"/>
       <classpath refid="libs-build-classpath"/>
       <compilerarg value="-Xlint:cast"/> 
     </javac>
@@ -336,6 +340,7 @@ list of possible build targets.
       <src path="${src.sandbox.dir}"/>
       <patternset includes="**/*.java"/>
       <patternset refid="exclude-jai"/>
+      <patternset refid="exclude-codegen"/>
       <classpath>
         <path refid="libs-build-classpath"/>
         <pathelement location="${build.classes.dir}"/>
@@ -343,18 +348,17 @@ list of possible build targets.
     </javac>
   </target>
   <target name="resourcegen" depends="compile-java">
-    <mkdir dir="${build.codegen-classes.dir}"/>
-    <javac destdir="${build.codegen-classes.dir}" includeAntRuntime="true">
-      <src path="${src.codegen.dir}/java"/>
-      <patternset includes="**/*.java"/>
+    <javac destdir="${build.classes.dir}" includeAntRuntime="true">
+      <src path="${src.java.dir}"/>
+      <patternset includes="**/tools/Event*.java"/>
       <classpath>
         <path refid="libs-tools-build-classpath"/>
         <pathelement location="${build.classes.dir}"/>
       </classpath>
     </javac>
-    <copy todir="${build.codegen-classes.dir}">
-      <fileset dir="${src.codegen.dir}/java">
-        <include name="**/*.xsl"/>
+    <copy todir="${build.classes.dir}">
+      <fileset dir="${src.resources.dir}">
+        <include name="**/tools/*.xsl"/>
       </fileset>
     </copy>
     <taskdef name="eventResourceGenerator" classname="org.apache.fop.tools.EventProducerCollectorTask">
@@ -481,7 +485,7 @@ list of possible build targets.
     <pathconvert property="manifest.classpath" dirsep="/" pathsep=" " refid="libs-build-classpath">
       <map from="${basedir}${file.separator}lib${file.separator}" to=""/>
     </pathconvert>
-    <jar jarfile="${build.dir}/fop.jar" basedir="${build.classes.dir}">
+    <jar jarfile="${build.dir}/fop.jar">
       <manifest>
         <attribute name="Main-Class" value="org.apache.fop.cli.Main"/>
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}, Target Java ${javac.target}])"/>
@@ -496,6 +500,10 @@ list of possible build targets.
         </section>
       </manifest>
       <metainf dir="${basedir}" includes="../LICENSE,../NOTICE"/>
+      <fileset dir="${build.classes.dir}">
+        <exclude name="**/tools/Event*.class"/>
+        <exclude name="**/tools/*.xsl"/>
+      </fileset>
     </jar>
   </target>
   <target name="uptodate-jar-sandbox" depends="compile">
