@@ -1,0 +1,99 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.apache.xmlgraphics</groupId>
+  <artifactId>fop-parent</artifactId>
+  <version>2.2.0-SNAPSHOT</version>
+  <name>${project.groupId}:${project.artifactId}</name>
+  <description>XML Graphics Format Object Processor</description>
+  <packaging>pom</packaging>
+
+  <properties>
+    <antrun.plugin.version>1.8</antrun.plugin.version>
+    <batik.version>1.9.0-SNAPSHOT</batik.version>
+    <build.helper.plugin.version>1.10</build.helper.plugin.version>
+    <checkstyle.plugin.version>2.15</checkstyle.plugin.version>
+    <exec.plugin.version>1.4.0</exec.plugin.version>
+    <findbugs.plugin.version>3.0.1</findbugs.plugin.version>
+    <jar.plugin.version>2.6</jar.plugin.version>
+    <java.version>1.7</java.version>
+    <junit.version>4.11</junit.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.info.reports.plugin.version>2.8</project.info.reports.plugin.version>
+    <release.plugin.version>2.5.2</release.plugin.version>
+    <surefire.plugin.version>2.18.1</surefire.plugin.version>
+    <xml.plugin.version>1.0.1</xml.plugin.version>
+    <xmlgraphics.commons.version>2.2.0-SNAPSHOT</xmlgraphics.commons.version>
+    <xmlunit.version>1.2</xmlunit.version>
+  </properties>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <organization>
+    <name>Apache Software Foundation</name>
+    <url>http://www.apache.org/</url>
+  </organization>
+
+  <modules>
+    <module>fop</module>
+    <!-- <module>fop-servlet</module> -->
+    <!-- <module>fop-transcoder</module> -->
+  </modules>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>${project.info.reports.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${surefire.plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <scm>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/</connection>
+    <url>scm:svn:https://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/</url>
+    <developerConnection></developerConnection>
+  </scm>
+
+  <repositories>
+    <repository>
+      <id>apache.snapshots.https</id>
+      <url>https://repository.apache.org/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>daily</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <site>
+      <id>${project.artifactId}-site</id>
+      <url>${project.baseUri}</url>
+    </site>
+  </distributionManagement>
+
+</project>
