@@ -84,7 +84,6 @@
       <url>https://repository.apache.org/content/repositories/snapshots</url>
       <snapshots>
         <enabled>true</enabled>
-        <updatePolicy>daily</updatePolicy>
       </snapshots>
     </repository>
   </repositories>
