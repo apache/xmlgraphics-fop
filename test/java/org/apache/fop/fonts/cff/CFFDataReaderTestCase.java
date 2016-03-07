@@ -60,43 +60,43 @@ public class CFFDataReaderTestCase {
         byte[] testDictData = new byte[0];
         //Version
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                392, new int[] { 0 }, -1));
+                392, new int[] { 0 }, -1, true));
         //Notice
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                393, new int[] { 1 }, -1));
+                393, new int[] { 1 }, -1, true));
         //Copyright
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                394, new int[] { 12, 0 }, -1));
+                394, new int[] { 12, 0 }, -1, true));
         //FullName
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                395, new int[] { 2 }, -1));
+                395, new int[] { 2 }, -1, true));
         //FamilyName
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                396, new int[] { 3 }, -1));
+                396, new int[] { 3 }, -1, true));
         //Weight
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                397, new int[] { 4 }, -1));
+                397, new int[] { 4 }, -1, true));
         //isFixedPitch (boolean = false)
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                0, new int[] { 12, 1 }, -1));
+                0, new int[] { 12, 1 }, -1, true));
         //FontBBox
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                -50, new int[0], -1));
+                -50, new int[0], -1, true));
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                -40, new int[0], -1));
+                -40, new int[0], -1, true));
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                100, new int[0], -1));
+                100, new int[0], -1, true));
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                120, new int[] { 5 }, -1));
+                120, new int[] { 5 }, -1, true));
         //charset
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                1234, new int[] { 15 }, -1));
+                1234, new int[] { 15 }, -1, true));
         //CharStrings
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                3654, new int[] { 17 }, -1));
+                3654, new int[] { 17 }, -1, true));
         //Private
         testDictData = OTFSubSetFile.concatArray(testDictData, OTFSubSetFile.createNewRef(
-                11454, new int[] { 18 }, -1));
+                11454, new int[] { 18 }, -1, true));
         return testDictData;
     }
 

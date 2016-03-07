@@ -105,7 +105,7 @@ public class OFFontLoader extends FontLoader {
             FontFileReader reader = new FontFileReader(in);
             String header = readHeader(reader);
             boolean isCFF = header.equals("OTTO");
-            OpenFont otf = (isCFF) ? new OTFFile() : new TTFFile(useKerning, useAdvanced);
+            OpenFont otf = (isCFF) ? new OTFFile(useKerning, useAdvanced) : new TTFFile(useKerning, useAdvanced);
             boolean supported = otf.readFont(reader, header, ttcFontName);
             if (!supported) {
                 throw new IOException("The font does not have a Unicode cmap table: " + fontFileURI);

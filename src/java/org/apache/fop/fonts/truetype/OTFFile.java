@@ -37,6 +37,11 @@ public class OTFFile extends OpenFont {
     protected CFFFont fileFont;
 
     public OTFFile() throws IOException {
+        this(true, false);
+    }
+
+    public OTFFile(boolean useKerning, boolean useAdvanced) throws IOException {
+        super(useKerning, useAdvanced);
         checkForFontbox();
     }
 
