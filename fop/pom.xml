@@ -248,17 +248,15 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.plugin.version}</version><!--$NO-MVN-MAN-VER$-->
         <configuration>
-          <!--
           <includes>
             <include>**/*TestCase.java</include>
-            <include>**/*TestCases.java</include>
           </includes>
-          -->
           <excludes>
-            <exclude>**/*Test.java</exclude>
-            <exclude>**/*TestCase.java</exclude>
-            <exclude>**/*TestCases.java</exclude>
-            <exclude>**/*TestSuite.java</exclude>
+            <exclude>**/BasicEventTestCase.java</exclude>
+            <exclude>**/HyphenationLayoutTestCase.java</exclude>
+            <exclude>**/IFTestCase.java</exclude>
+            <exclude>**/PDFVTTestCase.java</exclude>
+            <exclude>**/PDFEncodingTestCase.java</exclude>
           </excludes>
           <redirectTestOutputToFile>true</redirectTestOutputToFile>
         </configuration>
