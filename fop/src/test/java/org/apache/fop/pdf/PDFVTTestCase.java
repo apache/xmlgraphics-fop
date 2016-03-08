@@ -137,14 +137,14 @@ public class PDFVTTestCase {
 
         Fop fop = fopFactory.newFop(mimeFopIf, userAgent, out);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        Source src = new StreamSource(new FileInputStream("src/test/java/org/apache/fop/pdf/PDFVT.fo"));
+        Source src = new StreamSource(new FileInputStream("src/test/resources/org/apache/fop/pdf/PDFVT.fo"));
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
     }
 
     private FopFactory getFopFactory() throws IOException, SAXException {
         return FopFactory.newInstance(new File(".").toURI(),
-                new FileInputStream("src/test/java/org/apache/fop/pdf/PDFVT.xconf"));
+                new FileInputStream("src/test/resources/org/apache/fop/pdf/PDFVT.xconf"));
     }
 
     private void iFToPDF(InputStream is) throws IOException, SAXException, TransformerException, IFException {

@@ -188,6 +188,7 @@ list of possible build targets.
   <property name="hyph.stacksize" value="512k"/>
   <property name="test.dir" value="${basedir}/test"/>
   <property name="test.java.dir" value="${src.dir}/test/java"/>
+  <property name="test.resources.dir" value="${src.dir}/test/resources"/>
   <property name="build.dir" value="${basedir}/build"/>
   <property name="build.gensrc.dir" value="${build.dir}/gensrc"/>
   <property name="build.classes.dir" value="${build.dir}/classes"/>
@@ -737,14 +738,8 @@ list of possible build targets.
       </fileset>
     </eventResourceGenerator>
     <copy todir="${build.unit.tests.dir}">
-      <fileset dir="${test.java.dir}">
-        <include name="META-INF/**"/>
-        <include name="**/*.xml"/>
-        <include name="**/*.fo"/>
-        <include name="**/BidiTestData*.ser"/>
-        <include name="**/*.afp"/>
-        <include name="**/*.ps"/>
-        <include name="**/*.xsl"/>
+      <fileset dir="${test.resources.dir}">
+        <include name="**/*"/>
       </fileset>
       <fileset dir="${build.dir}/test-gensrc">
         <include name="**/*.xml"/>
