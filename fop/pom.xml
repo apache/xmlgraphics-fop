@@ -212,6 +212,16 @@
           </execution>
         </executions>
       </plugin>
+      <!-- compile -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>org/apache/fop/util/bitmap/JAIMonochromeBitmapConverter.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
       <!-- generate event collector models -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
