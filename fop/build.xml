@@ -167,12 +167,33 @@ list of possible build targets.
   <property name="junit.printsummary" value="off"/>
   <property name="junit.formatter.brief" value="on"/>
   <property name="javadoc.packages" value="org.apache.fop.*"/>
-  <property name="src.dir" value="${basedir}/src"/>
+  <property name="core.dir" value="${basedir}/../fop-core"/>
+  <property name="core.src.dir" value="${core.dir}/src"/>
+  <property name="core.src.java.dir" value="${core.src.dir}/main/java"/>
+  <property name="core.checkstyle.dir" value="${core.src.dir}/tools/resources/checkstyle"/>
+  <property name="core.findbugs.dir" value="${core.src.dir}/tools/resources/findbugs"/>
+  <property name="events.dir" value="${basedir}/../fop-events"/>
+  <property name="events.src.dir" value="${events.dir}/src"/>
+  <property name="events.src.java.dir" value="${events.src.dir}/main/java"/>
+  <property name="events.checkstyle.dir" value="${events.src.dir}/tools/resources/checkstyle"/>
+  <property name="events.findbugs.dir" value="${events.src.dir}/tools/resources/findbugs"/>
+  <property name="sandbox.dir" value="${basedir}/../fop-sandbox"/>
+  <property name="sandbox.src.dir" value="${sandbox.dir}/src"/>
+  <property name="sandbox.src.java.dir" value="${sandbox.src.dir}/main/java"/>
+  <property name="servlet.dir" value="${basedir}/../fop-servlet"/>
+  <property name="servlet.src.dir" value="${servlet.dir}/src"/>
+  <property name="servlet.src.java.dir" value="${servlet.src.dir}/main/java"/>
+  <property name="util.dir" value="${basedir}/../fop-util"/>
+  <property name="util.src.dir" value="${util.dir}/src"/>
+  <property name="util.src.java.dir" value="${util.src.dir}/main/java"/>
+  <property name="util.checkstyle.dir" value="${util.src.dir}/tools/resources/checkstyle"/>
+  <property name="util.findbugs.dir" value="${util.src.dir}/tools/resources/findbugs"/>
+  <property name="src.dir" value="${core.src.dir}"/>
   <property name="src.codegen.dir" value="${src.dir}/main/codegen"/>
   <property name="src.codegen.fonts.dir" value="${src.codegen.dir}/fonts"/>
   <property name="src.java.dir" value="${src.dir}/main/java"/>
   <property name="src.resources.dir" value="${src.dir}/main/resources"/>
-  <property name="src.sandbox.dir" value="${src.dir}/sandbox"/>
+  <property name="src.sandbox.dir" value="${sandbox.src.dir}"/>
   <property name="src.viewer.resources.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/resources"/>
   <property name="src.viewer.images.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/images"/>
   <property name="fo.examples.dir" value="${basedir}/examples/fo/basic"/>
@@ -328,7 +349,9 @@ list of possible build targets.
     <mkdir dir="${build.classes.dir}"/>
     <javac destdir="${build.classes.dir}" includeAntRuntime="true">
       <src path="${build.gensrc.dir}"/>
-      <src path="${src.java.dir}"/>
+      <src path="${core.src.java.dir}"/>
+      <src path="${events.src.java.dir}"/>
+      <src path="${util.src.java.dir}"/>
       <patternset includes="**/*.java"/>
       <patternset refid="exclude-jce-dependencies"/>
       <patternset refid="exclude-jai"/>
@@ -350,7 +373,7 @@ list of possible build targets.
   </target>
   <target name="resourcegen" depends="compile-java">
     <javac destdir="${build.classes.dir}" includeAntRuntime="true">
-      <src path="${src.java.dir}"/>
+      <src path="${events.src.java.dir}"/>
       <patternset includes="**/tools/Event*.java"/>
       <classpath>
         <path refid="libs-tools-build-classpath"/>
@@ -555,7 +578,7 @@ list of possible build targets.
   <target name="package" depends="jar-main,jar-hyphenation,jar-sandbox" description="Generates the jar files"/>
   <target name="servlet" depends="package" description="Generates the WAR with the sample FOP servlet">
     <echo message="Creating the WAR file"/>
-    <war warfile="${build.dir}/fop.war" webxml="${src.dir}/conf/web.xml">
+    <war warfile="${build.dir}/fop.war" webxml="${servlet.src.dir}/main/webapp/WEB-INF/web.xml">
       <lib dir="${lib.dir}">
         <include name="avalon-framework*.jar"/>
         <include name="commons-logging*.jar"/>
@@ -1058,7 +1081,8 @@ NOTE:
 <!-- Checkstyle                                                          -->
 <!-- =================================================================== -->
   <property name="checkstyle.location" value="${lib-tools}/checkstyle-5.5-all.jar" />
-  <property name="checkstyle.config" value="${basedir}/checkstyle-5.5.xml" />
+  <property name="checkstyle.config" value="${core.checkstyle.dir}/checkstyle.xml" />
+  <property name="checkstyle.suppressions.file" value="${core.checkstyle.dir}/suppressions.xml" />
   <path id="checkstyle-classpath">
     <pathelement location="${checkstyle.location}"/>
   </path>
@@ -1160,11 +1184,12 @@ NOTE:
       </classpath>
     </taskdef>
     <findbugs home="${findbugs.home.dir}" output="${findbugs.output.format}" reportLevel="low" effort="max"
-              outputFile="${build.dir}/report_findbugs.${findbugs.output.extension}" excludeFilter="findbugs-exclude.xml" jvmargs="-Xmx1024m" warningsProperty="findbugs.warnings">
+              outputFile="${build.dir}/report_findbugs.${findbugs.output.extension}" excludeFilter="${core.findbugs.dir}/exclusions.xml" jvmargs="-Xmx1024m" warningsProperty="findbugs.warnings">
       <sourcePath path="${src.java.dir}"/>
       <class location="${build.classes.dir}"/>
       <auxClasspath>
         <path refid="libs-build-classpath"/>
+        <path refid="libs-tools-build-classpath"/>
         <path>
           <fileset dir="${ant.library.dir}">
             <include name="ant.jar"/>
@@ -1197,7 +1222,7 @@ NOTE:
 <!-- Creates the distribution                                            -->
 <!-- =================================================================== -->
 <!-- It would be better to make dist depend on distclean. But as long as the forrest projectInfo plugin depends on a higher Java version (1.5) than we use for the compilation (1.4), leaving it out enables a workaround -->
-  <target name="dist" depends="dist-prereq,dist-src,dist-bin,maven-artifacts" description="Generates the distribution package"/>
+  <target name="dist" depends="dist-prereq,dist-src,dist-bin" description="Generates the distribution package"/>
   <target name="dist-prereq" depends="init,dist-get-jai">
     <fail message="A complete binary build requires JAI" unless="jai.present"/>
     <fail message="A complete binary build requires JCE" unless="jce.present"/>
@@ -1308,67 +1333,6 @@ NOTE:
     <exec executable="${gpg.exec}" inputstring="${pwd}">
       <arg line="${gpg.options} ${sign.archive}"/>
     </exec>
-  </target>
-<!-- =================================================================== -->
-<!-- Maven artifacts                                                     -->
-<!-- =================================================================== -->
-  <target name="maven-artifacts" depends="jar-main, jar-sources, jar-javadocs" description="Builds a Maven artifact that can be uploaded to a Maven repository">
-    <filter  token="version" value="${version}"/>
-    <mkdir dir="${build.dir}/maven"/>
-    <copy file="${basedir}/xmlgraphics-fop-pom-template.pom" tofile="${build.dir}/maven/pom.xml" filtering="true"/>
-    <copy file="${build.dir}/${name}.jar" tofile="${build.dir}/${name}-${version}.jar"/>
-    <fileset id="bundle-files" dir="${build.dir}">
-      <patternset>
-      <include name="${name}-${version}.jar"/>
-      <include name="${name}-${version}-sources.jar"/>
-      <include name="${name}-${version}-javadoc.jar"/>
-      </patternset>
-      <patternset>
-      <include name="maven/pom.xml"/>
-      </patternset>
-    </fileset>
-    <checksum algorithm="md5">
-      <fileset refid="bundle-files"/>
-    </checksum>
-    <checksum algorithm="sha1">
-      <fileset refid="bundle-files"/>
-    </checksum>
-    <input message="Passphrase for your default private key (attention: passphrase will be echoed in clear text on the display!)" addproperty="pwd"/>
-    <antcall target="sign-file">
-      <param name="sign.archive" value="${build.dir}/${name}-${version}.jar"/>
-      <param name="pwd" value="${pwd}"/>
-    </antcall>
-    <antcall target="sign-file">
-      <param name="sign.archive" value="${build.dir}/${name}-${version}-sources.jar"/>
-      <param name="pwd" value="${pwd}"/>
-    </antcall>
-    <antcall target="sign-file">
-      <param name="sign.archive" value="${build.dir}/${name}-${version}-javadoc.jar"/>
-      <param name="pwd" value="${pwd}"/>
-    </antcall>
-    <antcall target="sign-file">
-      <param name="sign.archive" value="${build.dir}/maven/pom.xml"/>
-      <param name="pwd" value="${pwd}"/>
-    </antcall>
-    <jar jarfile="${build.dir}/${name}-${version}-bundle.jar">
-      <manifest>
-        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
-      </manifest>
-      <fileset dir="${build.dir}">
-        <patternset>
-          <include name="${name}-${version}.jar*"/>
-          <include name="${name}-${version}-sources.jar*"/>
-          <include name="${name}-${version}-javadoc.jar*"/>
-        </patternset>
-      </fileset>
-      <fileset dir="${build.dir}/maven">
-        <patternset>
-          <include name="pom.xml*"/>
-        </patternset>
-      </fileset>
-      <metainf dir="${basedir}" includes="../LICENSE,../NOTICE"/>
-    </jar>
-    <move file="${build.dir}/${name}-${version}-bundle.jar" todir="${basedir}"/>
   </target>
 <!-- =================================================================== -->
 <!-- Nightly builds                                                      -->
