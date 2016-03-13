@@ -218,17 +218,6 @@
           </execution>
         </executions>
       </plugin>
-      <!-- compile -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <!-- [TBD] - temporarily exclude JAI support -->
-            <exclude>org/apache/fop/util/bitmap/JAIMonochromeBitmapConverter.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
       <!-- generate event collector models -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -284,9 +273,7 @@
       </plugin>
       <!-- code analysis - checkstyle -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${checkstyle.plugin.version}</version>
         <configuration>
           <configLocation>${project.baseUri}src/tools/resources/checkstyle/checkstyle.xml</configLocation>
           <headerLocation>${project.baseUri}src/tools/resources/checkstyle/LICENSE.txt</headerLocation>

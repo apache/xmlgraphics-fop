@@ -53,7 +53,6 @@ import org.apache.fop.fo.flow.table.TableHeader;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fonts.FontSetup;
@@ -122,10 +121,7 @@ public class MIFHandler extends FOEventHandler {
         // setup the pages for this sequence
         String name = pageSeq.getMasterReference();
         SimplePageMaster spm = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(name);
-        if (spm == null) {
-            PageSequenceMaster psm
-                = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(name);
-        } else {
+        if (spm != null) {
             // create simple master with regions
             MIFElement prop = new MIFElement("PageType");
             prop.setValue("BodyPage");

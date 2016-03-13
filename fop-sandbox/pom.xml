@@ -90,9 +90,7 @@
       </plugin>
       <!-- code analysis - checkstyle -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${checkstyle.plugin.version}</version>
         <configuration>
           <configLocation>${project.baseUri}../fop-core/src/tools/resources/checkstyle/checkstyle.xml</configLocation>
           <headerLocation>${project.baseUri}../fop-core/src/tools/resources/checkstyle/LICENSE.txt</headerLocation>
@@ -110,7 +108,7 @@
         <artifactId>findbugs-maven-plugin</artifactId>
         <version>${findbugs.plugin.version}</version>
         <configuration>
-          <excludeFilterFile>../fop-core/src/tools/resources/findbugs/exclusions.xml</excludeFilterFile>
+          <excludeFilterFile>src/tools/resources/findbugs/exclusions.xml</excludeFilterFile>
           <effort>Max</effort>
           <threshold>Low</threshold>
         </configuration>

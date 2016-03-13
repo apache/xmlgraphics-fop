@@ -28,9 +28,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,8 +40,10 @@
 
 package org.apache.fop.fonts;
 
-import java.util.Map;
 import java.util.Collections;
+import java.util.Map;
+
+// CSOFF: ConstantNameCheck
 
 public class CodePointMapping extends AbstractCodePointMapping {
 
@@ -64,23 +66,26 @@ public class CodePointMapping extends AbstractCodePointMapping {
         CodePointMapping mapping = (CodePointMapping) mappings.get(encoding);
         if (mapping != null) {
             return mapping;
-        } <xsl:apply-templates mode="get"/>
-        throw new UnsupportedOperationException("Unknown encoding: " + encoding);
+<xsl:apply-templates mode="get"/>
+        } else {
+            throw new UnsupportedOperationException("Unknown encoding: " + encoding);
+        }
     }
 <xsl:apply-templates mode="table"/>
 <xsl:apply-templates select="encoding" mode="names"/>
 }
-  </xsl:template>
+</xsl:template>
 
-  <xsl:template match="encoding" mode="constant">    public static final String <xsl:value-of select="@constant"/> = "<xsl:value-of select="@id"/>";</xsl:template>
+  <xsl:template match="encoding" mode="constant">
+    public static final String <xsl:value-of select="@constant"/> = "<xsl:value-of select="@id"/>";
+</xsl:template>
   
-  <xsl:template match="encoding" mode="get">
-        else if (encoding.equals(<xsl:value-of select="@constant"/>)) {
-    mapping = new CodePointMapping(<xsl:value-of select="@constant"/>, enc<xsl:value-of select="@id"/>, names<xsl:value-of select="@id"/>);
+<xsl:template match="encoding" mode="get">
+        } else if (encoding.equals(<xsl:value-of select="@constant"/>)) {
+            mapping = new CodePointMapping(<xsl:value-of select="@constant"/>, enc<xsl:value-of select="@id"/>, names<xsl:value-of select="@id"/>);
             mappings.put(<xsl:value-of select="@constant"/>, mapping);
             return mapping;
-        }
-  </xsl:template>
+</xsl:template>
 
   <xsl:template match="encoding" mode="table">
     <xsl:variable name="glyphlist-name" select="@glyphlist"/>
@@ -93,7 +98,7 @@ public class CodePointMapping extends AbstractCodePointMapping {
             0x<xsl:value-of select="$codepoint"/>, 0x<xsl:value-of select="@codepoint"/>, // <xsl:value-of select="$name"/>
 </xsl:for-each></xsl:for-each>
         };
-  </xsl:template>
+</xsl:template>
   
   <xsl:template match="encoding" mode="names">
     private static final String[] names<xsl:value-of select="@id"/>
@@ -102,7 +107,7 @@ public class CodePointMapping extends AbstractCodePointMapping {
   <xsl:with-param name="idx" select="0"/>
 </xsl:call-template>
         };
-  </xsl:template>
+</xsl:template>
   
   <xsl:template name="charname">
     <xsl:param name="idx"/>
@@ -121,20 +126,20 @@ public class CodePointMapping extends AbstractCodePointMapping {
     <xsl:value-of select="$idx"/>-<xsl:value-of select="$idxHEXraw"/>-<xsl:value-of select="$idxHEX"/>-<xsl:value-of select="$idxhex"/>
     -->
     <xsl:if test="($idx mod 4) = 0">
-      <xsl:text>&#x0D;    /*</xsl:text><xsl:value-of select="$idxHEX"/><xsl:text>*/ </xsl:text>
+      <xsl:text>&#x0A;    /*</xsl:text><xsl:value-of select="$idxHEX"/><xsl:text>*/</xsl:text>
     </xsl:if>
     <xsl:variable name="v">
       <xsl:value-of select="child::glyph[@codepoint = $idxHEX or @codepoint = $idxhex]/@name"/><!--<xsl:value-of select="glyph[@codepoint = $idxhex]/@name"/>-->
     </xsl:variable>
     <xsl:choose>
       <xsl:when test="string-length($v) > 0">
-        <xsl:text>"</xsl:text><xsl:value-of select="$v"/><xsl:text>"</xsl:text>
+        <xsl:text> "</xsl:text><xsl:value-of select="$v"/><xsl:text>"</xsl:text>
       </xsl:when>
-      <xsl:otherwise>null</xsl:otherwise>
+      <xsl:otherwise> null</xsl:otherwise>
     </xsl:choose>
     
     <xsl:if test="$idx &lt; 255">
-      <xsl:text>, </xsl:text>
+      <xsl:text>,</xsl:text>
       <xsl:call-template name="charname">
         <xsl:with-param name="idx" select="$idx + 1"/>
       </xsl:call-template>

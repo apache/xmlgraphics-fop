@@ -42,7 +42,6 @@ import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
-import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
 import org.apache.fop.render.ImageHandler;
@@ -77,16 +76,21 @@ public class EmbeddedSVGImageHandler implements ImageHandler, SVGConstants {
         };
     }
 
+    /*
     private void addAttribute(AttributesImpl atts, QName attribute, String value) {
         atts.addAttribute(attribute.getNamespaceURI(),
                 attribute.getLocalName(), attribute.getQName(), CDATA, value);
     }
+    */
 
     /** {@inheritDoc} */
     public void handleImage(RenderingContext context, Image image, final Rectangle pos)
             throws IOException {
         SVGRenderingContext svgContext = (SVGRenderingContext)context;
-        ImageXMLDOM svg = (ImageXMLDOM)image;
+        if (!(image instanceof ImageXMLDOM)) {
+            throw new IllegalStateException();
+        }
+        ImageXMLDOM svg = (ImageXMLDOM) image;
         ContentHandler handler = svgContext.getContentHandler();
         AttributesImpl atts = new AttributesImpl();
         atts.addAttribute("", "x", "x", CDATA, SVGUtil.formatMptToPt(pos.x));

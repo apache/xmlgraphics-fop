@@ -278,9 +278,7 @@ public class SVGPainter extends AbstractIFPainter<AbstractSVGDocumentHandler>
             XMLUtil.addAttribute(atts, "y", SVGUtil.formatMptToPt(rect.y));
             XMLUtil.addAttribute(atts, "width", SVGUtil.formatMptToPt(rect.width));
             XMLUtil.addAttribute(atts, "height", SVGUtil.formatMptToPt(rect.height));
-            if (fill != null) {
-                XMLUtil.addAttribute(atts, "fill", toString(fill));
-            }
+            XMLUtil.addAttribute(atts, "fill", toString(fill));
             /* disabled
             if (stroke != null) {
                 XMLUtil.addAttribute(atts, "stroke", toString(stroke));
