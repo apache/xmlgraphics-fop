@@ -411,6 +411,15 @@ list of possible build targets.
         <include name="**/*.xml"/>
       </fileset>
     </copy>
+    <copy todir="${build.sandbox-classes.dir}">
+      <fileset dir="${src.resources.dir}">
+        <include name="META-INF/services/*.ElementMapping"/>
+        <include name="META-INF/services/*.FOEventHandler"/>
+        <include name="META-INF/services/*.IFDocumentHandler"/>
+        <include name="META-INF/services/*.ImageHandler"/>
+        <include name="META-INF/services/*.XMLHandler"/>
+      </fileset>
+    </copy>
     <mkdir dir="${build.viewer.resources.dir}"/>
     <copy todir="${build.viewer.resources.dir}">
       <fileset dir="${src.viewer.resources.dir}"/>
