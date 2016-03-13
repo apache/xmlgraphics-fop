@@ -38,31 +38,31 @@ public class MIFFile extends MIFElement {
     /** pgfCatalog */
     protected PGFElement pgfCatalog;
     /** fontCatalog */
-    protected MIFElement fontCatalog;
+    // protected MIFElement fontCatalog;
     /** rulingCatalog */
     protected RulingElement rulingCatalog;
     /** tblCatalog */
-    protected MIFElement tblCatalog;
+    // protected MIFElement tblCatalog;
     /** views */
-    protected MIFElement views;
+    // protected MIFElement views;
     /** variableFormats */
-    protected MIFElement variableFormats;
+    // protected MIFElement variableFormats;
     /** xRefFormats */
-    protected MIFElement xRefFormats;
+    // protected MIFElement xRefFormats;
     /** document */
-    protected MIFElement document;
+    // protected MIFElement document;
     /** bookComponent */
-    protected MIFElement bookComponent;
+    // protected MIFElement bookComponent;
     /** initialAutoNums */
-    protected MIFElement initialAutoNums;
+    // protected MIFElement initialAutoNums;
     /** aFrames */
-    protected MIFElement aFrames;
+    // protected MIFElement aFrames;
     /** tbls */
-    protected MIFElement tbls;
+    // protected MIFElement tbls;
     /** pages */
     protected List pages = new java.util.ArrayList();
     /** textFlows */
-    protected List textFlows;
+    // protected List textFlows;
 
 
     /** default constructor */

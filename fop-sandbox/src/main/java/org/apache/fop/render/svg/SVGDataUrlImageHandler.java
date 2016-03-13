@@ -75,6 +75,9 @@ public class SVGDataUrlImageHandler implements ImageHandler, SVGConstants {
     public void handleImage(RenderingContext context, Image image, Rectangle pos)
             throws IOException {
         SVGRenderingContext svgContext = (SVGRenderingContext)context;
+        if (!(image instanceof ImageRawStream)) {
+            throw new IllegalStateException();
+        }
         ImageRawStream raw = (ImageRawStream)image;
         InputStream in = raw.createInputStream();
         try {

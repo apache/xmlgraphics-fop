@@ -32,7 +32,23 @@
   <xsl:param name="encoding" select="/font-metrics/encoding"/>
   <xsl:variable name="glyphs" select="document('encodings.xml')/encoding-set/encoding[@id=$encoding]/glyph"/>
 
-  <xsl:template match="font-metrics">
+  <xsl:template match="font-metrics"> /*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.fop.fonts.base14;
 
 import java.awt.Rectangle;
@@ -41,53 +57,58 @@ import java.net.URI;
 import java.util.Map;
 </xsl:if>
 import java.util.Set;
-import org.apache.fop.fonts.FontType;
+
 import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.CodePointMapping;
+import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.Typeface;
 
+// CSOFF: ConstantNameCheck
+
 public class <xsl:value-of select="class-name"/> extends Base14Font {
-    private final static URI fontFileURI;
-    private final static String fontName = "<xsl:value-of select="font-name"/>";
-    private final static String fullName = "<xsl:value-of select="full-name"/>";
-    private final static Set familyNames;
-    private final static int underlinePosition = <xsl:value-of select="underline-position"/>;
-    private final static int underlineThickness = <xsl:value-of select="underline-thickness"/>;
-    private final static String encoding = "<xsl:value-of select="$encoding"/>";
-    private final static int capHeight = <xsl:value-of select="cap-height"/>;
-    private final static int xHeight = <xsl:value-of select="x-height"/>;
-    private final static int ascender = <xsl:value-of select="ascender"/>;
-    private final static int descender = <xsl:value-of select="descender"/>;
-    private final static int firstChar = <xsl:value-of select="first-char"/>;
-    private final static int lastChar = <xsl:value-of select="last-char"/>;
-    private final static int[] width;
-    private final static Rectangle[] boundingBoxes;
+    private static final URI fontFileURI;
+    private static final String fontName = "<xsl:value-of select="font-name"/>";
+    private static final String fullName = "<xsl:value-of select="full-name"/>";
+    private static final Set familyNames;
+    private static final int underlinePosition = <xsl:value-of select="underline-position"/>;
+    private static final int underlineThickness = <xsl:value-of select="underline-thickness"/>;
+    private static final String encoding = "<xsl:value-of select="$encoding"/>";
+    private static final int capHeight = <xsl:value-of select="cap-height"/>;
+    private static final int xHeight = <xsl:value-of select="x-height"/>;
+    private static final int ascender = <xsl:value-of select="ascender"/>;
+    private static final int descender = <xsl:value-of select="descender"/>;
+    private static final int firstChar = <xsl:value-of select="first-char"/>;
+    private static final int lastChar = <xsl:value-of select="last-char"/>;
+    private static final int[] width;
+    private static final Rectangle[] boundingBoxes;
     private final CodePointMapping mapping =
         CodePointMapping.getMapping("<xsl:value-of select="$encoding"/>");
 <xsl:if test="count(kerning) &gt; 0">
-    private final static Map kerning;
+    private static final Map kerning;
 </xsl:if>
 
-    private boolean enableKerning = false;
+    private boolean enableKerning;
 
     static {
         URI uri = null;
         try {
             uri = new URI("base14:" + fontName.toLowerCase());
         } catch (java.net.URISyntaxException e) {
+          throw new RuntimeException(e);
         }
         fontFileURI = uri;
         width = new int[256];
         boundingBoxes = new Rectangle[256];
-        <xsl:apply-templates select="char-metrics"/>
-<xsl:if test="count(kerning) &gt; 0">
-        kerning = new java.util.HashMap();
-        Integer first, second;
-        Map pairs;
-        <xsl:apply-templates select="kerning"/>
-</xsl:if>
+<xsl:apply-templates select="char-metrics"/>
         familyNames = new java.util.HashSet();
         familyNames.add("<xsl:value-of select="family-name"/>");
+<xsl:if test="count(kerning) &gt; 0">
+        kerning = new java.util.HashMap();
+        Integer first;
+        Integer second;
+        Map pairs;
+<xsl:apply-templates select="kerning"/>
+</xsl:if>
     }
 
     public <xsl:value-of select="class-name"/>() {
@@ -158,7 +179,7 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
         return lastChar;
     }
 
-    public int getWidth(int i,int size) {
+    public int getWidth(int i, int size) {
         return size * width[i];
     }
 
@@ -172,9 +193,8 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
         System.arraycopy(width, getFirstChar(), arr, 0, getLastChar() - getFirstChar() + 1);
         return arr;
     }
-
 <xsl:choose>
-  <xsl:when test="count(kerning) &gt; 0">
+<xsl:when test="count(kerning) &gt; 0">
     public boolean hasKerningInfo() {
         return enableKerning;
     }
@@ -182,8 +202,8 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
     public java.util.Map getKerningInfo() {
         return kerning;
     }
-  </xsl:when>
-  <xsl:otherwise>
+</xsl:when>
+<xsl:otherwise>
     public boolean hasKerningInfo() {
         return false;
     }
@@ -191,9 +211,8 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
     public java.util.Map getKerningInfo() {
         return java.util.Collections.EMPTY_MAP;
     }
-  </xsl:otherwise>
+</xsl:otherwise>
 </xsl:choose>
-
     public char mapChar(char c) {
         notifyMapOperation();
         char d = mapping.mapChar(c);
@@ -210,25 +229,24 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
     }
 
 }
-  </xsl:template>
+</xsl:template>
 
-  <xsl:template match="char-metrics/char">
-    <xsl:variable name="char-name" select="@name"/><xsl:variable name="char-num" select="$glyphs[@name = $char-name]/@codepoint"/><xsl:if test="$char-num!=''">  width[0x<xsl:value-of select="$char-num"/>] = <xsl:value-of select="@width"/>;
-        boundingBoxes[0x<xsl:value-of select="$char-num"/>] = new Rectangle(<xsl:value-of select="@llx"/>,<xsl:value-of select="@lly"/>,<xsl:value-of select="@urx - @llx"/>,<xsl:value-of select="@ury - @lly"/>);</xsl:if></xsl:template>
+<xsl:template match="char-metrics/char"><xsl:variable name="char-name" select="@name"/><xsl:variable name="char-num" select="$glyphs[@name = $char-name]/@codepoint"/><xsl:if test="$char-num!=''">        width[0x<xsl:value-of select="$char-num"/>] = <xsl:value-of select="@width"/>;
+        boundingBoxes[0x<xsl:value-of select="$char-num"/>] = new Rectangle(<xsl:value-of select="@llx"/>, <xsl:value-of select="@lly"/>, <xsl:value-of select="@urx - @llx"/>, <xsl:value-of select="@ury - @lly"/>);</xsl:if></xsl:template>
   
-  <xsl:template match="kerning">
+<xsl:template match="kerning">
         first = new Integer(<xsl:value-of select="@kpx1"/>);
         pairs = (Map)kerning.get(first);
         if (pairs == null) {
             pairs = new java.util.HashMap();
             kerning.put(first, pairs);
         }
-        <xsl:apply-templates select="pair"/>
-  </xsl:template>
+<xsl:apply-templates select="pair"/></xsl:template>
   
-  <xsl:template match="pair">
+<xsl:template match="pair">
         second = new Integer(<xsl:value-of select="@kpx2"/>);
         pairs.put(second, new Integer(<xsl:value-of select="@kern"/>));
-  </xsl:template>
+</xsl:template>
+
 </xsl:stylesheet>
 

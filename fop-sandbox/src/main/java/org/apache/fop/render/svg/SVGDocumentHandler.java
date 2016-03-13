@@ -75,6 +75,8 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
      */
     public SVGDocumentHandler(IFContext context) {
         super(context);
+        this.multiFileUtil = null;
+        this.reusedParts = null;
     }
 
     /** {@inheritDoc} */
@@ -192,10 +194,13 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
             } catch (TransformerConfigurationException tce) {
                 throw new IFException("Error setting up a Transformer", tce);
             } catch (TransformerException te) {
-                if (te.getCause() instanceof SAXException) {
-                    throw (SAXException)te.getCause();
+                Throwable t = te.getCause();
+                if (t instanceof SAXException) {
+                    throw (SAXException) t;
+                } else if (t instanceof Exception) {
+                    throw new IFException("Error while serializing reused parts", (Exception) t);
                 } else {
-                    throw new IFException("Error while serializing reused parts", te);
+                    throw new RuntimeException(t);
                 }
             }
         } catch (SAXException e) {

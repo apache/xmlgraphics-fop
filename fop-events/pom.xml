@@ -95,9 +95,7 @@
       </plugin>
       <!-- code analysis - checkstyle -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${checkstyle.plugin.version}</version>
         <configuration>
           <configLocation>${project.baseUri}../fop-core/src/tools/resources/checkstyle/checkstyle.xml</configLocation>
           <headerLocation>${project.baseUri}../fop-core/src/tools/resources/checkstyle/LICENSE.txt</headerLocation>

@@ -83,10 +83,11 @@ public class MIFElement {
             return false;
         }
 
-        String indentStr = "";
+        StringBuffer sb = new StringBuffer();
         for (int c = 0; c < indent; c++) {
-            indentStr += " ";
+            sb.append(' ');
         }
+        String indentStr = sb.toString();
         if (!started) {
             os.write((indentStr + "<" + name).getBytes());
             if (valueElements != null) {
