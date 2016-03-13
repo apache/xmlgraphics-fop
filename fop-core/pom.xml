@@ -259,6 +259,15 @@
           </execution>
         </executions>
       </plugin>
+      <!-- compile exclusions -->
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>org/apache/fop/util/bitmap/JAIMonochromeBitmapConverter.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
       <!-- junit testing -->
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
