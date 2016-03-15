@@ -57,71 +57,6 @@ list of possible build targets.
   <property environment="env"/>
   <property file="${basedir}/build-local.properties"/>
   <property file="${basedir}/build.properties"/>
-  <fileset dir="${basedir}" id="dist.bin">
-    <include name="../KEYS"/>
-    <include name="../LICENSE"/>
-    <include name="../NOTICE"/>
-    <include name="../README"/>
-    <include name="conf/**"/>
-    <include name="examples/**"/>
-    <include name="fop"/>
-    <include name="fop.bat"/>
-    <include name="fop.cmd"/>
-    <include name="fop.js"/>
-    <include name="status.xml"/>
-  </fileset>
-  <fileset dir="${basedir}" id="dist.bin.lib">
-    <patternset id="dist.lib">
-      <include name="lib/README*"/>
-      <include name="lib/avalon-framework*"/>
-      <include name="lib/batik*"/>
-      <include name="lib/commons-io*"/>
-      <include name="lib/commons-logging*"/>
-      <include name="lib/fontbox*"/>
-      <include name="lib/serializer*"/>
-      <include name="lib/xalan*"/>
-      <include name="lib/xerces*"/>
-      <include name="lib/xml-apis*"/>
-      <include name="lib/xmlgraphics-commons*"/>
-    </patternset>
-  </fileset>
-  <patternset id="dist.src.lib.build">
-    <include name="lib/build/asm*"/>
-    <include name="lib/build/hamcrest*"/>
-    <include name="lib/build/jaxen*"/>
-    <include name="lib/build/mockito*"/>
-    <include name="lib/build/objenesis*"/>
-    <include name="lib/build/pmd*"/>
-    <include name="lib/build/qdox*"/>
-    <include name="lib/build/xmlunit*"/>
-  </patternset>
-  <fileset dir="${basedir}" id="dist.src">
-    <include name="../KEYS"/>
-    <include name="../LICENSE"/>
-    <include name="../NOTICE"/>
-    <include name="../README"/>
-    <include name="build.*"/>
-    <include name="checkstyle*"/>
-    <exclude name="checkstyle-noframes.xsl"/>
-    <include name="conf/**"/>
-    <include name="examples/**"/>
-    <include name="findbugs*"/>
-    <include name="fop"/>
-    <include name="fop.bat"/>
-    <include name="fop.cmd"/>
-    <include name="fop.js"/>
-    <include name="forrest.*"/>
-    <include name="hyph/hyphenation.dtd"/>
-    <include name="hyph/readme"/>
-    <include name="jacoco*"/>
-    <include name="known-issues.xml"/>
-    <include name="lib/servlet*"/>
-    <include name="src/**"/>
-    <include name="status.xml"/>
-    <include name="test/**"/>
-    <patternset refid="dist.lib"/>
-    <patternset refid="dist.src.lib.build"/>
-  </fileset>
   <path id="libs-build-classpath">
     <fileset dir="${basedir}/lib">
       <include name="*.jar"/>
@@ -224,13 +159,7 @@ list of possible build targets.
   <property name="build.viewer.images.dir" value="${build.classes.dir}/org/apache/fop/render/awt/viewer/images"/>
   <property name="build.property.examples.mime.type" value="application/pdf"/>
   <property name="build.property.tests.mime.type" value="application/pdf"/>
-  <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
-  <property name="dist.src.dir" value="${basedir}/dist-src"/>
-  <property name="nightly.dir" value="${basedir}/nightly"/>
-  <property name="dist.bin.result.dir" value="${dist.bin.dir}/${name}-${version}"/>
-  <property name="dist.src.result.dir" value="${dist.src.dir}/${name}-${version}"/>
   <tstamp/>
-  <property name="nightly.result.dir" value="${nightly.dir}/${name}-${DSTAMP}"/>
   <property name="samedir" value="${basedir}"/>
   <property name="junit.reports.dir" value="${build.dir}/test-reports"/>
   <property name="junit.html.reports.dir" value="${build.dir}/test-reports/html"/>
@@ -1233,118 +1162,18 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Creates the distribution                                            -->
 <!-- =================================================================== -->
-<!-- It would be better to make dist depend on distclean. But as long as the forrest projectInfo plugin depends on a higher Java version (1.5) than we use for the compilation (1.4), leaving it out enables a workaround -->
-  <target name="dist" depends="dist-prereq,dist-src,dist-bin" description="Generates the distribution package"/>
-  <target name="dist-prereq" depends="init,dist-get-jai">
-    <fail message="A complete binary build requires JAI" unless="jai.present"/>
-    <fail message="A complete binary build requires JCE" unless="jce.present"/>
+<!-- Change dist/release targets to NO-OPs, deferring to maven. -->
+  <target name="dist">
+    <echo message="Use maven deploy for FOP releases; release process no longer supported by ant configuration."/>
   </target>
-  <target name="dist-get-jai" description="Attempts to download the JAI library dependency" unless="jai.present">
-    <echo message="JAI Support NOT present - attempting to download... "/>
-    <get src="http://download.java.net/media/jai/builds/release/1_1_3/jai-1_1_3-lib.zip" dest="${java.io.tmpdir}/jai-1_1_3-lib.zip" verbose="true" />
-    <unzip src="${java.io.tmpdir}/jai-1_1_3-lib.zip" dest="${java.io.tmpdir}">
-      <patternset>
-        <include name="jai-1_1_3/lib/*"/>
-      </patternset>
-    </unzip>
-    <copy todir="${basedir}/lib" file="${java.io.tmpdir}/jai-1_1_3/lib/jai_core.jar" />
-    <copy todir="${basedir}/lib" file="${java.io.tmpdir}/jai-1_1_3/lib/jai_codec.jar" />
-    <delete dir="${java.io.tmpdir}/jai-1_1_3" />
-    <delete file="${java.io.tmpdir}/jai-1_1_3-lib.zip" />
-    <property name="jai.present" value="true"/>
-  </target>
-  <target name="dist-bin" depends="all,javadocs">
-    <echo message="Building the binary distribution files (zip,tar)"/>
-    <mkdir dir="${dist.bin.result.dir}"/>
-    <copy todir="${dist.bin.result.dir}">
-      <fileset refid="dist.bin"/>
-      <fileset refid="dist.bin.lib"/>
-    </copy>
-    <copy todir="${dist.bin.result.dir}/javadocs">
-      <fileset dir="${build.javadocs.dir}"/>
-    </copy>
-    <mkdir dir="${dist.bin.result.dir}/build"/>
-    <copy todir="${dist.bin.result.dir}/build" file="build/fop.jar"/>
-    <chmod file="${dist.bin.result.dir}/fop" perm="ugo+rx"/>
-    <zip zipfile="${name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
-    <tar longfile="gnu" destfile="${name}-${version}-bin.tar">
-      <tarfileset dir="${dist.bin.dir}" mode="755">
-        <include name="${name}-${version}/fop"/>
-      </tarfileset>
-      <tarfileset dir="${dist.bin.dir}">
-        <include name="**"/>
-        <exclude name="${name}-${version}/fop"/>
-      </tarfileset>
-    </tar>
-    <gzip zipfile="${name}-${version}-bin.tar.gz" src="${name}-${version}-bin.tar"/>
-    <delete file="${name}-${version}-bin.tar"/>
+  <target name="dist-bin">
+    <echo message="Use maven deploy for FOP releases; release process no longer supported by ant configuration."/>
   </target>
   <target name="dist-src">
-    <echo message="Building the source distribution files (zip,tar)"/>
-    <mkdir dir="${dist.src.result.dir}"/>
-    <copy todir="${dist.src.result.dir}">
-      <fileset refid="dist.src"/>
-    </copy>
-    <chmod file="${dist.src.result.dir}/fop" perm="ugo+rx"/>
-    <zip zipfile="${name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
-    <tar longfile="gnu" destfile="${name}-${version}-src.tar">
-      <tarfileset dir="${dist.src.dir}" mode="755">
-        <include name="${name}-${version}/fop"/>
-      </tarfileset>
-      <tarfileset dir="${dist.src.dir}">
-        <include name="**"/>
-        <exclude name="${name}-${version}/fop"/>
-      </tarfileset>
-    </tar>
-    <gzip zipfile="${name}-${version}-src.tar.gz" src="${name}-${version}-src.tar"/>
-    <delete file="${name}-${version}-src.tar"/>
+    <echo message="Use maven deploy for FOP releases; release process no longer supported by ant configuration."/>
   </target>
-  <target name="release-dist" depends="dist" description="Generates the distribution package and signs the release">
-    <property name="bin.suffix" value="bin"/>
-    <input message="Passphrase for your default private key (attention: passphrase will be echoed in clear text on the display!)" addproperty="pwd"/>
-    <antcall target="md5">
-      <param name="sign.archive" value="${name}-${version}-src.zip"/>
-    </antcall>
-    <antcall target="sign-file">
-      <param name="sign.archive" value="${name}-${version}-src.zip"/>
-      <param name="pwd" value="${pwd}"/>
-    </antcall>
-    <antcall target="md5">
-      <param name="sign.archive" value="${name}-${version}-src.tar.gz"/>
-    </antcall>
-    <antcall target="sign-file">
-      <param name="sign.archive" value="${name}-${version}-src.tar.gz"/>
-      <param name="pwd" value="${pwd}"/>
-    </antcall>
-    <antcall target="md5">
-      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.zip"/>
-    </antcall>
-    <antcall target="sign-file">
-      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.zip"/>
-      <param name="pwd" value="${pwd}"/>
-    </antcall>
-    <antcall target="md5">
-      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.tar.gz"/>
-    </antcall>
-    <antcall target="sign-file">
-      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.tar.gz"/>
-      <param name="pwd" value="${pwd}"/>
-    </antcall>
-  </target>
-  <target name="md5">
-    <property name="md5.exec" value="md5sum"/>
-    <property name="md5.options" value=""/>
-    <exec executable="${md5.exec}" output="${sign.archive}.md5">
-      <arg line="${md5.options} ${sign.archive}"/>
-    </exec>
-  </target>
-  <target name="sign-file">
-    <property name="gpg.exec" value="gpg"/>
-    <property name="gpg.options" value="--armor --detach-sign --force-v3-sigs --batch --verbose --passphrase-fd 0"/>
-    <delete file="${sign.archive}.asc"/>
-    <exec executable="${gpg.exec}" inputstring="${pwd}">
-      <arg line="${gpg.options} ${sign.archive}"/>
-    </exec>
+  <target name="release-dist">
+    <echo message="Use maven deploy for FOP releases; release process no longer supported by ant configuration."/>
   </target>
 <!-- =================================================================== -->
 <!-- Nightly builds                                                      -->
@@ -1366,29 +1195,8 @@ NOTE:
     </fail>
     <echo>All Junit tests passed!</echo>
   </target>
-  <target name="nightly-build" depends="clean,jar-main,junit-nightly-build">
-    <echo message="Building the binary distribution files (zip,tar)"/>
-    <delete dir="${nightly.dir}"/>
-    <mkdir dir="${nightly.result.dir}"/>
-    <copy todir="${nightly.result.dir}">
-      <fileset refid="dist.bin"/>
-      <fileset refid="dist.bin.lib"/>
-    </copy>
-    <mkdir dir="${nightly.result.dir}/build"/>
-    <copy todir="${nightly.result.dir}/build" file="build/fop.jar"/>
-    <chmod file="${nightly.result.dir}/fop" perm="ugo+rx"/>
-    <zip zipfile="${name}-${DSTAMP}-bin.zip" basedir="${nightly.dir}" includes="**"/>
-    <tar longfile="gnu" destfile="${name}-${DSTAMP}-bin.tar">
-      <tarfileset dir="${nightly.dir}" mode="755">
-        <include name="${name}-${DSTAMP}/fop"/>
-      </tarfileset>
-      <tarfileset dir="${nightly.dir}">
-        <include name="**"/>
-        <exclude name="${name}-${DSTAMP}/fop"/>
-      </tarfileset>
-    </tar>
-    <gzip zipfile="${name}-${DSTAMP}-bin.tar.gz" src="${name}-${DSTAMP}-bin.tar"/>
-    <delete file="${name}-${DSTAMP}-bin.tar"/>
+  <target name="nightly-build">
+    <echo message="Build process now processed by Jenkins, see https://builds.apache.org/job/xmlgraphics-fop-maven/."/>
   </target>
 <!-- =================================================================== -->
 <!-- Generate examples                                                   -->
@@ -1507,15 +1315,7 @@ NOTE:
   <target name="remove-cache" description="Removes the .fop cache directory">
     <delete dir="${user.home}/.fop" />
   </target>
-  <target name="distclean" depends="clean" description="Cleans the distribution target directories">
-    <delete dir="${dist.src.dir}"/>
-    <delete dir="${dist.bin.dir}"/>
-    <delete>
-      <fileset dir="${basedir}" includes="${name}-*.tar.gz"/>
-      <fileset dir="${basedir}" includes="${name}-*.zip"/>
-      <fileset dir="${basedir}" includes="${name}-bundle.jar"/>
-    </delete>
-  </target>
+  <target name="distclean"/>
 <!-- =================================================================== -->
 <!-- Local targets                                                       -->
 <!-- =================================================================== -->
