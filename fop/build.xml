@@ -1118,7 +1118,10 @@ NOTE:
         <pathelement location="${build.sandbox-classes.dir}"/>
         <pathelement location="${build.codegen-classes.dir}"/>
       </classpath>
-      <fileset dir="${src.dir}" includes="**/*.java"/>
+      <fileset dir="${core.src.dir}" includes="**/*.java"/>
+      <fileset dir="${events.src.dir}" includes="**/*.java"/>
+      <fileset dir="${sandbox.src.dir}" includes="**/*.java"/>
+      <fileset dir="${util.src.dir}" includes="**/*.java"/>
       <fileset dir="${test.dir}" includes="**/*.java"/>
       <formatter type="xml" toFile="${build.dir}/report_checkstyle.xml"/>
       <formatter type="plain"/>
