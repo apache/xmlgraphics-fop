@@ -21,7 +21,6 @@ package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,6 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
     CFFDataReader cffReaderSourceSans;
     private OTFSubSetFile sourceSansSubset;
     private byte[] sourceSansData;
-    CFFDataReader cffReaderHeitiStd;
 
     /**
      * Initialises the test by creating the font subset. A CFFDataReader is
@@ -109,14 +107,84 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             byte[] origCharData = origCharStringData.get(origCharStringData.keySet().toArray(
                     new String[0])[i]);
             byte[] charData = charStrings.getValue(i);
-            List<BytesNumber> origOperands = getFullCharString(origCharData, origCFF);
-            List<BytesNumber> subsetOperands = getFullCharString(charData, subsetCFF);
+            List<BytesNumber> origOperands = getFullCharString(new Context(), origCharData, origCFF);
+            List<BytesNumber> subsetOperands = getFullCharString(new Context(), charData, subsetCFF);
             for (int j = 0; j < origOperands.size(); j++) {
-                assertTrue(origOperands.get(j).equals(subsetOperands.get(j)));
+                    assertTrue(origOperands.get(j).equals(subsetOperands.get(j)));
             }
         }
     }
 
+    static class Context {
+        private ArrayList<BytesNumber> operands = new ArrayList<BytesNumber>();
+        private ArrayList<BytesNumber> stack = new ArrayList<BytesNumber>();
+        private int hstemCount;
+        private int vstemCount;
+        private int lastOp = -1;
+        private int maskLength = -1;
+
+        public void pushOperand(BytesNumber v) {
+            operands.add(v);
+            if (v instanceof Operator) {
+                if (v.getNumber() != 11 && v.getNumber() != 12) {
+                    lastOp = v.getNumber();
+                }
+            } else {
+                stack.add(v);
+            }
+        }
+
+        public BytesNumber popOperand() {
+            operands.remove(operands.size() - 1);
+            return stack.remove(stack.size() - 1);
+        }
+
+        public BytesNumber lastOperand() {
+            return operands.get(operands.size() - 1);
+        }
+
+        public void clearStack() {
+            stack.clear();
+        }
+
+        public int getMaskLength() {
+            // The number of data bytes for mask is exactly the number needed, one
+            // bit per hint, to reference the number of stem hints declared
+            // at the beginning of the charstring program.
+            if (maskLength > 0) {
+                return maskLength;
+            }
+            return 1 + (hstemCount + vstemCount  - 1) / 8;
+        }
+
+        public List<BytesNumber> getFullOperandsList() {
+            return operands;
+        }
+
+        public void countHstem() {
+            // hstem(hm) operator
+            hstemCount += stack.size() / 2;
+            clearStack();
+        }
+
+        public void countVstem() {
+            // vstem(hm) operator
+            vstemCount += stack.size() / 2;
+            clearStack();
+        }
+
+        public int calcMaskLength() {
+            if (lastOp == 1 || lastOp == 18) {
+                //If hstem and vstem hints are both declared at the beginning of
+                //a charstring, and this sequence is followed directly by the
+                //hintmask or cntrmask operators, the vstem hint operator need
+                //not be included.
+                vstemCount += stack.size() / 2;
+            }
+            clearStack();
+            return getMaskLength();
+        }
+    }
     /**
      * Recursively reads and constructs the full CharString for comparison
      * @param data The original byte data of the CharString
@@ -124,65 +192,46 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
      * @return Returns a list of parsed operands and operators
      * @throws IOException
      */
-    private List<BytesNumber> getFullCharString(byte[] data, CFFDataReader cffData) throws IOException {
+    private List<BytesNumber> getFullCharString(Context context, byte[] data, CFFDataReader cffData)
+        throws IOException {
         CFFIndexData localIndexSubr = cffData.getLocalIndexSubr();
         CFFIndexData globalIndexSubr = cffData.getGlobalIndexSubr();
         boolean hasLocalSubroutines = localIndexSubr != null && localIndexSubr.getNumObjects() > 0;
         boolean hasGlobalSubroutines = globalIndexSubr != null && globalIndexSubr.getNumObjects() > 0;
-        ArrayList<BytesNumber> operands = new ArrayList<BytesNumber>();
         for (int dataPos = 0; dataPos < data.length; dataPos++) {
             int b0 = data[dataPos] & 0xff;
             if (b0 == 10 && hasLocalSubroutines) {
                 int subrNumber = getSubrNumber(localIndexSubr.getNumObjects(),
-                        operands.get(operands.size() - 1).getNumber());
+                        context.popOperand().getNumber());
                 byte[] subr = localIndexSubr.getValue(subrNumber);
-                List<BytesNumber> subrOperands = getFullCharString(subr, cffData);
-                operands = mergeOperands(operands, subrOperands);
+                getFullCharString(context, subr, cffData);
             } else if (b0 == 29 && hasGlobalSubroutines) {
                 int subrNumber = getSubrNumber(globalIndexSubr.getNumObjects(),
-                        operands.get(operands.size() - 1).getNumber());
+                        context.popOperand().getNumber());
                 byte[] subr = globalIndexSubr.getValue(subrNumber);
-                ArrayList<BytesNumber> subrOperands = (ArrayList<BytesNumber>)getFullCharString(subr, cffData);
-                operands = mergeOperands(operands, subrOperands);
+                getFullCharString(context, subr, cffData);
             } else if ((b0 >= 0 && b0 <= 27) || (b0 >= 29 && b0 <= 31)) {
                 int size = 1;
                 int b1 = -1;
                 if (b0 == 12) {
                     b1 = data[dataPos++] & 0xff;
                     size = 2;
+                } else if (b0 == 1 || b0 == 18) {
+                    context.countHstem();
+                } else if (b0 == 3 || b0 == 23) {
+                    context.countVstem();
+                } else if (b0 == 19 || b0 == 20) {
+                    int length = context.calcMaskLength();
+                    dataPos += length;
+                    size = length + 1;
                 }
-                if (b0 == 19 || b0 == 20) {
-                    dataPos += 1;
-                    size = 2;
-                }
-                operands.add(new Operator(b0, size, getOperatorName(b0, b1)));
+                context.pushOperand(new Operator(b0, size, getOperatorName(b0, b1)));
             } else if (b0 == 28 || (b0 >= 32 && b0 <= 255)) {
-                operands.add(readNumber(b0, data, dataPos));
-                dataPos += operands.get(operands.size() - 1).getNumBytes() - 1;
+                context.pushOperand(readNumber(b0, data, dataPos));
+                dataPos += context.lastOperand().getNumBytes() - 1;
             }
         }
-        return operands;
-    }
-
-    /**
-     * Merges two lists of operands. This is typically used to merge the CharString
-     * data with that of a parsed and referenced subroutine.
-     * @param charString The parsed CharString data so far
-     * @param subroutine The parsed elements from a subroutine
-     * @return Returns a merged list of both CharString and subroutine elements.
-     */
-    private ArrayList<BytesNumber> mergeOperands(List<BytesNumber> charString,
-            List<BytesNumber> subroutine) {
-        BytesNumber[] charStringOperands = charString.toArray(new BytesNumber[0]);
-        BytesNumber[] subroutineOperands = subroutine.toArray(new BytesNumber[0]);
-        BytesNumber[] mergeData = new BytesNumber[charStringOperands.length - 1
-                                                  + subroutineOperands.length - 1];
-        System.arraycopy(charStringOperands, 0, mergeData, 0, charStringOperands.length - 1);
-        System.arraycopy(subroutineOperands, 0, mergeData, charStringOperands.length - 1,
-                subroutineOperands.length - 1);
-        ArrayList<BytesNumber> hello = new ArrayList<BytesNumber>();
-        hello.addAll(Arrays.asList(mergeData));
-        return hello;
+        return context.getFullOperandsList();
     }
 
     /**
@@ -209,7 +258,9 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         } else if (b0 == 255) {
             int b1 = input[curPos + 1] & 0xff;
             int b2 = input[curPos + 2] & 0xff;
-            return new BytesNumber(Integer.valueOf((short)(b1 << 8 | b2)), 5);
+            int b3 = input[curPos + 3] & 0xff;
+            int b4 = input[curPos + 4] & 0xff;
+            return new BytesNumber(Integer.valueOf((b1 << 24  | b2 << 16 | b3 << 8 | b4)), 5);
         } else {
             throw new IllegalArgumentException();
         }
@@ -264,7 +315,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
      * used for debugging purposes. See the Type 2 CharString Format specification
      * document (Technical Note #5177) Appendix A (Command Codes).
      * @param operator The operator code
-     * @param codeb The second byte of the operator
+     * @param operatorB The second byte of the operator
      * @return Returns the operator name.
      */
     private String getOperatorName(int operator, int operatorB) {
