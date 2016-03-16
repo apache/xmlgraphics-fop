@@ -78,6 +78,18 @@ FOP.
 Otherwise, please follow the instructions found here:
 http://xmlgraphics.apache.org/fop/stable/compiling.html
 
+[TEMPORARY]
+
+Until the above referenced instructions are updated, one of the following
+may be used to build FOP:
+
+Building with Maven (preferred)
+
+% mvn clean install
+
+Building with Ant (deprecated)
+
+% ant -f fop/build.xml clean all
 
 How do I run FOP?
 -----------------
@@ -89,9 +101,24 @@ command-line.
 For more details, see:
 http://xmlgraphics.apache.org/fop/stable/running.html
 
+[TEMPORARY]
+
+Note that FOP command line scripts and build results from ant will be found
+under the ./fop sub-directory.
+
 ==============================================================================
   RELEASE NOTES
 ==============================================================================
+
+Version 2.2  (Forthcoming)
+===========
+
+Major Changes in Version 2.2
+----------------------------
+
+* Transition from Ant to Maven Build Process
+
+This release also contains a number of bug fixes.
 
 Version 2.1
 ===========

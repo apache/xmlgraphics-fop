@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FindBugsFilter>
+
+  <!--
+  !
+  ! This file is divided into two parts:
+  ! 1. APPROVED EXCLUSIONS
+  ! 2. TEMPORARY (UNAPPROVED) EXCLUSIONS
+  !
+  ! Approved exclusions come in two sub-types:
+  ! 1. general exclusion of a named bug pattern, meaning that all instances that matches the bug
+  !    pattern identifier are excluded;
+  ! 2. specific exclusions for a named bug pattern, meaning that all instance exclusions are
+  !    explicitly enumerated;
+  !
+  ! All specific exclusions must be accompanied inline (i.e., in the affected source code) by
+  ! a commented out annotation of the form:
+  !
+  ! // @SuppressFBWarnings("pattern identifier")
+  !
+  ! where pattern identifier is one of findbugs' named patterns. At an appropriate point in the
+  ! future, these commented out annotations will be uncommented and exclusion patterns removed
+  ! from this file.
+  !
+  ! Temporary (unapproved) exclusions are short-term work arounds that should be removed as
+  ! soon as possible by either (1) fixing (eliminating) cause of warning, or (2) conversion to
+  ! approved exclusion.
+  !
+  ! The organization of pattern matches employs the following levels (from top down):
+  ! 1. bug pattern
+  ! 2. or clause matching instances
+  ! 3. class name, if applies to class/interface
+  ! 4. and clause matching class/instance and single or or clause of multiple {method,field} members
+  !
+  ! for example,
+  !
+  ! <Match>
+  !   <Bug pattern="pattern identifier"/>
+  !   <Or>
+  !     <And>
+  !       <Class name="dotted class name"/>
+  !       <Member name="unqualified member name"/>
+  !     </And>
+  !   </Or>
+  ! </Match>
+  !
+  -->
+
+  <!-- START - APPROVED EXCLUSIONS -->
+  <!-- END - APPROVED EXCLUSIONS -->
+
+  <!-- START - TEMPORARY (UNAPPROVED) EXCLUSIONS -->
+  <Match>
+    <Bug pattern="DM_DEFAULT_ENCODING"/>
+  </Match>
+  <Match>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
+    <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+  </Match>
+  <!--
+  <Match>
+    <Bug pattern="BC_UNCONFIRMED_CAST"/>
+  </Match>
+  <Match>
+    <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+  </Match>
+  <Match>
+    <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+  </Match>
+  <Match>
+    <Bug pattern="DM_CONVERT_CASE"/>
+  </Match>
+  <Match>
+    <Bug pattern="DM_FP_NUMBER_CTOR"/>
+  </Match>
+  <Match>
+    <Bug pattern="DM_NUMBER_CTOR"/>
+  </Match>
+  <Match>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+  </Match>
+  <Match>
+    <Bug pattern="MS_OOI_PKGPROTECT"/>
+  </Match>
+  <Match>
+    <Bug pattern="MS_PKGPROTECT"/>
+  </Match>
+  <Match>
+    <Bug pattern="NM_CONFUSING"/>
+  </Match>
+  <Match>
+    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+  </Match>
+  <Match>
+    <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+  </Match>
+  <Match>
+    <Bug pattern="REC_CATCH_EXCEPTION"/>
+  </Match>
+  <Match>
+    <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+  </Match>
+  <Match>
+    <Bug pattern="SE_BAD_FIELD"/>
+  </Match>
+  <Match>
+    <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+  </Match>
+  <Match>
+    <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+  </Match>
+  <Match>
+    <Bug pattern="URF_UNREAD_FIELD"/>
+  </Match>
+  <Match>
+    <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+  </Match>
+  -->  
+  <!-- END - TEMPORARY (UNAPPROVED) EXCLUSIONS -->
+
+</FindBugsFilter>
