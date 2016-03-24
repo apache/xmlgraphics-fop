@@ -155,8 +155,26 @@
                   <includes>
                     <include>Courier*.xml</include>
                     <include>Helvetica*.xml</include>
-                    <include>Symbol.xml</include>
                     <include>Times*.xml</include>
+                  </includes>
+                  <parameters>
+                    <parameter>
+                      <name>encoding</name>
+                      <value>WinAnsiEncoding</value>
+                    </parameter>
+                  </parameters>
+                  <outputDir>${project.build.directory}/generated-sources/main/java/org/apache/fop/fonts/base14</outputDir>
+                  <stylesheet>${project.basedir}/src/main/codegen/fonts/font-file.xsl</stylesheet>
+                </transformationSet>
+                <transformationSet>
+                  <dir>${project.basedir}/src/main/codegen/fonts</dir>
+                  <fileMappers>
+                    <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+                      <targetExtension>.java</targetExtension>
+                    </fileMapper>
+                  </fileMappers>
+                  <includes>
+                    <include>Symbol.xml</include>
                     <include>ZapfDingbats.xml</include>
                   </includes>
                   <outputDir>${project.build.directory}/generated-sources/main/java/org/apache/fop/fonts/base14</outputDir>
