@@ -300,6 +300,7 @@
       </plugin>
       <!-- code analysis - checkstyle -->
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
           <configLocation>${project.baseUri}src/tools/resources/checkstyle/checkstyle.xml</configLocation>
@@ -311,6 +312,15 @@
           <suppressionsLocation>${project.baseUri}src/tools/resources/checkstyle/suppressions.xml</suppressionsLocation>
           <violationSeverity>warning</violationSeverity>
         </configuration>
+        <executions>
+          <execution>
+            <id>validate</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <!-- code analysis - findbugs -->
       <plugin>
@@ -322,6 +332,15 @@
           <effort>Max</effort>
           <threshold>Low</threshold>
         </configuration>
+        <executions>
+          <execution>
+            <id>verify</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <resources>
