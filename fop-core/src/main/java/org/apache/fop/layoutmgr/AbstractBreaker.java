@@ -464,15 +464,7 @@ public abstract class AbstractBreaker {
         if (onLastPageAndIPDChanges && visitedBefore && this.originalRestartAtLM == null) {
             optimalBreak = null;
         }
-
-        int positionIndex = (optimalBreak != null) ? optimalBreak.position : start;
-        KnuthElement elementAtBreak = alg.getElement(positionIndex);
-        if (elementAtBreak.getPosition() == null) {
-            elementAtBreak = alg.getElement(0);
-        }
-        positionAtBreak = elementAtBreak.getPosition();
-        /* Retrieve the original position wrapped into this space position */
-        positionAtBreak = positionAtBreak.getPosition();
+        int positionIndex = findPositionIndex(optimalBreak, alg, start);
         if (ipdChangesOnNextPage || (positionAtBreak != null && positionAtBreak.getIndex() > -1)) {
             firstElementsForRestart = Collections.EMPTY_LIST;
             if (ipdChangesOnNextPage) {
@@ -540,6 +532,23 @@ public abstract class AbstractBreaker {
             restartAtLM = positionAtBreak.getPosition().getLM();
         }
         return restartAtLM;
+    }
+
+    private int findPositionIndex(KnuthNode optimalBreak, PageBreakingAlgorithm alg, int start) {
+        int positionIndex = (optimalBreak != null) ? optimalBreak.position : start;
+        for (int i = positionIndex; i < alg.par.size(); i++) {
+            KnuthElement elementAtBreak = alg.getElement(i);
+            if (elementAtBreak.getPosition() == null) {
+                elementAtBreak = alg.getElement(0);
+            }
+            positionAtBreak = elementAtBreak.getPosition();
+            /* Retrieve the original position wrapped into this space position */
+            positionAtBreak = positionAtBreak.getPosition();
+            if (positionAtBreak != null) {
+                return i;
+            }
+        }
+        return positionIndex;
     }
 
     /**
