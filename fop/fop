@@ -158,7 +158,7 @@ LOCALCLASSPATH=${FOP_HOME}/build/fop.jar${pathSepChar}${FOP_HOME}/build/fop-sand
 OLD_IFS=$IFS
 IFS="
 "
-DIRLIBS=${FOP_HOME}/lib/*.jar
+DIRLIBS=${FOP_HOME}/*/*.jar
 for i in ${DIRLIBS}
 do
     # if the directory is empty, then it will return the input string
