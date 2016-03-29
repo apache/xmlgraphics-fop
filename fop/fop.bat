@@ -56,7 +56,7 @@ rem set LOGLEVEL=-Dorg.apache.commons.logging.simplelog.defaultlog=INFO
 set LIBDIR=%LOCAL_FOP_HOME%lib
 
 set LOCALCLASSPATH=%FOP_HYPHENATION_PATH%
-for %%l in (%LOCAL_FOP_HOME%build\*.jar %LIBDIR%\*.jar) do set LOCALCLASSPATH=!LOCALCLASSPATH!;%%l
+for %%l in (%LOCAL_FOP_HOME%build\*.jar %LIBDIR%\*.jar %LOCAL_FOP_HOME%target\*.jar) do set LOCALCLASSPATH=!LOCALCLASSPATH!;%%l
 
 set JAVAOPTS=-Denv.windir=%WINDIR%
 
