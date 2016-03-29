@@ -425,7 +425,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
             }
             while (baseIter.hasNext()) {
                 // this happens when the retrieve-table-marker has been resolved
-                FONode child = (FONode) baseIter.next();
+                FONode child = baseIter.next();
                 makeLayoutManagers(child, lms);
             }
         }
