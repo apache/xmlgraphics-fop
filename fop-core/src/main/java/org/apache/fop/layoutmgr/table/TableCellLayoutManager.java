@@ -443,7 +443,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
                 adjustYOffset(curBlockArea, borderBeforeWidth);
                 Block[][] blocks = new Block[getTableCell().getNumberRowsSpanned()][getTableCell()
                         .getNumberColumnsSpanned()];
-                GridUnit[] gridUnits = (GridUnit[]) primaryGridUnit.getRows().get(startRow);
+                GridUnit[] gridUnits = primaryGridUnit.getRows().get(startRow);
                 int level = getTableCell().getBidiLevelRecursive();
                 for (int x = 0; x < getTableCell().getNumberColumnsSpanned(); x++) {
                     GridUnit gu = gridUnits[x];
@@ -456,7 +456,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
                         adjustBPD(blocks[startRow][x], -borderWidth);
                     }
                 }
-                gridUnits = (GridUnit[]) primaryGridUnit.getRows().get(endRow);
+                gridUnits = primaryGridUnit.getRows().get(endRow);
                 for (int x = 0; x < getTableCell().getNumberColumnsSpanned(); x++) {
                     GridUnit gu = gridUnits[x];
                     BorderInfo border = gu.getBorderAfter(borderAfterWhich);
@@ -468,7 +468,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
                     }
                 }
                 for (int y = startRow; y <= endRow; y++) {
-                    gridUnits = (GridUnit[]) primaryGridUnit.getRows().get(y);
+                    gridUnits = primaryGridUnit.getRows().get(y);
                     BorderInfo border = gridUnits[0].getBorderStart();
                     int borderWidth = border.getRetainedWidth() / 2;
                     if (borderWidth > 0) {
