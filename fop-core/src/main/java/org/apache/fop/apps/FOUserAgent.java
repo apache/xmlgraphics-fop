@@ -807,6 +807,9 @@ public class FOUserAgent {
         return factory.getHyphenationPatternNames();
     }
 
+    public InternalResourceResolver getHyphenationResourceResolver() {
+        return factory.getHyphenationResourceResolver();
+    }
     public SoftMapCache getPDFObjectCache() {
         return pdfObjectCache;
     }

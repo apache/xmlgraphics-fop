@@ -45,6 +45,7 @@ import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.FontManagerConfigurator;
 import org.apache.fop.hyphenation.HyphenationTreeCache;
+import org.apache.fop.hyphenation.Hyphenator;
 import org.apache.fop.util.LogUtil;
 
 /**
@@ -248,6 +249,7 @@ public class FopConfParser {
                     false));
         }
 
+        setHyphenationBase(cfg, resourceResolver, baseURI, fopFactoryBuilder);
         setHyphPatNames(cfg, fopFactoryBuilder, strict);
 
         // prefer Renderer over IFDocumentHandler
@@ -268,19 +270,38 @@ public class FopConfParser {
         configureImageLoading(cfg.getChild("image-loading", false), strict);
     }
 
+
+    private void setHyphenationBase(Configuration cfg, ResourceResolver resourceResolver, URI baseURI,
+                                    FopFactoryBuilder fopFactoryBuilder) throws FOPException {
+        if (cfg.getChild("hyphenation-base", false) != null) {
+            try {
+                URI fontBase = InternalResourceResolver.getBaseURI(cfg.getChild("hyphenation-base").getValue(null));
+                fopFactoryBuilder.setHyphenBaseResourceResolver(
+                        ResourceResolverFactory.createInternalResourceResolver(
+                                baseURI.resolve(fontBase), resourceResolver));
+            } catch (URISyntaxException use) {
+                LogUtil.handleException(log, use, true);
+            }
+        } else {
+            fopFactoryBuilder.setHyphenBaseResourceResolver(
+                    ResourceResolverFactory.createInternalResourceResolver(
+                            fopFactoryBuilder.getBaseURI(), resourceResolver));
+        }
+    }
+
     private void setHyphPatNames(Configuration cfg, FopFactoryBuilder builder, boolean strict)
             throws FOPException {
         Configuration[] hyphPatConfig = cfg.getChildren("hyphenation-pattern");
         if (hyphPatConfig.length != 0) {
             Map<String, String> hyphPatNames = new HashMap<String, String>();
-            for (int i = 0; i < hyphPatConfig.length; ++i) {
+            for (Configuration aHyphPatConfig : hyphPatConfig) {
                 String lang;
                 String country;
                 String filename;
                 StringBuffer error = new StringBuffer();
-                String location = hyphPatConfig[i].getLocation();
+                String location = aHyphPatConfig.getLocation();
 
-                lang = hyphPatConfig[i].getAttribute("lang", null);
+                lang = aHyphPatConfig.getAttribute("lang", null);
                 if (lang == null) {
                     addError("The lang attribute of a hyphenation-pattern configuration"
                             + " element must exist (" + location + ")", error);
@@ -291,7 +312,7 @@ public class FopConfParser {
                 }
                 lang = lang.toLowerCase(Locale.getDefault());
 
-                country = hyphPatConfig[i].getAttribute("country", null);
+                country = aHyphPatConfig.getAttribute("country", null);
                 if ("".equals(country)) {
                     country = null;
                 }
@@ -304,7 +325,7 @@ public class FopConfParser {
                     country = country.toUpperCase(Locale.getDefault());
                 }
 
-                filename = hyphPatConfig[i].getValue(null);
+                filename = aHyphPatConfig.getValue(null);
                 if (filename == null) {
                     addError("The value of a hyphenation-pattern configuration"
                             + " element may not be empty (" + location + ")", error);
@@ -316,7 +337,15 @@ public class FopConfParser {
                 }
 
                 String llccKey = HyphenationTreeCache.constructLlccKey(lang, country);
-                hyphPatNames.put(llccKey, filename);
+
+                String type = aHyphPatConfig.getAttribute("type", null);
+                if ("xml".equals(type)) {
+                    hyphPatNames.put(llccKey, filename + Hyphenator.XMLTYPE);
+                } else if ("hyp".equals(type)) {
+                    hyphPatNames.put(llccKey, filename + Hyphenator.HYPTYPE);
+                } else {
+                    hyphPatNames.put(llccKey, filename);
+                }
                 if (log.isDebugEnabled()) {
                     log.debug("Using hyphenation pattern filename " + filename
                             + " for lang=\"" + lang + "\""

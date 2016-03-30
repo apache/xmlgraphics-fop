@@ -33,6 +33,7 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext.FallbackResolver;
 import org.apache.xmlgraphics.io.ResourceResolver;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
@@ -183,6 +184,11 @@ public final class FopFactoryBuilder {
         return this;
     }
 
+    public FopFactoryBuilder setHyphenBaseResourceResolver(InternalResourceResolver hyphenationResourceResolver) {
+        fopFactoryConfigBuilder.setHyphenationResourceResolver(hyphenationResourceResolver);
+        return this;
+    }
+
     /**
      * Sets whether to perform strict validation on the FO used.
      *
@@ -329,6 +335,8 @@ public final class FopFactoryBuilder {
 
         private URI baseURI;
 
+        private InternalResourceResolver hyphenationResourceResolver;
+
         private boolean hasStrictFOValidation = true;
 
         private boolean hasStrictUserValidation = FopFactoryConfig.DEFAULT_STRICT_USERCONFIG_VALIDATION;
@@ -391,6 +399,10 @@ public final class FopFactoryBuilder {
         /** {@inheritDoc} */
         public URI getBaseURI() {
             return baseURI;
+        }
+
+        public InternalResourceResolver getHyphenationResourceResolver() {
+            return hyphenationResourceResolver;
         }
 
         /** {@inheritDoc} */
@@ -479,6 +491,8 @@ public final class FopFactoryBuilder {
 
         void setBaseURI(URI baseURI);
 
+        void setHyphenationResourceResolver(InternalResourceResolver hyphenationResourceResolver);
+
         void setStrictFOValidation(boolean validateStrictly);
 
         void setStrictUserConfigValidation(boolean validateStrictly);
@@ -525,6 +539,10 @@ public final class FopFactoryBuilder {
         }
 
         public void setBaseURI(URI baseURI) {
+            throwIllegalStateException();
+        }
+
+        public void setHyphenationResourceResolver(InternalResourceResolver hyphenationResourceResolver) {
             throwIllegalStateException();
         }
 
@@ -601,6 +619,10 @@ public final class FopFactoryBuilder {
 
         public void setBaseURI(URI baseURI) {
             config.baseURI = baseURI;
+        }
+
+        public void setHyphenationResourceResolver(InternalResourceResolver hyphenationResourceResolver) {
+            config.hyphenationResourceResolver = hyphenationResourceResolver;
         }
 
         public void setStrictFOValidation(boolean validateStrictly) {

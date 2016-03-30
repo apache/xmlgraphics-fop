@@ -159,4 +159,12 @@ public interface ResourceEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void imageWarning(Object source, String message);
+
+    /**
+     * Hyphenation not found.
+     * @param source the event source
+     * @param uri the original URI of the hyphenation
+     * @event.severity WARN
+     */
+    void hyphenationNotFound(Object source, String uri);
 }
