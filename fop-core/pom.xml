@@ -322,26 +322,6 @@
           </execution>
         </executions>
       </plugin>
-      <!-- code analysis - findbugs -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>${findbugs.plugin.version}</version>
-        <configuration>
-          <excludeFilterFile>src/tools/resources/findbugs/exclusions.xml</excludeFilterFile>
-          <effort>Max</effort>
-          <threshold>Low</threshold>
-        </configuration>
-        <executions>
-          <execution>
-            <id>verify</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
     <resources>
       <resource>
@@ -366,4 +346,32 @@
     </testResources>
   </build>
 
+  <profiles>
+    <profile>
+    <id>runFindbugs</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>${findbugs.plugin.version}</version>
+            <configuration>
+              <excludeFilterFile>src/tools/resources/findbugs/exclusions.xml</excludeFilterFile>
+              <effort>Max</effort>
+              <threshold>Low</threshold>
+            </configuration>
+            <executions>
+              <execution>
+                <id>verify</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
