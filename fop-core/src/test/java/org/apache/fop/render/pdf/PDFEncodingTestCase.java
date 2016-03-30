@@ -57,7 +57,6 @@ public class PDFEncodingTestCase extends BasePDFTest {
      * Test using a standard FOP font
      * @throws Exception checkstyle wants a comment here, even a silly one
      */
-    @Ignore("Failing in maven test, skip for time being.")
     @Test
     public void testPDFEncodingWithStandardFont() throws Exception {
 
