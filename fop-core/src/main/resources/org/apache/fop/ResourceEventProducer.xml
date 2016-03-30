@@ -30,4 +30,5 @@
   <message key="cannotDeleteTempFile">Temporary file could not be deleted: {tempFile}</message>
   <message key="catalogResolverNotFound">Catalog resolver not found along the classpath</message>
   <message key="catalogResolverNotCreated">Error creating the catalog resolver: {message}</message>
+  <message key="hyphenationNotFound">Hyphenation pattern not found.[ URI: {uri}.]</message>
 </catalogue>

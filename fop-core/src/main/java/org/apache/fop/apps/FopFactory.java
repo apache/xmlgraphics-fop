@@ -361,6 +361,10 @@ public final class FopFactory implements ImageContext {
         return config.getTargetResolution();
     }
 
+    public InternalResourceResolver getHyphenationResourceResolver() {
+        return config.getHyphenationResourceResolver();
+    }
+
     /**
      * Returns the conversion factor from pixel units to millimeters. This
      * depends on the desired source resolution.

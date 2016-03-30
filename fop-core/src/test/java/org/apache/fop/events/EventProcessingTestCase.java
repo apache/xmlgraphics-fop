@@ -158,4 +158,12 @@ public class EventProcessingTestCase {
         doTest("region-body_overflow.fo", BlockLevelEventProducer.class.getName() + ".regionOverflow",
                 params);
     }
+
+    @Test
+    public void testHyphenationNotFound() throws Exception {
+        Map<String, Object> noParams = Collections.emptyMap();
+        doTest(BASE_DIR.resolve("hyphenation.fo").toURL().openStream(),
+                new File("test/events/hyphenationfop.xconf").toURI(),
+                ResourceEventProducer.class.getName() + ".hyphenationNotFound", MimeConstants.MIME_PDF, noParams);
+    }
 }

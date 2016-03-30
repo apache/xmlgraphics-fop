@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" hyphenate="true" language="fr">
+
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="simple" page-height="27.9cm" page-width="21.6cm">
+      <fo:region-body />
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="simple">
+    <fo:flow flow-name="xsl-region-body">
+
+<fo:block font-size="30pt">Text should have hyphenation:</fo:block>     
+     
+</fo:flow>
+  </fo:page-sequence>
+</fo:root>

@@ -29,6 +29,7 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext.FallbackResolver;
 import org.apache.xmlgraphics.io.ResourceResolver;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 
@@ -164,6 +165,8 @@ public interface FopFactoryConfig {
 
     /** @return the hyphenation pattern names */
     Map<String, String> getHyphenationPatternNames();
+
+    InternalResourceResolver getHyphenationResourceResolver();
 
     /**
      * Controls the mechanisms that are used in the event that {@link javax.xml.transform.Source}
