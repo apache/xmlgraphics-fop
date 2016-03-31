@@ -338,10 +338,10 @@ public class FopConfParser {
 
                 String llccKey = HyphenationTreeCache.constructLlccKey(lang, country);
 
-                String type = aHyphPatConfig.getAttribute("type", null);
-                if ("xml".equals(type)) {
+                String extension = aHyphPatConfig.getAttribute("extension", null);
+                if ("xml".equals(extension)) {
                     hyphPatNames.put(llccKey, filename + Hyphenator.XMLTYPE);
-                } else if ("hyp".equals(type)) {
+                } else if ("hyp".equals(extension)) {
                     hyphPatNames.put(llccKey, filename + Hyphenator.HYPTYPE);
                 } else {
                     hyphPatNames.put(llccKey, filename);
