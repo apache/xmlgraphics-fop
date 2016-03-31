@@ -22,7 +22,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -137,17 +136,14 @@ public class PDFVTTestCase {
 
         Fop fop = fopFactory.newFop(mimeFopIf, userAgent, out);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        // [TBD] FIXME - use getResource() to access FO file [GA]
-        Source src = new StreamSource(
-          new FileInputStream("../fop-core/src/test/resources/org/apache/fop/pdf/PDFVT.fo"));
+        Source src = new StreamSource(PDFVTTestCase.class.getResource("PDFVT.fo").openStream());
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
     }
 
     private FopFactory getFopFactory() throws IOException, SAXException {
-        // [TBD] FIXME - use getResource() to access conf file [GA]
         return FopFactory.newInstance(new File(".").toURI(),
-                new FileInputStream("../fop-core/src/test/resources/org/apache/fop/pdf/PDFVT.xconf"));
+                PDFVTTestCase.class.getResource("PDFVT.xconf").openStream());
     }
 
     private void iFToPDF(InputStream is) throws IOException, SAXException, TransformerException, IFException {
