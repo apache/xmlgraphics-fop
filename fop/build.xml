@@ -507,6 +507,9 @@ list of possible build targets.
       <fileset dir="${events.src.java.dir}">
         <patternset refid="java-only"/>
       </fileset>
+      <fileset dir="${util.src.java.dir}">
+        <patternset refid="java-only"/>
+      </fileset>
       <fileset dir="${basedir}">
         <include name="../LICENSE"/>
         <include name="../NOTICE"/>
