@@ -23,7 +23,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -37,7 +36,6 @@ import org.apache.fop.hyphenation.Hyphenator;
 
 public class HyphenationTestCase {
 
-    @Ignore
     @Test
     public void testHyphenator() {
         File f = new File("test/resources/fop");
@@ -48,7 +46,6 @@ public class HyphenationTestCase {
         assertEquals(hyph.toString(), "-hel-lo");
     }
 
-    @Ignore
     @Test
     public void testHyphenatorBinary() throws HyphenationException, IOException {
         File f = File.createTempFile("hyp", "fop");
