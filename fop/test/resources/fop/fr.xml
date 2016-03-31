@@ -2,12 +2,16 @@
 <hyphenation-info>
 <hyphen-min before="2" after="3"/>
 
+<classes>
+h
+e
+l
+o
+</classes>
+
 <exceptions>
 </exceptions>
 
-<classes>
-
-</classes> 
 <patterns>
 1he
 1lo
