@@ -510,9 +510,9 @@ list of possible build targets.
       <fileset dir="${util.src.java.dir}">
         <patternset refid="java-only"/>
       </fileset>
-      <fileset dir="${basedir}">
-        <include name="../LICENSE"/>
-        <include name="../NOTICE"/>
+      <fileset dir="${basedir}/..">
+        <include name="LICENSE"/>
+        <include name="NOTICE"/>
       </fileset>
     </jar>
   </target>
