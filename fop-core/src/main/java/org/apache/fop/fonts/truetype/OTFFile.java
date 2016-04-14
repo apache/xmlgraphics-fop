@@ -20,17 +20,10 @@
 package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.fontbox.cff.CFFDataInput;
 import org.apache.fontbox.cff.CFFFont;
 import org.apache.fontbox.cff.CFFParser;
-import org.apache.fontbox.cff.charset.CFFCharset;
 
 public class OTFFile extends OpenFont {
 
@@ -56,44 +49,6 @@ public class OTFFile extends OpenFont {
 
     @Override
     protected void updateBBoxAndOffset() throws IOException {
-        List<Mapping> gidMappings = getGIDMappings(fileFont);
-        Map<Integer, String> sidNames = constructNameMap(gidMappings);
-        UnicodeMapping[] mappings = unicodeMappings.toArray(new UnicodeMapping[unicodeMappings.size()]);
-        for (int i = 0; i < mappings.length; i++) {
-            int glyphIdx = mappings[i].getGlyphIndex();
-            Mapping m = gidMappings.get(glyphIdx);
-            String name = sidNames.get(m.getSID());
-            mtxTab[glyphIdx].setName(name);
-        }
-    }
-
-    private List<Mapping> getGIDMappings(CFFFont font) {
-        List<Mapping> gidMappings = new ArrayList<Mapping>();
-        Mapping notdef = new Mapping();
-        gidMappings.add(notdef);
-        for (CFFCharset.Entry entry : font.getCharset().getEntries()) {
-            String name = entry.getName();
-            byte[] bytes = font.getCharStringsDict().get(name);
-            if (bytes == null) {
-                continue;
-            }
-            Mapping mapping = new Mapping();
-            mapping.setSID(entry.getSID());
-            mapping.setName(name);
-            mapping.setBytes(bytes);
-            gidMappings.add(mapping);
-        }
-        return gidMappings;
-    }
-
-    private Map<Integer, String> constructNameMap(Collection<Mapping> mappings) {
-        Map<Integer, String> sidNames = new HashMap<Integer, String>();
-        Iterator<Mapping> it = mappings.iterator();
-        while (it.hasNext()) {
-            Mapping mapping = it.next();
-            sidNames.put(mapping.getSID(), mapping.getName());
-        }
-        return sidNames;
     }
 
     private static class Mapping {
@@ -136,7 +91,7 @@ public class OTFFile extends OpenFont {
     }
 
     protected void readName() throws IOException {
-        Object familyName = fileFont.getProperty("FamilyName");
+        Object familyName = fileFont.getTopDict().get("FamilyName");
         if (familyName != null && !familyName.equals("")) {
             familyNames.add(familyName.toString());
             fullName = familyName.toString();
