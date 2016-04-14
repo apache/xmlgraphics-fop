@@ -35,7 +35,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fontbox.cff.CFFStandardString;
-import org.apache.fontbox.cff.encoding.CFFEncoding;
 
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.cff.CFFDataReader;
@@ -207,7 +206,6 @@ public class OTFSubSetFile extends OTFFile {
 
         //Encoding
         int encodingOffset = currentPos;
-        writeEncoding(fileFont.getEncoding());
 
         //Charset table
         int charsetOffset = currentPos;
@@ -268,20 +266,6 @@ public class OTFSubSetFile extends OTFFile {
         for (int i = offset; i < offset + length; i++) {
             output[currentPos++] = out[i];
             realSize++;
-        }
-    }
-
-    private void writeEncoding(CFFEncoding encoding) throws IOException {
-        LinkedHashMap<String, DICTEntry> topDICT = cffReader.getTopDictEntries();
-        DICTEntry encodingEntry = topDICT.get("Encoding");
-        if (encodingEntry != null && encodingEntry.getOperands().get(0).intValue() != 0
-                && encodingEntry.getOperands().get(0).intValue() != 1) {
-            writeByte(0);
-            writeByte(gidToSID.size());
-            for (int gid : gidToSID.keySet()) {
-                int code = encoding.getCode(gidToSID.get(gid));
-                writeByte(code);
-            }
         }
     }
 

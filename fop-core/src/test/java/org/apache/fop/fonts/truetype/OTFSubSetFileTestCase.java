@@ -102,10 +102,9 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             throws IOException {
         CFFFont sourceSansOriginal = sourceSansProBold.fileFont;
         CFFIndexData charStrings = subsetCFF.getCharStringIndex();
-        Map<String, byte[]> origCharStringData = sourceSansOriginal.getCharStringsDict();
+        List<byte[]> origCharStringData = sourceSansOriginal.getCharStringBytes();
         for (int i = 0; i < charStrings.getNumObjects(); i++) {
-            byte[] origCharData = origCharStringData.get(origCharStringData.keySet().toArray(
-                    new String[0])[i]);
+            byte[] origCharData = origCharStringData.get(i);
             byte[] charData = charStrings.getValue(i);
             List<BytesNumber> origOperands = getFullCharString(new Context(), origCharData, origCFF);
             List<BytesNumber> subsetOperands = getFullCharString(new Context(), charData, subsetCFF);
