@@ -332,8 +332,7 @@ public final class FontCache implements Serializable {
             } else {
                 // try and determine modified date
                 URI fontUri = resourceResolver.resolveFromBase(fontInfo.getEmbedURI());
-                File fontFile = new File(fontUri);
-                long lastModified = fontFile.lastModified();
+                long lastModified = getLastModified(fontUri);
                 cachedFontFile = new CachedFontFile(lastModified);
                 if (log.isTraceEnabled()) {
                     log.trace("Font added to cache: " + cacheKey);
