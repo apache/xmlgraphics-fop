@@ -17,8 +17,11 @@
 
 package org.apache.fop.fonts;
 
+import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -30,6 +33,7 @@ import static org.mockito.Mockito.verify;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 
 public class FontManagerTestCase {
 
@@ -55,6 +59,17 @@ public class FontManagerTestCase {
         InOrder inOrder = inOrder(resolver, fontCacheManager);
         inOrder.verify(resolver).resolveFromBase(testURI);
         inOrder.verify(fontCacheManager).setCacheFile(any(URI.class));
+    }
+
+    @Test
+    public void testSetCacheURL() throws URISyntaxException {
+        InternalResourceResolver rr = ResourceResolverFactory.createDefaultInternalResourceResolver(
+                new File(".").toURI());
+        String uri = "abc://localhost/f";
+        EmbedFontInfo efi = new EmbedFontInfo(new FontUris(new URI(uri), null), false, false, null, null);
+        FontCache fc = new FontCache();
+        fc.addFont(efi, rr);
+        Assert.assertTrue(fc.containsFont(uri));
     }
 
     @Test
