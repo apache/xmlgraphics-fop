@@ -184,6 +184,7 @@ public abstract class OpenFont {
 
     protected String postScriptName = "";
     protected String fullName = "";
+    protected String embedFontName = "";
     protected String notice = "";
     protected final Set<String> familyNames = new HashSet<String>();
     protected String subFamilyName = "";
@@ -1998,6 +1999,10 @@ public abstract class OpenFont {
         } finally {
             IOUtils.closeQuietly(stream);
         }
+    }
+
+    public String getEmbedFontName() {
+        return embedFontName;
     }
 
     public String getCopyrightNotice() {

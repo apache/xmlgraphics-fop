@@ -29,6 +29,7 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.fonts.CFFToType1Font;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.EmbeddingMode;
@@ -51,6 +52,7 @@ public class OFFontLoader extends FontLoader {
     private final String subFontName;
     private EncodingMode encodingMode;
     private EmbeddingMode embeddingMode;
+    private boolean embedAsType1;
 
     /**
      * Default constructor
@@ -58,7 +60,7 @@ public class OFFontLoader extends FontLoader {
      * @param resourceResolver the resource resolver for font URI resolution
      */
     public OFFontLoader(URI fontFileURI, InternalResourceResolver resourceResolver) {
-        this(fontFileURI, null, true, EmbeddingMode.AUTO, EncodingMode.AUTO, true, true, resourceResolver);
+        this(fontFileURI, null, true, EmbeddingMode.AUTO, EncodingMode.AUTO, true, true, resourceResolver, false);
     }
 
     /**
@@ -75,11 +77,12 @@ public class OFFontLoader extends FontLoader {
      */
     public OFFontLoader(URI fontFileURI, String subFontName, boolean embedded,
             EmbeddingMode embeddingMode, EncodingMode encodingMode, boolean useKerning,
-            boolean useAdvanced, InternalResourceResolver resolver) {
+            boolean useAdvanced, InternalResourceResolver resolver, boolean embedAsType1) {
         super(fontFileURI, embedded, useKerning, useAdvanced, resolver);
         this.subFontName = subFontName;
         this.encodingMode = encodingMode;
         this.embeddingMode = embeddingMode;
+        this.embedAsType1 = embedAsType1;
         if (this.encodingMode == EncodingMode.AUTO) {
             this.encodingMode = EncodingMode.CID; //Default to CID mode for TrueType
         }
@@ -110,7 +113,7 @@ public class OFFontLoader extends FontLoader {
             if (!supported) {
                 throw new IOException("The font does not have a Unicode cmap table: " + fontFileURI);
             }
-            buildFont(otf, ttcFontName);
+            buildFont(otf, ttcFontName, embedAsType1);
             loaded = true;
         } finally {
             IOUtils.closeQuietly(in);
@@ -125,15 +128,19 @@ public class OFFontLoader extends FontLoader {
         return null;
     }
 
-    private void buildFont(OpenFont otf, String ttcFontName) {
+    private void buildFont(OpenFont otf, String ttcFontName, boolean embedAsType1) {
         boolean isCid = this.embedded;
         if (this.encodingMode == EncodingMode.SINGLE_BYTE) {
             isCid = false;
         }
 
         if (isCid) {
-            multiFont = new MultiByteFont(resourceResolver, embeddingMode);
-            multiFont.setIsOTFFile(otf instanceof OTFFile);
+            if (otf instanceof OTFFile && embedAsType1) {
+                multiFont = new CFFToType1Font(resourceResolver, embeddingMode);
+            } else {
+                multiFont = new MultiByteFont(resourceResolver, embeddingMode);
+                multiFont.setIsOTFFile(otf instanceof OTFFile);
+            }
             returnFont = multiFont;
             multiFont.setTTCName(ttcFontName);
         } else {
@@ -142,7 +149,11 @@ public class OFFontLoader extends FontLoader {
         }
 
         returnFont.setFontURI(fontFileURI);
-        returnFont.setFontName(otf.getPostScriptName());
+        if (!otf.getEmbedFontName().equals("")) {
+            returnFont.setFontName(otf.getEmbedFontName());
+        } else {
+            returnFont.setFontName(otf.getPostScriptName());
+        }
         returnFont.setFullName(otf.getFullName());
         returnFont.setFamilyNames(otf.getFamilyNames());
         returnFont.setFontSubFamilyName(otf.getSubFamilyName());
@@ -160,7 +171,6 @@ public class OFFontLoader extends FontLoader {
         returnFont.setItalicAngle(Integer.parseInt(otf.getItalicAngle()));
         returnFont.setMissingWidth(0);
         returnFont.setWeight(otf.getWeightClass());
-        returnFont.setEmbeddingMode(this.embeddingMode);
         if (isCid) {
             if (otf instanceof OTFFile) {
                 multiFont.setCIDType(CIDFontType.CIDTYPE0);

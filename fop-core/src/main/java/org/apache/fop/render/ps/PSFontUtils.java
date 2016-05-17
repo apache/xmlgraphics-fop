@@ -277,7 +277,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                 }
                 gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, fontRes);
                 if (fontType == FontType.TYPE1) {
-                    embedType1Font(gen, (SingleByteFont) tf, in);
+                    embedType1Font(gen, (CustomFont) tf, in);
                     fontResource = PSFontResource.createFontResource(fontRes);
                 } else if (fontType == FontType.TRUETYPE) {
                     embedTrueTypeFont(gen, (SingleByteFont) tf, in);
@@ -316,7 +316,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         }
     }
 
-    private static void embedType1Font(PSGenerator gen, SingleByteFont font,
+    private static void embedType1Font(PSGenerator gen, CustomFont font,
             InputStream fontStream) throws IOException {
         if (font.getEmbeddingMode() == EmbeddingMode.AUTO) {
             font.setEmbeddingMode(EmbeddingMode.FULL);
@@ -326,12 +326,12 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         boolean embed = true;
         if (font.getEmbeddingMode() == EmbeddingMode.SUBSET) {
             Type1SubsetFile subset = new Type1SubsetFile();
-            byte[] byteSubset = subset.createSubset(fontStream, font);
+            byte[] byteSubset = subset.createSubset(fontStream, (SingleByteFont) font);
             fontStream = new ByteArrayInputStream(byteSubset);
         }
         embedType1Font(gen, fontStream);
         if (font.getEmbeddingMode() == EmbeddingMode.SUBSET) {
-            writeEncoding(gen, font);
+            writeEncoding(gen, (SingleByteFont) font);
         }
     }
 

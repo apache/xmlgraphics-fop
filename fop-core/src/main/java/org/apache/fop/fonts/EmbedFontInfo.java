@@ -47,6 +47,7 @@ public class EmbedFontInfo implements Serializable {
     protected String postScriptName;
     /** the sub-fontname of the font (used for TrueType Collections, null otherwise) */
     protected String subFontName;
+    private boolean embedAsType1;
 
     /** the list of associated font triplets */
     private List<FontTriplet> fontTriplets;
@@ -67,7 +68,7 @@ public class EmbedFontInfo implements Serializable {
      */
     public EmbedFontInfo(FontUris fontUris, boolean kerning, boolean advanced,
             List<FontTriplet> fontTriplets, String subFontName,
-            EncodingMode encodingMode, EmbeddingMode embeddingMode) {
+            EncodingMode encodingMode, EmbeddingMode embeddingMode, boolean embedAsType1) {
         this.kerning = kerning;
         this.advanced = advanced;
         this.fontTriplets = fontTriplets;
@@ -75,6 +76,7 @@ public class EmbedFontInfo implements Serializable {
         this.encodingMode = encodingMode;
         this.embeddingMode = embeddingMode;
         this.fontUris = fontUris;
+        this.embedAsType1 = embedAsType1;
     }
 
     /**
@@ -88,7 +90,7 @@ public class EmbedFontInfo implements Serializable {
     public EmbedFontInfo(FontUris fontUris, boolean kerning, boolean advanced,
             List<FontTriplet> fontTriplets, String subFontName) {
         this(fontUris, kerning, advanced, fontTriplets, subFontName, EncodingMode.AUTO,
-                EmbeddingMode.AUTO);
+                EmbeddingMode.AUTO, false);
     }
 
     /**
@@ -192,6 +194,10 @@ public class EmbedFontInfo implements Serializable {
      */
     public EncodingMode getEncodingMode() {
         return this.encodingMode;
+    }
+
+    public boolean getEmbedAsType1() {
+        return embedAsType1;
     }
 
     private void readObject(java.io.ObjectInputStream in)

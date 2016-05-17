@@ -83,7 +83,7 @@ class FontInfoBuilder {
         URI baseURI = new File("test/resources/fonts/ttf").toURI();
         InternalResourceResolver resolver = ResourceResolverFactory.createDefaultInternalResourceResolver(baseURI);
         OFFontLoader fontLoader = new OFFontLoader(new URI(filename), null, true,
-                EmbeddingMode.AUTO, EncodingMode.AUTO, true, useAdvanced, resolver);
+                EmbeddingMode.AUTO, EncodingMode.AUTO, true, useAdvanced, resolver, false);
         FontMetrics font = fontLoader.getFont();
         registerFont(font, "F" + fontKey++, fontName);
         return this;
