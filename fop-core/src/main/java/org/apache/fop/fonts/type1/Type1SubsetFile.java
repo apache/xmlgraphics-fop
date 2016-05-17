@@ -156,8 +156,8 @@ public class Type1SubsetFile {
         return stitchFont(boasHeader, boasMain, baosTrailer);
     }
 
-    protected byte[] stitchFont(ByteArrayOutputStream boasHeader, ByteArrayOutputStream boasMain,
-                                ByteArrayOutputStream boasTrailer) throws IOException {
+    public byte[] stitchFont(ByteArrayOutputStream boasHeader, ByteArrayOutputStream boasMain,
+                             ByteArrayOutputStream boasTrailer) throws IOException {
         int headerLength = boasHeader.size();
         int mainLength = boasMain.size();
 

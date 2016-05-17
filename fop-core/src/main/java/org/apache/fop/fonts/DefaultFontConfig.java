@@ -79,6 +79,7 @@ public final class DefaultFontConfig implements FontConfig {
 
         private  boolean strict;
 
+        private Configuration config;
         private  Configuration fontInfoCfg;
 
         private  DefaultFontConfig instance;
@@ -88,6 +89,7 @@ public final class DefaultFontConfig implements FontConfig {
                 instance = null;
             } else {
                 this.strict = strict;
+                this.config = cfg;
                 this.fontInfoCfg = cfg.getChild("fonts", false);
                 instance = new DefaultFontConfig(fontInfoCfg.getChild("auto-detect", false) != null);
                 parse();
@@ -108,13 +110,15 @@ public final class DefaultFontConfig implements FontConfig {
                             strict);
                     continue;
                 }
-                Font font = new Font(fontCfg.getAttribute("metrics-url", null), embed, fontCfg.getAttribute(
-                        "embed-url-afm", null), fontCfg.getAttribute("embed-url-pfm", null),
+                Font font = new Font(fontCfg.getAttribute("metrics-url", null), embed,
+                        fontCfg.getAttribute("embed-url-afm", null),
+                        fontCfg.getAttribute("embed-url-pfm", null),
                         fontCfg.getAttribute("sub-font", null),
-                        fontCfg.getAttributeAsBoolean("kerning", true), fontCfg.getAttributeAsBoolean(
-                                "advanced", true), fontCfg.getAttribute("encoding-mode",
-                                EncodingMode.AUTO.getName()), fontCfg.getAttribute("embedding-mode",
-                                EncodingMode.AUTO.getName()));
+                        fontCfg.getAttributeAsBoolean("kerning", true),
+                        fontCfg.getAttributeAsBoolean("advanced", true),
+                        fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()),
+                        fontCfg.getAttribute("embedding-mode", EncodingMode.AUTO.getName()),
+                        fontCfg.getAttributeAsBoolean("embed-as-type1", false));
                 instance.fonts.add(font);
                 boolean hasTriplets = false;
                 for (Configuration tripletCfg : fontCfg.getChildren("font-triplet")) {
@@ -125,6 +129,13 @@ public final class DefaultFontConfig implements FontConfig {
                 // no font triplet info
                 if (!hasTriplets) {
                     LogUtil.handleError(log, "font without font-triplet", strict);
+                }
+                try {
+                    if (font.getEmbedAsType1() && !config.getAttribute("mime").equals("application/postscript")) {
+                        throw new FOPException("The embed-as-type1 attribute is only supported in postscript");
+                    }
+                } catch (ConfigurationException ex) {
+                    LogUtil.handleException(log, ex, true);
                 }
             }
         }
@@ -289,6 +300,8 @@ public final class DefaultFontConfig implements FontConfig {
             return encodingMode;
         }
 
+        private final boolean embedAsType1;
+
         private final List<FontTriplet> tripletList = new ArrayList<FontTriplet>();
 
         public List<FontTriplet> getTripletList() {
@@ -296,7 +309,7 @@ public final class DefaultFontConfig implements FontConfig {
         }
 
         private Font(String metrics, String embed, String afm, String pfm, String subFont, boolean kerning,
-                boolean advanced, String encodingMode, String embeddingMode) {
+                boolean advanced, String encodingMode, String embeddingMode, boolean embedAsType1) {
             this.metrics = metrics;
             this.embedUri = embed;
             this.afm = afm;
@@ -306,6 +319,7 @@ public final class DefaultFontConfig implements FontConfig {
             this.advanced = advanced;
             this.encodingMode = encodingMode;
             this.embeddingMode = embeddingMode;
+            this.embedAsType1 = embedAsType1;
         }
 
         /**
@@ -354,6 +368,10 @@ public final class DefaultFontConfig implements FontConfig {
 
         public String getPfm() {
             return pfm;
+        }
+
+        public boolean getEmbedAsType1() {
+            return embedAsType1;
         }
     }
 }

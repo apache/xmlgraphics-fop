@@ -88,6 +88,7 @@ public class OTFFile extends OpenFont {
         fontFile.seekSet(0);
         CFFParser parser = new CFFParser();
         fileFont = parser.parse(in.getAllBytes()).get(0);
+        embedFontName = fileFont.getName();
     }
 
     protected void readName() throws IOException {

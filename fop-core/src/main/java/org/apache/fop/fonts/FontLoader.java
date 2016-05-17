@@ -91,7 +91,8 @@ public abstract class FontLoader {
      */
     public static CustomFont loadFont(FontUris fontUris, String subFontName,
             boolean embedded, EmbeddingMode embeddingMode, EncodingMode encodingMode,
-            boolean useKerning, boolean useAdvanced, InternalResourceResolver resourceResolver) throws IOException {
+            boolean useKerning, boolean useAdvanced, InternalResourceResolver resourceResolver,
+                                      boolean embedAsType1) throws IOException {
         boolean type1 = isType1(fontUris.getEmbed());
         FontLoader loader;
         if (type1) {
@@ -103,7 +104,7 @@ public abstract class FontLoader {
                     resourceResolver);
         } else {
             loader = new OFFontLoader(fontUris.getEmbed(), subFontName, embedded, embeddingMode,
-                    encodingMode, useKerning, useAdvanced, resourceResolver);
+                    encodingMode, useKerning, useAdvanced, resourceResolver, embedAsType1);
         }
         return loader.getFont();
     }

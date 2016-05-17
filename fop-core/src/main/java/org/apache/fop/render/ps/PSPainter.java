@@ -40,6 +40,7 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
 
+import org.apache.fop.fonts.CFFToType1Font;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
@@ -458,7 +459,7 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
         int lineStart = 0;
         StringBuffer accText = new StringBuffer(initialSize);
         StringBuffer sb = new StringBuffer(initialSize);
-        boolean isOTF = multiByte && ((MultiByteFont)tf).isOTFFile();
+        boolean isOTF = multiByte && ((MultiByteFont)tf).isOTFFile() || tf instanceof CFFToType1Font;
         for (int i = start; i < end; i++) {
             char orgChar = text.charAt(i);
             char ch;
