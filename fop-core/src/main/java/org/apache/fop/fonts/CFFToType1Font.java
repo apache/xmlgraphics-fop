@@ -52,7 +52,7 @@ public class CFFToType1Font extends MultiByteFont {
         if (!(f instanceof  CFFType1Font)) {
             throw new IOException(getEmbedFileURI() + ": only OTF CFF Type1 font can be converted to Type1");
         }
-        byte[] t1 = new Type1FontFormatter(cidSet.getGlyphs()).format((CFFType1Font) f);
+        byte[] t1 = new Type1FontFormatter(cidSet.getGlyphs(), eventListener).format((CFFType1Font) f);
         PFBData pfb = new PFBParser().parsePFB(new ByteArrayInputStream(t1));
         ByteArrayOutputStream s1 = new ByteArrayOutputStream();
         s1.write(pfb.getHeaderSegment());

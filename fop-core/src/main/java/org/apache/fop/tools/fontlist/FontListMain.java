@@ -155,6 +155,9 @@ public final class FontListMain {
                 // ignore
             }
 
+            public void fontType1MaxGlyphs(Object source, String fontName) {
+                //ignore
+            }
         };
 
         FontListGenerator listGenerator = new FontListGenerator();

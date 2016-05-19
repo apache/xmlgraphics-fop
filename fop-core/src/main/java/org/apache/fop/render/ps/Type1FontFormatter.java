@@ -28,6 +28,8 @@ import org.apache.fontbox.cff.CFFType1Font;
 import org.apache.fontbox.cff.DataOutput;
 import org.apache.fontbox.cff.Type1FontUtil;
 
+import org.apache.fop.fonts.FontEventListener;
+
 /**
  * This class represents a formatter for a given Type1 font.
  * author Villu Ruusmann
@@ -35,9 +37,11 @@ import org.apache.fontbox.cff.Type1FontUtil;
  */
 public final class Type1FontFormatter {
     private Map<Integer, Integer> gids;
+    private FontEventListener eventListener;
 
-    public Type1FontFormatter(Map<Integer, Integer> gids) {
+    public Type1FontFormatter(Map<Integer, Integer> gids, FontEventListener eventListener) {
         this.gids = gids;
+        this.eventListener = eventListener;
     }
 
     /**
@@ -108,13 +112,19 @@ public final class Type1FontFormatter {
         output.println("/StrokeWidth " + font.getTopDict().get("StrokeWidth")
                 + " def");
 
-        output.println("/Encoding " + gids.size() + " array");
-        output.println("0 1 " + (gids.size() - 1) + " {1 index exch /.notdef put} for");
-
+        int max = 0;
+        StringBuilder sb = new StringBuilder();
         for (Map.Entry<Integer, Integer> gid : gids.entrySet()) {
             String name = font.getCharset().getNameForGID(gid.getKey());
-            output.println("dup " + gid.getValue() + " /" + name + " put");
+            sb.append(String.format("dup %d /%s put", gid.getValue(), name)).append('\n');
+            max = Math.max(max, gid.getValue());
         }
+        if (max > 255) {
+            eventListener.fontType1MaxGlyphs(this, font.getName());
+        }
+        output.println("/Encoding " + (max + 1) + " array");
+        output.println("0 1 " + max + " {1 index exch /.notdef put} for");
+        output.print(sb.toString());
         output.println("readonly def");
 
         output.println("currentdict end");
