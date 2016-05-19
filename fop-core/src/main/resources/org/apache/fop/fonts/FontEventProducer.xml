@@ -22,4 +22,5 @@
   <message key="glyphNotAvailable">Glyph "{ch}" (0x{ch,hex}[, {ch,glyph-name}]) not available in font "{fontName}".</message>
   <message key="fontDirectoryNotFound">The font directory {dir} could not be found.</message>
   <message key="svgTextStrokedAsShapes">The SVG text for font {fontFamily} will be stroked as shapes.</message>
+  <message key="fontType1MaxGlyphs">Font "{fontName}" encoding has more than 256 glyphs may cause wrong output, enable font subsetting or disable 'embed-as-type1'.</message>
 </catalogue>
