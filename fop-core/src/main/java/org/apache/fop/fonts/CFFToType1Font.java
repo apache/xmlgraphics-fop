@@ -22,6 +22,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.fontbox.cff.CFFFont;
@@ -43,16 +47,49 @@ public class CFFToType1Font extends MultiByteFont {
     }
 
     public InputStream getInputStream() throws IOException {
+        return null;
+    }
+
+    public List<InputStream> getInputStreams() throws IOException {
         InputStream cff = super.getInputStream();
         return convertOTFToType1(cff);
     }
 
-    private InputStream convertOTFToType1(InputStream in) throws IOException {
+    private List<InputStream> convertOTFToType1(InputStream in) throws IOException {
         CFFFont f = new CFFParser().parse(IOUtils.toByteArray(in)).get(0);
         if (!(f instanceof  CFFType1Font)) {
             throw new IOException(getEmbedFileURI() + ": only OTF CFF Type1 font can be converted to Type1");
         }
-        byte[] t1 = new Type1FontFormatter(cidSet.getGlyphs(), eventListener).format((CFFType1Font) f);
+        List<InputStream> fonts = new ArrayList<InputStream>();
+        Map<Integer, Integer> glyphs = cidSet.getGlyphs();
+        int i = 0;
+        for (Map<Integer, Integer> x : splitGlyphs(glyphs)) {
+            String iStr = "." + i;
+            fonts.add(convertOTFToType1(x, f, iStr));
+            i++;
+        }
+        return fonts;
+    }
+
+    private List<Map<Integer, Integer>> splitGlyphs(Map<Integer, Integer> glyphs) {
+        List<Map<Integer, Integer>> allGlyphs = new ArrayList<Map<Integer, Integer>>();
+        for (Map.Entry<Integer, Integer> x : glyphs.entrySet()) {
+            int k = x.getKey();
+            int v = x.getValue();
+            int pot = v / 256;
+            v =  v % 256;
+            while (allGlyphs.size() < pot + 1) {
+                Map<Integer, Integer> glyphsPerFont = new HashMap<Integer, Integer>();
+                glyphsPerFont.put(0, 0);
+                allGlyphs.add(glyphsPerFont);
+            }
+            allGlyphs.get(pot).put(k, v);
+        }
+        return allGlyphs;
+    }
+
+    private InputStream convertOTFToType1(Map<Integer, Integer> glyphs, CFFFont f, String i) throws IOException {
+        byte[] t1 = new Type1FontFormatter(glyphs).format((CFFType1Font) f, i);
         PFBData pfb = new PFBParser().parsePFB(new ByteArrayInputStream(t1));
         ByteArrayOutputStream s1 = new ByteArrayOutputStream();
         s1.write(pfb.getHeaderSegment());

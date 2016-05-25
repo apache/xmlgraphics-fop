@@ -66,10 +66,6 @@ public class FontEventAdapter implements FontEventListener {
         getEventProducer().fontDirectoryNotFound(source, dir);
     }
 
-    public void fontType1MaxGlyphs(Object source, String fontName) {
-        getEventProducer().fontType1MaxGlyphs(source, fontName);
-    }
-
     /** {@inheritDoc} */
     public void svgTextStrokedAsShapes(Object source, String fontFamily) {
         getEventProducer().svgTextStrokedAsShapes(source, fontFamily);

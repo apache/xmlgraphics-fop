@@ -154,10 +154,6 @@ public final class FontListMain {
             public void svgTextStrokedAsShapes(Object source, String fontFamily) {
                 // ignore
             }
-
-            public void fontType1MaxGlyphs(Object source, String fontName) {
-                //ignore
-            }
         };
 
         FontListGenerator listGenerator = new FontListGenerator();

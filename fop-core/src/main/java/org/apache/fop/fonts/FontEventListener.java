@@ -61,6 +61,4 @@ public interface FontEventListener {
      * @param fontFamily the family name of the font that is being stroked
      */
     void svgTextStrokedAsShapes(Object source, String fontFamily);
-
-    void fontType1MaxGlyphs(Object source, String fontName);
 }

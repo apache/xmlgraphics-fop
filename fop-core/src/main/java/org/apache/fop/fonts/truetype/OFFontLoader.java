@@ -139,8 +139,8 @@ public class OFFontLoader extends FontLoader {
                 multiFont = new CFFToType1Font(resourceResolver, embeddingMode);
             } else {
                 multiFont = new MultiByteFont(resourceResolver, embeddingMode);
-                multiFont.setIsOTFFile(otf instanceof OTFFile);
             }
+            multiFont.setIsOTFFile(otf instanceof OTFFile);
             returnFont = multiFont;
             multiFont.setTTCName(ttcFontName);
         } else {

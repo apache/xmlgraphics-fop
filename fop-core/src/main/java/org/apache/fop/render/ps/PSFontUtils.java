@@ -22,8 +22,10 @@ package org.apache.fop.render.ps;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +42,7 @@ import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 
 import org.apache.fop.fonts.Base14Font;
+import org.apache.fop.fonts.CFFToType1Font;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.CIDSet;
 import org.apache.fop.fonts.CMapSegment;
@@ -138,8 +141,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         Map fontResources = new HashMap();
         for (String key : fonts.keySet()) {
             Typeface tf = getTypeFace(fontInfo, fonts, key);
-            PSResource fontRes = new PSResource(PSResource.TYPE_FONT, tf.getEmbedFontName());
-            PSFontResource fontResource = embedFont(gen, tf, fontRes, eventProducer);
+            PSFontResource fontResource = embedFont(gen, tf, eventProducer);
             fontResources.put(key, fontResource);
 
             if (tf instanceof SingleByteFont) {
@@ -239,11 +241,12 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         return tf;
     }
 
-    private static PSFontResource embedFont(PSGenerator gen, Typeface tf, PSResource fontRes,
-            PSEventProducer eventProducer) throws IOException {
+    private static PSFontResource embedFont(PSGenerator gen, Typeface tf, PSEventProducer eventProducer)
+            throws IOException {
         boolean embeddedFont = false;
         FontType fontType = tf.getFontType();
         PSFontResource fontResource = null;
+        PSResource fontRes = new PSResource(PSResource.TYPE_FONT, tf.getEmbedFontName());
         if (!(fontType == FontType.TYPE1 || fontType == FontType.TRUETYPE
                 || fontType == FontType.TYPE0) || !(tf instanceof CustomFont)) {
             gen.writeDSCComment(DSCConstants.INCLUDE_RESOURCE, fontRes);
@@ -252,42 +255,51 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         }
         CustomFont cf = (CustomFont)tf;
         if (isEmbeddable(cf)) {
-            InputStream in = getInputStreamOnFont(gen, cf);
-            if (in != null) {
-                if (fontType == FontType.TYPE0) {
-                    if (((MultiByteFont)tf).isOTFFile()) {
-                        checkPostScriptLevel3(gen, eventProducer, "OpenType CFF");
-                        embedType2CFF(gen, (MultiByteFont) tf, in);
-                    } else {
-                        if (gen.embedIdentityH()) {
-                            checkPostScriptLevel3(gen, eventProducer, "TrueType");
+            List<InputStream> ins = getInputStreamOnFont(gen, cf);
+            if (ins != null) {
+                int i = 0;
+                for (InputStream in : ins) {
+                    if (i > 0) {
+                        fontRes = new PSResource(PSResource.TYPE_FONT, tf.getEmbedFontName()  + "." + i);
+                    }
+                    if (fontType == FontType.TYPE0) {
+                        if (((MultiByteFont) tf).isOTFFile()) {
+                            checkPostScriptLevel3(gen, eventProducer, "OpenType CFF");
+                            embedType2CFF(gen, (MultiByteFont) tf, in);
+                        } else {
+                            if (gen.embedIdentityH()) {
+                                checkPostScriptLevel3(gen, eventProducer, "TrueType");
                             /*
                              * First CID-keyed font to be embedded; add
                              * %%IncludeResource: comment for ProcSet CIDInit.
                              */
-                            gen.includeProcsetCIDInitResource();
+                                gen.includeProcsetCIDInitResource();
+                            }
+                            PSResource cidFontResource;
+                            cidFontResource = embedType2CIDFont(gen,
+                                    (MultiByteFont) tf, in);
+                            fontResource = PSFontResource.createFontResource(fontRes,
+                                    gen.getProcsetCIDInitResource(), gen.getIdentityHCMapResource(),
+                                    cidFontResource);
                         }
-                        PSResource cidFontResource;
-                        cidFontResource = embedType2CIDFont(gen,
-                                (MultiByteFont) tf, in);
-                        fontResource = PSFontResource.createFontResource(fontRes,
-                                gen.getProcsetCIDInitResource(), gen.getIdentityHCMapResource(),
-                                cidFontResource);
                     }
+                    gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, fontRes);
+                    if (fontType == FontType.TYPE1) {
+                        embedType1Font(gen, (CustomFont) tf, in);
+                        if (fontResource == null) {
+                            fontResource = PSFontResource.createFontResource(fontRes);
+                        }
+                    } else if (fontType == FontType.TRUETYPE) {
+                        embedTrueTypeFont(gen, (SingleByteFont) tf, in);
+                        fontResource = PSFontResource.createFontResource(fontRes);
+                    } else if (!((MultiByteFont) tf).isOTFFile()) {
+                        composeType0Font(gen, (MultiByteFont) tf);
+                    }
+                    gen.writeDSCComment(DSCConstants.END_RESOURCE);
+                    gen.getResourceTracker().registerSuppliedResource(fontRes);
+                    embeddedFont = true;
+                    i++;
                 }
-                gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, fontRes);
-                if (fontType == FontType.TYPE1) {
-                    embedType1Font(gen, (CustomFont) tf, in);
-                    fontResource = PSFontResource.createFontResource(fontRes);
-                } else if (fontType == FontType.TRUETYPE) {
-                    embedTrueTypeFont(gen, (SingleByteFont) tf, in);
-                    fontResource = PSFontResource.createFontResource(fontRes);
-                } else {
-                   composeType0Font(gen, (MultiByteFont) tf, in);
-                }
-                gen.writeDSCComment(DSCConstants.END_RESOURCE);
-                gen.getResourceTracker().registerSuppliedResource(fontRes);
-                embeddedFont = true;
             } else {
                 gen.commentln("%WARNING: Could not embed font: " + cf.getEmbedFontName());
                 log.warn("Font " + cf.getEmbedFontName() + " is marked as supplied in the"
@@ -297,7 +309,6 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         if (!embeddedFont) {
             gen.writeDSCComment(DSCConstants.INCLUDE_RESOURCE, fontRes);
             fontResource = PSFontResource.createFontResource(fontRes);
-            return fontResource;
         }
         return fontResource;
     }
@@ -502,8 +513,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         return 0;
     }
 
-    private static void composeType0Font(PSGenerator gen, MultiByteFont font,
-            InputStream fontStream) throws IOException {
+    private static void composeType0Font(PSGenerator gen, MultiByteFont font) throws IOException {
         String psName = font.getEmbedFontName();
         gen.write("/");
         gen.write(psName);
@@ -724,18 +734,23 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         return font.isEmbeddable();
     }
 
-    private static InputStream getInputStreamOnFont(PSGenerator gen, CustomFont font)
+    private static List<InputStream> getInputStreamOnFont(PSGenerator gen, CustomFont font)
                 throws IOException {
         if (isEmbeddable(font)) {
+            List<InputStream> fonts = new ArrayList<InputStream>();
             InputStream in = font.getInputStream();
             if (in == null) {
+                if (font instanceof CFFToType1Font) {
+                    return ((CFFToType1Font) font).getInputStreams();
+                }
                 return null;
             }
             //Make sure the InputStream is decorated with a BufferedInputStream
             if (!(in instanceof java.io.BufferedInputStream)) {
                 in = new java.io.BufferedInputStream(in);
             }
-            return in;
+            fonts.add(in);
+            return fonts;
         } else {
             return null;
         }
