@@ -28,8 +28,6 @@ import org.apache.fontbox.cff.CFFType1Font;
 import org.apache.fontbox.cff.DataOutput;
 import org.apache.fontbox.cff.Type1FontUtil;
 
-import org.apache.fop.fonts.FontEventListener;
-
 /**
  * This class represents a formatter for a given Type1 font.
  * author Villu Ruusmann
@@ -37,31 +35,30 @@ import org.apache.fop.fonts.FontEventListener;
  */
 public final class Type1FontFormatter {
     private Map<Integer, Integer> gids;
-    private FontEventListener eventListener;
 
-    public Type1FontFormatter(Map<Integer, Integer> gids, FontEventListener eventListener) {
+    public Type1FontFormatter(Map<Integer, Integer> gids) {
         this.gids = gids;
-        this.eventListener = eventListener;
     }
 
     /**
      * Read and convert a given CFFFont.
      * @param font the given CFFFont
+     * @param i
      * @return the Type1 font
      * @throws IOException if an error occurs during reading the given font
      */
-    public byte[] format(CFFType1Font font) throws IOException {
+    public byte[] format(CFFType1Font font, String i) throws IOException {
         DataOutput output = new DataOutput();
-        printFont(font, output);
+        printFont(font, output, i);
         return output.getBytes();
     }
 
-    private void printFont(CFFType1Font font, DataOutput output)
+    private void printFont(CFFType1Font font, DataOutput output, String iStr)
             throws IOException {
-        output.println("%!FontType1-1.0 " + font.getName() + " "
+        output.println("%!FontType1-1.0 " + font.getName() + iStr + " "
                 + font.getTopDict().get("version"));
 
-        printFontDictionary(font, output);
+        printFontDictionary(font, output, iStr);
 
         for (int i = 0; i < 8; i++) {
             StringBuilder sb = new StringBuilder();
@@ -76,7 +73,7 @@ public final class Type1FontFormatter {
         output.println("cleartomark");
     }
 
-    private void printFontDictionary(CFFType1Font font, DataOutput output)
+    private void printFontDictionary(CFFType1Font font, DataOutput output, String iStr)
             throws IOException {
         output.println("10 dict begin");
         output.println("/FontInfo 10 dict dup begin");
@@ -99,7 +96,7 @@ public final class Type1FontFormatter {
         output.println("/UnderlineThickness "
                 + font.getTopDict().get("UnderlineThickness") + " def");
         output.println("end readonly def");
-        output.println("/FontName /" + font.getName() + " def");
+        output.println("/FontName /" + font.getName() + iStr + " def");
         output.println("/PaintType " + font.getTopDict().get("PaintType") + " def");
         output.println("/FontType 1 def");
         NumberFormat matrixFormat = new DecimalFormat("0.########", new DecimalFormatSymbols(Locale.US));
@@ -118,9 +115,6 @@ public final class Type1FontFormatter {
             String name = font.getCharset().getNameForGID(gid.getKey());
             sb.append(String.format("dup %d /%s put", gid.getValue(), name)).append('\n');
             max = Math.max(max, gid.getValue());
-        }
-        if (max > 255) {
-            eventListener.fontType1MaxGlyphs(this, font.getName());
         }
         output.println("/Encoding " + (max + 1) + " array");
         output.println("0 1 " + max + " {1 index exch /.notdef put} for");

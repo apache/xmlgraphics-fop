@@ -220,7 +220,6 @@ public class PSPainterTestCase {
                 + "/OTFFont.0 0.01 F\n"
                 + "1 0 0 -1 0 0 Tm\n"
                 + "<FFFFFFFFFF> t\n"
-                + "/OTFFont.0 0.01 F\n"
                 + "1 0 0 -1 0 0 Tm\n"
                 + "<FFFFFFFFFF> t\n"
                 + "/TTFFont 0.01 F\n"

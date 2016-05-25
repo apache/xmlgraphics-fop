@@ -87,11 +87,4 @@ public interface FontEventProducer extends EventProducer {
      */
     void svgTextStrokedAsShapes(Object source, String fontFamily);
 
-    /**
-     * A method to warn the user that the font has too many glyphs
-     * @param source
-     * @param fontName
-     * @event.severity ERROR
-     */
-    void fontType1MaxGlyphs(Object source, String fontName);
 }
