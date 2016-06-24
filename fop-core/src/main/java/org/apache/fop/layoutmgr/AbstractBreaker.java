@@ -430,10 +430,13 @@ public abstract class AbstractBreaker {
                     firstElementsForRestart = null;
                     LayoutManager restartAtLM = getRestartAtLM(alg, ipdChangesOnNextPage, onLastPageAndIPDChanges,
                             visitedBefore, blockList, 1);
-                    if (restartAtLM == null) {
+                    if (restartAtLM == null || restartAtLM.getChildLMs().isEmpty()) {
                         firstElementsForRestart = null;
-                        restartAtLM = getRestartAtLM(alg, ipdChangesOnNextPage, onLastPageAndIPDChanges,
+                        LayoutManager restartAtLM2 = getRestartAtLM(alg, ipdChangesOnNextPage, onLastPageAndIPDChanges,
                                 visitedBefore, blockList, 0);
+                        if (restartAtLM2 != null) {
+                            restartAtLM = restartAtLM2;
+                        }
                     }
                     if (ipdChangesOnNextPage) {
                         addAreas(alg, optimalPageCount, blockList, blockList);
