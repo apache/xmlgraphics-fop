@@ -49,7 +49,7 @@ public class PDFUri extends PDFAction {
     }
 
     private String getDictString() {
-        return "<< /URI (" + uri + ")\n/S /URI >>";
+        return "<< /URI (" + encodeString(uri) + ")\n/S /URI >>";
     }
 
     /** {@inheritDoc} */
