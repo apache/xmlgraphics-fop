@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.apache.xmlgraphics.image.loader.ImageInfo;
@@ -32,6 +33,7 @@ import org.apache.fop.apps.FopFactory;
 
 public class PSImageUtilsTestCase {
     @Test
+    @Ignore
     public void testIsImageInlined() {
         FOUserAgent foUserAgent = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
         ImageInfo imageInfo = new ImageInfo("a", "application/pdf");
