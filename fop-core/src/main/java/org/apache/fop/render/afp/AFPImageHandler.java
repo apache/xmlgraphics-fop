@@ -110,9 +110,8 @@ public abstract class AFPImageHandler implements ImageHandlerBase {
 
         int[] coords = unitConv.mpts2units(new float[] {targetRect.x, targetRect.y});
 
-        int width = Math.round(unitConv.mpt2units(targetRect.width));
-
-        int height = Math.round(unitConv.mpt2units(targetRect.height));
+        int width = (int) Math.ceil(unitConv.mpt2units(targetRect.width));
+        int height = (int) Math.ceil(unitConv.mpt2units(targetRect.height));
 
         int resolution = paintingState.getResolution();
         AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo(coords[X], coords[Y], width,
