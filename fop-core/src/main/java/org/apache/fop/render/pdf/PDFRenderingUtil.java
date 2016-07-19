@@ -679,6 +679,7 @@ class PDFRenderingUtil {
         dict.put("F", file);
         String filename = PDFText.toPDFString(embeddedFile.getFilename(), '_');
         PDFFileSpec fileSpec = new PDFFileSpec(filename);
+        pdfDoc.getRoot().addAF(fileSpec, filename);
         fileSpec.setEmbeddedFile(dict);
         if (embeddedFile.getDesc() != null) {
             fileSpec.setDescription(embeddedFile.getDesc());
