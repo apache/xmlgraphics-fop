@@ -332,7 +332,7 @@ public class PDFProfile {
     /** Checks if embedded files are allowed. */
     public void verifyEmbeddedFilesAllowed() {
         final String err = "{0} does not allow embedded files.";
-        if (isPDFAActive()) {
+        if (isPDFAActive() && getPDFAMode().getPart() < 3) {
             throw new PDFConformanceException(format(err, getPDFAMode()));
         }
         if (isPDFXActive()) {

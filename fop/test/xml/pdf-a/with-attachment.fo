@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:pdf="http://xmlgraphics.apache.org/fop/extensions/pdf" xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Gladiator">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="y" margin-right="10mm" margin-left="5mm" margin-bottom="5mm" margin-top="5mm" page-width="21cm" page-height="29.7cm">
+      <fo:region-body/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="x">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference master-reference="y" page-position="any"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:declarations>
+    <pdf:embedded-file filename="minimal-pdf-a.fo" src="xml/pdf-a/minimal-pdf-a.fo"/>
+  </fo:declarations>
+  <fo:page-sequence master-reference="x">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>xx</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
