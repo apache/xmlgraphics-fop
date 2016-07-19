@@ -54,7 +54,8 @@ public class PDFAttachmentTestCase {
         docHandler.getDocumentNavigationHandler().renderLink(new Link(
                 new URIAction("embedded-file:filename", false), new Rectangle()));
         docHandler.endDocument();
-        Assert.assertTrue(out.toString().contains("<<\n  /Type /Filespec\n  /F (filename)"));
+        Assert.assertTrue(out.toString().contains(
+                "<<\n  /Type /Filespec\n  /F (filename)\n  /UF (filename)\n  /AFRelationship /Data"));
         Assert.assertTrue(out.toString().contains("<<\n/S /JavaScript\n"
                 + "/JS (this.exportDataObject({cName:\"filename\", nLaunch:2});)\n>>"));
     }
