@@ -131,6 +131,20 @@ public class PDFAConformanceTestCase extends BasePDFTest {
         eventChecker.end();
     }
 
+    @Test
+    public void testAttachment() throws Exception {
+        File foFile = new File(foBaseDir, "with-attachment.fo");
+        try {
+            convertFO(foFile, getUserAgent(), dumpPDF);
+            fail("Expected PDFConformanceException. PDF/A-1 does not allow attachments.");
+        } catch (PDFConformanceException e) {
+            //Good!
+        }
+        FOUserAgent ua = getUserAgent();
+        ua.getRendererOptions().put("pdf-a-mode", "PDF/A-3a");
+        convertFO(foFile, ua, dumpPDF);
+    }
+
     private EventChecker setupEventChecker(FOUserAgent ua, String expectedEvent) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("pdfProfile", PDFAMode.PDFA_1B);
