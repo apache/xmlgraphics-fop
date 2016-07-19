@@ -53,7 +53,7 @@ public class PDFRoot extends PDFDictionary {
     private final PDFDocument document;
 
     private PDFDPartRoot dPartRoot;
-
+    private PDFArray af;
 
     private static final PDFName[] PAGEMODE_NAMES = new PDFName[] {
         new PDFName("UseNone"),
@@ -332,5 +332,15 @@ public class PDFRoot extends PDFDictionary {
             put("DPartRoot", dPartRoot.makeReference());
         }
         return dPartRoot;
+    }
+
+    public void addAF(PDFFileSpec fileSpec, String filename) {
+        if (af == null) {
+            af = new PDFArray();
+            put("AF", af);
+        }
+        af.add(fileSpec);
+        fileSpec.put("UF", filename);
+        fileSpec.put("AFRelationship", new PDFName("Data"));
     }
 }

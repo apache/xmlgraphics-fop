@@ -33,8 +33,10 @@ public class PDFEmbeddedFile extends PDFStream {
     public PDFEmbeddedFile() {
         super();
         put("Type", new PDFName("EmbeddedFile"));
+        put("Subtype", new PDFName("application/octet-stream"));
         PDFDictionary params = new PDFDictionary();
         params.put("CreationDate", PDFInfo.formatDateTime(new Date()));
+        params.put("ModDate", PDFInfo.formatDateTime(new Date()));
         put("Params", params);
     }
 
