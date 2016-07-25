@@ -80,6 +80,7 @@ public abstract class CustomFont extends Typeface
     /** the character map, mapping Unicode ranges to glyph indices. */
     protected List<CMapSegment> cmap = new ArrayList<CMapSegment>();
     private boolean useAdvanced = true;
+    private boolean simulateStyle;
 
     /**
      * @param resourceResolver the URI resource resolver for controlling file access
@@ -488,6 +489,17 @@ public abstract class CustomFont extends Typeface
      */
     public void setAdvancedEnabled(boolean enabled) {
         this.useAdvanced = enabled;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setSimulateStyle(boolean enabled) {
+        this.simulateStyle = enabled;
+    }
+
+    public boolean getSimulateStyle() {
+        return this.simulateStyle;
     }
 
     /** {@inheritDoc} */

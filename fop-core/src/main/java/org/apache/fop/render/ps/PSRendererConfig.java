@@ -32,6 +32,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
+import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.render.RendererConfig;
 import org.apache.fop.util.LogUtil;
 
@@ -113,7 +114,8 @@ public final class PSRendererConfig implements RendererConfig {
         private ParserHelper(Configuration cfg, FOUserAgent userAgent)
                 throws ConfigurationException, FOPException {
             config = new PSRendererConfig(new DefaultFontConfigParser().parse(cfg,
-                    userAgent.validateStrictly()));
+                    userAgent.validateStrictly(),
+                    new FontEventAdapter(userAgent.getEventBroadcaster())));
             if (cfg != null) {
                 setBoolConfigParam(cfg, AUTO_ROTATE_LANDSCAPE);
                 setConfigParameter(LANGUAGE_LEVEL,

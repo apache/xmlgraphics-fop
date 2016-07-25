@@ -27,6 +27,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
+import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.render.RendererConfig;
 
 import static org.apache.fop.render.java2d.Java2DRendererOption.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
@@ -68,7 +69,8 @@ public final class Java2DRendererConfig implements RendererConfig {
         public Java2DRendererConfig build(FOUserAgent userAgent, Configuration cfg)
                 throws FOPException {
             Java2DRendererConfig config = new Java2DRendererConfig(new DefaultFontConfigParser()
-                    .parse(cfg, userAgent.validateStrictly()));
+                    .parse(cfg, userAgent.validateStrictly(),
+                            new FontEventAdapter(userAgent.getEventBroadcaster())));
             boolean value = cfg.getChild(
                     JAVA2D_TRANSPARENT_PAGE_BACKGROUND.getName(), true).getValueAsBoolean(false);
             config.params.put(JAVA2D_TRANSPARENT_PAGE_BACKGROUND, value);

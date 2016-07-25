@@ -28,6 +28,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
+import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.render.RendererConfig;
 import org.apache.fop.render.RendererConfigOption;
 
@@ -81,7 +82,7 @@ public final class TxtRendererConfig implements RendererConfig {
         /** {@inheritDoc} */
         public TxtRendererConfig build(FOUserAgent userAgent, Configuration cfg) throws FOPException {
             TxtRendererConfig config = new TxtRendererConfig(new DefaultFontConfigParser().parse(cfg,
-                    userAgent.validateStrictly()));
+                    userAgent.validateStrictly(), new FontEventAdapter(userAgent.getEventBroadcaster())));
             if (cfg != null) {
                 TxtRendererOption option = TxtRendererOption.ENCODING;
                 String value = cfg.getChild(option.getName(), true).getValue(null);

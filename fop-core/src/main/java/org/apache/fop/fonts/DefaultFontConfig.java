@@ -69,6 +69,12 @@ public final class DefaultFontConfig implements FontConfig {
         }
 
         /** {@inheritDoc} */
+        public DefaultFontConfig parse(Configuration cfg, boolean strict,
+                                       FontEventAdapter eventAdapter) throws FOPException {
+            return new ParserHelper(cfg, strict, eventAdapter).instance;
+        }
+
+        /** {@inheritDoc} */
         public FontConfig parse(Configuration cfg, FontManager fontManager, boolean strict,
                 EventProducer eventProducer) throws FOPException {
             return parse(cfg, strict);
@@ -81,10 +87,17 @@ public final class DefaultFontConfig implements FontConfig {
 
         private Configuration config;
         private  Configuration fontInfoCfg;
+        private FontEventAdapter eventAdapter;
 
         private  DefaultFontConfig instance;
 
         private ParserHelper(Configuration cfg, boolean strict) throws FOPException {
+            this(cfg, strict, null);
+        }
+
+        private ParserHelper(Configuration cfg, boolean strict, FontEventAdapter eventAdapter)
+                throws FOPException {
+            this.eventAdapter = eventAdapter;
             if (cfg == null || cfg.getChild("fonts", false) == null) {
                 instance = null;
             } else {
@@ -118,6 +131,7 @@ public final class DefaultFontConfig implements FontConfig {
                         fontCfg.getAttributeAsBoolean("advanced", true),
                         fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()),
                         fontCfg.getAttribute("embedding-mode", EncodingMode.AUTO.getName()),
+                        fontCfg.getAttributeAsBoolean("simulate-style", false),
                         fontCfg.getAttributeAsBoolean("embed-as-type1", false));
                 instance.fonts.add(font);
                 boolean hasTriplets = false;
@@ -131,7 +145,12 @@ public final class DefaultFontConfig implements FontConfig {
                     LogUtil.handleError(log, "font without font-triplet", strict);
                 }
                 try {
-                    if (font.getEmbedAsType1() && !config.getAttribute("mime").equals("application/postscript")) {
+                    if (eventAdapter != null && font.getSimulateStyle()
+                            && !config.getAttribute("mime").equals("application/pdf")) {
+                        eventAdapter.fontFeatureNotSuppprted(this, "simulate-style", "PDF");
+                    }
+                    if (eventAdapter != null && font.getEmbedAsType1()
+                            && !config.getAttribute("mime").equals("application/postscript")) {
                         throw new FOPException("The embed-as-type1 attribute is only supported in postscript");
                     }
                 } catch (ConfigurationException ex) {
@@ -301,6 +320,7 @@ public final class DefaultFontConfig implements FontConfig {
         }
 
         private final boolean embedAsType1;
+        private final boolean simulateStyle;
 
         private final List<FontTriplet> tripletList = new ArrayList<FontTriplet>();
 
@@ -309,7 +329,8 @@ public final class DefaultFontConfig implements FontConfig {
         }
 
         private Font(String metrics, String embed, String afm, String pfm, String subFont, boolean kerning,
-                boolean advanced, String encodingMode, String embeddingMode, boolean embedAsType1) {
+                     boolean advanced, String encodingMode, String embeddingMode, boolean simulateStyle,
+                     boolean embedAsType1) {
             this.metrics = metrics;
             this.embedUri = embed;
             this.afm = afm;
@@ -319,6 +340,7 @@ public final class DefaultFontConfig implements FontConfig {
             this.advanced = advanced;
             this.encodingMode = encodingMode;
             this.embeddingMode = embeddingMode;
+            this.simulateStyle = simulateStyle;
             this.embedAsType1 = embedAsType1;
         }
 
@@ -368,6 +390,10 @@ public final class DefaultFontConfig implements FontConfig {
 
         public String getPfm() {
             return pfm;
+        }
+
+        public boolean getSimulateStyle() {
+            return simulateStyle;
         }
 
         public boolean getEmbedAsType1() {

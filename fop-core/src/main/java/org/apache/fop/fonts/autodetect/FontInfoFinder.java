@@ -223,7 +223,7 @@ public class FontInfoFinder {
                 try {
                     OFFontLoader ttfLoader = new OFFontLoader(fontURI, fontName, true,
                             EmbeddingMode.AUTO, EncodingMode.AUTO, useKerning, useAdvanced,
-                            resourceResolver, false);
+                            resourceResolver, false, false);
                     customFont = ttfLoader.getFont();
                     if (this.eventListener != null) {
                         customFont.setEventListener(this.eventListener);
@@ -251,7 +251,7 @@ public class FontInfoFinder {
             try {
                 FontUris fontUris = new FontUris(fontURI, null);
                 customFont = FontLoader.loadFont(fontUris, null, true, EmbeddingMode.AUTO, EncodingMode.AUTO,
-                        useKerning, useAdvanced, resourceResolver, false);
+                        useKerning, useAdvanced, resourceResolver, false, false);
                 if (this.eventListener != null) {
                     customFont.setEventListener(this.eventListener);
                 }

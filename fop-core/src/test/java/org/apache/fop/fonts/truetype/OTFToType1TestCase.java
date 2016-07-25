@@ -51,7 +51,7 @@ public class OTFToType1TestCase {
         InternalResourceResolver rr = ResourceResolverFactory.createDefaultInternalResourceResolver(
                 new File(".").toURI());
         CustomFont realFont = FontLoader.loadFont(new FontUris(new File(s).toURI(), null), null, true,
-                EmbeddingMode.SUBSET, EncodingMode.AUTO, true, true, rr, true);
+                EmbeddingMode.SUBSET, EncodingMode.AUTO, true, true, rr, false, true);
         realFont.mapChar('d');
         InputStream is = ((CFFToType1Font)realFont).getInputStreams().get(0);
         return Type1Font.createWithPFB(is);
