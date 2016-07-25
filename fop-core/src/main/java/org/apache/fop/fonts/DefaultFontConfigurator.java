@@ -166,8 +166,9 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
         }
         EncodingMode encodingMode = EncodingMode.getValue(font.getEncodingMode());
         EmbeddingMode embeddingMode = EmbeddingMode.getValue(font.getEmbeddingMode());
-        EmbedFontInfo embedFontInfo = new EmbedFontInfo(fontUris, font.isKerning(), font.isAdvanced(),
-                tripletList, subFont, encodingMode, embeddingMode, font.getEmbedAsType1());
+        EmbedFontInfo embedFontInfo = new EmbedFontInfo(fontUris, font.isKerning(),
+                font.isAdvanced(), tripletList, subFont, encodingMode, embeddingMode,
+                font.getSimulateStyle(), font.getEmbedAsType1());
         if (fontCache != null) {
             if (!fontCache.containsFont(embedFontInfo)) {
                 fontCache.addFont(embedFontInfo, resourceResolver);

@@ -39,6 +39,7 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
 import org.apache.fop.ResourceEventProducer;
+import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
@@ -458,9 +459,21 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         PDFTextUtil textutil = generator.getTextUtil();
         textutil.updateTf(fontKey, fontSize, tf.isMultiByte());
 
+        double shear = 0;
+        boolean simulateStyle = tf instanceof CustomFont && ((CustomFont) tf).getSimulateStyle();
+        if (simulateStyle) {
+            if (triplet.getWeight() == 700) {
+                generator.add("q\n");
+                generator.add("2 Tr 0.31543 w\n");
+            }
+            if (triplet.getStyle().equals("italic")) {
+                shear = 0.3333;
+            }
+        }
+
         generator.updateCharacterSpacing(letterSpacing / 1000f);
 
-        textutil.writeTextMatrix(new AffineTransform(1, 0, 0, -1, x / 1000f, y / 1000f));
+        textutil.writeTextMatrix(new AffineTransform(1, 0, shear, -1, x / 1000f, y / 1000f));
         int l = text.length();
         int dxl = (dx != null ? dx.length : 0);
 
@@ -504,6 +517,9 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
 
         }
         textutil.writeTJ();
+        if (simulateStyle && triplet.getWeight() == 700) {
+            generator.add("Q\n");
+        }
     }
 
     private static int[] paZero = new int[4];

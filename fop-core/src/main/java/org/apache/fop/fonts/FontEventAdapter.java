@@ -71,4 +71,9 @@ public class FontEventAdapter implements FontEventListener {
         getEventProducer().svgTextStrokedAsShapes(source, fontFamily);
     }
 
+    /** {@inheritDoc} */
+    public void fontFeatureNotSuppprted(Object source, String feature, String onlySupportedIn) {
+        getEventProducer().fontFeatureNotSuppprted(source, feature, onlySupportedIn);
+    }
+
 }

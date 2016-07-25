@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,6 +36,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
+import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.render.RendererConfig;
@@ -117,8 +119,14 @@ public final class PDFRendererConfig implements RendererConfig {
             if (cfg != null) {
                 configure(cfg, userAgent, strict);
             }
-            pdfConfig = new PDFRendererConfig(new DefaultFontConfigParser().parse(cfg, strict),
-                    new PDFRendererOptionsConfig(configOptions, encryptionConfig));
+            if (userAgent == null) {
+                pdfConfig = new PDFRendererConfig(new DefaultFontConfigParser().parse(cfg, strict),
+                        new PDFRendererOptionsConfig(configOptions, encryptionConfig));
+            } else {
+                pdfConfig = new PDFRendererConfig(new DefaultFontConfigParser().parse(cfg, strict,
+                        new FontEventAdapter(userAgent.getEventBroadcaster())),
+                        new PDFRendererOptionsConfig(configOptions, encryptionConfig));
+            }
         }
 
         private void parseAndPut(PDFRendererOption option, Configuration cfg) {

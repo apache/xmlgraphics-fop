@@ -26,6 +26,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.fonts.FontConfig;
+import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.render.RendererConfig;
 
 /**
@@ -52,7 +53,8 @@ public final class IFRendererConfig implements RendererConfig {
         public RendererConfig build(FOUserAgent userAgent, Configuration cfg)
                 throws FOPException {
             return new IFRendererConfig(new DefaultFontConfigParser().parse(cfg,
-                    userAgent.validateStrictly()));
+                    userAgent.validateStrictly(),
+                    new FontEventAdapter(userAgent.getEventBroadcaster())));
         }
 
         /** {@inheritDoc} */

@@ -25,6 +25,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
+import org.apache.fop.fonts.FontEventAdapter;
 
 /**
  * The PNG renderer configuration data object.
@@ -43,7 +44,8 @@ public final class PNGRendererConfig extends BitmapRendererConfig {
         public PNGRendererConfig build(FOUserAgent userAgent, Configuration cfg)
                 throws FOPException {
             return new PNGRendererConfig(new DefaultFontConfigParser().parse(cfg,
-                    userAgent.validateStrictly()));
+                    userAgent.validateStrictly(),
+                    new FontEventAdapter(userAgent.getEventBroadcaster())));
         }
 
         /** {@inheritDoc} */

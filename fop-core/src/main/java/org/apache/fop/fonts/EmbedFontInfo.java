@@ -42,12 +42,14 @@ public class EmbedFontInfo implements Serializable {
     private final EncodingMode encodingMode;
     /** the requested embedding mode for this font */
     private final EmbeddingMode embeddingMode;
+    /** simulates bold or italic on a regular font */
+    private final boolean simulateStyle;
+    private final boolean embedAsType1;
 
     /** the PostScript name of the font */
     protected String postScriptName;
     /** the sub-fontname of the font (used for TrueType Collections, null otherwise) */
     protected String subFontName;
-    private boolean embedAsType1;
 
     /** the list of associated font triplets */
     private List<FontTriplet> fontTriplets;
@@ -67,8 +69,8 @@ public class EmbedFontInfo implements Serializable {
      * @param encodingMode the encoding mode to use for this font
      */
     public EmbedFontInfo(FontUris fontUris, boolean kerning, boolean advanced,
-            List<FontTriplet> fontTriplets, String subFontName,
-            EncodingMode encodingMode, EmbeddingMode embeddingMode, boolean embedAsType1) {
+            List<FontTriplet> fontTriplets, String subFontName, EncodingMode encodingMode,
+            EmbeddingMode embeddingMode, boolean simulateStyle, boolean embedAsType1) {
         this.kerning = kerning;
         this.advanced = advanced;
         this.fontTriplets = fontTriplets;
@@ -76,6 +78,7 @@ public class EmbedFontInfo implements Serializable {
         this.encodingMode = encodingMode;
         this.embeddingMode = embeddingMode;
         this.fontUris = fontUris;
+        this.simulateStyle = simulateStyle;
         this.embedAsType1 = embedAsType1;
     }
 
@@ -90,7 +93,7 @@ public class EmbedFontInfo implements Serializable {
     public EmbedFontInfo(FontUris fontUris, boolean kerning, boolean advanced,
             List<FontTriplet> fontTriplets, String subFontName) {
         this(fontUris, kerning, advanced, fontTriplets, subFontName, EncodingMode.AUTO,
-                EmbeddingMode.AUTO, false);
+                EmbeddingMode.AUTO, false, false);
     }
 
     /**
@@ -194,6 +197,14 @@ public class EmbedFontInfo implements Serializable {
      */
     public EncodingMode getEncodingMode() {
         return this.encodingMode;
+    }
+
+    /**
+     * Determines whether the font can simulate a style such as bold or italic.
+     * @return true if the font is being simulated as a different style.
+     */
+    public boolean getSimulateStyle() {
+        return this.simulateStyle;
     }
 
     public boolean getEmbedAsType1() {

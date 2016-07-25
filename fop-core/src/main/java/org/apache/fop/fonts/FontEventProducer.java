@@ -87,4 +87,13 @@ public interface FontEventProducer extends EventProducer {
      */
     void svgTextStrokedAsShapes(Object source, String fontFamily);
 
+    /**
+     * A method to warn the user that the feature they are trying to use is not supported with either the renderer or
+     * other setting.
+     * @param source
+     * @param feature The feature that has caused the not supported issue
+     * @param onlySupportedIn The renderer / setting that this feature works with.
+     * @event.severity ERROR
+     */
+    void fontFeatureNotSuppprted(Object source, String feature, String onlySupportedIn);
 }

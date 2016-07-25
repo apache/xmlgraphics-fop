@@ -50,12 +50,13 @@ public class TTFFontLoaderTestCase {
         boolean useKerning = true;
 
         OFFontLoader fontLoader = new OFFontLoader(absoluteFilePath, fontName, embedded,
-                EmbeddingMode.AUTO, EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resourceResolver, false);
+                EmbeddingMode.AUTO, EncodingMode.AUTO, useKerning, useComplexScriptFeatures,
+                resourceResolver, false, false);
         assertTrue(fontLoader.getFont().hasKerningInfo());
         useKerning = false;
 
         fontLoader = new OFFontLoader(absoluteFilePath, fontName, embedded, EmbeddingMode.AUTO,
-                EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resourceResolver, false);
+                EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resourceResolver, false, false);
         assertFalse(fontLoader.getFont().hasKerningInfo());
     }
 }

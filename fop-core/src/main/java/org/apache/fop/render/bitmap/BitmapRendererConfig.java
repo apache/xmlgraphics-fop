@@ -29,6 +29,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
+import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.render.RendererConfig;
 import org.apache.fop.render.java2d.Java2DRendererConfig;
 import org.apache.fop.render.java2d.Java2DRendererConfig.Java2DRendererConfigParser;
@@ -139,7 +140,8 @@ public class BitmapRendererConfig implements RendererConfig {
         public BitmapRendererConfig build(FOUserAgent userAgent, Configuration cfg)
                 throws FOPException {
             BitmapRendererConfig config = new BitmapRendererConfig(new DefaultFontConfigParser()
-                    .parse(cfg, userAgent.validateStrictly()));
+                    .parse(cfg, userAgent.validateStrictly(),
+                            new FontEventAdapter(userAgent.getEventBroadcaster())));
             build(config, userAgent, cfg);
             return config;
         }

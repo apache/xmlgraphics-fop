@@ -32,6 +32,7 @@ import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.CFFToType1Font;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.CMapSegment;
+import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.FontLoader;
@@ -52,6 +53,7 @@ public class OFFontLoader extends FontLoader {
     private final String subFontName;
     private EncodingMode encodingMode;
     private EmbeddingMode embeddingMode;
+    private boolean simulateStyle;
     private boolean embedAsType1;
 
     /**
@@ -60,7 +62,8 @@ public class OFFontLoader extends FontLoader {
      * @param resourceResolver the resource resolver for font URI resolution
      */
     public OFFontLoader(URI fontFileURI, InternalResourceResolver resourceResolver) {
-        this(fontFileURI, null, true, EmbeddingMode.AUTO, EncodingMode.AUTO, true, true, resourceResolver, false);
+        this(fontFileURI, null, true, EmbeddingMode.AUTO, EncodingMode.AUTO, true, true, resourceResolver, false,
+                false);
     }
 
     /**
@@ -74,14 +77,16 @@ public class OFFontLoader extends FontLoader {
      * @param useKerning true to enable loading kerning info if available, false to disable
      * @param useAdvanced true to enable loading advanced info if available, false to disable
      * @param resolver the FontResolver for font URI resolution
+     * @param simulateStyle Determines whether to simulate font styles if a font does not support those by default.
      */
     public OFFontLoader(URI fontFileURI, String subFontName, boolean embedded,
             EmbeddingMode embeddingMode, EncodingMode encodingMode, boolean useKerning,
-            boolean useAdvanced, InternalResourceResolver resolver, boolean embedAsType1) {
+            boolean useAdvanced, InternalResourceResolver resolver, boolean simulateStyle, boolean embedAsType1) {
         super(fontFileURI, embedded, useKerning, useAdvanced, resolver);
         this.subFontName = subFontName;
         this.encodingMode = encodingMode;
         this.embeddingMode = embeddingMode;
+        this.simulateStyle = simulateStyle;
         this.embedAsType1 = embedAsType1;
         if (this.encodingMode == EncodingMode.AUTO) {
             this.encodingMode = EncodingMode.CID; //Default to CID mode for TrueType
@@ -134,6 +139,7 @@ public class OFFontLoader extends FontLoader {
             isCid = false;
         }
 
+        CustomFont font;
         if (isCid) {
             if (otf instanceof OTFFile && embedAsType1) {
                 multiFont = new CFFToType1Font(resourceResolver, embeddingMode);
@@ -143,10 +149,13 @@ public class OFFontLoader extends FontLoader {
             multiFont.setIsOTFFile(otf instanceof OTFFile);
             returnFont = multiFont;
             multiFont.setTTCName(ttcFontName);
+            font = multiFont;
         } else {
             singleFont = new SingleByteFont(resourceResolver, embeddingMode);
             returnFont = singleFont;
+            font = singleFont;
         }
+        font.setSimulateStyle(simulateStyle);
 
         returnFont.setFontURI(fontFileURI);
         if (!otf.getEmbedFontName().equals("")) {

@@ -38,9 +38,13 @@ import static org.mockito.Mockito.when;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFProfile;
 import org.apache.fop.pdf.PDFStructElem;
+import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
@@ -51,7 +55,7 @@ import junit.framework.Assert;
 public class PDFPainterTestCase {
 
     private FOUserAgent foUserAgent;
-    private  PDFContentGenerator pdfContentGenerator;
+    private PDFContentGenerator pdfContentGenerator;
     private PDFDocumentHandler pdfDocumentHandler;
     private PDFPainter pdfPainter;
     private PDFStructElem elem = new PDFStructElem();
@@ -73,17 +77,17 @@ public class PDFPainterTestCase {
         verify(pdfContentGenerator, times(16)).add(endsWith(" c "));
     }
 
-    private void createPDFPainter(boolean value) {
-        mockFOUserAgent(value);
+    private void createPDFPainter(boolean accessibility) {
+        mockFOUserAgent(accessibility);
         mockPDFContentGenerator();
         mockPDFDocumentHandler();
         PDFLogicalStructureHandler handler = mock(PDFLogicalStructureHandler.class);
         pdfPainter = new PDFPainter(pdfDocumentHandler, handler);
     }
 
-    private void mockFOUserAgent(boolean value) {
+    private void mockFOUserAgent(boolean accessibility) {
         foUserAgent = mock(FOUserAgent.class);
-        when(foUserAgent.isAccessibilityEnabled()).thenReturn(value);
+        when(foUserAgent.isAccessibilityEnabled()).thenReturn(accessibility);
     }
 
     private void mockPDFContentGenerator() {
@@ -131,5 +135,47 @@ public class PDFPainterTestCase {
             renderingContext = super.createRenderingContext();
             return renderingContext;
         }
+    }
+
+    @Test
+    public void testSimulateStyle() throws IFException {
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+        foUserAgent = fopFactory.newFOUserAgent();
+        mockPDFContentGenerator();
+        final StringBuilder sb = new StringBuilder();
+        PDFTextUtil pdfTextUtil = new PDFTextUtil() {
+            protected void write(String code) {
+                sb.append(code);
+            }
+            protected void write(StringBuffer code) {
+                sb.append(code);
+            }
+        };
+        pdfTextUtil.beginTextObject();
+
+        when(pdfContentGenerator.getTextUtil()).thenReturn(pdfTextUtil);
+        PDFDocumentHandler pdfDocumentHandler = new PDFDocumentHandler(new IFContext(foUserAgent)) {
+            PDFContentGenerator getGenerator() {
+                return pdfContentGenerator;
+            }
+        };
+
+        pdfDocumentHandler.setResult(new StreamResult(new ByteArrayOutputStream()));
+        pdfDocumentHandler.startDocument();
+        pdfDocumentHandler.startPage(0, "", "", new Dimension());
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("f1", new FontTriplet("a", "italic", 700));
+        MultiByteFont font = new MultiByteFont(null, null);
+        font.setSimulateStyle(true);
+        fi.addMetrics("f1", font);
+        pdfDocumentHandler.setFontInfo(fi);
+        MyPDFPainter pdfPainter = new MyPDFPainter(pdfDocumentHandler, null);
+        pdfPainter.setFont("a", "italic", 700, null, 12, null);
+        pdfPainter.drawText(0, 0, 0, 0, null, "test");
+
+        Assert.assertEquals(sb.toString(), "BT\n/f1 0.012 Tf\n1 0 0.3333 -1 0 0 Tm [<0000000000000000>] TJ\n");
+        verify(pdfContentGenerator).add("q\n");
+        verify(pdfContentGenerator).add("2 Tr 0.31543 w\n");
+        verify(pdfContentGenerator).add("Q\n");
     }
 }

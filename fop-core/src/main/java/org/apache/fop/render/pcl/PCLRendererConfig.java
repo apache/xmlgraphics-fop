@@ -29,6 +29,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
+import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.render.RendererConfig;
 
 import static org.apache.fop.render.pcl.Java2DRendererOption.DISABLE_PJL;
@@ -88,7 +89,8 @@ public final class PCLRendererConfig implements RendererConfig {
         /** {@inheritDoc} */
         public PCLRendererConfig build(FOUserAgent userAgent, Configuration cfg) throws FOPException {
             PCLRendererConfig config = new PCLRendererConfig(new DefaultFontConfigParser()
-                    .parse(cfg, userAgent.validateStrictly()));
+                    .parse(cfg, userAgent.validateStrictly(),
+                            new FontEventAdapter(userAgent.getEventBroadcaster())));
             configure(cfg, config);
             return config;
         }
