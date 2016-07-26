@@ -42,6 +42,11 @@ public class AFPBorderPainter extends AbstractAFPPainter {
 
     /** {@inheritDoc} */
     public void paint(PaintingInfo paintInfo) {
+        Integer bytesAvailable = dataStream.getCurrentPage().getPresentationTextObject().getBytesAvailable();
+        if (bytesAvailable != null && bytesAvailable < 1024) {
+            dataStream.getCurrentPage().endPresentationObject();
+        }
+
         BorderPaintingInfo borderPaintInfo = (BorderPaintingInfo)paintInfo;
         float w = borderPaintInfo.getX2() - borderPaintInfo.getX1();
         float h = borderPaintInfo.getY2() - borderPaintInfo.getY1();

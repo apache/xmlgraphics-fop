@@ -186,7 +186,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
     /**
      * Ends the presentation text object
      */
-    protected void endPresentationObject() {
+    public void endPresentationObject() {
         if (currentPresentationTextObject != null) {
             currentPresentationTextObject.endControlSequence();
             currentPresentationTextObject = null;

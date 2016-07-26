@@ -60,7 +60,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      */
     private List/*<PresentationTextData>*/ presentationTextDataList;
 
-    private PtocaBuilder builder = new DefaultBuilder();
+    private DefaultBuilder builder = new DefaultBuilder();
 
     /**
      * Construct a new PresentationTextObject for the specified name argument,
@@ -105,6 +105,13 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
     }
 
     private class DefaultBuilder extends PtocaBuilder {
+        public Integer getBytesAvailable() {
+            if (currentPresentationTextData == null) {
+                return null;
+            }
+            return currentPresentationTextData.getBytesAvailable();
+        }
+
         protected OutputStream getOutputStreamForControlSequence(int length) {
             if (length > currentPresentationTextData.getBytesAvailable()) {
                 endPresentationTextData();
@@ -200,5 +207,9 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
             return presentationTextDataList.toString();
         }
         return super.toString();
+    }
+
+    public Integer getBytesAvailable() {
+        return builder.getBytesAvailable();
     }
 }

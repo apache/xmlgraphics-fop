@@ -33,6 +33,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.CharacterCodingException;
 import java.security.MessageDigest;
 import java.util.Map;
 
@@ -102,6 +103,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
     private final AFPUnitConverter unitConv;
 
     private final AFPEventProducer eventProducer;
+    private Integer bytesAvailable;
 
     /**
      * Default constructor.
@@ -928,7 +930,16 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
         }
 
         AbstractPageObject page = getDataStream().getCurrentPage();
-        PresentationTextObject pto = page.getPresentationTextObject();
+
+        try {
+            int size = charSet.encodeChars(text).getLength();
+            if (bytesAvailable != null && bytesAvailable < size) {
+                page.endPresentationObject();
+            }
+        } catch (CharacterCodingException e) {
+            throw new IFException(e.getMessage(), e);
+        }
+        final PresentationTextObject pto = page.getPresentationTextObject();
         try {
             pto.createControlSequences(new PtocaProducer() {
 
@@ -1053,6 +1064,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                         }
                     }
                     flushText(builder, sb, charSet);
+                    bytesAvailable = pto.getBytesAvailable();
                 }
 
                 private void flushText(PtocaBuilder builder, StringBuffer sb,
