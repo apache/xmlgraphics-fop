@@ -20,13 +20,26 @@
 package org.apache.fop.render.afp;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import javax.xml.transform.stream.StreamResult;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,11 +54,18 @@ import org.apache.xmlgraphics.image.loader.impl.ImageBuffered;
 import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceManager;
+import org.apache.fop.afp.fonts.CharacterSet;
+import org.apache.fop.afp.fonts.CharactersetEncoder;
+import org.apache.fop.afp.fonts.RasterFont;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.traits.BorderProps;
 
 public class AFPPainterTestCase {
@@ -128,4 +148,69 @@ public class AFPPainterTestCase {
         }
     }
 
+    @Test
+    public void testPresentationText() throws URISyntaxException, IFException, IOException {
+        List<String> strings = new ArrayList<String>();
+        strings.add("test");
+        Assert.assertEquals(writeText(strings), "BEGIN DOCUMENT DOC00001\n"
+                + "BEGIN PAGE PGN00001\n"
+                + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "DESCRIPTOR PAGE\n"
+                + "MIGRATION PRESENTATION_TEXT\n"
+                + "END ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "BEGIN PRESENTATION_TEXT PT000001\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000001\n"
+                + "END PAGE PGN00001\n"
+                + "END DOCUMENT DOC00001\n");
+
+        for (int i = 0; i < 5000; i++) {
+            strings.add("test");
+        }
+        Assert.assertEquals(writeText(strings), "BEGIN DOCUMENT DOC00001\n"
+                + "BEGIN PAGE PGN00001\n"
+                + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "DESCRIPTOR PAGE\n"
+                + "MIGRATION PRESENTATION_TEXT\n"
+                + "END ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "BEGIN PRESENTATION_TEXT PT000001\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000001\n"
+                + "BEGIN PRESENTATION_TEXT PT000002\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000002\n"
+                + "END PAGE PGN00001\n"
+                + "END DOCUMENT DOC00001\n");
+    }
+
+    private String writeText(List<String> text) throws URISyntaxException, IOException, IFException {
+        FOUserAgent agent = FopFactory.newInstance(new URI(".")).newFOUserAgent();
+        IFContext context = new IFContext(agent);
+        AFPDocumentHandler doc = new AFPDocumentHandler(context);
+        AFPPainter afpPainter = new AFPPainter(doc);
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("", Font.DEFAULT_FONT);
+        RasterFont rf = new RasterFont("", true);
+        CharacterSet cs = mock(CharacterSet.class);
+        CharactersetEncoder.EncodedChars encoder = mock(CharactersetEncoder.EncodedChars.class);
+        when(cs.encodeChars(anyString())).thenReturn(encoder);
+        when(encoder.getLength()).thenReturn(text.get(0).length());
+        rf.addCharacterSet(12000, cs);
+        fi.addMetrics("", rf);
+        doc.setFontInfo(fi);
+        afpPainter.setFont("any", "normal", 400, "", 12000, Color.BLACK);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        doc.setResult(new StreamResult(outputStream));
+        doc.startDocument();
+        doc.startPage(0, "", "", new Dimension());
+        for (String s : text) {
+            afpPainter.drawText(0, 0, 0, 0, null, s);
+        }
+        doc.endDocument();
+
+        InputStream bis = new ByteArrayInputStream(outputStream.toByteArray());
+        StringBuilder sb = new StringBuilder();
+        new AFPParser(false).read(bis, sb);
+        return sb.toString();
+    }
 }
