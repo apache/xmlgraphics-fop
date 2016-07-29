@@ -193,7 +193,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
         //AFP doesn't support alpha channels
         hints.put(ImageProcessingHints.TRANSPARENCY_INTENT,
                 ImageProcessingHints.TRANSPARENCY_INTENT_IGNORE);
-        hints.put("CMYK", getDocumentHandler().getFS45());
+        hints.put("CMYK", getDocumentHandler().getPaintingState().isCMYKImagesSupported());
         return hints;
     }
 
