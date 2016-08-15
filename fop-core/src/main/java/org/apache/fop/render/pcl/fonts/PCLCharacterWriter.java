@@ -27,7 +27,6 @@ import org.apache.fop.fonts.truetype.OpenFont;
 public abstract class PCLCharacterWriter {
 
     protected PCLSoftFont font;
-    protected PCLByteWriterUtil pclByteWriter;
     protected OpenFont openFont;
     protected FontFileReader fontReader;
 
@@ -35,7 +34,6 @@ public abstract class PCLCharacterWriter {
         this.font = font;
         openFont = font.getOpenFont();
         fontReader = font.getReader();
-        pclByteWriter = new PCLByteWriterUtil();
     }
 
     public abstract byte[] writeCharacterDefinitions(String text) throws IOException;

@@ -31,12 +31,10 @@ import org.apache.fop.fonts.truetype.OpenFont;
 public abstract class PCLFontReader {
 
     protected Typeface typeface;
-    protected PCLByteWriterUtil pclByteWriter;
     protected CustomFont font;
 
-    public PCLFontReader(Typeface font, PCLByteWriterUtil pclByteWriter) {
+    public PCLFontReader(Typeface font) {
         this.typeface = font;
-        this.pclByteWriter = pclByteWriter;
     }
 
     public void setFont(CustomFont mbFont) {
@@ -81,6 +79,7 @@ public abstract class PCLFontReader {
     public abstract int getMasterUnderlineThickness() throws IOException;
     public abstract int getFontScalingTechnology();
     public abstract int getVariety();
+    public abstract Map<Integer, Integer> scanMtxCharacters() throws IOException;
 
     /** Segmented Font Data **/
     public abstract List<PCLFontSegment> getFontSegments(Map<Character, Integer> mappedGlyphs)

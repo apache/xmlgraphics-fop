@@ -34,6 +34,7 @@ import org.apache.fop.render.RendererConfig;
 
 import static org.apache.fop.render.pcl.Java2DRendererOption.DISABLE_PJL;
 import static org.apache.fop.render.pcl.Java2DRendererOption.MODE_COLOR;
+import static org.apache.fop.render.pcl.Java2DRendererOption.OPTIMIZE_RESOURCES;
 import static org.apache.fop.render.pcl.Java2DRendererOption.RENDERING_MODE;
 import static org.apache.fop.render.pcl.Java2DRendererOption.TEXT_RENDERING;
 
@@ -69,6 +70,10 @@ public final class PCLRendererConfig implements RendererConfig {
 
     public Boolean isColorEnabled() {
         return getParam(MODE_COLOR, Boolean.class);
+    }
+
+    public Boolean isOptimizeResources() {
+        return getParam(OPTIMIZE_RESOURCES, Boolean.class);
     }
 
     private <T> T getParam(Java2DRendererOption option, Class<T> type) {
@@ -124,6 +129,8 @@ public final class PCLRendererConfig implements RendererConfig {
                 }
                 config.setParam(DISABLE_PJL,
                         cfg.getChild(DISABLE_PJL.getName()).getValueAsBoolean(false));
+                config.setParam(OPTIMIZE_RESOURCES,
+                        cfg.getChild(OPTIMIZE_RESOURCES.getName()).getValueAsBoolean(false));
             }
         }
 

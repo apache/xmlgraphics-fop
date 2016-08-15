@@ -46,7 +46,6 @@ public class PCLFontReaderFactoryTestCase {
         // Have to mock the input stream twice otherwise get a Stream is closed exception
         when(((CustomFont) customFont.getRealFont()).getInputStream()).thenReturn(
                 new FileInputStream(new File(TEST_FONT_TTF)));
-        PCLFontReaderFactory fontReaderFactory = PCLFontReaderFactory.getInstance(null);
-        assertTrue(fontReaderFactory.createInstance(customFont) instanceof PCLTTFFontReader);
+        assertTrue(PCLFontReaderFactory.createInstance(customFont) instanceof PCLTTFFontReader);
     }
 }

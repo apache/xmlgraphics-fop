@@ -31,19 +31,12 @@ import org.apache.fop.render.pcl.fonts.truetype.PCLTTFFontReader;
 
 public final class PCLFontReaderFactory {
 
-    private PCLByteWriterUtil pclByteWriter;
-
-    private PCLFontReaderFactory(PCLByteWriterUtil pclByteWriter) {
-        this.pclByteWriter = pclByteWriter;
+    private PCLFontReaderFactory() {
     }
 
-    public static PCLFontReaderFactory getInstance(PCLByteWriterUtil pclByteWriter) {
-        return new PCLFontReaderFactory(pclByteWriter);
-    }
-
-    public PCLFontReader createInstance(Typeface font) throws IOException {
+    public static PCLFontReader createInstance(Typeface font) throws IOException {
         if (font.getFontType() == FontType.TRUETYPE || isCIDType2(font)) {
-            return new PCLTTFFontReader(font, pclByteWriter);
+            return new PCLTTFFontReader(font);
         }
         // else if (font instanceof MultiByteFont && ((MultiByteFont) font).isOTFFile()) {
             // Placeholder for future Type 1 / OTF Soft font implementations e.g.
@@ -52,7 +45,7 @@ public final class PCLFontReaderFactory {
         return null;
     }
 
-    private boolean isCIDType2(Typeface font) {
+    private static boolean isCIDType2(Typeface font) {
         CustomFontMetricsMapper fontMetrics = (CustomFontMetricsMapper) font;
         CustomFont customFont = (CustomFont) fontMetrics.getRealFont();
 

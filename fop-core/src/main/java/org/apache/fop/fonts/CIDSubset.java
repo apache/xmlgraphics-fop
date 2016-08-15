@@ -22,6 +22,7 @@ package org.apache.fop.fonts;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.fop.util.CharUtilities;
@@ -40,7 +41,7 @@ public class CIDSubset implements CIDSet {
     /**
      * usedGlyphs contains orginal, new glyph index (glyph index -> char selector)
      */
-    private Map<Integer, Integer> usedGlyphs = new HashMap<Integer, Integer>();
+    private Map<Integer, Integer> usedGlyphs = new LinkedHashMap<Integer, Integer>();
 
     /**
      * usedGlyphsIndex contains new glyph, original index (char selector -> glyph index)

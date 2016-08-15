@@ -31,18 +31,15 @@ public class PCLCharacterDefinition {
     private boolean hasContinuation;
     private PCLCharacterFormat charFormat;
     private PCLCharacterClass charClass;
-    private PCLByteWriterUtil pclByteWriter;
     private List<PCLCharacterDefinition> composites;
     private boolean isComposite;
 
     public PCLCharacterDefinition(int charCode, PCLCharacterFormat charFormat,
-            PCLCharacterClass charClass, byte[] glyfData, PCLByteWriterUtil pclByteWriter,
-            boolean isComposite) {
+            PCLCharacterClass charClass, byte[] glyfData, boolean isComposite) {
         this.charCode = charCode;
         this.charFormat = charFormat;
         this.charClass = charClass;
         this.glyfData = glyfData;
-        this.pclByteWriter = pclByteWriter;
         this.isComposite = isComposite;
         // Glyph Data + (Descriptor Size) + (Character Data Size) + (Glyph ID) must
         // be less than 32767 otherwise it will result in a continuation structure.
@@ -52,11 +49,11 @@ public class PCLCharacterDefinition {
     }
 
     public byte[] getCharacterCommand() throws IOException {
-        return pclByteWriter.writeCommand(String.format("*c%dE", (isComposite) ? 65535 : charCode));
+        return PCLByteWriterUtil.writeCommand(String.format("*c%dE", (isComposite) ? 65535 : charCode));
     }
 
     public byte[] getCharacterDefinitionCommand() throws IOException {
-        return pclByteWriter.writeCommand(String.format("(s%dW", 10 + glyfData.length));
+        return PCLByteWriterUtil.writeCommand(String.format("(s%dW", 10 + glyfData.length));
     }
 
     public byte[] getData() throws IOException {
@@ -89,12 +86,12 @@ public class PCLCharacterDefinition {
     }
 
     private void writeCharacterDescriptorHeader(int continuation, ByteArrayOutputStream baos) throws IOException {
-        baos.write(pclByteWriter.unsignedByte(charFormat.getValue()));
+        baos.write(PCLByteWriterUtil.unsignedByte(charFormat.getValue()));
         baos.write(continuation);
-        baos.write(pclByteWriter.unsignedByte(2)); // Descriptor size (from this byte to character data)
-        baos.write(pclByteWriter.unsignedByte(charClass.getValue()));
-        baos.write(pclByteWriter.unsignedInt(glyfData.length + 4));
-        baos.write(pclByteWriter.unsignedInt(charCode));
+        baos.write(PCLByteWriterUtil.unsignedByte(2)); // Descriptor size (from this byte to character data)
+        baos.write(PCLByteWriterUtil.unsignedByte(charClass.getValue()));
+        baos.write(PCLByteWriterUtil.unsignedInt(glyfData.length + 4));
+        baos.write(PCLByteWriterUtil.unsignedInt(charCode));
     }
 
     public void addCompositeGlyph(PCLCharacterDefinition composite) {

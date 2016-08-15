@@ -46,6 +46,7 @@ public class PCLTTFCharacterWriterTestCase {
     public void verifyCharacterDefinition() throws Exception {
         CustomFont sbFont = mock(CustomFont.class);
         when(customFont.getRealFont()).thenReturn(sbFont);
+        when(sbFont.getInputStream()).thenReturn(new FileInputStream(TEST_FONT_A));
         softFont = new PCLSoftFont(1, customFont, false);
         TTFFile openFont = new TTFFile();
         FontFileReader reader = new FontFileReader(new FileInputStream(new File(TEST_FONT_A)));
@@ -53,15 +54,15 @@ public class PCLTTFCharacterWriterTestCase {
         openFont.readFont(reader, header);
         softFont.setOpenFont(openFont);
         softFont.setReader(reader);
+        softFont.setMtxCharIndexes(new PCLTTFFontReader(customFont).scanMtxCharacters());
 
         characterWriter = new PCLTTFCharacterWriter(softFont);
         byte[] charDefinition = characterWriter.writeCharacterDefinitions("f");
-        PCLByteWriterUtil pclByteWriter = new PCLByteWriterUtil();
         // Character command
-        byte[] command = pclByteWriter.writeCommand(String.format("*c%dE", 32));
+        byte[] command = PCLByteWriterUtil.writeCommand(String.format("*c%dE", 32));
         assertArrayEquals(getBytes(charDefinition, 0, 6), command);
         // Character definition command
-        byte[] charDefCommand = pclByteWriter.writeCommand(String.format("(s%dW", 210));
+        byte[] charDefCommand = PCLByteWriterUtil.writeCommand(String.format("(s%dW", 210));
         assertArrayEquals(getBytes(charDefinition, 6, 7), charDefCommand);
     }
 

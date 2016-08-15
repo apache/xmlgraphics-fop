@@ -55,6 +55,8 @@ public class PCLTTFFontReader extends PCLFontReader {
     private PCLTTFOS2FontTable os2Table;
     private PCLTTFPOSTFontTable postTable;
     private PCLTTFTableFactory ttfTableFactory;
+    private Map<Integer, int[]> charOffsets;
+    private Map<Integer, Integer> charMtxOffsets;
 
     private static final int HMTX_RESTRICT_SIZE = 50000;
 
@@ -115,8 +117,8 @@ public class PCLTTFFontReader extends PCLFontReader {
     private int scaleFactor = -1;
     private PCLSymbolSet symbolSet = PCLSymbolSet.Bound_Generic;
 
-    public PCLTTFFontReader(Typeface font, PCLByteWriterUtil pclByteWriter) throws IOException {
-        super(font, pclByteWriter);
+    public PCLTTFFontReader(Typeface font) throws IOException {
+        super(font);
         loadFont();
     }
 
@@ -461,7 +463,7 @@ public class PCLTTFFontReader extends PCLFontReader {
             throws IOException {
         List<PCLFontSegment> fontSegments = new ArrayList<PCLFontSegment>();
         fontSegments.add(new PCLFontSegment(SegmentID.CC, getCharacterComplement()));
-        fontSegments.add(new PCLFontSegment(SegmentID.PA, pclByteWriter.toByteArray(os2Table.getPanose())));
+        fontSegments.add(new PCLFontSegment(SegmentID.PA, PCLByteWriterUtil.toByteArray(os2Table.getPanose())));
         fontSegments.add(new PCLFontSegment(SegmentID.GT, getGlobalTrueTypeData(mappedGlyphs)));
         fontSegments.add(new PCLFontSegment(SegmentID.CP, ttfFont.getCopyrightNotice().getBytes("US-ASCII")));
         fontSegments.add(new PCLFontSegment(SegmentID.NULL, new byte[0]));
@@ -484,8 +486,8 @@ public class PCLTTFFontReader extends PCLFontReader {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         List<TableOffset> tableOffsets = new ArrayList<TableOffset>();
         // Version
-        baos.write(pclByteWriter.unsignedInt(1)); // Major
-        baos.write(pclByteWriter.unsignedInt(0)); // Minor
+        baos.write(PCLByteWriterUtil.unsignedInt(1)); // Major
+        baos.write(PCLByteWriterUtil.unsignedInt(0)); // Minor
         int numTables = 5; // head, hhea, hmtx, maxp and gdir
         // Optional Hint Tables
         OFDirTabEntry headTable = ttfFont.getDirectoryEntry(OFTableName.CVT);
@@ -500,12 +502,12 @@ public class PCLTTFFontReader extends PCLFontReader {
         if (prepTable != null) {
             numTables++;
         }
-        baos.write(pclByteWriter.unsignedInt(numTables)); // numTables
-        int maxPowerNumTables = pclByteWriter.maxPower2(numTables);
+        baos.write(PCLByteWriterUtil.unsignedInt(numTables)); // numTables
+        int maxPowerNumTables = PCLByteWriterUtil.maxPower2(numTables);
         int searchRange = maxPowerNumTables * 16;
-        baos.write(pclByteWriter.unsignedInt(searchRange));
-        baos.write(pclByteWriter.unsignedInt(pclByteWriter.log(maxPowerNumTables, 2))); // Entry Selector
-        baos.write(pclByteWriter.unsignedInt(numTables * 16 - searchRange)); // Range shift
+        baos.write(PCLByteWriterUtil.unsignedInt(searchRange));
+        baos.write(PCLByteWriterUtil.unsignedInt(PCLByteWriterUtil.log(maxPowerNumTables, 2))); // Entry Selector
+        baos.write(PCLByteWriterUtil.unsignedInt(numTables * 16 - searchRange)); // Range shift
 
         // Add default data tables
         writeTrueTypeTable(baos, OFTableName.HEAD, tableOffsets);
@@ -555,20 +557,20 @@ public class PCLTTFFontReader extends PCLFontReader {
         OFDirTabEntry tabEntry = ttfFont.getDirectoryEntry(table);
         if (tabEntry != null) {
             baos.write(tabEntry.getTag());
-            baos.write(pclByteWriter.unsignedLongInt(tabEntry.getChecksum()));
+            baos.write(PCLByteWriterUtil.unsignedLongInt(tabEntry.getChecksum()));
             TableOffset newTableOffset = new TableOffset(tabEntry.getOffset(),
                     tabEntry.getLength(), baos.size());
             tableOffsets.add(newTableOffset);
-            baos.write(pclByteWriter.unsignedLongInt(0)); // Offset to be set later
-            baos.write(pclByteWriter.unsignedLongInt(tabEntry.getLength()));
+            baos.write(PCLByteWriterUtil.unsignedLongInt(0)); // Offset to be set later
+            baos.write(PCLByteWriterUtil.unsignedLongInt(tabEntry.getLength()));
         }
     }
 
     private void writeGDIR(ByteArrayOutputStream baos) throws UnsupportedEncodingException, IOException {
         baos.write("gdir".getBytes("ISO-8859-1"));
-        baos.write(pclByteWriter.unsignedLongInt(0)); // Checksum
-        baos.write(pclByteWriter.unsignedLongInt(0)); // Offset
-        baos.write(pclByteWriter.unsignedLongInt(0)); // Length
+        baos.write(PCLByteWriterUtil.unsignedLongInt(0)); // Checksum
+        baos.write(PCLByteWriterUtil.unsignedLongInt(0)); // Offset
+        baos.write(PCLByteWriterUtil.unsignedLongInt(0)); // Length
     }
 
     private ByteArrayOutputStream copyTables(List<TableOffset> tableOffsets,
@@ -576,7 +578,7 @@ public class PCLTTFFontReader extends PCLFontReader {
             throws IOException {
         Map<Integer, byte[]> offsetValues = new HashMap<Integer, byte[]>();
         for (TableOffset tableOffset : tableOffsets) {
-            offsetValues.put(tableOffset.getNewOffset(), pclByteWriter.unsignedLongInt(baos.size()));
+            offsetValues.put(tableOffset.getNewOffset(), PCLByteWriterUtil.unsignedLongInt(baos.size()));
             if (tableOffset.getOriginOffset() == -1) { // Update the offset in the table directory
                 baos.write(hmtxTable);
             } else {
@@ -604,7 +606,7 @@ public class PCLTTFFontReader extends PCLFontReader {
             throws IOException {
         byte[] softFont = baos.toByteArray();
         for (int offset : offsets.keySet()) {
-            pclByteWriter.updateDataAtLocation(softFont, offsets.get(offset), offset);
+            PCLByteWriterUtil.updateDataAtLocation(softFont, offsets.get(offset), offset);
         }
         baos = new ByteArrayOutputStream();
         baos.write(softFont);
@@ -613,32 +615,34 @@ public class PCLTTFFontReader extends PCLFontReader {
 
     @Override
     public Map<Integer, int[]> getCharacterOffsets() throws IOException {
-        List<OFMtxEntry> mtx = ttfFont.getMtx();
-        OFTableName glyfTag = OFTableName.GLYF;
-        Map<Integer, int[]> charOffsets = new HashMap<Integer, int[]>();
-        OFDirTabEntry tabEntry = ttfFont.getDirectoryEntry(glyfTag);
-        if (ttfFont.seekTab(reader, glyfTag, 0)) {
-            for (int i = 1; i < mtx.size(); i++) {
-                OFMtxEntry entry = mtx.get(i);
-                OFMtxEntry nextEntry;
-                int nextOffset = 0;
-                int charCode = 0;
-                if (entry.getUnicodeIndex().size() > 0) {
-                    charCode = (Integer) entry.getUnicodeIndex().get(0);
-                } else {
-                    charCode = entry.getIndex();
-                }
+        if (charOffsets == null) {
+            List<OFMtxEntry> mtx = ttfFont.getMtx();
+            OFTableName glyfTag = OFTableName.GLYF;
+            charOffsets = new HashMap<Integer, int[]>();
+            OFDirTabEntry tabEntry = ttfFont.getDirectoryEntry(glyfTag);
+            if (ttfFont.seekTab(reader, glyfTag, 0)) {
+                for (int i = 1; i < mtx.size(); i++) {
+                    OFMtxEntry entry = mtx.get(i);
+                    OFMtxEntry nextEntry;
+                    int nextOffset = 0;
+                    int charCode = 0;
+                    if (entry.getUnicodeIndex().size() > 0) {
+                        charCode = (Integer) entry.getUnicodeIndex().get(0);
+                    } else {
+                        charCode = entry.getIndex();
+                    }
 
-                if (i < mtx.size() - 1) {
-                    nextEntry = mtx.get(i + 1);
-                    nextOffset = (int) nextEntry.getOffset();
-                } else {
-                    nextOffset = (int) ttfFont.getLastGlyfLocation();
-                }
-                int glyphOffset = (int) entry.getOffset();
-                int glyphLength = nextOffset - glyphOffset;
+                    if (i < mtx.size() - 1) {
+                        nextEntry = mtx.get(i + 1);
+                        nextOffset = (int) nextEntry.getOffset();
+                    } else {
+                        nextOffset = (int) ttfFont.getLastGlyfLocation();
+                    }
+                    int glyphOffset = (int) entry.getOffset();
+                    int glyphLength = nextOffset - glyphOffset;
 
-                charOffsets.put(charCode, new int[]{(int) tabEntry.getOffset() + glyphOffset, glyphLength});
+                    charOffsets.put(charCode, new int[]{(int) tabEntry.getOffset() + glyphOffset, glyphLength});
+                }
             }
         }
         return charOffsets;
@@ -660,11 +664,11 @@ public class PCLTTFFontReader extends PCLFontReader {
         if (tabEntry != null) {
             baos.write(tabEntry.getTag());
             // Override the original checksum for the subset version
-            baos.write(pclByteWriter.unsignedLongInt(getCheckSum(hmtxTable, 0, hmtxTable.length)));
+            baos.write(PCLByteWriterUtil.unsignedLongInt(getCheckSum(hmtxTable, 0, hmtxTable.length)));
             TableOffset newTableOffset = new TableOffset(-1, hmtxTable.length, baos.size());
             tableOffsets.add(newTableOffset);
-            baos.write(pclByteWriter.unsignedLongInt(0)); // Offset to be set later
-            baos.write(pclByteWriter.unsignedLongInt(hmtxTable.length));
+            baos.write(PCLByteWriterUtil.unsignedLongInt(0)); // Offset to be set later
+            baos.write(PCLByteWriterUtil.unsignedLongInt(hmtxTable.length));
         }
     }
 
@@ -727,6 +731,27 @@ public class PCLTTFFontReader extends PCLFontReader {
         byte b2 = (byte) (s & 0xff);
         out[offset] = b1;
         out[offset + 1] = b2;
+    }
+
+    public Map<Integer, Integer> scanMtxCharacters() throws IOException {
+        if (charMtxOffsets == null) {
+            charMtxOffsets = new HashMap<Integer, Integer>();
+            List<OFMtxEntry> mtx = ttfFont.getMtx();
+            OFTableName glyfTag = OFTableName.GLYF;
+            if (ttfFont.seekTab(reader, glyfTag, 0)) {
+                for (int i = 1; i < mtx.size(); i++) {
+                    OFMtxEntry entry = mtx.get(i);
+                    int charCode = 0;
+                    if (entry.getUnicodeIndex().size() > 0) {
+                        charCode = (Integer) entry.getUnicodeIndex().get(0);
+                    } else {
+                        charCode = entry.getIndex();
+                    }
+                    charMtxOffsets.put(charCode, i);
+                }
+            }
+        }
+        return charMtxOffsets;
     }
 }
 
