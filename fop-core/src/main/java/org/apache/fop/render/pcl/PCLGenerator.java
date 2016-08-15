@@ -39,13 +39,20 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.io.output.CountingOutputStream;
 
 import org.apache.xmlgraphics.util.UnitConv;
 
+import org.apache.fop.fonts.Typeface;
+import org.apache.fop.render.pcl.fonts.PCLFontReader;
+import org.apache.fop.render.pcl.fonts.PCLSoftFontManager;
 import org.apache.fop.util.bitmap.BitmapImageUtil;
 import org.apache.fop.util.bitmap.DitherUtil;
 
@@ -68,7 +75,10 @@ public class PCLGenerator {
     private final DecimalFormat df2 = new DecimalFormat("0.##", symbols);
     private final DecimalFormat df4 = new DecimalFormat("0.####", symbols);
 
-    private final OutputStream out;
+    private final CountingOutputStream out;
+    protected Map<Typeface, PCLFontReader> fontReaderMap = new HashMap<Typeface, PCLFontReader>();
+    protected Map<PCLSoftFontManager, Map<Typeface, Long>> fontManagerMap
+            = new LinkedHashMap<PCLSoftFontManager, Map<Typeface, Long>>();
 
     private boolean currentSourceTransparency = true;
     private boolean currentPatternTransparency = true;
@@ -87,7 +97,7 @@ public class PCLGenerator {
      * @param out the OutputStream to write the PCL stream to
      */
     public PCLGenerator(OutputStream out) {
-        this.out = out;
+        this.out = new CountingOutputStream(out);
     }
 
     /**
@@ -108,6 +118,16 @@ public class PCLGenerator {
             throw new IllegalArgumentException("Illegal value for maximum resolution!");
         }
         this.maxBitmapResolution = maxResolution;
+    }
+
+    public void addFont(PCLSoftFontManager sfManager, Typeface font) {
+        if (!fontManagerMap.containsKey(sfManager)) {
+            fontManagerMap.put(sfManager, new LinkedHashMap<Typeface, Long>());
+        }
+        Map<Typeface, Long> fonts = fontManagerMap.get(sfManager);
+        if (!fonts.containsKey(font)) {
+            fonts.put(font, out.getByteCount());
+        }
     }
 
     /** @return the OutputStream that this generator writes to */

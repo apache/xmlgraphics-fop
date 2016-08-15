@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -44,13 +43,7 @@ import org.apache.fop.render.pcl.fonts.truetype.PCLTTFFontReader;
 public class PCLTTFFontReaderTestCase {
 
     private CustomFontMetricsMapper customFont = mock(CustomFontMetricsMapper.class);
-    private PCLByteWriterUtil byteWriter;
     private static final String TEST_FONT_A = "./test/resources/fonts/ttf/DejaVuLGCSerif.ttf";
-
-    @Before
-    public void setUp() {
-        byteWriter = new PCLByteWriterUtil();
-    }
 
     @Test
     public void verifyFontAData() throws Exception {
@@ -62,7 +55,7 @@ public class PCLTTFFontReaderTestCase {
         when(font.getGIDFromChar('e')).thenReturn(101);
         when(font.getGIDFromChar('l')).thenReturn(108);
         when(font.getGIDFromChar('o')).thenReturn(111);
-        PCLTTFFontReader reader = new MockPCLTTFFontReader(customFont, byteWriter);
+        PCLTTFFontReader reader = new MockPCLTTFFontReader(customFont);
         reader.setFont(font);
         verifyFontData(reader);
         validateOffsets(reader);

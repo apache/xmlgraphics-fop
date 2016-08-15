@@ -21,8 +21,10 @@ package org.apache.fop.render.pcl.fonts;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,40 +34,65 @@ import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.java2d.CustomFontMetricsMapper;
 
 public class PCLSoftFontManager {
-    private ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    private Map<Typeface, PCLFontReader> fontReaderMap;
     private PCLFontReader fontReader;
-    private PCLByteWriterUtil pclByteWriter = new PCLByteWriterUtil();
     private List<PCLSoftFont> fonts = new ArrayList<PCLSoftFont>();
-    private PCLFontReaderFactory fontReaderFactory;
 
     private static final int SOFT_FONT_SIZE = 255;
 
-    public ByteArrayOutputStream makeSoftFont(Typeface font) throws IOException {
+    public PCLSoftFontManager(Map<Typeface, PCLFontReader> fontReaderMap) {
+        this.fontReaderMap = fontReaderMap;
+    }
+
+    public ByteArrayOutputStream makeSoftFont(Typeface font, String text) throws IOException {
         List<Map<Character, Integer>> mappedGlyphs = mapFontGlyphs(font);
-        if (fontReaderFactory == null) {
-            fontReaderFactory = PCLFontReaderFactory.getInstance(pclByteWriter);
+        if (!fontReaderMap.containsKey(font)) {
+            fontReaderMap.put(font, PCLFontReaderFactory.createInstance(font));
         }
-        fontReader = fontReaderFactory.createInstance(font);
-        initialize();
+        fontReader = fontReaderMap.get(font);
         if (mappedGlyphs.isEmpty()) {
             mappedGlyphs.add(new HashMap<Character, Integer>());
         }
         if (fontReader != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PCLSoftFont softFont = null;
             for (Map<Character, Integer> glyphSet : mappedGlyphs) {
-                PCLSoftFont softFont = new PCLSoftFont(fonts.size() + 1, font,
-                        mappedGlyphs.get(0).size() != 0);
+                softFont = getSoftFont(font, text, mappedGlyphs, softFont);
                 softFont.setMappedChars(glyphSet);
-                assignFontID();
-                writeFontHeader(softFont.getMappedChars());
+                writeFontID(softFont.getFontID(), baos);
+                writeFontHeader(softFont.getMappedChars(), baos);
                 softFont.setCharacterOffsets(fontReader.getCharacterOffsets());
                 softFont.setOpenFont(fontReader.getFontFile());
                 softFont.setReader(fontReader.getFontFileReader());
-                fonts.add(softFont);
+                softFont.setMtxCharIndexes(fontReader.scanMtxCharacters());
             }
             return baos;
         } else {
             return null;
         }
+    }
+
+    private PCLSoftFont getSoftFont(Typeface font, String text, List<Map<Character, Integer>> mappedGlyphs,
+                                    PCLSoftFont last) {
+        if (text == null) {
+            Iterator<PCLSoftFont> fontIterator = fonts.iterator();
+            while (fontIterator.hasNext()) {
+                PCLSoftFont sftFont = fontIterator.next();
+                if (sftFont.getTypeface().equals(font)) {
+                    fontIterator.remove();
+                    return sftFont;
+                }
+            }
+        }
+        for (PCLSoftFont sftFont : fonts) {
+            if (sftFont.getTypeface().equals(font) && sftFont != last
+                    && (sftFont.getCharCount() + countNonMatches(sftFont, text)) < SOFT_FONT_SIZE) {
+                return sftFont;
+            }
+        }
+        PCLSoftFont f = new PCLSoftFont(fonts.size() + 1, font, mappedGlyphs.get(0).size() != 0);
+        fonts.add(f);
+        return f;
     }
 
     private List<Map<Character, Integer>> mapFontGlyphs(Typeface tf) {
@@ -101,63 +128,59 @@ public class PCLSoftFontManager {
         return mappedGlyphs;
     }
 
-    private void initialize() {
-        baos.reset();
-    }
-
-    private void assignFontID() throws IOException {
-        baos.write(assignFontID(fonts.size() + 1));
+    private void writeFontID(int fontID, OutputStream os) throws IOException {
+        os.write(assignFontID(fontID));
     }
 
     public byte[] assignFontID(int fontID) throws IOException {
-        return pclByteWriter.writeCommand(String.format("*c%dD", fontID));
+        return PCLByteWriterUtil.writeCommand(String.format("*c%dD", fontID));
     }
 
-    private void writeFontHeader(Map<Character, Integer> mappedGlyphs) throws IOException {
+    private void writeFontHeader(Map<Character, Integer> mappedGlyphs, OutputStream os) throws IOException {
         ByteArrayOutputStream header = new ByteArrayOutputStream();
-        header.write(pclByteWriter.unsignedInt(fontReader.getDescriptorSize()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getHeaderFormat()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getFontType()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getStyleMSB()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getDescriptorSize()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getHeaderFormat()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getFontType()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getStyleMSB()));
         header.write(0); // Reserved
-        header.write(pclByteWriter.unsignedInt(fontReader.getBaselinePosition()));
-        header.write(pclByteWriter.unsignedInt(fontReader.getCellWidth()));
-        header.write(pclByteWriter.unsignedInt(fontReader.getCellHeight()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getOrientation()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getBaselinePosition()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getCellWidth()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getCellHeight()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getOrientation()));
         header.write(fontReader.getSpacing());
-        header.write(pclByteWriter.unsignedInt(fontReader.getSymbolSet()));
-        header.write(pclByteWriter.unsignedInt(fontReader.getPitch()));
-        header.write(pclByteWriter.unsignedInt(fontReader.getHeight()));
-        header.write(pclByteWriter.unsignedInt(fontReader.getXHeight()));
-        header.write(pclByteWriter.signedByte(fontReader.getWidthType()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getStyleLSB()));
-        header.write(pclByteWriter.signedByte(fontReader.getStrokeWeight()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getTypefaceLSB()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getTypefaceMSB()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getSerifStyle()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getQuality()));
-        header.write(pclByteWriter.signedByte(fontReader.getPlacement()));
-        header.write(pclByteWriter.signedByte(fontReader.getUnderlinePosition()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getUnderlineThickness()));
-        header.write(pclByteWriter.unsignedInt(fontReader.getTextHeight()));
-        header.write(pclByteWriter.unsignedInt(fontReader.getTextWidth()));
-        header.write(pclByteWriter.unsignedInt(fontReader.getFirstCode()));
-        header.write(pclByteWriter.unsignedInt(fontReader.getLastCode()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getPitchExtended()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getHeightExtended()));
-        header.write(pclByteWriter.unsignedInt(fontReader.getCapHeight()));
-        header.write(pclByteWriter.unsignedLongInt(fontReader.getFontNumber()));
-        header.write(pclByteWriter.padBytes(fontReader.getFontName().getBytes("US-ASCII"), 16, 32));
-        header.write(pclByteWriter.unsignedInt(fontReader.getScaleFactor()));
-        header.write(pclByteWriter.signedInt(fontReader.getMasterUnderlinePosition()));
-        header.write(pclByteWriter.unsignedInt(fontReader.getMasterUnderlineThickness()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getFontScalingTechnology()));
-        header.write(pclByteWriter.unsignedByte(fontReader.getVariety()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getSymbolSet()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getPitch()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getHeight()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getXHeight()));
+        header.write(PCLByteWriterUtil.signedByte(fontReader.getWidthType()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getStyleLSB()));
+        header.write(PCLByteWriterUtil.signedByte(fontReader.getStrokeWeight()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getTypefaceLSB()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getTypefaceMSB()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getSerifStyle()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getQuality()));
+        header.write(PCLByteWriterUtil.signedByte(fontReader.getPlacement()));
+        header.write(PCLByteWriterUtil.signedByte(fontReader.getUnderlinePosition()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getUnderlineThickness()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getTextHeight()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getTextWidth()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getFirstCode()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getLastCode()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getPitchExtended()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getHeightExtended()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getCapHeight()));
+        header.write(PCLByteWriterUtil.unsignedLongInt(fontReader.getFontNumber()));
+        header.write(PCLByteWriterUtil.padBytes(fontReader.getFontName().getBytes("US-ASCII"), 16, 32));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getScaleFactor()));
+        header.write(PCLByteWriterUtil.signedInt(fontReader.getMasterUnderlinePosition()));
+        header.write(PCLByteWriterUtil.unsignedInt(fontReader.getMasterUnderlineThickness()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getFontScalingTechnology()));
+        header.write(PCLByteWriterUtil.unsignedByte(fontReader.getVariety()));
 
         writeSegmentedFontData(header, mappedGlyphs);
 
-        baos.write(getFontHeaderCommand(header.size()));
-        baos.write(header.toByteArray());
+        os.write(getFontHeaderCommand(header.size()));
+        os.write(header.toByteArray());
     }
 
     private void writeSegmentedFontData(ByteArrayOutputStream header,
@@ -178,12 +201,12 @@ public class PCLSoftFontManager {
     }
 
     private byte[] getFontHeaderCommand(int headerSize) throws IOException {
-        return pclByteWriter.writeCommand(String.format(")s%dW", headerSize));
+        return PCLByteWriterUtil.writeCommand(String.format(")s%dW", headerSize));
     }
 
     private void writeFontSegment(ByteArrayOutputStream header, PCLFontSegment segment) throws IOException {
-        header.write(pclByteWriter.unsignedInt(segment.getIdentifier().getValue()));
-        header.write(pclByteWriter.unsignedInt(segment.getData().length));
+        header.write(PCLByteWriterUtil.unsignedInt(segment.getIdentifier().getValue()));
+        header.write(PCLByteWriterUtil.unsignedInt(segment.getData().length));
         header.write(segment.getData());
     }
 

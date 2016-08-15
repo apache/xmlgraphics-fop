@@ -29,8 +29,8 @@ import org.apache.fop.render.pcl.fonts.truetype.PCLTTFFontReader;
 
 public class MockPCLTTFFontReader extends PCLTTFFontReader {
 
-    public MockPCLTTFFontReader(Typeface font, PCLByteWriterUtil pclByteWriter) throws IOException {
-        super(font, pclByteWriter);
+    public MockPCLTTFFontReader(Typeface font) throws IOException {
+        super(font);
     }
 
     @Override

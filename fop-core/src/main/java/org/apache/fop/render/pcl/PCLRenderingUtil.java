@@ -51,6 +51,7 @@ public class PCLRenderingUtil {
     private float ditheringQuality = 0.5f;
 
     private boolean useColor;
+    private boolean optimizeResources;
 
     /**
      * Controls whether the generation of PJL commands gets disabled.
@@ -226,6 +227,14 @@ public class PCLRenderingUtil {
             throw new IllegalStateException("Illegal print direction: " + printDirection);
         }
         return transPoint;
+    }
+
+    public boolean isOptimizeResources() {
+        return optimizeResources;
+    }
+
+    public void setOptimizeResources(boolean b) {
+        optimizeResources = b;
     }
 
 }

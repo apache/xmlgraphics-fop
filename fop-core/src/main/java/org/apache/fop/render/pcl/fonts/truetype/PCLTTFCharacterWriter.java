@@ -44,7 +44,6 @@ public class PCLTTFCharacterWriter extends PCLCharacterWriter {
 
     public PCLTTFCharacterWriter(PCLSoftFont softFont) throws IOException {
         super(softFont);
-        softFont.setMtxCharIndexes(scanMtxCharacters());
     }
 
     @Override
@@ -70,25 +69,6 @@ public class PCLTTFCharacterWriter extends PCLCharacterWriter {
         baos.write(pclChar.getData());
     }
 
-    private Map<Integer, Integer> scanMtxCharacters() throws IOException {
-        Map<Integer, Integer> charMtxOffsets = new HashMap<Integer, Integer>();
-        List<OFMtxEntry> mtx = openFont.getMtx();
-        OFTableName glyfTag = OFTableName.GLYF;
-        if (openFont.seekTab(fontReader, glyfTag, 0)) {
-            for (int i = 1; i < mtx.size(); i++) {
-                OFMtxEntry entry = mtx.get(i);
-                int charCode = 0;
-                if (entry.getUnicodeIndex().size() > 0) {
-                    charCode = (Integer) entry.getUnicodeIndex().get(0);
-                } else {
-                    charCode = entry.getIndex();
-                }
-                charMtxOffsets.put(charCode, i);
-            }
-        }
-        return charMtxOffsets;
-    }
-
     private PCLCharacterDefinition getCharacterDefinition(int unicode) throws IOException {
         if (mtx == null) {
             mtx = openFont.getMtx();
@@ -112,7 +92,7 @@ public class PCLTTFCharacterWriter extends PCLCharacterWriter {
             PCLCharacterDefinition newChar = new PCLCharacterDefinition(
                     font.getCharCode((char) unicode),
                     PCLCharacterFormat.TrueType,
-                    PCLCharacterClass.TrueType, glyphData, pclByteWriter, false);
+                    PCLCharacterClass.TrueType, glyphData, false);
 
             // Handle composite character definitions
             GlyfTable glyfTable = new GlyfTable(fontReader, mtx.toArray(new OFMtxEntry[mtx.size()]),
@@ -123,7 +103,7 @@ public class PCLTTFCharacterWriter extends PCLCharacterWriter {
                     byte[] compositeData = getGlyphData(compositeIndex);
                     newChar.addCompositeGlyph(new PCLCharacterDefinition(compositeIndex,
                             PCLCharacterFormat.TrueType,
-                            PCLCharacterClass.TrueType, compositeData, pclByteWriter, true));
+                            PCLCharacterClass.TrueType, compositeData, true));
                 }
             }
 

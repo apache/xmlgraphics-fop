@@ -25,16 +25,26 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.io.TempResourceURIGenerator;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.FopFactoryConfig;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
@@ -44,6 +54,7 @@ import org.apache.fop.render.java2d.Java2DPainter;
 import org.apache.fop.render.java2d.Java2DUtil;
 import org.apache.fop.render.pcl.PCLRendererConfig.PCLRendererConfigParser;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
+import org.apache.fop.render.pcl.fonts.PCLSoftFontManager;
 
 /**
  * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation
@@ -54,6 +65,10 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PCLDocumentHandler.class);
+
+    /** the temporary file in case of two-pass processing */
+    private URI tempURI;
+    private static final TempResourceURIGenerator TEMP_URI_GENERATOR = new TempResourceURIGenerator("pcl-optimize");
 
     /** Utility class for handling all sorts of peripheral tasks around PCL generation. */
     protected PCLRenderingUtil pclUtil;
@@ -127,7 +142,15 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     public void startDocument() throws IFException {
         super.startDocument();
         try {
-            this.gen = new PCLGenerator(this.outputStream, getResolution());
+            final OutputStream out;
+            if (pclUtil.isOptimizeResources()) {
+                tempURI = TEMP_URI_GENERATOR.generate();
+                out = new BufferedOutputStream(getUserAgent().getResourceResolver().getOutputStream(tempURI));
+            } else {
+                out = this.outputStream;
+            }
+
+            this.gen = new PCLGenerator(out, getResolution());
             this.gen.setDitheringQuality(pclUtil.getDitheringQuality());
 
             if (!pclUtil.isPJLDisabled()) {
@@ -161,10 +184,45 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             if (!pclUtil.isPJLDisabled()) {
                 gen.universalEndOfLanguage();
             }
+
+            if (pclUtil.isOptimizeResources()) {
+                IOUtils.closeQuietly(gen.getOutputStream());
+                rewritePCLFile();
+            }
         } catch (IOException ioe) {
             throw new IFException("I/O error in endDocument()", ioe);
         }
         super.endDocument();
+    }
+
+    private void rewritePCLFile() throws IOException {
+        InputStream in = new BufferedInputStream(getUserAgent().getResourceResolver().getResource(tempURI));
+        long offset = 0;
+        for (Map.Entry<PCLSoftFontManager, Map<Typeface, Long>> fontManagerMapEntry : gen.fontManagerMap.entrySet()) {
+            PCLSoftFontManager softFontManager = fontManagerMapEntry.getKey();
+            for (Map.Entry<Typeface, Long> fontEntry : fontManagerMapEntry.getValue().entrySet()) {
+                ByteArrayOutputStream fontData = softFontManager.makeSoftFont(fontEntry.getKey(), null);
+                long pos = fontEntry.getValue();
+                copy(in, pos - offset);
+                outputStream.write(fontData.toByteArray());
+                offset = pos;
+            }
+        }
+        copy(in, Long.MAX_VALUE);
+        this.outputStream.flush();
+        IOUtils.closeQuietly(in);
+    }
+
+    private void copy(InputStream is, long len) throws IOException {
+        while (len > 0) {
+            int bufsize = (int) Math.min(1024, len);
+            byte[] buf = new byte[bufsize];
+            if (is.read(buf) == -1) {
+                return;
+            }
+            outputStream.write(buf);
+            len -= bufsize;
+        }
     }
 
     /** {@inheritDoc} */

@@ -70,6 +70,9 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator {
         if (config.isColorEnabled() != null) {
             pclUtil.setColorEnabled(config.isColorEnabled());
         }
+        if (config.isOptimizeResources() != null) {
+            pclUtil.setOptimizeResources(config.isOptimizeResources());
+        }
     }
 
     @Override

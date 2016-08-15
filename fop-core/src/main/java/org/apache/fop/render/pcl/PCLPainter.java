@@ -85,8 +85,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
 
     private Stack<GraphicContext> graphicContextStack = new Stack<GraphicContext>();
     private GraphicContext graphicContext = new GraphicContext();
-
-    private PCLSoftFontManager sfManager = new PCLSoftFontManager();
+    private PCLSoftFontManager sfManager;
 
     /**
      * Main constructor.
@@ -338,12 +337,20 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
             } else {
                 // TrueType conversion to a soft font (PCL 5 Technical Reference - Chapter 11)
                 if (!drawAsBitmaps && isTrueType(tf)) {
-                    boolean madeSF = false;
-                    if (sfManager.getSoftFont(tf, text) == null) {
-                        madeSF = true;
-                        ByteArrayOutputStream baos = sfManager.makeSoftFont(tf);
+                    if (sfManager == null) {
+                        sfManager = new PCLSoftFontManager(gen.fontReaderMap);
+                    }
+                    if (getPCLUtil().isOptimizeResources() || sfManager.getSoftFont(tf, text) == null) {
+                        for (char c : text.toCharArray()) {
+                            tf.mapChar(c);
+                        }
+                        ByteArrayOutputStream baos = sfManager.makeSoftFont(tf, text);
                         if (baos != null) {
-                            gen.writeBytes(baos.toByteArray());
+                            if (getPCLUtil().isOptimizeResources()) {
+                                gen.addFont(sfManager, tf);
+                            } else {
+                                gen.writeBytes(baos.toByteArray());
+                            }
                         }
                     }
                     String formattedSize = gen.formatDouble2(state.getFontSize() / 1000.0);
