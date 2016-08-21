@@ -72,7 +72,7 @@ public class PCLPainterTestCase {
         String notOptimizeResources = getPCL(false).toString();
         Assert.assertTrue(notOptimizeResources.contains("DejaVu"));
         Assert.assertFalse(optimizeResources.contains("DejaVu"));
-        Assert.assertEquals(optimizeResources.length(), 935);
+        Assert.assertTrue(optimizeResources.length() > 900);
     }
 
     private ByteArrayOutputStream getPCL(boolean optimizeResources)
