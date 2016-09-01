@@ -43,16 +43,20 @@ import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.apps.TTFReader;
 
 /**
- * Class for reading a metric.xml file and creating a font object.
- * Typical usage:
+ * <p>Class for reading a metric.xml file and creating a font object.
+ * Typical usage:</p>
  * <pre>
- * FontReader reader = new FontReader(<path til metrics.xml>);
+ * XMLFontMetricsReader reader = new XMLFontMetricsReader(<path til metrics.xml>);
  * reader.setFontEmbedPath(<path to a .ttf or .pfb file or null to diable embedding>);
  * reader.useKerning(true);
  * Font f = reader.getFont();
  * </pre>
+ * <p><strong>N.B. This is deprecated functionality and is expected to be
+ * removed from a future version of FOP. New applications using FOP should
+ * not make direct or implied use of this mechanism.</strong></p>
  */
-public class FontReader extends DefaultHandler {
+@Deprecated
+public class XMLFontMetricsReader extends DefaultHandler {
 
     private boolean isCID;
     private CustomFont returnFont;
@@ -69,12 +73,12 @@ public class FontReader extends DefaultHandler {
     private List<CMapSegment> bfranges;
 
     /**
-     * Construct a FontReader object from a path to a metric.xml file
+     * Construct a XMLFontMetricsReader object from a path to a metric.xml file
      * and read metric data
      * @param source Source of the font metric file
      * @throws FOPException if loading the font fails
      */
-    public FontReader(InputSource source, InternalResourceResolver resourceResolver) throws FOPException {
+    public XMLFontMetricsReader(InputSource source, InternalResourceResolver resourceResolver) throws FOPException {
         this.resourceResolver = resourceResolver;
         createFont(source);
     }
