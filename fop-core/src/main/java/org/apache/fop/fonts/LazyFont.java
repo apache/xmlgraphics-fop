@@ -101,12 +101,13 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
         if (!isMetricsLoaded) {
             try {
                 if (fontUris.getMetrics() != null) {
-                    /**@todo Possible thread problem here */
-                    FontReader reader = null;
+                    // Use of XML based font metrics is DEPRECATED!
+                    // @todo Possible thread problem here
+                    XMLFontMetricsReader reader = null;
                     InputStream in = resourceResolver.getResource(fontUris.getMetrics());
                     InputSource src = new InputSource(in);
                     src.setSystemId(fontUris.getMetrics().toASCIIString());
-                    reader = new FontReader(src, resourceResolver);
+                    reader = new XMLFontMetricsReader(src, resourceResolver);
                     reader.setKerningEnabled(useKerning);
                     reader.setAdvancedEnabled(useAdvanced);
                     if (this.embedded) {
