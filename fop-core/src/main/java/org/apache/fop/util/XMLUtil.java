@@ -95,7 +95,7 @@ public final class XMLUtil implements XMLConstants {
         if (s == null) {
             return null;
         } else {
-            return new Integer(s);
+            return Integer.valueOf(s);
         }
     }
 

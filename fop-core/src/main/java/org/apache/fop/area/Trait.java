@@ -48,7 +48,7 @@ public final class Trait implements Serializable {
     }
 
     /** Id reference line, not resolved. (not sure if this is needed.) */
-    //public static final Integer ID_LINK = new Integer(0);
+    //public static final Integer ID_LINK = Integer.valueOf(0);
 
     /**
      * Internal link trait.
@@ -84,10 +84,10 @@ public final class Trait implements Serializable {
     public static final Integer LINETHROUGH = 12;
 
     /** Shadow offset. */
-    //public static final Integer OFFSET = new Integer(13);
+    //public static final Integer OFFSET = Integer.valueOf(13);
 
     /** The shadow for text. */
-    //public static final Integer SHADOW = new Integer(14);
+    //public static final Integer SHADOW = Integer.valueOf(14);
 
     /** The border start. */
     public static final Integer BORDER_START = 15;
@@ -120,10 +120,10 @@ public final class Trait implements Serializable {
     public static final Integer SPACE_END  = 24;
 
     /** break before */
-    //public static final Integer BREAK_BEFORE = new Integer(25);
+    //public static final Integer BREAK_BEFORE = Integer.valueOf(25);
 
     /** break after */
-    //public static final Integer BREAK_AFTER = new Integer(26);
+    //public static final Integer BREAK_AFTER = Integer.valueOf(26);
 
     /** The start-indent trait. */
     public static final Integer START_INDENT = 27;

@@ -96,9 +96,9 @@ public class PDFImageXObject extends PDFXObject {
 
     private void populateDictionaryFromImage() {
         put("Subtype", new PDFName("Image"));
-        put("Width", new Integer(pdfimage.getWidth()));
-        put("Height", new Integer(pdfimage.getHeight()));
-        put("BitsPerComponent", new Integer(pdfimage.getBitsPerComponent()));
+        put("Width", pdfimage.getWidth());
+        put("Height", pdfimage.getHeight());
+        put("BitsPerComponent", pdfimage.getBitsPerComponent());
 
         PDFICCStream pdfICCStream = pdfimage.getICCStream();
         if (pdfICCStream != null) {
@@ -114,8 +114,8 @@ public class PDFImageXObject extends PDFXObject {
              * this will invert the values - too bad if it's not
              * a PhotoShop image...
              */
-            final Float zero = new Float(0.0f);
-            final Float one = new Float(1.0f);
+            final Float zero = 0.0f;
+            final Float one = 1.0f;
             PDFArray decode = new PDFArray(this);
             for (int i = 0, c = pdfimage.getColorSpace().getNumComponents(); i < c; i++) {
                 decode.add(one);
@@ -128,15 +128,15 @@ public class PDFImageXObject extends PDFXObject {
             PDFColor transp = pdfimage.getTransparentColor();
             PDFArray mask = new PDFArray(this);
             if (pdfimage.getColorSpace().isGrayColorSpace()) {
-                mask.add(new Integer(transp.red255()));
-                mask.add(new Integer(transp.red255()));
+                mask.add(Integer.valueOf(transp.red255()));
+                mask.add(Integer.valueOf(transp.red255()));
             } else {
-                mask.add(new Integer(transp.red255()));
-                mask.add(new Integer(transp.red255()));
-                mask.add(new Integer(transp.green255()));
-                mask.add(new Integer(transp.green255()));
-                mask.add(new Integer(transp.blue255()));
-                mask.add(new Integer(transp.blue255()));
+                mask.add(Integer.valueOf(transp.red255()));
+                mask.add(Integer.valueOf(transp.red255()));
+                mask.add(Integer.valueOf(transp.green255()));
+                mask.add(Integer.valueOf(transp.green255()));
+                mask.add(Integer.valueOf(transp.blue255()));
+                mask.add(Integer.valueOf(transp.blue255()));
             }
             put("Mask", mask);
         }

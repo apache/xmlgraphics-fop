@@ -51,7 +51,7 @@ public class Command extends AbstractAction {
         super(name);
         putValue(SHORT_DESCRIPTION, name);
         if (mnemonic > 0) {
-            putValue(MNEMONIC_KEY, new Integer(mnemonic));
+            putValue(MNEMONIC_KEY, mnemonic);
         }
     }
 

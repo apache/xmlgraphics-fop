@@ -239,9 +239,9 @@ public class PDFPattern extends PDFPathPaint {
                 }
                 p.append("] \n");
             }
-            p.append("/XStep " + PDFNumber.doubleOut(new Double(this.xStep))
+            p.append("/XStep " + PDFNumber.doubleOut(Double.valueOf(this.xStep))
                      + " \n");
-            p.append("/YStep " + PDFNumber.doubleOut(new Double(this.yStep))
+            p.append("/YStep " + PDFNumber.doubleOut(Double.valueOf(this.yStep))
                      + " \n");
 
             if (this.matrix != null) {

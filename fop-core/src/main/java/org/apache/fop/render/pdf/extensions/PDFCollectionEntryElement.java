@@ -124,9 +124,9 @@ public class PDFCollectionEntryElement extends AbstractPDFExtensionElement {
                 try {
                     double d = Double.parseDouble(value);
                     if (Math.abs(Math.floor(d) - d) < 1E-10) {
-                        extension.setValue(Long.valueOf((long) d));
+                        extension.setValue((long) d);
                     } else {
-                        extension.setValue(Double.valueOf(d));
+                        extension.setValue(d);
                     }
                 } catch (NumberFormatException e) {
                     invalidPropertyValueError("<value>", value, null);

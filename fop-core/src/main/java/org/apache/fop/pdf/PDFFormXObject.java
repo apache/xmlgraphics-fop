@@ -50,7 +50,7 @@ public class PDFFormXObject extends PDFXObject {
 
         put("Type", new PDFName("XObject"));
         put("Subtype", new PDFName("Form"));
-        put("FormType", new Integer(1));
+        put("FormType", 1);
         setMatrix(new AffineTransform());
         if (resources != null) {
             put("Resources", resources);

@@ -147,7 +147,7 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
             List entries = new java.util.ArrayList();
             if (map != null) {
                 for (int i = 0, n = map.length; i < n; i++) {
-                    entries.add(Integer.valueOf(map [ i ]));
+                    entries.add(map[i]);
                 }
             }
             return entries;

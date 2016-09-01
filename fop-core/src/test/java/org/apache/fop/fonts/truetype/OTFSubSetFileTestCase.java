@@ -245,21 +245,21 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         if (b0 == 28) {
             int b1 = input[curPos + 1] & 0xff;
             int b2 = input[curPos + 2] & 0xff;
-            return new BytesNumber(Integer.valueOf((short) (b1 << 8 | b2)), 3);
+            return new BytesNumber((int) (short) (b1 << 8 | b2), 3);
         } else if (b0 >= 32 && b0 <= 246) {
-            return new BytesNumber(Integer.valueOf(b0 - 139), 1);
+            return new BytesNumber(b0 - 139, 1);
         } else if (b0 >= 247 && b0 <= 250) {
             int b1 = input[curPos + 1] & 0xff;
-            return new BytesNumber(Integer.valueOf((b0 - 247) * 256 + b1 + 108), 2);
+            return new BytesNumber((b0 - 247) * 256 + b1 + 108, 2);
         } else if (b0 >= 251 && b0 <= 254) {
             int b1 = input[curPos + 1] & 0xff;
-            return new BytesNumber(Integer.valueOf(-(b0 - 251) * 256 - b1 - 108), 2);
+            return new BytesNumber(-(b0 - 251) * 256 - b1 - 108, 2);
         } else if (b0 == 255) {
             int b1 = input[curPos + 1] & 0xff;
             int b2 = input[curPos + 2] & 0xff;
             int b3 = input[curPos + 3] & 0xff;
             int b4 = input[curPos + 4] & 0xff;
-            return new BytesNumber(Integer.valueOf((b1 << 24  | b2 << 16 | b3 << 8 | b4)), 5);
+            return new BytesNumber((b1 << 24 | b2 << 16 | b3 << 8 | b4), 5);
         } else {
             throw new IllegalArgumentException();
         }

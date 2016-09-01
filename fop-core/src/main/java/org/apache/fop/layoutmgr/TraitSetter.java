@@ -558,8 +558,8 @@ public final class TraitSetter {
      */
     public static void addBreaks(Area area, int breakBefore, int breakAfter) {
         /* Currently disabled as these traits are never used by the renderers
-        area.addTrait(Trait.BREAK_AFTER, new Integer(breakAfter));
-        area.addTrait(Trait.BREAK_BEFORE, new Integer(breakBefore));
+        area.addTrait(Trait.BREAK_AFTER, Integer.valueOf(breakAfter));
+        area.addTrait(Trait.BREAK_BEFORE, Integer.valueOf(breakBefore));
         */
     }
 

@@ -519,16 +519,16 @@ public class RtfExternalGraphic extends RtfElement {
         }
 
         if (this.cropValues[0] != 0) {
-            writeOneAttribute("piccropl", new Integer(this.cropValues[0]));
+            writeOneAttribute("piccropl", this.cropValues[0]);
         }
         if (this.cropValues[1] != 0) {
-            writeOneAttribute("piccropt", new Integer(this.cropValues[1]));
+            writeOneAttribute("piccropt", this.cropValues[1]);
         }
         if (this.cropValues[2] != 0) {
-            writeOneAttribute("piccropr", new Integer(this.cropValues[2]));
+            writeOneAttribute("piccropr", this.cropValues[2]);
         }
         if (this.cropValues[3] != 0) {
-            writeOneAttribute("piccropb", new Integer(this.cropValues[3]));
+            writeOneAttribute("piccropb", this.cropValues[3]);
         }
     }
 

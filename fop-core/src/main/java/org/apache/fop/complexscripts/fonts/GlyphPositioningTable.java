@@ -535,8 +535,8 @@ public class GlyphPositioningTable extends GlyphTable {
                 List entries = new ArrayList(5);
                 entries.add(cdt1);
                 entries.add(cdt2);
-                entries.add(Integer.valueOf(nc1));
-                entries.add(Integer.valueOf(nc2));
+                entries.add(nc1);
+                entries.add(nc2);
                 entries.add(pvm);
                 return entries;
             } else {
@@ -796,7 +796,7 @@ public class GlyphPositioningTable extends GlyphTable {
             if ((bct != null) && (maa != null) && (nmc > 0) && (bam != null)) {
                 List entries = new ArrayList(4);
                 entries.add(bct);
-                entries.add(Integer.valueOf(nmc));
+                entries.add(nmc);
                 entries.add(maa);
                 entries.add(bam);
                 return entries;
@@ -942,8 +942,8 @@ public class GlyphPositioningTable extends GlyphTable {
             if (lam != null) {
                 List entries = new ArrayList(5);
                 entries.add(lct);
-                entries.add(Integer.valueOf(nmc));
-                entries.add(Integer.valueOf(mxc));
+                entries.add(nmc);
+                entries.add(mxc);
                 entries.add(maa);
                 entries.add(lam);
                 return entries;
@@ -1086,7 +1086,7 @@ public class GlyphPositioningTable extends GlyphTable {
             if ((mct2 != null) && (maa != null) && (nmc > 0) && (mam != null)) {
                 List entries = new ArrayList(4);
                 entries.add(mct2);
-                entries.add(Integer.valueOf(nmc));
+                entries.add(nmc);
                 entries.add(maa);
                 entries.add(mam);
                 return entries;
@@ -1293,7 +1293,7 @@ public class GlyphPositioningTable extends GlyphTable {
             if (rsa != null) {
                 List entries = new ArrayList(3);
                 entries.add(cdt);
-                entries.add(Integer.valueOf(ngc));
+                entries.add(ngc);
                 entries.add(rsa);
                 return entries;
             } else {
@@ -1608,7 +1608,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 entries.add(icdt);
                 entries.add(bcdt);
                 entries.add(lcdt);
-                entries.add(Integer.valueOf(ngc));
+                entries.add(ngc);
                 entries.add(rsa);
                 return entries;
             } else {

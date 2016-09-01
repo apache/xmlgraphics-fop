@@ -51,8 +51,8 @@ public class RtfList extends RtfContainer {
         super(parent, w, attr);
 
         //random number generator for ids
-        listId = new Integer(listIdGenerator.nextInt());
-        listTemplateId = new Integer(listIdGenerator.nextInt());
+        listId = listIdGenerator.nextInt();
+        listTemplateId = listIdGenerator.nextInt();
 
         //create a new list table entry for the list
         listTable = getRtfFile().startListTable(attr);

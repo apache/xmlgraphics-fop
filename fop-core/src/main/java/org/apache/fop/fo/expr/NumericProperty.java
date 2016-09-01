@@ -87,7 +87,7 @@ public class NumericProperty extends Property implements Numeric, Length {
 
     /** {@inheritDoc} */
     public Number getNumber() {
-        return new Double(value);
+        return value;
     }
 
     /** {@inheritDoc} */

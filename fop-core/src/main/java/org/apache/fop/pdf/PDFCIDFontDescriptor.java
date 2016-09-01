@@ -46,7 +46,7 @@ public class PDFCIDFontDescriptor extends PDFFontDescriptor {
         super(basefont, fontBBox[3], fontBBox[1], capHeight, flags,
               new PDFRectangle(fontBBox), italicAngle, stemV);
 
-        put("MissingWidth", new Integer(500));
+        put("MissingWidth", Integer.valueOf(500));
         if (lang != null) {
             put("Lang", lang);
         }

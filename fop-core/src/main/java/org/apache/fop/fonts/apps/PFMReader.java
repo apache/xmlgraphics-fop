@@ -233,22 +233,22 @@ public class PFMReader extends AbstractFontReader {
 
         el = doc.createElement("cap-height");
         root.appendChild(el);
-        Integer value = new Integer(pfm.getCapHeight());
+        Integer value = pfm.getCapHeight();
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("x-height");
         root.appendChild(el);
-        value = new Integer(pfm.getXHeight());
+        value = pfm.getXHeight();
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("ascender");
         root.appendChild(el);
-        value = new Integer(pfm.getLowerCaseAscent());
+        value = pfm.getLowerCaseAscent();
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("descender");
         root.appendChild(el);
-        value = new Integer(pfm.getLowerCaseDescent());
+        value = pfm.getLowerCaseDescent();
         el.appendChild(doc.createTextNode(value.toString()));
 
         Element bbox = doc.createElement("bbox");
@@ -258,33 +258,33 @@ public class PFMReader extends AbstractFontReader {
         for (int i = 0; i < names.length; i++) {
             el = doc.createElement(names[i]);
             bbox.appendChild(el);
-            value = new Integer(bb[i]);
+            value = bb[i];
             el.appendChild(doc.createTextNode(value.toString()));
         }
 
         el = doc.createElement("flags");
         root.appendChild(el);
-        value = new Integer(pfm.getFlags());
+        value = pfm.getFlags();
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("stemv");
         root.appendChild(el);
-        value = new Integer(pfm.getStemV());
+        value = pfm.getStemV();
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("italicangle");
         root.appendChild(el);
-        value = new Integer(pfm.getItalicAngle());
+        value = pfm.getItalicAngle();
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("first-char");
         root.appendChild(el);
-        value = new Integer(pfm.getFirstChar());
+        value = (int) pfm.getFirstChar();
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("last-char");
         root.appendChild(el);
-        value = new Integer(pfm.getLastChar());
+        value = (int) pfm.getLastChar();
         el.appendChild(doc.createTextNode(value.toString()));
 
         Element widths = doc.createElement("widths");

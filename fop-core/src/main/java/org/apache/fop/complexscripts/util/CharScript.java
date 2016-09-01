@@ -708,7 +708,7 @@ public final class CharScript {
     public static int[] scriptsOf(CharSequence cs) {
         Set s = new HashSet();
         for (int i = 0, n = cs.length(); i < n; i++) {
-            s.add(Integer.valueOf(scriptOf(cs.charAt(i))));
+            s.add(scriptOf(cs.charAt(i)));
         }
         int[] sa = new int [ s.size() ];
         int ns = 0;
@@ -729,12 +729,12 @@ public final class CharScript {
         for (int i = 0, n = cs.length(); i < n; i++) {
             int c = cs.charAt(i);
             int s = scriptOf(c);
-            Integer k = Integer.valueOf(s);
+            Integer k = s;
             Integer v = (Integer) m.get(k);
             if (v != null) {
-                m.put(k, Integer.valueOf(v.intValue() + 1));
+                m.put(k, v.intValue() + 1);
             } else {
-                m.put(k, Integer.valueOf(0));
+                m.put(k, 0);
             }
         }
         int sMax = -1;
@@ -818,7 +818,7 @@ public final class CharScript {
         Map<Integer, String> m = getScriptTagsMap();
         if (m != null) {
             String tag;
-            if ((tag = m.get(Integer.valueOf(code))) != null) {
+            if ((tag = m.get(code)) != null) {
                 return tag;
             } else {
                 return "";
@@ -855,8 +855,8 @@ public final class CharScript {
         assert tag.length() != 0;
         assert code >= 0;
         assert code <  2000;
-        tm.put(Integer.valueOf(code), tag);
-        cm.put(tag, Integer.valueOf(code));
+        tm.put(code, tag);
+        cm.put(tag, code);
     }
 
     private static void makeScriptMaps() {

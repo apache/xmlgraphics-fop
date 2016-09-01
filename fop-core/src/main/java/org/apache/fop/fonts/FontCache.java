@@ -433,7 +433,7 @@ public final class FontCache implements Serializable {
     public void registerFailedFont(String embedUrl, long lastModified) {
         synchronized (changeLock) {
             if (!getFailedFontMap().containsKey(embedUrl)) {
-                getFailedFontMap().put(embedUrl, new Long(lastModified));
+                getFailedFontMap().put(embedUrl, lastModified);
                 changed = true;
             }
         }

@@ -55,7 +55,7 @@ public class CIDFullTestCase {
                 continue;
             }
             bs.set(j);
-            glyphs.put(Integer.valueOf(j), Integer.valueOf(j));
+            glyphs.put(j, j);
             chars[i] = (char) j;
             widths[i] = 100;
             i++;

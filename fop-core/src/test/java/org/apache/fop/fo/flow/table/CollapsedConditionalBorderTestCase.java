@@ -40,13 +40,13 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
  */
 public class CollapsedConditionalBorderTestCase extends AbstractTableTest {
 
-    private final Integer border0pt = new Integer(0);
+    private final Integer border0pt = 0;
 
-    private final Integer border4pt = new Integer(4000);
+    private final Integer border4pt = 4000;
 
-    private final Integer border6pt = new Integer(6000);
+    private final Integer border6pt = 6000;
 
-    private final Integer border8pt = new Integer(8000);
+    private final Integer border8pt = 8000;
 
     /**
      * Resolved borders for tables without headers and footers, generated from the Python

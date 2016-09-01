@@ -296,7 +296,7 @@ public class Java2DFontMetrics {
         if ((style & Font.ITALIC) != 0) {
             atts.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
         }
-        atts.put(TextAttribute.SIZE, new Float(size)); //size in pt
+        atts.put(TextAttribute.SIZE, size); //size in pt
         return new Font(atts);
     }
 

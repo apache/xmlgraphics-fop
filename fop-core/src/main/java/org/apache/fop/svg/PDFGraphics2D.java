@@ -934,10 +934,10 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         // }
 
         List<Double> bbox = new java.util.ArrayList<Double>();
-        bbox.add(new Double(rect.getX()));
-        bbox.add(new Double(rect.getHeight() + rect.getY()));
-        bbox.add(new Double(rect.getWidth() + rect.getX()));
-        bbox.add(new Double(rect.getY()));
+        bbox.add(rect.getX());
+        bbox.add(rect.getHeight() + rect.getY());
+        bbox.add(rect.getWidth() + rect.getX());
+        bbox.add(rect.getY());
 
         AffineTransform transform;
         transform = new AffineTransform(getBaseTransform());
@@ -948,7 +948,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         double [] mat = new double[6];
         transform.getMatrix(mat);
         for (int idx = 0; idx < mat.length; idx++) {
-            theMatrix.add(new Double(mat[idx]));
+            theMatrix.add(mat[idx]);
         }
 
         /** @todo see if pdfDoc and res can be linked here,
@@ -1324,8 +1324,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             }
 
             if (kerningAvailable && (i + 1) < l) {
-                addKerning(currentStream, (Integer.valueOf(ch)),
-                           (Integer.valueOf(fontState.mapChar(s.charAt(i + 1)))),
+                addKerning(currentStream, ((int) ch),
+                           ((int) fontState.mapChar(s.charAt(i + 1))),
                            kerning, startText, endText);
             }
 
@@ -1348,10 +1348,10 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             if (profile == null) {
                 Map<String, Float> vals = new java.util.HashMap<String, Float>();
                 if (fillAlpha != OPAQUE) {
-                    vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, new Float(fillAlpha / 255f));
+                    vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, fillAlpha / 255f);
                 }
                 if (strokeAlpha != OPAQUE) {
-                    vals.put(PDFGState.GSTATE_ALPHA_STROKE, new Float(strokeAlpha / 255f));
+                    vals.put(PDFGState.GSTATE_ALPHA_STROKE, strokeAlpha / 255f);
                 }
                 PDFGState gstate = pdfDoc.getFactory().makeGState(vals, paintingState.getGState());
                 resourceContext.addGState(gstate);

@@ -287,7 +287,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
         /** {@inheritDoc} */
         public List getEntries() {
             List entries = new ArrayList(1);
-            entries.add(Integer.valueOf(delta));
+            entries.add(delta);
             return entries;
         }
         /** {@inheritDoc} */
@@ -325,7 +325,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
         public List getEntries() {
             List entries = new ArrayList(glyphs.length);
             for (int i = 0, n = glyphs.length; i < n; i++) {
-                entries.add(Integer.valueOf(glyphs[i]));
+                entries.add(glyphs[i]);
             }
             return entries;
         }
@@ -822,7 +822,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
             if (rsa != null) {
                 List entries = new ArrayList(3);
                 entries.add(cdt);
-                entries.add(Integer.valueOf(ngc));
+                entries.add(ngc);
                 entries.add(rsa);
                 return entries;
             } else {
@@ -1138,7 +1138,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 entries.add(icdt);
                 entries.add(bcdt);
                 entries.add(lcdt);
-                entries.add(Integer.valueOf(ngc));
+                entries.add(ngc);
                 entries.add(rsa);
                 return entries;
             } else {

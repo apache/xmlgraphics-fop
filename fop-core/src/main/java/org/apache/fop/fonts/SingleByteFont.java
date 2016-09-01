@@ -122,7 +122,7 @@ public class SingleByteFont extends CustomFont {
             int codePoint = i % 256;
             NamedCharacter nc = encoding.getCharacterForIndex(codePoint);
             UnencodedCharacter uc
-                = this.unencodedCharacters.get(Character.valueOf(nc.getSingleUnicodeValue()));
+                = this.unencodedCharacters.get(nc.getSingleUnicodeValue());
             return size * uc.getWidth();
         }
         return 0;
@@ -147,7 +147,7 @@ public class SingleByteFont extends CustomFont {
             SimpleSingleByteEncoding encoding = getAdditionalEncoding(encodingIndex);
             int codePoint = glyphIndex % 256;
             NamedCharacter nc = encoding.getCharacterForIndex(codePoint);
-            UnencodedCharacter uc = this.unencodedCharacters.get(Character.valueOf(nc.getSingleUnicodeValue()));
+            UnencodedCharacter uc = this.unencodedCharacters.get(nc.getSingleUnicodeValue());
             bbox = uc.getBBox();
         }
         return bbox == null ? null : new Rectangle(bbox.x * size, bbox.y * size, bbox.width * size, bbox.height * size);
@@ -255,7 +255,7 @@ public class SingleByteFont extends CustomFont {
 
     private char mapUnencodedChar(char ch) {
         if (this.unencodedCharacters != null) {
-            UnencodedCharacter unencoded = this.unencodedCharacters.get(Character.valueOf(ch));
+            UnencodedCharacter unencoded = this.unencodedCharacters.get(ch);
             if (unencoded != null) {
                 if (this.additionalEncodings == null) {
                     this.additionalEncodings = new ArrayList<SimpleSingleByteEncoding>();
@@ -384,7 +384,7 @@ public class SingleByteFont extends CustomFont {
         }
         if (ch.hasSingleUnicodeValue()) {
             UnencodedCharacter uc = new UnencodedCharacter(ch, width, bbox);
-            this.unencodedCharacters.put(Character.valueOf(ch.getSingleUnicodeValue()), uc);
+            this.unencodedCharacters.put(ch.getSingleUnicodeValue(), uc);
         } else {
             //Cannot deal with unicode sequences, so ignore this character
         }
@@ -452,7 +452,7 @@ public class SingleByteFont extends CustomFont {
         for (int i = 0, c = arr.length; i < c; i++) {
             NamedCharacter nc = enc.getCharacterForIndex(enc.getFirstChar() + i);
             UnencodedCharacter uc = this.unencodedCharacters.get(
-                    Character.valueOf(nc.getSingleUnicodeValue()));
+                    nc.getSingleUnicodeValue());
             arr[i] = uc.getWidth();
         }
         return arr;

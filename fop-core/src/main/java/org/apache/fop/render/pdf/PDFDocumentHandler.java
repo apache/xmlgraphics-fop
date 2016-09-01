@@ -253,7 +253,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         pdfUtil.generatePageLabel(index, name);
 
         currentPageRef = new PageReference(currentPage, size);
-        this.pageReferences.put(Integer.valueOf(index), currentPageRef);
+        this.pageReferences.put(index, currentPageRef);
 
         this.generator = new PDFContentGenerator(this.pdfDoc, this.outputStream,
                 this.currentPage);
@@ -335,7 +335,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     }
 
     PageReference getPageReference(int pageIndex) {
-        return this.pageReferences.get(Integer.valueOf(pageIndex));
+        return this.pageReferences.get(pageIndex);
     }
 
     static final class PageReference {

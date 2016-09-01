@@ -199,7 +199,7 @@ public abstract class AbstractPDFStream extends PDFObject {
         OutputStream filteredOutput = getFilterList().applyFilters(cout);
         outputRawStreamData(filteredOutput);
         filteredOutput.close();
-        refLength.setNumber(Integer.valueOf(cout.getCount()));
+        refLength.setNumber(cout.getCount());
         bytesWritten += cout.getCount();
 
         //Stream trailer

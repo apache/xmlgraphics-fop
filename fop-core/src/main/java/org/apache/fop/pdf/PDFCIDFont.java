@@ -106,7 +106,7 @@ public class PDFCIDFont extends PDFObject {
 
         this.basefont = basefont;
         this.cidtype = cidtype;
-        this.dw = new Integer(dw);
+        this.dw = dw;
         this.w = w;
         this.dw2 = null;
         this.w2 = null;
@@ -122,7 +122,7 @@ public class PDFCIDFont extends PDFObject {
      * @param dw the default width
      */
     public void setDW(int dw) {
-        this.dw = new Integer(dw);
+        this.dw = dw;
     }
 
     /**

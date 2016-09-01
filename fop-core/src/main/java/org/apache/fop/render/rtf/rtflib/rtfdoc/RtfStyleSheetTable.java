@@ -148,7 +148,7 @@ public final class RtfStyleSheetTable {
         if (attrs != null) {
             attrTable.put(name, attrs);
         }
-        styles.put(name, new Integer(nameTable.size() - 1 + startIndex));
+        styles.put(name, nameTable.size() - 1 + startIndex);
     }
 
     /**

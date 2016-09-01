@@ -525,7 +525,7 @@ class RowPainter {
          * below.
          */
         for (int i = rowOffsets.size(); i <= rowIndex - firstRowIndex; i++) {
-            rowOffsets.add(new Integer(offset));
+            rowOffsets.add(offset);
         }
     }
 

@@ -865,7 +865,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
             hints.put(ImageHandlerUtil.CONVERSION_MODE, ImageHandlerUtil.CONVERSION_MODE_BITMAP);
             hints.put("TARGET_RESOLUTION",
-                    Integer.valueOf(context.getPaintingState().getResolution()));
+                    context.getPaintingState().getResolution());
 
 
             try {

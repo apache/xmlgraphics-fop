@@ -212,7 +212,7 @@ public class MinOptMaxTestCase {
         assertFalse(number.equals(MinOptMax.getInstance(1, 4, 5)));
         assertFalse(number.equals(MinOptMax.getInstance(1, 3, 4)));
         assertFalse(number.equals(null));
-        assertFalse(number.equals(new Integer(1)));
+        assertFalse(number.equals(1));
     }
 
     @Test

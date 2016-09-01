@@ -116,7 +116,7 @@ public final class PropertyCache<T> {
             return null;
         }
 
-        Integer hashCode = Integer.valueOf(obj.hashCode());
+        Integer hashCode = obj.hashCode();
 
         WeakReference<T> weakRef = map.get(hashCode);
         if (weakRef == null) {

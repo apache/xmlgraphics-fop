@@ -143,13 +143,13 @@ public abstract class PrintRenderer extends AbstractRenderer {
         context.setUserAgent(userAgent);
 
         context.setProperty(RendererContextConstants.WIDTH,
-                            new Integer(width));
+                width);
         context.setProperty(RendererContextConstants.HEIGHT,
-                            new Integer(height));
+                height);
         context.setProperty(RendererContextConstants.XPOS,
-                            new Integer(x));
+                x);
         context.setProperty(RendererContextConstants.YPOS,
-                            new Integer(y));
+                y);
         context.setProperty(RendererContextConstants.PAGE_VIEWPORT,
                             getCurrentPageViewport());
         if (foreignAttributes != null) {

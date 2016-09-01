@@ -588,10 +588,10 @@ public class RTFHandler extends FOEventHandler {
             percentManager.setDimension(tc, iWidth);
 
             //convert to twips
-            Float width = new Float(FoUnitsConverter.getInstance().convertMptToTwips(iWidth));
+            Float width = FoUnitsConverter.getInstance().convertMptToTwips(iWidth);
             builderContext.getTableContext().setNextColumnWidth(width);
             builderContext.getTableContext().setNextColumnRowSpanning(
-                  new Integer(0), null);
+                    0, null);
             builderContext.getTableContext().setNextFirstSpanningCol(false);
         } catch (Exception e) {
             log.error("startColumn: " + e.getMessage());
@@ -844,11 +844,11 @@ public class RTFHandler extends FOEventHandler {
                 cell.setVMerge(RtfTableCell.MERGE_START);
 
                 // set the number of rows spanned
-                tctx.setCurrentColumnRowSpanning(new Integer(numberRowsSpanned),
+                tctx.setCurrentColumnRowSpanning(numberRowsSpanned,
                         cell.getRtfAttributes());
             } else {
                 tctx.setCurrentColumnRowSpanning(
-                        new Integer(numberRowsSpanned), null);
+                        numberRowsSpanned, null);
             }
 
             //process number-columns-spanned attribute
@@ -873,11 +873,11 @@ public class RTFHandler extends FOEventHandler {
 
                         // set the number of rows spanned
                         tctx.setCurrentColumnRowSpanning(
-                                new Integer(numberRowsSpanned),
+                                numberRowsSpanned,
                                 cell.getRtfAttributes());
                     } else {
                         tctx.setCurrentColumnRowSpanning(
-                                new Integer(numberRowsSpanned), cell.getRtfAttributes());
+                                numberRowsSpanned, cell.getRtfAttributes());
                     }
                 }
             }

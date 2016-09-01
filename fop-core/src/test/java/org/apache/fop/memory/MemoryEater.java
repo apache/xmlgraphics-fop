@@ -75,7 +75,7 @@ public final class MemoryEater {
         Source src = new StreamSource(foFile);
 
         Transformer transformer = replicatorTemplates.newTransformer();
-        transformer.setParameter("repeats", new Integer(replicatorRepeats));
+        transformer.setParameter("repeats", replicatorRepeats);
 
         OutputStream out = new NullOutputStream(); //write to /dev/nul
         try {

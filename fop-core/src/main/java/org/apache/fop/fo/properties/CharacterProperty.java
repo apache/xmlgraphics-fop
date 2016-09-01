@@ -76,7 +76,7 @@ public final class CharacterProperty extends Property {
      * @return this.character cast as an Object
      */
     public Object getObject() {
-        return new Character(character);
+        return character;
     }
 
     /**

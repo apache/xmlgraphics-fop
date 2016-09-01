@@ -189,7 +189,7 @@ public class RtfListItem extends RtfContainer
         getRtfListStyle().writeListPrefix(this);
 
         writeGroupMark(false);
-        writeOneAttribute(RtfListTable.LIST_NUMBER, new Integer(number));
+        writeOneAttribute(RtfListTable.LIST_NUMBER, number);
     }
 
     /**

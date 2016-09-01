@@ -63,9 +63,9 @@ public class PDFT1Stream extends AbstractPDFFontStream {
     /** {@inheritDoc} */
     protected void populateStreamDict(Object lengthEntry) {
         super.populateStreamDict(lengthEntry);
-        put("Length1", new Integer(pfb.getLength1()));
-        put("Length2", new Integer(pfb.getLength2()));
-        put("Length3", new Integer(pfb.getLength3()));
+        put("Length1", pfb.getLength1());
+        put("Length2", pfb.getLength2());
+        put("Length3", pfb.getLength3());
     }
 
     /**

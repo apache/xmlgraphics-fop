@@ -131,19 +131,19 @@ public class PDFColor extends PDFPathPaint {
         List theColorVector = new ArrayList();
         if (this.colorSpace.getColorSpace() == PDFDeviceColorSpace.DEVICE_RGB) {
             // RGB
-            theColorVector.add(new Double(this.red));
-            theColorVector.add(new Double(this.green));
-            theColorVector.add(new Double(this.blue));
+            theColorVector.add(this.red);
+            theColorVector.add(this.green);
+            theColorVector.add(this.blue);
         } else if (this.colorSpace.getColorSpace()
                    == PDFDeviceColorSpace.DEVICE_CMYK) {
             // CMYK
-            theColorVector.add(new Double(this.cyan));
-            theColorVector.add(new Double(this.magenta));
-            theColorVector.add(new Double(this.yellow));
-            theColorVector.add(new Double(this.black));
+            theColorVector.add(this.cyan);
+            theColorVector.add(this.magenta);
+            theColorVector.add(this.yellow);
+            theColorVector.add(this.black);
         } else {
             // GRAY
-            theColorVector.add(new Double(this.black));
+            theColorVector.add(this.black);
         }
         return (theColorVector);
     }

@@ -65,7 +65,7 @@ public class PDFDictionaryTestCase extends PDFObjectTestCase {
         pdfDictUnderTest.setDocument(doc);
         pdfDictUnderTest.put("String", "TestValue");
         pdfDictUnderTest.put("int", 10);
-        pdfDictUnderTest.put("double", Double.valueOf(3.1));
+        pdfDictUnderTest.put("double", 3.1);
         pdfDictUnderTest.put("array", testArray);
         pdfDictUnderTest.put("number", testNumber);
         // null is a valid PDF object
