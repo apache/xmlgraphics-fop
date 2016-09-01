@@ -114,10 +114,10 @@ public class TTFFileTestCase {
         if (ansiKerning.isEmpty()) {
             fail();
         }
-        Integer k1 = ansiKerning.get(Integer.valueOf('A')).get(
-                Integer.valueOf('T'));
+        Integer k1 = ansiKerning.get((int) 'A').get(
+                (int) 'T');
         assertEquals(dejavuTTFFile.convertTTFUnit2PDFUnit(-112), k1.intValue());
-        Integer k2 = ansiKerning.get(Integer.valueOf('Y')).get(Integer.valueOf('u'));
+        Integer k2 = ansiKerning.get((int) 'Y').get((int) 'u');
         assertEquals(dejavuTTFFile.convertTTFUnit2PDFUnit(-178), k2.intValue());
 
         // DroidSansMono doens't have kerning (it's mono-spaced)
@@ -297,9 +297,9 @@ public class TTFFileTestCase {
         if (kerning.isEmpty()) {
             fail();
         }
-        Integer k1 = kerning.get(Integer.valueOf('A')).get(Integer.valueOf('T'));
+        Integer k1 = kerning.get((int) 'A').get((int) 'T');
         assertEquals(dejavuTTFFile.convertTTFUnit2PDFUnit(-112), k1.intValue());
-        Integer k2 = kerning.get(Integer.valueOf('K')).get(Integer.valueOf('u'));
+        Integer k2 = kerning.get((int) 'K').get((int) 'u');
         assertEquals(dejavuTTFFile.convertTTFUnit2PDFUnit(-45), k2.intValue());
 
         // DroidSansMono has no kerning data (mono-spaced)

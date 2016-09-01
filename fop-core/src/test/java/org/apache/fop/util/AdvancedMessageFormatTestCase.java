@@ -172,15 +172,15 @@ public class AdvancedMessageFormatTestCase {
 
         Map params = new java.util.HashMap();
 
-        params.put("amount", new Integer(0));
+        params.put("amount", 0);
         msg = format.format(params);
         assertEquals("You have nothing.", msg);
 
-        params.put("amount", new Integer(7));
+        params.put("amount", 7);
         msg = format.format(params);
         assertEquals("You have 7 bucks.", msg);
 
-        params.put("amount", new Integer(140));
+        params.put("amount", 140);
         msg = format.format(params);
         assertEquals("You have more than enough.", msg);
 

@@ -62,7 +62,7 @@ public class PDFArray extends PDFObject {
         super(parent);
 
         for (int i = 0, c = values.length; i < c; i++) {
-            this.values.add(Integer.valueOf(values[i]));
+            this.values.add(values[i]);
         }
     }
 
@@ -76,7 +76,7 @@ public class PDFArray extends PDFObject {
         super(parent);
 
         for (int i = 0, c = values.length; i < c; i++) {
-            this.values.add(new Double(values[i]));
+            this.values.add(values[i]);
         }
     }
 
@@ -156,7 +156,7 @@ public class PDFArray extends PDFObject {
      * @param value the new value
      */
     public void set(int index, double value) {
-        this.values.set(index, new Double(value));
+        this.values.set(index, value);
     }
 
     /**
@@ -187,7 +187,7 @@ public class PDFArray extends PDFObject {
      * @param value the value
      */
     public void add(double value) {
-        this.values.add(new Double(value));
+        this.values.add(value);
     }
 
     /**

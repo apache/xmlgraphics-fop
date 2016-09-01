@@ -125,7 +125,7 @@ public abstract class Typeface implements FontMetrics {
      */
     protected void warnMissingGlyph(char c) {
         // Give up, character is not available
-        Character ch = new Character(c);
+        Character ch = c;
         if (warnedChars == null) {
             warnedChars = new HashSet<Character>();
         }

@@ -174,7 +174,7 @@ public final class RtfFontManager {
      * @param family Identifier of font
      */
     private void addFont(String family) {
-        fontIndex.put(getFontKey(family), new Integer(fontTable.size()));
+        fontIndex.put(getFontKey(family), fontTable.size());
         fontTable.addElement(family);
     }
 }

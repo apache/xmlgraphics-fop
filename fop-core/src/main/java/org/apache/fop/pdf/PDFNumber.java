@@ -30,7 +30,7 @@ public class PDFNumber extends PDFObject {
     private Number number;
 
     public PDFNumber() {
-        this.number = Integer.valueOf(0);
+        this.number = 0;
     }
 
     public PDFNumber(Number number) {

@@ -235,12 +235,12 @@ public class PFMFile {
                 log.trace("glyphs: " + glyph1 + ", " + glyph2);
             }
 
-            Map<Integer, Integer> adjTab = kerningTab.get(Integer.valueOf(g1));
+            Map<Integer, Integer> adjTab = kerningTab.get(g1);
             if (adjTab == null) {
                 adjTab = new HashMap<Integer, Integer>();
             }
-            adjTab.put(Integer.valueOf(g2), Integer.valueOf(adj));
-            kerningTab.put(Integer.valueOf(g1), adjTab);
+            adjTab.put(g2, adj);
+            kerningTab.put(g1, adjTab);
         }
     }
 

@@ -62,7 +62,7 @@ public class RasterFont extends AFPFont {
      */
     public void addCharacterSet(int size, CharacterSet characterSet) {
         //TODO: replace with Integer.valueOf() once we switch to Java 5
-        this.charSets.put(new Integer(size), characterSet);
+        this.charSets.put(size, characterSet);
         this.charSet = characterSet;
     }
 
@@ -74,7 +74,7 @@ public class RasterFont extends AFPFont {
      */
     public CharacterSet getCharacterSet(int sizeInMpt) {
 
-        Integer requestedSize = Integer.valueOf(sizeInMpt);
+        Integer requestedSize = sizeInMpt;
         CharacterSet csm = charSets.get(requestedSize);
         double sizeInPt = sizeInMpt / 1000.0;
 
@@ -101,9 +101,9 @@ public class RasterFont extends AFPFont {
             Integer fontSize;
             if (!smallerSizes.isEmpty()
                             && (sizeInMpt - smallerSize) <= (largerSize - sizeInMpt)) {
-                fontSize = Integer.valueOf(smallerSize);
+                fontSize = smallerSize;
             } else {
-                fontSize = Integer.valueOf(largerSize);
+                fontSize = largerSize;
             }
             csm = charSets.get(fontSize);
 

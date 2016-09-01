@@ -91,7 +91,7 @@ public class CIDFull implements CIDSet {
         int nextBitSet = 0;
         for (int j = 0; j < glyphIndices.cardinality(); j++) {
             nextBitSet = glyphIndices.nextSetBit(nextBitSet);
-            glyphs.put(Integer.valueOf(nextBitSet), Integer.valueOf(nextBitSet));
+            glyphs.put(nextBitSet, nextBitSet);
             nextBitSet++;
         }
         return Collections.unmodifiableMap(glyphs);

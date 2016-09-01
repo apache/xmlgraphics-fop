@@ -1510,7 +1510,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             lineArea.addTrait(Trait.START_INDENT, lbp.startIndent);
         }
         if (lbp.endIndent != 0) {
-            lineArea.addTrait(Trait.END_INDENT, new Integer(lbp.endIndent));
+            lineArea.addTrait(Trait.END_INDENT, lbp.endIndent);
         }
         lineArea.setBPD(lbp.lineHeight);
         lineArea.setIPD(lbp.lineWidth);

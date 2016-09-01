@@ -47,10 +47,10 @@ public final class GradientMaker {
         Point2D startPoint = gp.getStartPoint();
         Point2D endPoint = gp.getEndPoint();
         List<Double> coords = new java.util.ArrayList<Double>(4);
-        coords.add(Double.valueOf(startPoint.getX()));
-        coords.add(Double.valueOf(startPoint.getY()));
-        coords.add(Double.valueOf(endPoint.getX()));
-        coords.add(Double.valueOf(endPoint.getY()));
+        coords.add(startPoint.getX());
+        coords.add(startPoint.getY());
+        coords.add(endPoint.getX());
+        coords.add(endPoint.getY());
         return makeGradient(gp, coords, baseTransform, transform);
     }
 
@@ -70,12 +70,12 @@ public final class GradientMaker {
             dy *= scale;
         }
         List<Double> coords = new java.util.ArrayList<Double>(6);
-        coords.add(Double.valueOf(center.getX() + dx));
-        coords.add(Double.valueOf(center.getY() + dy));
-        coords.add(Double.valueOf(0));
-        coords.add(Double.valueOf(center.getX()));
-        coords.add(Double.valueOf(center.getY()));
-        coords.add(Double.valueOf(radius));
+        coords.add(center.getX() + dx);
+        coords.add(center.getY() + dy);
+        coords.add(0d);
+        coords.add(center.getX());
+        coords.add(center.getY());
+        coords.add(radius);
         return makeGradient(gradient, coords, baseTransform, transform);
     }
 
@@ -101,7 +101,7 @@ public final class GradientMaker {
         double[] m = new double[6];
         gradientTransform.getMatrix(m);
         for (double d : m) {
-            matrix.add(Double.valueOf(d));
+            matrix.add(d);
         }
         return matrix;
     }

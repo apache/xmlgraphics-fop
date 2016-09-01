@@ -67,7 +67,7 @@ public class BidiAttributedCharacterIterator implements AttributedCharacterItera
                     currRunLevel = nextRunLevel;
                 } else if (nextRunLevel != currRunLevel) {
                     as.addAttribute(GVTAttributedCharacterIterator.TextAttribute.BIDI_LEVEL,
-                                    new Integer(currRunLevel), runStart, i);
+                            currRunLevel, runStart, i);
                     runStart = i;
                     runEnd = runStart;
                     currRunLevel = nextRunLevel;
@@ -75,7 +75,7 @@ public class BidiAttributedCharacterIterator implements AttributedCharacterItera
             }
             if ((currRunLevel >= 0) && (end > runStart)) {
                 as.addAttribute(GVTAttributedCharacterIterator.TextAttribute.BIDI_LEVEL,
-                                new Integer(currRunLevel), runStart, end);
+                        currRunLevel, runStart, end);
             }
             return as.getIterator();
         } else {

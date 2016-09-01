@@ -256,11 +256,11 @@ public final class PropertyParser extends PropertyTokenizer {
             break;
 
         case TOK_FLOAT:
-            prop = NumberProperty.getInstance(new Double(currentTokenValue));
+            prop = NumberProperty.getInstance(Double.valueOf(currentTokenValue));
             break;
 
         case TOK_INTEGER:
-            prop = NumberProperty.getInstance(new Integer(currentTokenValue));
+            prop = NumberProperty.getInstance(Integer.valueOf(currentTokenValue));
             break;
 
         case TOK_PERCENT:

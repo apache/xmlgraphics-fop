@@ -567,7 +567,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             log.trace("renderPage() " + page);
         }
         try {
-            pageIndices.put(page.getKey(), new Integer(page.getPageIndex()));
+            pageIndices.put(page.getKey(), page.getPageIndex());
             Rectangle viewArea = page.getViewArea();
             Dimension dim = new Dimension(viewArea.width, viewArea.height);
 
@@ -1048,8 +1048,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         FontTriplet triplet = (FontTriplet)text.getTrait(Trait.FONT);
         try {
-            painter.setFont(triplet.getName(), triplet.getStyle(), new Integer(triplet.getWeight()),
-                    "normal", new Integer(size), ct);
+            painter.setFont(triplet.getName(), triplet.getStyle(), triplet.getWeight(),
+                    "normal", size, ct);
         } catch (IFException e) {
             handleIFException(e);
         }

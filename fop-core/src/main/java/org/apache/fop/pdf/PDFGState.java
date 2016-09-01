@@ -90,18 +90,18 @@ public class PDFGState extends PDFObject {
         DEFAULT = new PDFGState();
         Map vals = DEFAULT.values;
         /*vals.put(LW, new Float(1.0));
-        vals.put(LC, new Integer(0));
-        vals.put(LJ, new Integer(0));
+        vals.put(LC, Integer.valueOf(0));
+        vals.put(LJ, Integer.valueOf(0));
         vals.put(ML, new Float(10.0));
         vals.put(D, "0 []");
         vals.put(RI, "RelativeColorimetric");
         vals.put(OP, Boolean.FALSE);
         vals.put(op, Boolean.FALSE);
-        vals.put(OPM, new Integer(1));
+        vals.put(OPM, Integer.valueOf(1));
         vals.put(Font, "");*/
 
-        vals.put(GSTATE_ALPHA_STROKE, new Float(1.0));
-        vals.put(GSTATE_ALPHA_NONSTROKE, new Float(1.0));
+        vals.put(GSTATE_ALPHA_STROKE, 1.0f);
+        vals.put(GSTATE_ALPHA_NONSTROKE, 1.0f);
     }
 
     private Map values = new java.util.HashMap();
@@ -126,9 +126,9 @@ public class PDFGState extends PDFObject {
      */
     public void setAlpha(float val, boolean fill) {
         if (fill) {
-            values.put(GSTATE_ALPHA_NONSTROKE, new Float(val));
+            values.put(GSTATE_ALPHA_NONSTROKE, val);
         } else {
-            values.put(GSTATE_ALPHA_STROKE, new Float(val));
+            values.put(GSTATE_ALPHA_STROKE, val);
         }
     }
 

@@ -196,7 +196,7 @@ public class PDFArrayTestCase extends PDFObjectTestCase {
      */
     @Test
     public void testAdd() {
-        intArray.add(new Integer(6));
+        intArray.add(Integer.valueOf(6));
         doubleArray.add(6.6);
         // Test some arbitrary values
         for (int i = 1; i <= 6; i++) {

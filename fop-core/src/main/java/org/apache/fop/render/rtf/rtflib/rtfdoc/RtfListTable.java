@@ -155,8 +155,8 @@ public class RtfListTable extends RtfContainer {
                 writeGroupMark(true);
 
                 writeOneAttributeNS(LIST_ID, style.getRtfList().getListId().toString());
-                writeOneAttributeNS(LIST_OVR_COUNT, new Integer(0));
-                writeOneAttributeNS(LIST_NUMBER, new Integer(z++));
+                writeOneAttributeNS(LIST_OVR_COUNT, 0);
+                writeOneAttributeNS(LIST_NUMBER, z++);
 
                 writeGroupMark(false);
                 writeGroupMark(false);
@@ -191,7 +191,7 @@ public class RtfListTable extends RtfContainer {
 
         writeOneAttributeNS(LIST_JUSTIFICATION, attrib.getValue(LIST_JUSTIFICATION));
         writeOneAttributeNS(LIST_FOLLOWING_CHAR, attrib.getValue(LIST_FOLLOWING_CHAR));
-        writeOneAttributeNS(LIST_SPACE, new Integer(0));
+        writeOneAttributeNS(LIST_SPACE, 0);
         writeOneAttributeNS(LIST_INDENT, attrib.getValue(LIST_INDENT));
 
         RtfListItem item = (RtfListItem)list.getChildren().get(0);

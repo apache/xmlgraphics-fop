@@ -41,20 +41,20 @@ public final class RtfStringConverter {
 
     private static final RtfStringConverter INSTANCE = new RtfStringConverter();
     private static final Map SPECIAL_CHARS;
-    private static final Character DBLQUOTE = new Character('\"');
-    private static final Character QUOTE = new Character('\'');
-    private static final Character SPACE = new Character(' ');
+    private static final Character DBLQUOTE = '\"';
+    private static final Character QUOTE = '\'';
+    private static final Character SPACE = ' ';
 
     /** List of characters to escape with corresponding replacement strings */
     static {
         SPECIAL_CHARS = new HashMap();
-        SPECIAL_CHARS.put(new Character('\t'), "tab");
-        SPECIAL_CHARS.put(new Character('\n'), "line");
-        SPECIAL_CHARS.put(new Character('\''), "rquote");
-        SPECIAL_CHARS.put(new Character('\"'), "rdblquote");
-        SPECIAL_CHARS.put(new Character('\\'), "\\");
-        SPECIAL_CHARS.put(new Character('{'), "{");
-        SPECIAL_CHARS.put(new Character('}'), "}");
+        SPECIAL_CHARS.put('\t', "tab");
+        SPECIAL_CHARS.put('\n', "line");
+        SPECIAL_CHARS.put('\'', "rquote");
+        SPECIAL_CHARS.put('\"', "rdblquote");
+        SPECIAL_CHARS.put('\\', "\\");
+        SPECIAL_CHARS.put('{', "{");
+        SPECIAL_CHARS.put('}', "}");
     }
 
     /** singleton pattern */
@@ -96,13 +96,13 @@ public final class RtfStringConverter {
         StringBuffer sb = new StringBuffer(Math.max(16, str.length()));
         // TODO: could be made more efficient (binary lookup, etc.)
         for (int i = 0; i < str.length(); i++) {
-            final Character c = new Character(str.charAt(i));
+            final Character c = str.charAt(i);
             Character d;
             String replacement;
             if (i != 0) {
-                d = new Character(str.charAt(i - 1));
+                d = str.charAt(i - 1);
             } else {
-                d = new Character(SPACE);
+                d = SPACE;
             }
 
             //This section modified by Chris Scott

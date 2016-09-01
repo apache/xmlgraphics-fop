@@ -281,7 +281,7 @@ public class RtfTextrun extends RtfContainer {
         ListIterator lit = children.listIterator(children.size());
         while (lit.hasPrevious()
                 && (lit.previous() instanceof RtfCloseGroupMark)) {
-            tmp.push(Integer.valueOf(((RtfCloseGroupMark)lit.next()).getBreakType()));
+            tmp.push(((RtfCloseGroupMark) lit.next()).getBreakType());
             lit.remove();
             deletedCloseGroupCount++;
         }

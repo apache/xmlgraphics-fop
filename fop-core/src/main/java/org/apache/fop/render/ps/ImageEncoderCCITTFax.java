@@ -50,17 +50,17 @@ public class ImageEncoderCCITTFax implements ImageEncoder {
     /** {@inheritDoc} */
     public String getImplicitFilter() {
         PSDictionary dict = new PSDictionary();
-        dict.put("/Columns", new Integer(ccitt.getSize().getWidthPx()));
+        dict.put("/Columns", ccitt.getSize().getWidthPx());
         int compression = ccitt.getCompression();
         switch (compression) {
         case TIFFImage.COMP_FAX_G3_1D :
-            dict.put("/K", new Integer(0));
+            dict.put("/K", 0);
             break;
         case TIFFImage.COMP_FAX_G3_2D :
-            dict.put("/K", new Integer(1));
+            dict.put("/K", 1);
             break;
         case TIFFImage.COMP_FAX_G4_2D :
-            dict.put("/K", new Integer(-1));
+            dict.put("/K", -1);
             break;
         default:
             throw new IllegalStateException(

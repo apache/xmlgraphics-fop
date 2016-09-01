@@ -70,12 +70,12 @@ public class PDFObjectExtension {
         } else if (value instanceof String) {
             double d = Double.parseDouble((String) value);
             if (Math.abs(Math.floor(d) - d) < 1E-10) {
-                return Long.valueOf((long) d);
+                return (long) d;
             } else {
-                return Double.valueOf(d);
+                return d;
             }
         } else {
-            return Integer.valueOf(0);
+            return 0;
         }
     }
 

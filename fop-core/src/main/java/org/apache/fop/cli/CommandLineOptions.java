@@ -602,11 +602,11 @@ public class CommandLineOptions {
             for (int j = 0; j < parts.length; j++) {
                 String s = parts[j];
                 if (s.matches("\\d+")) {
-                    renderingOptions.put(PrintRenderer.START_PAGE, new Integer(s));
+                    renderingOptions.put(PrintRenderer.START_PAGE, Integer.valueOf(s));
                 } else if (s.matches("\\d+-\\d+")) {
                     String[] startend = s.split("-");
-                    renderingOptions.put(PrintRenderer.START_PAGE, new Integer(startend[0]));
-                    renderingOptions.put(PrintRenderer.END_PAGE, new Integer(startend[1]));
+                    renderingOptions.put(PrintRenderer.START_PAGE, Integer.valueOf(startend[0]));
+                    renderingOptions.put(PrintRenderer.END_PAGE, Integer.valueOf(startend[1]));
                 } else {
                     PagesMode mode = PagesMode.byName(s);
                     renderingOptions.put(PrintRenderer.PAGES_MODE, mode);
@@ -623,7 +623,7 @@ public class CommandLineOptions {
                 || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the number of copies");
         } else {
-            renderingOptions.put(PrintRenderer.COPIES, new Integer(args[i + 1]));
+            renderingOptions.put(PrintRenderer.COPIES, Integer.valueOf(args[i + 1]));
             return 1;
         }
     }

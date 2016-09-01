@@ -106,7 +106,7 @@ extends RtfContainer {
         if (listTable != null) {
             return listTable;
         } else {
-            listTable = new RtfListTable(this, writer, new Integer(listNum), attr);
+            listTable = new RtfListTable(this, writer, listNum, attr);
             listTableContainer.addChild(listTable);
         }
 

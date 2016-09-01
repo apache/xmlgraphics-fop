@@ -49,10 +49,10 @@ final class FoUnitsConverter {
     /** conversion factors keyed by xsl:fo units names */
     private static final Map TWIP_FACTORS = new HashMap();
     static {
-        TWIP_FACTORS.put(FixedLength.MM, new Float(MM_TO_TWIPS));
-        TWIP_FACTORS.put(FixedLength.CM, new Float(CM_TO_TWIPS));
-        TWIP_FACTORS.put(FixedLength.POINT, new Float(POINT_TO_TWIPS));
-        TWIP_FACTORS.put(FixedLength.INCH, new Float(IN_TO_TWIPS));
+        TWIP_FACTORS.put(FixedLength.MM, MM_TO_TWIPS);
+        TWIP_FACTORS.put(FixedLength.CM, CM_TO_TWIPS);
+        TWIP_FACTORS.put(FixedLength.POINT, POINT_TO_TWIPS);
+        TWIP_FACTORS.put(FixedLength.INCH, IN_TO_TWIPS);
     }
 
     /** singleton pattern */

@@ -138,17 +138,17 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
         Node n = new Node(nodeIndex);
         ns.string.append(n.toNodeString());
         if (n.high != 0) {
-            ns.high.add(new Integer(pos));
+            ns.high.add(Integer.valueOf(pos));
             NodeString highNs = new NodeString(pos);
-            highNs.low.add(new Integer(pos));
+            highNs.low.add(Integer.valueOf(pos));
             int index = strings.indexOf(ns);
             strings.add(index, highNs);
             addNode(n.high, strings, highNs);
         }
         if (n.low != 0) {
-            ns.low.add(new Integer(pos));
+            ns.low.add(Integer.valueOf(pos));
             NodeString lowNs = new NodeString(pos);
-            lowNs.high.add(new Integer(pos));
+            lowNs.high.add(Integer.valueOf(pos));
             int index = strings.indexOf(ns);
             strings.add(index + 1, lowNs);
             addNode(n.low, strings, lowNs);

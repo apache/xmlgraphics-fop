@@ -235,7 +235,7 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
         boundingBoxes[0x<xsl:value-of select="$char-num"/>] = new Rectangle(<xsl:value-of select="@llx"/>, <xsl:value-of select="@lly"/>, <xsl:value-of select="@urx - @llx"/>, <xsl:value-of select="@ury - @lly"/>);</xsl:if></xsl:template>
   
 <xsl:template match="kerning">
-        first = new Integer(<xsl:value-of select="@kpx1"/>);
+        first = <xsl:value-of select="@kpx1"/>;
         pairs = (Map)kerning.get(first);
         if (pairs == null) {
             pairs = new java.util.HashMap();
@@ -244,8 +244,8 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
 <xsl:apply-templates select="pair"/></xsl:template>
   
 <xsl:template match="pair">
-        second = new Integer(<xsl:value-of select="@kpx2"/>);
-        pairs.put(second, new Integer(<xsl:value-of select="@kern"/>));
+        second = <xsl:value-of select="@kpx2"/>;
+        pairs.put(second, <xsl:value-of select="@kern"/>);
 </xsl:template>
 
 </xsl:stylesheet>

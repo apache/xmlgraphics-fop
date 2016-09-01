@@ -159,10 +159,10 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
         /** {@inheritDoc} */
         public List getEntries() {
             List entries = new java.util.ArrayList();
-            entries.add(Integer.valueOf(firstGlyph));
+            entries.add(firstGlyph);
             if (gca != null) {
                 for (int i = 0, n = gca.length; i < n; i++) {
-                    entries.add(Integer.valueOf(gca [ i ]));
+                    entries.add(gca[i]);
                 }
             }
             return entries;

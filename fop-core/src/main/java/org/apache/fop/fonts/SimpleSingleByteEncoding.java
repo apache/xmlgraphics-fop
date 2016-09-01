@@ -54,7 +54,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
 
     /** {@inheritDoc} */
     public char mapChar(char c) {
-        Character nc = charMap.get(Character.valueOf(c));
+        Character nc = charMap.get(c);
         if (nc != null) {
             return nc.charValue();
         }
@@ -119,7 +119,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
         }
         char newSlot = (char)(getLastChar() + 1);
         this.mapping.add(ch);
-        this.charMap.put(Character.valueOf(ch.getSingleUnicodeValue()), Character.valueOf(newSlot));
+        this.charMap.put(ch.getSingleUnicodeValue(), newSlot);
         return newSlot;
     }
 

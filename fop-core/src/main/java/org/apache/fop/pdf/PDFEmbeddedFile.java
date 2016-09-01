@@ -55,7 +55,7 @@ public class PDFEmbeddedFile extends PDFStream {
         super.populateStreamDict(lengthEntry);
         try {
             PDFDictionary dict = (PDFDictionary)get("Params");
-            dict.put("Size", new Integer(data.getSize()));
+            dict.put("Size", Integer.valueOf(data.getSize()));
         } catch (IOException ioe) {
             //ignore and just skip this entry as it's optional
         }

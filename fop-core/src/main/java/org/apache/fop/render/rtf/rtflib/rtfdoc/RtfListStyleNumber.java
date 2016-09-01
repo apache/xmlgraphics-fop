@@ -46,7 +46,7 @@ public class RtfListStyleNumber extends RtfListStyle {
         item.writeControlWord("ilvl0");
         item.writeOneAttribute(RtfListTable.LIST_NUMBER, "0");
         item.writeControlWord("pndec");
-        item.writeOneAttribute("pnstart", new Integer(1));
+        item.writeOneAttribute("pnstart", 1);
         item.writeOneAttribute("pnindent",
                 item.attrib.getValue(RtfListTable.LIST_INDENT));
         item.writeControlWord("pntxta.");
@@ -79,7 +79,7 @@ public class RtfListStyleNumber extends RtfListStyle {
     public void writeLevelGroup(RtfElement element)
     throws IOException {
         element.writeOneAttributeNS(
-                RtfListTable.LIST_START_AT, new Integer(1));
+                RtfListTable.LIST_START_AT, 1);
         element.attrib.set(RtfListTable.LIST_NUMBER_TYPE, 0);
 
         element.writeGroupMark(true);
@@ -92,6 +92,6 @@ public class RtfListStyleNumber extends RtfListStyle {
                 RtfListTable.LIST_NUM_POSITION, "\\'01;");
         element.writeGroupMark(false);
 
-        element.writeOneAttribute(RtfListTable.LIST_FONT_TYPE, new Integer(0));
+        element.writeOneAttribute(RtfListTable.LIST_FONT_TYPE, 0);
     }
 }

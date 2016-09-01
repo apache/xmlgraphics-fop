@@ -260,7 +260,7 @@ public class TTXFile {
     }
     public int mapCharToGlyph(int c) {
         if (cmap != null) {
-            Integer g = cmap.get(Integer.valueOf(c));
+            Integer g = cmap.get(c);
             if (g != null) {
                 return (int) g;
             } else {
@@ -389,7 +389,7 @@ public class TTXFile {
                         missingRequiredAttribute(en, "glyph");
                     }
                     int gid = mapGlyphId(glyph, en);
-                    alternates.add(Integer.valueOf(gid));
+                    alternates.add(gid);
                 } else {
                     notPermittedInElementContext(en, getParent(), pn);
                 }
@@ -401,7 +401,7 @@ public class TTXFile {
                         missingRequiredAttribute(en, "glyph");
                     }
                     int gid = mapGlyphId(glyph, en);
-                    coverageEntries.add(Integer.valueOf(gid));
+                    coverageEntries.add(gid);
                 } else {
                     notPermittedInElementContext(en, getParent(), pn);
                 }
@@ -817,7 +817,7 @@ public class TTXFile {
                         missingRequiredAttribute(en, "value");
                     } else {
                         int gid = mapGlyphId(value, en);
-                        coverageEntries.add(Integer.valueOf(gid));
+                        coverageEntries.add(gid);
                     }
                 } else {
                     notPermittedInElementContext(en, getParent(), pnx);
@@ -1030,7 +1030,7 @@ public class TTXFile {
                         missingRequiredAttribute(en, "glyph");
                     }
                     int gid = mapGlyphId(glyph, en);
-                    coverageEntries.add(Integer.valueOf(gid));
+                    coverageEntries.add(gid);
                 } else {
                     notPermittedInElementContext(en, getParent(), pn);
                 }
@@ -1708,7 +1708,7 @@ public class TTXFile {
                         missingRequiredAttribute(en, "value");
                     } else {
                         int gid = mapGlyphId(value, en);
-                        substitutes.add(Integer.valueOf(gid));
+                        substitutes.add(gid);
                     }
                 } else {
                     notPermittedInElementContext(en, getParent(), pn);
@@ -1730,8 +1730,8 @@ public class TTXFile {
                     } else {
                         ogid = mapGlyphId(out, en);
                     }
-                    coverageEntries.add(Integer.valueOf(igid));
-                    subtableEntries.add(Integer.valueOf(ogid));
+                    coverageEntries.add(igid);
+                    subtableEntries.add(ogid);
                 } else {
                     notPermittedInElementContext(en, getParent(), pn);
                 }
@@ -2594,8 +2594,8 @@ public class TTXFile {
         private Map<Integer, Integer> getCMAP() {
             Map<Integer, Integer> cmap = new TreeMap();
             for (int[] cme : cmapEntries) {
-                Integer c = Integer.valueOf(cme[0]);
-                Integer g = Integer.valueOf(cme[1]);
+                Integer c = cme[0];
+                Integer g = cme[1];
                 cmap.put(c, g);
             }
             return cmap;
@@ -2603,8 +2603,8 @@ public class TTXFile {
         private Map<Integer, Integer> getGMAP() {
             Map<Integer, Integer> gmap = new TreeMap();
             for (int[] cme : cmapEntries) {
-                Integer c = Integer.valueOf(cme[0]);
-                Integer g = Integer.valueOf(cme[1]);
+                Integer c = cme[0];
+                Integer g = cme[1];
                 gmap.put(g, c);
             }
             return gmap;
@@ -2636,21 +2636,21 @@ public class TTXFile {
             List entries = new ArrayList<Integer>();
             int s = -1;
             int l = -1;
-            Integer zero = Integer.valueOf(0);
+            Integer zero = 0;
             for (int[] m : cma) {
                 int g = m[0];
                 int c = m[1];
                 if (s < 0) {
                     s = g;
                     l = g - 1;
-                    entries.add(Integer.valueOf(s));
+                    entries.add(s);
                 }
                 while (g > (l + 1)) {
                     entries.add(zero);
                     l++;
                 }
                 assert l == (g - 1);
-                entries.add(Integer.valueOf(c));
+                entries.add(c);
                 l = g;
             }
             return GlyphClassTable.createClassTable(entries);
@@ -3140,7 +3140,7 @@ public class TTXFile {
                     }
                 }
             }
-            return Integer.valueOf(ncMax);
+            return ncMax;
         }
         private Anchor[][] extractComponents() {
             Anchor[][] cam = new Anchor [ components.size() ][];
@@ -3206,7 +3206,7 @@ public class TTXFile {
                     }
                 }
             }
-            return Integer.valueOf(ncMax);
+            return ncMax;
         }
         private Integer computeLigaturesComponentCount(Anchor[][][] lam) {
             int nxMax = 0;
@@ -3220,7 +3220,7 @@ public class TTXFile {
                     }
                 }
             }
-            return Integer.valueOf(nxMax);
+            return nxMax;
         }
         private Anchor[] extractAttachmentAnchors() {
             int na = attachmentAnchors.size();

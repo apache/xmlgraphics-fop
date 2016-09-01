@@ -121,12 +121,12 @@ public final class NumberProperty extends Property implements Numeric {
         //if possible
         if (num == Math.floor(num)) {
             if (num < Integer.MAX_VALUE) {
-                this.number = new Integer((int)num);
+                this.number = (int) num;
             } else {
-                this.number = new Long((long)num);
+                this.number = (long) num;
             }
         } else {
-            this.number = new Double(num);
+            this.number = num;
         }
     }
 
@@ -135,7 +135,7 @@ public final class NumberProperty extends Property implements Numeric {
      * @param num integer numeric value for property
      */
     private NumberProperty(int num) {
-        this.number = new Integer(num);
+        this.number = num;
     }
 
     /**

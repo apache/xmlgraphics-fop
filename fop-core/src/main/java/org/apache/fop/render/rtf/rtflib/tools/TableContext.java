@@ -168,9 +168,9 @@ public class TableContext implements ITableColumnsInfo {
             while (colIndex >= colFirstSpanningCol.size()) {
                 setNextFirstSpanningCol(false);
             }
-            colFirstSpanningCol.set(colIndex, Boolean.valueOf(bFirstSpanningCol));
+            colFirstSpanningCol.set(colIndex, bFirstSpanningCol);
         } else {
-            colFirstSpanningCol.add(Boolean.valueOf(bFirstSpanningCol));
+            colFirstSpanningCol.add(bFirstSpanningCol);
         }
     }
 
@@ -181,7 +181,7 @@ public class TableContext implements ITableColumnsInfo {
      */
     public void setNextFirstSpanningCol(
             boolean bFirstSpanningCol) {
-        colFirstSpanningCol.add(Boolean.valueOf(bFirstSpanningCol));
+        colFirstSpanningCol.add(bFirstSpanningCol);
     }
 
     /**
@@ -195,14 +195,14 @@ public class TableContext implements ITableColumnsInfo {
             Integer i = (Integer)colRowSpanningNumber.get(z);
 
             if (i.intValue() > 0) {
-                i = new Integer(i.intValue() - 1);
+                i = i.intValue() - 1;
             }
 
             colRowSpanningNumber.set(z, i);
 
             if (i.intValue() == 0) {
                 colRowSpanningAttrs.set(z, null);
-                colFirstSpanningCol.set(z, Boolean.valueOf(false));
+                colFirstSpanningCol.set(z, false);
             }
         }
     }
@@ -238,7 +238,7 @@ public class TableContext implements ITableColumnsInfo {
             log.warn("Column width for column " + (colIndex + 1) + " is not defined, using "
                     + INVALID_COLUMN_WIDTH);
             while (colIndex >= getNumberOfColumns()) {
-                setNextColumnWidth(new Float(INVALID_COLUMN_WIDTH));
+                setNextColumnWidth(INVALID_COLUMN_WIDTH);
             }
         }
         return ((Float)colWidths.get(colIndex)).floatValue();

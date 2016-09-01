@@ -129,7 +129,7 @@ public class RtfAttributes implements Cloneable {
      * @return this (which now contains the new entry), for chaining calls
      */
     public RtfAttributes set(String name, int value) {
-        values.put(name, new Integer(value));
+        values.put(name, value);
         return this;
     }
 

@@ -39,7 +39,7 @@ public class AFPResourceLevelDefaults {
     }
 
     private static void registerResourceTypeName(String name, byte type) {
-        RESOURCE_TYPE_NAMES.put(name.toLowerCase(), new Byte(type));
+        RESOURCE_TYPE_NAMES.put(name.toLowerCase(), type);
     }
 
     private static byte getResourceType(String resourceTypeName) {
@@ -77,7 +77,7 @@ public class AFPResourceLevelDefaults {
      * @param level the resource level
      */
     public void setDefaultResourceLevel(byte type, AFPResourceLevel level) {
-        this.defaultResourceLevels.put(new Byte(type), level);
+        this.defaultResourceLevels.put(type, level);
     }
 
     /**
@@ -86,7 +86,7 @@ public class AFPResourceLevelDefaults {
      * @return the default resource level
      */
     public AFPResourceLevel getDefaultResourceLevel(byte type) {
-        AFPResourceLevel result = (AFPResourceLevel)this.defaultResourceLevels.get(new Byte(type));
+        AFPResourceLevel result = (AFPResourceLevel)this.defaultResourceLevels.get(type);
         if (result == null) {
             result = AFPResourceInfo.DEFAULT_LEVEL;
         }

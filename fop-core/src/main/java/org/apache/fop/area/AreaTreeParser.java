@@ -1085,7 +1085,7 @@ public class AreaTreeParser {
                 if (value != null) {
                     Class cl = Trait.getTraitClass(trait);
                     if (cl == Integer.class) {
-                        area.addTrait(trait, new Integer(value));
+                        area.addTrait(trait, Integer.valueOf(value));
                     } else if (cl == Boolean.class) {
                         area.addTrait(trait, Boolean.valueOf(value));
                     } else if (cl == String.class) {

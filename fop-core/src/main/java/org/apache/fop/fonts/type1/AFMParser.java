@@ -148,8 +148,8 @@ public class AFMParser {
         VALUE_PARSERS.put(KPY, new NotImplementedYet(KPY));
 
         PARSE_MODE_CHANGES = new HashMap<String, Integer>();
-        PARSE_MODE_CHANGES.put(START_CHAR_METRICS, new Integer(PARSE_CHAR_METRICS));
-        PARSE_MODE_CHANGES.put(END_CHAR_METRICS, new Integer(PARSE_NORMAL));
+        PARSE_MODE_CHANGES.put(START_CHAR_METRICS, PARSE_CHAR_METRICS);
+        PARSE_MODE_CHANGES.put(END_CHAR_METRICS, PARSE_NORMAL);
     }
 
     /**
@@ -278,9 +278,9 @@ public class AFMParser {
 
         protected Number getNumberValue(String line, int startpos) {
             try {
-                return new Integer(getIntegerValue(line, startpos));
+                return getIntegerValue(line, startpos);
             } catch (NumberFormatException nfe) {
-                return new Double(getDoubleValue(line, startpos));
+                return getDoubleValue(line, startpos);
             }
         }
 
@@ -384,7 +384,7 @@ public class AFMParser {
 
         public void parse(String line, int startpos, Stack<Object> stack) throws IOException {
             int value = getIntegerValue(line, startpos);
-            setValue(getContextObject(stack), int.class, new Integer(value));
+            setValue(getContextObject(stack), int.class, value);
         }
     }
 
@@ -395,7 +395,7 @@ public class AFMParser {
 
         public void parse(String line, int startpos, Stack<Object> stack) throws IOException {
             double value = getDoubleValue(line, startpos);
-            setValue(getContextObject(stack), double.class, new Double(value));
+            setValue(getContextObject(stack), double.class, value);
         }
     }
 
@@ -429,7 +429,7 @@ public class AFMParser {
 
         public void parse(String line, int startpos, Stack<Object> stack) throws IOException {
             double value = getDoubleValue(line, startpos);
-            setValue(getContextObject(stack), double.class, new Double(value));
+            setValue(getContextObject(stack), double.class, value);
         }
     }
 

@@ -308,7 +308,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
         icm.getBlues(blues);
         for (int i = 0; i < icm.getMapSize(); i++) {
             if ((alphas[i] & 0xFF) == 0) {
-                return Integer.valueOf(i);
+                return i;
             }
         }
         return null;

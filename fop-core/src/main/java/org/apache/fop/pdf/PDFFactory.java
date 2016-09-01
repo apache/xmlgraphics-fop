@@ -1398,8 +1398,8 @@ public class PDFFactory {
     public PDFSeparationColorSpace makeSeparationColorSpace(PDFResourceContext res,
             NamedColorSpace ncs) {
         String colorName = ncs.getColorName();
-        final Double zero = new Double(0d);
-        final Double one = new Double(1d);
+        final Double zero = 0d;
+        final Double one = 1d;
         List domain = Arrays.asList(new Double[] {zero, one});
         List range = Arrays.asList(new Double[] {zero, one, zero, one, zero, one});
         float[] cZero = new float[] {1f, 1f, 1f};

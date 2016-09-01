@@ -122,7 +122,7 @@ public final class RtfColorTable {
 
     /** define a named color for getColorNumber(String) */
     private void addNamedColor(String name, int colorNumber) {
-        namedColors.put(name.toLowerCase(), new Integer(colorNumber));
+        namedColors.put(name.toLowerCase(), colorNumber);
     }
 
     //////////////////////////////////////////////////
@@ -147,7 +147,7 @@ public final class RtfColorTable {
      * @return The number of the color in the table
      */
     public Integer getColorNumber(int red, int green, int blue) {
-        Integer identifier = new Integer(determineIdentifier(red, green, blue));
+        Integer identifier = determineIdentifier(red, green, blue);
         Object o = colorIndex.get(identifier);
         int retVal;
 
@@ -166,7 +166,7 @@ public final class RtfColorTable {
             retVal = ((Integer) o).intValue() + 1;
         }
 
-        return new Integer(retVal);
+        return retVal;
     }
 
     /**
@@ -215,7 +215,7 @@ public final class RtfColorTable {
      * @param i Identifier of color
      */
     private void addColor(Integer i) {
-        colorIndex.put(i, new Integer(colorTable.size()));
+        colorIndex.put(i, colorTable.size());
         colorTable.addElement(i);
     }
 

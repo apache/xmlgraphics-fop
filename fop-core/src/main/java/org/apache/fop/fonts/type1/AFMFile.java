@@ -430,7 +430,7 @@ public class AFMFile {
                     continue;
                 }
                 if (container == null) {
-                    Integer k1 = Integer.valueOf(chm1.getCharCode());
+                    Integer k1 = chm1.getCharCode();
                     container = m.get(k1);
                     if (container == null) {
                         container = new java.util.HashMap<Integer, Integer>();
@@ -438,8 +438,8 @@ public class AFMFile {
                     }
                 }
                 Dimension2D dim = entryTo.getValue();
-                container.put(Integer.valueOf(chm2.getCharCode()),
-                        Integer.valueOf((int)Math.round(dim.getWidth())));
+                container.put(chm2.getCharCode(),
+                        (int) Math.round(dim.getWidth()));
             }
         }
         return m;

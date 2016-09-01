@@ -43,7 +43,7 @@ public class BasicEventTestCase {
         Event ev = new Event(this, "123", EventSeverity.INFO,
                 Event.paramsBuilder()
                     .param("reason", "I'm tired")
-                    .param("blah", new Integer(23))
+                    .param("blah", Integer.valueOf(23))
                     .build());
         broadcaster.broadcastEvent(ev);
 
@@ -52,7 +52,7 @@ public class BasicEventTestCase {
         assertEquals("123", listener.event.getEventID());
         assertEquals(EventSeverity.INFO, listener.event.getSeverity());
         assertEquals("I'm tired", ev.getParam("reason"));
-        assertEquals(new Integer(23), ev.getParam("blah"));
+        assertEquals(Integer.valueOf(23), ev.getParam("blah"));
 
         broadcaster.removeEventListener(listener);
         assertFalse(broadcaster.hasEventListeners());
@@ -79,7 +79,7 @@ public class BasicEventTestCase {
                 listener.event.getEventID());
         assertEquals(EventSeverity.WARN, listener.event.getSeverity());
         assertEquals("I'm tired", ev.getParam("reason"));
-        assertEquals(new Integer(23), ev.getParam("blah"));
+        assertEquals(Integer.valueOf(23), ev.getParam("blah"));
 
         broadcaster.removeEventListener(listener);
         assertFalse(broadcaster.hasEventListeners());

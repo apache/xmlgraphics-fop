@@ -98,7 +98,7 @@ public class BorderManager {
     public Character getCharacter(int x, int y) {
         Character c = null;
         if (borderInfo[y][x] != null) {
-            c = new Character(borderInfo[y][x].convert2Char());
+            c = borderInfo[y][x].convert2Char();
         }
         return c;
     }

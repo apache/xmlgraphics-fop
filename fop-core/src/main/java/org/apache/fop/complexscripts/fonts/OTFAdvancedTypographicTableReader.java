@@ -557,7 +557,7 @@ public final class OTFAdvancedTypographicTableReader {
         for (int i = 0, n = ng; i < n; i++) {
             int g = in.readTTFUShort();
             ga[i] = g;
-            entries.add(Integer.valueOf(g));
+            entries.add(g);
         }
         // dump info if debugging
         if (log.isDebugEnabled()) {
@@ -613,7 +613,7 @@ public final class OTFAdvancedTypographicTableReader {
         in.skip(2);
         // read start glyph
         int sg = in.readTTFUShort();
-        entries.add(Integer.valueOf(sg));
+        entries.add(sg);
         // read glyph count
         int ng = in.readTTFUShort();
         // read glyph classes
@@ -621,7 +621,7 @@ public final class OTFAdvancedTypographicTableReader {
         for (int i = 0, n = ng; i < n; i++) {
             int gc = in.readTTFUShort();
             ca[i] = gc;
-            entries.add(Integer.valueOf(gc));
+            entries.add(gc);
         }
         // dump info if debugging
         if (log.isDebugEnabled()) {
@@ -687,7 +687,7 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // read coverage table
         seMapping = readCoverageTable(tableTag + " single substitution coverage", subtableOffset + co);
-        seEntries.add(Integer.valueOf(dg));
+        seEntries.add(dg);
     }
 
     private void readSingleSubTableFormat2(int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
@@ -715,7 +715,7 @@ public final class OTFAdvancedTypographicTableReader {
                 log.debug(tableTag + " single substitution glyph[" + i + "]: " + gs);
             }
             gsa[i] = gs;
-            seEntries.add(Integer.valueOf(gs));
+            seEntries.add(gs);
         }
     }
 
@@ -1101,7 +1101,7 @@ public final class OTFAdvancedTypographicTableReader {
         // store results
         seMapping = ct;
         seEntries.add(cdt);
-        seEntries.add(Integer.valueOf(ngc));
+        seEntries.add(ngc);
         seEntries.add(rsa);
     }
 
@@ -1397,7 +1397,7 @@ public final class OTFAdvancedTypographicTableReader {
         seEntries.add(icdt);
         seEntries.add(bcdt);
         seEntries.add(lcdt);
-        seEntries.add(Integer.valueOf(ngc));
+        seEntries.add(ngc);
         seEntries.add(rsa);
     }
 
@@ -1999,8 +1999,8 @@ public final class OTFAdvancedTypographicTableReader {
         seMapping = ct;
         seEntries.add(cdt1);
         seEntries.add(cdt2);
-        seEntries.add(Integer.valueOf(nc1));
-        seEntries.add(Integer.valueOf(nc2));
+        seEntries.add(nc1);
+        seEntries.add(nc2);
         seEntries.add(pvm);
     }
 
@@ -2225,7 +2225,7 @@ public final class OTFAdvancedTypographicTableReader {
         // store results
         seMapping = mct;
         seEntries.add(bct);
-        seEntries.add(Integer.valueOf(nmc));
+        seEntries.add(nmc);
         seEntries.add(maa);
         seEntries.add(bam);
     }
@@ -2359,8 +2359,8 @@ public final class OTFAdvancedTypographicTableReader {
         // store results
         seMapping = mct;
         seEntries.add(lct);
-        seEntries.add(Integer.valueOf(nmc));
-        seEntries.add(Integer.valueOf(mxc));
+        seEntries.add(nmc);
+        seEntries.add(mxc);
         seEntries.add(maa);
         seEntries.add(lam);
     }
@@ -2466,7 +2466,7 @@ public final class OTFAdvancedTypographicTableReader {
         // store results
         seMapping = mct1;
         seEntries.add(mct2);
-        seEntries.add(Integer.valueOf(nmc));
+        seEntries.add(nmc);
         seEntries.add(maa);
         seEntries.add(mam);
     }
@@ -2660,7 +2660,7 @@ public final class OTFAdvancedTypographicTableReader {
         // store results
         seMapping = ct;
         seEntries.add(cdt);
-        seEntries.add(Integer.valueOf(ngc));
+        seEntries.add(ngc);
         seEntries.add(rsa);
     }
 
@@ -2956,7 +2956,7 @@ public final class OTFAdvancedTypographicTableReader {
         seEntries.add(icdt);
         seEntries.add(bcdt);
         seEntries.add(lcdt);
-        seEntries.add(Integer.valueOf(ngc));
+        seEntries.add(ngc);
         seEntries.add(rsa);
     }
 
@@ -3755,12 +3755,12 @@ public final class OTFAdvancedTypographicTableReader {
         if (seEntries != null) {
             if ((tableType == GlyphTable.GLYPH_TABLE_TYPE_DEFINITION) || (seEntries.size() > 0)) {
                 if (seSubtables != null) {
-                    Integer tt = Integer.valueOf(tableType);
-                    Integer lt = Integer.valueOf(lookupType);
-                    Integer ln = Integer.valueOf(lookupSequence);
-                    Integer lf = Integer.valueOf(lookupFlags);
-                    Integer sn = Integer.valueOf(subtableSequence);
-                    Integer sf = Integer.valueOf(subtableFormat);
+                    Integer tt = tableType;
+                    Integer lt = lookupType;
+                    Integer ln = lookupSequence;
+                    Integer lf = lookupFlags;
+                    Integer sn = subtableSequence;
+                    Integer sf = subtableFormat;
                     seSubtables.add(new Object[] { tt, lt, ln, lf, sn, sf, seMapping, seEntries });
                 }
             }

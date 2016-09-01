@@ -275,8 +275,8 @@ public abstract class OpenFont {
         UnicodeMapping(OpenFont font, int glyphIndex, int unicodeIndex) {
             this.unicodeIndex = unicodeIndex;
             this.glyphIndex = glyphIndex;
-            font.glyphToUnicodeMap.put(new Integer(glyphIndex), new Integer(unicodeIndex));
-            font.unicodeToGlyphMap.put(new Integer(unicodeIndex), new Integer(glyphIndex));
+            font.glyphToUnicodeMap.put(glyphIndex, unicodeIndex);
+            font.unicodeToGlyphMap.put(unicodeIndex, glyphIndex);
         }
 
         /**
@@ -535,7 +535,7 @@ public abstract class OpenFont {
                                        & 0xffff;
                             //mtxTab[glyphIdx].setName(mtxTab[glyphIdx].getName() + " - "+(char)j);
                             unicodeMappings.add(new UnicodeMapping(this, glyphIdx, j));
-                            mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
+                            mtxTab[glyphIdx].getUnicodeIndex().add(j);
 
                             if (encodingID == 0 && j >= 0xF020 && j <= 0xF0FF) {
                                 //Experimental: Mapping 0xF020-0xF0FF to 0x0020-0x00FF
@@ -545,12 +545,12 @@ public abstract class OpenFont {
                                 if (!eightBitGlyphs.get(mapped)) {
                                     //Only map if Unicode code point hasn't been mapped before
                                     unicodeMappings.add(new UnicodeMapping(this, glyphIdx, mapped));
-                                    mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(mapped));
+                                    mtxTab[glyphIdx].getUnicodeIndex().add(mapped);
                                 }
                             }
 
                             // Also add winAnsiWidth
-                            List<Integer> v = ansiIndex.get(new Integer(j));
+                            List<Integer> v = ansiIndex.get(j);
                             if (v != null) {
                                 for (Integer aIdx : v) {
                                     ansiWidth[aIdx.intValue()]
@@ -576,7 +576,7 @@ public abstract class OpenFont {
                             glyphIdx = (j + cmapDeltas[i]) & 0xffff;
 
                             if (glyphIdx < mtxTab.length) {
-                                mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
+                                mtxTab[glyphIdx].getUnicodeIndex().add(j);
                             } else {
                                 log.debug("Glyph " + glyphIdx
                                                    + " out of range: "
@@ -585,7 +585,7 @@ public abstract class OpenFont {
 
                             unicodeMappings.add(new UnicodeMapping(this, glyphIdx, j));
                             if (glyphIdx < mtxTab.length) {
-                                mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
+                                mtxTab[glyphIdx].getUnicodeIndex().add(j);
                             } else {
                                 log.debug("Glyph " + glyphIdx
                                                    + " out of range: "
@@ -593,7 +593,7 @@ public abstract class OpenFont {
                             }
 
                             // Also add winAnsiWidth
-                            List<Integer> v = ansiIndex.get(new Integer(j));
+                            List<Integer> v = ansiIndex.get(j);
                             if (v != null) {
                                 for (Integer aIdx : v) {
                                     ansiWidth[aIdx.intValue()] = mtxTab[glyphIdx].getWx();
@@ -685,8 +685,8 @@ public abstract class OpenFont {
         // same char (eg bullet) is repeated more than one place
         ansiIndex = new HashMap<Integer, List<Integer>>();
         for (int i = 32; i < Glyphs.WINANSI_ENCODING.length; i++) {
-            Integer ansi = new Integer(i);
-            Integer uni = new Integer(Glyphs.WINANSI_ENCODING[i]);
+            Integer ansi = i;
+            Integer uni = (int) Glyphs.WINANSI_ENCODING[i];
 
             List<Integer> v = ansiIndex.get(uni);
             if (v == null) {
@@ -1614,7 +1614,7 @@ public abstract class OpenFont {
                             if (adjTab == null) {
                                 adjTab = new HashMap<Integer, Integer>();
                             }
-                            adjTab.put(u2, new Integer(convertTTFUnit2PDFUnit(kpx)));
+                            adjTab.put(u2, convertTTFUnit2PDFUnit(kpx));
                             kerningTab.put(iObj, adjTab);
                         }
                     }
@@ -1852,7 +1852,7 @@ public abstract class OpenFont {
         List<Integer> ret = new ArrayList<Integer>();
         for (int i = 32; i < Glyphs.WINANSI_ENCODING.length; i++) {
             if (unicode == Glyphs.WINANSI_ENCODING[i]) {
-                ret.add(new Integer(i));
+                ret.add(i);
             }
         }
         return ret.toArray(new Integer[ret.size()]);
@@ -1898,7 +1898,7 @@ public abstract class OpenFont {
      * @return unicode code point
      */
     private Integer glyphToUnicode(int glyphIndex) {
-        return glyphToUnicodeMap.get(new Integer(glyphIndex));
+        return glyphToUnicodeMap.get(glyphIndex);
     }
 
     /**
@@ -1909,7 +1909,7 @@ public abstract class OpenFont {
      */
     private Integer unicodeToGlyph(int unicodeIndex) throws IOException {
         final Integer result
-            = unicodeToGlyphMap.get(new Integer(unicodeIndex));
+            = unicodeToGlyphMap.get(unicodeIndex);
         if (result == null) {
             throw new IOException(
                     "Glyph index not found for unicode value " + unicodeIndex);
