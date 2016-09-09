@@ -188,14 +188,16 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
     private void addStructTreeBBox(Rectangle rect) {
         if (accessEnabled && getDocumentHandler().getPDFDocument().getProfile().getPDFUAMode().isEnabled()) {
             PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
-            PDFDictionary d = new PDFDictionary();
-            int x = rect.x / 1000;
-            int y = rect.y / 1000;
-            int w = rect.width / 1000;
-            int h = rect.height / 1000;
-            d.put("BBox", new PDFArray(x, y, w, h));
-            d.put("O", new PDFName("Layout"));
-            structElem.put("A", d);
+            if (structElem != null) { //structElem is null if the image is marked as an artifact
+                PDFDictionary d = new PDFDictionary();
+                int x = rect.x / 1000;
+                int y = rect.y / 1000;
+                int w = rect.width / 1000;
+                int h = rect.height / 1000;
+                d.put("BBox", new PDFArray(x, y, w, h));
+                d.put("O", new PDFName("Layout"));
+                structElem.put("A", d);
+            }
         }
     }
 

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+    xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
+    language="en" font-family="DejaVu LGC Serif">
+  
+  <fo:layout-master-set>
+    
+    <fo:simple-page-master master-name="normal" page-height="29.7cm" page-width="21cm" margin="2cm">
+      <fo:region-body/>
+    </fo:simple-page-master>
+    
+    <fo:simple-page-master master-name="with-header" page-height="29.7cm" page-width="21cm" margin="2cm">
+      <fo:region-body margin-top="2.5cm"/>
+      <fo:region-before extent="2cm"/>
+    </fo:simple-page-master>
+    
+  </fo:layout-master-set>
+  
+  <fo:declarations>
+    <x:xmpmeta xmlns:x="adobe:ns:meta/">
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+        <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+          <dc:title>PDF/UA test case provoking an NPE with artifact images.</dc:title>
+          <dc:creator>The Apache Software Foundation</dc:creator>
+          <dc:description>Demonstrates a NullPointerException a NullPointerException occurring with activated PDF/UA and when an image is marked as an artifact. See FOP-2646</dc:description>
+        </rdf:Description>
+      </rdf:RDF>
+    </x:xmpmeta>
+  </fo:declarations>
+  
+  <fo:page-sequence id="ps1" master-reference="with-header">
+    
+    <fo:static-content flow-name="xsl-region-before"> <!-- Don't do role="artifact" here! -->
+      <fo:block><fo:retrieve-marker retrieve-class-name="running-header" retrieve-position="last-ending-within-page" retrieve-boundary="page-sequence"/></fo:block>
+    </fo:static-content>
+    
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block><fo:marker marker-class-name="running-header"><fo:wrapper role="artifact">Chapter 1</fo:wrapper></fo:marker>Chapter 1</fo:block>
+      <fo:block>Some text and an image wrapped in an fo:wrapper that is marked as an artifact:</fo:block>
+      <fo:block><fo:wrapper role="artifact"><fo:external-graphic fox:alt-text="A red dot" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9YGARc5KB0XV+IAAAAddEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIFRoZSBHSU1Q72QlbgAAAF1JREFUGNO9zL0NglAAxPEfdLTs4BZM4DIO4C7OwQg2JoQ9LE1exdlYvBBeZ7jqch9//q1uH4TLzw4d6+ErXMMcXuHWxId3KOETnnXXV6MJpcq2MLaI97CER3N0vr4MkhoXe0rZigAAAABJRU5ErkJggg=="/></fo:wrapper></fo:block>
+      <fo:block>Some text.</fo:block>
+      <fo:block><fo:marker marker-class-name="running-header"><fo:wrapper role="artifact">Chapter 2</fo:wrapper></fo:marker>Chapter 2</fo:block>
+      <fo:block>Some text.</fo:block>
+      
+      <fo:block break-before="page"/>
+      
+      <fo:block><fo:marker marker-class-name="running-header"><fo:wrapper role="artifact">Chapter 3</fo:wrapper></fo:marker>Chapter 3</fo:block>
+      <fo:block>Some text.</fo:block>
+      
+    </fo:flow>
+  </fo:page-sequence>
+
+  <fo:page-sequence id="ps2" master-reference="normal">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>Next Page Sequence. Does accessibility still work?<fo:wrapper role="artifact">Artifact</fo:wrapper></fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
