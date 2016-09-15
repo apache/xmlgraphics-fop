@@ -19,10 +19,12 @@
 
 package org.apache.fop.pdf;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Arrays;
 
 /**
  * Class representing a PDF stream.
@@ -191,4 +193,9 @@ public class PDFStream extends AbstractPDFStream {
         return len;
     }
 
+    public int streamHashCode() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        outputRawStreamData(bos);
+        return Arrays.hashCode(bos.toByteArray());
+    }
 }

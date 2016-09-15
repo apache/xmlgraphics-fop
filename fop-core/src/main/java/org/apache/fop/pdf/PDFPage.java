@@ -118,9 +118,9 @@ public class PDFPage extends PDFResourceContext {
      *
      * @param contents the contents of the page
      */
-    public void setContents(PDFStream contents) {
+    public void setContents(PDFReference contents) {
         if (contents != null) {
-            put("Contents", new PDFReference(contents));
+            put("Contents", contents);
         }
     }
 
