@@ -43,6 +43,7 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFResources;
+import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.render.extensions.prepress.PageBoundaries;
 import org.apache.fop.render.extensions.prepress.PageScale;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
@@ -97,6 +98,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             = new PDFDocumentNavigationHandler(this);
 
     private Map<Integer, PDFArray> pageNumbers = new HashMap<Integer, PDFArray>();
+    private Map<Integer, PDFReference> contents = new HashMap<Integer, PDFReference>();
 
     /**
      * Default constructor.
@@ -287,8 +289,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         }
         try {
             this.documentNavigationHandler.commit();
-            this.pdfDoc.registerObject(generator.getStream());
-            currentPage.setContents(generator.getStream());
+            setUpContents();
             PDFAnnotList annots = currentPage.getAnnotations();
             if (annots != null) {
                 this.pdfDoc.addObject(annots);
@@ -302,6 +303,17 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         } catch (IOException ioe) {
             throw new IFException("I/O error in endPage()", ioe);
         }
+    }
+
+    private void setUpContents() throws IOException {
+        PDFStream stream = generator.getStream();
+        int hash = stream.streamHashCode();
+        if (!contents.containsKey(hash)) {
+            pdfDoc.registerObject(stream);
+            PDFReference ref = new PDFReference(stream);
+            contents.put(hash, ref);
+        }
+        currentPage.setContents(contents.get(hash));
     }
 
     /** {@inheritDoc} */

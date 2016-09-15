@@ -62,7 +62,7 @@ public class PDFLinearizationTestCase {
             PDFPage page = new PDFPage(resources, i, f, f, f, f);
             doc.registerObject(page);
             doc.registerObject(gen.getStream());
-            page.setContents(gen.getStream());
+            page.setContents(new PDFReference(gen.getStream()));
         }
         gen.flushPDFDoc();
         byte[] data = out.toByteArray();
