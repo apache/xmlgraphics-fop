@@ -20,7 +20,6 @@
 package org.apache.fop.tools.fontlist;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -77,10 +76,9 @@ public class FontListSerializer {
         AttributesImpl atts = new AttributesImpl();
         handler.startElement(FONTS, atts);
 
-        Iterator iter = fontFamilies.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry)iter.next();
-            String familyName = (String)entry.getKey();
+        for (Object o : fontFamilies.entrySet()) {
+            Map.Entry entry = (Map.Entry) o;
+            String familyName = (String) entry.getKey();
             if (singleFamily != null && !singleFamily.equals(familyName)) {
                 continue;
             }
@@ -90,7 +88,7 @@ public class FontListSerializer {
                     stripQuotes(familyName));
             handler.startElement(FAMILY, atts);
 
-            List containers = (List)entry.getValue();
+            List containers = (List) entry.getValue();
             generateXMLForFontContainers(handler, containers);
             handler.endElement(FAMILY);
         }
@@ -108,9 +106,8 @@ public class FontListSerializer {
     private void generateXMLForFontContainers(GenerationHelperContentHandler handler,
             List containers) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
-        Iterator fontIter = containers.iterator();
-        while (fontIter.hasNext()) {
-            FontSpec cont = (FontSpec)fontIter.next();
+        for (Object container : containers) {
+            FontSpec cont = (FontSpec) container;
             atts.clear();
             atts.addAttribute(null, KEY, KEY, CDATA, cont.getKey());
             atts.addAttribute(null, TYPE, TYPE, CDATA,
@@ -126,9 +123,8 @@ public class FontListSerializer {
         AttributesImpl atts = new AttributesImpl();
         atts.clear();
         handler.startElement(TRIPLETS, atts);
-        Iterator iter = triplets.iterator();
-        while (iter.hasNext()) {
-            FontTriplet triplet = (FontTriplet)iter.next();
+        for (Object triplet1 : triplets) {
+            FontTriplet triplet = (FontTriplet) triplet1;
             atts.clear();
             atts.addAttribute(null, NAME, NAME, CDATA, triplet.getName());
             atts.addAttribute(null, STYLE, STYLE, CDATA, triplet.getStyle());

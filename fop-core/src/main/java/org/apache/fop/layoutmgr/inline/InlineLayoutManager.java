@@ -22,7 +22,6 @@ package org.apache.fop.layoutmgr.inline;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -341,9 +340,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             if (curLM instanceof InlineLevelLayoutManager) {
                 context.clearKeepWithNextPending();
                 // "wrap" the Position stored in each element of returnedList
-                ListIterator seqIter = returnedList.listIterator();
-                while (seqIter.hasNext()) {
-                    KnuthSequence sequence = (KnuthSequence) seqIter.next();
+                for (KnuthSequence sequence : returnedList) {
                     sequence.wrapPositions(this);
                 }
                 int insertionStartIndex = 0;

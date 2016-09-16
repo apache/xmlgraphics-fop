@@ -64,11 +64,9 @@ public final class EventExceptionManager {
             String msg = EventFormatter.format(event);
             //Get original exception as cause if it is given as one of the parameters
             Throwable t = null;
-            Iterator<Object> iter = event.getParams().values().iterator();
-            while (iter.hasNext()) {
-                Object o = iter.next();
+            for (Object o : event.getParams().values()) {
                 if (o instanceof Throwable) {
-                    t = (Throwable)o;
+                    t = (Throwable) o;
                     break;
                 }
             }

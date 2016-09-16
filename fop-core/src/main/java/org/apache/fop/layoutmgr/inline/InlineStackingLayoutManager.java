@@ -377,11 +377,10 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
 
         // this is a new list
         // "wrap" the Position stored in each element of returnedList
-        ListIterator listIter = returnedList.listIterator();
-        while (listIter.hasNext()) {
-            returnedElement = (KnuthElement) listIter.next();
+        for (Object aReturnedList : returnedList) {
+            returnedElement = (KnuthElement) aReturnedList;
             returnedElement.setPosition(
-                notifyPos(new NonLeafPosition(this, returnedElement.getPosition())));
+                    notifyPos(new NonLeafPosition(this, returnedElement.getPosition())));
             returnList.add(returnedElement);
         }
 

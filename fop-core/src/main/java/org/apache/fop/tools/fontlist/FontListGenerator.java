@@ -19,8 +19,8 @@
 
 package org.apache.fop.tools.fontlist;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,31 +81,30 @@ public class FontListGenerator {
         SortedMap fontFamilies = new java.util.TreeMap();
         //SortedMap<String/font-family, List<FontSpec>>
 
-        Iterator iter = fontInfo.getFontTriplets().entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry)iter.next();
-            FontTriplet triplet = (FontTriplet)entry.getKey();
-            String key = (String)entry.getValue();
+        for (Object o : fontInfo.getFontTriplets().entrySet()) {
+            Map.Entry entry = (Map.Entry) o;
+            FontTriplet triplet = (FontTriplet) entry.getKey();
+            String key = (String) entry.getValue();
             FontSpec container;
             if (keyBag.contains(key)) {
                 keyBag.remove(key);
 
-                FontMetrics metrics = (FontMetrics)fonts.get(key);
+                FontMetrics metrics = (FontMetrics) fonts.get(key);
 
                 container = new FontSpec(key, metrics);
                 container.addFamilyNames(metrics.getFamilyNames());
                 keys.put(key, container);
-                String firstFamilyName = (String)container.getFamilyNames().first();
-                List containers = (List)fontFamilies.get(firstFamilyName);
+                String firstFamilyName = (String) container.getFamilyNames().first();
+                List containers = (List) fontFamilies.get(firstFamilyName);
                 if (containers == null) {
-                    containers = new java.util.ArrayList();
+                    containers = new ArrayList();
                     fontFamilies.put(firstFamilyName, containers);
                 }
                 containers.add(container);
                 Collections.sort(containers);
 
             } else {
-                container = (FontSpec)keys.get(key);
+                container = (FontSpec) keys.get(key);
             }
             container.addTriplet(triplet);
         }

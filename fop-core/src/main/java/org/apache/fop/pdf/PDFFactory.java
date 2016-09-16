@@ -29,7 +29,6 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -436,9 +435,8 @@ public class PDFFactory {
         if (deep) {
             dests = new PDFDests();
             PDFArray kids = new PDFArray(dests);
-            Iterator iter = destinationList.iterator();
-            while (iter.hasNext()) {
-                PDFDestination dest = (PDFDestination)iter.next();
+            for (Object aDestinationList : destinationList) {
+                PDFDestination dest = (PDFDestination) aDestinationList;
                 PDFNameTreeNode node = new PDFNameTreeNode();
                 getDocument().registerObject(node);
                 node.setLowerLimit(dest.getIDRef());

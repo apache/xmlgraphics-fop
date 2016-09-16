@@ -563,9 +563,8 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
         List tempList = returnedList;
         KnuthElement tempElement;
         returnedList = new LinkedList();
-        ListIterator listIter = tempList.listIterator();
-        while (listIter.hasNext()) {
-            tempElement = (KnuthElement)listIter.next();
+        for (Object aTempList : tempList) {
+            tempElement = (KnuthElement) aTempList;
             tempElement.setPosition(new NonLeafPosition(this, tempElement.getPosition()));
             returnedList.add(tempElement);
         }

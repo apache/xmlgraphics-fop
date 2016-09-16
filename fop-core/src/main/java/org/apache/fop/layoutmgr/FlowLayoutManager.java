@@ -349,9 +349,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
 
         // "wrap" the Position stored in each element of returnedList
         // and add elements to returnList
-        ListIterator<KnuthElement> listIter = returnedList.listIterator();
-        while (listIter.hasNext()) {
-            returnedElement = listIter.next();
+        for (KnuthElement aReturnedList : returnedList) {
+            returnedElement = aReturnedList;
             if (returnedElement.getLayoutManager() != this) {
                 returnedElement.setPosition(
                         new NonLeafPosition(this, returnedElement.getPosition()));

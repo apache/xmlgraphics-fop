@@ -201,9 +201,7 @@ public class EventProducerCollectorTask extends Task {
     protected long processFileSets(EventProducerCollector collector)
             throws IOException, EventConventionException, ClassNotFoundException {
         long lastModified = 0;
-        Iterator<FileSet> iter = filesets.iterator();
-        while (iter.hasNext()) {
-            FileSet fs = (FileSet)iter.next();
+        for (FileSet fs : filesets) {
             DirectoryScanner ds = fs.getDirectoryScanner(getProject());
             String[] srcFiles = ds.getIncludedFiles();
             File directory = fs.getDir(getProject());

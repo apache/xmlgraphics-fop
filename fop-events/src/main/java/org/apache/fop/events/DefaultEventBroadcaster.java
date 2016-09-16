@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -161,10 +160,9 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
                         }
                         Map params = new java.util.HashMap();
                         int i = 1;
-                        Iterator iter = methodModel.getParameters().iterator();
-                        while (iter.hasNext()) {
+                        for (Object o : methodModel.getParameters()) {
                             EventMethodModel.Parameter param
-                                = (EventMethodModel.Parameter)iter.next();
+                                    = (EventMethodModel.Parameter) o;
                             params.put(param.getName(), args[i]);
                             i++;
                         }

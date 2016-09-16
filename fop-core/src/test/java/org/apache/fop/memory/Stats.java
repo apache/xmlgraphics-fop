@@ -19,7 +19,6 @@
 
 package org.apache.fop.memory;
 
-import java.util.Iterator;
 import java.util.List;
 
 class Stats {
@@ -83,9 +82,8 @@ class Stats {
         sb.append("&chd=t:");
         boolean first = true;
         int maxY = 0;
-        Iterator iter = samples.iterator();
-        while (iter.hasNext()) {
-            Sample sample = (Sample)iter.next();
+        for (Object sample1 : samples) {
+            Sample sample = (Sample) sample1;
             if (first) {
                 first = false;
             } else {

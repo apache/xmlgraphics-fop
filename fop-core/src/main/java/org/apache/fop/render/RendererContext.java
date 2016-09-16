@@ -20,7 +20,6 @@
 package org.apache.fop.render;
 
 //Java
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -117,9 +116,8 @@ public class RendererContext {
     /** {@inheritDoc} **/
     public String toString() {
         StringBuffer stringBuffer = new StringBuffer("RendererContext{\n");
-        Iterator it = props.keySet().iterator();
-        while (it.hasNext()) {
-            String key = (String)it.next();
+        for (Object o : props.keySet()) {
+            String key = (String) o;
             Object value = props.get(key);
             stringBuffer.append("\t" + key + "=" + value + "\n");
         }

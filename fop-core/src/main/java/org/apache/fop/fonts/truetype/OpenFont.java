@@ -1636,9 +1636,8 @@ public abstract class OpenFont {
                     Integer cidKey2 = unicodeToGlyph(unicodeKey2);
                     Integer kern = e.getValue();
 
-                    Iterator uniMap = mtxTab[cidKey2].getUnicodeIndex().listIterator();
-                    while (uniMap.hasNext()) {
-                        Integer unicodeKey = (Integer)uniMap.next();
+                    for (Object o : mtxTab[cidKey2].getUnicodeIndex()) {
+                        Integer unicodeKey = (Integer) o;
                         Integer[] ansiKeys = unicodeToWinAnsi(unicodeKey);
                         for (Integer ansiKey : ansiKeys) {
                             akpx.put(ansiKey, kern);
@@ -1647,9 +1646,8 @@ public abstract class OpenFont {
                 }
 
                 if (akpx.size() > 0) {
-                    Iterator uniMap = mtxTab[cidKey1].getUnicodeIndex().listIterator();
-                    while (uniMap.hasNext()) {
-                        Integer unicodeKey = (Integer)uniMap.next();
+                    for (Object o : mtxTab[cidKey1].getUnicodeIndex()) {
+                        Integer unicodeKey = (Integer) o;
                         Integer[] ansiKeys = unicodeToWinAnsi(unicodeKey);
                         for (Integer ansiKey : ansiKeys) {
                             ansiKerningTab.put(ansiKey, akpx);

@@ -23,7 +23,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -117,10 +116,9 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
         if (formResources == null) {
             return;
         }
-        Iterator iter = formResources.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry)iter.next();
-            PSResource res = (PSResource)entry.getValue();
+        for (Object o : formResources.entrySet()) {
+            Map.Entry entry = (Map.Entry) o;
+            PSResource res = (PSResource) entry.getValue();
             long count = resTracker.getUsageCount(res);
             if (count > 1) {
                 //Make global form
@@ -264,9 +262,8 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
         if (formResources == null) {
             return;
         }
-        Iterator iter = formResources.values().iterator();
-        while (iter.hasNext()) {
-            PSImageFormResource form = (PSImageFormResource)iter.next();
+        for (Object o : formResources.values()) {
+            PSImageFormResource form = (PSImageFormResource) o;
             resTracker.registerSuppliedResource(form);
         }
     }
@@ -275,9 +272,8 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
         if (formResources == null) {
             return;
         }
-        Iterator iter = formResources.values().iterator();
-        while (iter.hasNext()) {
-            PSImageFormResource form = (PSImageFormResource)iter.next();
+        for (Object o : formResources.values()) {
+            PSImageFormResource form = (PSImageFormResource) o;
             generateFormForImage(gen, form);
         }
     }
