@@ -19,7 +19,6 @@
 
 package org.apache.fop.complexscripts.bidi;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -114,8 +113,8 @@ public class DelimitedTextRange {
         StringBuffer sb = new StringBuffer("DR: " + fn.getLocalName() + " { <" + CharUtilities.toNCRefs(buffer.toString()) + ">");
         sb.append(", intervals <");
         boolean first = true;
-        for (Iterator it = intervals.iterator(); it.hasNext(); ) {
-            TextInterval ti = (TextInterval) it.next();
+        for (Object interval : intervals) {
+            TextInterval ti = (TextInterval) interval;
             if (first) {
                 first = false;
             } else {
@@ -144,8 +143,8 @@ public class DelimitedTextRange {
      */
     private void assignLevels(int[] levels) {
         Vector intervalsNew = new Vector(intervals.size());
-        for (Iterator it = intervals.iterator(); it.hasNext(); ) {
-            TextInterval ti = (TextInterval) it.next();
+        for (Object interval : intervals) {
+            TextInterval ti = (TextInterval) interval;
             intervalsNew.addAll(assignLevels(ti, levels));
         }
         if (!intervalsNew.equals(intervals)) {
@@ -196,15 +195,15 @@ public class DelimitedTextRange {
      * <p>Assign resolved levels for each interval to source #PCDATA in the associated FOText.</p>
      */
     private void assignTextLevels() {
-        for (Iterator it = intervals.iterator(); it.hasNext(); ) {
-            TextInterval ti = (TextInterval) it.next();
+        for (Object interval : intervals) {
+            TextInterval ti = (TextInterval) interval;
             ti.assignTextLevels();
         }
     }
     private void assignBlockLevel(Direction paragraphEmbeddingLevel) {
         int defaultLevel = (paragraphEmbeddingLevel == Direction.RL) ? 1 : 0;
-        for (Iterator it = intervals.iterator(); it.hasNext(); ) {
-            TextInterval ti = (TextInterval) it.next();
+        for (Object interval : intervals) {
+            TextInterval ti = (TextInterval) interval;
             assignBlockLevel(ti.getNode(), defaultLevel);
         }
     }

@@ -208,8 +208,7 @@ public final class FontSetup {
             fontInfo.addMetrics(internalName, font);
 
             List<FontTriplet> triplets = embedFontInfo.getFontTriplets();
-            for (int tripletIndex = 0; tripletIndex < triplets.size(); tripletIndex++) {
-                FontTriplet triplet = triplets.get(tripletIndex);
+            for (FontTriplet triplet : triplets) {
                 fontInfo.addFontProperties(internalName, triplet);
             }
         }

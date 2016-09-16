@@ -211,8 +211,8 @@ public class ColumnSetup {
          * and work out the total number of factors to use to distribute
          * the remaining space (if any)
          */
-        for (Iterator i = colWidths.iterator(); i.hasNext();) {
-            Length colWidth = (Length) i.next();
+        for (Object colWidth1 : colWidths) {
+            Length colWidth = (Length) colWidth1;
             if (colWidth != null) {
                 sumCols += colWidth.getValue(percentBaseContext);
                 if (colWidth instanceof RelativeNumericProperty) {

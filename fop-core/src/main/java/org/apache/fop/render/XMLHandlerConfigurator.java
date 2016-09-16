@@ -57,10 +57,10 @@ public class XMLHandlerConfigurator extends AbstractRendererConfigurator {
         Configuration handlerConfig = null;
 
         Configuration[] children = cfg.getChildren("xml-handler");
-        for (int i = 0; i < children.length; ++i) {
+        for (Configuration aChildren : children) {
             try {
-                if (children[i].getAttribute("namespace").equals(namespace)) {
-                    handlerConfig = children[i];
+                if (aChildren.getAttribute("namespace").equals(namespace)) {
+                    handlerConfig = aChildren;
                     break;
                 }
             } catch (ConfigurationException e) {

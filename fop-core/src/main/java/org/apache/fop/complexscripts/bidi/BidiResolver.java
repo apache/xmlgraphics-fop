@@ -20,7 +20,6 @@
 package org.apache.fop.complexscripts.bidi;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
@@ -119,8 +118,8 @@ public final class BidiResolver {
     }
 
     private static void resolveInlineDirectionality(List ranges) {
-        for (Iterator it = ranges.iterator(); it.hasNext(); ) {
-            DelimitedTextRange r = (DelimitedTextRange) it.next();
+        for (Object range : ranges) {
+            DelimitedTextRange r = (DelimitedTextRange) range;
             r.resolve();
             if (log.isDebugEnabled()) {
                 log.debug(r);
@@ -129,8 +128,8 @@ public final class BidiResolver {
     }
 
     private static List collectRuns(List inlines, List runs) {
-        for (Iterator it = inlines.iterator(); it.hasNext(); ) {
-            InlineArea ia = (InlineArea) it.next();
+        for (Object inline : inlines) {
+            InlineArea ia = (InlineArea) inline;
             runs = ia.collectInlineRuns(runs);
         }
         return runs;
@@ -138,8 +137,8 @@ public final class BidiResolver {
 
     private static List splitRuns(List runs) {
         List runsNew = new Vector();
-        for (Iterator it = runs.iterator(); it.hasNext(); ) {
-            InlineRun ir = (InlineRun) it.next();
+        for (Object run : runs) {
+            InlineRun ir = (InlineRun) run;
             if (ir.isHomogenous()) {
                 runsNew.add(ir);
             } else {
@@ -156,8 +155,8 @@ public final class BidiResolver {
         if (mm == null) {
             mm = new int[] {Integer.MAX_VALUE, Integer.MIN_VALUE};
         }
-        for (Iterator it = runs.iterator(); it.hasNext(); ) {
-            InlineRun ir = (InlineRun) it.next();
+        for (Object run : runs) {
+            InlineRun ir = (InlineRun) run;
             ir.updateMinMax(mm);
         }
         return mm;
@@ -205,8 +204,8 @@ public final class BidiResolver {
         return runsNew;
     }
     private static void reverseWords(List runs, boolean mirror) {
-        for (Iterator it = runs.iterator(); it.hasNext(); ) {
-            InlineRun ir = (InlineRun) it.next();
+        for (Object run : runs) {
+            InlineRun ir = (InlineRun) run;
             ir.maybeReverseWord(mirror);
         }
     }
@@ -217,8 +216,8 @@ public final class BidiResolver {
     }
     private static void replaceInlines(LineArea la, List runs) {
         List<InlineArea> inlines = new ArrayList<InlineArea>();
-        for (Iterator it = runs.iterator(); it.hasNext(); ) {
-            InlineRun ir = (InlineRun) it.next();
+        for (Object run : runs) {
+            InlineRun ir = (InlineRun) run;
             inlines.add(ir.getInline());
         }
         la.setInlineAreas(unflattenInlines(inlines));
@@ -228,22 +227,22 @@ public final class BidiResolver {
     }
     private static void dumpRuns(String header, List runs) {
         log.debug(header);
-        for (Iterator it = runs.iterator(); it.hasNext(); ) {
-            InlineRun ir = (InlineRun) it.next();
+        for (Object run : runs) {
+            InlineRun ir = (InlineRun) run;
             log.debug(ir);
         }
     }
     private static void dumpRanges(String header, List ranges) {
         log.debug(header);
-        for (Iterator it = ranges.iterator(); it.hasNext(); ) {
-            DelimitedTextRange r = (DelimitedTextRange) it.next();
+        for (Object range : ranges) {
+            DelimitedTextRange r = (DelimitedTextRange) range;
             log.debug(r);
         }
     }
     private static List pruneEmptyRanges(List ranges) {
         Vector rv = new Vector();
-        for (Iterator it = ranges.iterator(); it.hasNext(); ) {
-            DelimitedTextRange r = (DelimitedTextRange) it.next();
+        for (Object range : ranges) {
+            DelimitedTextRange r = (DelimitedTextRange) range;
             if (!r.isEmpty()) {
                 rv.add(r);
             }

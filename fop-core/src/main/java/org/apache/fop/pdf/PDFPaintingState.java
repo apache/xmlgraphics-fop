@@ -24,7 +24,6 @@ import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
-import java.util.Iterator;
 
 import org.apache.xmlgraphics.java2d.color.ColorUtil;
 
@@ -172,8 +171,8 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
         PDFGState state;
         PDFGState newState = new PDFGState();
         newState.addValues(defaultState);
-        for (Iterator it = getStateStack().iterator(); it.hasNext();) {
-            PDFData data = (PDFData)it.next();
+        for (AbstractData abstractData : getStateStack()) {
+            PDFData data = (PDFData) abstractData;
             state = data.gstate;
             if (state != null) {
                 newState.addValues(state);

@@ -58,8 +58,8 @@ public class FontSubstitutions extends java.util.ArrayList/*<Substitutions>*/ {
 
             FontQualifier fromQualifier = substitution.getFromQualifier();
             List/*<FontTriplet>*/ tripletList = fromQualifier.getTriplets();
-            for (Iterator tripletit = tripletList.iterator(); tripletit.hasNext();) {
-                FontTriplet triplet = (FontTriplet) tripletit.next();
+            for (Object aTripletList : tripletList) {
+                FontTriplet triplet = (FontTriplet) aTripletList;
                 fontInfo.addFontProperties(internalFontKey, triplet);
             }
         }

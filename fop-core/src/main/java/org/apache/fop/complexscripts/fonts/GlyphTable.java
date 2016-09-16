@@ -22,7 +22,6 @@ package org.apache.fop.complexscripts.fonts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -117,8 +116,8 @@ public class GlyphTable {
     public List/*<LookupTable>*/ getLookupTables() {
         TreeSet/*<String>*/ lids = new TreeSet/*<String>*/(lookupTables.keySet());
         List/*<LookupTable>*/ ltl = new ArrayList/*<LookupTable>*/(lids.size());
-        for (Iterator it = lids.iterator(); it.hasNext(); ) {
-            String lid = (String) it.next();
+        for (Object lid1 : lids) {
+            String lid = (String) lid1;
             ltl.add(lookupTables.get(lid));
         }
         return ltl;
@@ -162,8 +161,8 @@ public class GlyphTable {
      */
     protected void freezeSubtables() {
         if (!frozen) {
-            for (Iterator it = lookupTables.values().iterator(); it.hasNext(); ) {
-                LookupTable lt = (LookupTable) it.next();
+            for (Object o : lookupTables.values()) {
+                LookupTable lt = (LookupTable) o;
                 lt.freezeSubtables(lookupTables);
             }
             frozen = true;
@@ -181,8 +180,8 @@ public class GlyphTable {
     public List/*<LookupSpec>*/ matchLookupSpecs(String script, String language, String feature) {
         Set/*<LookupSpec>*/ keys = lookups.keySet();
         List/*<LookupSpec>*/ matches = new ArrayList/*<LookupSpec>*/();
-        for (Iterator it = keys.iterator(); it.hasNext();) {
-            LookupSpec ls = (LookupSpec) it.next();
+        for (Object key : keys) {
+            LookupSpec ls = (LookupSpec) key;
             if (!"*".equals(script)) {
                 if (!ls.getScript().equals(script)) {
                     continue;
@@ -217,8 +216,8 @@ public class GlyphTable {
         if (lm == null) {
             lm = new LinkedHashMap();
             List/*<LookupSpec>*/ lsl = matchLookupSpecs(script, language, feature);
-            for (Iterator it = lsl.iterator(); it.hasNext(); ) {
-                LookupSpec ls = (LookupSpec) it.next();
+            for (Object aLsl : lsl) {
+                LookupSpec ls = (LookupSpec) aLsl;
                 lm.put(ls, findLookupTables(ls));
             }
             matchedLookups.put(lsm, lm);
@@ -239,8 +238,8 @@ public class GlyphTable {
         TreeSet/*<LookupTable>*/ lts = new TreeSet/*<LookupTable>*/();
         List/*<String>*/ ids;
         if ((ids = (List/*<String>*/) lookups.get(ls)) != null) {
-            for (Iterator it = ids.iterator(); it.hasNext();) {
-                String lid = (String) it.next();
+            for (Object id : ids) {
+                String lid = (String) id;
                 LookupTable lt;
                 if ((lt = (LookupTable) lookupTables.get(lid)) != null) {
                     lts.add(lt);
@@ -259,16 +258,15 @@ public class GlyphTable {
      */
     public UseSpec[] assembleLookups(String[] features, Map/*<LookupSpec,List<LookupTable>>*/ lookups) {
         TreeSet/*<UseSpec>*/ uss = new TreeSet/*<UseSpec>*/();
-        for (int i = 0, n = features.length; i < n; i++) {
-            String feature = features[i];
-            for (Iterator it = lookups.entrySet().iterator(); it.hasNext(); ) {
-                Map.Entry/*<LookupSpec,List<LookupTable>>*/ e = (Map.Entry/*<LookupSpec,List<LookupTable>>*/) it.next();
+        for (String feature : features) {
+            for (Object o : lookups.entrySet()) {
+                Map.Entry/*<LookupSpec,List<LookupTable>>*/ e = (Map.Entry/*<LookupSpec,List<LookupTable>>*/) o;
                 LookupSpec ls = (LookupSpec) e.getKey();
                 if (ls.getFeature().equals(feature)) {
                     List/*<LookupTable>*/ ltl = (List/*<LookupTable>*/) e.getValue();
                     if (ltl != null) {
-                        for (Iterator ltit = ltl.iterator(); ltit.hasNext(); ) {
-                            LookupTable lt = (LookupTable) ltit.next();
+                        for (Object aLtl : ltl) {
+                            LookupTable lt = (LookupTable) aLtl;
                             uss.add(new UseSpec(lt, feature));
                         }
                     }
@@ -334,8 +332,7 @@ public class GlyphTable {
      */
     public static void resolveLookupReferences(RuleSet[] rsa, Map/*<String,LookupTable>*/ lookupTables) {
         if ((rsa != null) && (lookupTables != null)) {
-            for (int i = 0, n = rsa.length; i < n; i++) {
-                RuleSet rs = rsa [ i ];
+            for (RuleSet rs : rsa) {
                 if (rs != null) {
                     rs.resolveLookupReferences(lookupTables);
                 }
@@ -498,8 +495,8 @@ public class GlyphTable {
             this.idOrdinal = Integer.parseInt(id.substring(2));
             this.subtables = new LinkedList/*<GlyphSubtable>*/();
             if (subtables != null) {
-                for (Iterator it = subtables.iterator(); it.hasNext(); ) {
-                    GlyphSubtable st = (GlyphSubtable) it.next();
+                for (Object subtable : subtables) {
+                    GlyphSubtable st = (GlyphSubtable) subtable;
                     addSubtable(st);
                 }
             }
@@ -600,8 +597,7 @@ public class GlyphTable {
 
         private void resolveLookupReferences(GlyphSubtable[] subtables, Map/*<String,LookupTable>*/ lookupTables) {
             if (subtables != null) {
-                for (int i = 0, n = subtables.length; i < n; i++) {
-                    GlyphSubtable st = subtables [ i ];
+                for (GlyphSubtable st : subtables) {
                     if (st != null) {
                         st.resolveLookupReferences(lookupTables);
                     }
@@ -936,8 +932,7 @@ public class GlyphTable {
          */
         public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
             if (lookups != null) {
-                for (int i = 0, n = lookups.length; i < n; i++) {
-                    RuleLookup l = lookups [ i ];
+                for (RuleLookup l : lookups) {
                     if (l != null) {
                         l.resolveLookupReferences(lookupTables);
                     }
@@ -1274,8 +1269,7 @@ public class GlyphTable {
          */
         public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
             if (rules != null) {
-                for (int i = 0, n = rules.length; i < n; i++) {
-                    Rule r = rules [ i ];
+                for (Rule r : rules) {
                     if (r != null) {
                         r.resolveLookupReferences(lookupTables);
                     }

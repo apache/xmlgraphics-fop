@@ -455,8 +455,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 double[][] quadParts = CubicBezierApproximator.fixedMidPointApproximation(
                         cubicCoords);
                 if (quadParts.length >= 4) {
-                    for (int segIndex = 0; segIndex < quadParts.length; segIndex++) {
-                        double[] quadPts = quadParts[segIndex];
+                    for (double[] quadPts : quadParts) {
                         if (quadPts != null && quadPts.length == 4) {
                             graphicsObj.addFillet(new int[]{
                                     (int) Math.round(quadPts[X1]),

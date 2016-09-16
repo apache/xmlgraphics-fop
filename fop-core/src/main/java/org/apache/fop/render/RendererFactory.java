@@ -85,13 +85,13 @@ public class RendererFactory {
      */
     public void addRendererMaker(AbstractRendererMaker maker) {
         String[] mimes = maker.getSupportedMimeTypes();
-        for (int i = 0; i < mimes.length; i++) {
+        for (String mime : mimes) {
             //This overrides any renderer previously set for a MIME type
-            if (rendererMakerMapping.get(mimes[i]) != null) {
-                log.trace("Overriding renderer for " + mimes[i]
+            if (rendererMakerMapping.get(mime) != null) {
+                log.trace("Overriding renderer for " + mime
                         + " with " + maker.getClass().getName());
             }
-            rendererMakerMapping.put(mimes[i], maker);
+            rendererMakerMapping.put(mime, maker);
         }
     }
 
@@ -102,13 +102,13 @@ public class RendererFactory {
      */
     public void addFOEventHandlerMaker(AbstractFOEventHandlerMaker maker) {
         String[] mimes = maker.getSupportedMimeTypes();
-        for (int i = 0; i < mimes.length; i++) {
+        for (String mime : mimes) {
             //This overrides any event handler previously set for a MIME type
-            if (eventHandlerMakerMapping.get(mimes[i]) != null) {
-                log.trace("Overriding FOEventHandler for " + mimes[i]
+            if (eventHandlerMakerMapping.get(mime) != null) {
+                log.trace("Overriding FOEventHandler for " + mime
                         + " with " + maker.getClass().getName());
             }
-            eventHandlerMakerMapping.put(mimes[i], maker);
+            eventHandlerMakerMapping.put(mime, maker);
         }
     }
 
@@ -119,13 +119,13 @@ public class RendererFactory {
      */
     public void addDocumentHandlerMaker(AbstractIFDocumentHandlerMaker maker) {
         String[] mimes = maker.getSupportedMimeTypes();
-        for (int i = 0; i < mimes.length; i++) {
+        for (String mime : mimes) {
             //This overrides any renderer previously set for a MIME type
-            if (documentHandlerMakerMapping.get(mimes[i]) != null) {
-                log.trace("Overriding document handler for " + mimes[i]
+            if (documentHandlerMakerMapping.get(mime) != null) {
+                log.trace("Overriding document handler for " + mime
                         + " with " + maker.getClass().getName());
             }
-            documentHandlerMakerMapping.put(mimes[i], maker);
+            documentHandlerMakerMapping.put(mime, maker);
         }
     }
 

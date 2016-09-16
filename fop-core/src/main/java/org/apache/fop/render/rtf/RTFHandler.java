@@ -1757,9 +1757,9 @@ public class RTFHandler extends FOEventHandler {
               //Calculation for column-widths which are not set
               prepareTable(table);
 
-              for (Iterator it = table.getColumns().iterator(); it.hasNext();) {
-                  recurseFONode((FONode) it.next());
-              }
+                for (Object o : table.getColumns()) {
+                    recurseFONode((FONode) o);
+                }
             } else {
                 //TODO Implement implicit column setup handling!
                 RTFEventProducer eventProducer = RTFEventProducer.Provider.get(

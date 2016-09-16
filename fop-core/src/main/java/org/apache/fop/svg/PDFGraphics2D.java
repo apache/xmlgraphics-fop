@@ -947,8 +947,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         List<Double> theMatrix = new java.util.ArrayList<Double>();
         double [] mat = new double[6];
         transform.getMatrix(mat);
-        for (int idx = 0; idx < mat.length; idx++) {
-            theMatrix.add(mat[idx]);
+        for (double aMat : mat) {
+            theMatrix.add(aMat);
         }
 
         /** @todo see if pdfDoc and res can be linked here,

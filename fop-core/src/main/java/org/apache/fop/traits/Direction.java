@@ -74,9 +74,9 @@ public final class Direction extends TraitEnum {
      * @return the enumeration object
      */
     public static Direction valueOf(String name) {
-        for (int i = 0; i < DIRECTIONS.length; i++) {
-            if (DIRECTIONS[i].getName().equalsIgnoreCase(name)) {
-                return DIRECTIONS[i];
+        for (Direction direction : DIRECTIONS) {
+            if (direction.getName().equalsIgnoreCase(name)) {
+                return direction;
             }
         }
         throw new IllegalArgumentException("Illegal direction: " + name);
@@ -88,9 +88,9 @@ public final class Direction extends TraitEnum {
      * @return the enumeration object
      */
     public static Direction valueOf(int enumValue) {
-        for (int i = 0; i < DIRECTIONS.length; i++) {
-            if (DIRECTIONS[i].getEnumValue() == enumValue) {
-                return DIRECTIONS[i];
+        for (Direction direction : DIRECTIONS) {
+            if (direction.getEnumValue() == enumValue) {
+                return direction;
             }
         }
         throw new IllegalArgumentException("Illegal direction: " + enumValue);

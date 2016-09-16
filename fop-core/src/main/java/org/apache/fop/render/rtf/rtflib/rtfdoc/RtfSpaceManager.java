@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -54,8 +53,8 @@ public class RtfSpaceManager {
      * candidate presence.
      */
     public void stopUpdatingSpaceBefore() {
-        for (Iterator it = blockAttributes.iterator(); it.hasNext();) {
-            RtfSpaceSplitter splitter = (RtfSpaceSplitter) it.next();
+        for (Object blockAttribute : blockAttributes) {
+            RtfSpaceSplitter splitter = (RtfSpaceSplitter) blockAttribute;
             if (splitter.isBeforeCadidateSet()) {
                 splitter.stopUpdatingSpaceBefore();
             }
@@ -68,8 +67,8 @@ public class RtfSpaceManager {
      * @param attrs  attributes to set
      */
     public void setCandidate(RtfAttributes attrs) {
-        for (Iterator it = blockAttributes.iterator(); it.hasNext();) {
-            RtfSpaceSplitter splitter = (RtfSpaceSplitter) it.next();
+        for (Object blockAttribute : blockAttributes) {
+            RtfSpaceSplitter splitter = (RtfSpaceSplitter) blockAttribute;
             splitter.setSpaceBeforeCandidate(attrs);
             splitter.setSpaceAfterCandidate(attrs);
         }

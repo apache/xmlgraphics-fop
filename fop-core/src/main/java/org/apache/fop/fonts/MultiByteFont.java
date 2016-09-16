@@ -588,10 +588,9 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
 
     private int[][] scaleAdjustments(int[][] adjustments, int fontSize) {
         if (adjustments != null) {
-            for (int i = 0, n = adjustments.length; i < n; i++) {
-                int[] gpa = adjustments [ i ];
+            for (int[] gpa : adjustments) {
                 for (int k = 0; k < 4; k++) {
-                    gpa [ k ] = (gpa [ k ] * fontSize) / 1000;
+                    gpa[k] = (gpa[k] * fontSize) / 1000;
                 }
             }
             return adjustments;
@@ -710,9 +709,9 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         for (int i = 0, n = cs.length(); i < n; i++) {
             int cc = cs.charAt(i);
             int[] da = CharNormalize.decompose(cc, daBuffer);
-            for (int j = 0; j < da.length; j++) {
-                if (da[j] > 0) {
-                    sb.append((char) da[j]);
+            for (int aDa : da) {
+                if (aDa > 0) {
+                    sb.append((char) aDa);
                 } else {
                     break;
                 }
@@ -752,8 +751,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
 
     private static boolean hasElidableControl(GlyphSequence gs) {
         int[] ca = gs.getCharacterArray(false);
-        for (int i = 0, n = ca.length; i < n; ++i) {
-            int ch = ca [ i ];
+        for (int ch : ca) {
             if (isElidableControl(ch)) {
                 return true;
             }

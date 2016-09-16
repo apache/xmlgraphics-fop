@@ -20,7 +20,6 @@
 package org.apache.fop.complexscripts.fonts;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -74,8 +73,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
         if ((subtables == null) || (subtables.size() == 0)) {
             throw new AdvancedTypographicTableFormatException("subtables must be non-empty");
         } else {
-            for (Iterator it = subtables.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : subtables) {
                 if (o instanceof GlyphSubstitutionSubtable) {
                     addSubtable((GlyphSubtable) o);
                 } else {
@@ -324,8 +322,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
         /** {@inheritDoc} */
         public List getEntries() {
             List entries = new ArrayList(glyphs.length);
-            for (int i = 0, n = glyphs.length; i < n; i++) {
-                entries.add(glyphs[i]);
+            for (int glyph : glyphs) {
+                entries.add(glyph);
             }
             return entries;
         }
@@ -343,12 +341,11 @@ public class GlyphSubstitutionTable extends GlyphTable {
             int i = 0;
             int n = entries.size();
             int[] glyphs = new int [ n ];
-            for (Iterator it = entries.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : entries) {
                 if (o instanceof Integer) {
                     int gid = (Integer) o;
                     if ((gid >= 0) && (gid < 65536)) {
-                        glyphs [ i++ ] = gid;
+                        glyphs[i++] = gid;
                     } else {
                         throw new AdvancedTypographicTableFormatException("illegal glyph index: " + gid);
                     }
@@ -509,8 +506,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
         /** {@inheritDoc} */
         public List getEntries() {
             List entries = new ArrayList(gaa.length);
-            for (int i = 0, n = gaa.length; i < n; i++) {
-                entries.add(gaa[i]);
+            for (int[] aGaa : gaa) {
+                entries.add(aGaa);
             }
             return entries;
         }
@@ -528,10 +525,9 @@ public class GlyphSubstitutionTable extends GlyphTable {
             int i = 0;
             int n = entries.size();
             int[][] gaa = new int [ n ][];
-            for (Iterator it = entries.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : entries) {
                 if (o instanceof int[]) {
-                    gaa [ i++ ] = (int[]) o;
+                    gaa[i++] = (int[]) o;
                 } else {
                     throw new AdvancedTypographicTableFormatException("illegal entries entry, must be int[]: " + o);
                 }
@@ -642,8 +638,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
         /** {@inheritDoc} */
         public List getEntries() {
             List entries = new ArrayList(ligatureSets.length);
-            for (int i = 0, n = ligatureSets.length; i < n; i++) {
-                entries.add(ligatureSets[i]);
+            for (LigatureSet ligatureSet : ligatureSets) {
+                entries.add(ligatureSet);
             }
             return entries;
         }
@@ -661,10 +657,9 @@ public class GlyphSubstitutionTable extends GlyphTable {
             int i = 0;
             int n = entries.size();
             LigatureSet[] ligatureSets = new LigatureSet [ n ];
-            for (Iterator it = entries.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : entries) {
                 if (o instanceof LigatureSet) {
-                    ligatureSets [ i++ ] = (LigatureSet) o;
+                    ligatureSets[i++] = (LigatureSet) o;
                 } else {
                     throw new AdvancedTypographicTableFormatException("illegal ligatures entry, must be LigatureSet: " + o);
                 }
@@ -754,8 +749,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedGlyphSequenceRule)) {
                             ChainedGlyphSequenceRule cr = (ChainedGlyphSequenceRule) r;
                             int[] iga = cr.getGlyphs(gi);
@@ -842,8 +836,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedClassSequenceRule)) {
                             ChainedClassSequenceRule cr = (ChainedClassSequenceRule) r;
                             int[] ca = cr.getClasses(cdt.getClassIndex(gi, ss.getClassMatchSet(gi)));
@@ -944,8 +937,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedCoverageSequenceRule)) {
                             ChainedCoverageSequenceRule cr = (ChainedCoverageSequenceRule) r;
                             GlyphCoverageTable[] gca = cr.getCoverages();
@@ -1082,8 +1074,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedGlyphSequenceRule)) {
                             ChainedGlyphSequenceRule cr = (ChainedGlyphSequenceRule) r;
                             int[] iga = cr.getGlyphs(gi);
@@ -1154,8 +1145,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedClassSequenceRule)) {
                             ChainedClassSequenceRule cr = (ChainedClassSequenceRule) r;
                             int[] ica = cr.getClasses(icdt.getClassIndex(gi, ss.getClassMatchSet(gi)));
@@ -1249,8 +1239,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedCoverageSequenceRule)) {
                             ChainedCoverageSequenceRule cr = (ChainedCoverageSequenceRule) r;
                             GlyphCoverageTable[] igca = cr.getCoverages();
@@ -1348,8 +1337,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
             } else if (components == null) {
                 throw new AdvancedTypographicTableFormatException("invalid ligature components, must be non-null array");
             } else {
-                for (int i = 0, n = components.length; i < n; i++) {
-                    int gc = components [ i ];
+                for (int gc : components) {
                     if ((gc < 0) || (gc > 65535)) {
                         throw new AdvancedTypographicTableFormatException("invalid component glyph index: " + gc);
                     }
@@ -1436,8 +1424,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
             } else {
                 this.ligatures = ligatures;
                 int ncMax = -1;
-                for (int i = 0, n = ligatures.length; i < n; i++) {
-                    Ligature l = ligatures [ i ];
+                for (Ligature l : ligatures) {
                     int nc = l.getNumComponents() + 1;
                     if (nc > ncMax) {
                         ncMax = nc;

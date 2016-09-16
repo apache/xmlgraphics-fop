@@ -172,12 +172,12 @@ public class SingleByteFont extends CustomFont {
         String charName = Glyphs.charToGlyphName(c);
         String[] charNameAlternatives = Glyphs.getCharNameAlternativesFor(charName);
         if (charNameAlternatives != null && charNameAlternatives.length > 0) {
-            for (int i = 0; i < charNameAlternatives.length; i++) {
+            for (String charNameAlternative : charNameAlternatives) {
                 if (log.isDebugEnabled()) {
                     log.debug("Checking alternative for char " + c + " (charname="
-                            + charName + "): " + charNameAlternatives[i]);
+                            + charName + "): " + charNameAlternative);
                 }
-                String s = Glyphs.getUnicodeSequenceForGlyphName(charNameAlternatives[i]);
+                String s = Glyphs.getUnicodeSequenceForGlyphName(charNameAlternative);
                 if (s != null) {
                     d = lookupChar(s.charAt(0));
                     if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {

@@ -19,7 +19,6 @@
 
 package org.apache.fop.area;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.fo.Constants;
@@ -196,14 +195,14 @@ public class Span extends Area {
         switch (wmtg.getColumnProgressionDirection().getEnumValue()) {
         case Constants.EN_RL:
             setBidiLevel(1);
-            for (Iterator<NormalFlow> it = flowAreas.iterator(); it.hasNext();) {
-                it.next().setBidiLevel(1);
+            for (NormalFlow flowArea1 : flowAreas) {
+                flowArea1.setBidiLevel(1);
             }
             break;
         default:
             resetBidiLevel();
-            for (Iterator<NormalFlow> it = flowAreas.iterator(); it.hasNext();) {
-                it.next().resetBidiLevel();
+            for (NormalFlow flowArea : flowAreas) {
+                flowArea.resetBidiLevel();
             }
             break;
         }

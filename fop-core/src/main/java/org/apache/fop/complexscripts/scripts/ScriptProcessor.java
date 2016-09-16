@@ -109,8 +109,7 @@ public abstract class ScriptProcessor {
      */
     public GlyphSequence substitute(GlyphSequence gs, String script, String language, GlyphTable.UseSpec[] usa, ScriptContextTester sct) {
         assert usa != null;
-        for (int i = 0, n = usa.length; i < n; i++) {
-            GlyphTable.UseSpec us = usa [ i ];
+        for (GlyphTable.UseSpec us : usa) {
             gs = us.substitute(gs, script, language, sct);
         }
         return gs;
@@ -186,8 +185,7 @@ public abstract class ScriptProcessor {
     public boolean position(GlyphSequence gs, String script, String language, int fontSize, GlyphTable.UseSpec[] usa, int[] widths, int[][] adjustments, ScriptContextTester sct) {
         assert usa != null;
         boolean adjusted = false;
-        for (int i = 0, n = usa.length; i < n; i++) {
-            GlyphTable.UseSpec us = usa [ i ];
+        for (GlyphTable.UseSpec us : usa) {
             if (us.position(gs, script, language, fontSize, widths, adjustments, sct)) {
                 adjusted = true;
             }

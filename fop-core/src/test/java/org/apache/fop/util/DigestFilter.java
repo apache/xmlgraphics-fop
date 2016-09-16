@@ -21,7 +21,6 @@ package org.apache.fop.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -57,8 +56,7 @@ public class DigestFilter extends XMLFilterImpl {
     public String getDigestString() {
         if (value != null) {
             StringBuffer buffer = new StringBuffer(2 * value.length);
-            for (int i = 0; i < value.length; i++) {
-                int val = value[i];
+            for (byte val : value) {
                 int hi = (val >> 4) & 0xF;
                 int lo = val & 0xF;
                 if (hi < 10) {
@@ -116,10 +114,10 @@ public class DigestFilter extends XMLFilterImpl {
                 map.put(attr.getQName(i), attr.getValue(i));
             }
         }
-        for (Iterator i = map.entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry)i.next();
-            digest.update(((String)entry.getKey()).getBytes());
-            digest.update(((String)entry.getValue()).getBytes());
+        for (Object o : map.entrySet()) {
+            Map.Entry entry = (Map.Entry) o;
+            digest.update(((String) entry.getKey()).getBytes());
+            digest.update(((String) entry.getValue()).getBytes());
         }
         super.startElement(url, localName, qName, attr);
     }

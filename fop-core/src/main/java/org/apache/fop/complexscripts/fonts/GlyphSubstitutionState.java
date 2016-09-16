@@ -204,8 +204,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
         int nog = 0;
         if ((lookups != null) && (lookups.length > 0)) {
             // apply each rule lookup to extracted input glyph array
-            for (int i = 0, n = lookups.length; i < n; i++) {
-                GlyphTable.RuleLookup l = lookups [ i ];
+            for (GlyphTable.RuleLookup l : lookups) {
                 if (l != null) {
                     GlyphTable.LookupTable lt = l.getLookup();
                     if (lt != null) {

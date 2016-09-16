@@ -28,7 +28,6 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -113,16 +112,16 @@ public class RtfContainer extends RtfElement {
     }
 
     private int findChildren(RtfElement aChild, int iStart) {
-        for (Iterator it = this.getChildren().iterator(); it.hasNext();) {
-          final RtfElement e = (RtfElement)it.next();
-          if (aChild == e) {
-              return iStart;
-          } else if (e instanceof RtfContainer) {
-              int iFound = ((RtfContainer)e).findChildren(aChild, (iStart + 1));
-              if (iFound != -1) {
-                  return iFound;
-              }
-          }
+        for (Object o : this.getChildren()) {
+            final RtfElement e = (RtfElement) o;
+            if (aChild == e) {
+                return iStart;
+            } else if (e instanceof RtfContainer) {
+                int iFound = ((RtfContainer) e).findChildren(aChild, (iStart + 1));
+                if (iFound != -1) {
+                    return iFound;
+                }
+            }
         }
         return -1;
     }
@@ -157,8 +156,8 @@ public class RtfContainer extends RtfElement {
      */
     protected void writeRtfContent()
     throws IOException {
-        for (Iterator it = children.iterator(); it.hasNext();) {
-            final RtfElement e = (RtfElement)it.next();
+        for (Object aChildren : children) {
+            final RtfElement e = (RtfElement) aChildren;
             e.writeRtf();
         }
     }
@@ -171,12 +170,12 @@ public class RtfContainer extends RtfElement {
     /** true if this (recursively) contains at least one RtfText object */
     boolean containsText() {
         boolean result = false;
-        for (Iterator it = children.iterator(); it.hasNext();) {
-            final RtfElement e = (RtfElement)it.next();
+        for (Object aChildren : children) {
+            final RtfElement e = (RtfElement) aChildren;
             if (e instanceof RtfText) {
                 result = !e.isEmpty();
             } else if (e instanceof RtfContainer) {
-                if (((RtfContainer)e).containsText()) {
+                if (((RtfContainer) e).containsText()) {
                     result = true;
                 }
             }
@@ -191,8 +190,8 @@ public class RtfContainer extends RtfElement {
     void dump(Writer w, int indent)
     throws IOException {
         super.dump(w, indent);
-        for (Iterator it = children.iterator(); it.hasNext();) {
-            final RtfElement e = (RtfElement)it.next();
+        for (Object aChildren : children) {
+            final RtfElement e = (RtfElement) aChildren;
             e.dump(w, indent + 1);
         }
     }
@@ -222,8 +221,8 @@ public class RtfContainer extends RtfElement {
      */
     public boolean isEmpty() {
         boolean result = true;
-        for (Iterator it = children.iterator(); it.hasNext();) {
-            final RtfElement e = (RtfElement)it.next();
+        for (Object aChildren : children) {
+            final RtfElement e = (RtfElement) aChildren;
             if (!e.isEmpty()) {
                 result = false;
                 break;

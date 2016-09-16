@@ -179,8 +179,7 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
             URI embedFile = embedFontInfo.getEmbedURI();
             log.debug("Adding font " + (embedFile != null ? embedFile + ", " : "")
                     + "metrics URI " + embedFontInfo.getMetricsURI());
-            for (int j = 0; j < tripletList.size(); ++j) {
-                FontTriplet triplet = tripletList.get(j);
+            for (FontTriplet triplet : tripletList) {
                 log.debug("  Font triplet "
                         + triplet.getName() + ", "
                         + triplet.getStyle() + ", "

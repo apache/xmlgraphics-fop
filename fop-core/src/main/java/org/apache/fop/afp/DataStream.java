@@ -551,9 +551,9 @@ public class DataStream {
      */
 
     public void createPageTagLogicalElement(TagLogicalElement.State[] attributes) {
-        for (int i = 0; i < attributes.length; i++) {
+        for (TagLogicalElement.State attribute : attributes) {
 
-            currentPage.createTagLogicalElement(attributes[i]);
+            currentPage.createTagLogicalElement(attribute);
         }
     }
 
@@ -564,8 +564,8 @@ public class DataStream {
      *            the array of key value pairs.
      */
     public void createPageGroupTagLogicalElement(TagLogicalElement.State[] attributes) {
-        for (int i = 0; i < attributes.length; i++) {
-            currentPageGroup.createTagLogicalElement(attributes[i]);
+        for (TagLogicalElement.State attribute : attributes) {
+            currentPageGroup.createTagLogicalElement(attribute);
         }
     }
 

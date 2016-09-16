@@ -104,8 +104,8 @@ public final class FontUtil {
      */
     public static String guessStyle(String fontName) {
         if (fontName != null) {
-            for (int i = 0; i < ITALIC_WORDS.length; i++) {
-                if (fontName.indexOf(ITALIC_WORDS[i]) != -1) {
+            for (String word : ITALIC_WORDS) {
+                if (fontName.indexOf(word) != -1) {
                     return Font.STYLE_ITALIC;
                 }
             }
@@ -122,34 +122,34 @@ public final class FontUtil {
         // weight
         int weight = Font.WEIGHT_NORMAL;
 
-        for (int i = 0; i < BOLD_WORDS.length; i++) {
-            if (fontName.indexOf(BOLD_WORDS[i]) != -1) {
+        for (String word : BOLD_WORDS) {
+            if (fontName.indexOf(word) != -1) {
                 weight = Font.WEIGHT_BOLD;
                 break;
             }
         }
-        for (int i = 0; i < MEDIUM_WORDS.length; i++) {
-            if (fontName.indexOf(MEDIUM_WORDS[i]) != -1) {
+        for (String word : MEDIUM_WORDS) {
+            if (fontName.indexOf(word) != -1) {
                 weight = Font.WEIGHT_NORMAL + 100; //500
                 break;
             }
         }
         //Search for "semi/demi" before "light", but after "bold"
         //(normally semi/demi-bold is meant, but it can also be semi/demi-light)
-        for (int i = 0; i < DEMI_WORDS.length; i++) {
-            if (fontName.indexOf(DEMI_WORDS[i]) != -1) {
+        for (String word : DEMI_WORDS) {
+            if (fontName.indexOf(word) != -1) {
                 weight = Font.WEIGHT_BOLD - 100; //600
                 break;
             }
         }
-        for (int i = 0; i < EXTRA_BOLD_WORDS.length; i++) {
-            if (fontName.indexOf(EXTRA_BOLD_WORDS[i]) != -1) {
+        for (String word : EXTRA_BOLD_WORDS) {
+            if (fontName.indexOf(word) != -1) {
                 weight = Font.WEIGHT_EXTRA_BOLD;
                 break;
             }
         }
-        for (int i = 0; i < LIGHT_WORDS.length; i++) {
-            if (fontName.indexOf(LIGHT_WORDS[i]) != -1) {
+        for (String word : LIGHT_WORDS) {
+            if (fontName.indexOf(word) != -1) {
                 weight = Font.WEIGHT_LIGHT;
                 break;
             }

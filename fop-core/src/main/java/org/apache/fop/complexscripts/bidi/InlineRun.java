@@ -93,8 +93,7 @@ public class InlineRun {
         int mn = Integer.MAX_VALUE;
         int mx = Integer.MIN_VALUE;
         if ((levels != null) && (levels.length > 0)) {
-            for (int i = 0, n = levels.length; i < n; i++) {
-                int l = levels [ i ];
+            for (int l : levels) {
                 if (l < mn) {
                     mn = l;
                 }
@@ -265,8 +264,7 @@ public class InlineRun {
         StringBuffer lb = new StringBuffer();
         int maxLevel = -1;
         int numLevels = levels.length;
-        for (int i = 0; i < numLevels; i++) {
-            int l = levels [ i ];
+        for (int l : levels) {
             if (l > maxLevel) {
                 maxLevel = l;
             }
@@ -275,19 +273,19 @@ public class InlineRun {
             // leave level buffer empty
         } else if (maxLevel < 10) {
             // use string of decimal digits
-            for (int i = 0; i < numLevels; i++) {
-                lb.append((char) ('0' + levels [ i ]));
+            for (int level : levels) {
+                lb.append((char) ('0' + level));
             }
         } else {
             // use comma separated list
             boolean first = true;
-            for (int i = 0; i < numLevels; i++) {
+            for (int level : levels) {
                 if (first) {
                     first = false;
                 } else {
                     lb.append(',');
                 }
-                lb.append(levels [ i ]);
+                lb.append(level);
             }
         }
         return lb.toString();

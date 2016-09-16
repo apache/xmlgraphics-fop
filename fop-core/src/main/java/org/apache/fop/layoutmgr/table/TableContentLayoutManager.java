@@ -564,8 +564,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
             getTableLM().registerMarkers(body.getMarkers(), true, isFirstPos, isLastPos);
         }
         painter.startTablePart(body);
-        for (Iterator iter = positions.iterator(); iter.hasNext();) {
-            painter.handleTableContentPosition((TableContentPosition) iter.next());
+        for (Object position : positions) {
+            painter.handleTableContentPosition((TableContentPosition) position);
         }
         getTableLM().getCurrentPV().registerMarkers(body.getMarkers(),
                 false, isFirstPos, isLastPos);

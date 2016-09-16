@@ -138,12 +138,12 @@ public abstract class AbstractAFPObjectTest<S extends AbstractAFPObject> {
        byte[] actual = baos.toByteArray();
 
        int index = 0;
-       for (int i = 0; i < expected.length; i++) {
-           for (int j = 0; j < expected[i].length; j++) {
-               assertTrue("" + index, actual[index] == expected[i][j]);
-               index++;
-           }
-       }
+        for (byte[] anExpected : expected) {
+            for (int j = 0; j < anExpected.length; j++) {
+                assertTrue("" + index, actual[index] == anExpected[j]);
+                index++;
+            }
+        }
     }
 
     /**
@@ -222,8 +222,8 @@ public abstract class AbstractAFPObjectTest<S extends AbstractAFPObject> {
 
     private void checkHeaderAndData(byte[] header, byte[] data, byte[] testData, int expectedIndex,
             int testIndex, int chunkSize) {
-        for (int i = 0; i < header.length; i++) {
-            assertEquals(testData[expectedIndex++], header[i]);
+        for (byte aHeader : header) {
+            assertEquals(testData[expectedIndex++], aHeader);
         }
         for (int i = 0; i < chunkSize; i++) {
             assertEquals(testData[expectedIndex++], data[i + testIndex]);

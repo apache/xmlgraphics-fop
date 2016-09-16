@@ -160,15 +160,14 @@ public class NumberConverter {
         int tokenType = TOKEN_NONE;
         List<Integer> token = new ArrayList<Integer>();
         Integer[] ca = UTF32.toUTF32(format, 0, true);
-        for (int i = 0, n = ca.length; i < n; i++) {
-            int c = ca[i];
+        for (Integer c : ca) {
             int tokenTypeNew = isAlphaNumeric(c) ? TOKEN_ALPHANUMERIC : TOKEN_NONALPHANUMERIC;
             if (tokenTypeNew != tokenType) {
                 if (token.size() > 0) {
                     if (tokenType == TOKEN_ALPHANUMERIC) {
-                        tokens.add(token.toArray(new Integer [ token.size() ]));
+                        tokens.add(token.toArray(new Integer[token.size()]));
                     } else {
-                        separators.add(token.toArray(new Integer [ token.size() ]));
+                        separators.add(token.toArray(new Integer[token.size()]));
                     }
                     token.clear();
                 }
@@ -429,8 +428,8 @@ public class NumberConverter {
         for (String[] el : equivalentLanguages) {
             assert el.length >= 2;
             if (el[0].equals(i3c)) {
-                for (int i = 0, n = el.length; i < n; i++) {
-                    if (el[i].equals(lc)) {
+                for (String anEl : el) {
+                    if (anEl.equals(lc)) {
                         return true;
                     }
                 }

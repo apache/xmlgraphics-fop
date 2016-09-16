@@ -293,8 +293,8 @@ public class PSImageHandlerSVG implements ImageHandler {
                 if (curNode.getAttributes().getNamedItem("style") != null) {
                     String[] stylePairs = curNode.getAttributes().getNamedItem("style").getNodeValue()
                             .split(";");
-                    for (int styleAtt = 0; styleAtt < stylePairs.length; styleAtt++) {
-                        String[] style = stylePairs[styleAtt].split(":");
+                    for (String stylePair : stylePairs) {
+                        String[] style = stylePair.split(":");
                         if (style[0].equalsIgnoreCase("stop-opacity")) {
                             if (Double.parseDouble(style[1]) < 1) {
                                 return true;

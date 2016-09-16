@@ -61,8 +61,8 @@ public class CreateTestDocuments {
             throw new IOException("output directory (" + outDir + ") must exist and be writable");
         }
 
-        for (int i = 0; i < CLASS_NAMES.length; i++) {
-            createOneTestDocument(CLASS_NAMES[i], outDir);
+        for (String className : CLASS_NAMES) {
+            createOneTestDocument(className, outDir);
         }
     }
 

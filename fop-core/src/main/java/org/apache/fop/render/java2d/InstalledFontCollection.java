@@ -77,8 +77,7 @@ public class InstalledFontCollection implements FontCollection {
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
         java.awt.Font[] fonts = env.getAllFonts();
-        for (int i = 0; i < fonts.length; i++) {
-            java.awt.Font f = fonts[i];
+        for (java.awt.Font f : fonts) {
             if (HARDCODED_FONT_NAMES.contains(f.getName())) {
                 continue; //skip
             }

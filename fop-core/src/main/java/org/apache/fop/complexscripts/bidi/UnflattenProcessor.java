@@ -20,7 +20,6 @@
 package org.apache.fop.complexscripts.bidi;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -61,8 +60,8 @@ class UnflattenProcessor {
     }
     List unflatten() {
         if (il != null) {
-            for (Iterator<InlineArea> it = il.iterator(); it.hasNext(); ) {
-                process(it.next());
+            for (InlineArea anIl : il) {
+                process(anIl);
             }
         }
         finishAll();
@@ -125,8 +124,7 @@ class UnflattenProcessor {
     }
     private void finishInlineContainer(List<InlineParent> ich, TextArea tc, InlineArea ia) {
         if ((ich != null) && !ich.isEmpty()) {     // finish non-matching inner inline container(s)
-            for (Iterator<InlineParent> it = ich.iterator(); it.hasNext(); ) {
-                InlineParent ic  = it.next();
+            for (InlineParent ic : ich) {
                 InlineParent ic0 = icOrig.empty() ? null : icOrig.peek();
                 if (ic0 == null) {
                     assert icNew.empty();
@@ -191,8 +189,8 @@ class UnflattenProcessor {
         }
     }
     private boolean alreadyUnflattened(InlineArea ia) {
-        for (Iterator<InlineArea> it = ilNew.iterator(); it.hasNext(); ) {
-            if (ia.isAncestorOrSelf(it.next())) {
+        for (InlineArea anIlNew : ilNew) {
+            if (ia.isAncestorOrSelf(anIlNew)) {
                 return true;
             }
         }
@@ -200,16 +198,14 @@ class UnflattenProcessor {
     }
     private void pushInlineContainers(List<InlineParent> ich) {
         LinkedList<InlineParent> icl = new LinkedList<InlineParent>();
-        for (Iterator<InlineParent> it = ich.iterator(); it.hasNext(); ) {
-            InlineParent ic = it.next();
+        for (InlineParent ic : ich) {
             if (icOrig.search(ic) >= 0) {
                 break;
             } else {
                 icl.addFirst(ic);
             }
         }
-        for (Iterator<InlineParent> it = icl.iterator(); it.hasNext(); ) {
-            InlineParent ic = it.next();
+        for (InlineParent ic : icl) {
             icOrig.push(ic);
             icNew.push(generateInlineContainer(ic));
         }
@@ -307,8 +303,7 @@ class UnflattenProcessor {
     }
     private void updateIPD(TextArea tc) {
         int numAdjustable = 0;
-        for (Iterator it = tc.getChildAreas().iterator(); it.hasNext(); ) {
-            InlineArea ia = (InlineArea) it.next();
+        for (InlineArea ia : tc.getChildAreas()) {
             if (ia instanceof SpaceArea) {
                 SpaceArea sa = (SpaceArea) ia;
                 if (sa.isAdjustable()) {

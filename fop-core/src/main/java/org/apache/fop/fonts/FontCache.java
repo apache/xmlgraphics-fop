@@ -284,8 +284,7 @@ public final class FontCache implements Serializable {
      * @return file font file
      */
     public static File getFileFromUrls(String[] urls) {
-        for (int i = 0; i < urls.length; i++) {
-            String urlStr = urls[i];
+        for (String urlStr : urls) {
             if (urlStr != null) {
                 File fontFile = null;
                 if (urlStr.startsWith("file:")) {

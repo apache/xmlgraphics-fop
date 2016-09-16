@@ -159,8 +159,8 @@ public class FontManager {
     public void setup(FontInfo fontInfo, FontCollection[] fontCollections) {
         int startNum = 1;
 
-        for (int i = 0, c = fontCollections.length; i < c; i++) {
-            startNum = fontCollections[i].setup(startNum, fontInfo);
+        for (FontCollection fontCollection : fontCollections) {
+            startNum = fontCollection.setup(startNum, fontInfo);
         }
         // Make any defined substitutions in the font info
         getFontSubstitutions().adjustFontInfo(fontInfo);

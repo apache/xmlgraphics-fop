@@ -100,16 +100,15 @@ public class PDFWArray {
         StringBuffer p = new StringBuffer();
         p.append("[ ");
         int len = entries.size();
-        for (int i = 0; i < len; i++) {
-            Object entry = entries.get(i);
+        for (Object entry : entries) {
             if (entry instanceof int[]) {
-                int[] line = (int[])entry;
-                for (int j = 0; j < line.length; j++) {
-                    p.append(line[j]);
+                int[] line = (int[]) entry;
+                for (int aLine : line) {
+                    p.append(aLine);
                     p.append(" ");
                 }
             } else {
-                ((Entry)entry).fillInPDF(p);
+                ((Entry) entry).fillInPDF(p);
             }
         }
         p.append("]");
@@ -131,8 +130,8 @@ public class PDFWArray {
             // p.setLength(0);
             p.append(start);
             p.append(" [");
-            for (int i = 0; i < metrics.length; i++) {
-                p.append(this.metrics[i]);
+            for (int metric : metrics) {
+                p.append(metric);
                 p.append(" ");
             }
             p.append("] ");

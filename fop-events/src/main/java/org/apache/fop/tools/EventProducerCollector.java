@@ -93,8 +93,7 @@ class EventProducerCollector {
         builder.addSource(src);
         JavaClass[] classes = builder.getClasses();
         boolean eventProducerFound = false;
-        for (int i = 0, c = classes.length; i < c; i++) {
-            JavaClass clazz = classes[i];
+        for (JavaClass clazz : classes) {
             if (clazz.isInterface() && implementsInterface(clazz, CLASSNAME_EVENT_PRODUCER)) {
                 processEventProducerInterface(clazz);
                 eventProducerFound = true;
@@ -105,8 +104,7 @@ class EventProducerCollector {
 
     private boolean implementsInterface(JavaClass clazz, String intf) {
         JavaClass[] classes = clazz.getImplementedInterfaces();
-        for (int i = 0, c = classes.length; i < c; i++) {
-            JavaClass cl = classes[i];
+        for (JavaClass cl : classes) {
             if (cl.getFullyQualifiedName().equals(intf)) {
                 return true;
             }
@@ -124,8 +122,7 @@ class EventProducerCollector {
                 throws EventConventionException, ClassNotFoundException {
         EventProducerModel prodMeta = new EventProducerModel(clazz.getFullyQualifiedName());
         JavaMethod[] methods = clazz.getMethods(true);
-        for (int i = 0, c = methods.length; i < c; i++) {
-            JavaMethod method = methods[i];
+        for (JavaMethod method : methods) {
             EventMethodModel methodMeta = createMethodModel(method);
             prodMeta.addMethod(methodMeta);
         }

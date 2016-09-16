@@ -599,8 +599,7 @@ public class CommandLineOptions {
                 && (args[i + 1].charAt(0) != '-')) {
             String arg = args[i + 1];
             String[] parts = arg.split(",");
-            for (int j = 0; j < parts.length; j++) {
-                String s = parts[j];
+            for (String s : parts) {
                 if (s.matches("\\d+")) {
                     renderingOptions.put(PrintRenderer.START_PAGE, Integer.valueOf(s));
                 } else if (s.matches("\\d+-\\d+")) {
@@ -702,8 +701,8 @@ public class CommandLineOptions {
             if ("list".equals(mime)) {
                 String[] mimes = factory.getRendererFactory().listSupportedMimeTypes();
                 System.out.println("Supported MIME types:");
-                for (int j = 0; j < mimes.length; j++) {
-                    System.out.println("  " + mimes[j]);
+                for (String mime1 : mimes) {
+                    System.out.println("  " + mime1);
                 }
                 // @SuppressFBWarnings("DM_EXIT")
                 System.exit(0);

@@ -95,10 +95,10 @@ class RowGroupLayoutManager {
             int bodyType, LinkedList returnList) {
         log.debug("Handling row group with " + rowGroup.length + " rows...");
         EffRow row;
-        for (int rgi = 0; rgi < rowGroup.length; rgi++) {
-            row = rowGroup[rgi];
-            for (Iterator iter = row.getGridUnits().iterator(); iter.hasNext();) {
-                GridUnit gu = (GridUnit) iter.next();
+        for (EffRow aRowGroup : rowGroup) {
+            row = aRowGroup;
+            for (Object o : row.getGridUnits()) {
+                GridUnit gu = (GridUnit) o;
                 if (gu.isPrimary()) {
                     PrimaryGridUnit primary = gu.getPrimary();
                     // TODO a new LM must be created for every new static-content
@@ -118,7 +118,7 @@ class RowGroupLayoutManager {
 
                     //Get the element list for the cell contents
                     List elems = primary.getCellLM().getNextKnuthElements(
-                                            childLC, alignment);
+                            childLC, alignment);
                     ElementListObserver.observe(elems, "table-cell", primary.getCell().getId());
                     primary.setElements(elems);
                 }
@@ -155,8 +155,8 @@ class RowGroupLayoutManager {
                 rowHeights[rgi] = rowBPD.toMinOptMax(tableLM);
                 explicitRowHeight = rowBPD.toMinOptMax(tableLM);
             }
-            for (Iterator iter = row.getGridUnits().iterator(); iter.hasNext();) {
-                GridUnit gu = (GridUnit) iter.next();
+            for (Object o : row.getGridUnits()) {
+                GridUnit gu = (GridUnit) o;
                 if (!gu.isEmpty() && gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan()) {
                     PrimaryGridUnit primary = gu.getPrimary();
                     int effectiveCellBPD = 0;

@@ -195,10 +195,9 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
 
     private ArrayList normalizeException(ArrayList ex) {
         ArrayList res = new ArrayList();
-        for (int i = 0; i < ex.size(); i++) {
-            Object item = ex.get(i);
+        for (Object item : ex) {
             if (item instanceof String) {
-                String str = (String)item;
+                String str = (String) item;
                 StringBuffer buf = new StringBuffer();
                 for (int j = 0; j < str.length(); j++) {
                     char c = str.charAt(j);
@@ -226,13 +225,12 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
 
     private String getExceptionWord(ArrayList ex) {
         StringBuffer res = new StringBuffer();
-        for (int i = 0; i < ex.size(); i++) {
-            Object item = ex.get(i);
+        for (Object item : ex) {
             if (item instanceof String) {
-                res.append((String)item);
+                res.append((String) item);
             } else {
-                if (((Hyphen)item).noBreak != null) {
-                    res.append(((Hyphen)item).noBreak);
+                if (((Hyphen) item).noBreak != null) {
+                    res.append(((Hyphen) item).noBreak);
                 }
             }
         }

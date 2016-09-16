@@ -386,8 +386,8 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
         curBlockArea.setBPD(tableHeight);
 
         if (columnBackgroundAreas != null) {
-            for (Iterator iter = columnBackgroundAreas.iterator(); iter.hasNext();) {
-                ColumnBackgroundInfo b = (ColumnBackgroundInfo) iter.next();
+            for (Object columnBackgroundArea : columnBackgroundAreas) {
+                ColumnBackgroundInfo b = (ColumnBackgroundInfo) columnBackgroundArea;
                 TraitSetter.addBackground(b.backgroundArea,
                         b.column.getCommonBorderPaddingBackground(), this,
                         b.xShift, -b.backgroundArea.getYOffset(),
@@ -558,8 +558,7 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
         // if we get to this stage then we are at the footer of the table fragment; this means that no more
         // different TCLM need to be saved (we already have all); we flag the list as being complete then
         areAllTCLMsSaved = true;
-        for (int i = 0; i < savedTCLMs.size(); i++) {
-            TableCellLayoutManager tclm = savedTCLMs.get(i);
+        for (TableCellLayoutManager tclm : savedTCLMs) {
             if (this.repeatedHeader) {
                 tclm.setHasRepeatedHeader(true);
             }

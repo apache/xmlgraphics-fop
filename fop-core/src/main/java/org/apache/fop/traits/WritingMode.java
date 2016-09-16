@@ -133,9 +133,9 @@ public final class WritingMode extends TraitEnum {
      * @return the enumeration object
      */
     public static WritingMode valueOf(String name) {
-        for (int i = 0; i < WRITING_MODES.length; i++) {
-            if (WRITING_MODES[i].getName().equalsIgnoreCase(name)) {
-                return WRITING_MODES[i];
+        for (WritingMode writingMode : WRITING_MODES) {
+            if (writingMode.getName().equalsIgnoreCase(name)) {
+                return writingMode;
             }
         }
         throw new IllegalArgumentException("Illegal writing mode: " + name);
@@ -147,9 +147,9 @@ public final class WritingMode extends TraitEnum {
      * @return the enumeration object
      */
     public static WritingMode valueOf(int enumValue) {
-        for (int i = 0; i < WRITING_MODES.length; i++) {
-            if (WRITING_MODES[i].getEnumValue() == enumValue) {
-                return WRITING_MODES[i];
+        for (WritingMode writingMode : WRITING_MODES) {
+            if (writingMode.getEnumValue() == enumValue) {
+                return writingMode;
             }
         }
         throw new IllegalArgumentException("Illegal writing mode: " + enumValue);

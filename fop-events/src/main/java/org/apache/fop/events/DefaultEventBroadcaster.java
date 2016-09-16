@@ -104,8 +104,8 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
     }
 
     private static synchronized EventProducerModel getEventProducerModel(Class clazz) {
-        for (int i = 0, c = eventModels.size(); i < c; i++) {
-            EventModel eventModel = (EventModel)eventModels.get(i);
+        for (Object eventModel1 : eventModels) {
+            EventModel eventModel = (EventModel) eventModel1;
             EventProducerModel producerModel = eventModel.getProducer(clazz);
             if (producerModel != null) {
                 return producerModel;

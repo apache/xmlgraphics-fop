@@ -72,8 +72,7 @@ public class PDFColorHandler {
             ColorWithAlternatives colExt = (ColorWithAlternatives)color;
             //Alternate colors have priority
             Color[] alt = colExt.getAlternativeColors();
-            for (int i = 0, c = alt.length; i < c; i++) {
-                Color col = alt[i];
+            for (Color col : alt) {
                 boolean established = establishColorFromColor(codeBuffer, col, fill);
                 if (established) {
                     return;
@@ -223,8 +222,8 @@ public class PDFColorHandler {
         if (comps.length != componentCount) {
             throw new IllegalStateException("Color with unexpected component count encountered");
         }
-        for (int i = 0, c = comps.length; i < c; i++) {
-            DoubleFormatUtil.formatDouble(comps[i], 4, 4, codeBuffer);
+        for (float comp : comps) {
+            DoubleFormatUtil.formatDouble(comp, 4, 4, codeBuffer);
             codeBuffer.append(" ");
         }
         codeBuffer.append(command).append("\n");
