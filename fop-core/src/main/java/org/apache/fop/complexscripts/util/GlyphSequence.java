@@ -21,6 +21,7 @@ package org.apache.fop.complexscripts.util;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 // CSOFF: LineLengthCheck
@@ -459,19 +460,13 @@ public class GlyphSequence implements Cloneable {
         if (na > 0) {
             List gl = new ArrayList(na);
             if (baa != null) {
-                for (CharAssociation aBaa : baa) {
-                    gl.add(aBaa);
-                }
+                Collections.addAll(gl, baa);
             }
             if (iaa != null) {
-                for (CharAssociation anIaa : iaa) {
-                    gl.add(anIaa);
-                }
+                Collections.addAll(gl, iaa);
             }
             if (laa != null) {
-                for (CharAssociation aLaa : laa) {
-                    gl.add(aLaa);
-                }
+                Collections.addAll(gl, laa);
             }
             return gl;
         } else {

@@ -23,6 +23,7 @@ import java.awt.geom.RectangularShape;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -215,9 +216,7 @@ public class Type1FontLoader extends FontLoader {
 
     private Set<String> toGlyphSet(String[] glyphNames) {
         Set<String> glyphSet = new java.util.HashSet<String>();
-        for (String name : glyphNames) {
-            glyphSet.add(name);
-        }
+        Collections.addAll(glyphSet, glyphNames);
         return glyphSet;
     }
 

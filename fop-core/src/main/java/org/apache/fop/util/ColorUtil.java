@@ -798,7 +798,7 @@ public final class ColorUtil {
             }
         }
         sb.append(")");
-        return functionName + sb.toString();
+        return functionName + sb;
     }
 
     private static String toCIELabFunctionCall(ColorWithAlternatives color) {

@@ -20,6 +20,7 @@
 package org.apache.fop.complexscripts.fonts;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -506,9 +507,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
         /** {@inheritDoc} */
         public List getEntries() {
             List entries = new ArrayList(gaa.length);
-            for (int[] aGaa : gaa) {
-                entries.add(aGaa);
-            }
+            Collections.addAll(entries, gaa);
             return entries;
         }
         /** {@inheritDoc} */
@@ -638,9 +637,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
         /** {@inheritDoc} */
         public List getEntries() {
             List entries = new ArrayList(ligatureSets.length);
-            for (LigatureSet ligatureSet : ligatureSets) {
-                entries.add(ligatureSet);
-            }
+            Collections.addAll(entries, ligatureSets);
             return entries;
         }
         /** {@inheritDoc} */

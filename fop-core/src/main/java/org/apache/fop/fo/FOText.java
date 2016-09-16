@@ -801,9 +801,7 @@ public class FOText extends FONode implements CharSequence, TextFragment {
             assert start <= end;
             int n = end - start;
             int[] bidiLevels = new int [ n ];
-            for (int i = 0; i < n; i++) {
-                bidiLevels[i] = this.bidiLevels [ start + i ];
-            }
+            System.arraycopy(this.bidiLevels, start + 0, bidiLevels, 0, n);
             return bidiLevels;
         } else {
             return null;

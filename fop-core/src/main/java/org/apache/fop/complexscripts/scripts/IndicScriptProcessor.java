@@ -21,6 +21,7 @@ package org.apache.fop.complexscripts.scripts;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -241,9 +242,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     };
     static {
         basicShapingFeatures = new HashSet<String>();
-        for (String s : BASIC_SHAPING_FEATURE_STRINGS) {
-            basicShapingFeatures.add(s);
-        }
+        Collections.addAll(basicShapingFeatures, BASIC_SHAPING_FEATURE_STRINGS);
     }
     private boolean isBasicShapingUse(GlyphTable.UseSpec us) {
         assert us != null;
@@ -265,9 +264,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     };
     static {
         presentationFeatures = new HashSet<String>();
-        for (String s : PRESENTATION_FEATURE_STRINGS) {
-            presentationFeatures.add(s);
-        }
+        Collections.addAll(presentationFeatures, PRESENTATION_FEATURE_STRINGS);
     }
     private boolean isPresentationUse(GlyphTable.UseSpec us) {
         assert us != null;

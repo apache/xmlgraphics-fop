@@ -140,7 +140,7 @@ public abstract class AbstractGraphicsCoord extends AbstractGraphicsDrawingOrder
             sb.append('=');
             sb.append(coords[i]);
         }
-        return getName() + "{" + sb.toString() + "}";
+        return getName() + "{" + sb + "}";
     }
 
     /**

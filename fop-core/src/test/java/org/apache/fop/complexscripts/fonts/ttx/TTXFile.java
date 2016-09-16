@@ -2804,11 +2804,11 @@ public class TTXFile {
                 }
             }
             GlyphCoverageTable[] gca = new GlyphCoverageTable [ mi + 1 ];
-            for (String k : keys) {
-                if (k.startsWith(prefix)) {
-                    int i = Integer.parseInt(k.substring(prefixLength));
+            for (Map.Entry<String, GlyphCoverageTable> stringGlyphCoverageTableEntry : coverages.entrySet()) {
+                if (stringGlyphCoverageTableEntry.getKey().startsWith(prefix)) {
+                    int i = Integer.parseInt(stringGlyphCoverageTableEntry.getKey().substring(prefixLength));
                     if (i >= 0) {
-                        gca [ i ] = coverages.get(k);
+                        gca [ i ] = stringGlyphCoverageTableEntry.getValue();
                     }
                 }
             }
@@ -2915,11 +2915,11 @@ public class TTXFile {
         }
         private Map<GlyphTable.LookupSpec, List<String>> extractLookups() {
             Map<GlyphTable.LookupSpec, List<String>> lookups = new LinkedHashMap<GlyphTable.LookupSpec, List<String>>();
-            for (String st : scripts.keySet()) {
-                Map<String, List<String>> lm = scripts.get(st);
+            for (Map.Entry<String, Map<String, List<String>>> stringMapEntry : scripts.entrySet()) {
+                Map<String, List<String>> lm = stringMapEntry.getValue();
                 if (lm != null) {
-                    for (String lt : lm.keySet()) {
-                        List<String> fids = lm.get(lt);
+                    for (Map.Entry<String, List<String>> stringListEntry : lm.entrySet()) {
+                        List<String> fids = stringListEntry.getValue();
                         if (fids != null) {
                             for (String fid : fids) {
                                 if (fid != null) {
@@ -2929,7 +2929,7 @@ public class TTXFile {
                                         String ft = (String) fa[0];
                                         List<String> lids = (List<String>) fa[1];
                                         if ((lids != null) && (lids.size() > 0)) {
-                                            GlyphTable.LookupSpec ls = new GlyphTable.LookupSpec(st, lt, ft);
+                                            GlyphTable.LookupSpec ls = new GlyphTable.LookupSpec(stringMapEntry.getKey(), stringListEntry.getKey(), ft);
                                             lookups.put(ls, lids);
                                         }
                                     }

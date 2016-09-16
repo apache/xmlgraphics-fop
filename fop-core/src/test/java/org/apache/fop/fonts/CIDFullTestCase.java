@@ -91,8 +91,8 @@ public class CIDFullTestCase {
     @Test
     public void testGetGlyphs() {
         Map<Integer, Integer> fontGlyphs = cidFull.getGlyphs();
-        for (Integer key : fontGlyphs.keySet()) {
-            assertEquals(fontGlyphs.get(key), glyphs.get(key));
+        for (Map.Entry<Integer, Integer> integerIntegerEntry : fontGlyphs.entrySet()) {
+            assertEquals(integerIntegerEntry.getValue(), glyphs.get(integerIntegerEntry.getKey()));
         }
         assertTrue(fontGlyphs.size() == glyphs.size());
     }

@@ -428,7 +428,7 @@ public class FontInfo {
             }
             throw new IllegalStateException(
                     "fontLookup must return an array with at least one "
-                            + "FontTriplet on the last call. Lookup: " + sb.toString());
+                            + "FontTriplet on the last call. Lookup: " + sb);
 
         }
         FontTriplet[] fontTriplets = new FontTriplet[matchedTriplets.size()];

@@ -64,7 +64,7 @@ public class CrossReferenceTableTestCase extends CrossReferenceObjectTest {
                 .append("\n0000000000 65535 f \n");
         for (Long objectReference : offsets) {
             final String padding = "0000000000";
-            String s = String.valueOf(objectReference).toString();
+            String s = String.valueOf(objectReference);
             String loc = padding.substring(s.length()) + s;
             expected.append(loc).append(" 00000 n \n");
         }

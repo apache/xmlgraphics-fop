@@ -605,8 +605,8 @@ public class PCLTTFFontReader extends PCLFontReader {
     private ByteArrayOutputStream updateOffsets(ByteArrayOutputStream baos, Map<Integer, byte[]> offsets)
             throws IOException {
         byte[] softFont = baos.toByteArray();
-        for (int offset : offsets.keySet()) {
-            PCLByteWriterUtil.updateDataAtLocation(softFont, offsets.get(offset), offset);
+        for (Entry<Integer, byte[]> integerEntry : offsets.entrySet()) {
+            PCLByteWriterUtil.updateDataAtLocation(softFont, integerEntry.getValue(), integerEntry.getKey());
         }
         baos = new ByteArrayOutputStream();
         baos.write(softFont);

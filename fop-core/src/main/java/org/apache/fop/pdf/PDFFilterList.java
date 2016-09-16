@@ -278,9 +278,9 @@ public class PDFFilterList {
         }
         if (filterCount > 0) {
             if (filterCount > 1) {
-                return "/Filter [ " + sb.toString() + "]";
+                return "/Filter [ " + sb + "]";
             } else {
-                return "/Filter " + sb.toString();
+                return "/Filter " + sb;
             }
         } else {
             return "";
