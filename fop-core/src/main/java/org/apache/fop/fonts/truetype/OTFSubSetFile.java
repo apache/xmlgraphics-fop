@@ -334,13 +334,14 @@ public class OTFSubSetFile extends OTFFile {
 
         gidToSID = new LinkedHashMap<Integer, Integer>();
 
-        for (int gid : subsetGlyphs.keySet()) {
+        for (Entry<Integer, Integer> subsetGlyph : subsetGlyphs.entrySet()) {
+            int gid = subsetGlyph.getKey();
             int sid = cffReader.getSIDFromGID(charsetOffset, gid);
             //Check whether the SID falls into the standard string set
             if (sid < NUM_STANDARD_STRINGS) {
-                gidToSID.put(subsetGlyphs.get(gid), sid);
+                gidToSID.put(subsetGlyph.getValue(), sid);
                 if (mbFont != null) {
-                    mbFont.mapUsedGlyphName(subsetGlyphs.get(gid),
+                    mbFont.mapUsedGlyphName(subsetGlyph.getValue(),
                             CFFStandardString.getName(sid));
                 }
             } else {
@@ -348,16 +349,16 @@ public class OTFSubSetFile extends OTFFile {
                 //index is 0 based, should use < not <=
                 if (index < cffReader.getStringIndex().getNumObjects()) {
                     if (mbFont != null) {
-                        mbFont.mapUsedGlyphName(subsetGlyphs.get(gid),
+                        mbFont.mapUsedGlyphName(subsetGlyph.getValue(),
                                 new String(cffReader.getStringIndex().getValue(index)));
                     }
-                    gidToSID.put(subsetGlyphs.get(gid), stringIndexData.size() + 391);
+                    gidToSID.put(subsetGlyph.getValue(), stringIndexData.size() + 391);
                     stringIndexData.add(cffReader.getStringIndex().getValue(index));
                 } else {
                     if (mbFont != null) {
-                        mbFont.mapUsedGlyphName(subsetGlyphs.get(gid), ".notdef");
+                        mbFont.mapUsedGlyphName(subsetGlyph.getValue(), ".notdef");
                     }
-                    gidToSID.put(subsetGlyphs.get(gid), index);
+                    gidToSID.put(subsetGlyph.getValue(), index);
                 }
             }
         }
@@ -410,7 +411,8 @@ public class OTFSubSetFile extends OTFFile {
                 foundLocalUniques.add(new ArrayList<Integer>());
             }
             Map<Integer, Integer> gidHintMaskLengths = new HashMap<Integer, Integer>();
-            for (int gid : subsetGlyphs.keySet()) {
+            for (Entry<Integer, Integer> subsetGlyph : subsetGlyphs.entrySet()) {
+                int gid = subsetGlyph.getKey();
                 int group = subsetGroups.get(gid);
                 localIndexSubr = cffReader.getFDFonts().get(group).getLocalSubrData();
                 localUniques = foundLocalUniques.get(uniqueGroups.indexOf(subsetGroups.get(gid)));
@@ -418,7 +420,7 @@ public class OTFSubSetFile extends OTFFile {
 
                 FDIndexReference newFDReference = new FDIndexReference(
                         uniqueGroups.indexOf(subsetGroups.get(gid)), subsetGroups.get(gid));
-                subsetFDSelect.put(subsetGlyphs.get(gid), newFDReference);
+                subsetFDSelect.put(subsetGlyph.getValue(), newFDReference);
                 byte[] data = charStringsIndex.getValue(gid);
                 preScanForSubsetIndexSize(data);
                 gidHintMaskLengths.put(gid, type2Parser.getMaskLength());
@@ -439,13 +441,15 @@ public class OTFSubSetFile extends OTFFile {
             for (Integer uniqueGroup : uniqueGroups) {
                 foundLocalUniquesB.add(new ArrayList<Integer>());
             }
-            for (Integer gid : subsetGlyphs.keySet()) {
+            for (Entry<Integer, Integer> subsetGlyph : subsetGlyphs.entrySet()) {
+                int gid = subsetGlyph.getKey();
+                int value = subsetGlyph.getValue();
                 int group = subsetGroups.get(gid);
                 localIndexSubr = cffReader.getFDFonts().get(group).getLocalSubrData();
-                localUniques = foundLocalUniquesB.get(subsetFDSelect.get(subsetGlyphs.get(gid)).getNewFDIndex());
+                localUniques = foundLocalUniquesB.get(subsetFDSelect.get(value).getNewFDIndex());
                 byte[] data = charStringsIndex.getValue(gid);
-                subsetLocalIndexSubr = fdSubrs.get(subsetFDSelect.get(subsetGlyphs.get(gid)).getNewFDIndex());
-                subsetLocalSubrCount = foundLocalUniques.get(subsetFDSelect.get(subsetGlyphs.get(gid))
+                subsetLocalIndexSubr = fdSubrs.get(subsetFDSelect.get(value).getNewFDIndex());
+                subsetLocalSubrCount = foundLocalUniques.get(subsetFDSelect.get(value)
                         .getNewFDIndex()).size();
                 type2Parser = new Type2Parser();
                 type2Parser.setMaskLength(gidHintMaskLengths.get(gid));
@@ -457,15 +461,15 @@ public class OTFSubSetFile extends OTFFile {
 
     protected void writeFDSelect() {
         writeByte(0); //Format
-        for (Integer gid : subsetFDSelect.keySet()) {
-            writeByte(subsetFDSelect.get(gid).getNewFDIndex());
+        for (FDIndexReference e : subsetFDSelect.values()) {
+            writeByte(e.getNewFDIndex());
         }
     }
 
     protected List<Integer> getUsedFDFonts() {
         List<Integer> uniqueNewRefs = new ArrayList<Integer>();
-        for (int gid : subsetFDSelect.keySet()) {
-            int fdIndex = subsetFDSelect.get(gid).getOldFDIndex();
+        for (FDIndexReference e : subsetFDSelect.values()) {
+            int fdIndex = e.getOldFDIndex();
             if (!uniqueNewRefs.contains(fdIndex)) {
                 uniqueNewRefs.add(fdIndex);
             }
@@ -1023,11 +1027,11 @@ public class OTFSubSetFile extends OTFFile {
 
     private void writeCharsetTable(boolean cidFont) throws IOException {
         writeByte(0);
-        for (int gid : gidToSID.keySet()) {
-            if (cidFont && gid == 0) {
+        for (Entry<Integer, Integer> entry : gidToSID.entrySet()) {
+            if (cidFont && entry.getKey() == 0) {
                 continue;
             }
-            writeCard16((cidFont) ? gid : gidToSID.get(gid));
+            writeCard16((cidFont) ? entry.getKey() : entry.getValue());
         }
     }
 

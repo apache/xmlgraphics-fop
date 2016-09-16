@@ -21,6 +21,7 @@ package org.apache.fop.complexscripts.fonts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -340,9 +341,7 @@ public class GlyphPositioningTable extends GlyphTable {
         public List getEntries() {
             if (values != null) {
                 List entries = new ArrayList(values.length);
-                for (Value value : values) {
-                    entries.add(value);
-                }
+                Collections.addAll(entries, values);
                 return entries;
             } else {
                 return null;

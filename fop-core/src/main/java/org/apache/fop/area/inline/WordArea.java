@@ -125,9 +125,7 @@ public class WordArea extends InlineArea {
         if (this.levels != null) {
             int n = end - start;
             int[] levels = new int [ n ];
-            for (int i = 0; i < n; i++) {
-                levels[i] = this.levels [ start + i ];
-            }
+            System.arraycopy(this.levels, start + 0, levels, 0, n);
             return levels;
         } else {
             return null;

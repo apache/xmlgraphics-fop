@@ -84,7 +84,7 @@ public class WhitespaceManagementPenalty extends KnuthPenalty {
         String str = super.toString();
         StringBuffer buffer = new StringBuffer(64);
         buffer.append(" number of variants = " + variantList.size());
-        return str + buffer.toString();
+        return str + buffer;
     }
 
 }

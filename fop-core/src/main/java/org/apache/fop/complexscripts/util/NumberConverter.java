@@ -20,6 +20,7 @@
 package org.apache.fop.complexscripts.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 // CSOFF: LineLengthCheck
@@ -478,9 +479,7 @@ public class NumberConverter {
     */
 
     private static void appendScalars(List<Integer> scalars, Integer[] sa) {
-        for (Integer s : sa) {
-            scalars.add(s);
-        }
+        Collections.addAll(scalars, sa);
     }
 
     private static String scalarsToString(List<Integer> scalars) {

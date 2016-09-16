@@ -1326,7 +1326,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     }
                 }
                 if (log.isTraceEnabled()) {
-                    log.trace(" Word to hyphenate: " + sbChars.toString());
+                    log.trace(" Word to hyphenate: " + sbChars);
                 }
                 // find hyphenation points
                 HyphContext hc = getHyphenContext(sbChars);
