@@ -108,8 +108,8 @@ public class PCLGenerator {
     public PCLGenerator(OutputStream out, int maxResolution) {
         this(out);
         boolean found = false;
-        for (int i = 0; i < PCL_RESOLUTIONS.length; i++) {
-            if (PCL_RESOLUTIONS[i] == maxResolution) {
+        for (int pclResolutions : PCL_RESOLUTIONS) {
+            if (pclResolutions == maxResolution) {
                 found = true;
                 break;
             }

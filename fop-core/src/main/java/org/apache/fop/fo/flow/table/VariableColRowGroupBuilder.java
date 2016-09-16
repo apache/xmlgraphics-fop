@@ -19,7 +19,6 @@
 
 package org.apache.fop.fo.flow.table;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -112,8 +111,8 @@ class VariableColRowGroupBuilder extends RowGroupBuilder {
     /** {@inheritDoc} */
     void endTable() throws ValidationException {
         RowGroupBuilder delegate = new FixedColRowGroupBuilder(table);
-        for (Iterator eventIter = events.iterator(); eventIter.hasNext();) {
-            ((Event) eventIter.next()).play(delegate);
+        for (Object event : events) {
+            ((Event) event).play(delegate);
         }
         delegate.endTable();
     }

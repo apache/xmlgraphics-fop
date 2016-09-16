@@ -20,7 +20,6 @@
 package org.apache.fop.layoutmgr.inline;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -270,8 +269,8 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
                     Object obj = returnedList.remove(0);
                     if (obj instanceof KnuthSequence) {
                         KnuthSequence ks = (KnuthSequence)obj;
-                        for (Iterator it = ks.iterator(); it.hasNext();) {
-                            contentElement = (KnuthElement)it.next();
+                        for (Object k : ks) {
+                            contentElement = (KnuthElement) k;
                             stackSize += contentElement.getWidth();
                             contentList.add(contentElement);
                         }

@@ -418,14 +418,14 @@ public class RtfTextrun extends RtfContainer {
         RtfParagraphBreak lastParagraphBreak = null;
         if (bLast) {
             RtfElement aBefore = null;
-            for (Iterator it = getChildren().iterator(); it.hasNext();) {
-                final RtfElement e = (RtfElement)it.next();
+            for (Object o : getChildren()) {
+                final RtfElement e = (RtfElement) o;
                 if (e instanceof RtfParagraphBreak) {
                     //If the element before was a paragraph break or a bookmark
                     //they will be hidden and are therefore not considered as visible
                     if (!(aBefore instanceof RtfParagraphBreak)
-                     && !(aBefore instanceof RtfBookmark)) {
-                      lastParagraphBreak = (RtfParagraphBreak)e;
+                            && !(aBefore instanceof RtfBookmark)) {
+                        lastParagraphBreak = (RtfParagraphBreak) e;
                     }
                 } else {
                     if (!(e instanceof RtfOpenGroupMark)
@@ -449,8 +449,8 @@ public class RtfTextrun extends RtfContainer {
         boolean bPrevPar = false;
         boolean bBookmark = false;
         boolean bFirst = true;
-        for (Iterator it = getChildren().iterator(); it.hasNext();) {
-            final RtfElement e = (RtfElement)it.next();
+        for (Object o : getChildren()) {
+            final RtfElement e = (RtfElement) o;
             final boolean bRtfParagraphBreak = (e instanceof RtfParagraphBreak);
 
             if (bHasTableCellParent) {
@@ -471,12 +471,12 @@ public class RtfTextrun extends RtfContainer {
             boolean bHide = false;
             bHide = bRtfParagraphBreak;
             bHide = bHide
-                && (bPrevPar
+                    && (bPrevPar
                     || bFirst
                     || (bSuppressLastPar && bLast && lastParagraphBreak != null
-                        && e == lastParagraphBreak)
+                    && e == lastParagraphBreak)
                     || bBookmark)
-                && ((RtfParagraphBreak)e).canHide();
+                    && ((RtfParagraphBreak) e).canHide();
 
             if (!bHide) {
                 newLine();
@@ -489,7 +489,7 @@ public class RtfTextrun extends RtfContainer {
 
             if (e instanceof RtfParagraphBreak) {
                 bPrevPar = true;
-            } else if (e instanceof RtfBookmark)  {
+            } else if (e instanceof RtfBookmark) {
                 bBookmark = true;
             } else if (e instanceof RtfCloseGroupMark) {
                 //do nothing

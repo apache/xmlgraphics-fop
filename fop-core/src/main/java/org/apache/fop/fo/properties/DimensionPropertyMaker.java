@@ -64,8 +64,8 @@ public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
         if (super.isCorrespondingForced(propertyList)) {
             return true;
         }
-        for (int i = 0; i < extraCorresponding.length; i++) {
-            int wmcorr = extraCorresponding[i][0]; //propertyList.getWritingMode()];
+        for (int[] anExtraCorresponding : extraCorresponding) {
+            int wmcorr = anExtraCorresponding[0]; //propertyList.getWritingMode()];
             if (propertyList.getExplicit(wmcorr) != null) {
                 return true;
             }

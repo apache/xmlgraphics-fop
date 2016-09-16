@@ -113,8 +113,8 @@ public class FontInfo {
      * @param weight font weight
      */
     public void addFontProperties(String name, String[] families, String style, int weight) {
-        for (int i = 0; i < families.length; i++) {
-            addFontProperties(name, families[i], style, weight);
+        for (String family : families) {
+            addFontProperties(name, family, style, weight);
         }
     }
 
@@ -382,8 +382,8 @@ public class FontInfo {
     private List<FontTriplet> fontLookup(String[] families, String style, int weight, boolean substitutable) {
         List<FontTriplet> matchingTriplets = new ArrayList<FontTriplet>();
         FontTriplet triplet = null;
-        for (int i = 0; i < families.length; i++) {
-            triplet = fontLookup(families[i], style, weight, substitutable);
+        for (String family : families) {
+            triplet = fontLookup(family, style, weight, substitutable);
             if (triplet != null) {
                 matchingTriplets.add(triplet);
             }

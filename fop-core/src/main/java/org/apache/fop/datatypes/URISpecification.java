@@ -132,8 +132,8 @@ public final class URISpecification {
             } else {
                 try {
                     byte[] utf8 = Character.toString(ch).getBytes("UTF-8");
-                    for (int j = 0, cj = utf8.length; j < cj; j++) {
-                        appendEscape(sb, utf8[j]);
+                    for (byte anUtf8 : utf8) {
+                        appendEscape(sb, anUtf8);
                     }
                 } catch (UnsupportedEncodingException e) {
                     throw new Error("Incompatible JVM. UTF-8 not supported.");

@@ -92,8 +92,8 @@ public class TableRowIterator {
         List rowGroup = (List) rowGroupsIter.next();
         EffRow[] effRowGroup = new EffRow[rowGroup.size()];
         int i = 0;
-        for (Iterator rowIter = rowGroup.iterator(); rowIter.hasNext();) {
-            List gridUnits = (List) rowIter.next();
+        for (Object aRowGroup : rowGroup) {
+            List gridUnits = (List) aRowGroup;
             effRowGroup[i++] = new EffRow(rowIndex++, tablePart, gridUnits);
         }
         return effRowGroup;

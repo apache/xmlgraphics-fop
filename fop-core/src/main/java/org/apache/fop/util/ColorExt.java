@@ -242,9 +242,9 @@ public final class ColorExt extends Color {
             sb.append("\"" + this.iccProfileSrc + "\"");
         }
         float[] colorComponents = this.getColorComponents(null);
-        for (int ix = 0; ix < colorComponents.length; ix++) {
+        for (float colorComponent : colorComponents) {
             sb.append(",");
-            sb.append(colorComponents[ix]);
+            sb.append(colorComponent);
         }
         sb.append(")");
         return sb.toString();

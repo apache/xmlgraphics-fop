@@ -466,8 +466,8 @@ public class XMLRenderer extends AbstractXMLRenderer {
             startElement("title");
             List children = seqTitle.getInlineAreas();
 
-            for (int count = 0; count < children.size(); count++) {
-                InlineArea inline = (InlineArea) children.get(count);
+            for (Object aChildren : children) {
+                InlineArea inline = (InlineArea) aChildren;
                 renderInlineArea(inline);
             }
 
@@ -603,8 +603,8 @@ public class XMLRenderer extends AbstractXMLRenderer {
 
         Span span = null;
         List spans = mr.getSpans();
-        for (int count = 0; count < spans.size(); count++) {
-            span = (Span) spans.get(count);
+        for (Object span1 : spans) {
+            span = (Span) span1;
             atts.clear();
             if (span.getColumnCount() != 1) {
                 addAttribute("columnCount", span.getColumnCount());

@@ -147,10 +147,10 @@ public class FontManagerConfigurator {
             Configuration cfg, boolean strict) throws FOPException {
         List<FontTriplet.Matcher> matcherList = new java.util.ArrayList<FontTriplet.Matcher>();
         Configuration[] matches = cfg.getChildren("match");
-        for (int i = 0; i < matches.length; i++) {
+        for (Configuration matche : matches) {
             try {
                 matcherList.add(new FontFamilyRegExFontTripletMatcher(
-                        matches[i].getAttribute("font-family")));
+                        matche.getAttribute("font-family")));
             } catch (ConfigurationException ce) {
                 LogUtil.handleException(log, ce, strict);
                 continue;
@@ -189,8 +189,8 @@ public class FontManagerConfigurator {
 
         /** {@inheritDoc} */
         public boolean matches(FontTriplet triplet) {
-            for (int i = 0, c = matchers.length; i < c; i++) {
-                if (matchers[i].matches(triplet)) {
+            for (FontTriplet.Matcher matcher : matchers) {
+                if (matcher.matches(triplet)) {
                     return true;
                 }
             }

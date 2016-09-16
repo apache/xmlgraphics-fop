@@ -21,7 +21,6 @@ package org.apache.fop.complexscripts.fonts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -76,8 +75,7 @@ public class GlyphPositioningTable extends GlyphTable {
         if ((subtables == null) || (subtables.size() == 0)) {
             throw new AdvancedTypographicTableFormatException("subtables must be non-empty");
         } else {
-            for (Iterator it = subtables.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : subtables) {
                 if (o instanceof GlyphPositioningSubtable) {
                     addSubtable((GlyphSubtable) o);
                 } else {
@@ -342,8 +340,8 @@ public class GlyphPositioningTable extends GlyphTable {
         public List getEntries() {
             if (values != null) {
                 List entries = new ArrayList(values.length);
-                for (int i = 0, n = values.length; i < n; i++) {
-                    entries.add(values[i]);
+                for (Value value : values) {
+                    entries.add(value);
                 }
                 return entries;
             } else {
@@ -487,8 +485,7 @@ public class GlyphPositioningTable extends GlyphTable {
         public PairValues getPairValues(int ci, int gi1, int gi2) {
             if ((pvm != null) && (ci < pvm.length)) {
                 PairValues[] pvt = pvm [ ci ];
-                for (int i = 0, n = pvt.length; i < n; i++) {
-                    PairValues pv = pvt [ i ];
+                for (PairValues pv : pvt) {
                     if (pv != null) {
                         int g = pv.getGlyph();
                         if (g < gi2) {
@@ -1225,8 +1222,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedGlyphSequenceRule)) {
                             ChainedGlyphSequenceRule cr = (ChainedGlyphSequenceRule) r;
                             int[] iga = cr.getGlyphs(gi);
@@ -1313,8 +1309,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedClassSequenceRule)) {
                             ChainedClassSequenceRule cr = (ChainedClassSequenceRule) r;
                             int[] ca = cr.getClasses(cdt.getClassIndex(gi, ps.getClassMatchSet(gi)));
@@ -1415,8 +1410,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedCoverageSequenceRule)) {
                             ChainedCoverageSequenceRule cr = (ChainedCoverageSequenceRule) r;
                             GlyphCoverageTable[] gca = cr.getCoverages();
@@ -1552,8 +1546,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedGlyphSequenceRule)) {
                             ChainedGlyphSequenceRule cr = (ChainedGlyphSequenceRule) r;
                             int[] iga = cr.getGlyphs(gi);
@@ -1628,8 +1621,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedClassSequenceRule)) {
                             ChainedClassSequenceRule cr = (ChainedClassSequenceRule) r;
                             int[] ica = cr.getClasses(icdt.getClassIndex(gi, ps.getClassMatchSet(gi)));
@@ -1719,8 +1711,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedCoverageSequenceRule)) {
                             ChainedCoverageSequenceRule cr = (ChainedCoverageSequenceRule) r;
                             GlyphCoverageTable[] igca = cr.getCoverages();

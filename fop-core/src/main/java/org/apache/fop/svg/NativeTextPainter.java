@@ -182,8 +182,8 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
             super.paintTextRuns(textRuns, g2d);
             return;
         }
-        for (int i = 0; i < textRuns.size(); i++) {
-            TextRun textRun = (TextRun) textRuns.get(i);
+        for (Object textRun1 : textRuns) {
+            TextRun textRun = (TextRun) textRun1;
             try {
                 paintTextRun(textRun, g2d);
             } catch (IOException ioe) {

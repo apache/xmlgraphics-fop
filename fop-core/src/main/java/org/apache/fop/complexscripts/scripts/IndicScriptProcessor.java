@@ -184,8 +184,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
         for (int i = 0, n = sa.length; i < n; i++) {
             GlyphSequence s = sa [ i ];
             // apply basic shaping subs
-            for (int j = 0, m = usa.length; j < m; j++) {
-                GlyphTable.UseSpec us = usa [ j ];
+            for (GlyphTable.UseSpec us : usa) {
                 if (isBasicShapingUse(us)) {
                     s.setPredications(true);
                     s = us.substitute(s, script, language, sct);
@@ -196,8 +195,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
             // reorder reph
             s = reorderReph(s);
             // apply presentation subs
-            for (int j = 0, m = usa.length; j < m; j++) {
-                GlyphTable.UseSpec us = usa [ j ];
+            for (GlyphTable.UseSpec us : usa) {
                 if (isPresentationUse(us)) {
                     s.setPredications(true);
                     s = us.substitute(s, script, language, sct);
@@ -503,19 +501,18 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
             int[] ga = gs.getGlyphArray(false);
             CharAssociation[] aa = gs.getAssociations(0, -1);
             Vector<GlyphSequence> nsv = new Vector<GlyphSequence>();
-            for (int i = 0, ns = sa.length; i < ns; i++) {
-                Segment s = sa [ i ];
+            for (Segment s : sa) {
                 Vector<Integer> ngv = new Vector<Integer>(ng);
                 Vector<CharAssociation> nav = new Vector<CharAssociation>(ng);
                 for (int j = 0; j < ng; j++) {
-                    CharAssociation ca = aa [ j ];
+                    CharAssociation ca = aa[j];
                     if (ca.contained(s.getOffset(), s.getCount())) {
-                        ngv.add(ga [ j ]);
+                        ngv.add(ga[j]);
                         nav.add(ca);
                     }
                 }
                 if (ngv.size() > 0) {
-                    nsv.add(new GlyphSequence(gs, null, toIntArray(ngv), null, null, nav.toArray(new CharAssociation [ nav.size() ]), null));
+                    nsv.add(new GlyphSequence(gs, null, toIntArray(ngv), null, null, nav.toArray(new CharAssociation[nav.size()]), null));
                 }
             }
             if (nsv.size() > 0) {

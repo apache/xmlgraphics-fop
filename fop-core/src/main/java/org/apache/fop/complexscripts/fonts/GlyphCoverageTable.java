@@ -20,7 +20,6 @@
 package org.apache.fop.complexscripts.fonts;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -99,8 +98,7 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
         if ((entries == null) || (entries.size() == 0)) {
             return false;
         } else {
-            for (Iterator it = entries.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : entries) {
                 if (!(o instanceof Integer)) {
                     return false;
                 }
@@ -113,8 +111,7 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
         if ((entries == null) || (entries.size() == 0)) {
             return false;
         } else {
-            for (Iterator it = entries.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : entries) {
                 if (!(o instanceof MappingRange)) {
                     return false;
                 }
@@ -146,8 +143,8 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
         public List getEntries() {
             List entries = new java.util.ArrayList();
             if (map != null) {
-                for (int i = 0, n = map.length; i < n; i++) {
-                    entries.add(map[i]);
+                for (int aMap : map) {
+                    entries.add(aMap);
                 }
             }
             return entries;
@@ -178,13 +175,12 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
             int n = entries.size();
             int gidMax = -1;
             int[] map = new int [ n ];
-            for (Iterator it = entries.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : entries) {
                 if (o instanceof Integer) {
                     int gid = (Integer) o;
                     if ((gid >= 0) && (gid < 65536)) {
                         if (gid > gidMax) {
-                            map [ i++ ] = gidMax = gid;
+                            map[i++] = gidMax = gid;
                         } else {
                             log.info("ignoring out of order or duplicate glyph index: " + gid);
                             skipped++;

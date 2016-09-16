@@ -97,8 +97,7 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
         if ((entries == null) || (entries.size() == 0)) {
             return false;
         } else {
-            for (Iterator it = entries.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : entries) {
                 if (!(o instanceof Integer)) {
                     return false;
                 }
@@ -111,8 +110,7 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
         if ((entries == null) || (entries.size() == 0)) {
             return false;
         } else {
-            for (Iterator it = entries.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : entries) {
                 if (!(o instanceof MappingRange)) {
                     return false;
                 }
@@ -125,8 +123,7 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
         if ((entries == null) || (entries.size() == 0)) {
             return false;
         } else {
-            for (Iterator it = entries.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : entries) {
                 if (!(o instanceof GlyphCoverageTable)) {
                     return false;
                 }
@@ -161,8 +158,8 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
             List entries = new java.util.ArrayList();
             entries.add(firstGlyph);
             if (gca != null) {
-                for (int i = 0, n = gca.length; i < n; i++) {
-                    entries.add(gca[i]);
+                for (int aGca : gca) {
+                    entries.add(aGca);
                 }
             }
             return entries;

@@ -2817,8 +2817,8 @@ public class TTXFile {
         private boolean hasMissingCoverage(GlyphCoverageTable[] gca) {
             assert gca != null;
             int nc = 0;
-            for (int i = 0, n = gca.length; i < n; i++) {
-                if (gca [ i ] != null) {
+            for (GlyphCoverageTable aGca : gca) {
+                if (aGca != null) {
                     nc++;
                 }
             }
@@ -3131,8 +3131,7 @@ public class TTXFile {
         }
         private Integer computeClassCount(Anchor[][] am) {
             int ncMax = 0;
-            for (int i = 0, n = am.length; i < n; i++) {
-                Anchor[] aa = am [ i ];
+            for (Anchor[] aa : am) {
                 if (aa != null) {
                     int nc = aa.length;
                     if (nc > ncMax) {

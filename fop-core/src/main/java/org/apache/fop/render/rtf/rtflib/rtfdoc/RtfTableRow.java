@@ -28,7 +28,6 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Iterator;
 
 import org.apache.fop.apps.FOPException;
 
@@ -199,11 +198,11 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         RtfAttributes tableBorderAttributes = getTable().getBorderAttributes();
 
         int index = 0;
-        for (Iterator it = getChildren().iterator(); it.hasNext();) {
-            final RtfElement e = (RtfElement)it.next();
+        for (Object o : getChildren()) {
+            final RtfElement e = (RtfElement) o;
             if (e instanceof RtfTableCell) {
 
-                RtfTableCell rtfcell = (RtfTableCell)e;
+                RtfTableCell rtfcell = (RtfTableCell) e;
 
                 // Adjust the cell's display attributes so the table's/row's borders
                 // are drawn properly.
@@ -214,7 +213,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                         String border = ITableAttributes.CELL_BORDER_LEFT;
                         if (!rtfcell.getRtfAttributes().isSet(border)) {
                             rtfcell.getRtfAttributes().set(border,
-                                (RtfAttributes) tableBorderAttributes.getValue(border));
+                                    (RtfAttributes) tableBorderAttributes.getValue(border));
                         }
                     }
 
@@ -222,7 +221,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                         String border = ITableAttributes.CELL_BORDER_RIGHT;
                         if (!rtfcell.getRtfAttributes().isSet(border)) {
                             rtfcell.getRtfAttributes().set(border,
-                                (RtfAttributes) tableBorderAttributes.getValue(border));
+                                    (RtfAttributes) tableBorderAttributes.getValue(border));
                         }
                     }
 
@@ -230,7 +229,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                         String border = ITableAttributes.CELL_BORDER_TOP;
                         if (!rtfcell.getRtfAttributes().isSet(border)) {
                             rtfcell.getRtfAttributes().set(border,
-                                (RtfAttributes) tableBorderAttributes.getValue(border));
+                                    (RtfAttributes) tableBorderAttributes.getValue(border));
                         }
                     }
 
@@ -238,7 +237,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                         String border = ITableAttributes.CELL_BORDER_BOTTOM;
                         if (!rtfcell.getRtfAttributes().isSet(border)) {
                             rtfcell.getRtfAttributes().set(border,
-                                (RtfAttributes) tableBorderAttributes.getValue(border));
+                                    (RtfAttributes) tableBorderAttributes.getValue(border));
                         }
                     }
                 }
@@ -247,35 +246,35 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                 if (index == 0) {
                     if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_LEFT)) {
                         rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_LEFT,
-                            (String) attrib.getValue(ITableAttributes.ROW_BORDER_LEFT));
+                                (String) attrib.getValue(ITableAttributes.ROW_BORDER_LEFT));
                     }
                 }
 
                 if (index == this.getChildCount() - 1) {
                     if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_RIGHT)) {
                         rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_RIGHT,
-                            (String) attrib.getValue(ITableAttributes.ROW_BORDER_RIGHT));
+                                (String) attrib.getValue(ITableAttributes.ROW_BORDER_RIGHT));
                     }
                 }
 
                 if (isFirstRow()) {
                     if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_TOP)) {
                         rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_TOP,
-                            (String) attrib.getValue(ITableAttributes.ROW_BORDER_TOP));
+                                (String) attrib.getValue(ITableAttributes.ROW_BORDER_TOP));
                     }
                 }
 
                 if ((parentTable != null) && (parentTable.isHighestRow(id))) {
                     if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_BOTTOM)) {
                         rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_BOTTOM,
-                            (String) attrib.getValue(ITableAttributes.ROW_BORDER_BOTTOM));
+                                (String) attrib.getValue(ITableAttributes.ROW_BORDER_BOTTOM));
                     }
                 }
 
                 // write cell's definition
                 xPos = rtfcell.writeCellDef(xPos);
             }
-          index++; // Added by Boris POUDEROUS on 2002/07/02
+            index++; // Added by Boris POUDEROUS on 2002/07/02
         }
 
         newLine();

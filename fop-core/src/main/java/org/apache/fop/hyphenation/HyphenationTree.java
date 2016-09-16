@@ -264,9 +264,9 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer {
                 if (hstrcmp(word, i, kv.getArray(), lo[p]) == 0) {
                     values = getValues(eq[p]);    // data pointer is in eq[]
                     int j = index;
-                    for (int k = 0; k < values.length; k++) {
-                        if (j < il.length && values[k] > il[j]) {
-                            il[j] = values[k];
+                    for (byte value : values) {
+                        if (j < il.length && value > il[j]) {
+                            il[j] = value;
                         }
                         j++;
                     }
@@ -291,9 +291,9 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer {
                     if (sc[q] == 0) {
                         values = getValues(eq[q]);
                         int j = index;
-                        for (int k = 0; k < values.length; k++) {
-                            if (j < il.length && values[k] > il[j]) {
-                                il[j] = values[k];
+                        for (byte value : values) {
+                            if (j < il.length && value > il[j]) {
+                                il[j] = value;
                             }
                             j++;
                         }

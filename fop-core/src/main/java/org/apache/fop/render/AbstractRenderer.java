@@ -202,11 +202,12 @@ public abstract class AbstractRenderer
 
     private String convertToString(List children) {
         StringBuffer sb = new StringBuffer();
-        for (int count = 0; count < children.size(); count++) {
-            InlineArea inline = (InlineArea) children.get(count);
+        for (Object aChildren : children) {
+            InlineArea inline = (InlineArea) aChildren;
             //if (inline instanceof Character) {
             //    sb.append(((Character) inline).getChar());
-            /*} else*/ if (inline instanceof TextArea) {
+            /*} else*/
+            if (inline instanceof TextArea) {
                 sb.append(((TextArea) inline).getText());
             } else if (inline instanceof InlineParent) {
                 sb.append(convertToString(
@@ -413,8 +414,8 @@ public abstract class AbstractRenderer
         int saveBPPos = currentBPPosition;
         int saveSpanBPPos = saveBPPos;
         int saveIPPos = currentIPPosition;
-        for (int count = 0; count < spans.size(); count++) {
-            span = (Span) spans.get(count);
+        for (Object span1 : spans) {
+            span = (Span) span1;
             int level = span.getBidiLevel();
             if (level < 0) {
                 level = 0;
@@ -548,8 +549,7 @@ public abstract class AbstractRenderer
         containingBPPosition = currentBPPosition;
         containingIPPosition = currentIPPosition;
 
-        for (int count = 0; count < blocks.size(); count++) {
-            Object obj = blocks.get(count);
+        for (Object obj : blocks) {
             if (obj instanceof Block) {
                 currentIPPosition = contIP;
                 containingBPPosition = contBP;
@@ -685,8 +685,8 @@ public abstract class AbstractRenderer
         } else {
             currentIPPosition += line.getStartIndent();
         }
-        for (int i = 0, l = children.size(); i < l; i++) {
-            InlineArea inline = (InlineArea) children.get(i);
+        for (Object aChildren : children) {
+            InlineArea inline = (InlineArea) aChildren;
             renderInlineArea(inline);
         }
         currentBPPosition = saveBP;
@@ -755,8 +755,8 @@ public abstract class AbstractRenderer
         List children = text.getChildAreas();
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
-        for (int i = 0, l = children.size(); i < l; i++) {
-            InlineArea inline = (InlineArea) children.get(i);
+        for (Object aChildren : children) {
+            InlineArea inline = (InlineArea) aChildren;
             renderInlineArea(inline);
         }
         currentIPPosition = saveIP + text.getAllocIPD();
@@ -798,8 +798,8 @@ public abstract class AbstractRenderer
         int ipAdjust;
         if ((ip instanceof FilledArea) && ((level & 1) != 0)) {
             int ipdChildren = 0;
-            for (int i = 0, l = children.size(); i < l; i++) {
-                InlineArea inline = (InlineArea) children.get(i);
+            for (Object aChildren : children) {
+                InlineArea inline = (InlineArea) aChildren;
                 ipdChildren += inline.getAllocIPD();
             }
             ipAdjust = ip.getAllocIPD() - ipdChildren;
@@ -817,8 +817,8 @@ public abstract class AbstractRenderer
         }
         currentBPPosition += ip.getBlockProgressionOffset();
         // render children inlines
-        for (int i = 0, l = children.size(); i < l; i++) {
-            InlineArea inline = (InlineArea) children.get(i);
+        for (Object aChildren : children) {
+            InlineArea inline = (InlineArea) aChildren;
             renderInlineArea(inline);
         }
         currentIPPosition = saveIP + ip.getAllocIPD();

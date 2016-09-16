@@ -47,10 +47,10 @@ public class RowGroupBuilderTestCase extends AbstractTableTest {
      */
     private void checkTablePartRowGroups(TablePart part, int[] expectedRowLengths) {
         Iterator rowGroupIter = part.getRowGroups().iterator();
-        for (int i = 0; i < expectedRowLengths.length; i++) {
+        for (int expectedRowLength : expectedRowLengths) {
             assertTrue(rowGroupIter.hasNext());
             List rowGroup = (List) rowGroupIter.next();
-            assertEquals(expectedRowLengths[i], rowGroup.size());
+            assertEquals(expectedRowLength, rowGroup.size());
         }
         assertFalse(rowGroupIter.hasNext());
     }
@@ -78,9 +78,9 @@ public class RowGroupBuilderTestCase extends AbstractTableTest {
             checkTablePartRowGroups(table.getTableFooter(), expectedFooterRowLengths);
         }
         Iterator bodyIter = table.getChildNodes();
-        for (int i = 0; i < expectedBodyRowLengths.length; i++) {
+        for (int[] expectedBodyRowLength : expectedBodyRowLengths) {
             assertTrue(bodyIter.hasNext());
-            checkTablePartRowGroups((TableBody) bodyIter.next(), expectedBodyRowLengths[i]);
+            checkTablePartRowGroups((TableBody) bodyIter.next(), expectedBodyRowLength);
         }
     }
 

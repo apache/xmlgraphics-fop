@@ -20,7 +20,6 @@
 package org.apache.fop.complexscripts.fonts;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -78,8 +77,7 @@ public class GlyphDefinitionTable extends GlyphTable {
         if ((subtables == null) || (subtables.size() == 0)) {
             throw new AdvancedTypographicTableFormatException("subtables must be non-empty");
         } else {
-            for (Iterator it = subtables.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : subtables) {
                 if (o instanceof GlyphDefinitionSubtable) {
                     addSubtable((GlyphSubtable) o);
                 } else {

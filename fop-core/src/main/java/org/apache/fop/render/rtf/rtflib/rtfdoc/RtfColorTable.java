@@ -191,8 +191,8 @@ public final class RtfColorTable {
 
         int len = colorTable.size();
 
-        for (int i = 0; i < len; i++) {
-            int identifier = (Integer) colorTable.get(i);
+        for (Object aColorTable : colorTable) {
+            int identifier = (Integer) aColorTable;
 
             header.newLine();
             header.write("\\red" + determineColorLevel(identifier, RED));

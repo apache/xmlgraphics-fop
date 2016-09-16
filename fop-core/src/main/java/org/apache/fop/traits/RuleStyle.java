@@ -64,9 +64,9 @@ public final class RuleStyle extends TraitEnum {
      * @return the enumeration object
      */
     public static RuleStyle valueOf(String name) {
-        for (int i = 0; i < STYLES.length; i++) {
-            if (STYLES[i].getName().equalsIgnoreCase(name)) {
-                return STYLES[i];
+        for (RuleStyle style : STYLES) {
+            if (style.getName().equalsIgnoreCase(name)) {
+                return style;
             }
         }
         throw new IllegalArgumentException("Illegal rule style: " + name);
@@ -78,9 +78,9 @@ public final class RuleStyle extends TraitEnum {
      * @return the enumeration object
      */
     public static RuleStyle valueOf(int enumValue) {
-        for (int i = 0; i < STYLES.length; i++) {
-            if (STYLES[i].getEnumValue() == enumValue) {
-                return STYLES[i];
+        for (RuleStyle style : STYLES) {
+            if (style.getEnumValue() == enumValue) {
+                return style;
             }
         }
         throw new IllegalArgumentException("Illegal rule style: " + enumValue);

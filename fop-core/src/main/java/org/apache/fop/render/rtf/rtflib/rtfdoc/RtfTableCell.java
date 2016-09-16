@@ -28,7 +28,6 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Iterator;
 
 /**
  * <p>A cell in an RTF table, container for paragraphs, lists, etc.</p>
@@ -491,14 +490,13 @@ public class RtfTableCell
         // true if there is at least one non-empty paragraph after p in our children
         boolean pFound = false;
         boolean result = false;
-        for (Iterator it = getChildren().iterator(); it.hasNext();) {
-            final Object o = it.next();
+        for (final Object o : getChildren()) {
             if (!pFound) {
                 // set pFound when p is found in the list
-                pFound =  (o == p);
+                pFound = (o == p);
             } else {
                 if (o instanceof RtfParagraph) {
-                    final RtfParagraph p2 = (RtfParagraph)o;
+                    final RtfParagraph p2 = (RtfParagraph) o;
                     if (!p2.isEmpty()) {
                         // found a non-empty paragraph after p
                         result = true;

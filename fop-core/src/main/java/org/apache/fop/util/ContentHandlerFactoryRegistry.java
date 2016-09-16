@@ -78,8 +78,8 @@ public class ContentHandlerFactoryRegistry {
      */
     public void addContentHandlerFactory(ContentHandlerFactory factory) {
         String[] ns = factory.getSupportedNamespaces();
-        for (int i = 0; i < ns.length; i++) {
-            factories.put(ns[i], factory);
+        for (String n : ns) {
+            factories.put(n, factory);
         }
     }
 

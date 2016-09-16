@@ -53,9 +53,7 @@ public class CustomFontCollection implements FontCollection {
 
         String internalName = null;
 
-        for (int i = 0; i < embedFontInfoList.size(); i++) {
-            EmbedFontInfo embedFontInfo = embedFontInfoList.get(i);
-
+        for (EmbedFontInfo embedFontInfo : embedFontInfoList) {
             internalName = "F" + num;
             num++;
 
@@ -63,8 +61,7 @@ public class CustomFontCollection implements FontCollection {
             fontInfo.addMetrics(internalName, font);
 
             List<FontTriplet> triplets = embedFontInfo.getFontTriplets();
-            for (int tripletIndex = 0; tripletIndex < triplets.size(); tripletIndex++) {
-                FontTriplet triplet = triplets.get(tripletIndex);
+            for (FontTriplet triplet : triplets) {
                 fontInfo.addFontProperties(internalName, triplet);
             }
         }

@@ -111,14 +111,14 @@ public class GraphicsSetProcessColor extends AbstractGraphicsDrawingOrder {
         if (colSpaceType == ColorSpace.TYPE_CMYK) {
             colspace = CMYK;
             colsizes = new byte[] {0x08, 0x08, 0x08, 0x08};
-            for (int i = 0; i < colorComponents.length; i++) {
-                baout.write(Math.round(colorComponents[i] * 255));
+            for (float colorComponent : colorComponents) {
+                baout.write(Math.round(colorComponent * 255));
             }
         } else if (colSpaceType == ColorSpace.TYPE_RGB) {
             colspace = RGB;
             colsizes = new byte[] {0x08, 0x08, 0x08, 0x00};
-            for (int i = 0; i < colorComponents.length; i++) {
-                baout.write(Math.round(colorComponents[i] * 255));
+            for (float colorComponent : colorComponents) {
+                baout.write(Math.round(colorComponent * 255));
             }
         } else if (cs instanceof CIELabColorSpace) {
             colspace = CIELAB;

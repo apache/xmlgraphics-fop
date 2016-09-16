@@ -29,7 +29,6 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -140,10 +139,10 @@ public class RtfExtraRowSet extends RtfContainer {
      */
     int addTable(RtfTable tbl, int rowIndex, int xOffset) {
         // process all rows of the table
-        for (Iterator it = tbl.getChildren().iterator(); it.hasNext();) {
-            final RtfElement e = (RtfElement)it.next();
+        for (Object o : tbl.getChildren()) {
+            final RtfElement e = (RtfElement) o;
             if (e instanceof RtfTableRow) {
-                addRow((RtfTableRow)e, rowIndex, xOffset);
+                addRow((RtfTableRow) e, rowIndex, xOffset);
                 rowIndex++;
                 maxRowIndex = Math.max(rowIndex, maxRowIndex);
             }
@@ -153,10 +152,10 @@ public class RtfExtraRowSet extends RtfContainer {
 
     /** add all cells of given row to this set */
     private void addRow(RtfTableRow row, int rowIndex, int xOffset) {
-        for (Iterator it = row.getChildren().iterator(); it.hasNext();) {
-            final RtfElement e = (RtfElement)it.next();
+        for (Object o : row.getChildren()) {
+            final RtfElement e = (RtfElement) o;
             if (e instanceof RtfTableCell) {
-                final RtfTableCell c = (RtfTableCell)e;
+                final RtfTableCell c = (RtfTableCell) e;
                 cells.add(new PositionedCell(c, rowIndex, xOffset));
                 xOffset += c.getCellWidth();
             }
@@ -188,8 +187,8 @@ public class RtfExtraRowSet extends RtfContainer {
         // process all extra cells by rendering them into extra rows
         List rowCells = null;
         int rowIndex = -1;
-        for (Iterator it = cells.iterator(); it.hasNext();) {
-            final PositionedCell pc = (PositionedCell)it.next();
+        for (Object cell : cells) {
+            final PositionedCell pc = (PositionedCell) cell;
             if (pc.rowIndex != rowIndex) {
                 // starting a new row, render previous one
                 if (rowCells != null) {
@@ -225,24 +224,24 @@ public class RtfExtraRowSet extends RtfContainer {
         float xOffset = 0;
         float xOffsetOfLastPositionedCell = 0;
 
-        for (Iterator it = cells.iterator(); it.hasNext();) {
-            final PositionedCell pc = (PositionedCell)it.next();
+        for (Object cell : cells) {
+            final PositionedCell pc = (PositionedCell) cell;
 
             // if first cell is not at offset 0, add placeholder cell
             // TODO should be merged with the cell that is above it
             if (cellIndex == 0 && pc.xOffset > 0) {
-               /**
-                * Added by Boris Poudérous
-                */
-               // Add empty cells merged vertically with the cells above and with the same widths
-               // (BEFORE the cell that contains the nested table)
+                /**
+                 * Added by Boris Poudérous
+                 */
+                // Add empty cells merged vertically with the cells above and with the same widths
+                // (BEFORE the cell that contains the nested table)
                 for (int i = 0; (xOffset < pc.xOffset)
                         && (i < parentITableColumnsInfo.getNumberOfColumns()); i++) {
                     // Get the width of the cell above
                     xOffset += parentITableColumnsInfo.getColumnWidth();
                     // Create the empty cell merged vertically
-                    row.newTableCellMergedVertically((int)parentITableColumnsInfo.getColumnWidth(),
-                           pc.cell.attrib);
+                    row.newTableCellMergedVertically((int) parentITableColumnsInfo.getColumnWidth(),
+                            pc.cell.attrib);
                     // Select next column in order to have its width
                     parentITableColumnsInfo.selectNextColumn();
                 }
@@ -286,8 +285,8 @@ public class RtfExtraRowSet extends RtfContainer {
      */
     private static boolean allCellsEmpty(List cells) {
         boolean empty = true;
-        for (Iterator it = cells.iterator(); it.hasNext();) {
-            final PositionedCell pc = (PositionedCell)it.next();
+        for (Object cell : cells) {
+            final PositionedCell pc = (PositionedCell) cell;
             if (pc.cell.containsText()) {
                 empty = false;
                 break;

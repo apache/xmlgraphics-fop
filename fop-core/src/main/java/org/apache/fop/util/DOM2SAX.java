@@ -274,8 +274,8 @@ public class DOM2SAX {
 
             // Generate endPrefixMapping() for all pushed prefixes
             final int nPushedPrefixes = pushedPrefixes.size();
-            for (int i = 0; i < nPushedPrefixes; i++) {
-                endPrefixMapping((String)pushedPrefixes.get(i));
+            for (Object pushedPrefixe : pushedPrefixes) {
+                endPrefixMapping((String) pushedPrefixe);
             }
             break;
 

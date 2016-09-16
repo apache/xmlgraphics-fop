@@ -409,9 +409,9 @@ public final class SpaceResolver {
 
     private MinOptMax sum(MinOptMax[] lengths) {
         MinOptMax sum = MinOptMax.ZERO;
-        for (int i = 0; i < lengths.length; i++) {
-            if (lengths[i] != null) {
-                sum = sum.plus(lengths[i]);
+        for (MinOptMax length : lengths) {
+            if (length != null) {
+                sum = sum.plus(length);
             }
         }
         return sum;

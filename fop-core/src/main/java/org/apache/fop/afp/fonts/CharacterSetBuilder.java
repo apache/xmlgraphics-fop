@@ -302,8 +302,7 @@ public abstract class CharacterSetBuilder {
                 //process D3AC89 Font Position
                 processFontPosition(structuredFieldReader, characterSetOrientations, normalizer);
                 //process D38C89 Font Index (per orientation)
-                for (int i = 0; i < characterSetOrientations.length; i++) {
-                    CharacterSetOrientation characterSetOrientation = characterSetOrientations[i];
+                for (CharacterSetOrientation characterSetOrientation : characterSetOrientations) {
                     processFontIndex(structuredFieldReader, characterSetOrientation, codePage, normalizer);
                     characterSet.addCharacterSetOrientation(characterSetOrientation);
                 }

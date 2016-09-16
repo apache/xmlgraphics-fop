@@ -64,8 +64,7 @@ public class DigestFilterTestCase {
 
     private String digestToString(byte[] digest) {
         StringBuffer buffer = new StringBuffer(2 * digest.length);
-        for (int i = 0; i < digest.length; i++) {
-            int val = digest[i];
+        for (byte val : digest) {
             int hi = (val >> 4) & 0xF;
             int lo = val & 0xF;
             if (hi < 10) {

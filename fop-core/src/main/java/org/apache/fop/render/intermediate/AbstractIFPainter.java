@@ -113,8 +113,8 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
 
     private AffineTransform combine(AffineTransform[] transforms) {
         AffineTransform at = new AffineTransform();
-        for (int i = 0, c = transforms.length; i < c; i++) {
-            at.concatenate(transforms[i]);
+        for (AffineTransform transform : transforms) {
+            at.concatenate(transform);
         }
         return at;
     }

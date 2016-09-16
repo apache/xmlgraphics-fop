@@ -295,8 +295,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
          * @return true if the sequence contains a box
          */
         public boolean containsBox() {
-            for (int i = 0; i < this.size(); i++) {
-                KnuthElement el = (KnuthElement)this.get(i);
+            for (Object o : this) {
+                KnuthElement el = (KnuthElement) o;
                 if (el.isBox()) {
                     return true;
                 }

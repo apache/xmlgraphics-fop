@@ -126,8 +126,8 @@ class RowPainter {
 
         if (tablePartBackground != null) {
             TableLayoutManager tableLM = tclm.getTableLM();
-            for (Iterator iter = tablePartBackgroundAreas.iterator(); iter.hasNext();) {
-                Block backgroundArea = (Block) iter.next();
+            for (Object tablePartBackgroundArea : tablePartBackgroundAreas) {
+                Block backgroundArea = (Block) tablePartBackgroundArea;
                 TraitSetter.addBackground(backgroundArea, tablePartBackground, tableLM,
                         -backgroundArea.getXOffset(), tablePartOffset - backgroundArea.getYOffset(),
                         tableLM.getContentAreaIPD(), currentRowOffset - tablePartOffset);

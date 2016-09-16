@@ -142,8 +142,8 @@ public class ImageHandlerRegistry {
         for (ImageHandler handler : this.handlerList) {
             if (handler.isCompatible(context, null)) {
                 ImageFlavor[] f = handler.getSupportedImageFlavors();
-                for (int i = 0; i < f.length; i++) {
-                    flavors.add(f[i]);
+                for (ImageFlavor aF : f) {
+                    flavors.add(aF);
                 }
             }
         }

@@ -71,8 +71,8 @@ public class FOPTestbed extends AbstractLogEnabled
         Configuration tasks = configuration.getChild("tasks");
         this.repeat = tasks.getAttributeAsInteger("repeat", 1);
         Configuration[] entries = tasks.getChildren("task");
-        for (int i = 0; i < entries.length; i++) {
-            this.taskList.add(new TaskDef(entries[i]));
+        for (Configuration entry : entries) {
+            this.taskList.add(new TaskDef(entry));
         }
         this.fopCfg = configuration.getChild("processor");
     }

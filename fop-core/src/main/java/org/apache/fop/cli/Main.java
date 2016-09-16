@@ -84,16 +84,16 @@ public final class Main {
         }
         files = libDir.listFiles(filter);
         if (files != null) {
-            for (int i = 0, size = files.length; i < size; i++) {
-                jars.add(files[i].toURI().toURL());
+            for (File file : files) {
+                jars.add(file.toURI().toURL());
             }
         }
         String optionalLib = System.getProperty("fop.optional.lib");
         if (optionalLib != null) {
             files = new File(optionalLib).listFiles(filter);
             if (files != null) {
-                for (int i = 0, size = files.length; i < size; i++) {
-                    jars.add(files[i].toURI().toURL());
+                for (File file : files) {
+                    jars.add(file.toURI().toURL());
                 }
             }
         }

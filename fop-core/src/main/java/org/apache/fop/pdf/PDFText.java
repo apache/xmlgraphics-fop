@@ -151,9 +151,9 @@ public class PDFText extends PDFObject {
         if (brackets) {
             sb.append("<");
         }
-        for (int i = 0; i < data.length; i++) {
-            sb.append(DIGITS[(data[i] >>> 4) & 0x0F]);
-            sb.append(DIGITS[data[i] & 0x0F]);
+        for (byte aData : data) {
+            sb.append(DIGITS[(aData >>> 4) & 0x0F]);
+            sb.append(DIGITS[aData & 0x0F]);
         }
         if (brackets) {
             sb.append(">");
@@ -198,9 +198,9 @@ public class PDFText extends PDFObject {
             throw new CascadingRuntimeException("Incompatible VM", uee);
         }
 
-        for (int i = 0; i < uniBytes.length; i++) {
-            buf.append(DIGITS[(uniBytes[i] >>> 4) & 0x0F]);
-            buf.append(DIGITS[uniBytes[i] & 0x0F]);
+        for (byte uniByte : uniBytes) {
+            buf.append(DIGITS[(uniByte >>> 4) & 0x0F]);
+            buf.append(DIGITS[uniByte & 0x0F]);
         }
         return buf.toString();
     }
@@ -287,8 +287,7 @@ public class PDFText extends PDFObject {
     public static final byte[] escapeByteArray(byte[] data) {
         ByteArrayOutputStream bout = new ByteArrayOutputStream(data.length);
         bout.write((int)'(');
-        for (int i = 0; i < data.length; i++) {
-            final int b = data[i];
+        for (final byte b : data) {
             switch (b) {
                 case '\n':
                     bout.write('\\');

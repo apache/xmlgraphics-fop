@@ -140,8 +140,8 @@ public class FOTreeTestCase {
 
             List<String> results = collector.getResults();
             if (results.size() > 0) {
-                for (int i = 0; i < results.size(); i++) {
-                    System.out.println(results.get(i));
+                for (String result : results) {
+                    System.out.println(result);
                 }
                 throw new IllegalStateException(results.get(0));
             }

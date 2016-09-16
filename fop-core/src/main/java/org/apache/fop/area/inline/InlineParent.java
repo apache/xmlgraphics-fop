@@ -22,7 +22,6 @@ package org.apache.fop.area.inline;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.area.Area;
@@ -108,8 +107,7 @@ public class InlineParent extends InlineArea {
         boolean hasUnresolvedAreas = false;
         int cumulativeIPD = 0;
         // recursively apply variation factor to descendant areas
-        for (int i = 0, len = inlines.size(); i < len; i++) {
-            InlineArea inline = inlines.get(i);
+        for (InlineArea inline : inlines) {
             hasUnresolvedAreas |= inline.applyVariationFactor(
                     variationFactor, lineStretch, lineShrink);
             cumulativeIPD += inline.getIPD();  //Update this area's IPD based on changes to children
@@ -121,8 +119,7 @@ public class InlineParent extends InlineArea {
 
     @Override
     public List collectInlineRuns(List runs) {
-        for (Iterator<InlineArea> it = getChildAreas().iterator(); it.hasNext();) {
-            InlineArea ia = it.next();
+        for (InlineArea ia : getChildAreas()) {
             runs = ia.collectInlineRuns(runs);
         }
         return runs;
@@ -133,8 +130,8 @@ public class InlineParent extends InlineArea {
      * signalling that they will inherit the level of their parent text area.
      */
     public void resetChildrenLevel() {
-        for (Iterator it = inlines.iterator(); it.hasNext();) {
-            ((InlineArea) it.next()) .resetBidiLevel();
+        for (InlineArea inline : inlines) {
+            (inline).resetBidiLevel();
         }
     }
 

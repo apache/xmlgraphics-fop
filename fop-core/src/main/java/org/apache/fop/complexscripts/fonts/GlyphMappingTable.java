@@ -20,7 +20,6 @@
 package org.apache.fop.complexscripts.fonts;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 // CSOFF: LineLengthCheck
@@ -186,8 +185,7 @@ public class GlyphMappingTable {
             int[] sa = new int [ n ];
             int[] ea = new int [ n ];
             int[] ma = new int [ n ];
-            for (Iterator it = entries.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : entries) {
                 if (o instanceof MappingRange) {
                     MappingRange r = (MappingRange) o;
                     int gs = r.getStart();
@@ -205,9 +203,9 @@ public class GlyphMappingTable {
                         throw new AdvancedTypographicTableFormatException("illegal mapping index: " + mi);
                     } else {
                         int miLast;
-                        sa [ i ] = gs;
-                        ea [ i ] = gidMax = ge;
-                        ma [ i ] = mi;
+                        sa[i] = gs;
+                        ea[i] = gidMax = ge;
+                        ma[i] = mi;
                         if ((miLast = mi + (ge - gs)) > miMax) {
                             miMax = miLast;
                         }

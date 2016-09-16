@@ -72,9 +72,9 @@ public final class BorderStyle extends TraitEnum {
      * @return the enumeration object
      */
     public static BorderStyle valueOf(String name) {
-        for (int i = 0; i < STYLES.length; i++) {
-            if (STYLES[i].getName().equalsIgnoreCase(name)) {
-                return STYLES[i];
+        for (BorderStyle style : STYLES) {
+            if (style.getName().equalsIgnoreCase(name)) {
+                return style;
             }
         }
         throw new IllegalArgumentException("Illegal border style: " + name);
@@ -86,9 +86,9 @@ public final class BorderStyle extends TraitEnum {
      * @return the enumeration object
      */
     public static BorderStyle valueOf(int enumValue) {
-        for (int i = 0; i < STYLES.length; i++) {
-            if (STYLES[i].getEnumValue() == enumValue) {
-                return STYLES[i];
+        for (BorderStyle style : STYLES) {
+            if (style.getEnumValue() == enumValue) {
+                return style;
             }
         }
         throw new IllegalArgumentException("Illegal border style: " + enumValue);
