@@ -305,7 +305,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 Object o = entries.get(0);
                 int delta = 0;
                 if (o instanceof Integer) {
-                    delta = ((Integer) o) .intValue();
+                    delta = (Integer) o;
                 } else {
                     throw new AdvancedTypographicTableFormatException("illegal entries entry, must be Integer, but is: " + o);
                 }
@@ -346,7 +346,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 Object o = it.next();
                 if (o instanceof Integer) {
-                    int gid = ((Integer) o) .intValue();
+                    int gid = (Integer) o;
                     if ((gid >= 0) && (gid < 65536)) {
                         glyphs [ i++ ] = gid;
                     } else {
@@ -901,7 +901,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 if (((o = entries.get(1)) == null) || !(o instanceof Integer)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, second entry must be an Integer, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
-                    ngc = ((Integer)(o)).intValue();
+                    ngc = (Integer) (o);
                 }
                 if (((o = entries.get(2)) == null) || !(o instanceof RuleSet[])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, third entry must be an RuleSet[], but is: " + ((o != null) ? o.getClass() : null));
@@ -1206,7 +1206,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 if (((o = entries.get(3)) == null) || !(o instanceof Integer)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, fourth entry must be an Integer, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
-                    ngc = ((Integer)(o)).intValue();
+                    ngc = (Integer) (o);
                 }
                 if (((o = entries.get(4)) == null) || !(o instanceof RuleSet[])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, fifth entry must be an RuleSet[], but is: " + ((o != null) ? o.getClass() : null));

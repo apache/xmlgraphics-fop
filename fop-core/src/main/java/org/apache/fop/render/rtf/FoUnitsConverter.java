@@ -101,7 +101,7 @@ final class FoUnitsConverter {
         // convert number to integer
         try {
             if (number != null && number.trim().length() > 0) {
-                result = Float.valueOf(number).floatValue();
+                result = Float.valueOf(number);
             }
         } catch (Exception e) {
             throw new FOPException("number format error: cannot convert '"
@@ -114,7 +114,7 @@ final class FoUnitsConverter {
             if (factor == null) {
                 throw new FOPException("conversion factor not found for '" + units + "' units");
             }
-            result *= factor.floatValue();
+            result *= factor;
         }
 
         return result;
@@ -132,7 +132,7 @@ final class FoUnitsConverter {
         float result = 0;
         size = size.substring(0, size.length() - sFONTSUFFIX.length());
         try {
-            result = (Float.valueOf(size).floatValue());
+            result = (Float.valueOf(size));
         } catch (Exception e) {
             throw new FOPException("Invalid font size value '" + size + "'");
         }

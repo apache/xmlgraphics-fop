@@ -47,7 +47,7 @@ public final class XMLUtil implements XMLConstants {
         if (s == null) {
             return defaultValue;
         } else {
-            return Boolean.valueOf(s).booleanValue();
+            return Boolean.valueOf(s);
         }
     }
 

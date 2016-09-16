@@ -3647,12 +3647,12 @@ public final class OTFAdvancedTypographicTableReader {
         Integer sf = (Integer) stp[5];          // subtable format
         GlyphMappingTable mapping = (GlyphMappingTable) stp[6];
         List entries = (List) stp[7];
-        if (tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_DEFINITION) {
+        if (tt == GlyphTable.GLYPH_TABLE_TYPE_DEFINITION) {
             int type = GDEFLookupType.getSubtableType(lt.intValue());
-            String lid = "lu" + ln.intValue();
-            int sequence = sn.intValue();
-            int flags = lf.intValue();
-            int format = sf.intValue();
+            String lid = "lu" + ln;
+            int sequence = sn;
+            int flags = lf;
+            int format = sf;
             st = GlyphDefinitionTable.createSubtable(type, lid, sequence, flags, format, mapping, entries);
         }
         return st;
@@ -3683,12 +3683,12 @@ public final class OTFAdvancedTypographicTableReader {
         Integer sf = (Integer) stp[5];          // subtable format
         GlyphCoverageTable coverage = (GlyphCoverageTable) stp[6];
         List entries = (List) stp[7];
-        if (tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION) {
+        if (tt == GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION) {
             int type = GSUBLookupType.getSubtableType(lt.intValue());
-            String lid = "lu" + ln.intValue();
-            int sequence = sn.intValue();
-            int flags = lf.intValue();
-            int format = sf.intValue();
+            String lid = "lu" + ln;
+            int sequence = sn;
+            int flags = lf;
+            int format = sf;
             st = GlyphSubstitutionTable.createSubtable(type, lid, sequence, flags, format, coverage, entries);
         }
         return st;
@@ -3719,12 +3719,12 @@ public final class OTFAdvancedTypographicTableReader {
         Integer sf = (Integer) stp[5];          // subtable format
         GlyphCoverageTable coverage = (GlyphCoverageTable) stp[6];
         List entries = (List) stp[7];
-        if (tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_POSITIONING) {
+        if (tt == GlyphTable.GLYPH_TABLE_TYPE_POSITIONING) {
             int type = GSUBLookupType.getSubtableType(lt.intValue());
-            String lid = "lu" + ln.intValue();
-            int sequence = sn.intValue();
-            int flags = lf.intValue();
-            int format = sf.intValue();
+            String lid = "lu" + ln;
+            int sequence = sn;
+            int flags = lf;
+            int format = sf;
             st = GlyphPositioningTable.createSubtable(type, lid, sequence, flags, format, coverage, entries);
         }
         return st;

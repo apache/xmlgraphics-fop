@@ -59,7 +59,7 @@ public class RtfAttributes implements Cloneable {
                     if (value == null) {
                         set(name);
                     }  else {
-                        set(name, value.intValue());
+                        set(name, value);
                     }
                 } else if (attrs.getValue(name) instanceof String) {
                     String value = (String)attrs.getValue(name);
@@ -234,7 +234,7 @@ public class RtfAttributes implements Cloneable {
      */
     public void addIntegerValue(int addValue, String name) {
         Integer value = (Integer) getValue(name);
-        int v = (value != null) ? value.intValue() : 0;
+        int v = (value != null) ? value : 0;
         set(name, v + addValue);
     }
 }

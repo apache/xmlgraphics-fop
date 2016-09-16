@@ -3291,7 +3291,7 @@ public class TTXFile {
             if (gmap != null) {
                 Integer cid = gmap.get(gid);
                 if (cid != null) {
-                    return cid.intValue();
+                    return cid;
                 }
             }
         }

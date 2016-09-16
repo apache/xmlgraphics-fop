@@ -54,10 +54,10 @@ public class AFPRendererContext extends RendererContext {
      */
     public AFPInfo getInfo() {
         AFPInfo info = new AFPInfo();
-        info.setWidth(((Integer)getProperty(RendererContextConstants.WIDTH)).intValue());
-        info.setHeight(((Integer)getProperty(RendererContextConstants.HEIGHT)).intValue());
-        info.setX(((Integer)getProperty(RendererContextConstants.XPOS)).intValue());
-        info.setY(((Integer)getProperty(RendererContextConstants.YPOS)).intValue());
+        info.setWidth((Integer) getProperty(RendererContextConstants.WIDTH));
+        info.setHeight((Integer) getProperty(RendererContextConstants.HEIGHT));
+        info.setX((Integer) getProperty(RendererContextConstants.XPOS));
+        info.setY((Integer) getProperty(RendererContextConstants.YPOS));
         info.setHandlerConfiguration((Configuration)getProperty(
                 RendererContextConstants.HANDLER_CONFIGURATION));
         info.setFontInfo((org.apache.fop.fonts.FontInfo)getProperty(

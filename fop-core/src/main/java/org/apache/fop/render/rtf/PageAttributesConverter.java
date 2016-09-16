@@ -67,7 +67,7 @@ final class PageAttributesConverter {
             Object widthRaw = attrib.getValue(RtfPage.PAGE_WIDTH);
             Object heightRaw = attrib.getValue(RtfPage.PAGE_HEIGHT);
             if ((widthRaw instanceof Integer) && (heightRaw instanceof Integer)
-                    && ((Integer) widthRaw).intValue() > ((Integer) heightRaw).intValue()) {
+                    && (Integer) widthRaw > (Integer) heightRaw) {
                 attrib.set(RtfPage.LANDSCAPE);
             }
 

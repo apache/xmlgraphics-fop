@@ -713,7 +713,7 @@ public final class CharScript {
         int[] sa = new int [ s.size() ];
         int ns = 0;
         for (Iterator it = s.iterator(); it.hasNext();) {
-            sa [ ns++ ] = ((Integer) it.next()) .intValue();
+            sa [ ns++ ] = (Integer) it.next();
         }
         Arrays.sort(sa);
         return sa;
@@ -732,7 +732,7 @@ public final class CharScript {
             Integer k = s;
             Integer v = (Integer) m.get(k);
             if (v != null) {
-                m.put(k, v.intValue() + 1);
+                m.put(k, v + 1);
             } else {
                 m.put(k, 0);
             }
@@ -742,7 +742,7 @@ public final class CharScript {
         for (Iterator it = m.entrySet().iterator(); it.hasNext();) {
             Map.Entry e = (Map.Entry) it.next();
             Integer k = (Integer) e.getKey();
-            int s = k.intValue();
+            int s = k;
             switch (s) {
             case SCRIPT_UNDETERMINED:
             case SCRIPT_UNCODED:
@@ -750,7 +750,7 @@ public final class CharScript {
             default:
                 Integer v = (Integer) e.getValue();
                 assert v != null;
-                int c = v.intValue();
+                int c = v;
                 if (c > cMax) {
                     cMax = c;
                     sMax = s;

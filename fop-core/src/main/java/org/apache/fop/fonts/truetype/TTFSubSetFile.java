@@ -435,10 +435,10 @@ public class TTFSubSetFile extends TTFFile {
                 Integer origIndex = glyph.getKey();
                 Integer subsetIndex = glyph.getValue();
 
-                writeUShort(currentPos + subsetIndex.intValue() * 4,
-                            mtxTab[origIndex.intValue()].getWx());
-                writeUShort(currentPos + subsetIndex.intValue() * 4 + 2,
-                            mtxTab[origIndex.intValue()].getLsb());
+                writeUShort(currentPos + subsetIndex * 4,
+                            mtxTab[origIndex].getWx());
+                writeUShort(currentPos + subsetIndex * 4 + 2,
+                            mtxTab[origIndex].getLsb());
             }
 
             updateCheckSum(currentPos, hmtxSize, hmtx);

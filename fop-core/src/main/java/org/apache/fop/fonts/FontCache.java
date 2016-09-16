@@ -408,7 +408,7 @@ public final class FontCache implements Serializable {
         synchronized (changeLock) {
             if (getFailedFontMap().containsKey(embedUrl)) {
                 long failedLastModified = getFailedFontMap().get(
-                        embedUrl).longValue();
+                        embedUrl);
                 if (lastModified != failedLastModified) {
                     // this font has been changed so lets remove it
                     // from failed font map for now

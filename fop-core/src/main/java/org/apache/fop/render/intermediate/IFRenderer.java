@@ -956,7 +956,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             boolean idRefOK = idRef != null && idRef.length() > 0;
             if (pvKeyOK && idRefOK) {
                 Integer pageIndex = (Integer)pageIndices.get(pvKey);
-                action = getGoToActionForID(idRef, (pageIndex != null ? pageIndex.intValue() : -1));
+                action = getGoToActionForID(idRef, (pageIndex != null ? pageIndex : -1));
             } else {
                 //Warnings already issued by AreaTreeHandler
             }
@@ -1038,7 +1038,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         beginTextObject();
 
         String fontName = getInternalFontNameForArea(text);
-        int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
+        int size = (Integer) text.getTrait(Trait.FONT_SIZE);
         StructureTreeElement structElem
                 = (StructureTreeElement) text.getTrait(Trait.STRUCTURE_TREE_ELEMENT);
         establishStructureTreeElement(structElem);

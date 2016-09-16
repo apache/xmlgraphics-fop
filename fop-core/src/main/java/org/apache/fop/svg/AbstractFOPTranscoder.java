@@ -155,7 +155,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
             //By default, enable font auto-detection if no cfg is given
             boolean autoFonts = getAutoFontsDefault();
             if (hints.containsKey(KEY_AUTO_FONTS)) {
-                autoFonts = ((Boolean)hints.get(KEY_AUTO_FONTS)).booleanValue();
+                autoFonts = (Boolean) hints.get(KEY_AUTO_FONTS);
             }
             if (autoFonts) {
                 DefaultConfiguration c = new DefaultConfiguration("cfg");
@@ -212,7 +212,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
     protected boolean isTextStroked() {
         boolean stroke = false;
         if (hints.containsKey(KEY_STROKE_TEXT)) {
-            stroke = ((Boolean)hints.get(KEY_STROKE_TEXT)).booleanValue();
+            stroke = (Boolean) hints.get(KEY_STROKE_TEXT);
         }
         return stroke;
     }
@@ -223,7 +223,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
      */
     protected float getDeviceResolution() {
         if (hints.containsKey(KEY_DEVICE_RESOLUTION)) {
-            return ((Float)hints.get(KEY_DEVICE_RESOLUTION)).floatValue();
+            return (Float) hints.get(KEY_DEVICE_RESOLUTION);
         } else {
             return GraphicsConstants.DEFAULT_DPI;
         }
@@ -369,7 +369,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
         public float getPixelUnitToMillimeter() {
             Object key = ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER;
             if (getTranscodingHints().containsKey(key)) {
-                return ((Float)getTranscodingHints().get(key)).floatValue();
+                return (Float) getTranscodingHints().get(key);
             } else {
                 // return 0.3528f; // 72 dpi
                 return UnitConv.IN2MM / 96; //96dpi = 0.2645833333333333333f;

@@ -464,7 +464,7 @@ public class TTFReader extends AbstractFontReader {
 
             for (Map.Entry<Integer, Integer> e : h2.entrySet()) {
                 Integer kpx2 = e.getKey();
-                if (isCid || kpx2.intValue() < 256) {
+                if (isCid || kpx2 < 256) {
                     el2 = doc.createElement("pair");
                     el2.setAttribute("kpx2", kpx2.toString());
                     Integer val = e.getValue();

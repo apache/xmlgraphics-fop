@@ -553,14 +553,14 @@ public abstract class OpenFont {
                             List<Integer> v = ansiIndex.get(j);
                             if (v != null) {
                                 for (Integer aIdx : v) {
-                                    ansiWidth[aIdx.intValue()]
+                                    ansiWidth[aIdx]
                                         = mtxTab[glyphIdx].getWx();
 
                                     if (log.isTraceEnabled()) {
                                         log.trace("Added width "
                                                 + mtxTab[glyphIdx].getWx()
                                                 + " uni: " + j
-                                                + " ansi: " + aIdx.intValue());
+                                                + " ansi: " + aIdx);
                                     }
                                 }
                             }
@@ -596,7 +596,7 @@ public abstract class OpenFont {
                             List<Integer> v = ansiIndex.get(j);
                             if (v != null) {
                                 for (Integer aIdx : v) {
-                                    ansiWidth[aIdx.intValue()] = mtxTab[glyphIdx].getWx();
+                                    ansiWidth[aIdx] = mtxTab[glyphIdx].getWx();
                                 }
                             }
 
@@ -1633,13 +1633,13 @@ public abstract class OpenFont {
 
                 for (Map.Entry<Integer, Integer> e : ckpx.entrySet()) {
                     Integer unicodeKey2 = e.getKey();
-                    Integer cidKey2 = unicodeToGlyph(unicodeKey2.intValue());
+                    Integer cidKey2 = unicodeToGlyph(unicodeKey2);
                     Integer kern = e.getValue();
 
-                    Iterator uniMap = mtxTab[cidKey2.intValue()].getUnicodeIndex().listIterator();
+                    Iterator uniMap = mtxTab[cidKey2].getUnicodeIndex().listIterator();
                     while (uniMap.hasNext()) {
                         Integer unicodeKey = (Integer)uniMap.next();
-                        Integer[] ansiKeys = unicodeToWinAnsi(unicodeKey.intValue());
+                        Integer[] ansiKeys = unicodeToWinAnsi(unicodeKey);
                         for (int u = 0; u < ansiKeys.length; u++) {
                             akpx.put(ansiKeys[u], kern);
                         }
@@ -1647,10 +1647,10 @@ public abstract class OpenFont {
                 }
 
                 if (akpx.size() > 0) {
-                    Iterator uniMap = mtxTab[cidKey1.intValue()].getUnicodeIndex().listIterator();
+                    Iterator uniMap = mtxTab[cidKey1].getUnicodeIndex().listIterator();
                     while (uniMap.hasNext()) {
                         Integer unicodeKey = (Integer)uniMap.next();
-                        Integer[] ansiKeys = unicodeToWinAnsi(unicodeKey.intValue());
+                        Integer[] ansiKeys = unicodeToWinAnsi(unicodeKey);
                         for (int u = 0; u < ansiKeys.length; u++) {
                             ansiKerningTab.put(ansiKeys[u], akpx);
                         }

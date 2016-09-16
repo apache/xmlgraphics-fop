@@ -128,7 +128,7 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTest {
     private static void checkBorder(String errorMsge, BorderSpecification border,
             Object[] resolvedBorder) {
         checkBorder(errorMsge, border,
-                ((Integer) resolvedBorder[0]).intValue(),
+                (Integer) resolvedBorder[0],
                 (Color) resolvedBorder[1]);
     }
 

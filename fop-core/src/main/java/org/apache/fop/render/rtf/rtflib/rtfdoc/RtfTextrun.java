@@ -291,7 +291,7 @@ public class RtfTextrun extends RtfContainer {
             setChildren(children);
             par = new RtfParagraphBreak(this, writer);
             for (int i = 0; i < deletedCloseGroupCount; i++) {
-                addCloseGroupMark(((Integer)tmp.pop()).intValue());
+                addCloseGroupMark((Integer) tmp.pop());
             }
         }
         return par;

@@ -178,7 +178,7 @@ public final class RtfStyleSheetTable {
         }
 
         // Adds the attributes to default attributes, if not available in default attributes
-        attr.set("cs", style.intValue());
+        attr.set("cs", style);
 
         Object o = attrTable.get(name);
         if (o != null) {
@@ -191,7 +191,7 @@ public final class RtfStyleSheetTable {
                     if (i == null) {
                         attr.set(attrName);
                     } else {
-                        attr.set(attrName, i.intValue());
+                        attr.set(attrName, i);
                     }
                 }
             }

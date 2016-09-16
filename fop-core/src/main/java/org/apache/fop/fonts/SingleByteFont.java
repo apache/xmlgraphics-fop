@@ -247,7 +247,7 @@ public class SingleByteFont extends CustomFont {
     private char getUnicode(int index) {
         Character mapValue = usedCharsIndex.get(index);
         if (mapValue != null) {
-            return mapValue.charValue();
+            return mapValue;
         } else {
             return CharUtilities.NOT_A_CHARACTER;
         }

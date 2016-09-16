@@ -728,9 +728,9 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
                 }
             }
             if (weight != null) {
-                changed = (weight.intValue() != state.getFontWeight());
+                changed = (weight != state.getFontWeight());
                 if (changed) {
-                    state.setFontWeight(weight.intValue());
+                    state.setFontWeight(weight);
                     addAttribute(atts, "weight", weight.toString());
                 }
             }
@@ -742,9 +742,9 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
                 }
             }
             if (size != null) {
-                changed = (size.intValue() != state.getFontSize());
+                changed = (size != state.getFontSize());
                 if (changed) {
-                    state.setFontSize(size.intValue());
+                    state.setFontSize(size);
                     addAttribute(atts, "size", size.toString());
                 }
             }

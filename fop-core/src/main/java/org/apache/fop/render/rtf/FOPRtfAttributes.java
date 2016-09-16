@@ -78,7 +78,7 @@ public class FOPRtfAttributes extends RtfAttributes {
         int greenComponent = color.getGreen();
         int blueComponent = color.getBlue();
         set(name, RtfColorTable.getInstance().getColorNumber(
-                redComponent, greenComponent, blueComponent).intValue());
+                redComponent, greenComponent, blueComponent));
         return this;
     }
 

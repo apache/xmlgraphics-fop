@@ -193,7 +193,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
 
         final Object leftIndent = attrib.getValue(ITableAttributes.ATTR_ROW_LEFT_INDENT);
         if (leftIndent != null) {
-            xPos = ((Integer)leftIndent).intValue();
+            xPos = (Integer) leftIndent;
         }
 
         RtfAttributes tableBorderAttributes = getTable().getBorderAttributes();
@@ -342,11 +342,11 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                 // set (RTF 1.5) gaph to the average of the (RTF 1.6) left and right padding values
                 final Integer leftPadStr = (Integer)attrib.getValue(ATTR_ROW_PADDING_LEFT);
                 if (leftPadStr != null) {
-                    gaph = leftPadStr.intValue();
+                    gaph = leftPadStr;
                 }
                 final Integer rightPadStr = (Integer)attrib.getValue(ATTR_ROW_PADDING_RIGHT);
                 if (rightPadStr != null) {
-                    gaph = (gaph + rightPadStr.intValue()) / 2;
+                    gaph = (gaph + rightPadStr) / 2;
                 }
             } catch (Exception e) {
                 final String msg = "RtfTableRow.writePaddingAttributes: " + e.toString();

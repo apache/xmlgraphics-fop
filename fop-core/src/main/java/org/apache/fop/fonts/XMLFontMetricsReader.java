@@ -291,7 +291,7 @@ public class XMLFontMetricsReader extends DefaultHandler {
             int[] wds = new int[cidWidths.size()];
             int j = 0;
             for (int count = 0; count < cidWidths.size(); count++) {
-                wds[j++] = cidWidths.get(count).intValue();
+                wds[j++] = cidWidths.get(count);
             }
 
             //multiFont.addCIDWidthEntry(cidWidthIndex, wds);

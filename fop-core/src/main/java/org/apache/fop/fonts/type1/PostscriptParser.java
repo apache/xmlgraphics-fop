@@ -244,7 +244,7 @@ public class PostscriptParser {
         private void parseToken(int pos) throws UnsupportedEncodingException {
             byte[] bytesToken = new byte[token.size()];
             for (int i = 0; i < token.size(); i++) {
-                bytesToken[i] = token.get(i).byteValue();
+                bytesToken[i] = token.get(i);
             }
             parseToken(new String(bytesToken, "ASCII"), pos);
             token.clear();

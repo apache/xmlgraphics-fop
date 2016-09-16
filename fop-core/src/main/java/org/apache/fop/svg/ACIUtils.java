@@ -67,7 +67,7 @@ public final class ACIUtils {
                 GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
         String style = toStyle((Float) aci.getAttribute(TextAttribute.POSTURE));
         int weight = toCSSWeight((Float) aci.getAttribute(TextAttribute.WEIGHT));
-        float fontSize = ((Float) aci.getAttribute(TextAttribute.SIZE)).floatValue();
+        float fontSize = (Float) aci.getAttribute(TextAttribute.SIZE);
 
         String firstFontFamily = null;
         //GVT_FONT can sometimes be different from the fonts in GVT_FONT_FAMILIES
@@ -119,23 +119,23 @@ public final class ACIUtils {
     public static int toCSSWeight(Float weight) {
         if (weight == null) {
             return 400;
-        } else if (weight <= TextAttribute.WEIGHT_EXTRA_LIGHT.floatValue()) {
+        } else if (weight <= TextAttribute.WEIGHT_EXTRA_LIGHT) {
             return 100;
-        } else if (weight <= TextAttribute.WEIGHT_LIGHT.floatValue()) {
+        } else if (weight <= TextAttribute.WEIGHT_LIGHT) {
             return 200;
-        } else if (weight <= TextAttribute.WEIGHT_DEMILIGHT.floatValue()) {
+        } else if (weight <= TextAttribute.WEIGHT_DEMILIGHT) {
             return 300;
-        } else if (weight <= TextAttribute.WEIGHT_REGULAR.floatValue()) {
+        } else if (weight <= TextAttribute.WEIGHT_REGULAR) {
             return 400;
-        } else if (weight <= TextAttribute.WEIGHT_SEMIBOLD.floatValue()) {
+        } else if (weight <= TextAttribute.WEIGHT_SEMIBOLD) {
             return 500;
-        } else if (weight <  TextAttribute.WEIGHT_BOLD.floatValue()) {
+        } else if (weight < TextAttribute.WEIGHT_BOLD) {
             return 600;
         } else if (weight == TextAttribute.WEIGHT_BOLD.floatValue()) {
             return 700;
-        } else if (weight <= TextAttribute.WEIGHT_HEAVY.floatValue()) {
+        } else if (weight <= TextAttribute.WEIGHT_HEAVY) {
             return 800;
-        } else if (weight <= TextAttribute.WEIGHT_EXTRABOLD.floatValue()) {
+        } else if (weight <= TextAttribute.WEIGHT_EXTRABOLD) {
             return 900;
         } else {
             return 900;
@@ -143,7 +143,7 @@ public final class ACIUtils {
     }
 
     public static String toStyle(Float posture) {
-        return ((posture != null) && (posture.floatValue() > 0.0))
+        return ((posture != null) && (posture > 0.0))
                        ? Font.STYLE_ITALIC
                        : Font.STYLE_NORMAL;
     }

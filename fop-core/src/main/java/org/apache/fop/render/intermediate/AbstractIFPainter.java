@@ -432,13 +432,13 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
             state.setFontStyle(style);
         }
         if (weight != null) {
-            state.setFontWeight(weight.intValue());
+            state.setFontWeight(weight);
         }
         if (variant != null) {
             state.setFontVariant(variant);
         }
         if (size != null) {
-            state.setFontSize(size.intValue());
+            state.setFontSize(size);
         }
         if (color != null) {
             state.setTextColor(color);

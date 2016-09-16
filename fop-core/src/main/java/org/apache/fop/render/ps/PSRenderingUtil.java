@@ -90,9 +90,9 @@ public class PSRenderingUtil {
 
     private boolean booleanValueOf(Object obj) {
         if (obj instanceof Boolean) {
-            return ((Boolean)obj).booleanValue();
+            return (Boolean) obj;
         } else if (obj instanceof String) {
-            return Boolean.valueOf((String)obj).booleanValue();
+            return Boolean.valueOf((String) obj);
         } else {
             throw new IllegalArgumentException("Boolean or \"true\" or \"false\" expected.");
         }
@@ -100,7 +100,7 @@ public class PSRenderingUtil {
 
     private int intValueOf(Object obj) {
         if (obj instanceof Integer) {
-            return ((Integer)obj).intValue();
+            return (Integer) obj;
         } else if (obj instanceof String) {
             return Integer.parseInt((String)obj);
         } else {

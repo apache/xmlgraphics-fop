@@ -122,7 +122,7 @@ public final class RtfFontManager {
 
             retVal = fontTable.size() - 1;
         } else {
-            retVal = ((Integer)o).intValue();
+            retVal = (Integer) o;
         }
 
         return retVal;

@@ -1411,7 +1411,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         if (kernPair != null) {
             Integer width = kernPair.get(ch2);
             if (width != null) {
-                currentStream.write(endText + (-width.intValue()) + " " + startText);
+                currentStream.write(endText + (-width) + " " + startText);
             }
         }
     }
