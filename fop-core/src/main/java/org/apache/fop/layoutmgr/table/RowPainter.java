@@ -536,7 +536,7 @@ class RowPainter {
      * @return its y-offset on the page
      */
     private int getRowOffset(int rowIndex) {
-        return ((Integer) rowOffsets.get(rowIndex - firstRowIndex)).intValue();
+        return (Integer) rowOffsets.get(rowIndex - firstRowIndex);
     }
 
     // TODO get rid of that

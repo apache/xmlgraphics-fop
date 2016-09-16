@@ -69,10 +69,10 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
     public static Java2DInfo getJava2DInfo(RendererContext context) {
         Java2DInfo pdfi = new Java2DInfo();
         pdfi.state = (Java2DGraphicsState)context.getProperty(JAVA2D_STATE);
-        pdfi.width = ((Integer)context.getProperty(WIDTH)).intValue();
-        pdfi.height = ((Integer)context.getProperty(HEIGHT)).intValue();
-        pdfi.currentXPosition = ((Integer)context.getProperty(XPOS)).intValue();
-        pdfi.currentYPosition = ((Integer)context.getProperty(YPOS)).intValue();
+        pdfi.width = (Integer) context.getProperty(WIDTH);
+        pdfi.height = (Integer) context.getProperty(HEIGHT);
+        pdfi.currentXPosition = (Integer) context.getProperty(XPOS);
+        pdfi.currentYPosition = (Integer) context.getProperty(YPOS);
         Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
         pdfi.paintAsBitmap = ImageHandlerUtil.isConversionModeBitmap(foreign);
         return pdfi;

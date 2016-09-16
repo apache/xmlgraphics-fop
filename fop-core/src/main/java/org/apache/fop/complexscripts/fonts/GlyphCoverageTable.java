@@ -181,7 +181,7 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 Object o = it.next();
                 if (o instanceof Integer) {
-                    int gid = ((Integer) o) .intValue();
+                    int gid = (Integer) o;
                     if ((gid >= 0) && (gid < 65536)) {
                         if (gid > gidMax) {
                             map [ i++ ] = gidMax = gid;

@@ -766,9 +766,9 @@ class PDFRenderingUtil {
 
         private static boolean booleanValueOf(Object obj) {
             if (obj instanceof Boolean) {
-                return ((Boolean)obj).booleanValue();
+                return (Boolean) obj;
             } else if (obj instanceof String) {
-                return Boolean.valueOf((String)obj).booleanValue();
+                return Boolean.valueOf((String) obj);
             } else {
                 throw new IllegalArgumentException("Boolean or \"true\" or \"false\" expected.");
             }

@@ -529,6 +529,6 @@ final class TextAttributesConverter {
        int greenComponent = fopColor.getGreen();
        int blueComponent = fopColor.getBlue();
        return RtfColorTable.getInstance().getColorNumber(redComponent,
-               greenComponent, blueComponent).intValue();
+               greenComponent, blueComponent);
    }
 }

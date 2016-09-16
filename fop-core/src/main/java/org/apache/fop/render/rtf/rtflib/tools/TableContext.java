@@ -125,7 +125,7 @@ public class TableContext implements ITableColumnsInfo {
      */
     public boolean getFirstSpanningCol() {
         Boolean b = (Boolean) colFirstSpanningCol.get(colIndex);
-        return b.booleanValue();
+        return b;
     }
 
     /**
@@ -194,13 +194,13 @@ public class TableContext implements ITableColumnsInfo {
         for (int z = 0; z < colRowSpanningNumber.size(); ++z) {
             Integer i = (Integer)colRowSpanningNumber.get(z);
 
-            if (i.intValue() > 0) {
-                i = i.intValue() - 1;
+            if (i > 0) {
+                i = i - 1;
             }
 
             colRowSpanningNumber.set(z, i);
 
-            if (i.intValue() == 0) {
+            if (i == 0) {
                 colRowSpanningAttrs.set(z, null);
                 colFirstSpanningCol.set(z, false);
             }
@@ -241,7 +241,7 @@ public class TableContext implements ITableColumnsInfo {
                 setNextColumnWidth(INVALID_COLUMN_WIDTH);
             }
         }
-        return ((Float)colWidths.get(colIndex)).floatValue();
+        return (Float) colWidths.get(colIndex);
     }
 
     /**

@@ -716,7 +716,7 @@ public class FOUserAgent {
     public boolean isAccessibilityEnabled() {
         Boolean enabled = (Boolean)this.getRendererOptions().get(Accessibility.ACCESSIBILITY);
         if (enabled != null) {
-            return enabled.booleanValue();
+            return enabled;
         } else {
             return false;
         }

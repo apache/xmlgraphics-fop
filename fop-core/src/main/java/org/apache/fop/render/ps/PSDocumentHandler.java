@@ -332,7 +332,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             gen.getResourceTracker().notifyResourceUsageOnPage(PSProcSets.STD_PROCSET);
             gen.writeDSCComment(DSCConstants.PAGE, new Object[]
                     {name,
-                     Integer.valueOf(this.currentPageNumber)});
+                            this.currentPageNumber});
 
             double pageWidth = size.width / 1000.0;
             double pageHeight = size.height / 1000.0;
@@ -383,20 +383,20 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             if (rotate) {
                 pageBoundingBox.setRect(0, 0, pageHeight, pageWidth);
                 gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[] {
-                        zero, zero, Long.valueOf(Math.round(pageHeight)),
-                        Long.valueOf(Math.round(pageWidth)) });
+                        zero, zero, Math.round(pageHeight),
+                        Math.round(pageWidth)});
                 gen.writeDSCComment(DSCConstants.PAGE_HIRES_BBOX, new Object[] {
-                        zero, zero, Double.valueOf(pageHeight),
-                        Double.valueOf(pageWidth) });
+                        zero, zero, pageHeight,
+                        pageWidth});
                 gen.writeDSCComment(DSCConstants.PAGE_ORIENTATION, "Landscape");
             } else {
                 pageBoundingBox.setRect(0, 0, pageWidth, pageHeight);
                 gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[] {
-                        zero, zero, Long.valueOf(Math.round(pageWidth)),
-                        Long.valueOf(Math.round(pageHeight)) });
+                        zero, zero, Math.round(pageWidth),
+                        Math.round(pageHeight)});
                 gen.writeDSCComment(DSCConstants.PAGE_HIRES_BBOX, new Object[] {
-                        zero, zero, Double.valueOf(pageWidth),
-                        Double.valueOf(pageHeight) });
+                        zero, zero, pageWidth,
+                        pageHeight});
                 if (psUtil.isAutoRotateLandscape()) {
                     gen.writeDSCComment(DSCConstants.PAGE_ORIENTATION,
                             "Portrait");

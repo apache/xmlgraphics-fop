@@ -120,11 +120,11 @@ public final class RtfStringConverter {
                 sb.append('\\');
                 sb.append(replacement);
                 sb.append(' ');
-            } else if (c.charValue() > 127) {
+            } else if (c > 127) {
                 // write unicode representation - contributed by Michel Jacobson
                 // <jacobson@idf.ext.jussieu.fr>
                 sb.append("\\u");
-                sb.append(Integer.toString((int)c.charValue()));
+                sb.append(Integer.toString((int) c));
                 sb.append("\\\'3f");
             } else {
                 // plain char that is understood by RTF natively

@@ -116,7 +116,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
      */
     protected Font getFontFromArea(Area area) {
         FontTriplet triplet = (FontTriplet)area.getTrait(Trait.FONT);
-        int size = ((Integer)area.getTrait(Trait.FONT_SIZE)).intValue();
+        int size = (Integer) area.getTrait(Trait.FONT_SIZE);
         return fontInfo.getFontInstance(triplet, size);
     }
 

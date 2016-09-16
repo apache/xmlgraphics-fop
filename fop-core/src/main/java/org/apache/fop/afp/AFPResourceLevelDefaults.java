@@ -47,7 +47,7 @@ public class AFPResourceLevelDefaults {
         if (result == null) {
             throw new IllegalArgumentException("Unknown resource type name: " + resourceTypeName);
         }
-        return result.byteValue();
+        return result;
     }
 
     private Map defaultResourceLevels = new java.util.HashMap();

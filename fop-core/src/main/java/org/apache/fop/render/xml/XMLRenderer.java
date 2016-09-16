@@ -128,7 +128,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
         userAgent.getXMLHandlerRegistry().addXMLHandler(xmlHandler);
         Boolean b = (Boolean)userAgent.getRendererOptions().get("compact-format");
         if (b != null) {
-            setCompactFormat(b.booleanValue());
+            setCompactFormat(b);
         }
     }
 

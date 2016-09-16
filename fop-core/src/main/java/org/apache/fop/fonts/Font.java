@@ -199,7 +199,7 @@ public class Font implements Substitutable, Positionable {
         if (kernPair != null) {
             Integer width = kernPair.get((int) ch2);
             if (width != null) {
-                return width.intValue() * getFontSize() / 1000;
+                return width * getFontSize() / 1000;
             }
         }
         return 0;

@@ -72,10 +72,10 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
         PSInfo psi = new PSInfo();
         psi.psGenerator = (PSGenerator)context.getProperty(PS_GENERATOR);
         psi.fontInfo = (org.apache.fop.fonts.FontInfo) context.getProperty(PS_FONT_INFO);
-        psi.width = ((Integer)context.getProperty(WIDTH)).intValue();
-        psi.height = ((Integer)context.getProperty(HEIGHT)).intValue();
-        psi.currentXPosition = ((Integer)context.getProperty(XPOS)).intValue();
-        psi.currentYPosition = ((Integer)context.getProperty(YPOS)).intValue();
+        psi.width = (Integer) context.getProperty(WIDTH);
+        psi.height = (Integer) context.getProperty(HEIGHT);
+        psi.currentXPosition = (Integer) context.getProperty(XPOS);
+        psi.currentYPosition = (Integer) context.getProperty(YPOS);
         psi.cfg = (Configuration)context.getProperty(HANDLER_CONFIGURATION);
         return psi;
     }

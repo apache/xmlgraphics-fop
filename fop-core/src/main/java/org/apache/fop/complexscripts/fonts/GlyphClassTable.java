@@ -196,7 +196,7 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
             if (it.hasNext()) {
                 Object o = it.next();
                 if (o instanceof Integer) {
-                    firstGlyph = ((Integer) o) .intValue();
+                    firstGlyph = (Integer) o;
                 } else {
                     throw new AdvancedTypographicTableFormatException("illegal entry, first entry must be Integer denoting first glyph value, but is: " + o);
                 }
@@ -209,7 +209,7 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
             while (it.hasNext()) {
                 Object o = it.next();
                 if (o instanceof Integer) {
-                    int gc = ((Integer) o) .intValue();
+                    int gc = (Integer) o;
                     gca [ i++ ] = gc;
                     if (gc > gcMax) {
                         gcMax = gc;

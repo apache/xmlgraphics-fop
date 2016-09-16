@@ -151,22 +151,22 @@ public class RendererContext {
 
         /** @return the currentXPosition */
         public int getCurrentXPosition() {
-            return ((Integer)context.getProperty(RendererContextConstants.XPOS)).intValue();
+            return (Integer) context.getProperty(RendererContextConstants.XPOS);
         }
 
         /** @return the currentYPosition */
         public int getCurrentYPosition() {
-            return ((Integer)context.getProperty(RendererContextConstants.YPOS)).intValue();
+            return (Integer) context.getProperty(RendererContextConstants.YPOS);
         }
 
         /** @return the width of the image */
         public int getWidth() {
-            return ((Integer)context.getProperty(RendererContextConstants.WIDTH)).intValue();
+            return (Integer) context.getProperty(RendererContextConstants.WIDTH);
         }
 
         /** @return the height of the image */
         public int getHeight() {
-            return ((Integer)context.getProperty(RendererContextConstants.HEIGHT)).intValue();
+            return (Integer) context.getProperty(RendererContextConstants.HEIGHT);
         }
 
         /** @return the foreign attributes */

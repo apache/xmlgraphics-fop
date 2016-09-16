@@ -165,7 +165,7 @@ public class FOTreeTestCase {
         public void processingInstruction(String target, String data) throws SAXException {
             if ("fop-useragent-break-indent-inheritance".equals(target)) {
                 fopConfig.setBreakIndentInheritanceOnReferenceAreaBoundary(
-                        Boolean.valueOf(data).booleanValue());
+                        Boolean.valueOf(data));
             } else if ("fop-source-resolution".equals(target)) {
                 fopConfig.setSourceResolution(Float.parseFloat(data));
             }

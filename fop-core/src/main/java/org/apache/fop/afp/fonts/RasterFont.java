@@ -94,9 +94,9 @@ public class RasterFont extends AFPFont {
             SortedMap<Integer, CharacterSet> smallerSizes = charSets.headMap(requestedSize);
             SortedMap<Integer, CharacterSet> largerSizes = charSets.tailMap(requestedSize);
             int smallerSize = smallerSizes.isEmpty() ? 0
-                    : smallerSizes.lastKey().intValue();
+                    : smallerSizes.lastKey();
             int largerSize = largerSizes.isEmpty() ? Integer.MAX_VALUE
-                    : largerSizes.firstKey().intValue();
+                    : largerSizes.firstKey();
 
             Integer fontSize;
             if (!smallerSizes.isEmpty()
@@ -115,9 +115,9 @@ public class RasterFont extends AFPFont {
                 }
                 substitutionCharSets.put(requestedSize, csm);
                 // do not output the warning if the font size is closer to an integer less than 0.1
-                if (!(Math.abs(fontSize.intValue() / 1000.0 - sizeInPt) < 0.1)) {
+                if (!(Math.abs(fontSize / 1000.0 - sizeInPt) < 0.1)) {
                     String msg = "No " + sizeInPt + "pt font " + getFontName()
-                            + " found, substituted with " + fontSize.intValue() / 1000f + "pt font";
+                            + " found, substituted with " + fontSize / 1000f + "pt font";
                     LOG.warn(msg);
                 }
             }

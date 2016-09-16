@@ -106,7 +106,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
 
     private static boolean containsHalfConsonant(GlyphSequence gs, int k) {
         Boolean half = (Boolean) gs.getAssociation(k) .getPredication("half");
-        return (half != null) ? half.booleanValue() : false;
+        return (half != null) ? half : false;
     }
 
     @Override
@@ -156,7 +156,7 @@ public class GujaratiScriptProcessor extends IndicScriptProcessor {
 
     private static boolean containsReph(GlyphSequence gs, int k) {
         Boolean rphf = (Boolean) gs.getAssociation(k) .getPredication("rphf");
-        return (rphf != null) ? rphf.booleanValue() : false;
+        return (rphf != null) ? rphf : false;
     }
 
     private static boolean containsMatra(GlyphSequence gs, int k) {

@@ -73,7 +73,7 @@ public class RtfSpaceSplitter {
         }
 
         commonAttributes.unset(key);
-        return i.intValue();
+        return i;
     }
 
     /** @return attributes, applicable to whole block. */

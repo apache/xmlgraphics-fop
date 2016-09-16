@@ -189,7 +189,7 @@ public class FontQualifier {
                                 }
                             } else if (weightObj instanceof Integer) {
                                 Integer fontWeightInteger = (Integer)weightObj;
-                                int fontWeightValue = fontWeightInteger.intValue();
+                                int fontWeightValue = fontWeightInteger;
                                 if (fontWeightValue == fontWeight) {
                                     weightMatched = true;
                                 }
@@ -272,7 +272,7 @@ public class FontQualifier {
                         triplets.add(new FontTriplet(name, style, weight));
                     } else if (weightObj instanceof Integer) {
                         Integer weightInteger = (Integer)weightObj;
-                        int weight = weightInteger.intValue();
+                        int weight = weightInteger;
                         triplets.add(new FontTriplet(name, style, weight));
                     }
                 }

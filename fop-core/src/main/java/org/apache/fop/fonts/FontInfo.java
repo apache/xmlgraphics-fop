@@ -134,7 +134,7 @@ public class FontInfo {
         String oldName = triplets.get(triplet);
         int newPriority = triplet.getPriority();
         if (oldName != null) {
-            int oldPriority = tripletPriorities.get(triplet).intValue();
+            int oldPriority = tripletPriorities.get(triplet);
             if (oldPriority < newPriority) {
                 logDuplicateFont(triplet, false, oldName, oldPriority, internalFontKey, newPriority);
                 return;
