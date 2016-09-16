@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BodyRegion;
@@ -184,11 +183,10 @@ public class PageBreaker extends AbstractBreaker {
     private boolean containsFootnotes(List contentList, LayoutContext context) {
         boolean containsFootnotes = false;
         if (contentList != null) {
-            ListIterator contentListIterator = contentList.listIterator();
-            while (contentListIterator.hasNext()) {
-                ListElement element = (ListElement) contentListIterator.next();
+            for (Object aContentList : contentList) {
+                ListElement element = (ListElement) aContentList;
                 if (element instanceof KnuthBlockBox
-                    && ((KnuthBlockBox) element).hasAnchors()) {
+                        && ((KnuthBlockBox) element).hasAnchors()) {
                     // element represents a line with footnote citations
                     containsFootnotes = true;
                     KnuthBlockBox box = (KnuthBlockBox) element;

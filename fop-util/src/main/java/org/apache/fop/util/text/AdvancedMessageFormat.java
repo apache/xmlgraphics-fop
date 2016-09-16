@@ -355,9 +355,7 @@ public class AdvancedMessageFormat {
             target.append(obj);
         } else {
             boolean handled = false;
-            Iterator<ObjectFormatter> iter = OBJECT_FORMATTERS.iterator();
-            while (iter.hasNext()) {
-                ObjectFormatter formatter = iter.next();
+            for (ObjectFormatter formatter : OBJECT_FORMATTERS) {
                 if (formatter.supportsObject(obj)) {
                     formatter.format(target, obj);
                     handled = true;
@@ -437,9 +435,7 @@ public class AdvancedMessageFormat {
 
         public void write(StringBuffer sb, Map<String, Object> params) {
             if (hasSections) {
-                Iterator<Part> iter = this.parts.iterator();
-                while (iter.hasNext()) {
-                    Part part = iter.next();
+                for (Part part : this.parts) {
                     if (part.isGenerated(params)) {
                         part.write(sb, params);
                         break;
@@ -447,9 +443,7 @@ public class AdvancedMessageFormat {
                 }
             } else {
                 if (isGenerated(params)) {
-                    Iterator<Part> iter = this.parts.iterator();
-                    while (iter.hasNext()) {
-                        Part part = iter.next();
+                    for (Part part : this.parts) {
                         part.write(sb, params);
                     }
                 }
@@ -458,9 +452,7 @@ public class AdvancedMessageFormat {
 
         public boolean isGenerated(Map<String, Object> params) {
             if (hasSections) {
-                Iterator<Part> iter = this.parts.iterator();
-                while (iter.hasNext()) {
-                    Part part = iter.next();
+                for (Part part : this.parts) {
                     if (part.isGenerated(params)) {
                         return true;
                     }
@@ -468,9 +460,7 @@ public class AdvancedMessageFormat {
                 return false;
             } else {
                 if (conditional) {
-                    Iterator<Part> iter = this.parts.iterator();
-                    while (iter.hasNext()) {
-                        Part part = iter.next();
+                    for (Part part : this.parts) {
                         if (!part.isGenerated(params)) {
                             return false;
                         }

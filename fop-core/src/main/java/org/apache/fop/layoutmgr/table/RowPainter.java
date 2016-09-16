@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr.table;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -166,10 +165,9 @@ class RowPainter {
                 firstRowOnPageIndex = firstRowIndex;
             }
         }
-        Iterator partIter = tcpos.cellParts.iterator();
         //Iterate over all grid units in the current step
-        while (partIter.hasNext()) {
-            CellPart cellPart = (CellPart)partIter.next();
+        for (Object cellPart1 : tcpos.cellParts) {
+            CellPart cellPart = (CellPart) cellPart1;
             if (log.isDebugEnabled()) {
                 log.debug(">" + cellPart);
             }

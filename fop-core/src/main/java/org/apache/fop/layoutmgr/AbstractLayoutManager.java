@@ -282,9 +282,8 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
         if (newLMs == null || newLMs.size() == 0) {
             return;
         }
-        ListIterator<LayoutManager> iter = newLMs.listIterator();
-        while (iter.hasNext()) {
-            addChildLM(iter.next());
+        for (LayoutManager newLM : (Iterable<LayoutManager>) newLMs) {
+            addChildLM(newLM);
         }
     }
 

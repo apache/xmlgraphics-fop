@@ -21,7 +21,6 @@ package org.apache.fop.render.pcl;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.xmlgraphics.util.UnitConv;
@@ -104,9 +103,8 @@ public class PCLPageDefinition {
      * @return the page definition or null if no match was found
      */
     public static PCLPageDefinition getPageDefinition(long width, long height, int errorMargin) {
-        Iterator iter = pageDefinitions.iterator();
-        while (iter.hasNext()) {
-            PCLPageDefinition def = (PCLPageDefinition)iter.next();
+        for (Object pageDefinition : pageDefinitions) {
+            PCLPageDefinition def = (PCLPageDefinition) pageDefinition;
             if (def.matches(width, height, errorMargin)) {
                 return def;
             }
@@ -120,9 +118,8 @@ public class PCLPageDefinition {
      * @return the page definition or null if no match was found
      */
     public static PCLPageDefinition getPageDefinition(String name) {
-        Iterator iter = pageDefinitions.iterator();
-        while (iter.hasNext()) {
-            PCLPageDefinition def = (PCLPageDefinition)iter.next();
+        for (Object pageDefinition : pageDefinitions) {
+            PCLPageDefinition def = (PCLPageDefinition) pageDefinition;
             if (def.getName().equalsIgnoreCase(name)) {
                 return def;
             }

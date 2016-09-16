@@ -24,7 +24,6 @@ import java.awt.Point;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -309,10 +308,8 @@ public class DataStream {
      *            a collection of AFP font attributes
      */
     public void addFontsToCurrentPage(Map pageFonts) {
-        Iterator iter = pageFonts.values().iterator();
-        while (iter.hasNext()) {
-            AFPFontAttributes afpFontAttributes = (AFPFontAttributes) iter
-                    .next();
+        for (Object o : pageFonts.values()) {
+            AFPFontAttributes afpFontAttributes = (AFPFontAttributes) o;
             createFont(afpFontAttributes.getFontReference(), afpFontAttributes
                     .getFont(), afpFontAttributes.getPointSize());
         }

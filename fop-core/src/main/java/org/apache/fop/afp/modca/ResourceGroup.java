@@ -21,7 +21,6 @@ package org.apache.fop.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.fop.afp.Streamable;
@@ -83,11 +82,9 @@ public class ResourceGroup extends AbstractNamedAFPObject {
 
     /** {@inheritDoc} */
     public void writeContent(OutputStream os) throws IOException {
-        Iterator it = resourceSet.iterator();
-        while (it.hasNext()) {
-            Object object = it.next();
+        for (Object object : resourceSet) {
             if (object instanceof Streamable) {
-                Streamable streamableObject = (Streamable)object;
+                Streamable streamableObject = (Streamable) object;
                 streamableObject.writeToStream(os);
             }
         }

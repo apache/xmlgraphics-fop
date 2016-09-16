@@ -19,7 +19,6 @@
 
 package org.apache.fop.afp;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.fop.afp.AFPResourceLevel.ResourceType;
@@ -99,11 +98,10 @@ public class AFPResourceLevelDefaults {
      * @param other the other instance to get the defaults from
      */
     public void mergeFrom(AFPResourceLevelDefaults other) {
-        Iterator iter = other.defaultResourceLevels.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry)iter.next();
-            Byte type = (Byte)entry.getKey();
-            AFPResourceLevel level = (AFPResourceLevel)entry.getValue();
+        for (Object o : other.defaultResourceLevels.entrySet()) {
+            Map.Entry entry = (Map.Entry) o;
+            Byte type = (Byte) entry.getKey();
+            AFPResourceLevel level = (AFPResourceLevel) entry.getValue();
             this.defaultResourceLevels.put(type, level);
         }
     }

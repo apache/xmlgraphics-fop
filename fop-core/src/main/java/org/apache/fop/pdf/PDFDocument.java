@@ -29,7 +29,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -742,9 +741,7 @@ public class PDFDocument {
      */
     protected PDFGState findGState(PDFGState wanted, PDFGState current) {
         PDFGState poss;
-        Iterator<PDFGState> iter = this.gstates.iterator();
-        while (iter.hasNext()) {
-            PDFGState avail = iter.next();
+        for (PDFGState avail : this.gstates) {
             poss = new PDFGState();
             poss.addValues(current);
             poss.addValues(avail);

@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr.table;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -272,9 +271,8 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
 
         contentKnuthElements = contentLM.getNextKnuthElements(childLC, alignment);
         //Set index values on elements coming from the content LM
-        Iterator iter = contentKnuthElements.iterator();
-        while (iter.hasNext()) {
-            ListElement el = (ListElement)iter.next();
+        for (Object contentKnuthElement : contentKnuthElements) {
+            ListElement el = (ListElement) contentKnuthElement;
             notifyPos(el.getPosition());
         }
         log.debug(contentKnuthElements);

@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -54,9 +53,8 @@ public class PDFEmbeddedFiles extends PDFNameTreeNode {
             map.put(key, value);
         }
         names.clear();
-        Iterator iter = map.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry)iter.next();
+        for (Object o : map.entrySet()) {
+            Map.Entry entry = (Map.Entry) o;
             names.add(entry.getKey());
             names.add(entry.getValue());
         }

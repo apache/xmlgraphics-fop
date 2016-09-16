@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutengine;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.w3c.dom.CDATASection;
@@ -230,9 +229,8 @@ public class ElementListCheck implements LayoutEngineCheck {
 
     private ElementListCollector.ElementList findElementList(LayoutResult result) {
         List candidates = new java.util.ArrayList();
-        Iterator iter = result.getElementListCollector().getElementLists().iterator();
-        while (iter.hasNext()) {
-            ElementListCollector.ElementList el = (ElementListCollector.ElementList)iter.next();
+        for (Object o : result.getElementListCollector().getElementLists()) {
+            ElementListCollector.ElementList el = (ElementListCollector.ElementList) o;
             if (el.getCategory().equals(category)) {
                 if (haveID() && this.id.equals(el.getID())) {
                     candidates.add(el);

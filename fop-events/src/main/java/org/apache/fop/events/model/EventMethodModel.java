@@ -21,7 +21,6 @@ package org.apache.fop.events.model;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.xml.sax.ContentHandler;
@@ -141,9 +140,8 @@ public class EventMethodModel implements Serializable, XMLizable {
         }
         String elName = "method";
         handler.startElement("", elName, elName, atts);
-        Iterator iter = this.params.iterator();
-        while (iter.hasNext()) {
-            ((XMLizable)iter.next()).toSAX(handler);
+        for (Object param : this.params) {
+            ((XMLizable) param).toSAX(handler);
         }
         handler.endElement("", elName, elName);
     }

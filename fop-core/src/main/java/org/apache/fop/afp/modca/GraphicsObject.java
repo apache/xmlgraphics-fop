@@ -22,7 +22,6 @@ package org.apache.fop.afp.modca;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.xmlgraphics.java2d.color.ColorConverter;
@@ -30,7 +29,6 @@ import org.apache.xmlgraphics.java2d.color.ColorUtil;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
-import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.StructuredData;
 import org.apache.fop.afp.fonts.CharacterSet;
@@ -383,9 +381,7 @@ public class GraphicsObject extends AbstractDataObject {
     /** {@inheritDoc} */
     @Override
     public void setComplete(boolean complete) {
-        Iterator<GraphicsData> it = objects.iterator();
-        while (it.hasNext()) {
-            Completable completedObject = it.next();
+        for (GraphicsData completedObject : objects) {
             completedObject.setComplete(true);
         }
         super.setComplete(complete);

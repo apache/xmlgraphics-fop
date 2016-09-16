@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -67,9 +66,8 @@ public final class ElementListObserver {
             if (category == null) {
                 throw new NullPointerException("category must not be null");
             }
-            Iterator i = activeObservers.iterator();
-            while (i.hasNext()) {
-                ((Observer)i.next()).observe(elementList, category, id);
+            for (Object activeObserver : activeObservers) {
+                ((Observer) activeObserver).observe(elementList, category, id);
             }
         }
     }

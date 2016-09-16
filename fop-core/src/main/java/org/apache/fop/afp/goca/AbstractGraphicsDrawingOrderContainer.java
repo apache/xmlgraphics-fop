@@ -22,7 +22,6 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.afp.Completable;
@@ -122,20 +121,17 @@ implements StructuredData, Completable, Startable {
      */
     public int getDataLength() {
         int dataLen = 0;
-        Iterator it = objects.iterator();
-        while (it.hasNext()) {
-            dataLen += ((StructuredData)it.next()).getDataLength();
+        for (Object object : objects) {
+            dataLen += ((StructuredData) object).getDataLength();
         }
         return dataLen;
     }
 
     /** {@inheritDoc} */
     public void setComplete(boolean complete) {
-        Iterator it = objects.iterator();
-        while (it.hasNext()) {
-            Object object = it.next();
+        for (Object object : objects) {
             if (object instanceof Completable) {
-                ((Completable)object).setComplete(true);
+                ((Completable) object).setComplete(true);
             }
         }
         this.complete = true;
