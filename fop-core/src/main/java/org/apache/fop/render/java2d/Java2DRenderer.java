@@ -735,7 +735,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         AffineTransform at = new AffineTransform();
         at.translate(rx / 1000f, bl / 1000f);
         state.transform(at);
-        renderText(text, state.getGraph(), font);
+        renderText(text, state.getGraph(), font, fontInfo);
         restoreGraphicsState();
 
         currentIPPosition = saveIP + text.getAllocIPD();
@@ -753,8 +753,9 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
      * @param text the TextArea
      * @param g2d the Graphics2D to render to
      * @param font the font to paint with
+     * @param fontInfo the font information
      */
-    public static void renderText(TextArea text, Graphics2D g2d, Font font) {
+    public static void renderText(TextArea text, Graphics2D g2d, Font font, FontInfo fontInfo) {
 
         Color col = (Color) text.getTrait(Trait.COLOR);
         g2d.setColor(col);
@@ -768,7 +769,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                 WordArea word = (WordArea)child;
                 String s = word.getWord();
                 int[] letterAdjust = word.getLetterAdjustArray();
-                GlyphVector gv = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), s);
+                GlyphVector gv = Java2DUtil.createGlyphVector(s, g2d, font, fontInfo);
                 double additionalWidth = 0.0;
                 if (letterAdjust == null
                         && text.getTextLetterSpaceAdjust() == 0
@@ -808,8 +809,11 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         int textLen = s.length();
         int[] offsets = new int[textLen];
         for (int i = 0; i < textLen; i++) {
-            final char c = s.charAt(i);
-            final char mapped = font.mapChar(c);
+            int c = s.codePointAt(i);
+
+            i += CharUtilities.incrementIfNonBMP(c);
+
+            final int mapped = font.mapCodePoint(c);
             int wordSpace;
 
             if (CharUtilities.isAdjustableSpace(mapped)) {

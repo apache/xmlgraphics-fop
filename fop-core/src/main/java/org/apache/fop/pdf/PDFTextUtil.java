@@ -92,12 +92,12 @@ public abstract class PDFTextUtil {
         PDFNumber.doubleOut(lt[5], DEC, sb);
     }
 
-    private static void writeChar(char ch, StringBuffer sb, boolean multibyte) {
+    private static void writeChar(int codePoint, StringBuffer sb, boolean multibyte) {
         if (!multibyte) {
-            if (ch < 32 || ch > 127) {
-                sb.append("\\").append(Integer.toOctalString(ch));
+            if (codePoint < 32 || codePoint > 127) {
+                sb.append("\\").append(Integer.toOctalString(codePoint));
             } else {
-                switch (ch) {
+                switch (codePoint) {
                 case '(':
                 case ')':
                 case '\\':
@@ -105,15 +105,15 @@ public abstract class PDFTextUtil {
                     break;
                 default:
                 }
-                sb.append(ch);
+                sb.appendCodePoint(codePoint);
             }
         } else {
-            PDFText.toUnicodeHex(ch, sb);
+            PDFText.toUnicodeHex(codePoint, sb);
         }
     }
 
-    private void writeChar(char ch, StringBuffer sb) {
-        writeChar(ch, sb, useMultiByte);
+    private void writeChar(int codePoint, StringBuffer sb) {
+        writeChar(codePoint, sb, useMultiByte);
     }
 
     private void checkInTextObject() {
@@ -258,9 +258,17 @@ public abstract class PDFTextUtil {
 
     /**
      * Writes a char to the "TJ-Buffer".
-     * @param codepoint the mapped character (code point/character code)
+     * @param ch the mapped character (code point/character code)
      */
-    public void writeTJMappedChar(char codepoint) {
+    public void writeTJMappedChar(char ch) {
+        writeTJMappedCodePoint((int) ch);
+    }
+
+    /**
+     * Writes a codepoint to the "TJ-Buffer".
+     * @param codePoint the mapped character (code point/character code)
+     */
+    public void writeTJMappedCodePoint(int codePoint) {
         if (bufTJ == null) {
             bufTJ = new StringBuffer();
         }
@@ -268,7 +276,7 @@ public abstract class PDFTextUtil {
             bufTJ.append('[');
             bufTJ.append(startText);
         }
-        writeChar(codepoint, bufTJ);
+        writeChar(codePoint, bufTJ);
     }
 
     /**

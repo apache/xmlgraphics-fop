@@ -41,7 +41,7 @@ public interface CIDSet {
      * @param index the subset index (character selector)
      * @return the Unicode value or "NOT A CHARACTER" (0xFFFF)
      */
-    char getUnicode(int index);
+    int getUnicode(int index);
 
     /**
      * Gets the unicode character from the original font glyph index
@@ -66,6 +66,16 @@ public interface CIDSet {
      * @return the subset index
      */
     int mapChar(int glyphIndex, char unicode);
+
+    /**
+     * Maps a character to a character selector for a font subset. If the character isn't in the
+     * subset yet, it is added and a new character selector returned. Otherwise, the already
+     * allocated character selector is returned from the existing map/subset.
+     * @param glyphIndex the glyph index of the character
+     * @param codePoint the Unicode index of the character
+     * @return the subset index
+     */
+    int mapCodePoint(int glyphIndex, int codePoint);
 
     /**
      * Returns an unmodifiable Map of the font subset. It maps from glyph index to

@@ -71,6 +71,20 @@ public abstract class CIDFont extends CustomFont {
      */
     public abstract CIDSet getCIDSet();
 
+    /**
+     * Determines whether this font contains a particular code point/glyph.
+     * @param cp character to check
+     * @return True if the character is supported, False otherwise
+     */
+    public abstract boolean hasCodePoint(int cp);
+
+    /**
+     * Map a Unicode code point to a code point in the font.
+     * @param cp code point to map
+     * @return the mapped code point
+     */
+    public abstract int mapCodePoint(int cp);
+
     // ---- Optional ----
     /**
      * Returns the default width for this font.

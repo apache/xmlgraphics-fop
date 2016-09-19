@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -57,7 +58,7 @@ public class GlyphMapping {
             MinOptMax areaIPD, boolean isHyphenated, boolean isSpace, boolean breakOppAfter,
             Font font, int level, int[][] gposAdjustments) {
         this(startIndex, endIndex, wordSpaceCount, letterSpaceCount, areaIPD, isHyphenated,
-             isSpace, breakOppAfter, font, level, gposAdjustments, null, null);
+                isSpace, breakOppAfter, font, level, gposAdjustments, null, null);
     }
 
     public GlyphMapping(int startIndex, int endIndex, int wordSpaceCount, int letterSpaceCount,
@@ -126,7 +127,16 @@ public class GlyphMapping {
 
         // 3. perform mapping of chars to glyphs ... to glyphs ... to chars, retaining
         // associations if requested.
-        List associations = retainAssociations ? new java.util.ArrayList() : null;
+        List associations = retainAssociations ? new ArrayList() : null;
+
+        // This is a workaround to read the ligature from the font even if the script
+        // does not match the one defined for the table.
+        // More info here: https://issues.apache.org/jira/browse/FOP-2638
+        // zyyy == SCRIPT_UNDEFINED
+        if ("zyyy".equals(script) || "auto".equals(script)) {
+            script = "*";
+        }
+
         CharSequence mcs = font.performSubstitution(ics, script, language, associations, retainControls);
 
         // 4. compute glyph position adjustments on (substituted) characters.
@@ -148,7 +158,11 @@ public class GlyphMapping {
         MinOptMax ipd = MinOptMax.ZERO;
         for (int i = 0, n = mcs.length(); i < n; i++) {
             int c = mcs.charAt(i);
-            // TODO !BMP
+
+            if (CharUtilities.containsSurrogatePairAt(mcs, i)) {
+                c = Character.toCodePoint((char) c, mcs.charAt(++i));
+            }
+
             int w = font.getCharWidth(c);
             if (w < 0) {
                 w = 0;

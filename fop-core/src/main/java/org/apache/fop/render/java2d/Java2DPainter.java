@@ -239,7 +239,7 @@ public class Java2DPainter extends AbstractIFPainter<IFDocumentHandler> {
         g2dState.updateFont(font.getFontName(), state.getFontSize() * 1000);
 
         Graphics2D g2d = this.g2dState.getGraph();
-        GlyphVector gv = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), text);
+        GlyphVector gv = Java2DUtil.createGlyphVector(text, g2d, font, fontInfo);
         Point2D cursor = new Point2D.Float(0, 0);
 
         int l = text.length();
@@ -248,8 +248,17 @@ public class Java2DPainter extends AbstractIFPainter<IFDocumentHandler> {
             cursor.setLocation(cursor.getX() + dp[0][0], cursor.getY() - dp[0][1]);
             gv.setGlyphPosition(0, cursor);
         }
+
+        int currentIdx = 0;
         for (int i = 0; i < l; i++) {
-            char orgChar = text.charAt(i);
+            int orgChar = text.codePointAt(i);
+            // The dp (GPOS/kerning adjustment) is performed over glyphs and not
+            // characters (GlyphMapping.processWordMapping). The length of dp is
+            // adjusted later to fit the length of the String adding trailing 0.
+            // This means that it's probably ok to consume one of the 2 surrogate
+            // pairs.
+            i += CharUtilities.incrementIfNonBMP(orgChar);
+
             float xGlyphAdjust = 0;
             float yGlyphAdjust = 0;
             int cw = font.getCharWidth(orgChar);
@@ -268,7 +277,7 @@ public class Java2DPainter extends AbstractIFPainter<IFDocumentHandler> {
             }
 
             cursor.setLocation(cursor.getX() + cw + xGlyphAdjust, cursor.getY() - yGlyphAdjust);
-            gv.setGlyphPosition(i + 1, cursor);
+            gv.setGlyphPosition(++currentIdx, cursor);
         }
         g2d.drawGlyphVector(gv, x, y);
     }
@@ -288,7 +297,5 @@ public class Java2DPainter extends AbstractIFPainter<IFDocumentHandler> {
     private void concatenateTransformationMatrix(AffineTransform transform) throws IOException {
         g2dState.transform(transform);
     }
-
-
 
 }

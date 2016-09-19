@@ -376,8 +376,36 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
 
     /** {@inheritDoc} */
     @Override
+    public int mapCodePoint(int cp) {
+        notifyMapOperation();
+        int glyphIndex = findGlyphIndex(cp);
+        if (glyphIndex == SingleByteEncoding.NOT_FOUND_CODE_POINT) {
+
+            for (char ch : Character.toChars(cp)) {
+                //TODO better handling for non BMP
+                warnMissingGlyph(ch);
+            }
+
+            if (!isOTFFile) {
+                glyphIndex = findGlyphIndex(Typeface.NOT_FOUND);
+            }
+        }
+        if (isEmbeddable()) {
+            glyphIndex = cidSet.mapCodePoint(glyphIndex, cp);
+        }
+        return (char) glyphIndex;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public boolean hasChar(char c) {
-        return (findGlyphIndex(c) != SingleByteEncoding.NOT_FOUND_CODE_POINT);
+        return hasCodePoint(c);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasCodePoint(int cp) {
+        return (findGlyphIndex(cp) != SingleByteEncoding.NOT_FOUND_CODE_POINT);
     }
 
     /**
@@ -525,6 +553,8 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
             if (!retainControls) {
                 ogs = elideControls(ogs);
             }
+            // ocs may not contains all the characters that were in cs.
+            // see: #createPrivateUseMapping(int gi)
             CharSequence ocs = mapGlyphsToChars(ogs);
             return ocs;
         } else {
@@ -662,7 +692,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      */
     private CharSequence mapGlyphsToChars(GlyphSequence gs) {
         int ng = gs.getGlyphCount();
-        CharBuffer cb = CharBuffer.allocate(ng);
+        CharBuffer cb = CharBuffer.allocate(gs.getUTF16CharacterCount());
         int ccMissing = Typeface.NOT_FOUND;
         for (int i = 0, n = ng; i < n; i++) {
             int gi = gs.getGlyph(i);
@@ -721,6 +751,14 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         return sb;
     }
 
+    /**
+     * Removes the glyphs associated with elidable control characters.
+     * All the characters in an association must be elidable in order
+     * to remove the corresponding glyph.
+     *
+     * @param gs GlyphSequence that may contains the elidable glyphs
+     * @return GlyphSequence without the elidable glyphs
+     */
     private static GlyphSequence elideControls(GlyphSequence gs) {
         if (hasElidableControl(gs)) {
             int[] ca = gs.getCharacterArray(false);
@@ -732,13 +770,15 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
                 int e = a.getEnd();
                 while (s < e) {
                     int ch = ca [ s ];
-                    if (isElidableControl(ch)) {
+                    if (!isElidableControl(ch)) {
                         break;
                     } else {
                         ++s;
                     }
                 }
-                if (s == e) {
+                // If there is at least one non-elidable character in the char
+                // sequence then the glyph/association is kept.
+                if (s != e) {
                     ngb.put(gs.getGlyph(i));
                     nal.add(a);
                 }

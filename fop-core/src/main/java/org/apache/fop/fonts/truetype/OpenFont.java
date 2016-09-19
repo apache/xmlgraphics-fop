@@ -390,6 +390,8 @@ public abstract class OpenFont {
      * tables are present. Currently only unicode cmaps are supported.
      * Set the unicodeIndex in the TTFMtxEntries and fills in the
      * cmaps vector.
+     *
+     * @see <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6cmap.html">TrueType-Reference-Manual</a>
      */
     protected boolean readCMAP() throws IOException {
 
@@ -401,6 +403,7 @@ public abstract class OpenFont {
         int numCMap = fontFile.readTTFUShort();    // Number of cmap subtables
         long cmapUniOffset = 0;
         long symbolMapOffset = 0;
+        long surrogateMapOffset = 0;
 
         if (log.isDebugEnabled()) {
             log.debug(numCMap + " cmap tables");
@@ -422,9 +425,14 @@ public abstract class OpenFont {
             if (cmapPID == 3 && cmapEID == 0) {
                 symbolMapOffset = cmapOffset;
             }
+            if (cmapPID == 3 && cmapEID == 10) {
+                surrogateMapOffset = cmapOffset;
+            }
         }
 
-        if (cmapUniOffset > 0) {
+       if (surrogateMapOffset > 0) {
+            return readUnicodeCmap(surrogateMapOffset, 10);
+        } else if (cmapUniOffset > 0) {
             return readUnicodeCmap(cmapUniOffset, 1);
         } else if (symbolMapOffset > 0) {
             return readUnicodeCmap(symbolMapOffset, 0);
@@ -443,14 +451,21 @@ public abstract class OpenFont {
         // Read unicode cmap
         seekTab(fontFile, OFTableName.CMAP, cmapUniOffset);
         int cmapFormat = fontFile.readTTFUShort();
-        /*int cmap_length =*/ fontFile.readTTFUShort(); //skip cmap length
+
+        if (cmapFormat < 8) {
+            fontFile.readTTFUShort(); //skip cmap length
+            fontFile.readTTFUShort(); //skip cmap version
+        } else {
+            fontFile.readTTFUShort(); //skip 2 bytes to read a Fixed32
+            fontFile.readTTFULong(); //skip cmap length
+            fontFile.readTTFULong(); //skip cmap version
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("CMAP format: " + cmapFormat);
         }
 
         if (cmapFormat == 4) {
-            fontFile.skip(2);    // Skip version number
             int cmapSegCountX2 = fontFile.readTTFUShort();
             int cmapSearchRange = fontFile.readTTFUShort();
             int cmapEntrySelector = fontFile.readTTFUShort();
@@ -614,6 +629,57 @@ public abstract class OpenFont {
                             }
                         }
                     }
+                }
+            }
+        } else if (cmapFormat == 12) {
+            long nGroups = fontFile.readTTFULong();
+
+            for (long i = 0; i < nGroups; ++i) {
+                int startCharCode = (int) fontFile.readTTFULong();
+                int endCharCode = (int) fontFile.readTTFULong();
+                int startGlyphCode = (int) fontFile.readTTFULong();
+
+                if (startCharCode < 0 || startCharCode > 0x0010FFFF) {
+                    log.warn("startCharCode outside Unicode range");
+                }
+
+                if (startCharCode >= 0x0000D800 && startCharCode <= 0x0000DFFF) {
+                    log.warn("startCharCode is a surrogate pair: " + startCharCode);
+                }
+
+                //endCharCode outside unicode range or is surrogate pair.
+                if (endCharCode > 0 && endCharCode < startCharCode || endCharCode > 0x0010FFFF) {
+                    log.warn("startCharCode outside Unicode range");
+                }
+
+                if (endCharCode >= 0x0000D800 && endCharCode <= 0x0000DFFF) {
+                    log.warn("endCharCode is a surrogate pair: " + startCharCode);
+                }
+
+                for (long j = 0; j <= endCharCode - startCharCode; ++j) {
+                    long glyphIndex = startGlyphCode + j;
+
+                    if (glyphIndex >= numberOfGlyphs) {
+                        log.warn("Format 12 cmap contains an invalid glyph index");
+                        break;
+                    }
+
+                    if (startCharCode + j > 0x10FFFF) {
+                        log.warn("Format 12 cmap contains character beyond UCS-4");
+                    }
+
+                    if (glyphIndex > Integer.MAX_VALUE) {
+                        log.error("glyphIndex > Integer.MAX_VALUE");
+                        continue;
+                    }
+
+                    if (startCharCode + j > Integer.MAX_VALUE) {
+                        log.error("startCharCode + j > Integer.MAX_VALUE");
+                        continue;
+                    }
+
+                    unicodeMappings.add(new UnicodeMapping(this, (int) glyphIndex, (int) (startCharCode + j)));
+                    mtxTab[(int) glyphIndex].getUnicodeIndex().add((int) (startCharCode + j));
                 }
             }
         } else {

@@ -45,13 +45,20 @@ public final class HexEncoder {
     }
 
     /**
-     * Returns an hex encoding of the given character as a four-character string.
+     * Returns an hex encoding of the given character as:
+     * <ul>
+     *     <li>4-character string in case of non-BMP character</li>
+     *     <li>6-character string in case of BMP character</li>
+     * </ul>
      *
      * @param c a character
      * @return an hex-encoded representation of the character
      */
-    public static String encode(char c) {
-        return encode(c, 4);
+    public static String encode(int c) {
+        if (CharUtilities.isBmpCodePoint(c)) {
+            return encode(c, 4);
+        } else {
+            return encode(c, 6);
+        }
     }
-
 }
