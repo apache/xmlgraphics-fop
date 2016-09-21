@@ -97,7 +97,7 @@ public final class Java2DUtil {
 
             // mapChar is not working here because MultiByteFont.mapChar replaces the glyph index with
             // CIDSet.mapChar when isEmbeddable == true.
-            glyphCodes[currentIdx ++] = multiByteFont.findGlyphIndex(ch);
+            glyphCodes[currentIdx++] = multiByteFont.findGlyphIndex(ch);
         }
 
         // Trims glyphCodes

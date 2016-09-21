@@ -391,7 +391,9 @@ public abstract class OpenFont {
      * Set the unicodeIndex in the TTFMtxEntries and fills in the
      * cmaps vector.
      *
-     * @see <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6cmap.html">TrueType-Reference-Manual</a>
+     * @see <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6cmap.html">
+     *          TrueType-Reference-Manual
+     *      </a>
      */
     protected boolean readCMAP() throws IOException {
 

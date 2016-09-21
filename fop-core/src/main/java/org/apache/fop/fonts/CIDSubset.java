@@ -130,7 +130,7 @@ public class CIDSubset implements CIDSet {
 
     /** {@inheritDoc} */
     public int getGIDFromChar(char ch) {
-        return charToGIDs.get(ch);
+        return charToGIDs.get((int) ch);
     }
 
     /** {@inheritDoc} */

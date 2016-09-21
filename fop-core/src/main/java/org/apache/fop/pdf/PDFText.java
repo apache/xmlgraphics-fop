@@ -19,11 +19,13 @@
 
 package org.apache.fop.pdf;
 
-import org.apache.avalon.framework.CascadingRuntimeException;
-import org.apache.fop.util.CharUtilities;
-
 import java.io.ByteArrayOutputStream;
+
 import java.util.Locale;
+
+import org.apache.avalon.framework.CascadingRuntimeException;
+
+import org.apache.fop.util.CharUtilities;
 
 /**
  * This class represents a simple number object. It also contains contains some

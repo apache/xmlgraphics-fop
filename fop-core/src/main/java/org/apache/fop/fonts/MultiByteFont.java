@@ -23,6 +23,7 @@ import java.awt.Rectangle;
 import java.io.InputStream;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -692,8 +693,9 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      */
     private CharSequence mapGlyphsToChars(GlyphSequence gs) {
         int ng = gs.getGlyphCount();
-        CharBuffer cb = CharBuffer.allocate(gs.getUTF16CharacterCount());
         int ccMissing = Typeface.NOT_FOUND;
+        List<Character> chars = new ArrayList<Character>(gs.getUTF16CharacterCount());
+
         for (int i = 0, n = ng; i < n; i++) {
             int gi = gs.getGlyph(i);
             int cc = findCharacterFromGlyphIndex(gi);
@@ -710,12 +712,19 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
                 cc -= 0x10000;
                 sh = ((cc >> 10) & 0x3FF) + 0xD800;
                 sl = ((cc >>  0) & 0x3FF) + 0xDC00;
-                cb.put((char) sh);
-                cb.put((char) sl);
+                chars.add((char) sh);
+                chars.add((char) sl);
             } else {
-                cb.put((char) cc);
+                chars.add((char) cc);
             }
         }
+
+        CharBuffer cb = CharBuffer.allocate(chars.size());
+
+        for (char c : chars) {
+            cb.put(c);
+        }
+
         cb.flip();
         return cb;
     }

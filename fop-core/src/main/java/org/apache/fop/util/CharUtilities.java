@@ -418,7 +418,7 @@ public class CharUtilities {
             throw new IllegalArgumentException(
                     "ill-formed UTF-16 sequence, contains isolated high surrogate at index " + index);
 
-        } else if (Character.isLowSurrogate(ch)){
+        } else if (Character.isLowSurrogate(ch)) {
             throw new IllegalArgumentException(
                     "ill-formed UTF-16 sequence, contains isolated low surrogate at index " + index);
         }
