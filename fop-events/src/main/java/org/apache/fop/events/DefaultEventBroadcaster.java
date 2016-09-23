@@ -67,7 +67,7 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
         this.listeners.processEvent(event);
     }
 
-    private static List/*<EventModel>*/ eventModels = new java.util.ArrayList();
+    private static List<EventModel> eventModels = new java.util.ArrayList();
     private Map proxies = new java.util.HashMap();
 
     /**

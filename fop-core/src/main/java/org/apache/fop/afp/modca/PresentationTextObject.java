@@ -58,7 +58,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
     /**
      * The presentation text data list
      */
-    private List/*<PresentationTextData>*/ presentationTextDataList;
+    private List<PresentationTextData> presentationTextDataList;
 
     private DefaultBuilder builder = new DefaultBuilder();
 
@@ -140,7 +140,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      */
     private void startPresentationTextData() {
         if (presentationTextDataList == null) {
-            presentationTextDataList = new java.util.ArrayList/*<PresentationTextData>*/();
+            presentationTextDataList = new java.util.ArrayList<PresentationTextData>();
         }
         if (presentationTextDataList.size() == 0) {
             currentPresentationTextData = new PresentationTextData(true);

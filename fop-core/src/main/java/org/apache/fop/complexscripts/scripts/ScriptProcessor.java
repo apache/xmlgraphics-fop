@@ -21,6 +21,7 @@ package org.apache.fop.complexscripts.scripts;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.fop.complexscripts.fonts.GlyphDefinitionTable;
@@ -43,7 +44,7 @@ public abstract class ScriptProcessor {
 
     private final String script;
 
-    private final Map/*<AssembledLookupsKey,GlyphTable.UseSpec[]>*/ assembledLookups;
+    private final Map<AssembledLookupsKey, GlyphTable.UseSpec[]> assembledLookups;
 
     private static Map<String, ScriptProcessor> processors = new HashMap<String, ScriptProcessor>();
 
@@ -56,7 +57,7 @@ public abstract class ScriptProcessor {
             throw new IllegalArgumentException("script must be non-empty string");
         } else {
             this.script = script;
-            this.assembledLookups = new HashMap/*<AssembledLookupsKey,GlyphTable.UseSpec[]>*/();
+            this.assembledLookups = new HashMap<AssembledLookupsKey, GlyphTable.UseSpec[]>();
         }
     }
 
@@ -94,7 +95,8 @@ public abstract class ScriptProcessor {
      * @param lookups a mapping from lookup specifications to glyph subtables to use for substitution processing
      * @return the substituted (output) glyph sequence
      */
-    public final GlyphSequence substitute(GlyphSubstitutionTable gsub, GlyphSequence gs, String script, String language, Map/*<LookupSpec,List<LookupTable>>>*/ lookups) {
+    public final GlyphSequence substitute(GlyphSubstitutionTable gsub, GlyphSequence gs, String script, String language,
+                                          Map<GlyphTable.LookupSpec, List<GlyphTable.LookupTable>> lookups) {
         return substitute(gs, script, language, assembleLookups(gsub, getSubstitutionFeatures(), lookups), getSubstitutionContextTester());
     }
 
@@ -165,7 +167,8 @@ public abstract class ScriptProcessor {
      * with one 4-tuple for each element of glyph sequence
      * @return true if some adjustment is not zero; otherwise, false
      */
-    public final boolean position(GlyphPositioningTable gpos, GlyphSequence gs, String script, String language, int fontSize, Map/*<LookupSpec,List<LookupTable>>*/ lookups, int[] widths, int[][] adjustments) {
+    public final boolean position(GlyphPositioningTable gpos, GlyphSequence gs, String script, String language, int fontSize,
+                                  Map<GlyphTable.LookupSpec, List<GlyphTable.LookupTable>> lookups, int[] widths, int[][] adjustments) {
         return position(gs, script, language, fontSize, assembleLookups(gpos, getPositioningFeatures(), lookups), widths, adjustments, getPositioningContextTester());
     }
 
@@ -201,7 +204,8 @@ public abstract class ScriptProcessor {
      * @param lookups a mapping from lookup specifications to lists of look tables from which to select lookup tables according to the specified features
      * @return ordered array of assembled lookup table use specifications
      */
-    public final GlyphTable.UseSpec[] assembleLookups(GlyphTable table, String[] features, Map/*<LookupSpec,List<LookupTable>>*/ lookups) {
+    public final GlyphTable.UseSpec[] assembleLookups(GlyphTable table, String[] features,
+                                                      Map<GlyphTable.LookupSpec, List<GlyphTable.LookupTable>> lookups) {
         AssembledLookupsKey key = new AssembledLookupsKey(table, features, lookups);
         GlyphTable.UseSpec[] usa;
         if ((usa = assembledLookupsGet(key)) != null) {
@@ -212,7 +216,7 @@ public abstract class ScriptProcessor {
     }
 
     private GlyphTable.UseSpec[] assembledLookupsGet(AssembledLookupsKey key) {
-        return (GlyphTable.UseSpec[]) assembledLookups.get(key);
+        return assembledLookups.get(key);
     }
 
     private GlyphTable.UseSpec[]  assembledLookupsPut(AssembledLookupsKey key, GlyphTable.UseSpec[] usa) {
@@ -252,9 +256,9 @@ public abstract class ScriptProcessor {
 
         private final GlyphTable table;
         private final String[] features;
-        private final Map/*<LookupSpec,List<LookupTable>>*/ lookups;
+        private final Map<GlyphTable.LookupSpec, List<GlyphTable.LookupTable>> lookups;
 
-        AssembledLookupsKey(GlyphTable table, String[] features, Map/*<LookupSpec,List<LookupTable>>*/ lookups) {
+        AssembledLookupsKey(GlyphTable table, String[] features, Map<GlyphTable.LookupSpec, List<GlyphTable.LookupTable>> lookups) {
             this.table = table;
             this.features = features;
             this.lookups = lookups;

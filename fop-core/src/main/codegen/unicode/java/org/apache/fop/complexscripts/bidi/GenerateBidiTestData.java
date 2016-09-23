@@ -162,9 +162,9 @@ public final class GenerateBidiTestData {
         String line;
         int n;
         // singleton map - derived from single char entry
-        Map/*<Integer,List>*/ sm = new HashMap/*<Integer,List>*/();
+        Map<Integer, List> sm = new HashMap<Integer, List>();
         // interval map - derived from pair of block endpoint entries
-        Map/*<String,int[3]>*/ im = new HashMap/*<String,int[3]>*/();
+        Map<String, Integer[]> im = new HashMap<String, Integer[]>();
         if (verbose) {
             System.out.print("Reading bidi type data...");
         }
@@ -189,7 +189,7 @@ public final class GenerateBidiTestData {
         td = (int[][]) tdl.toArray(new int [ tdl.size() ] []);
     }
 
-    private static void parseTypeProperties(String line, Map/*<Integer,List>*/ sm, Map/*<String,int[3]>*/ im) {
+    private static void parseTypeProperties(String line, Map<Integer, List> sm, Map<String, Integer[]> im) {
         String[] sa = line.split(";");
         if (sa.length >= 5) {
             int uc = Integer.parseInt(sa[0], 16);
@@ -250,9 +250,9 @@ public final class GenerateBidiTestData {
         return sa[0].trim();
     }
 
-    private static List processTypeData(Map/*<Integer,List>*/ sm, Map/*<String,int[3]>*/ im, List tdl) {
+    private static List processTypeData(Map<Integer, List> sm, Map<String, Integer[]> im, List tdl) {
         for (int i = BidiConstants.FIRST, k = BidiConstants.LAST; i <= k; i++) {
-            Map/*<Integer,Integer>*/ rm = new TreeMap/*<Integer,Integer>*/();
+            Map<Integer, Integer> rm = new TreeMap<Integer, Integer>();
             // populate intervals from singleton map
             List sl = (List) sm.get(Integer.valueOf(i));
             if (sl != null) {
@@ -277,12 +277,12 @@ public final class GenerateBidiTestData {
         return tdl;
     }
 
-    private static List extractRanges(Map/*<Integer,Integer>*/ rm) {
+    private static List extractRanges(Map<Integer, Integer> rm) {
         List ranges = new ArrayList();
         int sLast = 0;
         int eLast = 0;
         for (Iterator it = rm.entrySet().iterator(); it.hasNext(); ) {
-            Map.Entry/*<Integer,Integer>*/ me = (Map.Entry/*<Integer,Integer>*/) it.next();
+            Map.Entry<Integer, Integer> me = (Map.Entry<Integer, Integer>) it.next();
             int s = ((Integer) me.getKey()).intValue();
             int e = ((Integer) me.getValue()).intValue();
             if (s > eLast) {
@@ -703,7 +703,7 @@ public final class GenerateBidiTestData {
     }
 
     private static List complementRanges(List ranges) {
-        Map/*<Integer,Integer>*/ rm = new TreeMap/*<Integer,Integer>*/();
+        Map<Integer, Integer> rm = new TreeMap<Integer, Integer>();
         for (Iterator it = ranges.iterator(); it.hasNext(); ) {
             int[] r = (int[]) it.next();
             rm.put(Integer.valueOf(r[0]), Integer.valueOf(r[1]));
@@ -714,7 +714,7 @@ public final class GenerateBidiTestData {
         int cs = 0;
         List compRanges = new ArrayList(rm.size() + 1);
         for (Iterator it = rm.entrySet().iterator(); it.hasNext(); ) {
-            Map.Entry/*<Integer,Integer>*/ me = (Map.Entry/*<Integer,Integer>*/) it.next();
+            Map.Entry<Integer, Integer> me = (Map.Entry<Integer, Integer>) it.next();
             s = ((Integer) me.getKey()).intValue();
             e = ((Integer) me.getValue()).intValue();
             if (s > cs) {

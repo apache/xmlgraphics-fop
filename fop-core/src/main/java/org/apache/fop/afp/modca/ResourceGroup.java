@@ -31,7 +31,7 @@ import org.apache.fop.afp.Streamable;
 public class ResourceGroup extends AbstractNamedAFPObject {
 
     /** Set of resource uri */
-    private final Set/*<String>*/ resourceSet = new java.util.HashSet/*<String>*/();
+    private final Set<AbstractNamedAFPObject> resourceSet = new java.util.HashSet<AbstractNamedAFPObject>();
 
     /**
      * Constructor for the ResourceGroup, this takes a
@@ -60,17 +60,6 @@ public class ResourceGroup extends AbstractNamedAFPObject {
      */
     public int getResourceCount() {
         return resourceSet.size();
-    }
-
-    /**
-     * Returns true if the resource exists within this resource group,
-     * false otherwise.
-     *
-     * @param uri the uri of the resource
-     * @return true if the resource exists within this resource group
-     */
-    public boolean resourceExists(String uri) {
-        return resourceSet.contains(uri);
     }
 
     /** {@inheritDoc} */

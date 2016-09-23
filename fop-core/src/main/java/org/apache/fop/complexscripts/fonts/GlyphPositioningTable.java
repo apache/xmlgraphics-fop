@@ -232,7 +232,7 @@ public class GlyphPositioningTable extends GlyphTable {
      * @return true if some adjustment is not zero; otherwise, false
      */
     public boolean position(GlyphSequence gs, String script, String language, int fontSize, int[] widths, int[][] adjustments) {
-        Map/*<LookupSpec,List<LookupTable>>*/ lookups = matchLookups(script, language, "*");
+        Map<LookupSpec, List<LookupTable>> lookups = matchLookups(script, language, "*");
         if ((lookups != null) && (lookups.size() > 0)) {
             ScriptProcessor sp = ScriptProcessor.getInstance(script);
             return sp.position(this, gs, script, language, fontSize, lookups, widths, adjustments);
@@ -1209,7 +1209,7 @@ public class GlyphPositioningTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -1296,7 +1296,7 @@ public class GlyphPositioningTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -1397,7 +1397,7 @@ public class GlyphPositioningTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -1533,7 +1533,7 @@ public class GlyphPositioningTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -1608,7 +1608,7 @@ public class GlyphPositioningTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -1698,7 +1698,7 @@ public class GlyphPositioningTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */

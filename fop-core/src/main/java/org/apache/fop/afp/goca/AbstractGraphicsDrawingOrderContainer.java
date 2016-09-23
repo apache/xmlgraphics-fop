@@ -36,8 +36,7 @@ public abstract class AbstractGraphicsDrawingOrderContainer extends AbstractName
 implements StructuredData, Completable, Startable {
 
     /** list of objects contained within this container */
-    protected List/*<StructuredDataObject>*/ objects
-        = new java.util.ArrayList/*<StructuredDataObject>*/();
+    protected List objects = new java.util.ArrayList();
 
     /** object is complete */
     private boolean complete;
@@ -85,7 +84,7 @@ implements StructuredData, Completable, Startable {
      * @param graphicsContainer a graphics container
      */
     public void addAll(AbstractGraphicsDrawingOrderContainer graphicsContainer) {
-        Collection/*<StructuredDataObject>*/ objects = graphicsContainer.getObjects();
+        Collection objects = graphicsContainer.getObjects();
         objects.addAll(objects);
     }
 

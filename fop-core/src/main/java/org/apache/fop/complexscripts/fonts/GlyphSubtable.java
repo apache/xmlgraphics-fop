@@ -191,7 +191,7 @@ public abstract class GlyphSubtable implements Comparable {
      * Resolve references to lookup tables, e.g., in RuleLookup, to the lookup tables themselves.
      * @param lookupTables map from lookup table identifers, e.g. "lu4", to lookup tables
      */
-    public void resolveLookupReferences(Map/*<String,GlyphTable.LookupTable>*/ lookupTables) {
+    public void resolveLookupReferences(Map<String, GlyphTable.LookupTable> lookupTables) {
     }
 
     /**

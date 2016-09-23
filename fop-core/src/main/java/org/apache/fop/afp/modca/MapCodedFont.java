@@ -44,8 +44,8 @@ import org.apache.fop.afp.util.BinaryUtils;
 public class MapCodedFont extends AbstractStructuredObject {
 
     /** the collection of map coded fonts (maximum of 254) */
-    private final List/*<FontDefinition>*/ fontList
-        = new java.util.ArrayList/*<FontDefinition>*/();
+    private final List<FontDefinition> fontList
+        = new java.util.ArrayList<FontDefinition>();
 
     /**
      * Main constructor

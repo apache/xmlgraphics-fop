@@ -35,7 +35,7 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup implement
 
     /** the pre-process presentation objects contained in this resource environment group */
     // never written
-    // private List/*<PreprocessPresentationObject>*/ preProcessPresentationObjects;
+    // private List<PreprocessPresentationObject> preProcessPresentationObjects;
 
     /** the resource environment group state */
     private boolean complete;
