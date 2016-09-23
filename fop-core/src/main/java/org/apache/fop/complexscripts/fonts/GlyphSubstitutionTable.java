@@ -94,7 +94,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
      */
     public GlyphSequence substitute(GlyphSequence gs, String script, String language) {
         GlyphSequence ogs;
-        Map/*<LookupSpec,List<LookupTable>>*/ lookups = matchLookups(script, language, "*");
+        Map<LookupSpec, List<LookupTable>> lookups = matchLookups(script, language, "*");
         if ((lookups != null) && (lookups.size() > 0)) {
             ScriptProcessor sp = ScriptProcessor.getInstance(script);
             ogs = sp.substitute(this, gs, script, language, lookups);
@@ -734,7 +734,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -821,7 +821,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -922,7 +922,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -1059,7 +1059,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -1165,7 +1165,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
             return ContextualSubtableFormat2.matches(ss, cdt, classes, offset, rv);
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         private void populate(List entries) {
@@ -1224,7 +1224,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */

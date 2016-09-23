@@ -35,7 +35,7 @@ public class RendererContext {
     private final AbstractRenderer renderer;
     private FOUserAgent userAgent;
 
-    private final Map/*<String,Object>*/ props = new java.util.HashMap/*<String,Object>*/();
+    private final Map<String, Object> props = new java.util.HashMap<String, Object>();
 
     /**
      * Constructor for this class. It takes a MIME type as parameter.

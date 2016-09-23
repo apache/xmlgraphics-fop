@@ -147,19 +147,19 @@ public class FontQualifier {
      * @param fontInfo the font info
      * @return a list of matching font triplets
      */
-    protected List/*<FontTriplet>*/ match(FontInfo fontInfo) {
+    protected List<FontTriplet> match(FontInfo fontInfo) {
         AttributeValue fontFamilyValue = getFontFamily();
         AttributeValue weightValue = getFontWeight();
         AttributeValue styleValue = getFontStyle();
 
-        List/*<FontTriplet>*/ matchingTriplets = new java.util.ArrayList/*<FontTriplet>*/();
+        List<FontTriplet> matchingTriplets = new java.util.ArrayList<FontTriplet>();
 
         // try to find matching destination font triplet
         for (Object aFontFamilyValue : fontFamilyValue) {
             String fontFamilyString = (String) aFontFamilyValue;
-            Map/*<FontTriplet>*/ triplets = (Map/*<FontTriplet>*/) fontInfo.getFontTriplets();
+            Map<FontTriplet, String> triplets = fontInfo.getFontTriplets();
             if (triplets != null) {
-                Set/*<FontTriplet>*/ tripletSet = triplets.keySet();
+                Set<FontTriplet> tripletSet = triplets.keySet();
                 for (Object aTripletSet : tripletSet) {
                     FontTriplet triplet = (FontTriplet) aTripletSet;
                     String fontName = triplet.getName();
@@ -218,10 +218,10 @@ public class FontQualifier {
      * @return the highest priority matching font triplet
      */
     protected FontTriplet bestMatch(FontInfo fontInfo) {
-        List/*<FontTriplet>*/ matchingTriplets = match(fontInfo);
+        List<FontTriplet> matchingTriplets = match(fontInfo);
         FontTriplet bestTriplet = null;
         if (matchingTriplets.size() == 1) {
-            bestTriplet = (FontTriplet)matchingTriplets.get(0);
+            bestTriplet = matchingTriplets.get(0);
         } else {
             for (Object matchingTriplet : matchingTriplets) {
                 FontTriplet triplet = (FontTriplet) matchingTriplet;
@@ -241,8 +241,8 @@ public class FontQualifier {
     /**
      * @return a list of font triplets matching this qualifier
      */
-    public List/*<FontTriplet>*/ getTriplets() {
-        List/*<FontTriplet>*/ triplets = new java.util.ArrayList/*<FontTriplet>*/();
+    public List<FontTriplet> getTriplets() {
+        List<FontTriplet> triplets = new java.util.ArrayList<FontTriplet>();
 
         AttributeValue fontFamilyValue = getFontFamily();
         for (Object aFontFamilyValue : fontFamilyValue) {

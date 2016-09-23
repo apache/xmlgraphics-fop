@@ -140,7 +140,7 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
 
     /** {@inheritDoc} */
     @Override
-    protected void writeObjects(Collection/*<AbstractAFPObject>*/ objects, OutputStream os)
+    protected void writeObjects(Collection objects, OutputStream os)
             throws IOException {
         writeObjects(objects, os, false);
     }
@@ -153,7 +153,7 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
      * @param forceWrite true if writing should happen in any case
      * @throws java.io.IOException an I/O exception of some sort has occurred.
      */
-    protected void writeObjects(Collection/*<AbstractAFPObject>*/ objects, OutputStream os,
+    protected void writeObjects(Collection<AbstractAFPObject> objects, OutputStream os,
             boolean forceWrite) throws IOException {
         if (objects != null && objects.size() > 0) {
             Iterator it = objects.iterator();

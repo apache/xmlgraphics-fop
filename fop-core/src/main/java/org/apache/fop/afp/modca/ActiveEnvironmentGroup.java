@@ -51,8 +51,8 @@ import org.apache.fop.render.afp.AFPFontConfig;
 public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
 
     /** The collection of MapCodedFont objects */
-    private final List/*<MapCodedFonts>*/ mapCodedFonts
-        = new java.util.ArrayList/*<MapCodedFonts>*/();
+    private final List<AbstractStructuredObject> mapCodedFonts
+        = new java.util.ArrayList<AbstractStructuredObject>();
 
     /** the collection of MapPageSegments objects */
     private List mapPageSegments;

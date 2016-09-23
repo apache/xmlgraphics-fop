@@ -98,16 +98,16 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     };
 
     private static class SubstitutionScriptContextTester implements ScriptContextTester {
-        private static Map/*<String,GlyphContextTester>*/ testerMap = new HashMap/*<String,GlyphContextTester>*/();
+        private static Map<String, GlyphContextTester> testerMap = new HashMap<String, GlyphContextTester>();
         public GlyphContextTester getTester(String feature) {
-            return (GlyphContextTester) testerMap.get(feature);
+            return testerMap.get(feature);
         }
     }
 
     private static class PositioningScriptContextTester implements ScriptContextTester {
-        private static Map/*<String,GlyphContextTester>*/ testerMap = new HashMap/*<String,GlyphContextTester>*/();
+        private static Map<String, GlyphContextTester> testerMap = new HashMap<String, GlyphContextTester>();
         public GlyphContextTester getTester(String feature) {
-            return (GlyphContextTester) testerMap.get(feature);
+            return testerMap.get(feature);
         }
     }
 

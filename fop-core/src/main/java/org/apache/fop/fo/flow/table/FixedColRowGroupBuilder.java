@@ -41,7 +41,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     private int currentRowIndex;
 
     /** The rows belonging to this row group. List of List of {@link GridUnit}s. */
-    private List/*<List<GridUnit>>*/ rows;
+    private List<List<GridUnit>> rows;
 
     private boolean firstInPart = true;
 

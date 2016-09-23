@@ -70,7 +70,7 @@ public class Fop extends Task {
     private File xmlFile;
     private File xsltFile;
     private String xsltParams;
-    private List/*<FileSet>*/ filesets = new java.util.ArrayList/*<FileSet>*/();
+    private List<FileSet> filesets = new java.util.ArrayList<FileSet>();
     private File outFile;
     private File outDir;
     private String format; //MIME type
