@@ -662,7 +662,7 @@ public abstract class OpenFont {
                 for (long j = 0; j <= endCharCode - startCharCode; ++j) {
                     // Update lastChar
                     if (j < 256 && j > lastChar) {
-                        lastChar = (short)j;
+                        lastChar = (short) j;
                     }
 
                     long glyphIndex = startGlyphCode + j;
@@ -697,7 +697,13 @@ public abstract class OpenFont {
                     mtxTab[(int) glyphIndex].getUnicodeIndex().add((int) (startCharCode + j));
 
                     if (v != null) {
-                        int ansiGlyphIdx = unicodeToGlyph((int) j);
+                        // TODO I don't fully understand how this works. Needs review!
+                        Integer ansiGlyphIdx = unicodeToGlyphMap.get((int) j);
+
+                        if (ansiGlyphIdx == null) {
+                            continue;
+                        }
+
                         for (Integer aIdx : v) {
                             ansiWidth[aIdx] = mtxTab[ansiGlyphIdx].getWx();
 
