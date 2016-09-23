@@ -701,11 +701,6 @@ public abstract class OpenFont {
                         for (Integer aIdx : v) {
                             ansiWidth[aIdx] = mtxTab[ansiGlyphIdx].getWx();
 
-                            System.out.println("Added width "
-                                    + mtxTab[ansiGlyphIdx].getWx()
-                                    + " uni: " + j
-                                    + " ansi: " + aIdx);
-
                             if (log.isTraceEnabled()) {
                                 log.trace("Added width "
                                         + mtxTab[ansiGlyphIdx].getWx()
