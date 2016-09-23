@@ -433,6 +433,7 @@ public abstract class OpenFont {
         }
 
        if (surrogateMapOffset > 0) {
+            // TODO maybe for SingleByte fonts instances we should not reach this branch
             return readUnicodeCmap(surrogateMapOffset, 10);
         } else if (cmapUniOffset > 0) {
             return readUnicodeCmap(cmapUniOffset, 1);
@@ -641,24 +642,29 @@ public abstract class OpenFont {
                 int endCharCode = (int) fontFile.readTTFULong();
                 int startGlyphCode = (int) fontFile.readTTFULong();
 
-                if (startCharCode < 0 || startCharCode > 0x0010FFFF) {
+                if (startCharCode < 0 || startCharCode > 0x10FFFF) {
                     log.warn("startCharCode outside Unicode range");
                 }
 
-                if (startCharCode >= 0x0000D800 && startCharCode <= 0x0000DFFF) {
+                if (startCharCode >= 0xD800 && startCharCode <= 0xDFFF) {
                     log.warn("startCharCode is a surrogate pair: " + startCharCode);
                 }
 
                 //endCharCode outside unicode range or is surrogate pair.
-                if (endCharCode > 0 && endCharCode < startCharCode || endCharCode > 0x0010FFFF) {
+                if (endCharCode > 0 && endCharCode < startCharCode || endCharCode > 0x10FFFF) {
                     log.warn("startCharCode outside Unicode range");
                 }
 
-                if (endCharCode >= 0x0000D800 && endCharCode <= 0x0000DFFF) {
+                if (endCharCode >= 0xD800 && endCharCode <= 0xDFFF) {
                     log.warn("endCharCode is a surrogate pair: " + startCharCode);
                 }
 
                 for (long j = 0; j <= endCharCode - startCharCode; ++j) {
+                    // Update lastChar
+                    if (j < 256 && j > lastChar) {
+                        lastChar = (short)j;
+                    }
+
                     long glyphIndex = startGlyphCode + j;
 
                     if (glyphIndex >= numberOfGlyphs) {
@@ -680,8 +686,34 @@ public abstract class OpenFont {
                         continue;
                     }
 
+                    // Also add winAnsiWidth.
+                    List<Integer> v = null;
+
+                    if (j <= java.lang.Character.MAX_VALUE) {
+                        v = ansiIndex.get((int) j);
+                    }
+
                     unicodeMappings.add(new UnicodeMapping(this, (int) glyphIndex, (int) (startCharCode + j)));
                     mtxTab[(int) glyphIndex].getUnicodeIndex().add((int) (startCharCode + j));
+
+                    if (v != null) {
+                        int ansiGlyphIdx = unicodeToGlyph((int) j);
+                        for (Integer aIdx : v) {
+                            ansiWidth[aIdx] = mtxTab[ansiGlyphIdx].getWx();
+
+                            System.out.println("Added width "
+                                    + mtxTab[ansiGlyphIdx].getWx()
+                                    + " uni: " + j
+                                    + " ansi: " + aIdx);
+
+                            if (log.isTraceEnabled()) {
+                                log.trace("Added width "
+                                        + mtxTab[ansiGlyphIdx].getWx()
+                                        + " uni: " + j
+                                        + " ansi: " + aIdx);
+                            }
+                        }
+                    }
                 }
             }
         } else {

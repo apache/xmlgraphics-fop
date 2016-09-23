@@ -16,7 +16,7 @@
   <properties>
     <fop.hyph.version>2.0</fop.hyph.version>
   </properties>
-    
+
   <dependencies>
     <!-- batik deps -->
     <dependency>
@@ -307,6 +307,7 @@
           <headerLocation>${project.baseUri}src/tools/resources/checkstyle/LICENSE.txt</headerLocation>
           <includeResources>false</includeResources>
           <includeTestResources>false</includeTestResources>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
           <linkXRef>false</linkXRef>
           <logViolationsToConsole>true</logViolationsToConsole>
           <suppressionsLocation>${project.baseUri}src/tools/resources/checkstyle/suppressions.xml</suppressionsLocation>
