@@ -20,41 +20,6 @@
 package org.apache.fop.render.java2d;
 
 // Java
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.font.GlyphVector;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
-import org.apache.xmlgraphics.image.loader.ImageException;
-import org.apache.xmlgraphics.image.loader.ImageFlavor;
-import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
-import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
-import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
-import org.apache.xmlgraphics.image.loader.util.ImageUtil;
-import org.apache.xmlgraphics.util.UnitConv;
-
 import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -83,6 +48,40 @@ import org.apache.fop.render.extensions.prepress.PageScale;
 import org.apache.fop.render.pdf.CTMHelper;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ColorUtil;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.util.UnitConv;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 import static org.apache.fop.render.java2d.Java2DRendererOption.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
 
@@ -778,12 +777,19 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                 } else {
                     int[] offsets = getGlyphOffsets(s, font, text, letterAdjust);
                     float cursor = 0.0f;
+
+                    if (offsets.length != gv.getNumGlyphs()) {
+                        String errorMsg = "offsets length different from glyphNumber: %d != %d";
+                        throw new IllegalStateException(String.format(errorMsg, offsets.length, gv.getNumGlyphs()));
+                    }
+
                     for (int i = 0; i < offsets.length; i++) {
                         Point2D pt = gv.getGlyphPosition(i);
                         pt.setLocation(cursor, pt.getY());
                         gv.setGlyphPosition(i, pt);
                         cursor += offsets[i] / 1000f;
                     }
+
                     additionalWidth = cursor - gv.getLogicalBounds().getWidth();
                 }
                 g2d.drawGlyphVector(gv, textCursor, 0);
@@ -806,13 +812,10 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
     private static int[] getGlyphOffsets(String s, Font font, TextArea text,
             int[] letterAdjust) {
-        int textLen = s.length();
+        int textLen = s.codePointCount(0, s.length());
         int[] offsets = new int[textLen];
         for (int i = 0; i < textLen; i++) {
             int c = s.codePointAt(i);
-
-            i += CharUtilities.incrementIfNonBMP(c);
-
             final int mapped = font.mapCodePoint(c);
             int wordSpace;
 
