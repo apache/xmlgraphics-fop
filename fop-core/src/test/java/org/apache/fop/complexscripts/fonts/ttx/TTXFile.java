@@ -62,6 +62,7 @@ import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable.LigatureSet;
 import org.apache.fop.complexscripts.fonts.GlyphSubtable;
 import org.apache.fop.complexscripts.fonts.GlyphTable;
 import org.apache.fop.complexscripts.fonts.GlyphTable.RuleLookup;
+import org.apache.fop.complexscripts.scripts.ScriptProcessor;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.UTF32;
 import org.apache.fop.util.CharUtilities;
@@ -162,6 +163,7 @@ public class TTXFile {
     private GlyphDefinitionTable gdef;                          // constructed glyph definition table
     private GlyphSubstitutionTable gsub;                        // constructed glyph substitution table
     private GlyphPositioningTable gpos;                         // constructed glyph positioning table
+    private Map<String, ScriptProcessor> processors = new HashMap<String, ScriptProcessor>();
 
     public TTXFile() {
         elements = new Stack<String[]>();
@@ -2326,17 +2328,17 @@ public class TTXFile {
                 }
             } else if (en[1].equals("GDEF")) {
                 if (subtables.size() > 0) {
-                    gdef = new GlyphDefinitionTable(subtables);
+                    gdef = new GlyphDefinitionTable(subtables, processors);
                 }
                 clearTable();
             } else if (en[1].equals("GPOS")) {
                 if (subtables.size() > 0) {
-                    gpos = new GlyphPositioningTable(gdef, extractLookups(), subtables);
+                    gpos = new GlyphPositioningTable(gdef, extractLookups(), subtables, processors);
                 }
                 clearTable();
             } else if (en[1].equals("GSUB")) {
                 if (subtables.size() > 0) {
-                    gsub = new GlyphSubstitutionTable(gdef, extractLookups(), subtables);
+                    gsub = new GlyphSubstitutionTable(gdef, extractLookups(), subtables, processors);
                 }
                 clearTable();
             } else if (en[1].equals("GlyphClassDef")) {

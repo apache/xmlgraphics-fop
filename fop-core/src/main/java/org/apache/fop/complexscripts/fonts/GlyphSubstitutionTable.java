@@ -69,8 +69,9 @@ public class GlyphSubstitutionTable extends GlyphTable {
      * @param lookups a map of lookup specifications to subtable identifier strings
      * @param subtables a list of identified subtables
      */
-    public GlyphSubstitutionTable(GlyphDefinitionTable gdef, Map lookups, List subtables) {
-        super(gdef, lookups);
+    public GlyphSubstitutionTable(GlyphDefinitionTable gdef, Map lookups, List subtables,
+                                  Map<String, ScriptProcessor> processors) {
+        super(gdef, lookups, processors);
         if ((subtables == null) || (subtables.size() == 0)) {
             throw new AdvancedTypographicTableFormatException("subtables must be non-empty");
         } else {
@@ -96,7 +97,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
         GlyphSequence ogs;
         Map<LookupSpec, List<LookupTable>> lookups = matchLookups(script, language, "*");
         if ((lookups != null) && (lookups.size() > 0)) {
-            ScriptProcessor sp = ScriptProcessor.getInstance(script);
+            ScriptProcessor sp = ScriptProcessor.getInstance(script, processors);
             ogs = sp.substitute(this, gs, script, language, lookups);
         } else {
             ogs = gs;

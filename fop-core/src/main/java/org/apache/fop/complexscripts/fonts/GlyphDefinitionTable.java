@@ -21,6 +21,7 @@ package org.apache.fop.complexscripts.fonts;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,8 +73,8 @@ public class GlyphDefinitionTable extends GlyphTable {
      * Instantiate a <code>GlyphDefinitionTable</code> object using the specified subtables.
      * @param subtables a list of identified subtables
      */
-    public GlyphDefinitionTable(List subtables) {
-        super(null, new HashMap(0));
+    public GlyphDefinitionTable(List subtables, Map<String, ScriptProcessor> processors) {
+        super(null, new HashMap(0), processors);
         if ((subtables == null) || (subtables.size() == 0)) {
             throw new AdvancedTypographicTableFormatException("subtables must be non-empty");
         } else {
@@ -101,7 +102,7 @@ public class GlyphDefinitionTable extends GlyphTable {
      * @return the reordered (output) glyph sequence
      */
     public GlyphSequence reorderCombiningMarks(GlyphSequence gs, int[] widths, int[][] gpa, String script, String language) {
-        ScriptProcessor sp = ScriptProcessor.getInstance(script);
+        ScriptProcessor sp = ScriptProcessor.getInstance(script, processors);
         return sp.reorderCombiningMarks(this, gs, widths, gpa, script, language);
     }
 

@@ -46,8 +46,6 @@ public abstract class ScriptProcessor {
 
     private final Map<AssembledLookupsKey, GlyphTable.UseSpec[]> assembledLookups;
 
-    private static Map<String, ScriptProcessor> processors = new HashMap<String, ScriptProcessor>();
-
     /**
      * Instantiate a script processor.
      * @param script a script identifier
@@ -229,7 +227,7 @@ public abstract class ScriptProcessor {
      * @param script a script identifier
      * @return a script processor instance or null if none found
      */
-    public static synchronized ScriptProcessor getInstance(String script) {
+    public static synchronized ScriptProcessor getInstance(String script, Map<String, ScriptProcessor> processors) {
         ScriptProcessor sp = null;
         assert processors != null;
         if ((sp = processors.get(script)) == null) {
