@@ -71,8 +71,9 @@ public class GlyphPositioningTable extends GlyphTable {
      * @param lookups a map of lookup specifications to subtable identifier strings
      * @param subtables a list of identified subtables
      */
-    public GlyphPositioningTable(GlyphDefinitionTable gdef, Map lookups, List subtables) {
-        super(gdef, lookups);
+    public GlyphPositioningTable(GlyphDefinitionTable gdef, Map lookups, List subtables,
+                                 Map<String, ScriptProcessor> processors) {
+        super(gdef, lookups, processors);
         if ((subtables == null) || (subtables.size() == 0)) {
             throw new AdvancedTypographicTableFormatException("subtables must be non-empty");
         } else {
@@ -234,7 +235,7 @@ public class GlyphPositioningTable extends GlyphTable {
     public boolean position(GlyphSequence gs, String script, String language, int fontSize, int[] widths, int[][] adjustments) {
         Map<LookupSpec, List<LookupTable>> lookups = matchLookups(script, language, "*");
         if ((lookups != null) && (lookups.size() > 0)) {
-            ScriptProcessor sp = ScriptProcessor.getInstance(script);
+            ScriptProcessor sp = ScriptProcessor.getInstance(script, processors);
             return sp.position(this, gs, script, language, fontSize, lookups, widths, adjustments);
         } else {
             return false;

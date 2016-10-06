@@ -21,6 +21,7 @@ package org.apache.fop.complexscripts.scripts.arabic;
 
 import java.nio.IntBuffer;
 import java.util.BitSet;
+import java.util.HashMap;
 
 import org.junit.Test;
 
@@ -74,7 +75,7 @@ public class ArabicJoinersTestCase {
     @Test
     public void testArabicJoiners() {
         String script = CharScript.scriptTagFromCode(CharScript.SCRIPT_ARABIC);
-        ScriptProcessor sp = ScriptProcessor.getInstance(script);
+        ScriptProcessor sp = ScriptProcessor.getInstance(script, new HashMap<String, ScriptProcessor>());
         assertTrue(sp != null);
         ScriptContextTester sct = sp.getSubstitutionContextTester();
         assertTrue(sct != null);

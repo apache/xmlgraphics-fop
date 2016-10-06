@@ -21,12 +21,14 @@ package org.apache.fop.complexscripts.fonts;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.complexscripts.scripts.ScriptProcessor;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.OFDirTabEntry;
 import org.apache.fop.fonts.truetype.OFTableName;
@@ -57,6 +59,7 @@ public final class OTFAdvancedTypographicTableReader {
     private transient GlyphMappingTable seMapping;              // subtable entry mappings
     private transient List seEntries;                           // subtable entry entries
     private transient List seSubtables;                         // subtable entry subtables
+    private Map<String, ScriptProcessor> processors = new HashMap<String, ScriptProcessor>();
 
     /**
      * Construct an <code>OTFAdvancedTypographicTableReader</code> instance.
@@ -3515,7 +3518,7 @@ public final class OTFAdvancedTypographicTableReader {
         List subtables;
         if ((subtables = constructGDEFSubtables()) != null) {
             if (subtables.size() > 0) {
-                gdef = new GlyphDefinitionTable(subtables);
+                gdef = new GlyphDefinitionTable(subtables, processors);
             }
         }
         resetATState();
@@ -3534,7 +3537,7 @@ public final class OTFAdvancedTypographicTableReader {
             List subtables;
             if ((subtables = constructGSUBSubtables()) != null) {
                 if ((lookups.size() > 0) && (subtables.size() > 0)) {
-                    gsub = new GlyphSubstitutionTable(gdef, lookups, subtables);
+                    gsub = new GlyphSubstitutionTable(gdef, lookups, subtables, processors);
                 }
             }
         }
@@ -3554,7 +3557,7 @@ public final class OTFAdvancedTypographicTableReader {
             List subtables;
             if ((subtables = constructGPOSSubtables()) != null) {
                 if ((lookups.size() > 0) && (subtables.size() > 0)) {
-                    gpos = new GlyphPositioningTable(gdef, lookups, subtables);
+                    gpos = new GlyphPositioningTable(gdef, lookups, subtables, processors);
                 }
             }
         }

@@ -33,6 +33,7 @@ import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.complexscripts.scripts.ScriptProcessor;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 
@@ -74,12 +75,16 @@ public class GlyphTable {
     // if true, then prevent further subtable addition
     private boolean frozen;
 
+    protected Map<String, ScriptProcessor> processors;
+
     /**
      * Instantiate glyph table with specified lookups.
      * @param gdef glyph definition table that applies
      * @param lookups map from lookup specs to lookup tables
      */
-    public GlyphTable(GlyphTable gdef, Map<LookupSpec, List<String>> lookups) {
+    public GlyphTable(GlyphTable gdef, Map<LookupSpec, List<String>> lookups,
+                      Map<String, ScriptProcessor> processors) {
+        this.processors = processors;
         if ((gdef != null) && !(gdef instanceof GlyphDefinitionTable)) {
             throw new AdvancedTypographicTableFormatException("bad glyph definition table");
         } else if (lookups == null) {
