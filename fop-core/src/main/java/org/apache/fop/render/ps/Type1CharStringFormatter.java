@@ -41,8 +41,8 @@ public class Type1CharStringFormatter {
         for (Object object : sequence) {
             if (object instanceof CharStringCommand) {
                 writeCommand((CharStringCommand) object);
-            } else if (object instanceof Integer) {
-                writeNumber((Integer) object);
+            } else if (object instanceof Number) {
+                writeNumber(((Number) object).intValue());
             } else {
                 throw new IllegalArgumentException();
             }
