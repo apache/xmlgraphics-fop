@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.apache.xmlgraphics</groupId>
     <artifactId>fop-parent</artifactId>
-    <version>2.2.0-SNAPSHOT</version>
+    <version>${fop.version}</version>
   </parent>
 
   <properties>
@@ -101,6 +101,16 @@
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>fontbox</artifactId>
       <version>2.0.3</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jai-core</artifactId>
+      <version>1.1.3</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.media</groupId>
+      <artifactId>jai-codec</artifactId>
+      <version>1.1.3</version>
     </dependency>
     <!-- test deps -->
     <dependency>
@@ -276,15 +286,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <!-- compile exclusions -->
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>org/apache/fop/util/bitmap/JAIMonochromeBitmapConverter.java</exclude>
-          </excludes>
-        </configuration>
       </plugin>
       <!-- junit testing -->
       <plugin>
