@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.apache.xmlgraphics</groupId>
     <artifactId>fop-parent</artifactId>
-    <version>2.2.0-SNAPSHOT</version>
+    <version>${fop.version}</version>
   </parent>
 
   <dependencies>
