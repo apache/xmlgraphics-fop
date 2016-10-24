@@ -638,12 +638,13 @@ public abstract class OpenFont {
             long nGroups = fontFile.readTTFULong();
 
             for (long i = 0; i < nGroups; ++i) {
-                int startCharCode = (int) fontFile.readTTFULong();
-                int endCharCode = (int) fontFile.readTTFULong();
-                int startGlyphCode = (int) fontFile.readTTFULong();
+                long startCharCode = fontFile.readTTFULong();
+                long endCharCode = fontFile.readTTFULong();
+                long startGlyphCode = fontFile.readTTFULong();
 
-                if (startCharCode < 0 || startCharCode > 0x10FFFF) {
+                if (startCharCode < 0 || startCharCode > 0x10FFFFL) {
                     log.warn("startCharCode outside Unicode range");
+                    continue;
                 }
 
                 if (startCharCode >= 0xD800 && startCharCode <= 0xDFFF) {
@@ -651,68 +652,68 @@ public abstract class OpenFont {
                 }
 
                 //endCharCode outside unicode range or is surrogate pair.
-                if (endCharCode > 0 && endCharCode < startCharCode || endCharCode > 0x10FFFF) {
+                if (endCharCode > 0 && endCharCode < startCharCode || endCharCode > 0x10FFFFL) {
                     log.warn("startCharCode outside Unicode range");
+                    continue;
                 }
 
                 if (endCharCode >= 0xD800 && endCharCode <= 0xDFFF) {
                     log.warn("endCharCode is a surrogate pair: " + startCharCode);
                 }
 
-                for (long j = 0; j <= endCharCode - startCharCode; ++j) {
-                    // Update lastChar
-                    if (j < 256 && j > lastChar) {
-                        lastChar = (short) j;
-                    }
+                for (long offset = 0; offset <= endCharCode - startCharCode; ++offset) {
+                    long glyphIndexL = startGlyphCode + offset;
+                    long charCodeL = startCharCode + offset;
 
-                    long glyphIndex = startGlyphCode + j;
-
-                    if (glyphIndex >= numberOfGlyphs) {
+                    if (glyphIndexL >= numberOfGlyphs) {
                         log.warn("Format 12 cmap contains an invalid glyph index");
                         break;
                     }
 
-                    if (startCharCode + j > 0x10FFFF) {
+                    if (charCodeL > 0x10FFFFL) {
                         log.warn("Format 12 cmap contains character beyond UCS-4");
                     }
 
-                    if (glyphIndex > Integer.MAX_VALUE) {
+                    if (glyphIndexL > Integer.MAX_VALUE) {
                         log.error("glyphIndex > Integer.MAX_VALUE");
                         continue;
                     }
 
-                    if (startCharCode + j > Integer.MAX_VALUE) {
+                    if (charCodeL > Integer.MAX_VALUE) {
                         log.error("startCharCode + j > Integer.MAX_VALUE");
                         continue;
                     }
 
-                    // Also add winAnsiWidth.
-                    List<Integer> v = null;
-
-                    if (j <= java.lang.Character.MAX_VALUE) {
-                        v = ansiIndex.get((int) j);
+                    // Update lastChar
+                    if (charCodeL < 0xFF && charCodeL > lastChar) {
+                        lastChar = (short) charCodeL;
                     }
 
-                    unicodeMappings.add(new UnicodeMapping(this, (int) glyphIndex, (int) (startCharCode + j)));
-                    mtxTab[(int) glyphIndex].getUnicodeIndex().add((int) (startCharCode + j));
+                    int charCode = (int) charCodeL;
+                    int glyphIndex = (int) glyphIndexL;
 
-                    if (v != null) {
-                        // TODO I don't fully understand how this works. Needs review!
-                        Integer ansiGlyphIdx = unicodeToGlyphMap.get((int) j);
+                    // Also add winAnsiWidth.
+                    List<Integer> ansiIndexes = null;
 
-                        if (ansiGlyphIdx == null) {
-                            continue;
-                        }
+                    if (charCodeL <= java.lang.Character.MAX_VALUE) {
+                        ansiIndexes = ansiIndex.get((int) charCodeL);
+                    }
 
-                        for (Integer aIdx : v) {
-                            ansiWidth[aIdx] = mtxTab[ansiGlyphIdx].getWx();
+                    unicodeMappings.add(new UnicodeMapping(this, glyphIndex, charCode));
+                    mtxTab[glyphIndex].getUnicodeIndex().add(charCode);
 
-                            if (log.isTraceEnabled()) {
-                                log.trace("Added width "
-                                        + mtxTab[ansiGlyphIdx].getWx()
-                                        + " uni: " + j
-                                        + " ansi: " + aIdx);
-                            }
+                    if (ansiIndexes == null) {
+                        continue;
+                    }
+
+                    for (Integer aIdx : ansiIndexes) {
+                        ansiWidth[aIdx] = mtxTab[glyphIndex].getWx();
+
+                        if (log.isTraceEnabled()) {
+                            log.trace("Added width "
+                                    + mtxTab[glyphIndex].getWx()
+                                    + " uni: " + offset
+                                    + " ansi: " + aIdx);
                         }
                     }
                 }
@@ -864,8 +865,8 @@ public abstract class OpenFont {
      * Reads a font.
      *
      * @param in FontFileReader to read from
-     * @param name Name to be checked for in the font file
-     * @param glyphs Map of glyphs (glyphs has old index as (Integer) key and
+     * @param header Font header
+     * @param mbfont MultiByteFont
      * new index as (Integer) value)
      * @throws IOException in case of an I/O problem
      */

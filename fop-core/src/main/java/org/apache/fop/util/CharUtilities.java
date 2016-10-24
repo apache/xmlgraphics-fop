@@ -19,6 +19,9 @@
 
 package org.apache.fop.util;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 /**
  * This class provides utilities to distinguish various kinds of Unicode
  * whitespace and to get character widths in a given FontState.
@@ -426,4 +429,62 @@ public class CharUtilities {
         return false;
     }
 
+    /**
+     * Creates an iterator to iter a {@link CharSequence} codepoints.
+     *
+     * @see #codepointsIter(CharSequence, int, int)
+     * @param s {@link CharSequence} to iter
+     * @return codepoint iterator for the given {@link CharSequence}.
+     */
+    public static Iterable<Integer> codepointsIter(final CharSequence s) {
+        return codepointsIter(s, 0, s.length());
+    }
+
+    /**
+     * Creates an iterator to iter a sub-CharSequence codepoints.
+     *
+     * @see <a haref="http://bugs.java.com/bugdatabase/view_bug.do?bug_id=5003547">Bug JDK-5003547</a>
+     * @param s {@link CharSequence} to iter
+     * @param beginIndex lower range
+     * @param endIndex upper range
+     * @return codepoint iterator for the given sub-CharSequence.
+     */
+    public static Iterable<Integer> codepointsIter(final CharSequence s, final int beginIndex, final int endIndex) {
+        if (beginIndex < 0) {
+            throw new StringIndexOutOfBoundsException(beginIndex);
+        }
+        if (endIndex > s.length()) {
+            throw new StringIndexOutOfBoundsException(endIndex);
+        }
+        int subLen = endIndex - beginIndex;
+        if (subLen < 0) {
+            throw new StringIndexOutOfBoundsException(subLen);
+        }
+
+        return new Iterable<Integer>() {
+            public Iterator<Integer> iterator() {
+                return new Iterator<Integer>() {
+                    int nextIndex = beginIndex;
+
+                    public boolean hasNext() {
+                        return nextIndex < endIndex;
+                    }
+
+                    public Integer next() {
+                        if (!hasNext()) {
+                            // Findbugs wants this: IT_NO_SUCH_ELEMENT
+                            throw new NoSuchElementException();
+                        }
+                        int result = Character.codePointAt(s, nextIndex);
+                        nextIndex += Character.charCount(result);
+                        return result;
+                    }
+
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+        };
+    }
 }

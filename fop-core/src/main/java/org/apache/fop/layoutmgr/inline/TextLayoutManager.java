@@ -1023,8 +1023,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
             //log.info("Word: " + new String(textArray, startIndex, stopIndex - startIndex));
             for (int i = startIndex; i < stopIndex; i++) {
-                char ch = foText.charAt(i);
-                newIPD = newIPD.plus(font.getCharWidth(ch));
+                int cp = Character.codePointAt(foText, i);
+                i += Character.charCount(cp) - 1;
+
+                newIPD = newIPD.plus(font.getCharWidth(cp));
                 //if (i > startIndex) {
                 if (i < stopIndex) {
                     MinOptMax letterSpaceAdjust = letterSpaceAdjustArray[i + 1];

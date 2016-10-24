@@ -165,9 +165,7 @@ public class PSPainterTestCase {
         //0x48 0x65 0x6C 0x6C 0x6F 0x20 0x4D 0x6F 0x63 0x6B 0x21 0x1F4A9
         String text = "Hello Mock!\uD83D\uDCA9";
 
-        for (int i = 0; i < text.length(); i++) {
-            int cp = text.codePointAt(i);
-            i += CharUtilities.incrementIfNonBMP(cp);
+        for (int cp : CharUtilities.codepointsIter(text)) {
             when(font.mapCodePoint(cp)).thenReturn(cp);
         }
 

@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts.truetype;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class OFMtxEntry {
     private int lsb;
     private String name = "";
     private int index;
-    private List unicodeIndex = new java.util.ArrayList();
+    private List<Integer> unicodeIndex = new ArrayList<Integer>();
     private int[] boundingBox = new int[4];
     private long offset;
     private byte found;
@@ -131,7 +132,7 @@ public class OFMtxEntry {
      * Returns the unicodeIndex.
      * @return List
      */
-    public List getUnicodeIndex() {
+    public List<Integer> getUnicodeIndex() {
         return unicodeIndex;
     }
 

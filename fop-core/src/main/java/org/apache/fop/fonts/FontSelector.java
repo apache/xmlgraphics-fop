@@ -118,15 +118,10 @@ public final class FontSelector {
             fonts[fontnum] = font;
 
             int numCodePoints = 0;
-            for (int pos = firstIndex; pos < breakIndex; pos++, numCodePoints++) {
-                int ch = charSeq.charAt(pos);
+            for (int cp : CharUtilities.codepointsIter(charSeq, firstIndex, breakIndex)) {
+                numCodePoints++;
 
-                // The font maps code points and not surrogate pairs.
-                if (CharUtilities.isSurrogatePair((char) ch)) {
-                    ch = java.lang.Character.toCodePoint((char) ch, charSeq.charAt(++pos));
-                }
-
-                if (font.hasCodePoint(ch)) {
+                if (font.hasCodePoint(cp)) {
                     fontCount[fontnum]++;
                 }
             }

@@ -78,26 +78,41 @@ public final class Java2DUtil {
     public static GlyphVector createGlyphVector(String text, Graphics2D g2d, Font font, FontInfo fontInfo) {
         MultiByteFont multiByteFont = getMultiByteFont(font.getFontName(), fontInfo);
 
-        // To correctly support the advanced font features we have to build the GlyphVector passing the glyph codes
-        // instead of the characters. This because some of the chars in text might have been replaced by an internal
-        // font representation during GlyphMapping.processWordMapping. Eg 'fi' replaced with the corresponding character
-        // in the font ligatures table (GSUB).
-        //TODO extend this mechanism to SingleByteFont?
-        if (multiByteFont == null || !multiByteFont.isAdvancedEnabled()) {
-            return g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), text);
+        if (multiByteFont == null) {
+            return createGlyphVector(text, g2d);
         }
 
+        return createGlyphVectorMultiByteFont(text, g2d, multiByteFont);
+    }
+
+    /**
+     * Creates a {@link GlyphVector} using characters. Filters out non-bmp characters.
+     */
+    private static GlyphVector createGlyphVector(String text, Graphics2D g2d) {
+        StringBuilder sb = new StringBuilder(text.length());
+        for (int cp : CharUtilities.codepointsIter(text)) {
+            // If we are here we probably do not support non-BMP codepoints
+            sb.appendCodePoint(cp <= 0xFFFF ? cp : Typeface.NOT_FOUND);
+        }
+        return g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), sb.toString());
+    }
+
+    /**
+     * Creates a {@link GlyphVector} using glyph indexes instead of characters. To correctly support the advanced font
+     * features we have to build the GlyphVector passing the glyph indexes instead of the characters. This because some
+     * of the chars in text might have been replaced by an internal font representation during
+     * GlyphMapping.processWordMapping. Eg 'fi' replaced with the corresponding character in the font ligatures table
+     * (GSUB).
+     */
+    private static GlyphVector createGlyphVectorMultiByteFont(String text, Graphics2D g2d,
+            MultiByteFont multiByteFont) {
         int[] glyphCodes = new int[text.length()];
         int currentIdx = 0;
 
-        for (int i = 0, n = text.length(); i < n; i++) {
-            int ch = text.codePointAt(i);
-
-            i += CharUtilities.incrementIfNonBMP(ch);
-
+        for (int cp : CharUtilities.codepointsIter(text)) {
             // mapChar is not working here because MultiByteFont.mapChar replaces the glyph index with
             // CIDSet.mapChar when isEmbeddable == true.
-            glyphCodes[currentIdx++] = multiByteFont.findGlyphIndex(ch);
+            glyphCodes[currentIdx++] = multiByteFont.findGlyphIndex(cp);
         }
 
         // Trims glyphCodes

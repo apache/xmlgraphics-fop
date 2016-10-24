@@ -780,11 +780,13 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                     float cursor = 0.0f;
 
                     if (offsets.length != gv.getNumGlyphs()) {
-                        String errorMsg = "offsets length different from glyphNumber: %d != %d";
-                        throw new IllegalStateException(String.format(errorMsg, offsets.length, gv.getNumGlyphs()));
+                        log.error(String.format("offsets length different from glyphNumber: %d != %d",
+                                                    offsets.length, gv.getNumGlyphs()));
                     }
 
-                    for (int i = 0; i < offsets.length; i++) {
+                    // If for any reason offsets.length != gv.getNumGlyphs() then we have to choose the minimum to avoid
+                    // ArrayIndexOutOfBoundsException. This might happen when surrogate pairs are not correctly handled.
+                    for (int i = 0; i < Math.min(offsets.length, gv.getNumGlyphs()); i++) {
                         Point2D pt = gv.getGlyphPosition(i);
                         pt.setLocation(cursor, pt.getY());
                         gv.setGlyphPosition(i, pt);

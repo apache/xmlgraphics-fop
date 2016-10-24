@@ -196,39 +196,22 @@ public class Font implements Substitutable, Positionable {
      * @param ch2 second character
      * @return the distance to adjust for kerning, 0 if there's no kerning
      */
-    public int getKernValue(char ch1, char ch2) {
-        Map<Integer, Integer> kernPair = getKerning().get((int) ch1);
-        if (kernPair != null) {
-            Integer width = kernPair.get((int) ch2);
-            if (width != null) {
-                return width.intValue() * getFontSize() / 1000;
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * Returns the amount of kerning between two characters.
-     *
-     * The value returned measures in pt. So it is already adjusted for font size.
-     *
-     * @param ch1 first character
-     * @param ch2 second character
-     * @return the distance to adjust for kerning, 0 if there's no kerning
-     */
     public int getKernValue(int ch1, int ch2) {
-        // TODO !BMP
-        if (ch1 > 0x10000) {
-            return 0;
-        } else if ((ch1 >= 0xD800) && (ch1 <= 0xE000)) {
-            return 0;
-        } else if (ch2 > 0x10000) {
+        // Isolate surrogate pair
+        if ((ch1 >= 0xD800) && (ch1 <= 0xE000)) {
             return 0;
         } else if ((ch2 >= 0xD800) && (ch2 <= 0xE000)) {
             return 0;
-        } else {
-            return getKernValue((char) ch1, (char) ch2);
         }
+
+        Map<Integer, Integer> kernPair = getKerning().get(ch1);
+        if (kernPair != null) {
+            Integer width = kernPair.get(ch2);
+            if (width != null) {
+                return width * getFontSize() / 1000;
+            }
+        }
+        return 0;
     }
 
     /**
