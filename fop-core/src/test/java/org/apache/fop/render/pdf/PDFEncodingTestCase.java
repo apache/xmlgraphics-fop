@@ -30,10 +30,6 @@ import org.xml.sax.SAXException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-
-import org.apache.pdfbox.cos.COSDocument;
-import org.apache.pdfbox.io.RandomAccessBuffer;
-import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -170,11 +166,8 @@ public class PDFEncodingTestCase extends BasePDFTest {
     }
 
     private static String extractTextFromPDF(byte[] pdfContent) throws IOException {
-        PDFParser parser = new PDFParser(new RandomAccessBuffer(pdfContent));
-        parser.parse();
-        COSDocument cosDoc = parser.getDocument();
         PDFTextStripper pdfStripper = new PDFTextStripper();
-        PDDocument pdDoc = new PDDocument(cosDoc);
+        PDDocument pdDoc =  PDDocument.load(pdfContent);
         return pdfStripper.getText(pdDoc);
     }
 }
