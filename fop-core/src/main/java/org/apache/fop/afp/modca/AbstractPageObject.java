@@ -58,7 +58,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
     private PresentationTextObject currentPresentationTextObject;
 
     /** The list of objects within this resource container */
-    protected List/*<AbstractStructuredObject>*/ objects = new java.util.ArrayList();
+    protected List objects = new java.util.ArrayList();
 
     /** The page width */
     private int width;
@@ -215,7 +215,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      */
     protected List getTagLogicalElements() {
         if (objects == null) {
-            this.objects = new java.util.ArrayList/*<AbstractStructuredObject>*/();
+            this.objects = new java.util.ArrayList<AbstractStructuredObject>();
         }
         return this.objects;
     }

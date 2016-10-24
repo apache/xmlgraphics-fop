@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.transform.Source;
@@ -71,8 +70,8 @@ public class FOPTestbed extends AbstractLogEnabled
         Configuration tasks = configuration.getChild("tasks");
         this.repeat = tasks.getAttributeAsInteger("repeat", 1);
         Configuration[] entries = tasks.getChildren("task");
-        for (int i = 0; i < entries.length; i++) {
-            this.taskList.add(new TaskDef(entries[i]));
+        for (Configuration entry : entries) {
+            this.taskList.add(new TaskDef(entry));
         }
         this.fopCfg = configuration.getChild("processor");
     }
@@ -101,9 +100,8 @@ public class FOPTestbed extends AbstractLogEnabled
         }
 
         //Start threads
-        Iterator i = threadList.iterator();
-        while (i.hasNext()) {
-            ((Thread)i.next()).start();
+        for (Object aThreadList : threadList) {
+            ((Thread) aThreadList).start();
         }
 
         //Wait for threads to end
@@ -129,9 +127,8 @@ public class FOPTestbed extends AbstractLogEnabled
         int failures = 0;
         long bytesWritten = 0;
         System.out.println("Report on " + count + " tasks:");
-        Iterator iter = this.results.iterator();
-        while (iter.hasNext()) {
-            Result res = (Result)iter.next();
+        for (Object result : this.results) {
+            Result res = (Result) result;
             if (res.failure != null) {
                 System.out.println("FAIL: " + (res.end - res.start) + " " + res.task);
                 System.out.println("  -> " + res.failure.getMessage());
@@ -158,9 +155,8 @@ public class FOPTestbed extends AbstractLogEnabled
         public void run() {
             try {
                 for (int r = 0; r < repeat; r++) {
-                    Iterator i = taskList.iterator();
-                    while (i.hasNext()) {
-                        TaskDef def = (TaskDef)i.next();
+                    for (Object aTaskList : taskList) {
+                        TaskDef def = (TaskDef) aTaskList;
                         final Task task = new Task(def, counter++, foprocessor);
                         ContainerUtil.enableLogging(task, getLogger());
                         task.execute();

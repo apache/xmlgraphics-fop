@@ -358,8 +358,7 @@ public class CharAssociation implements Cloneable {
      */
     private static int[] extractIntervals(CharAssociation[] aa) {
         int ni = 0;
-        for (int i = 0, n = aa.length; i < n; i++) {
-            CharAssociation a = aa [ i ];
+        for (CharAssociation a : aa) {
             if (a.isDisjoint()) {
                 ni += a.getSubIntervalCount();
             } else {
@@ -401,25 +400,25 @@ public class CharAssociation implements Cloneable {
         assert sa.length == ea.length;
         int ni = sa.length;
         int[] incr = (ni < 21) ? SORT_INCREMENTS_03 : SORT_INCREMENTS_16;
-        for (int k = 0; k < incr.length; k++) {
-            for (int h = incr [ k ], i = h, n = ni, j; i < n; i++) {
-                int s1 = sa [ i ];
-                int e1 = ea [ i ];
+        for (int anIncr : incr) {
+            for (int h = anIncr, i = h, n = ni, j; i < n; i++) {
+                int s1 = sa[i];
+                int e1 = ea[i];
                 for (j = i; j >= h; j -= h) {
-                    int s2 = sa [ j - h ];
-                    int e2 = ea [ j - h ];
+                    int s2 = sa[j - h];
+                    int e2 = ea[j - h];
                     if (s2 > s1) {
-                        sa [ j ] = s2;
-                        ea [ j ] = e2;
+                        sa[j] = s2;
+                        ea[j] = e2;
                     } else if ((s2 == s1) && (e2 > e1)) {
-                        sa [ j ] = s2;
-                        ea [ j ] = e2;
+                        sa[j] = s2;
+                        ea[j] = e2;
                     } else {
                         break;
                     }
                 }
-                sa [ j ] = s1;
-                ea [ j ] = e1;
+                sa[j] = s1;
+                ea[j] = e1;
             }
         }
         int[] ia = new int [ ni * 2 ];

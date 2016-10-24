@@ -23,7 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.afp.AFPConstants;
@@ -45,8 +44,8 @@ import org.apache.fop.afp.util.BinaryUtils;
 public class MapCodedFont extends AbstractStructuredObject {
 
     /** the collection of map coded fonts (maximum of 254) */
-    private final List/*<FontDefinition>*/ fontList
-        = new java.util.ArrayList/*<FontDefinition>*/();
+    private final List<FontDefinition> fontList
+        = new java.util.ArrayList<FontDefinition>();
 
     /**
      * Main constructor
@@ -62,9 +61,8 @@ public class MapCodedFont extends AbstractStructuredObject {
         copySF(startData, Type.MAP, Category.CODED_FONT);
         baos.write(startData);
 
-        Iterator iter = fontList.iterator();
-        while (iter.hasNext()) {
-            FontDefinition fd = (FontDefinition) iter.next();
+        for (Object aFontList : fontList) {
+            FontDefinition fd = (FontDefinition) aFontList;
 
             // Start of repeating groups (occurs 1 to 254)
             baos.write(0x00);
@@ -114,10 +112,10 @@ public class MapCodedFont extends AbstractStructuredObject {
                 baos.write(0x00);
 
                 baos.write(BinaryUtils.convert(fd.scale, 2)); // Height
-                baos.write(new byte[] {0x00, 0x00}); // Width
+                baos.write(new byte[]{0x00, 0x00}); // Width
 
-                baos.write(new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00, 0x00});
+                baos.write(new byte[]{0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00});
 
                 baos.write(0x60);
 

@@ -190,8 +190,7 @@ public abstract class RtfElement {
 
         if (nameList != null) {
             // process only given attribute names
-            for (int i = 0; i < nameList.length; i++) {
-                final String name = nameList[i];
+            for (final String name : nameList) {
                 if (attr.isSet(name)) {
                     writeOneAttribute(name, attr.getValue(name));
                 }

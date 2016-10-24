@@ -21,7 +21,7 @@ package org.apache.fop.complexscripts.fonts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -71,13 +71,13 @@ public class GlyphPositioningTable extends GlyphTable {
      * @param lookups a map of lookup specifications to subtable identifier strings
      * @param subtables a list of identified subtables
      */
-    public GlyphPositioningTable(GlyphDefinitionTable gdef, Map lookups, List subtables) {
-        super(gdef, lookups);
+    public GlyphPositioningTable(GlyphDefinitionTable gdef, Map lookups, List subtables,
+                                 Map<String, ScriptProcessor> processors) {
+        super(gdef, lookups, processors);
         if ((subtables == null) || (subtables.size() == 0)) {
             throw new AdvancedTypographicTableFormatException("subtables must be non-empty");
         } else {
-            for (Iterator it = subtables.iterator(); it.hasNext();) {
-                Object o = it.next();
+            for (Object o : subtables) {
                 if (o instanceof GlyphPositioningSubtable) {
                     addSubtable((GlyphSubtable) o);
                 } else {
@@ -233,9 +233,9 @@ public class GlyphPositioningTable extends GlyphTable {
      * @return true if some adjustment is not zero; otherwise, false
      */
     public boolean position(GlyphSequence gs, String script, String language, int fontSize, int[] widths, int[][] adjustments) {
-        Map/*<LookupSpec,List<LookupTable>>*/ lookups = matchLookups(script, language, "*");
+        Map<LookupSpec, List<LookupTable>> lookups = matchLookups(script, language, "*");
         if ((lookups != null) && (lookups.size() > 0)) {
-            ScriptProcessor sp = ScriptProcessor.getInstance(script);
+            ScriptProcessor sp = ScriptProcessor.getInstance(script, processors);
             return sp.position(this, gs, script, language, fontSize, lookups, widths, adjustments);
         } else {
             return false;
@@ -342,9 +342,7 @@ public class GlyphPositioningTable extends GlyphTable {
         public List getEntries() {
             if (values != null) {
                 List entries = new ArrayList(values.length);
-                for (int i = 0, n = values.length; i < n; i++) {
-                    entries.add(values[i]);
-                }
+                Collections.addAll(entries, values);
                 return entries;
             } else {
                 return null;
@@ -487,8 +485,7 @@ public class GlyphPositioningTable extends GlyphTable {
         public PairValues getPairValues(int ci, int gi1, int gi2) {
             if ((pvm != null) && (ci < pvm.length)) {
                 PairValues[] pvt = pvm [ ci ];
-                for (int i = 0, n = pvt.length; i < n; i++) {
-                    PairValues pv = pvt [ i ];
+                for (PairValues pv : pvt) {
                     if (pv != null) {
                         int g = pv.getGlyph();
                         if (g < gi2) {
@@ -579,12 +576,12 @@ public class GlyphPositioningTable extends GlyphTable {
                 if (((o = entries.get(2)) == null) || !(o instanceof Integer)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, third entry must be an Integer, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
-                    nc1 = ((Integer)(o)).intValue();
+                    nc1 = (Integer) (o);
                 }
                 if (((o = entries.get(3)) == null) || !(o instanceof Integer)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, fourth entry must be an Integer, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
-                    nc2 = ((Integer)(o)).intValue();
+                    nc2 = (Integer) (o);
                 }
                 if (((o = entries.get(4)) == null) || !(o instanceof PairValues[][])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, fifth entry must be a PairValues[][], but is: " + ((o != null) ? o.getClass() : null));
@@ -840,7 +837,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 if (((o = entries.get(1)) == null) || !(o instanceof Integer)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, second entry must be an Integer, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
-                    nmc = ((Integer)(o)).intValue();
+                    nmc = (Integer) (o);
                 }
                 if (((o = entries.get(2)) == null) || !(o instanceof MarkAnchor[])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, third entry must be a MarkAnchor[], but is: " + ((o != null) ? o.getClass() : null));
@@ -994,12 +991,12 @@ public class GlyphPositioningTable extends GlyphTable {
                 if (((o = entries.get(1)) == null) || !(o instanceof Integer)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, second entry must be an Integer, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
-                    nmc = ((Integer)(o)).intValue();
+                    nmc = (Integer) (o);
                 }
                 if (((o = entries.get(2)) == null) || !(o instanceof Integer)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, third entry must be an Integer, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
-                    mxc = ((Integer)(o)).intValue();
+                    mxc = (Integer) (o);
                 }
                 if (((o = entries.get(3)) == null) || !(o instanceof MarkAnchor[])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, fourth entry must be a MarkAnchor[], but is: " + ((o != null) ? o.getClass() : null));
@@ -1130,7 +1127,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 if (((o = entries.get(1)) == null) || !(o instanceof Integer)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, second entry must be an Integer, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
-                    nmc = ((Integer)(o)).intValue();
+                    nmc = (Integer) (o);
                 }
                 if (((o = entries.get(2)) == null) || !(o instanceof MarkAnchor[])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, third entry must be a MarkAnchor[], but is: " + ((o != null) ? o.getClass() : null));
@@ -1213,7 +1210,7 @@ public class GlyphPositioningTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -1225,8 +1222,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedGlyphSequenceRule)) {
                             ChainedGlyphSequenceRule cr = (ChainedGlyphSequenceRule) r;
                             int[] iga = cr.getGlyphs(gi);
@@ -1301,7 +1297,7 @@ public class GlyphPositioningTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -1313,8 +1309,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedClassSequenceRule)) {
                             ChainedClassSequenceRule cr = (ChainedClassSequenceRule) r;
                             int[] ca = cr.getClasses(cdt.getClassIndex(gi, ps.getClassMatchSet(gi)));
@@ -1372,7 +1367,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 if (((o = entries.get(1)) == null) || !(o instanceof Integer)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, second entry must be an Integer, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
-                    ngc = ((Integer)(o)).intValue();
+                    ngc = (Integer) (o);
                 }
                 if (((o = entries.get(2)) == null) || !(o instanceof RuleSet[])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, third entry must be an RuleSet[], but is: " + ((o != null) ? o.getClass() : null));
@@ -1403,7 +1398,7 @@ public class GlyphPositioningTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -1415,8 +1410,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedCoverageSequenceRule)) {
                             ChainedCoverageSequenceRule cr = (ChainedCoverageSequenceRule) r;
                             GlyphCoverageTable[] gca = cr.getCoverages();
@@ -1540,7 +1534,7 @@ public class GlyphPositioningTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -1552,8 +1546,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedGlyphSequenceRule)) {
                             ChainedGlyphSequenceRule cr = (ChainedGlyphSequenceRule) r;
                             int[] iga = cr.getGlyphs(gi);
@@ -1616,7 +1609,7 @@ public class GlyphPositioningTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -1628,8 +1621,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedClassSequenceRule)) {
                             ChainedClassSequenceRule cr = (ChainedClassSequenceRule) r;
                             int[] ica = cr.getClasses(icdt.getClassIndex(gi, ps.getClassMatchSet(gi)));
@@ -1676,7 +1668,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 if (((o = entries.get(3)) == null) || !(o instanceof Integer)) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, fourth entry must be an Integer, but is: " + ((o != null) ? o.getClass() : null));
                 } else {
-                    ngc = ((Integer)(o)).intValue();
+                    ngc = (Integer) (o);
                 }
                 if (((o = entries.get(4)) == null) || !(o instanceof RuleSet[])) {
                     throw new AdvancedTypographicTableFormatException("illegal entries, fifth entry must be an RuleSet[], but is: " + ((o != null) ? o.getClass() : null));
@@ -1707,7 +1699,7 @@ public class GlyphPositioningTable extends GlyphTable {
             }
         }
         /** {@inheritDoc} */
-        public void resolveLookupReferences(Map/*<String,LookupTable>*/ lookupTables) {
+        public void resolveLookupReferences(Map<String, LookupTable> lookupTables) {
             GlyphTable.resolveLookupReferences(rsa, lookupTables);
         }
         /** {@inheritDoc} */
@@ -1719,8 +1711,7 @@ public class GlyphPositioningTable extends GlyphTable {
                 RuleSet rs = rsa [ 0 ];
                 if (rs != null) {
                     Rule[] ra = rs.getRules();
-                    for (int i = 0, n = ra.length; i < n; i++) {
-                        Rule r = ra [ i ];
+                    for (Rule r : ra) {
                         if ((r != null) && (r instanceof ChainedCoverageSequenceRule)) {
                             ChainedCoverageSequenceRule cr = (ChainedCoverageSequenceRule) r;
                             GlyphCoverageTable[] igca = cr.getCoverages();

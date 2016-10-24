@@ -173,9 +173,9 @@ public class FileCompare {
             PrintWriter results
                 = new PrintWriter(new java.io.FileWriter("results.html"), true);
             this.writeHeader(results);
-            for (int i = 0; i < filenameList.length; i++) {
-                oldFile = new File(referenceDirectory + filenameList[i]);
-                newFile = new File(testDirectory + filenameList[i]);
+            for (String aFilenameList : filenameList) {
+                oldFile = new File(referenceDirectory + aFilenameList);
+                newFile = new File(testDirectory + aFilenameList);
                 if (filesExist(oldFile, newFile)) {
                     identical = compareFileSize(oldFile, newFile);
                     if (identical) {
@@ -183,28 +183,28 @@ public class FileCompare {
                     }
                     if (!identical) {
                         System.out.println("Task Compare: \nFiles "
-                                           + referenceDirectory
-                                           + oldFile.getName() + " - "
-                                           + testDirectory
-                                           + newFile.getName()
-                                           + " are *not* identical.");
+                                + referenceDirectory
+                                + oldFile.getName() + " - "
+                                + testDirectory
+                                + newFile.getName()
+                                + " are *not* identical.");
                         results.println("<tr><td><a href='"
-                                        + referenceDirectory
-                                        + oldFile.getName() + "'>"
-                                        + oldFile.getName()
-                                        + "</a> </td><td> <a href='"
-                                        + testDirectory + newFile.getName()
-                                        + "'>" + newFile.getName() + "</a>"
-                                        + " </td><td><font color='red'>No</font></td></tr>");
+                                + referenceDirectory
+                                + oldFile.getName() + "'>"
+                                + oldFile.getName()
+                                + "</a> </td><td> <a href='"
+                                + testDirectory + newFile.getName()
+                                + "'>" + newFile.getName() + "</a>"
+                                + " </td><td><font color='red'>No</font></td></tr>");
                     } else {
                         results.println("<tr><td><a href='"
-                                        + referenceDirectory
-                                        + oldFile.getName() + "'>"
-                                        + oldFile.getName()
-                                        + "</a> </td><td> <a href='"
-                                        + testDirectory + newFile.getName()
-                                        + "'>" + newFile.getName() + "</a>"
-                                        + " </td><td>Yes</td></tr>");
+                                + referenceDirectory
+                                + oldFile.getName() + "'>"
+                                + oldFile.getName()
+                                + "</a> </td><td> <a href='"
+                                + testDirectory + newFile.getName()
+                                + "'>" + newFile.getName() + "</a>"
+                                + " </td><td>Yes</td></tr>");
                     }
                 }
             }

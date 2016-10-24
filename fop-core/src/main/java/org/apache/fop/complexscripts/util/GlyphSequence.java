@@ -21,6 +21,7 @@ package org.apache.fop.complexscripts.util;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 // CSOFF: LineLengthCheck
@@ -476,19 +477,13 @@ public class GlyphSequence implements Cloneable {
         if (na > 0) {
             List gl = new ArrayList(na);
             if (baa != null) {
-                for (int i = 0; i < baa.length; i++) {
-                    gl.add(baa[i]);
-                }
+                Collections.addAll(gl, baa);
             }
             if (iaa != null) {
-                for (int i = 0; i < iaa.length; i++) {
-                    gl.add(iaa[i]);
-                }
+                Collections.addAll(gl, iaa);
             }
             if (laa != null) {
-                for (int i = 0; i < laa.length; i++) {
-                    gl.add(laa[i]);
-                }
+                Collections.addAll(gl, laa);
             }
             return gl;
         } else {
@@ -506,8 +501,7 @@ public class GlyphSequence implements Cloneable {
         assert sa != null;
         int tg = 0;
         int ta = 0;
-        for (int i = 0, n = sa.length; i < n; i++) {
-            GlyphSequence s = sa [ i ];
+        for (GlyphSequence s : sa) {
             IntBuffer ga = s.getGlyphs();
             assert ga != null;
             int ng = ga.limit();
@@ -520,8 +514,7 @@ public class GlyphSequence implements Cloneable {
         }
         IntBuffer uga = IntBuffer.allocate(tg);
         ArrayList ual = new ArrayList(ta);
-        for (int i = 0, n = sa.length; i < n; i++) {
-            GlyphSequence s = sa [ i ];
+        for (GlyphSequence s : sa) {
             uga.put(s.getGlyphs());
             ual.addAll(s.getAssociations());
         }

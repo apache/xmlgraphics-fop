@@ -128,7 +128,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
         userAgent.getXMLHandlerRegistry().addXMLHandler(xmlHandler);
         Boolean b = (Boolean)userAgent.getRendererOptions().get("compact-format");
         if (b != null) {
-            setCompactFormat(b.booleanValue());
+            setCompactFormat(b);
         }
     }
 
@@ -192,9 +192,8 @@ public class XMLRenderer extends AbstractXMLRenderer {
     protected void addTraitAttributes(Area area) {
         Map traitMap = area.getTraits();
         if (traitMap != null) {
-            Iterator iter = traitMap.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry traitEntry = (Map.Entry) iter.next();
+            for (Object o : traitMap.entrySet()) {
+                Map.Entry traitEntry = (Map.Entry) o;
                 Object key = traitEntry.getKey();
                 String name = Trait.getTraitName(key);
                 Class clazz = Trait.getTraitClass(key);
@@ -203,15 +202,15 @@ public class XMLRenderer extends AbstractXMLRenderer {
                 }
                 Object value = traitEntry.getValue();
                 if (((Integer) key).intValue() == Trait.FONT) {
-                    FontTriplet triplet = (FontTriplet)value;
+                    FontTriplet triplet = (FontTriplet) value;
                     addAttribute("font-name", triplet.getName());
                     addAttribute("font-style", triplet.getStyle());
                     addAttribute("font-weight", triplet.getWeight());
                 } else if (clazz.equals(InternalLink.class)) {
-                    InternalLink iLink = (InternalLink)value;
+                    InternalLink iLink = (InternalLink) value;
                     addAttribute(name, iLink.xmlAttribute());
                 } else if (clazz.equals(Background.class)) {
-                    Background bkg = (Background)value;
+                    Background bkg = (Background) value;
                     //TODO Remove the following line (makes changes in the test checks necessary)
                     addAttribute(name, bkg.toString());
                     if (bkg.getColor() != null) {
@@ -222,28 +221,28 @@ public class XMLRenderer extends AbstractXMLRenderer {
                         String repString;
                         int repeat = bkg.getRepeat();
                         switch (repeat) {
-                        case Constants.EN_REPEAT:
-                            repString = "repeat";
-                            break;
-                        case Constants.EN_REPEATX:
-                            repString = "repeat-x";
-                            break;
-                        case Constants.EN_REPEATY:
-                            repString = "repeat-y";
-                            break;
-                        case Constants.EN_NOREPEAT:
-                            repString = "no-repeat";
-                            break;
-                        default:
-                            throw new IllegalStateException(
-                                    "Illegal value for repeat encountered: " + repeat);
+                            case Constants.EN_REPEAT:
+                                repString = "repeat";
+                                break;
+                            case Constants.EN_REPEATX:
+                                repString = "repeat-x";
+                                break;
+                            case Constants.EN_REPEATY:
+                                repString = "repeat-y";
+                                break;
+                            case Constants.EN_NOREPEAT:
+                                repString = "no-repeat";
+                                break;
+                            default:
+                                throw new IllegalStateException(
+                                        "Illegal value for repeat encountered: " + repeat);
                         }
                         addAttribute("bkg-repeat", repString);
                         addAttribute("bkg-horz-offset", bkg.getHoriz());
                         addAttribute("bkg-vert-offset", bkg.getVertical());
                     }
                 } else if (clazz.equals(Color.class)) {
-                    Color c = (Color)value;
+                    Color c = (Color) value;
                     addAttribute(name, ColorUtil.colorToString(c));
                 } else if (((Integer) key).intValue() == Trait.START_INDENT
                         || ((Integer) key).intValue() == Trait.END_INDENT) {
@@ -429,12 +428,11 @@ public class XMLRenderer extends AbstractXMLRenderer {
     protected void handleExtensionAttachments(List attachments) {
         if (attachments != null && attachments.size() > 0) {
             startElement("extension-attachments");
-            Iterator i = attachments.iterator();
-            while (i.hasNext()) {
-                ExtensionAttachment attachment = (ExtensionAttachment)i.next();
+            for (Object attachment1 : attachments) {
+                ExtensionAttachment attachment = (ExtensionAttachment) attachment1;
                 if (attachment instanceof XMLizable) {
                     try {
-                        ((XMLizable)attachment).toSAX(this.handler);
+                        ((XMLizable) attachment).toSAX(this.handler);
                     } catch (SAXException e) {
                         log.error("Error while serializing Extension Attachment", e);
                     }
@@ -466,8 +464,8 @@ public class XMLRenderer extends AbstractXMLRenderer {
             startElement("title");
             List children = seqTitle.getInlineAreas();
 
-            for (int count = 0; count < children.size(); count++) {
-                InlineArea inline = (InlineArea) children.get(count);
+            for (Object aChildren : children) {
+                InlineArea inline = (InlineArea) aChildren;
                 renderInlineArea(inline);
             }
 
@@ -603,8 +601,8 @@ public class XMLRenderer extends AbstractXMLRenderer {
 
         Span span = null;
         List spans = mr.getSpans();
-        for (int count = 0; count < spans.size(); count++) {
-            span = (Span) spans.get(count);
+        for (Object span1 : spans) {
+            span = (Span) span1;
             atts.clear();
             if (span.getColumnCount() != 1) {
                 addAttribute("columnCount", span.getColumnCount());

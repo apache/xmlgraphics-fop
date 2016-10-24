@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr.table;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -272,9 +271,8 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
 
         contentKnuthElements = contentLM.getNextKnuthElements(childLC, alignment);
         //Set index values on elements coming from the content LM
-        Iterator iter = contentKnuthElements.iterator();
-        while (iter.hasNext()) {
-            ListElement el = (ListElement)iter.next();
+        for (Object contentKnuthElement : contentKnuthElements) {
+            ListElement el = (ListElement) contentKnuthElement;
             notifyPos(el.getPosition());
         }
         log.debug(contentKnuthElements);
@@ -386,8 +384,8 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
         curBlockArea.setBPD(tableHeight);
 
         if (columnBackgroundAreas != null) {
-            for (Iterator iter = columnBackgroundAreas.iterator(); iter.hasNext();) {
-                ColumnBackgroundInfo b = (ColumnBackgroundInfo) iter.next();
+            for (Object columnBackgroundArea : columnBackgroundAreas) {
+                ColumnBackgroundInfo b = (ColumnBackgroundInfo) columnBackgroundArea;
                 TraitSetter.addBackground(b.backgroundArea,
                         b.column.getCommonBorderPaddingBackground(), this,
                         b.xShift, -b.backgroundArea.getYOffset(),
@@ -558,8 +556,7 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
         // if we get to this stage then we are at the footer of the table fragment; this means that no more
         // different TCLM need to be saved (we already have all); we flag the list as being complete then
         areAllTCLMsSaved = true;
-        for (int i = 0; i < savedTCLMs.size(); i++) {
-            TableCellLayoutManager tclm = savedTCLMs.get(i);
+        for (TableCellLayoutManager tclm : savedTCLMs) {
             if (this.repeatedHeader) {
                 tclm.setHasRepeatedHeader(true);
             }

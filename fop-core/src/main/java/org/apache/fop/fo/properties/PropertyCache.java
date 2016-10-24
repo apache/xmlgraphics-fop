@@ -79,8 +79,7 @@ public final class PropertyCache<T> {
         boolean useCache;
         try {
             useCache = Boolean.valueOf(
-                    System.getProperty("org.apache.fop.fo.properties.use-cache", "true"))
-                    .booleanValue();
+                    System.getProperty("org.apache.fop.fo.properties.use-cache", "true"));
         } catch (SecurityException e) {
             useCache = true;
             LOG.info("Unable to access org.apache.fop.fo.properties.use-cache"

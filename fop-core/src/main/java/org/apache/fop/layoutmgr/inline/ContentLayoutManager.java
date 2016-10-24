@@ -20,10 +20,8 @@
 package org.apache.fop.layoutmgr.inline;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -131,9 +129,8 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         stackSize = 0;
 
         List contentList = getNextKnuthElements(childLC, Constants.EN_START);
-        ListIterator contentIter = contentList.listIterator();
-        while (contentIter.hasNext()) {
-            KnuthElement element = (KnuthElement) contentIter.next();
+        for (Object aContentList : contentList) {
+            KnuthElement element = (KnuthElement) aContentList;
             if (element instanceof KnuthInlineBox) {
                 KnuthInlineBox box = (KnuthInlineBox) element;
                 // TODO handle alignment here?
@@ -246,9 +243,8 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         if (newLMs == null || newLMs.size() == 0) {
             return;
         }
-        ListIterator iter = newLMs.listIterator();
-        while (iter.hasNext()) {
-            LayoutManager lm = (LayoutManager) iter.next();
+        for (Object newLM : newLMs) {
+            LayoutManager lm = (LayoutManager) newLM;
             addChildLM(lm);
         }
     }
@@ -270,8 +266,8 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
                     Object obj = returnedList.remove(0);
                     if (obj instanceof KnuthSequence) {
                         KnuthSequence ks = (KnuthSequence)obj;
-                        for (Iterator it = ks.iterator(); it.hasNext();) {
-                            contentElement = (KnuthElement)it.next();
+                        for (Object k : ks) {
+                            contentElement = (KnuthElement) k;
                             stackSize += contentElement.getWidth();
                             contentList.add(contentElement);
                         }

@@ -61,10 +61,10 @@ public class AFPForeignAttributeReader {
      * @param foreignAttributes the foreign attributes
      * @return the resource information
      */
-    public AFPResourceInfo getResourceInfo(Map/*<QName, String>*/ foreignAttributes) {
+    public AFPResourceInfo getResourceInfo(Map<QName, String> foreignAttributes) {
         AFPResourceInfo resourceInfo = new AFPResourceInfo();
         if (foreignAttributes != null && !foreignAttributes.isEmpty()) {
-            String resourceName = (String) foreignAttributes.get(RESOURCE_NAME);
+            String resourceName = foreignAttributes.get(RESOURCE_NAME);
             if (resourceName != null) {
                 resourceInfo.setName(resourceName);
             }

@@ -370,8 +370,7 @@ public class FopConfParser {
         ImageImplRegistry registry = fopFactoryBuilder.getImageManager().getRegistry();
         Configuration[] penalties = parent.getChildren("penalty");
         try {
-            for (int i = 0, c = penalties.length; i < c; i++) {
-                Configuration penaltyCfg = penalties[i];
+            for (Configuration penaltyCfg : penalties) {
                 String className = penaltyCfg.getAttribute("class");
                 String value = penaltyCfg.getAttribute("value");
                 Penalty p = null;

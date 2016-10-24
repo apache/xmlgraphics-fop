@@ -20,6 +20,7 @@
 package org.apache.fop.complexscripts.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 // CSOFF: LineLengthCheck
@@ -160,15 +161,14 @@ public class NumberConverter {
         int tokenType = TOKEN_NONE;
         List<Integer> token = new ArrayList<Integer>();
         Integer[] ca = UTF32.toUTF32(format, 0, true);
-        for (int i = 0, n = ca.length; i < n; i++) {
-            int c = ca[i];
+        for (Integer c : ca) {
             int tokenTypeNew = isAlphaNumeric(c) ? TOKEN_ALPHANUMERIC : TOKEN_NONALPHANUMERIC;
             if (tokenTypeNew != tokenType) {
                 if (token.size() > 0) {
                     if (tokenType == TOKEN_ALPHANUMERIC) {
-                        tokens.add(token.toArray(new Integer [ token.size() ]));
+                        tokens.add(token.toArray(new Integer[token.size()]));
                     } else {
-                        separators.add(token.toArray(new Integer [ token.size() ]));
+                        separators.add(token.toArray(new Integer[token.size()]));
                     }
                     token.clear();
                 }
@@ -254,7 +254,7 @@ public class NumberConverter {
         if (number < 0) {
             throw new IllegalArgumentException("number must be non-negative");
         } else if (token.length == 1) {
-            int s = token[0].intValue();
+            int s = token[0];
             switch (s) {
             case (int) '1':
                 fn = formatNumberAsDecimal(number, (int) '1', 1);
@@ -282,7 +282,7 @@ public class NumberConverter {
         } else if ((token.length == 2) && (token[0] == (int) 'W') && (token[1] == (int) 'w')) {
             fn = formatNumberAsWord(number, Character.TITLECASE_LETTER);
         } else if (isPaddedOne(token)) {
-            int s = token [ token.length - 1 ].intValue();
+            int s = token[token.length - 1];
             fn = formatNumberAsDecimal(number, s, token.length);
         } else {
             throw new IllegalArgumentException("invalid format token: \"" + UTF32.fromUTF32(token) + "\"");
@@ -429,8 +429,8 @@ public class NumberConverter {
         for (String[] el : equivalentLanguages) {
             assert el.length >= 2;
             if (el[0].equals(i3c)) {
-                for (int i = 0, n = el.length; i < n; i++) {
-                    if (el[i].equals(lc)) {
+                for (String anEl : el) {
+                    if (anEl.equals(lc)) {
                         return true;
                     }
                 }
@@ -479,9 +479,7 @@ public class NumberConverter {
     */
 
     private static void appendScalars(List<Integer> scalars, Integer[] sa) {
-        for (Integer s : sa) {
-            scalars.add(s);
-        }
+        Collections.addAll(scalars, sa);
     }
 
     private static String scalarsToString(List<Integer> scalars) {
@@ -503,7 +501,7 @@ public class NumberConverter {
     }
 
     private static int getDecimalValue(Integer scalar) {
-        int s = scalar.intValue();
+        int s = scalar;
         if (Character.getType(s) == Character.DECIMAL_DIGIT_NUMBER) {
             return Character.getNumericValue(s);
         } else {

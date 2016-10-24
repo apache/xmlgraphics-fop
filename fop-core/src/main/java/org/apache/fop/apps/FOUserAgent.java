@@ -682,8 +682,7 @@ public class FOUserAgent {
         Configuration userConfig = null;
 
         Configuration[] cfgs = cfg.getChild(type + "s").getChildren(type);
-        for (int i = 0; i < cfgs.length; ++i) {
-            Configuration child = cfgs[i];
+        for (Configuration child : cfgs) {
             try {
                 if (child.getAttribute(mime).equals(mimeType)) {
                     userConfig = child;
@@ -716,7 +715,7 @@ public class FOUserAgent {
     public boolean isAccessibilityEnabled() {
         Boolean enabled = (Boolean)this.getRendererOptions().get(Accessibility.ACCESSIBILITY);
         if (enabled != null) {
-            return enabled.booleanValue();
+            return enabled;
         } else {
             return false;
         }

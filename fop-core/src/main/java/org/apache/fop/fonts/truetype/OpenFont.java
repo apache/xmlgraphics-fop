@@ -571,14 +571,14 @@ public abstract class OpenFont {
                             List<Integer> v = ansiIndex.get(j);
                             if (v != null) {
                                 for (Integer aIdx : v) {
-                                    ansiWidth[aIdx.intValue()]
+                                    ansiWidth[aIdx]
                                         = mtxTab[glyphIdx].getWx();
 
                                     if (log.isTraceEnabled()) {
                                         log.trace("Added width "
                                                 + mtxTab[glyphIdx].getWx()
                                                 + " uni: " + j
-                                                + " ansi: " + aIdx.intValue());
+                                                + " ansi: " + aIdx);
                                     }
                                 }
                             }
@@ -614,7 +614,7 @@ public abstract class OpenFont {
                             List<Integer> v = ansiIndex.get(j);
                             if (v != null) {
                                 for (Integer aIdx : v) {
-                                    ansiWidth[aIdx.intValue()] = mtxTab[glyphIdx].getWx();
+                                    ansiWidth[aIdx] = mtxTab[glyphIdx].getWx();
                                 }
                             }
 
@@ -1606,30 +1606,30 @@ public abstract class OpenFont {
         int localXHeight = 0;
         int localAscender = 0;
         int localDescender = 0;
-        for (int i = 0; i < mtxTab.length; i++) {
-            if ("H".equals(mtxTab[i].getName())) {
-                localCapHeight = mtxTab[i].getBoundingBox()[3];
-            } else if ("x".equals(mtxTab[i].getName())) {
-                localXHeight = mtxTab[i].getBoundingBox()[3];
-            } else if ("d".equals(mtxTab[i].getName())) {
-                localAscender = mtxTab[i].getBoundingBox()[3];
-            } else if ("p".equals(mtxTab[i].getName())) {
-                localDescender = mtxTab[i].getBoundingBox()[1];
+        for (OFMtxEntry aMtxTab : mtxTab) {
+            if ("H".equals(aMtxTab.getName())) {
+                localCapHeight = aMtxTab.getBoundingBox()[3];
+            } else if ("x".equals(aMtxTab.getName())) {
+                localXHeight = aMtxTab.getBoundingBox()[3];
+            } else if ("d".equals(aMtxTab.getName())) {
+                localAscender = aMtxTab.getBoundingBox()[3];
+            } else if ("p".equals(aMtxTab.getName())) {
+                localDescender = aMtxTab.getBoundingBox()[1];
             } else {
                 // OpenType Fonts with a version 3.0 "post" table don't have glyph names.
                 // Use Unicode indices instead.
-                List unicodeIndex = mtxTab[i].getUnicodeIndex();
+                List unicodeIndex = aMtxTab.getUnicodeIndex();
                 if (unicodeIndex.size() > 0) {
                     //Only the first index is used
-                    char ch = (char)((Integer)unicodeIndex.get(0)).intValue();
+                    char ch = (char) ((Integer) unicodeIndex.get(0)).intValue();
                     if (ch == 'H') {
-                        localCapHeight = mtxTab[i].getBoundingBox()[3];
+                        localCapHeight = aMtxTab.getBoundingBox()[3];
                     } else if (ch == 'x') {
-                        localXHeight = mtxTab[i].getBoundingBox()[3];
+                        localXHeight = aMtxTab.getBoundingBox()[3];
                     } else if (ch == 'd') {
-                        localAscender = mtxTab[i].getBoundingBox()[3];
+                        localAscender = aMtxTab.getBoundingBox()[3];
                     } else if (ch == 'p') {
-                        localDescender = mtxTab[i].getBoundingBox()[1];
+                        localDescender = aMtxTab.getBoundingBox()[1];
                     }
                 }
             }
@@ -1735,26 +1735,24 @@ public abstract class OpenFont {
 
                 for (Map.Entry<Integer, Integer> e : ckpx.entrySet()) {
                     Integer unicodeKey2 = e.getKey();
-                    Integer cidKey2 = unicodeToGlyph(unicodeKey2.intValue());
+                    Integer cidKey2 = unicodeToGlyph(unicodeKey2);
                     Integer kern = e.getValue();
 
-                    Iterator uniMap = mtxTab[cidKey2.intValue()].getUnicodeIndex().listIterator();
-                    while (uniMap.hasNext()) {
-                        Integer unicodeKey = (Integer)uniMap.next();
-                        Integer[] ansiKeys = unicodeToWinAnsi(unicodeKey.intValue());
-                        for (int u = 0; u < ansiKeys.length; u++) {
-                            akpx.put(ansiKeys[u], kern);
+                    for (Object o : mtxTab[cidKey2].getUnicodeIndex()) {
+                        Integer unicodeKey = (Integer) o;
+                        Integer[] ansiKeys = unicodeToWinAnsi(unicodeKey);
+                        for (Integer ansiKey : ansiKeys) {
+                            akpx.put(ansiKey, kern);
                         }
                     }
                 }
 
                 if (akpx.size() > 0) {
-                    Iterator uniMap = mtxTab[cidKey1.intValue()].getUnicodeIndex().listIterator();
-                    while (uniMap.hasNext()) {
-                        Integer unicodeKey = (Integer)uniMap.next();
-                        Integer[] ansiKeys = unicodeToWinAnsi(unicodeKey.intValue());
-                        for (int u = 0; u < ansiKeys.length; u++) {
-                            ansiKerningTab.put(ansiKeys[u], akpx);
+                    for (Object o : mtxTab[cidKey1].getUnicodeIndex()) {
+                        Integer unicodeKey = (Integer) o;
+                        Integer[] ansiKeys = unicodeToWinAnsi(unicodeKey);
+                        for (Integer ansiKey : ansiKeys) {
+                            ansiKerningTab.put(ansiKey, akpx);
                         }
                     }
                 }

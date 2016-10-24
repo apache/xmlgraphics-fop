@@ -1117,9 +1117,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             int oldIndex = -1;
             int changeIndex;
             PendingChange currChange;
-            ListIterator changeListIterator = changeList.listIterator();
-            while (changeListIterator.hasNext()) {
-                currChange = (PendingChange) changeListIterator.next();
+            for (Object aChangeList : changeList) {
+                currChange = (PendingChange) aChangeList;
                 if (currChange.index == oldIndex) {
                     mappingsAdded++;
                     changeIndex = currChange.index + mappingsAdded - mappingsRemoved;

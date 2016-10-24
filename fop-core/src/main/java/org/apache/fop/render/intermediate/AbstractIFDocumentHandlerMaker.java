@@ -50,8 +50,8 @@ public abstract class AbstractIFDocumentHandlerMaker {
      */
     public boolean isMimeTypeSupported(String mimeType) {
         String[] mimes = getSupportedMimeTypes();
-        for (int i = 0; i < mimes.length; i++) {
-            if (mimes[i].equals(mimeType)) {
+        for (String mime : mimes) {
+            if (mime.equals(mimeType)) {
                 return true;
             }
         }

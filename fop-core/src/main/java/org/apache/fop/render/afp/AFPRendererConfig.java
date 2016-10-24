@@ -358,8 +358,7 @@ public final class AFPRendererConfig implements RendererConfig {
             if (defaultResourceLevelCfg != null) {
                 AFPResourceLevelDefaults defaults = new AFPResourceLevelDefaults();
                 String[] types = defaultResourceLevelCfg.getAttributeNames();
-                for (int i = 0, c = types.length; i < c; i++) {
-                    String type = types[i];
+                for (String type : types) {
                     try {
                         String level = defaultResourceLevelCfg.getAttribute(type);
                         defaults.setDefaultResourceLevel(type, AFPResourceLevel.valueOf(level));

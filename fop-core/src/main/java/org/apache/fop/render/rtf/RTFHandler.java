@@ -249,8 +249,8 @@ public class RTFHandler extends FOEventHandler {
             int useAblePageWidth = pagemaster.getPageWidth().getValue()
                 - pagemaster.getCommonMarginBlock().marginLeft.getValue()
                 - pagemaster.getCommonMarginBlock().marginRight.getValue()
-                - sect.getRtfAttributes().getValueAsInteger(RtfPage.MARGIN_LEFT).intValue()
-                - sect.getRtfAttributes().getValueAsInteger(RtfPage.MARGIN_RIGHT).intValue();
+                - sect.getRtfAttributes().getValueAsInteger(RtfPage.MARGIN_LEFT)
+                - sect.getRtfAttributes().getValueAsInteger(RtfPage.MARGIN_RIGHT);
             percentManager.setDimension(pageSeq, useAblePageWidth);
 
             bHeaderSpecified = false;
@@ -778,7 +778,7 @@ public class RTFHandler extends FOEventHandler {
             //while the current column is in row-spanning, act as if
             //a vertical merged cell would have been specified.
             while (tctx.getNumberOfColumns() > tctx.getColumnIndex()
-                  && tctx.getColumnRowSpanningNumber().intValue() > 0) {
+                  && tctx.getColumnRowSpanningNumber() > 0) {
                 RtfTableCell vCell = row.newTableCellMergedVertically(
                         (int)tctx.getColumnWidth(),
                         tctx.getColumnRowSpanningAttrs());
@@ -819,7 +819,7 @@ public class RTFHandler extends FOEventHandler {
             //while the current column is in row-spanning, act as if
             //a vertical merged cell would have been specified.
             while (tctx.getNumberOfColumns() > tctx.getColumnIndex()
-                  && tctx.getColumnRowSpanningNumber().intValue() > 0) {
+                  && tctx.getColumnRowSpanningNumber() > 0) {
                 RtfTableCell vCell = row.newTableCellMergedVertically(
                         (int)tctx.getColumnWidth(),
                         tctx.getColumnRowSpanningAttrs());
@@ -1757,9 +1757,9 @@ public class RTFHandler extends FOEventHandler {
               //Calculation for column-widths which are not set
               prepareTable(table);
 
-              for (Iterator it = table.getColumns().iterator(); it.hasNext();) {
-                  recurseFONode((FONode) it.next());
-              }
+                for (Object o : table.getColumns()) {
+                    recurseFONode((FONode) o);
+                }
             } else {
                 //TODO Implement implicit column setup handling!
                 RTFEventProducer eventProducer = RTFEventProducer.Provider.get(

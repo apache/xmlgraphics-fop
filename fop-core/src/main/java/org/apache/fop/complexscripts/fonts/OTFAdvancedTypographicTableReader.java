@@ -21,13 +21,14 @@ package org.apache.fop.complexscripts.fonts;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.complexscripts.scripts.ScriptProcessor;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.OFDirTabEntry;
 import org.apache.fop.fonts.truetype.OFTableName;
@@ -52,12 +53,13 @@ public final class OTFAdvancedTypographicTableReader {
     private GlyphSubstitutionTable gsub;                        // glyph substitution table
     private GlyphPositioningTable gpos;                         // glyph positioning table
     // transient parsing state
-    private transient Map/*<String,Object[3]>*/ seScripts;      // script-tag         => Object[3] : { default-language-tag, List(language-tag), seLanguages }
-    private transient Map/*<String,Object[2]>*/ seLanguages;    // language-tag       => Object[2] : { "f<required-feature-index>", List("f<feature-index>")
-    private transient Map/*<String,List<String>>*/ seFeatures;  // "f<feature-index>" => Object[2] : { feature-tag, List("lu<lookup-index>") }
+    private transient Map<String, Object> seScripts;      // script-tag         => Object[3] : { default-language-tag, List(language-tag), seLanguages }
+    private transient Map<String, Object> seLanguages;    // language-tag       => Object[2] : { "f<required-feature-index>", List("f<feature-index>")
+    private transient Map<String, Object> seFeatures;  // "f<feature-index>" => Object[2] : { feature-tag, List("lu<lookup-index>") }
     private transient GlyphMappingTable seMapping;              // subtable entry mappings
     private transient List seEntries;                           // subtable entry entries
     private transient List seSubtables;                         // subtable entry subtables
+    private Map<String, ScriptProcessor> processors = new HashMap<String, ScriptProcessor>();
 
     /**
      * Construct an <code>OTFAdvancedTypographicTableReader</code> instance.
@@ -3516,7 +3518,7 @@ public final class OTFAdvancedTypographicTableReader {
         List subtables;
         if ((subtables = constructGDEFSubtables()) != null) {
             if (subtables.size() > 0) {
-                gdef = new GlyphDefinitionTable(subtables);
+                gdef = new GlyphDefinitionTable(subtables, processors);
             }
         }
         resetATState();
@@ -3535,7 +3537,7 @@ public final class OTFAdvancedTypographicTableReader {
             List subtables;
             if ((subtables = constructGSUBSubtables()) != null) {
                 if ((lookups.size() > 0) && (subtables.size() > 0)) {
-                    gsub = new GlyphSubstitutionTable(gdef, lookups, subtables);
+                    gsub = new GlyphSubstitutionTable(gdef, lookups, subtables, processors);
                 }
             }
         }
@@ -3555,7 +3557,7 @@ public final class OTFAdvancedTypographicTableReader {
             List subtables;
             if ((subtables = constructGPOSSubtables()) != null) {
                 if ((lookups.size() > 0) && (subtables.size() > 0)) {
-                    gpos = new GlyphPositioningTable(gdef, lookups, subtables);
+                    gpos = new GlyphPositioningTable(gdef, lookups, subtables, processors);
                 }
             }
         }
@@ -3568,7 +3570,7 @@ public final class OTFAdvancedTypographicTableReader {
         if (fp != null) {
             assert fp.length == 2;
             String ft = (String) fp[0];                 // feature tag
-            List/*<String>*/ lul = (List) fp[1];        // list of lookup table ids
+            List<String> lul = (List) fp[1];        // list of lookup table ids
             if ((ft != null) && (lul != null) && (lul.size() > 0)) {
                 GlyphTable.LookupSpec ls = new GlyphTable.LookupSpec(st, lt, ft);
                 lookups.put(ls, lul);
@@ -3576,14 +3578,14 @@ public final class OTFAdvancedTypographicTableReader {
         }
     }
 
-    private void constructLookupsFeatures(Map lookups, String st, String lt, List/*<String>*/ fids) {
-        for (Iterator fit = fids.iterator(); fit.hasNext();) {
-            String fid = (String) fit.next();
+    private void constructLookupsFeatures(Map lookups, String st, String lt, List<String> fids) {
+        for (Object fid1 : fids) {
+            String fid = (String) fid1;
             constructLookupsFeature(lookups, st, lt, fid);
         }
     }
 
-    private void constructLookupsLanguage(Map lookups, String st, String lt, Map/*<String,Object[2]>*/ languages) {
+    private void constructLookupsLanguage(Map lookups, String st, String lt, Map<String, Object> languages) {
         Object[] lp = (Object[]) languages.get(lt);
         if (lp != null) {
             assert lp.length == 2;
@@ -3596,21 +3598,21 @@ public final class OTFAdvancedTypographicTableReader {
         }
     }
 
-    private void constructLookupsLanguages(Map lookups, String st, List/*<String>*/ ll, Map/*<String,Object[2]>*/ languages) {
-        for (Iterator lit = ll.iterator(); lit.hasNext();) {
-            String lt = (String) lit.next();
+    private void constructLookupsLanguages(Map lookups, String st, List<String> ll, Map<String, Object> languages) {
+        for (Object aLl : ll) {
+            String lt = (String) aLl;
             constructLookupsLanguage(lookups, st, lt, languages);
         }
     }
 
     private Map constructLookups() {
-        Map/*<GlyphTable.LookupSpec,List<String>>*/ lookups = new java.util.LinkedHashMap();
-        for (Iterator sit = seScripts.keySet().iterator(); sit.hasNext();) {
-            String st = (String) sit.next();
+        Map<GlyphTable.LookupSpec, List<String>> lookups = new java.util.LinkedHashMap();
+        for (Object o : seScripts.keySet()) {
+            String st = (String) o;
             Object[] sp = (Object[]) seScripts.get(st);
             if (sp != null) {
                 assert sp.length == 3;
-                Map/*<String,Object[2]>*/ languages = (Map) sp[2];
+                Map<String, Object> languages = (Map) sp[2];
                 if (sp[0] != null) {                  // default language
                     constructLookupsLanguage(lookups, st, (String) sp[0], languages);
                 }
@@ -3623,10 +3625,10 @@ public final class OTFAdvancedTypographicTableReader {
     }
 
     private List constructGDEFSubtables() {
-        List/*<GlyphDefinitionSubtable>*/ subtables = new java.util.ArrayList();
+        List<GlyphSubtable> subtables = new java.util.ArrayList();
         if (seSubtables != null) {
-            for (Iterator it = seSubtables.iterator(); it.hasNext();) {
-                Object[] stp = (Object[]) it.next();
+            for (Object seSubtable : seSubtables) {
+                Object[] stp = (Object[]) seSubtable;
                 GlyphSubtable st;
                 if ((st = constructGDEFSubtable(stp)) != null) {
                     subtables.add(st);
@@ -3647,22 +3649,22 @@ public final class OTFAdvancedTypographicTableReader {
         Integer sf = (Integer) stp[5];          // subtable format
         GlyphMappingTable mapping = (GlyphMappingTable) stp[6];
         List entries = (List) stp[7];
-        if (tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_DEFINITION) {
+        if (tt == GlyphTable.GLYPH_TABLE_TYPE_DEFINITION) {
             int type = GDEFLookupType.getSubtableType(lt.intValue());
-            String lid = "lu" + ln.intValue();
-            int sequence = sn.intValue();
-            int flags = lf.intValue();
-            int format = sf.intValue();
+            String lid = "lu" + ln;
+            int sequence = sn;
+            int flags = lf;
+            int format = sf;
             st = GlyphDefinitionTable.createSubtable(type, lid, sequence, flags, format, mapping, entries);
         }
         return st;
     }
 
     private List constructGSUBSubtables() {
-        List/*<GlyphSubtable>*/ subtables = new java.util.ArrayList();
+        List<GlyphSubtable> subtables = new java.util.ArrayList();
         if (seSubtables != null) {
-            for (Iterator it = seSubtables.iterator(); it.hasNext();) {
-                Object[] stp = (Object[]) it.next();
+            for (Object seSubtable : seSubtables) {
+                Object[] stp = (Object[]) seSubtable;
                 GlyphSubtable st;
                 if ((st = constructGSUBSubtable(stp)) != null) {
                     subtables.add(st);
@@ -3683,22 +3685,22 @@ public final class OTFAdvancedTypographicTableReader {
         Integer sf = (Integer) stp[5];          // subtable format
         GlyphCoverageTable coverage = (GlyphCoverageTable) stp[6];
         List entries = (List) stp[7];
-        if (tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION) {
+        if (tt == GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION) {
             int type = GSUBLookupType.getSubtableType(lt.intValue());
-            String lid = "lu" + ln.intValue();
-            int sequence = sn.intValue();
-            int flags = lf.intValue();
-            int format = sf.intValue();
+            String lid = "lu" + ln;
+            int sequence = sn;
+            int flags = lf;
+            int format = sf;
             st = GlyphSubstitutionTable.createSubtable(type, lid, sequence, flags, format, coverage, entries);
         }
         return st;
     }
 
     private List constructGPOSSubtables() {
-        List/*<GlyphSubtable>*/ subtables = new java.util.ArrayList();
+        List<GlyphSubtable> subtables = new java.util.ArrayList();
         if (seSubtables != null) {
-            for (Iterator it = seSubtables.iterator(); it.hasNext();) {
-                Object[] stp = (Object[]) it.next();
+            for (Object seSubtable : seSubtables) {
+                Object[] stp = (Object[]) seSubtable;
                 GlyphSubtable st;
                 if ((st = constructGPOSSubtable(stp)) != null) {
                     subtables.add(st);
@@ -3719,12 +3721,12 @@ public final class OTFAdvancedTypographicTableReader {
         Integer sf = (Integer) stp[5];          // subtable format
         GlyphCoverageTable coverage = (GlyphCoverageTable) stp[6];
         List entries = (List) stp[7];
-        if (tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_POSITIONING) {
+        if (tt == GlyphTable.GLYPH_TABLE_TYPE_POSITIONING) {
             int type = GSUBLookupType.getSubtableType(lt.intValue());
-            String lid = "lu" + ln.intValue();
-            int sequence = sn.intValue();
-            int flags = lf.intValue();
-            int format = sf.intValue();
+            String lid = "lu" + ln;
+            int sequence = sn;
+            int flags = lf;
+            int format = sf;
             st = GlyphPositioningTable.createSubtable(type, lid, sequence, flags, format, coverage, entries);
         }
         return st;
@@ -3786,13 +3788,13 @@ public final class OTFAdvancedTypographicTableReader {
             sb.append('-');
         } else {
             boolean first = true;
-            for (int i = 0; i < ia.length; i++) {
+            for (int anIa : ia) {
                 if (!first) {
                     sb.append(' ');
                 } else {
                     first = false;
                 }
-                sb.append(ia[i]);
+                sb.append(anIa);
             }
         }
         return sb.toString();

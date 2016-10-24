@@ -21,7 +21,6 @@ package org.apache.fop.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.fop.afp.Streamable;
@@ -32,7 +31,7 @@ import org.apache.fop.afp.Streamable;
 public class ResourceGroup extends AbstractNamedAFPObject {
 
     /** Set of resource uri */
-    private final Set/*<String>*/ resourceSet = new java.util.HashSet/*<String>*/();
+    private final Set<AbstractNamedAFPObject> resourceSet = new java.util.HashSet<AbstractNamedAFPObject>();
 
     /**
      * Constructor for the ResourceGroup, this takes a
@@ -63,17 +62,6 @@ public class ResourceGroup extends AbstractNamedAFPObject {
         return resourceSet.size();
     }
 
-    /**
-     * Returns true if the resource exists within this resource group,
-     * false otherwise.
-     *
-     * @param uri the uri of the resource
-     * @return true if the resource exists within this resource group
-     */
-    public boolean resourceExists(String uri) {
-        return resourceSet.contains(uri);
-    }
-
     /** {@inheritDoc} */
     public void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
@@ -83,11 +71,9 @@ public class ResourceGroup extends AbstractNamedAFPObject {
 
     /** {@inheritDoc} */
     public void writeContent(OutputStream os) throws IOException {
-        Iterator it = resourceSet.iterator();
-        while (it.hasNext()) {
-            Object object = it.next();
+        for (Object object : resourceSet) {
             if (object instanceof Streamable) {
-                Streamable streamableObject = (Streamable)object;
+                Streamable streamableObject = (Streamable) object;
                 streamableObject.writeToStream(os);
             }
         }

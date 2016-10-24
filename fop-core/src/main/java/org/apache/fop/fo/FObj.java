@@ -692,7 +692,7 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /** @return the extension attachments of this FObj. */
-    public List/*<ExtensionAttachment>*/ getExtensionAttachments() {
+    public List<ExtensionAttachment> getExtensionAttachments() {
         if (extensionAttachments == null) {
             return Collections.EMPTY_LIST;
         } else {

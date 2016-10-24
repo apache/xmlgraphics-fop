@@ -20,9 +20,7 @@
 package org.apache.fop.fo.flow.table;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.ValidationException;
@@ -43,7 +41,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     private int currentRowIndex;
 
     /** The rows belonging to this row group. List of List of {@link GridUnit}s. */
-    private List/*<List<GridUnit>>*/ rows;
+    private List<List<GridUnit>> rows;
 
     private boolean firstInPart = true;
 
@@ -106,8 +104,8 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     }
 
     private static void setFlagForCols(int flag, List row) {
-        for (ListIterator iter = row.listIterator(); iter.hasNext();) {
-            ((GridUnit) iter.next()).setFlag(flag);
+        for (Object aRow : row) {
+            ((GridUnit) aRow).setFlag(flag);
         }
     }
 
@@ -132,8 +130,8 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
             eventProducer.breakIgnoredDueToRowSpanning(this, currentTableRow.getName(), false,
                     currentTableRow.getLocator());
         }
-        for (Iterator iter = ((List) rows.get(currentRowIndex)).iterator(); iter.hasNext();) {
-            GridUnit gu = (GridUnit) iter.next();
+        for (Object o : ((List) rows.get(currentRowIndex))) {
+            GridUnit gu = (GridUnit) o;
             // The row hasn't been filled with empty grid units yet
             if (gu != null) {
                 gu.setRow(currentTableRow);

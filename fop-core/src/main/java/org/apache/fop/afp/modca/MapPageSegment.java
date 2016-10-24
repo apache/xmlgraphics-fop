@@ -22,7 +22,6 @@ package org.apache.fop.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.fop.afp.AFPConstants;
@@ -115,17 +114,16 @@ public class MapPageSegment extends AbstractAFPObject {
 
         int pos = 13;
 
-        Iterator iter = this.pageSegments.iterator();
-        while (iter.hasNext()) {
+        for (Object pageSegment : this.pageSegments) {
             pos += 4;
 
-            String name = (String)iter.next();
+            String name = (String) pageSegment;
             try {
                 byte[] nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
                 System.arraycopy(nameBytes, 0, data, pos, nameBytes.length);
             } catch (UnsupportedEncodingException usee) {
                 LOG.error("UnsupportedEncodingException translating the name "
-                    + name);
+                        + name);
             }
             pos += 8;
         }

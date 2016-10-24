@@ -19,7 +19,6 @@
 
 package org.apache.fop.fo.flow.table;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.fo.Constants;
@@ -57,8 +56,7 @@ public class EffRow {
         this.bodyType = bodyType;
         this.gridUnits = gridUnits;
         // TODO this is ugly, but we may eventually be able to do without that index
-        for (Iterator guIter = gridUnits.iterator(); guIter.hasNext();) {
-            Object gu = guIter.next();
+        for (Object gu : gridUnits) {
             if (gu instanceof PrimaryGridUnit) {
                 ((PrimaryGridUnit) gu).setRowIndex(index);
             }
@@ -175,8 +173,8 @@ public class EffRow {
         if (row != null) {
             keep = Keep.getKeep(row.getKeepWithPrevious());
         }
-        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
-            GridUnit gu = (GridUnit) iter.next();
+        for (Object gridUnit : gridUnits) {
+            GridUnit gu = (GridUnit) gridUnit;
             if (gu.isPrimary()) {
                 keep = keep.compare(gu.getPrimary().getKeepWithPrevious());
             }
@@ -196,8 +194,8 @@ public class EffRow {
         if (row != null) {
             keep = Keep.getKeep(row.getKeepWithNext());
         }
-        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
-            GridUnit gu = (GridUnit) iter.next();
+        for (Object gridUnit : gridUnits) {
+            GridUnit gu = (GridUnit) gridUnit;
             if (!gu.isEmpty() && gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan()) {
                 keep = keep.compare(gu.getPrimary().getKeepWithNext());
             }
@@ -233,8 +231,8 @@ public class EffRow {
      */
     public int getBreakBefore() {
         int breakBefore = Constants.EN_AUTO;
-        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
-            GridUnit gu = (GridUnit) iter.next();
+        for (Object gridUnit : gridUnits) {
+            GridUnit gu = (GridUnit) gridUnit;
             if (gu.isPrimary()) {
                 breakBefore = BreakUtil.compareBreakClasses(breakBefore,
                         gu.getPrimary().getBreakBefore());
@@ -257,8 +255,8 @@ public class EffRow {
      */
     public int getBreakAfter() {
         int breakAfter = Constants.EN_AUTO;
-        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
-            GridUnit gu = (GridUnit) iter.next();
+        for (Object gridUnit : gridUnits) {
+            GridUnit gu = (GridUnit) gridUnit;
             if (!gu.isEmpty() && gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan()) {
                 breakAfter = BreakUtil.compareBreakClasses(breakAfter,
                         gu.getPrimary().getBreakAfter());

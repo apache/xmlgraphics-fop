@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.intermediate.extensions;
 
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -80,9 +79,8 @@ public class ActionSet {
     }
 
     private AbstractAction normalize(AbstractAction action) {
-        Iterator iter = this.actionRegistry.values().iterator();
-        while (iter.hasNext()) {
-            AbstractAction a = (AbstractAction)iter.next();
+        for (Object o : this.actionRegistry.values()) {
+            AbstractAction a = (AbstractAction) o;
             if (a.isSame(action)) {
                 return a;
             }

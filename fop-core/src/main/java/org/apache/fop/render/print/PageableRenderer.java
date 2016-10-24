@@ -123,11 +123,11 @@ public class PageableRenderer extends Java2DRenderer implements Pageable {
     protected int getPositiveInteger(Object o) {
         if (o instanceof Integer) {
             Integer i = (Integer)o;
-            if (i.intValue() < 1) {
+            if (i < 1) {
                 throw new IllegalArgumentException(
                         "Value must be a positive Integer");
             }
-            return i.intValue();
+            return i;
         } else if (o instanceof String) {
             return Integer.parseInt((String)o);
         } else {

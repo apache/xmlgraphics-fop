@@ -86,12 +86,12 @@ public class PercentContext implements PercentBaseContext {
         case LengthBase.TABLE_UNITS:
             Object unit = tableUnitMap.get(fobj);
             if (unit != null) {
-                return ((Integer)unit).intValue();
+                return (Integer) unit;
             } else if (fobj.getParent() != null) {
               // If the object itself has no width the parent width will be used
               unit = tableUnitMap.get(fobj.getParent());
               if (unit != null) {
-                return ((Integer)unit).intValue();
+                return (Integer) unit;
               }
             }
             return 0;
@@ -151,7 +151,7 @@ public class PercentContext implements PercentBaseContext {
     public void setDimension(FObj fobj) {
         if (baseWidthSet) {
             Integer width = findParent(fobj.getParent());
-            if (width.intValue() != -1) {
+            if (width != -1) {
                 lengthMap.put(fobj, width);
             }
         }

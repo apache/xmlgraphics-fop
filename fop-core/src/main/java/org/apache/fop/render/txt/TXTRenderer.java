@@ -246,7 +246,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
             for (int y = 0; y < pageHeight; y++) {
                 Character c = bm.getCharacter(x, y);
                 if (c != null) {
-                    putChar(x, y, c.charValue(), false);
+                    putChar(x, y, c, false);
                 }
             }
         }

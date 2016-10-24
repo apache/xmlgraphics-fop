@@ -184,8 +184,7 @@ public class TextArea extends AbstractTextArea {
     private static int findMinLevel(int[] levels, int defaultLevel) {
         if (levels != null) {
             int lMin = Integer.MAX_VALUE;
-            for (int i = 0, n = levels.length; i < n; i++) {
-                int l = levels [ i ];
+            for (int l : levels) {
                 if ((l >= 0) && (l < lMin)) {
                     lMin = l;
                 }

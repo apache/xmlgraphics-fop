@@ -124,7 +124,7 @@ public class FOPGVTGlyphVector implements GVTGlyphVector {
                 this.language = (String) aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.LANGUAGE);
                 Integer level = (Integer) aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.BIDI_LEVEL);
                 if (level != null) {
-                    this.level = level.intValue();
+                    this.level = level;
                 }
             }
         }

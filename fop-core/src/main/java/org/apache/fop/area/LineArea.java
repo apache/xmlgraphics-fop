@@ -21,7 +21,6 @@ package org.apache.fop.area;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.area.inline.InlineArea;
@@ -132,8 +131,7 @@ public class LineArea extends Area {
      * @param inlineAreas the list of inline areas
      */
     public void setInlineAreas(List inlineAreas) {
-        for (Iterator<InlineArea> it = inlineAreas.iterator(); it.hasNext();) {
-            InlineArea ia = it.next();
+        for (InlineArea ia : (Iterable<InlineArea>) inlineAreas) {
             Area pa = ia.getParentArea();
             if (pa == null) {
                 ia.setParentArea(this);
@@ -189,9 +187,9 @@ public class LineArea extends Area {
     public void updateExtentsFromChildren() {
         int ipd = 0;
         int bpd = 0;
-        for (int i = 0, len = inlineAreas.size(); i < len; i++) {
-            ipd = Math.max(ipd, inlineAreas.get(i).getAllocIPD());
-            bpd += inlineAreas.get(i).getAllocBPD();
+        for (InlineArea inlineArea : inlineAreas) {
+            ipd = Math.max(ipd, inlineArea.getAllocIPD());
+            bpd += inlineArea.getAllocBPD();
         }
         setIPD(ipd);
         setBPD(bpd);
@@ -258,8 +256,8 @@ public class LineArea extends Area {
             // justified line: apply the variation factor
             boolean bUnresolvedAreasPresent = false;
             // recursively apply variation factor to descendant areas
-            for (int i = 0, len = inlineAreas.size(); i < len; i++) {
-                bUnresolvedAreasPresent |= inlineAreas.get(i)
+            for (InlineArea inlineArea : inlineAreas) {
+                bUnresolvedAreasPresent |= inlineArea
                         .applyVariationFactor(adjustingInfo.variationFactor,
                                 adjustingInfo.availableStretch,
                                 adjustingInfo.availableShrink);

@@ -307,8 +307,8 @@ public final class IFUtil {
         if (dp == null) {
             return true;
         } else {
-            for (int i = 0, n = dp.length; i < n; i++) {
-                if (!isPAIdentity(dp[i])) {
+            for (int[] aDp : dp) {
+                if (!isPAIdentity(aDp)) {
                     return false;
                 }
             }
@@ -330,8 +330,7 @@ public final class IFUtil {
         if (dp == null) {
             return false;
         } else {
-            for (int i = 0, n = dp.length; i < n; i++) {
-                int[] pa = dp[i];
+            for (int[] pa : dp) {
                 if ((pa != null) && (pa[0] != pa[2])) {
                     return false;
                 }
@@ -376,9 +375,7 @@ public final class IFUtil {
                 int[] paSrc = dp [ i + offset ];
                 if (paSrc != null) {
                     int[] paDst = new int [ 4 ];
-                    for (int k = 0; k < 4; k++) {
-                        paDst [ k ] = paSrc [ k ];
-                    }
+                    System.arraycopy(paSrc, 0, paDst, 0, 4);
                     dpNew [ i ] = paDst;
                 }
             }

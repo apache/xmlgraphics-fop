@@ -191,8 +191,8 @@ public class PDFFilterList {
                 addFilter(new FlateFilter());
             }
         } else {
-            for (int i = 0; i < filterset.size(); i++) {
-                String v = (String)filterset.get(i);
+            for (Object aFilterset : filterset) {
+                String v = (String) aFilterset;
                 addFilter(v);
             }
         }
@@ -249,8 +249,7 @@ public class PDFFilterList {
     private int populateNamesAndParms(List names, List parms) {
         // run the filters
         int nonNullParams = 0;
-        for (int count = 0; count < filters.size(); count++) {
-            PDFFilter filter = filters.get(count);
+        for (PDFFilter filter : filters) {
             // place the names in our local vector in reverse order
             if (filter.getName().length() > 0) {
                 names.add(0, filter.getName());
@@ -269,8 +268,8 @@ public class PDFFilterList {
     private String buildFilterEntries(List names) {
         int filterCount = 0;
         StringBuffer sb = new StringBuffer(64);
-        for (int i = 0; i < names.size(); i++) {
-            final String name = (String)names.get(i);
+        for (Object name1 : names) {
+            final String name = (String) name1;
             if (name.length() > 0) {
                 filterCount++;
                 sb.append(name);
@@ -279,9 +278,9 @@ public class PDFFilterList {
         }
         if (filterCount > 0) {
             if (filterCount > 1) {
-                return "/Filter [ " + sb.toString() + "]";
+                return "/Filter [ " + sb + "]";
             } else {
-                return "/Filter " + sb.toString();
+                return "/Filter " + sb;
             }
         } else {
             return "";
@@ -290,8 +289,8 @@ public class PDFFilterList {
 
     private void putFilterEntries(PDFDictionary dict, List names) {
         PDFArray array = new PDFArray(dict);
-        for (int i = 0, c = names.size(); i < c; i++) {
-            final String name = (String)names.get(i);
+        for (Object name1 : names) {
+            final String name = (String) name1;
             if (name.length() > 0) {
                 array.add(new PDFName(name));
             }
@@ -313,8 +312,8 @@ public class PDFFilterList {
         if (parms.size() > 1) {
             sb.append("[ ");
         }
-        for (int count = 0; count < parms.size(); count++) {
-            String s = (String)parms.get(count);
+        for (Object parm : parms) {
+            String s = (String) parm;
             if (s != null) {
                 sb.append(s);
                 needParmsEntry = true;
@@ -336,8 +335,7 @@ public class PDFFilterList {
     private void putDecodeParams(PDFDictionary dict, List parms) {
         boolean needParmsEntry = false;
         PDFArray array = new PDFArray(dict);
-        for (int i = 0, c = parms.size(); i < c; i++) {
-            Object obj = parms.get(i);
+        for (Object obj : parms) {
             if (obj != null) {
                 array.add(obj);
                 needParmsEntry = true;

@@ -308,8 +308,8 @@ public class PDFResources extends PDFDictionary {
 
         if (!properties.isEmpty()) {
             PDFDictionary dict = new PDFDictionary(this);
-            for (String name : properties.keySet()) {
-                dict.put(name, properties.get(name));
+            for (Map.Entry<String, PDFReference> stringPDFReferenceEntry : properties.entrySet()) {
+                dict.put(stringPDFReferenceEntry.getKey(), stringPDFReferenceEntry.getValue());
             }
             put("Properties", dict);
         }

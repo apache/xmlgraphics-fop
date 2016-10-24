@@ -31,7 +31,7 @@ import org.apache.fop.fonts.FontTriplet;
 /**
  * Font substitutions
  */
-public class FontSubstitutions extends java.util.ArrayList/*<Substitutions>*/ {
+public class FontSubstitutions extends java.util.ArrayList<FontSubstitution> {
 
     private static final long serialVersionUID = -9173104935431899722L;
 
@@ -43,8 +43,8 @@ public class FontSubstitutions extends java.util.ArrayList/*<Substitutions>*/ {
      * @param fontInfo font info
      */
     public void adjustFontInfo(FontInfo fontInfo) {
-        for (Iterator/*<FontSubstitution>*/ subsIt = super.iterator(); subsIt.hasNext();) {
-            FontSubstitution substitution = (FontSubstitution)subsIt.next();
+        for (Iterator<FontSubstitution> subsIt = super.iterator(); subsIt.hasNext();) {
+            FontSubstitution substitution = subsIt.next();
 
             // find the best matching font triplet
             FontQualifier toQualifier = substitution.getToQualifier();
@@ -57,9 +57,9 @@ public class FontSubstitutions extends java.util.ArrayList/*<Substitutions>*/ {
             String internalFontKey = fontInfo.getInternalFontKey(fontTriplet);
 
             FontQualifier fromQualifier = substitution.getFromQualifier();
-            List/*<FontTriplet>*/ tripletList = fromQualifier.getTriplets();
-            for (Iterator tripletit = tripletList.iterator(); tripletit.hasNext();) {
-                FontTriplet triplet = (FontTriplet) tripletit.next();
+            List<FontTriplet> tripletList = fromQualifier.getTriplets();
+            for (Object aTripletList : tripletList) {
+                FontTriplet triplet = (FontTriplet) aTripletList;
                 fontInfo.addFontProperties(internalFontKey, triplet);
             }
         }

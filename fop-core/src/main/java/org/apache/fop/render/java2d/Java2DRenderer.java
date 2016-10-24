@@ -39,7 +39,6 @@ import java.awt.print.PrinterException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -63,7 +62,6 @@ import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.Image;
-import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
@@ -497,9 +495,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
         log.debug("Block.FIXED --> restoring context after break-out");
 
-        Iterator it = breakOutList.iterator();
-        while (it.hasNext()) {
-            Java2DGraphicsState s = (Java2DGraphicsState)it.next();
+        for (Object aBreakOutList : breakOutList) {
+            Java2DGraphicsState s = (Java2DGraphicsState) aBreakOutList;
             stateStack.push(state);
             this.state = s;
         }
@@ -762,11 +759,9 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
         float textCursor = 0;
 
-        Iterator iter = text.getChildAreas().iterator();
-        while (iter.hasNext()) {
-            InlineArea child = (InlineArea)iter.next();
+        for (Object child : text.getChildAreas()) {
             if (child instanceof WordArea) {
-                WordArea word = (WordArea)child;
+                WordArea word = (WordArea) child;
                 String s = word.getWord();
                 int[] letterAdjust = word.getLetterAdjustArray();
                 GlyphVector gv = Java2DUtil.createGlyphVector(s, g2d, font, fontInfo);
@@ -798,12 +793,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                 g2d.drawGlyphVector(gv, textCursor, 0);
                 textCursor += gv.getLogicalBounds().getWidth() + additionalWidth;
             } else if (child instanceof SpaceArea) {
-                SpaceArea space = (SpaceArea)child;
+                SpaceArea space = (SpaceArea) child;
                 String s = space.getSpace();
                 char sp = s.charAt(0);
                 int tws = (space.isAdjustable()
                         ? text.getTextWordSpaceAdjust()
-                                + 2 * text.getTextLetterSpaceAdjust()
+                        + 2 * text.getTextLetterSpaceAdjust()
                         : 0);
 
                 textCursor += (font.getCharWidth(sp) + tws) / 1000f;

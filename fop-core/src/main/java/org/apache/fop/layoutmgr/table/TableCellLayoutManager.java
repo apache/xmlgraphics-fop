@@ -291,8 +291,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
             return;
         }
         int n = childrenLMs.size();
-        for (int j = 0; j < n; j++) {
-            LayoutManager lm = childrenLMs.get(j);
+        for (LayoutManager lm : childrenLMs) {
             if (lm == null) {
                 return;
             } else if (lm instanceof RetrieveTableMarkerLayoutManager) {

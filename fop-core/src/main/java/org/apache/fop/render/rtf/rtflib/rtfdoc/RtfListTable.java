@@ -28,7 +28,6 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -134,8 +133,8 @@ public class RtfListTable extends RtfContainer {
             writeGroupMark(true);
             writeStarControlWordNS(LIST_TABLE);
             newLine();
-            for (Iterator it = lists.iterator(); it.hasNext();) {
-                final RtfList list = (RtfList)it.next();
+            for (Object list1 : lists) {
+                final RtfList list = (RtfList) list1;
                 writeListTableEntry(list);
                 newLine();
             }
@@ -147,8 +146,8 @@ public class RtfListTable extends RtfContainer {
             writeStarControlWordNS(LIST_OVR_TABLE);
             int z = 1;
             newLine();
-            for (Iterator it = styles.iterator(); it.hasNext();) {
-                final RtfListStyle style = (RtfListStyle)it.next();
+            for (Object style1 : styles) {
+                final RtfListStyle style = (RtfListStyle) style1;
 
                 writeGroupMark(true);
                 writeStarControlWordNS(LIST_OVR);

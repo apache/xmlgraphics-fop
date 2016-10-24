@@ -486,10 +486,9 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
     private void addForeignAttributes(AttributesImpl atts) throws SAXException {
         Map foreignAttributes = getContext().getForeignAttributes();
         if (!foreignAttributes.isEmpty()) {
-            Iterator iter = foreignAttributes.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry entry = (Map.Entry)iter.next();
-                addAttribute(atts, (QName)entry.getKey(), entry.getValue().toString());
+            for (Object o : foreignAttributes.entrySet()) {
+                Map.Entry entry = (Map.Entry) o;
+                addAttribute(atts, (QName) entry.getKey(), entry.getValue().toString());
             }
         }
     }
@@ -728,9 +727,9 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
                 }
             }
             if (weight != null) {
-                changed = (weight.intValue() != state.getFontWeight());
+                changed = (weight != state.getFontWeight());
                 if (changed) {
-                    state.setFontWeight(weight.intValue());
+                    state.setFontWeight(weight);
                     addAttribute(atts, "weight", weight.toString());
                 }
             }
@@ -742,9 +741,9 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
                 }
             }
             if (size != null) {
-                changed = (size.intValue() != state.getFontSize());
+                changed = (size != state.getFontSize());
                 if (changed) {
-                    state.setFontSize(size.intValue());
+                    state.setFontSize(size);
                     addAttribute(atts, "size", size.toString());
                 }
             }
@@ -857,9 +856,8 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
         AttributesImpl atts = new AttributesImpl();
         try {
             handler.startElement(DocumentNavigationExtensionConstants.BOOKMARK_TREE, atts);
-            Iterator iter = tree.getBookmarks().iterator();
-            while (iter.hasNext()) {
-                Bookmark b = (Bookmark)iter.next();
+            for (Object o : tree.getBookmarks()) {
+                Bookmark b = (Bookmark) o;
                 if (b.getAction() != null) {
                     serializeBookmark(b);
                 }
@@ -879,9 +877,8 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
                 XMLUtil.CDATA, bookmark.isShown() ? "show" : "hide");
         handler.startElement(DocumentNavigationExtensionConstants.BOOKMARK, atts);
         serializeXMLizable(bookmark.getAction());
-        Iterator iter = bookmark.getChildBookmarks().iterator();
-        while (iter.hasNext()) {
-            Bookmark b = (Bookmark)iter.next();
+        for (Object o : bookmark.getChildBookmarks()) {
+            Bookmark b = (Bookmark) o;
             if (b.getAction() != null) {
                 serializeBookmark(b);
             }

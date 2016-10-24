@@ -22,7 +22,6 @@ package org.apache.fop.render.pdf;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.fop.pdf.PDFAction;
@@ -76,9 +75,8 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
 
     /** {@inheritDoc} */
     public void renderBookmarkTree(BookmarkTree tree) throws IFException {
-        Iterator iter = tree.getBookmarks().iterator();
-        while (iter.hasNext()) {
-            Bookmark b = (Bookmark)iter.next();
+        for (Object o : tree.getBookmarks()) {
+            Bookmark b = (Bookmark) o;
             renderBookmark(b, null);
         }
     }
@@ -91,9 +89,8 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         PDFReference actionRef = (action != null ? action.makeReference() : null);
         PDFOutline pdfOutline = getPDFDoc().getFactory().makeOutline(parent,
             bookmark.getTitle(), actionRef, bookmark.isShown());
-        Iterator iter = bookmark.getChildBookmarks().iterator();
-        while (iter.hasNext()) {
-            Bookmark b = (Bookmark)iter.next();
+        for (Object o : bookmark.getChildBookmarks()) {
+            Bookmark b = (Bookmark) o;
             renderBookmark(b, pdfOutline);
         }
     }

@@ -19,6 +19,7 @@
 
 package org.apache.fop.render;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -142,9 +143,7 @@ public class ImageHandlerRegistry {
         for (ImageHandler handler : this.handlerList) {
             if (handler.isCompatible(context, null)) {
                 ImageFlavor[] f = handler.getSupportedImageFlavors();
-                for (int i = 0; i < f.length; i++) {
-                    flavors.add(f[i]);
-                }
+                Collections.addAll(flavors, f);
             }
         }
         return flavors.toArray(new ImageFlavor[flavors.size()]);

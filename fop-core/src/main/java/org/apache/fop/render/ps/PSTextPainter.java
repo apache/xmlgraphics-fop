@@ -358,9 +358,7 @@ public class PSTextPainter extends NativeTextPainter {
             if (x || y) {
                 sb.append("\n[");
                 int idx = 0;
-                Iterator<Point2D> iter = this.relativePositions.iterator();
-                while (iter.hasNext()) {
-                    Point2D pt = iter.next();
+                for (Point2D pt : this.relativePositions) {
                     if (idx > 0) {
                         if (x) {
                             sb.append(format(gen, pt.getX()));

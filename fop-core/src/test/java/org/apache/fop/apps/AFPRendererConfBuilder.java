@@ -94,8 +94,8 @@ public final class AFPRendererConfBuilder extends RendererConfBuilder {
 
     public AFPRendererConfBuilder setDefaultResourceLevels(Map<String, String> levels) {
         Element e = createElement(DEFAULT_RESOURCE_LEVELS.getName());
-        for (String key : levels.keySet()) {
-            e.setAttribute(key, levels.get(key));
+        for (Map.Entry<String, String> stringStringEntry : levels.entrySet()) {
+            e.setAttribute(stringStringEntry.getKey(), stringStringEntry.getValue());
         }
         return this;
     }

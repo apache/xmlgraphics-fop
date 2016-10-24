@@ -67,8 +67,7 @@ public class EventProducerCollectorTask extends Task {
         try {
             EventProducerCollector collector = new EventProducerCollector();
             long lastModified = processFileSets(collector);
-            for (Iterator iter = collector.getModels().iterator(); iter.hasNext();) {
-                EventModel model = (EventModel) iter.next();
+            for (EventModel model : collector.getModels()) {
                 File parentDir = getParentDir(model);
                 if (!parentDir.exists() && !parentDir.mkdirs()) {
                     throw new BuildException(
@@ -202,14 +201,11 @@ public class EventProducerCollectorTask extends Task {
     protected long processFileSets(EventProducerCollector collector)
             throws IOException, EventConventionException, ClassNotFoundException {
         long lastModified = 0;
-        Iterator<FileSet> iter = filesets.iterator();
-        while (iter.hasNext()) {
-            FileSet fs = (FileSet)iter.next();
+        for (FileSet fs : filesets) {
             DirectoryScanner ds = fs.getDirectoryScanner(getProject());
             String[] srcFiles = ds.getIncludedFiles();
             File directory = fs.getDir(getProject());
-            for (int i = 0, c = srcFiles.length; i < c; i++) {
-                String filename = srcFiles[i];
+            for (String filename : srcFiles) {
                 File src = new File(directory, filename);
                 boolean eventProducerFound = collector.scanFile(src);
                 if (eventProducerFound) {

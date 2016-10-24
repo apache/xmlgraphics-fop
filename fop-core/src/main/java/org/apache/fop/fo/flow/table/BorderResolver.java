@@ -33,7 +33,7 @@ interface BorderResolver {
      * @param row the row that has just been finished
      * @param container the FO element holding the given row
      */
-    void endRow(List/*<GridUnit>*/ row, TableCellContainer container);
+    void endRow(List<GridUnit> row, TableCellContainer container);
 
     /**
      * Receives notification of the start of a table-header/footer/body.

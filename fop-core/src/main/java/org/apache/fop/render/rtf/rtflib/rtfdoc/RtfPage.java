@@ -91,7 +91,7 @@ extends RtfContainer {
             Object heightRaw = attrib.getValue(PAGE_HEIGHT);
 
             if ((widthRaw instanceof Integer) && (heightRaw instanceof Integer)
-                    && ((Integer) widthRaw).intValue() > ((Integer) heightRaw).intValue()) {
+                    && (Integer) widthRaw > (Integer) heightRaw) {
                 writeControlWord(LANDSCAPE);
             }
         }

@@ -111,7 +111,7 @@ public class RunTest extends Task {
                     Boolean pass = (Boolean)e.getValue();
                     System.out.println("file: " + fname
                                        + " - reference success: " + pass);
-                    if (pass.booleanValue()) {
+                    if (pass) {
                         broke = true;
                     }
                 }

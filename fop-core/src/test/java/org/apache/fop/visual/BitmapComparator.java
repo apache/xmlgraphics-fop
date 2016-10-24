@@ -132,13 +132,13 @@ public final class BitmapComparator {
         g.setPaint(Color.white);
         g.fillRect(0, 0, cmp.getWidth(), cmp.getHeight());
         int lastWidth = 0;
-        for (int i = 0; i < images.length; i++) {
+        for (BufferedImage image : images) {
             if (lastWidth > 0) {
                 g.translate(lastWidth, 0);
             }
-            if (images[i] != null) {
-                g.drawImage(images[i], 0, 0, null);
-                lastWidth = images[i].getWidth();
+            if (image != null) {
+                g.drawImage(image, 0, 0, null);
+                lastWidth = image.getWidth();
             } else {
                 lastWidth = 20; //Maybe add a special placeholder image instead later
             }

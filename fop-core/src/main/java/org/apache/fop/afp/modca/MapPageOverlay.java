@@ -125,8 +125,8 @@ public class MapPageOverlay extends AbstractAFPObject {
             //now add the name
             byte[] name = (byte[]) overLays.get(i);
 
-            for (int j = 0; j < name.length; j++) {
-                data[++pos] = name[j];
+            for (byte aName : name) {
+                data[++pos] = aName;
             }
 
             data[++pos] = 0x04; //Resource Local Identifier (RLI)

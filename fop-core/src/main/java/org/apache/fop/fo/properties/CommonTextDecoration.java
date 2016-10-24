@@ -20,7 +20,6 @@
 package org.apache.fop.fo.properties;
 
 import java.awt.Color;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -74,9 +73,8 @@ public class CommonTextDecoration {
         Property textDecoProp = pList.getExplicit(Constants.PR_TEXT_DECORATION);
         if (textDecoProp != null) {
             List list = textDecoProp.getList();
-            Iterator i = list.iterator();
-            while (i.hasNext()) {
-                Property prop = (Property)i.next();
+            for (Object aList : list) {
+                Property prop = (Property) aList;
                 int propEnum = prop.getEnum();
                 FOUserAgent ua = pList.getFObj() == null ? null : pList.getFObj().getUserAgent();
                 if (propEnum == Constants.EN_NONE) {

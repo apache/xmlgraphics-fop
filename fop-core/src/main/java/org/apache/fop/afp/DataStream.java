@@ -24,7 +24,6 @@ import java.awt.Point;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -309,10 +308,8 @@ public class DataStream {
      *            a collection of AFP font attributes
      */
     public void addFontsToCurrentPage(Map pageFonts) {
-        Iterator iter = pageFonts.values().iterator();
-        while (iter.hasNext()) {
-            AFPFontAttributes afpFontAttributes = (AFPFontAttributes) iter
-                    .next();
+        for (Object o : pageFonts.values()) {
+            AFPFontAttributes afpFontAttributes = (AFPFontAttributes) o;
             createFont(afpFontAttributes.getFontReference(), afpFontAttributes
                     .getFont(), afpFontAttributes.getPointSize());
         }
@@ -551,9 +548,9 @@ public class DataStream {
      */
 
     public void createPageTagLogicalElement(TagLogicalElement.State[] attributes) {
-        for (int i = 0; i < attributes.length; i++) {
+        for (TagLogicalElement.State attribute : attributes) {
 
-            currentPage.createTagLogicalElement(attributes[i]);
+            currentPage.createTagLogicalElement(attribute);
         }
     }
 
@@ -564,8 +561,8 @@ public class DataStream {
      *            the array of key value pairs.
      */
     public void createPageGroupTagLogicalElement(TagLogicalElement.State[] attributes) {
-        for (int i = 0; i < attributes.length; i++) {
-            currentPageGroup.createTagLogicalElement(attributes[i]);
+        for (TagLogicalElement.State attribute : attributes) {
+            currentPageGroup.createTagLogicalElement(attribute);
         }
     }
 

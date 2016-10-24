@@ -405,8 +405,8 @@ public class RtfExternalGraphic extends RtfElement {
         writeSizeInfo();
         writeAttributes(getRtfAttributes(), null);
 
-        for (int i = 0; i < imagedata.length; i++) {
-            int iData = imagedata [i];
+        for (byte anImagedata : imagedata) {
+            int iData = anImagedata;
 
             // Make positive byte
             if (iData < 0) {

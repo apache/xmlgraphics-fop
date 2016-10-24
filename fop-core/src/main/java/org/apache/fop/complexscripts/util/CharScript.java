@@ -22,7 +22,6 @@ package org.apache.fop.complexscripts.util;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -712,8 +711,8 @@ public final class CharScript {
         }
         int[] sa = new int [ s.size() ];
         int ns = 0;
-        for (Iterator it = s.iterator(); it.hasNext();) {
-            sa [ ns++ ] = ((Integer) it.next()) .intValue();
+        for (Object value : s) {
+            sa[ns++] = (Integer) value;
         }
         Arrays.sort(sa);
         return sa;
@@ -732,30 +731,30 @@ public final class CharScript {
             Integer k = s;
             Integer v = (Integer) m.get(k);
             if (v != null) {
-                m.put(k, v.intValue() + 1);
+                m.put(k, v + 1);
             } else {
                 m.put(k, 0);
             }
         }
         int sMax = -1;
         int cMax = -1;
-        for (Iterator it = m.entrySet().iterator(); it.hasNext();) {
-            Map.Entry e = (Map.Entry) it.next();
+        for (Object o : m.entrySet()) {
+            Map.Entry e = (Map.Entry) o;
             Integer k = (Integer) e.getKey();
-            int s = k.intValue();
+            int s = k;
             switch (s) {
-            case SCRIPT_UNDETERMINED:
-            case SCRIPT_UNCODED:
-                break;
-            default:
-                Integer v = (Integer) e.getValue();
-                assert v != null;
-                int c = v.intValue();
-                if (c > cMax) {
-                    cMax = c;
-                    sMax = s;
-                }
-                break;
+                case SCRIPT_UNDETERMINED:
+                case SCRIPT_UNCODED:
+                    break;
+                default:
+                    Integer v = (Integer) e.getValue();
+                    assert v != null;
+                    int c = v;
+                    if (c > cMax) {
+                        cMax = c;
+                        sMax = s;
+                    }
+                    break;
             }
         }
         if (sMax < 0) {

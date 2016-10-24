@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr.table;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,9 +67,8 @@ public class ColumnSetup {
         List rawCols = table.getColumns();
         if (rawCols != null) {
             int colnum = 1;
-            ListIterator iter = rawCols.listIterator();
-            while (iter.hasNext()) {
-                TableColumn col = (TableColumn)iter.next();
+            for (Object rawCol : rawCols) {
+                TableColumn col = (TableColumn) rawCol;
                 if (col == null) {
                     continue;
                 }
@@ -86,9 +84,8 @@ public class ColumnSetup {
             //Post-processing the list (looking for gaps)
             //TODO The following block could possibly be removed
             int pos = 1;
-            ListIterator ppIter = columns.listIterator();
-            while (ppIter.hasNext()) {
-                TableColumn col = (TableColumn)ppIter.next();
+            for (Object column : columns) {
+                TableColumn col = (TableColumn) column;
                 if (col == null) {
                     assert false; //Gaps are filled earlier by fo.flow.table.Table.finalizeColumns()
                     //log.error("Found a gap in the table-columns at position " + pos);
@@ -211,8 +208,8 @@ public class ColumnSetup {
          * and work out the total number of factors to use to distribute
          * the remaining space (if any)
          */
-        for (Iterator i = colWidths.iterator(); i.hasNext();) {
-            Length colWidth = (Length) i.next();
+        for (Object colWidth1 : colWidths) {
+            Length colWidth = (Length) colWidth1;
             if (colWidth != null) {
                 sumCols += colWidth.getValue(percentBaseContext);
                 if (colWidth instanceof RelativeNumericProperty) {

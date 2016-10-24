@@ -284,8 +284,7 @@ public final class FontCache implements Serializable {
      * @return file font file
      */
     public static File getFileFromUrls(String[] urls) {
-        for (int i = 0; i < urls.length; i++) {
-            String urlStr = urls[i];
+        for (String urlStr : urls) {
             if (urlStr != null) {
                 File fontFile = null;
                 if (urlStr.startsWith("file:")) {
@@ -408,7 +407,7 @@ public final class FontCache implements Serializable {
         synchronized (changeLock) {
             if (getFailedFontMap().containsKey(embedUrl)) {
                 long failedLastModified = getFailedFontMap().get(
-                        embedUrl).longValue();
+                        embedUrl);
                 if (lastModified != failedLastModified) {
                     // this font has been changed so lets remove it
                     // from failed font map for now

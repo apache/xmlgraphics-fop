@@ -191,7 +191,7 @@ public abstract class GlyphSubtable implements Comparable {
      * Resolve references to lookup tables, e.g., in RuleLookup, to the lookup tables themselves.
      * @param lookupTables map from lookup table identifers, e.g. "lu4", to lookup tables
      */
-    public void resolveLookupReferences(Map/*<String,GlyphTable.LookupTable>*/ lookupTables) {
+    public void resolveLookupReferences(Map<String, GlyphTable.LookupTable> lookupTables) {
     }
 
     /**
@@ -271,8 +271,8 @@ public abstract class GlyphSubtable implements Comparable {
         if ((subtables == null) || (subtables.length == 0)) {
             return false;
         } else {
-            for (int i = 0, n = subtables.length; i < n; i++) {
-                if (subtables[i].usesReverseScan()) {
+            for (GlyphSubtable subtable : subtables) {
+                if (subtable.usesReverseScan()) {
                     return true;
                 }
             }
@@ -292,16 +292,16 @@ public abstract class GlyphSubtable implements Comparable {
         } else {
             int flags = 0;
             // obtain first non-zero value of flags in array of subtables
-            for (int i = 0, n = subtables.length; i < n; i++) {
-                int f = subtables[i].getFlags();
+            for (GlyphSubtable subtable1 : subtables) {
+                int f = subtable1.getFlags();
                 if (flags == 0) {
                     flags = f;
                     break;
                 }
             }
             // enforce flag consistency
-            for (int i = 0, n = subtables.length; i < n; i++) {
-                int f = subtables[i].getFlags();
+            for (GlyphSubtable subtable : subtables) {
+                int f = subtable.getFlags();
                 if (f != flags) {
                     throw new IllegalStateException("inconsistent lookup flags " + f + ", expected " + flags);
                 }

@@ -42,6 +42,7 @@ import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFPaintingState;
+import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFStream;
 
@@ -279,7 +280,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
                 PDFFilterList.CONTENT_FILTER, false);
         pdfStream.add(getString());
         this.pdfDoc.registerObject(pdfStream);
-        pdfContext.getCurrentPage().setContents(pdfStream);
+        pdfContext.getCurrentPage().setContents(new PDFReference(pdfStream));
         PDFAnnotList annots = pdfContext.getCurrentPage().getAnnotations();
         if (annots != null) {
             this.pdfDoc.addObject(annots);

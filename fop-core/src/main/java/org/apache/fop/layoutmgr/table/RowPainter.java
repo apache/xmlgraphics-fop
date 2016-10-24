@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr.table;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -126,8 +125,8 @@ class RowPainter {
 
         if (tablePartBackground != null) {
             TableLayoutManager tableLM = tclm.getTableLM();
-            for (Iterator iter = tablePartBackgroundAreas.iterator(); iter.hasNext();) {
-                Block backgroundArea = (Block) iter.next();
+            for (Object tablePartBackgroundArea : tablePartBackgroundAreas) {
+                Block backgroundArea = (Block) tablePartBackgroundArea;
                 TraitSetter.addBackground(backgroundArea, tablePartBackground, tableLM,
                         -backgroundArea.getXOffset(), tablePartOffset - backgroundArea.getYOffset(),
                         tableLM.getContentAreaIPD(), currentRowOffset - tablePartOffset);
@@ -166,10 +165,9 @@ class RowPainter {
                 firstRowOnPageIndex = firstRowIndex;
             }
         }
-        Iterator partIter = tcpos.cellParts.iterator();
         //Iterate over all grid units in the current step
-        while (partIter.hasNext()) {
-            CellPart cellPart = (CellPart)partIter.next();
+        for (Object cellPart1 : tcpos.cellParts) {
+            CellPart cellPart = (CellPart) cellPart1;
             if (log.isDebugEnabled()) {
                 log.debug(">" + cellPart);
             }
@@ -536,7 +534,7 @@ class RowPainter {
      * @return its y-offset on the page
      */
     private int getRowOffset(int rowIndex) {
-        return ((Integer) rowOffsets.get(rowIndex - firstRowIndex)).intValue();
+        return (Integer) rowOffsets.get(rowIndex - firstRowIndex);
     }
 
     // TODO get rid of that

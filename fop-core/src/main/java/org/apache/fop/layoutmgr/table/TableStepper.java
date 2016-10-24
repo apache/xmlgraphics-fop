@@ -121,8 +121,8 @@ public class TableStepper {
 
     private void calcTotalHeight() {
         totalHeight = 0;
-        for (int i = 0; i < rowGroup.length; i++) {
-            totalHeight += rowGroup[i].getHeight().getOpt();
+        for (EffRow aRowGroup : rowGroup) {
+            totalHeight += aRowGroup.getHeight().getOpt();
         }
         if (log.isDebugEnabled()) {
             log.debug("totalHeight=" + totalHeight);
@@ -131,8 +131,8 @@ public class TableStepper {
 
     private int getMaxRemainingHeight() {
         int maxW = 0;
-        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-            ActiveCell activeCell = (ActiveCell) iter.next();
+        for (Object activeCell1 : activeCells) {
+            ActiveCell activeCell = (ActiveCell) activeCell1;
             int remain = activeCell.getRemainingLength();
             PrimaryGridUnit pgu = activeCell.getPrimaryGridUnit();
             for (int i = activeRowIndex + 1; i < pgu.getRowIndex() - rowGroup[0].getIndex()
@@ -202,8 +202,8 @@ public class TableStepper {
             LinkedList footnoteList = new LinkedList();
             //Put all involved grid units into a list
             List cellParts = new java.util.ArrayList(activeCells.size());
-            for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-                ActiveCell activeCell = (ActiveCell) iter.next();
+            for (Object activeCell2 : activeCells) {
+                ActiveCell activeCell = (ActiveCell) activeCell2;
                 CellPart part = activeCell.createCellPart();
                 cellParts.add(part);
                 activeCell.addFootnotes(footnoteList);
@@ -242,8 +242,8 @@ public class TableStepper {
 
             Keep keep = getTableLM().getKeepTogether();
             int stepPenalty = 0;
-            for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-                ActiveCell activeCell = (ActiveCell) iter.next();
+            for (Object activeCell1 : activeCells) {
+                ActiveCell activeCell = (ActiveCell) activeCell1;
                 keep = keep.compare(activeCell.getKeepWithNext());
                 stepPenalty = Math.max(stepPenalty, activeCell.getPenaltyValue());
             }
@@ -342,8 +342,8 @@ public class TableStepper {
      * previous rows and spanning over this one)
      */
     private void computeRowFirstStep(List cells) {
-        for (Iterator iter = cells.iterator(); iter.hasNext();) {
-            ActiveCell activeCell = (ActiveCell) iter.next();
+        for (Object cell : cells) {
+            ActiveCell activeCell = (ActiveCell) cell;
             rowFirstStep = Math.max(rowFirstStep, activeCell.getFirstStep());
         }
     }
@@ -356,8 +356,8 @@ public class TableStepper {
     private int computeMinStep() {
         int minStep = Integer.MAX_VALUE;
         boolean stepFound = false;
-        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-            ActiveCell activeCell = (ActiveCell) iter.next();
+        for (Object activeCell1 : activeCells) {
+            ActiveCell activeCell = (ActiveCell) activeCell1;
             int nextStep = activeCell.getNextStep();
             if (nextStep >= 0) {
                 stepFound = true;
@@ -378,8 +378,8 @@ public class TableStepper {
      * @see ActiveCell#signalRowFirstStep(int)
      */
     private void signalRowFirstStep() {
-        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-            ActiveCell activeCell = (ActiveCell) iter.next();
+        for (Object activeCell1 : activeCells) {
+            ActiveCell activeCell = (ActiveCell) activeCell1;
             activeCell.signalRowFirstStep(rowFirstStep);
         }
     }
@@ -391,8 +391,8 @@ public class TableStepper {
      */
     private void signalNextStep(int step) {
         nextBreakClass = Constants.EN_AUTO;
-        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-            ActiveCell activeCell = (ActiveCell) iter.next();
+        for (Object activeCell1 : activeCells) {
+            ActiveCell activeCell = (ActiveCell) activeCell1;
             nextBreakClass = BreakUtil.compareBreakClasses(nextBreakClass,
                     activeCell.signalNextStep(step));
         }
@@ -417,8 +417,8 @@ public class TableStepper {
      */
     private int considerRowLastStep(int step) {
         rowFinished = true;
-        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-            ActiveCell activeCell = (ActiveCell) iter.next();
+        for (Object activeCell3 : activeCells) {
+            ActiveCell activeCell = (ActiveCell) activeCell3;
             if (activeCell.endsOnRow(activeRowIndex)) {
                 if (!activeCell.finishes(step)) {
                     rowFinished = false;
@@ -431,8 +431,8 @@ public class TableStepper {
                 log.trace("Row finished, computing last step");
             }
             int maxStep = 0;
-            for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-                ActiveCell activeCell = (ActiveCell) iter.next();
+            for (Object activeCell2 : activeCells) {
+                ActiveCell activeCell = (ActiveCell) activeCell2;
                 if (activeCell.endsOnRow(activeRowIndex)) {
                     maxStep = Math.max(maxStep, activeCell.getLastStep());
                 }
@@ -440,8 +440,8 @@ public class TableStepper {
             if (log.isTraceEnabled()) {
                 log.trace("Max step: " + maxStep);
             }
-            for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-                ActiveCell activeCell = (ActiveCell) iter.next();
+            for (Object activeCell1 : activeCells) {
+                ActiveCell activeCell = (ActiveCell) activeCell1;
                 activeCell.endRow(activeRowIndex);
                 if (!activeCell.endsOnRow(activeRowIndex)) {
                     activeCell.signalRowLastStep(maxStep);
@@ -493,8 +493,8 @@ public class TableStepper {
         if (log.isTraceEnabled()) {
             log.trace("Switching to row " + (activeRowIndex + 1));
         }
-        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-            ActiveCell activeCell = (ActiveCell) iter.next();
+        for (Object activeCell1 : activeCells) {
+            ActiveCell activeCell = (ActiveCell) activeCell1;
             activeCell.nextRowStarts();
         }
         activeCells.addAll(nextActiveCells);

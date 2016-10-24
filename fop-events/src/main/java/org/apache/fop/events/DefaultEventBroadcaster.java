@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -68,7 +67,7 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
         this.listeners.processEvent(event);
     }
 
-    private static List/*<EventModel>*/ eventModels = new java.util.ArrayList();
+    private static List<EventModel> eventModels = new java.util.ArrayList();
     private Map proxies = new java.util.HashMap();
 
     /**
@@ -104,8 +103,8 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
     }
 
     private static synchronized EventProducerModel getEventProducerModel(Class clazz) {
-        for (int i = 0, c = eventModels.size(); i < c; i++) {
-            EventModel eventModel = (EventModel)eventModels.get(i);
+        for (Object eventModel1 : eventModels) {
+            EventModel eventModel = (EventModel) eventModel1;
             EventProducerModel producerModel = eventModel.getProducer(clazz);
             if (producerModel != null) {
                 return producerModel;
@@ -161,10 +160,9 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
                         }
                         Map params = new java.util.HashMap();
                         int i = 1;
-                        Iterator iter = methodModel.getParameters().iterator();
-                        while (iter.hasNext()) {
+                        for (Object o : methodModel.getParameters()) {
                             EventMethodModel.Parameter param
-                                = (EventMethodModel.Parameter)iter.next();
+                                    = (EventMethodModel.Parameter) o;
                             params.put(param.getName(), args[i]);
                             i++;
                         }

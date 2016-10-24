@@ -26,7 +26,6 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.util.Iterator;
 import java.util.StringTokenizer;
 
 /**
@@ -46,13 +45,12 @@ final class WhitespaceCollapser {
      */
     WhitespaceCollapser(RtfContainer c) {
         // process all texts
-        for (Iterator it = c.getChildren().iterator(); it.hasNext();) {
-            final Object kid = it.next();
+        for (final Object kid : c.getChildren()) {
             if (kid instanceof RtfText) {
-                RtfText current = (RtfText)kid;
+                RtfText current = (RtfText) kid;
                 processText(current);
             } else if (kid instanceof RtfString) {
-                RtfString current = (RtfString)kid;
+                RtfString current = (RtfString) kid;
                 processString(current);
             } else {
                 // if there is something between two texts, it counts for a space

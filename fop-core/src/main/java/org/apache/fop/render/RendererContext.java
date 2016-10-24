@@ -20,7 +20,6 @@
 package org.apache.fop.render;
 
 //Java
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -36,7 +35,7 @@ public class RendererContext {
     private final AbstractRenderer renderer;
     private FOUserAgent userAgent;
 
-    private final Map/*<String,Object>*/ props = new java.util.HashMap/*<String,Object>*/();
+    private final Map<String, Object> props = new java.util.HashMap<String, Object>();
 
     /**
      * Constructor for this class. It takes a MIME type as parameter.
@@ -117,9 +116,8 @@ public class RendererContext {
     /** {@inheritDoc} **/
     public String toString() {
         StringBuffer stringBuffer = new StringBuffer("RendererContext{\n");
-        Iterator it = props.keySet().iterator();
-        while (it.hasNext()) {
-            String key = (String)it.next();
+        for (Object o : props.keySet()) {
+            String key = (String) o;
             Object value = props.get(key);
             stringBuffer.append("\t" + key + "=" + value + "\n");
         }
@@ -151,22 +149,22 @@ public class RendererContext {
 
         /** @return the currentXPosition */
         public int getCurrentXPosition() {
-            return ((Integer)context.getProperty(RendererContextConstants.XPOS)).intValue();
+            return (Integer) context.getProperty(RendererContextConstants.XPOS);
         }
 
         /** @return the currentYPosition */
         public int getCurrentYPosition() {
-            return ((Integer)context.getProperty(RendererContextConstants.YPOS)).intValue();
+            return (Integer) context.getProperty(RendererContextConstants.YPOS);
         }
 
         /** @return the width of the image */
         public int getWidth() {
-            return ((Integer)context.getProperty(RendererContextConstants.WIDTH)).intValue();
+            return (Integer) context.getProperty(RendererContextConstants.WIDTH);
         }
 
         /** @return the height of the image */
         public int getHeight() {
-            return ((Integer)context.getProperty(RendererContextConstants.HEIGHT)).intValue();
+            return (Integer) context.getProperty(RendererContextConstants.HEIGHT);
         }
 
         /** @return the foreign attributes */

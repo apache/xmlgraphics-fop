@@ -62,6 +62,7 @@ import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable.LigatureSet;
 import org.apache.fop.complexscripts.fonts.GlyphSubtable;
 import org.apache.fop.complexscripts.fonts.GlyphTable;
 import org.apache.fop.complexscripts.fonts.GlyphTable.RuleLookup;
+import org.apache.fop.complexscripts.scripts.ScriptProcessor;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.UTF32;
 import org.apache.fop.util.CharUtilities;
@@ -162,6 +163,7 @@ public class TTXFile {
     private GlyphDefinitionTable gdef;                          // constructed glyph definition table
     private GlyphSubstitutionTable gsub;                        // constructed glyph substitution table
     private GlyphPositioningTable gpos;                         // constructed glyph positioning table
+    private Map<String, ScriptProcessor> processors = new HashMap<String, ScriptProcessor>();
 
     public TTXFile() {
         elements = new Stack<String[]>();
@@ -2326,17 +2328,17 @@ public class TTXFile {
                 }
             } else if (en[1].equals("GDEF")) {
                 if (subtables.size() > 0) {
-                    gdef = new GlyphDefinitionTable(subtables);
+                    gdef = new GlyphDefinitionTable(subtables, processors);
                 }
                 clearTable();
             } else if (en[1].equals("GPOS")) {
                 if (subtables.size() > 0) {
-                    gpos = new GlyphPositioningTable(gdef, extractLookups(), subtables);
+                    gpos = new GlyphPositioningTable(gdef, extractLookups(), subtables, processors);
                 }
                 clearTable();
             } else if (en[1].equals("GSUB")) {
                 if (subtables.size() > 0) {
-                    gsub = new GlyphSubstitutionTable(gdef, extractLookups(), subtables);
+                    gsub = new GlyphSubstitutionTable(gdef, extractLookups(), subtables, processors);
                 }
                 clearTable();
             } else if (en[1].equals("GlyphClassDef")) {
@@ -2804,11 +2806,11 @@ public class TTXFile {
                 }
             }
             GlyphCoverageTable[] gca = new GlyphCoverageTable [ mi + 1 ];
-            for (String k : keys) {
-                if (k.startsWith(prefix)) {
-                    int i = Integer.parseInt(k.substring(prefixLength));
+            for (Map.Entry<String, GlyphCoverageTable> stringGlyphCoverageTableEntry : coverages.entrySet()) {
+                if (stringGlyphCoverageTableEntry.getKey().startsWith(prefix)) {
+                    int i = Integer.parseInt(stringGlyphCoverageTableEntry.getKey().substring(prefixLength));
                     if (i >= 0) {
-                        gca [ i ] = coverages.get(k);
+                        gca [ i ] = stringGlyphCoverageTableEntry.getValue();
                     }
                 }
             }
@@ -2817,8 +2819,8 @@ public class TTXFile {
         private boolean hasMissingCoverage(GlyphCoverageTable[] gca) {
             assert gca != null;
             int nc = 0;
-            for (int i = 0, n = gca.length; i < n; i++) {
-                if (gca [ i ] != null) {
+            for (GlyphCoverageTable aGca : gca) {
+                if (aGca != null) {
                     nc++;
                 }
             }
@@ -2915,11 +2917,11 @@ public class TTXFile {
         }
         private Map<GlyphTable.LookupSpec, List<String>> extractLookups() {
             Map<GlyphTable.LookupSpec, List<String>> lookups = new LinkedHashMap<GlyphTable.LookupSpec, List<String>>();
-            for (String st : scripts.keySet()) {
-                Map<String, List<String>> lm = scripts.get(st);
+            for (Map.Entry<String, Map<String, List<String>>> stringMapEntry : scripts.entrySet()) {
+                Map<String, List<String>> lm = stringMapEntry.getValue();
                 if (lm != null) {
-                    for (String lt : lm.keySet()) {
-                        List<String> fids = lm.get(lt);
+                    for (Map.Entry<String, List<String>> stringListEntry : lm.entrySet()) {
+                        List<String> fids = stringListEntry.getValue();
                         if (fids != null) {
                             for (String fid : fids) {
                                 if (fid != null) {
@@ -2929,7 +2931,7 @@ public class TTXFile {
                                         String ft = (String) fa[0];
                                         List<String> lids = (List<String>) fa[1];
                                         if ((lids != null) && (lids.size() > 0)) {
-                                            GlyphTable.LookupSpec ls = new GlyphTable.LookupSpec(st, lt, ft);
+                                            GlyphTable.LookupSpec ls = new GlyphTable.LookupSpec(stringMapEntry.getKey(), stringListEntry.getKey(), ft);
                                             lookups.put(ls, lids);
                                         }
                                     }
@@ -3131,8 +3133,7 @@ public class TTXFile {
         }
         private Integer computeClassCount(Anchor[][] am) {
             int ncMax = 0;
-            for (int i = 0, n = am.length; i < n; i++) {
-                Anchor[] aa = am [ i ];
+            for (Anchor[] aa : am) {
                 if (aa != null) {
                     int nc = aa.length;
                     if (nc > ncMax) {
@@ -3291,7 +3292,7 @@ public class TTXFile {
             if (gmap != null) {
                 Integer cid = gmap.get(gid);
                 if (cid != null) {
-                    return cid.intValue();
+                    return cid;
                 }
             }
         }

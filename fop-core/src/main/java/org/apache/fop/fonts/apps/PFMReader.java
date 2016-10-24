@@ -21,7 +21,6 @@ package org.apache.fop.fonts.apps;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -299,18 +298,15 @@ public class PFMReader extends AbstractFontReader {
 
 
         // Get kerning
-        Iterator iter = pfm.getKerning().keySet().iterator();
-        while (iter.hasNext()) {
-            Integer kpx1 = (Integer)iter.next();
+        for (Object kpx1 : pfm.getKerning().keySet()) {
             el = doc.createElement("kerning");
             el.setAttribute("kpx1", kpx1.toString());
             root.appendChild(el);
             Element el2 = null;
 
             Map h2 = (Map) pfm.getKerning().get(kpx1);
-            Iterator enum2 = h2.entrySet().iterator();
-            while (enum2.hasNext()) {
-                Map.Entry entry = (Map.Entry) enum2.next();
+            for (Object o : h2.entrySet()) {
+                Map.Entry entry = (Map.Entry) o;
                 Integer kpx2 = (Integer) entry.getKey();
                 el2 = doc.createElement("pair");
                 el2.setAttribute("kpx2", kpx2.toString());

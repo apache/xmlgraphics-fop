@@ -29,7 +29,6 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -69,8 +68,8 @@ class RtfHeader extends RtfContainer {
         if (userProperties.size() > 0) {
             writeGroupMark(true);
             writeStarControlWord("userprops");
-            for (Iterator it = userProperties.entrySet().iterator(); it.hasNext();) {
-                final Map.Entry entry = (Map.Entry)it.next();
+            for (Object o : userProperties.entrySet()) {
+                final Map.Entry entry = (Map.Entry) o;
                 writeGroupMark(true);
                 writeControlWord("propname");
                 RtfStringConverter.getInstance().writeRtfString(writer,

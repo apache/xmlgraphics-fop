@@ -21,7 +21,6 @@ package org.apache.fop.render.txt;
 
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.apache.fop.area.CTM;
@@ -62,8 +61,8 @@ public class TXTState {
      */
     private void calcResultCTM() {
         resultCTM = new CTM();
-        for (Iterator i = stackCTM.iterator(); i.hasNext();) {
-            updateResultCTM((CTM) i.next());
+        for (Object aStackCTM : stackCTM) {
+            updateResultCTM((CTM) aStackCTM);
         }
     }
 

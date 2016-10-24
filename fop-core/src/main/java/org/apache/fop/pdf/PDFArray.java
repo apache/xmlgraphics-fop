@@ -22,6 +22,7 @@ package org.apache.fop.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -61,8 +62,8 @@ public class PDFArray extends PDFObject {
         /* generic creation of PDF object */
         super(parent);
 
-        for (int i = 0, c = values.length; i < c; i++) {
-            this.values.add(values[i]);
+        for (int value : values) {
+            this.values.add(value);
         }
     }
 
@@ -75,8 +76,8 @@ public class PDFArray extends PDFObject {
         /* generic creation of PDF object */
         super(parent);
 
-        for (int i = 0, c = values.length; i < c; i++) {
-            this.values.add(values[i]);
+        for (double value : values) {
+            this.values.add(value);
         }
     }
 
@@ -119,9 +120,7 @@ public class PDFArray extends PDFObject {
         /* generic creation of PDF object */
         super(parent);
 
-        for (int i = 0, c = values.length; i < c; i++) {
-            this.values.add(values[i]);
-        }
+        Collections.addAll(this.values, values);
     }
 
     /**

@@ -70,7 +70,7 @@ public class Fop extends Task {
     private File xmlFile;
     private File xsltFile;
     private String xsltParams;
-    private List/*<FileSet>*/ filesets = new java.util.ArrayList/*<FileSet>*/();
+    private List<FileSet> filesets = new java.util.ArrayList<FileSet>();
     private File outFile;
     private File outDir;
     private String format; //MIME type
@@ -446,9 +446,9 @@ class FOPTaskStarter {
         if (format == null) {
             return MimeConstants.MIME_PDF;
         }
-        for (int i = 0; i < SHORT_NAMES.length; i++) {
-            if (SHORT_NAMES[i][0].equals(format)) {
-                return SHORT_NAMES[i][1];
+        for (String[] shortName : SHORT_NAMES) {
+            if (shortName[0].equals(format)) {
+                return shortName[1];
             }
         }
         return format; //no change
@@ -477,9 +477,9 @@ class FOPTaskStarter {
     };
 
     private String determineExtension(String outputFormat) {
-        for (int i = 0; i < EXTENSIONS.length; i++) {
-            if (EXTENSIONS[i][0].equals(outputFormat)) {
-                String ext = EXTENSIONS[i][1];
+        for (String[] extension : EXTENSIONS) {
+            if (extension[0].equals(outputFormat)) {
+                String ext = extension[1];
                 if (ext == null) {
                     throw new RuntimeException("Output format '"
                             + outputFormat + "' does not produce a file.");
@@ -575,18 +575,18 @@ class FOPTaskStarter {
             DirectoryScanner ds = fs.getDirectoryScanner(task.getProject());
             String[] files = ds.getIncludedFiles();
 
-            for (int j = 0; j < files.length; j++) {
-                File f = new File(fs.getDir(task.getProject()), files[j]);
+            for (String file : files) {
+                File f = new File(fs.getDir(task.getProject()), file);
 
                 File outf = null;
-                if (task.getOutdir() != null && files[j].endsWith(inputExtension)) {
-                  String[] sa = mapper.mapFileName(files[j]);
-                  outf = new File(task.getOutdir(), sa[0]);
+                if (task.getOutdir() != null && file.endsWith(inputExtension)) {
+                    String[] sa = mapper.mapFileName(file);
+                    outf = new File(task.getOutdir(), sa[0]);
                 } else {
-                  outf = replaceExtension(f, inputExtension, newExtension);
-                  if (task.getOutdir() != null) {
-                      outf = new File(task.getOutdir(), outf.getName());
-                  }
+                    outf = replaceExtension(f, inputExtension, newExtension);
+                    if (task.getOutdir() != null) {
+                        outf = new File(task.getOutdir(), outf.getName());
+                    }
                 }
                 File dir = outf.getParentFile();
                 if (!dir.exists()) {
@@ -608,7 +608,7 @@ class FOPTaskStarter {
                 // OR output file doesn't exist OR
                 // output file is older than input file
                 if (task.getForce() || !outf.exists()
-                    || (f.lastModified() > outf.lastModified())) {
+                        || (f.lastModified() > outf.lastModified())) {
                     if (xsltFile != null) {
                         render(f, xsltFile, outf, outputFormat);
                     } else {

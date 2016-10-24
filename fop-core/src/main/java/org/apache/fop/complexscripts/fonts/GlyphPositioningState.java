@@ -184,8 +184,7 @@ public class GlyphPositioningState extends GlyphProcessingState {
     public boolean apply(GlyphTable.RuleLookup[] lookups, int nig) {
         if ((lookups != null) && (lookups.length > 0)) {
             // apply each rule lookup to extracted input glyph array
-            for (int i = 0, n = lookups.length; i < n; i++) {
-                GlyphTable.RuleLookup l = lookups [ i ];
+            for (GlyphTable.RuleLookup l : lookups) {
                 if (l != null) {
                     GlyphTable.LookupTable lt = l.getLookup();
                     if (lt != null) {

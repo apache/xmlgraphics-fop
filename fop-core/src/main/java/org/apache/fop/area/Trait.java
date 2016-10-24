@@ -438,8 +438,7 @@ public final class Trait implements Serializable {
             String dest = null;
             boolean newWindow = false;
             String[] values = traitValue.split(",");
-            for (int i = 0, c = values.length; i < c; i++) {
-                String v = values[i];
+            for (String v : values) {
                 if (v.startsWith("dest=")) {
                     dest = v.substring(5);
                 } else if (v.startsWith("newWindow=")) {

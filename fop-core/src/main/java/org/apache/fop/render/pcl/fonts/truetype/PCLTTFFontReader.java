@@ -605,8 +605,8 @@ public class PCLTTFFontReader extends PCLFontReader {
     private ByteArrayOutputStream updateOffsets(ByteArrayOutputStream baos, Map<Integer, byte[]> offsets)
             throws IOException {
         byte[] softFont = baos.toByteArray();
-        for (int offset : offsets.keySet()) {
-            PCLByteWriterUtil.updateDataAtLocation(softFont, offsets.get(offset), offset);
+        for (Entry<Integer, byte[]> integerEntry : offsets.entrySet()) {
+            PCLByteWriterUtil.updateDataAtLocation(softFont, integerEntry.getValue(), integerEntry.getKey());
         }
         baos = new ByteArrayOutputStream();
         baos.write(softFont);
@@ -715,7 +715,7 @@ public class PCLTTFFontReader extends PCLFontReader {
                     originalIndex = ((SingleByteFont) font).getGIDFromChar(unicode);
 
                     writeUShort(hmtxTable, (softFontGlyphIndex) * 4,
-                            ((SingleByteFont) font).getWidth(originalIndex, 1));
+                            font.getWidth(originalIndex, 1));
                     writeUShort(hmtxTable, (softFontGlyphIndex) * 4 + 2, 0);
                 }
             }

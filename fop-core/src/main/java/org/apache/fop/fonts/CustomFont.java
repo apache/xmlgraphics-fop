@@ -530,9 +530,7 @@ public abstract class CustomFont extends Typeface
      */
     public void setCMap(CMapSegment[] cmap) {
         this.cmap.clear();
-        for (CMapSegment c : cmap) {
-            this.cmap.add(c);
-        }
+        Collections.addAll(this.cmap, cmap);
     }
 
     /**

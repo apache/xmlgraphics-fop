@@ -113,8 +113,8 @@ public class FontInfo {
      * @param weight font weight
      */
     public void addFontProperties(String name, String[] families, String style, int weight) {
-        for (int i = 0; i < families.length; i++) {
-            addFontProperties(name, families[i], style, weight);
+        for (String family : families) {
+            addFontProperties(name, family, style, weight);
         }
     }
 
@@ -134,7 +134,7 @@ public class FontInfo {
         String oldName = triplets.get(triplet);
         int newPriority = triplet.getPriority();
         if (oldName != null) {
-            int oldPriority = tripletPriorities.get(triplet).intValue();
+            int oldPriority = tripletPriorities.get(triplet);
             if (oldPriority < newPriority) {
                 logDuplicateFont(triplet, false, oldName, oldPriority, internalFontKey, newPriority);
                 return;
@@ -382,8 +382,8 @@ public class FontInfo {
     private List<FontTriplet> fontLookup(String[] families, String style, int weight, boolean substitutable) {
         List<FontTriplet> matchingTriplets = new ArrayList<FontTriplet>();
         FontTriplet triplet = null;
-        for (int i = 0; i < families.length; i++) {
-            triplet = fontLookup(families[i], style, weight, substitutable);
+        for (String family : families) {
+            triplet = fontLookup(family, style, weight, substitutable);
             if (triplet != null) {
                 matchingTriplets.add(triplet);
             }
@@ -428,7 +428,7 @@ public class FontInfo {
             }
             throw new IllegalStateException(
                     "fontLookup must return an array with at least one "
-                            + "FontTriplet on the last call. Lookup: " + sb.toString());
+                            + "FontTriplet on the last call. Lookup: " + sb);
 
         }
         FontTriplet[] fontTriplets = new FontTriplet[matchedTriplets.size()];

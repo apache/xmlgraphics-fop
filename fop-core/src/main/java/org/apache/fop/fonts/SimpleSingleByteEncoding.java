@@ -56,7 +56,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
     public char mapChar(char c) {
         Character nc = charMap.get(c);
         if (nc != null) {
-            return nc.charValue();
+            return nc;
         }
         return NOT_FOUND_CODE_POINT;
     }

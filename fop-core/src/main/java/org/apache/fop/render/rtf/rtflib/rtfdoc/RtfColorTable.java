@@ -96,14 +96,14 @@ public final class RtfColorTable {
      * Initialize the color table.
      */
     private void init() {
-        addNamedColor("black", getColorNumber(0, 0, 0).intValue());
-        addNamedColor("white", getColorNumber(255, 255, 255).intValue());
-        addNamedColor("red", getColorNumber(255, 0, 0).intValue());
-        addNamedColor("green", getColorNumber(0, 255, 0).intValue());
-        addNamedColor("blue", getColorNumber(0, 0, 255).intValue());
-        addNamedColor("cyan", getColorNumber(0, 255, 255).intValue());
-        addNamedColor("magenta", getColorNumber(255, 0, 255).intValue());
-        addNamedColor("yellow", getColorNumber(255, 255, 0).intValue());
+        addNamedColor("black", getColorNumber(0, 0, 0));
+        addNamedColor("white", getColorNumber(255, 255, 255));
+        addNamedColor("red", getColorNumber(255, 0, 0));
+        addNamedColor("green", getColorNumber(0, 255, 0));
+        addNamedColor("blue", getColorNumber(0, 0, 255));
+        addNamedColor("cyan", getColorNumber(0, 255, 255));
+        addNamedColor("magenta", getColorNumber(255, 0, 255));
+        addNamedColor("yellow", getColorNumber(255, 255, 0));
 
         getColorNumber(0, 0, 128);
         getColorNumber(0, 128, 128);
@@ -115,7 +115,7 @@ public final class RtfColorTable {
 
          // Added by Normand Masse
           // Gray color added
-        addNamedColor("gray", getColorNumber(128, 128, 128).intValue());
+        addNamedColor("gray", getColorNumber(128, 128, 128));
 
         getColorNumber(192, 192, 192);
     }
@@ -163,7 +163,7 @@ public final class RtfColorTable {
             //The color was found. Before returning the index, increment
             //it by one. Because index 0 is reserved for auto-colored, but
             //is not contained in colorTable.
-            retVal = ((Integer) o).intValue() + 1;
+            retVal = (Integer) o + 1;
         }
 
         return retVal;
@@ -191,8 +191,8 @@ public final class RtfColorTable {
 
         int len = colorTable.size();
 
-        for (int i = 0; i < len; i++) {
-            int identifier = ((Integer) colorTable.get(i)).intValue();
+        for (Object aColorTable : colorTable) {
+            int identifier = (Integer) aColorTable;
 
             header.newLine();
             header.write("\\red" + determineColorLevel(identifier, RED));

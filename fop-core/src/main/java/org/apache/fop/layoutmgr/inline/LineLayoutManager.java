@@ -295,8 +295,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
          * @return true if the sequence contains a box
          */
         public boolean containsBox() {
-            for (int i = 0; i < this.size(); i++) {
-                KnuthElement el = (KnuthElement)this.get(i);
+            for (Object o : this) {
+                KnuthElement el = (KnuthElement) o;
                 if (el.isBox()) {
                     return true;
                 }
@@ -729,9 +729,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
 
             // loop over the KnuthSequences (and single KnuthElements) in returnedList
-            ListIterator iter = inlineElements.listIterator();
-            while (iter.hasNext()) {
-                KnuthSequence sequence = (KnuthSequence) iter.next();
+            for (Object inlineElement : inlineElements) {
+                KnuthSequence sequence = (KnuthSequence) inlineElement;
                 // the sequence contains inline Knuth elements
                 if (sequence.isInlineSequence()) {
                     // look at the last element
@@ -745,9 +744,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     // else this is the last paragraph
                     if (lastPar == null) {
                         lastPar = new Paragraph(this,
-                                                textAlignment, textAlignmentLast,
-                                                textIndent.getValue(this),
-                                                lastLineEndIndent.getValue(this));
+                                textAlignment, textAlignmentLast,
+                                textIndent.getValue(this),
+                                lastLineEndIndent.getValue(this));
                         lastPar.startSequence();
                         if (log.isTraceEnabled()) {
                             trace.append(" [");
@@ -765,7 +764,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     // finish last paragraph if it was closed with a linefeed
                     if (lastElement.isPenalty()
                             && ((KnuthPenalty) lastElement).getPenalty()
-                                == -KnuthPenalty.INFINITE) {
+                            == -KnuthPenalty.INFINITE) {
                         // a penalty item whose value is -inf
                         // represents a preserved linefeed,
                         // which forces a line break
@@ -938,10 +937,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
             if (!seq.isInlineSequence()) {
                 List<ListElement> targetList = new LinkedList<ListElement>();
-                ListIterator listIter = seq.listIterator();
-                while (listIter.hasNext()) {
+                for (Object aSeq : seq) {
                     ListElement tempElement;
-                    tempElement = (ListElement) listIter.next();
+                    tempElement = (ListElement) aSeq;
                     LayoutManager lm = tempElement.getLayoutManager();
                     if (baselineOffset < 0 && lm != null && lm.hasLineAreaDescendant()) {
                         baselineOffset = lm.getBaselineOffset();
@@ -1328,7 +1326,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     }
                 }
                 if (log.isTraceEnabled()) {
-                    log.trace(" Word to hyphenate: " + sbChars.toString());
+                    log.trace(" Word to hyphenate: " + sbChars);
                 }
                 // find hyphenation points
                 HyphContext hc = getHyphenContext(sbChars);

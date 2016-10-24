@@ -202,7 +202,7 @@ public class AFMParser {
             }
             Integer newParseMode = PARSE_MODE_CHANGES.get(key);
             if (newParseMode != null) {
-                parseMode = newParseMode.intValue();
+                parseMode = newParseMode;
             }
         }
         return (AFMFile)stack.pop();
@@ -528,7 +528,7 @@ public class AFMParser {
 
     private static class IsBaseFont extends AbstractValueHandler {
         public void parse(String line, int startpos, Stack<Object> stack) throws IOException {
-            if (getBooleanValue(line, startpos).booleanValue()) {
+            if (getBooleanValue(line, startpos)) {
                 throw new IOException("Only base fonts are currently supported!");
             }
         }
@@ -536,7 +536,7 @@ public class AFMParser {
 
     private static class IsCIDFont extends AbstractValueHandler {
         public void parse(String line, int startpos, Stack<Object> stack) throws IOException {
-            if (getBooleanValue(line, startpos).booleanValue()) {
+            if (getBooleanValue(line, startpos)) {
                 throw new IOException("CID fonts are currently not supported!");
             }
         }

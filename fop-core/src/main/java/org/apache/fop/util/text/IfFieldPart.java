@@ -81,7 +81,7 @@ public class IfFieldPart implements Part {
     protected boolean isTrue(Map params) {
         Object obj = params.get(fieldName);
         if (obj instanceof Boolean) {
-            return ((Boolean)obj).booleanValue();
+            return (Boolean) obj;
         } else {
             return (obj != null);
         }

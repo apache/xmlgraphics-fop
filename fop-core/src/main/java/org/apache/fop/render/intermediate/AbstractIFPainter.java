@@ -113,8 +113,8 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
 
     private AffineTransform combine(AffineTransform[] transforms) {
         AffineTransform at = new AffineTransform();
-        for (int i = 0, c = transforms.length; i < c; i++) {
-            at.concatenate(transforms[i]);
+        for (AffineTransform transform : transforms) {
+            at.concatenate(transform);
         }
         return at;
     }
@@ -432,13 +432,13 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
             state.setFontStyle(style);
         }
         if (weight != null) {
-            state.setFontWeight(weight.intValue());
+            state.setFontWeight(weight);
         }
         if (variant != null) {
             state.setFontVariant(variant);
         }
         if (size != null) {
-            state.setFontSize(size.intValue());
+            state.setFontSize(size);
         }
         if (color != null) {
             state.setTextColor(color);
