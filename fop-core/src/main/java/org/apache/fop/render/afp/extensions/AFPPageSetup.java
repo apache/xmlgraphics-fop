@@ -32,6 +32,7 @@ public class AFPPageSetup extends AFPExtensionAttachment {
 
     /** value attribute */
     protected static final String ATT_VALUE = "value";
+    protected static final String ATT_ENCODING = "encoding";
 
     /** placement attribute */
     protected static final String ATT_PLACEMENT = "placement";
@@ -144,6 +145,9 @@ public class AFPPageSetup extends AFPExtensionAttachment {
         }
         if (this.placement != ExtensionPlacement.DEFAULT) {
             atts.addAttribute(null, ATT_PLACEMENT, ATT_PLACEMENT, "CDATA", placement.getXMLValue());
+        }
+        if (encoding != TagLogicalElement.State.ENCODING_NONE) {
+            atts.addAttribute(null, ATT_ENCODING, ATT_ENCODING, "CDATA", String.valueOf(encoding));
         }
         handler.startElement(CATEGORY, elementName, elementName, atts);
         if (content != null && content.length() > 0) {
