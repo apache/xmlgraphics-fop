@@ -131,13 +131,23 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
             log.debug("Starting layout");
         }
 
-        curPage = makeNewPage(false);
+        boolean finished = false;
+        while (!finished) {
+            initialize();
+            curPage = makeNewPage(false);
 
-        pageBreaker = new PageBreaker(this);
-        int flowBPD = getCurrentPV().getBodyRegion().getRemainingBPD();
-        pageBreaker.doLayout(flowBPD);
+            pageBreaker = new PageBreaker(this);
+            int flowBPD = getCurrentPV().getBodyRegion().getRemainingBPD();
+            finished = pageBreaker.doLayout(flowBPD);
+            pageProvider.skipPagePositionOnly = true;
+        }
 
         finishPage();
+    }
+
+    public void initialize() {
+        super.initialize();
+        pageProvider.initialize();
     }
 
     /** {@inheritDoc} */

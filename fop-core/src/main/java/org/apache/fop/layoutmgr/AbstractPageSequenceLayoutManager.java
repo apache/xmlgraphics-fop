@@ -111,6 +111,7 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
     public void initialize() {
         startPageNum = pageSeq.getStartingPageNumber();
         currentPageNum = startPageNum - 1;
+        curPage = null;
     }
 
     /**
