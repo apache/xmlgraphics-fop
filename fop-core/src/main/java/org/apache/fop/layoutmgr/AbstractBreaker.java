@@ -45,6 +45,7 @@ public abstract class AbstractBreaker {
     private LayoutManager originalRestartAtLM;
     private Position positionAtBreak;
     private List firstElementsForRestart;
+    protected PageSequenceLayoutManager pslm;
 
     /**
      * A page break position.
@@ -368,7 +369,7 @@ public abstract class AbstractBreaker {
      * @param autoHeight true if warnings about overflows should be disabled because the
      *                   the BPD is really undefined (for footnote-separators, for example)
      */
-    public void doLayout(int flowBPD, boolean autoHeight) {
+    public boolean doLayout(int flowBPD, boolean autoHeight) {
         LayoutContext childLC = createLayoutContext();
         childLC.setStackLimitBP(MinOptMax.getInstance(flowBPD));
         alignment = Constants.EN_START;
@@ -418,6 +419,10 @@ public abstract class AbstractBreaker {
                     onLastPageAndIPDChanges = (lastPageHasIPDChange() && !thereIsANonRestartableLM(alg)
                             && (shouldRedoLayout() || (wasLayoutRedone() && optimalPageCount > 1)));
                 }
+                if ((ipdChangesOnNextPage || hasMoreContent() || optimalPageCount > 1)
+                        && pslm != null && pslm.getCurrentPage().isPagePositionOnly) {
+                    return false;
+                }
                 if (alg.handlingFloat()) {
                     nextSequenceStartsOn = handleFloatLayout(alg, optimalPageCount, blockList, childLC);
                 } else if (ipdChangesOnNextPage || onLastPageAndIPDChanges) {
@@ -457,6 +462,7 @@ public abstract class AbstractBreaker {
 
         // done
         blockLists = null;
+        return true;
     }
 
     private LayoutManager getRestartAtLM(PageBreakingAlgorithm alg, boolean ipdChangesOnNextPage,

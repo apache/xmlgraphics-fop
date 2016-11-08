@@ -43,7 +43,6 @@ import org.apache.fop.traits.MinOptMax;
  */
 public class PageBreaker extends AbstractBreaker {
 
-    private PageSequenceLayoutManager pslm;
     private boolean firstPart = true;
     private boolean pageBreakHandled;
     private boolean needColumnBalancing;
@@ -109,8 +108,8 @@ public class PageBreaker extends AbstractBreaker {
      * Starts the page breaking process.
      * @param flowBPD the constant available block-progression-dimension (used for every part)
      */
-    void doLayout(int flowBPD) {
-        doLayout(flowBPD, false);
+    boolean doLayout(int flowBPD) {
+        return doLayout(flowBPD, false);
     }
 
     /** {@inheritDoc} */

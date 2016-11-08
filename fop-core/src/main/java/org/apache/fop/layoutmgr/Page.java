@@ -34,6 +34,7 @@ public class Page {
 
     private SimplePageMaster spm;
     private PageViewport pageViewport;
+    protected boolean isPagePositionOnly;
 
     /**
      * Main constructor
@@ -44,9 +45,10 @@ public class Page {
      * @param spanAll true if the first span area spans all columns
      */
     public Page(SimplePageMaster spm, int pageNumber, String pageNumberStr,
-            boolean blank, boolean spanAll) {
+            boolean blank, boolean spanAll, boolean isPagePositionOnly) {
         this.spm = spm;
         this.pageViewport = new PageViewport(spm, pageNumber, pageNumberStr, blank, spanAll);
+        this.isPagePositionOnly = isPagePositionOnly;
     }
 
     /**

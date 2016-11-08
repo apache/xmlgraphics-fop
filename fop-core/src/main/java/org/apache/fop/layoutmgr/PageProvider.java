@@ -75,6 +75,8 @@ public class PageProvider implements Constants {
      */
     private PageSequence pageSeq;
 
+    protected boolean skipPagePositionOnly;
+
     /**
      * Main constructor.
      * @param ath the area tree handler
@@ -84,6 +86,10 @@ public class PageProvider implements Constants {
         this.areaTreeHandler = ath;
         this.pageSeq = ps;
         this.startPageOfPageSequence = ps.getStartingPageNumber();
+    }
+
+    public void initialize() {
+        cachedPages.clear();
     }
 
     /**
@@ -346,7 +352,11 @@ public class PageProvider implements Constants {
         boolean isFirstPage = (startPageOfPageSequence == index);
         SimplePageMaster spm = pageSeq.getNextSimplePageMaster(
                 index, isFirstPage, isLastPage, isBlank);
-        Page page = new Page(spm, index, pageNumberString, isBlank, spanAll);
+        boolean isPagePositionOnly = pageSeq.hasPagePositionOnly() && !skipPagePositionOnly;
+        if (isPagePositionOnly) {
+            spm = pageSeq.getNextSimplePageMaster(index, isFirstPage, true, isBlank);
+        }
+        Page page = new Page(spm, index, pageNumberString, isBlank, spanAll, isPagePositionOnly);
         //Set unique key obtained from the AreaTreeHandler
         page.getPageViewport().setKey(areaTreeHandler.generatePageViewportKey());
         page.getPageViewport().setForeignAttributes(spm.getForeignAttributes());
@@ -372,7 +382,7 @@ public class PageProvider implements Constants {
         int index = this.cachedPages.size();
         boolean isFirstPage = (startPageOfPageSequence == index);
         SimplePageMaster spm = pageSeq.getLastSimplePageMaster(index, isFirstPage, false);
-        Page page = new Page(spm, index, "", false, false);
+        Page page = new Page(spm, index, "", false, false, false);
         if (pageSeq.getRoot().getLastSeq() != null && pageSeq.getRoot().getLastSeq() != pageSeq) {
             return -1;
         }
