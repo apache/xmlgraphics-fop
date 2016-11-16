@@ -30,7 +30,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -97,8 +96,8 @@ public class FopServlet extends HttpServlet {
     public void init() throws ServletException {
         this.uriResolver = new ServletContextURIResolver(getServletContext());
         this.transFactory = TransformerFactory.newInstance();
-        transFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        transFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        transFactory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalDTD", "");
+        transFactory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalStylesheet", "");
         this.transFactory.setURIResolver(this.uriResolver);
         //Configure FopFactory as desired
         // TODO: Double check this behaves properly!!
