@@ -244,6 +244,7 @@ public class InputHandler implements ErrorListener, Renderable {
         SAXParserFactory spf = SAXParserFactory.newInstance();
         spf.setFeature("http://xml.org/sax/features/namespaces", true);
         spf.setFeature("http://apache.org/xml/features/xinclude", true);
+        spf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         XMLReader xr = spf.newSAXParser().getXMLReader();
         return xr;
     }
