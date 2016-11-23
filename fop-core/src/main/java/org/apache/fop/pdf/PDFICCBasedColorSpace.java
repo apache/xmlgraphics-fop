@@ -138,7 +138,7 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
     public static PDFICCStream setupsRGBColorProfile(PDFDocument pdfDoc) {
         ICC_Profile profile;
         PDFICCStream sRGBProfile = pdfDoc.getFactory().makePDFICCStream();
-        InputStream in = PDFDocument.class.getResourceAsStream("sRGB Color Space Profile.icm");
+        InputStream in = PDFDocument.class.getResourceAsStream("sRGB.icc");
         if (in != null) {
             try {
                 profile = ColorProfileUtil.getICC_Profile(in);

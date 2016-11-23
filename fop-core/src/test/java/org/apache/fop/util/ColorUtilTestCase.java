@@ -129,7 +129,7 @@ public class ColorUtilTestCase {
     public void testRGBICC() throws Exception {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         // [TBD] FIXME - use getResource() to access profile [GA]
-        URI sRGBLoc = new URI("../fop-core/src/main/resources/org/apache/fop/pdf/sRGB%20Color%20Space%20Profile.icm");
+        URI sRGBLoc = new URI("../fop-core/src/main/resources/org/apache/fop/pdf/sRGB.icc");
         ColorSpace cs = fopFactory.getColorSpaceCache().get(
                 "sRGBAlt", sRGBLoc.toASCIIString(), RenderingIntent.AUTO);
         assertNotNull("Color profile not found", cs);
