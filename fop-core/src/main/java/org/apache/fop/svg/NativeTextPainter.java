@@ -63,6 +63,7 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
 
     /** the logger for this class */
     protected static final Log log = LogFactory.getLog(NativeTextPainter.class);
+    private static final boolean DEBUG = false;
 
     /** the font collection */
     protected final FontInfo fontInfo;
@@ -115,7 +116,7 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
             textRun.getLayout().draw(g2d);
             return;
         } else {
-            GeneralPath debugShapes = log.isDebugEnabled() ? new GeneralPath() : null;
+            GeneralPath debugShapes = new GeneralPath();
             preparePainting(g2d);
             saveGraphicsState();
             setInitialTransform(g2d.getTransform());
@@ -124,7 +125,7 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
             writeGlyphs((FOPGVTGlyphVector) gv, debugShapes);
             endTextObject();
             restoreGraphicsState();
-            if (debugShapes != null) {
+            if (DEBUG) {
                 g2d.setStroke(new BasicStroke(0));
                 g2d.setColor(Color.LIGHT_GRAY);
                 g2d.draw(debugShapes);
@@ -147,7 +148,7 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
             if (log.isTraceEnabled()) {
                 log.trace("pos " + glyphPos + ", transform " + glyphTransform);
             }
-            if (debugShapes != null) {
+            if (DEBUG) {
                 Shape sh = gv.getGlyphLogicalBounds(index);
                 if (sh == null) {
                     sh = new Ellipse2D.Double(glyphPos.getX(), glyphPos.getY(), 2, 2);
