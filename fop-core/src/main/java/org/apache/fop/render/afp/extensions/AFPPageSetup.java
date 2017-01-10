@@ -138,16 +138,16 @@ public class AFPPageSetup extends AFPExtensionAttachment {
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
         if (name != null && name.length() > 0) {
-            atts.addAttribute(null, ATT_NAME, ATT_NAME, "CDATA", name);
+            atts.addAttribute("", ATT_NAME, ATT_NAME, "CDATA", name);
         }
         if (value != null && value.length() > 0) {
-            atts.addAttribute(null, ATT_VALUE, ATT_VALUE, "CDATA", value);
+            atts.addAttribute("", ATT_VALUE, ATT_VALUE, "CDATA", value);
         }
         if (this.placement != ExtensionPlacement.DEFAULT) {
-            atts.addAttribute(null, ATT_PLACEMENT, ATT_PLACEMENT, "CDATA", placement.getXMLValue());
+            atts.addAttribute("", ATT_PLACEMENT, ATT_PLACEMENT, "CDATA", placement.getXMLValue());
         }
         if (encoding != TagLogicalElement.State.ENCODING_NONE) {
-            atts.addAttribute(null, ATT_ENCODING, ATT_ENCODING, "CDATA", String.valueOf(encoding));
+            atts.addAttribute("", ATT_ENCODING, ATT_ENCODING, "CDATA", String.valueOf(encoding));
         }
         handler.startElement(CATEGORY, elementName, elementName, atts);
         if (content != null && content.length() > 0) {

@@ -83,8 +83,8 @@ public class FontListSerializer {
                 continue;
             }
             atts.clear();
-            atts.addAttribute(null, NAME, NAME, CDATA, familyName);
-            atts.addAttribute(null, STRIPPED_NAME, STRIPPED_NAME, CDATA,
+            atts.addAttribute("", NAME, NAME, CDATA, familyName);
+            atts.addAttribute("", STRIPPED_NAME, STRIPPED_NAME, CDATA,
                     stripQuotes(familyName));
             handler.startElement(FAMILY, atts);
 
@@ -109,8 +109,8 @@ public class FontListSerializer {
         for (Object container : containers) {
             FontSpec cont = (FontSpec) container;
             atts.clear();
-            atts.addAttribute(null, KEY, KEY, CDATA, cont.getKey());
-            atts.addAttribute(null, TYPE, TYPE, CDATA,
+            atts.addAttribute("", KEY, KEY, CDATA, cont.getKey());
+            atts.addAttribute("", TYPE, TYPE, CDATA,
                     cont.getFontMetrics().getFontType().getName());
             handler.startElement(FONT, atts);
             generateXMLForTriplets(handler, cont.getTriplets());
@@ -126,9 +126,9 @@ public class FontListSerializer {
         for (Object triplet1 : triplets) {
             FontTriplet triplet = (FontTriplet) triplet1;
             atts.clear();
-            atts.addAttribute(null, NAME, NAME, CDATA, triplet.getName());
-            atts.addAttribute(null, STYLE, STYLE, CDATA, triplet.getStyle());
-            atts.addAttribute(null, WEIGHT, WEIGHT, CDATA,
+            atts.addAttribute("", NAME, NAME, CDATA, triplet.getName());
+            atts.addAttribute("", STYLE, STYLE, CDATA, triplet.getStyle());
+            atts.addAttribute("", WEIGHT, WEIGHT, CDATA,
                     Integer.toString(triplet.getWeight()));
             handler.element(TRIPLET, atts);
         }

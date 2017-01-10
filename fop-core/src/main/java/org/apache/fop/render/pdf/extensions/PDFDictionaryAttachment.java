@@ -113,26 +113,26 @@ public class PDFDictionaryAttachment extends PDFExtensionAttachment {
             String idName = PDFDictionaryElement.ATT_ID;
             String id = dictionary.getProperty(PDFDictionaryExtension.PROPERTY_ID);
             if (id != null) {
-                attributes.addAttribute(null, idName, idName, "ID", id);
+                attributes.addAttribute("", idName, idName, "ID", id);
             }
         }
         if (type == PDFDictionaryType.Action) {
             String actionTypeName = PDFActionElement.ATT_TYPE;
             String actionType = dictionary.getProperty(PDFActionExtension.PROPERTY_TYPE);
             if (actionType != null) {
-                attributes.addAttribute(null, actionTypeName, actionTypeName, "CDATA", actionType);
+                attributes.addAttribute("", actionTypeName, actionTypeName, "CDATA", actionType);
             }
         } else if (type == PDFDictionaryType.Page) {
             String pageNumbersName = PDFPageExtension.PROPERTY_PAGE_NUMBERS;
             String pageNumbers = dictionary.getProperty(pageNumbersName);
             if (pageNumbers != null) {
-                attributes.addAttribute(null, pageNumbersName, pageNumbersName, "CDATA", pageNumbers);
+                attributes.addAttribute("", pageNumbersName, pageNumbersName, "CDATA", pageNumbers);
             }
         } else if (type == PDFDictionaryType.Dictionary) {
             String keyName = PDFCollectionEntryElement.ATT_KEY;
             String key = dictionary.getKey();
             if (key != null) {
-                attributes.addAttribute(null, keyName, keyName, "CDATA", key);
+                attributes.addAttribute("", keyName, keyName, "CDATA", key);
             }
         }
         return attributes;
@@ -142,7 +142,7 @@ public class PDFDictionaryAttachment extends PDFExtensionAttachment {
         String keyName = PDFCollectionEntryExtension.PROPERTY_KEY;
         String key = array.getKey();
         if (key != null) {
-            attributes.addAttribute(null, keyName, keyName, "CDATA", key);
+            attributes.addAttribute("", keyName, keyName, "CDATA", key);
         }
         return attributes;
     }
@@ -151,13 +151,13 @@ public class PDFDictionaryAttachment extends PDFExtensionAttachment {
         String keyName = PDFCollectionEntryElement.ATT_KEY;
         String key = entry.getKey();
         if (key != null) {
-            attributes.addAttribute(null, keyName, keyName, "CDATA", key);
+            attributes.addAttribute("", keyName, keyName, "CDATA", key);
         }
         if (entry instanceof PDFReferenceExtension) {
             String refid = ((PDFReferenceExtension) entry).getReferenceId();
             if (refid != null) {
                 String refidName = PDFReferenceElement.ATT_REFID;
-                attributes.addAttribute(null, refidName, refidName, "IDREF", refid);
+                attributes.addAttribute("", refidName, refidName, "IDREF", refid);
             }
         }
         return attributes;

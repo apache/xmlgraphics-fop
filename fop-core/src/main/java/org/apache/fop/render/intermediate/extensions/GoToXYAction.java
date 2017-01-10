@@ -144,15 +144,15 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
         AttributesImpl atts = new AttributesImpl();
         if (this.isCompleteExceptTargetLocation()) {
             final Point reportedTargetLocation = this.getTargetLocation();
-            atts.addAttribute(null, "id", "id", XMLUtil.CDATA, getID());
-            atts.addAttribute(null, "page-index", "page-index",
+            atts.addAttribute("", "id", "id", XMLUtil.CDATA, getID());
+            atts.addAttribute("", "page-index", "page-index",
                     XMLUtil.CDATA, Integer.toString(pageIndex));
-            atts.addAttribute(null, "x", "x", XMLUtil.CDATA,
+            atts.addAttribute("", "x", "x", XMLUtil.CDATA,
                     Integer.toString(reportedTargetLocation.x));
-            atts.addAttribute(null, "y", "y", XMLUtil.CDATA,
+            atts.addAttribute("", "y", "y", XMLUtil.CDATA,
                     Integer.toString(reportedTargetLocation.y));
         } else {
-            atts.addAttribute(null, "idref", "idref", XMLUtil.CDATA, getID());
+            atts.addAttribute("", "idref", "idref", XMLUtil.CDATA, getID());
         }
         handler.startElement(GOTO_XY.getNamespaceURI(),
                 GOTO_XY.getLocalName(), GOTO_XY.getQName(), atts);
