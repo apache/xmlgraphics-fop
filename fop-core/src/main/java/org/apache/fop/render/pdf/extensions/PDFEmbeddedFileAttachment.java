@@ -140,13 +140,13 @@ public class PDFEmbeddedFileAttachment extends PDFExtensionAttachment {
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
         if (filename != null && filename.length() > 0) {
-            atts.addAttribute(null, ATT_NAME, ATT_NAME, "CDATA", filename);
+            atts.addAttribute("", ATT_NAME, ATT_NAME, "CDATA", filename);
         }
         if (src != null && src.length() > 0) {
-            atts.addAttribute(null, ATT_SRC, ATT_SRC, "CDATA", src);
+            atts.addAttribute("", ATT_SRC, ATT_SRC, "CDATA", src);
         }
         if (desc != null && desc.length() > 0) {
-            atts.addAttribute(null, ATT_DESC, ATT_DESC, "CDATA", desc);
+            atts.addAttribute("", ATT_DESC, ATT_DESC, "CDATA", desc);
         }
         String element = getElement();
         handler.startElement(CATEGORY, element, element, atts);

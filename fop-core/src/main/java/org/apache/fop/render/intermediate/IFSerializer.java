@@ -841,7 +841,7 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
         noteAction(destination.getAction());
 
         AttributesImpl atts = new AttributesImpl();
-        atts.addAttribute(null, "name", "name", XMLConstants.CDATA, destination.getName());
+        atts.addAttribute("", "name", "name", XMLConstants.CDATA, destination.getName());
         try {
             handler.startElement(DocumentNavigationExtensionConstants.NAMED_DESTINATION, atts);
             serializeXMLizable(destination.getAction());
@@ -872,8 +872,8 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
         noteAction(bookmark.getAction());
 
         AttributesImpl atts = new AttributesImpl();
-        atts.addAttribute(null, "title", "title", XMLUtil.CDATA, bookmark.getTitle());
-        atts.addAttribute(null, "starting-state", "starting-state",
+        atts.addAttribute("", "title", "title", XMLUtil.CDATA, bookmark.getTitle());
+        atts.addAttribute("", "starting-state", "starting-state",
                 XMLUtil.CDATA, bookmark.isShown() ? "show" : "hide");
         handler.startElement(DocumentNavigationExtensionConstants.BOOKMARK, atts);
         serializeXMLizable(bookmark.getAction());
@@ -891,7 +891,7 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
         noteAction(link.getAction());
 
         AttributesImpl atts = new AttributesImpl();
-        atts.addAttribute(null, "rect", "rect",
+        atts.addAttribute("", "rect", "rect",
                 XMLConstants.CDATA, IFUtil.toString(link.getTargetRect()));
         if (getUserAgent().isAccessibilityEnabled()) {
             addStructRefAttribute(atts,

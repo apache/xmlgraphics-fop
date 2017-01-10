@@ -90,7 +90,7 @@ public class PSSetupCode extends PSExtensionAttachment {
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
         if (name != null && name.length() > 0) {
-            atts.addAttribute(null, ATT_NAME, ATT_NAME, "CDATA", name);
+            atts.addAttribute("", ATT_NAME, ATT_NAME, "CDATA", name);
         }
         String element = getElement();
         handler.startElement(CATEGORY, element, element, atts);

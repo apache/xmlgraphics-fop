@@ -68,10 +68,10 @@ public class AFPIncludeFormMap extends AFPExtensionAttachment {
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
         if (name != null && name.length() > 0) {
-            atts.addAttribute(null, ATT_NAME, ATT_NAME, "CDATA", name);
+            atts.addAttribute("", ATT_NAME, ATT_NAME, "CDATA", name);
         }
         if (this.src != null) {
-            atts.addAttribute(null, ATT_SRC, ATT_SRC, "CDATA", this.src.toASCIIString());
+            atts.addAttribute("", ATT_SRC, ATT_SRC, "CDATA", this.src.toASCIIString());
         }
         handler.startElement(CATEGORY, elementName, elementName, atts);
         handler.endElement(CATEGORY, elementName, elementName);

@@ -117,14 +117,14 @@ public class AFPPageSegmentElement extends AFPPageSetupElement {
         public void toSAX(ContentHandler handler) throws SAXException {
             AttributesImpl atts = new AttributesImpl();
             if (name != null && name.length() > 0) {
-                atts.addAttribute(null, ATT_NAME, ATT_NAME, "CDATA", name);
+                atts.addAttribute("", ATT_NAME, ATT_NAME, "CDATA", name);
             }
             if (value != null && value.length() > 0) {
-                atts.addAttribute(null, ATT_VALUE, ATT_VALUE, "CDATA", value);
+                atts.addAttribute("", ATT_VALUE, ATT_VALUE, "CDATA", value);
             }
 
             if (resourceSrc != null && resourceSrc.length() > 0) {
-                atts.addAttribute(null, ATT_RESOURCE_SRC, ATT_RESOURCE_SRC, "CDATA", resourceSrc);
+                atts.addAttribute("", ATT_RESOURCE_SRC, ATT_RESOURCE_SRC, "CDATA", resourceSrc);
             }
 
             handler.startElement(CATEGORY, elementName, elementName, atts);

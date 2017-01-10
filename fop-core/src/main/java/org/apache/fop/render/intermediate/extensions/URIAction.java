@@ -90,11 +90,11 @@ public class URIAction extends AbstractAction implements DocumentNavigationExten
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
         if (hasID()) {
-            atts.addAttribute(null, "id", "id", XMLUtil.CDATA, getID());
+            atts.addAttribute("", "id", "id", XMLUtil.CDATA, getID());
         }
-        atts.addAttribute(null, "uri", "uri", XMLUtil.CDATA, getURI());
+        atts.addAttribute("", "uri", "uri", XMLUtil.CDATA, getURI());
         if (isNewWindow()) {
-            atts.addAttribute(null, "show-destination", "show-destination", XMLUtil.CDATA, "new");
+            atts.addAttribute("", "show-destination", "show-destination", XMLUtil.CDATA, "new");
         }
         handler.startElement(GOTO_URI.getNamespaceURI(),
                 GOTO_URI.getLocalName(), GOTO_URI.getQName(), atts);
