@@ -30,10 +30,11 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.CharacterCodingException;
 import java.security.MessageDigest;
 import java.util.Map;
 
@@ -898,187 +899,218 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, final int letterSpacing, final int wordSpacing,
-            final int[][] dp, final String text) throws IFException {
-        final int fontSize = this.state.getFontSize();
-        getPaintingState().setFontSize(fontSize);
+    public void drawText(int x, int y,
+            final int letterSpacing, final int wordSpacing, final int[][] dp,
+            final String text) throws IFException {
+        new DefaultPtocaProducer(x, y, letterSpacing, wordSpacing, dp, text);
+    }
 
-        FontTriplet triplet = new FontTriplet(
-                state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
-        //TODO Ignored: state.getFontVariant()
-        String fontKey = getFontKey(triplet);
+    private final class DefaultPtocaProducer implements PtocaProducer {
+        final int[] coords;
+        final int fontReference;
+        final String text;
+        final int[][] dp;
+        final int letterSpacing;
+        final int wordSpacing;
+        final Font font;
+        final AFPFont afpFont;
+        final CharacterSet charSet;
+        final PresentationTextObject pto;
 
-        // register font as necessary
-        Map<String, Typeface> fontMetricMap = getFontInfo().getFonts();
-        final AFPFont afpFont = (AFPFont) fontMetricMap.get(fontKey);
-        final Font font = getFontInfo().getFontInstance(triplet, fontSize);
-        AFPPageFonts pageFonts = getPaintingState().getPageFonts();
-        AFPFontAttributes fontAttributes = pageFonts.registerFont(fontKey, afpFont, fontSize);
+        private DefaultPtocaProducer(int x, int y,
+                                      final int letterSpacing, final int wordSpacing, final int[][] dp,
+                                      final String text) throws IFException {
+            this.letterSpacing = letterSpacing;
+            this.wordSpacing = wordSpacing;
+            this.text = text;
+            this.dp = dp;
+            final int fontSize = state.getFontSize();
+            getPaintingState().setFontSize(fontSize);
 
-        final int fontReference = fontAttributes.getFontReference();
+            FontTriplet triplet = new FontTriplet(
+                    state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
+            //TODO Ignored: state.getFontVariant()
+            String fontKey = getFontKey(triplet);
 
-        final int[] coords = unitConv.mpts2units(new float[] {x, y});
+            // register font as necessary
+            Map<String, Typeface> fontMetricMap = getFontInfo().getFonts();
+            afpFont = (AFPFont) fontMetricMap.get(fontKey);
+            font = getFontInfo().getFontInstance(triplet, fontSize);
+            AFPPageFonts pageFonts = getPaintingState().getPageFonts();
+            AFPFontAttributes fontAttributes = pageFonts.registerFont(fontKey, afpFont, fontSize);
 
-        final CharacterSet charSet = afpFont.getCharacterSet(fontSize);
+            fontReference = fontAttributes.getFontReference();
 
-        if (afpFont.isEmbeddable()) {
+            coords = unitConv.mpts2units(new float[] {x, y});
+
+            charSet = afpFont.getCharacterSet(fontSize);
+
+            if (afpFont.isEmbeddable()) {
+                try {
+                    getDocumentHandler().getResourceManager().embedFont(afpFont, charSet);
+                } catch (IOException ioe) {
+                    throw new IFException("Error while embedding font resources", ioe);
+                }
+            }
+
+            AbstractPageObject page = getDataStream().getCurrentPage();
+
             try {
-                getDocumentHandler().getResourceManager().embedFont(afpFont, charSet);
+                if (bytesAvailable != null && bytesAvailable < getSize()) {
+                    page.endPresentationObject();
+                }
+                pto = page.getPresentationTextObject();
+                pto.createControlSequences(this);
             } catch (IOException ioe) {
-                throw new IFException("Error while embedding font resources", ioe);
+                throw new IFException("I/O error in drawText()", ioe);
             }
         }
 
-        AbstractPageObject page = getDataStream().getCurrentPage();
-
-        try {
-            int size = charSet.encodeChars(text).getLength();
-            if (bytesAvailable != null && bytesAvailable < size) {
-                page.endPresentationObject();
-            }
-        } catch (CharacterCodingException e) {
-            throw new IFException(e.getMessage(), e);
+        private int getSize() throws IOException {
+            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            PtocaBuilder pb = new PtocaBuilder() {
+                protected OutputStream getOutputStreamForControlSequence(int length) {
+                    return bos;
+                }
+            };
+            produce(pb);
+            return bos.size();
         }
-        final PresentationTextObject pto = page.getPresentationTextObject();
-        try {
-            pto.createControlSequences(new PtocaProducer() {
 
-                public void produce(PtocaBuilder builder) throws IOException {
-                    Point p = getPaintingState().getPoint(coords[X], coords[Y]);
-                    builder.setTextOrientation(getPaintingState().getRotation());
-                    builder.absoluteMoveBaseline(p.y);
-                    builder.absoluteMoveInline(p.x);
+        public void produce(PtocaBuilder builder) throws IOException {
+            Point p = getPaintingState().getPoint(coords[X], coords[Y]);
+            builder.setTextOrientation(getPaintingState().getRotation());
+            builder.absoluteMoveBaseline(p.y);
+            builder.absoluteMoveInline(p.x);
 
-                    builder.setExtendedTextColor(state.getTextColor());
-                    builder.setCodedFont((byte) fontReference);
+            builder.setExtendedTextColor(state.getTextColor());
+            builder.setCodedFont((byte) fontReference);
 
-                    int l = text.length();
-                    int[] dx = IFUtil.convertDPToDX(dp);
-                    int dxl = (dx != null ? dx.length : 0);
-                    StringBuffer sb = new StringBuffer();
+            int l = text.length();
+            int[] dx = IFUtil.convertDPToDX(dp);
+            int dxl = (dx != null ? dx.length : 0);
+            StringBuffer sb = new StringBuffer();
 
-                    if (dxl > 0 && dx[0] != 0) {
-                        int dxu = Math.round(unitConv.mpt2units(dx[0]));
-                        builder.relativeMoveInline(-dxu);
-                    }
+            if (dxl > 0 && dx[0] != 0) {
+                int dxu = Math.round(unitConv.mpt2units(dx[0]));
+                builder.relativeMoveInline(-dxu);
+            }
 
-                    //Following are two variants for glyph placement.
-                    //SVI does not seem to be implemented in the same way everywhere, so
-                    //a fallback alternative is preserved here.
-                    final boolean usePTOCAWordSpacing = true;
-                    if (usePTOCAWordSpacing) {
+            //Following are two variants for glyph placement.
+            //SVI does not seem to be implemented in the same way everywhere, so
+            //a fallback alternative is preserved here.
+            final boolean usePTOCAWordSpacing = true;
+            if (usePTOCAWordSpacing) {
 
-                        int interCharacterAdjustment = 0;
-                        if (letterSpacing != 0) {
-                            interCharacterAdjustment = Math.round(unitConv.mpt2units(
-                                    letterSpacing));
-                        }
-                        builder.setInterCharacterAdjustment(interCharacterAdjustment);
+                int interCharacterAdjustment = 0;
+                if (letterSpacing != 0) {
+                    interCharacterAdjustment = Math.round(unitConv.mpt2units(
+                            letterSpacing));
+                }
+                builder.setInterCharacterAdjustment(interCharacterAdjustment);
 
-                        int spaceWidth = font.getCharWidth(CharUtilities.SPACE);
-                        int fixedSpaceCharacterIncrement = Math.round(unitConv.mpt2units(
-                                spaceWidth + letterSpacing));
-                        int varSpaceCharacterIncrement = fixedSpaceCharacterIncrement;
-                        if (wordSpacing != 0) {
-                            varSpaceCharacterIncrement = Math.round(unitConv.mpt2units(
-                                    spaceWidth + wordSpacing + letterSpacing));
-                        }
-                        builder.setVariableSpaceCharacterIncrement(varSpaceCharacterIncrement);
+                int spaceWidth = font.getCharWidth(CharUtilities.SPACE);
+                int fixedSpaceCharacterIncrement = Math.round(unitConv.mpt2units(
+                        spaceWidth + letterSpacing));
+                int varSpaceCharacterIncrement = fixedSpaceCharacterIncrement;
+                if (wordSpacing != 0) {
+                    varSpaceCharacterIncrement = Math.round(unitConv.mpt2units(
+                            spaceWidth + wordSpacing + letterSpacing));
+                }
+                builder.setVariableSpaceCharacterIncrement(varSpaceCharacterIncrement);
 
-                        boolean fixedSpaceMode = false;
-                        int ttPos = p.x;
+                boolean fixedSpaceMode = false;
+                int ttPos = p.x;
 
-                        for (int i = 0; i < l; i++) {
-                            char orgChar = text.charAt(i);
-                            float glyphAdjust = 0;
-                            if (afpFont.getFontType() == FontType.TRUETYPE) {
-                                flushText(builder, sb, charSet);
-                                fixedSpaceMode = true;
-                                int charWidth = font.getCharWidth(orgChar);
-                                sb.append(orgChar);
-                                glyphAdjust += charWidth;
-                            } else if (CharUtilities.isFixedWidthSpace(orgChar)) {
-                                flushText(builder, sb, charSet);
-                                builder.setVariableSpaceCharacterIncrement(
-                                        fixedSpaceCharacterIncrement);
-                                fixedSpaceMode = true;
-                                sb.append(CharUtilities.SPACE);
-                                int charWidth = font.getCharWidth(orgChar);
-                                glyphAdjust += (charWidth - spaceWidth);
-                            } else {
-                                if (fixedSpaceMode) {
-                                    flushText(builder, sb, charSet);
-                                    builder.setVariableSpaceCharacterIncrement(
-                                            varSpaceCharacterIncrement);
-                                    fixedSpaceMode = false;
-                                }
-                                char ch;
-                                if (orgChar == CharUtilities.NBSPACE) {
-                                    ch = ' '; //converted to normal space to allow word spacing
-                                } else {
-                                    ch = orgChar;
-                                }
-                                sb.append(ch);
-                            }
-
-                            if (i < dxl - 1) {
-                                glyphAdjust += dx[i + 1];
-                            }
-
-                            if (afpFont.getFontType() == FontType.TRUETYPE) {
-                                flushText(builder, sb, charSet);
-                                ttPos += Math.round(unitConv.mpt2units(glyphAdjust));
-                                builder.absoluteMoveInline(ttPos);
-                            } else if (glyphAdjust != 0) {
-                                flushText(builder, sb, charSet);
-                                int increment = Math.round(unitConv.mpt2units(glyphAdjust));
-                                builder.relativeMoveInline(increment);
-                            }
-                        }
+                for (int i = 0; i < l; i++) {
+                    char orgChar = text.charAt(i);
+                    float glyphAdjust = 0;
+                    if (afpFont.getFontType() == FontType.TRUETYPE) {
+                        flushText(builder, sb, charSet);
+                        fixedSpaceMode = true;
+                        int charWidth = font.getCharWidth(orgChar);
+                        sb.append(orgChar);
+                        glyphAdjust += charWidth;
+                    } else if (CharUtilities.isFixedWidthSpace(orgChar)) {
+                        flushText(builder, sb, charSet);
+                        builder.setVariableSpaceCharacterIncrement(
+                                fixedSpaceCharacterIncrement);
+                        fixedSpaceMode = true;
+                        sb.append(CharUtilities.SPACE);
+                        int charWidth = font.getCharWidth(orgChar);
+                        glyphAdjust += (charWidth - spaceWidth);
                     } else {
-                        for (int i = 0; i < l; i++) {
-                            char orgChar = text.charAt(i);
-                            float glyphAdjust = 0;
-                            if (CharUtilities.isFixedWidthSpace(orgChar)) {
-                                sb.append(CharUtilities.SPACE);
-                                int spaceWidth = font.getCharWidth(CharUtilities.SPACE);
-                                int charWidth = font.getCharWidth(orgChar);
-                                glyphAdjust += (charWidth - spaceWidth);
-                            } else {
-                                sb.append(orgChar);
-                            }
-
-                            if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
-                                glyphAdjust += wordSpacing;
-                            }
-                            glyphAdjust += letterSpacing;
-                            if (i < dxl - 1) {
-                                glyphAdjust += dx[i + 1];
-                            }
-
-                            if (glyphAdjust != 0) {
-                                flushText(builder, sb, charSet);
-                                int increment = Math.round(unitConv.mpt2units(glyphAdjust));
-                                builder.relativeMoveInline(increment);
-                            }
+                        if (fixedSpaceMode) {
+                            flushText(builder, sb, charSet);
+                            builder.setVariableSpaceCharacterIncrement(
+                                    varSpaceCharacterIncrement);
+                            fixedSpaceMode = false;
                         }
+                        char ch;
+                        if (orgChar == CharUtilities.NBSPACE) {
+                            ch = ' '; //converted to normal space to allow word spacing
+                        } else {
+                            ch = orgChar;
+                        }
+                        sb.append(ch);
                     }
-                    flushText(builder, sb, charSet);
-                    bytesAvailable = pto.getBytesAvailable();
-                }
 
-                private void flushText(PtocaBuilder builder, StringBuffer sb,
-                        final CharacterSet charSet) throws IOException {
-                    if (sb.length() > 0) {
-                        builder.addTransparentData(charSet.encodeChars(sb));
-                        sb.setLength(0);
+                    if (i < dxl - 1) {
+                        glyphAdjust += dx[i + 1];
+                    }
+
+                    if (afpFont.getFontType() == FontType.TRUETYPE) {
+                        flushText(builder, sb, charSet);
+                        ttPos += Math.round(unitConv.mpt2units(glyphAdjust));
+                        builder.absoluteMoveInline(ttPos);
+                    } else if (glyphAdjust != 0) {
+                        flushText(builder, sb, charSet);
+                        int increment = Math.round(unitConv.mpt2units(glyphAdjust));
+                        builder.relativeMoveInline(increment);
                     }
                 }
+            } else {
+                for (int i = 0; i < l; i++) {
+                    char orgChar = text.charAt(i);
+                    float glyphAdjust = 0;
+                    if (CharUtilities.isFixedWidthSpace(orgChar)) {
+                        sb.append(CharUtilities.SPACE);
+                        int spaceWidth = font.getCharWidth(CharUtilities.SPACE);
+                        int charWidth = font.getCharWidth(orgChar);
+                        glyphAdjust += (charWidth - spaceWidth);
+                    } else {
+                        sb.append(orgChar);
+                    }
 
-            });
-        } catch (IOException ioe) {
-            throw new IFException("I/O error in drawText()", ioe);
+                    if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
+                        glyphAdjust += wordSpacing;
+                    }
+                    glyphAdjust += letterSpacing;
+                    if (i < dxl - 1) {
+                        glyphAdjust += dx[i + 1];
+                    }
+
+                    if (glyphAdjust != 0) {
+                        flushText(builder, sb, charSet);
+                        int increment = Math.round(unitConv.mpt2units(glyphAdjust));
+                        builder.relativeMoveInline(increment);
+                    }
+                }
+            }
+            flushText(builder, sb, charSet);
+            if (pto != null) {
+                bytesAvailable = pto.getBytesAvailable();
+            }
         }
+
+        private void flushText(PtocaBuilder builder, StringBuffer sb,
+                               final CharacterSet charSet) throws IOException {
+            if (sb.length() > 0) {
+                builder.addTransparentData(charSet.encodeChars(sb));
+                sb.setLength(0);
+            }
+        }
+
     }
 
     /**

@@ -156,7 +156,11 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      * @param lineDataInfo the line data information.
      */
     public void createLine(AFPLineDataInfo lineDataInfo) {
-        getPresentationTextObject().createLineData(lineDataInfo);
+        boolean success = getPresentationTextObject().createLineData(lineDataInfo);
+        if (!success) {
+            endPresentationObject();
+            getPresentationTextObject().createLineData(lineDataInfo);
+        }
     }
 
     /**
@@ -168,7 +172,11 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      */
     public void createText(PtocaProducer producer) throws UnsupportedEncodingException {
         //getPresentationTextObject().createTextData(textDataInfo);
-        getPresentationTextObject().createControlSequences(producer);
+        boolean success = getPresentationTextObject().createControlSequences(producer);
+        if (!success) {
+            endPresentationObject();
+            getPresentationTextObject().createControlSequences(producer);
+        }
 
     }
 
