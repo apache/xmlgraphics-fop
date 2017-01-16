@@ -19,6 +19,7 @@
 
 package org.apache.fop.afp.modca;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -88,12 +89,15 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @param producer the producer
      * @throws UnsupportedEncodingException thrown if character encoding is not supported
      */
-    public void createControlSequences(PtocaProducer producer)
+    public boolean createControlSequences(PtocaProducer producer)
                 throws UnsupportedEncodingException {
         if (currentPresentationTextData == null) {
             startPresentationTextData();
         }
         try {
+            if (getBytesAvailable() != null && getBytesAvailable() < getSize(producer)) {
+                return false;
+            }
             producer.produce(builder);
         } catch (UnsupportedEncodingException e) {
             endPresentationTextData();
@@ -102,6 +106,18 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
             endPresentationTextData();
             handleUnexpectedIOError(ioe);
         }
+        return true;
+    }
+
+    private int getSize(PtocaProducer producer) throws IOException {
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        PtocaBuilder pb = new PtocaBuilder() {
+            protected OutputStream getOutputStreamForControlSequence(int length) {
+                return bos;
+            }
+        };
+        producer.produce(pb);
+        return bos.size();
     }
 
     private class DefaultBuilder extends PtocaBuilder {
@@ -127,12 +143,13 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      *
      * @param lineDataInfo the line data information.
      */
-    public void createLineData(AFPLineDataInfo lineDataInfo) {
+    public boolean createLineData(AFPLineDataInfo lineDataInfo) {
         try {
-            createControlSequences(new LineDataInfoProducer(lineDataInfo));
+            return createControlSequences(new LineDataInfoProducer(lineDataInfo));
         } catch (UnsupportedEncodingException e) {
             handleUnexpectedIOError(e); //Won't happen for lines
         }
+        return false;
     }
 
     /**

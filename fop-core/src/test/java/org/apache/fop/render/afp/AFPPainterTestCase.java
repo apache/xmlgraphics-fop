@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -61,12 +62,14 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.util.ColorUtil;
 
 public class AFPPainterTestCase {
 
@@ -183,6 +186,28 @@ public class AFPPainterTestCase {
                 + "END DOCUMENT DOC00001\n");
     }
 
+    @Test
+    public void testPresentationText2() throws URISyntaxException, IFException, IOException {
+        List<String> strings = new ArrayList<String>();
+        for (int i = 0; i < 5000; i++) {
+            strings.add("tes");
+        }
+        Assert.assertEquals(writeText(strings), "BEGIN DOCUMENT DOC00001\n"
+                + "BEGIN PAGE PGN00001\n"
+                + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "DESCRIPTOR PAGE\n"
+                + "MIGRATION PRESENTATION_TEXT\n"
+                + "END ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "BEGIN PRESENTATION_TEXT PT000001\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000001\n"
+                + "BEGIN PRESENTATION_TEXT PT000002\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000002\n"
+                + "END PAGE PGN00001\n"
+                + "END DOCUMENT DOC00001\n");
+    }
+
     private String writeText(List<String> text) throws URISyntaxException, IOException, IFException {
         FOUserAgent agent = FopFactory.newInstance(new URI(".")).newFOUserAgent();
         IFContext context = new IFContext(agent);
@@ -212,5 +237,43 @@ public class AFPPainterTestCase {
         StringBuilder sb = new StringBuilder();
         new AFPParser(false).read(bis, sb);
         return sb.toString();
+    }
+
+    @Test
+    public void testDrawBorderRect3() throws IFException, PropertyException, IOException {
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        AFPDocumentHandler documentHandler = new AFPDocumentHandler(new IFContext(ua));
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        documentHandler.setResult(new StreamResult(os));
+        documentHandler.startDocument();
+        documentHandler.startPage(0, "", "", new Dimension());
+        AFPPainter afpPainter = new AFPPainter(documentHandler);
+        int style = Constants.EN_DOTTED;
+        BorderProps.Mode mode = BorderProps.Mode.COLLAPSE_OUTER;
+        Color color = ColorUtil.parseColorString(ua, "fop-rgb-icc(0.5019608,0.5019608,0.5019608,#CMYK,,0,0,0,0.5)");
+        int borderWidth = 500;
+        int radiusStart = 0;
+        int radiusEnd = 0;
+        BorderProps border1 = new BorderProps(style, borderWidth, radiusStart, radiusEnd, color, mode);
+        afpPainter.drawBorderRect(new Rectangle(0, 0, 552755, 16090), null, border1, null, null, Color.WHITE);
+        documentHandler.endDocument();
+
+        InputStream bis = new ByteArrayInputStream(os.toByteArray());
+        StringBuilder sb = new StringBuilder();
+        new AFPParser(false).read(bis, sb);
+        Assert.assertEquals(sb.toString(), "BEGIN DOCUMENT DOC00001\n"
+                + "BEGIN PAGE PGN00001\n"
+                + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "DESCRIPTOR PAGE\n"
+                + "MIGRATION PRESENTATION_TEXT\n"
+                + "END ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "BEGIN PRESENTATION_TEXT PT000001\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000001\n"
+                + "BEGIN PRESENTATION_TEXT PT000002\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000002\n"
+                + "END PAGE PGN00001\n"
+                + "END DOCUMENT DOC00001\n");
     }
 }
