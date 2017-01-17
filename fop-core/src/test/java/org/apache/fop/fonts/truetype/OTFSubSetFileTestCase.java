@@ -21,15 +21,20 @@ package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.apache.fontbox.cff.CFFFont;
 
@@ -40,9 +45,8 @@ import org.apache.fop.fonts.truetype.OTFSubSetFile.BytesNumber;
 
 public class OTFSubSetFileTestCase extends OTFFileTestCase {
 
-    CFFDataReader cffReaderSourceSans;
+    private CFFDataReader cffReaderSourceSans;
     private OTFSubSetFile sourceSansSubset;
-    private byte[] sourceSansData;
 
     /**
      * Initialises the test by creating the font subset. A CFFDataReader is
@@ -61,7 +65,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         sourceSansSubset = new OTFSubSetFile();
         String sourceSansHeader = OFFontLoader.readHeader(sourceSansReader);
         sourceSansSubset.readFont(sourceSansReader, "SourceSansProBold", sourceSansHeader, glyphs);
-        sourceSansData = sourceSansSubset.getFontSubset();
+        byte[] sourceSansData = sourceSansSubset.getFontSubset();
         cffReaderSourceSans = new CFFDataReader(sourceSansData);
     }
 
@@ -427,5 +431,41 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         Map<String, DICTEntry> topDictEntries = cffReaderSourceSans.parseDictData(
                 cffReaderSourceSans.getTopDictIndex().getData());
         assertEquals(10, topDictEntries.size());
+    }
+
+    @Test
+    public void testFDSelect() throws IOException {
+        Assert.assertEquals(getSubset(1).length, 39);
+        Assert.assertEquals(getSubset(2).length, 46);
+    }
+
+    private byte[] getSubset(final int opLen) throws IOException {
+        FontFileReader reader = sourceSansReader;
+        String header = OFFontLoader.readHeader(reader);
+
+        OTFSubSetFile otfSubSetFile = new OTFSubSetFile() {
+            protected void createCFF() throws IOException {
+                cffReader = mock(CFFDataReader.class);
+                when(cffReader.getHeader()).thenReturn(new byte[0]);
+                when(cffReader.getTopDictIndex()).thenReturn(new CFFDataReader().new CFFIndexData() {
+                    public byte[] getByteData() throws IOException {
+                        return new byte[3];
+                    }
+                });
+
+                LinkedHashMap<String, DICTEntry> map = new LinkedHashMap<String, DICTEntry>();
+                DICTEntry dict = new DICTEntry();
+                dict.setOperands(Collections.<Number>singletonList(1));
+                map.put("charset", dict);
+                map.put("CharStrings", dict);
+                when((cffReader.getTopDictEntries())).thenReturn(map);
+                when(cffReader.getFDSelect()).thenReturn(new CFFDataReader().new Format3FDSelect());
+                cffReader.getTopDictEntries().get("CharStrings").setOperandLength(opLen);
+                super.createCFF();
+            }
+        };
+
+        otfSubSetFile.readFont(reader, "StandardOpenType", header, new HashMap<Integer, Integer>());
+        return otfSubSetFile.getFontSubset();
     }
 }

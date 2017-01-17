@@ -415,11 +415,10 @@ public class OTFSubSetFile extends OTFFile {
                 int gid = subsetGlyph.getKey();
                 int group = subsetGroups.get(gid);
                 localIndexSubr = cffReader.getFDFonts().get(group).getLocalSubrData();
-                localUniques = foundLocalUniques.get(uniqueGroups.indexOf(subsetGroups.get(gid)));
+                localUniques = foundLocalUniques.get(uniqueGroups.indexOf(group));
                 type2Parser = new Type2Parser();
 
-                FDIndexReference newFDReference = new FDIndexReference(
-                        uniqueGroups.indexOf(subsetGroups.get(gid)), subsetGroups.get(gid));
+                FDIndexReference newFDReference = new FDIndexReference(uniqueGroups.indexOf(group), group);
                 subsetFDSelect.put(subsetGlyph.getValue(), newFDReference);
                 byte[] data = charStringsIndex.getValue(gid);
                 preScanForSubsetIndexSize(data);
@@ -460,10 +459,40 @@ public class OTFSubSetFile extends OTFFile {
     }
 
     protected void writeFDSelect() {
-        writeByte(0); //Format
-        for (FDIndexReference e : subsetFDSelect.values()) {
-            writeByte(e.getNewFDIndex());
+        if (cffReader.getTopDictEntries().get("CharStrings").getOperandLength() == 2) {
+            Map<Integer, Integer> indexs = getFormat3Index();
+            writeByte(3); //Format
+            writeCard16(indexs.size());
+            int count = 0;
+            for (Entry<Integer, Integer> x : indexs.entrySet()) {
+                writeCard16(count);
+                writeByte(x.getKey());
+                count += x.getValue();
+            }
+            writeCard16(subsetFDSelect.size());
+        } else {
+            writeByte(0); //Format
+            for (FDIndexReference e : subsetFDSelect.values()) {
+                writeByte(e.getNewFDIndex());
+            }
         }
+    }
+
+    private Map<Integer, Integer> getFormat3Index() {
+        Map<Integer, Integer> indexs = new LinkedHashMap<Integer, Integer>();
+        int last = -1;
+        int count = 0;
+        for (FDIndexReference e : subsetFDSelect.values()) {
+            int i = e.getNewFDIndex();
+            count++;
+            if (i != last) {
+                indexs.put(i, count);
+                count = 1;
+            }
+            last = i;
+        }
+        indexs.put(last, count);
+        return indexs;
     }
 
     protected List<Integer> getUsedFDFonts() {
@@ -534,7 +563,7 @@ public class OTFSubSetFile extends OTFFile {
         return offset;
     }
 
-    private class FDIndexReference {
+    private static class FDIndexReference {
         private int newFDIndex;
         private int oldFDIndex;
 
