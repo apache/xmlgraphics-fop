@@ -814,7 +814,7 @@ public class CFFDataReader {
         }
     }
 
-    public class FDSelect {
+    public abstract class FDSelect {
         private int format;
 
         public void setFormat(int format) {
