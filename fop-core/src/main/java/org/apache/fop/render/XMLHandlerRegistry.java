@@ -19,6 +19,7 @@
 
 package org.apache.fop.render;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class XMLHandlerRegistry {
      */
     public void addXMLHandler(String classname) {
         try {
-            XMLHandler handlerInstance = (XMLHandler)Class.forName(classname).newInstance();
+            XMLHandler handlerInstance = (XMLHandler)Class.forName(classname).getDeclaredConstructor().newInstance();
             addXMLHandler(handlerInstance);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
@@ -78,6 +79,10 @@ public class XMLHandlerRegistry {
             throw new IllegalArgumentException(classname
                                                + " is not an "
                                                + XMLHandler.class.getName());
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 

@@ -72,7 +72,7 @@ public class CreateTestDocuments {
         className = TESTDOCS_PACKAGE + "." + className;
         TestDocument td = null;
         try {
-            td = (TestDocument)Class.forName(className).newInstance();
+            td = (TestDocument)Class.forName(className).getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new Exception("unable to instantiate '" + className
                     + " as a TestDocument object: " + e);

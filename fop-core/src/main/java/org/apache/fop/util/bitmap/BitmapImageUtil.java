@@ -28,6 +28,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Utility method for dealing with bitmap images.
@@ -245,7 +246,7 @@ public final class BitmapImageUtil {
         try {
             String clName = "org.apache.fop.util.bitmap.JAIMonochromeBitmapConverter";
             Class clazz = Class.forName(clName);
-            converter = (MonochromeBitmapConverter)clazz.newInstance();
+            converter = (MonochromeBitmapConverter)clazz.getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException cnfe) {
             // Class was not compiled so is not available. Simply ignore.
         } catch (LinkageError le) {
@@ -257,6 +258,10 @@ public final class BitmapImageUtil {
         } catch (InstantiationException e) {
             // Problem instantiating the class, simply continue with the backup implementation
         } catch (IllegalAccessException e) {
+            // Problem instantiating the class, simply continue with the backup implementation
+        } catch (NoSuchMethodException e) {
+            // Problem instantiating the class, simply continue with the backup implementation
+        } catch (InvocationTargetException e) {
             // Problem instantiating the class, simply continue with the backup implementation
         }
         if (converter == null) {

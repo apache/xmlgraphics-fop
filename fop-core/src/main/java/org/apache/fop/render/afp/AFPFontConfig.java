@@ -20,6 +20,7 @@
 package org.apache.fop.render.afp;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -458,13 +459,17 @@ public final class AFPFontConfig implements FontConfig {
         try {
             Class<? extends Typeface> clazz = Class.forName("org.apache.fop.fonts.base14."
                     + base14Name).asSubclass(Typeface.class);
-            return clazz.newInstance();
+            return clazz.getDeclaredConstructor().newInstance();
         } catch (IllegalAccessException iae) {
             LOG.error(iae.getMessage());
         } catch (ClassNotFoundException cnfe) {
             LOG.error(cnfe.getMessage());
         } catch (InstantiationException ie) {
             LOG.error(ie.getMessage());
+        } catch (NoSuchMethodException e) {
+            LOG.error(e.getMessage());
+        } catch (InvocationTargetException e) {
+            LOG.error(e.getMessage());
         }
         throw new ClassNotFoundException("Couldn't load file for AFP font with base14 name: "
                 + base14Name);

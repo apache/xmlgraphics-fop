@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -202,12 +203,18 @@ public class InputHandler implements ErrorListener, Renderable {
             return;
         }
         try {
-            entityResolver = (EntityResolver) resolverClass.newInstance();
-            uriResolver = (URIResolver) resolverClass.newInstance();
+            entityResolver = (EntityResolver) resolverClass.getDeclaredConstructor().newInstance();
+            uriResolver = (URIResolver) resolverClass.getDeclaredConstructor().newInstance();
         } catch (InstantiationException e) {
             log.error("Error creating the catalog resolver: " + e.getMessage());
             eventProducer.catalogResolverNotCreated(this, e.getMessage());
         } catch (IllegalAccessException e) {
+            log.error("Error creating the catalog resolver: " + e.getMessage());
+            eventProducer.catalogResolverNotCreated(this, e.getMessage());
+        } catch (NoSuchMethodException e) {
+            log.error("Error creating the catalog resolver: " + e.getMessage());
+            eventProducer.catalogResolverNotCreated(this, e.getMessage());
+        } catch (InvocationTargetException e) {
             log.error("Error creating the catalog resolver: " + e.getMessage());
             eventProducer.catalogResolverNotCreated(this, e.getMessage());
         }

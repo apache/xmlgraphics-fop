@@ -19,6 +19,7 @@
 
 package org.apache.fop.render;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -74,7 +75,7 @@ public class ImageHandlerRegistry {
     public void addHandler(String classname) {
         try {
             ImageHandler handlerInstance
-                = (ImageHandler)Class.forName(classname).newInstance();
+                = (ImageHandler)Class.forName(classname).getDeclaredConstructor().newInstance();
             addHandler(handlerInstance);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
@@ -89,6 +90,10 @@ public class ImageHandlerRegistry {
             throw new IllegalArgumentException(classname
                                                + " is not an "
                                                + ImageHandler.class.getName());
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 
