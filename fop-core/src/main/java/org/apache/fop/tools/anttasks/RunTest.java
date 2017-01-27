@@ -199,7 +199,7 @@ public class RunTest extends Task {
         Map diff = null;
         try {
             Class cla = Class.forName(converter, true, loader);
-            Object tc = cla.newInstance();
+            Object tc = cla.getDeclaredConstructor().newInstance();
             Method meth;
 
             meth = cla.getMethod("setBaseDir", new Class[] {

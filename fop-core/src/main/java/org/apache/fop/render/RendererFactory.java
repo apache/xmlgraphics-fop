@@ -20,6 +20,7 @@
 package org.apache.fop.render;
 
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -137,7 +138,7 @@ public class RendererFactory {
     public void addRendererMaker(String className) {
         try {
             AbstractRendererMaker makerInstance
-                = (AbstractRendererMaker)Class.forName(className).newInstance();
+                = (AbstractRendererMaker)Class.forName(className).getDeclaredConstructor().newInstance();
             addRendererMaker(makerInstance);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
@@ -152,6 +153,10 @@ public class RendererFactory {
             throw new IllegalArgumentException(className
                                                + " is not an "
                                                + AbstractRendererMaker.class.getName());
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -163,7 +168,7 @@ public class RendererFactory {
     public void addFOEventHandlerMaker(String className) {
         try {
             AbstractFOEventHandlerMaker makerInstance
-                = (AbstractFOEventHandlerMaker)Class.forName(className).newInstance();
+                = (AbstractFOEventHandlerMaker)Class.forName(className).getDeclaredConstructor().newInstance();
             addFOEventHandlerMaker(makerInstance);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
@@ -178,6 +183,10 @@ public class RendererFactory {
             throw new IllegalArgumentException(className
                                                + " is not an "
                                                + AbstractFOEventHandlerMaker.class.getName());
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -189,7 +198,7 @@ public class RendererFactory {
     public void addDocumentHandlerMaker(String className) {
         try {
             AbstractIFDocumentHandlerMaker makerInstance
-                = (AbstractIFDocumentHandlerMaker)Class.forName(className).newInstance();
+                = (AbstractIFDocumentHandlerMaker)Class.forName(className).getDeclaredConstructor().newInstance();
             addDocumentHandlerMaker(makerInstance);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
@@ -204,6 +213,10 @@ public class RendererFactory {
             throw new IllegalArgumentException(className
                                                + " is not an "
                                                + AbstractIFDocumentHandlerMaker.class.getName());
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 

@@ -43,11 +43,11 @@ public class GraphicsCharacterStringTestCase {
         CharacterSetBuilder csb = CharacterSetBuilder.getSingleByteInstance();
         CharacterSet cs1146 = csb.build("C0H200B0", "T1V10500", "Cp1146",
                 Class.forName("org.apache.fop.fonts.base14.Helvetica").asSubclass(Typeface.class)
-                .newInstance(), null);
+                        .getDeclaredConstructor().newInstance(), null);
         gcsCp1146 = new GraphicsCharacterString(poundsText, 0, 0, cs1146);
         CharacterSet cs500 = csb.build("C0H200B0", "T1V10500", "Cp500",
                 Class.forName("org.apache.fop.fonts.base14.Helvetica").asSubclass(Typeface.class)
-                .newInstance(), null);
+                        .getDeclaredConstructor().newInstance(), null);
         gcsCp500 = new GraphicsCharacterString(dollarsText, 0, 0, cs500);
     }
 

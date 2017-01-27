@@ -177,7 +177,7 @@ public class FOPTestbed extends AbstractLogEnabled
         try {
             Class clazz = Class.forName(this.fopCfg.getAttribute("class",
                     "org.apache.fop.threading.FOProcessorImpl"));
-            Processor fop = (Processor)clazz.newInstance();
+            Processor fop = (Processor)clazz.getDeclaredConstructor().newInstance();
             ContainerUtil.enableLogging(fop, getLogger());
             ContainerUtil.configure(fop, this.fopCfg);
             ContainerUtil.initialize(fop);

@@ -19,6 +19,7 @@
 
 package org.apache.fop.fo;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -94,7 +95,7 @@ public class ElementMappingRegistry {
                 throws IllegalArgumentException {
         try {
             ElementMapping mapping
-                = (ElementMapping)Class.forName(mappingClassName).newInstance();
+                = (ElementMapping)Class.forName(mappingClassName).getDeclaredConstructor().newInstance();
             addElementMapping(mapping);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
@@ -108,6 +109,10 @@ public class ElementMappingRegistry {
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(mappingClassName
                                                + " is not an ElementMapping");
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 

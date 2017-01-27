@@ -19,6 +19,7 @@
 
 package org.apache.fop.util;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class ContentHandlerFactoryRegistry {
     public void addContentHandlerFactory(String classname) {
         try {
             ContentHandlerFactory factory
-                = (ContentHandlerFactory)Class.forName(classname).newInstance();
+                = (ContentHandlerFactory)Class.forName(classname).getDeclaredConstructor().newInstance();
             addContentHandlerFactory(factory);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
@@ -69,6 +70,10 @@ public class ContentHandlerFactoryRegistry {
             throw new IllegalArgumentException(classname
                                                + " is not an "
                                                + ContentHandlerFactory.class.getName());
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 

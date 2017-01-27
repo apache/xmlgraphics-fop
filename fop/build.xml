@@ -160,8 +160,8 @@ list of possible build targets.
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="javac.deprecation" value="on"/>
-  <property name="javac.source" value="1.5"/>
-  <property name="javac.target" value="1.5"/>
+  <property name="javac.source" value="1.6"/>
+  <property name="javac.target" value="1.6"/>
   <property name="javac.fork" value="no"/>
   <property name="junit.fork" value="yes"/>
   <property name="junit.haltonfailure" value="off"/>

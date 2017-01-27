@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -218,8 +219,12 @@ public class FopConfBuilder implements FontConfigurator<FopConfBuilder> {
      */
     public <T extends RendererConfBuilder> T startRendererConfig(Class<T> rendererConfigClass) {
         try {
-            currentRendererConfig = rendererConfigClass.newInstance();
+            currentRendererConfig = rendererConfigClass.getDeclaredConstructor().newInstance();
         } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
