@@ -35,6 +35,7 @@ public class PDFFileSpec extends PDFDictionary {
         super();
         put("Type", new PDFName("Filespec"));
         put("F", filename);
+        put("UF", filename); // for non-ascii filenames, since PDF 1.7, 3.10.2
     }
 
     private String getFilename() {
@@ -77,4 +78,3 @@ public class PDFFileSpec extends PDFDictionary {
         return true;
     }
 }
-
