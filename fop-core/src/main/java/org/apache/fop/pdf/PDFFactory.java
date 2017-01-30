@@ -25,6 +25,8 @@ import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -548,8 +550,6 @@ public class PDFFactory {
         return link;
     }
 
-    private static final String EMBEDDED_FILE = "embedded-file:";
-
     /**
      * Create/find and return the appropriate external PDFAction according to the target
      *
@@ -560,39 +560,113 @@ public class PDFFactory {
      * @return the PDFAction thus created or found
      */
     public PDFAction getExternalAction(String target, boolean newWindow) {
+        URI uri = getTargetUri(target);
+        if (uri != null) {
+            String scheme = uri.getScheme();
+            String filename = uri.getPath();
+            if (filename == null) {
+                filename = uri.getSchemeSpecificPart();
+            }
+            if (scheme == null) {
+                return new PDFUri(uri.toASCIIString());
+            } else if (scheme.equalsIgnoreCase("embedded-file")) {
+                return getActionForEmbeddedFile(filename, newWindow);
+            } else if (scheme.equalsIgnoreCase("file")) {
+                if (filename.startsWith("//")) {
+                    filename = filename.replace("/", "\\");
+                } else if (filename.matches("^/[A-z]:/.*")) {
+                    filename = filename.substring(1);
+                }
+                if (filename.toLowerCase().endsWith(".pdf")) {
+                    int page = -1;
+                    String dest = null;
+                    String fragment = uri.getFragment();
+                    if (fragment != null) {
+                        String fragmentLo = fragment.toLowerCase();
+                        if (fragmentLo.startsWith("page=")) {
+                            page = Integer.parseInt(fragmentLo.substring(5));
+                        } else if (fragmentLo.startsWith("dest=")) {
+                            dest = fragment.substring(5);
+                        }
+                    }
+                    return getGoToPDFAction(filename, dest, page, newWindow);
+                } else {
+                    if (uri.getQuery() != null || uri.getFragment() != null) {
+                        return new PDFUri(uri.toASCIIString());
+                    } else {
+                        return getLaunchAction(filename, newWindow);
+                    }
+                }
+            } else {
+                return new PDFUri(uri.toASCIIString());
+            }
+        }
+        return new PDFUri(target);
+    }
+
+    private URI getTargetUri(String target) {
+        URI uri;
+        try {
+            uri = new URI(target);
+            String scheme = uri.getScheme();
+            String schemeSpecificPart = uri.getSchemeSpecificPart();
+            String authority = uri.getAuthority();
+            if (scheme == null && schemeSpecificPart.matches("//.*")) {
+                uri = getFileUri(target);
+            } else if ((scheme == null) && schemeSpecificPart.matches("/.*")) {
+                uri = getFileUri(target);
+            } else if (scheme != null && scheme.matches("[A-z]")) {
+                uri = getFileUri(target);
+            }  else if (scheme != null && scheme.equalsIgnoreCase("file") && authority != null) {
+                uri = getFileUri(target);
+            }
+        } catch (URISyntaxException e) {
+            uri = getFileUri(target);
+        }
+        return uri;
+    }
+
+    private URI getFileUri(String target) {
+        URI uri;
+        String scheme = null;
+        String fragment = null;
+        String filename = target;
         int index;
         String targetLo = target.toLowerCase();
-        if (target.startsWith(EMBEDDED_FILE)) {
-            // File Attachments (Embedded Files)
-            String filename = target.substring(EMBEDDED_FILE.length());
-            return getActionForEmbeddedFile(filename, newWindow);
-        } else if (targetLo.startsWith("http://")) {
-            // HTTP URL?
-            return new PDFUri(target);
-        } else if (targetLo.startsWith("https://")) {
-            // HTTPS URL?
-            return new PDFUri(target);
-        } else if (targetLo.startsWith("file://")) {
-            // Non PDF files. Try to /Launch them.
-            target = target.substring("file://".length());
-            return getLaunchAction(target);
-        } else if (targetLo.endsWith(".pdf")) {
-            // Bare PDF file name?
-            return getGoToPDFAction(target, null, -1, newWindow);
-        } else if ((index = targetLo.indexOf(".pdf#page=")) > 0) {
-            // PDF file + page?
-            String filename = target.substring(0, index + 4);
-            int page = Integer.parseInt(target.substring(index + 10));
-            return getGoToPDFAction(filename, null, page, newWindow);
-        } else if ((index = targetLo.indexOf(".pdf#dest=")) > 0) {
-            // PDF file + destination?
-            String filename = target.substring(0, index + 4);
-            String dest = target.substring(index + 10);
-            return getGoToPDFAction(filename, dest, -1, newWindow);
-        } else {
-            // None of the above? Default to URI:
-            return new PDFUri(target);
+        if (((index = targetLo.indexOf(".pdf#page=")) > 0)
+                || ((index = targetLo.indexOf(".pdf#dest=")) > 0)) {
+            filename = target.substring(0, index + 4);
+            fragment = target.substring(index + 5);
         }
+
+        if (targetLo.startsWith("file://")) {
+            scheme = "file";
+            filename = filename.substring("file://".length());
+        } else if (targetLo.startsWith("embedded-file:")) {
+            scheme = "embedded-file";
+            filename = filename.substring("embedded-file:".length());
+        } else if (targetLo.startsWith("file:")) {
+            scheme = "file";
+            filename = filename.substring("file:".length());
+        }
+
+        try {
+             filename = filename.replace("\\", "/");
+             if (filename.matches("[A-z]:.*")) {
+                 scheme = (scheme == null) ? "file" : scheme;
+                 filename = "/" + filename;
+             } else if (filename.matches("//.*")) {
+                 scheme = (scheme == null) ? "file" : scheme;
+                 filename = "//" + filename;
+             } else if (filename.matches("/.*")) {
+                 scheme = (scheme == null) ? "file" : scheme;
+             }
+             uri = new URI(scheme, filename, fragment);
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(e);
+        }
+
+        return uri;
     }
 
     private PDFAction getActionForEmbeddedFile(String filename, boolean newWindow) {
@@ -723,13 +797,15 @@ public class PDFFactory {
 
     /**
      * Creates and returns a launch pdf document action using
-     * <code>file</code> to create a file spcifiaciton for
+     * <code>file</code> to create a file specification for
      * the document/file to be opened with an external application.
      *
      * @param file the pdf file name
+     * @param newWindow boolean indicating whether the target should be
+     *                  displayed in a new window
      * @return the pdf launch object
      */
-    private PDFLaunch getLaunchAction(String file) {
+    private PDFLaunch getLaunchAction(String file, boolean newWindow) {
         getDocument().getProfile().verifyActionAllowed();
 
         PDFFileSpec fileSpec = new PDFFileSpec(file);
@@ -740,7 +816,7 @@ public class PDFFactory {
         } else {
             fileSpec = oldSpec;
         }
-        PDFLaunch launch = new PDFLaunch(fileSpec);
+        PDFLaunch launch = new PDFLaunch(fileSpec, newWindow);
         PDFLaunch oldLaunch = getDocument().findLaunch(launch);
 
         if (oldLaunch == null) {

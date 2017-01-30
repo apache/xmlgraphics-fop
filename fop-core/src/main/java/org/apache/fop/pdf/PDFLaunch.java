@@ -25,6 +25,7 @@ package org.apache.fop.pdf;
 public class PDFLaunch extends PDFAction {
 
     private PDFReference externalFileSpec;
+    private boolean newWindow;
 
     /**
      * Creates a new /Launch action.
@@ -32,6 +33,18 @@ public class PDFLaunch extends PDFAction {
      */
     public PDFLaunch(PDFFileSpec fileSpec) {
         this(fileSpec.makeReference());
+        this.newWindow = false;
+    }
+
+    /**
+     * Creates a new /Launch action.
+     * @param fileSpec the file specification to launch
+     * @param newWindow boolean indicating whether the target should be
+     *                  displayed in a new window
+     */
+    public PDFLaunch(PDFFileSpec fileSpec, boolean newWindow) {
+        this(fileSpec.makeReference());
+        this.newWindow = newWindow;
     }
 
     /**
@@ -56,6 +69,9 @@ public class PDFLaunch extends PDFAction {
         StringBuffer sb = new StringBuffer(64);
         sb.append("<<\n/S /Launch\n/F ");
         sb.append(externalFileSpec.toString());
+        if (newWindow) {
+            sb.append("\n/NewWindow true");
+        }
         sb.append("\n>>");
 
         return sb.toString();
