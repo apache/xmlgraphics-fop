@@ -71,13 +71,14 @@ public abstract class FontLoader {
         this.resourceResolver = resourceResolver;
     }
 
-    private static boolean isType1(URI fontURI) {
-        return fontURI.toASCIIString().toLowerCase().endsWith(".pfb");
+    private static boolean isType1(FontUris fontUris) {
+        return fontUris.getEmbed().toASCIIString().toLowerCase().endsWith(".pfb") || fontUris.getAfm() != null
+            || fontUris.getPfm() != null;
     }
 
     /**
      * Loads a custom font from a URI. In the case of Type 1 fonts, the PFB file must be specified.
-     * @param fontFileURI the URI to the font
+     * @param fontUris the URI to the font
      * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
      * @param embedded indicates whether the font is embedded or referenced
      * @param embeddingMode the embedding mode of the font
@@ -93,7 +94,7 @@ public abstract class FontLoader {
             boolean embedded, EmbeddingMode embeddingMode, EncodingMode encodingMode,
             boolean useKerning, boolean useAdvanced, InternalResourceResolver resourceResolver,
             boolean simulateStyle, boolean embedAsType1) throws IOException {
-        boolean type1 = isType1(fontUris.getEmbed());
+        boolean type1 = isType1(fontUris);
         FontLoader loader;
         if (type1) {
             if (encodingMode == EncodingMode.CID) {
