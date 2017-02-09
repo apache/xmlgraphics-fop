@@ -1040,10 +1040,12 @@ public abstract class OpenFont {
      * @return int[] Array defining bounding box.
      */
     public int[] getBBox(int glyphIndex) {
-        int[] bboxInTTFUnits = mtxTab[glyphIndex].getBoundingBox();
         int[] bbox = new int[4];
-        for (int i = 0; i < 4; i++) {
-            bbox[i] = convertTTFUnit2PDFUnit(bboxInTTFUnits[i]);
+        if (glyphIndex < mtxTab.length) {
+            int[] bboxInTTFUnits = mtxTab[glyphIndex].getBoundingBox();
+            for (int i = 0; i < 4; i++) {
+                bbox[i] = convertTTFUnit2PDFUnit(bboxInTTFUnits[i]);
+            }
         }
         return bbox;
     }

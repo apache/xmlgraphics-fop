@@ -454,4 +454,10 @@ public class TTFFileTestCase {
     public void testReadFont() {
         // I'm pretty sure we've tested this with all the other tests
     }
+
+    @Test
+    public void testBBox() {
+        assertEquals(dejavuTTFFile.getBBox(1)[0], 49);
+        assertEquals(dejavuTTFFile.getBBox(2330).length, 4);
+    }
 }
