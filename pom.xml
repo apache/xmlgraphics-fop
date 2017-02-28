@@ -31,6 +31,7 @@
     <xml.plugin.version>1.0.1</xml.plugin.version>
     <xmlgraphics.commons.version>2.2.0-SNAPSHOT</xmlgraphics.commons.version>
     <xmlunit.version>1.2</xmlunit.version>
+    <jdk.path>${env.JAVA_HOME}</jdk.path>
   </properties>
 
   <licenses>
@@ -72,6 +73,8 @@
           <configuration>
             <source>${java.version}</source>
             <target>${java.version}</target>
+            <executable>${jdk.path}/bin/javac</executable>
+            <fork>true</fork>
           </configuration>
         </plugin>
         <plugin>
