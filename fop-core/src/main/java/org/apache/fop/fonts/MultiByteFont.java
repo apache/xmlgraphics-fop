@@ -769,7 +769,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
                 return true;
             } else if ((ch >= 0x2028) && (ch <= 0x202E)) {
                 return true;
-            } else if ((ch >= 0x2066) && (ch <= 0x206F)) {
+            } else if (ch >= 0x2066) {
                 return true;
             } else {
                 return ch == 0x2060;
