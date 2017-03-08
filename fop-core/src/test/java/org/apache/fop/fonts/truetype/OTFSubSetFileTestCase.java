@@ -37,6 +37,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.apache.fontbox.cff.CFFFont;
+import org.apache.fontbox.cff.CFFParser;
 
 import org.apache.fop.fonts.cff.CFFDataReader;
 import org.apache.fop.fonts.cff.CFFDataReader.CFFIndexData;
@@ -435,8 +436,8 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
 
     @Test
     public void testFDSelect() throws IOException {
-        Assert.assertEquals(getSubset(1).length, 39);
-        Assert.assertEquals(getSubset(2).length, 46);
+        Assert.assertEquals(getSubset(1).length, 41);
+        Assert.assertEquals(getSubset(2).length, 48);
     }
 
     private byte[] getSubset(final int opLen) throws IOException {
@@ -467,5 +468,20 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
 
         otfSubSetFile.readFont(reader, "StandardOpenType", header, new HashMap<Integer, Integer>());
         return otfSubSetFile.getFontSubset();
+    }
+
+    @Test
+    public void testOffsets() throws IOException {
+        Map<Integer, Integer> glyphs = new HashMap<Integer, Integer>();
+        for (int i = 0; i < 256; i++) {
+            glyphs.put(i, i);
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 2048; i++) {
+            sb.append("SourceSansProBold");
+        }
+        OTFSubSetFile otfSubSetFile = new OTFSubSetFile();
+        otfSubSetFile.readFont(sourceSansReader, sb.toString(), null, glyphs);
+        new CFFParser().parse(otfSubSetFile.getFontSubset());
     }
 }
