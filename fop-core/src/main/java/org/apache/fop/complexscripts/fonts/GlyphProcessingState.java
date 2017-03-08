@@ -927,6 +927,7 @@ public class GlyphProcessingState {
             al.add(igs.getAssociation(i));
         }
         gb.flip();
+        assert igs != null;
         if (igs.compareGlyphs(gb) != 0) {
             this.igs = new GlyphSequence(igs.getCharacters(), gb, al);
             this.indexLast = gb.limit();

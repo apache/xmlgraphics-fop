@@ -78,13 +78,8 @@ public class FloatLayoutManager extends InlineStackingLayoutManager {
 
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         // "Unwrap" the NonLeafPositions stored in posIter
-        LinkedList positionList = new LinkedList();
-        Position pos = null;
         while (posIter.hasNext()) {
-            pos = posIter.next();
-            if (pos != null && pos.getPosition() != null) {
-                positionList.add(pos.getPosition());
-            }
+            posIter.next();
         }
     }
 
