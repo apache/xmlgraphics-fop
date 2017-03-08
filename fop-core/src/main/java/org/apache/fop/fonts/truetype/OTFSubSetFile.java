@@ -172,7 +172,7 @@ public class OTFSubSetFile extends OTFFile {
         writeBytes(cffReader.getHeader());
 
         //Name Index
-        writeIndex(Arrays.asList(embeddedName.getBytes()));
+        writeIndex(Arrays.asList(embedFontName.getBytes()));
 
         //Keep offset of the topDICT so it can be updated once all data has been written
         int topDictOffset = currentPos;
