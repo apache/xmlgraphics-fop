@@ -1347,7 +1347,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             // if a break occurs the content width increases,
             // otherwise nothing happens
             addElementsForAHyphen(baseList, alignment, hyphIPD, widthIfNoBreakOccurs,
-                    mapping.breakOppAfter && mapping.isHyphenated);
+                    mapping.breakOppAfter);
         } else if (suppressibleLetterSpace) {
             // the word fragment ends with a character that acts as a hyphen
             // if a break occurs the width does not increase,

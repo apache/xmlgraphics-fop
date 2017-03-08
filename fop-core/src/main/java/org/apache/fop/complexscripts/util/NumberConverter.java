@@ -1260,7 +1260,6 @@ public class NumberConverter {
                 sl.add(0x05F3);
             }
             if (hundreds > 0) {
-                assert hundreds < 10;
                 if (hundreds < 5) {
                     sl.add(map [ 18 + (hundreds - 1) ]);
                 } else if (hundreds < 9) {
@@ -1273,6 +1272,7 @@ public class NumberConverter {
                     sl.add(0x05F4);
                     sl.add(map [ 18 + (hundreds - 9) ]);
                 }
+                assert hundreds < 10;
             }
             if (number == 15) {
                 sl.add(map [ 9 - 1]);

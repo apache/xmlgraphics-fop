@@ -113,7 +113,7 @@ public final class DitherUtil {
             throw new IllegalArgumentException("Unsupported dither matrix: " + matrix);
         }
         if (doubleMatrix) {
-            if (doubleMatrix && (matrix != DITHER_MATRIX_4X4)) {
+            if (matrix != DITHER_MATRIX_4X4) {
                 throw new IllegalArgumentException("doubleMatrix=true is only allowed for 4x4");
             }
             dither = new byte[bayer.length / 8 * 4];

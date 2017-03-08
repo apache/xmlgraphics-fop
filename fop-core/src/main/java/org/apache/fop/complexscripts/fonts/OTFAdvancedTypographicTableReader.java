@@ -150,14 +150,12 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " lang sys table non-required feature count: " + nf);
         }
         // read (non-required) feature indices
-        int[] fia = new int[nf];
         List fl = new java.util.ArrayList();
         for (int i = 0; i < nf; i++) {
             int fi = in.readTTFUShort();
             if (log.isDebugEnabled()) {
                 log.debug(tableTag + " lang sys table non-required feature index: " + fi);
             }
-            fia[i] = fi;
             fl.add("f" + fi);
         }
         if (seLanguages == null) {
@@ -265,14 +263,12 @@ public final class OTFAdvancedTypographicTableReader {
             log.debug(tableTag + " feature table lookup list index count: " + nl);
         }
         // read lookup table indices
-        int[] lia = new int[nl];
         List lul = new java.util.ArrayList();
         for (int i = 0; i < nl; i++) {
             int li = in.readTTFUShort();
             if (log.isDebugEnabled()) {
                 log.debug(tableTag + " feature table lookup index: " + li);
             }
-            lia[i] = li;
             lul.add("lu" + li);
         }
         seFeatures.put("f" + featureIndex, new Object[] { featureTag, lul });
@@ -710,13 +706,11 @@ public final class OTFAdvancedTypographicTableReader {
         // read coverage table
         seMapping = readCoverageTable(tableTag + " single substitution coverage", subtableOffset + co);
         // read glyph substitutions
-        int[] gsa = new int[ng];
         for (int i = 0, n = ng; i < n; i++) {
             int gs = in.readTTFUShort();
             if (log.isDebugEnabled()) {
                 log.debug(tableTag + " single substitution glyph[" + i + "]: " + gs);
             }
-            gsa[i] = gs;
             seEntries.add(gs);
         }
     }

@@ -19,7 +19,6 @@
 
 package org.apache.fop.pdf;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -109,10 +108,6 @@ public class PDFFunction extends PDFObject {
 
 
     public byte[] toByteString() {
-        List<String> functionsStrings = new ArrayList<String>(function.getFunctions().size());
-        for (PDFFunction f : pdfFunctions) {
-            functionsStrings.add(f.referencePDF());
-        }
         SubFunctionRenderer subFunctionRenderer = new SubFunctionRenderer() {
 
             public void outputFunction(StringBuilder out, int functionIndex) {

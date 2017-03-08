@@ -601,9 +601,6 @@ public class RTFHandler extends FOEventHandler {
 
     /** {@inheritDoc} */
     public void endColumn(TableColumn tc) {
-        if (bDefer) {
-            return;
-        }
     }
 
     /** {@inheritDoc} */
@@ -1452,9 +1449,6 @@ public class RTFHandler extends FOEventHandler {
 
     /** {@inheritDoc} */
     public void endPageNumber(PageNumber pagenum) {
-        if (bDefer) {
-            return;
-        }
     }
 
     /** {@inheritDoc} */

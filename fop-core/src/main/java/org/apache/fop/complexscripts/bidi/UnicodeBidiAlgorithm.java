@@ -382,7 +382,7 @@ public final class UnicodeBidiAlgorithm implements BidiConstants {
                 if ((bcPrev == EN) || (bcNext == EN)) {
                     wca [ i ] = EN;
                 }
-            } else if ((bc != BN) && (bc != ET)) {
+            } else if (bc != BN) {
                 bcPrev = bc;
             }
         }
