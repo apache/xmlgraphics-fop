@@ -952,16 +952,7 @@ public class OTFSubSetFile extends OTFFile {
         for (byte[] aDataArray1 : dataArray) {
             totLength += aDataArray1.length;
         }
-        int offSize = 1;
-        if (totLength < (1 << 8)) {
-            offSize = 1;
-        } else if (totLength < (1 << 16)) {
-            offSize = 2;
-        } else if (totLength < (1 << 24)) {
-            offSize = 3;
-        } else {
-            offSize = 4;
-        }
+        int offSize = getOffSize(totLength);
         this.writeByte(offSize);
         //Count the first offset 1
         hdrTotal += offSize;
@@ -1008,6 +999,19 @@ public class OTFSubSetFile extends OTFFile {
         return hdrTotal + total;
     }
 
+    private int getOffSize(int totLength) {
+        int offSize = 1;
+        if (totLength < (1 << 8)) {
+            offSize = 1;
+        } else if (totLength < (1 << 16)) {
+            offSize = 2;
+        } else if (totLength < (1 << 24)) {
+            offSize = 3;
+        } else {
+            offSize = 4;
+        }
+        return offSize;
+    }
     /**
      * A class used to store the last number operand and also it's size in bytes
      */
