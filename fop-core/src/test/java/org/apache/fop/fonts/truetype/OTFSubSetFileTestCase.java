@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts.truetype;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +49,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
 
     private CFFDataReader cffReaderSourceSans;
     private OTFSubSetFile sourceSansSubset;
+    private Map<Integer, Integer> glyphs = new HashMap<Integer, Integer>();
 
     /**
      * Initialises the test by creating the font subset. A CFFDataReader is
@@ -57,8 +59,6 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        Map<Integer, Integer> glyphs = new HashMap<Integer, Integer>();
         for (int i = 0; i < 256; i++) {
             glyphs.put(i, i);
         }
@@ -444,27 +444,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         FontFileReader reader = sourceSansReader;
         String header = OFFontLoader.readHeader(reader);
 
-        OTFSubSetFile otfSubSetFile = new OTFSubSetFile() {
-            protected void createCFF() throws IOException {
-                cffReader = mock(CFFDataReader.class);
-                when(cffReader.getHeader()).thenReturn(new byte[0]);
-                when(cffReader.getTopDictIndex()).thenReturn(new CFFDataReader().new CFFIndexData() {
-                    public byte[] getByteData() throws IOException {
-                        return new byte[3];
-                    }
-                });
-
-                LinkedHashMap<String, DICTEntry> map = new LinkedHashMap<String, DICTEntry>();
-                DICTEntry dict = new DICTEntry();
-                dict.setOperands(Collections.<Number>singletonList(1));
-                map.put("charset", dict);
-                map.put("CharStrings", dict);
-                when((cffReader.getTopDictEntries())).thenReturn(map);
-                when(cffReader.getFDSelect()).thenReturn(new CFFDataReader().new Format3FDSelect());
-                cffReader.getTopDictEntries().get("CharStrings").setOperandLength(opLen);
-                super.createCFF();
-            }
-        };
+        OTFSubSetFile otfSubSetFile = new MyOTFSubSetFile(opLen);
 
         otfSubSetFile.readFont(reader, "StandardOpenType", header, new HashMap<Integer, Integer>());
         return otfSubSetFile.getFontSubset();
@@ -472,10 +452,6 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
 
     @Test
     public void testOffsets() throws IOException {
-        Map<Integer, Integer> glyphs = new HashMap<Integer, Integer>();
-        for (int i = 0; i < 256; i++) {
-            glyphs.put(i, i);
-        }
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 2048; i++) {
             sb.append("SourceSansProBold");
@@ -483,5 +459,50 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         OTFSubSetFile otfSubSetFile = new OTFSubSetFile();
         otfSubSetFile.readFont(sourceSansReader, sb.toString(), null, glyphs);
         new CFFParser().parse(otfSubSetFile.getFontSubset());
+    }
+
+    @Test
+    public void testCharset() throws IOException {
+        FontFileReader reader = sourceSansReader;
+        MyOTFSubSetFile otfSubSetFile = new MyOTFSubSetFile(1);
+        otfSubSetFile.readFont(reader, "StandardOpenType", null, new HashMap<Integer, Integer>());
+        ByteArrayInputStream is = new ByteArrayInputStream(otfSubSetFile.getFontSubset());
+        is.skip(otfSubSetFile.charsetOffset);
+        Assert.assertEquals(is.read(), 2);
+    }
+
+    class MyOTFSubSetFile extends OTFSubSetFile {
+        int charsetOffset;
+        int opLen;
+        MyOTFSubSetFile(int opLen) throws IOException {
+            super();
+            this.opLen = opLen;
+        }
+
+        protected void createCFF() throws IOException {
+            cffReader = mock(CFFDataReader.class);
+            when(cffReader.getHeader()).thenReturn(new byte[0]);
+            when(cffReader.getTopDictIndex()).thenReturn(new CFFDataReader().new CFFIndexData() {
+                public byte[] getByteData() throws IOException {
+                    return new byte[3];
+                }
+            });
+
+            LinkedHashMap<String, DICTEntry> map = new LinkedHashMap<String, DICTEntry>();
+            DICTEntry dict = new DICTEntry();
+            dict.setOperands(Collections.<Number>singletonList(1));
+            map.put("charset", dict);
+            map.put("CharStrings", dict);
+            when((cffReader.getTopDictEntries())).thenReturn(map);
+            when(cffReader.getFDSelect()).thenReturn(new CFFDataReader().new Format3FDSelect());
+            cffReader.getTopDictEntries().get("CharStrings").setOperandLength(opLen);
+            super.createCFF();
+        }
+
+        protected void updateFixedOffsets(Map<String, DICTEntry> topDICT, int dataTopDictOffset,
+                                          int charsetOffset, int charStringOffset, int encodingOffset) {
+            this.charsetOffset = charsetOffset;
+            super.updateFixedOffsets(topDICT, dataTopDictOffset, charsetOffset, charStringOffset, encodingOffset);
+        }
     }
 }
