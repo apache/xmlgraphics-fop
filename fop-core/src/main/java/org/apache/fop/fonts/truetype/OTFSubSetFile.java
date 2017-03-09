@@ -1055,12 +1055,21 @@ public class OTFSubSetFile extends OTFFile {
     }
 
     private void writeCharsetTable(boolean cidFont) throws IOException {
-        writeByte(0);
-        for (Entry<Integer, Integer> entry : gidToSID.entrySet()) {
-            if (cidFont && entry.getKey() == 0) {
-                continue;
+        if (cidFont) {
+            writeByte(2);
+            for (int entry : gidToSID.keySet()) {
+                if (entry == 0) {
+                    continue;
+                }
+                writeCard16(entry);
+                writeCard16(gidToSID.size() - 1);
+                break;
             }
-            writeCard16((cidFont) ? entry.getKey() : entry.getValue());
+        } else {
+            writeByte(0);
+            for (int entry : gidToSID.values()) {
+                writeCard16(entry);
+            }
         }
     }
 
