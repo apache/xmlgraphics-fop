@@ -508,7 +508,7 @@ public class CFFDataReader {
         Format1Encoding newEncoding = new Format1Encoding();
         newEncoding.setFormat(format);
         newEncoding.setNumEntries(numEntries);
-        LinkedHashMap<Integer, Integer> ranges = new LinkedHashMap<Integer, Integer>();
+        Map<Integer, Integer> ranges = new LinkedHashMap<Integer, Integer>();
         for (int i = 0; i < numEntries; i++) {
             int first = cffData.readCard8();
             int left = cffData.readCard8();
@@ -555,7 +555,7 @@ public class CFFDataReader {
         newFDs.setFormat(3);
         int rangeCount = cffData.readCard16();
         newFDs.setRangeCount(rangeCount);
-        LinkedHashMap<Integer, Integer> ranges = new LinkedHashMap<Integer, Integer>();
+        Map<Integer, Integer> ranges = new LinkedHashMap<Integer, Integer>();
         for (int i = 0; i < rangeCount; i++) {
             int first = cffData.readCard16();
             int fd = cffData.readCard8();
@@ -567,7 +567,7 @@ public class CFFDataReader {
     }
 
     private List<FontDict> parseCIDData() throws IOException {
-        ArrayList<FontDict> fdFonts = new ArrayList<FontDict>();
+        List<FontDict> fdFonts = new ArrayList<FontDict>();
         if (topDict.get("ROS") != null) {
             DICTEntry fdArray = topDict.get("FDArray");
             if (fdArray != null) {
@@ -577,7 +577,7 @@ public class CFFDataReader {
                     FontDict newFontDict = new FontDict();
 
                     byte[] fdData = fontDicts.getValue(i);
-                    LinkedHashMap<String, DICTEntry> fdEntries = parseDictData(fdData);
+                    Map<String, DICTEntry> fdEntries = parseDictData(fdData);
                     newFontDict.setByteData(fontDicts.getValuePosition(i), fontDicts.getValueLength(i));
                     DICTEntry fontFDEntry = fdEntries.get("FontName");
                     if (fontFDEntry != null) {
@@ -601,7 +601,7 @@ public class CFFDataReader {
         cffData.setPosition(privateFDOffset);
         byte[] privateDict = cffData.readBytes(privateFDLength);
         newFontDict.setPrivateDictData(privateFDOffset, privateFDLength);
-        LinkedHashMap<String, DICTEntry> privateEntries = parseDictData(privateDict);
+        Map<String, DICTEntry> privateEntries = parseDictData(privateDict);
         DICTEntry subroutines = privateEntries.get("Subrs");
         if (subroutines != null) {
             CFFIndexData localSubrs = readIndex(privateFDOffset
@@ -625,7 +625,7 @@ public class CFFDataReader {
             int offset = privateEntry.getOperands().get(1).intValue();
             cffData.setPosition(offset);
             byte[] privateData = cffData.readBytes(length);
-            LinkedHashMap<String, DICTEntry> privateDict = parseDictData(privateData);
+            Map<String, DICTEntry> privateDict = parseDictData(privateData);
             DICTEntry localSubrsEntry = privateDict.get("Subrs");
             if (localSubrsEntry != null) {
                 int localOffset = offset + localSubrsEntry.getOperands().get(0).intValue();
@@ -803,13 +803,13 @@ public class CFFDataReader {
     }
 
     public class Format1Encoding extends CustomEncoding {
-        private LinkedHashMap<Integer, Integer> ranges;
+        private Map<Integer, Integer> ranges;
 
-        public void setRanges(LinkedHashMap<Integer, Integer> ranges) {
+        public void setRanges(Map<Integer, Integer> ranges) {
             this.ranges = ranges;
         }
 
-        public LinkedHashMap<Integer, Integer> getRanges() {
+        public Map<Integer, Integer> getRanges() {
             return ranges;
         }
     }
@@ -840,7 +840,7 @@ public class CFFDataReader {
 
     public class Format3FDSelect extends FDSelect {
         private int rangeCount;
-        private LinkedHashMap<Integer, Integer> ranges;
+        private Map<Integer, Integer> ranges;
         private int sentinelGID;
 
         public void setRangeCount(int rangeCount) {
@@ -851,11 +851,11 @@ public class CFFDataReader {
             return rangeCount;
         }
 
-        public void setRanges(LinkedHashMap<Integer, Integer> ranges) {
+        public void setRanges(Map<Integer, Integer> ranges) {
             this.ranges = ranges;
         }
 
-        public LinkedHashMap<Integer, Integer> getRanges() {
+        public Map<Integer, Integer> getRanges() {
             return ranges;
         }
 
