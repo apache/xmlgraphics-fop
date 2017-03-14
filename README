@@ -116,6 +116,11 @@ Version 2.2  (Forthcoming)
 Major Changes in Version 2.2
 ----------------------------
 
+* PCL Color support
+* Allow generation of bold/italic versions of fonts for PDF
+* Allow to convert OTF fonts to Type 1 for Postscript
+* Deduplicate PDF content streams
+* Update to PDFBox 2
 * Transition from Ant to Maven Build Process
 
 This release also contains a number of bug fixes.
