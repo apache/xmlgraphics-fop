@@ -156,7 +156,7 @@ list of possible build targets.
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
   <property name="version" value="2.2.0-SNAPSHOT"/>
-  <property name="year" value="1999-2016"/>
+  <property name="year" value="1999-2017"/>
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="javac.deprecation" value="on"/>
