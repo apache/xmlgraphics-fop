@@ -22,11 +22,11 @@
       <version>${project.version}</version>
     </dependency>
     <!-- batik deps -->
-    <dependency>
+<!--     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>batik-all</artifactId>
       <version>${batik.version}</version>
-    </dependency>
+    </dependency> -->
     <!-- xgc deps -->
     <dependency>
       <groupId>${project.groupId}</groupId>
