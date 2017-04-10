@@ -85,12 +85,12 @@ public class Block extends FObjMixed implements BreakPropertySet,
     private Numeric widows;
     private int wrapOption;
     private int disableColumnBalancing;
+    private int visibility;
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
     //     private Length textDepth;
     //     private Length textAltitude;
-    //     private int visibility;
     // End of FO trait values
 
     /**
@@ -137,6 +137,7 @@ public class Block extends FObjMixed implements BreakPropertySet,
         widows = pList.get(PR_WIDOWS).getNumeric();
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
         disableColumnBalancing = pList.get(PR_X_DISABLE_COLUMN_BALANCING).getEnum();
+        visibility = pList.get(PR_VISIBILITY).getEnum();
     }
 
     /** {@inheritDoc} */
@@ -358,4 +359,7 @@ public class Block extends FObjMixed implements BreakPropertySet,
         return FO_BLOCK;
     }
 
+     public int getVisibility() {
+         return visibility;
+     }
 }

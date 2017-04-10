@@ -27,6 +27,7 @@ import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.Direction;
+import org.apache.fop.traits.Visibility;
 import org.apache.fop.traits.WritingMode;
 import org.apache.fop.util.ColorUtil;
 
@@ -172,8 +173,11 @@ public final class Trait implements Serializable {
     /** For optional content groups. */
     public static final Integer LAYER = 43;
 
+    /** Used to disable the rendering of a Block http://www.w3.org/TR/xsl/#rend-vis */
+    public static final Integer VISIBILITY = 44;
+
     /** Maximum value used by trait keys */
-    public static final int MAX_TRAIT_KEY = 43;
+    public static final int MAX_TRAIT_KEY = 44;
 
     private static final TraitInfo[] TRAIT_INFO = new TraitInfo[MAX_TRAIT_KEY + 1];
 
@@ -246,7 +250,7 @@ public final class Trait implements Serializable {
         put(SHIFT_DIRECTION,
                 new TraitInfo("shift-direction", Direction.class));
         put(LAYER, new TraitInfo("layer", String.class));
-
+        put(VISIBILITY, new TraitInfo("visibility", Visibility.class));
     }
 
     /**

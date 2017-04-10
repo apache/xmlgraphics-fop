@@ -331,6 +331,7 @@ public class BlockLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
 
         TraitSetter.addSpaceBeforeAfter(curBlockArea, layoutContext.getSpaceAdjust(),
                 effSpaceBefore, effSpaceAfter);
+        TraitSetter.setVisibility(curBlockArea, getBlockFO().getVisibility());
         flush();
 
         curBlockArea = null;

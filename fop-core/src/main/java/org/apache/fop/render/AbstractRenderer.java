@@ -71,6 +71,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.traits.Visibility;
 
 /**
  * Abstract base class for all renderers. The Abstract renderer does all the
@@ -609,7 +610,8 @@ public abstract class AbstractRenderer
 
             handleBlockTraits(block);
 
-            if (children != null) {
+            if (children != null && block.getTrait(Trait.VISIBILITY) != Visibility.HIDDEN)
+            {
                 renderBlocks(block, children);
             }
 
