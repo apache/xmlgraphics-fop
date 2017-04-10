@@ -2055,9 +2055,15 @@
   </property>
   <property>
     <name>visibility</name>
-    <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <inherited>true</inherited>
     <default>visible</default>
+    <datatype>Enum</datatype>
+    <enumeration>
+      <value const="VISIBLE">visible</value>
+      <value const="HIDDEN">hidden</value>
+      <value const="COLLAPSE">collapse</value>
+      <value const="INHERIT">inherit</value>
+    </enumeration>
   </property>
   <property>
     <name>z-index</name>

@@ -80,6 +80,7 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.Visibility;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
@@ -663,6 +664,10 @@ public class AreaTreeParser {
                 if (attributes.getValue("top-offset") != null) {
                     block.setYOffset(XMLUtil.getAttributeAsInt(attributes, "top-offset", 0));
                 }
+                if (attributes.getValue("visibility") != null) {
+                    block.addTrait(Trait.VISIBILITY, Visibility.valueOf(attributes.getValue("visibility")));
+                }
+
                 transferForeignObjects(attributes, block);
                 setAreaAttributes(attributes, block);
                 setTraits(attributes, block, SUBSET_COMMON);
