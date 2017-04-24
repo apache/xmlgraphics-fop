@@ -119,6 +119,13 @@ public class BorderProps implements Serializable {
     public int getRadiusEnd() {
         return radiusEnd;
     }
+    
+    /**
+     * @return the border mode ((one of SEPARATE, COLLAPSE_INNER and COLLAPSE_OUTER)
+     */
+    public Mode getMode() {
+        return mode;
+    }
 
     /**
      * @param bp the border properties or null
