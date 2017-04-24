@@ -387,11 +387,11 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
         contentLM.setStartXOffset(startXOffset);
         contentLM.addAreas(parentIter, lc);
         
-        Object borderOpt = fobj.getUserAgent().getRendererOptions().get("overpaint-table-borders");
+        //Object borderOpt = fobj.getUserAgent().getRendererOptions().get("overpaint-table-borders");
         
-        if (borderOpt != null && borderOpt instanceof Boolean && (Boolean)borderOpt) {
+        //if (borderOpt != null && borderOpt instanceof Boolean && (Boolean)borderOpt) {
              overPaintBorders();
-        }
+        //}
         
         tableHeight += contentLM.getUsedBPD();
 
