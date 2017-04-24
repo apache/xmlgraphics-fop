@@ -19,8 +19,11 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
@@ -54,6 +58,7 @@ import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpacedBorderedPaddedBlockLayoutManager;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.util.BreakUtil;
@@ -381,6 +386,13 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
         lc.setRefIPD(getContentAreaIPD());
         contentLM.setStartXOffset(startXOffset);
         contentLM.addAreas(parentIter, lc);
+        
+        //Object borderOpt = fobj.getUserAgent().getRendererOptions().get("overpaint-table-borders");
+        
+        //if (borderOpt != null && borderOpt instanceof Boolean && (Boolean)borderOpt) {
+             overPaintBorders();
+        //}
+        
         tableHeight += contentLM.getUsedBPD();
 
         curBlockArea.setBPD(tableHeight);
@@ -422,6 +434,299 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
         curBlockArea = null;
 
         notifyEndOfLayout();
+    }
+    
+    private void overPaintBorders() {
+
+        List<Block> newBlocks = new ArrayList<Block>();
+
+        List<Object> childAreas = new ArrayList<Object>(curBlockArea.getChildAreas());
+        Collections.sort(childAreas, new Comparator<Object>() {
+            public int compare(Object o1, Object o2) {
+                Block b1 = (Block)o1;
+                Block b2 = (Block)o2;
+                Integer paddingStart1 = (Integer)b1.getTrait(Trait.PADDING_START);
+                Integer paddingStart2 = (Integer)b2.getTrait(Trait.PADDING_START);
+                int x1 = b1.getXOffset() - (paddingStart1 != null ? paddingStart1 : 0);
+                int x2 = b2.getXOffset() - (paddingStart2 != null ? paddingStart2 : 0);
+                if (x1 > x2)
+                    return 1;
+                else if (x1 < x2)
+                    return -1;
+                else {
+                    if (b1.getYOffset() > b2.getYOffset())
+                        return 1;
+                    else if (b1.getYOffset() < b2.getYOffset())
+                        return -1;
+                    else
+                        return 0;
+                }
+            };
+        });
+
+        mergeBordersOfType(newBlocks, childAreas,
+                new Integer[] {Trait.BORDER_BEFORE, Trait.BORDER_AFTER});
+
+        Collections.sort(childAreas, new Comparator<Object>() {
+            public int compare(Object o1, Object o2) {
+                Block b1 = (Block)o1;
+                Block b2 = (Block)o2;
+                Integer paddingStart1 = (Integer)b1.getTrait(Trait.PADDING_START);
+                Integer paddingStart2 = (Integer)b2.getTrait(Trait.PADDING_START);
+                int x1 = b1.getXOffset() - (paddingStart1 != null ? paddingStart1 : 0);
+                int x2 = b2.getXOffset() - (paddingStart2 != null ? paddingStart2 : 0);
+                if (b1.getYOffset() > b2.getYOffset())
+                    return 1;
+                else if (b1.getYOffset() < b2.getYOffset())
+                    return -1;
+                else {
+                    if (x1 > x2)
+                        return 1;
+                    else if (x1 < x2)
+                        return -1;
+                    else {
+                        return 0;
+                    }
+                }
+            };
+        });
+
+        mergeBordersOfType(newBlocks,childAreas,
+                new Integer[] {Trait.BORDER_START, Trait.BORDER_END});
+
+        for (Block borderBlock : newBlocks) {
+            curBlockArea.addBlock(borderBlock);
+        }
+    }
+
+
+    private void mergeBordersOfType(List<Block> newBlocks, List<?> childAreas, Integer[] borderTraits) {
+
+        HashMap<Integer, HashMap<Point, Block>> mergeMap = new HashMap<Integer, HashMap<Point,Block>>();
+        for (Integer traitType : borderTraits) {
+            mergeMap.put(traitType, null);
+        }
+
+        for (Object child : childAreas) {
+            Block childBlock = (Block)child;
+
+            log.debug("Block - x=" + childBlock.getXOffset() + ",y=" + childBlock.getYOffset());
+
+            BorderProps startBps = (BorderProps)childBlock.getTrait(Trait.BORDER_START);
+            BorderProps endBps = (BorderProps)childBlock.getTrait(Trait.BORDER_END);
+            BorderProps beforeBps = (BorderProps)childBlock.getTrait(Trait.BORDER_BEFORE);
+            BorderProps afterBps = (BorderProps)childBlock.getTrait(Trait.BORDER_AFTER);
+
+            for (Integer traitType : borderTraits) {
+
+                Block currBlock = childBlock;
+
+                BorderProps borderProps = (BorderProps)currBlock.getTrait(traitType);
+                if (borderProps == null) {
+                    continue;
+                }
+
+
+                log.debug("Merge: " + traitType);
+
+                HashMap<Point, Block> currTraitMap = mergeMap.get(traitType);
+                Point endPoint = this.getEndMiddlePoint(currBlock, traitType, startBps, endBps,
+                        beforeBps, afterBps);
+
+                BorderProps bpsCurr = (BorderProps) currBlock.getTrait(traitType);
+
+                Block prevBlock = null;
+                if (currTraitMap == null)
+                {
+                    currTraitMap = new HashMap<Point, Block>();
+                    mergeMap.put(traitType, currTraitMap);
+                }
+                else
+                {
+                    Point startPoint = this.getStartMiddlePoint(currBlock, traitType, startBps, endBps, beforeBps, afterBps);
+
+                    log.debug("Start now");
+                    Iterator<Point> iter = currTraitMap.keySet().iterator();
+                    while (iter.hasNext()) {
+                        Point prevEndPoint = iter.next();
+                        log.debug("end: " + prevEndPoint);
+                        log.debug("start: " + startPoint);
+                        boolean isVertical = traitType == Trait.BORDER_START || traitType == Trait.BORDER_END;
+                        boolean isHorizontal = traitType == Trait.BORDER_BEFORE || traitType == Trait.BORDER_AFTER;
+
+                        if ((isHorizontal && prevEndPoint.y == startPoint.y && prevEndPoint.x >= startPoint.x)
+                                || (isVertical && prevEndPoint.x == startPoint.x && prevEndPoint.y >= startPoint.y)) {
+                            log.debug("try merge");
+
+                            Block prevBlockCurr = currTraitMap.get(prevEndPoint);
+                            iter.remove();
+                            BorderProps bpsPrev = (BorderProps) prevBlockCurr.getTrait(traitType);
+                            if (this.canMergeBorders(bpsPrev, bpsCurr)) {
+                                prevBlock = prevBlockCurr;
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                Block borderBlock;
+                if (prevBlock != null && newBlocks.contains(prevBlock)) {
+                    borderBlock = prevBlock;
+                } else {
+                    borderBlock = new Block();
+                    borderBlock.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+                    borderBlock.setPositioning(Block.ABSOLUTE);
+                    borderBlock.setBidiLevel(currBlock.getBidiLevel());
+                    newBlocks.add(borderBlock);
+
+                    BorderProps prevBeforeBps = (BorderProps)currBlock.getTrait(Trait.BORDER_BEFORE);
+                    int prevBefore = prevBeforeBps != null ? prevBeforeBps.width : 0;
+                    Integer prevPaddingStart = (Integer)currBlock.getTrait(Trait.PADDING_START);
+                    Integer prevPaddingEnd = (Integer)currBlock.getTrait(Trait.PADDING_END);
+                    Integer prevPaddingBefore = (Integer)currBlock.getTrait(Trait.PADDING_BEFORE);
+                    Integer prevPaddingAfter = (Integer)currBlock.getTrait(Trait.PADDING_AFTER);
+
+                    if (traitType == Trait.BORDER_START) {
+                        borderBlock.setYOffset(currBlock.getYOffset()
+                                + prevBefore);
+                        borderBlock.setXOffset(currBlock.getXOffset()
+                                - (prevPaddingStart != null ? prevPaddingStart : 0));
+                    } else if (traitType == Trait.BORDER_END) {
+                        borderBlock.setYOffset(currBlock.getYOffset()
+                                + prevBefore);
+                        borderBlock.setXOffset(currBlock.getXOffset()
+                                - (prevPaddingStart != null ? prevPaddingStart : 0));
+                        borderBlock.setIPD(currBlock.getIPD()
+                                + (prevPaddingStart != null ? prevPaddingStart : 0)
+                                + (prevPaddingEnd != null ? prevPaddingEnd : 0));
+                    } else if (traitType == Trait.BORDER_BEFORE) {
+                        borderBlock.setYOffset(currBlock.getYOffset());
+                        borderBlock.setXOffset(currBlock.getXOffset()
+                                - (prevPaddingStart != null ? prevPaddingStart : 0));
+                    } else if (traitType == Trait.BORDER_AFTER) {
+                        borderBlock.setYOffset(currBlock.getYOffset()
+                                + prevBefore);
+                        borderBlock.setXOffset(currBlock.getXOffset()
+                                - (prevPaddingStart != null ? prevPaddingStart : 0));
+                        borderBlock.setBPD(currBlock.getBPD()
+                                + (prevPaddingBefore != null ? prevPaddingBefore : 0)
+                                + (prevPaddingAfter != null ? prevPaddingAfter : 0));
+                    }
+                }
+
+                Integer paddingEnd = (Integer)currBlock.getTrait(Trait.PADDING_END);
+                Integer paddingAfter = (Integer)currBlock.getTrait(Trait.PADDING_AFTER);
+                if (traitType == Trait.BORDER_BEFORE || traitType == Trait.BORDER_AFTER) {
+                    int newEndPoint = currBlock.getXOffset()
+                            + currBlock.getIPD()
+                            + (paddingEnd != null ? paddingEnd : 0);
+                    borderBlock.setIPD(newEndPoint - borderBlock.getXOffset());
+                } else if (traitType == Trait.BORDER_START
+                        || traitType == Trait.BORDER_END) {
+                    int newEndPoint = currBlock.getYOffset()
+                            + currBlock.getBPD()
+                            + currBlock.getBorderAndPaddingWidthBefore()
+                            + (paddingAfter != null ? paddingAfter : 0);
+                    borderBlock.setBPD(newEndPoint - borderBlock.getYOffset());
+                }
+
+                BorderProps newBps = new BorderProps(bpsCurr.style, bpsCurr.width, 0,
+                        0, bpsCurr.color/*new Color(255, 0, 0)*/, bpsCurr.getMode());
+                borderBlock.addTrait(traitType, newBps);
+                //
+                currBlock = borderBlock;
+
+                log.debug("merge!");
+
+                currTraitMap.put(endPoint, currBlock);
+            }
+        }
+    }
+
+    private boolean canMergeBorders(BorderProps bpsPrev, BorderProps bpsCurr) {
+        return bpsPrev.style == bpsCurr.style
+                /*&& org.apache.xmlgraphics.java2d.color.ColorUtil.isSameColor(
+                                bpsPrev.color, bpsCurr.color)*/
+                && bpsPrev.width == bpsCurr.width
+                && bpsPrev.getMode() == bpsPrev.getMode()
+                && bpsPrev.getRadiusEnd() == 0
+                && bpsCurr.getRadiusStart() == 0;
+    }
+
+
+    private Point getEndMiddlePoint(Block block, int borderTrait, BorderProps startBps,
+            BorderProps endBps, BorderProps beforeBps, BorderProps afterBps) {
+        int x, y;
+        if (borderTrait == Trait.BORDER_START) {
+            Integer paddingStart = (Integer)block.getTrait(Trait.PADDING_START);
+            x = block.getXOffset()
+                    - (paddingStart != null ? paddingStart : 0)
+                    - BorderProps.getClippedWidth(startBps);
+            y = block.getYOffset() + block.getBPD()
+            + block.getBorderAndPaddingWidthBefore()
+            + block.getBorderAndPaddingWidthAfter();
+        } else if (borderTrait == Trait.BORDER_END) {
+            Integer paddingEnd = (Integer)block.getTrait(Trait.PADDING_END);
+            x = block.getXOffset() + block.getIPD()
+            + (paddingEnd != null ? paddingEnd : 0)
+            + BorderProps.getClippedWidth(endBps);
+            y = block.getYOffset() + block.getBPD()
+            + block.getBorderAndPaddingWidthBefore()
+            + block.getBorderAndPaddingWidthAfter();
+        } else if (borderTrait == Trait.BORDER_AFTER) {
+            Integer paddingEnd = (Integer)block.getTrait(Trait.PADDING_END);
+            x = block.getXOffset() + block.getIPD()
+            + (paddingEnd != null ? paddingEnd : 0)
+            + BorderProps.getClippedWidth(endBps);
+            Integer paddingAfter = (Integer)block.getTrait(Trait.PADDING_AFTER);
+            y = block.getYOffset() + block.getBPD()
+            + block.getBorderAndPaddingWidthBefore()
+            + (paddingAfter != null ? paddingAfter : 0)
+            + BorderProps.getClippedWidth(afterBps);
+        } else if (borderTrait == Trait.BORDER_BEFORE) {
+            Integer paddingEnd = (Integer)block.getTrait(Trait.PADDING_END);
+            x = block.getXOffset() + block.getIPD()
+            + (paddingEnd != null ? paddingEnd : 0)
+            + BorderProps.getClippedWidth(endBps);
+            y = block.getYOffset()
+                    + BorderProps.getClippedWidth(beforeBps);
+        } else {
+            throw new IllegalArgumentException("Invalid trait: " + borderTrait);
+        }
+        return new Point(x, y);
+    }
+
+    private Point getStartMiddlePoint(Block block, int borderTrait, BorderProps startBps, BorderProps endBps,
+            BorderProps beforeBps, BorderProps afterBps) {
+        int x, y;
+        if (borderTrait == Trait.BORDER_START) {
+            Integer paddingStart = (Integer)block.getTrait(Trait.PADDING_START);
+            x = block.getXOffset()
+                    - (paddingStart != null ? paddingStart : 0)
+                    - BorderProps.getClippedWidth(startBps);
+            y = block.getYOffset();
+        } else if (borderTrait == Trait.BORDER_BEFORE) {
+            x = block.getXOffset() - block.getBorderAndPaddingWidthStart();
+            y = block.getYOffset()
+                    + BorderProps.getClippedWidth(beforeBps);
+        } else if (borderTrait == Trait.BORDER_END) {
+            Integer paddingEnd = (Integer)block.getTrait(Trait.PADDING_END);
+            x = block.getXOffset() + block.getIPD()
+            + (paddingEnd != null ? paddingEnd : 0)
+            + BorderProps.getClippedWidth(endBps);
+            y = block.getYOffset();
+        } else if (borderTrait == Trait.BORDER_AFTER) {
+            x = block.getXOffset() - block.getBorderAndPaddingWidthStart();
+            Integer paddingAfter = (Integer)block.getTrait(Trait.PADDING_AFTER);
+            y = block.getYOffset() + block.getBorderAndPaddingWidthBefore()
+            + block.getBPD()
+            + (paddingAfter != null ? paddingAfter : 0)
+            + BorderProps.getClippedWidth(afterBps);
+        } else {
+            throw new IllegalArgumentException("Invalid trait: " + borderTrait);
+        }
+        return new Point(x, y);
     }
 
     /**
