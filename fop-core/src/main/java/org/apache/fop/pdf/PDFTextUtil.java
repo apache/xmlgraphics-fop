@@ -51,6 +51,7 @@ public abstract class PDFTextUtil {
     private String startText;
     private String endText;
     private boolean useMultiByte;
+    private boolean useCid;
     private StringBuffer bufTJ;
     private int textRenderingMode = TR_FILL;
 
@@ -92,9 +93,9 @@ public abstract class PDFTextUtil {
         PDFNumber.doubleOut(lt[5], DEC, sb);
     }
 
-    private static void writeChar(char ch, StringBuffer sb, boolean multibyte) {
+    private static void writeChar(char ch, StringBuffer sb, boolean multibyte, boolean cid) {
         if (!multibyte) {
-            if (ch < 32 || ch > 127) {
+            if (cid || ch < 32 || ch > 127) {
                 sb.append("\\").append(Integer.toOctalString(ch));
             } else {
                 switch (ch) {
@@ -113,7 +114,7 @@ public abstract class PDFTextUtil {
     }
 
     private void writeChar(char ch, StringBuffer sb) {
-        writeChar(ch, sb, useMultiByte);
+        writeChar(ch, sb, useMultiByte, useCid);
     }
 
     private void checkInTextObject() {
@@ -199,13 +200,14 @@ public abstract class PDFTextUtil {
      * @param fontSize the font size (in points)
      * @param multiByte true indicates the font is a multi-byte font, false means single-byte
      */
-    public void updateTf(String fontName, double fontSize, boolean multiByte) {
+    public void updateTf(String fontName, double fontSize, boolean multiByte, boolean cid) {
         checkInTextObject();
         if (!fontName.equals(this.currentFontName) || (fontSize != this.currentFontSize)) {
             writeTJ();
             this.currentFontName = fontName;
             this.currentFontSize = fontSize;
             this.useMultiByte = multiByte;
+            this.useCid = cid;
             writeTf(fontName, fontSize);
         }
     }
@@ -338,11 +340,11 @@ public abstract class PDFTextUtil {
      * Writes a "Tj" command with specified character code.
      * @param ch character code to write
      */
-    public void writeTj(char ch) {
+    public void writeTj(char ch, boolean multibyte, boolean cid) {
         StringBuffer sb = new StringBuffer();
-        sb.append('<');
-        writeChar(ch, sb, true);
-        sb.append('>');
+        sb.append(startText);
+        writeChar(ch, sb, multibyte, cid);
+        sb.append(endText);
         sb.append(" Tj\n");
         write(sb);
     }

@@ -371,6 +371,9 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         if (isEmbeddable()) {
             glyphIndex = cidSet.mapChar(glyphIndex, c);
         }
+        if (isCID() && glyphIndex > 256) {
+            mapUnencodedChar(c);
+        }
         return (char) glyphIndex;
     }
 

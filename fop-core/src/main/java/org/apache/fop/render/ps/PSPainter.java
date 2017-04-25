@@ -40,7 +40,6 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
 
-import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
@@ -491,7 +490,6 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
             if (!multiByte || isOTF) {
                 char codepoint = (char)(ch % 256);
                 if (isOTF) {
-                    codepoint -= (((MultiByteFont)tf).getEmbeddingMode() == EmbeddingMode.FULL) ? 0 : 1;
                     accText.append(HexEncoder.encode(codepoint, 2));
                 } else {
                     PSGenerator.escapeChar(codepoint, accText); //add character to accumulated text

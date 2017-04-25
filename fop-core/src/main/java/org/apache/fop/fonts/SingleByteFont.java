@@ -20,11 +20,9 @@
 package org.apache.fop.fonts;
 
 import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -53,8 +51,6 @@ public class SingleByteFont extends CustomFont {
 
     private Rectangle[] boundingBoxes;
 
-    private Map<Character, UnencodedCharacter> unencodedCharacters;
-    private List<SimpleSingleByteEncoding> additionalEncodings;
     private Map<Character, Character> alternativeCodes;
 
     private PostScriptVersion ttPostScriptVersion;
@@ -253,39 +249,6 @@ public class SingleByteFont extends CustomFont {
         }
     }
 
-    private char mapUnencodedChar(char ch) {
-        if (this.unencodedCharacters != null) {
-            UnencodedCharacter unencoded = this.unencodedCharacters.get(ch);
-            if (unencoded != null) {
-                if (this.additionalEncodings == null) {
-                    this.additionalEncodings = new ArrayList<SimpleSingleByteEncoding>();
-                }
-                SimpleSingleByteEncoding encoding = null;
-                char mappedStart = 0;
-                int additionalsCount = this.additionalEncodings.size();
-                for (int i = 0; i < additionalsCount; i++) {
-                    mappedStart += 256;
-                    encoding = getAdditionalEncoding(i);
-                    char alt = encoding.mapChar(ch);
-                    if (alt != 0) {
-                        return (char)(mappedStart + alt);
-                    }
-                }
-                if (encoding != null && encoding.isFull()) {
-                    encoding = null;
-                }
-                if (encoding == null) {
-                    encoding = new SimpleSingleByteEncoding(
-                            getFontName() + "EncodingSupp" + (additionalsCount + 1));
-                    this.additionalEncodings.add(encoding);
-                    mappedStart += 256;
-                }
-                return (char)(mappedStart + encoding.addCharacter(unencoded.getCharacter()));
-            }
-        }
-        return 0;
-    }
-
     /** {@inheritDoc} */
     @Override
     public boolean hasChar(char c) {
@@ -407,41 +370,6 @@ public class SingleByteFont extends CustomFont {
     }
 
     /**
-     * Indicates whether the encoding has additional encodings besides the primary encoding.
-     * @return true if there are additional encodings.
-     */
-    public boolean hasAdditionalEncodings() {
-        return (this.additionalEncodings != null) && (this.additionalEncodings.size() > 0);
-    }
-
-    /**
-     * Returns the number of additional encodings this single-byte font maintains.
-     * @return the number of additional encodings
-     */
-    public int getAdditionalEncodingCount() {
-        if (hasAdditionalEncodings()) {
-            return this.additionalEncodings.size();
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * Returns an additional encoding.
-     * @param index the index of the additional encoding
-     * @return the additional encoding
-     * @throws IndexOutOfBoundsException if the index is out of bounds
-     */
-    public SimpleSingleByteEncoding getAdditionalEncoding(int index)
-            throws IndexOutOfBoundsException {
-        if (hasAdditionalEncodings()) {
-            return this.additionalEncodings.get(index);
-        } else {
-            throw new IndexOutOfBoundsException("No additional encodings available");
-        }
-    }
-
-    /**
      * Returns an array with the widths for an additional encoding.
      * @param index the index of the additional encoding
      * @return the width array
@@ -458,7 +386,7 @@ public class SingleByteFont extends CustomFont {
         return arr;
     }
 
-    private static final class UnencodedCharacter {
+    protected static final class UnencodedCharacter {
 
         private final NamedCharacter character;
         private final int width;

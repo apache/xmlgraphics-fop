@@ -248,7 +248,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         PSFontResource fontResource = null;
         PSResource fontRes = new PSResource(PSResource.TYPE_FONT, tf.getEmbedFontName());
         if (!(fontType == FontType.TYPE1 || fontType == FontType.TRUETYPE
-                || fontType == FontType.TYPE0) || !(tf instanceof CustomFont)) {
+                || fontType == FontType.TYPE0 || fontType == FontType.TYPE1C) || !(tf instanceof CustomFont)) {
             gen.writeDSCComment(DSCConstants.INCLUDE_RESOURCE, fontRes);
             fontResource = PSFontResource.createFontResource(fontRes);
             return fontResource;
@@ -262,7 +262,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                     if (i > 0) {
                         fontRes = new PSResource(PSResource.TYPE_FONT, tf.getEmbedFontName()  + "." + i);
                     }
-                    if (fontType == FontType.TYPE0) {
+                    if (fontType == FontType.TYPE0 || fontType == FontType.TYPE1C) {
                         if (((MultiByteFont) tf).isOTFFile()) {
                             checkPostScriptLevel3(gen, eventProducer, "OpenType CFF");
                             embedType2CFF(gen, (MultiByteFont) tf, in);
@@ -525,7 +525,6 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
     private static void embedType2CFF(PSGenerator gen,
             MultiByteFont font, InputStream fontStream) throws IOException {
         FontFileReader reader = new FontFileReader(fontStream);
-        String header = OFFontLoader.readHeader(reader);
         String psName;
         CFFDataReader cffReader = new CFFDataReader(reader);
         if (cffReader.getFDSelect() != null) {
@@ -560,7 +559,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         } else {
             psName = font.getEmbedFontName();
             OTFSubSetFile otfFile = new OTFSubSetFile();
-            otfFile.readFont(reader, psName, header, font);
+            otfFile.readFont(reader, psName, font);
             bytes = otfFile.getFontSubset();
         }
 

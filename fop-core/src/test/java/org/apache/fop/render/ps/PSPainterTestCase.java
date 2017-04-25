@@ -219,9 +219,9 @@ public class PSPainterTestCase {
                 + "<00000000000000000000> t\n"
                 + "/OTFFont.0 0.01 F\n"
                 + "1 0 0 -1 0 0 Tm\n"
-                + "<FFFFFFFFFF> t\n"
+                + "<0000000000> t\n"
                 + "1 0 0 -1 0 0 Tm\n"
-                + "<FFFFFFFFFF> t\n"
+                + "<0000000000> t\n"
                 + "/TTFFont 0.01 F\n"
                 + "1 0 0 -1 0 0 Tm\n"
                 + "<00000000000000000000> t\n"));

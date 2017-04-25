@@ -127,7 +127,7 @@ class PDFTextPainter extends NativeTextPainter {
                 double      xoLast          = 0f;
                 double      yoLast          = 0f;
                 textUtil.writeTextMatrix(new AffineTransform(1, 0, 0, -1, initialPos.getX(), initialPos.getY()));
-                textUtil.updateTf(fk, fsPoints, true);
+                textUtil.updateTf(fk, fsPoints, true, false);
                 int[][] dp = gv.getGlyphPositionAdjustments();
                 for (int i = 0, n = gv.getNumGlyphs(); i < n; i++) {
                     int     gc              = gv.getGlyphCode(i);
@@ -139,7 +139,7 @@ class PDFTextPainter extends NativeTextPainter {
                     double  xd              = (xo - xoLast) / 1000f;
                     double  yd              = (yo - yoLast) / 1000f;
                     textUtil.writeTd(xd, yd);
-                    textUtil.writeTj((char) gc);
+                    textUtil.writeTj((char) gc, true, false);
                     xc += xa + pa[2];
                     yc += ya + pa[3];
                     xoLast = xo;

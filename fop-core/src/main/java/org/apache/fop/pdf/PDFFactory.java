@@ -28,9 +28,11 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -987,6 +989,9 @@ public class PDFFactory {
                 assert font instanceof PDFFontType0;
                 ((PDFFontType0)font).setCMAP(cmap);
                 ((PDFFontType0)font).setDescendantFonts(cidFont);
+            } else if (fonttype == FontType.TYPE1C
+                    && (metrics instanceof LazyFont || metrics instanceof MultiByteFont)) {
+                handleType1CFont(pdfdesc, font, metrics, fontname, basefont, descriptor);
             } else {
                 assert font instanceof PDFFontNonBase14;
                 PDFFontNonBase14 nonBase14 = (PDFFontNonBase14)font;
@@ -1121,6 +1126,84 @@ public class PDFFactory {
 
             return font;
         }
+    }
+
+    private void handleType1CFont(PDFFontDescriptor pdfdesc, PDFFont font, FontMetrics metrics, String fontname,
+                                  String basefont, FontDescriptor descriptor) {
+        PDFFontNonBase14 nonBase14 = (PDFFontNonBase14)font;
+        nonBase14.setDescriptor(pdfdesc);
+        MultiByteFont singleByteFont;
+        if (metrics instanceof LazyFont) {
+            singleByteFont = (MultiByteFont)((LazyFont)metrics).getRealFont();
+        } else {
+            singleByteFont = (MultiByteFont)metrics;
+        }
+        Map<Integer, Integer> usedGlyphs = singleByteFont.getUsedGlyphs();
+        SortedSet<Integer> keys = new TreeSet<Integer>(usedGlyphs.keySet());
+        keys.remove(0);
+        int count = keys.size();
+        Iterator<String> usedGlyphNames = singleByteFont.getUsedGlyphNames().values().iterator();
+        count = setupFontMetrics(nonBase14, pdfdesc, usedGlyphNames, 0, count, metrics);
+        List<PDFFontNonBase14> additionalEncodings = addAdditionalEncodings(metrics, descriptor, fontname, basefont);
+        for (int j = 0; j < additionalEncodings.size(); j++) {
+            PDFFontNonBase14 additional = additionalEncodings.get(j);
+            int start = 256 * (j + 1);
+            count = setupFontMetrics(additional, pdfdesc, usedGlyphNames, start, count, metrics);
+        }
+    }
+
+    private int setupFontMetrics(PDFFontNonBase14 font, PDFFontDescriptor pdfdesc,
+                                 Iterator<String> usedGlyphNames, int start, int count, FontMetrics metrics) {
+        font.setDescriptor(pdfdesc);
+        PDFArray differences = new PDFArray();
+        int firstChar = 0;
+        differences.add(firstChar);
+        int lastChar = Math.min(count, 255);
+        int[] newWidths = new int[lastChar + 1];
+        for (int i = 0; i < newWidths.length; i++) {
+            newWidths[i] = metrics.getWidth(start + i, 1);
+            differences.add(new PDFName(usedGlyphNames.next()));
+            count--;
+        }
+        font.setWidthMetrics(firstChar,
+                lastChar,
+                new PDFArray(null, newWidths));
+        PDFEncoding pdfEncoding = new PDFEncoding("WinAnsiEncoding");
+        getDocument().registerTrailerObject(pdfEncoding);
+        pdfEncoding.setDifferences(differences);
+        font.setEncoding(pdfEncoding);
+        return count;
+    }
+
+    private List<PDFFontNonBase14> addAdditionalEncodings(FontMetrics metrics, FontDescriptor descriptor,
+                                                          String fontname, String basefont) {
+        List<PDFFontNonBase14> additionalEncodings = new ArrayList<PDFFontNonBase14>();
+        FontType fonttype = metrics.getFontType();
+        if (descriptor != null && (fonttype != FontType.TYPE0)) {
+            CustomFont singleByteFont;
+            if (metrics instanceof LazyFont) {
+                singleByteFont = (CustomFont)((LazyFont)metrics).getRealFont();
+            } else {
+                singleByteFont = (CustomFont)metrics;
+            }
+            //Handle additional encodings (characters outside the primary encoding)
+            if (singleByteFont.hasAdditionalEncodings()) {
+                for (int i = additionalEncodings.size(),
+                     c = singleByteFont.getAdditionalEncodingCount(); i < c; i++) {
+                    SimpleSingleByteEncoding addEncoding
+                            = singleByteFont.getAdditionalEncoding(i);
+                    String name = fontname + "_" + (i + 1);
+                    Object pdfenc = createPDFEncoding(addEncoding, singleByteFont.getFontName());
+                    PDFFontNonBase14 addFont = (PDFFontNonBase14)PDFFont.createFont(
+                            name, fonttype,
+                            basefont, pdfenc);
+                    getDocument().registerObject(addFont);
+                    getDocument().getResources().addFont(addFont);
+                    additionalEncodings.add(addFont);
+                }
+            }
+        }
+        return additionalEncodings;
     }
 
     private void generateToUnicodeCmap(PDFFont font, SingleByteEncoding encoding) {
@@ -1315,10 +1398,17 @@ public class PDFFactory {
                     ((PDFT1Stream) embeddedFont).setData(pfb);
                 }
             } else if (desc.getFontType() == FontType.TYPE1C) {
-                byte[] file = IOUtils.toByteArray(in);
-                PDFCFFStream embeddedFont2 = new PDFCFFStream("Type1C");
-                embeddedFont2.setData(file);
-                return embeddedFont2;
+                if (font.getEmbeddingMode() == EmbeddingMode.SUBSET) {
+                    FontFileReader reader = new FontFileReader(in);
+                    String header = OFFontLoader.readHeader(reader);
+                    byte[] fontBytes = getFontSubsetBytes(reader, (MultiByteFont) font, header, fontPrefix, desc, true);
+                    embeddedFont = getFontStream(font, fontBytes, true);
+                } else {
+                    byte[] file = IOUtils.toByteArray(in);
+                    PDFCFFStream embeddedFont2 = new PDFCFFStream("Type1C");
+                    embeddedFont2.setData(file);
+                    return embeddedFont2;
+                }
             } else if (desc.getFontType() == FontType.CIDTYPE0) {
                 byte[] file = IOUtils.toByteArray(in);
                 PDFCFFStream embeddedFont2 = new PDFCFFStream("CIDFontType0C");
@@ -1361,7 +1451,7 @@ public class PDFFactory {
             String fontPrefix, FontDescriptor desc, boolean isCFF) throws IOException {
         if (isCFF) {
             OTFSubSetFile otfFile = new OTFSubSetFile();
-            otfFile.readFont(reader, fontPrefix + desc.getEmbedFontName(), header, mbfont);
+            otfFile.readFont(reader, fontPrefix + desc.getEmbedFontName(), mbfont);
             return otfFile.getFontSubset();
         } else {
             TTFSubSetFile otfFile = new TTFSubSetFile();
@@ -1374,7 +1464,7 @@ public class PDFFactory {
             throws IOException {
         AbstractPDFStream embeddedFont;
         if (isCFF) {
-            embeddedFont = new PDFCFFStreamType0C(font.getEmbeddingMode() == EmbeddingMode.FULL);
+            embeddedFont = new PDFCFFStreamType0C(font);
             ((PDFCFFStreamType0C) embeddedFont).setData(fontBytes, fontBytes.length);
         } else {
             embeddedFont = new PDFTTFStream(fontBytes.length);
