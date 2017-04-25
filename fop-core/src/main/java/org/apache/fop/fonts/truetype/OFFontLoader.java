@@ -182,6 +182,10 @@ public class OFFontLoader extends FontLoader {
         returnFont.setWeight(otf.getWeightClass());
         if (isCid) {
             if (otf instanceof OTFFile) {
+                if (((OTFFile) otf).isType1() && embeddingMode == EmbeddingMode.SUBSET) {
+                    multiFont.setFontType(FontType.TYPE1C);
+                    copyGlyphMetricsSingleByte(otf);
+                }
                 multiFont.setCIDType(CIDFontType.CIDTYPE0);
             } else {
                 multiFont.setCIDType(CIDFontType.CIDTYPE2);
@@ -223,17 +227,21 @@ public class OFFontLoader extends FontLoader {
     private void copyGlyphMetricsSingleByte(OpenFont otf) {
         int[] wx = otf.getWidths();
         Rectangle[] bboxes = otf.getBoundingBoxes();
-        for (int i = singleFont.getFirstChar(); i <= singleFont.getLastChar(); i++) {
-            singleFont.setWidth(i, otf.getCharWidth(i));
-            int[] bbox = otf.getBBox(i);
-            singleFont.setBoundingBox(i,
-                    new Rectangle(bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]));
+        if (singleFont != null) {
+            for (int i = singleFont.getFirstChar(); i <= singleFont.getLastChar(); i++) {
+                singleFont.setWidth(i, otf.getCharWidth(i));
+                int[] bbox = otf.getBBox(i);
+                singleFont.setBoundingBox(i,
+                        new Rectangle(bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]));
+            }
         }
-
         for (CMapSegment segment : otf.getCMaps()) {
             if (segment.getUnicodeStart() < 0xFFFE) {
                 for (char u = (char)segment.getUnicodeStart(); u <= segment.getUnicodeEnd(); u++) {
-                    int codePoint = singleFont.getEncoding().mapChar(u);
+                    int codePoint = 0;
+                    if (singleFont != null) {
+                        codePoint = singleFont.getEncoding().mapChar(u);
+                    }
                     if (codePoint <= 0) {
                         int glyphIndex = segment.getGlyphStartIndex() + u - segment.getUnicodeStart();
                         String glyphName = otf.getGlyphName(glyphIndex);
@@ -243,7 +251,7 @@ public class OFFontLoader extends FontLoader {
                         if (glyphName.length() > 0) {
                             String unicode = Character.toString(u);
                             NamedCharacter nc = new NamedCharacter(glyphName, unicode);
-                            singleFont.addUnencodedCharacter(nc, wx[glyphIndex], bboxes[glyphIndex]);
+                            returnFont.addUnencodedCharacter(nc, wx[glyphIndex], bboxes[glyphIndex]);
                         }
                     }
                 }

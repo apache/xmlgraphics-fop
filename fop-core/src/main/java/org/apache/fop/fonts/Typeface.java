@@ -98,6 +98,10 @@ public abstract class Typeface implements FontMetrics {
         return false;
     }
 
+    public boolean isCID() {
+        return getFontType() == FontType.TYPE1C;
+    }
+
     /** {@inheritDoc} */
     public int getMaxAscent(int size) {
         return getAscender(size);

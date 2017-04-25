@@ -24,6 +24,7 @@ import java.io.IOException;
 import org.apache.fontbox.cff.CFFDataInput;
 import org.apache.fontbox.cff.CFFFont;
 import org.apache.fontbox.cff.CFFParser;
+import org.apache.fontbox.cff.CFFType1Font;
 
 public class OTFFile extends OpenFont {
 
@@ -132,5 +133,9 @@ public class OTFFile extends OpenFont {
 
     private static long readLong(CFFDataInput input) throws IOException {
         return (input.readCard16() << 16) | input.readCard16();
+    }
+
+    public boolean isType1() {
+        return fileFont instanceof CFFType1Font;
     }
 }

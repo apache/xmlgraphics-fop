@@ -64,8 +64,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         }
 
         sourceSansSubset = new OTFSubSetFile();
-        String sourceSansHeader = OFFontLoader.readHeader(sourceSansReader);
-        sourceSansSubset.readFont(sourceSansReader, "SourceSansProBold", sourceSansHeader, glyphs);
+        sourceSansSubset.readFont(sourceSansReader, "SourceSansProBold", null, glyphs);
         byte[] sourceSansData = sourceSansSubset.getFontSubset();
         cffReaderSourceSans = new CFFDataReader(sourceSansData);
     }
@@ -442,11 +441,8 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
 
     private byte[] getSubset(final int opLen) throws IOException {
         FontFileReader reader = sourceSansReader;
-        String header = OFFontLoader.readHeader(reader);
-
         OTFSubSetFile otfSubSetFile = new MyOTFSubSetFile(opLen);
-
-        otfSubSetFile.readFont(reader, "StandardOpenType", header, new HashMap<Integer, Integer>());
+        otfSubSetFile.readFont(reader, "StandardOpenType", null, new HashMap<Integer, Integer>());
         return otfSubSetFile.getFontSubset();
     }
 

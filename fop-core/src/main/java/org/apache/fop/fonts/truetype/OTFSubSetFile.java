@@ -111,10 +111,8 @@ public class OTFSubSetFile extends OTFSubSetWriter {
         super();
     }
 
-    public void readFont(FontFileReader in, String embeddedName, String header,
-            MultiByteFont mbFont) throws IOException {
-        this.mbFont = mbFont;
-        readFont(in, embeddedName, header, mbFont.getUsedGlyphs());
+    public void readFont(FontFileReader in, String embeddedName, MultiByteFont mbFont) throws IOException {
+        readFont(in, embeddedName, mbFont, mbFont.getUsedGlyphs());
     }
 
     /**
@@ -122,13 +120,13 @@ public class OTFSubSetFile extends OTFSubSetWriter {
      *
      * @param in FontFileReader to read from
      * @param embeddedName Name to be checked for in the font file
-     * @param header The header of the font file
      * @param usedGlyphs Map of glyphs (glyphs has old index as (Integer) key and
      * new index as (Integer) value)
      * @throws IOException in case of an I/O problem
      */
-    void readFont(FontFileReader in, String embeddedName, String header,
+    void readFont(FontFileReader in, String embeddedName, MultiByteFont mbFont,
             Map<Integer, Integer> usedGlyphs) throws IOException {
+        this.mbFont = mbFont;
         fontFile = in;
 
         currentPos = 0;
@@ -1038,6 +1036,9 @@ public class OTFSubSetFile extends OTFSubSetWriter {
         } else {
             writeByte(0);
             for (int entry : gidToSID.values()) {
+                if (entry == 0) {
+                    continue;
+                }
                 writeCard16(entry);
             }
         }

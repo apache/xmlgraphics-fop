@@ -19,12 +19,14 @@
 
 package org.apache.fop.pdf;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.xmlgraphics.io.ResourceResolver;
 
@@ -32,8 +34,11 @@ import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.CIDSet;
 import org.apache.fop.fonts.CIDSubset;
+import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbeddingMode;
+import org.apache.fop.fonts.FontUris;
 import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.truetype.OFFontLoader;
 
 /**
  * Test case for {@link PDFFactory}.
@@ -74,5 +79,38 @@ public class PDFFactoryTestCase {
 
         PDFFont pdfArial = pdfFactory.makeFont("Arial", "Arial", "TTF", font, font);
         assertEquals("/EAAAAB+Arial", pdfArial.getBaseFont().toString());
+    }
+
+    @Test
+    public void testMakeOTFFont() throws IOException {
+        InternalResourceResolver rr =
+                ResourceResolverFactory.createDefaultInternalResourceResolver(new File(".").toURI());
+        PDFDocument doc = new PDFDocument("");
+        PDFFactory pdfFactory = new PDFFactory(doc);
+        URI uri = new File("test/resources/fonts/otf/SourceSansProBold.otf").toURI();
+        CustomFont sb = OFFontLoader.loadFont(new FontUris(uri, null),
+                null, true, EmbeddingMode.SUBSET, null, false, false, rr, false, false);
+        for (char c = 0; c < 512; c++) {
+            sb.mapChar(c);
+        }
+        pdfFactory.makeFont("a", "a", "WinAnsiEncoding", sb, sb);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        doc.outputTrailer(bos);
+
+        assertEquals(pdfFactory.getDocument().getFontMap().size(), 2);
+        PDFFont pdfFont = pdfFactory.getDocument().getFontMap().get("a_1");
+        PDFEncoding enc = (PDFEncoding) pdfFont.get("Encoding");
+        PDFArray diff = (PDFArray) enc.get("Differences");
+        assertEquals(diff.length(), 80);
+        assertEquals(diff.get(1).toString(), "/nacute");
+
+        pdfFont = pdfFactory.getDocument().getFontMap().get("a");
+        enc = (PDFEncoding) pdfFont.get("Encoding");
+        diff = (PDFArray) enc.get("Differences");
+        assertEquals(diff.length(), 257);
+        assertEquals(diff.get(2).toString(), "/space");
+
+        assertTrue(bos.toString().contains("/Subtype /Type1\n"));
+        assertTrue(bos.toString().contains("/Subtype /Type1C"));
     }
 }

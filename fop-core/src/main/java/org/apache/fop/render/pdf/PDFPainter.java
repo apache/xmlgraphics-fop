@@ -451,15 +451,11 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         Typeface tf = getTypeface(fontKey);
-        SingleByteFont singleByteFont = null;
-        if (tf instanceof SingleByteFont) {
-            singleByteFont = (SingleByteFont)tf;
-        }
         Font font = getFontInfo().getFontInstance(triplet, sizeMillipoints);
         String fontName = font.getFontName();
 
         PDFTextUtil textutil = generator.getTextUtil();
-        textutil.updateTf(fontKey, fontSize, tf.isMultiByte());
+        textutil.updateTf(fontKey, fontSize, tf.isMultiByte(), tf.isCID());
 
         double shear = 0;
         boolean simulateStyle = tf instanceof CustomFont && ((CustomFont) tf).getSimulateStyle();
@@ -488,7 +484,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             float glyphAdjust = 0;
             if (font.hasChar(orgChar)) {
                 ch = font.mapChar(orgChar);
-                ch = selectAndMapSingleByteFont(singleByteFont, fontName, fontSize, textutil, ch);
+                ch = selectAndMapSingleByteFont(tf, fontName, fontSize, textutil, ch);
                 if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
                     glyphAdjust += wordSpacing;
                 }
@@ -504,8 +500,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                         glyphAdjust += wordSpacing;
                     }
                 }
-                ch = selectAndMapSingleByteFont(singleByteFont, fontName, fontSize,
-                        textutil, ch);
+                ch = selectAndMapSingleByteFont(tf, fontName, fontSize, textutil, ch);
             }
             textutil.writeTJMappedChar(ch);
 
@@ -533,7 +528,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         assert dp != null;
         String          fk              = getFontInfo().getInternalFontKey(triplet);
         Typeface        tf              = getTypeface(fk);
-        if (tf.isMultiByte()) {
+        if (tf.isMultiByte() || tf.isCID()) {
             int         fs              = state.getFontSize();
             float       fsPoints        = fs / 1000f;
             Font        f               = getFontInfo().getFontInstance(triplet, fs);
@@ -544,7 +539,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             double      yoLast          = 0f;
             double      wox             = wordSpacing;
             tu.writeTextMatrix(new AffineTransform(1, 0, 0, -1, x / 1000f, y / 1000f));
-            tu.updateTf(fk, fsPoints, true);
+            tu.updateTf(fk, fsPoints, tf.isMultiByte(), true);
             generator.updateCharacterSpacing(letterSpacing / 1000f);
             for (int i = 0, n = text.length(); i < n; i++) {
                 char    ch              = text.charAt(i);
@@ -556,7 +551,9 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                 double  xd              = (xo - xoLast) / 1000f;
                 double  yd              = (yo - yoLast) / 1000f;
                 tu.writeTd(xd, yd);
-                tu.writeTj(f.mapChar(ch));
+                ch = f.mapChar(ch);
+                ch = selectAndMapSingleByteFont(tf, f.getFontName(), fsPoints, tu, ch);
+                tu.writeTj(ch, tf.isMultiByte(), true);
                 xc += xa + pa[2];
                 yc += ya + pa[3];
                 xoLast = xo;
@@ -587,15 +584,15 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
     }
     */
 
-    private char selectAndMapSingleByteFont(SingleByteFont singleByteFont, String fontName,
-            float fontSize, PDFTextUtil textutil, char ch) {
-        if (singleByteFont != null && singleByteFont.hasAdditionalEncodings()) {
+    private char selectAndMapSingleByteFont(Typeface tf, String fontName, float fontSize, PDFTextUtil textutil,
+                                            char ch) {
+        if ((tf instanceof SingleByteFont && ((SingleByteFont)tf).hasAdditionalEncodings()) || tf.isCID()) {
             int encoding = ch / 256;
             if (encoding == 0) {
-                textutil.updateTf(fontName, fontSize, singleByteFont.isMultiByte());
+                textutil.updateTf(fontName, fontSize, tf.isMultiByte(), tf.isCID());
             } else {
                 textutil.updateTf(fontName + "_" + Integer.toString(encoding),
-                        fontSize, singleByteFont.isMultiByte());
+                        fontSize, tf.isMultiByte(), tf.isCID());
                 ch = (char)(ch % 256);
             }
         }

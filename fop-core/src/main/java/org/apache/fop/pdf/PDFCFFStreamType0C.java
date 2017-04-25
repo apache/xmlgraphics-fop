@@ -22,21 +22,30 @@ package org.apache.fop.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.fonts.CustomFont;
+import org.apache.fop.fonts.EmbeddingMode;
+import org.apache.fop.fonts.FontType;
+
 /**
  * PDFStream for embeddable OpenType CFF fonts.
  */
 public class PDFCFFStreamType0C extends AbstractPDFFontStream {
 
     private byte[] cffData;
-    private boolean fullEmbed;
+    private String type;
 
     /**
      * Main constructor
-     * @param fullEmbed Determines whether the font is fully embedded
      */
-    public PDFCFFStreamType0C(boolean fullEmbed) {
+    public PDFCFFStreamType0C(CustomFont font) {
         super();
-        this.fullEmbed = fullEmbed;
+        if (font.getEmbeddingMode() == EmbeddingMode.FULL) {
+            type = "OpenType";
+        } else if (font.getFontType() == FontType.TYPE0) {
+            type = "CIDFontType0C";
+        } else {
+            type = font.getFontType().getName();
+        }
     }
 
     protected int getSizeHint() throws IOException {
@@ -54,7 +63,6 @@ public class PDFCFFStreamType0C extends AbstractPDFFontStream {
 
     /** {@inheritDoc} */
     protected void populateStreamDict(Object lengthEntry) {
-        String type = (fullEmbed) ? "OpenType" : "CIDFontType0C";
         put("Subtype", new PDFName(type));
         super.populateStreamDict(lengthEntry);
     }

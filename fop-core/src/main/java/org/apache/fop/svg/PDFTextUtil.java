@@ -91,6 +91,11 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
         return f.isMultiByte();
     }
 
+    protected boolean isCIDFont(String name) {
+        Typeface f = fontInfo.getFonts().get(name);
+        return f.isCID();
+    }
+
     /**
      * Writes a "Tf" command, setting a new current font.
      * @param f the font to select
@@ -99,10 +104,11 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
         String fontName = f.getFontName();
         float fontSize = (float)f.getFontSize() / 1000f;
         boolean isMultiByte = isMultiByteFont(fontName);
+        boolean isCid = isCIDFont(fontName);
         if (!isMultiByte && encoding != 0) {
-            updateTf(fontName + "_" + Integer.toString(encoding), fontSize, isMultiByte);
+            updateTf(fontName + "_" + Integer.toString(encoding), fontSize, isMultiByte, isCid);
         } else {
-            updateTf(fontName, fontSize, isMultiByte);
+            updateTf(fontName, fontSize, isMultiByte, isCid);
         }
     }
 

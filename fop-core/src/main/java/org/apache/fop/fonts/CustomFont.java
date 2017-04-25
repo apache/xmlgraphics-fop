@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts;
 
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -81,6 +82,8 @@ public abstract class CustomFont extends Typeface
     protected List<CMapSegment> cmap = new ArrayList<CMapSegment>();
     private boolean useAdvanced = true;
     private boolean simulateStyle;
+    protected List<SimpleSingleByteEncoding> additionalEncodings;
+    protected Map<Character, SingleByteFont.UnencodedCharacter> unencodedCharacters;
 
     /**
      * @param resourceResolver the URI resource resolver for controlling file access
@@ -590,4 +593,93 @@ public abstract class CustomFont extends Typeface
      * @return The character
      */
     public abstract char getUnicodeFromGID(int glyphIndex);
+
+    /**
+     * Indicates whether the encoding has additional encodings besides the primary encoding.
+     * @return true if there are additional encodings.
+     */
+    public boolean hasAdditionalEncodings() {
+        return (this.additionalEncodings != null) && (this.additionalEncodings.size() > 0);
+    }
+
+    /**
+     * Returns the number of additional encodings this single-byte font maintains.
+     * @return the number of additional encodings
+     */
+    public int getAdditionalEncodingCount() {
+        if (hasAdditionalEncodings()) {
+            return this.additionalEncodings.size();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Returns an additional encoding.
+     * @param index the index of the additional encoding
+     * @return the additional encoding
+     * @throws IndexOutOfBoundsException if the index is out of bounds
+     */
+    public SimpleSingleByteEncoding getAdditionalEncoding(int index)
+            throws IndexOutOfBoundsException {
+        if (hasAdditionalEncodings()) {
+            return this.additionalEncodings.get(index);
+        } else {
+            throw new IndexOutOfBoundsException("No additional encodings available");
+        }
+    }
+
+    /**
+     * Adds an unencoded character (one that is not supported by the primary encoding).
+     * @param ch the named character
+     * @param width the width of the character
+     */
+    public void addUnencodedCharacter(NamedCharacter ch, int width, Rectangle bbox) {
+        if (this.unencodedCharacters == null) {
+            this.unencodedCharacters = new HashMap<Character, SingleByteFont.UnencodedCharacter>();
+        }
+        if (ch.hasSingleUnicodeValue()) {
+            SingleByteFont.UnencodedCharacter uc = new SingleByteFont.UnencodedCharacter(ch, width, bbox);
+            this.unencodedCharacters.put(ch.getSingleUnicodeValue(), uc);
+        } else {
+            //Cannot deal with unicode sequences, so ignore this character
+        }
+    }
+
+    /**
+     * Adds a character to additional encodings
+     * @param ch character to map
+     */
+    protected char mapUnencodedChar(char ch) {
+        if (this.unencodedCharacters != null) {
+            SingleByteFont.UnencodedCharacter unencoded = this.unencodedCharacters.get(ch);
+            if (unencoded != null) {
+                if (this.additionalEncodings == null) {
+                    this.additionalEncodings = new ArrayList<SimpleSingleByteEncoding>();
+                }
+                SimpleSingleByteEncoding encoding = null;
+                char mappedStart = 0;
+                int additionalsCount = this.additionalEncodings.size();
+                for (int i = 0; i < additionalsCount; i++) {
+                    mappedStart += 256;
+                    encoding = getAdditionalEncoding(i);
+                    char alt = encoding.mapChar(ch);
+                    if (alt != 0) {
+                        return (char)(mappedStart + alt);
+                    }
+                }
+                if (encoding != null && encoding.isFull()) {
+                    encoding = null;
+                }
+                if (encoding == null) {
+                    encoding = new SimpleSingleByteEncoding(
+                            getFontName() + "EncodingSupp" + (additionalsCount + 1));
+                    this.additionalEncodings.add(encoding);
+                    mappedStart += 256;
+                }
+                return (char)(mappedStart + encoding.addCharacter(unencoded.getCharacter()));
+            }
+        }
+        return 0;
+    }
 }
