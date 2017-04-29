@@ -471,17 +471,30 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
                     BorderInfo border = gridUnits[0].getBorderStart();
                     int borderWidth = border.getRetainedWidth() / 2;
                     if (borderWidth > 0) {
-                        addBorder(blocks, y, 0, Trait.BORDER_START, border,
-                                  inFirstColumn, level);
-                        adjustXOffset(blocks[y][0], borderWidth);
-                        adjustIPD(blocks[y][0], -borderWidth);
+                        if (level == 1) {
+                            addBorder(blocks, y, gridUnits.length - 1, Trait.BORDER_START, border,
+                                      inFirstColumn, level);
+                            adjustXOffset(blocks[y][gridUnits.length - 1], -borderWidth);
+                        } else {
+                            addBorder(blocks, y, 0, Trait.BORDER_START, border,
+                                      inFirstColumn, level);
+                            adjustXOffset(blocks[y][0], borderWidth);
+                            adjustIPD(blocks[y][0], -borderWidth);
+                        }
                     }
                     border = gridUnits[gridUnits.length - 1].getBorderEnd();
                     borderWidth = border.getRetainedWidth() / 2;
                     if (borderWidth > 0) {
-                        addBorder(blocks, y, gridUnits.length - 1, Trait.BORDER_END, border,
-                                  inLastColumn, level);
-                        adjustIPD(blocks[y][gridUnits.length - 1], -borderWidth);
+                        if (level == 1) {
+                            addBorder(blocks, y, 0, Trait.BORDER_END, border,
+                                      inLastColumn, level);
+                            adjustXOffset(blocks[y][0], borderWidth);
+                            adjustIPD(blocks[y][0], -borderWidth);
+                        } else {
+                            addBorder(blocks, y, gridUnits.length - 1, Trait.BORDER_END, border,
+                                    inLastColumn, level);
+                            adjustIPD(blocks[y][gridUnits.length - 1], -borderWidth);
+                        }
                     }
                 }
                 int dy = yoffset;
