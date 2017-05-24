@@ -37,6 +37,7 @@ public class MainReference extends Area {
     private BodyRegion parent;
     private List<Span> spanAreas = new java.util.ArrayList<Span>();
     private boolean isEmpty = true;
+    private WritingModeTraitsGetter wmtg;
 
     /**
      * Constructor
@@ -62,6 +63,9 @@ public class MainReference extends Area {
         Span newSpan = new Span(((spanAll) ? 1 : getColumnCount()),
                 getColumnGap(), parent.getContentIPD());
         spanAreas.add(newSpan);
+        if (wmtg != null) {
+            newSpan.setWritingModeTraits(wmtg);
+        }
         return getCurrentSpan();
     }
 
@@ -127,6 +131,7 @@ public class MainReference extends Area {
      * @param wmtg a WM traits getter
      */
     public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
+        this.wmtg = wmtg;
         for (Span s : getSpans()) {
             s.setWritingModeTraits(wmtg);
         }
