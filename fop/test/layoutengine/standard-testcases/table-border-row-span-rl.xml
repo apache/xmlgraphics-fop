@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id: table-border-separate3.xml 627324 2008-02-13 09:35:01Z maxberger $ -->
+<testcase>
+  <info>
+    <p>This test checks correct placement of table borders of spanned table cells in right-to-left writing mode.</p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master margin="20mm" master-name="odd" page-height="148mm" page-width="210mm">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+
+      <fo:page-sequence id="lastpagesequence" master-reference="odd" writing-mode="rl-tb">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table border-collapse="collapse" table-layout="fixed" width="100%">
+            <fo:table-column column-width="60%"/>
+            <fo:table-column column-width="40%"/>
+            <fo:table-body>
+              <fo:table-row height="8px">
+                <fo:table-cell background-color="#DCDDDE" border-collapse="collapse" border-color="black" border-style="solid" border-width="1px">
+                  <fo:block>A1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell background-color="#DCDDDE" border-collapse="collapse" border-color="black" border-style="solid" border-width="1px" number-rows-spanned="2">
+                  <fo:block>B1,B2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row height="8px">
+                <fo:table-cell background-color="#DCDDDE" border-collapse="collapse" border-color="black" border-style="solid" border-width="1px">
+                  <fo:block>A2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row height="8px">
+                <fo:table-cell border-collapse="collapse" border-color="black" border-style="solid" border-width="1px">
+                  <fo:block>A3</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border-collapse="collapse" border-color="black" border-style="solid" border-width="1px">
+                  <fo:block>B3</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- ************** ROW 1 ************** -->
+    <!-- Border top, bottom, left and right of A1 -->
+    <eval expected="193256" xpath="//flow/block[1]/block[1][.//word = 'A1'][@border-before and @border-after and @border-end and @border-start]/@left-offset"/>
+    <eval expected="-500" xpath="//flow/block[1]/block[1][.//word = 'A1'][@border-before and @border-after and @border-end and @border-start]/@top-offset"/>
+
+    <!-- Border top, left and right of B1 -->
+    <eval expected="500" xpath="//flow/block[1]/block[3][@border-before and not(@border-after) and @border-end and @border-start]/@left-offset"/>
+    <eval expected="-500" xpath="//flow/block[1]/block[3][@border-before and not(@border-after) and @border-end and @border-start]/@top-offset"/>
+
+    <!-- ************** ROW 2 ************** -->
+    <!-- Border top, bottom, left and right of A2 -->
+    <eval expected="193256" xpath="//flow/block[1]/block[2][.//word = 'A2'][@border-before and @border-after and @border-end and @border-start]/@left-offset"/>
+    <eval expected="14900" xpath="//flow/block[1]/block[2][.//word = 'A2'][@border-before and @border-after and @border-end and @border-start]/@top-offset"/>
+
+    <!-- Border bottom, left and right of B2 -->
+    <eval expected="500" xpath="//flow/block[1]/block[4][not(@border-before) and @border-after and @border-end and @border-start]/@left-offset"/>
+    <eval expected="15400" xpath="//flow/block[1]/block[4][not(@border-before) and @border-after and @border-end and @border-start]/@top-offset"/>
+
+    <!-- ************** ROW 3 ************** -->
+    <!-- Border top, bottom, left and right of A3 -->
+    <eval expected="193256" xpath="//flow/block[1]/block[6][.//word = 'A3'][@border-before and @border-after and @border-end and @border-start]/@left-offset"/>
+    <eval expected="30300" xpath="//flow/block[1]/block[6][.//word = 'A3'][@border-before and @border-after and @border-end and @border-start]/@top-offset"/>
+
+    <!-- Border top, bottom, left and right of B3 -->
+    <eval expected="500" xpath="//flow/block[1]/block[7][.//word = 'B3'][@border-before and @border-after and @border-end and @border-start]/@left-offset"/>
+    <eval expected="30300" xpath="//flow/block[1]/block[7][.//word = 'B3'][@border-before and @border-after and @border-end and @border-start]/@top-offset"/>
+  </checks>
+</testcase>

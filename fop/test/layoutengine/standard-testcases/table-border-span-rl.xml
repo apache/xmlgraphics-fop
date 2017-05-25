@@ -86,7 +86,7 @@
     <eval expected="-500" xpath="//flow/block[1]/block[1]/block[1]/block[2][@border-before and @border-after and not(@border-end) and not(@border-start)]/@top-offset"/>
 
     <!-- Border top, bottom and right of TCU 3 -->
-    <eval expected="582303" xpath="//flow/block[1]/block[1]/block[1]/block[3][@border-before and @border-after and @border-start and not(@border-end)]/@left-offset"/>
+    <eval expected="582803" xpath="//flow/block[1]/block[1]/block[1]/block[3][@border-before and @border-after and @border-start and not(@border-end)]/@left-offset"/>
     <eval expected="-500" xpath="//flow/block[1]/block[1]/block[1]/block[3][@border-before and @border-after and @border-start and not(@border-end)]/@top-offset"/>
 
 
@@ -109,7 +109,7 @@
     <eval expected="25500" xpath="//flow/block[1]/block[1]/block[1]/block[8][@border-before and @border-after and @border-end and not(@border-start)]/@top-offset"/>
 
     <!-- Border top, bottom and right of TCU 3 -->
-    <eval expected="509453" xpath="//flow/block[1]/block[1]/block[1]/block[9][@border-before and @border-after and not(@border-end) and @border-start]/@left-offset"/>
+    <eval expected="509953" xpath="//flow/block[1]/block[1]/block[1]/block[9][@border-before and @border-after and not(@border-end) and @border-start]/@left-offset"/>
     <eval expected="25500" xpath="//flow/block[1]/block[1]/block[1]/block[9][@border-before and @border-after and not(@border-end) and @border-start]/@top-offset"/>
 
     <!-- Border top, bottom, left and right of TCU 1 -->
@@ -127,7 +127,7 @@
     <eval expected="38500" xpath="//flow/block[1]/block[1]/block[1]/block[13][@border-before and @border-after and @border-end and not(@border-start)]/@top-offset"/>
 
     <!-- Border top, bottom and right of TCU 2 -->
-    <eval expected="218051" xpath="//flow/block[1]/block[1]/block[1]/block[14][@border-before and @border-after and @border-start and not(@border-end)]/@left-offset"/>
+    <eval expected="218551" xpath="//flow/block[1]/block[1]/block[1]/block[14][@border-before and @border-after and @border-start and not(@border-end)]/@left-offset"/>
     <eval expected="38500" xpath="//flow/block[1]/block[1]/block[1]/block[14][@border-before and @border-after and @border-start and not(@border-end)]/@top-offset"/>
   </checks>
 </testcase>
