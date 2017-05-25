@@ -474,7 +474,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
                         if (level == 1) {
                             addBorder(blocks, y, gridUnits.length - 1, Trait.BORDER_START, border,
                                       inFirstColumn, level);
-                            adjustXOffset(blocks[y][gridUnits.length - 1], -borderWidth);
+                            adjustIPD(blocks[y][gridUnits.length - 1], -borderWidth);
                         } else {
                             addBorder(blocks, y, 0, Trait.BORDER_START, border,
                                       inFirstColumn, level);
