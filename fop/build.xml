@@ -1276,12 +1276,12 @@ NOTE:
     <chmod file="${dist.bin.result.dir}/fop/fop" perm="ugo+rx"/>
     <zip zipfile="${name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
     <tar longfile="gnu" destfile="${name}-${version}-bin.tar">
-      <tarfileset dir="${dist.bin.dir}" mode="755">
-        <include name="${name}-${version}/fop"/>
+      <tarfileset dir="${dist.bin.dir}" filemode="755">
+        <include name="${name}-${version}/fop/fop"/>
       </tarfileset>
       <tarfileset dir="${dist.bin.dir}">
         <include name="**"/>
-        <exclude name="${name}-${version}/fop"/>
+        <exclude name="${name}-${version}/fop/fop"/>
       </tarfileset>
     </tar>
     <gzip zipfile="${name}-${version}-bin.tar.gz" src="${name}-${version}-bin.tar"/>
@@ -1293,15 +1293,15 @@ NOTE:
     <copy todir="${dist.src.result.dir}">
       <fileset refid="dist.src"/>
     </copy>
-    <chmod file="${dist.src.result.dir}/fop" perm="ugo+rx"/>
+    <chmod file="${dist.src.result.dir}/fop/fop" perm="ugo+rx"/>
     <zip zipfile="${name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
     <tar longfile="gnu" destfile="${name}-${version}-src.tar">
-      <tarfileset dir="${dist.src.dir}" mode="755">
-        <include name="${name}-${version}/fop"/>
+      <tarfileset dir="${dist.src.dir}" filemode="755">
+        <include name="${name}-${version}/fop/fop"/>
       </tarfileset>
       <tarfileset dir="${dist.src.dir}">
         <include name="**"/>
-        <exclude name="${name}-${version}/fop"/>
+        <exclude name="${name}-${version}/fop/fop"/>
       </tarfileset>
     </tar>
     <gzip zipfile="${name}-${version}-src.tar.gz" src="${name}-${version}-src.tar"/>
