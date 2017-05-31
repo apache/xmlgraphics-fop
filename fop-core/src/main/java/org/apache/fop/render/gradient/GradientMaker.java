@@ -114,11 +114,15 @@ public final class GradientMaker {
 
     private static List<Float> makeBounds(MultipleGradientPaint gradient) {
         float[] fractions = gradient.getFractions();
-        List<Float> bounds = new java.util.ArrayList<Float>(fractions.length);
+        List<Float> bounds = new ArrayList<Float>(fractions.length);
         for (float offset : fractions) {
-            if (0f < offset && offset < 1f) {
+            if (0f < offset) {
                 bounds.add(offset);
             }
+        }
+        float last = bounds.get(bounds.size() - 1);
+        if (last == 1f) {
+            bounds.remove(bounds.size() - 1);
         }
         return bounds;
     }

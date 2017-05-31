@@ -288,4 +288,18 @@ public class GradientTestCase {
         return colors;
     }
 
+    @Test
+    public void testMakeBounds() {
+        RadialGradientPaint gradient = new RadialGradientPaint(0, 0, 100, 100, 100,
+                fractions(0f, 1f, 0.9f), colors(Color.WHITE, Color.RED, Color.GREEN));
+        Pattern pattern = GradientMaker.makeRadialGradient(gradient, new AffineTransform(), new AffineTransform());
+        ShadingChecker shadingChecker = new PatternChecker(pattern).shading()
+                .coords(70.7036, 70.7036, 0.0, 0.0, 0.0, 100.0);
+        shadingChecker.function()
+                .functionType(3)
+                .bounds(1f, 0.9f)
+                .encode(0.0, 1.0, 0.0, 1.0, 0.0, 1.0)
+                .functions(3);
+    }
+
 }
