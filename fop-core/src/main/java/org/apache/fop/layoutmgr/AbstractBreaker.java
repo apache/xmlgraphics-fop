@@ -778,10 +778,12 @@ public abstract class AbstractBreaker {
              * Remove the last 3 penalty-filler-forced break elements that were added by
              * the Knuth algorithm. They will be re-added later on.
              */
-            ListIterator iter = returnedList.listIterator(returnedList.size());
-            for (int i = 0; i < 3; i++) {
-                iter.previous();
-                iter.remove();
+            if (returnedList.size() > 2) {
+                ListIterator iter = returnedList.listIterator(returnedList.size());
+                for (int i = 0; i < 3; i++) {
+                    iter.previous();
+                    iter.remove();
+                }
             }
         } else {
             returnedList = getNextKnuthElements(childLC, alignment, positionAtIPDChange,
