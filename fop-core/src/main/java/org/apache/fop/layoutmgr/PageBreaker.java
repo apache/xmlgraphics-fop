@@ -467,16 +467,19 @@ public class PageBreaker extends AbstractBreaker {
                 */
             }
         } else {
-            if (fitsOnePage) {
+            boolean ipdChange = algRestart.getIPDdifference() != 0;
+            if (fitsOnePage && !ipdChange) {
                 //Replace last page
                 pslm.setCurrentPage(pageProvider.getPage(false, currentPageNum));
             } else {
                 //Last page-master cannot hold the content.
                 //Add areas now...
                 addAreas(alg, restartPoint, partCount - restartPoint, originalList, effectiveList);
-                //...and add a blank last page
-                setLastPageIndex(currentPageNum + 1);
-                pslm.setCurrentPage(pslm.makeNewPage(true));
+                if (!ipdChange) {
+                    //...and add a blank last page
+                    setLastPageIndex(currentPageNum + 1);
+                    pslm.setCurrentPage(pslm.makeNewPage(true));
+                }
                 return;
             }
         }
