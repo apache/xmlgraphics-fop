@@ -31,6 +31,7 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
+import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 
@@ -106,7 +107,7 @@ public class PageSequenceLayoutManagerTestCase {
         final Page page = mock(Page.class);
         final SimplePageMaster spm = mock(SimplePageMaster.class);
         final PageViewport pageViewport = mock(PageViewport.class);
-        final Region region = mock(Region.class);
+        final Region region = mock(RegionBody.class);
 
         when(page.getSimplePageMaster()).thenReturn(spm);
         when(page.getPageViewport()).thenReturn(pageViewport);
@@ -115,5 +116,36 @@ public class PageSequenceLayoutManagerTestCase {
         when(region.getRegionName()).thenReturn(regionName);
 
         return page;
+    }
+
+    @Test
+    public void testRegionNameNotFound() {
+        final PageSequence pseq = mock(PageSequence.class);
+        final AreaTreeHandler ath = mock(AreaTreeHandler.class);
+        final Flow flow = mock(Flow.class);
+        final Root root = mock(Root.class);
+
+        when(flow.getFlowName()).thenReturn(MAIN_FLOW_NAME);
+        when(pseq.getRoot()).thenReturn(root);
+        when(pseq.getMainFlow()).thenReturn(flow);
+
+        PageSequenceLayoutManager pageSequenceLayoutManager = new PageSequenceLayoutManager(ath, pseq) {
+            public void activateLayout() {
+                makeNewPage(false);
+            }
+            protected Page createPage(int pageNumber, boolean isBlank) {
+                return createPageForRegionName("test");
+            }
+            protected void finishPage() {
+            }
+        };
+        RuntimeException re = null;
+        try {
+            pageSequenceLayoutManager.activateLayout();
+        } catch (RuntimeException e) {
+            re = e;
+        }
+        assertEquals(re.getMessage(),
+                "The flow-name \"test\" could not be mapped to a region-name in the layout-master-set");
     }
 }
