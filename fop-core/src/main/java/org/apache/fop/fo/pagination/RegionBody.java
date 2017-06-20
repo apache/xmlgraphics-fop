@@ -141,7 +141,7 @@ public class RegionBody extends Region {
     }
 
     /** {@inheritDoc} */
-    protected String getDefaultRegionName() {
+    public String getDefaultRegionName() {
         return "xsl-region-body";
     }
 

@@ -34,6 +34,8 @@ import org.apache.fop.complexscripts.bidi.BidiResolver;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.PageSequenceMaster;
+import org.apache.fop.fo.pagination.Region;
+import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.layoutmgr.inline.ContentLayoutManager;
@@ -189,14 +191,25 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         // cannot layout areas from the main flow.  Blank pages can be created from empty pages.
 
         if (!isBlank) {
-            while (!getPageSequence().getMainFlow().getFlowName()
-                    .equals(newPage.getSimplePageMaster()
-                            .getRegion(FO_REGION_BODY).getRegionName())) {
+            int i = 0;
+            while (!flowNameEquals(newPage, i > 0)) {
                 newPage = super.makeNewPage(isBlank);
+                i++;
             }
         }
 
         return newPage;
+    }
+
+    private boolean flowNameEquals(Page newPage, boolean strict) {
+        String psName = getPageSequence().getMainFlow().getFlowName();
+        Region body = newPage.getSimplePageMaster().getRegion(FO_REGION_BODY);
+        String name = body.getRegionName();
+        if (strict && !name.equals(psName) && !name.equals(((RegionBody)body).getDefaultRegionName())) {
+            throw new RuntimeException(
+                    "The flow-name \"" + name + "\" could not be mapped to a region-name in the layout-master-set");
+        }
+        return psName.equals(name);
     }
 
     private void layoutSideRegion(int regionID) {
