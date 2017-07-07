@@ -404,6 +404,7 @@ list of possible build targets.
       <fileset dir="${src.resources.dir}">
         <include name="META-INF/**"/>
         <include name="**/*.icm"/>
+        <include name="**/*.icc"/>
         <include name="**/*.xml"/>
         <include name="**/*.LICENSE.txt"/>
         <include name="**/*.xsl"/>
