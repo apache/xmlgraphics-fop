@@ -407,6 +407,12 @@
     <!-- 58 warnings -->
     <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
   </Match>
+  <Match>
+    <Bug pattern="PT_ABSOLUTE_PATH_TRAVERSAL"/>
+    <And>
+      <Class name="org.apache.fop.servlet.FopServlet"/>
+    </And>    
+  </Match>
   
   <!-- END - TEMPORARY (UNAPPROVED) EXCLUSIONS -->
 
