@@ -112,40 +112,40 @@ public class FOUserAgent {
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
      */
-    protected String producer = "Apache FOP Version " + Version.getVersion();
+    private String producer = "Apache FOP Version " + Version.getVersion();
 
     /** Creator:  Metadata element for the user that created the
      * document. (Some renderers can store this in the document.)
      */
-    protected String creator;
+    private String creator;
 
     /** Creation Date:  Override of the date the document was created.
      * (Some renderers can store this in the document.)
      */
-    protected Date creationDate;
+    private Date creationDate;
 
     /** Author of the content of the document. */
-    protected String author;
+    private String author;
     /** Title of the document. */
-    protected String title;
+    private String title;
     /** Subject of the document. */
-    protected String subject;
+    private String subject;
     /** Set of keywords applicable to this document. */
-    protected String keywords;
+    private String keywords;
 
     private final ImageSessionContext imageSessionContext;
     private final SoftMapCache pdfObjectCache = new SoftMapCache(true);
 
     /**
-     * Main constructor. <b>This constructor should not be called directly. Please use the
-     * methods from FopFactory to construct FOUserAgent instances!</b>
+     * Constructor for subclasses. Unless you are extending this class, please
+     * use {@link FopFactory#newFOUserAgent()} instead.
      * @param factory the factory that provides environment-level information
-     * @param resourceResolver the resolver used to acquire resources
      * @see org.apache.fop.apps.FopFactory
+     * @throws FOPException
      */
-    FOUserAgent(final FopFactory factory, InternalResourceResolver resourceResolver) {
+    protected FOUserAgent(final FopFactory factory) {
         this.factory = factory;
-        this.resourceResolver = resourceResolver;
+        this.resourceResolver = factory.resolver;
         setTargetResolution(factory.getTargetResolution());
         setAccessibility(factory.isAccessibilityEnabled());
         imageSessionContext = new AbstractImageSessionContext(factory.getFallbackResolver()) {

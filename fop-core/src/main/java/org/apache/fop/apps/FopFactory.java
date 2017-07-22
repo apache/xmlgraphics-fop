@@ -84,7 +84,7 @@ public final class FopFactory implements ImageContext {
 
     private final FopFactoryConfig config;
 
-    private final InternalResourceResolver resolver;
+    final InternalResourceResolver resolver;
 
     private final Map<String, RendererConfig> rendererConfig;
 
@@ -165,7 +165,7 @@ public final class FopFactory implements ImageContext {
      * @return the newly created FOUserAgent instance initialized with default values
      */
     public FOUserAgent newFOUserAgent() {
-        FOUserAgent userAgent = new FOUserAgent(this, resolver);
+        FOUserAgent userAgent = new FOUserAgent(this);
         return userAgent;
     }
 
