@@ -24,10 +24,13 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.endsWith;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.pdf.PDFNumber;
 
 public class PDFGraphicsPainterTestCase {
@@ -125,6 +128,12 @@ public class PDFGraphicsPainterTestCase {
         int[] args = new int[]{1, 2, 3, 4, 5, 6};
         sut.cubicBezierTo(args[0], args[1], args[2], args[3], args[4], args[5]);
         verify(generator).add(op("c", args));
+    }
+
+    @Test
+    public void testDrawBorderLineDashed() {
+        sut.drawBorderLine(0, 0, 0, 0, true, true, Constants.EN_DASHED, null);
+        verify(generator, never()).add(any(String.class));
     }
 
     private void testTransformCoordinatesF(float... args) {
