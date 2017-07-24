@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.afp.AFPBorderPainter;
@@ -73,5 +74,13 @@ public class AFPBorderPainterTestCase {
         public void createLine(AFPLineDataInfo lineDataInfo) {
             line = lineDataInfo;
         }
+    }
+
+    @Test
+    public void testDrawBorderLineDashed2() throws Exception {
+        BorderPaintingInfo paintInfo = new BorderPaintingInfo(0, 0, 0, 0, false, Constants.EN_DASHED, Color.BLACK);
+        borderPainter.paint(paintInfo);
+        ds.endDocument();
+        assertNull(line);
     }
 }

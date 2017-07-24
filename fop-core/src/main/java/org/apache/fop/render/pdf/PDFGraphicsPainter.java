@@ -66,16 +66,20 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             generator.setColor(col);
             if (horz) {
                 float dashedWidth = BorderPainter.dashWidthCalculator(w, h);
-                float ym = y1 + (h / 2);
-                generator.setDashLine(dashedWidth, dashedWidth * BorderPainter.DASHED_BORDER_SPACE_RATIO)
-                        .setLineWidth(h)
-                        .strokeLine(x1, ym, x2, ym);
+                if (dashedWidth != 0) {
+                    float ym = y1 + (h / 2);
+                    generator.setDashLine(dashedWidth, dashedWidth * BorderPainter.DASHED_BORDER_SPACE_RATIO)
+                            .setLineWidth(h)
+                            .strokeLine(x1, ym, x2, ym);
+                }
             } else {
                 float dashedWidth = BorderPainter.dashWidthCalculator(h, w);
-                float xm = x1 + (w / 2);
-                generator.setDashLine(dashedWidth, dashedWidth * BorderPainter.DASHED_BORDER_SPACE_RATIO)
-                        .setLineWidth(w)
-                        .strokeLine(xm, y1, xm, y2);
+                if (dashedWidth != 0) {
+                    float xm = x1 + (w / 2);
+                    generator.setDashLine(dashedWidth, dashedWidth * BorderPainter.DASHED_BORDER_SPACE_RATIO)
+                            .setLineWidth(w)
+                            .strokeLine(xm, y1, xm, y2);
+                }
             }
             break;
         case Constants.EN_DOTTED:

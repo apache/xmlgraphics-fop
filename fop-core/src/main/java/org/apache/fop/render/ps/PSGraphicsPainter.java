@@ -89,16 +89,20 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             gen.useColor(col);
             if (horz) {
                 float dashWidth = BorderPainter.dashWidthCalculator(w, h);
-                gen.useDash("[" + dashWidth + " " + BorderPainter.DASHED_BORDER_SPACE_RATIO
-                        * dashWidth + "] 0");
+                if (dashWidth != 0) {
+                    gen.useDash("[" + dashWidth + " " + BorderPainter.DASHED_BORDER_SPACE_RATIO
+                            * dashWidth + "] 0");
+                }
                 gen.useLineCap(0);
                 gen.useLineWidth(h);
                 float ym = y1 + (h / 2);
                 drawLine(gen, x1, ym, x2, ym);
             } else {
                 float dashWidth = BorderPainter.dashWidthCalculator(h, w);
-                gen.useDash("[" + dashWidth + " " + BorderPainter.DASHED_BORDER_SPACE_RATIO
-                        * dashWidth + "] 0");
+                if (dashWidth != 0) {
+                    gen.useDash("[" + dashWidth + " " + BorderPainter.DASHED_BORDER_SPACE_RATIO
+                            * dashWidth + "] 0");
+                }
                 gen.useLineCap(0);
                 gen.useLineWidth(w);
                 float xm = x1 + (w / 2);
