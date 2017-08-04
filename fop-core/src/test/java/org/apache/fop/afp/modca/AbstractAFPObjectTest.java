@@ -139,8 +139,8 @@ public abstract class AbstractAFPObjectTest<S extends AbstractAFPObject> {
 
        int index = 0;
         for (byte[] anExpected : expected) {
-            for (int j = 0; j < anExpected.length; j++) {
-                assertTrue("" + index, actual[index] == anExpected[j]);
+            for (byte anAnExpected : anExpected) {
+                assertTrue("" + index, actual[index] == anAnExpected);
                 index++;
             }
         }

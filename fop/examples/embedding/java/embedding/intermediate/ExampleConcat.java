@@ -160,8 +160,8 @@ public class ExampleConcat {
             IFConcatenator concatenator = new IFConcatenator(targetHandler, null);
 
             //Iterate over all intermediate files
-            for (int i = 0; i < files.length; i++) {
-                Source src = new StreamSource(files[i]);
+            for (File file : files) {
+                Source src = new StreamSource(file);
                 concatenator.appendDocument(src);
             }
 

@@ -363,7 +363,7 @@ public class SingleByteFont extends CustomFont {
         if (this.unencodedCharacters != null) {
             Set<Character> sortedKeys = new TreeSet<Character>(this.unencodedCharacters.keySet());
             for (Character ch : sortedKeys) {
-                char mapped = mapChar(ch.charValue());
+                char mapped = mapChar(ch);
                 assert mapped != Typeface.NOT_FOUND;
             }
         }

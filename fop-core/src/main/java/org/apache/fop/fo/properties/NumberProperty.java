@@ -145,7 +145,7 @@ public final class NumberProperty extends Property implements Numeric {
      * @return  the canonical NumberProperty
      */
     public static NumberProperty getInstance(Double num) {
-        return CACHE.fetch(new NumberProperty(num.doubleValue()));
+        return CACHE.fetch(new NumberProperty(num));
     }
 
     /**
@@ -155,7 +155,7 @@ public final class NumberProperty extends Property implements Numeric {
      * @return  the canonical NumberProperty
      */
     public static NumberProperty getInstance(Integer num) {
-        return CACHE.fetch(new NumberProperty(num.intValue()));
+        return CACHE.fetch(new NumberProperty(num));
     }
 
     /**

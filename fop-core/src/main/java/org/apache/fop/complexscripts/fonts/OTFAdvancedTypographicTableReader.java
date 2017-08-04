@@ -3644,7 +3644,7 @@ public final class OTFAdvancedTypographicTableReader {
         GlyphMappingTable mapping = (GlyphMappingTable) stp[6];
         List entries = (List) stp[7];
         if (tt == GlyphTable.GLYPH_TABLE_TYPE_DEFINITION) {
-            int type = GDEFLookupType.getSubtableType(lt.intValue());
+            int type = GDEFLookupType.getSubtableType(lt);
             String lid = "lu" + ln;
             int sequence = sn;
             int flags = lf;
@@ -3680,7 +3680,7 @@ public final class OTFAdvancedTypographicTableReader {
         GlyphCoverageTable coverage = (GlyphCoverageTable) stp[6];
         List entries = (List) stp[7];
         if (tt == GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION) {
-            int type = GSUBLookupType.getSubtableType(lt.intValue());
+            int type = GSUBLookupType.getSubtableType(lt);
             String lid = "lu" + ln;
             int sequence = sn;
             int flags = lf;
@@ -3716,7 +3716,7 @@ public final class OTFAdvancedTypographicTableReader {
         GlyphCoverageTable coverage = (GlyphCoverageTable) stp[6];
         List entries = (List) stp[7];
         if (tt == GlyphTable.GLYPH_TABLE_TYPE_POSITIONING) {
-            int type = GSUBLookupType.getSubtableType(lt.intValue());
+            int type = GSUBLookupType.getSubtableType(lt);
             String lid = "lu" + ln;
             int sequence = sn;
             int flags = lf;
