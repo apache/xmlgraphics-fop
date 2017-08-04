@@ -49,7 +49,7 @@ public class GlyphNameFieldPart implements Part {
 
     private String getGlyphName(Object obj) {
         if (obj instanceof Character) {
-            return Glyphs.charToGlyphName(((Character)obj).charValue());
+            return Glyphs.charToGlyphName((Character) obj);
         } else {
             throw new IllegalArgumentException(
                     "Value for glyph name part must be a Character but was: "

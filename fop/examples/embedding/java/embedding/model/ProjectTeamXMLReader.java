@@ -20,7 +20,6 @@
 package embedding.model;
 
 //Java
-import java.util.Iterator;
 import java.io.IOException;
 
 //SAX
@@ -87,9 +86,8 @@ public class ProjectTeamXMLReader extends AbstractObjectReader {
 
         handler.startElement("projectteam");
         handler.element("projectname", projectTeam.getProjectName());
-        Iterator i = projectTeam.getMembers().iterator();
-        while (i.hasNext()) {
-            ProjectMember member = (ProjectMember)i.next();
+        for (Object o : projectTeam.getMembers()) {
+            ProjectMember member = (ProjectMember) o;
             generateFor(member);
         }
         handler.endElement("projectteam");

@@ -135,7 +135,7 @@ public abstract class AbstractObjectReader implements XMLReader {
      * @see org.xml.sax.XMLReader#getFeature(String)
      */
     public boolean getFeature(java.lang.String name) {
-        return ((Boolean) features.get(name)).booleanValue();
+        return (Boolean) features.get(name);
     }
 
     /**
@@ -158,7 +158,7 @@ public abstract class AbstractObjectReader implements XMLReader {
      * @see org.xml.sax.XMLReader#setFeature(String, boolean)
      */
     public void setFeature(java.lang.String name, boolean value) {
-        this.features.put(name, new Boolean(value));
+        this.features.put(name, value);
     }
 
     /**

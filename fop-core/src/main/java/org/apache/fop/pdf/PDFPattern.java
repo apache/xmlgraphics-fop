@@ -249,7 +249,7 @@ public class PDFPattern extends PDFPathPaint {
                 p.append("/Matrix [ ");
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
                     p.append(PDFNumber.doubleOut(
-                            ((Double)this.matrix.get(tempInt)).doubleValue(), 8));
+                            (Double) this.matrix.get(tempInt), 8));
                     p.append(" ");
                 }
                 p.append("] \n");
@@ -304,7 +304,7 @@ public class PDFPattern extends PDFPathPaint {
                 p.append("/Matrix [ ");
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
                     p.append(PDFNumber.doubleOut(
-                            ((Double)this.matrix.get(tempInt)).doubleValue(), 8));
+                            (Double) this.matrix.get(tempInt), 8));
                     p.append(" ");
                 }
                 p.append("] \n");

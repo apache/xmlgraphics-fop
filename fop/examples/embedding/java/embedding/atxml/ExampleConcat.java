@@ -152,8 +152,8 @@ public class ExampleConcat {
 
             //Iterate over all area tree files
             AreaTreeParser parser = new AreaTreeParser();
-            for (int i = 0; i < files.length; i++) {
-                Source src = new StreamSource(files[i]);
+            for (File file : files) {
+                Source src = new StreamSource(file);
                 parser.parse(src, treeModel, userAgent);
             }
 

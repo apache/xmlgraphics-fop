@@ -142,11 +142,11 @@ public class MultipleFO2PDF {
 
                 // Result processing
                 java.util.List pageSequences = foResults.getPageSequences();
-                for (java.util.Iterator it = pageSequences.iterator(); it.hasNext();) {
-                    PageSequenceResults pageSequenceResults = (PageSequenceResults)it.next();
+                for (Object pageSequence : pageSequences) {
+                    PageSequenceResults pageSequenceResults = (PageSequenceResults) pageSequence;
                     System.out.println("PageSequence "
                             + (String.valueOf(pageSequenceResults.getID()).length() > 0
-                                    ? pageSequenceResults.getID() : "<no id>")
+                            ? pageSequenceResults.getID() : "<no id>")
                             + " generated " + pageSequenceResults.getPageCount() + " pages.");
                 }
                 System.out.println("Generated " + foResults.getPageCount() + " pages in total.");

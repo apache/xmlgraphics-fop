@@ -53,7 +53,7 @@ public class HexFieldPart implements Part {
         }
         Object obj = params.get(fieldName);
         if (obj instanceof Character) {
-            sb.append(Integer.toHexString(((Character)obj).charValue()));
+            sb.append(Integer.toHexString((Character) obj));
         } else if (obj instanceof Number) {
             sb.append(Integer.toHexString(((Number)obj).intValue()));
         } else {

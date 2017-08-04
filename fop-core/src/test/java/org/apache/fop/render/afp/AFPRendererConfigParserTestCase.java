@@ -65,7 +65,7 @@ public class AFPRendererConfigParserTestCase
     public void testLineWidthCorrection() throws Exception {
         parseConfig(createRenderer());
         assertEquals(AFPConstants.LINE_WIDTH_CORRECTION,
-                conf.getLineWidthCorrection().floatValue(), 0.0001f);
+                conf.getLineWidthCorrection(), 0.0001f);
         parseConfig(createRenderer().setLineWidthCorrection(1f));
         assertEquals(Float.valueOf(1f), conf.getLineWidthCorrection());
     }
