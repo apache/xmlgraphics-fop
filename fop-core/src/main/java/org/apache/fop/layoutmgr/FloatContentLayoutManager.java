@@ -39,7 +39,7 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
     private int yOffset;
 
     /**
-     * {@asf.todo - Add info}
+     * {Add info}
      *
      * @param node the {@link Float} associated with this instance
      */
@@ -100,7 +100,7 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
     }
 
     /**
-     * {@asf.todo - Add info}
+     * {Add info}
      *
      * @param elemenList
      * @param startIndex
@@ -132,7 +132,7 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
     }
 
     /**
-     * {@asf.todo - Add info}
+     * {Add info}
      *
      * @param layoutContext
      */

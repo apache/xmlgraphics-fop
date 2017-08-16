@@ -192,7 +192,7 @@ public class AdvancedMessageFormat {
 
     /**
      * Formats a message with the given parameters.
-     * @param params a Map of named parameters (Contents: <String, Object>)
+     * @param params a Map of named parameters (Contents: &lt;String, Object&gt;)
      * @return the formatted message
      */
     public String format(Map<String, Object> params) {
@@ -203,7 +203,7 @@ public class AdvancedMessageFormat {
 
     /**
      * Formats a message with the given parameters.
-     * @param params a Map of named parameters (Contents: <String, Object>)
+     * @param params a Map of named parameters (Contents: &lt;String, Object&gt;)
      * @param target the target StringBuffer to write the formatted message to
      */
     public void format(Map<String, Object> params, StringBuffer target) {

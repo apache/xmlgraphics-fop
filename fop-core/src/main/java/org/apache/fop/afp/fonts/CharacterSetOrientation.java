@@ -134,7 +134,6 @@ public class CharacterSetOrientation {
     }
 
     /**
-     * {@asf.todo}
      *
      * @return  the underscore width
      */
@@ -143,7 +142,6 @@ public class CharacterSetOrientation {
     }
 
     /**
-     * {@asf.todo}
      *
      * @return  the underscore position
      */
