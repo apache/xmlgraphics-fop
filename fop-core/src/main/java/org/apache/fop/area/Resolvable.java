@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * Resolvable Interface.  Classes that implement this interface contain
- * idrefs (see Section 5.11 of spec for definition of <idref> datatype)
+ * idrefs (see Section 5.11 of spec for definition of &lt;idref&gt; datatype)
  * that are resolved when their target IDs are added to the area tree.
  */
 public interface Resolvable {

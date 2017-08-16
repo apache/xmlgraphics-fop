@@ -50,17 +50,19 @@ import org.apache.fop.cli.InputHandler;
  * Wrapper for FOP which allows it to be accessed from within an Ant task.
  * Accepts the inputs:
  * <ul>
- * <li>fofile -> formatting objects file to be transformed</li>
- * <li>format -> MIME type of the format to generate ex. "application/pdf"</li>
- * <li>outfile -> output filename</li>
- * <li>baseDir -> directory to work from</li>
- * <li>relativebase -> (true | false) control whether to use each FO's
+ * <li>fofile - formatting objects file to be transformed</li>
+ * <li>iffile - intermediate format input file to be transformed</li>
+ * <li>outputFormat - MIME type of the format to generate ex. "application/pdf"</li>
+ * <li>inputFormat - Input file format (like "fo","xml","if")</li>
+ * <li>outfile - output filename</li>
+ * <li>baseDir - directory to work from</li>
+ * <li>relativebase - (true | false) control whether to use each FO's
  *      directory as base directory. false uses the baseDir parameter.</li>
- * <li>userconfig -> file with user configuration (same as the "-c" command
+ * <li>userconfig - file with user configuration (same as the "-c" command
  *      line option)</li>
- * <li>messagelevel -> (error | warn | info | verbose | debug) level to output
+ * <li>messagelevel - (error | warn | info | verbose | debug) level to output
  *      non-error messages</li>
- * <li>logFiles -> Controls whether the names of the files that are processed
+ * <li>logFiles - Controls whether the names of the files that are processed
  *      are logged or not</li>
  * </ul>
  */

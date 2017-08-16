@@ -21,7 +21,7 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * created by Bertrand Delacretaz bdelacretaz@codeconsult.ch and by other
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
@@ -32,10 +32,10 @@ import java.io.Writer;
 import org.apache.fop.apps.FOPException;
 
 /**
- * <p>Creates an hyperlink.
- * This class belongs to the <fo:basic-link> tag processing.</p>
+ * Creates an hyperlink.
+ * This class belongs to the fo:basic-link tag processing.
+ * This work was originally authored by <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
  *
- * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
  */
 public class RtfHyperLink
 extends RtfContainer

@@ -47,14 +47,14 @@ import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.fop.image.loader.batik.BatikUtil;
 
 /**
- * <p>Bridge class for the &lt;image> element when jpeg images.</p>
+ * Bridge class for the &lt;image&gt; element when jpeg images.
  *
- * <p>This work was authored by Keiron Liddle (keiron@aftexsw.com).</p>
+ * This work was originally authored by <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  */
 public abstract class AbstractFOPImageElementBridge extends SVGImageElementBridge {
 
     /**
-     * Constructs a new bridge for the &lt;image> element.
+     * Constructs a new bridge for the &lt;image&gt; element.
      */
     public AbstractFOPImageElementBridge() { }
 

@@ -182,7 +182,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
 
 
     /**
-     * Set maximum value to max if it is >= optimum or optimum isn't set.
+     * Set maximum value to max if it is &gt;= optimum or optimum isn't set.
      * @param max A Length value specifying the maximum value for this
      * @param bIsDefault If true, this is set as a "default" value
      * and not a user-specified explicit value.

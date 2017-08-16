@@ -24,14 +24,14 @@ import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
 
 /**
- * <p>PDF Image Element Bridge class for the &lt;image> element when jpeg images.</p>
+ * PDF Image Element Bridge class for the &lt;image&gt; element when jpeg images.
  *
- * <p>This work was authored by Keiron Liddle (keiron@aftexsw.com).</p>
+ * This work was originally authored by <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  */
 public class PDFImageElementBridge extends AbstractFOPImageElementBridge {
 
     /**
-     * Constructs a new bridge for the &lt;image> element.
+     * Constructs a new bridge for the &lt;image&gt; element.
      */
     public PDFImageElementBridge() { }
 

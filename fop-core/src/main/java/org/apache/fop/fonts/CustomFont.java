@@ -515,7 +515,7 @@ public abstract class CustomFont extends Typeface
 
     /**
      * Replaces the existing kerning map with a new one.
-     * @param kerningMap the kerning map (Map<Integer, Map<Integer, Integer>, the integers are
+     * @param kerningMap the kerning map (the integers are
      *                          character codes)
      */
     public void replaceKerningMap(Map<Integer, Map<Integer, Integer>> kerningMap) {

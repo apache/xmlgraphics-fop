@@ -69,7 +69,7 @@ public class PDFRoot extends PDFDictionary {
      * it is about to be written (immediately before the xref
      * table as part of the trailer). (mark-fop@inomial.com)
      *
-     * @param objnum the object's number
+     * @param document TODO
      * @param pages the PDFPages object
      */
     public PDFRoot(PDFDocument document, PDFPages pages) {

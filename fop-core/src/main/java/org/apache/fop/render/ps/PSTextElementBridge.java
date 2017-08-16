@@ -28,16 +28,16 @@ import org.apache.batik.bridge.TextPainter;
 import org.apache.batik.gvt.GraphicsNode;
 
 /**
- * <p>Bridge class for the &lt;text> element.
+ * Bridge class for the &lt;text&gt; element.
  * This bridge will use the direct text painter if the text
- * for the element is simple.</p>
+ * for the element is simple.
  */
 public class PSTextElementBridge extends SVGTextElementBridge {
 
     private TextPainter textPainter;
 
     /**
-     * Constructs a new bridge for the &lt;text> element.
+     * Constructs a new bridge for the &lt;text&gt; element.
      * @param textPainter the text painter to use
      */
     public PSTextElementBridge(TextPainter textPainter) {

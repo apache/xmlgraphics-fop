@@ -34,7 +34,7 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
  * This class extends the org.apache.fop.extensions.ExtensionObj class. The
  * object faciliates extraction of elements from formatted objects based on
  * the static list as defined in the AFPElementMapping implementation.
- * <p/>
+ * <p>
  */
 public class AFPPageSegmentElement extends AFPPageSetupElement {
 

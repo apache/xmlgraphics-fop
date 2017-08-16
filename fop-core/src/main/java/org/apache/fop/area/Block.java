@@ -169,7 +169,7 @@ public class Block extends BlockParent {
     /**
      * Sets the location in the source XML of the FO that generated this area.
      *
-     * @location the line and column location
+     * @param location the line and column location
      */
     public void setLocation(String location) {
         this.location = location;

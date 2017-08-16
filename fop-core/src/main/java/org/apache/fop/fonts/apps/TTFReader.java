@@ -91,16 +91,16 @@ public class TTFReader extends AbstractFontReader {
      *
      * @param  args Command-line arguments: [options] fontfile.ttf xmlfile.xml
      * where options can be:
-     * -fn <fontname>
+     * -fn fontname
      * default is to use the fontname in the .ttf file, but you can override
      * that name to make sure that the embedded font is used instead of installed
      * fonts when viewing documents with Acrobat Reader.
-     * -cn <classname>
+     * -cn classname
      * default is to use the fontname
-     * -ef <path to the truetype fontfile>
+     * -ef path to the truetype fontfile
      * will add the possibility to embed the font. When running fop, fop will look
      * for this file to embed it
-     * -er <path to truetype fontfile relative to org/apache/fop/render/pdf/fonts>
+     * -er path to truetype fontfile relative to org/apache/fop/render/pdf/fonts
      * you can also include the fontfile in the fop.jar file when building fop.
      * You can use both -ef and -er. The file specified in -ef will be searched first,
      * then the -er file.

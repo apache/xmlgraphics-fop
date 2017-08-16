@@ -35,7 +35,6 @@ public interface Numeric {
     /**
      * Return the value of this Numeric
      * @return the computed value.
-     * @throws PropertyException if a property exception occurs
      */
     double getNumericValue();
 
@@ -43,7 +42,6 @@ public interface Numeric {
      * Return the value of this Numeric
      * @param context The context for the length calculation (for percentage based lengths)
      * @return the computed value.
-     * @throws PropertyException if a property exception occurs
      */
     double getNumericValue(PercentBaseContext context);
 

@@ -46,7 +46,7 @@ public class PCLPageDefinition {
     /**
      * Main constructor
      * @param name the name of the page definition
-     * @param selector the selector used by the <ESC>&l#A command (page size)
+     * @param selector the selector used by the &lt;ESC&gt; command (page size)
      * @param physicalPageSize the physical page size
      * @param logicalPageRect the rectangle defining the logical page
      * @param landscape true if it is a landscape format
@@ -65,7 +65,7 @@ public class PCLPageDefinition {
         return this.name;
     }
 
-    /** @return the selector used by the <ESC>&l#A command (page size) */
+    /** @return the selector used by the &lt;ESC&gt; command (page size) */
     public int getSelector() {
         return this.selector;
     }

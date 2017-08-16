@@ -21,7 +21,7 @@ package org.apache.fop.render.afp.exceptions;
 
 /**
  * A runtime exception for handling fatal errors in rendering.
- * <p/>
+ * <p>
  */
 public class RendererRuntimeException extends NestedRuntimeException {
 

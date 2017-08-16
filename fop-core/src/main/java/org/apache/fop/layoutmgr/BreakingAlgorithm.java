@@ -100,7 +100,7 @@ public abstract class BreakingAlgorithm {
     /** Demerit for consecutive lines belonging to incompatible fitness classes . */
     protected int incompatibleFitnessDemerit = KnuthPenalty.FLAGGED_PENALTY;
     /** Maximum number of consecutive lines ending with a flagged penalty.
-     * Only a value >= 1 is a significant limit.
+     * Only a value &gt;= 1 is a significant limit.
      */
     protected int maxFlaggedPenaltiesCount;
 
@@ -767,7 +767,7 @@ public abstract class BreakingAlgorithm {
 
     /**
      * Handle a {@link KnuthBox}.
-     * <br/><em>Note: default implementation just adds the box's width
+     * <br><em>Note: default implementation just adds the box's width
      * to the total content width. Subclasses that do not keep track
      * of this themselves, but override this method, should remember
      * to call {@code super.handleBox(box)} to avoid unwanted side-effects.</em>

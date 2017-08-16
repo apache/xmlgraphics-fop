@@ -329,7 +329,7 @@ public class PDFContentGenerator {
      * @param mcid sequence number
      * @param actualText the replacement text for the marked content
      * @see #beginTextObject()
-     * @see #beginMarkedContentSequence(String, int, String))
+     * @see #beginMarkedContentSequence
      */
     protected void beginTextObject(String structElemType, int mcid, String actualText) {
         if (!textutil.isInTextObject()) {

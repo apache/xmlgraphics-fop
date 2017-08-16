@@ -41,7 +41,7 @@ import org.apache.fop.fonts.FontInfo;
 public class AreaTreeInputHandler extends InputHandler {
 
     /**
-     * Constructor for XML->XSLT->area tree XML input
+     * Constructor for XML-&gt;XSLT-&gt;area tree XML input
      * @param xmlfile XML file
      * @param xsltfile XSLT file
      * @param params Vector of command-line parameters (name, value,

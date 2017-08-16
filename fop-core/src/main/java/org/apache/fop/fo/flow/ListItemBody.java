@@ -23,8 +23,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 
 /**
- * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_list-item-body">
- * <code>fo:list-item-body object</code></a>.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_list-item-body">list item</a>
+ * <code>fo:list-item-body object</code>.
  */
 public class ListItemBody extends AbstractListItemPart {
 

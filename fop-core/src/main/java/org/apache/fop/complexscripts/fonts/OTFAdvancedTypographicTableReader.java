@@ -63,7 +63,7 @@ public final class OTFAdvancedTypographicTableReader {
 
     /**
      * Construct an <code>OTFAdvancedTypographicTableReader</code> instance.
-     * @param ttf parent font file reader (must be non-null)
+     * @param otf parent font file reader (must be non-null)
      * @param in font file reader (must be non-null)
      */
     public OTFAdvancedTypographicTableReader(OpenFont otf, FontFileReader in) {

@@ -17,20 +17,19 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.rtf.rtflib.tools;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * created by Bertrand Delacretaz bdelacretaz@codeconsult.ch and by other
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
 
-/**
- * <p>Miscellaneous utilities for images handling.
- * This class belongs to the <fo:external-graphic> tag processing.</p>
- *
- * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
+package org.apache.fop.render.rtf.rtflib.tools;
+
+/**  Misc.utilities for images handling
+ *  This class belongs to the fo:external-graphic tag processing.
+ *  This work was originally authored by <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
  */
 public final class ImageUtil {
 

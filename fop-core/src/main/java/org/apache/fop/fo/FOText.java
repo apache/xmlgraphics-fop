@@ -212,7 +212,7 @@ public class FOText extends FONode implements CharSequence, TextFragment {
      * Check if this text node will create an area.
      * This means either there is non-whitespace or it is
      * preserved whitespace.
-     * Maybe this just needs to check length > 0, since char iterators
+     * Maybe this just needs to check length &gt; 0, since char iterators
      * handle whitespace.
      *
      * @return true if this will create an area in the output

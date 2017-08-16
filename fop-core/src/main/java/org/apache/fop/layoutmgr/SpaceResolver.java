@@ -679,7 +679,7 @@ public final class SpaceResolver {
      * @param startElementIndex index of the first element in the part to be processed
      * @param endElementIndex index of the last element in the part to be processed
      * @param prevBreak index of the the break possibility just before this part (used to
-     *                  identify a break condition, lastBreak <= 0 represents a no-break condition)
+     *                  identify a break condition, lastBreak &lt;= 0 represents a no-break condition)
      */
     public static void performConditionalsNotification(List effectiveList,
             int startElementIndex, int endElementIndex, int prevBreak) {

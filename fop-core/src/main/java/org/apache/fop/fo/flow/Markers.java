@@ -145,8 +145,6 @@ public final class Markers {
 
     /**
      * Retrieves the best candidate marker for the given position.
-     * @param name the key used to register the marker
-     * @param pos the retrieval scope position
      * @return a Marker instance
      */
     public Marker resolve(AbstractRetrieveMarker arm) {

@@ -23,7 +23,7 @@ import java.io.UnsupportedEncodingException;
 
 
 /**
- * This class contains method to deal with the <uri-specification> datatype from XSL-FO.
+ * This class contains method to deal with the &lt;uri-specification&gt; datatype from XSL-FO.
  */
 public final class URISpecification {
 

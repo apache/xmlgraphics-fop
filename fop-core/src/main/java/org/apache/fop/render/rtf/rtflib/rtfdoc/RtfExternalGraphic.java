@@ -21,7 +21,7 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * created by Bertrand Delacretaz bdelacretaz@codeconsult.ch and by other
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
@@ -39,27 +39,23 @@ import org.apache.fop.render.rtf.rtflib.tools.ImageConstants;
 import org.apache.fop.render.rtf.rtflib.tools.ImageUtil;
 
 /**
- * <p>Creates an RTF image from an external graphic file.
- * This class belongs to the <fo:external-graphic> tag processing.</p>
+ * Creates an RTF image from an external graphic file.
+ * This class belongs to the fo:external-graphic tag processing. <br>
  *
- * <p>Supports relative path like "../test.gif", too (01-08-24)</p>
+ * Supports relative path like "../test.gif", too (01-08-24) <br>
  *
- * <p>Limitations:</p>
- * <ul>
- * <li>    Only the image types PNG, JPEG and EMF are supported
- * <li>    The GIF is supported, too, but will be converted to JPG
- * <li>    Only the attributes SRC (required), WIDTH, HEIGHT, SCALING are supported
- * <li>    The SCALING attribute supports (uniform | non-uniform)
- * </ul>
+ * Limitations:
+ *     Only the image types PNG, JPEG and EMF are supported
+ *     The GIF is supported, too, but will be converted to JPG
+ *     Only the attributes SRC (required), WIDTH, HEIGHT, SCALING are supported
+ *     The SCALING attribute supports (uniform | non-uniform)
  *
- * <p>Known Bugs:</p>
- * <ul>
- * <li>    If the emf image has a desired size, the image will be clipped
- * <li>    The emf, jpg & png image will not be displayed in correct size
- * </ul>
+ * Known Bugs:
+ *     If the emf image has a desired size, the image will be clipped
+ *     The emf, jpg, png image will not be displayed in correct size
  *
- * <p>This work was authored by Andreas Putz (a.putz@skynamics.com) and
- * Gianugo Rabellino (gianugo@rabellino.it).</p>
+ *  This work was originally authored by <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
+ *  This work was originally authored by Gianugo Rabellino gianugo@rabellino.it
  */
 
 public class RtfExternalGraphic extends RtfElement {

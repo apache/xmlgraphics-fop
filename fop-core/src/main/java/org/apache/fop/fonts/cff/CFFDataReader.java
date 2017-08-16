@@ -344,7 +344,7 @@ public class CFFDataReader {
     /**
      * Retrieves the SID for the given GID object
      * @param charsetOffset The offset of the charset data
-     * @param GID The GID for which to retrieve the SID
+     * @param gid The GID for which to retrieve the SID
      * @return Returns the SID as an integer
      */
     public int getSIDFromGID(int charsetOffset, int gid) throws IOException {
@@ -458,7 +458,6 @@ public class CFFDataReader {
 
     /**
      * Parses the char string index from the CFF byte data
-     * @param offset The offset to the char string index
      * @return Returns the char string index object
      * @throws IOException Throws an IO Exception if an error occurs
      */

@@ -335,7 +335,7 @@ public abstract class PropertyList {
      * <li>number-columns-spanned</li>
      * <li>font</li>
      * <li>font-size</li>
-     * <li><emph>all others in order of appearance</emph></li>
+     * <li>all others in order of appearance</li>
      * </ol>
      *
      * @param attributes Collection of attributes passed to us from the parser.

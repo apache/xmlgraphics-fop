@@ -38,11 +38,11 @@ import org.xml.sax.InputSource;
 import org.apache.commons.io.IOUtils;
 
 /**
- * <p>This tree structure stores the hyphenation patterns in an efficient
+ * This tree structure stores the hyphenation patterns in an efficient
  * way for fast lookup. It provides the provides the method to
- * hyphenate a word.</p>
+ * hyphenate a word.
  *
- * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
+ * This work was originally authored by Carlos Villegas cav@uniscope.co.jp
  */
 public class HyphenationTree extends TernaryTree implements PatternConsumer {
 
@@ -232,7 +232,7 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer {
      * at index an update interletter values. In other words, it
      * does something like:</p>
      * <code>
-     * for(i=0; i<patterns.length; i++) {
+     * for(i=0; i&lt;patterns.length; i++) {
      * if ( word.substring(index).startsWidth(patterns[i]) )
      * update_interletter_values(patterns[i]);
      * }

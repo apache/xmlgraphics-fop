@@ -284,7 +284,7 @@ public final class XMLUtil implements XMLConstants {
 
     /**
      * Returns an attribute value as a glyph position adjustments array. The string value
-     * is expected to be a non-empty sequence of either Z<repeat> or <number>, where the
+     * is expected to be a non-empty sequence of either Z&lt;repeat&gt; or &lt;number&gt;, where the
      * former encodes a repeat count (of zeroes) and the latter encodes a integer number,
      * and where each item is separated by whitespace.
      * @param attributes the Attributes object
@@ -301,7 +301,7 @@ public final class XMLUtil implements XMLConstants {
     }
 
     /**
-     * Escape '<', '>' and '&' using NCRs.
+     * Escape '&lt;', '&gt;' and '&amp;' using NCRs.
      * @param unescaped string
      * @return escaped string
      */

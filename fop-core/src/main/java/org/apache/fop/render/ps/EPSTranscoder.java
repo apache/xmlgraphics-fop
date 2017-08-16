@@ -41,7 +41,7 @@ import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
  * processor can be specified:
  *
  * <p><code>KEY_LANGUAGE</code> to set the default language to use (may be
- * used by a &lt;switch> SVG element for example),
+ * used by a &lt;switch&gt; SVG element for example),
  * <code>KEY_USER_STYLESHEET_URI</code> to fix the URI of a user
  * stylesheet, and <code>KEY_PIXEL_TO_MM</code> to specify the pixel to
  * millimeter conversion factor.

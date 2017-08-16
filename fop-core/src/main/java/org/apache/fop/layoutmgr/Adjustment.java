@@ -21,7 +21,7 @@ package org.apache.fop.layoutmgr;
 
 /**
  * @see KnuthGlue
- * @see "http://www.leverkruid.eu/GKPLinebreaking/elements.html"
+ * http://www.leverkruid.eu/GKPLinebreaking/elements.html
  */
 public final class Adjustment {
 

@@ -23,7 +23,7 @@ package org.apache.fop.pdf;
  * An element in the document's structure tree. This can be either the structure tree root
  * or a structure element.
  *
- * @see "Section 10.6, <q>Logical Structure</q> of the PDF Reference, 4th edition (PDF 1.5)"
+ * "Section 10.6, Logical Structure of the PDF Reference, 4th edition (PDF 1.5)"
  */
 public abstract class StructureHierarchyMember extends PDFDictionary {
 

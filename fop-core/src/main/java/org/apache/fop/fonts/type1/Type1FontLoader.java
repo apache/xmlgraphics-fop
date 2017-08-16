@@ -56,7 +56,7 @@ public class Type1FontLoader extends FontLoader {
 
     /**
      * Constructs a new Type 1 font loader.
-     * @param fontFileURI the URI to the PFB file of a Type 1 font
+     * @param fontUris the URI to the PFB file of a Type 1 font
      * @param embedded indicates whether the font is embedded or referenced
      * @param useKerning indicates whether to load kerning information if available
      * @param resourceResolver the font resolver used to resolve URIs

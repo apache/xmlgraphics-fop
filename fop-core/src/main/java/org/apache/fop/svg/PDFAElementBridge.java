@@ -29,15 +29,15 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.gvt.GraphicsNode;
 
 /**
- * <p>Bridge class for the &lt;a> element.</p>
+ * Bridge class for the &lt;a&gt; element.
  *
- * <p>This work was authored by Keiron Liddle (keiron@aftexsw.com).</p>
+ * This work was originally authored by <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  */
 public class PDFAElementBridge extends AbstractGraphicsNodeBridge {
     private AffineTransform transform;
 
     /**
-     * Constructs a new bridge for the &lt;a> element.
+     * Constructs a new bridge for the &lt;a&gt; element.
      */
     public PDFAElementBridge() {
     }
@@ -87,7 +87,7 @@ public class PDFAElementBridge extends AbstractGraphicsNodeBridge {
     }
 
     /**
-     * Returns true as the &lt;a> element is a container.
+     * Returns true as the &lt;a&gt; element is a container.
      * @return true if the a element is a container
      */
     public boolean isComposite() {

@@ -117,8 +117,8 @@ public interface TableEventProducer extends EventProducer {
             int actualValue, Locator loc) throws PropertyException;
 
     /**
-     * table-layout=\"fixed\" and column-width unspecified
-     * => falling back to proportional-column-width(1)
+     * table-layout=fixed and column-width unspecified
+     * =&gt; falling back to proportional-column-width(1)
      * @param source the event source
      * @param loc the location of the error or null
      * @event.severity WARN

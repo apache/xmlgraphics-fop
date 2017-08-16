@@ -31,7 +31,7 @@ import org.apache.fop.util.CompareUtil;
 import static org.apache.fop.fo.Constants.PR_X_XML_BASE;
 
 /**
- * Class modeling a property that has a value of type &lt;uri-specification>.
+ * Class modeling a property that has a value of type &lt;uri-specification&gt;.
  * The purpose is mainly to support resolution of a specified
  * relative URI against a specified or inherited <code>xml:base</code>
  * during the property refinement stage.

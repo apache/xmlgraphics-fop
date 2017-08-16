@@ -47,11 +47,11 @@ import org.apache.fop.apps.MimeConstants;
  *   <li>xml: the path to an XML file to render</li>
  *   <li>xslt: the path to an XSLT file that can transform the above XML to XSL-FO</li>
  * </ul>
- * <br/>
+ * <br>
  * Example URL: http://servername/fop/servlet/FopPrintServlet?fo=readme.fo
- * <br/>
- * Example URL: http://servername/fop/servlet/FopPrintServlet?xml=data.xml&xsl=format.xsl
- * <br/>
+ * <br>
+ * Example URL: http://servername/fop/servlet/FopPrintServlet?xml=data.xml
+ * <br>
  * <b>Note:</b> This servlet is derived from FopServlet. Most methods are inherited from the
  * superclass. Only the differences to the base class are necessary.
  */

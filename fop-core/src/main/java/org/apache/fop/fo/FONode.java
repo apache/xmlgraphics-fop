@@ -1013,7 +1013,7 @@ public abstract class FONode implements Cloneable {
 
     /**
      * Base iterator interface over a FO's children, offering three methods on top of the base interface
-     * methods {@see java.util.ListIterator}.
+     * methods.
      */
     public interface FONodeIterator extends ListIterator<FONode> {
 

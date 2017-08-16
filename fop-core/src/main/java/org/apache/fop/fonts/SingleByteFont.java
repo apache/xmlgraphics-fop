@@ -421,7 +421,7 @@ public class SingleByteFont extends CustomFont {
      * Sets the version of the PostScript table stored in the TrueType font represented by
      * this instance.
      *
-     * @param version version of the <q>post</q> table
+     * @param version version of the post table
      */
     public void setTrueTypePostScriptVersion(PostScriptVersion version) {
         ttPostScriptVersion = version;
@@ -431,7 +431,7 @@ public class SingleByteFont extends CustomFont {
      * Returns the version of the PostScript table stored in the TrueType font represented by
      * this instance.
      *
-     * @return the version of the <q>post</q> table
+     * @return the version of the post table
      */
     public PostScriptVersion getTrueTypePostScriptVersion() {
         assert getFontType() == FontType.TRUETYPE;

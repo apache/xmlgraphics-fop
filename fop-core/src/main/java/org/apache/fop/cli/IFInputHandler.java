@@ -40,7 +40,7 @@ import org.apache.fop.render.intermediate.IFUtil;
 public class IFInputHandler extends InputHandler {
 
     /**
-     * Constructor for XML->XSLT->intermediate XML input
+     * Constructor for XML-&gt;XSLT-&gt;intermediate XML input
      * @param xmlfile XML file
      * @param xsltfile XSLT file
      * @param params Vector of command-line parameters (name, value,

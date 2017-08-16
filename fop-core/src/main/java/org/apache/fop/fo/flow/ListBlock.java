@@ -35,8 +35,8 @@ import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.KeepProperty;
 
 /**
- * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_list-block">
- * <code>fo:list-block</code></a> object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_list-block">list block</a>
+ * <code>fo:list-block</code> object.
  */
 public class ListBlock extends FObj implements BreakPropertySet, CommonAccessibilityHolder {
     // The value of properties relevant for fo:list-block.

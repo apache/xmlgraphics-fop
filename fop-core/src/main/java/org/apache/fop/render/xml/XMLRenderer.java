@@ -105,7 +105,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
      * in the root element of the AT document, the initial value of which
      * is set to '2.0' to signify that something preceded it (but didn't
      * happen to be marked as such), and that this version is not necessarily
-     * backwards compatible with the unmarked (<2.0) version.
+     * backwards compatible with the unmarked (&lt;2.0) version.
      */
     public static final String VERSION = "2.0";
 

@@ -112,7 +112,7 @@ public class BlockContainer extends FObj implements BreakPropertySet, WritingMod
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: marker* (%block;)+
-     * <br><i><b>BUT</b>: "In addition an fo:block-container that does not generate an
+     * <br><b>BUT</b>: "In addition an fo:block-container that does not generate an
      * absolutely positioned area may have a sequence of zero or more
      * fo:markers as its initial children."
      * The latter refers to block-containers with absolute-position="absolute"

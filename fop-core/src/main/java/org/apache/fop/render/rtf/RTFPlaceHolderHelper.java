@@ -47,7 +47,6 @@ public class RTFPlaceHolderHelper {
      * A method to create an object which is missing and required from the
      * RTF structure.
      * @param containerClass The class which is missing
-     * @throws Exception
      */
     public void createRTFPlaceholder(Class containerClass) throws RtfException {
         if (containerClass == RtfTableRow.class) {

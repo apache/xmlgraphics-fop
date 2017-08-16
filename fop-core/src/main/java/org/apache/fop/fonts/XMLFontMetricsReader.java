@@ -46,8 +46,8 @@ import org.apache.fop.fonts.apps.TTFReader;
  * <p>Class for reading a metric.xml file and creating a font object.
  * Typical usage:</p>
  * <pre>
- * XMLFontMetricsReader reader = new XMLFontMetricsReader(<path til metrics.xml>);
- * reader.setFontEmbedPath(<path to a .ttf or .pfb file or null to diable embedding>);
+ * XMLFontMetricsReader reader = new XMLFontMetricsReader(&lt;path til metrics.xml&gt;);
+ * reader.setFontEmbedPath(&lt;path to a .ttf or .pfb file or null to diable embedding&gt;);
  * reader.useKerning(true);
  * Font f = reader.getFont();
  * </pre>

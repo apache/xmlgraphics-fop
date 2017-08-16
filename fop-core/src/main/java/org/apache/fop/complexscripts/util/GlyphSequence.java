@@ -303,7 +303,7 @@ public class GlyphSequence implements Cloneable {
     }
 
     /**
-     * Set predication <KEY,VALUE> at glyph sequence OFFSET.
+     * Set predication &lt;KEY,VALUE&gt; at glyph sequence OFFSET.
      * @param offset offset (index) into glyph sequence
      * @param key predication key
      * @param value predication value

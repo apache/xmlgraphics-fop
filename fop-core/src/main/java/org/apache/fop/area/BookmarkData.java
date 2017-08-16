@@ -95,7 +95,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
     /**
      * Create a new bookmark data root object.
      * This constructor is called by the AreaTreeParser when the
-     * <bookmarkTree> element is read from the XML file
+     * &lt;bookmarkTree&gt; element is read from the XML file
      */
     public BookmarkData() {
         idRef = null;
@@ -106,7 +106,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
     /**
      * Create a new bookmark data object.
      * This constructor is called by the AreaTreeParser when a
-     * <bookmark> element is read from the XML file.
+     * &lt;bookmark&gt; element is read from the XML file.
      *
      * @param title the bookmark's title
      * @param showChildren whether to initially display the bookmark's children

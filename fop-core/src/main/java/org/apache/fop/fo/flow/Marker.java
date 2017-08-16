@@ -36,8 +36,8 @@ import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyCache;
 
 /**
- * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_marker">
- * <code>fo:marker<code></a> object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_marker">marker</a>
+ * <code>fo:marker</code>object.
  */
 public class Marker extends FObjMixed {
     // The value of properties relevant for fo:marker.

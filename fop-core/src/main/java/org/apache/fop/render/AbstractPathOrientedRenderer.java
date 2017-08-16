@@ -326,7 +326,6 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsAfter the border-after traits
      * @param bpsStart the border-start traits
      * @param bpsEnd the border-end traits
-     * @param innerBackgroundColor the background color of the block
      */
     protected void clipBackground(float startx, float starty,
             float width, float height,

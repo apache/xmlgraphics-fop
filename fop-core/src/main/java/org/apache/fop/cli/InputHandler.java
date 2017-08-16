@@ -72,7 +72,7 @@ public class InputHandler implements ErrorListener, Renderable {
     protected Log log = LogFactory.getLog(InputHandler.class);
 
     /**
-     * Constructor for XML->XSLT->FO input
+     * Constructor for XML-&gt;XSLT-&gt;FO input
      *
      * @param xmlfile XML file
      * @param xsltfile XSLT file

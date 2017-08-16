@@ -1315,8 +1315,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
 
     /**
      * The <code>Ligature</code> class implements a ligature lookup result in terms of
-     * a ligature glyph (code) and the <emph>N+1...</emph> components that comprise the ligature,
-     * where the <emph>Nth</emph> component was consumed in the coverage table lookup mapping to
+     * a ligature glyph (code) and the N+1... components that comprise the ligature,
+     * where the Nth component was consumed in the coverage table lookup mapping to
      * this ligature instance.
      */
     public static class Ligature {
@@ -1327,7 +1327,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
         /**
          * Instantiate a ligature.
          * @param ligature glyph id
-         * @param components sequence of <emph>N+1...</emph> component glyph (or character) identifiers
+         * @param components sequence of N+1... component glyph (or character) identifiers
          */
         public Ligature(int ligature, int[] components) {
             if ((ligature < 0) || (ligature > 65535)) {
@@ -1350,7 +1350,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
             return ligature;
         }
 
-        /** @return array of <emph>N+1...</emph> components */
+        /** @return array of N+1... components */
         public int[] getComponents() {
             return components;
         }

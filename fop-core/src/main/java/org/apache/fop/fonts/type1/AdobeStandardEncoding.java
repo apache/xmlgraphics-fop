@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Enumerates the {@linkplain http://unicode.org/Public/MAPPINGS/VENDORS/ADOBE/stdenc.txt} for
+ * Enumerates the linkplain http://unicode.org/Public/MAPPINGS/VENDORS/ADOBE/stdenc.txt for
  * characters  found in a Type1 font.
  */
 public enum AdobeStandardEncoding {
