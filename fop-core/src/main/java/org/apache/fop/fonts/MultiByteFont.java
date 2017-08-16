@@ -304,7 +304,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * Returns the Unicode scalar value that corresponds to the glyph index. If more than
      * one correspondence exists, then the first one is returned (ordered by bfentries[]).
      * @param gi glyph index
-     * @returns unicode scalar value
+     * @return unicode scalar value
      */
     // [TBD] - needs optimization, i.e., change from linear search to binary search
     private int findCharacterFromGlyphIndex(int gi, boolean augment) {

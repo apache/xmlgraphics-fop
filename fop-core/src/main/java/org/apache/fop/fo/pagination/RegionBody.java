@@ -81,7 +81,7 @@ public class RegionBody extends Region {
     }
 
     /**
-     * Return the value of the <code>column-count<code> property.
+     * Return the value of the <code>column-count</code> property.
      * @return the "column-count" property.
      */
     public int getColumnCount() {

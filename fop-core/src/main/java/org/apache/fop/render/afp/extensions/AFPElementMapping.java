@@ -29,7 +29,7 @@ import org.apache.fop.fo.FONode;
  * for custom AFP extensions not supported by the FO schema. Examples include
  * adding overlays or indexing a document using the tag logical element
  * structured field.
- * <p/>
+ * <p>
  */
 public class AFPElementMapping extends ElementMapping {
 

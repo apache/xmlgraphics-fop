@@ -32,7 +32,7 @@ public interface ImageHandlerBase {
      * Returns the priority for this image handler. A lower value means higher priority. This
      * information is used to build the ordered/prioritized list of supported ImageFlavors.
      * The built-in handlers use priorities between 100 and 999.
-     * @return a positive integer (>0) indicating the priority
+     * @return a positive integer (&gt;0) indicating the priority
      */
     int getPriority();
 

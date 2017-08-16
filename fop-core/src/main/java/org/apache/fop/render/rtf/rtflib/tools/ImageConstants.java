@@ -17,20 +17,20 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.rtf.rtflib.tools;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * created by Bertrand Delacretaz bdelacretaz@codeconsult.ch and by other
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
 
-/**
- * <p>Here will be defined all supported image formats.
- *  This class belongs to the <fo:external-graphic> tag processing.</p>
- *
- * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
+package org.apache.fop.render.rtf.rtflib.tools;
+
+
+/** Here will be defined all supported image formats.
+ *  This class belongs to the fo:external-graphic tag processing.
+ *  This work was originally authored by a.putz@skynamics.com (Andreas Putz)
  */
 
 public final class ImageConstants {

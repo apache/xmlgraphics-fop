@@ -232,7 +232,7 @@ public abstract class OpenFont {
     protected OTFAdvancedTypographicTableReader advancedTableReader;
 
     /**
-     * Version of the PostScript table (<q>post</q>) contained in this font.
+     * Version of the PostScript table (post) contained in this font.
      */
     public static enum PostScriptVersion {
         /** PostScript table version 1.0. */
@@ -763,9 +763,6 @@ public abstract class OpenFont {
      * Reads a font.
      *
      * @param in FontFileReader to read from
-     * @param name Name to be checked for in the font file
-     * @param glyphs Map of glyphs (glyphs has old index as (Integer) key and
-     * new index as (Integer) value)
      * @throws IOException in case of an I/O problem
      */
     public void readFont(FontFileReader in, String header, MultiByteFont mbfont) throws IOException {
@@ -993,8 +990,8 @@ public abstract class OpenFont {
 
     /**
      * Returns the index of the last character, but this is for WinAnsiEncoding
-     * only, so the last char is < 256.
-     * @return short Index of the last character (<256)
+     * only, so the last char is &lt; 256.
+     * @return short Index of the last character (&lt;256)
      */
     public short getLastChar() {
         return lastChar;

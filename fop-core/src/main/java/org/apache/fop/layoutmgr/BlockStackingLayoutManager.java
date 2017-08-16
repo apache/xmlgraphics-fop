@@ -182,7 +182,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
     /**
      * @param len length in millipoints to span with bp units
-     * @return the minimum integer n such that n * bpUnit >= len
+     * @return the minimum integer n such that n * bpUnit &gt;= len
      */
     protected int neededUnits(int len) {
         return (int) Math.ceil((float)len / bpUnit);

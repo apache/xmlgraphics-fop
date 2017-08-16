@@ -35,7 +35,7 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 /**
  * This class extends the org.apache.fop.render.afp.extensions.AbstractAFPExtensionObject class.
  * This object will be used to map the page overlay object in  AFPElementMapping.
- * <p/>
+ * <p>
  */
 public class AFPPageOverlayElement extends AbstractAFPExtensionObject {
 

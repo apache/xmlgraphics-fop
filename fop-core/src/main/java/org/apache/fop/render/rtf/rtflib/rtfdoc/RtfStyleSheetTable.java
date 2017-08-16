@@ -17,14 +17,15 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * created by Bertrand Delacretaz bdelacretaz@codeconsult.ch and by other
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
+
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 import java.util.Hashtable;
@@ -32,10 +33,9 @@ import java.util.Iterator;
 import java.util.Vector;
 
 /**
- * <p>Singelton of the RTF style sheet table.
- * This class belongs to the <jfor:stylesheet> tag processing.</p>
- *
- * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
+ * Singelton of the RTF style sheet table.
+ * This class belongs to the jfor:stylesheet tag processing.
+ * This work was originally authored by <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
  */
 public final class RtfStyleSheetTable {
     //////////////////////////////////////////////////

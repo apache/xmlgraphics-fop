@@ -32,8 +32,8 @@ import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 
 /**
- * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_wrapper">
- * <code>fo:wrapper</code></a> object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_wrapper">fo wrapper</a>
+ * <code>fo:wrapper</code> object.
  * The <code>fo:wrapper</code> object serves as a property holder for
  * its child node objects.
  */

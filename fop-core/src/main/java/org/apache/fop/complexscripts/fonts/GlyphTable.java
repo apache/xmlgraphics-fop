@@ -175,7 +175,7 @@ public class GlyphTable {
     }
 
     /**
-     * Match lookup specifications according to <script,language,feature> tuple, where
+     * Match lookup specifications according to &lt;script,language,feature&gt; tuple, where
      * '*' is a wildcard for a tuple component.
      * @param script a script identifier
      * @param language a language identifier
@@ -208,7 +208,7 @@ public class GlyphTable {
     }
 
     /**
-     * Match lookup specifications according to <script,language,feature> tuple, where
+     * Match lookup specifications according to &lt;script,language,feature&gt; tuple, where
      * '*' is a wildcard for a tuple component.
      * @param script a script identifier
      * @param language a language identifier
@@ -346,7 +346,7 @@ public class GlyphTable {
     }
 
     /**
-     * A structure class encapsulating a lookup specification as a <script,language,feature> tuple.
+     * A structure class encapsulating a lookup specification as a &lt;script,language,feature&gt; tuple.
      */
     public static class LookupSpec implements Comparable {
 

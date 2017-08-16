@@ -335,10 +335,6 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
     protected abstract void writeGlyph(char glyph, AffineTransform transform) throws IOException;
 
 
-    /**
-     * @param runaci an attributed character iterator
-     * @param layout a text span layout
-     */
     protected final void logTextRun(TextRun textRun) {
         AttributedCharacterIterator runaci = textRun.getACI();
         TextSpanLayout layout = textRun.getLayout();

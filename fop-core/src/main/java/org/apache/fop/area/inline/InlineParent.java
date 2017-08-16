@@ -42,11 +42,11 @@ public class InlineParent extends InlineArea {
     /** Controls whether the IPD is automatically adjusted based on the area's children. */
     protected transient boolean autoSize;
 
-    /** The offset of the <q>beforest</q> child area of this area. */
+    /** The offset of the beforest child area of this area. */
     protected int minChildOffset;
 
     /**
-     * The offset of the <q>afterest</q> child area of this area. Offset from the
+     * The offset of the afterest child area of this area. Offset from the
      * before-edge of this area's content-rectangle and the after-edge of the child area's
      * allocation-rectangle.
      */

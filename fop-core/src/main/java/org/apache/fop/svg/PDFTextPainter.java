@@ -37,7 +37,7 @@ import org.apache.fop.svg.font.FOPGVTFont;
 import org.apache.fop.svg.font.FOPGVTGlyphVector;
 
 /**
- * Renders the attributed character iterator of a {@link org.apache.batik.gvt.TextNode}.
+ * Renders the attributed character iterator of a {@link org.apache.batik.bridge.TextNode}.
  * This class draws the text directly into the PDFGraphics2D so that
  * the text is not drawn using shapes which makes the PDF files larger.
  * If the text is simple enough to draw then it sets the font and calls
@@ -60,7 +60,6 @@ class PDFTextPainter extends NativeTextPainter {
      * Create a new PDF text painter with the given font information.
      *
      * @param fi the font info
-     * @param fontFamilyResolver the Font Family Resolver
      */
     public PDFTextPainter(FontInfo fi) {
         super(fi);

@@ -53,7 +53,7 @@ import org.apache.fop.apps.MimeConstants;
 
 /**
  * Example servlet to generate a PDF from a servlet.
- * <br/>
+ * <br>
  * Servlet param is:
  * <ul>
  *   <li>fo: the path to a XSL-FO file to render
@@ -63,12 +63,12 @@ import org.apache.fop.apps.MimeConstants;
  *   <li>xml: the path to an XML file to render</li>
  *   <li>xslt: the path to an XSLT file that can transform the above XML to XSL-FO</li>
  * </ul>
- * <br/>
+ * <br>
  * Example URL: http://servername/fop/servlet/FopServlet?fo=readme.fo
- * <br/>
- * Example URL: http://servername/fop/servlet/FopServlet?xml=data.xml&xslt=format.xsl
- * <br/>
- * For this to work with Internet Explorer, you might need to append "&ext=.pdf"
+ * <br>
+ * Example URL: http://servername/fop/servlet/FopServlet?xml=data.xml
+ * <br>
+ * For this to work with Internet Explorer, you might need to append "ext=.pdf"
  * to the URL.
  * (todo) Ev. add caching mechanism for Templates objects
  */

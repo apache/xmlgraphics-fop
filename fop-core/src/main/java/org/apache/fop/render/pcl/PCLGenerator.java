@@ -573,8 +573,8 @@ public class PCLGenerator {
 
     /**
      * Select the current pattern
-     * @param patternID the pattern ID (<ESC>*c#G command)
-     * @param pattern the pattern type (<ESC>*v#T command)
+     * @param patternID the pattern ID (&lt;ESC&gt;*c#G command)
+     * @param pattern the pattern type (&lt;ESC&gt;*v#T command)
      * @throws IOException In case of an I/O error
      */
     public void selectCurrentPattern(int patternID, int pattern) throws IOException {

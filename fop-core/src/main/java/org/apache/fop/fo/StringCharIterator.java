@@ -31,7 +31,7 @@ public class StringCharIterator extends CharIterator {
 
     /**
      * Constructor
-     * @param c the character that this iterator should iterate.
+     * @param s the character that this iterator should iterate.
      */
     public StringCharIterator(String s) {
         this.index = -1;

@@ -65,8 +65,7 @@ import static org.apache.fop.render.bitmap.TIFFCompressionValue.PACKBITS;
  * <li>JPEG-in-TIFF compression</li>
  * <li>DEFLATE lossless compression (also known as "Zip-in-TIFF")</li>
  * <li>LZW compression</li>
- * TODO
- * <p>
+ * </ul>
  * This class actually does not render itself, instead it extends
  * <code>org.apache.fop.render.java2D.Java2DRenderer</code> and just encode
  * rendering results into TIFF format using Batik's image codec

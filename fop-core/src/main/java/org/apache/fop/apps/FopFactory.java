@@ -163,7 +163,6 @@ public final class FopFactory implements ImageContext {
      * are particular to a rendering run. Don't reuse instances over multiple rendering runs but
      * instead create a new one each time and reuse the FopFactory.
      * @return the newly created FOUserAgent instance initialized with default values
-     * @throws FOPException
      */
     public FOUserAgent newFOUserAgent() {
         FOUserAgent userAgent = new FOUserAgent(this, resolver);

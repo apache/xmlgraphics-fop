@@ -28,11 +28,11 @@ import org.apache.batik.bridge.TextPainter;
 import org.apache.batik.gvt.GraphicsNode;
 
 /**
- * <p>Bridge class for the &lt;text> element.
+ * Bridge class for the &lt;text&gt; element.
  * This bridge will use the direct text painter if the text
- * for the element is simple.</p>
+ * for the element is simple.
  *
- * <p>This work was authored by Keiron Liddle (keiron@aftexsw.com).</p>
+ * This work was originally authored by <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  */
 public abstract class AbstractFOPTextElementBridge extends SVGTextElementBridge {
 

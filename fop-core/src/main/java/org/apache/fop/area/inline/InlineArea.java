@@ -291,7 +291,7 @@ public class InlineArea extends Area {
      * elements.
      *
      * @return the offset that this area would have if the before-edge of its
-     * content-rectangle were coinciding with the <q>beforest</q> before-edge of its
+     * content-rectangle were coinciding with the beforest before-edge of its
      * children allocation-rectangles.
      * @see #getVirtualBPD()
      * @see BasicLinkArea

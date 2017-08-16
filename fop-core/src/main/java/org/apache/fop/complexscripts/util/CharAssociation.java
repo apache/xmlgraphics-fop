@@ -145,7 +145,7 @@ public class CharAssociation implements Cloneable {
     }
 
     /**
-     * Set predication <KEY,VALUE>.
+     * Set predication &lt;KEY,VALUE&gt;.
      * @param key predication key
      * @param value predication value
      */
@@ -172,7 +172,7 @@ public class CharAssociation implements Cloneable {
     }
 
     /**
-     * Merge predication <KEY,VALUE>.
+     * Merge predication &lt;KEY,VALUE&gt;.
      * @param key predication key
      * @param value predication value
      */

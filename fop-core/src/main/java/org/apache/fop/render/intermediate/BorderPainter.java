@@ -58,7 +58,7 @@ public class BorderPainter {
 
     /** The ratio between a solid dash and the white-space in a dashed-border */
     public static final float DASHED_BORDER_SPACE_RATIO = 0.5f;
-    /** The length of the dash as a factor of the border width i.e. 2 -> dashWidth = 2*borderWidth */
+    /** The length of the dash as a factor of the border width i.e. 2 -&gt; dashWidth = 2*borderWidth */
     protected static final float DASHED_BORDER_LENGTH_FACTOR = 2.0f;
 
     private final GraphicsPainter graphicsPainter;
@@ -284,7 +284,6 @@ public class BorderPainter {
      * condition that corners start on a dash and end with a dash (rather than ending with a white space).
      * @param borderLength The length of the border.
      * @param borderWidth The width/thickness of the border.
-     * @param dashSpaceRatio The ratio between dashes and white-space.
      * @return returns the length of the dash such that it fits the criteria above.
      */
     public static float dashWidthCalculator(float borderLength, float borderWidth) {
@@ -299,10 +298,6 @@ public class BorderPainter {
 
     /** TODO merge with drawRectangularBorders?
      * @param borderRect the border rectangle
-     * @param bpsBefore the border specification on the before side
-     * @param bpsAfter the border specification on the after side
-     * @param bpsStart the border specification on the start side
-     * @param bpsEnd the border specification on the end side
      * @throws IOException on io exception
      * */
     protected void drawRoundedBorders(Rectangle borderRect,

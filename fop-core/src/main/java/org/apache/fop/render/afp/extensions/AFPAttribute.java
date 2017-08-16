@@ -28,7 +28,7 @@ import org.apache.fop.fo.properties.StringProperty;
  * in order to provide a static property maker. The object facilitates
  * extraction of attributes from formatted objects based on the static list
  * as defined in the AFPElementMapping implementation.
- * <p/>
+ * <p>
  */
 public class AFPAttribute extends StringProperty.Maker {
 

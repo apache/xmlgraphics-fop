@@ -693,7 +693,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         /**
          * The <code>GlyphMapping</code> stores information about spaces.
-         * <p/>
+         * <p>
          * Add the spaces - except zero-width spaces - to the TextArea.
          */
         private void addSpaces() {

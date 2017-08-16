@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
  * An iterator over {@link Position} instances, that is wrapped around
  * another 'parent' {@link Iterator}. The parent can be either another
  * {@code PositionIterator}, or an iterator over {@link KnuthElement}s,
- * for example.<br/>
+ * for example.<br>
  * The {@link #next()} method always returns a {@link Position}. The
  * {@link #getPos(Object)} method can be overridden in subclasses
  * to take care of obtaining the {@link LayoutManager} or {@link Position}

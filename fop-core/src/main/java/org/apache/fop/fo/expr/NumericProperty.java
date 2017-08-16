@@ -42,7 +42,7 @@ public class NumericProperty extends Property implements Numeric, Length {
      * including absolute length, percent length, table units.
      * @param value The value of the numeric.
      * @param dim The dimension of the value. 0 for a Number, 1 for a Length
-     * (any type), >1, <0 if Lengths have been multiplied or divided.
+     * (any type), &gt;1, &lt;0 if Lengths have been multiplied or divided.
      */
     protected NumericProperty(double value, int dim) {
         this.value = value;

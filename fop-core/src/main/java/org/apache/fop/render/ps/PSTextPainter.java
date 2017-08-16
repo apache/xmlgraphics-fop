@@ -47,7 +47,7 @@ import org.apache.fop.svg.NativeTextPainter;
 import org.apache.fop.util.HexEncoder;
 
 /**
- * Renders the attributed character iterator of a {@link org.apache.batik.gvt.TextNode TextNode}.
+ * Renders the attributed character iterator of a {@link org.apache.batik.bridge.TextNode TextNode}.
  * This class draws the text directly using PostScript text operators so
  * the text is not drawn using shapes which makes the PS files larger.
  * <p>

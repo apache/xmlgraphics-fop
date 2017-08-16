@@ -63,7 +63,7 @@ public final class FopFactoryBuilder {
     /**
      * A builder class for {@link FopFactory} which can be used for setting configuration. This is
      * a helper constructor that uses the default URI resolver implementation that FOP packages
-     * provide ({@link org.apache.fop.apps.io.ResourceResolverFactory.DefaultResourceResolver}).
+     * provide.
      *
      * @param defaultBaseURI the default base URI for resolving URIs against
      */

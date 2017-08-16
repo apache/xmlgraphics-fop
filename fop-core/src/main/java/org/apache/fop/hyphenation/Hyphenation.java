@@ -20,9 +20,9 @@
 package org.apache.fop.hyphenation;
 
 /**
- * <p.This class represents a hyphenated word.</p>
+ * This class represents a hyphenated word.
  *
- * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
+ * This work was originally authored by Carlos Villegas cav@uniscope.co.jp
  */
 public class Hyphenation {
 

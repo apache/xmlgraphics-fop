@@ -71,14 +71,14 @@ public final class FontCache implements Serializable {
     private final boolean[] changeLock = new boolean[1];
 
     /**
-     * master mapping of font url -> font info. This needs to be a list, since a
+     * master mapping of font url -&gt; font info. This needs to be a list, since a
      * TTC file may contain more than 1 font.
      * @serial
      */
     private Map<String, CachedFontFile> fontfileMap;
 
     /**
-     * mapping of font url -> file modified date (for all fonts that have failed
+     * mapping of font url -&gt; file modified date (for all fonts that have failed
      * to load)
      * @serial
      */

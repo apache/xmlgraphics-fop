@@ -23,14 +23,12 @@ import java.io.Serializable;
 
 /**
  * This class holds the resolved (as mpoints) form of a
- * {@link org.apache.fop.fo.properties.LengthRangeProperty} or
- * {@link org.apache.fop.fo.properties.SpaceProperty} type property value.
- * <p/>
- * Instances of this class are immutable. All arithmetic methods like {@link #plus(MinOptMax) plus},
- * {@link #minus(MinOptMax) minus} or {@link #mult(int) mult} return a different instance. So it is
- * possible to pass around instances without copying.
- * <p/>
- * <code>MinOptMax</code> values are used during layout calculations.
+ * {@link org.apache.fop.fo.properties.LengthRangeProperty LengthRange} or
+ * {@link org.apache.fop.fo.properties.SpaceProperty Space} type property value. <p>
+ * Instances of this class are immutable. All arithmetic methods like
+ * {@link #plus(MinOptMax) plus}, {@link #minus(MinOptMax) minus} or {@link #mult(int)
+ * mult} return a different instance. So it is possible to pass around instances without
+ * copying. <p> <code>MinOptMax</code> values are used during layout calculations.
  */
 public final class MinOptMax implements Serializable {
 
@@ -52,7 +50,7 @@ public final class MinOptMax implements Serializable {
      * @param opt the optimum value
      * @param max the maximum value
      * @return the corresponding instance
-     * @throws IllegalArgumentException if <code>min > opt || max < opt</code>.
+     * @throws IllegalArgumentException if <code>min &gt; opt || max &lt; opt</code>.
      */
     public static MinOptMax getInstance(int min, int opt, int max) throws IllegalArgumentException {
         if (min > opt) {
@@ -196,7 +194,7 @@ public final class MinOptMax implements Serializable {
      * @param minOperand the minimal value to be added.
      * @return an instance with the given value added to the minimal value.
      * @throws IllegalArgumentException if
-     * <code>min + minOperand > opt || max < opt</code>.
+     * <code>min + minOperand &gt; opt || max &lt; opt</code>.
      */
     public MinOptMax plusMin(int minOperand) throws IllegalArgumentException {
         return getInstance(min + minOperand, opt, max);
@@ -209,7 +207,7 @@ public final class MinOptMax implements Serializable {
      * @param minOperand the minimal value to be subtracted.
      * @return an instance with the given value subtracted to the minimal value.
      * @throws IllegalArgumentException if
-     * <code>min - minOperand > opt || max < opt</code>.
+     * <code>min - minOperand &gt; opt || max &lt; opt</code>.
      */
     public MinOptMax minusMin(int minOperand) throws IllegalArgumentException {
         return getInstance(min - minOperand, opt, max);
@@ -222,7 +220,7 @@ public final class MinOptMax implements Serializable {
      * @param maxOperand the maximal value to be added.
      * @return an instance with the given value added to the maximal value.
      * @throws IllegalArgumentException if
-     * <code>min > opt || max < opt + maxOperand</code>.
+     * <code>min &gt; opt || max &lt; opt + maxOperand</code>.
      */
     public MinOptMax plusMax(int maxOperand) throws IllegalArgumentException {
         return getInstance(min, opt, max + maxOperand);
@@ -235,7 +233,7 @@ public final class MinOptMax implements Serializable {
      * @param maxOperand the maximal value to be subtracted.
      * @return an instance with the given value subtracted to the maximal value.
      * @throws IllegalArgumentException if
-     * <code>min > opt || max < opt - maxOperand</code>.
+     * <code>min &gt; opt || max &lt; opt - maxOperand</code>.
      */
     public MinOptMax minusMax(int maxOperand) throws IllegalArgumentException {
         return getInstance(min, opt, max - maxOperand);

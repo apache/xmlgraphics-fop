@@ -88,7 +88,7 @@ public class IFContext {
 
     /**
      * Returns the currently applicable foreign attributes.
-     * @return a Map<QName, Object>
+     * @return a Map&lt;QName, Object&gt;
      */
     public Map getForeignAttributes() {
         return this.foreignAttributes;
@@ -105,7 +105,7 @@ public class IFContext {
 
     /**
      * Sets the currently applicable foreign attributes.
-     * @param foreignAttributes a Map<QName, Object> or null to reset
+     * @param foreignAttributes a Map&lt;QName, Object&gt; or null to reset
      */
     public void setForeignAttributes(Map foreignAttributes) {
         if (foreignAttributes != null) {
@@ -190,7 +190,7 @@ public class IFContext {
     /**
      * Sets the location of the object enclosing the current content.
      *
-     * @location the line and column location of the object in the source FO file
+     * location the line and column location of the object in the source FO file
      */
     public void setLocation(String location) {
         this.location = location;

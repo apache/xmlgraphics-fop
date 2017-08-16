@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * FontInfo contains meta information on fonts (where is the metrics file etc.)
  * TODO: We need to remove this class and think about more intelligent design patterns
- * (Data classes => Procedural code)
+ * (Data classes =&gt; Procedural code)
  */
 public class EmbedFontInfo implements Serializable {
 
@@ -60,11 +60,10 @@ public class EmbedFontInfo implements Serializable {
 
     /**
      * Main constructor
-     * @param metricsURI the URI of the XML resource containing font metrics
+     * @param fontUris the URI of the XML resource containing font metrics
      * @param kerning True if kerning should be enabled
      * @param advanced true if advanced typography features should be enabled
      * @param fontTriplets List of font triplets to associate with this font
-     * @param embedURI Path to the embeddable font file (may be null)
      * @param subFontName the sub-fontname used for TrueType Collections (null otherwise)
      * @param encodingMode the encoding mode to use for this font
      */
@@ -84,10 +83,9 @@ public class EmbedFontInfo implements Serializable {
 
     /**
      * Main constructor
-     * @param metricsURI the URI of the XML resource containing font metrics
+     * @param fontUris the URI of the XML resource containing font metrics
      * @param kerning True if kerning should be enabled
      * @param fontTriplets List of font triplets to associate with this font
-     * @param embedURI Path to the embeddable font file (may be null)
      * @param subFontName the sub-fontname used for TrueType Collections (null otherwise)
      */
     public EmbedFontInfo(FontUris fontUris, boolean kerning, boolean advanced,
