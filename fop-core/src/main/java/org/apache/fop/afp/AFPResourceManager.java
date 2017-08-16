@@ -281,7 +281,6 @@ public class AFPResourceManager {
     }
 
     /**
-     * {@asf.todo}
      *
      * @param resourceInfo  the resource info to check
      * @param areaInfo  the area info to check
