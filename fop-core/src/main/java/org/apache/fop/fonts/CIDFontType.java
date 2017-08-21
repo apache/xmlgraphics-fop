@@ -19,32 +19,32 @@
 
 package org.apache.fop.fonts;
 
-import org.apache.avalon.framework.ValuedEnum;
-
 /**
  * This class enumerates all supported CID font types.
  */
-public class CIDFontType extends ValuedEnum {
+public enum CIDFontType {
 
     /**
      * CID Font Type 0 (based on Type 1 format)
      */
-    public static final CIDFontType CIDTYPE0 = new CIDFontType("CIDFontType0", 0);
+    CIDTYPE0("CIDFontType0", 0),
 
     /**
      * CID Font Type 2 (based on TrueType format)
      */
-    public static final CIDFontType CIDTYPE2 = new CIDFontType("CIDFontType2", 2);
+    CIDTYPE2("CIDFontType2", 2);
 
+    private final String name;
+    private final int value;
 
     /**
      * Construct a CID font type.
      * @param name a type name
      * @param value a type value
-     * @see org.apache.avalon.framework.Enum#Enum(String)
      */
-    protected CIDFontType(String name, int value) {
-        super(name, value);
+    CIDFontType(String name, int value) {
+        this.name = name;
+        this.value = value;
     }
 
 
@@ -79,4 +79,11 @@ public class CIDFontType extends ValuedEnum {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getValue() {
+        return value;
+    }
 }

@@ -21,8 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.ByteArrayOutputStream;
 
-import org.apache.avalon.framework.CascadingRuntimeException;
-
 /**
  * This class represents a simple number object. It also contains contains some
  * utility methods for outputting numbers to PDF.
@@ -101,7 +99,7 @@ public class PDFText extends PDFObject {
                 try {
                     uniBytes = text.getBytes("UTF-16");
                 } catch (java.io.UnsupportedEncodingException uee) {
-                    throw new CascadingRuntimeException("Incompatible VM", uee);
+                    throw new RuntimeException("Incompatible VM", uee);
                 }
                 return toHex(uniBytes);
             } else {
@@ -179,7 +177,7 @@ public class PDFText extends PDFObject {
         try {
             return text.getBytes("UnicodeBig");
         } catch (java.io.UnsupportedEncodingException uee) {
-            throw new CascadingRuntimeException("Incompatible VM", uee);
+            throw new RuntimeException("Incompatible VM", uee);
         }
     }
 
@@ -195,7 +193,7 @@ public class PDFText extends PDFObject {
             final char[] a = {c};
             uniBytes = new String(a).getBytes("UTF-16BE");
         } catch (java.io.UnsupportedEncodingException uee) {
-            throw new CascadingRuntimeException("Incompatible VM", uee);
+            throw new RuntimeException("Incompatible VM", uee);
         }
 
         for (byte uniByte : uniBytes) {
