@@ -60,6 +60,10 @@ public class URISpecificationTestCase {
 
         actual = URISpecification.escapeURI("http://localhost/test test.pdf#page=6");
         assertEquals("http://localhost/test%20test.pdf#page=6", actual);
+
+        actual = URISpecification.escapeURI("http://localhost/test^test.pdf");
+        assertEquals("http://localhost/test%5Etest.pdf", actual);
+
     }
 
 }

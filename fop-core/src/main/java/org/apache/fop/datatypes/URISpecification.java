@@ -72,7 +72,7 @@ public final class URISpecification {
     }
 
     private static boolean isAlpha(char ch) {
-        return (ch >= 'A' && ch <= 'Z') || (ch >= 'A' && ch <= 'z');
+        return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
     }
 
     private static boolean isHexDigit(char ch) {
