@@ -435,8 +435,8 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
 
     @Test
     public void testFDSelect() throws IOException {
-        Assert.assertEquals(getSubset(1).length, 41);
-        Assert.assertEquals(getSubset(2).length, 48);
+        Assert.assertEquals(getSubset(1).length, 43);
+        Assert.assertEquals(getSubset(2).length, 50);
     }
 
     private byte[] getSubset(final int opLen) throws IOException {
@@ -480,7 +480,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             when(cffReader.getHeader()).thenReturn(new byte[0]);
             when(cffReader.getTopDictIndex()).thenReturn(new CFFDataReader().new CFFIndexData() {
                 public byte[] getByteData() throws IOException {
-                    return new byte[3];
+                    return new byte[] {0, 0, 1};
                 }
             });
 
@@ -500,5 +500,20 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             this.charsetOffset = charsetOffset;
             super.updateFixedOffsets(topDICT, dataTopDictOffset, charsetOffset, charStringOffset, encodingOffset);
         }
+    }
+
+    @Test
+    public void testResizeOfOperand() throws IOException {
+        OTFSubSetFile otfSubSetFile = new OTFSubSetFile() {
+            protected void writeFDSelect() {
+                super.writeFDSelect();
+                writeBytes(new byte[1024 * 100]);
+            }
+        };
+        otfSubSetFile.readFont(sourceSansReader, "StandardOpenType", null, glyphs);
+        byte[] fontSubset = otfSubSetFile.getFontSubset();
+        CFFDataReader cffReader = new CFFDataReader(fontSubset);
+        assertEquals(cffReader.getTopDictEntries().get("CharStrings").getOperandLength(), 5);
+        assertEquals(cffReader.getTopDictEntries().get("CharStrings").getByteData().length, 6);
     }
 }
