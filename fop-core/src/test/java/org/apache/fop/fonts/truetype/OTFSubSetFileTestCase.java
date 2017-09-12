@@ -20,8 +20,10 @@
 package org.apache.fop.fonts.truetype;
 
 import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -34,6 +36,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,9 +49,6 @@ import org.apache.fop.fonts.cff.CFFDataReader.DICTEntry;
 import org.apache.fop.fonts.truetype.OTFSubSetFile.BytesNumber;
 
 public class OTFSubSetFileTestCase extends OTFFileTestCase {
-
-    private CFFDataReader cffReaderSourceSans;
-    private OTFSubSetFile sourceSansSubset;
     private Map<Integer, Integer> glyphs = new HashMap<Integer, Integer>();
 
     /**
@@ -62,11 +62,17 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         for (int i = 0; i < 256; i++) {
             glyphs.put(i, i);
         }
+    }
 
-        sourceSansSubset = new OTFSubSetFile();
+    private CFFDataReader getCFFReaderSourceSans() throws IOException {
+        byte[] sourceSansData = getSourceSansSubset().getFontSubset();
+        return new CFFDataReader(sourceSansData);
+    }
+
+    private OTFSubSetFile getSourceSansSubset() throws IOException {
+        OTFSubSetFile sourceSansSubset = new OTFSubSetFile();
         sourceSansSubset.readFont(sourceSansReader, "SourceSansProBold", null, glyphs);
-        byte[] sourceSansData = sourceSansSubset.getFontSubset();
-        cffReaderSourceSans = new CFFDataReader(sourceSansData);
+        return sourceSansSubset;
     }
 
     /**
@@ -75,9 +81,10 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
      */
     @Test
     public void testCharStringIndex() throws IOException {
+        CFFDataReader cffReaderSourceSans = getCFFReaderSourceSans();
         assertEquals(256, cffReaderSourceSans.getCharStringIndex().getNumObjects());
         assertTrue(checkCorrectOffsets(cffReaderSourceSans.getCharStringIndex()));
-        validateCharStrings(cffReaderSourceSans, sourceSansSubset.getCFFReader());
+        validateCharStrings(cffReaderSourceSans, getSourceSansSubset().getCFFReader());
     }
 
     /**
@@ -113,7 +120,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             List<BytesNumber> origOperands = getFullCharString(new Context(), origCharData, origCFF);
             List<BytesNumber> subsetOperands = getFullCharString(new Context(), charData, subsetCFF);
             for (int j = 0; j < origOperands.size(); j++) {
-                    assertTrue(origOperands.get(j).equals(subsetOperands.get(j)));
+                assertTrue(origOperands.get(j).equals(subsetOperands.get(j)));
             }
         }
     }
@@ -308,6 +315,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             super(number, numBytes);
             this.opName = opName;
         }
+
         public String toString() {
             return String.format("[%s]", opName);
         }
@@ -406,7 +414,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         case 37: return "flex1";
         case 38: return "Reserved";
         default: return "Unknown";
-         }
+        }
     }
 
     /**
@@ -415,6 +423,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
      */
     @Test
     public void testStringIndex() throws IOException {
+        CFFDataReader cffReaderSourceSans = getCFFReaderSourceSans();
         assertEquals(164, cffReaderSourceSans.getStringIndex().getNumObjects());
         assertTrue(checkCorrectOffsets(cffReaderSourceSans.getStringIndex()));
         assertEquals("Amacron", new String(cffReaderSourceSans.getStringIndex().getValue(5)));
@@ -428,6 +437,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
      */
     @Test
     public void testTopDictData() throws IOException {
+        CFFDataReader cffReaderSourceSans = getCFFReaderSourceSans();
         Map<String, DICTEntry> topDictEntries = cffReaderSourceSans.parseDictData(
                 cffReaderSourceSans.getTopDictIndex().getData());
         assertEquals(10, topDictEntries.size());
@@ -435,8 +445,8 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
 
     @Test
     public void testFDSelect() throws IOException {
-        Assert.assertEquals(getSubset(1).length, 43);
-        Assert.assertEquals(getSubset(2).length, 50);
+        Assert.assertEquals(getSubset(1).length, 42);
+        Assert.assertEquals(getSubset(2).length, 49);
     }
 
     private byte[] getSubset(final int opLen) throws IOException {
@@ -515,5 +525,62 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         CFFDataReader cffReader = new CFFDataReader(fontSubset);
         assertEquals(cffReader.getTopDictEntries().get("CharStrings").getOperandLength(), 5);
         assertEquals(cffReader.getTopDictEntries().get("CharStrings").getByteData().length, 6);
+    }
+
+    @Test
+    public void testFDArraySize() throws IOException {
+        OTFSubSetFileFDArraySize otfSubSetFileFDArraySize = new OTFSubSetFileFDArraySize();
+        otfSubSetFileFDArraySize.readFont(sourceSansReader, "StandardOpenType", null, glyphs);
+        byte[] fontSubset = otfSubSetFileFDArraySize.getFontSubset();
+        DataInputStream dis = new DataInputStream(new ByteArrayInputStream(fontSubset));
+        dis.skipBytes(otfSubSetFileFDArraySize.offset);
+        Assert.assertEquals(dis.readUnsignedShort(), otfSubSetFileFDArraySize.fdFontCount);
+        Assert.assertEquals(dis.readByte(), 2);
+    }
+
+    static class OTFSubSetFileFDArraySize extends OTFSubSetFile {
+        int offset;
+        int fdFontCount = 128;
+
+        public OTFSubSetFileFDArraySize() throws IOException {
+            super();
+        }
+
+        protected void createCFF() throws IOException {
+            super.createCFF();
+            writeFDArray(new ArrayList<Integer>(), new ArrayList<Integer>(), new ArrayList<Integer>());
+        }
+
+        protected int writeFDArray(List<Integer> uniqueNewRefs, List<Integer> privateDictOffsets,
+                                   List<Integer> fontNameSIDs) throws IOException {
+            List<CFFDataReader.FontDict> fdFonts = cffReader.getFDFonts();
+            CFFDataReader.FontDict fdFont = cffReader.new FontDict() {
+                public byte[] getByteData() throws IOException {
+                    return new byte[128];
+                }
+            };
+            cffReader = mock(CFFDataReader.class);
+            LinkedHashMap<String, DICTEntry> map = new LinkedHashMap<String, DICTEntry>();
+            DICTEntry e = new DICTEntry();
+            e.setOffset(1);
+            e.setOperandLengths(Arrays.asList(0, 0));
+            map.put("FontName", e);
+            map.put("Private", e);
+            when(cffReader.parseDictData(any(byte[].class))).thenReturn(map);
+            when(cffReader.getFDFonts()).thenReturn(fdFonts);
+
+            fdFonts.clear();
+            uniqueNewRefs.clear();
+            privateDictOffsets.clear();
+            fontNameSIDs.clear();
+            for (int i = 0; i < fdFontCount; i++) {
+                fdFonts.add(fdFont);
+                uniqueNewRefs.add(i);
+                privateDictOffsets.add(i);
+                fontNameSIDs.add(i);
+            }
+            offset = super.writeFDArray(uniqueNewRefs, privateDictOffsets, fontNameSIDs);
+            return offset;
+        }
     }
 }

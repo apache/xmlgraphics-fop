@@ -523,17 +523,7 @@ public class OTFSubSetFile extends OTFSubSetWriter {
             throws IOException {
         int offset = currentPos;
         List<FontDict> fdFonts = cffReader.getFDFonts();
-
-        writeCard16(uniqueNewRefs.size());
-        writeByte(1); //Offset size
-        writeByte(1); //First offset
-
-        int count = 1;
-        for (Integer uniqueNewRef : uniqueNewRefs) {
-            FontDict fdFont = fdFonts.get(uniqueNewRef);
-            count += fdFont.getByteData().length;
-            writeByte(count);
-        }
+        List<byte[]> index = new ArrayList<byte[]>();
 
         for (int i = 0; i < uniqueNewRefs.size(); i++) {
             FontDict fdFont = fdFonts.get(uniqueNewRefs.get(i));
@@ -548,8 +538,9 @@ public class OTFSubSetFile extends OTFSubSetWriter {
                     + fdFontDict.get("Private").getOperandLengths().get(0),
                     fdFontDict.get("Private").getOperandLengths().get(1),
                     privateDictOffsets.get(i));
-            writeBytes(fdFontByteData);
+            index.add(fdFontByteData);
         }
+        writeIndex(index);
         return offset;
     }
 
