@@ -167,12 +167,12 @@ public class OTFSubSetFile extends OTFSubSetWriter {
         writeBytes(cffReader.getHeader());
 
         //Name Index
-        writeIndex(Arrays.asList(embedFontName.getBytes()));
+        writeIndex(Arrays.asList(embedFontName.getBytes("UTF-8")));
 
-        //Keep offset of the topDICT so it can be updated once all data has been written
-        int topDictOffset = currentPos;
+        Offsets offsets = new Offsets();
+
         //Top DICT Index and Data
-        int topDictDataOffset = topDictOffset + writeTopDICT();
+        offsets.topDictData = currentPos + writeTopDICT();
 
         boolean hasFDSelect = cffReader.getFDSelect() != null;
 
@@ -198,45 +198,52 @@ public class OTFSubSetFile extends OTFSubSetWriter {
         writeIndex(subsetGlobalIndexSubr);
 
         //Encoding
-        int encodingOffset = currentPos;
+        offsets.encoding = currentPos;
 
         //Charset table
-        int charsetOffset = currentPos;
+        offsets.charset = currentPos;
         writeCharsetTable(hasFDSelect);
 
         //FDSelect table
-        int fdSelectOffset = currentPos;
+        offsets.fdSelect = currentPos;
         if (hasFDSelect) {
             writeFDSelect();
+            if (!isCharStringBeforeFD()) {
+                offsets.fdArray = writeFDArray(subsetFDFonts, fontNameSIDs);
+            }
         }
 
-        int fdArrayOffset = -1;
-        if (hasFDSelect && !isCharStringBeforeFD()) {
-            fdArrayOffset = writeFDArray(subsetFDFonts, fontNameSIDs);
-        }
         //Char Strings Index
-        int charStringOffset = currentPos;
+        offsets.charString = currentPos;
         writeIndex(subsetCharStringsIndex);
-        if (hasFDSelect && isCharStringBeforeFD()) {
-            fdArrayOffset = writeFDArray(subsetFDFonts, fontNameSIDs);
-        }
-
         if (hasFDSelect) {
-            updateCIDOffsets(topDictDataOffset, fdArrayOffset, fdSelectOffset, charsetOffset,
-                    charStringOffset, encodingOffset);
+            if (isCharStringBeforeFD()) {
+                offsets.fdArray = writeFDArray(subsetFDFonts, fontNameSIDs);
+            }
+            updateCIDOffsets(offsets);
         } else {
             //Keep offset to modify later with the local subroutine index offset
-            int privateDictOffset = currentPos;
+            offsets.privateDict = currentPos;
             writePrivateDict();
 
             //Local subroutine index
-            int localIndexOffset = currentPos;
+            offsets.localIndex = currentPos;
             writeIndex(subsetLocalIndexSubr);
 
             //Update the offsets
-            updateOffsets(topDictOffset, charsetOffset, charStringOffset, privateDictOffset,
-                    localIndexOffset, encodingOffset);
+            updateOffsets(offsets);
         }
+    }
+
+    static class Offsets {
+        Integer topDictData;
+        Integer encoding;
+        Integer charset;
+        Integer fdSelect;
+        Integer charString;
+        Integer fdArray;
+        Integer privateDict;
+        Integer localIndex;
     }
 
     private int writeFDArray(List<Integer> subsetFDFonts, List<Integer> fontNameSIDs) throws IOException {
@@ -308,7 +315,7 @@ public class OTFSubSetFile extends OTFSubSetWriter {
         int sidAStringIndex = stringIndexData.size() + 390;
         int sidB = dictEntry.getOperands().get(1).intValue();
         if (sidB > 390) {
-            stringIndexData.add("Identity".getBytes());
+            stringIndexData.add("Identity".getBytes("UTF-8"));
         }
         int sidBStringIndex = stringIndexData.size() + 390;
         byte[] cidEntryByteData = dictEntry.getByteData();
@@ -361,7 +368,7 @@ public class OTFSubSetFile extends OTFSubSetWriter {
                 if (index < cffReader.getStringIndex().getNumObjects()) {
                     if (mbFont != null) {
                         mbFont.mapUsedGlyphName(subsetGlyph.getValue(),
-                                new String(cffReader.getStringIndex().getValue(index)));
+                                new String(cffReader.getStringIndex().getValue(index), "UTF-8"));
                     }
                     gidToSID.put(subsetGlyph.getValue(), stringIndexData.size() + 391);
                     stringIndexData.add(cffReader.getStringIndex().getValue(index));
@@ -523,11 +530,10 @@ public class OTFSubSetFile extends OTFSubSetWriter {
         List<FontDict> fdFonts = cffReader.getFDFonts();
         for (int i = 0; i < uniqueNewRefs.size(); i++) {
             FontDict curFDFont = fdFonts.get(uniqueNewRefs.get(i));
-            Map<String, DICTEntry> fdPrivateDict = cffReader.parseDictData(
-                    curFDFont.getPrivateDictData());
+            byte[] fdPrivateDictByteData = curFDFont.getPrivateDictData();
+            Map<String, DICTEntry> fdPrivateDict = cffReader.parseDictData(fdPrivateDictByteData);
             int privateDictOffset = currentPos;
             privateDictOffsets.add(privateDictOffset);
-            byte[] fdPrivateDictByteData = curFDFont.getPrivateDictData();
             if (fdPrivateDict.get("Subrs") != null) {
                 updateOffset(fdPrivateDictByteData, fdPrivateDict.get("Subrs").getOffset(),
                         fdPrivateDict.get("Subrs").getOperandLength(),
@@ -1077,9 +1083,7 @@ public class OTFSubSetFile extends OTFSubSetWriter {
         }
     }
 
-    protected void updateOffsets(int topDictOffset, int charsetOffset, int charStringOffset,
-            int privateDictOffset, int localIndexOffset, int encodingOffset)
-            throws IOException {
+    protected void updateOffsets(Offsets offsets) throws IOException {
         Map<String, DICTEntry> topDICT = cffReader.getTopDictEntries();
         Map<String, DICTEntry> privateDICT = null;
 
@@ -1088,65 +1092,59 @@ public class OTFSubSetFile extends OTFSubSetWriter {
             privateDICT = cffReader.getPrivateDict(privateEntry);
         }
 
-        int dataPos = 3 + (cffReader.getTopDictIndex().getOffSize()
-                * cffReader.getTopDictIndex().getOffsets().length);
-        int dataTopDictOffset = topDictOffset + dataPos;
-
-        updateFixedOffsets(topDICT, dataTopDictOffset, charsetOffset, charStringOffset, encodingOffset);
+        updateFixedOffsets(topDICT, offsets);
 
         if (privateDICT != null) {
             //Private index offset in the top dict
-            int oldPrivateOffset = dataTopDictOffset + privateEntry.getOffset();
+            int oldPrivateOffset = offsets.topDictData + privateEntry.getOffset();
             updateOffset(output, oldPrivateOffset + privateEntry.getOperandLengths().get(0),
-                    privateEntry.getOperandLengths().get(1), privateDictOffset);
+                    privateEntry.getOperandLengths().get(1), offsets.privateDict);
 
             //Update the local subroutine index offset in the private dict
             DICTEntry subroutines = privateDICT.get("Subrs");
             if (subroutines != null) {
-                int oldLocalSubrOffset = privateDictOffset + subroutines.getOffset();
+                int oldLocalSubrOffset = offsets.privateDict + subroutines.getOffset();
                 updateOffset(output, oldLocalSubrOffset, subroutines.getOperandLength(),
-                        (localIndexOffset - privateDictOffset));
+                        (offsets.localIndex - offsets.privateDict));
             }
         }
     }
 
-    protected void updateFixedOffsets(Map<String, DICTEntry> topDICT, int dataTopDictOffset,
-            int charsetOffset, int charStringOffset, int encodingOffset) {
+    protected void updateFixedOffsets(Map<String, DICTEntry> topDICT, Offsets offsets) {
         //Charset offset in the top dict
         DICTEntry charset = topDICT.get("charset");
-        int oldCharsetOffset = dataTopDictOffset + charset.getOffset();
-        updateOffset(output, oldCharsetOffset, charset.getOperandLength(), charsetOffset);
+        int oldCharsetOffset = offsets.topDictData + charset.getOffset();
+        updateOffset(output, oldCharsetOffset, charset.getOperandLength(), offsets.charset);
 
         //Char string index offset in the private dict
         DICTEntry charString = topDICT.get("CharStrings");
-        int oldCharStringOffset = dataTopDictOffset + charString.getOffset();
-        updateOffset(output, oldCharStringOffset, charString.getOperandLength(), charStringOffset);
+        int oldCharStringOffset = offsets.topDictData + charString.getOffset();
+        updateOffset(output, oldCharStringOffset, charString.getOperandLength(), offsets.charString);
 
         DICTEntry encodingEntry = topDICT.get("Encoding");
         if (encodingEntry != null && encodingEntry.getOperands().get(0).intValue() != 0
                 && encodingEntry.getOperands().get(0).intValue() != 1) {
-            int oldEncodingOffset = dataTopDictOffset + encodingEntry.getOffset();
-            updateOffset(output, oldEncodingOffset, encodingEntry.getOperandLength(), encodingOffset);
+            int oldEncodingOffset = offsets.topDictData + encodingEntry.getOffset();
+            updateOffset(output, oldEncodingOffset, encodingEntry.getOperandLength(), offsets.encoding);
         }
     }
 
-    protected void updateCIDOffsets(int topDictDataOffset, int fdArrayOffset, int fdSelectOffset,
-            int charsetOffset, int charStringOffset, int encodingOffset) {
+    protected void updateCIDOffsets(Offsets offsets) {
         Map<String, DICTEntry> topDict = cffReader.getTopDictEntries();
 
         DICTEntry fdArrayEntry = topDict.get("FDArray");
         if (fdArrayEntry != null) {
-            updateOffset(output, topDictDataOffset + fdArrayEntry.getOffset() - 1,
-                    fdArrayEntry.getOperandLength(), fdArrayOffset);
+            updateOffset(output, offsets.topDictData + fdArrayEntry.getOffset() - 1,
+                    fdArrayEntry.getOperandLength(), offsets.fdArray);
         }
 
         DICTEntry fdSelect = topDict.get("FDSelect");
         if (fdSelect != null) {
-            updateOffset(output, topDictDataOffset + fdSelect.getOffset() - 1,
-                    fdSelect.getOperandLength(), fdSelectOffset);
+            updateOffset(output, offsets.topDictData + fdSelect.getOffset() - 1,
+                    fdSelect.getOperandLength(), offsets.fdSelect);
         }
 
-        updateFixedOffsets(topDict, topDictDataOffset, charsetOffset, charStringOffset, encodingOffset);
+        updateFixedOffsets(topDict, offsets);
     }
 
     protected void updateOffset(byte[] out, int position, int length, int replacement) {

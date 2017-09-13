@@ -505,10 +505,9 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             super.createCFF();
         }
 
-        protected void updateFixedOffsets(Map<String, DICTEntry> topDICT, int dataTopDictOffset,
-                                          int charsetOffset, int charStringOffset, int encodingOffset) {
-            this.charsetOffset = charsetOffset;
-            super.updateFixedOffsets(topDICT, dataTopDictOffset, charsetOffset, charStringOffset, encodingOffset);
+        protected void updateFixedOffsets(Map<String, DICTEntry> topDICT, Offsets offsets) {
+            this.charsetOffset = offsets.charset;
+            super.updateFixedOffsets(topDICT, offsets);
         }
     }
 
@@ -587,10 +586,10 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
     @Test
     public void testOrderOfEntries() throws IOException {
         OTFSubSetFileEntryOrder otfSubSetFile = getFont(3, 2);
-        assertTrue(otfSubSetFile.fdArrayOffset < otfSubSetFile.charStringOffset);
+        assertTrue(otfSubSetFile.offsets.fdArray < otfSubSetFile.offsets.charString);
 
         otfSubSetFile = getFont(2, 3);
-        assertTrue(otfSubSetFile.fdArrayOffset > otfSubSetFile.charStringOffset);
+        assertTrue(otfSubSetFile.offsets.fdArray > otfSubSetFile.offsets.charString);
     }
 
     private OTFSubSetFileEntryOrder getFont(int csLen, int fdLen) throws IOException {
@@ -601,8 +600,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
     }
 
     static class OTFSubSetFileEntryOrder extends OTFSubSetFile {
-        int fdArrayOffset;
-        int charStringOffset;
+        Offsets offsets;
         int csLen;
         int fdLen;
 
@@ -635,12 +633,9 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             super.createCFF();
         }
 
-        protected void updateCIDOffsets(int topDictDataOffset, int fdArrayOffset, int fdSelectOffset,
-                                        int charsetOffset, int charStringOffset, int encodingOffset) {
-            super.updateCIDOffsets(
-                    topDictDataOffset, fdArrayOffset, fdSelectOffset, charsetOffset, charStringOffset, encodingOffset);
-            this.fdArrayOffset = fdArrayOffset;
-            this.charStringOffset = charStringOffset;
+        protected void updateCIDOffsets(Offsets offsets) {
+            super.updateCIDOffsets(offsets);
+            this.offsets = offsets;
         }
     }
 }
