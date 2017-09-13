@@ -174,17 +174,19 @@ public class OTFSubSetFile extends OTFSubSetWriter {
         //Top DICT Index and Data
         int topDictDataOffset = topDictOffset + writeTopDICT();
 
+        boolean hasFDSelect = cffReader.getFDSelect() != null;
+
         //Create the char string index data and related local / global subroutines
-        if (cffReader.getFDSelect() == null) {
-            createCharStringData();
-        } else {
+        if (hasFDSelect) {
             createCharStringDataCID();
+        } else {
+            createCharStringData();
         }
 
         //If it is a CID-Keyed font, store each FD font and add each SID
         List<Integer> fontNameSIDs = null;
         List<Integer> subsetFDFonts = null;
-        if (cffReader.getFDSelect() != null) {
+        if (hasFDSelect) {
             subsetFDFonts = getUsedFDFonts();
             fontNameSIDs = storeFDStrings(subsetFDFonts);
         }
@@ -200,19 +202,29 @@ public class OTFSubSetFile extends OTFSubSetWriter {
 
         //Charset table
         int charsetOffset = currentPos;
-        writeCharsetTable(cffReader.getFDSelect() != null);
+        writeCharsetTable(hasFDSelect);
 
         //FDSelect table
         int fdSelectOffset = currentPos;
-        if (cffReader.getFDSelect() != null) {
+        if (hasFDSelect) {
             writeFDSelect();
         }
 
+        int fdArrayOffset = -1;
+        if (hasFDSelect && !isCharStringBeforeFD()) {
+            fdArrayOffset = writeFDArray(subsetFDFonts, fontNameSIDs);
+        }
         //Char Strings Index
         int charStringOffset = currentPos;
         writeIndex(subsetCharStringsIndex);
+        if (hasFDSelect && isCharStringBeforeFD()) {
+            fdArrayOffset = writeFDArray(subsetFDFonts, fontNameSIDs);
+        }
 
-        if (cffReader.getFDSelect() == null) {
+        if (hasFDSelect) {
+            updateCIDOffsets(topDictDataOffset, fdArrayOffset, fdSelectOffset, charsetOffset,
+                    charStringOffset, encodingOffset);
+        } else {
             //Keep offset to modify later with the local subroutine index offset
             int privateDictOffset = currentPos;
             writePrivateDict();
@@ -224,13 +236,22 @@ public class OTFSubSetFile extends OTFSubSetWriter {
             //Update the offsets
             updateOffsets(topDictOffset, charsetOffset, charStringOffset, privateDictOffset,
                     localIndexOffset, encodingOffset);
-        } else {
-            List<Integer> privateDictOffsets = writeCIDDictsAndSubrs(subsetFDFonts);
-            int fdArrayOffset = writeFDArray(subsetFDFonts, privateDictOffsets, fontNameSIDs);
-
-            updateCIDOffsets(topDictDataOffset, fdArrayOffset, fdSelectOffset, charsetOffset,
-                    charStringOffset, encodingOffset);
         }
+    }
+
+    private int writeFDArray(List<Integer> subsetFDFonts, List<Integer> fontNameSIDs) throws IOException {
+        List<Integer> privateDictOffsets = writeCIDDictsAndSubrs(subsetFDFonts);
+        return writeFDArray(subsetFDFonts, privateDictOffsets, fontNameSIDs);
+    }
+
+    private boolean isCharStringBeforeFD() {
+        LinkedHashMap<String, DICTEntry> entries = cffReader.getTopDictEntries();
+        int len = entries.get("CharStrings").getOperandLength();
+        if (entries.containsKey("FDArray")) {
+            int len2 = entries.get("FDArray").getOperandLength();
+            return len < len2;
+        }
+        return true;
     }
 
     protected List<Integer> storeFDStrings(List<Integer> uniqueNewRefs) throws IOException {
