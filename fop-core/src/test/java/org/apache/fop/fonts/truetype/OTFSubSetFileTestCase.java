@@ -583,4 +583,64 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             return offset;
         }
     }
+
+    @Test
+    public void testOrderOfEntries() throws IOException {
+        OTFSubSetFileEntryOrder otfSubSetFile = getFont(3, 2);
+        assertTrue(otfSubSetFile.fdArrayOffset < otfSubSetFile.charStringOffset);
+
+        otfSubSetFile = getFont(2, 3);
+        assertTrue(otfSubSetFile.fdArrayOffset > otfSubSetFile.charStringOffset);
+    }
+
+    private OTFSubSetFileEntryOrder getFont(int csLen, int fdLen) throws IOException {
+        glyphs.clear();
+        OTFSubSetFileEntryOrder otfSubSetFile = new OTFSubSetFileEntryOrder(csLen, fdLen);
+        otfSubSetFile.readFont(sourceSansReader, "StandardOpenType", null, glyphs);
+        return otfSubSetFile;
+    }
+
+    static class OTFSubSetFileEntryOrder extends OTFSubSetFile {
+        int fdArrayOffset;
+        int charStringOffset;
+        int csLen;
+        int fdLen;
+
+        public OTFSubSetFileEntryOrder(int csLen, int fdLen) throws IOException {
+            super();
+            this.csLen = csLen;
+            this.fdLen = fdLen;
+        }
+
+        protected void createCFF() throws IOException {
+            cffReader = mock(CFFDataReader.class);
+            when(cffReader.getHeader()).thenReturn(new byte[0]);
+            when(cffReader.getTopDictIndex()).thenReturn(cffReader.new CFFIndexData() {
+                public byte[] getByteData() throws IOException {
+                    return new byte[]{0, 0, 1};
+                }
+            });
+            when(cffReader.getFDSelect()).thenReturn(cffReader.new Format3FDSelect());
+
+            LinkedHashMap<String, DICTEntry> topDict = new LinkedHashMap<String, DICTEntry>();
+            DICTEntry entry = new DICTEntry();
+            entry.setOperands(Arrays.<Number>asList(0));
+            topDict.put("charset", entry);
+            entry.setOperandLength(csLen);
+            topDict.put("CharStrings", entry);
+            entry = new DICTEntry();
+            entry.setOperandLength(fdLen);
+            topDict.put("FDArray", entry);
+            when(cffReader.getTopDictEntries()).thenReturn(topDict);
+            super.createCFF();
+        }
+
+        protected void updateCIDOffsets(int topDictDataOffset, int fdArrayOffset, int fdSelectOffset,
+                                        int charsetOffset, int charStringOffset, int encodingOffset) {
+            super.updateCIDOffsets(
+                    topDictDataOffset, fdArrayOffset, fdSelectOffset, charsetOffset, charStringOffset, encodingOffset);
+            this.fdArrayOffset = fdArrayOffset;
+            this.charStringOffset = charStringOffset;
+        }
+    }
 }
