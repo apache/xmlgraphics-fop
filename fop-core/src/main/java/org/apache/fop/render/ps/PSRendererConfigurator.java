@@ -58,6 +58,9 @@ public class PSRendererConfigurator extends DefaultRendererConfigurator {
         if (psConfig.getRenderingMode() != null) {
             psUtil.setRenderingMode(psConfig.getRenderingMode());
         }
+        if (psConfig.isAcrobatDownsample() != null) {
+            psUtil.setAcrobatDownsample(psConfig.isAcrobatDownsample());
+        }
     }
 
     @Override

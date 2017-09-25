@@ -139,16 +139,18 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
      * @param pageCount the number of pages (given here because PSRenderer writes an "(atend)")
      * @param documentBoundingBox the document's bounding box
      *                                  (given here because PSRenderer writes an "(atend)")
+     * @param psUtil
      * @throws DSCException If there's an error in the DSC structure of the PS file
      * @throws IOException In case of an I/O error
      */
     public void process(InputStream in, OutputStream out,
-            int pageCount, Rectangle2D documentBoundingBox)
+                        int pageCount, Rectangle2D documentBoundingBox, PSRenderingUtil psUtil)
                     throws DSCException, IOException {
         DSCParser parser = new DSCParser(in);
         parser.setCheckEOF(false);
 
         PSGenerator gen = new PSGenerator(out);
+        gen.setAcrobatDownsample(psUtil.isAcrobatDownsample());
         parser.addListener(new DefaultNestedDocumentHandler(gen));
         parser.addListener(new IncludeResourceListener(gen));
 

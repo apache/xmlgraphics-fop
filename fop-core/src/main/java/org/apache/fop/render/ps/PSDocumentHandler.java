@@ -163,6 +163,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             //Setup for PostScript generation
             this.gen = new FOPPSGeneratorImpl(out);
             this.gen.setPSLevel(psUtil.getLanguageLevel());
+            this.gen.setAcrobatDownsample(psUtil.isAcrobatDownsample());
             this.currentPageNumber = 0;
             this.documentBoundingBox = new Rectangle2D.Double();
 
@@ -294,7 +295,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 ResourceHandler handler = new ResourceHandler(getUserAgent(), eventProducer,
                         this.fontInfo, resTracker, this.formResources);
                 handler.process(in, this.outputStream,
-                        this.currentPageNumber, this.documentBoundingBox);
+                        this.currentPageNumber, this.documentBoundingBox, psUtil);
                 this.outputStream.flush();
             } catch (DSCException e) {
                 throw new RuntimeException(e.getMessage());
