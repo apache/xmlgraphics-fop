@@ -36,6 +36,7 @@ import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.render.RendererConfig;
 import org.apache.fop.util.LogUtil;
 
+import static org.apache.fop.render.ps.PSRendererOption.ACROBAT_DOWNSAMPLE;
 import static org.apache.fop.render.ps.PSRendererOption.AUTO_ROTATE_LANDSCAPE;
 import static org.apache.fop.render.ps.PSRendererOption.DSC_COMPLIANT;
 import static org.apache.fop.render.ps.PSRendererOption.LANGUAGE_LEVEL;
@@ -85,6 +86,10 @@ public final class PSRendererConfig implements RendererConfig {
         return (PSRenderingMode) params.get(RENDERING_MODE);
     }
 
+    public Boolean isAcrobatDownsample() {
+        return (Boolean) params.get(ACROBAT_DOWNSAMPLE);
+    }
+
     /**
      * The PostScript renderer configuration data parser.
      */
@@ -124,6 +129,7 @@ public final class PSRendererConfig implements RendererConfig {
                 setBoolConfigParam(cfg, OPTIMIZE_RESOURCES);
                 setBoolConfigParam(cfg, SAFE_SET_PAGE_DEVICE);
                 setBoolConfigParam(cfg, DSC_COMPLIANT);
+                setBoolConfigParam(cfg, ACROBAT_DOWNSAMPLE);
                 Configuration child = cfg.getChild("rendering");
                 if (child != null) {
                     config.params.put(RENDERING_MODE,

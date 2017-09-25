@@ -37,7 +37,8 @@ public enum PSRendererOption implements RendererConfigOption {
     SAFE_SET_PAGE_DEVICE("safe-set-page-device", false),
     /** Indicates whether the PostScript output should be DSC compliant, default: true*/
     DSC_COMPLIANT("dsc-compliant", true),
-    RENDERING_MODE("rendering", PSRenderingMode.QUALITY);
+    RENDERING_MODE("rendering", PSRenderingMode.QUALITY),
+    ACROBAT_DOWNSAMPLE("acrobat-downsample", false);
 
     private final String name;
     private final Object defaultValue;
