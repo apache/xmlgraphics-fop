@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts.type1;
 
+import java.awt.Rectangle;
 import java.awt.geom.RectangularShape;
 import java.io.IOException;
 import java.io.InputStream;
@@ -415,7 +416,10 @@ public class Type1FontLoader extends FontLoader {
             returnFont.setFirstChar(pfm.getFirstChar());
             returnFont.setLastChar(pfm.getLastChar());
             for (short i = pfm.getFirstChar(); i <= pfm.getLastChar(); i++) {
-                singleFont.setWidth(i, pfm.getCharWidth(i));
+                int cw = pfm.getCharWidth(i);
+                singleFont.setWidth(i, cw);
+                int[] bbox = pfm.getFontBBox();
+                singleFont.setBoundingBox(i, new Rectangle(bbox[0], bbox[1], cw, bbox[3]));
             }
             if (useKerning) {
                 returnFont.replaceKerningMap(pfm.getKerning());
