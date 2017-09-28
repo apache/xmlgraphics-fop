@@ -205,7 +205,8 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         String psName = getPageSequence().getMainFlow().getFlowName();
         Region body = newPage.getSimplePageMaster().getRegion(FO_REGION_BODY);
         String name = body.getRegionName();
-        if (strict && !name.equals(psName) && !name.equals(((RegionBody)body).getDefaultRegionName())) {
+        if (strict && !name.equals(psName) && !name.equals(((RegionBody)body).getDefaultRegionName())
+                && getPageSequence().hasPagePositionLast()) {
             throw new RuntimeException(
                     "The flow-name \"" + name + "\" could not be mapped to a region-name in the layout-master-set");
         }

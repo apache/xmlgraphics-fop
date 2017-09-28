@@ -127,6 +127,7 @@ public class PageSequenceLayoutManagerTestCase {
 
         when(flow.getFlowName()).thenReturn(MAIN_FLOW_NAME);
         when(pseq.getRoot()).thenReturn(root);
+        when(pseq.hasPagePositionLast()).thenReturn(true);
         when(pseq.getMainFlow()).thenReturn(flow);
 
         PageSequenceLayoutManager pageSequenceLayoutManager = new PageSequenceLayoutManager(ath, pseq) {
