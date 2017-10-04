@@ -43,6 +43,7 @@ import static org.mockito.Mockito.when;
 import org.apache.fontbox.cff.CFFFont;
 import org.apache.fontbox.cff.CFFParser;
 
+import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.cff.CFFDataReader;
 import org.apache.fop.fonts.cff.CFFDataReader.CFFIndexData;
 import org.apache.fop.fonts.cff.CFFDataReader.DICTEntry;
@@ -500,7 +501,9 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             map.put("charset", dict);
             map.put("CharStrings", dict);
             when((cffReader.getTopDictEntries())).thenReturn(map);
-            when(cffReader.getFDSelect()).thenReturn(new CFFDataReader().new Format3FDSelect());
+            CFFDataReader.Format3FDSelect fdSelect = new CFFDataReader().new Format3FDSelect();
+            fdSelect.setRanges(new HashMap<Integer, Integer>());
+            when(cffReader.getFDSelect()).thenReturn(fdSelect);
             cffReader.getTopDictEntries().get("CharStrings").setOperandLength(opLen);
             super.createCFF();
         }
@@ -558,14 +561,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
                     return new byte[128];
                 }
             };
-            cffReader = mock(CFFDataReader.class);
-            LinkedHashMap<String, DICTEntry> map = new LinkedHashMap<String, DICTEntry>();
-            DICTEntry e = new DICTEntry();
-            e.setOffset(1);
-            e.setOperandLengths(Arrays.asList(0, 0));
-            map.put("FontName", e);
-            map.put("Private", e);
-            when(cffReader.parseDictData(any(byte[].class))).thenReturn(map);
+            cffReader = makeCFFDataReader();
             when(cffReader.getFDFonts()).thenReturn(fdFonts);
 
             fdFonts.clear();
@@ -611,15 +607,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         }
 
         protected void createCFF() throws IOException {
-            cffReader = mock(CFFDataReader.class);
-            when(cffReader.getHeader()).thenReturn(new byte[0]);
-            when(cffReader.getTopDictIndex()).thenReturn(cffReader.new CFFIndexData() {
-                public byte[] getByteData() throws IOException {
-                    return new byte[]{0, 0, 1};
-                }
-            });
-            when(cffReader.getFDSelect()).thenReturn(cffReader.new Format3FDSelect());
-
+            cffReader = makeCFFDataReader();
             LinkedHashMap<String, DICTEntry> topDict = new LinkedHashMap<String, DICTEntry>();
             DICTEntry entry = new DICTEntry();
             entry.setOperands(Arrays.<Number>asList(0));
@@ -637,5 +625,55 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             super.updateCIDOffsets(offsets);
             this.offsets = offsets;
         }
+    }
+
+    private static CFFDataReader makeCFFDataReader() throws IOException {
+        CFFDataReader cffReader = mock(CFFDataReader.class);
+        when(cffReader.getHeader()).thenReturn(new byte[0]);
+        when(cffReader.getTopDictIndex()).thenReturn(cffReader.new CFFIndexData() {
+            public byte[] getByteData() throws IOException {
+                return new byte[]{0, 0, 1};
+            }
+        });
+        CFFDataReader.Format3FDSelect fdSelect = cffReader.new Format3FDSelect();
+        fdSelect.setRanges(new HashMap<Integer, Integer>());
+        when(cffReader.getFDSelect()).thenReturn(fdSelect);
+        CFFDataReader.FontDict fd = mock(CFFDataReader.FontDict.class);
+        when(fd.getPrivateDictData()).thenReturn(new byte[0]);
+        when(cffReader.getFDFonts()).thenReturn(Arrays.asList(fd));
+
+        LinkedHashMap<String, DICTEntry> map = new LinkedHashMap<String, DICTEntry>();
+        DICTEntry e = new DICTEntry();
+        e.setOffset(1);
+        e.setOperandLengths(Arrays.asList(0, 0));
+        e.setOperandLength(2);
+        map.put("FontName", e);
+        map.put("Private", e);
+        map.put("Subrs", e);
+        when(cffReader.parseDictData(any(byte[].class))).thenReturn(map);
+        return cffReader;
+    }
+
+    @Test
+    public void testWriteCIDDictsAndSubrs() throws IOException {
+        OTFSubSetFile subSetFile = new OTFSubSetFile() {
+            public void readFont(FontFileReader in, String embeddedName, MultiByteFont mbFont) throws IOException {
+                output = new byte[128];
+                cffReader = makeCFFDataReader();
+                fdSubrs = new ArrayList<List<byte[]>>();
+                fdSubrs.add(new ArrayList<byte[]>());
+                writeCIDDictsAndSubrs(Arrays.asList(0));
+            }
+        };
+        subSetFile.readFont(null, null, (MultiByteFont) null);
+
+        ByteArrayInputStream is = new ByteArrayInputStream(subSetFile.getFontSubset());
+        is.skip(1);
+        Assert.assertEquals(is.read(), 247);
+        Assert.assertEquals(is.read(), 0);
+        final int sizeOfPrivateDictByteData = 108;
+        is.skip(sizeOfPrivateDictByteData - 3);
+        is.skip(2); //start index
+        Assert.assertEquals(is.read(), 1);
     }
 }
