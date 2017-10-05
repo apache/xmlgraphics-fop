@@ -312,7 +312,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
     private class Operator extends BytesNumber {
         private String opName = "";
 
-        public Operator(int number, int numBytes, String opName) {
+        Operator(int number, int numBytes, String opName) {
             super(number, numBytes);
             this.opName = opName;
         }
@@ -544,7 +544,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         int offset;
         int fdFontCount = 128;
 
-        public OTFSubSetFileFDArraySize() throws IOException {
+        OTFSubSetFileFDArraySize() throws IOException {
             super();
         }
 
@@ -600,7 +600,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         int csLen;
         int fdLen;
 
-        public OTFSubSetFileEntryOrder(int csLen, int fdLen) throws IOException {
+        OTFSubSetFileEntryOrder(int csLen, int fdLen) throws IOException {
             super();
             this.csLen = csLen;
             this.fdLen = fdLen;
@@ -610,7 +610,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             cffReader = makeCFFDataReader();
             LinkedHashMap<String, DICTEntry> topDict = new LinkedHashMap<String, DICTEntry>();
             DICTEntry entry = new DICTEntry();
-            entry.setOperands(Arrays.<Number>asList(0));
+            entry.setOperands(Collections.<Number>singletonList(0));
             topDict.put("charset", entry);
             entry.setOperandLength(csLen);
             topDict.put("CharStrings", entry);
@@ -640,7 +640,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         when(cffReader.getFDSelect()).thenReturn(fdSelect);
         CFFDataReader.FontDict fd = mock(CFFDataReader.FontDict.class);
         when(fd.getPrivateDictData()).thenReturn(new byte[0]);
-        when(cffReader.getFDFonts()).thenReturn(Arrays.asList(fd));
+        when(cffReader.getFDFonts()).thenReturn(Collections.singletonList(fd));
 
         LinkedHashMap<String, DICTEntry> map = new LinkedHashMap<String, DICTEntry>();
         DICTEntry e = new DICTEntry();
@@ -662,7 +662,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
                 cffReader = makeCFFDataReader();
                 fdSubrs = new ArrayList<List<byte[]>>();
                 fdSubrs.add(new ArrayList<byte[]>());
-                writeCIDDictsAndSubrs(Arrays.asList(0));
+                writeCIDDictsAndSubrs(Collections.singletonList(0));
             }
         };
         subSetFile.readFont(null, null, (MultiByteFont) null);
@@ -675,5 +675,29 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         is.skip(sizeOfPrivateDictByteData - 3);
         is.skip(2); //start index
         Assert.assertEquals(is.read(), 1);
+    }
+
+    @Test
+    public void testResizeOfOperand2() throws IOException {
+        OTFSubSetFile otfSubSetFile = new OTFSubSetFile() {
+            void readFont(FontFileReader in, String embeddedName, MultiByteFont mbFont,
+                          Map<Integer, Integer> usedGlyphs) throws IOException {
+                output = new byte[7];
+                cffReader = makeCFFDataReader();
+                LinkedHashMap<String, DICTEntry> topDict = new LinkedHashMap<String, DICTEntry>();
+                DICTEntry entry = new DICTEntry();
+                entry.setOperandLength(1);
+                entry.setOperator(new int[0]);
+                entry.setOperands(Collections.<Number>singletonList(0));
+                topDict.put("version", entry);
+                when(cffReader.getTopDictEntries()).thenReturn(topDict);
+                writeTopDICT();
+            }
+        };
+        otfSubSetFile.readFont(sourceSansReader, "StandardOpenType", null, glyphs);
+        ByteArrayInputStream fontSubset = new ByteArrayInputStream(otfSubSetFile.getFontSubset());
+        fontSubset.skip(5);
+        Assert.assertEquals(fontSubset.read(), 248);
+        Assert.assertEquals(fontSubset.read(), (byte)(390 - 108));
     }
 }

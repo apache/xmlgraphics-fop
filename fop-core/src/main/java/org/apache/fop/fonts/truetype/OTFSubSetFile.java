@@ -296,6 +296,10 @@ public class OTFSubSetFile extends OTFSubSetWriter {
             } else if (dictKey.equals("CIDCount")) {
                 dict.write(writeCIDCount(entry));
             } else if (topDictStringEntries.contains(dictKey)) {
+                if (entry.getOperandLength() < 2) {
+                    entry.setOperandLength(2);
+                    offsetExtra++;
+                }
                 dict.write(writeTopDictStringEntry(entry));
             } else {
                 dict.write(entry.getByteData());
@@ -339,7 +343,6 @@ public class OTFSubSetFile extends OTFSubSetWriter {
         if (sid > 391) {
             stringIndexData.add(cffReader.getStringIndex().getValue(sid - 391));
         }
-
         byte[] newDictEntry = createNewRef(stringIndexData.size() + 390, dictEntry.getOperator(),
                 dictEntry.getOperandLength(), true);
         return newDictEntry;
@@ -896,9 +899,6 @@ public class OTFSubSetFile extends OTFSubSetWriter {
         if ((forceLength == -1 && newRef >= -107 && newRef <= 107) || forceLength == 1) {
             //The index values are 0 indexed
             newRefBytes.write(newRef + 139);
-            for (int i : operatorCode) {
-                newRefBytes.write(i);
-            }
         } else if ((forceLength == -1 && newRef >= -1131 && newRef <= 1131) || forceLength == 2) {
             if (newRef <= -876) {
                 newRefBytes.write(254);
@@ -922,16 +922,10 @@ public class OTFSubSetFile extends OTFSubSetWriter {
             } else {
                 newRefBytes.write(-newRef - 108);
             }
-            for (int i : operatorCode) {
-                newRefBytes.write(i);
-            }
         } else if ((forceLength == -1 && newRef >= -32768 && newRef <= 32767) || forceLength == 3) {
             newRefBytes.write(28);
             newRefBytes.write(newRef >> 8);
             newRefBytes.write(newRef);
-            for (int i : operatorCode) {
-                newRefBytes.write(i);
-            }
         } else {
             if (isDict) {
                 newRefBytes.write(29);
@@ -942,9 +936,9 @@ public class OTFSubSetFile extends OTFSubSetWriter {
             newRefBytes.write(newRef >> 16);
             newRefBytes.write(newRef >> 8);
             newRefBytes.write(newRef);
-            for (int i : operatorCode) {
-                newRefBytes.write(i);
-            }
+        }
+        for (int i : operatorCode) {
+            newRefBytes.write(i);
         }
         return newRefBytes.toByteArray();
     }
