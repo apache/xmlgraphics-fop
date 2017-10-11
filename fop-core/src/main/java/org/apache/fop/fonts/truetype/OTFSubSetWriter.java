@@ -18,12 +18,12 @@
 /* $Id$ */
 package org.apache.fop.fonts.truetype;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class OTFSubSetWriter extends OTFFile {
     protected int currentPos;
-    protected int realSize;
-    protected byte[] output;
+    protected ByteArrayOutputStream output = new ByteArrayOutputStream();
 
     public OTFSubSetWriter() throws IOException {
         super();
@@ -43,8 +43,8 @@ public class OTFSubSetWriter extends OTFFile {
      * updates currentPost but not realSize
      */
     protected void writeByte(int b) {
-        output[currentPos++] = (byte)b;
-        realSize++;
+        output.write(b);
+        currentPos++;
     }
 
     /**
@@ -89,21 +89,12 @@ public class OTFSubSetWriter extends OTFFile {
         }
     }
 
-    protected void writeBytes(byte[] out, int offset, int length) {
-        for (int i = offset; i < offset + length; i++) {
-            output[currentPos++] = out[i];
-            realSize++;
-        }
-    }
-
     /**
      * Returns a subset of the fonts (readFont() MUST be called first in order to create the
      * subset).
      * @return byte array
      */
     public byte[] getFontSubset() {
-        byte[] ret = new byte[realSize];
-        System.arraycopy(output, 0, ret, 0, realSize);
-        return ret;
+        return output.toByteArray();
     }
 }

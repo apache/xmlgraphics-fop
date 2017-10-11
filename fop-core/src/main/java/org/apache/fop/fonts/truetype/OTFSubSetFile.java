@@ -19,8 +19,10 @@
 
 package org.apache.fop.fonts.truetype;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -128,15 +130,10 @@ public class OTFSubSetFile extends OTFSubSetWriter {
         this.mbFont = mbFont;
         fontFile = in;
 
-        currentPos = 0;
-        realSize = 0;
-
         this.embeddedName = embeddedName;
 
         //Sort by the new GID and store in a LinkedHashMap
         subsetGlyphs = sortByValue(usedGlyphs);
-
-        output = new byte[in.getFileSize()];
 
         initializeFont(in);
 
@@ -710,7 +707,13 @@ public class OTFSubSetFile extends OTFSubSetWriter {
             return 1 + (hstemCount + vstemCount  - 1) / 8;
         }
 
-        public int exec(int b0, byte[] data, int dataPos) {
+        private int exec(int b0, byte[] input, int curPos) throws IOException {
+            ByteArrayInputStream bis = new ByteArrayInputStream(input);
+            bis.skip(curPos + 1);
+            return exec(b0, bis);
+        }
+
+        public int exec(int b0, InputStream data) throws IOException {
             int posDelta = 0;
             if ((b0 >= 0 && b0 <= 27) || (b0 >= 29 && b0 <= 31)) {
                 if (b0 == 12) {
@@ -739,7 +742,7 @@ public class OTFSubSetFile extends OTFSubSetWriter {
                     lastOp = b0;
                 }
             } else if (b0 == 28 || (b0 >= 32 && b0 <= 255)) {
-                BytesNumber operand = readNumber(b0, data, dataPos);
+                BytesNumber operand = readNumber(b0, data);
                 pushOperand(operand);
                 posDelta = operand.getNumBytes() - 1;
             } else {
@@ -748,24 +751,24 @@ public class OTFSubSetFile extends OTFSubSetWriter {
             return posDelta;
         }
 
-        private BytesNumber readNumber(int b0, byte[] input, int curPos) {
+        private BytesNumber readNumber(int b0, InputStream input) throws IOException {
             if (b0 == 28) {
-                int b1 = input[curPos + 1] & 0xff;
-                int b2 = input[curPos + 2] & 0xff;
+                int b1 = input.read();
+                int b2 = input.read();
                 return new BytesNumber((int) (short) (b1 << 8 | b2), 3);
             } else if (b0 >= 32 && b0 <= 246) {
                 return new BytesNumber(b0 - 139, 1);
             } else if (b0 >= 247 && b0 <= 250) {
-                int b1 = input[curPos + 1] & 0xff;
+                int b1 = input.read();
                 return new BytesNumber((b0 - 247) * 256 + b1 + 108, 2);
             } else if (b0 >= 251 && b0 <= 254) {
-                int b1 = input[curPos + 1] & 0xff;
+                int b1 = input.read();
                 return new BytesNumber(-(b0 - 251) * 256 - b1 - 108, 2);
             } else if (b0 == 255) {
-                int b1 = input[curPos + 1] & 0xff;
-                int b2 = input[curPos + 2] & 0xff;
-                int b3 = input[curPos + 3] & 0xff;
-                int b4 = input[curPos + 4] & 0xff;
+                int b1 = input.read();
+                int b2 = input.read();
+                int b3 = input.read();
+                int b4 = input.read();
                 return new BytesNumber((b1 << 24 | b2 << 16 | b3 << 8 | b4), 5);
             } else {
                 throw new IllegalArgumentException();
@@ -778,30 +781,25 @@ public class OTFSubSetFile extends OTFSubSetWriter {
         for (int dataPos = 0; dataPos < data.length; dataPos++) {
             int b0 = data[dataPos] & 0xff;
             if (b0 == LOCAL_SUBROUTINE && hasLocalSubroutines) {
-                int subrNumber = getSubrNumber(localIndexSubr.getNumObjects(), type2Parser.popOperand().getNumber());
-                if (!localUniques.contains(subrNumber) && subrNumber < localIndexSubr.getNumObjects()) {
-                    localUniques.add(subrNumber);
-                }
-                if (subrNumber < localIndexSubr.getNumObjects()) {
-                    byte[] subr = localIndexSubr.getValue(subrNumber);
-                    preScanForSubsetIndexSize(subr);
-                } else {
-                    throw new IllegalArgumentException("callsubr out of range");
-                }
+                preScanForSubsetIndexSize(localIndexSubr, localUniques);
             } else if (b0 == GLOBAL_SUBROUTINE && hasGlobalSubroutines) {
-                int subrNumber = getSubrNumber(globalIndexSubr.getNumObjects(), type2Parser.popOperand().getNumber());
-                if (!globalUniques.contains(subrNumber) && subrNumber < globalIndexSubr.getNumObjects()) {
-                    globalUniques.add(subrNumber);
-                }
-                if (subrNumber < globalIndexSubr.getNumObjects()) {
-                    byte[] subr = globalIndexSubr.getValue(subrNumber);
-                    preScanForSubsetIndexSize(subr);
-                } else {
-                    throw new IllegalArgumentException("callgsubr out of range");
-                }
+                preScanForSubsetIndexSize(globalIndexSubr, globalUniques);
             } else  {
                 dataPos += type2Parser.exec(b0, data, dataPos);
             }
+        }
+    }
+
+    private void preScanForSubsetIndexSize(CFFIndexData indexSubr, List<Integer> uniques) throws IOException {
+        int subrNumber = getSubrNumber(indexSubr.getNumObjects(), type2Parser.popOperand().getNumber());
+        if (!uniques.contains(subrNumber) && subrNumber < indexSubr.getNumObjects()) {
+            uniques.add(subrNumber);
+        }
+        if (subrNumber < indexSubr.getNumObjects()) {
+            byte[] subr = indexSubr.getValue(subrNumber);
+            preScanForSubsetIndexSize(subr);
+        } else {
+            throw new IllegalArgumentException("callgsubr out of range");
         }
     }
 
@@ -1111,57 +1109,64 @@ public class OTFSubSetFile extends OTFSubSetWriter {
         if (privateDICT != null) {
             //Private index offset in the top dict
             int oldPrivateOffset = offsets.topDictData + privateEntry.getOffset();
-            updateOffset(output, oldPrivateOffset + privateEntry.getOperandLengths().get(0),
+            updateOffset(oldPrivateOffset + privateEntry.getOperandLengths().get(0),
                     privateEntry.getOperandLengths().get(1), offsets.privateDict);
 
             //Update the local subroutine index offset in the private dict
             DICTEntry subroutines = privateDICT.get("Subrs");
             if (subroutines != null) {
                 int oldLocalSubrOffset = offsets.privateDict + subroutines.getOffset();
-                updateOffset(output, oldLocalSubrOffset, subroutines.getOperandLength(),
+                updateOffset(oldLocalSubrOffset, subroutines.getOperandLength(),
                         (offsets.localIndex - offsets.privateDict));
             }
         }
     }
 
-    protected void updateFixedOffsets(Map<String, DICTEntry> topDICT, Offsets offsets) {
+    protected void updateFixedOffsets(Map<String, DICTEntry> topDICT, Offsets offsets) throws IOException {
         //Charset offset in the top dict
         DICTEntry charset = topDICT.get("charset");
         int oldCharsetOffset = offsets.topDictData + charset.getOffset();
-        updateOffset(output, oldCharsetOffset, charset.getOperandLength(), offsets.charset);
+        updateOffset(oldCharsetOffset, charset.getOperandLength(), offsets.charset);
 
         //Char string index offset in the private dict
         DICTEntry charString = topDICT.get("CharStrings");
         int oldCharStringOffset = offsets.topDictData + charString.getOffset();
-        updateOffset(output, oldCharStringOffset, charString.getOperandLength(), offsets.charString);
+        updateOffset(oldCharStringOffset, charString.getOperandLength(), offsets.charString);
 
         DICTEntry encodingEntry = topDICT.get("Encoding");
         if (encodingEntry != null && encodingEntry.getOperands().get(0).intValue() != 0
                 && encodingEntry.getOperands().get(0).intValue() != 1) {
             int oldEncodingOffset = offsets.topDictData + encodingEntry.getOffset();
-            updateOffset(output, oldEncodingOffset, encodingEntry.getOperandLength(), offsets.encoding);
+            updateOffset(oldEncodingOffset, encodingEntry.getOperandLength(), offsets.encoding);
         }
     }
 
-    protected void updateCIDOffsets(Offsets offsets) {
+    protected void updateCIDOffsets(Offsets offsets) throws IOException {
         Map<String, DICTEntry> topDict = cffReader.getTopDictEntries();
 
         DICTEntry fdArrayEntry = topDict.get("FDArray");
         if (fdArrayEntry != null) {
-            updateOffset(output, offsets.topDictData + fdArrayEntry.getOffset() - 1,
+            updateOffset(offsets.topDictData + fdArrayEntry.getOffset() - 1,
                     fdArrayEntry.getOperandLength(), offsets.fdArray);
         }
 
         DICTEntry fdSelect = topDict.get("FDSelect");
         if (fdSelect != null) {
-            updateOffset(output, offsets.topDictData + fdSelect.getOffset() - 1,
+            updateOffset(offsets.topDictData + fdSelect.getOffset() - 1,
                     fdSelect.getOperandLength(), offsets.fdSelect);
         }
 
         updateFixedOffsets(topDict, offsets);
     }
 
-    protected void updateOffset(byte[] out, int position, int length, int replacement) {
+    private void updateOffset(int position, int length, int replacement) throws IOException {
+        byte[] outBytes = output.toByteArray();
+        updateOffset(outBytes, position, length, replacement);
+        output.reset();
+        output.write(outBytes);
+    }
+
+    private void updateOffset(byte[] out, int position, int length, int replacement) {
         switch (length) {
         case 1:
             out[position] = (byte)(replacement + 139);
