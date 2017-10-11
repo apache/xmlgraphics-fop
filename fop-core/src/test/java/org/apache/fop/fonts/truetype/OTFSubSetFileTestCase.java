@@ -508,7 +508,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             super.createCFF();
         }
 
-        protected void updateFixedOffsets(Map<String, DICTEntry> topDICT, Offsets offsets) {
+        protected void updateFixedOffsets(Map<String, DICTEntry> topDICT, Offsets offsets) throws IOException {
             this.charsetOffset = offsets.charset;
             super.updateFixedOffsets(topDICT, offsets);
         }
@@ -621,7 +621,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             super.createCFF();
         }
 
-        protected void updateCIDOffsets(Offsets offsets) {
+        protected void updateCIDOffsets(Offsets offsets) throws IOException {
             super.updateCIDOffsets(offsets);
             this.offsets = offsets;
         }
@@ -658,7 +658,6 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
     public void testWriteCIDDictsAndSubrs() throws IOException {
         OTFSubSetFile subSetFile = new OTFSubSetFile() {
             public void readFont(FontFileReader in, String embeddedName, MultiByteFont mbFont) throws IOException {
-                output = new byte[128];
                 cffReader = makeCFFDataReader();
                 fdSubrs = new ArrayList<List<byte[]>>();
                 fdSubrs.add(new ArrayList<byte[]>());
@@ -682,7 +681,6 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         OTFSubSetFile otfSubSetFile = new OTFSubSetFile() {
             void readFont(FontFileReader in, String embeddedName, MultiByteFont mbFont,
                           Map<Integer, Integer> usedGlyphs) throws IOException {
-                output = new byte[7];
                 cffReader = makeCFFDataReader();
                 LinkedHashMap<String, DICTEntry> topDict = new LinkedHashMap<String, DICTEntry>();
                 DICTEntry entry = new DICTEntry();
