@@ -282,8 +282,8 @@ public class OTFSubSetFile extends OTFSubSetWriter {
             DICTEntry entry = dictEntry.getValue();
             //If the value is an SID, update the reference but keep the size the same
             entry.setOffset(entry.getOffset() + offsetExtra);
-            if (dictKey.equals("CharStrings") && entry.getOperandLength() == 3) {
-                byte[] extra = new byte[2];
+            if (dictKey.equals("CharStrings") && entry.getOperandLength() < 5) {
+                byte[] extra = new byte[5 - entry.getOperandLength()];
                 offsetExtra += extra.length;
                 dict.write(extra);
                 dict.write(entry.getByteData());
