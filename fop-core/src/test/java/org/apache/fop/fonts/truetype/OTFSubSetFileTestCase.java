@@ -446,8 +446,8 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
 
     @Test
     public void testFDSelect() throws IOException {
-        Assert.assertEquals(getSubset(1).length, 42);
-        Assert.assertEquals(getSubset(2).length, 49);
+        Assert.assertEquals(getSubset(1).length, 46);
+        Assert.assertEquals(getSubset(2).length, 45);
     }
 
     private byte[] getSubset(final int opLen) throws IOException {
@@ -583,9 +583,10 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
     public void testOrderOfEntries() throws IOException {
         OTFSubSetFileEntryOrder otfSubSetFile = getFont(3, 2);
         assertTrue(otfSubSetFile.offsets.fdArray < otfSubSetFile.offsets.charString);
-
+        assertEquals(otfSubSetFile.cffReader.getTopDictEntries().get("CharStrings").getOperandLength(), 5);
         otfSubSetFile = getFont(2, 3);
-        assertTrue(otfSubSetFile.offsets.fdArray > otfSubSetFile.offsets.charString);
+        assertTrue(otfSubSetFile.offsets.fdArray < otfSubSetFile.offsets.charString);
+        assertEquals(otfSubSetFile.cffReader.getTopDictEntries().get("CharStrings").getOperandLength(), 5);
     }
 
     private OTFSubSetFileEntryOrder getFont(int csLen, int fdLen) throws IOException {
