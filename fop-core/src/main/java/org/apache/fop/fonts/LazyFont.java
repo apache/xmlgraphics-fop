@@ -19,7 +19,6 @@
 
 package org.apache.fop.fonts;
 import java.awt.Rectangle;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
@@ -31,7 +30,6 @@ import org.xml.sax.InputSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.complexscripts.fonts.Positionable;
 import org.apache.fop.complexscripts.fonts.Substitutable;
@@ -124,15 +122,14 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;
                 }
-            } catch (FOPException fopex) {
-                log.error("Failed to read font metrics file " + fontUris.getMetrics(), fopex);
+            } catch (RuntimeException e) {
+                String error = "Failed to read font file " + fontUris.getEmbed();
+                throw new RuntimeException(error, e);
+            } catch (Exception e) {
+                String error = "Failed to read font file " + fontUris.getEmbed();
+                log.error(error, e);
                 if (fail) {
-                    throw new RuntimeException(fopex);
-                }
-            } catch (IOException ioex) {
-                log.error("Failed to read font metrics file " + fontUris.getMetrics(), ioex);
-                if (fail) {
-                    throw new RuntimeException(ioex);
+                    throw new RuntimeException(error, e);
                 }
             }
             realFont.setEventListener(this.eventListener);
