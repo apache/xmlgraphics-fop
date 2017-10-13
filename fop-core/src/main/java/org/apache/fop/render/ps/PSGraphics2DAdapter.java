@@ -31,6 +31,7 @@ import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.pdf.PDFFactory;
 import org.apache.fop.render.AbstractGraphics2DAdapter;
 import org.apache.fop.render.ImageHandlerUtil;
@@ -45,15 +46,17 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
 
     private PSGenerator gen;
     private boolean clip = true;
+    private FontInfo fontInfo;
 
     /**
      * Creates a new instance.
      * @param gen the PostScript generator
      * @param clip true if the image should be clipped
      */
-    public PSGraphics2DAdapter(PSGenerator gen, boolean clip) {
+    public PSGraphics2DAdapter(PSGenerator gen, boolean clip, FontInfo fontInfo) {
         this.gen = gen;
         this.clip = clip;
+        this.fontInfo = fontInfo;
     }
 
     /** {@inheritDoc} */
@@ -113,6 +116,9 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
                             / context.getUserAgent().getTargetResolution();
             graphics.drawImage(bi, new AffineTransform(scale, 0, 0, scale, 0, 0), null);
         } else {
+            if (painter instanceof GeneralGraphics2DImagePainter) {
+                PSFontUtils.addFallbackFonts(fontInfo, (GeneralGraphics2DImagePainter) painter);
+            }
             Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
             painter.paint(graphics, area);
         }
