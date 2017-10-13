@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fontbox.cff.CFFStandardString;
 
 import org.apache.xmlgraphics.fonts.Glyphs;
+import org.apache.xmlgraphics.java2d.GeneralGraphics2DImagePainter;
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
@@ -50,6 +51,7 @@ import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.MultiByteFont;
@@ -906,5 +908,13 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.writeDSCComment(DSCConstants.END_RESOURCE);
         gen.getResourceTracker().registerSuppliedResource(res);
         return res;
+    }
+
+    public static void addFallbackFonts(FontInfo fontInfo, GeneralGraphics2DImagePainter painter) throws IOException {
+        for (Map.Entry<FontTriplet, String> x : fontInfo.getFontTriplets().entrySet()) {
+            String name = x.getKey().getName();
+            Typeface typeface = fontInfo.getFonts().get(x.getValue());
+            painter.addFallbackFont(name, typeface);
+        }
     }
 }

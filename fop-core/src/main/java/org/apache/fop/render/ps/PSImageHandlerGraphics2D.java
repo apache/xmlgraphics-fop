@@ -37,6 +37,7 @@ import org.apache.xmlgraphics.ps.FormGenerator;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSProcSets;
 
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.RenderingContext;
 
 /**
@@ -94,6 +95,9 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
         transform.translate(fx, fy);
         gen.getCurrentState().concatMatrix(transform);
         Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
+        if (painter instanceof GeneralGraphics2DImagePainter) {
+            PSFontUtils.addFallbackFonts(psContext.getFontInfo(), (GeneralGraphics2DImagePainter) painter);
+        }
         painter.paint(graphics, area);
         gen.restoreGraphicsState();
         gen.commentln("%FOPEndGraphics2D");
@@ -107,7 +111,7 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
         final ImageGraphics2D imageG2D = (ImageGraphics2D)image;
         ImageInfo info = image.getInfo();
 
-        FormGenerator formGen = buildFormGenerator(gen.getPSLevel(), form, info, imageG2D);
+        FormGenerator formGen = buildFormGenerator(gen.getPSLevel(), form, info, imageG2D, psContext.getFontInfo());
         formGen.generate(gen);
     }
     /** {@inheritDoc} */
@@ -133,8 +137,8 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
         return false;
     }
 
-    private FormGenerator buildFormGenerator(int psLanguageLevel, final PSImageFormResource form,
-            final ImageInfo info, final ImageGraphics2D imageG2D) {
+    private FormGenerator buildFormGenerator(int psLanguageLevel, final PSImageFormResource form, final ImageInfo info,
+                                             final ImageGraphics2D imageG2D, final FontInfo fontInfo) {
         String imageDescription = info.getMimeType() + " " + info.getOriginalURI();
         final Dimension2D dimensionsPt = info.getSize().getDimensionPt();
         final Dimension2D dimensionsMpt = info.getSize().getDimensionMpt();
@@ -145,7 +149,7 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
 
                 @Override
                 void doGeneratePaintProc(PSGenerator gen) throws IOException {
-                    paintImageG2D(imageG2D, dimensionsMpt, gen);
+                    paintImageG2D(imageG2D, dimensionsMpt, gen, fontInfo);
                 }
             };
         } else {
@@ -157,7 +161,7 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
                     gen.writeln("  /Filter /SubFileDecode");
                     gen.writeln("  /DecodeParms << /EODCount 0 /EODString (%FOPEndOfData) >>");
                     gen.writeln(">> /ReusableStreamDecode filter");
-                    paintImageG2D(imageG2D, dimensionsMpt, gen);
+                    paintImageG2D(imageG2D, dimensionsMpt, gen, fontInfo);
                     gen.writeln("%FOPEndOfData");
                     gen.writeln("def");
                 }
@@ -179,8 +183,8 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
         }
 
         protected void paintImageG2D(final ImageGraphics2D imageG2D, Dimension2D dimensionsMpt,
-                PSGenerator gen) throws IOException {
-            PSGraphics2DAdapter adapter = new PSGraphics2DAdapter(gen, false);
+                PSGenerator gen, FontInfo fontInfo) throws IOException {
+            PSGraphics2DAdapter adapter = new PSGraphics2DAdapter(gen, false, fontInfo);
             adapter.paintImage(imageG2D.getGraphics2DImagePainter(),
                         null,
                         0, 0,
