@@ -918,6 +918,10 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
         }
     }
 
+    public int getPageIndex() {
+        return -1;
+    }
+
     private void commitNavigation() throws IFException {
         Iterator iter = this.completeActions.iterator();
         while (iter.hasNext()) {
