@@ -146,7 +146,7 @@ public class PageBreaker extends AbstractBreaker {
 
         }
         if (needColumnBalancing) {
-            AbstractBreaker.log.debug(
+            log.debug(
                     "Column balancing necessary for the next element list!!!");
         }
         return nextSequenceStartsOn;
@@ -401,7 +401,7 @@ public class PageBreaker extends AbstractBreaker {
             }
         }
 
-        AbstractBreaker.log.debug("Restarting at " + restartPoint
+        log.debug("Restarting at " + restartPoint
                 + ", new start position: " + newStartPos);
 
         pageBreakHandled = true;
@@ -416,8 +416,8 @@ public class PageBreaker extends AbstractBreaker {
 
         PageBreakingAlgorithm algRestart;
         if (needColumnBalancing) {
-            AbstractBreaker.log.debug("Column balancing now!!!");
-            AbstractBreaker.log.debug("===================================================");
+            log.debug("Column balancing now!!!");
+            log.debug("===================================================");
 
             //Restart last page
             algRestart = new BalancingColumnBreakingAlgorithm(
@@ -425,7 +425,7 @@ public class PageBreaker extends AbstractBreaker {
                     alignment, Constants.EN_START, footnoteSeparatorLength,
                     isPartOverflowRecoveryActivated(),
                     pslm.getCurrentPV().getBodyRegion().getColumnCount());
-            AbstractBreaker.log.debug("===================================================");
+            log.debug("===================================================");
         } else  {
             // Handle special page-master for last page
             BodyRegion currentBody = pageProvider.getPage(false, currentPageNum)
@@ -436,21 +436,21 @@ public class PageBreaker extends AbstractBreaker {
             BodyRegion lastBody = pageProvider.getPage(false, currentPageNum)
                     .getPageViewport().getBodyRegion();
             lastBody.getMainReference().setSpans(currentBody.getMainReference().getSpans());
-            AbstractBreaker.log.debug("Last page handling now!!!");
-            AbstractBreaker.log.debug("===================================================");
+            log.debug("Last page handling now!!!");
+            log.debug("===================================================");
             //Restart last page
             algRestart = new PageBreakingAlgorithm(
                     getTopLevelLM(), getPageProvider(), createLayoutListener(),
                     alg.getAlignment(), alg.getAlignmentLast(),
                     footnoteSeparatorLength,
                     isPartOverflowRecoveryActivated(), false, false);
-            AbstractBreaker.log.debug("===================================================");
+            log.debug("===================================================");
         }
 
         int optimalPageCount = algRestart.findBreakingPoints(effectiveList,
                     newStartPos,
                     1, true, BreakingAlgorithm.ALL_BREAKS);
-        AbstractBreaker.log.debug("restart: optimalPageCount= " + optimalPageCount
+        log.debug("restart: optimalPageCount= " + optimalPageCount
                 + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
 
         boolean fitsOnePage
@@ -459,7 +459,7 @@ public class PageBreaker extends AbstractBreaker {
 
         if (needColumnBalancing) {
             if (!fitsOnePage) {
-                AbstractBreaker.log.warn(
+                log.warn(
                         "Breaking algorithm produced more columns than are available.");
                 /* reenable when everything works
                 throw new IllegalStateException(
@@ -493,8 +493,8 @@ public class PageBreaker extends AbstractBreaker {
     }
 
     /** {@inheritDoc} */
-    protected void startPart(BlockSequence list, int breakClass) {
-        AbstractBreaker.log.debug("startPart() breakClass=" + getBreakClassName(breakClass));
+    protected void startPart(BlockSequence list, int breakClass, boolean emptyContent) {
+        log.debug("startPart() breakClass=" + getBreakClassName(breakClass));
         if (pslm.getCurrentPage() == null) {
             throw new IllegalStateException("curPage must not be null");
         }
@@ -508,7 +508,7 @@ public class PageBreaker extends AbstractBreaker {
                 // the current BlockSequence, it could have a break
                 // condition that must be satisfied;
                 // otherwise, we may simply need a new page
-                handleBreakTrait(breakClass);
+                handleBreakTrait(breakClass, emptyContent);
             }
             pageProvider.setStartOfNextElementList(pslm.getCurrentPageNum(),
                     pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex(),
@@ -588,6 +588,10 @@ public class PageBreaker extends AbstractBreaker {
      * @param breakVal - value of break-before or break-after trait.
      */
     private void handleBreakTrait(int breakVal) {
+        handleBreakTrait(breakVal, false);
+    }
+
+    private void handleBreakTrait(int breakVal, boolean emptyContent) {
         Page curPage = pslm.getCurrentPage();
         switch (breakVal) {
         case Constants.EN_ALL:
@@ -626,7 +630,7 @@ public class PageBreaker extends AbstractBreaker {
                         pv.getCurrentSpan().moveToNextFlow();
                     } else {
                         log.trace("Making new page");
-                        pslm.makeNewPage(false);
+                        pslm.makeNewPage(false, emptyContent);
                     }
                 }
             }
@@ -838,7 +842,7 @@ public class PageBreaker extends AbstractBreaker {
                 + ", break at pos " + endElementIndex + ", break class = "
                 + getBreakClassName(lastBreakClass));
 
-        startPart(effectiveList, lastBreakClass);
+        startPart(effectiveList, lastBreakClass, false);
 
         int displayAlign = getCurrentDisplayAlign();
 
