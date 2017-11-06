@@ -320,7 +320,7 @@ public abstract class AbstractBreaker {
      * @param list a block sequence
      * @param breakClass a break class
      */
-    protected void startPart(BlockSequence list, int breakClass) {
+    protected void startPart(BlockSequence list, int breakClass, boolean emptyContent) {
         //nop
     }
 
@@ -656,7 +656,7 @@ public abstract class AbstractBreaker {
                     + ", break at pos " + endElementIndex
                     + ", break class = " + getBreakClassName(lastBreakClass));
 
-            startPart(effectiveList, lastBreakClass);
+            startPart(effectiveList, lastBreakClass, startElementIndex > endElementIndex);
 
             int displayAlign = getCurrentDisplayAlign();
 
