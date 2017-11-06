@@ -57,4 +57,5 @@ public interface IFDocumentNavigationHandler {
      */
     void addResolvedAction(AbstractAction action) throws IFException;
 
+    int getPageIndex();
 }

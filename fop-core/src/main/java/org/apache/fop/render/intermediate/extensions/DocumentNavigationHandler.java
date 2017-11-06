@@ -123,6 +123,12 @@ public class DocumentNavigationHandler extends DefaultHandler
                     if (pageIndex < 0) {
                         location = null;
                     } else {
+                        if (hasNavigation()) {
+                            int currentPageIndex = navHandler.getPageIndex();
+                            if (currentPageIndex >= 0) {
+                                pageIndex = currentPageIndex;
+                            }
+                        }
                         final int x = XMLUtil
                                 .getAttributeAsInt(attributes, "x");
                         final int y = XMLUtil

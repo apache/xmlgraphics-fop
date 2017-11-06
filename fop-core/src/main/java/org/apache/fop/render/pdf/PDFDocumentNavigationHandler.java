@@ -139,6 +139,10 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         }
     }
 
+    public int getPageIndex() {
+        return documentHandler.getCurrentPage().getPageIndex();
+    }
+
     private PDFAction getAction(AbstractAction action) throws IFException {
         if (action == null) {
             return null;
