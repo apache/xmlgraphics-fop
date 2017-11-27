@@ -182,7 +182,7 @@ public class OFFontLoader extends FontLoader {
         returnFont.setWeight(otf.getWeightClass());
         if (isCid) {
             if (otf instanceof OTFFile) {
-                if (((OTFFile) otf).isType1() && embeddingMode == EmbeddingMode.SUBSET) {
+                if (((OTFFile) otf).isType1() && embeddingMode == EmbeddingMode.SUBSET && !embedAsType1) {
                     multiFont.setFontType(FontType.TYPE1C);
                     copyGlyphMetricsSingleByte(otf);
                 }
