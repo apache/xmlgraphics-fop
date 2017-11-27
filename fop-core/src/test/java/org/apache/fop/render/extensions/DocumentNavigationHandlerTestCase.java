@@ -22,7 +22,9 @@ import java.awt.Dimension;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.transform.stream.StreamResult;
@@ -84,5 +86,44 @@ public class DocumentNavigationHandlerTestCase {
 
         //Since user may merge IF files we want to use current page
         Assert.assertEquals(goToXYActions.get(0).getPageIndex(), currentPage);
+    }
+
+    @Test
+    public void testGotoXYUniqueLinks() throws IFException, SAXException {
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        PDFDocumentHandler documentHandler = new PDFDocumentHandler(new IFContext(ua));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        documentHandler.setResult(new StreamResult(bos));
+        documentHandler.setFontInfo(new FontInfo());
+        documentHandler.startDocument();
+
+        PDFDocumentNavigationHandler pdfDocumentNavigationHandler = new PDFDocumentNavigationHandler(documentHandler);
+        DocumentNavigationHandler navigationHandler = new DocumentNavigationHandler(pdfDocumentNavigationHandler,
+                new HashMap<String, StructureTreeElement>());
+        QName xy = DocumentNavigationExtensionConstants.GOTO_XY;
+
+        Attributes attributes = mock(Attributes.class);
+        when(attributes.getValue("page-index")).thenReturn("0");
+        when(attributes.getValue("x")).thenReturn("0");
+        when(attributes.getValue("y")).thenReturn("0");
+
+        documentHandler.startPage(0, "", "", new Dimension());
+        navigationHandler.startElement(xy.getNamespaceURI(), xy.getLocalName(), null, attributes);
+        navigationHandler.endElement(xy.getNamespaceURI(), xy.getLocalName(), null);
+        documentHandler.endPage();
+        documentHandler.startPage(1, "", "", new Dimension());
+        navigationHandler.startElement(xy.getNamespaceURI(), xy.getLocalName(), null, attributes);
+        navigationHandler.endElement(xy.getNamespaceURI(), xy.getLocalName(), null);
+        documentHandler.endPage();
+
+        Iterator<String> i = Arrays.asList(bos.toString().split("\n")).iterator();
+        List<String> pageLink = new ArrayList<String>();
+        while (i.hasNext()) {
+            if (i.next().equals("/S /GoTo")) {
+                pageLink.add(i.next());
+            }
+        }
+        Assert.assertEquals(pageLink.size(), 2);
+        Assert.assertFalse(pageLink.get(0).equals(pageLink.get(1)));
     }
 }
