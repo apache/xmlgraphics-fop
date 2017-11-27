@@ -34,6 +34,7 @@ import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.FontLoader;
+import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.FontUris;
 
 public class OTFToType1TestCase {
@@ -47,13 +48,23 @@ public class OTFToType1TestCase {
         Assert.assertEquals(t1.getFontName(), "AlexBrush-Regular.0");
     }
 
+    @Test
+    public void testFontType() throws IOException {
+        CustomFont t1 = getRealFont("test/resources/fonts/otf/SourceSansProBold.otf");
+        Assert.assertEquals(t1.getFontType(), FontType.TYPE1);
+    }
+
     private Type1Font getFont(String s) throws IOException {
+        InputStream is = ((CFFToType1Font)getRealFont(s)).getInputStreams().get(0);
+        return Type1Font.createWithPFB(is);
+    }
+
+    private CustomFont getRealFont(String s) throws IOException {
         InternalResourceResolver rr = ResourceResolverFactory.createDefaultInternalResourceResolver(
                 new File(".").toURI());
         CustomFont realFont = FontLoader.loadFont(new FontUris(new File(s).toURI(), null), null, true,
                 EmbeddingMode.SUBSET, EncodingMode.AUTO, true, true, rr, false, true);
         realFont.mapChar('d');
-        InputStream is = ((CFFToType1Font)realFont).getInputStreams().get(0);
-        return Type1Font.createWithPFB(is);
+        return realFont;
     }
 }
