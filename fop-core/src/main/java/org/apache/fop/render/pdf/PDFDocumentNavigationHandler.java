@@ -147,7 +147,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         if (action == null) {
             return null;
         }
-        PDFAction pdfAction = (PDFAction)this.completeActions.get(action.getID());
+        PDFAction pdfAction = (PDFAction)this.completeActions.get(getCompleteID(action));
         if (pdfAction != null) {
             return pdfAction;
         } else if (action instanceof GoToXYAction) {
@@ -175,7 +175,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
                 //Some PDF actions are pooled
                 getPDFDoc().registerObject(pdfAction);
             }
-            this.completeActions.put(action.getID(), pdfAction);
+            this.completeActions.put(getCompleteID(action), pdfAction);
             return pdfAction;
         } else {
             throw new UnsupportedOperationException("Unsupported action type: "
@@ -202,8 +202,16 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
 
             //Queue this object now that it's complete
             getPDFDoc().addObject(pdfGoTo);
-            this.completeActions.put(action.getID(), pdfGoTo);
+            this.completeActions.put(getCompleteID(action), pdfGoTo);
         }
+    }
+
+    private String getCompleteID(AbstractAction action) {
+        if (action instanceof GoToXYAction && action.isComplete()) {
+            int extra = ((GoToXYAction) action).getPageIndex();
+            return action.getID() + "_" + extra;
+        }
+        return action.getID();
     }
 
 }
