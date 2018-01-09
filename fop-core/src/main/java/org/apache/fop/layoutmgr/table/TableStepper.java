@@ -270,12 +270,17 @@ public class TableStepper {
                 breakClass = nextBreakClass;
             }
             returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, breakClass, context));
-            if (penaltyOrGlueLen < 0) {
-                returnList.add(new KnuthGlue(-penaltyOrGlueLen, 0, 0, new Position(null), true));
-            }
 
             laststep = step;
             step = getNextStep();
+
+            if (penaltyOrGlueLen < 0) {
+                if (step < 0) {
+                    returnList.add(new KnuthGlue(0, -penaltyOrGlueLen, 0, new Position(null), true));
+                } else {
+                    returnList.add(new KnuthGlue(-penaltyOrGlueLen, 0, 0, new Position(null), true));
+                }
+            }
         } while (step >= 0);
         assert !returnList.isEmpty();
         lastTCPos.setFlag(TableContentPosition.LAST_IN_ROWGROUP, true);

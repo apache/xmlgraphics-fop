@@ -132,7 +132,7 @@
       <skip>6</skip>
       <box w="11000"/>
       <penalty w="0" p="0"/>
-      <glue w="500"/>
+      <glue w="0"/>
       <box w="12000"/>
       <skip>3</skip>
     </element-list>
