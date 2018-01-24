@@ -128,7 +128,7 @@ public class RtfText extends RtfElement {
     /** constant for left indent body */
     public static final String LEFT_INDENT_BODY = "li";
     /** constant for left indent first */
-    public static final String LEFT_INDENT_FIRST = "fi-";
+    public static final String LEFT_INDENT_FIRST = "fi";
     /** constant for right indent body */
     public static final String RIGHT_INDENT_BODY = "ri";
 
