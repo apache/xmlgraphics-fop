@@ -83,6 +83,7 @@ final class TextAttributesConverter {
         attrBlockTextAlign(fobj.getTextAlign(), attrib);
         attrBorder(fobj.getCommonBorderPaddingBackground(), attrib, fobj);
         attrBreak(fobj, attrib);
+        attrBlockTextIndent(fobj.getTextIndent(), attrib);
 
         return attrib;
     }
@@ -376,6 +377,10 @@ final class TextAttributesConverter {
                 cmb.spaceAfter.getOptimum(null).getLength());
         rtfAttr.setTwips(RtfText.LEFT_INDENT_BODY, cmb.startIndent);
         rtfAttr.setTwips(RtfText.RIGHT_INDENT_BODY, cmb.endIndent);
+    }
+
+    private static void attrBlockTextIndent(Length textIndent, FOPRtfAttributes rtfAttr) {
+        rtfAttr.setTwips(RtfText.LEFT_INDENT_FIRST, textIndent.getValue());
     }
 
 
