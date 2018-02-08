@@ -19,9 +19,12 @@
 
 package org.apache.fop.pdf;
 
+import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
 import org.junit.Test;
@@ -34,10 +37,14 @@ import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.CIDSet;
 import org.apache.fop.fonts.CIDSubset;
+import org.apache.fop.fonts.CodePointMapping;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbeddingMode;
+import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.FontUris;
 import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.NamedCharacter;
+import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.truetype.OFFontLoader;
 
 /**
@@ -79,6 +86,53 @@ public class PDFFactoryTestCase {
 
         PDFFont pdfArial = pdfFactory.makeFont("Arial", "Arial", "TTF", font, font);
         assertEquals("/EAAAAB+Arial", pdfArial.getBaseFont().toString());
+    }
+
+    @Test
+    public void testMakeFont() throws IOException {
+        PDFDocument doc = new PDFDocument("");
+        PDFFactory pdfFactory = new PDFFactory(doc);
+        SingleByteFont sb = new TestSingleByteFont(null);
+        sb.setFontName("test");
+        sb.setWidth(0, 0);
+        sb.setFlags(0);
+        sb.setEmbedResourceName("");
+        sb.mapChar('a');
+        sb.addUnencodedCharacter(new NamedCharacter("xyz", String.valueOf((char) 0x2202)), 0, new Rectangle());
+        sb.mapChar((char) 0x2202);
+        sb.setEncoding(new CodePointMapping("FOPPDFEncoding", new int[0]));
+        PDFFont font = pdfFactory.makeFont("a", "a", "WinAnsiEncoding", sb, sb);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        font.output(bos);
+        assertTrue(bos.toString().contains("/BaseFont /EAAAAA+a"));
+        assertEquals(sb.getAdditionalEncodingCount(), 1);
+    }
+
+    @Test
+    public void testMakeTrueTypeFont() throws IOException {
+        PDFDocument doc = new PDFDocument("");
+        PDFFactory pdfFactory = new PDFFactory(doc);
+        SingleByteFont sb = new TestSingleByteFont(null);
+        sb.setFontType(FontType.TRUETYPE);
+        sb.setFontName("test");
+        sb.setWidth(0, 0);
+        sb.setFlags(0);
+        sb.setEncoding(new CodePointMapping("FOPPDFEncoding", new int[0]));
+        String enc = "MacRomanEncoding";
+        PDFFont font = pdfFactory.makeFont("a", "a", enc, sb, sb);
+        font.output(new ByteArrayOutputStream());
+        assertEquals(((PDFName)font.entries.get("Encoding")).getName(), enc);
+    }
+
+    class TestSingleByteFont extends SingleByteFont {
+        public TestSingleByteFont(InternalResourceResolver resourceResolver) {
+            super(resourceResolver, EmbeddingMode.SUBSET);
+        }
+
+        public InputStream getInputStream() throws IOException {
+            File f = new File("test/resources/fonts/type1/a010013l.pfb");
+            return new FileInputStream(f);
+        }
     }
 
     @Test

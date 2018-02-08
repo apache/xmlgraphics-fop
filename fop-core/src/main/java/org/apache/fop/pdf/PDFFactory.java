@@ -1061,7 +1061,7 @@ public class PDFFactory {
                     //believed.
                 } else if (mapping.getName().equals("FOPPDFEncoding")) {
                     if (fonttype == FontType.TRUETYPE) {
-                        font.setEncoding("WinAnsiEncoding");
+                        font.setEncoding(encoding);
                     } else {
                         String[] charNameMap = mapping.getCharNameMap();
                         char[] intmap = mapping.getUnicodeCharMap();
