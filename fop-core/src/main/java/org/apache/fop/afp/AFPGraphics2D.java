@@ -58,6 +58,7 @@ import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.afp.goca.GraphicsSetLineType;
 import org.apache.fop.afp.modca.GraphicsObject;
+import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.afp.util.CubicBezierApproximator;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.afp.AFPImageHandlerRenderedImage;
@@ -626,7 +627,12 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
         double h = toMillipointFactor * imgHeight * -gat.getScaleY();
 
         AFPImageHandlerRenderedImage handler = new AFPImageHandlerRenderedImage();
-        ImageInfo imageInfo = new ImageInfo(null, null);
+        String uri = null;
+        if (resourceManager.getResourceLevelDefaults()
+                .getDefaultResourceLevel(ResourceObject.TYPE_GRAPHIC).isPrintFile()) {
+            uri = resourceInfo.getUri();
+        }
+        ImageInfo imageInfo = new ImageInfo(uri, null);
         imageInfo.setSize(new ImageSize(
                 img.getWidth(), img.getHeight(), paintingState.getResolution()));
         imageInfo.getSize().calcSizeFromPixels();
@@ -638,11 +644,13 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 (int)Math.round(h));
         AFPRenderingContext context = new AFPRenderingContext(null,
                 resourceManager, paintingState, fontInfo, null);
+        resourceManager.includeCached = false;
         try {
             handler.handleImage(context, red, targetPos);
         } catch (IOException ioe) {
             handleIOException(ioe);
         }
+        resourceManager.includeCached = true;
     }
 
     /**

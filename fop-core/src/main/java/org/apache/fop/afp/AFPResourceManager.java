@@ -25,6 +25,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -74,9 +77,12 @@ public class AFPResourceManager {
     private int instreamObjectCount;
 
     /** Mapping of resourceInfo to AbstractCachedObject */
-    private final Map<AFPResourceInfo, AbstractCachedObject> includeObjectCache
-            = new java.util.HashMap<AFPResourceInfo, AbstractCachedObject>();
+    private final Map<AFPResourceInfo, List<AbstractCachedObject>> includeObjectCache =
+            new HashMap<AFPResourceInfo, List<AbstractCachedObject>>();
+
     private AFPResourceLevelDefaults resourceLevelDefaults = new AFPResourceLevelDefaults();
+
+    protected boolean includeCached = true;
 
     /**
      * Main constructor
@@ -262,12 +268,21 @@ public class AFPResourceManager {
 
         cachedObject.includeObject();
 
-        includeObjectCache.put(dataObjectInfo.getResourceInfo(), cachedObject);
+        addToCache(dataObjectInfo.getResourceInfo(), cachedObject);
 
         //The data field of dataObjectInfo is not further required
         // therefore we are safe to null the reference, saving memory
         dataObjectInfo.setData(null);
 
+    }
+
+    private void addToCache(AFPResourceInfo resourceInfo, AbstractCachedObject cachedObject) {
+        List<AbstractCachedObject> objs = includeObjectCache.get(resourceInfo);
+        if (objs == null) {
+            objs = new ArrayList<AbstractCachedObject>();
+            includeObjectCache.put(resourceInfo, objs);
+        }
+        objs.add(cachedObject);
     }
 
     /**
@@ -287,17 +302,14 @@ public class AFPResourceManager {
      * @return  {@code true} if ...
      */
     public boolean includeCachedObject(AFPResourceInfo resourceInfo, AFPObjectAreaInfo areaInfo) {
-
-        String objectName;
-
-        AbstractCachedObject cachedObject = includeObjectCache.get(resourceInfo);
-
-        if (cachedObject != null) {
-            if (areaInfo != null) {
-                cachedObject.dataObjectInfo.setObjectAreaInfo(areaInfo);
+        List<AbstractCachedObject> cachedObjectList = includeObjectCache.get(resourceInfo);
+        if (cachedObjectList != null && includeCached) {
+            for (AbstractCachedObject cachedObject : cachedObjectList) {
+                if (areaInfo != null && cachedObjectList.size() == 1) {
+                    cachedObject.dataObjectInfo.setObjectAreaInfo(areaInfo);
+                }
+                cachedObject.includeObject();
             }
-            cachedObject.includeObject();
-
             return true;
         } else {
             return false;
@@ -399,7 +411,7 @@ public class AFPResourceManager {
         resourceInfo.setName(resourceName);
         resourceInfo.setUri(uri.toASCIIString());
 
-        AbstractCachedObject cachedObject = includeObjectCache.get(resourceInfo);
+        List<AbstractCachedObject> cachedObject = includeObjectCache.get(resourceInfo);
         if (cachedObject == null) {
             if (log.isDebugEnabled()) {
                 log.debug("Adding included resource: " + resourceName);
@@ -441,10 +453,10 @@ public class AFPResourceManager {
             }
 
             //TODO what is the data object?
-            cachedObject = new CachedObject(resourceName, null);
+            CachedObject newcachedObject = new CachedObject(resourceName, null);
 
             // record mapping of resource info to data object resource name
-            includeObjectCache.put(resourceInfo, cachedObject);
+            addToCache(resourceInfo, newcachedObject);
         } else {
             //skip, already created
         }
@@ -484,8 +496,8 @@ public class AFPResourceManager {
         resourceInfo.setName(resourceName);
         resourceInfo.setUri(uri.toASCIIString());
 
-        AbstractCachedObject cachedObject = includeObjectCache.get(resourceInfo);
-        if (cachedObject == null) {
+        List<AbstractCachedObject> resource = includeObjectCache.get(resourceInfo);
+        if (resource == null) {
             ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
 
             //resourceObject delegates write commands to copyNamedResource()
@@ -512,8 +524,8 @@ public class AFPResourceManager {
                 protected void writeEnd(OutputStream os) throws IOException { }
             };
             resourceGroup.addObject(resourceObject);
-            cachedObject = new CachedObject(resourceName, null);
-            includeObjectCache.put(resourceInfo, cachedObject);
+            CachedObject newresource = new CachedObject(resourceName, null);
+            addToCache(resourceInfo, newresource);
         }
     }
 
