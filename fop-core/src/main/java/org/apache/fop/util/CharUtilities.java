@@ -374,8 +374,8 @@ public class CharUtilities {
      * Returns 1 if codePoint not in the BMP. This function is particularly useful in for
      * loops over strings where, in presence of surrogate pairs, you need to skip one loop.
      *
-     * @param codePoint 1 if codePoint > 0xFFFF, 0 otherwise
-     * @return 1 if codePoint > 0xFFFF, 0 otherwise
+     * @param codePoint 1 if codePoint &gt; 0xFFFF, 0 otherwise
+     * @return 1 if codePoint &gt; 0xFFFF, 0 otherwise
      */
     public static int incrementIfNonBMP(int codePoint) {
         return isBmpCodePoint(codePoint) ? 0 : 1;
@@ -443,7 +443,7 @@ public class CharUtilities {
     /**
      * Creates an iterator to iter a sub-CharSequence codepoints.
      *
-     * @see <a haref="http://bugs.java.com/bugdatabase/view_bug.do?bug_id=5003547">Bug JDK-5003547</a>
+     * @see <a href="http://bugs.java.com/bugdatabase/view_bug.do?bug_id=5003547">Bug JDK-5003547</a>
      * @param s {@link CharSequence} to iter
      * @param beginIndex lower range
      * @param endIndex upper range
