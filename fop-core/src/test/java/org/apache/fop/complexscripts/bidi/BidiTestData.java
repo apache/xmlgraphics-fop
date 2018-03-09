@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 
+import org.apache.commons.io.IOUtils;
 
 /*
  * !!! THIS IS A GENERATED FILE !!!
@@ -64,9 +65,7 @@ public final class BidiTestData {
         } catch (ClassNotFoundException e) {
             data = null;
         } finally {
-            if (is != null) {
-                try { is.close(); } catch (Exception e) { /* NOP */ }
-            }
+            IOUtils.closeQuietly(is);
         }
         return data;
     }

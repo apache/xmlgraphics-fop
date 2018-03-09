@@ -147,10 +147,27 @@ public class GlyphSequence implements Cloneable {
     /**
      * Obtain the number of characters in character array, where
      * each character constitutes a unicode scalar value.
+     * NB: Supplementary characters (non-BMP code points) count as 1
+     * character, not as two UTF-16 code units.
      * @return number of characters available in character array
      */
     public int getCharacterCount() {
         return characters.limit();
+    }
+
+    /**
+     * Obtain the number of characters in character array, where
+     * each character constitutes a UTF-16 character. This means
+     * that every non-BMP character is counted as 2 characters.
+     * @return number of chars (UTF-16 code units) available in
+     * character array
+     */
+    public int getUTF16CharacterCount() {
+        int count = 0;
+        for (int ch : characters.array()) {
+            count += Character.charCount(ch);
+        }
+        return count;
     }
 
     /**

@@ -52,12 +52,12 @@ public class CIDSubset implements CIDSet {
     /**
      * usedCharsIndex contains new glyph, original char (char selector -> Unicode)
      */
-    private Map<Integer, Character> usedCharsIndex = new HashMap<Integer, Character>();
+    private Map<Integer, Integer> usedCharsIndex = new HashMap<Integer, Integer>();
 
     /**
      * A map between the original character and it's GID in the original font.
      */
-    private Map<Character, Integer> charToGIDs = new HashMap<Character, Integer>();
+    private Map<Integer, Integer> charToGIDs = new HashMap<Integer, Integer>();
 
 
     private final MultiByteFont font;
@@ -81,8 +81,8 @@ public class CIDSubset implements CIDSet {
     }
 
     /** {@inheritDoc} */
-    public char getUnicode(int index) {
-        Character mapValue = usedCharsIndex.get(index);
+    public int getUnicode(int index) {
+        Integer mapValue = usedCharsIndex.get(index);
         if (mapValue != null) {
             return mapValue;
         } else {
@@ -92,6 +92,11 @@ public class CIDSubset implements CIDSet {
 
     /** {@inheritDoc} */
     public int mapChar(int glyphIndex, char unicode) {
+        return mapCodePoint(glyphIndex, unicode);
+    }
+
+    /** {@inheritDoc} */
+    public int mapCodePoint(int glyphIndex, int codePoint) {
         // Reencode to a new subset font or get the reencoded value
         // IOW, accumulate the accessed characters and build a character map for them
         Integer subsetCharSelector = usedGlyphs.get(glyphIndex);
@@ -99,8 +104,8 @@ public class CIDSubset implements CIDSet {
             int selector = usedGlyphsCount;
             usedGlyphs.put(glyphIndex, selector);
             usedGlyphsIndex.put(selector, glyphIndex);
-            usedCharsIndex.put(selector, unicode);
-            charToGIDs.put(unicode, glyphIndex);
+            usedCharsIndex.put(selector, codePoint);
+            charToGIDs.put(codePoint, glyphIndex);
             usedGlyphsCount++;
             return selector;
         } else {
@@ -115,22 +120,28 @@ public class CIDSubset implements CIDSet {
 
     /** {@inheritDoc} */
     public char getUnicodeFromGID(int glyphIndex) {
+        // TODO this method is never called in the MultiByte font path.
+        // This is why we can safely cast the value of usedCharsIndex.get(selector)
+        // to int . BTW is a question if it should be changed to int as getUnicode
+        // or left like this.
         int selector = usedGlyphs.get(glyphIndex);
-        return usedCharsIndex.get(selector);
+        return (char) usedCharsIndex.get(selector).intValue();
     }
 
     /** {@inheritDoc} */
     public int getGIDFromChar(char ch) {
-        return charToGIDs.get(ch);
+        return charToGIDs.get((int) ch);
     }
 
     /** {@inheritDoc} */
     public char[] getChars() {
-        char[] charArray = new char[usedGlyphsCount];
+        StringBuilder buf = new StringBuilder();
+
         for (int i = 0; i < usedGlyphsCount; i++) {
-            charArray[i] = getUnicode(i);
+            buf.appendCodePoint(getUnicode(i));
         }
-        return charArray;
+
+        return buf.toString().toCharArray();
     }
 
     /** {@inheritDoc} */

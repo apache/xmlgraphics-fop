@@ -19,6 +19,9 @@
 
 package org.apache.fop.util;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 /**
  * This class provides utilities to distinguish various kinds of Unicode
  * whitespace and to get character widths in a given FontState.
@@ -354,4 +357,134 @@ public class CharUtilities {
         }
     }
 
+    /**
+     * Determine whether the specified character (Unicode code point) is in then Basic
+     * Multilingual Plane (BMP). Such code points can be represented using a single {@code char}.
+     *
+     * @see Character#isBmpCodePoint(int) from Java 1.7
+     * @param  codePoint the character (Unicode code point) to be tested
+     * @return {@code true} if the specified code point is between  Character#MIN_VALUE and
+     *          Character#MAX_VALUE} inclusive; {@code false} otherwise
+     */
+    public static boolean isBmpCodePoint(int codePoint) {
+        return codePoint >>> 16 == 0;
+    }
+
+    /**
+     * Returns 1 if codePoint not in the BMP. This function is particularly useful in for
+     * loops over strings where, in presence of surrogate pairs, you need to skip one loop.
+     *
+     * @param codePoint 1 if codePoint > 0xFFFF, 0 otherwise
+     * @return 1 if codePoint > 0xFFFF, 0 otherwise
+     */
+    public static int incrementIfNonBMP(int codePoint) {
+        return isBmpCodePoint(codePoint) ? 0 : 1;
+    }
+
+    /**
+     * Determine if the given characters is part of a surrogate pair.
+     *
+     * @param ch character to be checked
+     * @return true if ch is an high surrogate or a low surrogate
+     */
+    public static boolean isSurrogatePair(char ch) {
+        return Character.isHighSurrogate(ch) || Character.isLowSurrogate(ch);
+    }
+
+    /**
+     * Tells whether there is a surrogate pair starting from the given index in the {@link CharSequence}. If the
+     * character at index is an high surrogate then the character at index+1 is checked to be a low surrogate. If a
+     * malformed surrogate pair is encountered then an {@link IllegalArgumentException} is thrown.
+     * <pre>
+     * high surrogate [0xD800 - 0xDC00]
+     * low surrogate [0xDC00 - 0xE000]
+     * </pre>
+     *
+     * @param chars CharSequence to check
+     * @param index index in the CharSequqnce where to start the check
+     * @throws IllegalArgumentException if there wrong usage of surrogate pairs
+     * @return true if there is a well-formed surrogate pair at index
+     */
+    public static boolean containsSurrogatePairAt(CharSequence chars, int index) {
+        char ch = chars.charAt(index);
+
+        if (Character.isHighSurrogate(ch)) {
+            if ((index + 1) > chars.length()) {
+                throw new IllegalArgumentException(
+                        "ill-formed UTF-16 sequence, contains isolated high surrogate at end of sequence");
+            }
+
+            if (Character.isLowSurrogate(chars.charAt(index + 1))) {
+                return true;
+            }
+
+            throw new IllegalArgumentException(
+                    "ill-formed UTF-16 sequence, contains isolated high surrogate at index " + index);
+
+        } else if (Character.isLowSurrogate(ch)) {
+            throw new IllegalArgumentException(
+                    "ill-formed UTF-16 sequence, contains isolated low surrogate at index " + index);
+        }
+
+        return false;
+    }
+
+    /**
+     * Creates an iterator to iter a {@link CharSequence} codepoints.
+     *
+     * @see #codepointsIter(CharSequence, int, int)
+     * @param s {@link CharSequence} to iter
+     * @return codepoint iterator for the given {@link CharSequence}.
+     */
+    public static Iterable<Integer> codepointsIter(final CharSequence s) {
+        return codepointsIter(s, 0, s.length());
+    }
+
+    /**
+     * Creates an iterator to iter a sub-CharSequence codepoints.
+     *
+     * @see <a haref="http://bugs.java.com/bugdatabase/view_bug.do?bug_id=5003547">Bug JDK-5003547</a>
+     * @param s {@link CharSequence} to iter
+     * @param beginIndex lower range
+     * @param endIndex upper range
+     * @return codepoint iterator for the given sub-CharSequence.
+     */
+    public static Iterable<Integer> codepointsIter(final CharSequence s, final int beginIndex, final int endIndex) {
+        if (beginIndex < 0) {
+            throw new StringIndexOutOfBoundsException(beginIndex);
+        }
+        if (endIndex > s.length()) {
+            throw new StringIndexOutOfBoundsException(endIndex);
+        }
+        int subLen = endIndex - beginIndex;
+        if (subLen < 0) {
+            throw new StringIndexOutOfBoundsException(subLen);
+        }
+
+        return new Iterable<Integer>() {
+            public Iterator<Integer> iterator() {
+                return new Iterator<Integer>() {
+                    int nextIndex = beginIndex;
+
+                    public boolean hasNext() {
+                        return nextIndex < endIndex;
+                    }
+
+                    public Integer next() {
+                        if (!hasNext()) {
+                            // Findbugs wants this: IT_NO_SUCH_ELEMENT
+                            throw new NoSuchElementException();
+                        }
+                        int result = Character.codePointAt(s, nextIndex);
+                        nextIndex += Character.charCount(result);
+                        return result;
+                    }
+
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+        };
+    }
 }

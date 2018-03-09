@@ -58,6 +58,7 @@ import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.util.CharUtilities;
 
 public class PSPainterTestCase {
 
@@ -126,7 +127,7 @@ public class PSPainterTestCase {
     }
 
     @Test
-    public void testDrawText() {
+    public void testDrawText() throws IOException {
         int fontSize = 12000;
         String fontName = "MockFont";
         PSGenerator psGenerator = mock(PSGenerator.class);
@@ -160,12 +161,19 @@ public class PSPainterTestCase {
         double yAsDouble = (y - dp[0][1]) / 1000.0;
         when(psGenerator.formatDouble(xAsDouble)).thenReturn("100.100");
         when(psGenerator.formatDouble(yAsDouble)).thenReturn("99.900");
-        String text = "Hello Mock!";
+
+        //0x48 0x65 0x6C 0x6C 0x6F 0x20 0x4D 0x6F 0x63 0x6B 0x21 0x1F4A9
+        String text = "Hello Mock!\uD83D\uDCA9";
+
+        for (int cp : CharUtilities.codepointsIter(text)) {
+            when(font.mapCodePoint(cp)).thenReturn(cp);
+        }
+
         try {
             psPainter.drawText(x, y, letterSpacing, wordSpacing, dp, text);
             verify(psGenerator).writeln("1 0 0 -1 100.100 99.900 Tm");
-            verify(psGenerator).writeln("[<0000> [-100 100] <00000000> [200 -200] <0000> [-300 300] "
-                            + "<0000000000000000000000000000>] TJ");
+            verify(psGenerator).writeln("[<0048> [-100 100] <0065006C> [200 -200] <006C> [-300 300] "
+                            + "<006F0020004D006F0063006B002101F4A9>] TJ");
         } catch (Exception e) {
             fail("something broke...");
         }

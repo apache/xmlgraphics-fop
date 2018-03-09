@@ -21,7 +21,7 @@
 	Minimal FO document used to test PDF encoding
 -->
 
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Gladiator" font-size="10px">
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Helvetica, Aegean600">
   <fo:layout-master-set>
     <fo:simple-page-master master-name="A4" page-height="29.7cm" page-width="21cm" margin="2cm">
       <fo:region-body/>
@@ -29,10 +29,9 @@
   </fo:layout-master-set>
   <fo:page-sequence master-reference="A4">
     <fo:flow flow-name="xsl-region-body">
-      <fo:block>Testing PDF text encoding using the user-specified Gladiator font</fo:block>
-      <fo:block>PDFE_TEST_MARK_1: Hello Gladiator World!</fo:block>
-      <fo:block>PDFE_TEST_MARK_2: This is an e acute: XX_é_XX</fo:block>
-      <fo:block>PDFE_TEST_MARK_3: This is aeiou with circumflex on each letter: XX_âêîôû_XX</fo:block>
+      <!--<fo:block>Testing PDF text encoding using the user-specified AndroidEmoji font which cover non BMP codepoints</fo:block>-->
+      <fo:block>PDFE_TEST_MARK_1: Hello AndroidEmoji World!</fo:block>
+      <fo:block>PDFE_TEST_MARK_2: This is a OLD ITALIC LETTER A: XX_ &#x10300; _XX</fo:block>
     </fo:flow>
   </fo:page-sequence>
 </fo:root>

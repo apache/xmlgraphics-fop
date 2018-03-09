@@ -69,10 +69,10 @@ public class CIDFull implements CIDSet {
     }
 
     /** {@inheritDoc} */
-    public char getUnicode(int index) {
+    public int getUnicode(int index) {
         initGlyphIndices();
         if (glyphIndices.get(index)) {
-            return (char) index;
+            return index;
         } else {
             return CharUtilities.NOT_A_CHARACTER;
         }
@@ -80,7 +80,12 @@ public class CIDFull implements CIDSet {
 
     /** {@inheritDoc} */
     public int mapChar(int glyphIndex, char unicode) {
-        return (char) glyphIndex;
+        return glyphIndex;
+    }
+
+    /** {@inheritDoc} */
+    public int mapCodePoint(int glyphIndex, int codePoint) {
+        return glyphIndex;
     }
 
     /** {@inheritDoc} */
