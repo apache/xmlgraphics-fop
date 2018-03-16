@@ -36,6 +36,7 @@ import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
+import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.BreakOpportunity;
 import org.apache.fop.layoutmgr.BreakOpportunityHelper;
@@ -447,7 +448,13 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
                 // add the original line where the float was but without the float now
                 returnList.add(new KnuthBlockBox(boxHeight, footnoteList, stepPosition, false));
             }
-
+            if (originalBodyPosition != null) {
+                LayoutManager lm = originalBodyPosition.getLM();
+                if ((lm instanceof ListBlockLayoutManager || lm instanceof BlockLayoutManager)
+                        && getKeepWithPrevious().isAuto()) {
+                    stepPenalty++;
+                }
+            }
             if (addedBoxHeight < totalHeight) {
                 Keep keep = keepWithNextActive.compare(getKeepTogether());
                 int p = stepPenalty;
