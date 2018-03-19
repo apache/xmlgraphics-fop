@@ -19,18 +19,22 @@
 
 package org.apache.fop.render.pdf;
 
+
+
 import java.io.File;
 import java.io.IOException;
-import java.util.StringTokenizer;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+
 import org.apache.fop.apps.FOUserAgent;
+
 
 /** Test that characters are correctly encoded in a generated PDF file */
 public class PDFEncodingTestCase extends BasePDFTest {
@@ -67,24 +71,21 @@ public class PDFEncodingTestCase extends BasePDFTest {
          */
         final String[] testPatterns = {
                 TEST_MARKER + "1", "Standard",
-                TEST_MARKER + "2", "XX_\\351_XX",
-                TEST_MARKER + "3", "XX_\\342\\352\\356\\364\\373_XX"
+                TEST_MARKER + "2", "XX_é_XX",
+                TEST_MARKER + "3", "XX_âêîôû_XX"
               };
 
         runTest("test-standard-font.fo", testPatterns);
     }
 
     /**
-     * TODO test disabled for now, fails due (probably) do different PDF
-     * encoding when custom font is used.
-     * TODO This should be tested using PDFBox. If PDFBox can extract the text correctly,
-     * everything is fine. The tests here are too unstable.
+     * Test encoding with a Custom Font using BMP characters.
+     *
+     * NB: The Gladiator font do not contain '_' Glyph
      *
      * @throws Exception
      *             checkstyle wants a comment here, even a silly one
      */
-    @Ignore("This should be tested using PDFBox. If PDFBox can extract the text correctly,"
-            + "everything is fine. The tests here are too unstable.")
     @Test
     public void testPDFEncodingWithCustomFont() throws Exception {
 
@@ -94,12 +95,29 @@ public class PDFEncodingTestCase extends BasePDFTest {
          *  The following array is used to look for these patterns
          */
         final String[] testPatterns = {
-          TEST_MARKER + "1", "(Gladiator)",
-          TEST_MARKER + "2", "XX_\\351_XX",
-          TEST_MARKER + "3", "XX_\\342\\352\\356\\364\\373_XX"
+                TEST_MARKER + "1", "Gladiator",
+                TEST_MARKER + "2", "XX_é_XX",
+                TEST_MARKER + "3", "XX_âêîôû_XX"
         };
 
         runTest("test-custom-font.fo", testPatterns);
+    }
+
+    /**
+     * Test encoding with a Custom Font using non-BMP characters
+     *
+     * @throws Exception
+     *              checkstyle wants a comment here, even a silly one
+     */
+    @Test
+    public void testPDFEncodingWithNonBMPFont() throws Exception {
+
+        final String[] testPatterns = {
+            TEST_MARKER + "1", "AndroidEmoji",
+            TEST_MARKER + "2", "\uD800\uDF00",
+        };
+
+        runTest("test-custom-non-bmp-font.fo", testPatterns);
     }
 
     /** Test encoding using specified input file and test patterns array */
@@ -119,31 +137,37 @@ public class PDFEncodingTestCase extends BasePDFTest {
     private void checkEncoding(byte[] pdf, String[] testPattern)
             throws IOException {
 
-        int markersFound = 0;
-        final String input = new String(pdf);
-        int pos = 0;
-        if ((pos = input.indexOf(TEST_MARKER)) >= 0) {
-            final StringTokenizer tk = new StringTokenizer(
-                    input.substring(pos), "\n");
+        String s = extractTextFromPDF(pdf);
 
-            while (tk.hasMoreTokens()) {
-                final String line = tk.nextToken();
-                if (line.indexOf(TEST_MARKER) >= 0) {
-                    markersFound++;
-                    for (int i = 0; i < testPattern.length; i += 2) {
-                        if (line.indexOf(testPattern[i]) >= 0) {
-                            final String ref = testPattern[i + 1];
-                            final boolean patternFound = line.indexOf(ref) >= 0;
-                            assertTrue("line containing '" + testPattern[i]
-                                    + "' must contain '" + ref, patternFound);
-                        }
-                    }
+        int markersFound = 0;
+        for (String line : s.split("\n")) {
+            if (!line.contains(TEST_MARKER)) {
+                 continue;
+            }
+
+            markersFound++;
+
+            for (int i = 0; i < testPattern.length; i++) {
+                String marker = testPattern[i];
+                String pattern = testPattern[++i];
+
+                if (!line.contains(marker)) {
+                     continue;
                 }
+
+                String msg = String.format("line containing '%s' must contain '%s'", marker, pattern);
+                assertTrue(msg, line.contains(pattern));
             }
         }
 
         final int nMarkers = testPattern.length / 2;
         assertEquals(nMarkers + " " + TEST_MARKER + " markers must be found",
                 nMarkers, markersFound);
+    }
+
+    private static String extractTextFromPDF(byte[] pdfContent) throws IOException {
+        PDFTextStripper pdfStripper = new PDFTextStripper();
+        PDDocument pdDoc =  PDDocument.load(pdfContent);
+        return pdfStripper.getText(pdDoc);
     }
 }

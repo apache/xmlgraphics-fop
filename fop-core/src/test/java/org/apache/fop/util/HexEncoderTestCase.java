@@ -40,8 +40,21 @@ public class HexEncoderTestCase {
         }
     }
 
+
+    /**
+     * Tests that codepoints are properly encoded into hex strings.
+     */
+    @Test
+    public void testEncodeCodepoints() {
+        char[] digits = new char[] {'0', '1', '0', '0', '0', '0'};
+        for (int c = 0x10000; c <= 0x1FFFF; c++) {
+            assertEquals(new String(digits), HexEncoder.encode(c));
+            increment(digits);
+        }
+    }
+
     private static void increment(char[] digits) {
-        int d = 4;
+        int d = digits.length;
         do {
             d--;
             digits[d] = successor(digits[d]);

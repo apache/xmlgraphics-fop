@@ -221,6 +221,11 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
         return typeface.hasKerningInfo();
     }
 
+    /** {@inheritDoc} */
+    public boolean isMultiByte() {
+        return typeface.isMultiByte();
+    }
+
     /**
      * {@inheritDoc}
      */

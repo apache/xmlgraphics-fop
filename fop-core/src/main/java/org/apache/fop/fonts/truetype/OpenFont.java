@@ -390,6 +390,10 @@ public abstract class OpenFont {
      * tables are present. Currently only unicode cmaps are supported.
      * Set the unicodeIndex in the TTFMtxEntries and fills in the
      * cmaps vector.
+     *
+     * @see <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6cmap.html">
+     *          TrueType-Reference-Manual
+     *      </a>
      */
     protected boolean readCMAP() throws IOException {
 
@@ -401,6 +405,7 @@ public abstract class OpenFont {
         int numCMap = fontFile.readTTFUShort();    // Number of cmap subtables
         long cmapUniOffset = 0;
         long symbolMapOffset = 0;
+        long surrogateMapOffset = 0;
 
         if (log.isDebugEnabled()) {
             log.debug(numCMap + " cmap tables");
@@ -422,9 +427,15 @@ public abstract class OpenFont {
             if (cmapPID == 3 && cmapEID == 0) {
                 symbolMapOffset = cmapOffset;
             }
+            if (cmapPID == 3 && cmapEID == 10) {
+                surrogateMapOffset = cmapOffset;
+            }
         }
 
-        if (cmapUniOffset > 0) {
+       if (surrogateMapOffset > 0) {
+            // TODO maybe for SingleByte fonts instances we should not reach this branch
+            return readUnicodeCmap(surrogateMapOffset, 10);
+        } else if (cmapUniOffset > 0) {
             return readUnicodeCmap(cmapUniOffset, 1);
         } else if (symbolMapOffset > 0) {
             return readUnicodeCmap(symbolMapOffset, 0);
@@ -443,14 +454,21 @@ public abstract class OpenFont {
         // Read unicode cmap
         seekTab(fontFile, OFTableName.CMAP, cmapUniOffset);
         int cmapFormat = fontFile.readTTFUShort();
-        /*int cmap_length =*/ fontFile.readTTFUShort(); //skip cmap length
+
+        if (cmapFormat < 8) {
+            fontFile.readTTFUShort(); //skip cmap length
+            fontFile.readTTFUShort(); //skip cmap version
+        } else {
+            fontFile.readTTFUShort(); //skip 2 bytes to read a Fixed32
+            fontFile.readTTFULong(); //skip cmap length
+            fontFile.readTTFULong(); //skip cmap version
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("CMAP format: " + cmapFormat);
         }
 
         if (cmapFormat == 4) {
-            fontFile.skip(2);    // Skip version number
             int cmapSegCountX2 = fontFile.readTTFUShort();
             int cmapSearchRange = fontFile.readTTFUShort();
             int cmapEntrySelector = fontFile.readTTFUShort();
@@ -612,6 +630,90 @@ public abstract class OpenFont {
                             if (mtxTab[glyphIdx].getUnicodeIndex().size() < 2) {
                                 mtxPtr++;
                             }
+                        }
+                    }
+                }
+            }
+        } else if (cmapFormat == 12) {
+            long nGroups = fontFile.readTTFULong();
+
+            for (long i = 0; i < nGroups; ++i) {
+                long startCharCode = fontFile.readTTFULong();
+                long endCharCode = fontFile.readTTFULong();
+                long startGlyphCode = fontFile.readTTFULong();
+
+                if (startCharCode < 0 || startCharCode > 0x10FFFFL) {
+                    log.warn("startCharCode outside Unicode range");
+                    continue;
+                }
+
+                if (startCharCode >= 0xD800 && startCharCode <= 0xDFFF) {
+                    log.warn("startCharCode is a surrogate pair: " + startCharCode);
+                }
+
+                //endCharCode outside unicode range or is surrogate pair.
+                if (endCharCode > 0 && endCharCode < startCharCode || endCharCode > 0x10FFFFL) {
+                    log.warn("startCharCode outside Unicode range");
+                    continue;
+                }
+
+                if (endCharCode >= 0xD800 && endCharCode <= 0xDFFF) {
+                    log.warn("endCharCode is a surrogate pair: " + startCharCode);
+                }
+
+                for (long offset = 0; offset <= endCharCode - startCharCode; ++offset) {
+                    long glyphIndexL = startGlyphCode + offset;
+                    long charCodeL = startCharCode + offset;
+
+                    if (glyphIndexL >= numberOfGlyphs) {
+                        log.warn("Format 12 cmap contains an invalid glyph index");
+                        break;
+                    }
+
+                    if (charCodeL > 0x10FFFFL) {
+                        log.warn("Format 12 cmap contains character beyond UCS-4");
+                    }
+
+                    if (glyphIndexL > Integer.MAX_VALUE) {
+                        log.error("glyphIndex > Integer.MAX_VALUE");
+                        continue;
+                    }
+
+                    if (charCodeL > Integer.MAX_VALUE) {
+                        log.error("startCharCode + j > Integer.MAX_VALUE");
+                        continue;
+                    }
+
+                    // Update lastChar
+                    if (charCodeL < 0xFF && charCodeL > lastChar) {
+                        lastChar = (short) charCodeL;
+                    }
+
+                    int charCode = (int) charCodeL;
+                    int glyphIndex = (int) glyphIndexL;
+
+                    // Also add winAnsiWidth.
+                    List<Integer> ansiIndexes = null;
+
+                    if (charCodeL <= java.lang.Character.MAX_VALUE) {
+                        ansiIndexes = ansiIndex.get((int) charCodeL);
+                    }
+
+                    unicodeMappings.add(new UnicodeMapping(this, glyphIndex, charCode));
+                    mtxTab[glyphIndex].getUnicodeIndex().add(charCode);
+
+                    if (ansiIndexes == null) {
+                        continue;
+                    }
+
+                    for (Integer aIdx : ansiIndexes) {
+                        ansiWidth[aIdx] = mtxTab[glyphIndex].getWx();
+
+                        if (log.isTraceEnabled()) {
+                            log.trace("Added width "
+                                    + mtxTab[glyphIndex].getWx()
+                                    + " uni: " + offset
+                                    + " ansi: " + aIdx);
                         }
                     }
                 }

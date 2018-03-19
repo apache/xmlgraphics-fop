@@ -22,6 +22,7 @@ package org.apache.fop.fonts.truetype;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -30,6 +31,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.truetype.OpenFont.PostScriptVersion;
 
 /**
@@ -45,6 +47,11 @@ public class TTFFileTestCase {
     protected final TTFFile droidmonoTTFFile;
     /** The FontFileReader for ttfFile (DroidSansMono) */
     protected final FontFileReader droidmonoReader;
+    /** The truetype font file (AndroidEmoji) fonr non-BMP codepoints */
+    protected final TTFFile androidEmojiTTFFile;
+    /** The FontFileReader for ttfFile (AndroidEmoji) */
+    protected final FontFileReader androidEmojiReader;
+
 
 
     /**
@@ -52,20 +59,27 @@ public class TTFFileTestCase {
      * @throws IOException exception
      */
     public TTFFileTestCase() throws IOException {
-        dejavuTTFFile = new TTFFile();
         InputStream dejaStream = new FileInputStream("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
+        dejavuTTFFile = new TTFFile();
         dejavuReader = new FontFileReader(dejaStream);
         String dejavuHeader = OFFontLoader.readHeader(dejavuReader);
         dejavuTTFFile.readFont(dejavuReader, dejavuHeader);
         dejaStream.close();
 
         InputStream droidStream = new FileInputStream("test/resources/fonts/ttf/DroidSansMono.ttf");
-
         droidmonoTTFFile = new TTFFile();
         droidmonoReader = new FontFileReader(droidStream);
         String droidmonoHeader = OFFontLoader.readHeader(droidmonoReader);
         droidmonoTTFFile.readFont(droidmonoReader, droidmonoHeader);
         droidStream.close();
+
+        InputStream emojiStream = new FileInputStream("test/resources/fonts/ttf/AndroidEmoji.ttf");
+        androidEmojiTTFFile = new TTFFile();
+        androidEmojiReader = new FontFileReader(emojiStream);
+        String androidEmojiHeader = OFFontLoader.readHeader(androidEmojiReader);
+        androidEmojiTTFFile.readFont(androidEmojiReader, androidEmojiHeader);
+        emojiStream.close();
+
     }
 
     /**
@@ -110,12 +124,11 @@ public class TTFFileTestCase {
      */
     @Test
     public void testGetAnsiKerning() {
-        Map<Integer, Map<Integer, Integer>> ansiKerning = dejavuTTFFile.getKerning();
+        Map<Integer, Map<Integer, Integer>> ansiKerning = dejavuTTFFile.getAnsiKerning();
         if (ansiKerning.isEmpty()) {
             fail();
         }
-        Integer k1 = ansiKerning.get((int) 'A').get(
-                (int) 'T');
+        Integer k1 = ansiKerning.get((int) 'A').get((int) 'T');
         assertEquals(dejavuTTFFile.convertTTFUnit2PDFUnit(-112), k1.intValue());
         Integer k2 = ansiKerning.get((int) 'Y').get((int) 'u');
         assertEquals(dejavuTTFFile.convertTTFUnit2PDFUnit(-178), k2.intValue());
@@ -124,6 +137,12 @@ public class TTFFileTestCase {
         ansiKerning = droidmonoTTFFile.getAnsiKerning();
         if (!ansiKerning.isEmpty()) {
             fail("DroidSansMono shouldn't have any kerning data.");
+        }
+
+        // AndroidEmoji doens't have kerning
+        ansiKerning = androidEmojiTTFFile.getAnsiKerning();
+        if (!ansiKerning.isEmpty()) {
+            fail("AndroidEmoji shouldn't have any kerning data.");
         }
     }
 
@@ -145,6 +164,10 @@ public class TTFFileTestCase {
         // height of "H" = 1462
         assertEquals(droidmonoTTFFile.convertTTFUnit2PDFUnit(1462),
                 droidmonoTTFFile.getCapHeight());
+        // AndroidEmoji doesn't have a PCLT table either
+        // height of "H" = 1462
+        assertEquals(androidEmojiTTFFile.convertTTFUnit2PDFUnit(1462),
+                androidEmojiTTFFile.getCapHeight());
     }
 
     /**
@@ -154,6 +177,8 @@ public class TTFFileTestCase {
     public void testGetCharSetName() {
         assertTrue("WinAnsiEncoding".equals(dejavuTTFFile.getCharSetName()));
         assertTrue("WinAnsiEncoding".equals(droidmonoTTFFile.getCharSetName()));
+        //Even though this pass I'm not sure whether is what we want
+        assertTrue("WinAnsiEncoding".equals(androidEmojiTTFFile.getCharSetName()));
     }
 
     /**
@@ -175,12 +200,24 @@ public class TTFFileTestCase {
         for (int i = 0; i < 255; i++) {
             assertEquals(charWidth, droidmonoTTFFile.getCharWidth(i));
         }
+
+        // All the glyphs should be the same width in EmojiAndroid (mono-spaced)
+        charWidth = androidEmojiTTFFile.convertTTFUnit2PDFUnit(2600);
+        for (int i = 0; i < 255; i++) {
+            assertEquals(charWidth, androidEmojiTTFFile.getCharWidth(i));
+        }
     }
 
     /**
      * TODO: add implementation to this test
      */
+    @Test
     public void testGetCMaps() {
+        List<CMapSegment> cmaps = androidEmojiTTFFile.getCMaps();
+
+        for (CMapSegment seg : cmaps) {
+            System.out.println(seg.getUnicodeStart() + "-" + seg.getUnicodeEnd() + " -> " + seg.getGlyphStartIndex());
+        }
     }
 
     /**
@@ -196,6 +233,10 @@ public class TTFFileTestCase {
         for (String name : droidmonoTTFFile.getFamilyNames()) {
             assertEquals("Droid Sans Mono", name);
         }
+        assertEquals(1, androidEmojiTTFFile.getFamilyNames().size());
+        for (String name : androidEmojiTTFFile.getFamilyNames()) {
+            assertEquals("Android Emoji", name);
+        }
     }
 
     /**
@@ -206,6 +247,7 @@ public class TTFFileTestCase {
         // Not really sure how to test this intelligently
         assertEquals(0, dejavuTTFFile.getFirstChar());
         assertEquals(0, droidmonoTTFFile.getFirstChar());
+        assertEquals(0, androidEmojiTTFFile.getFirstChar());
     }
 
     /**
@@ -234,6 +276,17 @@ public class TTFFileTestCase {
         assertEquals(32, flags & 32);
         assertEquals(2, flags & 2);
         assertEquals(1, flags & 1);
+        /*
+         * Android Emoji flags are:
+         * italic angle = 0
+         * fixed pitch = 0
+         * has serifs = true (default value; this font doesn't have a PCLT table)
+         */
+        flags = androidEmojiTTFFile.getFlags();
+        assertEquals(0, flags & 64);
+        assertEquals(32, flags & 32);
+        assertEquals(0, flags & 2);
+        assertEquals(1, flags & 1);
     }
 
     /**
@@ -259,6 +312,16 @@ public class TTFFileTestCase {
         assertEquals(droidmonoTTFFile.convertTTFUnit2PDFUnit(-555), bBox[1]);
         assertEquals(droidmonoTTFFile.convertTTFUnit2PDFUnit(1315), bBox[2]);
         assertEquals(droidmonoTTFFile.convertTTFUnit2PDFUnit(2163), bBox[3]);
+
+        /*
+         * The head table has the following values (DroidSansMono):
+         * xMin = -50, yMin = -733, xMax = 2550, yMax = 2181
+         */
+        bBox = androidEmojiTTFFile.getFontBBox();
+        assertEquals(androidEmojiTTFFile.convertTTFUnit2PDFUnit(-50), bBox[0]);
+        assertEquals(androidEmojiTTFFile.convertTTFUnit2PDFUnit(-733), bBox[1]);
+        assertEquals(androidEmojiTTFFile.convertTTFUnit2PDFUnit(2550), bBox[2]);
+        assertEquals(androidEmojiTTFFile.convertTTFUnit2PDFUnit(2181), bBox[3]);
     }
 
     /**
@@ -268,6 +331,7 @@ public class TTFFileTestCase {
     public void testGetFullName() {
         assertEquals("DejaVu LGC Serif", dejavuTTFFile.getFullName());
         assertEquals("Droid Sans Mono", droidmonoTTFFile.getFullName());
+        assertEquals("Android Emoji", androidEmojiTTFFile.getFullName());
     }
 
     /**
@@ -277,6 +341,7 @@ public class TTFFileTestCase {
     public void testGetGlyphName() {
         assertEquals("H", dejavuTTFFile.getGlyphName(43));
         assertEquals("H", droidmonoTTFFile.getGlyphName(43));
+        assertEquals("smileface", androidEmojiTTFFile.getGlyphName(64));
     }
 
     /**
@@ -286,6 +351,7 @@ public class TTFFileTestCase {
     public void testGetItalicAngle() {
         assertEquals("0", dejavuTTFFile.getItalicAngle());
         assertEquals("0", droidmonoTTFFile.getItalicAngle());
+        assertEquals("0", androidEmojiTTFFile.getItalicAngle());
     }
 
     /**
@@ -307,6 +373,12 @@ public class TTFFileTestCase {
         if (!kerning.isEmpty()) {
             fail("DroidSansMono shouldn't have any kerning data");
         }
+
+        // AndroidEmoji doens't have kerning
+        kerning = androidEmojiTTFFile.getKerning();
+        if (!kerning.isEmpty()) {
+            fail("AndroidEmoji shouldn't have any kerning data.");
+        }
     }
 
     /**
@@ -316,6 +388,7 @@ public class TTFFileTestCase {
     public void testLastChar() {
         assertEquals(0xff, dejavuTTFFile.getLastChar());
         assertEquals(0xff, droidmonoTTFFile.getLastChar());
+        assertEquals(0xae, androidEmojiTTFFile.getLastChar());  // Last ASCII mapped char is REGISTERED SIGN
     }
 
     /**
@@ -331,6 +404,11 @@ public class TTFFileTestCase {
         // Curiously the same value
         assertEquals(droidmonoTTFFile.convertTTFUnit2PDFUnit(1556),
                 droidmonoTTFFile.getLowerCaseAscent());
+        //TODO:  Nedd to be fixed?
+        // 0 because the font miss letter glyph that are used in this method to guess the ascender:
+        // OpenFont.guessVerticalMetricsFromGlyphBBox
+        assertEquals(androidEmojiTTFFile.convertTTFUnit2PDFUnit(0),
+                androidEmojiTTFFile.getLowerCaseAscent());
     }
 
     /**
@@ -340,6 +418,7 @@ public class TTFFileTestCase {
     public void testGetPostScriptName() {
         assertEquals(PostScriptVersion.V2, dejavuTTFFile.getPostScriptVersion());
         assertEquals(PostScriptVersion.V2, droidmonoTTFFile.getPostScriptVersion());
+        assertEquals(PostScriptVersion.V2, androidEmojiTTFFile.getPostScriptVersion());
     }
 
     /**
@@ -350,6 +429,7 @@ public class TTFFileTestCase {
         // Undefined
         assertEquals("0", dejavuTTFFile.getStemV());
         assertEquals("0", droidmonoTTFFile.getStemV());
+        assertEquals("0", androidEmojiTTFFile.getStemV());
     }
 
     /**
@@ -359,6 +439,7 @@ public class TTFFileTestCase {
     public void testGetSubFamilyName() {
         assertEquals("Book", dejavuTTFFile.getSubFamilyName());
         assertEquals("Regular", droidmonoTTFFile.getSubFamilyName());
+        assertEquals("Regular", androidEmojiTTFFile.getSubFamilyName());
     }
 
     /**
@@ -376,6 +457,7 @@ public class TTFFileTestCase {
         // Retrieved from OS/2 table
         assertEquals(400, dejavuTTFFile.getWeightClass());
         assertEquals(400, droidmonoTTFFile.getWeightClass());
+        assertEquals(400, androidEmojiTTFFile.getWeightClass());
     }
 
     /**
@@ -388,12 +470,36 @@ public class TTFFileTestCase {
         assertEquals(dejavuTTFFile.convertTTFUnit2PDFUnit(1479), widths[36]);
         // using the width of '|' index = 95
         assertEquals(dejavuTTFFile.convertTTFUnit2PDFUnit(690), widths[95]);
-        widths = droidmonoTTFFile.getWidths();
+
         // DroidSansMono should have all widths the same size (mono-spaced)
-        int width = droidmonoTTFFile.convertTTFUnit2PDFUnit(1229);
-        for (int i = 0; i < 255; i++) {
-            assertEquals(width, widths[i]);
+        widths = droidmonoTTFFile.getWidths();
+        int charWidth = droidmonoTTFFile.convertTTFUnit2PDFUnit(1229);
+        for (OpenFont.UnicodeMapping unicodeMapping : droidmonoTTFFile.unicodeMappings) {
+            assertEquals(charWidth, widths[unicodeMapping.getGlyphIndex()]);
         }
+
+        // All the glyphs should be the same width in EmojiAndroid (mono-spaced)
+        charWidth = androidEmojiTTFFile.convertTTFUnit2PDFUnit(2600);
+        widths = androidEmojiTTFFile.getWidths();
+        for (OpenFont.UnicodeMapping unicodeMapping : androidEmojiTTFFile.unicodeMappings) {
+            assertEquals(charWidth, widths[unicodeMapping.getGlyphIndex()]);
+        }
+    }
+
+    @Test
+    public void textUnicodeCoverage() {
+        int nonBMPcount = 0;
+        for (OpenFont.UnicodeMapping unicodeMapping : droidmonoTTFFile.unicodeMappings) {
+            nonBMPcount += unicodeMapping.getUnicodeIndex() > 0xFFFF ? 1 : 0;
+        }
+        assertEquals("The font DroidSansMono is supposed to have only BMP codepoints", 0, nonBMPcount);
+
+        nonBMPcount = 0;
+        for (OpenFont.UnicodeMapping unicodeMapping : androidEmojiTTFFile.unicodeMappings) {
+            nonBMPcount += unicodeMapping.getUnicodeIndex() > 0xFFFF ? 1 : 0;
+        }
+
+        assertTrue("The font AndroidEmoji is supposed to have non-BMP codepoints", 0 != nonBMPcount);
     }
 
     /**
@@ -418,6 +524,7 @@ public class TTFFileTestCase {
         // Neither DejaVu nor DroidSansMono are a compact format font
         assertEquals(false, dejavuTTFFile.isCFF());
         assertEquals(false, droidmonoTTFFile.isCFF());
+        assertEquals(false, androidEmojiTTFFile.isCFF());
     }
 
     /**
@@ -428,6 +535,7 @@ public class TTFFileTestCase {
         // Dejavu and DroidSansMono are both embeddable
         assertEquals(true, dejavuTTFFile.isEmbeddable());
         assertEquals(true, droidmonoTTFFile.isEmbeddable());
+        assertEquals(true, androidEmojiTTFFile.isEmbeddable());
     }
 
     /** Underline position and thickness. */
@@ -437,6 +545,8 @@ public class TTFFileTestCase {
         assertEquals(43, dejavuTTFFile.getUnderlineThickness());
         assertEquals(-75, droidmonoTTFFile.getUnderlinePosition());
         assertEquals(49, droidmonoTTFFile.getUnderlineThickness());
+        assertEquals(-75, androidEmojiTTFFile.getUnderlinePosition());
+        assertEquals(49, androidEmojiTTFFile.getUnderlineThickness());
     }
 
     /** Strikeout position and thickness. */
@@ -446,6 +556,8 @@ public class TTFFileTestCase {
         assertEquals(49, dejavuTTFFile.getStrikeoutThickness());
         assertEquals(243, droidmonoTTFFile.getStrikeoutPosition());
         assertEquals(49, droidmonoTTFFile.getStrikeoutThickness());
+        assertEquals(122, androidEmojiTTFFile.getStrikeoutPosition());
+        assertEquals(24, androidEmojiTTFFile.getStrikeoutThickness());
     }
 
     /**

@@ -21,6 +21,10 @@ package org.apache.fop.pdf;
 
 import java.io.ByteArrayOutputStream;
 
+import java.util.Locale;
+
+import org.apache.fop.util.CharUtilities;
+
 /**
  * This class represents a simple number object. It also contains contains some
  * utility methods for outputting numbers to PDF.
@@ -205,13 +209,19 @@ public class PDFText extends PDFObject {
 
     /**
      * Convert a char to a multibyte hex representation appending to string buffer.
-     * Since Java always stores strings in UTF-16, we don't have to do any conversion.
+     * The created string will be:
+     * <ul>
+     *     <li>4-character string in case of non-BMP character</li>
+     *     <li>6-character string in case of BMP character</li>
+     * </ul>
      * @param c character to encode
      * @param sb the string buffer to append output
      */
-    public static final void toUnicodeHex(char c, StringBuffer sb) {
-        for (int i = 0; i < 4; ++i) {
-            sb.append(DIGITS[(c >> (12 - 4 * i)) & 0x0F]);
+    public static final void toUnicodeHex(int c, StringBuffer sb) {
+        if (CharUtilities.isBmpCodePoint(c)) {
+            sb.append(Integer.toHexString(c + 0x10000).substring(1).toUpperCase(Locale.US));
+        } else {
+            sb.append(Integer.toHexString(c + 0x1000000).substring(1).toUpperCase(Locale.US));
         }
     }
 

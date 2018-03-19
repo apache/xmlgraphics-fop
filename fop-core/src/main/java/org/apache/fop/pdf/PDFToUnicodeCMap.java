@@ -129,8 +129,17 @@ public class PDFToUnicodeCMap extends PDFCMap {
                         charIndex++;
                     }
                     writer.write("<" + padCharIndex(charIndex) + "> ");
-                    writer.write("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4)
-                            + ">\n");
+
+                    if (Character.codePointAt(charArray, charIndex) > 0xFFFF) {
+                        // Handle UTF-16 surrogate pairs
+                        String pairs = Integer.toHexString(charArray[charIndex])
+                                            + Integer.toHexString(charArray[++charIndex]);
+                        writer.write("<" + pairs + ">\n");
+                        i++;
+                    } else {
+                        writer.write("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4)
+                                + ">\n");
+                    }
                     charIndex++;
                 }
                 remainingEntries -= entriesThisSection;

@@ -137,6 +137,12 @@
       <version>${xmlunit.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+      <version>2.0.3</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -308,6 +314,7 @@
           <headerLocation>${project.baseUri}src/tools/resources/checkstyle/LICENSE.txt</headerLocation>
           <includeResources>false</includeResources>
           <includeTestResources>false</includeTestResources>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
           <linkXRef>false</linkXRef>
           <logViolationsToConsole>true</logViolationsToConsole>
           <suppressionsLocation>${project.baseUri}src/tools/resources/checkstyle/suppressions.xml</suppressionsLocation>

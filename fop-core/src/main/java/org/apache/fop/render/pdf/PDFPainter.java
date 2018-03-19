@@ -479,11 +479,17 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             textutil.adjustGlyphTJ(-dx[0] / fontSize);
         }
         for (int i = 0; i < l; i++) {
-            char orgChar = text.charAt(i);
-            char ch;
+            int orgChar = text.charAt(i);
+            int ch;
+
+            // surrogate pairs have to be merged in a single code point
+            if (CharUtilities.containsSurrogatePairAt(text, i)) {
+                orgChar = Character.toCodePoint((char) orgChar, text.charAt(++i));
+            }
+
             float glyphAdjust = 0;
-            if (font.hasChar(orgChar)) {
-                ch = font.mapChar(orgChar);
+            if (font.hasCodePoint(orgChar)) {
+                ch = font.mapCodePoint(orgChar);
                 ch = selectAndMapSingleByteFont(tf, fontName, fontSize, textutil, ch);
                 if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
                     glyphAdjust += wordSpacing;
@@ -495,14 +501,14 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                     int spaceDiff = font.getCharWidth(CharUtilities.SPACE) - font.getCharWidth(orgChar);
                     glyphAdjust = -spaceDiff;
                 } else {
-                    ch = font.mapChar(orgChar);
+                    ch = font.mapCodePoint(orgChar);
                     if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
                         glyphAdjust += wordSpacing;
                     }
                 }
                 ch = selectAndMapSingleByteFont(tf, fontName, fontSize, textutil, ch);
             }
-            textutil.writeTJMappedChar(ch);
+            textutil.writeTJMappedCodePoint(ch);
 
             if (dx != null && i < dxl - 1) {
                 glyphAdjust += dx[i + 1];
@@ -551,9 +557,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                 double  xd              = (xo - xoLast) / 1000f;
                 double  yd              = (yo - yoLast) / 1000f;
                 tu.writeTd(xd, yd);
-                ch = f.mapChar(ch);
-                ch = selectAndMapSingleByteFont(tf, f.getFontName(), fsPoints, tu, ch);
-                tu.writeTj(ch, tf.isMultiByte(), true);
+                tu.writeTj(f.mapChar(ch), tf.isMultiByte(), true);
                 xc += xa + pa[2];
                 yc += ya + pa[3];
                 xoLast = xo;
@@ -584,8 +588,8 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
     }
     */
 
-    private char selectAndMapSingleByteFont(Typeface tf, String fontName, float fontSize, PDFTextUtil textutil,
-                                            char ch) {
+    private int selectAndMapSingleByteFont(Typeface tf, String fontName, float fontSize, PDFTextUtil textutil,
+                                            int ch) {
         if ((tf instanceof SingleByteFont && ((SingleByteFont)tf).hasAdditionalEncodings()) || tf.isCID()) {
             int encoding = ch / 256;
             if (encoding == 0) {
