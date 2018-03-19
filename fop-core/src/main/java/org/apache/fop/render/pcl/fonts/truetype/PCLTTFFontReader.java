@@ -627,7 +627,7 @@ public class PCLTTFFontReader extends PCLFontReader {
                     int nextOffset = 0;
                     int charCode = 0;
                     if (entry.getUnicodeIndex().size() > 0) {
-                        charCode = (Integer) entry.getUnicodeIndex().get(0);
+                        charCode = entry.getUnicodeIndex().get(0);
                     } else {
                         charCode = entry.getIndex();
                     }
@@ -743,7 +743,7 @@ public class PCLTTFFontReader extends PCLFontReader {
                     OFMtxEntry entry = mtx.get(i);
                     int charCode = 0;
                     if (entry.getUnicodeIndex().size() > 0) {
-                        charCode = (Integer) entry.getUnicodeIndex().get(0);
+                        charCode = entry.getUnicodeIndex().get(0);
                     } else {
                         charCode = entry.getIndex();
                     }

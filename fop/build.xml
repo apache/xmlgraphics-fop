@@ -638,7 +638,7 @@ list of possible build targets.
       <include name="org/apache/fop/util/*OutputStream.class"/>
       <include name="org/apache/fop/util/SubInputStream.class"/>
       <include name="org/apache/fop/util/Finalizable.class"/>
-      <include name="org/apache/fop/util/CharUtilities.class"/>
+      <include name="org/apache/fop/util/CharUtilities*.class"/>
       <include name="org/apache/fop/util/DecimalFormatCache*.class"/>
       <include name="org/apache/fop/util/ImageObject.class"/>
       <include name="org/apache/fop/util/HexEncoder.class"/>

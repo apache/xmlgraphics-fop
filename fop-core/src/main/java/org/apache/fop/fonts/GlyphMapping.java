@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -29,6 +30,8 @@ import org.apache.fop.complexscripts.fonts.GlyphTable;
 import org.apache.fop.complexscripts.util.CharScript;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.CharUtilities;
+
+import static org.apache.fop.fonts.type1.AdobeStandardEncoding.i;
 
 /**
  * Stores the mapping of a text fragment to glyphs, along with various information.
@@ -57,7 +60,7 @@ public class GlyphMapping {
             MinOptMax areaIPD, boolean isHyphenated, boolean isSpace, boolean breakOppAfter,
             Font font, int level, int[][] gposAdjustments) {
         this(startIndex, endIndex, wordSpaceCount, letterSpaceCount, areaIPD, isHyphenated,
-             isSpace, breakOppAfter, font, level, gposAdjustments, null, null);
+                isSpace, breakOppAfter, font, level, gposAdjustments, null, null);
     }
 
     public GlyphMapping(int startIndex, int endIndex, int wordSpaceCount, int letterSpaceCount,
@@ -87,11 +90,11 @@ public class GlyphMapping {
         GlyphMapping mapping;
         if (font.performsSubstitution() || font.performsPositioning()) {
             mapping = processWordMapping(text, startIndex, endIndex, font,
-                breakOpportunityChar, endsWithHyphen, level,
-                dontOptimizeForIdentityMapping, retainAssociations, retainControls);
+                    breakOpportunityChar, endsWithHyphen, level,
+                    dontOptimizeForIdentityMapping, retainAssociations, retainControls);
         } else {
             mapping = processWordNoMapping(text, startIndex, endIndex, font,
-                letterSpaceIPD, letterSpaceAdjustArray, precedingChar, breakOpportunityChar, endsWithHyphen, level);
+                    letterSpaceIPD, letterSpaceAdjustArray, precedingChar, breakOpportunityChar, endsWithHyphen, level);
         }
         return mapping;
     }
@@ -99,21 +102,20 @@ public class GlyphMapping {
     private static GlyphMapping processWordMapping(TextFragment text, int startIndex,
             int endIndex, final Font font, final char breakOpportunityChar,
             final boolean endsWithHyphen, int level,
-        boolean dontOptimizeForIdentityMapping, boolean retainAssociations, boolean retainControls) {
-        int e = endIndex; // end index of word in FOText character buffer
+            boolean dontOptimizeForIdentityMapping, boolean retainAssociations, boolean retainControls) {
         int nLS = 0; // # of letter spaces
         String script = text.getScript();
         String language = text.getLanguage();
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("PW: [" + startIndex + "," + endIndex + "]: {"
-                        + " +M"
-                        + ", level = " + level
-                        + " }");
+                    + " +M"
+                    + ", level = " + level
+                    + " }");
         }
 
         // 1. extract unmapped character sequence.
-        CharSequence ics = text.subSequence(startIndex, e);
+        CharSequence ics = text.subSequence(startIndex, endIndex);
 
         // 2. if script is not specified (by FO property) or it is specified as 'auto',
         // then compute dominant script.
@@ -126,7 +128,16 @@ public class GlyphMapping {
 
         // 3. perform mapping of chars to glyphs ... to glyphs ... to chars, retaining
         // associations if requested.
-        List associations = retainAssociations ? new java.util.ArrayList() : null;
+        List associations = retainAssociations ? new ArrayList() : null;
+
+        // This is a workaround to read the ligature from the font even if the script
+        // does not match the one defined for the table.
+        // More info here: https://issues.apache.org/jira/browse/FOP-2638
+        // zyyy == SCRIPT_UNDEFINED
+        if ("zyyy".equals(script) || "auto".equals(script)) {
+            script = "*";
+        }
+
         CharSequence mcs = font.performSubstitution(ics, script, language, associations, retainControls);
 
         // 4. compute glyph position adjustments on (substituted) characters.
@@ -148,7 +159,11 @@ public class GlyphMapping {
         MinOptMax ipd = MinOptMax.ZERO;
         for (int i = 0, n = mcs.length(); i < n; i++) {
             int c = mcs.charAt(i);
-            // TODO !BMP
+
+            if (CharUtilities.containsSurrogatePairAt(mcs, i)) {
+                c = Character.toCodePoint((char) c, mcs.charAt(++i));
+            }
+
             int w = font.getCharWidth(c);
             if (w < 0) {
                 w = 0;
@@ -161,7 +176,7 @@ public class GlyphMapping {
 
         // [TBD] - handle letter spacing
 
-        return new GlyphMapping(startIndex, e, 0, nLS, ipd, endsWithHyphen, false,
+        return new GlyphMapping(startIndex, endIndex, 0, nLS, ipd, endsWithHyphen, false,
                 breakOpportunityChar != 0, font, level, gpa,
                 !dontOptimizeForIdentityMapping && CharUtilities.isSameSequence(mcs, ics) ? null : mcs.toString(),
                 associations);
@@ -180,21 +195,23 @@ public class GlyphMapping {
      * @return glyph position adjustments (or null if no kerning)
      */
     private static int[][] getKerningAdjustments(CharSequence mcs, final Font font, int[][] gpa) {
-        int nc = mcs.length();
+        int numCodepoints = Character.codePointCount(mcs, 0, mcs.length());
         // extract kerning array
-        int[] ka = new int[nc]; // kerning array
-        for (int i = 0, n = nc, cPrev = -1; i < n; i++) {
-            int c = mcs.charAt(i);
-            // TODO !BMP
-            if (cPrev >= 0) {
-                ka[i] = font.getKernValue(cPrev, c);
+        int[] kernings = new int[numCodepoints]; // kerning array
+
+        int prevCp = -1;
+        int i = 0;
+        for (int cp : CharUtilities.codepointsIter(mcs)) {
+            if (prevCp >= 0) {
+                kernings[i] = font.getKernValue(prevCp, cp);
             }
-            cPrev = c;
+            prevCp = cp;
+            i++;
         }
         // was there a non-zero kerning?
         boolean hasKerning = false;
-        for (int i = 0, n = nc; i < n; i++) {
-            if (ka[i] != 0) {
+        for (int kerningValue : kernings) {
+            if (kerningValue != 0) {
                 hasKerning = true;
                 break;
             }
@@ -202,11 +219,11 @@ public class GlyphMapping {
         // if non-zero kerning, then create and return glyph position adjustment array
         if (hasKerning) {
             if (gpa == null) {
-                gpa = new int[nc][4];
+                gpa = new int[numCodepoints][4];
             }
-            for (int i = 0, n = nc; i < n; i++) {
+            for (i = 0; i < numCodepoints; i++) {
                 if (i > 0) {
-                    gpa [i - 1][GlyphPositioningTable.Value.IDX_X_ADVANCE] += ka[i];
+                    gpa [i - 1][GlyphPositioningTable.Value.IDX_X_ADVANCE] += kernings[i];
                 }
             }
             return gpa;
@@ -223,13 +240,14 @@ public class GlyphMapping {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("PW: [" + startIndex + "," + endIndex + "]: {"
-                        + " -M"
-                        + ", level = " + level
-                        + " }");
+                    + " -M"
+                    + ", level = " + level
+                    + " }");
         }
 
-        for (int i = startIndex; i < endIndex; i++) {
-            char currentChar = text.charAt(i);
+        CharSequence ics = text.subSequence(startIndex, endIndex);
+        int offset = 0;
+        for (int currentChar : CharUtilities.codepointsIter(ics)) {
 
             // character width
             int charWidth = font.getCharWidth(currentChar);
@@ -238,24 +256,32 @@ public class GlyphMapping {
             // kerning
             if (kerning) {
                 int kern = 0;
-                if (i > startIndex) {
-                    char previousChar = text.charAt(i - 1);
+                if (offset > 0) {
+                    int previousChar = java.lang.Character.codePointAt(ics, offset - 1);
                     kern = font.getKernValue(previousChar, currentChar);
                 } else if (precedingChar != 0) {
                     kern = font.getKernValue(precedingChar, currentChar);
                 }
                 if (kern != 0) {
-                    addToLetterAdjust(letterSpaceAdjustArray, i, kern);
+                    addToLetterAdjust(letterSpaceAdjustArray, startIndex + offset, kern);
                     wordIPD = wordIPD.plus(kern);
                 }
             }
+            offset++;
         }
         if (kerning
                 && (breakOpportunityChar != 0)
                 && !isSpace(breakOpportunityChar)
                 && endIndex > 0
                 && endsWithHyphen) {
-            int kern = font.getKernValue(text.charAt(endIndex - 1), breakOpportunityChar);
+            int endChar = text.charAt(endIndex - 1);
+
+            if (java.lang.Character.isLowSurrogate((char) endChar)) {
+                char highSurrogate = text.charAt(endIndex - 2);
+                endChar = java.lang.Character.toCodePoint(highSurrogate, (char) endChar);
+            }
+
+            int kern = font.getKernValue(endChar, (int) breakOpportunityChar);
             if (kern != 0) {
                 addToLetterAdjust(letterSpaceAdjustArray, endIndex, kern);
                 // TODO: add kern to wordIPD?

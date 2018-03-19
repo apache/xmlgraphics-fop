@@ -28,6 +28,8 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.complexscripts.fonts.Positionable;
 import org.apache.fop.complexscripts.fonts.Substitutable;
+import org.apache.fop.render.java2d.CustomFontMetricsMapper;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * This class holds font state information and provides access to the font
@@ -194,39 +196,22 @@ public class Font implements Substitutable, Positionable {
      * @param ch2 second character
      * @return the distance to adjust for kerning, 0 if there's no kerning
      */
-    public int getKernValue(char ch1, char ch2) {
-        Map<Integer, Integer> kernPair = getKerning().get((int) ch1);
+    public int getKernValue(int ch1, int ch2) {
+        // Isolate surrogate pair
+        if ((ch1 >= 0xD800) && (ch1 <= 0xE000)) {
+            return 0;
+        } else if ((ch2 >= 0xD800) && (ch2 <= 0xE000)) {
+            return 0;
+        }
+
+        Map<Integer, Integer> kernPair = getKerning().get(ch1);
         if (kernPair != null) {
-            Integer width = kernPair.get((int) ch2);
+            Integer width = kernPair.get(ch2);
             if (width != null) {
                 return width * getFontSize() / 1000;
             }
         }
         return 0;
-    }
-
-    /**
-     * Returns the amount of kerning between two characters.
-     *
-     * The value returned measures in pt. So it is already adjusted for font size.
-     *
-     * @param ch1 first character
-     * @param ch2 second character
-     * @return the distance to adjust for kerning, 0 if there's no kerning
-     */
-    public int getKernValue(int ch1, int ch2) {
-        // TODO !BMP
-        if (ch1 > 0x10000) {
-            return 0;
-        } else if ((ch1 >= 0xD800) && (ch1 <= 0xE000)) {
-            return 0;
-        } else if (ch2 > 0x10000) {
-            return 0;
-        } else if ((ch2 >= 0xD800) && (ch2 <= 0xE000)) {
-            return 0;
-        } else {
-            return getKernValue((char) ch1, (char) ch2);
-        }
     }
 
     /**
@@ -264,9 +249,29 @@ public class Font implements Substitutable, Positionable {
     }
 
     /**
+     * Map a unicode code point to a font character.
+     * Default uses CodePointMapping.
+     * @param cp code point to map
+     * @return the mapped character
+     */
+    public int mapCodePoint(int cp) {
+        FontMetrics fontMetrics = getRealFontMetrics();
+
+        if (fontMetrics instanceof CIDFont) {
+            return ((CIDFont) fontMetrics).mapCodePoint(cp);
+        }
+
+        if (CharUtilities.isBmpCodePoint(cp)) {
+            return mapChar((char) cp);
+        }
+
+        return Typeface.NOT_FOUND;
+    }
+
+    /**
      * Determines whether this font contains a particular character/glyph.
      * @param c character to check
-     * @return True if the character is supported, Falso otherwise
+     * @return True if the character is supported, False otherwise
      */
     public boolean hasChar(char c) {
         if (metric instanceof org.apache.fop.fonts.Typeface) {
@@ -275,6 +280,45 @@ public class Font implements Substitutable, Positionable {
             // Use default CodePointMapping
             return (CodePointMapping.getMapping("WinAnsiEncoding").mapChar(c) > 0);
         }
+    }
+
+    /**
+     * Determines whether this font contains a particular code point/glyph.
+     * @param cp code point to check
+     * @return True if the code point is supported, False otherwise
+     */
+    public boolean hasCodePoint(int cp) {
+        FontMetrics realFont = getRealFontMetrics();
+
+        if (realFont instanceof CIDFont) {
+            return ((CIDFont) realFont).hasCodePoint(cp);
+        }
+
+        if (CharUtilities.isBmpCodePoint(cp)) {
+            return hasChar((char) cp);
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the real underlying font if it is wrapped inside some container such as a {@link LazyFont} or a
+     * {@link CustomFontMetricsMapper}.
+     *
+     * @return instance of the font
+     */
+    private FontMetrics getRealFontMetrics() {
+        FontMetrics realFontMetrics = metric;
+
+        if (realFontMetrics instanceof CustomFontMetricsMapper) {
+            realFontMetrics = ((CustomFontMetricsMapper) realFontMetrics).getRealFont();
+        }
+
+        if (realFontMetrics instanceof LazyFont) {
+            return ((LazyFont) realFontMetrics).getRealFont();
+        }
+
+        return realFontMetrics;
     }
 
     /**
@@ -380,10 +424,14 @@ public class Font implements Substitutable, Positionable {
     public int getCharWidth(int c) {
         if (c < 0x10000) {
             return getCharWidth((char) c);
-        } else {
-            // TODO !BMP
-            return -1;
         }
+
+        if (hasCodePoint(c)) {
+            int mappedChar = mapCodePoint(c);
+            return getWidth(mappedChar);
+        }
+
+        return -1;
     }
 
     /**

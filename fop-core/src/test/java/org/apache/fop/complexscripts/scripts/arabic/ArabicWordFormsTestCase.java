@@ -34,6 +34,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.apache.commons.io.IOUtils;
+
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable;
 import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable;
 import org.apache.fop.complexscripts.fonts.ttx.TTXFile;
@@ -88,14 +90,12 @@ public class ArabicWordFormsTestCase implements ArabicWordFormsConstants {
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(dpn);
-            if (fis != null) {
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                List<Object[]> data = (List<Object[]>) ois.readObject();
-                if (data != null) {
-                    processWordForms(data);
-                }
-                ois.close();
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            List<Object[]> data = (List<Object[]>) ois.readObject();
+            if (data != null) {
+                processWordForms(data);
             }
+            ois.close();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e.getMessage(), e);
         } catch (IOException e) {
@@ -103,9 +103,7 @@ public class ArabicWordFormsTestCase implements ArabicWordFormsConstants {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         } finally {
-            if (fis != null) {
-                try { fis.close(); } catch (Exception e) { /* NOP */ }
-            }
+            IOUtils.closeQuietly(fis);
         }
     }
 

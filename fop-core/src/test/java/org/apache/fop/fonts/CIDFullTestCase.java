@@ -89,6 +89,13 @@ public class CIDFullTestCase {
     }
 
     @Test
+    public void testMapCodePoint() {
+        // index 9 exists
+        char c = 'a';
+        assertEquals(cidFull.mapCodePoint(9, c), (char) 9);
+    }
+
+    @Test
     public void testGetGlyphs() {
         Map<Integer, Integer> fontGlyphs = cidFull.getGlyphs();
         for (Map.Entry<Integer, Integer> integerIntegerEntry : fontGlyphs.entrySet()) {

@@ -458,8 +458,8 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
         StringBuffer sb = new StringBuffer(initialSize);
         boolean isOTF = multiByte && ((MultiByteFont)tf).isOTFFile();
         for (int i = start; i < end; i++) {
-            char orgChar = text.charAt(i);
-            char ch;
+            int orgChar = text.charAt(i);
+            int ch;
             int cw;
             int xGlyphAdjust = 0;
             int yGlyphAdjust = 0;
@@ -473,8 +473,13 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                 if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
                     xGlyphAdjust -= wordSpacing;
                 }
-                ch = font.mapChar(orgChar);
-                cw = font.getCharWidth(orgChar); // this is never used?
+
+                // surrogate pairs have to be merged in a single code point
+                if (CharUtilities.containsSurrogatePairAt(text, i)) {
+                    orgChar = Character.toCodePoint((char) orgChar, text.charAt(++i));
+                }
+
+                ch = font.mapCodePoint(orgChar);
             }
 
             if (dp != null && i < dp.length && dp[i] != null) {

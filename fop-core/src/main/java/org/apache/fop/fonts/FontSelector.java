@@ -24,6 +24,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.properties.CommonFont;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * Helper class for automatic font selection.
@@ -115,14 +116,18 @@ public final class FontSelector {
             final Font font = fi.getFontInstance(fontkeys[fontnum],
                     commonFont.fontSize.getValue(context));
             fonts[fontnum] = font;
-            for (int pos = firstIndex; pos < breakIndex; pos++) {
-                if (font.hasChar(charSeq.charAt(pos))) {
+
+            int numCodePoints = 0;
+            for (int cp : CharUtilities.codepointsIter(charSeq, firstIndex, breakIndex)) {
+                numCodePoints++;
+
+                if (font.hasCodePoint(cp)) {
                     fontCount[fontnum]++;
                 }
             }
 
-            // quick fall through if all characters can be displayed
-            if (fontCount[fontnum] == (breakIndex - firstIndex)) {
+            // quick fall through if all codepoints can be displayed
+            if (fontCount[fontnum] == numCodePoints) {
                 return font;
             }
         }

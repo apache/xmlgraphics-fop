@@ -28,9 +28,14 @@ import java.io.File;
 import javax.xml.transform.stream.StreamResult;
 
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.endsWith;
+import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,8 +54,6 @@ import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.traits.BorderProps;
-
-import junit.framework.Assert;
 
 public class PDFPainterTestCase {
 
@@ -122,7 +125,7 @@ public class PDFPainterTestCase {
         pdfDocumentHandler.getContext().setPageNumber(3);
         MyPDFPainter pdfPainter = new MyPDFPainter(pdfDocumentHandler, null);
         pdfPainter.drawImage("test/resources/images/cmyk.jpg", new Rectangle());
-        Assert.assertEquals(pdfPainter.renderingContext.getHints().get("page-number"), 3);
+        assertEquals(pdfPainter.renderingContext.getHints().get("page-number"), 3);
     }
 
     class MyPDFPainter extends PDFPainter {
@@ -139,10 +142,52 @@ public class PDFPainterTestCase {
 
     @Test
     public void testSimulateStyle() throws IFException {
+        final StringBuilder sb = new StringBuilder();
+        pdfDocumentHandler = makePDFDocumentHandler(sb);
+
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("f1", new FontTriplet("a", "italic", 700));
+        MultiByteFont font = new MultiByteFont(null, null);
+        font.setSimulateStyle(true);
+        fi.addMetrics("f1", font);
+        pdfDocumentHandler.setFontInfo(fi);
+        MyPDFPainter pdfPainter = new MyPDFPainter(pdfDocumentHandler, null);
+        pdfPainter.setFont("a", "italic", 700, null, 12, null);
+        pdfPainter.drawText(0, 0, 0, 0, null, "test");
+
+        assertEquals(sb.toString(), "BT\n/f1 0.012 Tf\n1 0 0.3333 -1 0 0 Tm [<0000000000000000>] TJ\n");
+        verify(pdfContentGenerator).add("q\n");
+        verify(pdfContentGenerator).add("2 Tr 0.31543 w\n");
+        verify(pdfContentGenerator).add("Q\n");
+    }
+
+    @Test
+    public void testDrawTextWithMultiByteFont() throws IFException {
+        StringBuilder output = new StringBuilder();
+        PDFDocumentHandler pdfDocumentHandler = makePDFDocumentHandler(output);
+        //0x48 0x65 0x6C 0x6C 0x6F 0x20 0x4D 0x6F 0x63 0x6B 0x21 0x1F4A9
+        String text = "Hello Mock!\uD83D\uDCA9";
+        String expectedHex = "00480065006C006C006F0020004D006F0063006B002101F4A9";
+
+        MultiByteFont font = spy(new MultiByteFont(null, null));
+        when(font.mapCodePoint(anyInt())).thenAnswer(new FontMapCodepointAnswer());
+
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("f1", new FontTriplet("a", "normal", 400));
+        fi.addMetrics("f1", font);
+        pdfDocumentHandler.setFontInfo(fi);
+
+        MyPDFPainter pdfPainter = new MyPDFPainter(pdfDocumentHandler, null);
+        pdfPainter.setFont("a", "normal", 400, null, 12, null);
+        pdfPainter.drawText(0, 0, 0, 0, null, text);
+
+        assertEquals("BT\n/f1 0.012 Tf\n1 0 0 -1 0 0 Tm [<" + expectedHex + ">] TJ\n", output.toString());
+    }
+
+    private PDFDocumentHandler makePDFDocumentHandler(final StringBuilder sb) throws IFException {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         foUserAgent = fopFactory.newFOUserAgent();
         mockPDFContentGenerator();
-        final StringBuilder sb = new StringBuilder();
         PDFTextUtil pdfTextUtil = new PDFTextUtil() {
             protected void write(String code) {
                 sb.append(code);
@@ -163,19 +208,14 @@ public class PDFPainterTestCase {
         pdfDocumentHandler.setResult(new StreamResult(new ByteArrayOutputStream()));
         pdfDocumentHandler.startDocument();
         pdfDocumentHandler.startPage(0, "", "", new Dimension());
-        FontInfo fi = new FontInfo();
-        fi.addFontProperties("f1", new FontTriplet("a", "italic", 700));
-        MultiByteFont font = new MultiByteFont(null, null);
-        font.setSimulateStyle(true);
-        fi.addMetrics("f1", font);
-        pdfDocumentHandler.setFontInfo(fi);
-        MyPDFPainter pdfPainter = new MyPDFPainter(pdfDocumentHandler, null);
-        pdfPainter.setFont("a", "italic", 700, null, 12, null);
-        pdfPainter.drawText(0, 0, 0, 0, null, "test");
+        return pdfDocumentHandler;
+    }
 
-        Assert.assertEquals(sb.toString(), "BT\n/f1 0.012 Tf\n1 0 0.3333 -1 0 0 Tm [<0000000000000000>] TJ\n");
-        verify(pdfContentGenerator).add("q\n");
-        verify(pdfContentGenerator).add("2 Tr 0.31543 w\n");
-        verify(pdfContentGenerator).add("Q\n");
+    private static class FontMapCodepointAnswer implements Answer<Integer> {
+
+        @Override
+        public Integer answer(InvocationOnMock invocation) throws Throwable {
+            return (Integer) invocation.getArguments()[0];
+        }
     }
 }

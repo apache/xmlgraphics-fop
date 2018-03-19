@@ -29,18 +29,21 @@
   <renderers>
     <renderer mime="application/pdf">
       <!-- disable PDF text compression -->
-		  <filterList>
+      <filterList>
         <value>null</value>
       </filterList>
       <filterList type="image">
         <value>flate</value>
         <value>ascii-85</value>
       </filterList>
-      
+
       <!-- use a custom font to show encoding problems -->
       <fonts>
-        <font metrics-url="test/resources/fonts/ttf/glb12.ttf.xml" embed-url="test/resources/fonts/ttf/glb12.ttf">
+        <font metrics-url="../../resources/fonts/ttf/glb12.ttf.xml" embed-url="../../resources/fonts/ttf/glb12.ttf">
           <font-triplet name="Gladiator" style="normal" weight="normal"/>
+        </font>
+        <font embed-url="../../resources/fonts/ttf/Aegean600.ttf" >
+          <font-triplet name="Aegean600" style="normal" weight="normal"/>
         </font>
       </fonts>
     </renderer>

@@ -32,6 +32,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable;
 import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable;
 import org.apache.fop.complexscripts.fonts.ttx.TTXFile;
@@ -102,20 +104,18 @@ public final class GenerateArabicTestData implements ArabicWordFormsConstants {
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(spn);
-                if (fis != null) {
-                    LineNumberReader lr = new LineNumberReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
-                    String wf;
-                    while ((wf = lr.readLine()) != null) {
-                        GlyphSequence igs = tf.mapCharsToGlyphs(wf);
-                        GlyphSequence ogs = gsub.substitute(igs, script, language);
-                        int[][] paa = new int [ ogs.getGlyphCount() ] [ 4 ];
-                        if (!gpos.position(ogs, script, language, 1000, widths, paa)) {
-                            paa = null;
-                        }
-                        data.add(new Object[] { wf, getGlyphs(igs), getGlyphs(ogs), paa });
+                LineNumberReader lr = new LineNumberReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
+                String wf;
+                while ((wf = lr.readLine()) != null) {
+                    GlyphSequence igs = tf.mapCharsToGlyphs(wf);
+                    GlyphSequence ogs = gsub.substitute(igs, script, language);
+                    int[][] paa = new int [ ogs.getGlyphCount() ] [ 4 ];
+                    if (!gpos.position(ogs, script, language, 1000, widths, paa)) {
+                        paa = null;
                     }
-                    lr.close();
+                    data.add(new Object[] { wf, getGlyphs(igs), getGlyphs(ogs), paa });
                 }
+                lr.close();
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e.getMessage(), e);
             } catch (IOException e) {
@@ -123,9 +123,7 @@ public final class GenerateArabicTestData implements ArabicWordFormsConstants {
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage(), e);
             } finally {
-                if (fis != null) {
-                    try { fis.close(); } catch (Exception e) { /* NOP */ }
-                }
+                IOUtils.closeQuietly(fis);
             }
         } else {
             assert gsub != null;
@@ -161,11 +159,9 @@ public final class GenerateArabicTestData implements ArabicWordFormsConstants {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(dpn);
-            if (fos != null) {
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(data);
-                oos.close();
-            }
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(data);
+            oos.close();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e.getMessage(), e);
         } catch (IOException e) {
@@ -173,9 +169,7 @@ public final class GenerateArabicTestData implements ArabicWordFormsConstants {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         } finally {
-            if (fos != null) {
-                try { fos.close(); } catch (Exception e) { /* NOP */ }
-            }
+            IOUtils.closeQuietly(fos);
         }
     }
 
