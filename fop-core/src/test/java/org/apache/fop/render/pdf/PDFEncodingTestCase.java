@@ -71,8 +71,8 @@ public class PDFEncodingTestCase extends BasePDFTest {
          */
         final String[] testPatterns = {
                 TEST_MARKER + "1", "Standard",
-                TEST_MARKER + "2", "XX_é_XX",
-                TEST_MARKER + "3", "XX_âêîôû_XX"
+                TEST_MARKER + "2", "XX_\u00E9_XX",
+                TEST_MARKER + "3", "XX_\u00E2\u00EA\u00EE\u00F4\u00FB_XX"
               };
 
         runTest("test-standard-font.fo", testPatterns);
@@ -96,8 +96,8 @@ public class PDFEncodingTestCase extends BasePDFTest {
          */
         final String[] testPatterns = {
                 TEST_MARKER + "1", "Gladiator",
-                TEST_MARKER + "2", "XX_é_XX",
-                TEST_MARKER + "3", "XX_âêîôû_XX"
+                TEST_MARKER + "2", "XX_\u00E9_XX",
+                TEST_MARKER + "3", "XX_\u00E2\u00EA\u00EE\u00F4\u00FB_XX"
         };
 
         runTest("test-custom-font.fo", testPatterns);
