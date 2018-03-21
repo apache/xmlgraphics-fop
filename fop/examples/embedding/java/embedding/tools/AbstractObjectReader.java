@@ -121,20 +121,20 @@ public abstract class AbstractObjectReader implements XMLReader {
     /**
      * @see org.xml.sax.XMLReader#getProperty(String)
      */
-    public Object getProperty(java.lang.String name) {
+    public Object getProperty(String name) {
         return null;
     }
 
     /**
      * @see org.xml.sax.XMLReader#setProperty(String, Object)
      */
-    public void setProperty(java.lang.String name, java.lang.Object value) {
+    public void setProperty(String name, Object value) {
     }
 
     /**
      * @see org.xml.sax.XMLReader#getFeature(String)
      */
-    public boolean getFeature(java.lang.String name) {
+    public boolean getFeature(String name) {
         return (Boolean) features.get(name);
     }
 
@@ -157,7 +157,7 @@ public abstract class AbstractObjectReader implements XMLReader {
     /**
      * @see org.xml.sax.XMLReader#setFeature(String, boolean)
      */
-    public void setFeature(java.lang.String name, boolean value) {
+    public void setFeature(String name, boolean value) {
         this.features.put(name, value);
     }
 

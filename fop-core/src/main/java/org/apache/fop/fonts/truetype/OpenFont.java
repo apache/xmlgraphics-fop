@@ -695,7 +695,7 @@ public abstract class OpenFont {
                     // Also add winAnsiWidth.
                     List<Integer> ansiIndexes = null;
 
-                    if (charCodeL <= java.lang.Character.MAX_VALUE) {
+                    if (charCodeL <= Character.MAX_VALUE) {
                         ansiIndexes = ansiIndex.get((int) charCodeL);
                     }
 
