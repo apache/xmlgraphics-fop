@@ -257,7 +257,7 @@ public class GlyphMapping {
             if (kerning) {
                 int kern = 0;
                 if (offset > 0) {
-                    int previousChar = java.lang.Character.codePointAt(ics, offset - 1);
+                    int previousChar = Character.codePointAt(ics, offset - 1);
                     kern = font.getKernValue(previousChar, currentChar);
                 } else if (precedingChar != 0) {
                     kern = font.getKernValue(precedingChar, currentChar);
@@ -276,9 +276,9 @@ public class GlyphMapping {
                 && endsWithHyphen) {
             int endChar = text.charAt(endIndex - 1);
 
-            if (java.lang.Character.isLowSurrogate((char) endChar)) {
+            if (Character.isLowSurrogate((char) endChar)) {
                 char highSurrogate = text.charAt(endIndex - 2);
-                endChar = java.lang.Character.toCodePoint(highSurrogate, (char) endChar);
+                endChar = Character.toCodePoint(highSurrogate, (char) endChar);
             }
 
             int kern = font.getKernValue(endChar, (int) breakOpportunityChar);

@@ -71,7 +71,7 @@ public final class ConvertUtils {
             new Thread(outputRedirector).start();
 
             process.waitFor();
-        } catch (java.lang.InterruptedException ie) {
+        } catch (InterruptedException ie) {
             throw new IOException("The call to the external converter failed: " + ie.getMessage());
         } catch (java.io.IOException ioe) {
             throw new IOException("The call to the external converter failed: " + ioe.getMessage());
