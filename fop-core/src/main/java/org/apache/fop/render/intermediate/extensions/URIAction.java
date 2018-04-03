@@ -45,6 +45,7 @@ public class URIAction extends AbstractAction implements DocumentNavigationExten
         }
         this.uri = uri;
         this.newWindow = newWindow;
+        setID(getIDPrefix() + (uri + newWindow).hashCode());
     }
 
     /**
