@@ -123,7 +123,7 @@ public class DocumentNavigationHandler extends DefaultHandler
                     if (pageIndex < 0) {
                         location = null;
                     } else {
-                        if (hasNavigation()) {
+                        if (hasNavigation() && !inBookmark()) {
                             int currentPageIndex = navHandler.getPageIndex();
                             if (currentPageIndex >= 0) {
                                 pageIndex = currentPageIndex;
@@ -168,6 +168,10 @@ public class DocumentNavigationHandler extends DefaultHandler
                 log.warn("Unhandled element '" + localName + "' in namespace: " + uri);
             }
         }
+    }
+
+    private boolean inBookmark() {
+        return !objectStack.empty() && objectStack.peek() instanceof Bookmark;
     }
 
     /** {@inheritDoc} */

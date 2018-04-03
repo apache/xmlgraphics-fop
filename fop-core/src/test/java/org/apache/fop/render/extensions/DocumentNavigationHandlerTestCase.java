@@ -46,6 +46,8 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.extensions.AbstractAction;
+import org.apache.fop.render.intermediate.extensions.Bookmark;
+import org.apache.fop.render.intermediate.extensions.BookmarkTree;
 import org.apache.fop.render.intermediate.extensions.DocumentNavigationExtensionConstants;
 import org.apache.fop.render.intermediate.extensions.DocumentNavigationHandler;
 import org.apache.fop.render.intermediate.extensions.GoToXYAction;
@@ -125,5 +127,50 @@ public class DocumentNavigationHandlerTestCase {
         }
         Assert.assertEquals(pageLink.size(), 2);
         Assert.assertFalse(pageLink.get(0).equals(pageLink.get(1)));
+    }
+
+    @Test
+    public void testBookmarkGotoXY() throws SAXException, IFException {
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        PDFDocumentHandler documentHandler = new PDFDocumentHandler(new IFContext(ua));
+        documentHandler.setResult(new StreamResult(new ByteArrayOutputStream()));
+        documentHandler.setFontInfo(new FontInfo());
+        documentHandler.startDocument();
+
+        documentHandler.startPage(0, "", "", new Dimension());
+        documentHandler.endPage();
+
+        int currentPage = 1;
+        documentHandler.startPage(currentPage, "", "", new Dimension());
+
+        final List<BookmarkTree> trees = new ArrayList<BookmarkTree>();
+        PDFDocumentNavigationHandler pdfDocumentNavigationHandler = new PDFDocumentNavigationHandler(documentHandler) {
+            public void renderBookmarkTree(BookmarkTree tree) throws IFException {
+                trees.add(tree);
+            }
+        };
+        DocumentNavigationHandler navigationHandler = new DocumentNavigationHandler(pdfDocumentNavigationHandler,
+                new HashMap<String, StructureTreeElement>());
+        Attributes attributes = mock(Attributes.class);
+        when(attributes.getValue("page-index")).thenReturn("0");
+        when(attributes.getValue("x")).thenReturn("0");
+        when(attributes.getValue("y")).thenReturn("0");
+
+        for (QName q : Arrays.asList(DocumentNavigationExtensionConstants.BOOKMARK_TREE,
+                DocumentNavigationExtensionConstants.BOOKMARK,
+                DocumentNavigationExtensionConstants.GOTO_XY)) {
+            navigationHandler.startElement(q.getNamespaceURI(), q.getLocalName(), null, attributes);
+        }
+        for (QName q : Arrays.asList(DocumentNavigationExtensionConstants.GOTO_XY,
+                DocumentNavigationExtensionConstants.BOOKMARK,
+                DocumentNavigationExtensionConstants.BOOKMARK_TREE)) {
+            navigationHandler.endElement(q.getNamespaceURI(), q.getLocalName(), null);
+        }
+
+        documentHandler.endPage();
+
+        Bookmark b = (Bookmark) trees.get(0).getBookmarks().get(0);
+        GoToXYAction a = (GoToXYAction) b.getAction();
+        Assert.assertEquals(a.getPageIndex(), 0);
     }
 }
