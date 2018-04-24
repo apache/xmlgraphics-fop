@@ -44,7 +44,7 @@ public class BasicEventTestCase {
                 Event.paramsBuilder()
                     .param("reason", "I'm tired")
                     .param("blah", Integer.valueOf(23))
-                    .build());
+                    .getParams());
         broadcaster.broadcastEvent(ev);
 
         ev = listener.event;

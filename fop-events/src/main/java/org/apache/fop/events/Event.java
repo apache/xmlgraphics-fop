@@ -182,7 +182,7 @@ public class Event extends EventObject {
          * Returns the accumulated parameter map.
          * @return the accumulated parameter map
          */
-        public Map<String, Object> build() {
+        public Map<String, Object> getParams() {
             return this.params;
         }
     }
