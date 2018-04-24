@@ -124,7 +124,7 @@ public class AFPResourceManager {
      *
      * @throws IOException thrown if an I/O exception of some sort has occurred.
      */
-    public void writeToStream() throws IOException {
+    public void closeStream() throws IOException {
         streamer.close();
     }
 

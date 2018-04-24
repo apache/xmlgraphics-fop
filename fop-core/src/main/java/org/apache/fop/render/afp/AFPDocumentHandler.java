@@ -204,7 +204,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         try {
             this.dataStream.endDocument();
             this.dataStream = null;
-            this.resourceManager.writeToStream();
+            this.resourceManager.closeStream();
             this.resourceManager = null;
         } catch (IOException ioe) {
             throw new IFException("I/O error in endDocument()", ioe);
