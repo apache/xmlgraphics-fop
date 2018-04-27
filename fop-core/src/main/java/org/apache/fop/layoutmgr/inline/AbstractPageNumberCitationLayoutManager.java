@@ -124,7 +124,9 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
         TextArea text;
         if (resolved) {
             text = new TextArea();
-            text.addWord(citationString, 0);
+            int bidiLevel = getBidiLevel();
+            text.setBidiLevel(bidiLevel);
+            text.addWord(citationString, getStringWidth(citationString), null, null, null, 0);
         } else {
             UnresolvedPageNumber unresolved = new UnresolvedPageNumber(citation.getRefId(), font,
                     getReferenceType());
