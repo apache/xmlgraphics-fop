@@ -20,6 +20,7 @@
 package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.fontbox.cff.CFFDataInput;
 import org.apache.fontbox.cff.CFFFont;
@@ -50,6 +51,17 @@ public class OTFFile extends OpenFont {
 
     @Override
     protected void updateBBoxAndOffset() throws IOException {
+        Object bbox = fileFont.getTopDict().get("FontBBox");
+        if (bbox != null) {
+            List bboxList = (List) bbox;
+            int[] bboxInt = new int[4];
+            for (int i = 0; i < bboxInt.length; i++) {
+                bboxInt[i] = (Integer) bboxList.get(i);
+            }
+            for (OFMtxEntry o : mtxTab) {
+                o.setBoundingBox(bboxInt);
+            }
+        }
     }
 
     private static class Mapping {

@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts.truetype;
 
+import java.awt.Rectangle;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -81,5 +82,10 @@ public class OTFFileTestCase {
         for (int i = 0; i < gids.length; i++) {
             assertEquals(carolynaWidths[i], alexBrush.getWidths()[gids[i]]);
         }
+    }
+
+    @Test
+    public void testBoundingBoxes() {
+        assertEquals(sourceSansProBold.getBoundingBoxes()[0], new Rectangle(-231, -384, 1454, 1358));
     }
 }
