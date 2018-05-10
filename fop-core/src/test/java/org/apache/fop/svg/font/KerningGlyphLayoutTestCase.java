@@ -18,21 +18,23 @@
 /* $Id$ */
 package org.apache.fop.svg.font;
 
-import org.apache.batik.gvt.font.GVTLineMetrics;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontMetrics;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.awt.geom.Point2D;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 
+import org.junit.Before;
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.apache.batik.gvt.font.GVTLineMetrics;
+
+import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontMetrics;
+
 
 public class KerningGlyphLayoutTestCase extends FOPGVTGlyphVectorTest {
     private final int fontSize = 37500;
