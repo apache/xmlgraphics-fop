@@ -110,7 +110,18 @@ under the ./fop sub-directory.
   RELEASE NOTES
 ==============================================================================
 
-Version 2.2  (Forthcoming)
+Version 2.3  (Forthcoming)
+===========
+
+Major Changes in Version 2.3
+----------------------------
+
+* Support for unicode Surrogate pairs
+* OTF fonts not working on Mac Preview
+
+This release also contains a number of bug fixes.
+
+Version 2.2
 ===========
 
 Major Changes in Version 2.2
