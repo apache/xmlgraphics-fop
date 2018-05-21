@@ -8,6 +8,7 @@
   <name>Apache FOP Parent</name>
   <description>XML Graphics Format Object Processor</description>
   <packaging>pom</packaging>
+  <url>http://xmlgraphics.apache.org/fop/</url>
 
   <properties>
     <antrun.plugin.version>1.8</antrun.plugin.version>
