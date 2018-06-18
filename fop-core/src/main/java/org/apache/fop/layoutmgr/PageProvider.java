@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.area.AreaTreeHandler;
+import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.PageSequence;
@@ -137,20 +138,23 @@ public class PageProvider implements Constants {
             }
             return this.lastReportedBPD;
         }
-        int c = index;
+        int pageIndexTmp = index;
         int pageIndex = 0;
         int colIndex = startColumnOfCurrentElementList;
         Page page = getPage(
                 false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
-        while (c > 0) {
+        while (pageIndexTmp > 0) {
             colIndex++;
             if (colIndex >= page.getPageViewport().getCurrentSpan().getColumnCount()) {
                 colIndex = 0;
                 pageIndex++;
-                page = getPage(
-                        false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
+                page = getPage(false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
+                BodyRegion br = page.getPageViewport().getBodyRegion();
+                if (!pageSeq.getMainFlow().getFlowName().equals(br.getRegionName())) {
+                    pageIndexTmp++;
+                }
             }
-            c--;
+            pageIndexTmp--;
         }
         this.lastRequestedIndex = index;
         this.lastReportedBPD = page.getPageViewport().getBodyRegion().getRemainingBPD();

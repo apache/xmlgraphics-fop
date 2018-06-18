@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks 3rd page should not use margins from 2nd page
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <fo:layout-master-set>
+    <fo:simple-page-master margin-top="0.5in" margin-right="0.75in" margin-left="0.75in" margin-bottom="0.5in" master-name="PageSecond" page-width="8.5in" page-height="11in">
+      <fo:region-body region-name="Blank"/>
+    </fo:simple-page-master>    
+    <fo:simple-page-master margin-left="0.75in" margin-right="0.75in" margin-top="0.5in" margin-bottom="0.5in" master-name="RestOdd" page-width="8.5in" page-height="11in">
+      <fo:region-body background-color="green" margin-bottom=".25in"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="LetterPages">
+      <fo:single-page-master-reference master-reference="RestOdd"/>
+      <fo:single-page-master-reference master-reference="PageSecond"/>      
+      <fo:single-page-master-reference master-reference="RestOdd"/>
+      <fo:single-page-master-reference master-reference="RestOdd"/> 
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence format="1" id="th_default_sequence1" master-reference="LetterPages">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block font-size="40pt">       
+        <fo:block>test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test </fo:block>
+      </fo:block>      
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>    
+  </fo>
+  <checks>
+    <eval expected="84" xpath="count(//pageViewport[1]//word)"/>
+    <eval expected="0" xpath="count(//pageViewport[2]//word)"/>
+    <eval expected="84" xpath="count(//pageViewport[3]//word)"/>
+    <eval expected="70" xpath="count(//pageViewport[4]//word)"/>
+  </checks>
+</testcase>
