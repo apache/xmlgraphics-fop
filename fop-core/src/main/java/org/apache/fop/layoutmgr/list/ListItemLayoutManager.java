@@ -448,12 +448,9 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
                 // add the original line where the float was but without the float now
                 returnList.add(new KnuthBlockBox(boxHeight, footnoteList, stepPosition, false));
             }
-            if (originalBodyPosition != null) {
-                LayoutManager lm = originalBodyPosition.getLM();
-                if ((lm instanceof ListBlockLayoutManager || lm instanceof BlockLayoutManager)
-                        && getKeepWithPrevious().isAuto()) {
-                    stepPenalty++;
-                }
+            if (originalBodyPosition != null && getKeepWithPrevious().isAuto()
+                    && shouldWeAvoidBreak(returnList, originalBodyPosition.getLM())) {
+                stepPenalty++;
             }
             if (addedBoxHeight < totalHeight) {
                 Keep keep = keepWithNextActive.compare(getKeepTogether());
@@ -467,6 +464,26 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
         }
 
         return returnList;
+    }
+
+    private boolean shouldWeAvoidBreak(List returnList, LayoutManager lm) {
+        if (lm instanceof BlockLayoutManager) {
+            return true;
+        }
+        if (lm instanceof ListBlockLayoutManager) {
+            int penaltyShootout = 0;
+            for (Object o : returnList) {
+                if (o instanceof BreakElement) {
+                    if (((BreakElement) o).getPenaltyValue() > 0) {
+                        penaltyShootout++;
+                    } else {
+                        penaltyShootout--;
+                    }
+                }
+            }
+            return penaltyShootout > 0;
+        }
+        return false;
     }
 
     private int getNextStep(List[] elementLists, int[] start, int[] end, int[] partialHeights) {

@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks number of words in each column
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <fo:layout-master-set>
+    <fo:simple-page-master margin-top="0.4in" page-width="8.5in" page-height="11in" master-name="PageFront" margin-bottom="0.33in" margin-right="0.65in" margin-left="0.65in">
+      <fo:region-body margin-top="0.6in" margin-bottom="0.56in" margin-right="0in" margin-left="0in" column-gap="0.16in" column-count="2" region-name="letterPageBody"/>
+
+
+    </fo:simple-page-master>
+    <fo:simple-page-master page-width="8.5in" page-height="11in" master-name="PageRest" margin-bottom="0.33in" margin-right="0.65in" margin-top="0.49in" margin-left="0.65in">
+      <fo:region-body margin-bottom="0.5in" column-gap="0.20in" column-count="2" region-name="letterPageBody" margin-right="0in" margin-top="0in" margin-left="0in"/>
+
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="LetterPages">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference page-position="first" master-reference="PageFront"/>
+        <fo:conditional-page-master-reference page-position="rest" master-reference="PageRest"/>
+        <fo:conditional-page-master-reference page-position="last" master-reference="PageRest"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence format="1" id="th_default_sequence1" master-reference="LetterPages" initial-page-number="auto" force-page-count="auto">
+    <fo:flow flow-name="letterPageBody">
+      <fo:block>
+        <fo:block>
+          <fo:block  font-size="8.5pt" font-style="normal" color="#05CC7C" font-weight="bold" space-before="0.1in" leader-pattern="dots" leader-pattern-width="inherit" leader-alignment="reference-area" text-align-last="justify">
+            <fo:basic-link internal-destination="N1003F">AGREEMENT</fo:basic-link>
+            <fo:leader width="100%" leader-pattern="use-content">.</fo:leader>
+            <fo:page-number-citation ref-id="N1003F"/>
+          </fo:block>
+          <fo:block  font-size="8.5pt" font-style="normal" color="#05CC7C" font-weight="bold" space-before="0.1in" leader-pattern="dots" leader-pattern-width="inherit" leader-alignment="reference-area" text-align-last="justify">
+            <fo:basic-link internal-destination="N100F4">DEFINITIONS</fo:basic-link>
+            <fo:leader width="100%" leader-pattern="use-content">.</fo:leader>
+            <fo:page-number-citation ref-id="N100F4"/>
+          </fo:block>
+        </fo:block>
+        <fo:block>
+          <fo:leader/>
+          <fo:block break-before="page"/>
+        </fo:block>
+        <fo:block  font-size="8.5pt" font-style="normal" color="#05CC7C" space-after="0.1in" font-weight="bold" role="H1" id="N1003F" text-align="left">AGREEMENT</fo:block>
+        <fo:block  font-size="8.5pt" font-style="normal" text-align="left">
+          <fo:inline  font-weight="bold" font-style="italic">We </fo:inline>agree to provide the insurance described in this policy:</fo:block>
+        <fo:list-block space-after="1mm" space-before="2mm">
+          <fo:list-item space-before="1mm" space-after="0.5mm">
+            <fo:list-item-label  font-size="8.5pt" start-indent="0.23in">
+              <fo:block>1.</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body  font-size="8.5pt" start-indent="0.42in">
+              <fo:block>based on <fo:inline  font-weight="bold" font-style="italic">your </fo:inline>payment of premium, in a form acceptable to <fo:inline  font-weight="bold" font-style="italic">us</fo:inline>, for the coverages <fo:inline  font-weight="bold" font-style="italic">you </fo:inline>chose;</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-before="1mm" space-after="0.5mm">
+            <fo:list-item-label  font-size="8.5pt" start-indent="0.23in">
+              <fo:block>2.</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body  font-size="8.5pt" start-indent="0.42in">
+              <fo:block>based on <fo:inline  font-weight="bold" font-style="italic">your </fo:inline>compliance with all applicable provisions of this policy; and</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-before="1mm" space-after="0.5mm">
+            <fo:list-item-label  font-size="8.5pt" start-indent="0.23in">
+              <fo:block>3.</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body  font-size="8.5pt" start-indent="0.42in">
+              <fo:block>based on the information <fo:inline  font-weight="bold" font-style="italic">you </fo:inline>have given <fo:inline  font-weight="bold" font-style="italic">us </fo:inline>and <fo:inline  font-weight="bold" font-style="italic">your </fo:inline>statements in this agreement.</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+        </fo:list-block>
+        <fo:block  font-size="8.5pt" font-style="normal">
+          <fo:inline  font-weight="bold" font-style="italic">You </fo:inline>agree, by acceptance of this policy, that:</fo:block>
+        <fo:list-block space-after="1mm" space-before="2mm">
+          <fo:list-item space-before="1mm" space-after="0.5mm">
+            <fo:list-item-label  font-size="8.5pt" start-indent="0.23in">
+              <fo:block>1.</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body  font-size="8.5pt" start-indent="0.42in">
+              <fo:block>
+                <fo:inline  font-weight="bold" font-style="italic">you </fo:inline>will pay premiums when due and comply with the provisions of the policy;</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-before="1mm" space-after="0.5mm">
+            <fo:list-item-label  font-size="8.5pt" start-indent="0.23in">
+              <fo:block>2.</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body  font-size="8.5pt" start-indent="0.42in">
+              <fo:block>the statements in this agreement are <fo:inline  font-weight="bold" font-style="italic">your</fo:inline>
+                <fo:inline  font-weight="bold" font-style="italic"> </fo:inline>statements and are true;</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-before="1mm" space-after="0.5mm">
+            <fo:list-item-label  font-size="8.5pt" start-indent="0.23in">
+              <fo:block>3.</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body  font-size="8.5pt" start-indent="0.42in">
+              <fo:block>
+                <fo:inline  font-weight="bold" font-style="italic">we </fo:inline>insure <fo:inline  font-weight="bold" font-style="italic">you </fo:inline>on the basis <fo:inline  font-weight="bold" font-style="italic">your</fo:inline>
+                <fo:inline  font-weight="bold" font-style="italic"> </fo:inline>statements are true; and </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-before="1mm" space-after="0.5mm">
+            <fo:list-item-label  font-size="8.5pt" start-indent="0.23in">
+              <fo:block>4.</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body  font-size="8.5pt" start-indent="0.42in">
+              <fo:block>this policy contains all of the agreements between <fo:inline  font-weight="bold" font-style="italic">you </fo:inline>and <fo:inline  font-weight="bold" font-style="italic">us</fo:inline>.</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+        </fo:list-block>
+        <fo:block font-size="7.5pt" font-style="normal">
+          <fo:block>
+            <fo:block white-space-treatment="preserve" white-space-collapse="false" line-height="0.04in"> </fo:block>
+          </fo:block>
+        </fo:block>
+        <fo:block  font-size="8.5pt" font-style="normal">When <fo:inline  font-weight="bold" font-style="italic">you </fo:inline>request changes to this policy, or the information or factors used to calculate the premium for  this  policy  changes during the policy period, <fo:inline  font-weight="bold" font-style="italic">we </fo:inline>may adjust the premium in accordance with the change during the policy period and <fo:inline  font-weight="bold" font-style="italic">you </fo:inline>must pay any additional premium due within the time<fo:inline  font-weight="bold" font-style="italic"> we </fo:inline>specify.</fo:block>
+        <fo:block  font-size="8.5pt" font-style="normal" color="#05CE7C" space-after="2mm" font-weight="bold" space-before="2mm" role="H1" id="N100F4">DEFINITIONS</fo:block>
+        <fo:block  font-size="8.5pt" font-style="normal">We define the following words and phrases for use throughout the policy. These definitions apply to the singular, plural, and possessive forms of these words and phrases. Defined words and phrases are printed in bold italics.</fo:block>
+        <fo:list-block space-after="1mm" space-before="2mm">
+          <fo:list-item space-before="1mm" space-after="0.5mm">
+            <fo:list-item-label  font-size="8.5pt" start-indent="0.23in">
+              <fo:block>1</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body  font-size="8.5pt" start-indent="0.42in">
+              <fo:block>"actual cash value” means the value of the damaged part of the property at the time of loss, calculated as the estimated cost to repair or replace such property, less a deduction to account for pre-loss depreciation. For this calculation, all components of this estimated  cost including, but not limited to:<fo:list-block space-after="1mm" space-before="1mm">
+                  <fo:list-item space-after="1mm" space-before="0.5mm">
+                    <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                      <fo:block>a.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                      <fo:block>materials, including tax; </fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item space-after="1mm" space-before="0.5mm">
+                    <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                      <fo:block>b.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                      <fo:block>labor, including tax; and</fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item space-after="1mm" space-before="0.5mm">
+                    <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                      <fo:block>c.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                      <fo:block>overhead and profit</fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                </fo:list-block>
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+        </fo:list-block>
+        <fo:block  font-size="8.5pt" font-style="normal" start-indent="0.39in" space-after="1mm">are subject to depreciation.</fo:block>
+        <fo:block  font-size="8.5pt" font-style="normal" start-indent="0.39in" space-after="1mm">The depreciation deduction may include such considerations as:</fo:block>
+        <fo:list-block space-after="1mm" space-before="1mm">
+          <fo:list-item space-after="1mm" space-before="0.5mm">
+            <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+              <fo:block/>
+            </fo:list-item-label>
+            <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+              <fo:list-block space-after="1mm" space-before="1mm">
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>age; </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>condition; </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>c.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>reduction </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>d.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>obsolescence; and</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>e.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>any pre-loss damage including wear, tear, or deterioration;<fo:block/>
+                      <fo:block/>dfhskdkdfgkdfg</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+            </fo:list-item-body>
+          </fo:list-item>
+        </fo:list-block>
+        <fo:block  font-size="8.5pt" font-style="normal" start-indent="0.39in" space-after="1mm">of the damaged part of the property.</fo:block>
+        <fo:list-block space-after="1mm" space-before="2mm">
+          <fo:list-item space-before="1mm" space-after="0.5mm">
+            <fo:list-item-label  font-size="8.5pt" start-indent="0.23in">
+              <fo:block>2.</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body  font-size="8.5pt" start-indent="0.42in">
+              <fo:block>“bodily injury” means physical injury, sickness, or disease to a person. This includes required care, loss of services and death resulting therefrom.<fo:block>
+                  <fo:block white-space-treatment="preserve" white-space-collapse="false" line-height="0.04in"> </fo:block>
+                </fo:block>Bodily injury does not include:</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+        </fo:list-block>
+        <fo:list-block space-after="1mm" space-before="1mm">
+          <fo:list-item space-after="1mm" space-before="0.5mm">
+            <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+              <fo:block/>
+            </fo:list-item-label>
+            <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+              <fo:list-block space-after="1mm" space-before="1mm">
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>any of the following which are communicable: disease, bacteria, parasite, virus, or other organism, any of which are transmitted by any insured to any other person;</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>the actual or alleged exposure to any such disease, bacteria, parasite, virus, or other organism by any insured to any other person; or</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>c.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>Line item 3</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>d.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>Line item 4</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>e.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>Line item 5</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>f.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>Line item 6</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>g.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>Line item 7</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>h.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>Line Item 8</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>i.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>Line Item 9</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>j.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>Line Item 10</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-after="1mm" space-before="0.5mm">
+                  <fo:list-item-label  font-size="8.5pt" start-indent="0.4in">
+                    <fo:block>k.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body  font-size="8.5pt" start-indent="0.55in">
+                    <fo:block>Line Item 11</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+            </fo:list-item-body>
+          </fo:list-item>
+        </fo:list-block>
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+</fo>
+  <checks>
+    <eval expected="555" xpath="count(//flow[1]//word)" />
+    <eval expected="32" xpath="count(//flow[2]//word)" />
+  </checks>
+</testcase>
