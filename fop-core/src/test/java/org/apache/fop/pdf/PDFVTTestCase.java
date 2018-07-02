@@ -183,7 +183,7 @@ public class PDFVTTestCase {
         throw new IOException(name + " not found " + firstObj);
     }
 
-    private String getObj(Collection<StringBuilder> objs, String x) {
+    public static String getObj(Collection<StringBuilder> objs, String x) {
         for (StringBuilder s : objs) {
             if (s.toString().contains(x)) {
                 return s.toString();

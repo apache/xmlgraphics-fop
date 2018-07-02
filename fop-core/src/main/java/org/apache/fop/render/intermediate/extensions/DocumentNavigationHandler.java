@@ -119,11 +119,12 @@ public class DocumentNavigationHandler extends DefaultHandler
                 } else {
                     String id = attributes.getValue("id");
                     int pageIndex = XMLUtil.getAttributeAsInt(attributes, "page-index");
+                    final int pageIndexRelative = XMLUtil.getAttributeAsInt(attributes, "page-index-relative", 0);
                     final Point location;
                     if (pageIndex < 0) {
                         location = null;
                     } else {
-                        if (hasNavigation() && !inBookmark()) {
+                        if (hasNavigation() && !inBookmark() && pageIndexRelative >= 0) {
                             int currentPageIndex = navHandler.getPageIndex();
                             if (currentPageIndex >= 0) {
                                 pageIndex = currentPageIndex;
@@ -135,7 +136,11 @@ public class DocumentNavigationHandler extends DefaultHandler
                                 .getAttributeAsInt(attributes, "y");
                         location = new Point(x, y);
                     }
-                    action = new GoToXYAction(id, pageIndex, location);
+                    action = new GoToXYAction(id, pageIndex, location, new GoToXYAction.PageIndexRelative() {
+                        public int getPageIndexRelative() {
+                            return pageIndexRelative;
+                        }
+                    });
                 }
                 if (structureTreeElement != null) {
                     action.setStructureTreeElement(structureTreeElement);

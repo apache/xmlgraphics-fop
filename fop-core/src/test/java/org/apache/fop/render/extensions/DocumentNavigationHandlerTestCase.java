@@ -19,10 +19,13 @@
 package org.apache.fop.render.extensions;
 
 import java.awt.Dimension;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -43,6 +46,8 @@ import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.pdf.PDFLinearizationTestCase;
+import org.apache.fop.pdf.PDFVTTestCase;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.extensions.AbstractAction;
@@ -88,6 +93,50 @@ public class DocumentNavigationHandlerTestCase {
 
         //Since user may merge IF files we want to use current page
         Assert.assertEquals(goToXYActions.get(0).getPageIndex(), currentPage);
+    }
+
+    @Test
+    public void testGotoXYPrevousPage() throws SAXException, IFException, IOException {
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        PDFDocumentHandler documentHandler = new PDFDocumentHandler(new IFContext(ua));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        documentHandler.setResult(new StreamResult(bos));
+        documentHandler.setFontInfo(new FontInfo());
+        documentHandler.startDocument();
+
+        documentHandler.startPage(0, "", "", new Dimension());
+        documentHandler.endPage();
+
+        documentHandler.startPage(1, "", "", new Dimension());
+        final List<GoToXYAction> goToXYActions = new ArrayList<GoToXYAction>();
+        PDFDocumentNavigationHandler pdfDocumentNavigationHandler = new PDFDocumentNavigationHandler(documentHandler) {
+            public void addResolvedAction(AbstractAction action) throws IFException {
+                super.addResolvedAction(action);
+                goToXYActions.add((GoToXYAction) action);
+            }
+        };
+        DocumentNavigationHandler navigationHandler = new DocumentNavigationHandler(pdfDocumentNavigationHandler,
+                new HashMap<String, StructureTreeElement>());
+        QName xy = DocumentNavigationExtensionConstants.GOTO_XY;
+        Attributes attributes = mock(Attributes.class);
+        when(attributes.getValue("page-index")).thenReturn("0");
+        when(attributes.getValue("page-index-relative")).thenReturn("-1");
+        when(attributes.getValue("x")).thenReturn("0");
+        when(attributes.getValue("y")).thenReturn("0");
+        navigationHandler.startElement(xy.getNamespaceURI(), xy.getLocalName(), null, attributes);
+        navigationHandler.endElement(xy.getNamespaceURI(), xy.getLocalName(), null);
+        documentHandler.endPage();
+        documentHandler.endDocument();
+
+        Assert.assertEquals(goToXYActions.get(0).getPageIndex(), 0);
+
+        Collection<StringBuilder> objs = PDFLinearizationTestCase.readObjs(
+                new ByteArrayInputStream(bos.toByteArray())).values();
+        String pages = PDFVTTestCase.getObj(objs, "/Type /Pages");
+        String action = PDFVTTestCase.getObj(objs, "/Type /Action");
+        String pageRef = action.split("\\[")[1].split(" /XYZ")[0];
+        Assert.assertTrue(pageRef.endsWith(" 0 R"));
+        Assert.assertTrue(pages.contains("/Kids [" + pageRef));
     }
 
     @Test

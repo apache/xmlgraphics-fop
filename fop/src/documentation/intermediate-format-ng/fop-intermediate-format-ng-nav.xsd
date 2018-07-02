@@ -106,6 +106,7 @@
     <xs:complexType>
       <xs:attributeGroup ref="nav:refDef"/>
       <xs:attribute name="page-index" type="xs:int"/>
+      <xs:attribute name="page-index-relative" type="xs:int" use="optional"/>
       <xs:attributeGroup ref="nav:posAtts"/>
     </xs:complexType>
   </xs:element>
