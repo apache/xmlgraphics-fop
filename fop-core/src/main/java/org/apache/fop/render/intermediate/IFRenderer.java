@@ -396,7 +396,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         this.documentMetadata = metadata.getMetadata();
     }
 
-    private GoToXYAction getGoToActionForID(String targetID, int pageIndex) {
+    private GoToXYAction getGoToActionForID(String targetID, final int pageIndex) {
         // Already a GoToXY present for this target? If not, create.
         GoToXYAction action = (GoToXYAction)actionSet.get(targetID);
         //GoToXYAction action = (GoToXYAction)idGoTos.get(targetID);
@@ -407,10 +407,14 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             Point position = (Point)idPositions.get(targetID);
             // can the GoTo already be fully filled in?
             if (pageIndex >= 0 && position != null) {
-                action = new GoToXYAction(targetID, pageIndex, position);
+                action = new GoToXYAction(targetID, pageIndex, position, new GoToXYAction.PageIndexRelative() {
+                    public int getPageIndexRelative() {
+                        return pageIndex - documentHandler.getContext().getPageIndex();
+                    }
+                });
             } else {
                 // Not complete yet, can't use getPDFGoTo:
-                action = new GoToXYAction(targetID, pageIndex, null);
+                action = new GoToXYAction(targetID, pageIndex, null, null);
                 unfinishedGoTos.add(action);
             }
             action = (GoToXYAction)actionSet.put(action);
