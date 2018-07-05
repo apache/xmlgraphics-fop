@@ -218,6 +218,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             }
         }
 
+        assert leaderArea != null;
         leaderArea.setChangeBarList(getChangeBarList());
 
         TraitSetter.setProducerID(leaderArea, fobj.getId());
