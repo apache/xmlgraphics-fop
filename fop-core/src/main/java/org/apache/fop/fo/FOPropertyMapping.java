@@ -322,6 +322,7 @@ public final class FOPropertyMapping implements Constants {
         gp.createTableProperties();
         gp.createWritingModeProperties();
         gp.createMiscProperties();
+        gp.createChangeBarProperties();
 
         // Hardcode the subproperties.
         addSubpropMakerName("length", CP_LENGTH);
@@ -2586,6 +2587,56 @@ public final class FOPropertyMapping implements Constants {
         m.addKeyword("rl", "rl-tb");
         m.addKeyword("tb", "tb-rl");
         addPropertyMaker("writing-mode", m);
+    }
+
+    private void createChangeBarProperties() {
+        PropertyMaker m;
+
+        // change-bar-class
+        m = new StringProperty.Maker(PR_CHANGE_BAR_CLASS);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("change-bar-class", m);
+
+        // change-bar-color
+        m  = new ColorProperty.Maker(PR_CHANGE_BAR_COLOR);
+
+        m.setInherited(true);
+        // TODO: fall back to "color" property
+        m.setDefault("black");
+        addPropertyMaker("change-bar-color", m);
+
+        // change-bar-placement
+        m = new EnumProperty.Maker(PR_CHANGE_BAR_PLACEMENT);
+        m.setInherited(true);
+        m.setDefault("start");
+        m.addEnum("start", getEnumProperty(EN_START, "START"));
+        m.addEnum("end", getEnumProperty(EN_END, "END"));
+        m.addEnum("left", getEnumProperty(EN_LEFT, "LEFT"));
+        m.addEnum("right", getEnumProperty(EN_RIGHT, "RIGHT"));
+        m.addEnum("inside", getEnumProperty(EN_INSIDE, "INSIDE"));
+        m.addEnum("outside", getEnumProperty(EN_OUTSIDE, "OUTSIDE"));
+        m.addEnum("alternate", getEnumProperty(EN_ALTERNATE, "ALTERNATE"));
+        addPropertyMaker("change-bar-placement", m);
+
+        // change-bar-style
+        m = new EnumProperty.Maker(PR_CHANGE_BAR_STYLE);
+        m.useGeneric(genericBorderStyle);
+        m.setInherited(true);
+        m.setDefault("solid");
+        addPropertyMaker("change-bar-style", m);
+
+        // change-bar-width
+        m  = new LengthProperty.Maker(PR_CHANGE_BAR_WIDTH);
+        m.setInherited(true);
+        m.setDefault("6pt");
+        addPropertyMaker("change-bar-width", m);
+
+        // change-bar-offset
+        m  = new LengthProperty.Maker(PR_CHANGE_BAR_OFFSET);
+        m.setInherited(true);
+        m.setDefault("6pt");
+        addPropertyMaker("change-bar-offset", m);
     }
 
     private void createMiscProperties() {

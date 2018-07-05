@@ -32,6 +32,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
+import org.apache.fop.fo.flow.ChangeBar;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontSelector;
 import org.apache.fop.fonts.GlyphMapping;
@@ -312,6 +313,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         TextArea textArea = new TextAreaBuilder(realWidth, totalAdjust, context, firstMappingIndex,
                 lastMappingIndex, context.isLastArea(), mapping.font).build();
+        textArea.setChangeBarList(getChangeBarList());
 
         // wordSpaceDim is computed in relation to wordSpaceIPD.opt
         // but the renderer needs to know the adjustment in relation
@@ -411,6 +413,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 textArea = new TextArea(width.getStretch(), width.getShrink(),
                         adjust);
             }
+            textArea.setChangeBarList(getChangeBarList());
         }
 
         private void setInlineProgressionDimension() {
@@ -1455,6 +1458,15 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             }
         }
 
+    }
+
+    @Override
+    public List<ChangeBar> getChangeBarList() {
+        if (foText == null) {
+            return null;
+        } else {
+            return foText.getChangeBarList();
+        }
     }
 
     /** {@inheritDoc} */

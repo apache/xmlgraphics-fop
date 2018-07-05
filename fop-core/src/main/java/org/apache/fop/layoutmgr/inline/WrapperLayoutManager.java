@@ -68,10 +68,12 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
             if (parentLayoutManager instanceof BlockStackingLayoutManager
                     && !(parentLayoutManager instanceof BlockLayoutManager)) {
                 Block helperBlock = new Block();
+                helperBlock.setChangeBarList(getChangeBarList());
                 TraitSetter.setProducerID(helperBlock, fobj.getId());
                 parentLayoutManager.addChildArea(helperBlock);
             } else {
                 InlineArea area = getEffectiveArea(context);
+                area.setChangeBarList(getChangeBarList());
                 parentLayoutManager.addChildArea(area);
             }
         }

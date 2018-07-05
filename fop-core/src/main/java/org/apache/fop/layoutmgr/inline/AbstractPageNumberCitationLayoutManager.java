@@ -133,6 +133,7 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
             getPSLM().addUnresolvedArea(citation.getRefId(), unresolved);
             text = unresolved;
         }
+        text.setChangeBarList(getChangeBarList());
         setTraits(text);
         return text;
     }

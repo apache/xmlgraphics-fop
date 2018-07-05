@@ -217,6 +217,9 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                 leaderArea.setBidiLevel(fobj.getBidiLevelRecursive());
             }
         }
+
+        leaderArea.setChangeBarList(getChangeBarList());
+
         TraitSetter.setProducerID(leaderArea, fobj.getId());
         return leaderArea;
      }

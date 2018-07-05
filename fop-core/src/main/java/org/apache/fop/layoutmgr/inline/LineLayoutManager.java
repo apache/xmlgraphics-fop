@@ -1504,6 +1504,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         LineArea lineArea = new LineArea(
                 (lbp.getLeafPos() < seq.size() - 1 ? textAlignment : textAlignmentLast),
                 lbp.difference, lbp.availableStretch, lbp.availableShrink);
+        lineArea.setChangeBarList(getChangeBarList());
+
         if (lbp.startIndent != 0) {
             lineArea.addTrait(Trait.START_INDENT, lbp.startIndent);
         }
@@ -1619,6 +1621,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
 
         LineArea lineArea = new LineArea();
+        lineArea.setChangeBarList(getChangeBarList());
         setCurrentArea(lineArea);
         LayoutContext lc = LayoutContext.newInstance();
         lc.setAlignmentContext(alignmentContext);

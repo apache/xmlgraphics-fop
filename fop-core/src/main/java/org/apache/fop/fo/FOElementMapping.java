@@ -141,6 +141,10 @@ public class FOElementMapping extends ElementMapping {
             foObjs.put("marker", new MarkerMaker());
             foObjs.put("retrieve-marker", new RetrieveMarkerMaker());
             foObjs.put("retrieve-table-marker", new RetrieveTableMarkerMaker());
+
+            // change bars
+            foObjs.put("change-bar-begin", new ChangeBarBeginMaker());
+            foObjs.put("change-bar-end", new ChangeBarEndMaker());
         }
     }
 
@@ -525,6 +529,18 @@ public class FOElementMapping extends ElementMapping {
     static class RetrieveTableMarkerMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.RetrieveTableMarker(parent);
+        }
+    }
+
+    static class ChangeBarBeginMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new org.apache.fop.fo.flow.ChangeBarBegin(parent);
+        }
+    }
+
+    static class ChangeBarEndMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new org.apache.fop.fo.flow.ChangeBarEnd(parent);
         }
     }
 }

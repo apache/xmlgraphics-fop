@@ -66,6 +66,7 @@ import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineBlock;
 import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.InlineViewport;
@@ -80,6 +81,7 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.Direction;
 import org.apache.fop.traits.Visibility;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
@@ -190,6 +192,7 @@ public class AreaTreeParser {
             makers.put("block", new BlockMaker());
             makers.put("lineArea", new LineAreaMaker());
             makers.put("inline", new InlineMaker());
+            makers.put("inlineblock", new InlineBlockMaker());
             makers.put("inlineparent", new InlineParentMaker());
             makers.put("inlineblockparent", new InlineBlockParentMaker());
             makers.put("text", new TextMaker());
@@ -594,6 +597,17 @@ public class AreaTreeParser {
                 BodyRegion body = getCurrentBodyRegion();
                 Span span = new Span(columnCount,
                         body.getColumnGap(), ipd);
+
+                String blockDirection = attributes.getValue("block-progression-direction");
+                if (blockDirection != null) {
+                    span.addTrait(Trait.BLOCK_PROGRESSION_DIRECTION, Direction.valueOf(blockDirection));
+                }
+
+                String inlineDirection = attributes.getValue("inline-progression-direction");
+                if (inlineDirection != null) {
+                    span.addTrait(Trait.INLINE_PROGRESSION_DIRECTION, Direction.valueOf(inlineDirection));
+                }
+
                 transferForeignObjects(attributes, span);
                 setAreaAttributes(attributes, span);
                 body.getMainReference().getSpans().add(span);
@@ -720,6 +734,34 @@ public class AreaTreeParser {
 
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), InlineArea.class);
+            }
+        }
+
+        private class InlineBlockMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+
+                Block block = new Block();
+
+                if (attributes.getValue("left-offset") != null) {
+                    block.setXOffset(XMLUtil.getAttributeAsInt(attributes, "left-offset", 0));
+                }
+                if (attributes.getValue("top-offset") != null) {
+                    block.setYOffset(XMLUtil.getAttributeAsInt(attributes, "top-offset", 0));
+                }
+                transferForeignObjects(attributes, block);
+                setAreaAttributes(attributes, block);
+                setTraits(attributes, block, SUBSET_COMMON);
+                setTraits(attributes, block, SUBSET_BOX);
+                setTraits(attributes, block, SUBSET_COLOR);
+                Area parent = (Area)areaStack.peek();
+                InlineBlock inlineBlock = new InlineBlock(block);
+                parent.addChildArea(inlineBlock);
+                areaStack.push(inlineBlock);
+            }
+
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), InlineBlock.class);
             }
         }
 

@@ -33,6 +33,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.Block;
+import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonTextDecoration;
@@ -109,6 +110,11 @@ public class FOText extends FONode implements CharSequence, TextFragment {
      */
     public FOText(FONode parent) {
         super(parent);
+
+        PageSequence pageSequence = getRoot().getLastPageSequence();
+        if (pageSequence != null && pageSequence.hasChangeBars()) {
+            nodeChangeBarList = getRoot().getLastPageSequence().getClonedChangeBarList();
+        }
     }
 
     /** {@inheritDoc} */
