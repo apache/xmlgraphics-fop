@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+   <info>
+      <p>This test checks fo:change-bar-* on list elements.</p>
+   </info>
+   <fo>
+      <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+         <fo:layout-master-set>
+            <fo:simple-page-master page-height="145mm" page-width="210mm" margin="10mm"
+               master-name="master">
+               <fo:region-body column-count="2" column-gap="10mm"/>
+            </fo:simple-page-master>
+         </fo:layout-master-set>
+         <fo:page-sequence master-reference="master">
+            <fo:flow flow-name="xsl-region-body">
+               
+               <fo:block change-bar-style="solid" change-bar-color="red" change-bar-offset="2mm"
+                  change-bar-width="0.3mm">
+                  
+                  <fo:block>
+                     <fo:change-bar-begin change-bar-class="first-half"/><fo:inline color="red"
+                        id="first-half">January February March April May </fo:inline><fo:change-bar-begin
+                           change-bar-class="summer" change-bar-color="green" change-bar-offset="1mm"
+                        /><fo:inline color="brown" id="june-inline">June</fo:inline><fo:change-bar-end
+                           change-bar-class="first-half"/><fo:inline color="green" id="summer"> July
+                              August</fo:inline><fo:change-bar-end change-bar-class="summer"/> September October
+                     November December</fo:block>
+                  
+                  <fo:change-bar-begin change-bar-class="first-half"/>
+                  <fo:block id="january">January</fo:block>
+                  <fo:block id="february">February</fo:block>
+                  <fo:block id="march">March</fo:block>
+                  <fo:wrapper color="red">
+                     <fo:block id="april">April</fo:block>
+                     <fo:block id="may">May</fo:block>
+                  </fo:wrapper>
+                  <fo:change-bar-begin change-bar-class="summer" change-bar-color="green"
+                     change-bar-offset="1mm"/>
+                  <fo:wrapper color="brown">
+                     <fo:block id="june-block">June</fo:block>
+                  </fo:wrapper>
+                  <fo:change-bar-end change-bar-class="first-half"/>
+                  <fo:wrapper color="red">
+                     <fo:block id="july">July</fo:block>
+                     <fo:block id="august">August</fo:block>
+                  </fo:wrapper>
+                  <fo:change-bar-end change-bar-class="summer"/>
+                  <fo:block id="september">September</fo:block>
+                  <fo:block id="october">October</fo:block>
+                  <fo:block id="november">November</fo:block>
+                  <fo:block id="december">December</fo:block>
+                  
+               </fo:block>
+            </fo:flow>
+         </fo:page-sequence>
+      </fo:root>
+   </fo>
+   <checks>
+      <!-- inline -->
+      <eval expected="(solid,#ff0000,850)" xpath="//inlineparent[@prod-id='first-half']/inlineblock[1]/@border-start"/>
+      <eval expected="-6519" xpath="//inlineparent[@prod-id='first-half']/inlineblock[1]/@left-offset"/>
+      <eval expected="(solid,#ff0000,850)" xpath="//inlineparent[@prod-id='june-inline']/inlineblock[1]/@border-start"/>
+      <eval expected="-6519" xpath="//inlineparent[@prod-id='june-inline']/inlineblock[1]/@left-offset"/>
+      <eval expected="(solid,#008000,850)" xpath="//inlineparent[@prod-id='june-inline']/inlineblock[2]/@border-start"/>
+      <eval expected="-3684" xpath="//inlineparent[@prod-id='june-inline']/inlineblock[2]/@left-offset"/>
+      <eval expected="(solid,#008000,850)" xpath="//lineArea[2]/inlineparent[@prod-id='summer']/inlineblock[1]/@border-start"/>
+      <eval expected="-3684" xpath="//lineArea[2]/inlineparent[@prod-id='summer']/inlineblock[1]/@left-offset"/>
+      <!-- block -->
+      <eval expected="(solid,#ff0000,850)" xpath="//block[@prod-id='may']/block[1]/@border-start"/>
+      <eval expected="-6519" xpath="//block[@prod-id='may']/block[1]/@left-offset"/>
+      <eval expected="(solid,#ff0000,850)" xpath="//block[@prod-id='june-block']/block[1]/@border-start"/>
+      <eval expected="-6519" xpath="//block[@prod-id='june-block']/block[1]/@left-offset"/>
+      <eval expected="(solid,#008000,850)" xpath="//block[@prod-id='june-block']/block[2]/@border-start"/>
+      <eval expected="-3684" xpath="//block[@prod-id='june-block']/block[2]/@left-offset"/>
+      <eval expected="(solid,#008000,850)" xpath="//block[@prod-id='july']/block[1]/@border-start"/>
+      <eval expected="-3684" xpath="//block[@prod-id='july']/block[1]/@left-offset"/>
+   </checks>
+</testcase>

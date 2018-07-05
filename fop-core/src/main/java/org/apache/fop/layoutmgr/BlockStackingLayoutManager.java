@@ -124,6 +124,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         int sp = TraitSetter.getEffectiveSpace(adjust, minoptmax);
         if (sp != 0) {
             Block spacer = new Block();
+            spacer.setChangeBarList(getChangeBarList());
             spacer.setBPD(sp);
             parentLayoutManager.addChildArea(spacer);
         }

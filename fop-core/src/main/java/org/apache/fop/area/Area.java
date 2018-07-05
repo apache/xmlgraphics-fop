@@ -20,12 +20,14 @@
 package org.apache.fop.area;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.fo.flow.ChangeBar;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.WritingModeTraitsGetter;
 
@@ -127,6 +129,29 @@ public class Area extends AreaTreeObject implements Serializable {
      * logging instance
      */
     protected static final Log log = LogFactory.getLog(Area.class);
+
+    /**
+     * The active change bar list
+     */
+    private List<ChangeBar> changeBarList;
+
+    /**
+     * Returns the active change bar list.
+     *
+     * @return The active change bar list
+     */
+    public List<ChangeBar> getChangeBarList() {
+        return changeBarList;
+    }
+
+    /**
+     * Sets the active change bar list.
+     *
+     * @param changeBarList The active change bar list
+     */
+    public void setChangeBarList(List<ChangeBar> changeBarList) {
+        this.changeBarList = changeBarList;
+    }
 
     /**
      * Get the area class of this area.

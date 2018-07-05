@@ -736,12 +736,15 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         // save position and offset
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
+        int saveBO = getBeginOffset();
 
         //Establish a new coordinate system
         AffineTransform at = new AffineTransform();
         at.translate(currentIPPosition, currentBPPosition);
         at.translate(block.getXOffset(), block.getYOffset());
         at.translate(0, block.getSpaceBefore());
+
+        setBeginOffset(saveBO - block.getXOffset());
 
         if (!at.isIdentity()) {
             establishTransformationMatrix(at);
@@ -759,6 +762,8 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         if (!at.isIdentity()) {
             restoreGraphicsState();
         }
+
+        setBeginOffset(saveBO);
 
         // stacked and relative blocks effect stacking
         currentIPPosition = saveIP;

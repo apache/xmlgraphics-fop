@@ -72,6 +72,7 @@ import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineBlock;
 import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.InlineViewport;
@@ -692,6 +693,26 @@ public class XMLRenderer extends AbstractXMLRenderer {
         endElement("block");
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected void renderInlineBlock(InlineBlock inlineBlock) {
+        Block block = inlineBlock.getBlock();
+        atts.clear();
+        addAreaAttributes(block);
+        addTraitAttributes(block);
+        if (block.getXOffset() != 0) {
+            addAttribute("left-offset", block.getXOffset());
+        }
+        if (block.getYOffset() != 0) {
+            addAttribute("top-offset", block.getYOffset());
+        }
+        startElement("inlineblock", atts);
+        if (block.getChildAreas() != null) {
+           renderBlocks(null, block.getChildAreas());
+        }
+        endElement("inlineblock");
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -943,6 +964,4 @@ public class XMLRenderer extends AbstractXMLRenderer {
             addAttribute("reversed", "true");
         }
     }
-
-
 }

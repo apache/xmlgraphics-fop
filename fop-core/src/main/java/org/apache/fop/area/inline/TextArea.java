@@ -95,6 +95,7 @@ public class TextArea extends AbstractTextArea {
         WordArea wordArea = new WordArea(
             blockProgressionOffset, minWordLevel, word, letterAdjust, levels, gposAdjustments);
         wordArea.setIPD(ipd);
+        wordArea.setChangeBarList(getChangeBarList());
         addChildArea(wordArea);
         wordArea.setParentArea(this);
         updateLevel(minWordLevel);
@@ -113,6 +114,7 @@ public class TextArea extends AbstractTextArea {
         char space, int ipd, boolean adjustable, int blockProgressionOffset, int level) {
         SpaceArea spaceArea = new SpaceArea(blockProgressionOffset, level, space, adjustable);
         spaceArea.setIPD(ipd);
+        spaceArea.setChangeBarList(getChangeBarList());
         addChildArea(spaceArea);
         spaceArea.setParentArea(this);
         updateLevel(level);

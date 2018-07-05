@@ -357,6 +357,7 @@ public class BlockLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
+            curBlockArea.setChangeBarList(getChangeBarList());
 
             curBlockArea.setIPD(super.getContentAreaIPD());
 

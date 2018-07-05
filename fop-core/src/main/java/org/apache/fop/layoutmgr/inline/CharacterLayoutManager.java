@@ -75,6 +75,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     private TextArea createCharacterArea() {
         Character fobj = (Character) this.fobj;
         TextArea text = new TextArea();
+        text.setChangeBarList(getChangeBarList());
         char ch = fobj.getCharacter();
         int ipd = font.getCharWidth(ch);
         int blockProgressionOffset = 0;

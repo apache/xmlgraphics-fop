@@ -17,35 +17,26 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr.inline;
+package org.apache.fop.area.inline;
 
-import org.apache.fop.area.Area;
-import org.apache.fop.area.inline.Image;
-import org.apache.fop.fo.flow.ExternalGraphic;
-
+import org.apache.fop.area.Block;
 
 /**
- * LayoutManager for the fo:external-graphic formatting object
+ * This is the inline block area class.
+ * It wraps the child block when it has to be placed into inline parent.
  */
-public class ExternalGraphicLayoutManager extends AbstractGraphicsLayoutManager {
+public class InlineBlock extends InlineParent {
+
+    private final Block block;
+
+    public InlineBlock(Block block) {
+        this.block = block;
+    }
 
     /**
-     * Constructor.
-     *
-     * @param node
-     *            the fo:external-graphic formatting object that creates the
-     *            area
+     * @return the wrapped block
      */
-    public ExternalGraphicLayoutManager(ExternalGraphic node) {
-        super(node);
+    public Block getBlock() {
+        return block;
     }
-
-    /** {@inheritDoc} */
-    protected Area getChildArea() {
-        Image im = new Image(((ExternalGraphic) fobj).getSrc());
-        im.setChangeBarList(getChangeBarList());
-        return im;
-    }
-
 }
-

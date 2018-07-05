@@ -176,6 +176,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager imp
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
+            curBlockArea.setChangeBarList(getChangeBarList());
             curBlockArea.setPositioning(Block.ABSOLUTE);
             // set position
             curBlockArea.setXOffset(xOffset);

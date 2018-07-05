@@ -854,6 +854,7 @@ public class BlockContainerLayoutManager extends SpacedBorderedPaddedBlockLayout
             int level = getBlockContainerFO().getBidiLevel();
 
             viewportBlockArea = new BlockViewport(allowBPDUpdate);
+            viewportBlockArea.setChangeBarList(getChangeBarList());
             viewportBlockArea.addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
             if (level >= 0) {
                 viewportBlockArea.setBidiLevel(level);
@@ -892,6 +893,7 @@ public class BlockContainerLayoutManager extends SpacedBorderedPaddedBlockLayout
             }
 
             referenceArea = new Block();
+            referenceArea.setChangeBarList(getChangeBarList());
             referenceArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             if (level >= 0) {
                 referenceArea.setBidiLevel(level);

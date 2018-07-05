@@ -90,9 +90,11 @@ public class TableRow extends TableCellContainer implements BreakPropertySet {
     /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker()) {
-            TableCell cell = (TableCell) child;
-            TablePart part = (TablePart) getParent();
-            addTableCellChild(cell, part.isFirst(this));
+            if (child instanceof TableCell) {
+               TableCell cell = (TableCell) child;
+               TablePart part = (TablePart) getParent();
+               addTableCellChild(cell, part.isFirst(this));
+            }
         }
         super.addChildNode(child);
     }
