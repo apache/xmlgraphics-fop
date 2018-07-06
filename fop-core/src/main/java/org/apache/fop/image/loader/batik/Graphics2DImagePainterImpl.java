@@ -21,11 +21,15 @@ package org.apache.fop.image.loader.batik;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.gvt.GraphicsNode;
 
+import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 /**
@@ -74,6 +78,18 @@ public class Graphics2DImagePainterImpl implements Graphics2DImagePainter {
         float sy = h / ih;
         if (sx != 1.0 || sy != 1.0) {
             g2d.scale(sx, sy);
+        }
+        normaliseScale(g2d);
+    }
+
+    private void normaliseScale(Graphics2D g2d) {
+        if (!(g2d instanceof AbstractGraphics2D)) {
+            AffineTransform old = g2d.getTransform();
+            double scaleX = BigDecimal.valueOf(old.getScaleX()).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            double scaleY = BigDecimal.valueOf(old.getScaleY()).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            AffineTransform newat = new AffineTransform(scaleX, old.getShearY(), old.getShearX(), scaleY,
+                    old.getTranslateX(), old.getTranslateY());
+            g2d.setTransform(newat);
         }
     }
 
