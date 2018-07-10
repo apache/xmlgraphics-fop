@@ -42,9 +42,6 @@ Legal information on libraries used by Apache FOP can be found in the
 
 Here is a list of files included in Apache FOP but not published under Apache
 License version 2.0:
-- sRGB IEC61966-2.1 color profile
-  File: src/java/org/apache/fop/pdf/sRGB Color Space Profile.icm
-  Info: src/java/org/apache/fop/pdf/sRGB Color Space Profile.icm.LICENSE.txt
 - K3 3 of 9 barcode font (TrueType)
   File: examples/fo/advanced/K3.TTF
   Info: examples/fo/advanced/K3.README
