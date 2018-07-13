@@ -21,6 +21,7 @@ package org.apache.fop.fo;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,7 +35,9 @@ import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.fo.flow.ChangeBar;
 import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 
@@ -182,6 +185,39 @@ public abstract class FObj extends FONode implements Constants {
         if (id != null) {
             checkId(id);
         }
+
+        PageSequence pageSequence = getRoot().getLastPageSequence();
+        if (pageSequence != null && pageSequence.hasChangeBars()) {
+            startOfNodeChangeBarList = pageSequence.getClonedChangeBarList();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * @throws FOPException FOP Exception
+     */
+    public void endOfNode() throws FOPException {
+
+        List<ChangeBar> endOfNodeChangeBarList = null;
+
+        PageSequence pageSequence = getRoot().getLastPageSequence();
+        if (pageSequence != null) {
+            endOfNodeChangeBarList = pageSequence.getClonedChangeBarList();
+        }
+
+        if (startOfNodeChangeBarList != null && endOfNodeChangeBarList != null) {
+
+            nodeChangeBarList = new LinkedList<ChangeBar>(endOfNodeChangeBarList);
+            nodeChangeBarList.retainAll(startOfNodeChangeBarList);
+
+            if (nodeChangeBarList.isEmpty()) {
+                nodeChangeBarList = null;
+            }
+
+            startOfNodeChangeBarList = null;
+        }
+
+        super.endOfNode();
     }
 
     /**
@@ -492,6 +528,8 @@ public abstract class FObj extends FONode implements Constants {
     protected boolean isInlineItem(String nsURI, String lName) {
         return (FO_URI.equals(nsURI)
                 && ("bidi-override".equals(lName)
+                        || "change-bar-begin".equals(lName)
+                        || "change-bar-end".equals(lName)
                         || "character".equals(lName)
                         || "external-graphic".equals(lName)
                         || "instream-foreign-object".equals(lName)

@@ -41,6 +41,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.CTM;
@@ -61,6 +62,7 @@ import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineBlock;
 import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.InlineViewport;
@@ -70,7 +72,11 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.flow.ChangeBar;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.Direction;
 import org.apache.fop.traits.Visibility;
 
 /**
@@ -111,7 +117,74 @@ public abstract class AbstractRenderer
      */
     protected int containingIPPosition;
 
-    /** the currently active PageViewport */
+    /**
+     * The "start edge" IP Position of the current column (for change bars)
+     */
+    protected int columnStartIPPosition;
+
+    /**
+     * The "end edge" IP Position of the current column (for change bars)
+     */
+    protected int columnEndIPPosition;
+
+    /**
+     * The "left" position of the current column (for change bars)
+     */
+    protected int columnLeftIPPosition;
+
+    /**
+     * The "right" position of the current column (for change bars)
+     */
+    protected int columnRightIPPosition;
+
+    /**
+     * The number of columns in the span (for change bars)
+     */
+    protected int columnCount;
+
+    /**
+     * The index number of the current column (for change bars)
+     */
+    protected int columnIndex;
+
+    /**
+     * The column width (for change bars)
+     */
+    protected int columnWidth;
+
+    /**
+     * The size of column gap (for change bars)
+     */
+    protected int columnGap;
+
+    /**
+     * The block progression direction (for change bars)
+     */
+    protected Direction blockProgressionDirection;
+
+    /**
+     * The inline progression direction (for change bars)
+     */
+    protected Direction inlineProgressionDirection;
+
+    /**
+     * Is binding on start edge of column?
+     */
+    protected boolean bindingOnStartEdge;
+
+    /**
+     * Is binding on end edge of column?
+     */
+    protected boolean bindingOnEndEdge;
+
+    /**
+     * The IP begin offset of coordinate 0
+     */
+    private int beginOffset;
+
+    /**
+     * the currently active PageViewport
+     */
     protected PageViewport currentPageViewport;
 
     /* warned XML handlers */
@@ -407,36 +480,95 @@ public abstract class AbstractRenderer
      * that are positioned into columns.
      * </p>
      *
-     * @param mr  The main reference area
+     * @param mainReference The main reference area
      */
-    protected void renderMainReference(MainReference mr) {
+    protected void renderMainReference(MainReference mainReference) {
         Span span = null;
-        List spans = mr.getSpans();
+        List spans = mainReference.getSpans();
         int saveBPPos = currentBPPosition;
-        int saveSpanBPPos = saveBPPos;
         int saveIPPos = currentIPPosition;
+        int saveSpanBPPos = saveBPPos;
+
         for (Object span1 : spans) {
             span = (Span) span1;
+
+            columnCount = span.getColumnCount();
+            columnGap = span.getColumnGap();
+            columnWidth = span.getColumnWidth();
+
+            blockProgressionDirection = (Direction) span.getTrait(Trait.BLOCK_PROGRESSION_DIRECTION);
+            inlineProgressionDirection = (Direction) span.getTrait(Trait.INLINE_PROGRESSION_DIRECTION);
+
             int level = span.getBidiLevel();
             if (level < 0) {
                 level = 0;
             }
             if ((level & 1) == 1) {
                 currentIPPosition += span.getIPD();
-                currentIPPosition += mr.getColumnGap();
+                currentIPPosition += columnGap;
             }
-            for (int c = 0; c < span.getColumnCount(); c++) {
-                NormalFlow flow = span.getNormalFlow(c);
+
+            for (columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+
+                NormalFlow flow = span.getNormalFlow(columnIndex);
+
+                boolean isLeftToRight = (inlineProgressionDirection == null)
+                        || (inlineProgressionDirection.getEnumValue() == Constants.EN_LR);
+
                 if (flow != null) {
+
+                    // if direction is right to left, then end is left edge,
+                    // else end is right edge (for top-bottom/bottom-top block
+                    // progression directions)
+
+                    // binding edge is on left edge for odd pages and
+                    // on right edge for even pages
+
+                    int pageIndex = currentPageViewport.getPageIndex();
+
+                    bindingOnStartEdge = false;
+                    bindingOnEndEdge = false;
+
+                    if (isLeftToRight) {
+
+                        columnStartIPPosition = 0;
+                        columnEndIPPosition = columnWidth;
+                        columnLeftIPPosition = 0;
+                        columnRightIPPosition = columnWidth;
+
+                        if (blockProgressionDirection == null || blockProgressionDirection.isVertical()) {
+                            if (pageIndex % 2 == 0) {
+                                bindingOnStartEdge = true;
+                            } else {
+                                bindingOnEndEdge = true;
+                            }
+                        }
+
+                    } else {
+
+                        columnStartIPPosition = columnWidth;
+                        columnEndIPPosition = 0;
+                        columnLeftIPPosition = 0;
+                        columnRightIPPosition = columnWidth;
+
+                        if (blockProgressionDirection == null || blockProgressionDirection.isVertical()) {
+                            if (pageIndex % 2 == 0) {
+                                bindingOnEndEdge = true;
+                            } else {
+                                bindingOnStartEdge = true;
+                            }
+                        }
+                    }
+
                     currentBPPosition = saveSpanBPPos;
                     if ((level & 1) == 1) {
                         currentIPPosition -= flow.getIPD();
-                        currentIPPosition -= mr.getColumnGap();
+                        currentIPPosition -= columnGap;
                     }
                     renderFlow(flow);
                     if ((level & 1) == 0) {
                         currentIPPosition += flow.getIPD();
-                        currentIPPosition += mr.getColumnGap();
+                        currentIPPosition += columnGap;
                     }
                 }
             }
@@ -504,7 +636,6 @@ public abstract class AbstractRenderer
             endVParea();
 
             // clip if necessary
-
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
         } else {
@@ -584,6 +715,18 @@ public abstract class AbstractRenderer
      */
     protected void renderBlock(Block block) {
         assert block != null;
+        List<ChangeBar> changeBarList = block.getChangeBarList();
+
+        if (changeBarList != null && !changeBarList.isEmpty()) {
+            int saveIP = currentIPPosition;
+            int saveBP = currentBPPosition;
+
+            drawChangeBars(block, changeBarList);
+
+            currentIPPosition = saveIP;
+            currentBPPosition = saveBP;
+        }
+
         List children = block.getChildAreas();
         boolean inNewLayer = false;
         if (maybeStartLayer(block)) {
@@ -628,7 +771,17 @@ public abstract class AbstractRenderer
     }
 
     /**
+     * Renders an inline block area.
+     *
+     * @param inlineBlock The inline block area
+     */
+    protected void renderInlineBlock(InlineBlock inlineBlock) {
+        renderBlock(inlineBlock.getBlock());
+    }
+
+    /**
      * Establish new optional content group layer.
+     *
      * @param layer name of layer
      */
     protected abstract void startLayer(String layer);
@@ -699,6 +852,11 @@ public abstract class AbstractRenderer
      * @param inlineArea inline area text to render
      */
     protected void renderInlineArea(InlineArea inlineArea) {
+        List<ChangeBar> changeBarList = inlineArea.getChangeBarList();
+
+        if (changeBarList != null && !changeBarList.isEmpty()) {
+            drawChangeBars(inlineArea, changeBarList);
+        }
         if (inlineArea instanceof TextArea) {
             renderText((TextArea) inlineArea);
         //} else if (inlineArea instanceof Character) {
@@ -707,6 +865,8 @@ public abstract class AbstractRenderer
             renderWord((WordArea) inlineArea);
         } else if (inlineArea instanceof SpaceArea) {
             renderSpace((SpaceArea) inlineArea);
+        } else if (inlineArea instanceof InlineBlock) {
+            renderInlineBlock((InlineBlock) inlineArea);
         } else if (inlineArea instanceof InlineParent) {
             renderInlineParent((InlineParent) inlineArea);
         } else if (inlineArea instanceof InlineBlockParent) {
@@ -757,6 +917,16 @@ public abstract class AbstractRenderer
         List children = text.getChildAreas();
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
+
+        List<ChangeBar> changeBarList = text.getChangeBarList();
+
+        if (changeBarList != null && !changeBarList.isEmpty()) {
+            drawChangeBars(text, changeBarList);
+
+            currentIPPosition = saveIP;
+            currentBPPosition = saveBP;
+        }
+
         for (Object aChildren : children) {
             InlineArea inline = (InlineArea) aChildren;
             renderInlineArea(inline);
@@ -877,6 +1047,11 @@ public abstract class AbstractRenderer
      * (todo) Make renderImage() protected
      */
     public void renderImage(Image image, Rectangle2D pos) {
+        List<ChangeBar> changeBarList = image.getChangeBarList();
+
+        if (changeBarList != null && !changeBarList.isEmpty()) {
+            drawChangeBars(image, changeBarList);
+        }
         // Default: do nothing.
         // Some renderers (ex. Text) don't support images.
     }
@@ -903,6 +1078,12 @@ public abstract class AbstractRenderer
      * (todo) Make renderForeignObject() protected
      */
     protected void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
+        List<ChangeBar> changeBarList = fo.getChangeBarList();
+
+        if (changeBarList != null && !changeBarList.isEmpty()) {
+            drawChangeBars(fo, changeBarList);
+        }
+
         // Default: do nothing.
         // Some renderers (ex. Text) don't support foreign objects.
     }
@@ -974,5 +1155,192 @@ public abstract class AbstractRenderer
         matrix[4] = Math.round(matrix[4] * 1000);
         matrix[5] = Math.round(matrix[5] * 1000);
         return new AffineTransform(matrix);
+    }
+
+    /**
+     * Draws all change bars associated with an area.
+     *
+     * @param area The area to draw change bars for
+     * @param changeBarList The list of change bars affecting the area
+     */
+    protected void drawChangeBars(Area area, List<ChangeBar> changeBarList) {
+
+        if (area.getTraitAsBoolean(Trait.IS_REFERENCE_AREA)) {
+            return;
+        }
+
+        Block changeBarArea;
+
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        int currentColumnStartIP = columnStartIPPosition;
+        int currentColumnEndIP = columnEndIPPosition;
+        int currentColumnLeftIP = columnLeftIPPosition;
+        int currentColumnRightIP = columnRightIPPosition;
+
+        for (ChangeBar changeBar : changeBarList) {
+
+            boolean isLeftToRight = (inlineProgressionDirection == null)
+                    || (inlineProgressionDirection.getEnumValue() == Constants.EN_LR);
+
+            changeBarArea = new Block();
+
+            // currentIPPosition is reset to zero so from now on all multicolumn
+            // dimensions has to be calculated relatively to the given column
+            currentIPPosition = 0;
+            currentBPPosition = saveBP;
+
+            int changeBarWidth = changeBar.getWidth().getValue();
+            int changeBarOffset = changeBar.getOffset().getValue();
+
+            if (isLeftToRight) {
+                currentColumnStartIP = columnStartIPPosition - changeBarWidth;
+                currentColumnLeftIP = columnLeftIPPosition - changeBarWidth;
+            } else {
+                currentColumnEndIP = columnEndIPPosition - changeBarWidth;
+                currentColumnLeftIP = columnLeftIPPosition - changeBarWidth;
+            }
+
+            // xOffset by default is negative width for change bars placed on the
+            // start edge (overriden if placement is at the end edge)
+            int xOffset = currentColumnStartIP;
+
+            // xScale is for adding or subtracting the offset of the change bar
+            // depending on placing the bar towards or away from the edge it is
+            // bound to
+            int xScale = -1;
+
+            // determines currentIPPosition based on placement
+            switch (changeBar.getPlacement()) {
+                case EN_START:
+                    xOffset = currentColumnStartIP;
+                    xScale = -1;
+                    break;
+                case EN_END:
+                    xOffset = currentColumnEndIP;
+                    xScale = 1;
+                    break;
+                case EN_LEFT:
+                    xOffset = currentColumnLeftIP;
+                    xScale = (isLeftToRight) ? -1 : 1;
+                    break;
+                case EN_RIGHT:
+                    xOffset = currentColumnRightIP;
+                    xScale = (isLeftToRight) ? 1 : -1;
+                    break;
+                case EN_INSIDE:
+                    if (bindingOnStartEdge) {
+                        xOffset = currentColumnStartIP;
+                        xScale = -1;
+                    } else if (bindingOnEndEdge) {
+                        xOffset = currentColumnEndIP;
+                        xScale = 1;
+                    } else {
+                        xOffset = currentColumnStartIP;
+                        xScale = -1;
+                    }
+                    break;
+                case EN_OUTSIDE:
+                    if (bindingOnStartEdge) {
+                        xOffset = columnEndIPPosition;
+                        xScale = 1;
+                    } else if (bindingOnEndEdge) {
+                        xOffset = columnStartIPPosition;
+                        xScale = -1;
+                    } else {
+                        xOffset = columnStartIPPosition;
+                        xScale = -1;
+                    }
+                    break;
+                case EN_ALTERNATE:
+                    if (columnCount == 2) {
+                        if (columnIndex == 0) {
+                            xOffset = columnStartIPPosition;
+                            xScale = -1;
+                        } else {
+                            xOffset = columnEndIPPosition;
+                            xScale = 1;
+                        }
+                    } else {
+                        if (bindingOnStartEdge) {
+                            xOffset = columnEndIPPosition;
+                            xScale = 1;
+                        } else if (bindingOnEndEdge) {
+                            xOffset = columnStartIPPosition;
+                            xScale = -1;
+                        } else {
+                            xOffset = columnStartIPPosition;
+                            xScale = -1;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            if (isLeftToRight) {
+                xOffset += xScale * changeBarOffset;
+            } else {
+                xOffset -= xScale * changeBarOffset;
+            }
+
+            xOffset += getBeginOffset();
+
+            // Change bar area has 0 ipd, class xsl-absolute, no margin or padding
+            changeBarArea.setAreaClass(Area.CLASS_ABSOLUTE);
+            changeBarArea.setIPD(0);
+
+            BorderProps props = BorderProps.makeRectangular(
+                    changeBar.getStyle(), changeBarWidth, changeBar.getColor(),
+                    BorderProps.Mode.SEPARATE);
+
+            changeBarArea.addTrait(Trait.BORDER_START, props);
+            changeBarArea.addTrait(Trait.BORDER_END, props);
+
+            changeBarArea.setXOffset(xOffset);
+
+            int areaHeight = area.getAllocBPD();
+
+            if (area instanceof BlockParent) {
+                changeBarArea.setBPD(areaHeight);
+                changeBarArea.setYOffset(((BlockParent) area).getYOffset());
+                renderBlock(changeBarArea);
+
+            } else {
+                if (areaHeight > 0) {
+                    Property p = changeBar.getLineHeight().getOptimum(DummyPercentBaseContext.getInstance());
+                    int lineHeight = p.getLength().getValue();
+                    changeBarArea.setBPD(lineHeight);
+                    changeBarArea.setYOffset(areaHeight - lineHeight);
+                }
+                renderInlineBlock(new InlineBlock(changeBarArea));
+            }
+
+            // restore position on page
+            currentIPPosition = saveIP;
+            currentBPPosition = saveBP;
+        }
+    }
+
+    /**
+     * Returns the begin offset of the inline begin (changes by reference area
+     * transforms).
+     *
+     * @return the offset from current coordinate system 0 that the IP begin is
+     * at
+     */
+    protected int getBeginOffset() {
+        return beginOffset;
+    }
+
+    /**
+     * Sets the begin offset for inline progression begin (changes by reference
+     * area tranforms).
+     *
+     * @param offset the new offset from IPP 0 that true IP start is at
+     */
+    protected void setBeginOffset(int offset) {
+        beginOffset = offset;
     }
 }

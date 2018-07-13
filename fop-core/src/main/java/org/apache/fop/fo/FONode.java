@@ -20,6 +20,7 @@
 package org.apache.fop.fo;
 
 // Java
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Stack;
@@ -42,6 +43,7 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.fo.extensions.svg.SVGElementMapping;
+import org.apache.fop.fo.flow.ChangeBar;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ContentHandlerFactory;
@@ -62,6 +64,12 @@ public abstract class FONode implements Cloneable {
 
     /** pointer to the sibling nodes */
     protected FONode[] siblings;
+
+    /** The list of active change bars for the given node */
+    protected List<ChangeBar> nodeChangeBarList;
+
+    /** The list of active change bars for the start of the given node  */
+    protected List<ChangeBar> startOfNodeChangeBarList;
 
     /**
      * Marks the location of this object from the input FO
@@ -171,6 +179,18 @@ public abstract class FONode implements Cloneable {
      */
     protected boolean inMarker() {
         return getBuilderContext().inMarker();
+    }
+
+    /**
+     * Tests if the given element is a change bar element.
+     *
+     * @param namespaceURI The name space of the element
+     * @param localName The local name of the element
+     * @return A boolean value true if the given element is a change bar element
+     */
+    public boolean isChangeBarElement(String namespaceURI, String localName) {
+        return FO_URI.equals(namespaceURI)
+                && (localName.equals("change-bar-begin") || localName.equals("change-bar-end"));
     }
 
     /**
@@ -1080,6 +1100,15 @@ public abstract class FONode implements Cloneable {
          */
         FONode last();
 
+    }
+
+    /**
+     * Returns the list of active change bars.
+     *
+     * @return The list of active change bars
+     */
+    public List<ChangeBar> getChangeBarList() {
+        return nodeChangeBarList;
     }
 
     /**

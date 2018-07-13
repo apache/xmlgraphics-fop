@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+   <info>
+      <p>This test checks fo:change-bar-* on block elements.</p>
+   </info>
+   <fo>
+      <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+         <fo:layout-master-set>
+            <fo:simple-page-master page-height="145mm" page-width="210mm" margin="10mm"
+               master-name="master">
+               <fo:region-body column-count="2" column-gap="10mm"/>
+            </fo:simple-page-master>
+         </fo:layout-master-set>
+         <fo:page-sequence master-reference="master">
+            <fo:flow flow-name="xsl-region-body">
+               
+               <fo:block change-bar-style="solid" change-bar-color="red" change-bar-offset="3mm"
+                  change-bar-width="0.3mm">
+                  
+                  <fo:change-bar-begin change-bar-class="global"/>
+                  <fo:block id="red-01" color="red">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-begin change-bar-class="local-blue" change-bar-color="blue"
+                     change-bar-offset="2mm"/>
+                  <fo:block id="blue-01" color="blue">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="local-blue"/>
+                  <fo:change-bar-begin change-bar-class="local-green" change-bar-color="green"
+                     change-bar-offset="2mm"/>
+                  <fo:block id="green-01" color="green">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="local-green"/>
+                  <fo:block id="red-02" color="red">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="global"/>
+                  
+               </fo:block>
+            </fo:flow>
+         </fo:page-sequence>
+      </fo:root>
+   </fo>
+   <checks>
+      <eval expected="(solid,#ff0000,850)" xpath="//block[@prod-id='red-01']/block[1]/@border-start"/>
+      <eval expected="-9353" xpath="//block[@prod-id='red-01']/block[1]/@left-offset"/>
+      <eval expected="(solid,#ff0000,850)" xpath="//block[@prod-id='blue-01']/block[1]/@border-start"/>
+      <eval expected="-9353" xpath="//block[@prod-id='blue-01']/block[1]/@left-offset"/>
+      <eval expected="(solid,#0000ff,850)" xpath="//block[@prod-id='blue-01']/block[2]/@border-start"/>
+      <eval expected="-6519" xpath="//block[@prod-id='blue-01']/block[2]/@left-offset"/>
+      <eval expected="(solid,#ff0000,850)" xpath="//block[@prod-id='green-01']/block[1]/@border-start"/>
+      <eval expected="-9353" xpath="//block[@prod-id='green-01']/block[1]/@left-offset"/>
+      <eval expected="(solid,#008000,850)" xpath="//block[@prod-id='green-01']/block[2]/@border-start"/>
+      <eval expected="-6519" xpath="//block[@prod-id='green-01']/block[2]/@left-offset"/>
+      <eval expected="(solid,#ff0000,850)" xpath="//block[@prod-id='red-02']/block[1]/@border-start"/>
+      <eval expected="-9353" xpath="//block[@prod-id='red-02']/block[1]/@left-offset"/>
+   </checks>
+</testcase>

@@ -529,11 +529,13 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
         if (usedBPD < cellBPD) {
             if (getTableCell().getDisplayAlign() == EN_CENTER) {
                 Block space = new Block();
+                space.setChangeBarList(getChangeBarList());
                 space.setBPD((cellBPD - usedBPD) / 2);
                 space.setBidiLevel(getTableCell().getBidiLevelRecursive());
                 curBlockArea.addBlock(space);
             } else if (getTableCell().getDisplayAlign() == EN_AFTER) {
                 Block space = new Block();
+                space.setChangeBarList(getChangeBarList());
                 space.setBPD(cellBPD - usedBPD);
                 space.setBidiLevel(getTableCell().getBidiLevelRecursive());
                 curBlockArea.addBlock(space);
@@ -620,6 +622,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
                            boolean outer, int level) {
         if (blocks[i][j] == null) {
             blocks[i][j] = new Block();
+            blocks[i][j].setChangeBarList(getChangeBarList());
             blocks[i][j].addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             blocks[i][j].setPositioning(Block.ABSOLUTE);
             blocks[i][j].setBidiLevel(level);
@@ -651,6 +654,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
         int paddingEnd = padding.getPaddingEnd(false, this);
 
         Block block = new Block();
+        block.setChangeBarList(getChangeBarList());
         TraitSetter.setProducerID(block, getTable().getId());
         block.setPositioning(Block.ABSOLUTE);
         block.setIPD(cellIPD + paddingStart + paddingEnd);
@@ -677,6 +681,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
+            curBlockArea.setChangeBarList(getChangeBarList());
             curBlockArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             TraitSetter.setProducerID(curBlockArea, getTableCell().getId());
             curBlockArea.setPositioning(Block.ABSOLUTE);

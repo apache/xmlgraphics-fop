@@ -282,6 +282,28 @@ public class Root extends FObj implements CommonAccessibilityHolder {
     }
 
     /**
+     * Adds the specified page sequence.
+     *
+     * @param pageSequence The page sequence to add
+     */
+    public void addPageSequence(PageSequence pageSequence) {
+        pageSequences.add(pageSequence);
+    }
+
+    /**
+     * Returns the last page sequence (current while parsing).
+     *
+     * @return The last page sequence or null
+     */
+    public PageSequence getLastPageSequence() {
+        if (getPageSequenceCount() > 0) {
+            return pageSequences.get(getPageSequenceCount() - 1);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Returns the associated LayoutMasterSet.
      * @return the LayoutMasterSet instance
      */

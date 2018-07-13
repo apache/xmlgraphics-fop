@@ -178,6 +178,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         Dimension imageSize = this.imageLayout.getViewportSize();
 
         Block blockArea = new Block();
+        blockArea.setChangeBarList(getChangeBarList());
         blockArea.setIPD(imageSize.width);
         LineArea lineArea = new LineArea();
 

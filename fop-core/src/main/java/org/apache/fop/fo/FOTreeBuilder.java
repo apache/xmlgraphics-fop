@@ -273,7 +273,9 @@ public class FOTreeBuilder extends DefaultHandler {
                 if (currentFObj.getNamespaceURI().equals(FOElementMapping.URI)
                     || currentFObj.getNamespaceURI().equals(ExtensionElementMapping.URI)
                     || currentFObj.getNamespaceURI().equals(PDFElementMapping.NAMESPACE)) {
-                    currentFObj.validateChildNode(locator, namespaceURI, localName);
+                    if (!currentFObj.isChangeBarElement(namespaceURI, localName)) {
+                        currentFObj.validateChildNode(locator, namespaceURI, localName);
+                    }
                 }
             }
 
