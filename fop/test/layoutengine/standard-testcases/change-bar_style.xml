@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+   <info>
+      <p>This test checks fo:change-bar-start style.</p>
+   </info>
+   <fo>
+      <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+         <fo:layout-master-set>
+            <fo:simple-page-master page-height="145mm" page-width="210mm" margin="10mm"
+               master-name="master">
+               <fo:region-body column-count="2" column-gap="10mm"/>
+            </fo:simple-page-master>
+         </fo:layout-master-set>
+         <fo:page-sequence master-reference="master">
+            <fo:flow flow-name="xsl-region-body">
+
+               <fo:block change-bar-color="red" change-bar-offset="2mm" change-bar-width="1mm">
+
+                  <fo:change-bar-begin change-bar-class="none" change-bar-style="none"/>
+                  <fo:block id="none">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                     do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="none"/>
+
+                  <fo:change-bar-begin change-bar-class="hidden" change-bar-style="hidden"/>
+                  <fo:block id="hidden">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                     do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="hidden"/>
+
+                  <fo:change-bar-begin change-bar-class="dotted" change-bar-style="dotted"/>
+                  <fo:block id="dotted">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                     do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="dotted"/>
+
+                  <fo:change-bar-begin change-bar-class="dashed" change-bar-style="dashed"/>
+                  <fo:block id="dashed">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                     do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="dashed"/>
+
+                  <fo:change-bar-begin change-bar-class="solid" change-bar-style="solid"/>
+                  <fo:block id="solid">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                     do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="solid"/>
+
+                  <fo:change-bar-begin change-bar-class="double" change-bar-style="double"/>
+                  <fo:block id="double">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                     do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="double"/>
+
+                  <fo:change-bar-begin change-bar-class="groove" change-bar-style="groove"/>
+                  <fo:block id="groove">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                     do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="groove"/>
+
+                  <fo:change-bar-begin change-bar-class="ridge" change-bar-style="ridge"/>
+                  <fo:block id="ridge">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                     do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="ridge"/>
+
+                  <fo:change-bar-begin change-bar-class="inset" change-bar-style="inset"/>
+                  <fo:block id="inset">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                     do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="inset"/>
+
+                  <fo:change-bar-begin change-bar-class="outset" change-bar-style="outset"/>
+                  <fo:block id="outset">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                     do eiusmod tempor incididunt ut labore et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="outset"/>
+               </fo:block>
+            </fo:flow>
+         </fo:page-sequence>
+      </fo:root>
+   </fo>
+   <checks>
+      <eval expected="(none,#ff0000,2834)" xpath="//block[@prod-id='none']/block[1]/@border-start"/>
+      <eval expected="(hidden,#ff0000,2834)" xpath="//block[@prod-id='hidden']/block[1]/@border-start"/>
+      <eval expected="(dotted,#ff0000,2834)" xpath="//block[@prod-id='dotted']/block[1]/@border-start"/>
+      <eval expected="(dashed,#ff0000,2834)" xpath="//block[@prod-id='dashed']/block[1]/@border-start"/>
+      <eval expected="(solid,#ff0000,2834)" xpath="//block[@prod-id='solid']/block[1]/@border-start"/>
+      <eval expected="(double,#ff0000,2834)" xpath="//block[@prod-id='double']/block[1]/@border-start"/>
+      <eval expected="(groove,#ff0000,2834)" xpath="//block[@prod-id='groove']/block[1]/@border-start"/>
+      <eval expected="(ridge,#ff0000,2834)" xpath="//block[@prod-id='ridge']/block[1]/@border-start"/>
+      <eval expected="(inset,#ff0000,2834)" xpath="//block[@prod-id='inset']/block[1]/@border-start"/>
+      <eval expected="(outset,#ff0000,2834)" xpath="//block[@prod-id='outset']/block[1]/@border-start"/>
+   </checks>
+</testcase>

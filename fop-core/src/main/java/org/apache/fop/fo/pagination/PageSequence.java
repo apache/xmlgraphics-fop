@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.pagination;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
@@ -31,6 +33,7 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.flow.ChangeBar;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.traits.Direction;
 import org.apache.fop.traits.WritingMode;
@@ -78,6 +81,11 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
     private Flow mainFlow;
 
     /**
+     * Active change bars
+     */
+    private final List<ChangeBar> changeBarList = new LinkedList<ChangeBar>();
+
+    /**
      * Create a PageSequence instance that is a child of the
      * given {@link FONode}.
      *
@@ -118,6 +126,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
                         masterReference, getLocator());
             }
         }
+        getRoot().addPageSequence(this);
         getFOEventHandler().startPageSequence(this);
     }
 
@@ -463,5 +472,74 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
         }
         return pageSequenceMaster.getLastSimplePageMaster(isOddPage, isFirstPage, isBlank, getMainFlow()
                 .getFlowName());
+    }
+
+    /**
+     * Adds the specified change bar to the active change bar list.
+     *
+     * @param changeBarBegin The starting change bar element
+     */
+    public void pushChangeBar(ChangeBar changeBarBegin) {
+        changeBarList.add(changeBarBegin);
+    }
+
+    /**
+     * Removes the couple of the specified change bar from the active change bar list.
+     *
+     * @param changeBarEnd The ending change bar element
+     */
+    public void popChangeBar(ChangeBar changeBarEnd) {
+        ChangeBar changeBarBegin = getChangeBarBegin(changeBarEnd);
+        if (changeBarBegin != null) {
+            changeBarList.remove(changeBarBegin);
+        }
+    }
+
+    /**
+     * Returns the starting counterpart of the specified ending change bar.
+     *
+     * @param changeBarEnd The ending change bar element
+     * @return The starting counterpart of the specified ending change bar
+     */
+    public ChangeBar getChangeBarBegin(ChangeBar changeBarEnd) {
+        if (changeBarList.isEmpty()) {
+            return null;
+        } else {
+            String changeBarClass = changeBarEnd.getChangeBarClass();
+            for (int i = changeBarList.size() - 1; i >= 0; i--) {
+                ChangeBar changeBar = changeBarList.get(i);
+                if (changeBar.getChangeBarClass().equals(changeBarClass)) {
+                    return changeBar;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Tests if there are any active change bars.
+     *
+     * @return A boolean value true if there are any active change bars
+     */
+    public boolean hasChangeBars() {
+        return !changeBarList.isEmpty();
+    }
+
+    /**
+     * Returns the list of active change bars.
+     *
+     * @return The list of active change bars
+     */
+    public List<ChangeBar> getChangeBarList() {
+        return changeBarList;
+    }
+
+    /**
+     * Returns the copy of active change bars list.
+     *
+     * @return The list containing a copy of the active change bars
+     */
+    public List<ChangeBar> getClonedChangeBarList() {
+        return new LinkedList<ChangeBar>(changeBarList);
     }
 }

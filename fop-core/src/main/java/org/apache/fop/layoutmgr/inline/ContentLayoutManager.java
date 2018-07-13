@@ -84,6 +84,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         // get breaks then add areas to title
         this.parentLM = pslm;
         holder = new LineArea();
+        holder.setChangeBarList(getChangeBarList());
 
         //        setUserAgent(foTitle.getUserAgent());
 

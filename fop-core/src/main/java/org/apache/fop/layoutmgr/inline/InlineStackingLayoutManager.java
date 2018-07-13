@@ -181,6 +181,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
             if (iAdjust != 0) {
                 //getLogger().debug("Add leading space: " + iAdjust);
                 Space ls = new Space();
+                ls.setChangeBarList(getChangeBarList());
                 ls.setIPD(iAdjust);
                 int level = parentArea.getBidiLevel();
                 if (level >= 0) {

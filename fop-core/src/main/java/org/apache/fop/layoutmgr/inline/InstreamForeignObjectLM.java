@@ -46,7 +46,9 @@ public class InstreamForeignObjectLM extends AbstractGraphicsLayoutManager {
         org.w3c.dom.Document doc = child.getDOMDocument();
         String ns = child.getNamespaceURI();
 
-        return new ForeignObject(doc, ns);
+        ForeignObject obj = new ForeignObject(doc, ns);
+        obj.setChangeBarList(getChangeBarList());
+        return obj;
     }
 
 }

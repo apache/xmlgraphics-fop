@@ -206,9 +206,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         InlineArea area;
         if (isInline) {
             area = createInlineParent();
+            area.setChangeBarList(getChangeBarList());
             area.setBlockProgressionOffset(0);
         } else {
             area = new InlineBlockParent();
+            area.setChangeBarList(getChangeBarList());
         }
         if (fobj instanceof Inline || fobj instanceof BasicLink) {
             TraitSetter.setProducerID(area, fobj.getId());

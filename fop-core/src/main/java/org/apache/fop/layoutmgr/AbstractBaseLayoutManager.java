@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.flow.ChangeBar;
 
 /**
  * The base class for nearly all LayoutManagers.
@@ -255,6 +256,19 @@ public abstract class AbstractBaseLayoutManager
      */
     public FObj getFObj() {
         return fobj;
+    }
+
+    /**
+     * Returns the active change bar list.
+     *
+     * @return The active change bar list
+     */
+    public List<ChangeBar> getChangeBarList() {
+       if (fobj == null) {
+           return null;
+       } else {
+           return fobj.getChangeBarList();
+       }
     }
 
     /** {@inheritDoc} */

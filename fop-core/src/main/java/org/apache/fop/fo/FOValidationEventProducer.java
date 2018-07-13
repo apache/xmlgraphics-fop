@@ -382,6 +382,47 @@ public interface FOValidationEventProducer extends EventProducer {
             QName offendingNode, Locator loc);
 
     /**
+     * A class for change bars is not unique.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param name the class name
+     * @param loc the location of the error or null
+     * @event.severity FATAL
+     */
+    void changeBarClassNotUnique(Object source, String elementName, String name,
+            Locator loc);
+
+    /**
+     * Change bars were not stacked correctly
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param beginName the class name of the beginning change bar
+     * @param endName the class name of the ending change bar
+     * @param loc the location of the error or null
+     * @event.severity FATAL
+     */
+    void changeBarWrongStacking(Object source, String elementName, String beginName,
+            String endName, Locator loc);
+
+    /**
+     * Change bar ended without a start of bar occurred
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param loc the location of the error or null
+     * @event.severity FATAL
+     */
+    void changeBarNoBegin(Object source, String elementName, Locator loc);
+
+    /**
+     * Change bar not descendant of fo:flow or fo:static-content
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param loc the location of the error or null
+     * @event.severity FATAL
+     */
+    void changeBarWrongAncestor(Object source, String elementName, Locator loc);
+
+    /**
      * Alternate text is missing for a graphic element.
      *
      * @param source the event source

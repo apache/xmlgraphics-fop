@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+   <info>
+      <p>This test checks fo:change-bar-start placement.</p>
+   </info>
+   <fo>
+      <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+         <fo:layout-master-set>
+            <fo:simple-page-master page-height="145mm" page-width="210mm" margin="10mm"
+               master-name="master">
+               <fo:region-body column-count="2" column-gap="10mm"/>
+            </fo:simple-page-master>
+         </fo:layout-master-set>
+         <fo:page-sequence master-reference="master" writing-mode="rl-tb">
+            <fo:flow flow-name="xsl-region-body">
+
+               <fo:block change-bar-style="solid" change-bar-color="red" change-bar-offset="2mm"
+                  change-bar-width="0.3mm">
+
+                  <fo:change-bar-begin change-bar-class="left" change-bar-placement="left"/>
+                  <fo:block id="page1-col1-left">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="left"/>
+
+                  <fo:change-bar-begin change-bar-class="right" change-bar-placement="right"/>
+                  <fo:block id="page1-col1-right">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="right"/>
+
+                  <fo:change-bar-begin change-bar-class="start" change-bar-placement="start"/>
+                  <fo:block id="page1-col1-start">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="start"/>
+
+                  <fo:change-bar-begin change-bar-class="end" change-bar-placement="end"/>
+                  <fo:block id="page1-col1-end">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="end"/>
+
+                  <fo:change-bar-begin change-bar-class="inside" change-bar-placement="inside"/>
+                  <fo:block id="page1-col1-inside">Lorem ipsum dolor sit amet, consectetur
+                     adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="inside"/>
+
+                  <fo:change-bar-begin change-bar-class="outside" change-bar-placement="outside"/>
+                  <fo:block id="page1-col1-outside">Lorem ipsum dolor sit amet, consectetur
+                     adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="outside"/>
+
+                  <fo:change-bar-begin change-bar-class="left" change-bar-placement="left"/>
+                  <fo:block id="page1-col2-left">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="left"/>
+
+                  <fo:change-bar-begin change-bar-class="right" change-bar-placement="right"/>
+                  <fo:block id="page1-col2-right">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="right"/>
+
+                  <fo:change-bar-begin change-bar-class="start" change-bar-placement="start"/>
+                  <fo:block id="page1-col2-start">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="start"/>
+
+                  <fo:change-bar-begin change-bar-class="end" change-bar-placement="end"/>
+                  <fo:block id="page1-col2-end">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="end"/>
+
+                  <fo:change-bar-begin change-bar-class="inside" change-bar-placement="inside"/>
+                  <fo:block id="page1-col2-inside">Lorem ipsum dolor sit amet, consectetur
+                     adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="inside"/>
+
+                  <fo:change-bar-begin change-bar-class="outside" change-bar-placement="outside"/>
+                  <fo:block id="page1-col2-outside">Lorem ipsum dolor sit amet, consectetur
+                     adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="outside"/>
+
+                  <fo:change-bar-begin change-bar-class="left" change-bar-placement="left"/>
+                  <fo:block id="page2-col1-left">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="left"/>
+
+                  <fo:change-bar-begin change-bar-class="right" change-bar-placement="right"/>
+                  <fo:block id="page2-col1-right">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="right"/>
+
+                  <fo:change-bar-begin change-bar-class="start" change-bar-placement="start"/>
+                  <fo:block id="page2-col1-start">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="start"/>
+
+                  <fo:change-bar-begin change-bar-class="end" change-bar-placement="end"/>
+                  <fo:block id="page2-col1-end">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="end"/>
+
+                  <fo:change-bar-begin change-bar-class="inside" change-bar-placement="inside"/>
+                  <fo:block id="page2-col1-inside">Lorem ipsum dolor sit amet, consectetur
+                     adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="inside"/>
+
+                  <fo:change-bar-begin change-bar-class="outside" change-bar-placement="outside"/>
+                  <fo:block id="page2-col1-outside">Lorem ipsum dolor sit amet, consectetur
+                     adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="outside"/>
+
+                  <fo:change-bar-begin change-bar-class="left" change-bar-placement="left"/>
+                  <fo:block id="page2-col2-left">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="left"/>
+
+                  <fo:change-bar-begin change-bar-class="right" change-bar-placement="right"/>
+                  <fo:block id="page2-col2-right">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="right"/>
+
+                  <fo:change-bar-begin change-bar-class="start" change-bar-placement="start"/>
+                  <fo:block id="page2-col2-start">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="start"/>
+
+                  <fo:change-bar-begin change-bar-class="end" change-bar-placement="end"/>
+                  <fo:block id="page2-col2-end">Lorem ipsum dolor sit amet, consectetur adipiscing
+                     elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="end"/>
+
+                  <fo:change-bar-begin change-bar-class="inside" change-bar-placement="inside"/>
+                  <fo:block id="page2-col2-inside">Lorem ipsum dolor sit amet, consectetur
+                     adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="inside"/>
+
+                  <fo:change-bar-begin change-bar-class="outside" change-bar-placement="outside"/>
+                  <fo:block id="page2-col2-outside">Lorem ipsum dolor sit amet, consectetur
+                     adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="outside"/>
+
+                  <fo:change-bar-begin change-bar-class="alternate" change-bar-placement="alternate"/>
+                  <fo:block id="page3-col1-alternate">Lorem ipsum dolor sit amet, consectetur
+                     adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                     aliqua.</fo:block>
+                  <fo:block id="page3-col2-alternate" break-before="column">Lorem ipsum dolor sit
+                     amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                     et dolore magna aliqua.</fo:block>
+                  <fo:change-bar-end change-bar-class="alternate"/>
+               </fo:block>
+            </fo:flow>
+         </fo:page-sequence>
+      </fo:root>
+   </fo>
+   <checks>
+      <eval expected="-6519" xpath="//block[@prod-id='page1-col1-left']/block[1]/@left-offset"/>
+      <eval expected="5669" xpath="//block[@prod-id='page1-col1-right']/block[1]/@left-offset"/>
+      <eval expected="-6519" xpath="//block[@prod-id='page1-col1-start']/block[1]/@left-offset"/>
+      <eval expected="5669" xpath="//block[@prod-id='page1-col1-end']/block[1]/@left-offset"/>
+      <eval expected="-6519" xpath="//block[@prod-id='page1-col1-inside']/block[1]/@left-offset"/>
+      <eval expected="-5669" xpath="//block[@prod-id='page1-col1-outside']/block[1]/@left-offset"/>
+
+      <eval expected="-6519" xpath="//block[@prod-id='page1-col2-left']/block[1]/@left-offset"/>
+      <eval expected="5669" xpath="//block[@prod-id='page1-col2-right']/block[1]/@left-offset"/>
+      <eval expected="-6519" xpath="//block[@prod-id='page1-col2-start']/block[1]/@left-offset"/>
+      <eval expected="5669" xpath="//block[@prod-id='page1-col2-end']/block[1]/@left-offset"/>
+      <eval expected="-6519" xpath="//block[@prod-id='page1-col2-inside']/block[1]/@left-offset"/>
+      <eval expected="-5669" xpath="//block[@prod-id='page1-col2-outside']/block[1]/@left-offset"/>
+
+      <eval expected="-6519" xpath="//block[@prod-id='page2-col1-left']/block[1]/@left-offset"/>
+      <eval expected="5669" xpath="//block[@prod-id='page2-col1-right']/block[1]/@left-offset"/>
+      <eval expected="-6519" xpath="//block[@prod-id='page2-col1-start']/block[1]/@left-offset"/>
+      <eval expected="5669" xpath="//block[@prod-id='page2-col1-end']/block[1]/@left-offset"/>
+      <eval expected="-6519" xpath="//block[@prod-id='page2-col1-inside']/block[1]/@left-offset"/>
+      <eval expected="-5669" xpath="//block[@prod-id='page2-col1-outside']/block[1]/@left-offset"/>
+
+      <eval expected="-6519" xpath="//block[@prod-id='page2-col2-left']/block[1]/@left-offset"/>
+      <eval expected="5669" xpath="//block[@prod-id='page2-col2-right']/block[1]/@left-offset"/>
+      <eval expected="-6519" xpath="//block[@prod-id='page2-col2-start']/block[1]/@left-offset"/>
+      <eval expected="5669" xpath="//block[@prod-id='page2-col2-end']/block[1]/@left-offset"/>
+      <eval expected="-6519" xpath="//block[@prod-id='page2-col2-inside']/block[1]/@left-offset"/>
+      <eval expected="-5669" xpath="//block[@prod-id='page2-col2-outside']/block[1]/@left-offset"/>
+
+      <eval expected="-5669" xpath="//block[@prod-id='page3-col1-alternate']/block[1]/@left-offset"/>
+      <eval expected="-5669" xpath="//block[@prod-id='page3-col2-alternate']/block[1]/@left-offset"/>
+   </checks>
+</testcase>

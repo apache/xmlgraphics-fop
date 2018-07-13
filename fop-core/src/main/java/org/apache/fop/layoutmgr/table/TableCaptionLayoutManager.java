@@ -175,6 +175,8 @@ public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
+            curBlockArea.setChangeBarList(getChangeBarList());
+
             // Set up dimensions
             // Must get dimensions from parent area
             Area parentArea = parentLayoutManager.getParentArea(curBlockArea);

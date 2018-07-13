@@ -39,6 +39,8 @@ import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.BidiOverride;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
+import org.apache.fop.fo.flow.ChangeBarBegin;
+import org.apache.fop.fo.flow.ChangeBarEnd;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.Float;
@@ -146,6 +148,8 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         registerMaker(TableHeader.class, new Maker());
         registerMaker(Wrapper.class, new WrapperLayoutManagerMaker());
         registerMaker(Title.class, new InlineLayoutManagerMaker());
+        registerMaker(ChangeBarBegin.class, new Maker());
+        registerMaker(ChangeBarEnd.class, new Maker());
         registerMaker(MultiCase.class, new MultiCaseLayoutManagerMaker());
         registerMaker(MultiSwitch.class, new MultiSwitchLayoutManagerMaker());
         registerMaker(Float.class, new FloatLayoutManagerMaker());

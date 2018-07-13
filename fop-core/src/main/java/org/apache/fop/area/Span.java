@@ -82,6 +82,15 @@ public class Span extends Area {
     }
 
     /**
+     * Get the column gap for this span area.
+     *
+     * @return the column gap for this span area
+     */
+    public int getColumnGap() {
+        return colGap;
+    }
+
+    /**
      * Get the width of a single column within this Span
      *
      * @return the width of a single column
@@ -206,6 +215,8 @@ public class Span extends Area {
             }
             break;
         }
+        addTrait(Trait.INLINE_PROGRESSION_DIRECTION, wmtg.getInlineProgressionDirection());
+        addTrait(Trait.BLOCK_PROGRESSION_DIRECTION, wmtg.getBlockProgressionDirection());
     }
 
     /** {@inheritDoc} */

@@ -468,6 +468,7 @@ class RowPainter {
 
         //generate the block area
         Block block = new Block();
+        block.setChangeBarList(tclm.getTableLM().getFObj().getChangeBarList());
         block.setPositioning(Block.ABSOLUTE);
         block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
         block.setIPD(ipd);
