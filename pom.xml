@@ -13,7 +13,7 @@
   <properties>
     <antrun.plugin.version>1.8</antrun.plugin.version>
     <avalon.version>4.3.1</avalon.version>
-    <batik.version>1.9.0-SNAPSHOT</batik.version>
+    <batik.version>1.11.0-SNAPSHOT</batik.version>
     <build.helper.plugin.version>1.9.1</build.helper.plugin.version>
     <checkstyle.plugin.version>2.14</checkstyle.plugin.version>
     <commons.io.version>1.3.1</commons.io.version>
