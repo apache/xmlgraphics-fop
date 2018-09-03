@@ -544,7 +544,22 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             double      xoLast          = 0f;
             double      yoLast          = 0f;
             double      wox             = wordSpacing;
-            tu.writeTextMatrix(new AffineTransform(1, 0, 0, -1, x / 1000f, y / 1000f));
+
+            // FOP-2810
+            boolean simulateStyle = tf instanceof CustomFont && ((CustomFont) tf).getSimulateStyle();
+            double shear = 0;
+
+            if (simulateStyle) {
+                if (triplet.getWeight() == 700) {
+                    generator.add("q\n");
+                    generator.add("2 Tr 0.31543 w\n");
+                }
+                if (triplet.getStyle().equals("italic")) {
+                    shear = 0.3333;
+                }
+            }
+
+            tu.writeTextMatrix(new AffineTransform(1, 0, shear, -1, x / 1000f, y / 1000f));
             tu.updateTf(fk, fsPoints, tf.isMultiByte(), true);
             generator.updateCharacterSpacing(letterSpacing / 1000f);
             for (int i = 0, n = text.length(); i < n; i++) {
