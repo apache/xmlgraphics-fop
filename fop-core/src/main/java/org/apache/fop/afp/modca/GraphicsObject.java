@@ -376,6 +376,7 @@ public class GraphicsObject extends AbstractDataObject {
     public void newSegment() {
         getData().newSegment();
         graphicsState.lineWidth = 0; //Looks like a new segment invalidates the graphics state
+        graphicsState.color = Color.BLACK;
     }
 
     /** {@inheritDoc} */
