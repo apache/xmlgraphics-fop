@@ -98,7 +98,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             = new PDFDocumentNavigationHandler(this);
 
     private Map<Integer, PDFArray> pageNumbers = new HashMap<Integer, PDFArray>();
-    private Map<Integer, PDFReference> contents = new HashMap<Integer, PDFReference>();
+    private Map<String, PDFReference> contents = new HashMap<String, PDFReference>();
 
     /**
      * Default constructor.
@@ -307,7 +307,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     private void setUpContents() throws IOException {
         PDFStream stream = generator.getStream();
-        int hash = stream.streamHashCode();
+        String hash = stream.streamHashCode();
         if (!contents.containsKey(hash)) {
             pdfDoc.registerObject(stream);
             PDFReference ref = new PDFReference(stream);

@@ -123,4 +123,30 @@ public class PDFStreamTestCase {
         stream.write("\nendstream".getBytes("US-ASCII"));
         return stream.toByteArray();
     }
+
+    @Test
+    public void testHash() throws IOException {
+        assertFalse(getStreamHash(65025).equals(getStreamHash(127076)));
+    }
+
+    private String getStreamHash(int i) throws IOException {
+        PDFStream stream = new PDFStream();
+        String txt = "1 0 0 -1 0 790.866 cm\n"
+                + "q\n"
+                + "0 g\n"
+                + "BT\n"
+                + "/F1 12 Tf\n"
+                + "1 0 0 -1 0 10.26599979 Tm [(" + i + ")] TJ\n"
+                + "ET\n";
+        String img = "q\n"
+                + "126.734001 0 0 -38.244999 0 54.294998 cm\n"
+                + "/Im2 Do\n"
+                + "Q\n";
+        if (i % 2 == 0) {
+            stream.add(txt + img + "Q\n");
+        } else {
+            stream.add(txt + "Q\n");
+        }
+        return stream.streamHashCode();
+    }
 }

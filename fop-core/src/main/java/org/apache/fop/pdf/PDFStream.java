@@ -24,7 +24,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Arrays;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Class representing a PDF stream.
@@ -193,9 +194,19 @@ public class PDFStream extends AbstractPDFStream {
         return len;
     }
 
-    public int streamHashCode() throws IOException {
+    public String streamHashCode() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         outputRawStreamData(bos);
-        return Arrays.hashCode(bos.toByteArray());
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] thedigest = md.digest(bos.toByteArray());
+            StringBuilder hex = new StringBuilder();
+            for (byte b : thedigest) {
+                hex.append(String.format("%02x", b));
+            }
+            return hex.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IOException(e);
+        }
     }
 }
