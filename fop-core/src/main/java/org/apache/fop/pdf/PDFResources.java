@@ -298,8 +298,13 @@ public class PDFResources extends PDFDictionary {
             put("ExtGState", dict);
         }
 
-        if (!this.colorSpaces.isEmpty()) {
+        if (!this.colorSpaces.isEmpty() || (parent != null && !parent.colorSpaces.isEmpty())) {
             PDFDictionary dict = new PDFDictionary(this);
+            if (parent != null) {
+                for (PDFColorSpace colorSpace : parent.colorSpaces.values()) {
+                    dict.put(colorSpace.getName(), colorSpace);
+                }
+            }
             for (PDFColorSpace colorSpace : colorSpaces.values()) {
                 dict.put(colorSpace.getName(), colorSpace);
             }
