@@ -299,7 +299,10 @@ public class PDFResources extends PDFDictionary {
         }
 
         if (!this.colorSpaces.isEmpty() || (parent != null && !parent.colorSpaces.isEmpty())) {
-            PDFDictionary dict = new PDFDictionary(this);
+            PDFDictionary dict = (PDFDictionary)this.get("ColorSpace");
+            if (dict == null) {
+                dict = new PDFDictionary(this);
+            }
             if (parent != null) {
                 for (PDFColorSpace colorSpace : parent.colorSpaces.values()) {
                     dict.put(colorSpace.getName(), colorSpace);
