@@ -254,10 +254,18 @@ public class PDFResources extends PDFDictionary {
         }
         if (parent != null) {
             xObjects.addAll(parent.xObjects);
+            for (PDFResourceContext c : parent.contexts) {
+                patterns.addAll(c.getPatterns());
+                shadings.addAll(c.getShadings());
+                gstates.addAll(c.getGStates());
+            }
         }
 
         if (!shadings.isEmpty()) {
-            PDFDictionary dict = new PDFDictionary(this);
+            PDFDictionary dict = (PDFDictionary) get("Shading");
+            if (dict == null) {
+                dict = new PDFDictionary(this);
+            }
             for (PDFShading shading : shadings) {
                 dict.put(shading.getName(), shading);
             }
@@ -265,7 +273,10 @@ public class PDFResources extends PDFDictionary {
         }
 
         if (!patterns.isEmpty()) {
-            PDFDictionary dict = new PDFDictionary(this);
+            PDFDictionary dict = (PDFDictionary) get("Pattern");
+            if (dict == null) {
+                dict = new PDFDictionary(this);
+            }
             for (PDFPattern pattern : patterns) {
                 dict.put(pattern.getName(), pattern);
             }
@@ -291,7 +302,10 @@ public class PDFResources extends PDFDictionary {
         }
 
         if (!gstates.isEmpty()) {
-            PDFDictionary dict = new PDFDictionary(this);
+            PDFDictionary dict = (PDFDictionary) get("ExtGState");
+            if (dict == null) {
+                dict = new PDFDictionary(this);
+            }
             for (PDFGState gstate : gstates) {
                 dict.put(gstate.getName(), gstate);
             }
