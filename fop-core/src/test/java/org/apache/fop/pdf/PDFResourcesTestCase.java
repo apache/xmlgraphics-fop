@@ -108,13 +108,13 @@ public class PDFResourcesTestCase {
         PDFDocument pdfDoc = new PDFDocument(null);
         PDFResources res = new PDFResources(pdfDoc);
         PDFDictionary shadingDict = new PDFDictionary();
-        shadingDict.put("Sh1-1718006973", new PDFReference("9 0"));
+        shadingDict.put("Sh1-1718006973", new PDFReference("9 0 R"));
         res.put("Shading", shadingDict);
         PDFDictionary patternDict = new PDFDictionary();
-        patternDict.put("Pa1-1718006973", new PDFReference("10 0"));
+        patternDict.put("Pa1-1718006973", new PDFReference("10 0 R"));
         res.put("Pattern", patternDict);
         PDFDictionary colorSpaceDict = new PDFDictionary();
-        colorSpaceDict.put("DefaultRGB", new PDFReference("11 0"));
+        colorSpaceDict.put("DefaultRGB", new PDFReference("11 0 R"));
         res.put("ColorSpace", colorSpaceDict);
         PDFResources resParent = new PDFResources(pdfDoc);
         res.setParentResources(resParent);
