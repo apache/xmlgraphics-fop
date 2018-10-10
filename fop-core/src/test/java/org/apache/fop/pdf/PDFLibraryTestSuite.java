@@ -40,6 +40,7 @@ import org.junit.runners.Suite.SuiteClasses;
         PDFNumsArrayTestCase.class,
         PDFRectangleTestCase.class,
         PDFReferenceTestCase.class,
+        PDFResourcesTestCase.class,
         VersionTestCase.class,
         VersionControllerTestCase.class
 })
