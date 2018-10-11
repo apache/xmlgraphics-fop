@@ -32,6 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawPNG;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
@@ -281,12 +282,16 @@ public abstract class AbstractImageAdapter implements PDFImage {
 
         dict.put("ColorSpace", indexed);
 
-        Raster raster = ((ImageRendered)image).getRenderedImage().getTile(0, 0);
-        if (raster.getDataBuffer() instanceof DataBufferByte) {
-            dict.put("BitsPerComponent", icm.getPixelSize());
+        int bits = 8;
+        if (image instanceof ImageRawPNG) {
+            bits = ((ImageRawPNG) image).getBitDepth();
         } else {
-            dict.put("BitsPerComponent", 8);
+            Raster raster = ((ImageRendered) image).getRenderedImage().getTile(0, 0);
+            if (raster.getDataBuffer() instanceof DataBufferByte) {
+                bits = icm.getPixelSize();
+            }
         }
+        dict.put("BitsPerComponent", bits);
 
         Integer index = getIndexOfFirstTransparentColorInPalette(icm);
         if (index != null) {

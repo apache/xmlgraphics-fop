@@ -200,4 +200,18 @@ public class ImageRawPNGAdapterTestCase {
         PDFICCStream iccStream = irpnga.getICCStream();
         assertTrue(ColorProfileUtil.isDefaultsRGB(iccStream.getICCProfile()));
     }
+
+    @Test
+    public void test1BitPNG() throws IOException {
+        ImageRawPNG imageRawPNG = new ImageRawPNG(null, null,
+                new IndexColorModel(1, 1, new byte[3], 0, false), 1, null);
+        ImageRawPNGAdapter imageRawPNGAdapter = new ImageRawPNGAdapter(imageRawPNG, null);
+        PDFDocument pdfDocument = new PDFDocument("");
+        PDFDictionary pdfDictionary = new PDFDictionary();
+        pdfDictionary.setDocument(pdfDocument);
+        imageRawPNGAdapter.populateXObjectDictionary(pdfDictionary);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        pdfDictionary.output(bos);
+        assertEquals(bos.toString(), "<< /ColorSpace [/Indexed /DeviceGray 0 <00>] /BitsPerComponent 1 >>");
+    }
 }
