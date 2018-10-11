@@ -31,6 +31,7 @@ import org.apache.fop.fo.flow.Float;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.inline.FloatLayoutManager;
 import org.apache.fop.layoutmgr.inline.KnuthInlineBox;
+import org.apache.fop.layoutmgr.table.TableLayoutManager;
 
 public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutManager {
 
@@ -75,7 +76,7 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
     public void addChildArea(Area childArea) {
         floatContentArea.addChildArea(childArea);
         floatContentArea.setBPD(childArea.getAllocBPD());
-        int effectiveContentIPD = childArea.getEffectiveAllocIPD();
+        int effectiveContentIPD = getContentAreaIPD(childLMs, childArea);
         int contentIPD = childArea.getIPD();
         int xOffset = childArea.getBorderAndPaddingWidthStart();
         floatContentArea.setIPD(effectiveContentIPD);
@@ -97,6 +98,26 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
         } else if (side == Constants.EN_START || side == Constants.EN_LEFT) {
             lm.getPSLM().setStartIntrusionAdjustment(effectiveContentIPD);
         }
+    }
+
+    private int getContentAreaIPD(List<LayoutManager> childLMs, Area childArea) {
+        int ipd = getContentAreaIPD(childLMs);
+        if (ipd == 0) {
+            return childArea.getEffectiveAllocIPD();
+        }
+        return ipd;
+    }
+
+    private int getContentAreaIPD(List<LayoutManager> childLMs) {
+        int ipd = 0;
+        for (LayoutManager childLM : childLMs) {
+            if (childLM instanceof TableLayoutManager) {
+                ipd += childLM.getContentAreaIPD();
+            } else {
+                ipd += getContentAreaIPD(childLM.getChildLMs());
+            }
+        }
+        return ipd;
     }
 
     /**
