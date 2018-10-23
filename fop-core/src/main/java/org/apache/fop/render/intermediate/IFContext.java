@@ -38,7 +38,7 @@ import org.apache.fop.apps.FOUserAgent;
  * implementations will just ignore all foreign attributes for most elements. That's why the
  * main IF interfaces are not burdened with this.
  */
-public class IFContext {
+public class IFContext implements PageIndexContext {
 
     private FOUserAgent userAgent;
 

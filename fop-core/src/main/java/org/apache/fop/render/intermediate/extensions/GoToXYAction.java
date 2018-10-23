@@ -25,6 +25,7 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.apache.fop.render.intermediate.PageIndexContext;
 import org.apache.fop.util.XMLUtil;
 
 /**
@@ -33,7 +34,7 @@ import org.apache.fop.util.XMLUtil;
 public class GoToXYAction extends AbstractAction implements DocumentNavigationExtensionConstants {
 
     private int pageIndex = -1;
-    private PageIndexRelative pageIndexRelative;
+    private PageIndexContext ifContext;
     private Point targetLocation;
 
     /**
@@ -52,7 +53,7 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
      * @param targetLocation the absolute location on the page (coordinates in millipoints),
      *                  or null, if the position isn't known, yet
      */
-    public GoToXYAction(String id, int pageIndex, Point targetLocation, PageIndexRelative pageIndexRelative) {
+    public GoToXYAction(String id, int pageIndex, Point targetLocation, PageIndexContext ifContext) {
         setID(id);
         if (pageIndex < 0 && targetLocation != null) {
             throw new IllegalArgumentException(
@@ -60,11 +61,7 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
         }
         setPageIndex(pageIndex);
         setTargetLocation(targetLocation);
-        this.pageIndexRelative = pageIndexRelative;
-    }
-
-    public interface PageIndexRelative {
-        int getPageIndexRelative();
+        this.ifContext = ifContext;
     }
 
     /**
@@ -153,11 +150,11 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
             atts.addAttribute("", "id", "id", XMLUtil.CDATA, getID());
             atts.addAttribute("", "page-index", "page-index",
                     XMLUtil.CDATA, Integer.toString(pageIndex));
-            if (pageIndexRelative != null) {
-                int pageIndexRelativeInt = pageIndexRelative.getPageIndexRelative();
-                if (pageIndexRelativeInt < 0) {
+            if (ifContext != null && pageIndex >= 0) {
+                int pageIndexRelative = pageIndex - ifContext.getPageIndex();
+                if (pageIndexRelative < 0) {
                     atts.addAttribute("", "page-index-relative", "page-index-relative",
-                            XMLUtil.CDATA, Integer.toString(pageIndexRelativeInt));
+                            XMLUtil.CDATA, Integer.toString(pageIndexRelative));
                 }
             }
             atts.addAttribute("", "x", "x", XMLUtil.CDATA,

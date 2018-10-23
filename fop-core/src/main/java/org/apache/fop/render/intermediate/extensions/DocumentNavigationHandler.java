@@ -35,6 +35,7 @@ import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.render.intermediate.IFDocumentNavigationHandler;
 import org.apache.fop.render.intermediate.IFException;
+import org.apache.fop.render.intermediate.PageIndexContext;
 import org.apache.fop.util.XMLUtil;
 
 /**
@@ -119,7 +120,7 @@ public class DocumentNavigationHandler extends DefaultHandler
                 } else {
                     String id = attributes.getValue("id");
                     int pageIndex = XMLUtil.getAttributeAsInt(attributes, "page-index");
-                    final int pageIndexRelative = XMLUtil.getAttributeAsInt(attributes, "page-index-relative", 0);
+                    int pageIndexRelative = XMLUtil.getAttributeAsInt(attributes, "page-index-relative", 0);
                     final Point location;
                     if (pageIndex < 0) {
                         location = null;
@@ -136,11 +137,8 @@ public class DocumentNavigationHandler extends DefaultHandler
                                 .getAttributeAsInt(attributes, "y");
                         location = new Point(x, y);
                     }
-                    action = new GoToXYAction(id, pageIndex, location, new GoToXYAction.PageIndexRelative() {
-                        public int getPageIndexRelative() {
-                            return pageIndexRelative;
-                        }
-                    });
+                    action = new GoToXYAction(id, pageIndex, location,
+                            new PageIndexRelative(pageIndex, pageIndexRelative));
                 }
                 if (structureTreeElement != null) {
                     action.setStructureTreeElement(structureTreeElement);
@@ -172,6 +170,16 @@ public class DocumentNavigationHandler extends DefaultHandler
             } else {
                 log.warn("Unhandled element '" + localName + "' in namespace: " + uri);
             }
+        }
+    }
+
+    static class PageIndexRelative implements PageIndexContext {
+        private int pageIndex;
+        PageIndexRelative(int pageIndex, int pageIndexRelative) {
+            this.pageIndex = (pageIndexRelative * -1) + pageIndex;
+        }
+        public int getPageIndex() {
+            return pageIndex;
         }
     }
 
