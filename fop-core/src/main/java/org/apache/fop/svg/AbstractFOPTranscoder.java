@@ -21,10 +21,13 @@ package org.apache.fop.svg;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.DOMImplementation;
 import org.xml.sax.EntityResolver;
 
@@ -171,13 +174,13 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
 
     /**
      * Returns the logger associated with this transcoder. It returns a
-     * SimpleLog if no logger has been explicitly set.
+     * LogFactory if no logger has been explicitly set.
      * @return Logger the logger for the transcoder.
      */
     protected final Log getLogger() {
         if (this.logger == null) {
-            this.logger = new SimpleLog("FOP/Transcoder");
-            ((SimpleLog) logger).setLevel(SimpleLog.LOG_LEVEL_INFO);
+            this.logger = LogFactory.getLog("FOP/Transcoder");
+            ((Logger) logger).setLevel(Level.INFO);
         }
         return this.logger;
     }
