@@ -177,7 +177,6 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
     protected final Log getLogger() {
         if (this.logger == null) {
             this.logger = new SimpleLog("FOP/Transcoder");
-            ((SimpleLog) logger).setLevel(SimpleLog.LOG_LEVEL_INFO);
         }
         return this.logger;
     }
