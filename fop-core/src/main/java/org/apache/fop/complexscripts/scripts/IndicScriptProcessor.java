@@ -130,6 +130,8 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
         case CharScript.SCRIPT_TAMIL:
         case CharScript.SCRIPT_TAMIL_2:
             return new TamilScriptProcessor(script);
+        case CharScript.SCRIPT_KHMER:
+            return new KhmerScriptProcessor(script);
         // [TBD] implement other script processors
         default:
             return new IndicScriptProcessor(script);
@@ -239,6 +241,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
         "rkrf",
         "rphf",
         "vatu",
+        "ccmp"
     };
     static {
         basicShapingFeatures = new HashSet<String>();
@@ -261,6 +264,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
         "haln",
         "pres",
         "psts",
+        "clig"
     };
     static {
         presentationFeatures = new HashSet<String>();

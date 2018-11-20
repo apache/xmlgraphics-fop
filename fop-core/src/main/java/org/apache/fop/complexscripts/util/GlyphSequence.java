@@ -49,6 +49,8 @@ public class GlyphSequence implements Cloneable {
     /** predications flag */
     private boolean predications;
 
+    protected GlyphSequence unprocessedGS;
+
     /**
      * Instantiate a glyph sequence, reusing (i.e., not copying) the referenced
      * character and glyph buffers and associations. If characters is null, then
@@ -74,6 +76,7 @@ public class GlyphSequence implements Cloneable {
         this.glyphs = glyphs;
         this.associations = associations;
         this.predications = predications;
+        unprocessedGS = this;
     }
 
     /**
@@ -98,6 +101,7 @@ public class GlyphSequence implements Cloneable {
      */
     public GlyphSequence(GlyphSequence gs) {
         this (gs.characters.duplicate(), copyBuffer(gs.glyphs), copyAssociations(gs.associations), gs.predications);
+        this.unprocessedGS = gs.unprocessedGS;
     }
 
     /**
@@ -179,6 +183,14 @@ public class GlyphSequence implements Cloneable {
      */
     public int getGlyph(int index) throws IndexOutOfBoundsException {
         return glyphs.get(index);
+    }
+
+    public int getUnprocessedGlyph(int index) throws IndexOutOfBoundsException {
+        return unprocessedGS.getGlyph(index);
+    }
+
+    public void setUnprocessedGS(GlyphSequence glyphSequence) {
+        unprocessedGS = glyphSequence;
     }
 
     /**

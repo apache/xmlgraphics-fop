@@ -544,26 +544,30 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /** {@inheritDoc} */
-    public CharSequence performSubstitution(CharSequence cs, String script, String language, List associations,
-                                            boolean retainControls) {
+    public CharSequence performSubstitution(CharSequence charSequence, String script, String language,
+                                            List associations, boolean retainControls) {
         if (gsub != null) {
-            CharSequence  ncs = normalize(cs, associations);
-            GlyphSequence igs = mapCharsToGlyphs(ncs, associations);
-            GlyphSequence ogs = gsub.substitute(igs, script, language);
+            charSequence = gsub.preProcess(charSequence, script, this, associations);
+            GlyphSequence glyphSequence = charSequenceToGlyphSequence(charSequence, associations);
+            GlyphSequence glyphSequenceSubstituted = gsub.substitute(glyphSequence, script, language);
             if (associations != null) {
                 associations.clear();
-                associations.addAll(ogs.getAssociations());
+                associations.addAll(glyphSequenceSubstituted.getAssociations());
             }
             if (!retainControls) {
-                ogs = elideControls(ogs);
+                glyphSequenceSubstituted = elideControls(glyphSequenceSubstituted);
             }
-            // ocs may not contains all the characters that were in cs.
+            // may not contains all the characters that were in charSequence.
             // see: #createPrivateUseMapping(int gi)
-            CharSequence ocs = mapGlyphsToChars(ogs);
-            return ocs;
+            return mapGlyphsToChars(glyphSequenceSubstituted);
         } else {
-            return cs;
+            return charSequence;
         }
+    }
+
+    public GlyphSequence charSequenceToGlyphSequence(CharSequence charSequence, List associations) {
+        CharSequence normalizedCharSequence = normalize(charSequence, associations);
+        return mapCharsToGlyphs(normalizedCharSequence, associations);
     }
 
     /** {@inheritDoc} */

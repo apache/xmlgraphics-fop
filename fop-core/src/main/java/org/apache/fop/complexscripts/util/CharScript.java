@@ -802,6 +802,7 @@ public final class CharScript {
         case SCRIPT_TAMIL_2:
         case SCRIPT_TELUGU:
         case SCRIPT_TELUGU_2:
+        case SCRIPT_KHMER:
             return true;
         default:
             return false;

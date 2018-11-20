@@ -31,6 +31,7 @@ import org.apache.fop.complexscripts.fonts.GlyphTable;
 import org.apache.fop.complexscripts.util.CharScript;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
+import org.apache.fop.fonts.MultiByteFont;
 
 // CSOFF: LineLengthCheck
 
@@ -289,4 +290,7 @@ public abstract class ScriptProcessor {
 
     }
 
+    public CharSequence preProcess(CharSequence charSequence, MultiByteFont font, List associations) {
+        return charSequence;
+    }
 }
