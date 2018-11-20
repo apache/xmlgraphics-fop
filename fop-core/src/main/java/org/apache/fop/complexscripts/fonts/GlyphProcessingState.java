@@ -413,6 +413,15 @@ public class GlyphProcessingState {
         }
     }
 
+    public int getUnprocessedGlyph(int offset) throws IndexOutOfBoundsException {
+        int i = index + offset;
+        if ((i >= 0) && (i < indexLast)) {
+            return igs.getUnprocessedGlyph(i);
+        } else {
+            throw new IndexOutOfBoundsException("Attempting to process glyph at index " + i);
+        }
+    }
+
     /**
      * Obtain glyph at current position.
      * @return glyph at current position

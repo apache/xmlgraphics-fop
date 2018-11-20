@@ -31,6 +31,7 @@ import org.apache.fop.complexscripts.scripts.ScriptProcessor;
 import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.GlyphTester;
+import org.apache.fop.fonts.MultiByteFont;
 
 // CSOFF: LineLengthCheck
 
@@ -103,6 +104,11 @@ public class GlyphSubstitutionTable extends GlyphTable {
             ogs = gs;
         }
         return ogs;
+    }
+
+    public CharSequence preProcess(CharSequence charSequence, String script, MultiByteFont font, List associations) {
+        ScriptProcessor scriptProcessor = ScriptProcessor.getInstance(script, processors);
+        return scriptProcessor.preProcess(charSequence, font, associations);
     }
 
     /**

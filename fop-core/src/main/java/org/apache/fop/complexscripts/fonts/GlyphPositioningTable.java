@@ -731,7 +731,8 @@ public class GlyphPositioningTable extends GlyphTable {
                 if (ma != null) {
                     for (int i = 0, n = ps.getPosition(); i < n; i++) {
                         int gi = ps.getGlyph(-(i + 1));
-                        if (ps.isMark(gi)) {
+                        int unprocessedGlyph = ps.getUnprocessedGlyph(-(i + 1));
+                        if (ps.isMark(gi) && ps.isMark(unprocessedGlyph)) {
                             continue;
                         } else {
                             Anchor a = getBaseAnchor(gi, ma.getMarkClass());
@@ -743,6 +744,9 @@ public class GlyphPositioningTable extends GlyphTable {
                                     v.adjust(0, 0, -ps.getWidth(giMark), 0);
                                 }
                                 // end experimental fix for END OF AYAH in Lateef/Scheherazade
+                                if (OTFScript.KHMER.equals(ps.script)) {
+                                    v.adjust(-ps.getWidth(gi), -v.yPlacement, 0, 0);
+                                }
                                 if (ps.adjust(v)) {
                                     ps.setAdjusted(true);
                                 }
@@ -875,13 +879,13 @@ public class GlyphPositioningTable extends GlyphTable {
                 int mxc = getMaxComponentCount();
                 if (ma != null) {
                     for (int i = 0, n = ps.getPosition(); i < n; i++) {
-                        int gi = ps.getGlyph(-(i + 1));
-                        if (ps.isMark(gi)) {
+                        int glyphIndex = ps.getUnprocessedGlyph(-(i + 1));
+                        if (ps.isMark(glyphIndex)) {
                             continue;
                         } else {
-                            Anchor a = getLigatureAnchor(gi, mxc, i, ma.getMarkClass());
-                            if (a != null) {
-                                if (ps.adjust(a.getAlignmentAdjustment(ma))) {
+                            Anchor anchor = getLigatureAnchor(glyphIndex, mxc, i, ma.getMarkClass());
+                            if (anchor != null) {
+                                if (ps.adjust(anchor.getAlignmentAdjustment(ma))) {
                                     ps.setAdjusted(true);
                                 }
                             }
@@ -1033,9 +1037,9 @@ public class GlyphPositioningTable extends GlyphTable {
                 MarkAnchor ma = getMark1Anchor(ciMark1, giMark1);
                 if (ma != null) {
                     if (ps.hasPrev()) {
-                        Anchor a = getMark2Anchor(ps.getGlyph(-1), ma.getMarkClass());
-                        if (a != null) {
-                            if (ps.adjust(a.getAlignmentAdjustment(ma))) {
+                        Anchor anchor = getMark2Anchor(ps.getUnprocessedGlyph(-1), ma.getMarkClass());
+                        if (anchor != null) {
+                            if (ps.adjust(anchor.getAlignmentAdjustment(ma))) {
                                 ps.setAdjusted(true);
                             }
                         }
