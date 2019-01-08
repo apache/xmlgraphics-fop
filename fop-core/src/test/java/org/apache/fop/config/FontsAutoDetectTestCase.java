@@ -29,7 +29,7 @@ import org.apache.fop.apps.PDFRendererConfBuilder;
 public class FontsAutoDetectTestCase extends BaseConstructiveUserConfigTest {
 
     public FontsAutoDetectTestCase() throws SAXException, IOException {
-        super(new FopConfBuilder().startRendererConfig(PDFRendererConfBuilder.class)
+        super(new FopConfBuilder().setStrictConfiguration(true).startRendererConfig(PDFRendererConfBuilder.class)
                                       .startFontsConfig()
                                           .addAutoDetect()
                                       .endFontConfig()

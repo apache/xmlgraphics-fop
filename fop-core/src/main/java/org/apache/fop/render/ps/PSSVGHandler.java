@@ -24,9 +24,8 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.fop.configuration.Configuration;
 import org.w3c.dom.Document;
-
-import org.apache.avalon.framework.configuration.Configuration;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;

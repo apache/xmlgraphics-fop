@@ -19,6 +19,9 @@
 
 package org.apache.fop.threading;
 
+import org.apache.fop.activity.Initializable;
+import org.apache.fop.configuration.Configurable;
+
 import java.io.OutputStream;
 
 import javax.xml.transform.Source;
@@ -27,7 +30,7 @@ import javax.xml.transform.Templates;
 /**
  * Represents a processor.
  */
-public interface Processor {
+public interface Processor extends Configurable, Initializable {
 
     /**
      * Process a file.

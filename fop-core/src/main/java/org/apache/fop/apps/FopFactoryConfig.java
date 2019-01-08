@@ -23,8 +23,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.avalon.framework.configuration.Configuration;
-
+import org.apache.fop.configuration.Configuration;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext.FallbackResolver;
 import org.apache.xmlgraphics.io.ResourceResolver;

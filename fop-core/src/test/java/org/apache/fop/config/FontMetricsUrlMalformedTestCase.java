@@ -32,7 +32,7 @@ import org.apache.fop.apps.PDFRendererConfBuilder;
 public class FontMetricsUrlMalformedTestCase extends BaseDestructiveUserConfigTest {
 
     public FontMetricsUrlMalformedTestCase() throws SAXException, IOException {
-        super(new FopConfBuilder().setStrictValidation(true)
+        super(new FopConfBuilder().setStrictValidation(true).setStrictConfiguration(true)
                                   .startRendererConfig(PDFRendererConfBuilder.class)
                                       .startFontsConfig()
                                           .startFont("badprotocol:test/glb12.ttf.xml", null)

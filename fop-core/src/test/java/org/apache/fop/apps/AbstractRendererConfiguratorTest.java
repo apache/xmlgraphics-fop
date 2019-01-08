@@ -22,12 +22,11 @@ package org.apache.fop.apps;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.fop.configuration.ConfigurationException;
 import org.xml.sax.SAXException;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
 import org.apache.fop.render.PrintRendererConfigurator;

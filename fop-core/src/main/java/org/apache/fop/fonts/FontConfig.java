@@ -19,9 +19,8 @@
 
 package org.apache.fop.fonts;
 
-import org.apache.avalon.framework.configuration.Configuration;
-
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.configuration.Configuration;
 import org.apache.fop.events.EventProducer;
 
 /**
@@ -45,6 +44,6 @@ public interface FontConfig {
          * @throws FOPException if an error occurs creating the font configuration object
          */
         FontConfig parse(Configuration cfg, FontManager fontManager, boolean strict,
-                EventProducer eventProducer) throws FOPException;
+                         EventProducer eventProducer) throws FOPException;
     }
 }

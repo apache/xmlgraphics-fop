@@ -32,7 +32,7 @@ import org.apache.fop.apps.PDFRendererConfBuilder;
 public class FontTripletAttributeMissingTestCase extends BaseDestructiveUserConfigTest {
 
     public FontTripletAttributeMissingTestCase() throws SAXException, IOException {
-        super(new FopConfBuilder().setStrictValidation(true)
+        super(new FopConfBuilder().setStrictValidation(true).setStrictConfiguration(true)
                                   .startRendererConfig(PDFRendererConfBuilder.class)
                                       .startFontsConfig()
                                           .startFont(null, "test/resources/fonts/ttf/glb12.ttf")

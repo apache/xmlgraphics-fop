@@ -17,8 +17,7 @@
 
 package org.apache.fop.render.bitmap;
 
-import org.apache.avalon.framework.configuration.Configuration;
-
+import org.apache.fop.configuration.Configuration;
 import org.apache.xmlgraphics.util.MimeConstants;
 
 import org.apache.fop.apps.FOPException;

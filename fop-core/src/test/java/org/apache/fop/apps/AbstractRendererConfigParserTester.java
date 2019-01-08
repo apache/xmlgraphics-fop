@@ -22,10 +22,9 @@ package org.apache.fop.apps;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
-
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.fop.events.DefaultEventBroadcaster;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.RendererConfig;

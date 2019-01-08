@@ -32,7 +32,7 @@ import org.apache.fop.apps.PDFRendererConfBuilder;
 public class FontsDirectoryRecursiveTestCase extends BaseConstructiveUserConfigTest {
 
     public FontsDirectoryRecursiveTestCase() throws SAXException, IOException {
-        super(new FopConfBuilder().startRendererConfig(PDFRendererConfBuilder.class)
+        super(new FopConfBuilder().setStrictConfiguration(true).startRendererConfig(PDFRendererConfBuilder.class)
                                       .startFontsConfig()
                                           .addDirectory("test/resources/fonts", true)
                                       .endFontConfig()

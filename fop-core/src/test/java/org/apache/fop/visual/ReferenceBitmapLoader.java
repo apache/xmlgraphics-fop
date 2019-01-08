@@ -19,13 +19,13 @@
 
 package org.apache.fop.visual;
 
+import org.apache.fop.configuration.Configurable;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.ConfigurationException;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URI;
-
-import org.apache.avalon.framework.configuration.Configurable;
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 
 /**
  * BitmapProducer implementation that simply loads preproduced reference bitmaps from a

@@ -32,7 +32,7 @@ import org.apache.fop.apps.PDFRendererConfBuilder;
 public class FontMetricsUrlBadTestCase extends BaseDestructiveUserConfigTest {
 
     public FontMetricsUrlBadTestCase() throws SAXException, IOException {
-        super(new FopConfBuilder().setStrictValidation(true)
+        super(new FopConfBuilder().setStrictValidation(true).setStrictConfiguration(true)
                                   .startRendererConfig(PDFRendererConfBuilder.class)
                                       .startFontsConfig()
                                           .startFont("test/doesnotexist.ttf.ansi.xml", null)

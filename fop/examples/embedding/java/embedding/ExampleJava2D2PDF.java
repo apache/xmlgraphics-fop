@@ -30,9 +30,6 @@ import java.io.StringReader;
 
 import javax.swing.JEditorPane;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.configuration.DefaultConfiguration;
 import org.apache.commons.io.IOUtils;
 
 import org.apache.xmlgraphics.util.UnitConv;

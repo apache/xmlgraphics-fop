@@ -34,13 +34,14 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.fop.activity.Initializable;
+import org.apache.fop.configuration.Configurable;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.ConfigurationException;
 import org.xml.sax.SAXException;
 
-import org.apache.avalon.framework.activity.Initializable;
-import org.apache.avalon.framework.configuration.Configurable;
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.commons.io.FilenameUtils;
 
 import org.apache.fop.apps.FOPException;
@@ -52,8 +53,10 @@ import org.apache.fop.apps.MimeConstants;
 /**
  * Default implementation of the {@link Processor} interface using FOP.
  */
-public class FOProcessorImpl extends AbstractLogEnabled
+public class FOProcessorImpl
             implements Processor, Configurable, Initializable {
+
+    private static final Log logger = LogFactory.getLog(FOProcessorImpl.class);
 
     private FopFactory fopFactory;
     private TransformerFactory factory = TransformerFactory.newInstance();
@@ -74,7 +77,7 @@ public class FOProcessorImpl extends AbstractLogEnabled
 
     public void initialize() throws Exception {
         if (this.userconfig != null) {
-            getLogger().debug("Setting user config: " + userconfig);
+            logger.debug("Setting user config: " + userconfig);
             fopFactory = FopFactory.newInstance(new File(userconfig));
         } else {
             fopFactory = FopFactory.newInstance(new File(".").toURI());
@@ -92,7 +95,7 @@ public class FOProcessorImpl extends AbstractLogEnabled
             URL url = new URL(src.getSystemId());
             String filename = FilenameUtils.getName(url.getPath());
             foUserAgent.getEventBroadcaster().addEventListener(
-                    new AvalonAdapter(getLogger(), filename));
+                    new AvalonAdapter(logger, filename));
         } catch (MalformedURLException mfue) {
             throw new RuntimeException(mfue);
         }

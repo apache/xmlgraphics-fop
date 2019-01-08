@@ -26,4 +26,6 @@ package org.apache.fop.render;
 public interface RendererConfigOption {
     /** The name of the option. */
     String getName();
+
+    Object getDefaultValue();
 }

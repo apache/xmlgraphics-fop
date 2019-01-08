@@ -19,13 +19,15 @@
 
 package org.apache.fop.visual;
 
+import org.apache.fop.configuration.Configurable;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 
 /**
  * Interface for a converter.
  */
-public interface BitmapProducer {
+public interface BitmapProducer extends Configurable {
 
     /**
      * Produces a BufferedImage from the source file by invoking the FO processor and

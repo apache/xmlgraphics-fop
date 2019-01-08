@@ -23,9 +23,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.xml.sax.SAXException;
 
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

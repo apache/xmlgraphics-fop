@@ -44,6 +44,7 @@ public class FontsSubstitutionTestCase extends BaseConstructiveUserConfigTest {
 
     public FontsSubstitutionTestCase() throws SAXException, IOException {
         super(new FopConfBuilder()
+                    .setStrictConfiguration(true)
                     .startFontsConfig()
                         .substituteFonts("Times", "italic", null, "Gladiator", "normal", "bold")
                     .endFontsConfig()

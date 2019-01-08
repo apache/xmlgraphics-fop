@@ -52,6 +52,7 @@ public enum PSRendererOption implements RendererConfigOption {
         return name;
     }
 
+    @Override
     public Object getDefaultValue() {
         return defaultValue;
     }

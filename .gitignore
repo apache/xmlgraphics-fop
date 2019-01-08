@@ -1,0 +1,17 @@
+target/
+build/
+
+*.class
+*.jar
+*.war
+*.log
+*.out
+.attach*
+
+# idea
+.idea/workspace.xml
+.idea/xtextAutoBuilderState.xml
+.idea/dbnavigator.xml
+.idea/markdown-doclet.xml
+.idea/uiDesigner.xml
+*.iml

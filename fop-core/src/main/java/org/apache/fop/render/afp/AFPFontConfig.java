@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -44,6 +42,8 @@ import org.apache.fop.afp.fonts.RasterFont;
 import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.events.EventProducer;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.FontConfig;
@@ -85,7 +85,7 @@ public final class AFPFontConfig implements FontConfig {
 
         /** {@inheritDoc}} */
         public AFPFontConfig parse(Configuration cfg, FontManager fontManager, boolean strict,
-                EventProducer eventProducer) throws FOPException {
+                                   EventProducer eventProducer) throws FOPException {
             try {
                 return new ParserHelper(cfg, fontManager, strict,
                         (AFPEventProducer) eventProducer).fontConfig;

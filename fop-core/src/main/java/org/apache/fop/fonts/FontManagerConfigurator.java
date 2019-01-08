@@ -24,11 +24,11 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.ConfigurationException;
 import org.apache.xmlgraphics.io.ResourceResolver;
 
 import org.apache.fop.apps.FOPException;

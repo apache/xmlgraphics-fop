@@ -32,7 +32,7 @@ import org.apache.fop.apps.PDFRendererConfBuilder;
 public class FontAttributesMissingTestCase extends BaseDestructiveUserConfigTest {
 
     public FontAttributesMissingTestCase() throws SAXException, IOException {
-        super(new FopConfBuilder().setStrictValidation(true)
+        super(new FopConfBuilder().setStrictValidation(true).setStrictConfiguration(true)
                                   .startRendererConfig(PDFRendererConfBuilder.class)
                                       .startFontsConfig()
                                           .startFont(null, null)

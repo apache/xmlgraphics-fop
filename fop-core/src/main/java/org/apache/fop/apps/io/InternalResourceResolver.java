@@ -140,7 +140,16 @@ public class InternalResourceResolver {
      * @throws URISyntaxException if the given String was too erroneous to validate
      */
     public static URI getBaseURI(String base) throws URISyntaxException {
-        String path = base + (base.endsWith("/") ? "" : "/");
+        String path;
+        if (base != null) {
+            if ("".equals(base)) {
+                path = "./";
+            } else {
+                path = base + (base.endsWith("/") ? "" : "/");
+            }
+        } else {
+            path = base;
+        }
         return cleanURI(path);
     }
 
