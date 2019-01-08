@@ -20,7 +20,7 @@ public class DefaultConfigurationBuilder {
         try {
             DocumentBuilder builder = DefaultConfiguration.dbf.newDocumentBuilder();
             Document document = builder.parse(confStream);
-            LOG.info(DefaultConfiguration.toString(document));
+            LOG.debug(DefaultConfiguration.toString(document));
             return new DefaultConfiguration(document.getDocumentElement());
         } catch (DOMException | SAXException | IOException | ParserConfigurationException e) {
             throw new ConfigurationException("xml parse error", e);
@@ -37,7 +37,7 @@ public class DefaultConfigurationBuilder {
         try {
             DocumentBuilder builder = DefaultConfiguration.dbf.newDocumentBuilder();
             Document document = builder.parse(file);
-            LOG.info(DefaultConfiguration.toString(document));
+            LOG.debug(DefaultConfiguration.toString(document));
             return new DefaultConfiguration(document.getDocumentElement());
         } catch (DOMException | SAXException | IOException | ParserConfigurationException e) {
             throw new ConfigurationException("xml parse error", e);

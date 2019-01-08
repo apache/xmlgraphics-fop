@@ -187,11 +187,6 @@ public class DefaultConfiguration implements Configuration {
 
     @Override
     public String getValue(String defaultValue) {
-        /*
-        if (defaultValue == null) {
-            defaultValue = "";
-        }
-         */
         String result = _getValue();
         if (result == null || "".equals(result)) {
             result = defaultValue;

@@ -66,11 +66,6 @@ class NullConfiguration implements Configuration {
 
     @Override
     public String getValue(String defaultValue) {
-        /*
-        if (defaultValue == null) {
-            defaultValue = "";
-        }
-         */
         return defaultValue;
     }
 
