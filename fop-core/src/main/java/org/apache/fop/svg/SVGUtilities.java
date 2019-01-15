@@ -29,7 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import org.apache.batik.anim.dom.SVGDOMImplementation;
-import org.apache.batik.util.XMLConstants;
+import org.apache.batik.constants.XMLConstants;
 
 /**
  * Some utilities for creating svg DOM documents and elements.
