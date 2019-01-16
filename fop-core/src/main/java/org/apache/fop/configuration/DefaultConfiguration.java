@@ -246,13 +246,20 @@ public class DefaultConfiguration implements Configuration {
 
     @Override
     public String getLocation() {
-        List<String> path = new ArrayList<>();
+        List<String> path = new ArrayList<String>();
         for (Node el = element; el != null; el = el.getParentNode()) {
             if (el instanceof Element) {
                 path.add(((Element) el).getTagName());
             }
         }
+        if (path.isEmpty()) {
+            return "";
+        }
         Collections.reverse(path);
-        return String.join("/", path);
+        StringBuilder result = new StringBuilder();
+        for (String s: path) {
+            result.append(s).append("/");
+        }
+        return result.subSequence(0, result.length() - 1).toString();
     }
 }

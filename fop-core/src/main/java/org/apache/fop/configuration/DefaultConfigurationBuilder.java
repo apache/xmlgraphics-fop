@@ -22,7 +22,13 @@ public class DefaultConfigurationBuilder {
             Document document = builder.parse(confStream);
             LOG.debug(DefaultConfiguration.toString(document));
             return new DefaultConfiguration(document.getDocumentElement());
-        } catch (DOMException | SAXException | IOException | ParserConfigurationException e) {
+        } catch (DOMException e) {
+            throw new ConfigurationException("xml parse error", e);
+        } catch (SAXException e) {
+            throw new ConfigurationException("xml parse error", e);
+        } catch (IOException e) {
+            throw new ConfigurationException("xml parse error", e);
+        } catch (ParserConfigurationException e) {
             throw new ConfigurationException("xml parse error", e);
         } finally {
             try {
@@ -39,7 +45,13 @@ public class DefaultConfigurationBuilder {
             Document document = builder.parse(file);
             LOG.debug(DefaultConfiguration.toString(document));
             return new DefaultConfiguration(document.getDocumentElement());
-        } catch (DOMException | SAXException | IOException | ParserConfigurationException e) {
+        } catch (DOMException e) {
+            throw new ConfigurationException("xml parse error", e);
+        } catch (SAXException e) {
+            throw new ConfigurationException("xml parse error", e);
+        } catch (IOException e) {
+            throw new ConfigurationException("xml parse error", e);
+        } catch (ParserConfigurationException e) {
             throw new ConfigurationException("xml parse error", e);
         }
     }
