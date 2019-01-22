@@ -42,17 +42,6 @@
       <version>${commons.logging.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.avalon.framework</groupId>
-      <artifactId>avalon-framework-api</artifactId>
-      <version>${avalon.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.avalon.framework</groupId>
-      <artifactId>avalon-framework-impl</artifactId>
-      <version>${avalon.version}</version>
-    </dependency>
-    <!-- test deps -->
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>

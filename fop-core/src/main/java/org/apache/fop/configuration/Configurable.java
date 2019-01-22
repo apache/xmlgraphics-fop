@@ -15,17 +15,10 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: Accessibility.java 1343632 2012-05-29 09:48:03Z vhennebert $ */
+package org.apache.fop.configuration;
 
-package org.apache.fop.render;
+public interface Configurable {
 
-/**
- * Implementations of this interface enumerate the various renderer configuration options available
- * to users in the FOP conf.
- */
-public interface RendererConfigOption {
-    /** The name of the option. */
-    String getName();
-
-    Object getDefaultValue();
+    void configure(Configuration cfg) throws ConfigurationException;
 }

@@ -17,12 +17,11 @@
 
 package org.apache.fop.render.bitmap;
 
-import org.apache.avalon.framework.configuration.Configuration;
-
 import org.apache.xmlgraphics.util.MimeConstants;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.fonts.FontEventAdapter;

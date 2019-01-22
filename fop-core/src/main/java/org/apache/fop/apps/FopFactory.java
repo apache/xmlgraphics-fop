@@ -30,7 +30,6 @@ import java.util.Set;
 
 import org.xml.sax.SAXException;
 
-import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,6 +40,7 @@ import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
+import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fonts.FontManager;

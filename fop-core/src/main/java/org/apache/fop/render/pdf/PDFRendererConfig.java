@@ -25,15 +25,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.fonts.FontEventAdapter;
@@ -217,7 +216,12 @@ public final class PDFRendererConfig implements RendererConfig {
 
         private String parseConfig(Configuration cfg, RendererConfigOption option) {
             Configuration child = cfg.getChild(option.getName());
-            return child.getValue(null);
+            String value = child.getValue(null);
+            if (value == null || "".equals(value)) {
+                Object v = option.getDefaultValue();
+                return v == null ? null : v.toString();
+            }
+            return value;
         }
 
         private boolean doesValueExist(Configuration cfg, RendererConfigOption option) {

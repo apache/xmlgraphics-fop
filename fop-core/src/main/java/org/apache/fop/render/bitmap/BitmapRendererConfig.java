@@ -23,10 +23,9 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.EnumMap;
 
-import org.apache.avalon.framework.configuration.Configuration;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.fonts.FontEventAdapter;
@@ -170,7 +169,18 @@ public class BitmapRendererConfig implements RendererConfig {
         }
 
         private String getValue(Configuration cfg, BitmapRendererOption option) {
-            return cfg.getChild(option.getName()).getValue(null);
+            Object defaultValue = option.getDefaultValue();
+            Object result = cfg.getChild(option.getName()).getValue(null);
+            if (result == null || "".equals(result)) {
+                result = defaultValue;
+            }
+            if (result == null) {
+                return null;
+            }
+            if (result instanceof Color) {
+                return ColorUtil.colorToString((Color) result);
+            }
+            return result.toString();
         }
 
         public String getMimeType() {

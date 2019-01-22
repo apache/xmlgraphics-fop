@@ -21,12 +21,11 @@ package org.apache.fop.render.afp;
 
 import java.util.Map;
 
-import org.apache.avalon.framework.configuration.Configuration;
-
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.modca.ResourceObject;
+import org.apache.fop.configuration.Configuration;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RendererContext;
@@ -58,7 +57,7 @@ public class AFPRendererContext extends RendererContext {
         info.setHeight((Integer) getProperty(RendererContextConstants.HEIGHT));
         info.setX((Integer) getProperty(RendererContextConstants.XPOS));
         info.setY((Integer) getProperty(RendererContextConstants.YPOS));
-        info.setHandlerConfiguration((Configuration)getProperty(
+        info.setHandlerConfiguration((Configuration) getProperty(
                 RendererContextConstants.HANDLER_CONFIGURATION));
         info.setFontInfo((org.apache.fop.fonts.FontInfo)getProperty(
                 AFPRendererContextConstants.AFP_FONT_INFO));

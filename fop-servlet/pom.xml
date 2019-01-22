@@ -44,16 +44,6 @@
       <artifactId>commons-logging</artifactId>
       <version>${commons.logging.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.avalon.framework</groupId>
-      <artifactId>avalon-framework-api</artifactId>
-      <version>${avalon.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.avalon.framework</groupId>
-      <artifactId>avalon-framework-impl</artifactId>
-      <version>${avalon.version}</version>
-    </dependency>
   </dependencies>
 
   <build>
@@ -63,8 +53,6 @@
         <version>${war.plugin.version}</version>
         <configuration>
           <packagingIncludes>
-            WEB-INF/lib/avalon-framework-api-${avalon.version}.jar,
-            WEB-INF/lib/avalon-framework-impl-${avalon.version}.jar,
             WEB-INF/lib/batik-all-*.jar,
             WEB-INF/lib/commons-io-${commons.io.version}.jar,
             WEB-INF/lib/commons-logging-${commons.logging.version}.jar,

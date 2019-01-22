@@ -34,4 +34,9 @@ public enum Java2DRendererOption implements RendererConfigOption {
     public String getName() {
         return name;
     }
+
+    @Override
+    public Object getDefaultValue() {
+        return null;
+    }
 }

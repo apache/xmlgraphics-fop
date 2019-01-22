@@ -25,11 +25,11 @@ import java.io.InputStream;
 
 import org.xml.sax.SAXException;
 
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.fop.render.pdf.BasePDFTest;
 
 import static org.apache.fop.FOPTestUtils.getBaseDir;

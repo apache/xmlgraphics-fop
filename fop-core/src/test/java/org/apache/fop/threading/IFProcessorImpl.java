@@ -35,17 +35,19 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.ContentHandler;
 
-import org.apache.avalon.framework.activity.Initializable;
-import org.apache.avalon.framework.configuration.Configurable;
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.commons.io.FilenameUtils;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.activity.Initializable;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.configuration.Configurable;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFParser;
@@ -54,8 +56,11 @@ import org.apache.fop.render.intermediate.IFUtil;
 /**
  * Implementation of the {@link Processor} interface that renders IF XML to a final output format.
  */
-public class IFProcessorImpl extends AbstractLogEnabled
+public class IFProcessorImpl
             implements Processor, Configurable, Initializable {
+
+    private static final Log LOGGER = LogFactory.getLog(IFProcessorImpl.class);
+
 
     private FopFactory fopFactory;
     private TransformerFactory factory = TransformerFactory.newInstance();
@@ -73,7 +78,7 @@ public class IFProcessorImpl extends AbstractLogEnabled
     /** {@inheritDoc} */
     public void initialize() throws Exception {
         if (this.userconfig != null) {
-            getLogger().debug("Setting user config: " + userconfig);
+            LOGGER.debug("Setting user config: " + userconfig);
             fopFactory = FopFactory.newInstance(new File(this.userconfig));
         } else {
             fopFactory = FopFactory.newInstance(new File(".").toURI());
@@ -89,7 +94,7 @@ public class IFProcessorImpl extends AbstractLogEnabled
             URL url = new URL(src.getSystemId());
             String filename = FilenameUtils.getName(url.getPath());
             foUserAgent.getEventBroadcaster().addEventListener(
-                    new AvalonAdapter(getLogger(), filename));
+                    new AvalonAdapter(LOGGER, filename));
         } catch (MalformedURLException mfue) {
             throw new RuntimeException(mfue);
         }

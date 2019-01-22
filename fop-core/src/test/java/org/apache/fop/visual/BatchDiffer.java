@@ -30,10 +30,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.SAXException;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
-import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -44,6 +40,10 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.writer.ImageWriterUtil;
 
+import org.apache.fop.activity.ContainerUtil;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.ConfigurationException;
+import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.fop.layoutengine.LayoutEngineTestUtils;
 
 /**

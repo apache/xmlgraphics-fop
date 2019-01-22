@@ -49,7 +49,7 @@ public enum AFPShadingMode {
      * @return the enumeration object
      */
     public static AFPShadingMode getValueOf(String name) {
-        if (COLOR.getName().equalsIgnoreCase(name)) {
+        if (name == null || "".equals(name) || COLOR.getName().equalsIgnoreCase(name)) {
             return COLOR;
         } else if (DITHERED.getName().equalsIgnoreCase(name)) {
             return DITHERED;
