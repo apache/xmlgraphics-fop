@@ -61,4 +61,9 @@ public enum AFPRendererOption implements RendererConfigOption {
     public Class<?> getType() {
         return type;
     }
+
+    @Override
+    public Object getDefaultValue() {
+        return null;
+    }
 }

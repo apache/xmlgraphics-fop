@@ -31,8 +31,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.avalon.framework.ExceptionUtil;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -103,7 +101,7 @@ public class ExampleAWTViewer {
 
             System.out.println("Success!");
         } catch (Exception e) {
-            System.err.println(ExceptionUtil.printStackTrace(e));
+//            System.err.println(ExceptionUtil.printStackTrace(e));
             System.exit(-1);
         }
     }

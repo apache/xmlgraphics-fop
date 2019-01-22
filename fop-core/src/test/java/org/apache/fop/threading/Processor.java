@@ -24,10 +24,13 @@ import java.io.OutputStream;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 
+import org.apache.fop.activity.Initializable;
+import org.apache.fop.configuration.Configurable;
+
 /**
  * Represents a processor.
  */
-public interface Processor {
+public interface Processor extends Configurable, Initializable {
 
     /**
      * Process a file.

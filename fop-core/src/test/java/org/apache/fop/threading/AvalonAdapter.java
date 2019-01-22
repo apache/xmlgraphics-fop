@@ -19,7 +19,7 @@
 
 package org.apache.fop.threading;
 
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventFormatter;
@@ -31,10 +31,10 @@ import org.apache.fop.events.model.EventSeverity;
  */
 class AvalonAdapter implements EventListener {
 
-    private final Logger logger;
+    private final Log logger;
     private String filename;
 
-    public AvalonAdapter(Logger logger, String filename) {
+    public AvalonAdapter(Log logger, String filename) {
         this.logger = logger;
         this.filename = filename;
     }
@@ -49,7 +49,7 @@ class AvalonAdapter implements EventListener {
         } else if (severity == EventSeverity.ERROR) {
             logger.error(filename + ": "  + msg);
         } else if (severity == EventSeverity.FATAL) {
-            logger.fatalError(filename + ": "  + msg);
+            logger.fatal(filename + ": "  + msg);
         } else {
             assert false;
         }

@@ -27,8 +27,6 @@ import java.io.OutputStream;
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGLength;
 
-import org.apache.avalon.framework.configuration.Configuration;
-
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
@@ -37,6 +35,7 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 
 import org.apache.fop.Version;
+import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 

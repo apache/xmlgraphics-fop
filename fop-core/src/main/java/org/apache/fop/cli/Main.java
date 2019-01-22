@@ -112,9 +112,6 @@ public final class Main {
         try {
             //System.out.println(Thread.currentThread().getContextClassLoader());
             Class clazz = Class.forName("org.apache.commons.io.IOUtils");
-            if (clazz != null) {
-                clazz = Class.forName("org.apache.avalon.framework.configuration.Configuration");
-            }
             return (clazz != null);
         } catch (Exception e) {
             return false;

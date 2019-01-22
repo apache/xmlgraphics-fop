@@ -73,7 +73,6 @@ list of possible build targets.
   <fileset dir="${basedir}/.." id="dist.bin.lib">
     <patternset id="dist.lib">
       <include name="fop/lib/README*"/>
-      <include name="fop/lib/avalon-framework*"/>
       <include name="fop/lib/batik*"/>
       <include name="fop/lib/commons-io*"/>
       <include name="fop/lib/commons-logging*"/>
@@ -597,7 +596,6 @@ list of possible build targets.
     <echo message="Creating the WAR file"/>
     <war warfile="${build.dir}/fop.war" webxml="${servlet.src.dir}/main/webapp/WEB-INF/web.xml">
       <lib dir="${lib.dir}">
-        <include name="avalon-framework*.jar"/>
         <include name="commons-logging*.jar"/>
         <include name="batik*.jar"/>
         <include name="commons-io*.jar"/>
@@ -642,6 +640,7 @@ list of possible build targets.
       <include name="org/apache/fop/util/DecimalFormatCache*.class"/>
       <include name="org/apache/fop/util/ImageObject.class"/>
       <include name="org/apache/fop/util/HexEncoder.class"/>
+      <include name="org/apache/fop/configuration/**"/>
     </patternset>
 <!-- PDF transcoder -->
     <patternset>
@@ -665,7 +664,6 @@ list of possible build targets.
   </fileset>
   <fileset dir="${lib.dir}" id="transcoder-lib-files">
     <include name="commons-io*.jar"/>
-    <include name="avalon-framework*.jar"/>
     <include name="commons-logging*.jar"/>
     <include name="xmlgraphics-commons*.jar"/>
   </fileset>
@@ -698,10 +696,6 @@ list of possible build targets.
     <mkdir dir="${transcoder-deps}"/>
     <unjar dest="${transcoder-deps}">
       <patternset>
-        <include name="org/apache/avalon/framework/*"/>
-        <include name="org/apache/avalon/framework/activity/*"/>
-        <include name="org/apache/avalon/framework/configuration/*"/>
-        <include name="org/apache/avalon/framework/container/*"/>
         <include name="org/apache/commons/logging/**"/>
         <include name="org/apache/commons/io/*.class"/>
         <include name="org/apache/commons/io/filefilter/*.class"/>
@@ -712,7 +706,6 @@ list of possible build targets.
     <mkdir dir="${transcoder-deps}/legal"/>
     <copy todir="${transcoder-deps}/legal">
       <fileset dir="${lib.dir}">
-        <include name="avalon.LICENSE.txt"/>
         <include name="commons-io.LICENSE.txt"/>
         <include name="commons-logging.LICENSE.txt"/>
       </fileset>

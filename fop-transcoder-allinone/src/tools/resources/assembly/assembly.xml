@@ -22,10 +22,6 @@
       <unpack>true</unpack>
       <unpackOptions>
         <includes>
-          <include>org/apache/avalon/framework/*</include>
-          <include>org/apache/avalon/framework/activity/*</include>
-          <include>org/apache/avalon/framework/configuration/*</include>
-          <include>org/apache/avalon/framework/container/*</include>
           <include>org/apache/commons/io/*.class</include>
           <include>org/apache/commons/io/filefilter/*.class</include>
           <include>org/apache/commons/io/output/*.class</include>

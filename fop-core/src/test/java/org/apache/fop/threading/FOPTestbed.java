@@ -31,24 +31,26 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.avalon.framework.CascadingRuntimeException;
-import org.apache.avalon.framework.activity.Executable;
-import org.apache.avalon.framework.activity.Initializable;
-import org.apache.avalon.framework.configuration.Configurable;
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.container.ContainerUtil;
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.activity.ContainerUtil;
+import org.apache.fop.activity.Initializable;
+import org.apache.fop.configuration.Configurable;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.ConfigurationException;
 
 /**
  * Testbed for multi-threading tests. The class can run a configurable set of task a number of
  * times in a configurable number of threads to easily reproduce multi-threading issues.
  */
-public class FOPTestbed extends AbstractLogEnabled
+public class FOPTestbed
             implements Configurable, Initializable {
+
+    private static final Log LOG = LogFactory.getLog(FOPTestbed.class);
 
     private int repeat;
     private List taskList = new java.util.ArrayList();
@@ -85,7 +87,7 @@ public class FOPTestbed extends AbstractLogEnabled
      * Starts the stress test.
      */
     public void doStressTest() {
-        getLogger().info("Starting stress test...");
+        LOG.info("Starting stress test...");
         long start = System.currentTimeMillis();
         this.counter = 0;
 
@@ -94,7 +96,7 @@ public class FOPTestbed extends AbstractLogEnabled
         List threadList = new java.util.LinkedList();
         for (int ti = 0; ti < this.threads; ti++) {
             TaskRunner runner = new TaskRunner();
-            ContainerUtil.enableLogging(runner, getLogger());
+            // ContainerUtil.enableLogging(runner, logger);
             Thread thread = new Thread(workerGroup, runner, "Worker- " + ti);
             threadList.add(thread);
         }
@@ -150,7 +152,7 @@ public class FOPTestbed extends AbstractLogEnabled
         }
     }
 
-    private class TaskRunner extends AbstractLogEnabled implements Runnable {
+    private class TaskRunner implements Runnable {
 
         public void run() {
             try {
@@ -158,12 +160,12 @@ public class FOPTestbed extends AbstractLogEnabled
                     for (Object aTaskList : taskList) {
                         TaskDef def = (TaskDef) aTaskList;
                         final Task task = new Task(def, counter++, foprocessor);
-                        ContainerUtil.enableLogging(task, getLogger());
+                        // ContainerUtil.enableLogging(task, logger);
                         task.execute();
                     }
                 }
             } catch (Exception e) {
-                getLogger().error("Thread ended with an exception", e);
+                LOG.error("Thread ended with an exception", e);
             }
         }
 
@@ -178,12 +180,12 @@ public class FOPTestbed extends AbstractLogEnabled
             Class clazz = Class.forName(this.fopCfg.getAttribute("class",
                     "org.apache.fop.threading.FOProcessorImpl"));
             Processor fop = (Processor)clazz.getDeclaredConstructor().newInstance();
-            ContainerUtil.enableLogging(fop, getLogger());
+            // ContainerUtil.enableLogging(fop, logger);
             ContainerUtil.configure(fop, this.fopCfg);
             ContainerUtil.initialize(fop);
             return fop;
         } catch (Exception e) {
-            throw new CascadingRuntimeException("Error creating FO Processor", e);
+            throw new RuntimeException("Error creating FO Processor", e);
         }
     }
 
@@ -243,7 +245,7 @@ public class FOPTestbed extends AbstractLogEnabled
     }
 
 
-    private class Task extends AbstractLogEnabled implements Executable {
+    private class Task {
 
         private TaskDef def;
         private int num;
@@ -257,7 +259,7 @@ public class FOPTestbed extends AbstractLogEnabled
 
 
         public void execute() throws Exception {
-            getLogger().info("Processing: " + def);
+            LOG.info("Processing: " + def);
             long start = System.currentTimeMillis();
             try {
                 DecimalFormat df = new DecimalFormat("00000");

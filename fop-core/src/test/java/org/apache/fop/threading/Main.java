@@ -23,11 +23,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.avalon.framework.ExceptionUtil;
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
-import org.apache.avalon.framework.container.ContainerUtil;
-import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.fop.activity.ContainerUtil;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.DefaultConfigurationBuilder;
 
 /**
  * Starter class for the multi-threading testbed.
@@ -61,7 +59,7 @@ public final class Main {
 
             //Setup testbed
             FOPTestbed testbed = new FOPTestbed();
-            ContainerUtil.enableLogging(testbed, new ConsoleLogger(ConsoleLogger.LEVEL_INFO));
+            // ContainerUtil.enableLogging(testbed, new ConsoleLogger(ConsoleLogger.LEVEL_INFO));
             ContainerUtil.configure(testbed, cfg);
             ContainerUtil.initialize(testbed);
 
@@ -70,7 +68,8 @@ public final class Main {
 
             System.exit(0);
         } catch (Exception e) {
-            System.err.println(ExceptionUtil.printStackTrace(e));
+            // System.err.println(ExceptionUtil.printStackTrace(e));
+            e.printStackTrace(System.err);
             System.exit(-1);
         }
     }

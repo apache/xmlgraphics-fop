@@ -27,14 +27,6 @@ Normal Dependencies
     
     Apache License v2.0
 
-- Apache Avalon Framework
-
-    avalon-framework-*.jar
-    http://excalibur.apache.org/framework/
-    (Avalon Framework, maintained by the Apache Excalibur project)
-    
-    Apache License v2.0
-
 - Apache XML Graphics Commons
 
     xmlgraphics-commons-*.jar

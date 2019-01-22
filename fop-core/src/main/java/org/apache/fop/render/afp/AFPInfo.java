@@ -19,12 +19,11 @@
 
 package org.apache.fop.render.afp;
 
-import org.apache.avalon.framework.configuration.Configuration;
-
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceManager;
+import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fonts.FontInfo;
 
 /**

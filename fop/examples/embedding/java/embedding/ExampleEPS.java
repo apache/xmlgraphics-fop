@@ -21,12 +21,12 @@
 package embedding;
 
 import java.awt.Font;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
-
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
 
@@ -43,7 +43,7 @@ public class ExampleEPS {
     try {
       String configFile = "examples/fop-eps.xconf";
       DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-      Configuration c = cfgBuilder.buildFromFile(configFile);
+      Configuration c = cfgBuilder.buildFromFile(new File(configFile));
 
       FontInfo fontInfo = PDFDocumentGraphics2DConfigurator.createFontInfo(c, false);
 

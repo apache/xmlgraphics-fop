@@ -22,10 +22,10 @@ package org.apache.fop.render.pdf;
 import java.io.OutputStream;
 import java.util.Map;
 
-import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
