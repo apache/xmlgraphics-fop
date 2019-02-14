@@ -21,12 +21,13 @@ package org.apache.fop.render.afp;
 
 import java.awt.Rectangle;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
 
-import junit.framework.Assert;
+
 
 public class AFPImageHandlerTestCase {
 

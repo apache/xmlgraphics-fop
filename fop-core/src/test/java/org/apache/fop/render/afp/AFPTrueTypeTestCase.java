@@ -36,6 +36,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import org.xml.sax.SAXException;
@@ -65,7 +66,7 @@ import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.render.intermediate.IFException;
 
-import junit.framework.Assert;
+
 
 public class AFPTrueTypeTestCase {
     private String font;

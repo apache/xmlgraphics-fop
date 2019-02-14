@@ -24,10 +24,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Assert;
+
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
-
-import junit.framework.Assert;
 
 public class AFPParser {
     private boolean readText;

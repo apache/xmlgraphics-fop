@@ -25,6 +25,7 @@ import java.util.Arrays;
 
 import javax.xml.transform.stream.StreamResult;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
@@ -40,7 +41,7 @@ import org.apache.fop.render.pdf.extensions.PDFDictionaryAttachment;
 import org.apache.fop.render.pdf.extensions.PDFDictionaryExtension;
 import org.apache.fop.render.pdf.extensions.PDFDictionaryType;
 
-import junit.framework.Assert;
+
 
 public class PDFPagePieceTestCase {
     @Test

@@ -25,6 +25,7 @@ import java.io.File;
 
 import javax.xml.transform.stream.StreamResult;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -37,7 +38,7 @@ import org.apache.fop.render.intermediate.extensions.URIAction;
 import org.apache.fop.render.pdf.PDFDocumentHandler;
 import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileAttachment;
 
-import junit.framework.Assert;
+
 
 public class PDFAttachmentTestCase {
     private FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
