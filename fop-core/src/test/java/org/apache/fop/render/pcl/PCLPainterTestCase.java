@@ -30,6 +30,7 @@ import java.net.URISyntaxException;
 
 import javax.xml.transform.stream.StreamResult;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -42,7 +43,7 @@ import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.java2d.CustomFontMetricsMapper;
 
-import junit.framework.Assert;
+
 
 public class PCLPainterTestCase {
     private FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
