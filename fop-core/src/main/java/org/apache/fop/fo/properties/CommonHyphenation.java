@@ -58,7 +58,7 @@ public final class CommonHyphenation {
     public final EnumProperty hyphenate;
 
     /** The "hyphenation-character" property */
-    public final CharacterProperty hyphenationCharacter;
+    public final OptionalCharacterProperty hyphenationCharacter;
 
     /** The "hyphenation-push-character-count" property */
     public final NumberProperty hyphenationPushCharacterCount;
@@ -74,7 +74,7 @@ public final class CommonHyphenation {
                               StringProperty country,
                               StringProperty script,
                               EnumProperty hyphenate,
-                              CharacterProperty hyphenationCharacter,
+                              OptionalCharacterProperty hyphenationCharacter,
                               NumberProperty hyphenationPushCharacterCount,
                               NumberProperty hyphenationRemainCharacterCount) {
         this.language = language;
@@ -104,8 +104,8 @@ public final class CommonHyphenation {
             = (StringProperty) propertyList.get(Constants.PR_SCRIPT);
         EnumProperty hyphenate
             = (EnumProperty) propertyList.get(Constants.PR_HYPHENATE);
-        CharacterProperty hyphenationCharacter
-            = (CharacterProperty) propertyList.get(Constants.PR_HYPHENATION_CHARACTER);
+        OptionalCharacterProperty hyphenationCharacter
+            = (OptionalCharacterProperty) propertyList.get(Constants.PR_HYPHENATION_CHARACTER);
         NumberProperty hyphenationPushCharacterCount
             = (NumberProperty) propertyList.get(Constants.PR_HYPHENATION_PUSH_CHARACTER_COUNT);
         NumberProperty hyphenationRemainCharacterCount
@@ -132,7 +132,10 @@ public final class CommonHyphenation {
      * @param font the font
      * @return the effective hyphenation character.
      */
-    public char getHyphChar(org.apache.fop.fonts.Font font) {
+    public Character getHyphChar(org.apache.fop.fonts.Font font) {
+        if (hyphenationCharacter.getObject() == null) {
+            return null;
+        }
         char hyphChar = hyphenationCharacter.getCharacter();
         if (font.hasChar(hyphChar)) {
             return hyphChar; //short-cut
@@ -183,8 +186,8 @@ public final class CommonHyphenation {
      * @return the IPD in millipoints for the hyphenation character.
      */
     public int getHyphIPD(org.apache.fop.fonts.Font font) {
-        char hyphChar = getHyphChar(font);
-        return font.getCharWidth(hyphChar);
+        Character hyphChar = getHyphChar(font);
+        return (hyphChar == null) ? 0 : font.getCharWidth(hyphChar);
     }
 
     /**
