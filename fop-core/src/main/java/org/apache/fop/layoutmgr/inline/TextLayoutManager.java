@@ -571,7 +571,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 addWordLevels(getMappingBidiLevels(wordMapping));
             } else {
                 for (int i = s; i < e; i++) {
-                    wordChars.append(foText.charAt(i));
+                    char currentChar = foText.charAt(i);
+                    if (currentChar != CharUtilities.SOFT_HYPHEN) {
+                        wordChars.append(currentChar);
+                    }
                 }
                 addWordLevels(foText.getBidiLevels(s, e));
             }

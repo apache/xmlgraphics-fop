@@ -249,25 +249,32 @@ public class GlyphMapping {
         int offset = 0;
         for (int currentChar : CharUtilities.codepointsIter(ics)) {
 
-            // character width
-            int charWidth = font.getCharWidth(currentChar);
-            wordIPD = wordIPD.plus(charWidth);
+            if (currentChar != CharUtilities.SOFT_HYPHEN) {
+                // character width
+                int charWidth = font.getCharWidth(currentChar);
+                wordIPD = wordIPD.plus(charWidth);
 
-            // kerning
-            if (kerning) {
-                int kern = 0;
-                if (offset > 0) {
-                    int previousChar = Character.codePointAt(ics, offset - 1);
-                    kern = font.getKernValue(previousChar, currentChar);
-                } else if (precedingChar != 0) {
-                    kern = font.getKernValue(precedingChar, currentChar);
+                // kerning
+                if (kerning) {
+                    int kern = 0;
+                    if (offset > 0) {
+                        int previousChar = Character.codePointAt(ics, offset - 1);
+                        for (int j = offset - 2; previousChar == CharUtilities.SOFT_HYPHEN && j >= 0; j--) {
+                            previousChar = Character.codePointAt(ics, j);
+                        }
+                        if (previousChar != CharUtilities.SOFT_HYPHEN) {
+                            kern = font.getKernValue(previousChar, currentChar);
+                        }
+                    } else if (precedingChar != 0) {
+                        kern = font.getKernValue(precedingChar, currentChar);
+                    }
+                    if (kern != 0) {
+                        addToLetterAdjust(letterSpaceAdjustArray, startIndex + offset, kern);
+                        wordIPD = wordIPD.plus(kern);
+                    }
                 }
-                if (kern != 0) {
-                    addToLetterAdjust(letterSpaceAdjustArray, startIndex + offset, kern);
-                    wordIPD = wordIPD.plus(kern);
-                }
+                offset++;
             }
-            offset++;
         }
         if (kerning
                 && (breakOpportunityChar != 0)
