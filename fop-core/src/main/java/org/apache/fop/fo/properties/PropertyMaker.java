@@ -415,19 +415,6 @@ public class PropertyMaker implements Cloneable {
                 if ((propId & Constants.COMPOUND_MASK) != 0) {
                     newProp = getSubprop(newProp, propId & Constants.COMPOUND_MASK);
                 }
-                if (!isInherited() && LOG.isWarnEnabled()) {
-                    /* check whether explicit value is available on the parent
-                     * (for inherited properties, an inherited value will always
-                     *  be available)
-                     */
-                    Property parentExplicit = propertyList.getParentPropertyList()
-                                                .getExplicit(getPropId());
-                    if (parentExplicit == null) {
-                        LOG.warn(FOPropertyMapping.getPropertyName(getPropId())
-                                + "=\"inherit\" on " + propertyList.getFObj().getName()
-                                + ", but no explicit value found on the parent FO.");
-                    }
-                }
             } else {
                 // Check for keyword shorthand values to be substituted.
                 pvalue = checkValueKeywords(pvalue.trim());
