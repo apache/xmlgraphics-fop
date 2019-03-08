@@ -40,6 +40,8 @@ import org.apache.xmlgraphics.util.uri.DataURIResolver;
  * URIs to it.
  */
 public class InternalResourceResolver {
+    private static final String JAR_SCHEME = "jar";
+
     private final URI baseUri;
     private final ResourceResolver resourceResolver;
     private final DataURIResolver dataSchemeResolver = new DataURIResolver();
@@ -110,6 +112,15 @@ public class InternalResourceResolver {
      * @return the resolved URI
      */
     public URI resolveFromBase(URI uri) {
+        if (JAR_SCHEME.equals(baseUri.getScheme())) {
+            try {
+                final URI resolvedUri = new URI(baseUri.getSchemeSpecificPart()).resolve(uri);
+                return new URI(JAR_SCHEME, resolvedUri.toString(), null);
+            } catch (final URISyntaxException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+
         return baseUri.resolve(uri);
     }
 
