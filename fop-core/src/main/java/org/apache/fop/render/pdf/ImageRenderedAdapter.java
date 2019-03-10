@@ -18,6 +18,7 @@
 /* $Id$ */
 
 package org.apache.fop.render.pdf;
+import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
@@ -149,12 +150,6 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     /** {@inheritDoc} */
     @Override
     public boolean isTransparent() {
-        ColorModel cm = getEffectiveColorModel();
-        if (cm instanceof IndexColorModel) {
-            if (cm.getTransparency() == IndexColorModel.TRANSLUCENT) {
-                return true;
-            }
-        }
         return (getImage().getTransparentColor() != null);
     }
 
@@ -164,15 +159,23 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
         ColorModel cm = getEffectiveColorModel();
         if (cm instanceof IndexColorModel) {
             IndexColorModel icm = (IndexColorModel)cm;
-            if (cm.getTransparency() == IndexColorModel.TRANSLUCENT) {
+            if (cm.getTransparency() == IndexColorModel.TRANSLUCENT
+                    || cm.getTransparency() == IndexColorModel.BITMASK) {
                 int transPixel = icm.getTransparentPixel();
-                return new PDFColor(
-                        icm.getRed(transPixel),
-                        icm.getGreen(transPixel),
-                        icm.getBlue(transPixel));
+                if (transPixel != -1) {
+                    return new PDFColor(
+                            icm.getRed(transPixel),
+                            icm.getGreen(transPixel),
+                            icm.getBlue(transPixel));
+                }
             }
         }
-        return new PDFColor(getImage().getTransparentColor());
+        Color transColor = getImage().getTransparentColor();
+        if (transColor != null) {
+            return new PDFColor(transColor);
+        } else {
+            return null;
+        }
     }
 
     /** {@inheritDoc} */

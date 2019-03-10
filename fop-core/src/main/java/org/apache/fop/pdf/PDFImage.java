@@ -85,7 +85,14 @@ public interface PDFImage {
     /**
      * Check if this image has a transparent color transparency.
      *
-     * @return true if it has transparency
+     * Classes such as {@link PDFImageXObject} rely on this simple
+     * binary model of transparency (e.g. compare to
+     * {@link java.awt.Transparency}) in order to render
+     * color key masking (see PDF Spec 1.7 Chapter 8.9.6.4).
+     * Therefore only return true if image has fully transparent
+     * colors.
+     *
+     * @return true if it has at least one fully transparent color
      */
     boolean isTransparent();
 
