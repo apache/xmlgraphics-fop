@@ -19,6 +19,8 @@
 
 package org.apache.fop.pdf;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -68,7 +70,40 @@ public class AlphaRasterImage implements PDFImage {
      * @param image the image (must have an alpha channel)
      */
     public AlphaRasterImage(String k, RenderedImage image) {
-        this(k, GraphicsUtil.getAlphaRaster(image));
+        this(k, getAlphaRaster(image));
+    }
+
+    /**
+     * Extracts the Alpha Raster for the given image.
+     * Also works for {@link java.awt.image.IndexColorModel}.
+     */
+    private static Raster getAlphaRaster(RenderedImage image) {
+        Raster alphaRaster = GraphicsUtil.getAlphaRaster(image);
+
+        /*
+         * {@link GraphicsUtil#getAlphaRaster} calls internally
+         * {@link java.awt.image.BufferedImage#getAlphRaster} which
+         * will return <code>null</code> according to Java API
+         * documentation for {@link java.awt.image.IndexColorModel}.
+         *
+         * In that case we create the raster drawing a hidden
+         * image. That code might be better placed in
+         * {@link java.awt.image.BufferedImage#getAlphRaster}
+         * but since this is a different project and a change
+         * to the interface semantics, it might break consumers.
+         */
+        if (alphaRaster == null) {
+            BufferedImage bufferedImage = (BufferedImage) image;
+            int w = bufferedImage.getWidth();
+            int h = bufferedImage.getHeight();
+            int type = BufferedImage.TYPE_INT_ARGB;
+            BufferedImage bia = new BufferedImage(w,h,type);
+            Graphics2D g = bia.createGraphics();
+            g.drawImage(bufferedImage, 0, 0, null);
+            g.dispose();
+            alphaRaster = GraphicsUtil.getAlphaRaster(bia);
+        }
+        return alphaRaster;
     }
 
     /** {@inheritDoc} */
