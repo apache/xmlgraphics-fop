@@ -263,7 +263,7 @@ public class GlyphMapping {
                     kern = font.getKernValue(precedingChar, currentChar);
                 }
                 if (kern != 0) {
-                    addToLetterAdjust(letterSpaceAdjustArray, startIndex + offset, kern);
+                    addToLetterAdjust(letterSpaceAdjustArray, offset, kern);
                     wordIPD = wordIPD.plus(kern);
                 }
             }
@@ -283,7 +283,7 @@ public class GlyphMapping {
 
             int kern = font.getKernValue(endChar, (int) breakOpportunityChar);
             if (kern != 0) {
-                addToLetterAdjust(letterSpaceAdjustArray, endIndex, kern);
+                addToLetterAdjust(letterSpaceAdjustArray, endIndex - startIndex, kern);
                 // TODO: add kern to wordIPD?
             }
         }
