@@ -19,6 +19,9 @@
 
 package org.apache.fop.render.svg;
 
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.render.DefaultRendererConfigurator;
+import org.apache.fop.render.java2d.Java2DRendererConfig;
 import org.xml.sax.SAXException;
 
 import org.apache.commons.logging.Log;
@@ -81,7 +84,8 @@ public abstract class AbstractSVGDocumentHandler extends AbstractXMLWritingIFDoc
 
     /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
-        return null; //No configurator, yet.
+        return new DefaultRendererConfigurator(getUserAgent(),
+                new Java2DRendererConfig.Java2DRendererConfigParser(MimeConstants.MIME_SVG));
     }
 
     /** {@inheritDoc} */
