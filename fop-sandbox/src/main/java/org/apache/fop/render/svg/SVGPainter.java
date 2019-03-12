@@ -330,10 +330,6 @@ public class SVGPainter extends AbstractIFPainter<AbstractSVGDocumentHandler>
             if (wordSpacing != 0) {
                 XMLUtil.addAttribute(atts, "word-spacing", SVGUtil.formatMptToPt(wordSpacing));
             }
-            if (dp != null) {
-                int[] dx = IFUtil.convertDPToDX(dp);
-                XMLUtil.addAttribute(atts, "dx", SVGUtil.formatMptArrayToPt(dx));
-            }
             handler.startElement("text", atts);
             char[] chars = text.toCharArray();
             handler.characters(chars, 0, chars.length);
