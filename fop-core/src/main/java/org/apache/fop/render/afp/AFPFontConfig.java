@@ -46,6 +46,8 @@ import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.events.EventProducer;
 import org.apache.fop.fonts.EmbedFontInfo;
+import org.apache.fop.fonts.EmbeddingMode;
+import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.FontConfig;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontManagerConfigurator;
@@ -380,10 +382,10 @@ public final class AFPFontConfig implements FontConfig {
         AFPFontInfo getFontInfo(InternalResourceResolver resourceResolver, AFPEventProducer eventProducer)
                 throws IOException {
             try {
-                Typeface tf = new LazyFont(new EmbedFontInfo(
-                        new FontUris(new URI(fontUri), null)
-                        , false, true, null, subfont), resourceResolver, false).getRealFont();
-
+                FontUris fontUris = new FontUris(new URI(fontUri), null);
+                EmbedFontInfo embedFontInfo = new EmbedFontInfo(fontUris, false, true, null, subfont, EncodingMode.AUTO,
+                        EmbeddingMode.FULL, false, false);
+                Typeface tf = new LazyFont(embedFontInfo, resourceResolver, false).getRealFont();
                 AFPResourceAccessor accessor = getAccessor(resourceResolver);
                 CharacterSet characterSet = CharacterSetBuilder.getDoubleByteInstance().build(characterset,
                         super.codePage, super.encoding, tf, accessor, eventProducer);
