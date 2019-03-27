@@ -73,18 +73,6 @@ public class AFPTrueTypeTestCase {
 
     @Test
     public void testAFPTrueType() throws IOException, SAXException, TransformerException, URISyntaxException {
-        String fopxconf = "<fop version=\"1.0\">\n"
-                + "  <renderers>\n"
-                + "    <renderer mime=\"application/x-afp\">\n"
-                + "      <fonts>\n"
-                + "        <font name=\"Univers\" embed-url=\"test/resources/fonts/ttf/DejaVuLGCSerif.ttf\">\n"
-                + "          <font-triplet name=\"Univers\" style=\"normal\" weight=\"normal\"/>\n"
-                + "          <font-triplet name=\"any\" style=\"normal\" weight=\"normal\"/>\n"
-                + "        </font>\n"
-                + "      </fonts>\n"
-                + "    </renderer>\n"
-                + "  </renderers>\n"
-                + "</fop>";
         String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">\n"
                 + "  <fo:layout-master-set>\n"
                 + "    <fo:simple-page-master master-name=\"simple\">\n"
@@ -97,26 +85,6 @@ public class AFPTrueTypeTestCase {
                 + "    </fo:flow>\n"
                 + "  </fo:page-sequence>\n"
                 + "</fo:root>";
-
-        FopFactoryBuilder confBuilder = new FopConfParser(
-                new ByteArrayInputStream(fopxconf.getBytes()),
-                EnvironmentalProfileFactory.createRestrictedIO(new URI("."),
-                        new MyResourceResolver())).getFopFactoryBuilder();
-        FopFactory fopFactory = confBuilder.build();
-        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        Fop fop = fopFactory.newFop("application/x-afp", foUserAgent, bos);
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer transformer = factory.newTransformer();
-        Source src = new StreamSource(new ByteArrayInputStream(fo.getBytes()));
-        Result res = new SAXResult(fop.getDefaultHandler());
-        transformer.transform(src, res);
-        bos.close();
-
-        StringBuilder sb = new StringBuilder();
-        InputStream bis = new ByteArrayInputStream(bos.toByteArray());
-        new AFPParser(false).read(bis, sb);
-
         String format = "BEGIN RESOURCE_GROUP RG000001\n"
                 + "BEGIN NAME_RESOURCE RES00001 Triplets: OBJECT_FUNCTION_SET_SPECIFICATION"
                 + ",OBJECT_CLASSIFICATION,0x01,FULLY_QUALIFIED_NAME,\n"
@@ -143,8 +111,82 @@ public class AFPTrueTypeTestCase {
                 + "END PAGE_GROUP PGP00001\n"
                 + "END DOCUMENT DOC00001\n";
 
-        Assert.assertEquals(sb.toString(), format);
+        Assert.assertEquals(getAFP(fo), format);
         Assert.assertEquals("test/resources/fonts/ttf/DejaVuLGCSerif.ttf", font);
+    }
+
+    @Test
+    public void testSVGAFPTrueType() throws IOException, SAXException, TransformerException, URISyntaxException {
+        String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" "
+                + "xmlns:fox=\"http://xmlgraphics.apache.org/fop/extensions\" "
+                + "xmlns:svg=\"http://www.w3.org/2000/svg\">\n"
+                + "  <fo:layout-master-set>\n"
+                + "    <fo:simple-page-master master-name=\"simple\" page-height=\"27.9cm\" page-width=\"21.6cm\">\n"
+                + "      <fo:region-body />\n"
+                + "    </fo:simple-page-master>\n"
+                + "  </fo:layout-master-set>\n"
+                + "  <fo:page-sequence master-reference=\"simple\">\n"
+                + "    <fo:flow flow-name=\"xsl-region-body\">   \n"
+                + "      <fo:block font-size=\"0\">\n"
+                + "        <fo:instream-foreign-object content-height=\"792pt\" content-width=\"612pt\">\n"
+                + "          <svg:svg viewBox=\"0 0 816 1056\" height=\"1056\" width=\"816\" id=\"svg2\" "
+                + "version=\"1.1\">\n"
+                + "            <svg:g transform=\"matrix(1.3333333,0,0,-1.3333333,0,1056)\" id=\"g10\">\n"
+                + "              <svg:g id=\"g12\">\n"
+                + "                <svg:g id=\"g14\">\n"
+                + "                  <svg:g transform=\"translate(36,18)\" id=\"g40\">\n"
+                + "                    <svg:text id=\"text44\" style=\"font-variant:normal;font-weight:normal;"
+                + "font-size:9px;font-family:Univers;-inkscape-font-specification:ArialMT;writing-mode:lr-tb;"
+                + "fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none\" "
+                + "transform=\"matrix(1,0,0,-1,44.92,11.4)\">\n"
+                + "                      <svg:tspan id=\"tspan42\" y=\"0\" x=\"0.0\">W</svg:tspan>\n"
+                + "                    </svg:text>\n"
+                + "                  </svg:g>\n"
+                + "                  <svg:g id=\"g2672\"/>\n"
+                + "                </svg:g>\n"
+                + "              </svg:g>\n"
+                + "            </svg:g>\n"
+                + "          </svg:svg>\n"
+                + "        </fo:instream-foreign-object>\n"
+                + "      </fo:block>\n"
+                + "    </fo:flow>\n"
+                + "  </fo:page-sequence>\n"
+                + "</fo:root>";
+        Assert.assertTrue(getAFP(fo).contains("DATA GRAPHICS"));
+    }
+
+    private String getAFP(String fo) throws IOException, TransformerException, SAXException, URISyntaxException {
+        String fopxconf = "<fop version=\"1.0\">\n"
+                + "  <renderers>\n"
+                + "    <renderer mime=\"application/x-afp\">\n"
+                + "      <fonts>\n"
+                + "        <font name=\"Univers\" embed-url=\"test/resources/fonts/ttf/DejaVuLGCSerif.ttf\">\n"
+                + "          <font-triplet name=\"Univers\" style=\"normal\" weight=\"normal\"/>\n"
+                + "          <font-triplet name=\"any\" style=\"normal\" weight=\"normal\"/>\n"
+                + "        </font>\n"
+                + "      </fonts>\n"
+                + "    </renderer>\n"
+                + "  </renderers>\n"
+                + "</fop>";
+        FopFactoryBuilder confBuilder = new FopConfParser(
+                new ByteArrayInputStream(fopxconf.getBytes()),
+                EnvironmentalProfileFactory.createRestrictedIO(new URI("."),
+                        new MyResourceResolver())).getFopFactoryBuilder();
+        FopFactory fopFactory = confBuilder.build();
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        Fop fop = fopFactory.newFop("application/x-afp", foUserAgent, bos);
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer transformer = factory.newTransformer();
+        Source src = new StreamSource(new ByteArrayInputStream(fo.getBytes()));
+        Result res = new SAXResult(fop.getDefaultHandler());
+        transformer.transform(src, res);
+        bos.close();
+
+        StringBuilder sb = new StringBuilder();
+        InputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        new AFPParser(false).read(bis, sb);
+        return sb.toString();
     }
 
     class MyResourceResolver implements ResourceResolver {
