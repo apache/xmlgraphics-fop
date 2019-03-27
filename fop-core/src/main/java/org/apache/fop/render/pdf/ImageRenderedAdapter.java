@@ -18,12 +18,12 @@
 /* $Id$ */
 
 package org.apache.fop.render.pdf;
+import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
-import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -31,7 +31,6 @@ import java.io.OutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.xmlgraphics.image.GraphicsUtil;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
@@ -126,11 +125,8 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
             //TODO Implement code to combine image with background color if transparency is not
             //allowed (need BufferedImage support for that)
 
-            Raster raster = GraphicsUtil.getAlphaRaster(ri);
-            if (raster != null) {
-                AlphaRasterImage alphaImage = new AlphaRasterImage("Mask:" + getKey(), raster);
-                this.softMask = doc.addImage(null, alphaImage).makeReference();
-            }
+            AlphaRasterImage alphaImage = new AlphaRasterImage("Mask:" + getKey(), ri);
+            this.softMask = doc.addImage(null, alphaImage).makeReference();
         }
     }
 
@@ -154,12 +150,6 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     /** {@inheritDoc} */
     @Override
     public boolean isTransparent() {
-        ColorModel cm = getEffectiveColorModel();
-        if (cm instanceof IndexColorModel) {
-            if (cm.getTransparency() == IndexColorModel.TRANSLUCENT) {
-                return true;
-            }
-        }
         return (getImage().getTransparentColor() != null);
     }
 
@@ -169,15 +159,23 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
         ColorModel cm = getEffectiveColorModel();
         if (cm instanceof IndexColorModel) {
             IndexColorModel icm = (IndexColorModel)cm;
-            if (cm.getTransparency() == IndexColorModel.TRANSLUCENT) {
+            if (cm.getTransparency() == IndexColorModel.TRANSLUCENT
+                    || cm.getTransparency() == IndexColorModel.BITMASK) {
                 int transPixel = icm.getTransparentPixel();
-                return new PDFColor(
-                        icm.getRed(transPixel),
-                        icm.getGreen(transPixel),
-                        icm.getBlue(transPixel));
+                if (transPixel != -1) {
+                    return new PDFColor(
+                            icm.getRed(transPixel),
+                            icm.getGreen(transPixel),
+                            icm.getBlue(transPixel));
+                }
             }
         }
-        return new PDFColor(getImage().getTransparentColor());
+        Color transColor = getImage().getTransparentColor();
+        if (transColor != null) {
+            return new PDFColor(transColor);
+        } else {
+            return null;
+        }
     }
 
     /** {@inheritDoc} */

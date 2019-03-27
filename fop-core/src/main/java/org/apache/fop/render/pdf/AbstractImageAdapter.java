@@ -304,13 +304,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
 
     private static Integer getIndexOfFirstTransparentColorInPalette(IndexColorModel icm) {
         byte[] alphas = new byte[icm.getMapSize()];
-        byte[] reds = new byte[icm.getMapSize()];
-        byte[] greens = new byte[icm.getMapSize()];
-        byte[] blues = new byte[icm.getMapSize()];
         icm.getAlphas(alphas);
-        icm.getReds(reds);
-        icm.getGreens(greens);
-        icm.getBlues(blues);
         for (int i = 0; i < icm.getMapSize(); i++) {
             if ((alphas[i] & 0xFF) == 0) {
                 return i;
