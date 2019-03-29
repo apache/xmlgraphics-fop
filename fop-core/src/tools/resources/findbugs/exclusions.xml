@@ -413,6 +413,16 @@
       <Class name="org.apache.fop.servlet.FopServlet"/>
     </And>    
   </Match>
+  <!-- Bug in findbugs? -->
+  <Match>
+    <Bug pattern="RC_REF_COMPARISON"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.fo.properties.OptionalCharacterProperty"/>
+        <Method name="equals"/>
+      </And>
+    </Or>
+  </Match>
   
   <!-- END - TEMPORARY (UNAPPROVED) EXCLUSIONS -->
 
