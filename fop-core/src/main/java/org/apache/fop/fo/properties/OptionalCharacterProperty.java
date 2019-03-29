@@ -101,9 +101,11 @@ public final class OptionalCharacterProperty extends Property {
     public boolean equals(Object obj) {
         if (obj instanceof OptionalCharacterProperty) {
             OptionalCharacterProperty ocp = (OptionalCharacterProperty) obj;
-            return character == ocp.character
-                   || character != null
-                      && character.equals(ocp.character);
+            if (character == null && ocp.character == null) {
+                return true;
+            } else {
+                return (character != null && character.equals(ocp.character));
+            }
         } else {
             return false;
         }
