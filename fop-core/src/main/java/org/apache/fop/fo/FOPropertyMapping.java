@@ -53,6 +53,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.LineHeightPropertyMaker;
 import org.apache.fop.fo.properties.ListProperty;
 import org.apache.fop.fo.properties.NumberProperty;
+import org.apache.fop.fo.properties.OptionalCharacterProperty;
 import org.apache.fop.fo.properties.PageBreakShorthandParser;
 import org.apache.fop.fo.properties.PageDimensionMaker;
 import org.apache.fop.fo.properties.PositionShorthandParser;
@@ -1105,7 +1106,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("hyphenate", m);
 
         // hyphenation-character
-        m  = new CharacterProperty.Maker(PR_HYPHENATION_CHARACTER);
+        m  = new OptionalCharacterProperty.Maker(PR_HYPHENATION_CHARACTER);
         m.setInherited(true);
         m.setDefault("-");
         addPropertyMaker("hyphenation-character", m);
