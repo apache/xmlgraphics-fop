@@ -225,7 +225,7 @@ public class PDFLinearization {
     private void sort(List<PDFObject> objects) {
         Collections.sort(objects, new Comparator<PDFObject>() {
             public int compare(PDFObject o1, PDFObject o2) {
-                return ((Integer) o1.getObjectNumber().getNumber()).compareTo(o2.getObjectNumber().getNumber());
+                return Integer.compare(o1.getObjectNumber().getNumber(), o2.getObjectNumber().getNumber());
             }
         });
     }
@@ -240,7 +240,7 @@ public class PDFLinearization {
     public void outputPages(OutputStream stream) throws IOException {
         Collections.sort(doc.pageObjs, new Comparator<PDFPage>() {
             public int compare(PDFPage o1, PDFPage o2) {
-                return ((Integer) o1.pageIndex).compareTo(o2.pageIndex);
+                return Integer.compare(o1.pageIndex, o2.pageIndex);
             }
         });
         doc.objects.addAll(doc.trailerObjects);
