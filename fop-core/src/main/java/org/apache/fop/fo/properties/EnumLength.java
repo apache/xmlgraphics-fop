@@ -20,6 +20,7 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.util.CompareUtil;
 
 /**
@@ -52,8 +53,12 @@ public class EnumLength extends LengthProperty {
      * {@inheritDoc}
      */
     public int getValue() {
-        log.error("getValue() called on " + enumProperty + " length");
-        return 0;
+        if (enumProperty.getEnum() == Constants.EN_INDEFINITE) {
+            return Integer.MAX_VALUE;
+        } else {
+            log.error("getValue() called on " + enumProperty + " length");
+            return 0;
+        }
     }
 
     /**

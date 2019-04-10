@@ -65,6 +65,8 @@ public class Page extends AreaTreeObject implements Serializable {
     private RegionViewport regionEnd;
     private RegionViewport regionAfter;
 
+    private SimplePageMaster spm = null;
+
     // temporary map of unresolved objects used when serializing the page
     private Map<String, List<Resolvable>> unresolved;
 
@@ -82,6 +84,7 @@ public class Page extends AreaTreeObject implements Serializable {
      *            page-reference-area
      */
     public Page(SimplePageMaster spm) {
+        this.spm = spm;
         // Width and Height of the page view port
         FODimension pageViewPortDims = new FODimension(spm.getPageWidth().getValue()
                             ,  spm.getPageHeight().getValue());
@@ -144,6 +147,10 @@ public class Page extends AreaTreeObject implements Serializable {
             rvp.setRegionReference(rr);
             setRegionViewport(r.getNameId(), rvp);
         }
+    }
+
+    public SimplePageMaster getSimplePageMaster() {
+        return spm;
     }
 
     /**
