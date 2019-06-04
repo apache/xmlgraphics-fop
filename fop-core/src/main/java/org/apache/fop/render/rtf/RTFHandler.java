@@ -437,8 +437,7 @@ public class RTFHandler extends FOEventHandler {
 
             RtfTableCell cellParent = (RtfTableCell)textrun.getParentOfClass(RtfTableCell.class);
             if (cellParent != null && par != null) {
-                int iDepth = cellParent.findChildren(textrun);
-                cellParent.setLastParagraph(par, iDepth);
+                cellParent.setLastParagraph(par);
             }
 
             int breakValue = toRtfBreakValue(bl.getBreakAfter());

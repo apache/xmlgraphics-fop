@@ -48,7 +48,6 @@ public class RtfTableCell
     private boolean setRight;
     private int id;
     private RtfParagraphBreak lastBreak;
-    private int lastBreakDepth = Integer.MIN_VALUE;
 
     private static final String TABLE_CELL_PARAGRAPH = "cell";
     private static final String TABLE_CELL_NESTED_PARAGRAPH = "nestcell";
@@ -555,15 +554,10 @@ public class RtfTableCell
      * For nested tables it is not necessary.
      *
      * @param parBreak the paragraph break element
-     * @param breakDepth The depth is necessary for picking the correct break element.
-     * If it is deeper inside the whole cell it will be used, and if there is something on
-     * the same level (depth) it is also set because the method is called for all breaks
-     * in the correct order.
      */
-    public void setLastParagraph(RtfParagraphBreak parBreak, int breakDepth) {
-        if (parBreak != null && breakDepth >= lastBreakDepth) {
+    public void setLastParagraph(RtfParagraphBreak parBreak) {
+        if (parBreak != null) {
             lastBreak = parBreak;
-            lastBreakDepth = breakDepth;
         }
     }
 
