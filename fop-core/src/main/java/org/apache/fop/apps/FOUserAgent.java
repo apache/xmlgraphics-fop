@@ -56,6 +56,7 @@ import org.apache.fop.events.LoggingEventListener;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fonts.FontManager;
+import org.apache.fop.hyphenation.HyphenationTreeCache;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.Renderer;
@@ -811,5 +812,9 @@ public class FOUserAgent {
     }
     public SoftMapCache getPDFObjectCache() {
         return pdfObjectCache;
+    }
+
+    public HyphenationTreeCache getHyphenationTreeCache() {
+        return factory.getHyphenationTreeCache();
     }
 }

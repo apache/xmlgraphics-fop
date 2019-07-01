@@ -44,6 +44,7 @@ import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fonts.FontManager;
+import org.apache.fop.hyphenation.HyphenationTreeCache;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.RendererConfig;
@@ -87,6 +88,8 @@ public final class FopFactory implements ImageContext {
     private final InternalResourceResolver resolver;
 
     private final Map<String, RendererConfig> rendererConfig;
+
+    private HyphenationTreeCache hyphenationTreeCache;
 
     private FopFactory(FopFactoryConfig config) {
         this.config = config;
@@ -435,5 +438,12 @@ public final class FopFactory implements ImageContext {
      */
     public ColorSpaceCache getColorSpaceCache() {
         return this.colorSpaceCache;
+    }
+
+    public HyphenationTreeCache getHyphenationTreeCache() {
+        if (hyphenationTreeCache == null) {
+            hyphenationTreeCache = new HyphenationTreeCache();
+        }
+        return hyphenationTreeCache;
     }
 }

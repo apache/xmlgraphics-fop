@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.ResourceEventProducer;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.events.EventBroadcaster;
 
@@ -47,63 +48,29 @@ public final class Hyphenator {
     /** logging instance */
     private static final Log log = LogFactory.getLog(Hyphenator.class);
 
-    private static HyphenationTreeCache hTreeCache;
-
     /** Enables a dump of statistics. Note: If activated content is sent to System.out! */
     private static boolean statisticsDump;
 
     public static final String HYPTYPE = Hyphenator.class.toString() + "HYP";
     public static final String XMLTYPE = Hyphenator.class.toString() + "XML";
 
-    /**
-     * Creates a new hyphenator.
-     */
-    private Hyphenator() { }
-
-    /** @return the default (static) hyphenation tree cache */
-    public static synchronized HyphenationTreeCache getHyphenationTreeCache() {
-        if (hTreeCache == null) {
-            hTreeCache = new HyphenationTreeCache();
-        }
-        return hTreeCache;
-    }
-
-    /**
-     * Clears the default hyphenation tree cache.<br>
-     * This method can be used if the underlying data files are changed at runtime.
-     */
-    public static synchronized void clearHyphenationTreeCache() {
-        hTreeCache = new HyphenationTreeCache();
-    }
-
-    /**
-     * Returns a hyphenation tree for a given language and country,
-     * with fallback from (lang,country) to (lang).
-     * The hyphenation trees are cached.
-     * @param lang the language
-     * @param country the country (may be null or "none")
-     * @param resolver resolver to find the hyphenation files
-     * @param hyphPatNames the map with user-configured hyphenation pattern file names
-     * @return the hyphenation tree
-     */
-    public static HyphenationTree getHyphenationTree(String lang, String country,
-                                                     InternalResourceResolver resolver, Map hyphPatNames) {
-        return getHyphenationTree(lang, country, resolver, hyphPatNames, null);
+    private Hyphenator() {
     }
 
     public static HyphenationTree getHyphenationTree(String lang, String country,
-                       InternalResourceResolver resourceResolver, Map hyphPatNames, EventBroadcaster eventBroadcaster) {
+                       InternalResourceResolver resourceResolver, Map hyphPatNames, FOUserAgent foUserAgent) {
         String llccKey = HyphenationTreeCache.constructLlccKey(lang, country);
-        HyphenationTreeCache cache = getHyphenationTreeCache();
 
-        // If this hyphenation tree has been registered as missing, return immediately
-        if (cache.isMissing(llccKey)) {
+        HyphenationTreeCache cache = foUserAgent.getHyphenationTreeCache();
+
+        // See if there was an error finding this hyphenation tree before
+        if (cache == null || cache.isMissing(llccKey)) {
             return null;
         }
 
         HyphenationTree hTree;
         // first try to find it in the cache
-        hTree = getHyphenationTreeCache().getHyphenationTree(lang, country);
+        hTree = cache.getHyphenationTree(lang, country);
         if (hTree != null) {
             return hTree;
         }
@@ -120,13 +87,14 @@ public final class Hyphenator {
         }
 
         if (hTree == null && country != null && !country.equals("none")) {
-            return getHyphenationTree(lang, null, resourceResolver, hyphPatNames, eventBroadcaster);
+            return getHyphenationTree(lang, null, resourceResolver, hyphPatNames, foUserAgent);
         }
 
         // put it into the pattern cache
         if (hTree != null) {
             cache.cache(llccKey, hTree);
         } else {
+            EventBroadcaster eventBroadcaster = foUserAgent.getEventBroadcaster();
             if (eventBroadcaster == null) {
                 log.error("Couldn't find hyphenation pattern " + llccKey);
             } else {
@@ -188,23 +156,15 @@ public final class Hyphenator {
      * @return the hyphenation tree or null if it wasn't found in the resources
      */
     public static HyphenationTree getFopHyphenationTree(String key) {
-        HyphenationTree hTree = null;
-        ObjectInputStream ois = null;
-        InputStream is = null;
-        try {
-            is = getResourceStream(key);
-            if (is == null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Couldn't find precompiled hyphenation pattern "
-                              + key + " in resources");
-                }
-                return null;
+        InputStream is = getResourceStream(key);
+        if (is == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Couldn't find precompiled hyphenation pattern "
+                          + key + " in resources");
             }
-            hTree = readHyphenationTree(is);
-        } finally {
-            IOUtils.closeQuietly(ois);
+            return null;
         }
-        return hTree;
+        return readHyphenationTree(is);
     }
 
     /**
@@ -284,30 +244,15 @@ public final class Hyphenator {
         return null;
     }
 
-    /**
-     * Hyphenates a word.
-     * @param lang the language
-     * @param country the optional country code (may be null or "none")
-     * @param resourceResolver resolver to find the hyphenation files
-     * @param hyphPatNames the map with user-configured hyphenation pattern file names
-     * @param word the word to hyphenate
-     * @param leftMin the minimum number of characters before the hyphenation point
-     * @param rightMin the minimum number of characters after the hyphenation point
-     * @return the hyphenation result
-     */
-    public static Hyphenation hyphenate(String lang, String country,
-            InternalResourceResolver resourceResolver, Map hyphPatNames, String word, int leftMin,
-            int rightMin) {
-        return hyphenate(lang, country, resourceResolver, hyphPatNames, word, leftMin, rightMin, null);
-    }
-
     public static Hyphenation hyphenate(String lang, String country, InternalResourceResolver resourceResolver,
-                                        Map hyphPatNames, String word, int leftMin, int rightMin,
-                                        EventBroadcaster eventBroadcaster) {
-        HyphenationTree hTree = getHyphenationTree(lang, country, resourceResolver, hyphPatNames, eventBroadcaster);
+                                        Map hyphPatNames,
+                                        String word,
+                                        int leftMin, int rightMin, FOUserAgent foUserAgent) {
+        HyphenationTree hTree = getHyphenationTree(lang, country, resourceResolver, hyphPatNames, foUserAgent);
         if (hTree == null) {
             return null;
         }
         return hTree.hyphenate(word, leftMin, rightMin);
     }
+
 }
