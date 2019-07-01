@@ -19,6 +19,19 @@
 
 package org.apache.fop.render.intermediate;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -36,6 +49,10 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.InternalElementMapping;
@@ -165,5 +182,47 @@ public class IFStructureTreeBuilderTestCase {
             }
             return true;
         }
+    }
+
+    @Test
+    public void checkLinkStructRef() throws TransformerException, SAXException {
+        String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">\n"
+                + "  <fo:layout-master-set>\n"
+                + "    <fo:simple-page-master master-name=\"all\" page-width=\"8.5in\" page-height=\"11in\">\n"
+                + "      <fo:region-body/>\n"
+                + "    </fo:simple-page-master>\n"
+                + "  </fo:layout-master-set>\n"
+                + "  <fo:page-sequence format=\"1\" id=\"th_default_sequence1\" master-reference=\"all\">\n"
+                + "    <fo:flow flow-name=\"xsl-region-body\">\n"
+                + "      <fo:block>\n"
+                + "        <fo:block>1 <fo:basic-link external-destination=\"http://a.net\">www.a.net</fo:basic-link>"
+                + "</fo:block>\n"
+                + "        <fo:block>2 <fo:basic-link external-destination=\"http://a.net\">www.a.net</fo:basic-link>"
+                + "</fo:block>\n"
+                + "      </fo:block>\n"
+                + "    </fo:flow>\n"
+                + "  </fo:page-sequence>\n"
+                + "</fo:root>";
+        String ifXML = foToIF(fo);
+        Assert.assertTrue(ifXML, ifXML.contains("<nav:link rect=\"10008 1650 56016 11100\" foi:struct-ref=\"2\">"));
+        Assert.assertTrue(ifXML, ifXML.contains("<nav:link rect=\"10008 16050 56016 11100\" foi:struct-ref=\"6\">"));
+    }
+
+    private String foToIF(String fo) throws SAXException, TransformerException {
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        userAgent.setAccessibility(true);
+        IFSerializer serializer = new IFSerializer(new IFContext(userAgent));
+        IFDocumentHandler targetHandler
+                = userAgent.getRendererFactory().createDocumentHandler(userAgent, MimeConstants.MIME_PDF);
+        serializer.mimicDocumentHandler(targetHandler);
+        userAgent.setDocumentHandlerOverride(serializer);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_FOP_IF, userAgent, out);
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Source src = new StreamSource(new ByteArrayInputStream(fo.getBytes()));
+        Result res = new SAXResult(fop.getDefaultHandler());
+        transformer.transform(src, res);
+        return out.toString();
     }
 }
