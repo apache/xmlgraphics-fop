@@ -441,6 +441,14 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         }
     }
 
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[][] dp, String text, boolean nextIsSpace)
+            throws IFException {
+        if (accessEnabled && nextIsSpace) {
+            text += ' ';
+        }
+        drawText(x, y, letterSpacing, wordSpacing, dp, text);
+    }
+
     private void drawTextWithDX(int x, int y, String text, FontTriplet triplet,
             int letterSpacing, int wordSpacing, int[] dx) throws IFException {
         //TODO Ignored: state.getFontVariant()

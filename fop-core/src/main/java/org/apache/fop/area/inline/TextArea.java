@@ -88,17 +88,21 @@ public class TextArea extends AbstractTextArea {
      * @param gposAdjustments array of general position adjustments or null if none apply
      * @param blockProgressionOffset the offset for the next area
      */
-    public void addWord(
-        String word, int ipd, int[] letterAdjust, int[] levels,
-          int[][] gposAdjustments, int blockProgressionOffset) {
+    public void addWord(String word, int ipd, int[] letterAdjust, int[] levels, int[][] gposAdjustments,
+                        int blockProgressionOffset, boolean nextIsSpace) {
         int minWordLevel = findMinLevel(levels, getBidiLevel());
-        WordArea wordArea = new WordArea(
-            blockProgressionOffset, minWordLevel, word, letterAdjust, levels, gposAdjustments);
+        WordArea wordArea = new WordArea(blockProgressionOffset, minWordLevel, word, letterAdjust, levels,
+                gposAdjustments, false, nextIsSpace);
         wordArea.setIPD(ipd);
         wordArea.setChangeBarList(getChangeBarList());
         addChildArea(wordArea);
         wordArea.setParentArea(this);
         updateLevel(minWordLevel);
+    }
+
+    public void addWord(String word, int ipd, int[] letterAdjust, int[] levels, int[][] gposAdjustments,
+                        int blockProgressionOffset) {
+        addWord(word, ipd, letterAdjust, levels, gposAdjustments, blockProgressionOffset, false);
     }
 
     /**

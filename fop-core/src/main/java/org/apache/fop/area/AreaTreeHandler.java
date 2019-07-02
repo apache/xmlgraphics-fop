@@ -106,7 +106,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
         this.lmMaker = userAgent.getLayoutManagerMakerOverride();
         if (lmMaker == null) {
-            lmMaker = new LayoutManagerMapping();
+            lmMaker = new LayoutManagerMapping(userAgent);
         }
 
         this.idTracker = new IDTracker();

@@ -465,4 +465,8 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
         return true;
     }
 
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing,
+                         int[][] dp, String text, boolean nextIsSpace) throws IFException {
+        drawText(x, y, letterSpacing, wordSpacing, dp, text);
+    }
 }

@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
@@ -104,8 +105,11 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** The map of LayoutManagerMakers */
     private final Map makers = new HashMap();
 
+    private FOUserAgent userAgent;
+
     /** default constructor */
-    public LayoutManagerMapping() {
+    public LayoutManagerMapping(FOUserAgent userAgent) {
+        this.userAgent = userAgent;
         initialize();
     }
 
@@ -176,7 +180,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                 }
             }
         } else {
-            maker.make(node, lms);
+            maker.make(node, lms, userAgent);
         }
     }
 
@@ -239,7 +243,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
          * @param node the associated FO node
          * @param lms a list of layout managers to which new manager is to be added
          */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             // no layout manager
         }
     }
@@ -247,10 +251,10 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class FOTextLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             FOText foText = (FOText) node;
             if (foText.length() > 0) {
-                lms.add(new TextLayoutManager(foText));
+                lms.add(new TextLayoutManager(foText, userAgent));
             }
         }
     }
@@ -258,7 +262,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class BidiOverrideLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             if (node instanceof BidiOverride) {
                 lms.add(new BidiLayoutManager((BidiOverride) node));
             }
@@ -268,7 +272,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class InlineLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             lms.add(new InlineLayoutManager((InlineLevel) node));
         }
     }
@@ -276,7 +280,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class FootnoteLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             lms.add(new FootnoteLayoutManager((Footnote) node));
         }
     }
@@ -284,7 +288,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class InlineContainerLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             lms.add(new InlineContainerLayoutManager((InlineContainer) node));
         }
     }
@@ -292,7 +296,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class BasicLinkLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             lms.add(new BasicLinkLayoutManager((BasicLink) node));
         }
     }
@@ -300,7 +304,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class BlockLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-         public void make(FONode node, List lms) {
+         public void make(FONode node, List lms, FOUserAgent userAgent) {
              lms.add(new BlockLayoutManager((Block) node));
          }
     }
@@ -308,7 +312,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class LeaderLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             lms.add(new LeaderLayoutManager((Leader) node));
         }
     }
@@ -316,7 +320,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class CharacterLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             Character foCharacter = (Character) node;
             if (foCharacter.getCharacter() != CharUtilities.CODE_EOT) {
                 lms.add(new CharacterLayoutManager(foCharacter));
@@ -327,7 +331,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class ExternalGraphicLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             ExternalGraphic eg = (ExternalGraphic) node;
             if (!eg.getSrc().equals("")) {
                 lms.add(new ExternalGraphicLayoutManager(eg));
@@ -338,7 +342,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class BlockContainerLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             lms.add(new BlockContainerLayoutManager((BlockContainer) node));
          }
     }
@@ -346,7 +350,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class ListItemLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-         public void make(FONode node, List lms) {
+         public void make(FONode node, List lms, FOUserAgent userAgent) {
              lms.add(new ListItemLayoutManager((ListItem) node));
          }
     }
@@ -354,7 +358,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class ListBlockLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             lms.add(new ListBlockLayoutManager((ListBlock) node));
         }
     }
@@ -362,7 +366,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class InstreamForeignObjectLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             lms.add(new InstreamForeignObjectLM((InstreamForeignObject) node));
         }
     }
@@ -370,7 +374,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class PageNumberLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-         public void make(FONode node, List lms) {
+         public void make(FONode node, List lms, FOUserAgent userAgent) {
              lms.add(new PageNumberLayoutManager((PageNumber) node));
          }
     }
@@ -378,7 +382,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class PageNumberCitationLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-         public void make(FONode node, List lms) {
+         public void make(FONode node, List lms, FOUserAgent userAgent) {
             lms.add(new PageNumberCitationLayoutManager((PageNumberCitation) node));
          }
     }
@@ -386,7 +390,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class PageNumberCitationLastLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
            lms.add(new PageNumberCitationLastLayoutManager((PageNumberCitationLast) node));
         }
     }
@@ -394,7 +398,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public static class TableLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             Table table = (Table) node;
             TableLayoutManager tlm = new TableLayoutManager(table);
             lms.add(tlm);
@@ -404,7 +408,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public class RetrieveMarkerLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             Iterator baseIter;
             baseIter = node.getChildNodes();
             if (baseIter == null) {
@@ -418,7 +422,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
 
     public class RetrieveTableMarkerLayoutManagerMaker extends Maker {
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             FONodeIterator baseIter = node.getChildNodes();
             if (baseIter == null) {
                 // this happens when the retrieve-table-marker cannot be resolved yet
@@ -438,7 +442,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /** a layout manager maker */
     public class WrapperLayoutManagerMaker extends Maker {
         /** {@inheritDoc} */
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             //We insert the wrapper LM before it's children so an ID
             //on the node can be registered on a page.
             lms.add(new WrapperLayoutManager((Wrapper)node));
@@ -457,7 +461,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     public class MultiSwitchLayoutManagerMaker extends Maker {
 
         @Override
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             lms.add(new MultiSwitchLayoutManager((MultiSwitch) node));
         }
     }
@@ -465,13 +469,13 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     public class MultiCaseLayoutManagerMaker extends Maker {
 
         @Override
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             lms.add(new MultiCaseLayoutManager((MultiCase) node));
         }
     }
 
     public static class FloatLayoutManagerMaker extends Maker {
-        public void make(FONode node, List lms) {
+        public void make(FONode node, List lms, FOUserAgent userAgent) {
             lms.add(new FloatLayoutManager((Float) node));
         }
     }

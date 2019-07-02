@@ -669,12 +669,21 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
 
     /** {@inheritDoc} */
     public void drawText(int x, int y, int letterSpacing, int wordSpacing,
-            int[][] dp, String text) throws IFException {
+                         int[][] dp, String text) throws IFException {
+        drawText(x, y, letterSpacing, wordSpacing, dp, text, false);
+    }
+
+    /** {@inheritDoc} */
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing,
+            int[][] dp, String text, boolean nextIsSpace) throws IFException {
         try {
             addID();
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "x", Integer.toString(x));
             addAttribute(atts, "y", Integer.toString(y));
+            if (nextIsSpace) {
+                addAttribute(atts, "next-is-space", "true");
+            }
             if (letterSpacing != 0) {
                 addAttribute(atts, "letter-spacing", Integer.toString(letterSpacing));
             }

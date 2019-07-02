@@ -28,6 +28,7 @@ import java.util.ListIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.Constants;
@@ -132,15 +133,17 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private final Position auxiliaryPosition = new LeafPosition(this, -1);
 
+    private FOUserAgent userAgent;
     /**
      * Create a Text layout manager.
      *
      * @param node The FOText object to be rendered
      */
-    public TextLayoutManager(FOText node) {
+    public TextLayoutManager(FOText node, FOUserAgent userAgent) {
         foText = node;
         letterSpaceAdjustArray = new MinOptMax[node.length() + 1];
         mappings = new ArrayList<GlyphMapping>();
+        this.userAgent = userAgent;
     }
 
     private KnuthPenalty makeZeroWidthPenalty(int penaltyValue) {
@@ -507,8 +510,13 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             if (!gposAdjusted) {
                 gposAdjustments = null;
             }
-            textArea.addWord(wordChars.toString(), wordIPD, letterSpaceAdjust,
-                             getNonEmptyLevels(), gposAdjustments, blockProgressionOffset);
+            textArea.addWord(wordChars.toString(), wordIPD, letterSpaceAdjust, getNonEmptyLevels(), gposAdjustments,
+                    blockProgressionOffset, isWordSpace(endIndex + 1));
+        }
+
+        private boolean isWordSpace(int mappingIndex) {
+            return userAgent.isAccessibilityEnabled()
+                    && mappingIndex < mappings.size() - 1 && getGlyphMapping(mappingIndex).isSpace;
         }
 
         private int[] getNonEmptyLevels() {

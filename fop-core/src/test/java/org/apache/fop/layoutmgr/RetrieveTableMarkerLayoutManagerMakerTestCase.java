@@ -44,11 +44,11 @@ public class RetrieveTableMarkerLayoutManagerMakerTestCase {
         RetrieveTableMarker rtm = mock(RetrieveTableMarker.class);
         // real RTMLMM, not mock
         List l = new ArrayList();
-        LayoutManagerMapping lmm = new LayoutManagerMapping();
+        LayoutManagerMapping lmm = new LayoutManagerMapping(null);
         RetrieveTableMarkerLayoutManagerMaker rtmlmm = lmm.new RetrieveTableMarkerLayoutManagerMaker();
         // test the case rtm has no child nodes
         when(rtm.getChildNodes()).thenReturn(null);
-        rtmlmm.make(rtm, l);
+        rtmlmm.make(rtm, l, null);
         assertTrue(l.size() == 1);
         assertTrue(l.get(0) instanceof RetrieveTableMarkerLayoutManager);
     }

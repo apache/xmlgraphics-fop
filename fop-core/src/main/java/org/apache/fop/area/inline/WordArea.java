@@ -54,6 +54,7 @@ public class WordArea extends InlineArea {
      * its original logical order.
      */
     protected boolean reversed;
+    private boolean nextIsSpace;
 
     /**
      * Create a word area
@@ -66,9 +67,8 @@ public class WordArea extends InlineArea {
      * @param gposAdjustments array of general position adjustments or null if none apply
      * @param reversed true if word is known to be reversed at construction time
      */
-    public WordArea(
-        int blockProgressionOffset, int level, String word, int[] letterAdjust, int[] levels,
-          int[][] gposAdjustments, boolean reversed) {
+    public WordArea(int blockProgressionOffset, int level, String word, int[] letterAdjust, int[] levels,
+          int[][] gposAdjustments, boolean reversed, boolean nextIsSpace) {
         super(blockProgressionOffset, level);
         int length = (word != null) ? word.length() : 0;
         this.word = word;
@@ -76,6 +76,12 @@ public class WordArea extends InlineArea {
         this.levels = maybePopulateLevels(levels, level, length);
         this.gposAdjustments = maybeAdjustLength(gposAdjustments, length);
         this.reversed = reversed;
+        this.nextIsSpace = nextIsSpace;
+    }
+
+    public WordArea(int blockProgressionOffset, int level, String word, int[] letterAdjust, int[] levels,
+            int[][] gposAdjustments, boolean reversed) {
+        this(blockProgressionOffset, level, word, letterAdjust, levels, gposAdjustments, reversed, false);
     }
 
     /**
@@ -89,8 +95,8 @@ public class WordArea extends InlineArea {
      * @param gposAdjustments array of general position adjustments or null if none apply
      */
     public WordArea(
-        int blockProgressionOffset, int level, String word, int[] letterAdjust, int[] levels,
-          int[][] gposAdjustments) {
+    int blockProgressionOffset, int level, String word, int[] letterAdjust, int[] levels,
+      int[][] gposAdjustments) {
         this (blockProgressionOffset, level, word, letterAdjust, levels, gposAdjustments, false);
     }
 
@@ -229,6 +235,10 @@ public class WordArea extends InlineArea {
      */
     public boolean isReversed() {
         return reversed;
+    }
+
+    public boolean isNextIsSpace() {
+        return nextIsSpace;
     }
 
     /*

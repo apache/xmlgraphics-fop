@@ -656,7 +656,8 @@ public class IFParser implements IFConstants {
                 if (isHyphenated) {
                     documentHandler.getContext().setHyphenated(isHyphenated);
                 }
-                painter.drawText(x, y, letterSpacing, wordSpacing, dp, content.toString());
+                boolean nextIsSpace = Boolean.valueOf(lastAttributes.getValue("next-is-space"));
+                painter.drawText(x, y, letterSpacing, wordSpacing, dp, content.toString(), nextIsSpace);
                 documentHandler.getContext().setHyphenated(false);
                 resetStructureTreeElement();
             }

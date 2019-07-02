@@ -1085,6 +1085,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                     font, (AbstractTextArea) parentArea);
         }
 
+        textUtil.nextIsSpace = word.isNextIsSpace();
         super.renderWord(word);
     }
 
@@ -1172,7 +1173,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         private int starty;
         private int tls;
         private int tws;
-        // private final static boolean COMBINED = false; // no longer referenced
+        private boolean nextIsSpace;
 
         void addChar(char ch) {
             text.append(ch);
@@ -1234,13 +1235,18 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                                          trimAdjustments(dp, text.length()), text.toString());
                     } else { */
                         painter.drawText(startx, starty, tls, tws,
-                                         trimAdjustments(dp, text.length()), text.toString());
+                                         trimAdjustments(dp, text.length()), text.toString(), nextIsSpace);
                     /* } */
                 } catch (IFException e) {
                     handleIFException(e);
                 }
                 reset();
             }
+        }
+
+        void drawText(int x, int y, int letterSpacing, int wordSpacing, int[][] dx, String text, boolean nextIsSpace)
+                throws IFException {
+            painter.drawText(startx, starty, tls, tws, dx, text, nextIsSpace);
         }
 
         /**

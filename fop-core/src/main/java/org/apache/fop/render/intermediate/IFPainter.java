@@ -162,6 +162,9 @@ public interface IFPainter {
     void drawText(int x, int y, int letterSpacing, int wordSpacing,
             int[][] dp, String text) throws IFException;
 
+    void drawText(int x, int y, int letterSpacing, int wordSpacing, int[][] dp, String text, boolean nextIsSpace)
+            throws IFException;
+
     /**
      * Restricts the current clipping region with the given rectangle.
      * @param rect the rectangle's coordinates and extent
