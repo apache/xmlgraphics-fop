@@ -37,7 +37,7 @@ public class MainReference extends Area {
     private BodyRegion parent;
     private List<Span> spanAreas = new java.util.ArrayList<Span>();
     private boolean isEmpty = true;
-    private WritingModeTraitsGetter wmtg;
+    private transient WritingModeTraitsGetter wmtg;
 
     /**
      * Constructor
