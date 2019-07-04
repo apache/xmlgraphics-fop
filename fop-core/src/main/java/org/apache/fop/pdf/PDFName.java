@@ -21,14 +21,16 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 
 import org.apache.commons.io.output.CountingOutputStream;
 
 /**
  * Class representing a PDF name object.
  */
-public class PDFName extends PDFObject {
+public class PDFName extends PDFObject implements Serializable {
 
+    private static final long serialVersionUID = -968412396459739925L;
     private String name;
 
     /**

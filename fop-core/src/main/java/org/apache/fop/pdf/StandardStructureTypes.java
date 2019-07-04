@@ -19,6 +19,7 @@
 
 package org.apache.fop.pdf;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,8 +99,9 @@ public final class StandardStructureTypes {
         public static final StructureType FORM = new StructureTypeImpl("Form");
     }
 
-    private static class StructureTypeImpl implements StructureType {
+    private static class StructureTypeImpl implements StructureType, Serializable {
 
+        private static final long serialVersionUID = 8577475043360334210L;
         private final PDFName name;
 
         protected StructureTypeImpl(String name) {

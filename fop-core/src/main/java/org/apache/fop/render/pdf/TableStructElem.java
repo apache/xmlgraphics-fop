@@ -25,6 +25,7 @@ import org.apache.fop.pdf.StructureType;
 
 class TableStructElem extends PDFStructElem {
 
+    private static final long serialVersionUID = -3550873504343680465L;
     private PDFStructElem tableFooter;
 
     public TableStructElem(PDFObject parent, StructureType structureType) {

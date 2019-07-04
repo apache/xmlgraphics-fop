@@ -58,6 +58,7 @@ public class ConserveMemoryTestCase {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         userAgent.setConserveMemoryPolicy(true);
+        userAgent.setAccessibility(true);
         Fop fop = fopFactory.newFop("application/pdf", userAgent, new ByteArrayOutputStream());
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         Source src = new StreamSource(new ByteArrayInputStream(fo.getBytes()));

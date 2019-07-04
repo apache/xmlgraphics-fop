@@ -22,6 +22,7 @@ package org.apache.fop.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,8 +36,9 @@ import org.apache.fop.util.LanguageTags;
  * Class representing a PDF Structure Element.
  */
 public class PDFStructElem extends StructureHierarchyMember
-        implements StructureTreeElement, CompressedObject {
+        implements StructureTreeElement, CompressedObject, Serializable {
 
+    private static final long serialVersionUID = -3055241807589202532L;
     private StructureType structureType;
 
     protected PDFStructElem parentElement;
@@ -246,7 +248,7 @@ public class PDFStructElem extends StructureHierarchyMember
     }
 
     public int output(OutputStream stream) throws IOException {
-        if (getDocument().getProfile().getPDFUAMode().isEnabled()) {
+        if (getDocument() != null && getDocument().getProfile().getPDFUAMode().isEnabled()) {
             if (entries.containsKey("Alt") && "".equals(get("Alt"))) {
                 put("Alt", "No alternate text specified");
             } else if (kids != null) {
@@ -274,6 +276,8 @@ public class PDFStructElem extends StructureHierarchyMember
      * Class representing a placeholder for a PDF Structure Element.
      */
     public static class Placeholder extends PDFStructElem {
+
+        private static final long serialVersionUID = -2397980642558372068L;
 
         @Override
         public void outputInline(OutputStream out, StringBuilder textBuffer) throws IOException {

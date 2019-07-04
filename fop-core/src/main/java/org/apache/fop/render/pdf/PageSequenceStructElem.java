@@ -29,6 +29,7 @@ import org.apache.fop.pdf.StructureType;
 
 public class PageSequenceStructElem extends PDFStructElem {
 
+    private static final long serialVersionUID = -9146602678931267198L;
     private List<PDFStructElem> regionBefores = new ArrayList<PDFStructElem>();
 
     private List<PDFStructElem> regionAfters = new ArrayList<PDFStructElem>();
