@@ -49,22 +49,12 @@ public class PDFUri extends PDFAction {
     }
 
     private String getDictString() {
-        return "<< /URI " + encodeURI(uri) + "\n/S /URI >>";
+        return "<< /URI " + encodeScript(uri) + "\n/S /URI >>";
     }
 
     /** {@inheritDoc} */
     public String toPDFString() {
         //TODO Convert this class into a dictionary
         return getDictString();
-    }
-
-    private String encodeURI(String text) {
-        if (getDocument() != null && getDocumentSafely().isEncryptionActive()) {
-            final byte[] buf = PDFText.encode(text);
-            byte[] enc = getDocument().getEncryption().encrypt(buf, this);
-            return PDFText.toHex(enc, true);
-        } else {
-            return "(" + text + ")";
-        }
     }
 }

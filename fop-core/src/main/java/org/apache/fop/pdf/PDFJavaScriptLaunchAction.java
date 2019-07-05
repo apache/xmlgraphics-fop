@@ -43,12 +43,11 @@ public class PDFJavaScriptLaunchAction extends PDFAction {
     /** {@inheritDoc} */
     public String toPDFString() {
         StringBuffer sb = new StringBuffer(64);
-        sb.append("<<\n/S /JavaScript\n/JS (");
-        sb.append(this.script);
-        sb.append(")\n>>");
+        sb.append("<<\n/S /JavaScript\n/JS ");
+        sb.append(encodeScript(this.script));
+        sb.append("\n>>");
         return sb.toString();
     }
-
     /** {@inheritDoc} */
     protected boolean contentEquals(PDFObject obj) {
         if (this == obj) {
