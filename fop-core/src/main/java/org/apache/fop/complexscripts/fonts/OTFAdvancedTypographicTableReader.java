@@ -3336,7 +3336,12 @@ public final class OTFAdvancedTypographicTableReader {
             msca[i] = readCoverageTable(tableTag + " mark set coverage[" + i + "]", subtableOffset + mso[i]);
         }
         // create combined class table from per-class coverage tables
-        GlyphClassTable ct = GlyphClassTable.createClassTable(Arrays.asList(msca));
+        GlyphClassTable ct = null;
+        try {
+            ct = GlyphClassTable.createClassTable(Arrays.asList(msca));
+        } catch (UnsupportedOperationException uoe) {
+            log.debug(uoe.getMessage(), uoe);
+        }
         // store results
         seMapping = ct;
         // extract subtable
@@ -3580,14 +3585,16 @@ public final class OTFAdvancedTypographicTableReader {
     }
 
     private void constructLookupsLanguage(Map lookups, String st, String lt, Map<String, Object> languages) {
+        if (languages != null) {
         Object[] lp = (Object[]) languages.get(lt);
-        if (lp != null) {
-            assert lp.length == 2;
-            if (lp[0] != null) {                      // required feature id
-                constructLookupsFeature(lookups, st, lt, (String) lp[0]);
-            }
-            if (lp[1] != null) {                      // non-required features ids
-                constructLookupsFeatures(lookups, st, lt, (List) lp[1]);
+            if (lp != null) {
+                assert lp.length == 2;
+                if (lp[0] != null) {                      // required feature id
+                    constructLookupsFeature(lookups, st, lt, (String) lp[0]);
+                }
+                if (lp[1] != null) {                      // non-required features ids
+                    constructLookupsFeatures(lookups, st, lt, (List) lp[1]);
+                }
             }
         }
     }
