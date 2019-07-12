@@ -4,7 +4,7 @@
 
   <groupId>org.apache.xmlgraphics</groupId>
   <artifactId>fop-parent</artifactId>
-  <version>2.3</version>
+  <version>2.3-FOP-2704.1</version>
   <name>Apache FOP Parent</name>
   <description>XML Graphics Format Object Processor</description>
   <packaging>pom</packaging>

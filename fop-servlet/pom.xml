@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.apache.xmlgraphics</groupId>
     <artifactId>fop-parent</artifactId>
-    <version>2.3</version>
+    <version>2.3-FOP-2704.1</version>
   </parent>
 
   <dependencies>
@@ -25,13 +25,13 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>batik-all</artifactId>
-      <version>${batik.version}</version>
+      <version>1.10</version>
     </dependency>
     <!-- xgc deps -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>xmlgraphics-commons</artifactId>
-      <version>${xmlgraphics.commons.version}</version>
+      <version>2.3</version>
     </dependency>
     <!-- external deps -->
     <dependency>
