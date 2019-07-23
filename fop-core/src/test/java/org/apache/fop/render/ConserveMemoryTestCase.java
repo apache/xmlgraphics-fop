@@ -19,6 +19,9 @@ package org.apache.fop.render;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -38,8 +41,8 @@ import org.apache.fop.apps.FopFactory;
 
 public class ConserveMemoryTestCase {
     @Test
-    public void testLink() throws TransformerException, SAXException {
-        String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">\n"
+    public void testLink() throws Throwable {
+        final String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">\n"
                 + "  <fo:layout-master-set>\n"
                 + "    <fo:simple-page-master master-name=\"simple\" page-height=\"27.9cm\" page-width=\"21.6cm\">\n"
                 + "      <fo:region-body />\n"
@@ -51,7 +54,26 @@ public class ConserveMemoryTestCase {
                 + "    </fo:flow>\n"
                 + "  </fo:page-sequence>\n"
                 + "</fo:root>";
-        foToOutput(fo);
+
+        ExecutorService es = Executors.newCachedThreadPool();
+        final Throwable[] ex = new Throwable[1];
+        for (int i = 0; i < 5; i++) {
+            Runnable thread = new Runnable() {
+                public void run() {
+                    try {
+                        foToOutput(fo);
+                    } catch (Throwable e) {
+                        ex[0] = e;
+                    }
+                }
+            };
+            es.execute(thread);
+        }
+        es.shutdown();
+        es.awaitTermination(1, TimeUnit.MINUTES);
+        if (ex[0] != null) {
+            throw ex[0];
+        }
     }
 
     private void foToOutput(String fo) throws SAXException, TransformerException {

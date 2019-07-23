@@ -123,8 +123,8 @@ public class CachedRenderPagesModel extends RenderPagesModel {
         try {
             // save page to cache
             ObjectOutputStream tempstream;
-            String fname = "fop-page-" + page.getPageIndex() + ".ser";
-            URI tempURI = tempBaseURI.resolve(fname);
+            String fname = "/fop-page-" + page.getPageIndex() + ".ser";
+            URI tempURI = URI.create(tempBaseURI + fname);
             OutputStream outStream = renderer.getUserAgent().getResourceResolver().getOutputStream(tempURI);
             tempstream = new ObjectOutputStream(new BufferedOutputStream(outStream));
             try {
