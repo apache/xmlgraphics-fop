@@ -391,6 +391,9 @@ public class PDFLinkTestCase {
             {"examples.html?foo#bar", quote("/URI (examples.html?foo#bar)")},
             {"examples.html", quote("<< /URI (examples.html)")},
             {"file:examples.html", quote("<< /Type /Filespec /F (examples.html)")},
+
+            // parenthesis
+            {"simple_report_(version2.pdf", quote("<< /URI (simple_report_\\(version2.pdf)")}
         });
     }
 

@@ -41,7 +41,7 @@ public abstract class PDFAction extends PDFObject {
             byte[] enc = getDocument().getEncryption().encrypt(buf, this);
             return PDFText.toHex(enc, true);
         } else {
-            return "(" + text + ")";
+            return PDFText.escapeText(text, false);
         }
     }
 

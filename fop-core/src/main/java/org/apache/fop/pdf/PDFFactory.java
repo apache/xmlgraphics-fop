@@ -686,21 +686,20 @@ public class PDFFactory {
         }
 
         //Find filespec reference for the embedded file
-        filename = PDFText.toPDFString(filename, '_');
         PDFArray files = embeddedFiles.getNames();
-        PDFReference embeddedFileRef = null;
+        PDFFileSpec fileSpec = null;
         int i = 0;
         while (i < files.length()) {
-            String name = (String)files.get(i);
             i++;
             PDFReference ref = (PDFReference)files.get(i);
-            if (name.equals(filename)) {
-                embeddedFileRef = ref;
+            if (ref.getObject() instanceof PDFFileSpec
+                    && ((PDFFileSpec)ref.getObject()).getUnicodeFilename().equals(filename)) {
+                fileSpec = (PDFFileSpec)ref.getObject();
                 break;
             }
             i++;
         }
-        if (embeddedFileRef == null) {
+        if (fileSpec == null) {
             throw new IllegalStateException(
                     "No embedded file with name " + filename + " present.");
         }
@@ -716,7 +715,7 @@ public class PDFFactory {
         //This finally seems to work:
         StringBuffer scriptBuffer = new StringBuffer();
         scriptBuffer.append("this.exportDataObject({cName:\"");
-        scriptBuffer.append(filename);
+        scriptBuffer.append(fileSpec.getFilename());
         scriptBuffer.append("\", nLaunch:2});");
 
         PDFJavaScriptLaunchAction action = new PDFJavaScriptLaunchAction(scriptBuffer.toString());

@@ -23,6 +23,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.apache.fop.pdf.PDFText;
+
 /**
  * This is the pass-through value object for the PDF extension.
  */
@@ -45,6 +47,9 @@ public class PDFEmbeddedFileAttachment extends PDFExtensionAttachment {
     /** filename attribute */
     private String filename;
 
+    /** unicode filename attribute */
+    private String unicodeFilename;
+
     /** description attribute (optional) */
     private String desc;
 
@@ -66,7 +71,7 @@ public class PDFEmbeddedFileAttachment extends PDFExtensionAttachment {
      */
     public PDFEmbeddedFileAttachment(String filename, String src, String desc) {
         super();
-        this.filename = filename;
+        this.setFilename(filename);
         this.src = src;
         this.desc = desc;
     }
@@ -80,11 +85,25 @@ public class PDFEmbeddedFileAttachment extends PDFExtensionAttachment {
     }
 
     /**
+     * Returns the unicode file name.
+     * @return the file name
+     */
+    public String getUnicodeFilename() {
+        return unicodeFilename;
+    }
+
+    /**
      * Sets the file name.
      * @param name The file name to set.
      */
     public void setFilename(String name) {
-        this.filename = name;
+        if (!PDFText.toPDFString(name).equals(name)) {
+            // replace with auto generated filename, because non-ascii chars are used.
+            this.filename = "att" + name.hashCode();
+        } else {
+            this.filename = name;
+        }
+        this.unicodeFilename = name;
     }
 
     /**

@@ -334,13 +334,12 @@ public class PDFRoot extends PDFDictionary {
         return dPartRoot;
     }
 
-    public void addAF(PDFFileSpec fileSpec, String filename) {
+    public void addAF(PDFFileSpec fileSpec) {
         if (af == null) {
             af = new PDFArray();
             put("AF", af);
         }
         af.add(fileSpec);
-        fileSpec.put("UF", filename);
         fileSpec.put("AFRelationship", new PDFName("Data"));
     }
 }

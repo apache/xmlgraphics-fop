@@ -73,7 +73,6 @@ import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFPageLabels;
 import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFSetOCGStateAction;
-import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFTransitionAction;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.Version;
@@ -677,9 +676,9 @@ class PDFRenderingUtil {
         }
         PDFDictionary dict = new PDFDictionary();
         dict.put("F", file);
-        String filename = PDFText.toPDFString(embeddedFile.getFilename(), '_');
-        PDFFileSpec fileSpec = new PDFFileSpec(filename);
-        pdfDoc.getRoot().addAF(fileSpec, filename);
+        PDFFileSpec fileSpec = new PDFFileSpec(embeddedFile.getFilename(), embeddedFile.getUnicodeFilename());
+        String filename = fileSpec.getFilename();
+        pdfDoc.getRoot().addAF(fileSpec);
         fileSpec.setEmbeddedFile(dict);
         if (embeddedFile.getDesc() != null) {
             fileSpec.setDescription(embeddedFile.getDesc());
@@ -701,8 +700,7 @@ class PDFRenderingUtil {
             nameArray = new PDFArray();
             embeddedFiles.setNames(nameArray);
         }
-        String name = PDFText.toPDFString(filename);
-        nameArray.add(name);
+        nameArray.add(filename);
         nameArray.add(new PDFReference(fileSpec));
     }
 

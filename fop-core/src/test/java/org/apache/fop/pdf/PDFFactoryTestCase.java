@@ -167,4 +167,48 @@ public class PDFFactoryTestCase {
         assertTrue(bos.toString().contains("/Subtype /Type1\n"));
         assertTrue(bos.toString().contains("/Subtype /Type1C"));
     }
+
+    @Test
+    public void testGetExternalAction() {
+
+        String germanAe = "\u00E4";
+        String filename = "test";
+        String unicodeFilename = "t" + germanAe + "st.pdf";
+        PDFFileSpec fileSpec = new PDFFileSpec(filename, unicodeFilename);
+
+        PDFDocument doc = new PDFDocument("");
+        doc.registerObject(fileSpec);
+        PDFNames names = doc.getRoot().getNames();
+        if (names == null) {
+            //Add Names if not already present
+            names = doc.getFactory().makeNames();
+            doc.getRoot().setNames(names);
+        }
+
+        PDFEmbeddedFiles embeddedFiles = names.getEmbeddedFiles();
+        if (embeddedFiles == null) {
+            embeddedFiles = new PDFEmbeddedFiles();
+            doc.assignObjectNumber(embeddedFiles);
+            doc.addTrailerObject(embeddedFiles);
+            names.setEmbeddedFiles(embeddedFiles);
+        }
+
+        PDFArray nameArray = embeddedFiles.getNames();
+        if (nameArray == null) {
+            nameArray = new PDFArray();
+            embeddedFiles.setNames(nameArray);
+        }
+        nameArray.add(fileSpec.getFilename());
+        nameArray.add(new PDFReference(fileSpec));
+
+        PDFFactory pdfFactory = new PDFFactory(doc);
+        String target = "embedded-file:" + unicodeFilename;
+        PDFJavaScriptLaunchAction pdfAction = (PDFJavaScriptLaunchAction)
+                pdfFactory.getExternalAction(target, false);
+
+        String expectedString = "<<\n/S /JavaScript\n/JS (this.exportDataObject\\({cName:\""
+                + fileSpec.getFilename() + "\", nLaunch:2}\\);)\n>>";
+
+        assertEquals(expectedString, pdfAction.toPDFString());
+    }
 }

@@ -30,16 +30,35 @@ public class PDFFileSpec extends PDFDictionary {
      * @param filename the filename represented by this object
      */
     public PDFFileSpec(String filename) {
-
-        /* generic creation of object */
-        super();
-        put("Type", new PDFName("Filespec"));
-        put("F", filename);
-        put("UF", filename); // for non-ascii filenames, since PDF 1.7, 3.10.2
+        this(filename, filename);
     }
 
-    private String getFilename() {
+    /**
+     * create a /FileSpec object.
+     *
+     * @param filename the filename represented by this object
+     * @param unicodeFilename the unicode filename represented by this object
+     */
+    public PDFFileSpec(String filename, String unicodeFilename) {
+        put("Type", new PDFName("Filespec"));
+        put("F", filename);
+        put("UF", unicodeFilename); // for non-ascii filenames, since PDF 1.7, 3.10.2
+    }
+
+    /**
+     * Gets the filename.
+     * @return filename
+     */
+    public String getFilename() {
         return (String)get("F");
+    }
+
+    /**
+     * Gets the unicode filename
+     * @return unicode filename
+     */
+    public String getUnicodeFilename() {
+        return (String)get("UF");
     }
 
     /**
