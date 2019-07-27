@@ -844,8 +844,15 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 font.mapChar(ch);
                 // preserved space or non-breaking space:
                 // create the GlyphMapping object
-                mapping = new GlyphMapping(nextStart, nextStart + 1, 1, 0, wordSpaceIPD, false, true,
-                                        breakOpportunity, spaceFont, level, null);
+                MinOptMax areaIPD;
+                if (prevMapping != null && prevMapping.isSpace) {
+                    areaIPD = wordSpaceIPD.minus(letterSpaceIPD);
+                } else {
+                    areaIPD = wordSpaceIPD;
+                }
+
+                mapping = new GlyphMapping(nextStart, nextStart + 1, 1, 0, areaIPD, false, true,
+                        breakOpportunity, spaceFont, level, null);
                 thisStart = nextStart + 1;
             } else if (CharUtilities.isFixedWidthSpace(ch) || CharUtilities.isZeroWidthSpace(ch)) {
                 // create the GlyphMapping object
