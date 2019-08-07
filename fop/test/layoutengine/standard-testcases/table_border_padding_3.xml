@@ -76,6 +76,6 @@
 </fo:root>
   </fo>
   <checks>
-    <eval expected="test2" xpath="//pageViewport[2]//block/block[3]//word"/>
+    <eval expected="test2" xpath="//pageViewport[3]//block/block[1]//word"/>
   </checks>
 </testcase>

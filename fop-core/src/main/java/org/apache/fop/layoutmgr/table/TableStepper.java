@@ -34,6 +34,7 @@ import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
+import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -275,7 +276,7 @@ public class TableStepper {
             step = getNextStep();
 
             if (penaltyOrGlueLen < 0) {
-                if (step < 0) {
+                if (keep.getPenalty() == KnuthElement.INFINITE) {
                     returnList.add(new KnuthGlue(0, -penaltyOrGlueLen, 0, new Position(null), true));
                 } else {
                     returnList.add(new KnuthGlue(-penaltyOrGlueLen, 0, 0, new Position(null), true));
