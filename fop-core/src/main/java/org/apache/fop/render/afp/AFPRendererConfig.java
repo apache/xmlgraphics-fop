@@ -48,6 +48,7 @@ import static org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions.MODE
 import static org.apache.fop.render.afp.AFPRendererOption.DEFAULT_RESOURCE_LEVELS;
 import static org.apache.fop.render.afp.AFPRendererOption.GOCA;
 import static org.apache.fop.render.afp.AFPRendererOption.GOCA_TEXT;
+import static org.apache.fop.render.afp.AFPRendererOption.GOCA_WRAP_PSEG;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_DITHERING_QUALITY;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_FS45;
@@ -166,6 +167,10 @@ public final class AFPRendererConfig implements RendererConfig {
         return getParam(IMAGES_WRAP_PSEG, Boolean.class);
     }
 
+    public Boolean isGocaWrapPseg() {
+        return getParam(GOCA_WRAP_PSEG, Boolean.class);
+    }
+
     public Boolean isFs45() {
         return getParam(IMAGES_FS45, Boolean.class);
     }
@@ -252,6 +257,7 @@ public final class AFPRendererConfig implements RendererConfig {
 
         private void configure() throws ConfigurationException, FOPException {
             configureImages();
+            configureGOCA();
             setParam(SHADING, AFPShadingMode.getValueOf(
                     cfg.getChild(SHADING.getName()).getValue(AFPShadingMode.COLOR.getName())));
             Configuration rendererResolutionCfg = cfg.getChild(RENDERER_RESOLUTION.getName(), false);
@@ -315,6 +321,11 @@ public final class AFPRendererConfig implements RendererConfig {
                 setParam(IMAGES_MAPPING_OPTION, AFPDataObjectInfo.DEFAULT_MAPPING_OPTION);
             }
             configureJpegImages(imagesCfg);
+        }
+
+        private void configureGOCA() {
+            Configuration gocaCfg = cfg.getChild(GOCA.getName());
+            setParam(GOCA_WRAP_PSEG, gocaCfg.getAttributeAsBoolean(GOCA_WRAP_PSEG.getName(), false));
         }
 
         private void configureJpegImages(Configuration imagesCfg) {

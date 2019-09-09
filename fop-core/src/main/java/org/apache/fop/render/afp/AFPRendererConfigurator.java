@@ -93,6 +93,9 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
         if (config.isWrapPseg() != null) {
             documentHandler.setWrapPSeg(config.isWrapPseg());
         }
+        if (config.isGocaWrapPseg() != null) {
+            documentHandler.setWrapGocaPSeg(config.isGocaWrapPseg());
+        }
         if (config.isFs45() != null) {
             documentHandler.setFS45(config.isFs45());
         }

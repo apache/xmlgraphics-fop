@@ -95,6 +95,8 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     /** use page segment with F11 and F45 images*/
     private boolean pSeg;
 
+    private boolean gocaPSeg;
+
     /** use FS45 images*/
     private boolean fs45;
 
@@ -416,6 +418,13 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
         this.pSeg = pSeg;
     }
 
+    public boolean getWrapGocaPSeg() {
+        return gocaPSeg;
+    }
+
+    public void setWrapGocaPSeg(boolean pSeg) {
+        this.gocaPSeg = pSeg;
+    }
 
     /**
      * gets whether images should be FS45

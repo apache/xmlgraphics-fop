@@ -42,6 +42,7 @@ public enum AFPRendererOption implements RendererConfigOption {
     SHADING("shading", AFPShadingMode.class),
     LINE_WIDTH_CORRECTION("line-width-correction", Float.class),
     GOCA("goca", Boolean.class),
+    GOCA_WRAP_PSEG("pseg", Boolean.class),
     GOCA_TEXT("text", Boolean.class);
 
     private final String name;

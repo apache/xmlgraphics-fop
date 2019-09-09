@@ -696,4 +696,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     public void copyArea(int x, int y, int width, int height, int dx, int dy) {
         LOG.debug("copyArea() NYI: ");
     }
+
+    public void clearRect(int x, int y, int width, int height) {
+    }
 }

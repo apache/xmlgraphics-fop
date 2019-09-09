@@ -85,6 +85,7 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler implements ImageH
         AFPDataObjectInfo info = createDataObjectInfo();
         assert (info instanceof AFPGraphicsObjectInfo);
         AFPGraphicsObjectInfo graphicsObjectInfo = (AFPGraphicsObjectInfo) info;
+        graphicsObjectInfo.setCreatePageSegment(afpContext.getPaintingState().getWrapGocaPSeg());
 
         // set resource information
 

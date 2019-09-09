@@ -210,4 +210,11 @@ public class AFPRendererConfiguratorTestCase extends
         verify(getDocHandler()).canEmbedJpeg(false);
     }
 
+    @Test
+    public void testWrapGocaPSeg() throws Exception {
+        parseConfig(createBuilder().startGOCA()
+                .setWrapPseg(true)
+                .endGOCA());
+        verify(getDocHandler()).setWrapGocaPSeg(true);
+    }
 }

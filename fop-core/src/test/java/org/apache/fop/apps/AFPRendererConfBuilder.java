@@ -30,6 +30,8 @@ import org.apache.fop.render.afp.AFPShadingMode;
 
 import static org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions.MODE_GRAYSCALE;
 import static org.apache.fop.render.afp.AFPRendererOption.DEFAULT_RESOURCE_LEVELS;
+import static org.apache.fop.render.afp.AFPRendererOption.GOCA;
+import static org.apache.fop.render.afp.AFPRendererOption.GOCA_WRAP_PSEG;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_DITHERING_QUALITY;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_FS45;
@@ -51,6 +53,8 @@ import static org.apache.fop.render.afp.AFPRendererOption.SHADING;
 public final class AFPRendererConfBuilder extends RendererConfBuilder {
 
     private ImagesBuilder images;
+
+    private GOCABuilder gocaBuilder;
 
     public AFPRendererConfBuilder() {
         super(MimeConstants.MIME_AFP);
@@ -84,6 +88,16 @@ public final class AFPRendererConfBuilder extends RendererConfBuilder {
 
     public AFPRendererConfBuilder endImages() {
         images = null;
+        return this;
+    }
+
+    public GOCABuilder startGOCA() {
+        gocaBuilder = new GOCABuilder();
+        return gocaBuilder;
+    }
+
+    public AFPRendererConfBuilder endGOCA() {
+        gocaBuilder = null;
         return this;
     }
 
@@ -167,6 +181,32 @@ public final class AFPRendererConfBuilder extends RendererConfBuilder {
                 jpeg = createElement(IMAGES_JPEG.getName(), el);
             }
             return jpeg;
+        }
+    }
+
+    public final class GOCABuilder {
+
+        private final Element el;
+
+        private GOCABuilder() {
+            el = createElement(GOCA.getName());
+        }
+
+        private GOCABuilder setAttribute(String name, Object value) {
+            el.setAttribute(name, String.valueOf(value));
+            return this;
+        }
+
+        private GOCABuilder setAttribute(AFPRendererOption options, Object value) {
+            return setAttribute(options.getName(), value);
+        }
+
+        public GOCABuilder setWrapPseg(boolean value) {
+            return setAttribute(GOCA_WRAP_PSEG, value);
+        }
+
+        public AFPRendererConfBuilder endGOCA() {
+            return AFPRendererConfBuilder.this.endGOCA();
         }
     }
 }
