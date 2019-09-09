@@ -174,6 +174,8 @@ public class PDFDocument {
 
     private boolean linearizationEnabled;
 
+    private boolean formXObjectEnabled;
+
     protected boolean outputStarted;
 
     /**
@@ -1229,4 +1231,11 @@ public class PDFDocument {
         linearizationEnabled = b;
     }
 
+    public boolean isFormXObjectEnabled() {
+        return formXObjectEnabled;
+    }
+
+    public void setFormXObjectEnabled(boolean b) {
+        formXObjectEnabled = b;
+    }
 }

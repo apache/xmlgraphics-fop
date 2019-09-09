@@ -33,6 +33,7 @@ import org.apache.fop.pdf.Version;
 
 import static org.apache.fop.render.pdf.PDFRendererOption.DISABLE_SRGB_COLORSPACE;
 import static org.apache.fop.render.pdf.PDFRendererOption.FILTER_LIST;
+import static org.apache.fop.render.pdf.PDFRendererOption.FORM_XOBJECT;
 import static org.apache.fop.render.pdf.PDFRendererOption.LINEARIZATION;
 import static org.apache.fop.render.pdf.PDFRendererOption.MERGE_FONTS;
 import static org.apache.fop.render.pdf.PDFRendererOption.OUTPUT_PROFILE;
@@ -141,5 +142,9 @@ public final class PDFRendererOptionsConfig {
 
     public Boolean getLinearizationEnabled() {
         return (Boolean)properties.get(LINEARIZATION);
+    }
+
+    public Boolean getFormXObjectEnabled() {
+        return (Boolean)properties.get(FORM_XOBJECT);
     }
 }
