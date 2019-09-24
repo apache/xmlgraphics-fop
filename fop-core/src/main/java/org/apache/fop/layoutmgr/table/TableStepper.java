@@ -277,7 +277,11 @@ public class TableStepper {
 
             if (penaltyOrGlueLen < 0) {
                 if (keep.getPenalty() == KnuthElement.INFINITE) {
-                    returnList.add(new KnuthGlue(0, -penaltyOrGlueLen, 0, new Position(null), true));
+                    if (boxLen > -penaltyOrGlueLen && boxLen < maxRemainingHeight) {
+                        returnList.add(new KnuthGlue(boxLen, 0, 0, new Position(null), true));
+                    } else {
+                        returnList.add(new KnuthGlue(0, -penaltyOrGlueLen, 0, new Position(null), true));
+                    }
                 } else {
                     returnList.add(new KnuthGlue(-penaltyOrGlueLen, 0, 0, new Position(null), true));
                 }
