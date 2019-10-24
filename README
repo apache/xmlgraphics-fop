@@ -107,7 +107,20 @@ under the ./fop sub-directory.
   RELEASE NOTES
 ==============================================================================
 
-Version 2.3  (Forthcoming)
+Version 2.4
+===========
+
+Major Changes in Version 2.4
+----------------------------
+
+* Require Java 7 or later
+* Drop dependency on Avalon-Framework
+* Add change bar generation
+* Add support for Khmer complex script
+
+This release also contains a number of bug fixes.
+
+Version 2.3
 ===========
 
 Major Changes in Version 2.3
