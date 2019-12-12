@@ -274,17 +274,19 @@ public class TableStepper {
 
             laststep = step;
             step = getNextStep();
-
             if (penaltyOrGlueLen < 0) {
+                int shrink = 0;
+                int stretch = 0;
+                int width = -penaltyOrGlueLen;
                 if (keep.getPenalty() == KnuthElement.INFINITE) {
-                    if (boxLen > -penaltyOrGlueLen && boxLen < maxRemainingHeight) {
-                        returnList.add(new KnuthGlue(boxLen, 0, 0, new Position(null), true));
-                    } else {
-                        returnList.add(new KnuthGlue(0, -penaltyOrGlueLen, 0, new Position(null), true));
+                    width = (boxLen + -penaltyOrGlueLen) / 2;
+                    if (-penaltyOrGlueLen > maxRemainingHeight) {
+                        width = 0;
                     }
-                } else {
-                    returnList.add(new KnuthGlue(-penaltyOrGlueLen, 0, 0, new Position(null), true));
+                    stretch = Math.max(boxLen, -penaltyOrGlueLen);
+                    shrink = Math.min(boxLen, -penaltyOrGlueLen);
                 }
+                returnList.add(new KnuthGlue(width, stretch, shrink, new Position(null), true));
             }
         } while (step >= 0);
         assert !returnList.isEmpty();
