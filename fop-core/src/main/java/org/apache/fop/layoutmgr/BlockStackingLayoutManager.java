@@ -88,6 +88,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     private Position auxiliaryPosition;
 
     private int contentAreaIPD;
+    private boolean isRestartAtLM;
 
     /**
      * @param node the fo this LM deals with
@@ -244,6 +245,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     @Override
     public List getNextKnuthElements(LayoutContext context, int alignment,
             Stack lmStack, Position restartPosition, LayoutManager restartAtLM) {
+        isRestartAtLM = restartAtLM != null;
         referenceIPD = context.getRefIPD();
         updateContentAreaIPDwithOverconstrainedAdjust();
 
@@ -1256,6 +1258,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             return ((InlineContainerLayoutManager) getParent()).handleOverflow(milliPoints);
         }
         return false;
+    }
+
+    public boolean isRestartAtLM() {
+        return isRestartAtLM;
     }
 }
 

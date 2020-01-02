@@ -30,14 +30,15 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
+import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
-import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.util.BreakUtil;
 
@@ -278,13 +279,10 @@ public class TableStepper {
                 int shrink = 0;
                 int stretch = 0;
                 int width = -penaltyOrGlueLen;
-                if (keep.getPenalty() == KnuthElement.INFINITE) {
-                    width = (boxLen + -penaltyOrGlueLen) / 2;
-                    if (-penaltyOrGlueLen > maxRemainingHeight) {
-                        width = 0;
-                    }
-                    stretch = Math.max(boxLen, -penaltyOrGlueLen);
-                    shrink = Math.min(boxLen, -penaltyOrGlueLen);
+                LayoutManager bslm = getTableLM().getParent();
+                if (bslm instanceof BlockStackingLayoutManager && ((BlockStackingLayoutManager)bslm).isRestartAtLM()
+                        && keep.getPenalty() == KnuthPenalty.INFINITE) {
+                    width = 0;
                 }
                 returnList.add(new KnuthGlue(width, stretch, shrink, new Position(null), true));
             }
