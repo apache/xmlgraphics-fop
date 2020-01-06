@@ -108,7 +108,7 @@ public class DefaultConfiguration implements Configuration {
 
     @Override
     public Configuration getChild(String key) {
-        NodeList nl = element.getElementsByTagName(key);
+        NodeList nl = element.getChildNodes();
         for (int i = 0; i < nl.getLength(); ++i) {
             Node n = nl.item(i);
             if (n.getNodeName().equals(key)) {
@@ -133,13 +133,15 @@ public class DefaultConfiguration implements Configuration {
 
     @Override
     public Configuration[] getChildren(String key) {
-        NodeList nl = element.getElementsByTagName(key);
-        Configuration[] result = new Configuration[nl.getLength()];
+        ArrayList<Configuration> result = new ArrayList<>(1);
+        NodeList nl = element.getChildNodes();
         for (int i = 0; i < nl.getLength(); ++i) {
             Node n = nl.item(i);
-            result[i] = new DefaultConfiguration((Element) n);
+            if (n.getNodeName().equals(key)) {
+                result.add(new DefaultConfiguration((Element) n));
+            }
         }
-        return result;
+        return result.toArray(new Configuration[0]);
     }
 
     @Override
