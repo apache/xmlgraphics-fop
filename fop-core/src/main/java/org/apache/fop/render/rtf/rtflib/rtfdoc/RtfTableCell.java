@@ -234,8 +234,7 @@ public class RtfTableCell
             RtfTable tab = getRow().getTable();
 
             // Get the context of the current table in order to get the width of each column
-            ITableColumnsInfo tableColumnsInfo
-                = tab.getITableColumnsInfo();
+            ITableColumnsInfo tableColumnsInfo = tab.getITableColumnsInfo();
 
             tableColumnsInfo.selectFirstColumn();
 
@@ -255,6 +254,12 @@ public class RtfTableCell
                 iCurrentWidth += (int)tableColumnsInfo.getColumnWidth();
 
                 i--;
+            }
+
+            // check whether table right border should apply if this is really the last cell in the row
+            if (this.getRow().isHighestCell(this.id + nbMergedCells - 1)) {
+                writeAttributes(this.getRow().getTable().getBorderAttributes(), new String[]
+                        {ITableAttributes.CELL_BORDER_RIGHT});
             }
         }
         final int xPos = offset + iCurrentWidth;
