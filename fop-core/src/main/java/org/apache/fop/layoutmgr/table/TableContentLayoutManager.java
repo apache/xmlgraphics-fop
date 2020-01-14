@@ -328,13 +328,15 @@ public class TableContentLayoutManager implements PercentBaseContext {
          * represent the content. In such a case the break is simply disabled by setting
          * its penalty to infinite.
          */
-        ListIterator elemIter = returnList.listIterator(returnList.size());
-        ListElement elem = (ListElement) elemIter.previous();
-        if (elem instanceof KnuthGlue) {
-            BreakElement breakElement = (BreakElement) elemIter.previous();
-            breakElement.setPenaltyValue(KnuthElement.INFINITE);
-        } else {
-            elemIter.remove();
+        if (!returnList.isEmpty()) {
+            ListIterator elemIter = returnList.listIterator(returnList.size());
+            ListElement elem = (ListElement) elemIter.previous();
+            if (elem instanceof KnuthGlue) {
+                BreakElement breakElement = (BreakElement) elemIter.previous();
+                breakElement.setPenaltyValue(KnuthElement.INFINITE);
+            } else {
+                elemIter.remove();
+            }
         }
         context.updateKeepWithPreviousPending(keepWithPrevious);
         context.setBreakBefore(breakBefore);
@@ -483,7 +485,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         tableLM.repeatAddAreasForSavedTableHeaderTableCellLayoutManagers();
         atLeastOnce = true;
 
-        if (footerElements != null) {
+        if (footerElements != null && !footerElements.isEmpty()) {
             boolean ancestorTreatAsArtifact = layoutContext.treatAsArtifact();
             layoutContext.setTreatAsArtifact(treatFooterAsArtifact);
             //Positions for footers are simply added at the end
