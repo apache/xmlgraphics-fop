@@ -19,9 +19,13 @@
 
 package org.apache.fop.fonts.truetype;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -571,5 +575,24 @@ public class TTFFileTestCase {
     public void testBBox() {
         assertEquals(dejavuTTFFile.getBBox(1)[0], 49);
         assertEquals(dejavuTTFFile.getBBox(2330).length, 4);
+    }
+
+    @Test
+    public void testReservedIndex() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+        dos.write(0);
+        dos.write(2);
+        for (int i = 0; i < 31; i++) {
+            dos.write(0);
+        }
+        dos.write(1); //number of glyphs
+        dos.writeShort(32768); //index value
+        TTFFile ttfFile = new TTFFile();
+        ttfFile.dirTabs = new HashMap<OFTableName, OFDirTabEntry>();
+        ttfFile.fontFile = new FontFileReader(new ByteArrayInputStream(bos.toByteArray()));
+        ttfFile.mtxTab = new OFMtxEntry[1];
+        ttfFile.mtxTab[0] = new OFMtxEntry();
+        ttfFile.readPostScript();
     }
 }

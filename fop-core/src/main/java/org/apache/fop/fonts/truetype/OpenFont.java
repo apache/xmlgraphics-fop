@@ -1406,7 +1406,7 @@ public abstract class OpenFont {
             for (int i = 0; i < l; i++) {
                 mtxTab[i].setIndex(fontFile.readTTFUShort());
 
-                if (mtxTab[i].getIndex() > numGlyphStrings) {
+                if (mtxTab[i].getIndex() > numGlyphStrings && mtxTab[i].getIndex() <= 32767) {
                     numGlyphStrings = mtxTab[i].getIndex();
                 }
 
