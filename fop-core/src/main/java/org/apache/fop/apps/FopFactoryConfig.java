@@ -67,6 +67,7 @@ public interface FopFactoryConfig {
      * @return true if accessibility features have been requested
      */
     boolean isAccessibilityEnabled();
+    boolean isKeepEmptyTags();
 
     /**
      * Returns the overriding LayoutManagerMaker instance, if any.

@@ -89,8 +89,14 @@ public class FopConfParserTestCase {
 
     @Test
     public void testAccessibility() {
-        builder.setAccessibility(false);
+        builder.setAccessibility(false, true);
         assertFalse(buildFactory().isAccessibilityEnabled());
+    }
+
+    @Test
+    public void testAccessibilityKeepEmptyTags() {
+        builder.setAccessibility(true, false);
+        assertFalse(buildFactory().isKeepEmptyTags());
     }
 
     @Test

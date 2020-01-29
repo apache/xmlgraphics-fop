@@ -19,12 +19,15 @@
 
 package org.apache.fop.accessibility.fo;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -33,6 +36,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
@@ -44,6 +48,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -132,6 +137,52 @@ public class FO2StructureTreeConverterTestCase {
         assertNull(d.getStructureTreeEventHandler().startNode("table-body", null, null));
     }
 
+    @Test
+    public void testRemoveBlocks() throws Exception {
+        compare("<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">\n"
+                        + "  <fo:layout-master-set>\n"
+                        + "    <fo:simple-page-master master-name=\"simple\">\n"
+                        + "      <fo:region-body />\n"
+                        + "    </fo:simple-page-master>\n"
+                        + "  </fo:layout-master-set>\n"
+                        + "  <fo:page-sequence master-reference=\"simple\">\n"
+                        + "    <fo:flow flow-name=\"xsl-region-body\">\n"
+                        + "    <fo:block/>"
+                        + "    <fo:block><fo:block/></fo:block>\n"
+                        + "    <fo:block>a</fo:block>\n"
+                        + "    </fo:flow>\n"
+                        + "  </fo:page-sequence>\n"
+                        + "</fo:root>\n",
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                        + "<structure-tree-sequence>\n"
+                        + "<structure-tree xmlns=\"http://xmlgraphics.apache.org/fop/intermediate\" "
+                        + "xmlns:foi=\"http://xmlgraphics.apache.org/fop/internal\" "
+                        + "xmlns:fox=\"http://xmlgraphics.apache.org/fop/extensions\">\n"
+                        + "<fo:flow xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" flow-name=\"xsl-region-body\">\n"
+                        + "<fo:block>\n"
+                        + "<marked-content/>\n"
+                        + "</fo:block>\n"
+                        + "</fo:flow>\n"
+                        + "</structure-tree>\n"
+                        + "</structure-tree-sequence>\n");
+    }
+
+    private void compare(final String fo, String tree) throws Exception {
+        foLoader = new FOLoader("") {
+            public InputStream getFoInputStream() {
+                return new ByteArrayInputStream(fo.getBytes());
+            }
+        };
+        DOMResult actualStructureTree = buildActualStructureTree();
+        Document doc = (Document) actualStructureTree.getNode();
+        StringWriter sw = new StringWriter();
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.transform(new DOMSource(doc), new StreamResult(sw));
+        assertEquals(tree, sw.toString());
+    }
+
     private void testConverter(String foResourceName) throws Exception {
         foLoader = new FOLoader(foResourceName);
         DOMResult expectedStructureTree = loadExpectedStructureTree();
@@ -216,6 +267,7 @@ public class FO2StructureTreeConverterTestCase {
     private static FOUserAgent createFOUserAgent(FODocumentParser documentParser) {
         FOUserAgent userAgent = documentParser.createFOUserAgent();
         userAgent.setAccessibility(true);
+        userAgent.setKeepEmptyTags(false);
         return userAgent;
     }
 

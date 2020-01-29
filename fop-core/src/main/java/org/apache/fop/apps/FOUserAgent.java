@@ -149,6 +149,7 @@ public class FOUserAgent {
         this.resourceResolver = resourceResolver;
         setTargetResolution(factory.getTargetResolution());
         setAccessibility(factory.isAccessibilityEnabled());
+        setKeepEmptyTags(factory.isKeepEmptyTags());
         imageSessionContext = new AbstractImageSessionContext(factory.getFallbackResolver()) {
 
             public ImageContext getParentContext() {
@@ -816,5 +817,18 @@ public class FOUserAgent {
 
     public HyphenationTreeCache getHyphenationTreeCache() {
         return factory.getHyphenationTreeCache();
+    }
+
+    public void setKeepEmptyTags(boolean b) {
+        getRendererOptions().put(Accessibility.KEEP_EMPTY_TAGS, b);
+    }
+
+    public boolean isKeepEmptyTags() {
+        Boolean enabled = (Boolean)getRendererOptions().get(Accessibility.KEEP_EMPTY_TAGS);
+        if (enabled != null) {
+            return enabled;
+        } else {
+            return true;
+        }
     }
 }

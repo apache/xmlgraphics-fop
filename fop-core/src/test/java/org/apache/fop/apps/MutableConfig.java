@@ -52,6 +52,11 @@ public final class MutableConfig implements FopFactoryConfig {
         return delegate.isAccessibilityEnabled();
     }
 
+
+    public boolean isKeepEmptyTags() {
+        return delegate.isKeepEmptyTags();
+    }
+
     public LayoutManagerMaker getLayoutManagerMakerOverride() {
         return delegate.getLayoutManagerMakerOverride();
     }

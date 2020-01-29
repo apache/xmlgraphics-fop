@@ -43,6 +43,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.render.RendererConfigOption;
 
 /**
@@ -137,8 +138,12 @@ public class FopConfBuilder implements FontConfigurator<FopConfBuilder> {
      * @param setAccessibility true to enable accessibility features
      * @return <b>this</b>
      */
-    public FopConfBuilder setAccessibility(boolean setAccessibility) {
-        return createElement("accessibility", String.valueOf(setAccessibility));
+    public FopConfBuilder setAccessibility(boolean setAccessibility, boolean keepEmptyTags) {
+        Element el = fopConfDOM.createElement(Accessibility.ACCESSIBILITY);
+        el.setAttribute(Accessibility.KEEP_EMPTY_TAGS, String.valueOf(keepEmptyTags));
+        el.appendChild(fopConfDOM.createTextNode(String.valueOf(setAccessibility)));
+        root.appendChild(el);
+        return this;
     }
 
     @Deprecated

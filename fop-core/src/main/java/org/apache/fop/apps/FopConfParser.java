@@ -38,6 +38,7 @@ import org.apache.xmlgraphics.image.loader.spi.ImageImplRegistry;
 import org.apache.xmlgraphics.image.loader.util.Penalty;
 import org.apache.xmlgraphics.io.ResourceResolver;
 
+import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.configuration.Configuration;
@@ -185,6 +186,8 @@ public class FopConfParser {
         if (cfg.getChild("accessibility", false) != null) {
             try {
                 fopFactoryBuilder.setAccessibility(cfg.getChild("accessibility").getValueAsBoolean());
+                fopFactoryBuilder.setKeepEmptyTags(
+                        cfg.getChild("accessibility").getAttributeAsBoolean(Accessibility.KEEP_EMPTY_TAGS, true));
             } catch (ConfigurationException e) {
                 LogUtil.handleException(log, e, false);
             }

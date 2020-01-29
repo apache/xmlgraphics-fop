@@ -28,6 +28,9 @@ public final class Accessibility {
     /** Constant string for the rendering options key to enable accessibility features. */
     public static final String ACCESSIBILITY = "accessibility";
 
+    /** Constant string for the rendering options key to suppress empty tags from structure tree. */
+    public static final String KEEP_EMPTY_TAGS = "keep-empty-tags";
+
     /**
      * The value to be set on the 'role' property for the element and its descendants to
      * be considered as artifacts.

@@ -328,6 +328,10 @@ public final class FopFactory implements ImageContext {
         return config.isAccessibilityEnabled();
     }
 
+    boolean isKeepEmptyTags() {
+        return config.isKeepEmptyTags();
+    }
+
     /** @see FopFactoryConfig#getImageManager() */
     public ImageManager getImageManager() {
         return config.getImageManager();

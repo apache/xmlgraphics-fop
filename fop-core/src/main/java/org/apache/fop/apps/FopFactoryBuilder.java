@@ -160,6 +160,11 @@ public final class FopFactoryBuilder {
         return this;
     }
 
+    public FopFactoryBuilder setKeepEmptyTags(boolean b) {
+        fopFactoryConfigBuilder.setKeepEmptyTags(b);
+        return this;
+    }
+
     /**
      * Sets the {@link LayoutManagerMaker} so that users can configure how FOP creates
      * {@link org.apache.fop.layoutmgr.LayoutManager}s.
@@ -330,6 +335,8 @@ public final class FopFactoryBuilder {
 
         private boolean accessibility;
 
+        private boolean keepEmptyTags = true;
+
         private LayoutManagerMaker layoutManagerMaker;
 
         private URI baseURI;
@@ -383,6 +390,10 @@ public final class FopFactoryBuilder {
         /** {@inheritDoc} */
         public boolean isAccessibilityEnabled() {
             return accessibility;
+        }
+
+        public boolean isKeepEmptyTags() {
+            return keepEmptyTags;
         }
 
         /** {@inheritDoc} */
@@ -485,6 +496,7 @@ public final class FopFactoryBuilder {
     private interface FopFactoryConfigBuilder {
 
         void setAccessibility(boolean enableAccessibility);
+        void setKeepEmptyTags(boolean b);
 
         void setLayoutManagerMakerOverride(LayoutManagerMaker lmMaker);
 
@@ -529,6 +541,9 @@ public final class FopFactoryBuilder {
         }
 
         public void setAccessibility(boolean enableAccessibility) {
+            throwIllegalStateException();
+        }
+        public void setKeepEmptyTags(boolean b) {
             throwIllegalStateException();
         }
 
@@ -610,6 +625,10 @@ public final class FopFactoryBuilder {
 
         public void setAccessibility(boolean enableAccessibility) {
             config.accessibility = enableAccessibility;
+        }
+
+        public void setKeepEmptyTags(boolean b) {
+            config.keepEmptyTags = b;
         }
 
         public void setLayoutManagerMakerOverride(LayoutManagerMaker lmMaker) {
