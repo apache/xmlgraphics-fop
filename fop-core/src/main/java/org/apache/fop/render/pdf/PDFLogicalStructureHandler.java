@@ -183,8 +183,11 @@ public class PDFLogicalStructureHandler {
             return ARTIFACT;
         } else {
             MarkedContentInfo mci = addToParentTree(structElem);
-            mci.parent.setMCIDKid(mci.mcid);
-            mci.parent.setPage(this.currentPage);
+            PDFDictionary contentItem = new PDFDictionary();
+            contentItem.put("Type", MCR);
+            contentItem.put("Pg", this.currentPage);
+            contentItem.put("MCID", mci.mcid);
+            mci.parent.addKid(contentItem);
             return mci;
         }
     }
