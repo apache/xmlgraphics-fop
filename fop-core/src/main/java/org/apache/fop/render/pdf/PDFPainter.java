@@ -168,6 +168,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
     public void drawImage(String uri, Rectangle rect)
             throws IFException {
         PDFXObject xobject = getDocumentHandler().getPDFDocument().getXObject(uri);
+        addStructTreeBBox(rect);
         if (xobject != null) {
             if (accessEnabled) {
                 PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
@@ -177,7 +178,6 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                 placeImage(rect, xobject);
             }
         } else {
-            addStructTreeBBox(rect);
             drawImageUsingURI(uri, rect);
             if (!getDocumentHandler().getPDFDocument().isLinearizationEnabled()) {
                 flushPDFDoc();

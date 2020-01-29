@@ -24,9 +24,12 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.util.Locale;
 
 import javax.xml.transform.stream.StreamResult;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -47,9 +50,13 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFProfile;
+import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFStructElem;
 import org.apache.fop.pdf.PDFTextUtil;
+import org.apache.fop.pdf.PDFUAMode;
+import org.apache.fop.pdf.StandardStructureTypes;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
@@ -217,5 +224,40 @@ public class PDFPainterTestCase {
         public Integer answer(InvocationOnMock invocation) throws Throwable {
             return (Integer) invocation.getArguments()[0];
         }
+    }
+
+    @Test
+    public void testPDFUAImage() throws IFException, IOException {
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+        foUserAgent = fopFactory.newFOUserAgent();
+        foUserAgent.setAccessibility(true);
+        IFContext ifContext = new IFContext(foUserAgent);
+        pdfDocumentHandler = new PDFDocumentHandler(ifContext);
+        pdfDocumentHandler.getStructureTreeEventHandler();
+        pdfDocumentHandler.setResult(new StreamResult(new ByteArrayOutputStream()));
+        pdfDocumentHandler.startDocument();
+        pdfDocumentHandler.startPage(0, "", "", new Dimension());
+        PDFDocument doc = pdfDocumentHandler.getPDFDocument();
+        doc.getProfile().setPDFUAMode(PDFUAMode.PDFUA_1);
+        doc.getInfo().setTitle("a");
+        PDFLogicalStructureHandler structureHandler = new PDFLogicalStructureHandler(doc);
+        structureHandler.startPage(new PDFPage(new PDFResources(doc), 0,
+                new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()));
+        PDFPainter pdfPainter = new PDFPainter(pdfDocumentHandler, structureHandler);
+        ifContext.setLanguage(Locale.US);
+        drawImage(doc, pdfPainter, ifContext);
+        String output = drawImage(doc, pdfPainter, ifContext);
+        Assert.assertTrue(output, output.contains("/BBox [0 0 0 0]"));
+    }
+
+    private String drawImage(PDFDocument doc, PDFPainter pdfPainter, IFContext ifContext)
+        throws IOException, IFException {
+        PDFStructElem structElem = new PDFStructElem(doc.getRoot(), StandardStructureTypes.InlineLevelStructure.NOTE);
+        structElem.setDocument(doc);
+        ifContext.setStructureTreeElement(structElem);
+        pdfPainter.drawImage("test/resources/images/cmyk.jpg", new Rectangle());
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        structElem.output(bos);
+        return bos.toString();
     }
 }
