@@ -616,6 +616,7 @@ list of possible build targets.
   </fileset>
   <target name="transcoder-pkg" depends="remove-cache" description="Generates the jar for the transcoder package for Batik">
     <exec executable="mvn" dir="${basedir}/..">
+      <env key="MAVEN_OPTS" value="-Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2"/>
       <arg value="clean"/>
       <arg value="install"/>
       <arg value="-DskipTests"/>
