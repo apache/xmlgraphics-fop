@@ -56,12 +56,14 @@
           <include>org/apache/fop/util/ASCII*.class</include>
           <include>org/apache/fop/util/AbstractPaintingState**</include>
           <include>org/apache/fop/util/CMYKColorSpace*.class</include>
-          <include>org/apache/fop/util/CharUtilities.class</include>
+          <include>org/apache/fop/util/CharUtilities*.class</include>
           <include>org/apache/fop/util/Color*.class</include>
           <include>org/apache/fop/util/DecimalFormatCache*.class</include>
           <include>org/apache/fop/util/Finalizable.class</include>
           <include>org/apache/fop/util/ImageObject.class</include>
           <include>org/apache/fop/util/SubInputStream.class</include>
+          <include>org/apache/fop/util/HexEncoder.class</include>
+          <include>org/apache/fop/configuration/**</include>
         </includes>
         <excludes>
           <exclude>org/apache/fop/render/pdf/PSRenderer.class</exclude>
