@@ -615,12 +615,7 @@ list of possible build targets.
     <include name="xmlgraphics-commons*.jar"/>
   </fileset>
   <target name="transcoder-pkg" depends="remove-cache" description="Generates the jar for the transcoder package for Batik">
-    <exec executable="mvn" dir="${basedir}/../fop-transcoder">
-      <arg value="clean"/>
-      <arg value="install"/>
-      <arg value="-DskipTests"/>
-    </exec>
-    <exec executable="mvn" dir="${basedir}/../fop-transcoder-allinone">
+    <exec executable="mvn" dir="${basedir}/..">
       <arg value="clean"/>
       <arg value="install"/>
       <arg value="-DskipTests"/>
