@@ -40,9 +40,11 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
 import org.apache.fop.accessibility.StructureTreeEventHandler;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.DefaultRendererConfigurator;
+import org.apache.fop.render.RendererEventProducer;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.IFRendererConfig.IFRendererConfigParser;
 import org.apache.fop.render.intermediate.IFStructureTreeBuilder.IFStructureTreeElement;
@@ -85,6 +87,7 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
     private String currentID = "";
 
     private IFStructureTreeBuilder structureTreeBuilder;
+    private int pageNumberEnded;
 
     public IFSerializer(IFContext context) {
         super(context);
@@ -383,6 +386,11 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
             getContext().setPageIndex(-1);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPage()", e);
+        }
+        if (mimicHandler != null) {
+            pageNumberEnded++;
+            FOUserAgent userAgent = mimicHandler.getContext().getUserAgent();
+            RendererEventProducer.Provider.get(userAgent.getEventBroadcaster()).endPage(this, pageNumberEnded);
         }
     }
 

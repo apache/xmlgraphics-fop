@@ -20,6 +20,9 @@
 package org.apache.fop.render.intermediate;
 
 import java.awt.Rectangle;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.transform.sax.SAXResult;
 
@@ -38,6 +41,9 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.events.EventChecker;
+import org.apache.fop.render.afp.AFPDocumentHandler;
 
 public class IFSerializerTestCase {
 
@@ -90,4 +96,16 @@ public class IFSerializerTestCase {
         verify(imageManager).closeImage(eq(IMAGE), any(ImageSessionContext.class));
     }
 
+    @Test
+    public void testPageEvent() throws IFException {
+        FOUserAgent userAgent = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("number", 1);
+        EventChecker eventChecker = new EventChecker("org.apache.fop.render.RendererEventProducer.endPage", params);
+        userAgent.getEventBroadcaster().addEventListener(eventChecker);
+        sut.mimicDocumentHandler(new AFPDocumentHandler(new IFContext(userAgent)));
+        sut.setResult(new SAXResult(new DefaultHandler()));
+        sut.endPage();
+        eventChecker.end();
+    }
 }
