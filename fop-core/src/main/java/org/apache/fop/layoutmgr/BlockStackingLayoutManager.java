@@ -833,6 +833,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     public Keep getKeepTogether() {
         Keep keep = Keep.getKeep(getKeepTogetherProperty());
         keep = keep.compare(getParentKeepTogether());
+        if (getFObj().isForceKeepTogether()) {
+            keep = Keep.KEEP_ALWAYS;
+        }
         return keep;
     }
 

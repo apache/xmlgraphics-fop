@@ -78,6 +78,8 @@ public abstract class FObj extends FONode implements Constants {
     private String layer;
     // End of property values
 
+    private boolean forceKeepTogether;
+
     /**
      * Create a new formatting object.
      *
@@ -773,6 +775,14 @@ public abstract class FObj extends FONode implements Constants {
     /** {@inheritDoc} */
     public String toString() {
         return (super.toString() + "[@id=" + this.id + "]");
+    }
+
+    public boolean isForceKeepTogether() {
+        return forceKeepTogether;
+    }
+
+    public void setForceKeepTogether(boolean b) {
+        forceKeepTogether = b;
     }
 
     /** Basic {@link FONode.FONodeIterator} implementation */
