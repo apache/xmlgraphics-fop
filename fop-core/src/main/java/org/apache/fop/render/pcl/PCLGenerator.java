@@ -758,8 +758,12 @@ public class PCLGenerator {
         boolean scaled = !orgDim.equals(effDim);
         if (!monochrome) {
             if (printerSupportsColor) {
+                RenderedImage effImg = img;
+                if (scaled) {
+                    effImg = BitmapImageUtil.convertTosRGB(img, effDim);
+                }
                 selectCurrentPattern(0, 0); //Solid black
-                renderImageAsColor(img, effResolution);
+                renderImageAsColor(effImg, effResolution);
             } else {
                 //Transparency mask disabled. Doesn't work reliably
                 /*
@@ -784,7 +788,7 @@ public class PCLGenerator {
             RenderedImage effImg = img;
             if (scaled) {
                 effImg = BitmapImageUtil.convertToMonochrome(img, effDim);
-                }
+            }
             setSourceTransparencyMode(sourceTransparency);
             selectCurrentPattern(0, 0); //Solid black
             paintMonochromeBitmap(effImg, effResolution);

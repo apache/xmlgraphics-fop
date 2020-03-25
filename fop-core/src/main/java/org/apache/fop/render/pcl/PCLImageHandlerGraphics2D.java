@@ -91,6 +91,17 @@ public class PCLImageHandlerGraphics2D implements ImageHandler {
 
             AffineTransform prepareHPGL2 = new AffineTransform();
             prepareHPGL2.scale(0.001, 0.001);
+
+            int direction = PCLRenderingUtil.determinePrintDirection(ctx.getTransform());
+            rotate(prepareHPGL2, imageDim, direction);
+            int height = pos.height;
+            int width = pos.width;
+            if (direction == 90 || direction == 270) {
+                int tmp = height;
+                height = width;
+                width = tmp;
+            }
+
             ctx.setTransform(prepareHPGL2);
 
             PCLGraphics2D graphics = new PCLGraphics2D(tempGen);
@@ -101,8 +112,8 @@ public class PCLImageHandlerGraphics2D implements ImageHandler {
             imageG2D.getGraphics2DImagePainter().paint(graphics, area);
 
             //If we arrive here, the graphic is natively paintable, so write the graphic
-            gen.writeCommand("*c" + gen.formatDouble4(pos.width / 100f) + "x"
-                    + gen.formatDouble4(pos.height / 100f) + "Y");
+            gen.writeCommand("*c" + gen.formatDouble4(width / 100f) + "x"
+                    + gen.formatDouble4(height / 100f) + "Y");
             gen.writeCommand("*c0T");
             gen.enterHPGL2Mode(false);
             gen.writeText("\nIN;");
@@ -140,6 +151,19 @@ public class PCLImageHandlerGraphics2D implements ImageHandler {
 
             gen.paintBitmap(imgRend.getRenderedImage(), new Dimension(pos.width, pos.height),
                     pclContext.isSourceTransparencyEnabled(), pclContext.getPCLUtil());
+        }
+    }
+
+    private void rotate(AffineTransform prepareHPGL2, Dimension imageDim, int direction) {
+        if (direction != 0) {
+            double rads = Math.toRadians(-direction);
+            double sin = Math.abs(Math.sin(rads));
+            double cos = Math.abs(Math.cos(rads));
+            double w = Math.floor(imageDim.getWidth() * cos + imageDim.getHeight() * sin);
+            double h = Math.floor(imageDim.getHeight() * cos + imageDim.getWidth() * sin);
+            prepareHPGL2.translate(w / 2d, h / 2d);
+            prepareHPGL2.rotate(rads, 0, 0);
+            prepareHPGL2.translate(-imageDim.getWidth() / 2d, -imageDim.getHeight() / 2d);
         }
     }
 

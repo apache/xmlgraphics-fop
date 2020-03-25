@@ -21,7 +21,10 @@ package org.apache.fop.render.pcl;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontFormatException;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +35,11 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
@@ -65,6 +73,49 @@ public class PCLPainterTestCase {
         pclPainter.fillRect(size, Color.RED);
         Assert.assertFalse(output.toString().contains("*c4P"));
         Assert.assertTrue(output.toString().contains("*v255a0b0c0I\u001B*v0S\u001B*c0.01h0.01V\u001B*c0P"));
+    }
+
+    @Test
+    public void testDrawImage() throws IFException {
+        Rectangle size = new Rectangle(1, 1);
+        PCLPageDefinition pclPageDef = new PCLPageDefinition("", 0, new Dimension(), size, true);
+        PCLDocumentHandler documentHandler = new PCLDocumentHandler(new IFContext(ua));
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        documentHandler.setResult(new StreamResult(output));
+        documentHandler.startDocument();
+        PCLPainter pclPainter = new PCLPainter(documentHandler, pclPageDef);
+        pclPainter.getPCLUtil().setColorEnabled(true);
+        pclPainter.drawImage("test/resources/images/fop-logo-color-24bit.png", new Rectangle(100, 100));
+        Assert.assertTrue(output.toString(), output.toString().contains("*r0f1t1S"));
+    }
+
+    @Test
+    public void testDrawGraphics() throws IOException, IFException {
+        Rectangle size = new Rectangle(1, 1);
+        PCLPageDefinition pclPageDef = new PCLPageDefinition("", 0, new Dimension(), size, true);
+        PCLDocumentHandler documentHandler = new PCLDocumentHandler(new IFContext(ua));
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        documentHandler.setResult(new StreamResult(output));
+        documentHandler.startDocument();
+        PCLPainter pclPainter = new PCLPainter(documentHandler, pclPageDef);
+        PCLImageHandlerGraphics2D graphics2D = new PCLImageHandlerGraphics2D();
+        ImageInfo info = new ImageInfo(null, null);
+        info.setSize(new ImageSize());
+        ImageGraphics2D imageGraphics2D = new ImageGraphics2D(info, new MyGraphics2DImagePainter());
+        graphics2D.handleImage(pclPainter.createRenderingContext(), imageGraphics2D, new Rectangle(50, 100));
+        Assert.assertTrue(output.toString().contains("*c0.5x1Y"));
+        output.reset();
+        pclPainter.startGroup(AffineTransform.getRotateInstance(-Math.PI / 2), null);
+        graphics2D.handleImage(pclPainter.createRenderingContext(), imageGraphics2D, new Rectangle(50, 100));
+        Assert.assertTrue(output.toString().contains("*c1x0.5Y"));
+    }
+
+    static class MyGraphics2DImagePainter implements Graphics2DImagePainter {
+        public void paint(Graphics2D g2d, Rectangle2D area) {
+        }
+        public Dimension getImageSize() {
+            return null;
+        }
     }
 
     @Test
