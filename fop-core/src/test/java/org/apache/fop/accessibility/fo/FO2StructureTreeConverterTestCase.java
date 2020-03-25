@@ -83,6 +83,7 @@ public class FO2StructureTreeConverterTestCase {
     private static final String STRUCTURE_TREE_SEQUENCE_NAME = "structure-tree-sequence";
 
     private FOLoader foLoader;
+    private boolean keepEmptyTags = true;
 
     @Test
     public void testCompleteDocument() throws Exception {
@@ -139,6 +140,7 @@ public class FO2StructureTreeConverterTestCase {
 
     @Test
     public void testRemoveBlocks() throws Exception {
+        keepEmptyTags = false;
         compare("<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">\n"
                         + "  <fo:layout-master-set>\n"
                         + "    <fo:simple-page-master master-name=\"simple\">\n"
@@ -150,6 +152,8 @@ public class FO2StructureTreeConverterTestCase {
                         + "    <fo:block/>"
                         + "    <fo:block><fo:block/></fo:block>\n"
                         + "    <fo:block>a</fo:block>\n"
+                        + "    <fo:block><fo:leader/></fo:block>\n"
+                        + "    <fo:block>a<fo:leader/></fo:block>\n"
                         + "    </fo:flow>\n"
                         + "  </fo:page-sequence>\n"
                         + "</fo:root>\n",
@@ -159,6 +163,9 @@ public class FO2StructureTreeConverterTestCase {
                         + "xmlns:foi=\"http://xmlgraphics.apache.org/fop/internal\" "
                         + "xmlns:fox=\"http://xmlgraphics.apache.org/fop/extensions\">\n"
                         + "<fo:flow xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" flow-name=\"xsl-region-body\">\n"
+                        + "<fo:block>\n"
+                        + "<marked-content/>\n"
+                        + "</fo:block>\n"
                         + "<fo:block>\n"
                         + "<marked-content/>\n"
                         + "</fo:block>\n"
@@ -228,7 +235,7 @@ public class FO2StructureTreeConverterTestCase {
         return actualStructureTree;
     }
 
-    private static void createStructureTreeFromDocument(InputStream foInputStream,
+    private void createStructureTreeFromDocument(InputStream foInputStream,
             Result result) throws Exception {
         TransformerHandler tHandler = createTransformerHandler(result);
         startStructureTreeSequence(tHandler);
@@ -264,10 +271,10 @@ public class FO2StructureTreeConverterTestCase {
         });
     }
 
-    private static FOUserAgent createFOUserAgent(FODocumentParser documentParser) {
+    private FOUserAgent createFOUserAgent(FODocumentParser documentParser) {
         FOUserAgent userAgent = documentParser.createFOUserAgent();
         userAgent.setAccessibility(true);
-        userAgent.setKeepEmptyTags(false);
+        userAgent.setKeepEmptyTags(keepEmptyTags);
         return userAgent;
     }
 

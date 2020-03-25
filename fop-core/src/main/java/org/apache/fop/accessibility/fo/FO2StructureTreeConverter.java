@@ -686,7 +686,7 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
             public void run() {
                 eventHandler.startLeader(l);
             }
-        }, true);
+        }, false);
         super.startLeader(l);
     }
 
