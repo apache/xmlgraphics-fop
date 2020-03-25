@@ -420,6 +420,9 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
             if (clipRect != null) {
                 addAttribute(atts, "clip-rect", IFUtil.toString(clipRect));
             }
+            if (getUserAgent().isAccessibilityEnabled() && getContext().getRegionType() != null) {
+                addAttribute(atts, "region-type", getContext().getRegionType());
+            }
             handler.startElement(EL_VIEWPORT, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startViewport()", e);

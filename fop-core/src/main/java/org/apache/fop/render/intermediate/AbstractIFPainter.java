@@ -91,7 +91,7 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
      * Returns the intermediate format context object.
      * @return the context object
      */
-    protected IFContext getContext() {
+    public IFContext getContext() {
         return documentHandler.getContext();
     }
 

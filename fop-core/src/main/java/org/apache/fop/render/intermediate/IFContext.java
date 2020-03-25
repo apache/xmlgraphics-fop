@@ -27,6 +27,7 @@ import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.Constants;
 
 /**
  * This class provides a context object that is valid for a single processing run to create
@@ -58,6 +59,8 @@ public class IFContext implements PageIndexContext {
     private int pageIndex = -1;
 
     private int pageNumber = -1;
+
+    private RegionType regionType;
 
     /**
      * Main constructor.
@@ -242,5 +245,33 @@ public class IFContext implements PageIndexContext {
 
     public void setPageNumber(int pageNumber) {
         this.pageNumber = pageNumber;
+    }
+
+    private enum RegionType {
+        Footer,
+        Header
+    }
+
+    public String getRegionType() {
+        if (regionType != null) {
+            return regionType.name();
+        }
+        return null;
+    }
+
+    public void setRegionType(String type) {
+        regionType = null;
+        if (type != null) {
+            regionType = RegionType.valueOf(type);
+        }
+    }
+
+    public void setRegionType(int type) {
+        regionType = null;
+        if (type == Constants.FO_REGION_AFTER) {
+            regionType = RegionType.Footer;
+        } else if (type == Constants.FO_REGION_BEFORE) {
+            regionType = RegionType.Header;
+        }
     }
 }

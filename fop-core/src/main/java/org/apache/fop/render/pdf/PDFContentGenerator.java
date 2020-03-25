@@ -37,6 +37,7 @@ import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.render.intermediate.IFContext;
 
 /**
  * Generator class encapsulating all object references and state necessary to generate a
@@ -64,6 +65,7 @@ public class PDFContentGenerator {
     private boolean inMarkedContentSequence;
     private boolean inArtifactMode;
     private AffineTransform transform;
+    private IFContext context;
 
     /**
      * Main constructor. Creates a new PDF stream and additional helper classes for text painting
@@ -73,7 +75,12 @@ public class PDFContentGenerator {
      * @param resourceContext the resource context
      */
     public PDFContentGenerator(PDFDocument document, OutputStream out,
-            PDFResourceContext resourceContext) {
+                               PDFResourceContext resourceContext) {
+        this(document, out, resourceContext, null);
+    }
+
+    public PDFContentGenerator(PDFDocument document, OutputStream out,
+                               PDFResourceContext resourceContext, IFContext context) {
         this.document = document;
         this.outputStream = out;
         this.resourceContext = resourceContext;
@@ -90,6 +97,7 @@ public class PDFContentGenerator {
 
         this.currentState = new PDFPaintingState();
         this.colorHandler = new PDFColorHandler(document.getResources());
+        this.context = context;
     }
 
     public AffineTransform getAffineTransform() {
@@ -225,7 +233,11 @@ public class PDFContentGenerator {
                     + actualTextProperty + ">>\n"
                     + "BDC\n");
         } else {
-            getStream().add("/Artifact\nBMC\n");
+            if (context != null && context.getRegionType() != null) {
+                getStream().add("/Artifact\n<</Type /Pagination\n/Subtype /" + context.getRegionType() + ">>\nBDC\n");
+            } else {
+                getStream().add("/Artifact\nBMC\n");
+            }
             this.inArtifactMode = true;
         }
         this.inMarkedContentSequence = true;

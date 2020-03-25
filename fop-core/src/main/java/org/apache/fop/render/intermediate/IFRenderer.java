@@ -734,6 +734,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     protected void renderRegionViewport(RegionViewport viewport) {
         Dimension dim = new Dimension(viewport.getIPD(), viewport.getBPD());
         viewportDimensionStack.push(dim);
+        documentHandler.getContext().setRegionType(viewport.getRegionReference().getRegionClass());
         super.renderRegionViewport(viewport);
         viewportDimensionStack.pop();
     }

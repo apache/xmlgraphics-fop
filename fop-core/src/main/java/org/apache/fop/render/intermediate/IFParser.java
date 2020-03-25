@@ -582,6 +582,7 @@ public class IFParser implements IFConstants {
                 int height = Integer.parseInt(attributes.getValue("height"));
                 Rectangle clipRect = XMLUtil.getAttributeAsRectangle(attributes, "clip-rect");
                 painter.startViewport(transforms, new Dimension(width, height), clipRect);
+                documentHandler.getContext().setRegionType(attributes.getValue("region-type"));
             }
 
             public void endElement() throws IFException {

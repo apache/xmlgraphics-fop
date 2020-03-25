@@ -257,8 +257,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         currentPageRef = new PageReference(currentPage, size);
         this.pageReferences.put(index, currentPageRef);
 
-        this.generator = new PDFContentGenerator(this.pdfDoc, this.outputStream,
-                this.currentPage);
+        this.generator = new PDFContentGenerator(this.pdfDoc, this.outputStream, this.currentPage, getContext());
         // Transform the PDF's default coordinate system (0,0 at lower left) to the PDFPainter's
         AffineTransform basicPageTransform = new AffineTransform(1, 0, 0, -1, 0,
                 (scaleY * size.height) / 1000f);

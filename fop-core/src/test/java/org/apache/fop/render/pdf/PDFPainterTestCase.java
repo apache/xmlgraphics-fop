@@ -50,6 +50,7 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFProfile;
 import org.apache.fop.pdf.PDFResources;
@@ -259,5 +260,49 @@ public class PDFPainterTestCase {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         structElem.output(bos);
         return bos.toString();
+    }
+
+    @Test
+    public void testFooterText() throws IFException, IOException {
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+        foUserAgent = fopFactory.newFOUserAgent();
+        foUserAgent.setAccessibility(true);
+        PDFDocumentHandler pdfDocumentHandler = new PDFDocumentHandler(new IFContext(foUserAgent));
+        pdfDocumentHandler.getStructureTreeEventHandler();
+
+        pdfDocumentHandler.setResult(new StreamResult(new ByteArrayOutputStream()));
+        pdfDocumentHandler.startDocument();
+        pdfDocumentHandler.startPage(0, "", "", new Dimension());
+
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("f1", new FontTriplet("a", "italic", 700));
+        MultiByteFont font = new MultiByteFont(null, null);
+        font.setWidthArray(new int[1]);
+        fi.addMetrics("f1", font);
+        pdfDocumentHandler.setFontInfo(fi);
+        PDFDocument doc = pdfDocumentHandler.getPDFDocument();
+        PDFLogicalStructureHandler structureHandler = new PDFLogicalStructureHandler(doc);
+        MyPDFPainter pdfPainter = new MyPDFPainter(pdfDocumentHandler, structureHandler);
+        pdfPainter.getContext().setRegionType(Constants.FO_REGION_AFTER);
+        pdfPainter.setFont("a", "italic", 700, null, 12, null);
+        pdfPainter.drawText(0, 0, 0, 0, null, "test");
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        PDFFilterList filters = pdfPainter.generator.getStream().getFilterList();
+        filters.setDisableAllFilters(true);
+        pdfPainter.generator.getStream().output(bos);
+        Assert.assertEquals(bos.toString(), "<< /Length 1 0 R >>\n"
+                + "stream\n"
+                + "q\n"
+                + "1 0 0 -1 0 0 cm\n"
+                + "/Artifact\n"
+                + "<</Type /Pagination\n"
+                + "/Subtype /Footer>>\n"
+                + "BDC\n"
+                + "BT\n"
+                + "/f1 0.012 Tf\n"
+                + "1 0 0 -1 0 0 Tm [<0000000000000000>] TJ\n"
+                + "\n"
+                + "endstream");
     }
 }
