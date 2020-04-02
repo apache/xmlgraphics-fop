@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -185,9 +184,8 @@ public class FO2StructureTreeConverterTestCase {
         StringWriter sw = new StringWriter();
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = tf.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.transform(new DOMSource(doc), new StreamResult(sw));
-        assertEquals(tree, sw.toString());
+        assertEquals(tree.replace("\n", ""), sw.toString().replace("\n", ""));
     }
 
     private void testConverter(String foResourceName) throws Exception {
