@@ -68,9 +68,8 @@ public class GradientTestCase {
         svgGraphics2D.setGraphicContext(new GraphicContext());
         svgGraphics2D.translate(100, 100);
         svgGraphics2D.applyPaint(gradient, true);
-        byte[] actual = out.toByteArray();
-        byte[] expected = IOUtils.toByteArray(getClass().getResourceAsStream(expectedResourceName));
-        assertEquals(new String(expected, "US-ASCII"), new String(actual, "US-ASCII"));
+        String expected = IOUtils.toString(getClass().getResourceAsStream(expectedResourceName));
+        assertEquals(expected.replace("\r", ""), out.toString());
     }
 
 }
