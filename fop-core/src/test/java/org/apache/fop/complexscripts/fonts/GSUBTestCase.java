@@ -21,6 +21,7 @@ package org.apache.fop.complexscripts.fonts;
 
 import java.io.File;
 import java.nio.IntBuffer;
+import java.util.Collections;
 
 import org.junit.Test;
 
@@ -184,4 +185,10 @@ public class GSUBTestCase implements ScriptContextTester, GlyphContextTester {
         }
     }
 
+    @Test
+    public void testCreateClassTable() {
+        GlyphCoverageTable coverageTable = GlyphCoverageTable.createCoverageTable(null);
+        GlyphClassTable classTable = GlyphClassTable.createClassTable(Collections.singletonList(coverageTable));
+        assertNotNull(classTable);
+    }
 }

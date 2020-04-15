@@ -22,6 +22,9 @@ package org.apache.fop.complexscripts.fonts;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 // CSOFF: LineLengthCheck
 
 /**
@@ -255,8 +258,9 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
     }
 
     private static class CoverageSetClassTable extends GlyphMappingTable.EmptyMappingTable implements GlyphClassMapping {
+        private static final Log LOG = LogFactory.getLog(CoverageSetClassTable.class);
         public CoverageSetClassTable(List entries) {
-            throw new UnsupportedOperationException("coverage set class table not yet supported");
+            LOG.warn("coverage set class table not yet supported");
         }
         /** {@inheritDoc} */
         public int getType() {
