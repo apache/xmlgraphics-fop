@@ -66,7 +66,6 @@ public class BitmapProducerJava2D extends AbstractBitmapProducer implements Conf
         fopFactory = FopFactory.newInstance(baseUri);
     }
 
-    /** @see org.apache.avalon.framework.configuration.Configurable */
     public void configure(Configuration cfg) throws ConfigurationException {
         this.deleteTempFiles = cfg.getChild("delete-temp-files").getValueAsBoolean(true);
     }

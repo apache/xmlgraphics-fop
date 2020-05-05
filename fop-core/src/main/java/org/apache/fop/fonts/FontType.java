@@ -61,7 +61,6 @@ public class FontType {
      * Construct a font type.
      * @param name a font type name
      * @param value a font type value
-     * @see org.apache.avalon.framework.Enum#Enum(String)
      */
     protected FontType(String name, int value) {
         this.name = name;
