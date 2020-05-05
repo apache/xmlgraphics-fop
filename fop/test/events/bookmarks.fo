@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master page-width="8.5in" page-height="11in" master-name="Page">
+      <fo:region-body region-name="Body"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="PageSequence">
+      <fo:repeatable-page-master-reference master-reference="Page"/>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:bookmark-tree>
+      <fo:bookmark internal-destination="B1">
+        <fo:bookmark-title>w</fo:bookmark-title>
+      </fo:bookmark>
+  </fo:bookmark-tree>
+  <fo:page-sequence format="1" id="TH_LastPage" initial-page-number="auto" force-page-count="auto" master-reference="PageSequence">
+    <fo:flow flow-name="Body">
+        <fo:block>a</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

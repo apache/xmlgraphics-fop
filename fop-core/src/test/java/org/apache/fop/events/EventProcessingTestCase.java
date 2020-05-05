@@ -112,6 +112,12 @@ public class EventProcessingTestCase {
     }
 
     @Test
+    public void testBookmarks() throws Exception {
+        doTest("bookmarks.fo",
+                AreaEventProducer.class.getName() + ".unresolvedIDReference");
+    }
+
+    @Test
     public void testResource() throws Exception {
         doTest("resource.fo",
                 ResourceEventProducer.class.getName() + ".imageNotFound");
