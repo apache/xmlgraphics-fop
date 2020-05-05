@@ -107,6 +107,16 @@ under the ./fop sub-directory.
   RELEASE NOTES
 ==============================================================================
 
+Version 2.5
+===========
+
+Major Changes in Version 2.5
+----------------------------
+
+* Allow to hide empty blocks from structure tree
+
+This release also contains a number of bug fixes.
+
 Version 2.4
 ===========
 
