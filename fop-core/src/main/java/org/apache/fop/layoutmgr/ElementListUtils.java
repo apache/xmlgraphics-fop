@@ -229,10 +229,20 @@ public final class ElementListUtils {
     public static boolean isEmptyBox(List elements) {
         if (elements.size() == 1 && elements.get(0) instanceof KnuthBox) {
             KnuthBox kb = (KnuthBox) elements.get(0);
-            if (kb.getWidth() == 0) {
-                return true;
-            }
+            return kb.getWidth() == 0 && !isAbsoluteOrFixed(kb.getPosition());
         }
         return false;
     }
+
+    private static boolean isAbsoluteOrFixed(Position pos) {
+        if (pos == null || pos == pos.getPosition()) {
+            return false;
+        }
+        LayoutManager lm = pos.getLM();
+        if (lm instanceof BlockContainerLayoutManager && ((BlockContainerLayoutManager)lm).isAbsoluteOrFixed()) {
+            return true;
+        }
+        return isAbsoluteOrFixed(pos.getPosition());
+    }
+
 }

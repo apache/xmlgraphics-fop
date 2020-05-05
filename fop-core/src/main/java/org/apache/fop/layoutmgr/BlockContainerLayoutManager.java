@@ -161,7 +161,7 @@ public class BlockContainerLayoutManager extends SpacedBorderedPaddedBlockLayout
         return indents;
     }
 
-    private boolean isAbsoluteOrFixed() {
+    protected boolean isAbsoluteOrFixed() {
         return (abProps.absolutePosition == EN_ABSOLUTE
                 || abProps.absolutePosition == EN_FIXED);
     }
