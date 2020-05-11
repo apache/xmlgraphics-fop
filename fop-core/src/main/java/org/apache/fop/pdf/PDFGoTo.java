@@ -35,6 +35,19 @@ public class PDFGoTo extends PDFAction {
     private String destination;
     private float xPosition;
     private float yPosition;
+    private boolean isNamedDestination;
+
+    /**
+     * create a /GoTo object.
+     *
+     * @param destination name of the destination
+     * @param isNamedDestination set to true if the destination is a named destination
+     */
+    public PDFGoTo(String destination, boolean isNamedDestination) {
+        super();
+        this.destination = destination;
+        this.isNamedDestination = isNamedDestination;
+    }
 
     /**
      * create a /GoTo object.
@@ -125,6 +138,11 @@ public class PDFGoTo extends PDFAction {
                           + " " + yPosition + " null]\n";
         } else {
             dest = "/D [" + this.pageReference + " " + destination + "]\n";
+            if (this.isNamedDestination) {
+                dest = "/D (" + this.destination + ")\n";
+             } else {
+                dest = "/D [" + this.pageReference + " " + destination + "]\n";
+             }
         }
         return "<< /Type /Action\n/S /GoTo\n" + dest + ">>";
     }
@@ -172,7 +190,7 @@ public class PDFGoTo extends PDFAction {
             }
         }
 
-        return true;
+        return (isNamedDestination == gt.isNamedDestination);
     }
 }
 

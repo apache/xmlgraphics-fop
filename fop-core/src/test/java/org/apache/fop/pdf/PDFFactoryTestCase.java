@@ -20,6 +20,7 @@
 package org.apache.fop.pdf;
 
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -210,5 +211,20 @@ public class PDFFactoryTestCase {
                 + fileSpec.getFilename() + "\", nLaunch:2}\\);)\n>>";
 
         assertEquals(expectedString, pdfAction.toPDFString());
+    }
+
+    @Test
+    public void testMakeLink() {
+        PDFDocument doc = new PDFDocument("");
+        PDFFactory pdfFactory = new PDFFactory(doc);
+        Rectangle2D rect = new Rectangle(10,20);
+        PDFLink link = pdfFactory.makeLink(rect, "dest", true);
+
+        String expectedString = "<< /Type /Annot\n" + "/Subtype /Link\n" + "/Rect [ "
+                + "0.0 0.0 10.0 20.0 ]\n/C [ 0 0 0 ]\n"
+                + "/Border [ 0 0 0 ]\n" + "/A 1 0 R"
+                + "\n/H /I\n\n>>";
+
+        assertEquals(expectedString, link.toPDFString());
     }
 }

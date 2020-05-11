@@ -26,6 +26,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.StringTokenizer;
 
 import org.apache.batik.gvt.CompositeGraphicsNode;
+import org.apache.fop.pdf.PDFLink;
 
 /**
  * <p>A graphics node that represents an image described as a graphics node.</p>
@@ -115,8 +116,11 @@ public class PDFANode extends CompositeGraphicsNode {
 
                     destination = "" + x + " " + y + " "
                                   + (x + width) + " " + (y + height);
+                } else if (destination.startsWith("#")) {
+                    pdfg.addLink(getBounds(), transform, destination, PDFLink.INTERNAL);
+                } else {
+                    pdfg.addLink(getBounds(), transform, destination, type);
                 }
-                pdfg.addLink(getBounds(), transform, destination, type);
             }
         }
     }

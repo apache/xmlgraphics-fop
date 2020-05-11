@@ -519,6 +519,26 @@ public class PDFFactory {
     }
 
     /**
+     * Make an internal link.
+     *
+     * @param rect the hotspot position in absolute coordinates
+     * @param dest the position destination
+     * @param isNamedDestination set to true if dest param is a named destination
+     * @return the new PDF link object
+     */
+    public PDFLink makeLink(Rectangle2D rect, String dest, boolean isNamedDestination) {
+        PDFLink link = new PDFLink(rect);
+        getDocument().registerObject(link);
+
+        PDFAction pdfAction = new PDFGoTo(dest, isNamedDestination);
+        getDocument().registerObject(pdfAction);
+
+        link.setAction(pdfAction);
+
+        return link;
+    }
+
+    /**
      * Make a {@link PDFLink} object
      *
      * @param rect   the clickable rectangle

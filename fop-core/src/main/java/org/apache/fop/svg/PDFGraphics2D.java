@@ -421,9 +421,15 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             Rectangle rect = b.getBounds();
 
             if (linkType != PDFLink.EXTERNAL) {
-                String pdfdest = "/FitR " + dest;
-                resourceContext.addAnnotation(
-                    pdfDoc.getFactory().makeLink(rect, getPageReference().toString(), pdfdest));
+                if (dest.startsWith("#")) {
+                    String idDest = dest.substring(1);
+                    resourceContext.addAnnotation(
+                            pdfDoc.getFactory().makeLink(rect, idDest, true));
+                } else {
+                    String pdfdest = "/FitR " + dest;
+                    resourceContext.addAnnotation(
+                            pdfDoc.getFactory().makeLink(rect, getPageReference().toString(), pdfdest));
+                }
             } else {
                 resourceContext.addAnnotation(
                     pdfDoc.getFactory().makeLink(rect, dest, linkType, 0));
