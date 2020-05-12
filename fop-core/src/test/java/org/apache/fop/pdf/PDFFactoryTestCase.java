@@ -217,7 +217,7 @@ public class PDFFactoryTestCase {
     public void testMakeLink() {
         PDFDocument doc = new PDFDocument("");
         PDFFactory pdfFactory = new PDFFactory(doc);
-        Rectangle2D rect = new Rectangle(10,20);
+        Rectangle2D rect = new Rectangle(10, 20);
         PDFLink link = pdfFactory.makeLink(rect, "dest", true);
 
         String expectedString = "<< /Type /Annot\n" + "/Subtype /Link\n" + "/Rect [ "
