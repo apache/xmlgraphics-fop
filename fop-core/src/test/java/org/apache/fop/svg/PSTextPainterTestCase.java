@@ -20,11 +20,12 @@
 package org.apache.fop.svg;
 
 import java.awt.Graphics2D;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
+import org.junit.Assert;
 import org.junit.Test;
-
-import org.apache.commons.io.output.NullOutputStream;
 
 import org.apache.batik.bridge.TextPainter;
 
@@ -40,13 +41,12 @@ public class PSTextPainterTestCase extends NativeTextPainterTest {
     private static class OperatorCheckingPSGraphics2D extends PSGraphics2D {
 
         OperatorCheckingPSGraphics2D(FontInfo fontInfo, final OperatorValidator validator) {
-            super(false, new PSGenerator(new NullOutputStream()) {
-
+            super(false, new PSGenerator(new ByteArrayOutputStream()) {
                 @Override
                 public void writeln(String cmd) throws IOException {
+                    super.writeln(cmd);
                     validator.check(cmd);
                 }
-
             });
         }
     }
@@ -74,4 +74,11 @@ public class PSTextPainterTestCase extends NativeTextPainterTest {
                 .addOperatorMatch("xshow", "(C)\n[0] xshow"));
     }
 
+    @Test
+    public void testWatermark() throws Exception {
+        PSGraphics2D g2d = (PSGraphics2D) runTest("watermark.svg",
+                new OperatorValidator().addOperatorMatch("GS", "GS"));
+        OutputStream os = g2d.getPSGenerator().getOutputStream();
+        Assert.assertFalse(os.toString().contains("( ) false charpath"));
+    }
 }

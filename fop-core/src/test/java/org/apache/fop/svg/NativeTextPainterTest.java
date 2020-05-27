@@ -40,13 +40,14 @@ import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 
 abstract class NativeTextPainterTest {
 
-    protected final void runTest(String testcase, OperatorValidator validator) throws Exception {
+    protected final Graphics2D runTest(String testcase, OperatorValidator validator) throws Exception {
         FontInfo fontInfo = createFontInfo();
         BridgeContext bridgeContext = createBridgeContext(fontInfo);
         GraphicsNode svg = loadSVG(bridgeContext, testcase);
         Graphics2D g2d = createGraphics2D(fontInfo, validator);
         svg.paint(g2d);
         validator.end();
+        return g2d;
     }
 
     private FontInfo createFontInfo() {

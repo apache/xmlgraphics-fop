@@ -420,6 +420,9 @@ public class PSTextPainter extends NativeTextPainter {
 
         private void paintStrokedGlyphs(PSGraphics2D g2d, TextUtil textUtil,
                 Paint strokePaint, Stroke stroke) throws IOException {
+            if (currentGlyphs.toString().trim().isEmpty()) {
+                return;
+            }
             applyColor(strokePaint);
             PSGraphics2D.applyStroke(stroke, gen);
 
