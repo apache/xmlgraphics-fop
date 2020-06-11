@@ -412,7 +412,7 @@ public abstract class AbstractBreaker {
                 boolean ipdChangesOnNextPage = (alg.getIPDdifference() != 0);
                 boolean onLastPageAndIPDChanges = false;
                 if (!ipdChangesOnNextPage) {
-                    onLastPageAndIPDChanges = (lastPageHasIPDChange() && !thereIsANonRestartableLM(alg)
+                    onLastPageAndIPDChanges = (lastPageHasIPDChange(optimalPageCount) && !thereIsANonRestartableLM(alg)
                             && (shouldRedoLayout() || (wasLayoutRedone() && optimalPageCount > 1)));
                 }
                 if ((ipdChangesOnNextPage || hasMoreContent() || optimalPageCount > 1)
@@ -774,7 +774,7 @@ public abstract class AbstractBreaker {
         return false;
     }
 
-    protected boolean lastPageHasIPDChange() {
+    protected boolean lastPageHasIPDChange(int optimalPageCount) {
         return false;
     }
 

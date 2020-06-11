@@ -707,16 +707,18 @@ public class PageBreaker extends AbstractBreaker {
         return layoutRedone;
     }
 
-    protected boolean lastPageHasIPDChange() {
+    protected boolean lastPageHasIPDChange(int optimalPageCount) {
         boolean lastPageMasterDefined = pslm.getPageSequence().hasPagePositionLast();
         boolean onlyPageMasterDefined = pslm.getPageSequence().hasPagePositionOnly();
         if (lastPageMasterDefined && !onlyPageMasterDefined) {
             // code not very robust and unable to handle situations were only and last are defined
+            if (pageProvider.getCurrentColumnCount() > 1
+                    && optimalPageCount % pageProvider.getCurrentColumnCount() == 0) {
+                return false;
+            }
             int currentIPD = this.pageProvider.getCurrentIPD();
             int lastPageIPD = this.pageProvider.getLastPageIPD();
-            if (lastPageIPD != -1 && currentIPD != lastPageIPD) {
-                return true;
-            }
+            return lastPageIPD != -1 && currentIPD != lastPageIPD;
         }
         return false;
     }

@@ -394,8 +394,13 @@ public class PageProvider implements Constants {
     }
 
     public int getCurrentIPD() {
-        return getPageFromColumnIndex(startColumnOfCurrentElementList).getPageViewport().getBodyRegion()
-                .getColumnIPD();
+        Page page = getPageFromColumnIndex(startColumnOfCurrentElementList);
+        return page.getPageViewport().getBodyRegion().getColumnIPD();
+    }
+
+    public int getCurrentColumnCount() {
+        Page page = getPageFromColumnIndex(startColumnOfCurrentElementList);
+        return page.getPageViewport().getCurrentSpan().getColumnCount();
     }
 
     /**
