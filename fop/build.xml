@@ -614,7 +614,29 @@ list of possible build targets.
     <include name="commons-logging*.jar"/>
     <include name="xmlgraphics-commons*.jar"/>
   </fileset>
-  <target name="transcoder-pkg" depends="remove-cache" description="Generates the jar for the transcoder package for Batik">
+  
+  <condition property="isWindows">
+    <os family="windows" />
+  </condition>
+  
+  <condition property="isUnix">
+    <os family="unix" />
+  </condition>
+  
+  <target name="transcoder-pkg" depends="remove-cache,transcoder-pkg-unix" description="Generates the jar for the transcoder package for Batik" if="isWindows">
+    <exec executable="cmd" dir="${basedir}/.." failonerror="true">
+      <env key="MAVEN_OPTS" value="-Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2"/>
+	  <arg value="/c"/>
+	  <arg value="mvn"/>
+      <arg value="clean"/>
+      <arg value="install"/>
+      <arg value="-DskipTests"/>
+    </exec>	
+    <copy file="${basedir}/../fop-transcoder/target/fop-transcoder-${version}.jar" tofile="${build.dir}/fop-transcoder.jar"/>
+    <copy file="${basedir}/../fop-transcoder-allinone/target/fop-transcoder-allinone-${version}.jar" tofile="${build.dir}/fop-transcoder-allinone.jar"/>
+  </target>
+  
+  <target name="transcoder-pkg-unix" if="isUnix">
     <exec executable="mvn" dir="${basedir}/.." failonerror="true">
       <env key="MAVEN_OPTS" value="-Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2"/>
       <arg value="clean"/>
@@ -624,6 +646,7 @@ list of possible build targets.
     <copy file="${basedir}/../fop-transcoder/target/fop-transcoder-${version}.jar" tofile="${build.dir}/fop-transcoder.jar"/>
     <copy file="${basedir}/../fop-transcoder-allinone/target/fop-transcoder-allinone-${version}.jar" tofile="${build.dir}/fop-transcoder-allinone.jar"/>
   </target>
+  
   <target name="all" depends="package, servlet, transcoder-pkg, junit"/>
 <!-- "all" target for us Makefile converts ;-) -->
 <!-- =================================================================== -->
