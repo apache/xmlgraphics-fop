@@ -165,10 +165,14 @@ public class FopConfParserTestCase {
         URI currentDir = new File(".").getCanonicalFile().toURI();
         FopConfParser parser = new FopConfParser(configFile, currentDir);
         FopFactoryBuilder fopFactoryBuilder = parser.getFopFactoryBuilder();
-        assertEquals("base URI", currentDir.resolve(expectedBase),
+        assertEqualsLowerCase("base URI", currentDir.resolve(expectedBase),
                 fopFactoryBuilder.getBaseURI());
-        assertEquals("font base", currentDir.resolve(expectedFontBase),
+        assertEqualsLowerCase("font base", currentDir.resolve(expectedFontBase),
                 fopFactoryBuilder.getFontManager().getResourceResolver().getBaseURI());
+    }
+
+    private void assertEqualsLowerCase(String msg, URI a, URI b) {
+        assertEquals(msg, a.toString().toLowerCase(), b.toString().toLowerCase());
     }
 
 }
