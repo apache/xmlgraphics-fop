@@ -24,17 +24,21 @@ import java.net.URISyntaxException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
+
 public class LazyFontTestCase {
     @Test
     public void testFontError() throws URISyntaxException {
         FontUris fontUris = new FontUris(new URI("test"), null);
-        LazyFont lazyFont = new LazyFont(new EmbedFontInfo(fontUris, true, true, null, null), null, true);
+        InternalResourceResolver rr = ResourceResolverFactory.createDefaultInternalResourceResolver(new URI("."));
+        LazyFont lazyFont = new LazyFont(new EmbedFontInfo(fontUris, true, true, null, null), rr, true);
         String ex = null;
         try {
             lazyFont.getAscender();
         } catch (RuntimeException e) {
             ex = e.getMessage();
         }
-        Assert.assertEquals(ex, "Failed to read font file test");
+        Assert.assertEquals(ex, "Failed to read font file test URI is not absolute");
     }
 }
