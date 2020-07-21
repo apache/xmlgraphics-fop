@@ -68,6 +68,7 @@ public class PageBreaker extends AbstractBreaker {
     private MinOptMax relayedFootnoteSeparatorLength;
     private int previousFootnoteListIndex = -2;
     private int previousFootnoteElementIndex = -2;
+    private int prevousColumnCount;
 
     /**
      * The FlowLayoutManager object, which processes
@@ -712,8 +713,10 @@ public class PageBreaker extends AbstractBreaker {
         boolean onlyPageMasterDefined = pslm.getPageSequence().hasPagePositionOnly();
         if (lastPageMasterDefined && !onlyPageMasterDefined) {
             // code not very robust and unable to handle situations were only and last are defined
-            if (pageProvider.getCurrentColumnCount() > 1
-                    && optimalPageCount % pageProvider.getCurrentColumnCount() == 0) {
+            int currentColumnCount = pageProvider.getCurrentColumnCount();
+            boolean changeInColumnCount = prevousColumnCount > 0 && prevousColumnCount != currentColumnCount;
+            prevousColumnCount = currentColumnCount;
+            if ((currentColumnCount > 1 && optimalPageCount % currentColumnCount == 0) || changeInColumnCount) {
                 return false;
             }
             int currentIPD = this.pageProvider.getCurrentIPD();
