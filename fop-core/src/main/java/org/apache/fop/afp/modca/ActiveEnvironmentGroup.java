@@ -283,10 +283,12 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     private MapCodedFont getCurrentMapCodedFont() {
         int size = mapCodedFonts.size();
         if (size > 0) {
-            return (MapCodedFont)mapCodedFonts.get(size - 1);
-        } else {
-            return null;
+            AbstractStructuredObject font = mapCodedFonts.get(size - 1);
+            if (font instanceof MapCodedFont) {
+                return (MapCodedFont) font;
+            }
         }
+        return null;
     }
 
     /**
