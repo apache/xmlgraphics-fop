@@ -1004,10 +1004,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             // reset the current Positions
             currentBPPosition = 0;
             currentIPPosition = 0;
-
-            renderPageAreas(viewport.getPage());
+            super.renderPage(viewport);
             return PAGE_EXISTS;
         } catch (FOPException e) {
+            log.error(e);
+            return NO_SUCH_PAGE;
+        } catch (IOException e) {
             log.error(e);
             return NO_SUCH_PAGE;
         } finally {
