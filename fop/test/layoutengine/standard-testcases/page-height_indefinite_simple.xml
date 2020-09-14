@@ -46,8 +46,8 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="72000" xpath="//pageViewport[@nr=1]/page/regionViewport/@bpd"/>
-    <eval expected="90000" xpath="//pageViewport[@nr=2]/page/regionViewport/@bpd"/>
-    <eval expected="180000" xpath="//pageViewport[@nr=3]/page/regionViewport/@bpd"/>
+    <eval expected="2147483647" xpath="//pageViewport[@nr=1]/page/regionViewport/@bpd"/>
+    <eval expected="2147483647" xpath="//pageViewport[@nr=2]/page/regionViewport/@bpd"/>
+    <eval expected="2147483647" xpath="//pageViewport[@nr=3]/page/regionViewport/@bpd"/>
   </checks>
 </testcase>
