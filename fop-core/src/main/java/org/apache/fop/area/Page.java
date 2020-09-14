@@ -19,15 +19,11 @@
 
 package org.apache.fop.area;
 
-import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.fop.datatypes.FODimension;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.SimplePageMaster;
@@ -35,13 +31,13 @@ import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.WritingModeTraitsGetter;
 
-import static org.apache.fop.fo.Constants.EN_ERROR_IF_OVERFLOW;
-import static org.apache.fop.fo.Constants.EN_HIDDEN;
-import static org.apache.fop.fo.Constants.FO_REGION_AFTER;
-import static org.apache.fop.fo.Constants.FO_REGION_BEFORE;
-import static org.apache.fop.fo.Constants.FO_REGION_BODY;
-import static org.apache.fop.fo.Constants.FO_REGION_END;
-import static org.apache.fop.fo.Constants.FO_REGION_START;
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.fop.fo.Constants.*;
 
 /**
  * The page.
@@ -65,6 +61,8 @@ public class Page extends AreaTreeObject implements Serializable {
     private RegionViewport regionEnd;
     private RegionViewport regionAfter;
 
+    private Integer pageHeightEnum;
+
     // temporary map of unresolved objects used when serializing the page
     private Map<String, List<Resolvable>> unresolved;
 
@@ -82,6 +80,7 @@ public class Page extends AreaTreeObject implements Serializable {
      *            page-reference-area
      */
     public Page(SimplePageMaster spm) {
+        this.pageHeightEnum = spm != null && spm.getPageHeight() != null ? spm.getPageHeight().getEnum() :  null;
         // Width and Height of the page view port
         FODimension pageViewPortDims = new FODimension(spm.getPageWidth().getValue()
                             ,  spm.getPageHeight().getValue());
@@ -144,6 +143,10 @@ public class Page extends AreaTreeObject implements Serializable {
             rvp.setRegionReference(rr);
             setRegionViewport(r.getNameId(), rvp);
         }
+    }
+
+    public boolean hasIndefinitePageHeight() {
+        return Integer.valueOf(Constants.EN_INDEFINITE).equals(pageHeightEnum);
     }
 
     /**

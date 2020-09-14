@@ -146,11 +146,6 @@
     Overflows are not detected and warned.</description>
   </testcase>
   <testcase>
-    <name>Indefinite page height handling is imcomplete</name>
-    <file>page-height_indefinite_simple.xml</file>
-    <description>A RuntimeException is thrown for a page of indefinite height. Lots of warnings.</description>
-  </testcase>
-  <testcase>
     <name>page-number-citation: Problem with background-image</name>
     <file>page-number-citation_background-image.xml</file>
     <description>Background-images on page-number-citations are not

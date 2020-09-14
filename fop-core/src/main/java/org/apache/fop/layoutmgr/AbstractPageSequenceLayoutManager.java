@@ -19,21 +19,17 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.fop.area.AreaTreeHandler;
-import org.apache.fop.area.AreaTreeModel;
-import org.apache.fop.area.IDTracker;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Resolvable;
+import org.apache.fop.area.*;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.pagination.AbstractPageSequence;
+
+import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 /**
  * Abstract base class for a page sequence layout manager.
@@ -309,8 +305,9 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
             curPage.getPageViewport().dumpMarkers();
         }
 
+        handleIndefinitePageHeight();
+
         // Try to resolve any unresolved IDs for the current page.
-        //
         idTracker.tryIDResolution(curPage.getPageViewport());
         // Queue for ID resolution and rendering
         areaTreeHandler.getAreaTreeModel().addPage(curPage.getPageViewport());
@@ -319,6 +316,25 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
                     + ", current num: " + currentPageNum);
         }
         curPage = null;
+    }
+
+    /**
+     * Support for page-height="indefinite"
+     */
+    private void handleIndefinitePageHeight() {
+        PageViewport curPV = curPage.getPageViewport();
+        if (curPV.getPage().hasIndefinitePageHeight()) {
+            float height = (int) curPV.getBodyRegion().getRegionViewport().getViewArea().getY();
+            List<Span> spanList = curPV.getBodyRegion().getMainReference().getSpans();
+            if (spanList != null) {
+                for (Span span : spanList) {
+                    height += span.getHeight();
+                }
+            }
+
+            Rectangle2D rect = curPV.getViewArea();
+            curPV.getViewArea().setRect(rect.getX(), rect.getY(), rect.getWidth(), height);
+        }
     }
 
     /** {@inheritDoc} */

@@ -19,6 +19,8 @@
 
 package org.apache.fop.datatypes;
 
+import java.io.Serializable;
+
 /**
  * An interface for classes that can participate in numeric operations.
  * All the numeric operation (+, -, *, ...) are expressed in terms of
@@ -31,7 +33,7 @@ package org.apache.fop.datatypes;
  * during evaluation one additional methods exists: isAbsolute() which
  * return true for absolute numerics and false for relative numerics.
  */
-public interface Numeric {
+public interface Numeric extends Serializable {
     /**
      * Return the value of this Numeric
      * @return the computed value.
