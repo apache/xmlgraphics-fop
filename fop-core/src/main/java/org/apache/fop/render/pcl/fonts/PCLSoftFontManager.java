@@ -31,7 +31,12 @@ import java.util.Map.Entry;
 
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.Typeface;
+import org.apache.fop.fonts.truetype.GlyfTable;
+import org.apache.fop.fonts.truetype.OFDirTabEntry;
+import org.apache.fop.fonts.truetype.OFMtxEntry;
+import org.apache.fop.fonts.truetype.OFTableName;
 import org.apache.fop.render.java2d.CustomFontMetricsMapper;
+import org.apache.fop.util.CharUtilities;
 
 public class PCLSoftFontManager {
     private Map<Typeface, PCLFontReader> fontReaderMap;
@@ -45,11 +50,11 @@ public class PCLSoftFontManager {
     }
 
     public ByteArrayOutputStream makeSoftFont(Typeface font, String text) throws IOException {
-        List<Map<Character, Integer>> mappedGlyphs = mapFontGlyphs(font);
         if (!fontReaderMap.containsKey(font)) {
             fontReaderMap.put(font, PCLFontReaderFactory.createInstance(font));
         }
         fontReader = fontReaderMap.get(font);
+        List<Map<Character, Integer>> mappedGlyphs = mapFontGlyphs(font);
         if (mappedGlyphs.isEmpty()) {
             mappedGlyphs.add(new HashMap<Character, Integer>());
         }
@@ -95,7 +100,7 @@ public class PCLSoftFontManager {
         return f;
     }
 
-    private List<Map<Character, Integer>> mapFontGlyphs(Typeface tf) {
+    private List<Map<Character, Integer>> mapFontGlyphs(Typeface tf) throws IOException {
         List<Map<Character, Integer>> mappedGlyphs = new ArrayList<Map<Character, Integer>>();
         if (tf instanceof CustomFontMetricsMapper) {
             CustomFontMetricsMapper fontMetrics = (CustomFontMetricsMapper) tf;
@@ -105,10 +110,13 @@ public class PCLSoftFontManager {
         return mappedGlyphs;
     }
 
-    private List<Map<Character, Integer>> mapGlyphs(Map<Integer, Integer> usedGlyphs, CustomFont font) {
+    private List<Map<Character, Integer>> mapGlyphs(Map<Integer, Integer> usedGlyphs, CustomFont font)
+        throws IOException {
         int charCount = 32;
+        int charCountComposite = 32;
         List<Map<Character, Integer>> mappedGlyphs = new ArrayList<Map<Character, Integer>>();
         Map<Character, Integer> fontGlyphs = new HashMap<Character, Integer>();
+        Map<Character, Integer> fontGlyphsComposite = new HashMap<Character, Integer>();
         for (Entry<Integer, Integer> entry : usedGlyphs.entrySet()) {
             int glyphID = entry.getKey();
             if (glyphID == 0) {
@@ -120,12 +128,36 @@ public class PCLSoftFontManager {
                 charCount = 32;
                 fontGlyphs = new HashMap<Character, Integer>();
             }
-            fontGlyphs.put(unicode, charCount++);
+            if (isComposite(font, unicode)) {
+                fontGlyphsComposite.put(unicode, charCountComposite++);
+            } else {
+                fontGlyphs.put(unicode, charCount++);
+            }
         }
         if (fontGlyphs.size() > 0) {
             mappedGlyphs.add(fontGlyphs);
         }
+        if (fontGlyphsComposite.size() > 0) {
+            mappedGlyphs.add(fontGlyphsComposite);
+        }
         return mappedGlyphs;
+    }
+
+    private boolean isComposite(CustomFont customFont, int unicode) throws IOException {
+        OFDirTabEntry glyfTableInfo = fontReader.getFontFile().getDirectoryEntry(OFTableName.GLYF);
+        if (glyfTableInfo == null) {
+            return false;
+        }
+        List<OFMtxEntry> mtx = fontReader.getFontFile().getMtx();
+        Map<Integer, Integer> subsetGlyphs = customFont.getUsedGlyphs();
+        GlyfTable glyfTable = new GlyfTable(fontReader.getFontFileReader(), mtx.toArray(new OFMtxEntry[mtx.size()]),
+                glyfTableInfo, subsetGlyphs);
+        Map<Integer, Integer> mtxCharacters = fontReader.scanMtxCharacters();
+        if (mtxCharacters.containsKey(unicode)) {
+            int mtxChar = mtxCharacters.get(unicode);
+            return glyfTable.isComposite(mtxChar);
+        }
+        return false;
     }
 
     private void writeFontID(int fontID, OutputStream os) throws IOException {
@@ -256,6 +288,9 @@ public class PCLSoftFontManager {
         int curFontID = -1;
         String current = "";
         for (char ch : text.toCharArray()) {
+            if (ch == CharUtilities.NBSPACE) {
+                ch = ' ';
+            }
             for (PCLSoftFont softFont : fonts) {
                 if (curFontID == -1) {
                     curFontID = softFont.getFontID();

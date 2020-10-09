@@ -22,7 +22,6 @@ package org.apache.fop.render.pcl.fonts.truetype;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -553,7 +552,7 @@ public class PCLTTFFontReader extends PCLFontReader {
     }
 
     private void writeTrueTypeTable(ByteArrayOutputStream baos, OFTableName table,
-            List<TableOffset> tableOffsets) throws IOException, UnsupportedEncodingException {
+            List<TableOffset> tableOffsets) throws IOException {
         OFDirTabEntry tabEntry = ttfFont.getDirectoryEntry(table);
         if (tabEntry != null) {
             baos.write(tabEntry.getTag());
@@ -566,7 +565,7 @@ public class PCLTTFFontReader extends PCLFontReader {
         }
     }
 
-    private void writeGDIR(ByteArrayOutputStream baos) throws UnsupportedEncodingException, IOException {
+    private void writeGDIR(ByteArrayOutputStream baos) throws IOException {
         baos.write("gdir".getBytes("ISO-8859-1"));
         baos.write(PCLByteWriterUtil.unsignedLongInt(0)); // Checksum
         baos.write(PCLByteWriterUtil.unsignedLongInt(0)); // Offset
@@ -695,28 +694,24 @@ public class PCLTTFFontReader extends PCLFontReader {
         return (int) sum;
     }
 
-    protected byte[] createHmtx(Map<Character, Integer> mappedGlyphs) throws IOException {
+    protected byte[] createHmtx(Map<Character, Integer> mappedGlyphs) {
         byte[] hmtxTable = new byte[((mappedGlyphs.size() + 32) * 4)];
         OFDirTabEntry entry = ttfFont.getDirectoryEntry(OFTableName.HMTX);
-
         if (entry != null) {
             for (Entry<Character, Integer> glyphSubset : mappedGlyphs.entrySet()) {
                 char unicode = glyphSubset.getKey();
-                int originalIndex = 0;
                 int softFontGlyphIndex = glyphSubset.getValue();
                 if (font instanceof MultiByteFont) {
-                    originalIndex = ((MultiByteFont) font).getGIDFromChar(unicode);
-
-                    writeUShort(hmtxTable, (softFontGlyphIndex) * 4,
+                    int originalIndex = ((MultiByteFont) font).getGIDFromChar(unicode);
+                    writeUShort(hmtxTable, softFontGlyphIndex * 4,
                             ttfFont.getMtx().get(originalIndex).getWx());
-                    writeUShort(hmtxTable, (softFontGlyphIndex) * 4 + 2,
+                    writeUShort(hmtxTable, softFontGlyphIndex * 4 + 2,
                             ttfFont.getMtx().get(originalIndex).getLsb());
                 } else {
-                    originalIndex = ((SingleByteFont) font).getGIDFromChar(unicode);
-
-                    writeUShort(hmtxTable, (softFontGlyphIndex) * 4,
+                    int originalIndex = ((SingleByteFont) font).getGIDFromChar(unicode);
+                    writeUShort(hmtxTable, softFontGlyphIndex * 4,
                             font.getWidth(originalIndex, 1));
-                    writeUShort(hmtxTable, (softFontGlyphIndex) * 4 + 2, 0);
+                    writeUShort(hmtxTable, softFontGlyphIndex * 4 + 2, 0);
                 }
             }
         }
