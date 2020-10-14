@@ -37,6 +37,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fontbox.cff.CFFStandardString;
+import org.apache.fontbox.cff.CFFType1Font;
+import org.apache.fontbox.cff.CharStringCommand;
+import org.apache.fontbox.cff.Type2CharString;
 
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.cff.CFFDataReader;
@@ -46,6 +49,7 @@ import org.apache.fop.fonts.cff.CFFDataReader.FDSelect;
 import org.apache.fop.fonts.cff.CFFDataReader.FontDict;
 import org.apache.fop.fonts.cff.CFFDataReader.Format0FDSelect;
 import org.apache.fop.fonts.cff.CFFDataReader.Format3FDSelect;
+import org.apache.fop.fonts.type1.AdobeStandardEncoding;
 
 /**
  * Reads an OpenType CFF file and generates a subset
@@ -105,6 +109,9 @@ public class OTFSubSetFile extends OTFSubSetWriter {
     private static final int LOCAL_SUBROUTINE = 10;
     /** The operator used to identify a global subroutine reference */
     private static final int GLOBAL_SUBROUTINE = 29;
+
+    private static final String ACCENT_CMD = "seac";
+
     /** The parser used to parse type2 charstring */
     private Type2Parser type2Parser;
 
@@ -129,18 +136,39 @@ public class OTFSubSetFile extends OTFSubSetWriter {
             Map<Integer, Integer> usedGlyphs) throws IOException {
         this.mbFont = mbFont;
         fontFile = in;
-
         this.embeddedName = embeddedName;
-
+        initializeFont(in);
+        cffReader = new CFFDataReader(fontFile);
+        mapChars(usedGlyphs);
         //Sort by the new GID and store in a LinkedHashMap
         subsetGlyphs = sortByValue(usedGlyphs);
-
-        initializeFont(in);
-
-        cffReader = new CFFDataReader(fontFile);
-
         //Create the CIDFontType0C data
         createCFF();
+    }
+
+    private void mapChars(Map<Integer, Integer> usedGlyphs) throws IOException {
+        if (fileFont instanceof CFFType1Font) {
+            CFFType1Font cffType1Font = (CFFType1Font) fileFont;
+            subsetGlyphs = sortByValue(usedGlyphs);
+            for (int gid : subsetGlyphs.keySet()) {
+                Type2CharString type2CharString = cffType1Font.getType2CharString(gid);
+                List<Number> stack = new ArrayList<Number>();
+                for (Object obj : type2CharString.getType1Sequence()) {
+                    if (obj instanceof CharStringCommand) {
+                        String name = CharStringCommand.TYPE1_VOCABULARY.get(((CharStringCommand) obj).getKey());
+                        if (ACCENT_CMD.equals(name)) {
+                            int first = stack.get(3).intValue();
+                            int second = stack.get(4).intValue();
+                            mbFont.mapChar(AdobeStandardEncoding.getUnicodeFromCodePoint(first));
+                            mbFont.mapChar(AdobeStandardEncoding.getUnicodeFromCodePoint(second));
+                        }
+                        stack.clear();
+                    } else {
+                        stack.add((Number) obj);
+                    }
+                }
+            }
+        }
     }
 
     private Map<Integer, Integer> sortByValue(Map<Integer, Integer> map) {

@@ -21,6 +21,7 @@ package org.apache.fop.fonts.truetype;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +43,9 @@ import static org.mockito.Mockito.when;
 
 import org.apache.fontbox.cff.CFFFont;
 import org.apache.fontbox.cff.CFFParser;
+import org.apache.fontbox.cff.CFFType1Font;
+import org.apache.fontbox.cff.CharStringCommand;
+import org.apache.fontbox.cff.Type2CharString;
 
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.cff.CFFDataReader;
@@ -698,5 +702,32 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         fontSubset.skip(5);
         Assert.assertEquals(fontSubset.read(), 248);
         Assert.assertEquals(fontSubset.read(), (byte)(390 - 108));
+    }
+
+    @Test
+    public void testCompositeGlyphMapping() throws IOException {
+        glyphs.clear();
+        glyphs.put(0, 0);
+        OTFSubSetFile sourceSansSubset = new OTFSubSetFile() {
+            protected void initializeFont(FontFileReader in) {
+                fileFont = new CFFType1Font() {
+                    List<Object> sequence = Arrays.asList(0, 0, 0, (int)'a', (int)'b', new CharStringCommand(12, 6));
+                    public Type2CharString getType2CharString(int gid) {
+                        return new Type2CharString(null, null, null, 0, sequence, 0, 0);
+                    }
+                };
+            }
+        };
+        MultiByteFont multiByteFont = new MultiByteFont(null, null) {
+            public void setEmbedResourceName(String name) {
+                super.setEmbedResourceName(name);
+                addPrivateUseMapping('a', 'a');
+                addPrivateUseMapping('b', 'b');
+            }
+        };
+        multiByteFont.setEmbedURI(new File(".").toURI());
+        multiByteFont.setEmbedResourceName("");
+        sourceSansSubset.readFont(sourceSansReader, "SourceSansProBold", multiByteFont, glyphs);
+        Assert.assertEquals(multiByteFont.getUsedGlyphs().toString(), "{0=0, 97=1, 98=2}");
     }
 }

@@ -416,4 +416,13 @@ public enum AdobeStandardEncoding {
         }
         return "";
     }
+
+    public static char getUnicodeFromCodePoint(int codePoint) {
+        for (AdobeStandardEncoding encoding : CACHE.values()) {
+            if (encoding.getAdobeCodePoint() == codePoint) {
+                return (char) encoding.getUnicodeIndex();
+            }
+        }
+        return (char) -1;
+    }
 }
