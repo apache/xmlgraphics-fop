@@ -42,6 +42,8 @@ import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -432,9 +434,11 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     private void processPathIterator(PathIterator iter) {
         double[] dstPts = new double[6];
         double[] currentPosition = new double[2];
+        List<Integer> fillets = new ArrayList<Integer>();
         for (int[] openingCoords = new int[2]; !iter.isDone(); iter.next()) {
             switch (iter.currentSegment(dstPts)) {
             case PathIterator.SEG_LINETO:
+                flush(fillets);
                 graphicsObj.addLine(new int[] {
                         (int)Math.round(dstPts[X]),
                         (int)Math.round(dstPts[Y])
@@ -442,12 +446,13 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 currentPosition = new double[]{dstPts[X], dstPts[Y]};
                 break;
             case PathIterator.SEG_QUADTO:
+                flush(fillets);
                 graphicsObj.addFillet(new int[] {
                         (int)Math.round(dstPts[X1]),
                         (int)Math.round(dstPts[Y1]),
                         (int)Math.round(dstPts[X2]),
                         (int)Math.round(dstPts[Y2])
-                     }, true);
+                }, true);
                 currentPosition = new double[]{dstPts[X2], dstPts[Y2]};
                 break;
             case PathIterator.SEG_CUBICTO:
@@ -458,18 +463,17 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 if (quadParts.length >= 4) {
                     for (double[] quadPts : quadParts) {
                         if (quadPts != null && quadPts.length == 4) {
-                            graphicsObj.addFillet(new int[]{
-                                    (int) Math.round(quadPts[X1]),
-                                    (int) Math.round(quadPts[Y1]),
-                                    (int) Math.round(quadPts[X2]),
-                                    (int) Math.round(quadPts[Y2])
-                            }, true);
+                            fillets.add((int) Math.round(quadPts[X1]));
+                            fillets.add((int) Math.round(quadPts[Y1]));
+                            fillets.add((int) Math.round(quadPts[X2]));
+                            fillets.add((int) Math.round(quadPts[Y2]));
                             currentPosition = new double[]{quadPts[X2], quadPts[Y2]};
                         }
                     }
                 }
                 break;
             case PathIterator.SEG_MOVETO:
+                flush(fillets);
                 openingCoords = new int[] {
                         (int)Math.round(dstPts[X]),
                         (int)Math.round(dstPts[Y])
@@ -478,6 +482,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 graphicsObj.setCurrentPosition(openingCoords);
                 break;
             case PathIterator.SEG_CLOSE:
+                flush(fillets);
                 graphicsObj.addLine(openingCoords, true);
                 currentPosition = new double[]{openingCoords[0], openingCoords[1]};
                 break;
@@ -486,6 +491,26 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 break;
             }
         }
+        flush(fillets);
+    }
+
+    private void flush(List<Integer> fillets) {
+        List<int[]> intList = listToIntLists(fillets);
+        for (int[] ints : intList) {
+            graphicsObj.addFillet(ints, true);
+        }
+    }
+
+    private List<int[]> listToIntLists(List<Integer> input) {
+        List<int[]> out = new ArrayList<int[]>();
+        while (!input.isEmpty()) {
+            int[] data = new int[Math.min(100, input.size())];
+            for (int i = 0; i < data.length; i++) {
+                data[i] = input.remove(0);
+            }
+            out.add(data);
+        }
+        return out;
     }
 
     /** {@inheritDoc} */

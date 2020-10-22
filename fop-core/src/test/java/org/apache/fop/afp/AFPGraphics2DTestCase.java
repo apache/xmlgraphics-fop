@@ -20,12 +20,21 @@
 package org.apache.fop.afp;
 
 import java.awt.BasicStroke;
+import java.awt.Rectangle;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.apache.xmlgraphics.java2d.GraphicContext;
 
 import org.apache.fop.afp.modca.GraphicsObject;
 import org.apache.fop.fonts.FontInfo;
@@ -54,4 +63,21 @@ public class AFPGraphics2DTestCase {
         verify(gObject).setLineWidth(correctedLineWidth);
     }
 
+    @Test
+    public void testDrawGraphicsFillet() throws IOException {
+        GraphicContext gc = new GraphicContext();
+        gc.setClip(new Rectangle(0, 0, 2, 2));
+        graphics2D.setGraphicContext(gc);
+        GraphicsObject go = new GraphicsObject(new Factory(), "test");
+        graphics2D.setGraphicsObject(go);
+        graphics2D.draw(new Area(new Ellipse2D.Double(0, 0, 100, 100)));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        go.writeToStream(bos);
+        ByteArrayInputStream is = new ByteArrayInputStream(bos.toByteArray());
+        is.skip(17 + 9 + 14 + 6);
+        int graphicsFilletMarker = 0x85;
+        Assert.assertEquals(is.read(), graphicsFilletMarker);
+        int sizeOfGraphicsFillet = 128;
+        Assert.assertEquals(is.read(), sizeOfGraphicsFillet);
+    }
 }
