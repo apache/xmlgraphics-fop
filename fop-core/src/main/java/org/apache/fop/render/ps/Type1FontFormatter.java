@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.fontbox.cff.CFFCIDFont;
+import org.apache.fontbox.cff.CFFFont;
 import org.apache.fontbox.cff.CFFType1Font;
 import org.apache.fontbox.cff.DataOutput;
 import org.apache.fontbox.cff.Type1FontUtil;
@@ -47,13 +49,13 @@ public final class Type1FontFormatter {
      * @return the Type1 font
      * @throws IOException if an error occurs during reading the given font
      */
-    public byte[] format(CFFType1Font font, String i) throws IOException {
+    public byte[] format(CFFFont font, String i) throws IOException {
         DataOutput output = new DataOutput();
         printFont(font, output, i);
         return output.getBytes();
     }
 
-    private void printFont(CFFType1Font font, DataOutput output, String iStr)
+    private void printFont(CFFFont font, DataOutput output, String iStr)
             throws IOException {
         output.println("%!FontType1-1.0 " + font.getName() + iStr + " "
                 + font.getTopDict().get("version"));
@@ -73,7 +75,7 @@ public final class Type1FontFormatter {
         output.println("cleartomark");
     }
 
-    private void printFontDictionary(CFFType1Font font, DataOutput output, String iStr)
+    private void printFontDictionary(CFFFont font, DataOutput output, String iStr)
             throws IOException {
         output.println("10 dict begin");
         output.println("/FontInfo 10 dict dup begin");
@@ -112,7 +114,13 @@ public final class Type1FontFormatter {
         int max = 0;
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<Integer, Integer> gid : gids.entrySet()) {
-            String name = font.getCharset().getNameForGID(gid.getKey());
+            String name = "gid_" + gid.getKey();
+            if (gid.getKey() == 0) {
+                name = ".notdef";
+            }
+            if (font instanceof CFFType1Font) {
+                name = font.getCharset().getNameForGID(gid.getKey());
+            }
             sb.append(String.format("dup %d /%s put", gid.getValue(), name)).append('\n');
             max = Math.max(max, gid.getValue());
         }
@@ -133,32 +141,48 @@ public final class Type1FontFormatter {
         output.write(eexecBytes);
     }
 
-    private void printEexecFontDictionary(CFFType1Font font, DataOutput output)
+    private void printEexecFontDictionary(CFFFont font, DataOutput output)
             throws IOException {
         output.println("dup /Private 15 dict dup begin");
         output.println("/RD {string currentfile exch readstring pop} executeonly def");
         output.println("/ND {noaccess def} executeonly def");
         output.println("/NP {noaccess put} executeonly def");
+        Map<String, Object> privDict;
+        if (font instanceof CFFCIDFont) {
+            privDict = ((CFFCIDFont)font).getPrivDicts().get(0);
+        } else {
+            privDict = ((CFFType1Font)font).getPrivateDict();
+        }
         output.println("/BlueValues "
-                + formatArray(font.getPrivateDict().get("BlueValues"), true) + " ND");
+                + formatArray(privDict.get("BlueValues"), true) + " ND");
         output.println("/OtherBlues "
-                + formatArray(font.getPrivateDict().get("OtherBlues"), true) + " ND");
-        output.println("/BlueScale " + font.getPrivateDict().get("BlueScale") + " def");
-        output.println("/BlueShift " + font.getPrivateDict().get("BlueShift") + " def");
-        output.println("/BlueFuzz " + font.getPrivateDict().get("BlueFuzz") + " def");
-        output.println("/StdHW " + formatArray(font.getPrivateDict().get("StdHW"), true)
+                + formatArray(privDict.get("OtherBlues"), true) + " ND");
+        output.println("/BlueScale " + privDict.get("BlueScale") + " def");
+        output.println("/BlueShift " + privDict.get("BlueShift") + " def");
+        output.println("/BlueFuzz " + privDict.get("BlueFuzz") + " def");
+        output.println("/StdHW " + formatArray(privDict.get("StdHW"), true)
                 + " ND");
-        output.println("/StdVW " + formatArray(font.getPrivateDict().get("StdVW"), true)
+        output.println("/StdVW " + formatArray(privDict.get("StdVW"), true)
                 + " ND");
-        output.println("/ForceBold " + font.getPrivateDict().get("ForceBold") + " def");
+        output.println("/ForceBold " + privDict.get("ForceBold") + " def");
         output.println("/MinFeature {16 16} def");
         output.println("/password 5839 def");
 
         output.println("2 index /CharStrings " + gids.size() + " dict dup begin");
         Type1CharStringFormatter formatter = new Type1CharStringFormatter();
         for (int gid : gids.keySet()) {
-            String mapping = font.getCharset().getNameForGID(gid);
-            byte[] type1Bytes = formatter.format(font.getType1CharString(mapping).getType1Sequence());
+            String mapping = "gid_" + gid;
+            if (gid == 0) {
+                mapping = ".notdef";
+            }
+            byte[] type1Bytes;
+            if (font instanceof CFFCIDFont) {
+                int cid = font.getCharset().getCIDForGID(gid);
+                type1Bytes = formatter.format(((CFFCIDFont)font).getType2CharString(cid).getType1Sequence());
+            } else {
+                mapping = font.getCharset().getNameForGID(gid);
+                type1Bytes = formatter.format(((CFFType1Font)font).getType1CharString(mapping).getType1Sequence());
+            }
             byte[] charstringBytes = Type1FontUtil.charstringEncrypt(type1Bytes, 4);
             output.print("/" + mapping + " " + charstringBytes.length + " RD ");
             output.write(charstringBytes);

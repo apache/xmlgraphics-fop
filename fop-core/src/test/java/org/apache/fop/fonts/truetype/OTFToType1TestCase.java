@@ -21,6 +21,7 @@ package org.apache.fop.fonts.truetype;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,6 +53,20 @@ public class OTFToType1TestCase {
     public void testFontType() throws IOException {
         CustomFont t1 = getRealFont("test/resources/fonts/otf/SourceSansProBold.otf");
         Assert.assertEquals(t1.getFontType(), FontType.TYPE1);
+    }
+
+    @Test
+    public void testCIDFont() throws IOException {
+        CFFToType1Font realFont = (CFFToType1Font)getRealFont("test/resources/fonts/otf/AlexBrush-Regular-cid.otf");
+        for (int i = 0; i < 10240; i++) {
+            realFont.mapChar((char) i);
+        }
+        List<InputStream> fonts = realFont.getInputStreams();
+        InputStream is = fonts.get(0);
+        Type1Font t1 = Type1Font.createWithPFB(is);
+        Assert.assertEquals(t1.getFontName(), "AlexBrush-Regular.0");
+        Assert.assertTrue(t1.getCharStringsDict().keySet().contains(".notdef"));
+        Assert.assertTrue(t1.getCharStringsDict().keySet().contains("gid_1"));
     }
 
     private Type1Font getFont(String s) throws IOException {

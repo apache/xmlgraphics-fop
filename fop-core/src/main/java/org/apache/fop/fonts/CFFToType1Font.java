@@ -30,7 +30,6 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.fontbox.cff.CFFFont;
 import org.apache.fontbox.cff.CFFParser;
-import org.apache.fontbox.cff.CFFType1Font;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.type1.PFBData;
@@ -57,9 +56,6 @@ public class CFFToType1Font extends MultiByteFont {
 
     private List<InputStream> convertOTFToType1(InputStream in) throws IOException {
         CFFFont f = new CFFParser().parse(IOUtils.toByteArray(in)).get(0);
-        if (!(f instanceof  CFFType1Font)) {
-            throw new IOException(getEmbedFileURI() + ": only OTF CFF Type1 font can be converted to Type1");
-        }
         List<InputStream> fonts = new ArrayList<InputStream>();
         Map<Integer, Integer> glyphs = cidSet.getGlyphs();
         int i = 0;
@@ -88,9 +84,10 @@ public class CFFToType1Font extends MultiByteFont {
         return allGlyphs;
     }
 
-    private InputStream convertOTFToType1(Map<Integer, Integer> glyphs, CFFFont f, String i) throws IOException {
-        byte[] t1 = new Type1FontFormatter(glyphs).format((CFFType1Font) f, i);
-        PFBData pfb = new PFBParser().parsePFB(new ByteArrayInputStream(t1));
+    private InputStream convertOTFToType1(Map<Integer, Integer> glyphs, CFFFont cffFont, String splitGlyphsId)
+        throws IOException {
+        byte[] type1Bytes = new Type1FontFormatter(glyphs).format(cffFont, splitGlyphsId);
+        PFBData pfb = new PFBParser().parsePFB(new ByteArrayInputStream(type1Bytes));
         ByteArrayOutputStream s1 = new ByteArrayOutputStream();
         s1.write(pfb.getHeaderSegment());
         ByteArrayOutputStream s2 = new ByteArrayOutputStream();
