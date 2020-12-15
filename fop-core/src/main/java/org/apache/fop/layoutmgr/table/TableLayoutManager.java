@@ -79,6 +79,7 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
     private Block curBlockArea;
 
     private double tableUnit;
+    private double oldTableUnit;
     private boolean autoLayout = true;
 
     private int halfBorderSeparationBPD;
@@ -241,7 +242,8 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
          * for proportional-column-width()
          */
         if (tableUnit == 0.0) {
-            this.tableUnit = columns.computeTableUnit(this);
+            tableUnit = columns.computeTableUnit(this);
+            tableUnit = Math.max(tableUnit, oldTableUnit);
         }
 
         if (!firstVisibleMarkServed) {
@@ -531,6 +533,7 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
     public void reset() {
         super.reset();
         curBlockArea = null;
+        oldTableUnit = tableUnit;
         tableUnit = 0.0;
     }
 
