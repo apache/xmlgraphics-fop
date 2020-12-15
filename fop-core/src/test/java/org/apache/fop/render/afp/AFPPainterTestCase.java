@@ -57,6 +57,7 @@ import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.fonts.CharactersetEncoder;
+import org.apache.fop.afp.fonts.OutlineFontTestCase;
 import org.apache.fop.afp.fonts.RasterFont;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
@@ -248,14 +249,7 @@ public class AFPPainterTestCase {
         documentHandler.startDocument();
         documentHandler.startPage(0, "", "", new Dimension());
         AFPPainter afpPainter = new AFPPainter(documentHandler);
-        int style = Constants.EN_DOTTED;
-        BorderProps.Mode mode = BorderProps.Mode.COLLAPSE_OUTER;
-        Color color = ColorUtil.parseColorString(ua, "fop-rgb-icc(0.5019608,0.5019608,0.5019608,#CMYK,,0,0,0,0.5)");
-        int borderWidth = 500;
-        int radiusStart = 0;
-        int radiusEnd = 0;
-        BorderProps border1 = new BorderProps(style, borderWidth, radiusStart, radiusEnd, color, mode);
-        afpPainter.drawBorderRect(new Rectangle(0, 0, 552755, 16090), null, border1, null, null, Color.WHITE);
+        drawBorder(afpPainter, ua);
         documentHandler.endDocument();
 
         InputStream bis = new ByteArrayInputStream(os.toByteArray());
@@ -275,5 +269,68 @@ public class AFPPainterTestCase {
                 + "END PRESENTATION_TEXT PT000002\n"
                 + "END PAGE PGN00001\n"
                 + "END DOCUMENT DOC00001\n");
+    }
+
+    @Test
+    public void testDrawBorderRectAndText() throws IFException, PropertyException, IOException {
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        AFPDocumentHandler documentHandler = new AFPDocumentHandler(new IFContext(ua));
+        documentHandler.setResolution(480);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        documentHandler.setResult(new StreamResult(os));
+        documentHandler.startDocument();
+        documentHandler.startPage(0, "", "", new Dimension());
+        AFPPainter afpPainter = new AFPPainter(documentHandler);
+        setFont(documentHandler, afpPainter);
+        drawBorder(afpPainter, ua);
+        StringBuilder text = new StringBuilder();
+        for (int i = 0; i < 4770; i++) {
+            text.append("a");
+        }
+        afpPainter.drawText(0, 0, 0, 0, null, text.toString());
+        documentHandler.endDocument();
+
+        InputStream bis = new ByteArrayInputStream(os.toByteArray());
+        StringBuilder sb = new StringBuilder();
+        new AFPParser(false).read(bis, sb);
+        Assert.assertEquals(sb.toString(), "BEGIN DOCUMENT DOC00001\n"
+                + "BEGIN PAGE PGN00001\n"
+                + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "DESCRIPTOR PAGE\n"
+                + "MIGRATION PRESENTATION_TEXT\n"
+                + "END ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "BEGIN PRESENTATION_TEXT PT000001\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000001\n"
+                + "BEGIN PRESENTATION_TEXT PT000002\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000002\n"
+                + "BEGIN PRESENTATION_TEXT PT000003\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000003\n"
+                + "END PAGE PGN00001\n"
+                + "END DOCUMENT DOC00001\n");
+    }
+
+    private void setFont(AFPDocumentHandler doc, AFPPainter afpPainter) throws IFException {
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("", Font.DEFAULT_FONT);
+        RasterFont rf = new RasterFont("", true);
+        CharacterSet cs = OutlineFontTestCase.getCharacterSet();
+        rf.addCharacterSet(12000, cs);
+        fi.addMetrics("", rf);
+        doc.setFontInfo(fi);
+        afpPainter.setFont("any", "normal", 400, "", 12000, Color.BLACK);
+    }
+
+    private void drawBorder(AFPPainter afpPainter, FOUserAgent ua) throws IFException, PropertyException {
+        int style = Constants.EN_DOTTED;
+        BorderProps.Mode mode = BorderProps.Mode.COLLAPSE_OUTER;
+        Color color = ColorUtil.parseColorString(ua, "fop-rgb-icc(0.5019608,0.5019608,0.5019608,#CMYK,,0,0,0,0.5)");
+        int borderWidth = 500;
+        int radiusStart = 0;
+        int radiusEnd = 0;
+        BorderProps border1 = new BorderProps(style, borderWidth, radiusStart, radiusEnd, color, mode);
+        afpPainter.drawBorderRect(new Rectangle(0, 0, 552755, 16090), null, border1, null, null, Color.WHITE);
     }
 }
