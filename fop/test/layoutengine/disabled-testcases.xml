@@ -87,13 +87,13 @@
   <testcase>
     <name>NPE for table inside an inline</name>
     <file>inline_block_nested_3.xml</file>
-    <description>Placing a table as a child of an fo:inline produces a 
+    <description>Placing a table as a child of an fo:inline produces a
     NullPointerException.</description>
   </testcase>
   <testcase>
     <name>Keeps on inline-container are not implemented, yet.</name>
     <file>inline-container_keeps.xml</file>
-    <description>The keep-with-previous and keep-with-next properties have not been implemented on 
+    <description>The keep-with-previous and keep-with-next properties have not been implemented on
       inline-container yet. They will be treated as if they had the value "auto".</description>
   </testcase>
   <testcase>
@@ -135,14 +135,14 @@
   <testcase>
     <name>Page breaking doesn't deal with IPD changes</name>
     <file>page-breaking_4.xml</file>
-    <description>Page breaking currently doesn't support changing available IPD 
+    <description>Page breaking currently doesn't support changing available IPD
     between pages of a single page-sequence. Element list generation has to be reset to
     redetermine line breaks in this case.</description>
   </testcase>
   <testcase>
     <name>Overflow handing is incomplete</name>
     <file>page-breaking_6.xml</file>
-    <description>Line breaking is not 100% correct when there's too little space. 
+    <description>Line breaking is not 100% correct when there's too little space.
     Overflows are not detected and warned.</description>
   </testcase>
   <testcase>
@@ -186,7 +186,7 @@
   <testcase>
     <name>table-cell empty area with marker.xml</name>
     <file>table-cell_empty_area_with_marker.xml</file>
-    <description>A table-cell producing an empty area does currently not add any markers to a page. 
+    <description>A table-cell producing an empty area does currently not add any markers to a page.
       See TODO entry in AreaAdditionUtil.</description>
   </testcase>
   <testcase>
@@ -195,12 +195,6 @@
     <description>The code should be ok, but the test case uses shorthands and therefore
     is probably not expressing the indended outcome according to the spec. The test
     case should be revisited.</description>
-  </testcase>
-  <testcase>
-    <name>Soft hyphen with normal hyphenation enabled</name>
-    <file>block_shy_linebreaking_hyph.xml</file>
-    <description>A soft hyphen should be a preferred as break compared to a
-    normal hyphenation point but is not. Background info: see JIRA FOP-2466.</description>
   </testcase>
   <testcase>
     <name>Page-keep not respected in multi-column layout</name>
