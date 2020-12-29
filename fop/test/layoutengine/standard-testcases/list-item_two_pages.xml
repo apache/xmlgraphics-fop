@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks element list generation with padding in lists (list-item).
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="all" page-width="8.5in" page-height="11in" margin-bottom="0.3cm" margin-right="1cm" margin-top="1cm" margin-left="1cm">
+          <fo:region-body margin-bottom="1cm"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence format="1" id="th_default_sequence1" master-reference="all">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>
+
+            <fo:list-block font-family="Times" line-height="13pt" font-size="12pt" space-before="12pt" space-after="12pt">
+
+              <fo:list-item space-before="12pt" space-after="12pt">
+                <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                  <fo:block>8</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                  <fo:block>
+                    <fo:inline>Non-Solicitation</fo:inline>: I will not, for a period of one year after the Separation Date, solicit, interfere with, or cause any current Red Cross employee to leave employment with the Red Cross, nor will I solicit, induce, or attempt to induce any of the Red Cross’ past or current customers, clients, or donors (a) to cease doing business, in whole or in part, with or through the Red Cross, or (b) to do business with any other person, corporation, or other entity performing services materially similar to or competitive with those provided by the Red Cross.</fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+              <fo:list-item space-before="12pt" space-after="12pt">
+                <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                  <fo:block>9</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                  <fo:block>
+                    <fo:inline>Consideration and No Additional Payments</fo:inline>: In consideration for my promises in the Agreement, including the Release of Claims below, I am receiving pay and benefits to which I am not otherwise entitled. I agree that I am not entitled to any additional pay or benefits beyond what is provided in this Agreement.</fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+              <fo:list-item space-before="12pt" space-after="12pt">
+                <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                  <fo:block>10</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                  <fo:block>
+                    <fo:inline>Release of Claims:</fo:inline> I permanently and completely waive, release, and forever discharge Red Cross from liability for all known and unknown claims, charges, complaints and causes of action (collectively, “Release of Claims”) that I have or may have accrued through the effective date of this Agreement. This is a general release, and includes all claims except those that cannot be released under applicable law. This Release of Claims includes, but is not limited to, the following: <fo:list-block font-family="Times" line-height="13pt" font-size="12pt" space-before="12pt" space-after="12pt">
+                  <fo:list-item space-before="12pt" space-after="12pt">
+                    <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                      <fo:block>(a)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                          <fo:block>claims that could have been raised under any statute, law, regulation or precedent, with respect to my employment or termination from employment; </fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                      <fo:list-item space-before="12pt" space-after="12pt">
+                        <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                          <fo:block>(b)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                          <fo:block>claims for wrongful discharge, breach of contract, breach of implied covenant of good faith and fair dealing, interference with contractual relations, interference with prospective economic advantage, negligence, defamation, misrepresentation, fraud, infliction of emotional distress, and any other claims brought under common law in any form; </fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                      <fo:list-item space-before="12pt" space-after="12pt">
+                        <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                          <fo:block>(c)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                          <fo:block>claims arising under or based upon Title VII of the Civil Rights Act of 1964, the Age Discrimination in Employment Act of 1967 (“ADEA”), the Employee Retirement Income Security Act of 1974, the Americans with Disabilities Act,<fo:inline> </fo:inline>the Civil Rights Act of 1991, the civil rights statutes codified at 42 U.S.C.§ 1981 et seq., the Family and Medical Leave Act, and any other applicable federal<fo:inline>,</fo:inline> state or local statute, law, ordinance, decision, rule or law of any kind, as well as any amendments thereof; provided, however, that the following claims are excluded from this provision and are NOT waived:<fo:list-block font-family="Times" line-height="13pt" font-size="12pt" space-before="12pt" space-after="12pt">
+                          <fo:list-item space-before="12pt" space-after="12pt">
+                            <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                              <fo:block>i</fo:block>
+                                </fo:list-item-label>
+                                <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                                  <fo:block>Claims for benefits entitlements vested as of the Separation Date, pursuant to a written Red Cross benefit plan;</fo:block>
+                                </fo:list-item-body>
+                              </fo:list-item>
+                              <fo:list-item space-before="12pt" space-after="12pt">
+                                <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                                  <fo:block>ii</fo:block>
+                                </fo:list-item-label>
+                                <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                                  <fo:block>Claims for continuation of insurance coverage pursuant to COBRA;  and </fo:block>
+                                </fo:list-item-body>
+                              </fo:list-item>
+                              <fo:list-item space-before="12pt" space-after="12pt">
+                                <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                                  <fo:block>iii</fo:block>
+                                </fo:list-item-label>
+                                <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                                  <fo:block>unemployment, workers’ compensation or any state disability insurance benefits pursuant to the terms of applicable state law; and, </fo:block>
+                                </fo:list-item-body>
+                              </fo:list-item>
+                            </fo:list-block>
+                          </fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                      <fo:list-item space-before="12pt" space-after="12pt">
+                        <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                          <fo:block>(d)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                          <fo:block>any and all claims, including those that are not known or suspected at the time of the execution of this Agreement, notwithstanding the provisions of Section 1542 of the Civil Code of California, and in spite of any protections, rights or benefits that may be afforded to California-based employees under Section 1542.</fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                    </fo:list-block>
+                  </fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+              <fo:list-item space-before="12pt" space-after="12pt">
+                <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                  <fo:block>11</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                  <fo:block>
+                    <fo:inline>No Lawsuits or Other Actions</fo:inline>: I have not filed or caused to be filed any lawsuits, charges or complaints against the Red Cross with any court or municipal, state or federal agency. To the extent consistent with applicable law, I will not initiate any legal action, charge or complaint against the Red Cross in any forum in connection with the claims released in this Agreement, except that I understand that nothing in this Agreement interferes with my right to file a charge with the Equal Employment Opportunity Commission (“EEOC”) or participate in an EEOC investigation or proceeding.<fo:inline font-style="italic"> </fo:inline>I understand that I am waiving the right to recover monetary or other damages in any action brought by the EEOC or any other party.</fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+              <fo:list-item space-before="12pt" space-after="12pt">
+                <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                  <fo:block>12</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                  <fo:block>
+                    <fo:inline>Older Workers’ Benefits Protection Act</fo:inline>: I affirm that: <fo:list-block font-family="Times" line-height="13pt" font-size="12pt" space-before="12pt" space-after="12pt">
+                  <fo:list-item space-before="12pt" space-after="12pt">
+                    <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                      <fo:block>(a)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                          <fo:block>I have read and fully understand the terms of this Agreement, including the Release of Claims;</fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                      <fo:list-item space-before="12pt" space-after="12pt">
+                        <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                          <fo:block>(b)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                          <fo:block>this Agreement specifically waives my rights and potential claims under the ADEA; </fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                      <fo:list-item space-before="12pt" space-after="12pt">
+                        <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                          <fo:block>(c)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                          <fo:block>the consideration for the Release of Claims in this Agreement is adequate to make it final and binding, and is in addition to payments or benefits to which I would otherwise be entitled; </fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                      <fo:list-item space-before="12pt" space-after="12pt">
+                        <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                          <fo:block>(d)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                          <fo:block>I am hereby advised to consult with an attorney before entering into and signing this Agreement and Release of Claims, and I have independently and freely exercised my own judgment and discretion in deciding whether to do so;</fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                      <fo:list-item space-before="12pt" space-after="12pt">
+                        <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                          <fo:block>(e)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                          <fo:block>I have been given a <fo:inline>minimum of forty-five (45) days</fo:inline> to consider this Agreement and Release of Claims, and if I have decided to enter into this Agreement before the end of that period I have done so voluntarily as signified by my signature below;</fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                      <fo:list-item space-before="12pt" space-after="12pt">
+                        <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                          <fo:block>(f)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                          <fo:block>I have received and reviewed Attachment B of this Agreement listing the ages and job titles of persons in the unit who were and were not eligible for severance under the Plan; and</fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                      <fo:list-item space-before="12pt" space-after="12pt">
+                        <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                          <fo:block>(g)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                          <fo:block>
+                            <fo:inline>I may revoke this Agreement and Release of Claims up to seven (7) days after signing it </fo:inline>by providing written notice of such revocation to ytytytyt u, Human Resources Business Advisor at the Red Cross, at: <fo:block/>      HR Now Service Center <fo:block/>      13500 South Point Blvd., Suite L<fo:block/>      Charlotte, NC  28273  <fo:block/>      Phone: 833-473-9261<fo:block/>      Fax: 704-943-7396<fo:block/>
+                            <fo:block/>(“Right to Revoke”). I further agree that, if I exercise my Right to Revoke, all of the Red Cross’ obligations to me under the Agreement will become null and void.</fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                    </fo:list-block>
+                  </fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+              <fo:list-item space-before="12pt" space-after="12pt">
+                <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                  <fo:block>13</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                  <fo:block>
+                    <fo:inline>Cooperation in Legal Proceedings</fo:inline>: I will cooperate with the Red Cross in any investigations into matters that occurred during my employment. If I have knowledge relevant to any legal proceeding in which the Red Cross is involved, I agree to be available at mutually agreed-upon times and places to assist the Red Cross or its agents in the legal proceeding. If I am contacted by anyone concerning a potential claim, charge, complaint, demand, lawsuit, governmental investigation or other proceeding against the Red Cross, or if I receive a subpoena concerning a proceeding against it, I will notify the Red Cross’ Office of General Counsel as soon as possible at 431 18th Street, NW, Washington, DC 20006, Phone: (202) 303-5433; Fax: (202) 303-0143.</fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+              <fo:list-item space-before="12pt" space-after="12pt">
+                <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                  <fo:block>14</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                  <fo:block>
+                    <fo:inline>Liquidated Damages</fo:inline>: In the event I violate this Agreement after accepting any of its benefits, the Red Cross shall be entitled to liquidated damages in the amount of $5,000. I acknowledge that the actual damages the Red Cross would sustain upon any such violation are difficult or impossible to ascertain in advance and that the sum of $5,000 is a reasonable approximation of a likely amount of damages. </fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+              <fo:list-item space-before="12pt" space-after="12pt">
+                <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                  <fo:block>15</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                  <fo:block>
+                    <fo:inline>Severability</fo:inline>: If any term of this Agreement is held to be illegal, invalid, or unenforceable, all other provisions will remain in full force and effect. The illegal, invalid, or unenforceable provision will, to the extent permissible, be applied so as to render the remaining provisions enforceable.</fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+              <fo:list-item space-before="12pt" space-after="12pt">
+                <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                  <fo:block>16</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                  <fo:block>
+                    <fo:inline>Governing Law</fo:inline>: The terms and enforcement of this Agreement are governed by the laws of the District of Columbia without regard to conflict of law rules. </fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+              <fo:list-item space-before="12pt" space-after="12pt">
+                <fo:list-item-label end-indent="label-end()" font-size="12pt" font-family="Times">
+                  <fo:block>17</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()" font-family="Times" font-size="12pt">
+                  <fo:block>
+                    <fo:inline>Entire Agreement</fo:inline>: This Agreement sets forth the entire agreement between me and the Red Cross, and it fully supersedes any and all prior negotiations, agreements and understandings between us about the matters in the Agreement, except that my commitments contained in the Code of Business Ethics and Conduct and any prior executed confidentiality agreements, including the Confidential Information and Intellectual Property Agreement, remain in effect. This Agreement may only be modified in a written amendment signed both by me and by a duly authorized officer of the Red Cross. In entering into this Agreement, I have relied only on its written terms and not on any statements or representations of any person or entity.</fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+            </fo:list-block>
+
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+
+  </fo>
+  <checks>
+      <eval expected="2" xpath="count(//pageViewport)"/>
+  </checks>
+</testcase>

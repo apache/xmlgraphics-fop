@@ -54,6 +54,7 @@ import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.NonLeafPosition;
+import org.apache.fop.layoutmgr.PageProvider;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceResolver;
@@ -467,23 +468,32 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
     }
 
     private boolean shouldWeAvoidBreak(List returnList, LayoutManager lm) {
-        if (lm instanceof BlockLayoutManager) {
-            return true;
-        }
-        if (lm instanceof ListBlockLayoutManager) {
-            int penaltyShootout = 0;
-            for (Object o : returnList) {
-                if (o instanceof BreakElement) {
-                    if (((BreakElement) o).getPenaltyValue() > 0) {
-                        penaltyShootout++;
-                    } else {
-                        penaltyShootout--;
+        if (isChangingIPD(lm)) {
+            if (lm instanceof BlockLayoutManager) {
+                return true;
+            }
+            if (lm instanceof ListBlockLayoutManager) {
+                int penaltyShootout = 0;
+                for (Object o : returnList) {
+                    if (o instanceof BreakElement) {
+                        if (((BreakElement) o).getPenaltyValue() > 0) {
+                            penaltyShootout++;
+                        } else {
+                            penaltyShootout--;
+                        }
                     }
                 }
+                return penaltyShootout > 0;
             }
-            return penaltyShootout > 0;
         }
         return false;
+    }
+
+    private boolean isChangingIPD(LayoutManager lm) {
+        PageProvider pageProvider = lm.getPSLM().getPageProvider();
+        int currentIPD = pageProvider.getCurrentIPD();
+        int nextIPD = pageProvider.getNextIPD();
+        return nextIPD != currentIPD;
     }
 
     private int getNextStep(List[] elementLists, int[] start, int[] end, int[] partialHeights) {

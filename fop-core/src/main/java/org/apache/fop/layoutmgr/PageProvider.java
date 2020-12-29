@@ -398,6 +398,11 @@ public class PageProvider implements Constants {
         return page.getPageViewport().getBodyRegion().getColumnIPD();
     }
 
+    public int getNextIPD() {
+        Page page = getPageFromColumnIndex(startColumnOfCurrentElementList + 1);
+        return page.getPageViewport().getBodyRegion().getColumnIPD();
+    }
+
     public int getCurrentColumnCount() {
         Page page = getPageFromColumnIndex(startColumnOfCurrentElementList);
         return page.getPageViewport().getCurrentSpan().getColumnCount();
