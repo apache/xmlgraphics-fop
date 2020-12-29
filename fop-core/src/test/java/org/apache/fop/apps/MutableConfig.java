@@ -133,6 +133,10 @@ public final class MutableConfig implements FopFactoryConfig {
         return delegate.isComplexScriptFeaturesEnabled();
     }
 
+    public boolean isTableBorderOverpaint() {
+        return delegate.isTableBorderOverpaint();
+    }
+
     public Map<String, String> getHyphenationPatternNames() {
         return delegate.getHyphenationPatternNames();
     }

@@ -163,6 +163,8 @@ public interface FopFactoryConfig {
 
     boolean isComplexScriptFeaturesEnabled();
 
+    boolean isTableBorderOverpaint();
+
     /** @return the hyphenation pattern names */
     Map<String, String> getHyphenationPatternNames();
 

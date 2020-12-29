@@ -327,6 +327,11 @@ public final class FopFactoryBuilder {
         return this;
     }
 
+    public FopFactoryBuilder setTableBorderOverpaint(boolean b) {
+        fopFactoryConfigBuilder.setTableBorderOverpaint(b);
+        return this;
+    }
+
     public static class FopFactoryConfigImpl implements FopFactoryConfig {
 
         private final EnvironmentProfile enviro;
@@ -367,6 +372,8 @@ public final class FopFactoryBuilder {
         private boolean isComplexScript = true;
 
         private Map<String, String> hyphPatNames;
+
+        private boolean tableBorderOverpaint;
 
         private static final class ImageContextImpl implements ImageContext {
 
@@ -484,6 +491,10 @@ public final class FopFactoryBuilder {
             return isComplexScript;
         }
 
+        public boolean isTableBorderOverpaint() {
+            return tableBorderOverpaint;
+        }
+
         public Map<String, String> getHyphenationPatternNames() {
             return hyphPatNames;
         }
@@ -529,6 +540,8 @@ public final class FopFactoryBuilder {
         void setComplexScriptFeaturesEnabled(boolean csf);
 
         void setHyphPatNames(Map<String, String> hyphPatNames);
+
+        void setTableBorderOverpaint(boolean b);
     }
 
     private static final class CompletedFopFactoryConfigBuilder implements FopFactoryConfigBuilder {
@@ -613,6 +626,9 @@ public final class FopFactoryBuilder {
             throwIllegalStateException();
         }
 
+        public void setTableBorderOverpaint(boolean b) {
+            throwIllegalStateException();
+        }
     }
 
     private static final class ActiveFopFactoryConfigBuilder implements FopFactoryConfigBuilder {
@@ -696,6 +712,10 @@ public final class FopFactoryBuilder {
 
         public void setHyphPatNames(Map<String, String> hyphPatNames) {
             config.hyphPatNames = hyphPatNames;
+        }
+
+        public void setTableBorderOverpaint(boolean b) {
+            config.tableBorderOverpaint = b;
         }
     }
 

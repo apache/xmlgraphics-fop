@@ -121,6 +121,13 @@ public class BorderProps implements Serializable {
     }
 
     /**
+     * @return the border mode ((one of SEPARATE, COLLAPSE_INNER and COLLAPSE_OUTER)
+     */
+    public Mode getMode() {
+        return mode;
+    }
+
+    /**
      * @param bp the border properties or null
      * @return the effective width of the clipped part of the border
      */

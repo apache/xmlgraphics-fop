@@ -122,6 +122,7 @@ public class TestAssistant {
         FopFactoryBuilder builder = new FopFactoryBuilder(envProfile);
         builder.setStrictFOValidation(isStrictValidation(testDoc));
         builder.getFontManager().setBase14KerningEnabled(isBase14KerningEnabled(testDoc));
+        builder.setTableBorderOverpaint(isTableBorderOverpaint(testDoc));
         return builder.build();
     }
 
@@ -139,6 +140,16 @@ public class TestAssistant {
         try {
             XObject xo = XPathAPI.eval(testDoc, "/testcase/cfg/strict-validation");
             return !("false".equalsIgnoreCase(xo.str()));
+        } catch (TransformerException e) {
+            throw new RuntimeException("Error while evaluating XPath expression", e);
+        }
+    }
+
+    private boolean isTableBorderOverpaint(Document testDoc) {
+        try {
+            XObject xo = XPathAPI.eval(testDoc, "/testcase/cfg/table-border-overpaint");
+            String s = xo.str();
+            return "true".equalsIgnoreCase(s);
         } catch (TransformerException e) {
             throw new RuntimeException("Error while evaluating XPath expression", e);
         }

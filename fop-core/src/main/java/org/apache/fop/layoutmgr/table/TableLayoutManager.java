@@ -381,6 +381,11 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
         lc.setRefIPD(getContentAreaIPD());
         contentLM.setStartXOffset(startXOffset);
         contentLM.addAreas(parentIter, lc);
+
+        if (fobj.getUserAgent().isTableBorderOverpaint()) {
+            new OverPaintBorders(curBlockArea);
+        }
+
         tableHeight += contentLM.getUsedBPD();
 
         curBlockArea.setBPD(tableHeight);

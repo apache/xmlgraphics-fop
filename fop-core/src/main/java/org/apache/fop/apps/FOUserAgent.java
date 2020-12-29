@@ -831,4 +831,8 @@ public class FOUserAgent {
             return true;
         }
     }
+
+    public boolean isTableBorderOverpaint() {
+        return factory.isTableBorderOverpaint();
+    }
 }
