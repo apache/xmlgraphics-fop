@@ -55,6 +55,7 @@ public class OFFontLoader extends FontLoader {
     private EmbeddingMode embeddingMode;
     private boolean simulateStyle;
     private boolean embedAsType1;
+    private boolean useSVG;
 
     /**
      * Default constructor
@@ -63,7 +64,7 @@ public class OFFontLoader extends FontLoader {
      */
     public OFFontLoader(URI fontFileURI, InternalResourceResolver resourceResolver) {
         this(fontFileURI, null, true, EmbeddingMode.AUTO, EncodingMode.AUTO, true, true, resourceResolver, false,
-                false);
+                false, true);
     }
 
     /**
@@ -79,15 +80,16 @@ public class OFFontLoader extends FontLoader {
      * @param resolver the FontResolver for font URI resolution
      * @param simulateStyle Determines whether to simulate font styles if a font does not support those by default.
      */
-    public OFFontLoader(URI fontFileURI, String subFontName, boolean embedded,
-            EmbeddingMode embeddingMode, EncodingMode encodingMode, boolean useKerning,
-            boolean useAdvanced, InternalResourceResolver resolver, boolean simulateStyle, boolean embedAsType1) {
+    public OFFontLoader(URI fontFileURI, String subFontName, boolean embedded, EmbeddingMode embeddingMode,
+        EncodingMode encodingMode, boolean useKerning, boolean useAdvanced, InternalResourceResolver resolver,
+        boolean simulateStyle, boolean embedAsType1, boolean useSVG) {
         super(fontFileURI, embedded, useKerning, useAdvanced, resolver);
         this.subFontName = subFontName;
         this.encodingMode = encodingMode;
         this.embeddingMode = embeddingMode;
         this.simulateStyle = simulateStyle;
         this.embedAsType1 = embedAsType1;
+        this.useSVG = useSVG;
         if (this.encodingMode == EncodingMode.AUTO) {
             this.encodingMode = EncodingMode.CID; //Default to CID mode for TrueType
         }
@@ -118,7 +120,7 @@ public class OFFontLoader extends FontLoader {
             if (!supported) {
                 throw new IOException("The font does not have a Unicode cmap table: " + fontFileURI);
             }
-            buildFont(otf, ttcFontName, embedAsType1);
+            buildFont(otf, ttcFontName);
             loaded = true;
         } finally {
             IOUtils.closeQuietly(in);
@@ -133,7 +135,7 @@ public class OFFontLoader extends FontLoader {
         return null;
     }
 
-    private void buildFont(OpenFont otf, String ttcFontName, boolean embedAsType1) {
+    private void buildFont(OpenFont otf, String ttcFontName) {
         boolean isCid = this.embedded;
         if (this.encodingMode == EncodingMode.SINGLE_BYTE) {
             isCid = false;
@@ -201,6 +203,9 @@ public class OFFontLoader extends FontLoader {
             copyGlyphMetricsSingleByte(otf);
         }
         returnFont.setCMap(getCMap(otf));
+        if (useSVG) {
+            returnFont.setSVG(otf.svgs);
+        }
 
         if (otf.getKerning() != null && useKerning) {
             copyKerning(otf, isCid);

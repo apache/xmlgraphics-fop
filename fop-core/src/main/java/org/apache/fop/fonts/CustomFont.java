@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.fonts.truetype.SVGGlyphData;
 
 
 /**
@@ -80,6 +81,7 @@ public abstract class CustomFont extends Typeface
     private boolean useKerning = true;
     /** the character map, mapping Unicode ranges to glyph indices. */
     protected List<CMapSegment> cmap = new ArrayList<CMapSegment>();
+    protected Map<Integer, SVGGlyphData> svgs;
     private boolean useAdvanced = true;
     private boolean simulateStyle;
     protected List<SimpleSingleByteEncoding> additionalEncodings;
@@ -681,5 +683,13 @@ public abstract class CustomFont extends Typeface
             }
         }
         return 0;
+    }
+
+    public boolean hasSVG() {
+        return svgs != null;
+    }
+
+    public void setSVG(Map<Integer, SVGGlyphData> svgs) {
+        this.svgs = svgs;
     }
 }

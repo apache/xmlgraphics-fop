@@ -21,6 +21,7 @@ package org.apache.fop.render.ps;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -43,14 +44,11 @@ import org.w3c.dom.NodeList;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.transcoder.SVGAbstractTranscoder;
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.PNGTranscoder;
 
 import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.ps.ImageEncoder;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
@@ -58,6 +56,7 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
 import org.apache.fop.image.loader.batik.BatikUtil;
+import org.apache.fop.image.loader.batik.ImageConverterSVG2G2D;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.ps.svg.PSSVGGraphics2D;
@@ -85,7 +84,7 @@ public class PSImageHandlerSVG implements ImageHandler {
         ImageXMLDOM imageSVG = (ImageXMLDOM)image;
 
         if (shouldRaster(imageSVG)) {
-            InputStream is = renderSVGToInputStream(context, imageSVG);
+            InputStream is = renderSVGToInputStream(imageSVG, pos);
 
             float x = (float) pos.getX() / 1000f;
             float y = (float) pos.getY() / 1000f;
@@ -175,25 +174,35 @@ public class PSImageHandlerSVG implements ImageHandler {
         }
     }
 
-    private InputStream renderSVGToInputStream(RenderingContext context, ImageXMLDOM imageSVG) throws IOException {
-        PNGTranscoder png = new PNGTranscoder();
-        Float width = getDimension(imageSVG.getDocument(), "width") * 8;
-        png.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, width);
-        Float height = getDimension(imageSVG.getDocument(), "height") * 8;
-        png.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, height);
-        TranscoderInput input = new TranscoderInput(imageSVG.getDocument());
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        TranscoderOutput output = new TranscoderOutput(os);
-        try {
-            png.transcode(input, output);
-        } catch (TranscoderException ex) {
-            SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
-                    context.getUserAgent().getEventBroadcaster());
-            eventProducer.svgRenderingError(this, ex, imageSVG.getInfo().getOriginalURI());
-        } finally {
-            os.flush();
-            os.close();
+    private InputStream renderSVGToInputStream(ImageXMLDOM imageSVG, Rectangle destinationRect)
+        throws IOException {
+        Rectangle rectangle;
+        int width;
+        int height;
+        Float widthSVG = getDimension(imageSVG.getDocument(), "width");
+        Float heightSVG = getDimension(imageSVG.getDocument(), "height");
+        if (widthSVG != null && heightSVG != null) {
+            width = (int) (widthSVG * 8);
+            height = (int) (heightSVG * 8);
+            rectangle = new Rectangle(0, 0, width, height);
+        } else {
+            int scale = 10;
+            width = destinationRect.width / scale;
+            height = destinationRect.height / scale;
+            rectangle = new Rectangle(0, 0, destinationRect.width / 100, destinationRect.height / 100);
+            destinationRect.width *= scale;
+            destinationRect.height *= scale;
         }
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics2D = image.createGraphics();
+        try {
+            ImageGraphics2D img = (ImageGraphics2D) new ImageConverterSVG2G2D().convert(imageSVG, new HashMap());
+            img.getGraphics2DImagePainter().paint(graphics2D, rectangle);
+        } catch (ImageException e) {
+            throw new IOException(e);
+        }
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", os);
         return new ByteArrayInputStream(os.toByteArray());
     }
 

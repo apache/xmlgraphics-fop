@@ -42,6 +42,7 @@ import org.apache.fop.complexscripts.fonts.Substitutable;
 import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.CharNormalize;
 import org.apache.fop.complexscripts.util.GlyphSequence;
+import org.apache.fop.fonts.truetype.SVGGlyphData;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -856,6 +857,11 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
 
     public InputStream getCmapStream() {
         return null;
+    }
+
+    public SVGGlyphData getSVG(char c) {
+        int gid = findGlyphIndex(c);
+        return svgs.get(gid);
     }
 }
 

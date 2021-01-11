@@ -132,7 +132,8 @@ public final class DefaultFontConfig implements FontConfig {
                         fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()),
                         fontCfg.getAttribute("embedding-mode", EncodingMode.AUTO.getName()),
                         fontCfg.getAttributeAsBoolean("simulate-style", false),
-                        fontCfg.getAttributeAsBoolean("embed-as-type1", false));
+                        fontCfg.getAttributeAsBoolean("embed-as-type1", false),
+                        fontCfg.getAttributeAsBoolean("svg", true));
                 instance.fonts.add(font);
                 boolean hasTriplets = false;
                 for (Configuration tripletCfg : fontCfg.getChildren("font-triplet")) {
@@ -322,6 +323,8 @@ public final class DefaultFontConfig implements FontConfig {
         private final boolean embedAsType1;
         private final boolean simulateStyle;
 
+        private final boolean useSVG;
+
         private final List<FontTriplet> tripletList = new ArrayList<FontTriplet>();
 
         public List<FontTriplet> getTripletList() {
@@ -330,7 +333,7 @@ public final class DefaultFontConfig implements FontConfig {
 
         private Font(String metrics, String embed, String afm, String pfm, String subFont, boolean kerning,
                      boolean advanced, String encodingMode, String embeddingMode, boolean simulateStyle,
-                     boolean embedAsType1) {
+                     boolean embedAsType1, boolean useSVG) {
             this.metrics = metrics;
             this.embedUri = embed;
             this.afm = afm;
@@ -342,6 +345,7 @@ public final class DefaultFontConfig implements FontConfig {
             this.embeddingMode = embeddingMode;
             this.simulateStyle = simulateStyle;
             this.embedAsType1 = embedAsType1;
+            this.useSVG = useSVG;
         }
 
         /**
@@ -398,6 +402,10 @@ public final class DefaultFontConfig implements FontConfig {
 
         public boolean getEmbedAsType1() {
             return embedAsType1;
+        }
+
+        public boolean getUseSVG() {
+            return useSVG;
         }
     }
 }

@@ -359,25 +359,28 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
             }
             PSGenerator generator = getGenerator();
             generator.useColor(state.getTextColor());
+            FontTriplet triplet = new FontTriplet(state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
+            String fontKey = getFontKey(triplet);
+            Typeface typeface = getTypeface(fontKey);
+            if (typeface instanceof MultiByteFont && ((MultiByteFont) typeface).hasSVG()) {
+                drawSVGText((MultiByteFont) typeface, triplet, x, y, text, state);
+                return;
+            }
             beginTextObject();
-            FontTriplet triplet = new FontTriplet(
-                    state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
             //TODO Ignored: state.getFontVariant()
             //TODO Opportunity for font caching if font state is more heavily used
-            String fontKey = getFontKey(triplet);
             int sizeMillipoints = state.getFontSize();
 
             // This assumes that *all* CIDFonts use a /ToUnicode mapping
-            Typeface tf = getTypeface(fontKey);
             SingleByteFont singleByteFont = null;
-            if (tf instanceof SingleByteFont) {
-                singleByteFont = (SingleByteFont)tf;
+            if (typeface instanceof SingleByteFont) {
+                singleByteFont = (SingleByteFont)typeface;
             }
             Font font = getFontInfo().getFontInstance(triplet, sizeMillipoints);
 
             PSFontResource res = getDocumentHandler().getPSResourceForFontKey(fontKey);
-            boolean otf = tf instanceof MultiByteFont && ((MultiByteFont)tf).isOTFFile();
-            useFont(fontKey, sizeMillipoints, otf);
+            boolean isOpenTypeFont = typeface instanceof MultiByteFont && ((MultiByteFont)typeface).isOTFFile();
+            useFont(fontKey, sizeMillipoints, isOpenTypeFont);
 
             if (dp != null && dp[0] != null) {
                 x += dp[0][0];
@@ -393,12 +396,12 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                 int currentEncoding = -1;
                 for (int i = 0; i < textLen; i++) {
                     char c = text.charAt(i);
-                    char mapped = tf.mapChar(c);
+                    char mapped = typeface.mapChar(c);
                     int encoding = mapped / 256;
                     if (currentEncoding != encoding) {
                         if (i > 0) {
                             writeText(text, start, i - start,
-                                    letterSpacing, wordSpacing, dp, font, tf, false);
+                                    letterSpacing, wordSpacing, dp, font, typeface, false);
                         }
                         if (encoding == 0) {
                             useFont(fontKey, sizeMillipoints, false);
@@ -410,20 +413,20 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                     }
                 }
             } else {
-                if (tf instanceof MultiByteFont && ((MultiByteFont)tf).isOTFFile()) {
+                if (typeface instanceof MultiByteFont && ((MultiByteFont)typeface).isOTFFile()) {
                     //Analyze string and split up in order to paint in different sub-fonts/encodings
                     int curEncoding = 0;
                     for (int i = start; i < textLen; i++) {
                         char orgChar = text.charAt(i);
 
-                        MultiByteFont mbFont = (MultiByteFont)tf;
+                        MultiByteFont mbFont = (MultiByteFont)typeface;
                         mbFont.mapChar(orgChar);
                         int origGlyphIdx = mbFont.findGlyphIndex(orgChar);
                         int newGlyphIdx = mbFont.getUsedGlyphs().get(origGlyphIdx);
                         int encoding = newGlyphIdx / 256;
                         if (encoding != curEncoding) {
                             if (i != 0) {
-                                writeText(text, start, i - start, letterSpacing, wordSpacing, dp, font, tf,
+                                writeText(text, start, i - start, letterSpacing, wordSpacing, dp, font, typeface,
                                         true);
                                 start = i;
                             }
@@ -435,8 +438,8 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                     useFont(fontKey, sizeMillipoints, false);
                 }
             }
-            writeText(text, start, textLen - start, letterSpacing, wordSpacing, dp, font, tf,
-                    tf instanceof MultiByteFont);
+            writeText(text, start, textLen - start, letterSpacing, wordSpacing, dp, font, typeface,
+                    typeface instanceof MultiByteFont);
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawText()", ioe);
         }

@@ -141,7 +141,7 @@ public class FopConfParser {
      */
     public FopConfParser(File fopConfFile, ResourceResolver resourceResolver)
             throws SAXException, IOException {
-        this(new FileInputStream(fopConfFile), fopConfFile.toURI(), resourceResolver);
+        this(new FileInputStream(fopConfFile), fopConfFile.getParentFile().toURI(), resourceResolver);
     }
 
     public FopConfParser(InputStream fopConfStream, URI baseURI, EnvironmentProfile enviro)

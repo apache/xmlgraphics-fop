@@ -17,6 +17,7 @@
 package org.apache.fop.render.ps;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -54,6 +55,7 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.Typeface;
+import org.apache.fop.fonts.truetype.SVGGlyphData;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
@@ -241,5 +243,36 @@ public class PSPainterTestCase {
         mbf.setWidthArray(new int[100]);
         mbf.setIsOTFFile(otf);
         fi.addMetrics(name, mbf);
+    }
+
+    @Test
+    public void testSVGFont() throws IFException {
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        PSDocumentHandler psDocumentHandler = new PSDocumentHandler(new IFContext(foUserAgent));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        psDocumentHandler.setResult(new StreamResult(bos));
+        psDocumentHandler.startDocument();
+        psDocumentHandler.startPage(0, "", "", new Dimension());
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("f1", new FontTriplet("a", "normal", 400));
+        MultiByteFont font = new MultiByteFont(null, null);
+        font.setWidthArray(new int[1]);
+        Map<Integer, SVGGlyphData> svgs = new HashMap<>();
+        SVGGlyphData svgGlyph = new SVGGlyphData();
+        svgGlyph.setSVG("<svg xmlns=\"http://www.w3.org/2000/svg\">\n"
+                + "<circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" />\n"
+                + "</svg>");
+        svgs.put(0, svgGlyph);
+        font.setSVG(svgs);
+        font.setBBoxArray(new Rectangle[] {new Rectangle()});
+        fi.addMetrics("f1", font);
+        psDocumentHandler.setFontInfo(fi);
+        PSPainter psPainter = new PSPainter(psDocumentHandler);
+        psPainter.setFont("a", "normal", 400, null, 12, Color.black);
+        psPainter.drawText(0, 0, 0, 0, null, "test");
+        Assert.assertTrue(bos.toString().contains("%FOPBeginSVG"));
+        Assert.assertTrue(bos.toString().contains("[0.00012 0 0 0.00012 0 0] CT"));
+        Assert.assertTrue(bos.toString().contains("1 0 0 RC"));
     }
 }

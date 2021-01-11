@@ -29,6 +29,7 @@ import org.junit.Test;
 
 import org.apache.commons.io.IOUtils;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbeddingMode;
@@ -50,8 +51,10 @@ public class Type1FontLoaderTestCase {
             fos.close();
 
             FontUris fontUris = new FontUris(pfbNoAFM.toURI(), null, null, pfm.toURI());
+            InternalResourceResolver resourceResolver =
+                    ResourceResolverFactory.createDefaultInternalResourceResolver(new File(".").toURI());
             CustomFont x = FontLoader.loadFont(fontUris, null, true, EmbeddingMode.AUTO, EncodingMode.AUTO, true, true,
-                    ResourceResolverFactory.createDefaultInternalResourceResolver(new File(".").toURI()), false, false);
+                    resourceResolver, false, false, true);
             Assert.assertEquals(x.getBoundingBox(0, 12).getBounds(), new Rectangle(-240, -60, 0, 60));
         } finally {
             pfbNoAFM.delete();

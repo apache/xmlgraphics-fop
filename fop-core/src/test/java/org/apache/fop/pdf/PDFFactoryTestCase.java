@@ -144,7 +144,7 @@ public class PDFFactoryTestCase {
         PDFFactory pdfFactory = new PDFFactory(doc);
         URI uri = new File("test/resources/fonts/otf/SourceSansProBold.otf").toURI();
         CustomFont sb = OFFontLoader.loadFont(new FontUris(uri, null),
-                null, true, EmbeddingMode.SUBSET, null, false, false, rr, false, false);
+                null, true, EmbeddingMode.SUBSET, null, false, false, rr, false, false, true);
         for (char c = 0; c < 512; c++) {
             sb.mapChar(c);
         }

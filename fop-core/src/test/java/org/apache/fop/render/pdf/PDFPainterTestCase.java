@@ -25,7 +25,9 @@ import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.xml.transform.stream.StreamResult;
 
@@ -49,6 +51,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.truetype.SVGGlyphData;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFPage;
@@ -304,5 +307,38 @@ public class PDFPainterTestCase {
                 + "1 0 0 -1 0 0 Tm [<0000000000000000>] TJ\n"
                 + "\n"
                 + "endstream");
+    }
+
+    @Test
+    public void testSVGFont() throws IFException, IOException {
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+        foUserAgent = fopFactory.newFOUserAgent();
+        PDFDocumentHandler pdfDocumentHandler = new PDFDocumentHandler(new IFContext(foUserAgent));
+        pdfDocumentHandler.setResult(new StreamResult(new ByteArrayOutputStream()));
+        pdfDocumentHandler.startDocument();
+        pdfDocumentHandler.startPage(0, "", "", new Dimension());
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("f1", new FontTriplet("a", "normal", 400));
+        MultiByteFont font = new MultiByteFont(null, null);
+        font.setWidthArray(new int[1]);
+        Map<Integer, SVGGlyphData> svgs = new HashMap<>();
+        SVGGlyphData svgGlyph = new SVGGlyphData();
+        svgGlyph.setSVG("<svg xmlns=\"http://www.w3.org/2000/svg\">\n"
+                + "<circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" />\n"
+                + "</svg>");
+        svgs.put(0, svgGlyph);
+        font.setSVG(svgs);
+        font.setBBoxArray(new Rectangle[] {new Rectangle()});
+        fi.addMetrics("f1", font);
+        pdfDocumentHandler.setFontInfo(fi);
+        PDFPainter pdfPainter = new PDFPainter(pdfDocumentHandler, null);
+        pdfPainter.setFont("a", "normal", 400, null, 12, null);
+        pdfPainter.drawText(0, 0, 0, 0, null, "test");
+        PDFFilterList filters = pdfPainter.generator.getStream().getFilterList();
+        filters.setDisableAllFilters(true);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        pdfPainter.generator.getStream().output(bos);
+        Assert.assertTrue(bos.toString().contains("0.00012 0 0 0.00012 0 0 cm"));
+        Assert.assertTrue(bos.toString().contains("1 0 0 rg"));
     }
 }

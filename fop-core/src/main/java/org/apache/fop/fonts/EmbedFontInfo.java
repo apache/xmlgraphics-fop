@@ -45,6 +45,7 @@ public class EmbedFontInfo implements Serializable {
     /** simulates bold or italic on a regular font */
     private final boolean simulateStyle;
     private final boolean embedAsType1;
+    private final boolean useSVG;
 
     /** the PostScript name of the font */
     protected String postScriptName;
@@ -69,7 +70,7 @@ public class EmbedFontInfo implements Serializable {
      */
     public EmbedFontInfo(FontUris fontUris, boolean kerning, boolean advanced,
             List<FontTriplet> fontTriplets, String subFontName, EncodingMode encodingMode,
-            EmbeddingMode embeddingMode, boolean simulateStyle, boolean embedAsType1) {
+            EmbeddingMode embeddingMode, boolean simulateStyle, boolean embedAsType1, boolean useSVG) {
         this.kerning = kerning;
         this.advanced = advanced;
         this.fontTriplets = fontTriplets;
@@ -79,6 +80,7 @@ public class EmbedFontInfo implements Serializable {
         this.fontUris = fontUris;
         this.simulateStyle = simulateStyle;
         this.embedAsType1 = embedAsType1;
+        this.useSVG = useSVG;
     }
 
     /**
@@ -91,7 +93,7 @@ public class EmbedFontInfo implements Serializable {
     public EmbedFontInfo(FontUris fontUris, boolean kerning, boolean advanced,
             List<FontTriplet> fontTriplets, String subFontName) {
         this(fontUris, kerning, advanced, fontTriplets, subFontName, EncodingMode.AUTO,
-                EmbeddingMode.AUTO, false, false);
+                EmbeddingMode.AUTO, false, false, true);
     }
 
     /**
@@ -207,6 +209,10 @@ public class EmbedFontInfo implements Serializable {
 
     public boolean getEmbedAsType1() {
         return embedAsType1;
+    }
+
+    public boolean getUseSVG() {
+        return useSVG;
     }
 
     private void readObject(java.io.ObjectInputStream in)

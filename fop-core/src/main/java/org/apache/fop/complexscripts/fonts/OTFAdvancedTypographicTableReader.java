@@ -215,7 +215,9 @@ public final class OTFAdvancedTypographicTableReader {
                 log.debug(tableTag + " lang sys default: " + dt);
             }
         }
-        seScripts.put(scriptTag, new Object[] { dt, ll, seLanguages });
+        if (seLanguages != null) {
+            seScripts.put(scriptTag, new Object[]{dt, ll, seLanguages});
+        }
         seLanguages = null;
     }
 

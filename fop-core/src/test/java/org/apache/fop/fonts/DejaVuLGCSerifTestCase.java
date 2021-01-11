@@ -49,7 +49,7 @@ public class DejaVuLGCSerifTestCase {
         File file = new File("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
         FontUris fontUris = new FontUris(file.toURI(), null);
         font = FontLoader.loadFont(fontUris, "", true, EmbeddingMode.AUTO, EncodingMode.AUTO,
-                false, false, resolver, false, false);
+                false, false, resolver, false, false, true);
     }
 
     /**

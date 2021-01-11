@@ -43,6 +43,7 @@ import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
+import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.pdf.PDFArray;
@@ -431,8 +432,11 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
 
         FontTriplet triplet = new FontTriplet(
                 state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
-
-        if ((dp == null) || IFUtil.isDPOnlyDX(dp)) {
+        String fontKey = getFontInfo().getInternalFontKey(triplet);
+        Typeface typeface = getTypeface(fontKey);
+        if (typeface instanceof MultiByteFont && ((MultiByteFont) typeface).hasSVG()) {
+            drawSVGText((MultiByteFont) typeface, triplet, x, y, text, state);
+        } else if ((dp == null) || IFUtil.isDPOnlyDX(dp)) {
             drawTextWithDX(x, y, text, triplet, letterSpacing,
                              wordSpacing, IFUtil.convertDPToDX(dp));
         } else {

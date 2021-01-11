@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -219,6 +220,7 @@ public abstract class OpenFont {
 
     private int[] ansiWidth;
     private Map<Integer, List<Integer>> ansiIndex;
+    protected Map<Integer, SVGGlyphData> svgs;
 
     // internal mapping of glyph indexes to unicode indexes
     // used for quick mappings in this class
@@ -839,6 +841,7 @@ public abstract class OpenFont {
         readPostScript();
         readOS2();
         determineAscDesc();
+        readSVG();
 
         readName();
         boolean pcltFound = readPCLT();
@@ -1326,6 +1329,33 @@ public abstract class OpenFont {
             log.debug("hhea.Ascender: " + formatUnitsForDebug(hheaAscender));
             log.debug("hhea.Descender: " + formatUnitsForDebug(hheaDescender));
             log.debug("Number of horizontal metrics: " + nhmtx);
+        }
+    }
+
+    private void readSVG() throws IOException {
+        OFDirTabEntry dirTab = dirTabs.get(OFTableName.SVG);
+        if (dirTab != null) {
+            svgs = new LinkedHashMap<>();
+            fontFile.seekSet(dirTab.getOffset());
+            fontFile.readTTFUShort(); //version
+            fontFile.readTTFULong(); //svgDocumentListOffset
+            fontFile.readTTFULong(); //reserved
+            int numEntries = fontFile.readTTFUShort();
+            for (int i = 0; i < numEntries; i++) {
+                int startGlyphID = fontFile.readTTFUShort();
+                fontFile.readTTFUShort(); //endGlyphID
+                SVGGlyphData svgGlyph = new SVGGlyphData();
+                svgGlyph.svgDocOffset = fontFile.readTTFULong();
+                svgGlyph.svgDocLength = fontFile.readTTFULong();
+                svgs.put(startGlyphID, svgGlyph);
+            }
+            for (SVGGlyphData entry : svgs.values()) {
+                seekTab(fontFile, OFTableName.SVG, entry.svgDocOffset);
+                fontFile.readTTFUShort(); //version
+                fontFile.readTTFULong(); //svgDocumentListOffset
+                fontFile.readTTFULong(); //reserved
+                entry.setSVG(fontFile.readTTFString((int) entry.svgDocLength));
+            }
         }
     }
 

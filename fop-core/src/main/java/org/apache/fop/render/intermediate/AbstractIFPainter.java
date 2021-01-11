@@ -46,8 +46,11 @@ import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.truetype.SVGGlyphData;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.ImageHandlerUtil;
@@ -468,5 +471,26 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
     public void drawText(int x, int y, int letterSpacing, int wordSpacing,
                          int[][] dp, String text, boolean nextIsSpace) throws IFException {
         drawText(x, y, letterSpacing, wordSpacing, dp, text);
+    }
+
+    protected void drawSVGText(MultiByteFont multiByteFont, FontTriplet triplet, int x, int y, String text,
+                               IFState state) throws IFException {
+        int sizeMillipoints = state.getFontSize();
+        Font font = getFontInfo().getFontInstance(triplet, sizeMillipoints);
+        int newx = x;
+        for (char c : text.toCharArray()) {
+            SVGGlyphData svg = multiByteFont.getSVG(c);
+            if (svg != null) {
+                int codePoint = font.mapCodePoint(c);
+                String dataURL = svg.getDataURL(multiByteFont.getCapHeight());
+                Rectangle boundingBox = multiByteFont.getBoundingBox(codePoint, (int) (sizeMillipoints / 1000f));
+                boundingBox.y = y - boundingBox.height - boundingBox.y;
+                boundingBox.x = newx;
+                boundingBox.width = (int) (sizeMillipoints * svg.scale);
+                boundingBox.height = (int) (sizeMillipoints * svg.scale);
+                drawImage(dataURL, boundingBox);
+            }
+            newx += font.getCharWidth(c);
+        }
     }
 }

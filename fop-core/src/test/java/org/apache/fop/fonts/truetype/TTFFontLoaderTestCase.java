@@ -51,12 +51,12 @@ public class TTFFontLoaderTestCase {
 
         OFFontLoader fontLoader = new OFFontLoader(absoluteFilePath, fontName, embedded,
                 EmbeddingMode.AUTO, EncodingMode.AUTO, useKerning, useComplexScriptFeatures,
-                resourceResolver, false, false);
+                resourceResolver, false, false, true);
         assertTrue(fontLoader.getFont().hasKerningInfo());
         useKerning = false;
 
         fontLoader = new OFFontLoader(absoluteFilePath, fontName, embedded, EmbeddingMode.AUTO,
-                EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resourceResolver, false, false);
+                EncodingMode.AUTO, useKerning, useComplexScriptFeatures, resourceResolver, false, false, true);
         assertFalse(fontLoader.getFont().hasKerningInfo());
     }
 }
