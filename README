@@ -107,6 +107,17 @@ under the ./fop sub-directory.
   RELEASE NOTES
 ==============================================================================
 
+Version 2.6
+===========
+
+Major Changes in Version 2.6
+----------------------------
+
+* Support OTF/TTF SVG fonts
+* Allow overpaint of PDF border
+
+This release also contains a number of bug fixes.
+
 Version 2.5
 ===========
 
