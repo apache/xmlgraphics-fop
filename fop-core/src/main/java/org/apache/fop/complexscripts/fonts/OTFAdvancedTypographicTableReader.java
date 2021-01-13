@@ -3586,7 +3586,7 @@ public final class OTFAdvancedTypographicTableReader {
 
     private void constructLookupsLanguage(Map lookups, String st, String lt, Map<String, Object> languages) {
         if (languages != null) {
-        Object[] lp = (Object[]) languages.get(lt);
+            Object[] lp = (Object[]) languages.get(lt);
             if (lp != null) {
                 assert lp.length == 2;
                 if (lp[0] != null) {                      // required feature id
