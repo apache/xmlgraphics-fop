@@ -478,7 +478,8 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
         int sizeMillipoints = state.getFontSize();
         Font font = getFontInfo().getFontInstance(triplet, sizeMillipoints);
         int newx = x;
-        for (char c : text.toCharArray()) {
+        for (int i = 0; i < text.length();) {
+            int c = text.codePointAt(i);
             SVGGlyphData svg = multiByteFont.getSVG(c);
             if (svg != null) {
                 int codePoint = font.mapCodePoint(c);
@@ -491,6 +492,7 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
                 drawImage(dataURL, boundingBox);
             }
             newx += font.getCharWidth(c);
+            i += Character.charCount(c);
         }
     }
 }

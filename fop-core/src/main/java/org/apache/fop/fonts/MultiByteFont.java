@@ -859,7 +859,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         return null;
     }
 
-    public SVGGlyphData getSVG(char c) {
+    public SVGGlyphData getSVG(int c) {
         int gid = findGlyphIndex(c);
         return svgs.get(gid);
     }

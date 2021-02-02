@@ -311,6 +311,24 @@ public class PDFPainterTestCase {
 
     @Test
     public void testSVGFont() throws IFException, IOException {
+        String out = drawSVGFont("<svg xmlns=\"http://www.w3.org/2000/svg\">\n"
+                + "<circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" />\n"
+                + "</svg>");
+        Assert.assertTrue(out.contains("0.00012 0 0 0.00012 0 0 cm"));
+        Assert.assertTrue(out.contains("1 0 0 rg"));
+    }
+
+    @Test
+    public void testSVGFontScale() throws IFException, IOException {
+        String out = drawSVGFont("<svg xmlns=\"http://www.w3.org/2000/svg\">\n"
+                + "<g transform=\"translate(0 0) translate(0 0) scale(50)\"/>"
+                + "<circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" />\n"
+                + "</svg>");
+        Assert.assertTrue(out.contains("0.00012 0 0 0.00012 0 0 cm"));
+        Assert.assertTrue(out.contains("1 0 0 rg"));
+    }
+
+    private String drawSVGFont(String svg) throws IFException, IOException {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         foUserAgent = fopFactory.newFOUserAgent();
         PDFDocumentHandler pdfDocumentHandler = new PDFDocumentHandler(new IFContext(foUserAgent));
@@ -323,9 +341,7 @@ public class PDFPainterTestCase {
         font.setWidthArray(new int[1]);
         Map<Integer, SVGGlyphData> svgs = new HashMap<>();
         SVGGlyphData svgGlyph = new SVGGlyphData();
-        svgGlyph.setSVG("<svg xmlns=\"http://www.w3.org/2000/svg\">\n"
-                + "<circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" />\n"
-                + "</svg>");
+        svgGlyph.setSVG(svg);
         svgs.put(0, svgGlyph);
         font.setSVG(svgs);
         font.setBBoxArray(new Rectangle[] {new Rectangle()});
@@ -338,7 +354,6 @@ public class PDFPainterTestCase {
         filters.setDisableAllFilters(true);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         pdfPainter.generator.getStream().output(bos);
-        Assert.assertTrue(bos.toString().contains("0.00012 0 0 0.00012 0 0 cm"));
-        Assert.assertTrue(bos.toString().contains("1 0 0 rg"));
+        return bos.toString();
     }
 }

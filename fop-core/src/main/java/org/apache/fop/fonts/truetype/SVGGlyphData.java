@@ -70,7 +70,7 @@ public class SVGGlyphData {
         Element gElement = (Element) nodes.item(0);
         if (gElement != null) {
             String transform = gElement.getAttribute("transform");
-            if (transform.contains("scale(")) {
+            if (transform.split("scale\\(").length == 3) {
                 String scaleStr = transform.split("scale\\(")[1].split("\\)")[0].trim();
                 scale = Float.parseFloat(scaleStr);
                 gElement.removeAttribute("transform");
