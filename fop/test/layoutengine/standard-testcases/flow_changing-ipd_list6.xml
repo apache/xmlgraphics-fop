@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that blocks of texts are re-laid out after a change of the flow ipd.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="FirstPage" page-width="210mm" page-height="297mm">
+      <fo:region-body margin-bottom="20mm" margin-right="74mm" margin-top="90mm" margin-left="8mm" region-name="Body"/>      
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="SecondPage" page-width="210mm" page-height="297mm">
+      <fo:region-body margin-right="8mm" margin-top="8mm" margin-left="8mm" region-name="Body"/>
+      <fo:region-start precedence="true" region-name="SecondPage" extent="180mm"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="AnnualStatement">
+      <fo:repeatable-page-master-reference maximum-repeats="1" master-reference="FirstPage"/>
+      <fo:repeatable-page-master-reference maximum-repeats="1" master-reference="SecondPage"/>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence format="1" id="th_default_sequence1" initial-page-number="auto" force-page-count="end-on-even" master-reference="AnnualStatement">   
+    <fo:static-content flow-name="SecondPage">
+      <fo:block-container height="281mm" margin-top="8mm">
+        <fo:block-container width="194mm" margin-right="8mm" margin-left="8mm">          
+          <fo:block>           
+            <fo:table table-layout="fixed" width="100%">
+              <fo:table-column column-width="proportional-column-width(49.5)" column-number="1"/>
+              <fo:table-column column-width="proportional-column-width(2.5)" column-number="2"/>
+              <fo:table-column column-width="proportional-column-width(48)" column-number="3"/>
+              <fo:table-body>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block>
+                      
+                        <fo:table table-layout="fixed" width="100%">
+                          <fo:table-column column-width="proportional-column-width(4.16666666666667)" column-number="1"/>
+                          <fo:table-column column-width="proportional-column-width(62.5)" column-number="2"/>
+                          <fo:table-column column-width="proportional-column-width(4.16666666666667)" column-number="3"/>
+                          <fo:table-column column-width="proportional-column-width(29.1666666666667)" column-number="4"/>
+                          <fo:table-body>
+                            <fo:table-row>
+                              <fo:table-cell keep-together.within-page="always" padding-bottom="1mm" padding-left="2mm" padding-right="2mm" padding-top="1mm" background-color="#FFE7E1">
+                                <fo:block>
+                                  <fo:block color="#333333"  font-size="10pt" keep-together.within-page="always" keep-with-next.within-page="always" line-height="13pt">
+                                    <fo:leader/>
+                                  </fo:block>
+                                </fo:block>
+                              </fo:table-cell>
+                              <fo:table-cell keep-together.within-page="always" padding-bottom="1mm" padding-left="2mm" padding-right="2mm" padding-top="1mm" background-color="#FFE7E1">
+                                <fo:block>
+                                  <fo:list-block color="#ff5c39"  font-size="9pt" keep-together.within-page="always" keep-with-next.within-page="always" line-height="11pt">
+                                    <fo:list-item>
+                                      <fo:list-item-label>
+                                        <fo:block>·</fo:block>
+                                      </fo:list-item-label>
+                                      <fo:list-item-body color="#333333"  font-size="10pt" keep-together.within-page="always" keep-with-next.within-page="always" line-height="13pt" margin-left="5mm">
+                                        <fo:block>
+                                          <fo:inline color="#8031a7">London charges</fo:inline>
+                                        </fo:block>
+                                      </fo:list-item-body>
+                                    </fo:list-item>
+                                  </fo:list-block>
+                                </fo:block>
+                              </fo:table-cell>
+                            </fo:table-row>
+                          </fo:table-body>
+                        </fo:table>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+          </fo:block>
+        </fo:block-container>
+      </fo:block-container>
+    </fo:static-content>   
+    <fo:flow flow-name="Body">
+      <fo:block></fo:block>
+    </fo:flow>
+  </fo:page-sequence>  
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="" xpath="//pageViewport[1]//block//word"/>
+    <eval expected="·" xpath="//pageViewport[2]//block//word"/>
+  </checks> 
+</testcase>

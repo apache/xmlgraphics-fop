@@ -492,6 +492,9 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
     private boolean isChangingIPD(LayoutManager lm) {
         PageProvider pageProvider = lm.getPSLM().getPageProvider();
         int currentIPD = pageProvider.getCurrentIPD();
+        if (currentIPD == -1) {
+            return false;
+        }
         int nextIPD = pageProvider.getNextIPD();
         return nextIPD != currentIPD;
     }

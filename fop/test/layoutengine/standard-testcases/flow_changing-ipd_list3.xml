@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that blocks of texts are re-laid out after a change of the flow ipd.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="PrimaryPage" page-width="11in" page-height="8.5in" margin-bottom="0.25in" margin-right="0.25in" margin-top="0.25in" margin-left="0.25in">
+      <fo:region-body margin-bottom="1in" margin-right="0.5in" margin-top="1.6in" margin-left="0.5in" region-name="PrimaryPageBody" background-color="yellow"/>
+
+    </fo:simple-page-master>
+
+    <fo:page-sequence-master master-name="PrimaryPages">
+      <fo:repeatable-page-master-reference master-reference="PrimaryPage" maximum-repeats="2"/>
+    </fo:page-sequence-master>
+
+  </fo:layout-master-set>
+  <fo:page-sequence format="1" id="th_default_sequence1" initial-page-number="auto" force-page-count="auto" master-reference="PrimaryPages">
+
+    <fo:flow flow-name="PrimaryPageBody">
+      <fo:block>
+        <fo:block font-size="18pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="18pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="18pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="40pt" color="#0095DA">Small Group</fo:block>
+        <fo:block font-size="40pt" color="#0095DA">health insurance</fo:block>
+        <fo:block>
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="18pt" color="#0095DA">For the business of:</fo:block>
+        <fo:block>
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="18pt">EC Logistics LLC</fo:block>
+        <fo:block font-size="18pt" />
+        <fo:block>
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="12pt">
+          <fo:inline color="#0095DA">Effective Date:</fo:inline> 02/01/2021</fo:block>
+        <fo:block>
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="9pt" padding-after="3pt">
+          <fo:inline font-weight="bold">Prepared by:</fo:inline>
+          <fo:inline text-transform="capitalize">wb underwriting</fo:inline>
+        </fo:block>
+        <fo:block font-size="9pt" padding-after="3pt">02/10/2021</fo:block>
+        <fo:block font-size="9pt" padding-after="3pt">(800) 869-6989</fo:block>
+        <fo:block font-size="26pt" color="#0095DA">
+          <fo:leader/>
+          <fo:block break-before="page"/>Success!</fo:block>
+        <fo:block font-size="16pt">EC Logistics LLC is now enrolled.</fo:block>
+        <fo:block font-size="12pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="9pt" padding-after="3pt">We’ve put together tips and information, as well as a roster of enrolled members (with member ID included) and final rates for your records.</fo:block>
+        <fo:block font-size="9pt" padding-after="3pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:table table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(45)" column-number="1"/>
+          <fo:table-column column-width="proportional-column-width(5)" column-number="2"/>
+          <fo:table-column column-width="proportional-column-width(45)" column-number="3"/>
+          <fo:table-column column-width="proportional-column-width(5)" column-number="4"/>
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="9pt" padding-after="3pt">
+                    <fo:inline font-weight="bold">About group enrollment timing</fo:inline>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="9pt" padding-after="3pt">
+                    <fo:inline font-weight="bold">About member benefits</fo:inline>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="9pt" padding-after="3pt">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:list-block font-size="9pt" line-height="10pt">
+                    <fo:list-item>
+                      <fo:list-item-label font-size="10pt">
+                        <fo:block>•</fo:block>
+                      </fo:list-item-label>
+                      <fo:list-item-body start-indent="body-start()">
+                        <fo:block>This group will appear in <fo:inline color="#0095DA">Broker Connection</fo:inline> after the group effective date.</fo:block>
+                      </fo:list-item-body>
+                    </fo:list-item>
+                  </fo:list-block>
+                  <fo:list-block font-size="9pt" line-height="10pt">
+                    <fo:list-item>
+                      <fo:list-item-label font-size="10pt">
+                        <fo:block>•</fo:block>
+                      </fo:list-item-label>
+                      <fo:list-item-body start-indent="body-start()">
+                        <fo:block>This group will appear in <fo:inline color="#0095DA">Employer Connection</fo:inline> Plus after the first month’s billing statement has been generated, which generally occurs by the 14th business day of the month.</fo:block>
+                      </fo:list-item-body>
+                    </fo:list-item>
+                  </fo:list-block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:list-block font-size="9pt" line-height="10pt">
+                    <fo:list-item>
+                      <fo:list-item-label font-size="10pt">
+                        <fo:block>•</fo:block>
+                      </fo:list-item-label>
+                      <fo:list-item-body start-indent="body-start()">
+                        <fo:block>Members can use our Find a Doctor flier to learn how to search for doctors/specialists/facilities</fo:block>
+                      </fo:list-item-body>
+                    </fo:list-item>
+                  </fo:list-block>
+                  <fo:list-block font-size="9pt" line-height="10pt">
+                    <fo:list-item>
+                      <fo:list-item-label font-size="10pt">
+                        <fo:block>•</fo:block>
+                      </fo:list-item-label>
+                      <fo:list-item-body start-indent="body-start()">
+                        <fo:block>Members can access care 24/7 via phone or video consultations with Teladoc</fo:block>
+                      </fo:list-item-body>
+                    </fo:list-item>
+                  </fo:list-block>
+                  <fo:list-block font-size="9pt" line-height="10pt">
+                    <fo:list-item>
+                      <fo:list-item-label font-size="10pt">
+                        <fo:block>•</fo:block>
+                      </fo:list-item-label>
+                      <fo:list-item-body start-indent="body-start()">
+                        <fo:block>For access to Pharmacy Benefits, members must use the plan- specific alpha prefix with their member ID number.</fo:block>
+                      </fo:list-item-body>
+                    </fo:list-item>
+                  </fo:list-block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row height="0.502708325783412cm">
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="9pt" padding-after="3pt">
+                    <fo:inline font-weight="bold">About member enrollment information and next steps</fo:inline>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="9pt" padding-after="3pt">
+                    <fo:inline font-weight="bold">See examples below:</fo:inline>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="9pt" padding-after="3pt">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:list-block font-size="9pt" line-height="10pt">
+                    <fo:list-item>
+                      <fo:list-item-label font-size="10pt">
+                        <fo:block>•</fo:block>
+                      </fo:list-item-label>
+                      <fo:list-item-body start-indent="body-start()">
+                        <fo:block>Identification cards should arrive in approximately 7 to10 business days at each subscriber’s home.</fo:block>
+                      </fo:list-item-body>
+                    </fo:list-item>
+                  </fo:list-block>
+                  <fo:list-block font-size="9pt" line-height="10pt">
+                    <fo:list-item>
+                      <fo:list-item-label font-size="10pt">
+                        <fo:block>•</fo:block>
+                      </fo:list-item-label>
+                      <fo:list-item-body start-indent="body-start()">
+                        <fo:block>Access to ID card via our mobile app is available within 24 to 48 hours.</fo:block>
+                      </fo:list-item-body>
+                    </fo:list-item>
+                  </fo:list-block>
+                  <fo:list-block font-size="9pt" line-height="10pt">
+                    <fo:list-item>
+                      <fo:list-item-label font-size="10pt">
+                        <fo:block>•</fo:block>
+                      </fo:list-item-label>
+                      <fo:list-item-body start-indent="body-start()">
+                        <fo:block>Temporary ID cards can be printed after members register online.</fo:block>
+                      </fo:list-item-body>
+                    </fo:list-item>
+                  </fo:list-block>
+                  <fo:list-block font-size="9pt" line-height="10pt">
+                    <fo:list-item>
+                      <fo:list-item-label font-size="10pt">
+                        <fo:block>•</fo:block>
+                      </fo:list-item-label>
+                      <fo:list-item-body start-indent="body-start()">
+                        <fo:block>Members should appear in our Pharmacy Eligibility system within 24 to 48 hours.</fo:block>
+                      </fo:list-item-body>
+                    </fo:list-item>
+                  </fo:list-block>
+                  <fo:list-block font-size="9pt" line-height="10pt">
+                    <fo:list-item>
+                      <fo:list-item-label font-size="10pt">
+                        <fo:block>•</fo:block>
+                      </fo:list-item-label>
+                      <fo:list-item-body start-indent="body-start()">
+                        <fo:block>Eligibility can be verified prior to receipt of ID cards by calling <fo:inline font-weight="bold">(888) 319-5999</fo:inline>.</fo:block>
+                      </fo:list-item-body>
+                    </fo:list-item>
+                  </fo:list-block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="9pt" padding-after="3pt">XEH - HMO members (example: XEH999999999)</fo:block>
+                  <fo:block font-size="9pt" padding-after="3pt">XEA - PPO members (example: XEA999999999)</fo:block>
+                  <fo:block font-size="9pt" padding-after="3pt">XNK - Tandem PPO members (example: XNK999999999)</fo:block>
+                  <fo:block font-size="9pt" padding-after="3pt">Pharmacy services also requires the BIN # 600428 and PCN numbers: PCN # 01910000 - for Commercial HMO and PPO</fo:block>
+                  <fo:block font-size="9pt" padding-after="3pt">PCN # 02960000 – for Commercial HAS</fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="9pt" padding-after="3pt">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+      </fo:block>
+      <fo:block id="TH_LastPage"/>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="Small" xpath="//pageViewport[1]//flow/block//word"/>
+    <eval expected="Success!" xpath="//pageViewport[2]//flow/block//word"/>
+  </checks> 
+</testcase>

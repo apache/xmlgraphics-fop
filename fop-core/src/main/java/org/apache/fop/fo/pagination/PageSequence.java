@@ -542,4 +542,10 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
     public List<ChangeBar> getClonedChangeBarList() {
         return new LinkedList<ChangeBar>(changeBarList);
     }
+
+    public void setOnlyTryInfinite(boolean b) {
+        if (pageSequenceMaster != null) {
+            pageSequenceMaster.onlyTryInfinite = b;
+        }
+    }
 }

@@ -28,6 +28,7 @@ import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.pagination.PageProductionException;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.RegionBody;
@@ -192,7 +193,9 @@ public class PageProvider implements Constants {
             colIndex -= columnCount;
             pageIndex++;
             page = getPage(false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
-            columnCount = page.getPageViewport().getCurrentSpan().getColumnCount();
+            if (page.getPageViewport().getPage() != null) {
+                columnCount = page.getPageViewport().getCurrentSpan().getColumnCount();
+            }
         } while (colIndex >= columnCount);
         return new Column(page, pageIndex, colIndex, columnCount);
     }
@@ -316,7 +319,8 @@ public class PageProvider implements Constants {
             log.debug("blank condition doesn't match. Replacing PageViewport.");
             replace = true;
         }
-        if (page.getPageViewport().getCurrentSpan().getColumnCount() == 1
+        if (page.getPageViewport().getPage() != null
+                && page.getPageViewport().getCurrentSpan().getColumnCount() == 1
                 && !this.spanAllForCurrentElementList) {
             RegionBody rb = (RegionBody)page.getSimplePageMaster().getRegion(Region.FO_REGION_BODY);
             int colCount = rb.getColumnCount();
@@ -394,13 +398,27 @@ public class PageProvider implements Constants {
     }
 
     public int getCurrentIPD() {
+        if (startPageOfCurrentElementList == 0) {
+            return -1;
+        }
         Page page = getPageFromColumnIndex(startColumnOfCurrentElementList);
         return page.getPageViewport().getBodyRegion().getColumnIPD();
     }
 
     public int getNextIPD() {
-        Page page = getPageFromColumnIndex(startColumnOfCurrentElementList + 1);
-        return page.getPageViewport().getBodyRegion().getColumnIPD();
+        pageSeq.setOnlyTryInfinite(true);
+        try {
+            int oldSize = cachedPages.size();
+            Page page = getPageFromColumnIndex(startColumnOfCurrentElementList + 1);
+            if (oldSize != cachedPages.size()) {
+                cachedPages.remove(cachedPages.size() - 1);
+            }
+            return page.getPageViewport().getBodyRegion().getColumnIPD();
+        } catch (PageProductionException e) {
+            return getCurrentIPD();
+        } finally {
+            pageSeq.setOnlyTryInfinite(false);
+        }
     }
 
     public int getCurrentColumnCount() {

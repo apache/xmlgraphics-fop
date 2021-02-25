@@ -49,6 +49,7 @@ public class PageSequenceMaster extends FObj {
     private SubSequenceSpecifier currentSubSequence;
     private int currentSubSequenceNumber = -1;
     private BlockLevelEventProducer blockLevelEventProducer;
+    protected boolean onlyTryInfinite;
 
     // The terminology may be confusing. A 'page-sequence-master' consists
     // of a sequence of what the XSL spec refers to as
@@ -199,6 +200,9 @@ public class PageSequenceMaster extends FObj {
                                                     boolean isBlankPage,
                                                     String mainFlowName)
                                                       throws PageProductionException {
+        if (onlyTryInfinite && currentSubSequence != null && !currentSubSequence.isInfinite()) {
+            throw new PageProductionException("Limited to infinite");
+        }
         if (currentSubSequence == null) {
             currentSubSequence = getNextSubSequence();
             if (currentSubSequence == null) {

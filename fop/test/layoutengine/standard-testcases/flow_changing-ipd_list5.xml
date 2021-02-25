@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that blocks of texts are re-laid out after a change of the flow ipd.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="PageFront" page-width="8.5in" page-height="11in" margin-bottom="0.2in" margin-right="0.5in" margin-top="0.5in" margin-left="0.5in">
+      <fo:region-body region-name="letterPageBody1" margin-bottom="0.3in" margin-right="0pt" margin-top="1.6in" margin-left="0pt"/>
+      <fo:region-before region-name="Header" extent="10.8in"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="PageRest" page-width="8.5in" page-height="11in" margin-bottom="0.1in" margin-right="0.5in" margin-top="0.5in" margin-left="0.5in">
+      <fo:region-body margin-bottom="0.1in" margin-right="0pt" margin-top="0.4in" margin-left="0pt" column-gap="0.5in" column-count="2" region-name="letterPageBody"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="LetterPages">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference page-position="first" master-reference="PageFront"/>
+        <fo:conditional-page-master-reference page-position="rest" master-reference="PageRest"/>
+        <fo:conditional-page-master-reference page-position="last" master-reference="PageRest"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence format="1" id="th_default_sequence1" initial-page-number="auto" force-page-count="auto" master-reference="LetterPages">
+    <fo:static-content flow-name="Header">
+      <fo:block>
+        <fo:list-block font-family="Helvetica" font-size="10pt" line-height="11pt">
+          <fo:list-item space-after="5pt" space-before="5pt" line-height="11pt">
+            <fo:list-item-label font-family="Helvetica" font-size="10pt" text-indent="0.1in" line-height="11pt">
+              <fo:block>1.</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="0.325in" font-family="Helvetica" font-size="10pt" line-height="11pt">
+              <fo:block>
+                <fo:inline font-weight="bold">Your </fo:inline>name is the name on the attached declaration.</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+        </fo:list-block>
+      </fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="letterPageBody">
+      <fo:block>AGREEMENT</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="" xpath="//pageViewport[1]//flow/block//word"/>
+    <eval expected="AGREEMENT" xpath="//pageViewport[2]//flow/block//word"/>
+  </checks> 
+</testcase>
