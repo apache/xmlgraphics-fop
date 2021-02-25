@@ -31,6 +31,7 @@ import org.apache.fop.afp.ptoca.PtocaBuilder;
 
 public class AFPParser {
     private boolean readText;
+    protected boolean readWidths;
     public AFPParser(boolean readText) {
         this.readText = readText;
     }
@@ -82,7 +83,11 @@ public class AFPParser {
 
             sb.append(" " + PTOCA_MAP.get(functionType));
 
-            if ("TRN".equals(PTOCA_MAP.get(functionType))) {
+            if (readWidths && "AMI".equals(PTOCA_MAP.get(functionType))) {
+                byte[] data = new byte[len - 2];
+                bis.read(data);
+                sb.append(" ").append(data[1] & 0xFF);
+            } else if ("TRN".equals(PTOCA_MAP.get(functionType))) {
                 byte[] data = new byte[len - 2];
                 bis.read(data);
                 sb.append(" " + new String(data, "UTF-16BE"));

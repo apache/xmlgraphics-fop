@@ -1025,7 +1025,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                 builder.setVariableSpaceCharacterIncrement(varSpaceCharacterIncrement);
 
                 boolean fixedSpaceMode = false;
-                int ttPos = p.x;
+                double ttPos = p.x;
 
                 for (int i = 0; i < l; i++) {
                     char orgChar = text.charAt(i);
@@ -1066,8 +1066,8 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
                     if (afpFont.getFontType() == FontType.TRUETYPE) {
                         flushText(builder, sb, charSet);
-                        ttPos += Math.round(unitConv.mpt2units(glyphAdjust));
-                        builder.absoluteMoveInline(ttPos);
+                        ttPos += unitConv.mpt2units(glyphAdjust);
+                        builder.absoluteMoveInline((int) Math.round(ttPos));
                     } else if (glyphAdjust != 0) {
                         flushText(builder, sb, charSet);
                         int increment = Math.round(unitConv.mpt2units(glyphAdjust));
