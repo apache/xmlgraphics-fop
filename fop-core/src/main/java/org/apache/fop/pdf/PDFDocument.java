@@ -23,6 +23,7 @@ package org.apache.fop.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,6 +36,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.util.SoftMapCache;
 
 import org.apache.fop.pdf.StandardStructureAttributes.Table.Scope;
 import org.apache.fop.pdf.xref.CrossReferenceStream;
@@ -131,6 +134,7 @@ public class PDFDocument {
 
     /* TODO: Should be modified (works only for image subtype) */
     private Map<String, PDFXObject> xObjectsMap = new HashMap<String, PDFXObject>();
+    private SoftMapCache xObjectsMapFast = new SoftMapCache(false);
 
     private Map<String, PDFFont> fontMap = new HashMap<String, PDFFont>();
 
@@ -800,7 +804,7 @@ public class PDFDocument {
      */
     @Deprecated
     public PDFImageXObject getImage(String key) {
-        return (PDFImageXObject)this.xObjectsMap.get(key);
+        return (PDFImageXObject)getXObject(key);
     }
 
     /**
@@ -810,7 +814,34 @@ public class PDFDocument {
      * @return the PDFXObject for the key if found
      */
     public PDFXObject getXObject(String key) {
-        return this.xObjectsMap.get(key);
+        Object xObj = xObjectsMapFast.get(key);
+        if (xObj != null) {
+            return (PDFXObject) xObj;
+        }
+        return xObjectsMap.get(toHashCode(key));
+    }
+
+    private void putXObject(String key, PDFXObject pdfxObject) {
+        xObjectsMapFast.clear();
+        xObjectsMapFast.put(key, pdfxObject);
+        xObjectsMap.put(toHashCode(key), pdfxObject);
+    }
+
+    private String toHashCode(String key) {
+        if (key.length() < 1024) {
+            return key;
+        }
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] thedigest = md.digest(key.getBytes("UTF-8"));
+            StringBuilder hex = new StringBuilder();
+            for (byte b : thedigest) {
+                hex.append(String.format("%02x", b));
+            }
+            return hex.toString();
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -859,7 +890,7 @@ public class PDFDocument {
     public PDFImageXObject addImage(PDFResourceContext res, PDFImage img) {
         // check if already created
         String key = img.getKey();
-        PDFImageXObject xObject = (PDFImageXObject)this.xObjectsMap.get(key);
+        PDFImageXObject xObject = (PDFImageXObject)getXObject(key);
         if (xObject != null) {
             if (res != null) {
                 res.addXObject(xObject);
@@ -876,7 +907,7 @@ public class PDFDocument {
         if (res != null) {
             res.addXObject(xObject);
         }
-        this.xObjectsMap.put(key, xObject);
+        putXObject(key, xObject);
         return xObject;
     }
 
@@ -899,7 +930,7 @@ public class PDFDocument {
         String key) {
 
         // check if already created
-        PDFFormXObject xObject = (PDFFormXObject)xObjectsMap.get(key);
+        PDFFormXObject xObject = (PDFFormXObject)getXObject(key);
         if (xObject != null) {
             if (res != null) {
                 res.addXObject(xObject);
@@ -916,7 +947,7 @@ public class PDFDocument {
         if (res != null) {
             res.addXObject(xObject);
         }
-        this.xObjectsMap.put(key, xObject);
+        putXObject(key, xObject);
         return xObject;
     }
 
