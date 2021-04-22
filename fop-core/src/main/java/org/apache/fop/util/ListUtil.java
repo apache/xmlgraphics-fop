@@ -21,6 +21,8 @@ package org.apache.fop.util;
 
 import java.util.List;
 
+import org.apache.fop.layoutmgr.ListElement;
+
 /**
  * Provides helper functions for {@link java.util.List}.
  *
@@ -40,6 +42,14 @@ public final class ListUtil {
      */
     public static <T> T getLast(List<T> list) {
         return list.get(list.size() - 1);
+    }
+
+    public static ListElement getLastListElement(List list) {
+        Object last = getLast(list);
+        if (last instanceof ListElement) {
+            return (ListElement) last;
+        }
+        return null;
     }
 
     /**

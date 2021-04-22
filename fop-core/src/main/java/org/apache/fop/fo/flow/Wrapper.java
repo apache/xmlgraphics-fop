@@ -121,7 +121,7 @@ public class Wrapper extends FObjMixed implements CommonAccessibilityHolder {
             while (ancestor.getNameId() == Constants.FO_WRAPPER) {
                 ancestor = ancestor.getParent();
             }
-            if (!(ancestor instanceof FObjMixed)) {
+            if (!(ancestor instanceof FObjMixed) && !child.toString().trim().isEmpty()) {
                 invalidChildError(
                         getLocator(),
                         getLocalName(),

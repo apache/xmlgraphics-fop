@@ -178,7 +178,8 @@ public final class ElementListUtils {
      * @return true if the list ends with a forced break
      */
     public static boolean endsWithForcedBreak(List elems) {
-        return ((ListElement) ListUtil.getLast(elems)).isForcedBreak();
+        ListElement last = ListUtil.getLastListElement(elems);
+        return last == null || last.isForcedBreak();
     }
 
     /**

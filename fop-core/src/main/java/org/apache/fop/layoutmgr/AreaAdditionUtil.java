@@ -65,7 +65,7 @@ public final class AreaAdditionUtil {
                 }
                 lastPos = pos;
             }
-            if (pos instanceof NonLeafPosition) {
+            if (pos instanceof NonLeafPosition && pos.getPosition() != null) {
                 // pos was created by a child of this FlowLM
                 positionList.add(pos.getPosition());
                 lastLM = (pos.getPosition().getLM());

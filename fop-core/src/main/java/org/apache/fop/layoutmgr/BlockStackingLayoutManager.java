@@ -535,8 +535,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             return;
         }
 
-        ListElement last = ListUtil.getLast(contentList);
-        if (last.isGlue()) {
+        ListElement last = ListUtil.getLastListElement(contentList);
+        if (last == null || last.isGlue()) {
             // the last element in contentList is a glue;
             // it is a feasible breakpoint, there is no need to add
             // a penalty

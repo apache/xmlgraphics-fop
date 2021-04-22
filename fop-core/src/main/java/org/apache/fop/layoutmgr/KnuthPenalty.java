@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.fo.Constants;
+
 /**
  * An instance of this class represents information about a feasible
  * breaking point; it does not represent any piece of content.
@@ -47,7 +49,7 @@ public class KnuthPenalty extends KnuthElement {
 
     private int penalty;
     private boolean penaltyFlagged;
-    private int breakClass = -1;
+    private int breakClass = Constants.EN_AUTO;
 
     /**
      * Create a new KnuthPenalty.
