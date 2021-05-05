@@ -600,6 +600,7 @@ list of possible build targets.
         <include name="batik*.jar"/>
         <include name="commons-io*.jar"/>
         <include name="xmlgraphics*.jar"/>
+        <include name="xml-apis*jar" />
       </lib>
       <lib dir="${build.dir}">
         <include name="fop.jar"/>
