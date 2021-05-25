@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks tables, especially table-cells. This test: height and block-progression-dimension.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="1">
+          <fo:region-body region-name="xsl-region-body"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="2">
+          <fo:repeatable-page-master-reference maximum-repeats="99999" master-reference="1"/>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="2">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>
+            <fo:block>
+              <fo:wrapper>
+                <fo:table>
+                  <fo:table-column column-width="226pt"/>
+                  <fo:table-column column-width="198pt"/>
+                  <fo:table-body>
+                    <fo:table-row height="5mm">
+                      <fo:table-cell>
+                        <fo:wrapper>
+                          <fo:wrapper>
+                            <fo:wrapper>
+                              <fo:block>
+                                <fo:wrapper></fo:wrapper>
+                              </fo:block>
+                            </fo:wrapper>
+                          </fo:wrapper>
+                        </fo:wrapper>
+                      </fo:table-cell>
+                      <fo:table-cell>
+                        <fo:wrapper>
+                          <fo:wrapper></fo:wrapper>
+                        </fo:wrapper>
+                      </fo:table-cell>
+                    </fo:table-row>
+                  </fo:table-body>
+                </fo:table>
+              </fo:wrapper>
+            </fo:block>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="11100" xpath="//lineArea/@bpd"/>
+  </checks>
+</testcase>

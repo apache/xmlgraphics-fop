@@ -436,10 +436,12 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
 
         private void setBlockProgressionOffset() {
-            if (blockProgressionDimension == alignmentContext.getHeight()) {
-                textArea.setBlockProgressionOffset(0);
-            } else {
-                textArea.setBlockProgressionOffset(alignmentContext.getOffset());
+            if (alignmentContext != null) {
+                if (blockProgressionDimension == alignmentContext.getHeight()) {
+                    textArea.setBlockProgressionOffset(0);
+                } else {
+                    textArea.setBlockProgressionOffset(alignmentContext.getOffset());
+                }
             }
         }
 

@@ -239,25 +239,23 @@ class ActiveCell {
     private void handleExplicitHeight(MinOptMax cellBPD, MinOptMax rowBPD) {
         int minBPD = Math.max(cellBPD.getMin(), rowBPD.getMin());
         if (minBPD > 0) {
-            ListIterator iter = elementList.listIterator();
             int cumulateLength = 0;
             boolean prevIsBox = false;
-            while (iter.hasNext() && cumulateLength < minBPD) {
-                KnuthElement el = (KnuthElement) iter.next();
+            for (int i = 0; i < elementList.size() && cumulateLength < minBPD; i++) {
+                KnuthElement el = (KnuthElement) elementList.get(i);
                 if (el.isBox()) {
                     prevIsBox = true;
                     cumulateLength += el.getWidth();
                 } else if (el.isGlue()) {
                     if (prevIsBox) {
-                        elementList.add(iter.nextIndex() - 1,
-                                new FillerPenalty(minBPD - cumulateLength));
+                        elementList.add(i, new FillerPenalty(minBPD - cumulateLength));
                     }
                     prevIsBox = false;
                     cumulateLength += el.getWidth();
                 } else {
                     prevIsBox = false;
                     if (cumulateLength + el.getWidth() < minBPD) {
-                        iter.set(new FillerPenalty((KnuthPenalty) el, minBPD - cumulateLength));
+                        elementList.set(i, new FillerPenalty((KnuthPenalty) el, minBPD - cumulateLength));
                     }
                 }
             }

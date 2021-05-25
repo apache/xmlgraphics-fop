@@ -703,7 +703,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
      * @param childArea the child to add to the cell
      */
     public void addChildArea(Area childArea) {
-        if (curBlockArea != null) {
+        if (curBlockArea != null && childArea instanceof Block) {
             curBlockArea.addBlock((Block) childArea);
         }
     }
