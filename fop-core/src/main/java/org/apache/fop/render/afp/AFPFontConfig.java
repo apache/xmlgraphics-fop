@@ -266,8 +266,9 @@ public final class AFPFontConfig implements FontConfig {
                 return null;
             }
             String subfont = cfg.getAttribute("sub-font", null);
+            boolean positionByChar = cfg.getAttributeAsBoolean("position-by-char", true);
             return new TrueTypeFontConfig(fontTriplets, type, codepage, encoding, "",
-                    name, subfont, isEmbbedable(fontTriplets), uri);
+                    name, subfont, isEmbbedable(fontTriplets), uri, positionByChar);
         }
 
         private RasterFontConfig getRasterFont(List<FontTriplet> triplets, String type,
@@ -368,14 +369,16 @@ public final class AFPFontConfig implements FontConfig {
         private String characterset;
         private String subfont;
         private String fontUri;
+        private boolean positionByChar;
 
         private TrueTypeFontConfig(List<FontTriplet> triplets, String type, String codePage,
                                    String encoding, String characterset, String name, String subfont,
-                                   boolean embeddable, String uri) {
+                                   boolean embeddable, String uri, boolean positionByChar) {
             super(triplets, type, codePage, encoding, name, embeddable, null);
             this.characterset = characterset;
             this.subfont = subfont;
             this.fontUri = uri;
+            this.positionByChar = positionByChar;
         }
 
         @Override
@@ -390,7 +393,7 @@ public final class AFPFontConfig implements FontConfig {
                 CharacterSet characterSet = CharacterSetBuilder.getDoubleByteInstance().build(characterset,
                         super.codePage, super.encoding, tf, accessor, eventProducer);
                 OutlineFont font = new AFPTrueTypeFont(super.name, super.embeddable, characterSet,
-                            eventProducer, subfont, new URI(fontUri));
+                            eventProducer, subfont, new URI(fontUri), positionByChar);
                 return getFontInfo(font, this);
             } catch (URISyntaxException e) {
                 throw new IOException(e);
@@ -401,11 +404,13 @@ public final class AFPFontConfig implements FontConfig {
     public static class AFPTrueTypeFont extends OutlineFont {
         private String ttc;
         private URI uri;
+        private boolean positionByChar;
         public AFPTrueTypeFont(String name, boolean embeddable, CharacterSet charSet, AFPEventProducer eventProducer,
-                               String ttc, URI uri) {
+                               String ttc, URI uri, boolean positionByChar) {
             super(name, embeddable, charSet, eventProducer);
             this.ttc = ttc;
             this.uri = uri;
+            this.positionByChar = positionByChar;
         }
 
         public FontType getFontType() {
@@ -418,6 +423,10 @@ public final class AFPFontConfig implements FontConfig {
 
         public URI getUri() {
             return uri;
+        }
+
+        public boolean isPositionByChar() {
+            return positionByChar;
         }
     }
 

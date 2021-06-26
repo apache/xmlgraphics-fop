@@ -70,7 +70,6 @@ import org.apache.fop.afp.ptoca.PtocaProducer;
 import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
@@ -1026,11 +1025,12 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
                 boolean fixedSpaceMode = false;
                 double ttPos = p.x;
-
+                boolean positionByChar = afpFont instanceof AFPFontConfig.AFPTrueTypeFont
+                        && ((AFPFontConfig.AFPTrueTypeFont) afpFont).isPositionByChar();
                 for (int i = 0; i < l; i++) {
                     char orgChar = text.charAt(i);
                     float glyphAdjust = 0;
-                    if (afpFont.getFontType() == FontType.TRUETYPE) {
+                    if (positionByChar) {
                         flushText(builder, sb, charSet);
                         fixedSpaceMode = true;
                         int charWidth = font.getCharWidth(orgChar);
@@ -1064,7 +1064,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                         glyphAdjust += dx[i + 1];
                     }
 
-                    if (afpFont.getFontType() == FontType.TRUETYPE) {
+                    if (positionByChar) {
                         flushText(builder, sb, charSet);
                         ttPos += unitConv.mpt2units(glyphAdjust);
                         builder.absoluteMoveInline((int) Math.round(ttPos));
