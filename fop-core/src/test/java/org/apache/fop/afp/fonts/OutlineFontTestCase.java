@@ -33,7 +33,7 @@ public class OutlineFontTestCase {
     }
 
     public static CharacterSet getCharacterSet() {
-        CharacterSet characterSet = new CharacterSet(null, "utf-8", CharacterSetType.SINGLE_BYTE, "", null, null);
+        CharacterSet characterSet = new CharacterSet("00000000", "utf-8", CharacterSetType.SINGLE_BYTE, "", null, null);
         characterSet.addCharacterSetOrientation(new CharacterSetOrientation(0, 0, 0, 0));
         return characterSet;
     }

@@ -215,7 +215,9 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void startPageSequence(String id) throws IFException {
         try {
-            dataStream.startPageGroup();
+            if (!"false".equals(getContext().getForeignAttribute(AFPElementMapping.PAGE_GROUP))) {
+                dataStream.startPageGroup();
+            }
         } catch (IOException ioe) {
             throw new IFException("I/O error in startPageSequence()", ioe);
         }

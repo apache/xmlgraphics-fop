@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.afp.extensions;
 
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FONode;
 
@@ -55,6 +57,8 @@ public class AFPElementMapping extends ElementMapping {
      * The namespace used for AFP extensions
      */
     public static final String NAMESPACE = "http://xmlgraphics.apache.org/fop/extensions/afp";
+
+    public static final QName PAGE_GROUP = new QName(NAMESPACE, null, "page-group");
 
     /**
      * The usual namespace prefix used for AFP extensions

@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +52,7 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.impl.DefaultImageContext;
 import org.apache.xmlgraphics.image.loader.impl.DefaultImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.ImageBuffered;
+import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.AFPPaintingState;
@@ -67,6 +69,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.ImageHandlerRegistry;
+import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.traits.BorderProps;
@@ -332,5 +335,57 @@ public class AFPPainterTestCase {
         int radiusEnd = 0;
         BorderProps border1 = new BorderProps(style, borderWidth, radiusStart, radiusEnd, color, mode);
         afpPainter.drawBorderRect(new Rectangle(0, 0, 552755, 16090), null, border1, null, null, Color.WHITE);
+    }
+
+    @Test
+    public void testPageGroup() throws IFException, IOException {
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        AFPDocumentHandler documentHandler = new AFPDocumentHandler(new IFContext(ua));
+        Map<QName, String> attributes = new HashMap<>();
+        attributes.put(AFPElementMapping.PAGE_GROUP, "false");
+        documentHandler.getContext().setForeignAttributes(attributes);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        documentHandler.setResult(new StreamResult(os));
+        documentHandler.startDocument();
+        documentHandler.startPageSequence(null);
+        documentHandler.startPage(0, "", "", new Dimension());
+        AFPPainter afpPainter = new AFPPainter(documentHandler);
+        setFont(documentHandler, afpPainter);
+        afpPainter.drawText(0, 0, 0, 0, null, "a");
+        documentHandler.endPage();
+        documentHandler.endPageSequence();
+        attributes.clear();
+        documentHandler.startPageSequence(null);
+        documentHandler.startPage(0, "", "", new Dimension());
+        afpPainter.drawText(0, 0, 0, 0, null, "a");
+        documentHandler.endDocument();
+
+        InputStream bis = new ByteArrayInputStream(os.toByteArray());
+        StringBuilder sb = new StringBuilder();
+        new AFPParser(false).read(bis, sb);
+        Assert.assertEquals(sb.toString(), "BEGIN DOCUMENT DOC00001\n"
+                + "BEGIN PAGE PGN00001\n"
+                + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "MAP CODED_FONT Triplets: "
+                + "FULLY_QUALIFIED_NAME,FULLY_QUALIFIED_NAME,CHARACTER_ROTATION,RESOURCE_LOCAL_IDENTIFIER,\n"
+                + "DESCRIPTOR PAGE\n"
+                + "MIGRATION PRESENTATION_TEXT\n"
+                + "END ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "BEGIN PRESENTATION_TEXT PT000001\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000001\n"
+                + "END PAGE PGN00001\n"
+                + "BEGIN PAGE_GROUP PGP00001\n"
+                + "BEGIN PAGE PGN00002\n"
+                + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00002\n"
+                + "DESCRIPTOR PAGE\n"
+                + "MIGRATION PRESENTATION_TEXT\n"
+                + "END ACTIVE_ENVIRONMENT_GROUP AEG00002\n"
+                + "BEGIN PRESENTATION_TEXT PT000002\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000002\n"
+                + "END PAGE PGN00002\n"
+                + "END PAGE_GROUP PGP00001\n"
+                + "END DOCUMENT DOC00001\n");
     }
 }
