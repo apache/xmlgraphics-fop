@@ -245,6 +245,8 @@ public abstract class ScriptProcessor {
             sp = new ArabicScriptProcessor(script);
         } else if (CharScript.isIndicScript(sc)) {
             sp = IndicScriptProcessor.makeProcessor(script);
+        } else if (sc == CharScript.SCRIPT_THAI) {
+            sp = new ThaiScriptProcessor(script);
         } else {
             sp = new DefaultScriptProcessor(script);
         }
