@@ -161,20 +161,48 @@ public final class PDFRendererConfig implements RendererConfig {
         private void configureEncryptionParams(Configuration cfg, FOUserAgent userAgent, boolean strict) {
             Configuration encryptCfg = cfg.getChild(ENCRYPTION_PARAMS, false);
             if (encryptCfg != null) {
-                encryptionConfig = new PDFEncryptionParams();
-                encryptionConfig.setOwnerPassword(parseConfig(encryptCfg, OWNER_PASSWORD));
-                encryptionConfig.setUserPassword(parseConfig(encryptCfg, USER_PASSWORD));
-                encryptionConfig.setAllowPrint(!doesValueExist(encryptCfg, NO_PRINT));
-                encryptionConfig.setAllowCopyContent(!doesValueExist(encryptCfg, NO_COPY_CONTENT));
-                encryptionConfig.setAllowEditContent(!doesValueExist(encryptCfg, NO_EDIT_CONTENT));
-                encryptionConfig.setAllowEditAnnotations(!doesValueExist(encryptCfg, NO_ANNOTATIONS));
-                encryptionConfig.setAllowFillInForms(!doesValueExist(encryptCfg, NO_FILLINFORMS));
-                encryptionConfig.setAllowAccessContent(!doesValueExist(encryptCfg, NO_ACCESSCONTENT));
-                encryptionConfig.setAllowAssembleDocument(!doesValueExist(encryptCfg, NO_ASSEMBLEDOC));
-                encryptionConfig.setAllowPrintHq(!doesValueExist(encryptCfg, NO_PRINTHQ));
-                encryptionConfig.setEncryptMetadata(getConfigValue(encryptCfg, ENCRYPT_METADATA, true));
+                encryptionConfig = PDFRenderingUtil.createFromUserAgent(userAgent).getEncryptionParameters();
+                if (encryptionConfig == null) {
+                    encryptionConfig = new PDFEncryptionParams();
+                }
+                String ownerPassword = parseConfig(encryptCfg, OWNER_PASSWORD);
+                if (doesValueExist(encryptCfg, OWNER_PASSWORD)) {
+                    encryptionConfig.setOwnerPassword(ownerPassword);
+                }
+                String userPassword = parseConfig(encryptCfg, USER_PASSWORD);
+                if (doesValueExist(encryptCfg, USER_PASSWORD)) {
+                    encryptionConfig.setUserPassword(userPassword);
+                }
+                if (doesValueExist(encryptCfg, NO_PRINT)) {
+                    encryptionConfig.setAllowPrint(false);
+                }
+                if (doesValueExist(encryptCfg, NO_COPY_CONTENT)) {
+                    encryptionConfig.setAllowCopyContent(false);
+                }
+                if (doesValueExist(encryptCfg, NO_EDIT_CONTENT)) {
+                    encryptionConfig.setAllowEditContent(false);
+                }
+                if (doesValueExist(encryptCfg, NO_ANNOTATIONS)) {
+                    encryptionConfig.setAllowEditAnnotations(false);
+                }
+                if (doesValueExist(encryptCfg, NO_FILLINFORMS)) {
+                    encryptionConfig.setAllowFillInForms(false);
+                }
+                if (doesValueExist(encryptCfg, NO_ACCESSCONTENT)) {
+                    encryptionConfig.setAllowAccessContent(false);
+                }
+                if (doesValueExist(encryptCfg, NO_ASSEMBLEDOC)) {
+                    encryptionConfig.setAllowAssembleDocument(false);
+                }
+                if (doesValueExist(encryptCfg, NO_PRINTHQ)) {
+                    encryptionConfig.setAllowPrintHq(false);
+                }
+                String encryptMetadata = parseConfig(encryptCfg, ENCRYPT_METADATA);
+                if (doesValueExist(encryptCfg, ENCRYPT_METADATA)) {
+                    encryptionConfig.setEncryptMetadata(Boolean.parseBoolean(encryptMetadata));
+                }
                 String encryptionLength = parseConfig(encryptCfg, ENCRYPTION_LENGTH);
-                if (encryptionLength != null) {
+                if (doesValueExist(encryptCfg, ENCRYPTION_LENGTH)) {
                     int validatedLength = checkEncryptionLength(Integer.parseInt(encryptionLength), userAgent);
                     encryptionConfig.setEncryptionLengthInBits(validatedLength);
                 }
@@ -227,19 +255,6 @@ public final class PDFRendererConfig implements RendererConfig {
 
         private boolean doesValueExist(Configuration cfg, RendererConfigOption option) {
             return cfg.getChild(option.getName(), false) != null;
-        }
-
-        private boolean getConfigValue(Configuration cfg, RendererConfigOption option, boolean defaultTo) {
-            if (cfg.getChild(option.getName(), false) != null) {
-                Configuration child = cfg.getChild(option.getName());
-                try {
-                    return child.getValueAsBoolean();
-                } catch (ConfigurationException e) {
-                    return defaultTo;
-                }
-            } else {
-                return defaultTo;
-            }
         }
 
         private int checkEncryptionLength(int encryptionLength, FOUserAgent userAgent) {

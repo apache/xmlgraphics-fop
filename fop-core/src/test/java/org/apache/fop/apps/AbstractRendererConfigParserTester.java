@@ -51,15 +51,19 @@ public abstract class AbstractRendererConfigParserTester<B extends RendererConfB
     }
 
     protected void parseConfig(B rendererConfBuilder) throws Exception {
-        DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-        Configuration cfg = cfgBuilder.build(rendererConfBuilder.endRendererConfig().build())
-                .getChild("renderers")
-                .getChild("renderer");
         FOUserAgent userAgent = mock(FOUserAgent.class);
         when(userAgent.validateStrictly()).thenReturn(true);
         FontManager fontManager = mock(FontManager.class);
         when(userAgent.getFontManager()).thenReturn(fontManager);
         when(userAgent.getEventBroadcaster()).thenReturn(new DefaultEventBroadcaster());
+        parseConfig(rendererConfBuilder, userAgent);
+    }
+
+    protected void parseConfig(B rendererConfBuilder, FOUserAgent userAgent) throws Exception {
+        DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
+        Configuration cfg = cfgBuilder.build(rendererConfBuilder.endRendererConfig().build())
+                .getChild("renderers")
+                .getChild("renderer");
         conf = (C) configBuilder.build(userAgent, cfg);
     }
 

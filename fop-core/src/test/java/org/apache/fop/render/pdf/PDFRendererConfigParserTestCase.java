@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.pdf;
 
+import java.io.File;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -26,8 +28,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.apps.AbstractRendererConfigParserTester;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.PDFRendererConfBuilder;
 import org.apache.fop.pdf.PDFAMode;
+import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.Version;
 import org.apache.fop.render.pdf.PDFRendererConfig.PDFRendererConfigParser;
@@ -93,6 +98,19 @@ public class PDFRendererConfigParserTestCase
         testRestrictEncryptionParameter(PDFEncryptionOption.NO_EDIT_CONTENT);
         testRestrictEncryptionParameter(PDFEncryptionOption.NO_FILLINFORMS);
         testRestrictEncryptionParameter(PDFEncryptionOption.NO_PRINTHQ);
+    }
+
+    @Test
+    public void testMergeEncryptionParams() throws Exception {
+        FOUserAgent userAgent = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        PDFEncryptionParams params = new PDFEncryptionParams();
+        String testPassword = "x";
+        params.setUserPassword(testPassword);
+        userAgent.getRendererOptions().put(PDFEncryptionOption.ENCRYPTION_PARAMS, params);
+        parseConfig(createRenderer()
+                .startEncryptionParams()
+                .endEncryptionParams(), userAgent);
+        assertEquals(testPassword, conf.getConfigOptions().getEncryptionParameters().getUserPassword());
     }
 
     @Test

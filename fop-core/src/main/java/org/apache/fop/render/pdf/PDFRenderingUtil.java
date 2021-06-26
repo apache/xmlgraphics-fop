@@ -136,7 +136,7 @@ class PDFRenderingUtil {
         }
     }
 
-    private static  PDFRendererOptionsConfig createFromUserAgent(FOUserAgent userAgent) {
+    protected static PDFRendererOptionsConfig createFromUserAgent(FOUserAgent userAgent) {
         Map<PDFRendererOption, Object> properties
                 = new EnumMap<PDFRendererOption, Object>(PDFRendererOption.class);
         for (PDFRendererOption option : PDFRendererOption.values()) {
