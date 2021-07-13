@@ -96,9 +96,12 @@ public class GenericShorthandParser implements ShorthandParser {
             }
             prop = maker.convertShorthandProperty(propertyList, p, null);
         }
-        propertyList.validatePropertyValue(vProperty.toString(), prop, property);
+        validate(propertyList, vProperty.toString(), prop, property);
         return prop;
     }
 
+    protected void validate(PropertyList propertyList, String propertyString, Property prop, Property property) {
+        propertyList.validatePropertyValue(propertyString, prop, property);
+    }
 }
 

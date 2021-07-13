@@ -99,7 +99,7 @@ public final class FOPropertyMapping implements Constants {
     private PropertyMaker genericCondPadding;
     private PropertyMaker genericPadding;
     private PropertyMaker genericCondBorderWidth;
-    private PropertyMaker genericBorderWidth;
+    PropertyMaker genericBorderWidth;
     private PropertyMaker genericBorderStyle;
     private PropertyMaker genericCondCornerRadius;
     private PropertyMaker genericBreak;
@@ -2849,7 +2849,7 @@ public final class FOPropertyMapping implements Constants {
         m  = new ListProperty.Maker(PR_BORDER_BOTTOM);
         m.setInherited(false);
         m.setDefault("");
-        m.setDatatypeParser(new GenericShorthandParser());
+        m.setDatatypeParser(new BorderShorthandParser(this));
         addPropertyMaker("border-bottom", m);
 
         // border-color
@@ -2863,14 +2863,14 @@ public final class FOPropertyMapping implements Constants {
         m  = new ListProperty.Maker(PR_BORDER_LEFT);
         m.setInherited(false);
         m.setDefault("");
-        m.setDatatypeParser(new GenericShorthandParser());
+        m.setDatatypeParser(new BorderShorthandParser(this));
         addPropertyMaker("border-left", m);
 
         // border-right
         m  = new ListProperty.Maker(PR_BORDER_RIGHT);
         m.setInherited(false);
         m.setDefault("");
-        m.setDatatypeParser(new GenericShorthandParser());
+        m.setDatatypeParser(new BorderShorthandParser(this));
         addPropertyMaker("border-right", m);
 
         // border-style
@@ -2891,7 +2891,7 @@ public final class FOPropertyMapping implements Constants {
         m  = new ListProperty.Maker(PR_BORDER_TOP);
         m.setInherited(false);
         m.setDefault("");
-        m.setDatatypeParser(new GenericShorthandParser());
+        m.setDatatypeParser(new BorderShorthandParser(this));
         addPropertyMaker("border-top", m);
 
         // border-width

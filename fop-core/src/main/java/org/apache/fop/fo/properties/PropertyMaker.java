@@ -539,7 +539,7 @@ public class PropertyMaker implements Cloneable {
      * @return a String containing a parseable equivalent or null if
      * the passed value isn't a keyword initializer for this Property
      */
-    protected String checkValueKeywords(String keyword) {
+    public String checkValueKeywords(String keyword) {
         if (keywords != null) {
             String value = (String)keywords.get(keyword);
             if (value != null) {
