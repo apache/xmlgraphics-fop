@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that a table immediately following a changing IPD break is handled properly.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" xmlns:svg="http://www.w3.org/2000/svg">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="FirstPage" page-width="210mm" page-height="297mm" margin-bottom="10mm" margin-right="10mm" margin-top="10mm" margin-left="10mm">
+      <fo:region-body margin-top="70mm" region-name="Body" background-color="yellow"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master margin-bottom="5mm" master-name="RestPages" page-width="210mm" page-height="297mm" margin-right="10mm" margin-top="10mm" margin-left="10mm">
+      <fo:region-body margin-bottom="8mm" margin-right="35mm" margin-top="14mm" region-name="Body" background-color="pink"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master margin-top="10mm" margin-right="10mm" margin-left="10mm" margin-bottom="10mm" master-name="LastPage" page-width="210mm" page-height="297mm">
+      <fo:region-body margin-top="14mm" margin-bottom="8mm" margin-right="35mm" region-name="Body" background-color="pink"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="LetterPages">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference odd-or-even="odd" page-position="first" master-reference="FirstPage"/>
+        <fo:conditional-page-master-reference page-position="rest" master-reference="RestPages"/>
+        <fo:conditional-page-master-reference page-position="last" master-reference="LastPage"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence format="1" id="th_default_sequence1" master-reference="LetterPages" initial-page-number="auto" force-page-count="auto">
+    <fo:flow flow-name="Body">
+      <fo:block wrap-option="wrap">        
+        <fo:block line-height="15cm">a</fo:block>     
+        <fo:table table-layout="fixed" width="100%" id="2">
+          <fo:table-column column-width="proportional-column-width(6)" column-number="1"/>
+          <fo:table-column column-width="proportional-column-width(22.5)" column-number="2"/>
+          <fo:table-column column-width="proportional-column-width(3)" column-number="3"/>
+          <fo:table-column column-width="proportional-column-width(24.5)" column-number="4"/>
+          <fo:table-column column-width="proportional-column-width(9)" column-number="5"/>
+          <fo:table-column column-width="proportional-column-width(35)" column-number="6"/>
+          <fo:table-body>
+            <fo:table-row keep-together.within-page="always" keep-with-next.within-page="always">
+              <fo:table-cell number-columns-spanned="5">
+                <fo:block>
+                  <fo:block font-size="10pt" keep-together.within-page="always" keep-with-next.within-page="always" line-height="13pt">
+                    <fo:instream-foreign-object content-width="93.13333333333333mm" content-height="60.11333333333333mm" fox:alt-text="(None Specified)">
+                      <svg:svg fill-opacity="1" color-rendering="auto" color-interpolation="auto" text-rendering="optimizeLegibility" stroke="black" stroke-linecap="square" width="550.0" stroke-miterlimit="10" shape-rendering="auto" stroke-opacity="1" fill="black" stroke-dasharray="none" font-weight="normal" stroke-width="1" height="355.0" font-family="'Dialog'" font-style="normal" stroke-linejoin="miter" font-size="12px" stroke-dashoffset="0" image-rendering="auto">
+                        <svg:defs id="genericDefs"/>
+                        <svg:g>
+                          <svg:defs id="defs1">
+                            <svg:clipPath clipPathUnits="userSpaceOnUse" id="clipPath1">
+                              <svg:path d="M-1073741824 -1073741824 L1073741824 -1073741824 L1073741824 1073741824 L-1073741824 1073741824 L-1073741824 -1073741824 Z"/>
+                            </svg:clipPath>
+                            <svg:clipPath clipPathUnits="userSpaceOnUse" id="clipPath2">
+                              <svg:path d="M342 -27 L342 521 L-11 521 L-11 -27 L342 -27 Z"/>
+                            </svg:clipPath>
+                            <svg:clipPath clipPathUnits="userSpaceOnUse" id="clipPath3">
+                              <svg:path d="M257 -27 L257 521 L-96 521 L-96 -27 L257 -27 Z"/>
+                            </svg:clipPath>
+                            <svg:clipPath clipPathUnits="userSpaceOnUse" id="clipPath4">
+                              <svg:path d="M172 -27 L172 521 L-181 521 L-181 -27 L172 -27 Z"/>
+                            </svg:clipPath>
+                            <svg:clipPath clipPathUnits="userSpaceOnUse" id="clipPath5">
+                              <svg:path d="M87 -27 L87 521 L-266 521 L-266 -27 L87 -27 Z"/>
+                            </svg:clipPath>
+                            <svg:clipPath clipPathUnits="userSpaceOnUse" id="clipPath6">
+                              <svg:path d="M2 -27 L2 521 L-351 521 L-351 -27 L2 -27 Z"/>
+                            </svg:clipPath>
+                            <svg:clipPath clipPathUnits="userSpaceOnUse" id="clipPath7">
+                              <svg:path d="M1 1 L549 1 L549 354 L1 354 L1 1 Z"/>
+                            </svg:clipPath>
+                          </svg:defs>
+                          <svg:g fill="rgb(255,255,255)" fill-opacity="0" stroke-opacity="0" stroke="rgb(255,255,255)">
+                            <svg:rect x="0" width="550" height="355" y="0" stroke="none"/>
+                            <svg:rect x="0" width="550" height="355" y="0" clip-path="url(#clipPath1)" stroke="none"/>
+                          </svg:g>
+
+                          <svg:g fill="rgb(215,57,214)" text-rendering="geometricPrecision" font-size="8px" font-family="sans-serif" stroke="rgb(215,57,214)">
+                            <svg:rect x="79" width="156" height="312" y="31" clip-path="url(#clipPath7)" stroke="none"/>
+                            <svg:rect x="320" y="300" clip-path="url(#clipPath7)" fill="rgb(66,24,83)" width="156" height="43" stroke="none"/>
+                          </svg:g>
+                        </svg:g>
+                      </svg:svg>
+                    </fo:instream-foreign-object>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row keep-together.within-page="always" keep-with-next.within-page="always">
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="9pt" keep-together.within-page="always" keep-with-next.within-page="always" line-height="11pt">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell display-align="center" keep-together.within-page="always">
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="13pt" font-weight="bold" keep-together.within-page="always" keep-with-next.within-page="always" text-align="center">£73,477.30</fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="9pt" keep-together.within-page="always" keep-with-next.within-page="always" line-height="11pt">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell display-align="center" keep-together.within-page="always">
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="13pt" font-weight="bold" keep-together.within-page="always" keep-with-next.within-page="always" text-align="center">
+                    <fo:inline>£10,123.56</fo:inline>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>             
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="538583" xpath="//pageViewport[1]//lineArea/@ipd"/>
+    <eval expected="285544" xpath="//pageViewport[2]//lineArea/@ipd"/>
+  </checks>
+</testcase>

@@ -34,6 +34,7 @@ import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.flow.AbstractGraphics;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.Markers;
 import org.apache.fop.fo.flow.RetrieveTableMarker;
@@ -243,7 +244,9 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
          */
         if (tableUnit == 0.0) {
             tableUnit = columns.computeTableUnit(this);
-            tableUnit = Math.max(tableUnit, oldTableUnit);
+            if (oldTableUnit > tableUnit && supportResize(fobj)) {
+                tableUnit = oldTableUnit;
+            }
         }
 
         if (!firstVisibleMarkServed) {
@@ -312,6 +315,20 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
         setFinished(true);
         resetSpaces();
         return returnList;
+    }
+
+    private boolean supportResize(FONode node) {
+        if (node instanceof AbstractGraphics) {
+            return false;
+        }
+        FONode.FONodeIterator iterator = node.getChildNodes();
+        while (iterator != null && iterator.hasNext()) {
+            FONode x = (FONode) iterator.next();
+            if (!supportResize(x)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** {@inheritDoc} */
