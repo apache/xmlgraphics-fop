@@ -240,7 +240,7 @@ public class AFPTrueTypeTestCase {
 
     @Test
     public void testAFPPainterWidths() throws IFException, IOException {
-        String s = getAFPPainterWidths(true);
+        String s = getAFPPainterWidths(true, "abcdefghijklmno");
         Assert.assertTrue(s, s.contains("DATA PRESENTATION_TEXT AMB AMI 0 SCFL SVI TRN a AMI"
                 + " 9 TRN b AMI 29 TRN c AMI 59 TRN d AMI 99 TRN e AMI 149 TRN f AMI 209 TRN g AMI 24 TRN h AMI 105 TRN"
                 + " i AMI 196 TRN j AMI 42 TRN k AMI 153 TRN l AMI 19 TRN m AMI 151 TRN n AMI 38 TRN o AMI 190"));
@@ -248,11 +248,23 @@ public class AFPTrueTypeTestCase {
 
     @Test
     public void testAFPPainterWidthsNoPositionByChar() throws IFException, IOException {
-        String s = getAFPPainterWidths(false);
+        String s = getAFPPainterWidths(false, "abcdefghijklmno");
         Assert.assertTrue(s, s.contains("DATA PRESENTATION_TEXT AMB AMI 0 SCFL SVI TRN abcdefghijklmno"));
     }
 
-    private String getAFPPainterWidths(boolean positionByChar) throws IFException, IOException {
+    @Test
+    public void testAFPPainterWidthsNoPositionByCharLongText() throws IFException, IOException {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 30; i++) {
+            sb.append("test ");
+        }
+        String s = getAFPPainterWidths(false, sb.toString());
+        Assert.assertTrue(s, s.contains("DATA PRESENTATION_TEXT AMB AMI 0 SCFL SVI TRN test test test test test test "
+                + "test test test test test test test test test test test test test test test test test test test t "
+                + "TRN est test test test test"));
+    }
+
+    private String getAFPPainterWidths(boolean positionByChar, String text) throws IFException, IOException {
         AFPDocumentHandler afpDocumentHandler = mock(AFPDocumentHandler.class);
         when(afpDocumentHandler.getPaintingState()).thenReturn(new AFPPaintingState());
         when(afpDocumentHandler.getResourceManager()).thenReturn(new AFPResourceManager(null));
@@ -264,7 +276,7 @@ public class AFPTrueTypeTestCase {
 
         AFPPainter afpPainter = new MyAFPPainter(afpDocumentHandler, positionByChar);
         afpPainter.setFont("any", "normal", 400, null, 12000, Color.BLACK);
-        afpPainter.drawText(0, 0, 0, 0, null, "abcdefghijklmno");
+        afpPainter.drawText(0, 0, 0, 0, null, text);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         po.writeToStream(bos);

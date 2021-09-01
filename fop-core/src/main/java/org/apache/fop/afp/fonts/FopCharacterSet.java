@@ -51,7 +51,7 @@ public class FopCharacterSet extends CharacterSet {
 
     public FopCharacterSet(String codePage, String encoding, String name, Typeface charSet,
                            AFPResourceAccessor accessor, AFPEventProducer eventProducer) {
-        super(codePage, encoding, CharacterSetType.SINGLE_BYTE, name, accessor, eventProducer);
+        super(codePage, encoding, CharacterSetType.DOUBLE_BYTE, name, accessor, eventProducer);
         this.charSet = charSet;
     }
 
