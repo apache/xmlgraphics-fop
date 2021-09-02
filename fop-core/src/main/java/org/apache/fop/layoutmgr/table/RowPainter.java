@@ -198,6 +198,9 @@ class RowPainter {
      * in the outer mode
      */
     private void addAreasAndFlushRow(boolean lastInPart, boolean lastOnPage) {
+        if (currentRow == null) {
+            return;
+        }
         if (log.isDebugEnabled()) {
             log.debug("Remembering yoffset for row " + currentRow.getIndex() + ": "
                     + currentRowOffset);
