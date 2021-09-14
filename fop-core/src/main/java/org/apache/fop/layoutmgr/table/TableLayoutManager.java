@@ -323,7 +323,7 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
         }
         FONode.FONodeIterator iterator = node.getChildNodes();
         while (iterator != null && iterator.hasNext()) {
-            FONode x = (FONode) iterator.next();
+            FONode x = iterator.next();
             if (!supportResize(x)) {
                 return false;
             }
