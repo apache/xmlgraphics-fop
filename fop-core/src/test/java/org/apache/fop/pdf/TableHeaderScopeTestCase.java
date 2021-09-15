@@ -112,7 +112,7 @@ public class TableHeaderScopeTestCase {
         return argThat(new IsScopeAttribute(scope));
     }
 
-    private static class IsScopeAttribute extends ArgumentMatcher<PDFDictionary> {
+    private static class IsScopeAttribute implements ArgumentMatcher<PDFDictionary> {
 
         private final Scope expectedScope;
 
@@ -121,12 +121,11 @@ public class TableHeaderScopeTestCase {
         }
 
         @Override
-        public boolean matches(Object argument) {
-            PDFDictionary attribute = (PDFDictionary) argument;
+        public boolean matches(PDFDictionary argument) {
+            PDFDictionary attribute = argument;
             return "/Table".equals(attribute.get("O").toString())
                     && expectedScope.getName().toString().equals(attribute.get("Scope").toString());
         }
-
     }
 
 }

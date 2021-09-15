@@ -39,9 +39,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -78,7 +77,7 @@ import org.apache.fop.util.ColorUtil;
 public class AFPPainterTestCase {
 
     @Test
-    public void testDrawBorderRect() {
+    public void testDrawBorderRect() throws Exception {
         // the goal of this test is to check that the drawing of rounded corners in AFP uses a bitmap of the
         // rounded corners (in fact the whole rectangle with rounded corners). the check is done by verifying
         // that the AFPImageHandlerRenderedImage.handleImage() method is called
@@ -102,7 +101,7 @@ public class AFPPainterTestCase {
         AFPImageHandlerRenderedImage afpImageHandlerRenderedImage = mock(AFPImageHandlerRenderedImage.class);
         // mock
         ImageHandlerRegistry imageHandlerRegistry = mock(ImageHandlerRegistry.class);
-        when(imageHandlerRegistry.getHandler(any(AFPRenderingContext.class), any(Image.class))).thenReturn(
+        when(imageHandlerRegistry.getHandler(any(AFPRenderingContext.class), nullable(Image.class))).thenReturn(
                 afpImageHandlerRenderedImage);
         // mock
         FOUserAgent foUserAgent = mock(FOUserAgent.class);
@@ -140,19 +139,15 @@ public class AFPPainterTestCase {
         BorderProps border2 = new BorderProps(style, borderWidth, radiusStart, radiusEnd, color, mode);
         BorderProps border3 = new BorderProps(style, borderWidth, radiusStart, radiusEnd, color, mode);
         BorderProps border4 = new BorderProps(style, borderWidth, radiusStart, radiusEnd, color, mode);
-        try {
-            when(imageManager.convertImage(any(Image.class), any(ImageFlavor[].class), any(Map.class)))
-                    .thenReturn(imageBuffered);
-            afpPainter.drawBorderRect(rectangle, border1, border2, border3, border4, Color.WHITE);
-            // note: here we would really like to verify that the second and third arguments passed to
-            // handleImage() are the instances ib and rect declared above but that causes mockito to throw
-            // an exception, probably because we cannot declare the AFPRenderingContext and are forced to
-            // use any(), which forces the use of any() for all arguments
-            verify(afpImageHandlerRenderedImage).handleImage(any(AFPRenderingContext.class),
-                    any(Image.class), any(Rectangle.class));
-        } catch (Exception e) {
-            fail("something broke...");
-        }
+        when(imageManager.convertImage(any(Image.class), any(ImageFlavor[].class), any(Map.class)))
+                .thenReturn(imageBuffered);
+        afpPainter.drawBorderRect(rectangle, border1, border2, border3, border4, Color.WHITE);
+        // note: here we would really like to verify that the second and third arguments passed to
+        // handleImage() are the instances ib and rect declared above but that causes mockito to throw
+        // an exception, probably because we cannot declare the AFPRenderingContext and are forced to
+        // use any(), which forces the use of any() for all arguments
+        verify(afpImageHandlerRenderedImage).handleImage(any(AFPRenderingContext.class),
+                nullable(Image.class), any(Rectangle.class));
     }
 
     @Test
@@ -222,7 +217,7 @@ public class AFPPainterTestCase {
         RasterFont rf = new RasterFont("", true);
         CharacterSet cs = mock(CharacterSet.class);
         CharactersetEncoder.EncodedChars encoder = mock(CharactersetEncoder.EncodedChars.class);
-        when(cs.encodeChars(anyString())).thenReturn(encoder);
+        when(cs.encodeChars(any(CharSequence.class))).thenReturn(encoder);
         when(encoder.getLength()).thenReturn(text.get(0).length());
         rf.addCharacterSet(12000, cs);
         fi.addMetrics("", rf);

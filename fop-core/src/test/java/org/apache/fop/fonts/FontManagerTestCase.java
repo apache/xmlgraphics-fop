@@ -26,7 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -58,7 +58,7 @@ public class FontManagerTestCase {
 
         InOrder inOrder = inOrder(resolver, fontCacheManager);
         inOrder.verify(resolver).resolveFromBase(testURI);
-        inOrder.verify(fontCacheManager).setCacheFile(any(URI.class));
+        inOrder.verify(fontCacheManager).setCacheFile(nullable(URI.class));
     }
 
     @Test

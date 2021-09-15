@@ -25,6 +25,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.helpers.AttributesImpl;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -61,7 +62,7 @@ public class HeaderColumnTestCase {
         Attributes atts = createScopeAttribute("blah");
         propertyList.addAttributesToList(atts);
         verify(eventProducer).invalidPropertyValue(any(), eq("fo:table-column"),
-                eq("fox:header"), eq("blah"), any(PropertyException.class), any(Locator.class));
+                eq("fox:header"), eq("blah"), any(PropertyException.class), nullable(Locator.class));
     }
 
     @Test

@@ -19,7 +19,7 @@
 
 package org.apache.fop.fo.properties;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -53,7 +53,7 @@ public final class PropertyMocks {
     private static LengthRangeProperty mockLengthRangeProperty() {
         final LengthRangeProperty mockLengthRangeProperty = mock(LengthRangeProperty.class);
         final Property optimum = mockOptimumProperty();
-        when(mockLengthRangeProperty.getOptimum(any(PercentBaseContext.class)))
+        when(mockLengthRangeProperty.getOptimum(nullable(PercentBaseContext.class)))
                 .thenReturn(optimum);
         return mockLengthRangeProperty;
     }

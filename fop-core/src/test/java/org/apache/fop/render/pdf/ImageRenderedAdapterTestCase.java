@@ -28,6 +28,7 @@ import java.awt.image.RenderedImage;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -175,7 +176,7 @@ public class ImageRenderedAdapterTestCase {
         PDFImageXObject pio = new PDFImageXObject(0, null);
         pio.setObjectNumber(0);
         when(doc.getProfile()).thenReturn(profile);
-        when(doc.addImage(any(PDFResourceContext.class), any(PDFImage.class))).thenReturn(pio);
+        when(doc.addImage(nullable(PDFResourceContext.class), any(PDFImage.class))).thenReturn(pio);
 
         // ICC Color info
         PDFFactory factory = mock(PDFFactory.class);

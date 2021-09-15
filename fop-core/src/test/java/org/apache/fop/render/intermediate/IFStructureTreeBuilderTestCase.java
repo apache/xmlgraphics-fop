@@ -143,7 +143,7 @@ public class IFStructureTreeBuilderTestCase {
         return atts;
     }
 
-    private static final class AttributesMatcher extends ArgumentMatcher<Attributes> {
+    private static final class AttributesMatcher implements ArgumentMatcher<Attributes> {
 
         private final Attributes expected;
 
@@ -155,7 +155,7 @@ public class IFStructureTreeBuilderTestCase {
             return argThat(new AttributesMatcher(expected));
         }
 
-        public boolean matches(Object attributes) {
+        public boolean matches(Attributes attributes) {
             return attributesEqual(expected, (Attributes) attributes);
         }
 

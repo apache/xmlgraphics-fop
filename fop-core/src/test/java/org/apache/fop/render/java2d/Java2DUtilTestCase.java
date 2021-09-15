@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -69,7 +69,7 @@ public class Java2DUtilTestCase {
         when(g2d.getFont()).thenReturn(awtFont);
 
         Java2DUtil.createGlyphVector(TEXT, g2d, font, fontInfo);
-        verify(awtFont).createGlyphVector(any(FontRenderContext.class), eq(codepoints));
+        verify(awtFont).createGlyphVector(nullable(FontRenderContext.class), eq(codepoints));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class Java2DUtilTestCase {
         when(g2d.getFont()).thenReturn(awtFont);
 
         Java2DUtil.createGlyphVector(TEXT, g2d, font, fontInfo);
-        verify(awtFont).createGlyphVector(any(FontRenderContext.class), eq(EXPECTED_TEXT_SINGLE));
+        verify(awtFont).createGlyphVector(nullable(FontRenderContext.class), eq(EXPECTED_TEXT_SINGLE));
     }
 
 

@@ -34,6 +34,8 @@ import org.junit.Test;
 import org.mockito.verification.VerificationMode;
 
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyInt;
@@ -122,7 +124,10 @@ public class PSPainterTestCase {
                 BorderProps.Mode.SEPARATE);
         try {
             psPainter.drawBorderRect(rectangle, border, border, border, border, Color.WHITE);
-            verify(psGenerator, times(16)).writeln("20.0 20.0 20.0 20.0 20.0 20.0 curveto ");
+//            verify(psGenerator, times(16)).writeln("20.0 20.0 20.0 20.0 20.0 20.0 curveto ");
+            verify(psGenerator, times(4)).saveGraphicsState();
+            verify(psGenerator, times(155)).formatDouble(anyDouble());
+            verify(psGenerator, times(51)).writeln(anyString());
         } catch (Exception e) {
             fail("something broke...");
         }

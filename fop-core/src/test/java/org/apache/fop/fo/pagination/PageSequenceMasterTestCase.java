@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.xml.sax.Locator;
 
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
@@ -79,14 +80,14 @@ public class PageSequenceMasterTestCase {
                  anyBoolean(), anyBoolean())).thenReturn(null, spm);
 
          //Need this for the method to return normally
-         when(mockSinglePageMasterReference.canProcess(anyString())).thenReturn(true);
+         when(mockSinglePageMasterReference.canProcess(nullable(String.class))).thenReturn(true);
 
          when(mockSinglePageMasterReference.isReusable()).thenReturn(canResume);
 
          pageSequenceMaster.getNextSimplePageMaster(false, false, false, false, null);
 
          verify(mockBlockLevelEventProducer).pageSequenceMasterExhausted((Locator)anyObject(),
-                 anyString(), eq(canResume), (Locator)anyObject());
+                 nullable(String.class), eq(canResume), (Locator)anyObject());
      }
 
      /**
