@@ -138,7 +138,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
     private List<ListElement> addChildElements(List<ListElement> elements,
             LayoutManager childLM, LayoutContext context, int alignment,
             Stack<LayoutManager> lmStack, Position position, LayoutManager restartAtLM) {
-        if (handleSpanChange(childLM, context)) {
+        if (handleSpanChange(childLM, context) && position == null) {
             SpaceResolver.resolveElementList(elements);
             return elements;
         }
