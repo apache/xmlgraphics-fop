@@ -314,7 +314,7 @@ public abstract class FObj extends FONode implements Constants {
         }
         if (child == lastChild) {
             if (child.siblings != null) {
-                lastChild = siblings[0];
+                lastChild = child.siblings[0];
             } else {
                 lastChild = null;
             }
