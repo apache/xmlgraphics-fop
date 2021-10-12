@@ -20,12 +20,15 @@
 package org.apache.fop.render.pdf;
 
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.DublinCoreAdapter;
@@ -35,6 +38,7 @@ import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFAdapter;
 import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFSchema;
 
+import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFMetadata;
@@ -114,5 +118,29 @@ public class PDFAMetadataTestCase {
         assertEquals("WonderFOP", xmp.getCreatorTool());
         assertEquals(cal1.getTime(), xmp.getCreateDate());
         assertEquals(cal2.getTime(), xmp.getModifyDate());
+    }
+
+    @Test
+    public void testXMPMetaDataForLanguageAndDateForPDF2A() throws Exception {
+        PDFDocument doc = new PDFDocument("SuperFOP");
+        doc.getRoot().setLanguage(new Locale("en"));
+        doc.getProfile().setPDFAMode(PDFAMode.PDFA_2A);
+        Metadata meta = PDFMetadata.createXMPFromPDFDocument(doc);
+        assertTrue(meta.getProperty("http://purl.org/dc/elements/1.1/", "language").getValue().toString()
+                .contains("rdf:Bag"));
+        assertTrue(meta.getProperty("http://purl.org/dc/elements/1.1/", "date").getValue().toString()
+                .contains("rdf:Seq"));
+    }
+
+    @Test
+    public void testXMPMetaDataForLanguageAndDateForPDF1A() throws Exception {
+        PDFDocument doc = new PDFDocument("SuperFOP");
+        doc.getRoot().setLanguage(new Locale("en"));
+        doc.getProfile().setPDFAMode(PDFAMode.PDFA_1A);
+        Metadata meta = PDFMetadata.createXMPFromPDFDocument(doc);
+        assertFalse(meta.getProperty("http://purl.org/dc/elements/1.1/", "language").getValue().toString()
+                .contains("rdf:Bag"));
+        assertFalse(meta.getProperty("http://purl.org/dc/elements/1.1/", "date").getValue().toString()
+                .contains("rdf:Seq"));
     }
 }

@@ -146,7 +146,7 @@ public class PDFMetadata extends PDFStream {
         DublinCoreAdapter dc = DublinCoreSchema.getAdapter(meta);
         //PDF/A identification
         PDFAMode pdfaMode = pdfDoc.getProfile().getPDFAMode();
-        dc.setCompact(pdfaMode.getPart() != 3);
+        dc.setCompact((pdfaMode.getPart() != 3) && (pdfaMode.getPart() != 2));
         if (info.getAuthor() != null) {
             dc.addCreator(info.getAuthor());
         }
