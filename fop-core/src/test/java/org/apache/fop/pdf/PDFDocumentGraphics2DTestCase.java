@@ -27,9 +27,12 @@ import java.awt.Graphics2D;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
+import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.svg.PDFDocumentGraphics2D;
@@ -48,7 +51,7 @@ public class PDFDocumentGraphics2DTestCase {
     public void smokeTest() throws Exception {
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         PDFDocumentGraphics2D g2d = new PDFDocumentGraphics2D(false);
-        g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
+        g2d.setGraphicContext(new GraphicContext());
 
         //Set up the document size
         Dimension pageSize = new Dimension(
@@ -90,4 +93,31 @@ public class PDFDocumentGraphics2DTestCase {
                 pdfString.substring(pdfString.length() - 6), "%%EOF\n");
     }
 
+    @Test
+    public void checkContentNotRepeatedAcrossPage() throws Exception {
+        ByteArrayOutputStream baout = new ByteArrayOutputStream();
+        PDFDocumentGraphics2D gPDF = new PDFDocumentGraphics2D(false);
+        Dimension pageSize = new Dimension(
+                (int) Math.ceil(UnitConv.mm2pt(210)),
+                (int) Math.ceil(UnitConv.mm2pt(297))); //page size A4 (in pt)
+        gPDF.setupDocument(baout, pageSize.width, pageSize.height);
+        gPDF.setupDefaultFontInfo();
+        gPDF.setGraphicContext(new GraphicContext());
+        for (int i = 0; i < 4; i++) {
+            gPDF.drawString("PageOUTPUT " + i, getInch(1), getInch(1 + i * 0.2));
+            assertTrue(gPDF.getString().contains("PageOUTPUT " + i));
+            if (i > 1) {
+                int previousValue = i - 1;
+                assertFalse(gPDF.getString().contains("PageOUTPUT " + previousValue));
+            }
+            gPDF.nextPage();
+        }
+        gPDF.finish();
+    }
+
+    private int getInch(double p) {
+        final int point = 72;
+        final int dpiScale = 4;
+        return (int) (p * point * dpiScale);
+    }
 }

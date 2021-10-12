@@ -286,6 +286,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
             this.pdfDoc.addObject(annots);
         }
         this.pdfDoc.addObject(pdfContext.getCurrentPage());
+        currentStream = null;
         pdfContext.clearCurrentPage();
     }
 
