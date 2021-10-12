@@ -86,7 +86,7 @@ public class InternalResourceResolver {
      * @throws IOException if an I/O error occurred
      */
     public Resource getResource(URI uri) throws IOException {
-        if (uri.getScheme() != null && uri.getScheme().startsWith("data")) {
+        if (uri.getScheme() != null && uri.getScheme().equals("data")) {
             return new Resource(resolveDataURI(uri.toASCIIString()));
         }
         return resourceResolver.getResource(resolveFromBase(uri));

@@ -19,6 +19,8 @@
 package org.apache.fop.apps.io;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -35,7 +37,11 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import org.apache.commons.io.IOUtils;
+
 import org.apache.xmlgraphics.io.ResourceResolver;
+import org.apache.xmlgraphics.util.WriterOutputStream;
+import org.apache.xmlgraphics.util.io.Base64EncodeStream;
 
 public class URIResolverWrapperTestCase {
 
@@ -60,7 +66,8 @@ public class URIResolverWrapperTestCase {
 
     @Test
     public void testResolveIn() throws Exception {
-        String[] uris = new String[] {".", "resource", "path/to/resource"};
+        String[] uris = new String[]{".", "resource", "path/to/resource",
+                "datafoo:application/octet-stream;interpreter=fop;base64,AAECAwQF"};
         for (String base : BASE_URIS) {
             setBase(base);
             for (String uriStr : uris) {
@@ -69,6 +76,20 @@ public class URIResolverWrapperTestCase {
                 test(uriStr, uri, expected);
             }
         }
+    }
+
+    @Test
+    public void testGetResourceForURIStartingWithData() throws Exception {
+        String uriStr = "data:application/octet-stream;interpreter=fop;base64,AAECAwQF";
+        ResourceResolver resolver = mock(ResourceResolver.class);
+        InternalResourceResolver sut = new InternalResourceResolver(base, resolver);
+        URI uri = new URI(uriStr);
+        InputStream actual = sut.getResource(uri);
+        StringWriter stringWriter = new StringWriter();
+        Base64EncodeStream out = new Base64EncodeStream(
+                new WriterOutputStream(stringWriter, "US-ASCII"), false);
+        IOUtils.copy(actual, out);
+        assertEquals("AAECAwQF", stringWriter.toString());
     }
 
     @Test
