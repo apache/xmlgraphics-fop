@@ -73,6 +73,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     private final Factory factory;
 
     private MapDataResource mdr;
+    private MapCodedFont mapCodedFont;
 
     /**
      * Constructor for the ActiveEnvironmentGroup, this takes a
@@ -198,17 +199,16 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
             mdr.addTriplet(new DataObjectFontTriplet(size / 1000));
             mdr.finishElement();
         } else {
-            MapCodedFont mapCodedFont = getCurrentMapCodedFont();
             if (mapCodedFont == null) {
                 mapCodedFont = factory.createMapCodedFont();
-                mapCodedFonts.add(mapCodedFont);
+                mapCodedFonts.add(0, mapCodedFont);
             }
 
             try {
                 mapCodedFont.addFont(fontRef, font, size, orientation);
             } catch (MaximumSizeExceededException msee) {
                 mapCodedFont = factory.createMapCodedFont();
-                mapCodedFonts.add(mapCodedFont);
+                mapCodedFonts.add(0, mapCodedFont);
 
                 try {
                     mapCodedFont.addFont(fontRef, font, size, orientation);
