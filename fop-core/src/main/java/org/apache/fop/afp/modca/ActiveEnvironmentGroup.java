@@ -275,23 +275,6 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     }
 
     /**
-     * Getter method for the most recent MapCodedFont added to the
-     * Active Environment Group (returns null if no MapCodedFonts exist)
-     *
-     * @return the most recent Map Coded Font.
-     */
-    private MapCodedFont getCurrentMapCodedFont() {
-        int size = mapCodedFonts.size();
-        if (size > 0) {
-            AbstractStructuredObject font = mapCodedFonts.get(size - 1);
-            if (font instanceof MapCodedFont) {
-                return (MapCodedFont) font;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Add map page segment.
      * @param name of segment to add
      */
