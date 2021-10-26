@@ -485,7 +485,6 @@ public class DataStream {
      */
     public void createIncludePageOverlay(String name, int x, int y) {
         currentPageObject.createIncludePageOverlay(name, x, y, paintingState.getRotation());
-        currentPageObject.getActiveEnvironmentGroup().createOverlay(name);
     }
 
     /**
