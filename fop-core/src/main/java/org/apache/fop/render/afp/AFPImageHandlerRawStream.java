@@ -44,6 +44,7 @@ public class AFPImageHandlerRawStream extends AbstractAFPImageHandlerRawStream {
         ImageFlavor.RAW_JPEG,
         ImageFlavor.RAW_TIFF,
         ImageFlavor.RAW_EPS,
+        ImageFlavor.RAW
     };
 
     /** logging instance */
@@ -89,10 +90,13 @@ public class AFPImageHandlerRawStream extends AbstractAFPImageHandlerRawStream {
                 && (image == null
                         || image instanceof ImageRawJPEG
                         || image instanceof ImageRawEPS
-                        || ((image instanceof ImageRawStream)
-                                && (MimeConstants.MIME_TIFF.equals(
-                                        ((ImageRawStream)image).getMimeType()))));
+                        || (image instanceof ImageRawStream && isCompatible((ImageRawStream)image)));
         }
         return false;
+    }
+
+    private boolean isCompatible(ImageRawStream rawStream) {
+        return MimeConstants.MIME_TIFF.equals(rawStream.getMimeType())
+                || MimeConstants.MIME_PDF.equals(rawStream.getMimeType());
     }
 }
