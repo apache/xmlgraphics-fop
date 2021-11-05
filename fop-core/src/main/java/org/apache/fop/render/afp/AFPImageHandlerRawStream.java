@@ -44,7 +44,7 @@ public class AFPImageHandlerRawStream extends AbstractAFPImageHandlerRawStream {
         ImageFlavor.RAW_JPEG,
         ImageFlavor.RAW_TIFF,
         ImageFlavor.RAW_EPS,
-        ImageFlavor.RAW
+        ImageFlavor.RAW_PDF
     };
 
     /** logging instance */

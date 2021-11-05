@@ -19,16 +19,15 @@
 package org.apache.fop.render.afp;
 
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
-import org.apache.xmlgraphics.image.loader.MimeEnabledImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 
 import org.apache.fop.afp.AFPPaintingState;
-import org.apache.fop.apps.MimeConstants;
 
 public class AFPImageHandlerRawStreamTestCase {
     @Test
@@ -36,8 +35,9 @@ public class AFPImageHandlerRawStreamTestCase {
         AFPPaintingState state = new AFPPaintingState();
         state.setNativeImagesSupported(true);
         AFPRenderingContext context = new AFPRenderingContext(null, null, state, null, null);
-        MimeEnabledImageFlavor flavor = new MimeEnabledImageFlavor(ImageFlavor.RAW, MimeConstants.MIME_PDF);
-        ImageRawStream stream = new ImageRawStream(null, flavor, (InputStream) null);
+        ImageRawStream stream = new ImageRawStream(null, ImageFlavor.RAW_PDF, (InputStream) null);
         Assert.assertTrue(new AFPImageHandlerRawStream().isCompatible(context, stream));
+        Assert.assertFalse(Arrays.asList(
+                new AFPImageHandlerRawStream().getSupportedImageFlavors()).contains(ImageFlavor.RAW));
     }
 }
