@@ -64,7 +64,7 @@ public class CFFDataReader {
      * @param cffDataArray A byte array which holds the CFF data
      */
     public CFFDataReader(byte[] cffDataArray) throws IOException {
-        cffData = new CFFDataInput(cffDataArray);
+        cffData = new FOPCFFDataInput(cffDataArray);
         readCFFData();
     }
 
@@ -74,7 +74,7 @@ public class CFFDataReader {
      * @param fontFile The font file as represented by a FontFileReader object
      */
     public CFFDataReader(FontFileReader fontFile) throws IOException {
-        cffData = new CFFDataInput(OTFFile.getCFFData(fontFile));
+        cffData = new FOPCFFDataInput(OTFFile.getCFFData(fontFile));
         readCFFData();
     }
 
