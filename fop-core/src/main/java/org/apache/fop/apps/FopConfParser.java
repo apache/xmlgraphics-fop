@@ -154,8 +154,13 @@ public class FopConfParser {
             throw new FOPException(e);
         }
         // The default base URI is taken from the directory in which the fopConf resides
-        fopFactoryBuilder = new FopFactoryBuilder(enviro).setConfiguration(cfg);
+        fopFactoryBuilder = new FopFactoryBuilder(enviro).setConfiguration(cfg, false);
         configure(baseURI, enviro.getResourceResolver(), cfg);
+    }
+
+    public FopConfParser(Configuration cfg, FopFactoryBuilder fopFactoryBuilder) throws SAXException {
+        this.fopFactoryBuilder = fopFactoryBuilder;
+        configure(fopFactoryBuilder.getBaseURI(), ResourceResolverFactory.createDefaultResourceResolver(), cfg);
     }
 
     private void configure(final URI baseURI, final ResourceResolver resourceResolver,

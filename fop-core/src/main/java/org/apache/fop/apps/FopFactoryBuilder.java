@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.xml.sax.SAXException;
+
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext.FallbackResolver;
@@ -301,7 +303,18 @@ public final class FopFactoryBuilder {
      * @return <code>this</code>
      */
     public FopFactoryBuilder setConfiguration(Configuration cfg) {
+        return setConfiguration(cfg, true);
+    }
+
+    protected FopFactoryBuilder setConfiguration(Configuration cfg, boolean parse) {
         fopFactoryConfigBuilder.setConfiguration(cfg);
+        if (parse) {
+            try {
+                new FopConfParser(cfg, this);
+            } catch (SAXException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return this;
     }
 

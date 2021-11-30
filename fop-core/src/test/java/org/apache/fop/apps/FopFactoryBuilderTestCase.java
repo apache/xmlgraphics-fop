@@ -19,6 +19,8 @@
 
 package org.apache.fop.apps;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -36,6 +38,8 @@ import static org.junit.Assert.fail;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.Block;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.fo.pagination.Flow;
@@ -287,5 +291,15 @@ public class FopFactoryBuilderTestCase {
         } catch (IllegalStateException e) {
             // Expected
         }
+    }
+
+    @Test
+    public void testSetConfiguration() throws Exception {
+        String fopxconf = "<fop version=\"1.0\">\n"
+                + "<source-resolution>288</source-resolution>"
+                + "</fop>";
+        Configuration cfg = new DefaultConfigurationBuilder().build(new ByteArrayInputStream(fopxconf.getBytes()));
+        FopFactory fopFactory = new FopFactoryBuilder(new File(".").toURI()).setConfiguration(cfg).build();
+        assertEquals((int)fopFactory.getSourceResolution(), 288);
     }
 }
