@@ -631,6 +631,7 @@ list of possible build targets.
       <arg value="clean"/>
       <arg value="install"/>
       <arg value="-DskipTests"/>
+      <arg value="-U"/>
     </exec>	
     <copy file="${basedir}/../fop-transcoder/target/fop-transcoder-${version}.jar" tofile="${build.dir}/fop-transcoder.jar"/>
     <copy file="${basedir}/../fop-transcoder-allinone/target/fop-transcoder-allinone-${version}.jar" tofile="${build.dir}/fop-transcoder-allinone.jar"/>
@@ -642,6 +643,7 @@ list of possible build targets.
       <arg value="clean"/>
       <arg value="install"/>
       <arg value="-DskipTests"/>
+      <arg value="-U"/>
     </exec>
     <copy file="${basedir}/../fop-transcoder/target/fop-transcoder-${version}.jar" tofile="${build.dir}/fop-transcoder.jar"/>
     <copy file="${basedir}/../fop-transcoder-allinone/target/fop-transcoder-allinone-${version}.jar" tofile="${build.dir}/fop-transcoder-allinone.jar"/>
