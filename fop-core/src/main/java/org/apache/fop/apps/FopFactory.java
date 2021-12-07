@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -142,8 +144,14 @@ public final class FopFactory implements ImageContext {
      * @param baseURI the base URI to resolve resource URIs against
      * @return the requested FopFactory instance.
      */
-    public static FopFactory newInstance(URI baseURI) {
-        return new FopFactoryBuilder(baseURI).build();
+    public static FopFactory newInstance(final URI baseURI) {
+        return AccessController.doPrivileged(
+            new PrivilegedAction<FopFactory>() {
+                public FopFactory run() {
+                    return new FopFactoryBuilder(baseURI).build();
+                }
+            }
+        );
     }
 
     /**

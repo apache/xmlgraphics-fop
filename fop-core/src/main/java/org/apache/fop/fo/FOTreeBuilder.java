@@ -20,6 +20,8 @@
 package org.apache.fop.fo;
 
 import java.io.OutputStream;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -171,23 +173,49 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /** {@inheritDoc} */
-    public void startElement(String namespaceURI, String localName, String rawName,
-                             Attributes attlist) throws SAXException {
+    public void startElement(final String namespaceURI, final String localName, final String rawName,
+                             final Attributes attlist) throws SAXException {
         this.depth++;
         errorinstart = false;
-        try {
-            delegate.startElement(namespaceURI, localName, rawName, attlist);
-        } catch (SAXException e) {
+        final ContentHandler contentHandler = delegate;
+        SAXException saxException = AccessController.doPrivileged(
+            new PrivilegedAction<SAXException>() {
+                public SAXException run() {
+                    try {
+                        contentHandler.startElement(namespaceURI, localName, rawName, attlist);
+                    } catch (SAXException e) {
+                        return e;
+                    }
+                    return null;
+                }
+            }
+        );
+        if (saxException != null) {
             errorinstart = true;
-            throw e;
+            throw saxException;
         }
     }
 
     /** {@inheritDoc} */
-    public void endElement(String uri, String localName, String rawName)
-                throws SAXException {
+    public void endElement(final String uri, final String localName, final String rawName) throws SAXException {
         if (!errorinstart) {
-            this.delegate.endElement(uri, localName, rawName);
+            final ContentHandler contentHandler = delegate;
+            SAXException saxException = AccessController.doPrivileged(
+                new PrivilegedAction<SAXException>() {
+                    public SAXException run() {
+                        try {
+                            contentHandler.endElement(uri, localName, rawName);
+                        } catch (SAXException e) {
+                            return e;
+                        }
+                        return null;
+                    }
+                }
+            );
+            if (saxException != null) {
+                throw saxException;
+            }
+
             this.depth--;
             if (depth == 0) {
                 if (delegate != mainFOHandler) {

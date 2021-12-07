@@ -19,7 +19,18 @@
 
 package org.apache.fop.apps;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.security.Permission;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -62,5 +73,43 @@ public class FopFactoryTestCase extends BaseConstructiveUserConfigTest {
             e.printStackTrace();
             fail(e.getMessage());
         }
+    }
+
+    @Test
+    public void testSecurityManager() throws Exception {
+        System.setSecurityManager(new SecurityManager() {
+            public void checkPermission(Permission perm) {
+                for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
+                    if (element.toString().contains("java.security.AccessController.doPrivileged")
+                            || element.toString().contains("newFop(")
+                            || element.toString().contains("setSecurityManager(")) {
+                        return;
+                    }
+                }
+                throw new RuntimeException("doPrivileged not used for " + perm);
+            }
+        });
+        FopFactory fopFactory = FopFactory.newInstance(new URI("."));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" "
+                + "xmlns:fox=\"http://xmlgraphics.apache.org/fop/extensions\">\n"
+                + "  <fo:layout-master-set>\n"
+                + "    <fo:simple-page-master master-name=\"simple\" page-height=\"27.9cm\" page-width=\"21.6cm\">\n"
+                + "      <fo:region-body />\n"
+                + "    </fo:simple-page-master>\n"
+                + "  </fo:layout-master-set>\n"
+                + "  <fo:page-sequence master-reference=\"simple\">\n"
+                + "    <fo:flow flow-name=\"xsl-region-body\">\n"
+                + " <fo:block font-size=\"100pt\">test2test2test2test2test2test2test2test2test2test2te"
+                + "st2test2test2test2test2test2test2</fo:block>     \n"
+                + "</fo:flow>\n"
+                + "  </fo:page-sequence>\n"
+                + "</fo:root>\n";
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, fopFactory.newFOUserAgent(), out);
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Source src = new StreamSource(new ByteArrayInputStream(fo.getBytes()));
+        Result res = new SAXResult(fop.getDefaultHandler());
+        transformer.transform(src, res);
+        System.setSecurityManager(null);
     }
 }
