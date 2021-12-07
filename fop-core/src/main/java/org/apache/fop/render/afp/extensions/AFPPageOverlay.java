@@ -23,6 +23,9 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import static org.apache.fop.render.afp.extensions.AFPPageOverlayElement.ATT_X;
+import static org.apache.fop.render.afp.extensions.AFPPageOverlayElement.ATT_Y;
+
 /**
  * This extension allows to include an AFP Page Overlay resource. It is implemented as an extension
  * attachment ({@link org.apache.fop.fo.extensions.ExtensionAttachment}).
@@ -30,11 +33,6 @@ import org.xml.sax.helpers.AttributesImpl;
 public class AFPPageOverlay extends AFPExtensionAttachment {
 
     private static final long serialVersionUID = 8548056652642588919L;
-
-    /** X coordinate attribute */
-    protected static final String ATT_X = "X";
-    /** X coordinate attribute */
-    protected static final String ATT_Y = "Y";
 
     /**
      * The x coordinate
@@ -91,6 +89,8 @@ public class AFPPageOverlay extends AFPExtensionAttachment {
         if (name != null && name.length() > 0) {
             atts.addAttribute("", ATT_NAME, ATT_NAME, "CDATA", name);
         }
+        atts.addAttribute(null, ATT_X, ATT_X, "CDATA", String.valueOf(x));
+        atts.addAttribute(null, ATT_Y, ATT_Y, "CDATA", String.valueOf(y));
         handler.startElement(CATEGORY, elementName, elementName, atts);
         handler.endElement(CATEGORY, elementName, elementName);
     }

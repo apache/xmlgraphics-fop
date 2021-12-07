@@ -27,9 +27,13 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.render.afp.extensions.AFPElementMapping;
+import org.apache.fop.render.afp.extensions.AFPExtensionAttachment;
+import org.apache.fop.render.afp.extensions.AFPExtensionHandler;
 import org.apache.fop.render.afp.extensions.AFPPageOverlay;
 import org.apache.fop.render.intermediate.IFContext;
 
@@ -68,5 +72,19 @@ public class PageOverlayTestCase {
         StringBuilder sb = new StringBuilder();
         new AFPParser(true).read(new ByteArrayInputStream(outputStream.toByteArray()), sb);
         return sb.toString();
+    }
+
+    @Test
+    public void testXY() throws Exception {
+        AFPExtensionHandler extensionHandler = new AFPExtensionHandler();
+        AttributesImpl attributes = new AttributesImpl();
+        attributes.addAttribute(null, null, "x", null, "1");
+        attributes.addAttribute(null, null, "y", null, "1");
+        extensionHandler.startElement(AFPExtensionAttachment.CATEGORY, AFPElementMapping.INCLUDE_PAGE_OVERLAY, null,
+                attributes);
+        extensionHandler.endElement(AFPExtensionAttachment.CATEGORY, AFPElementMapping.INCLUDE_PAGE_OVERLAY, null);
+        AFPPageOverlay pageOverlay = (AFPPageOverlay) extensionHandler.getObject();
+        Assert.assertEquals(pageOverlay.getX(), 1);
+        Assert.assertEquals(pageOverlay.getY(), 1);
     }
 }

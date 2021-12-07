@@ -95,10 +95,19 @@ public class AFPExtensionHandler extends DefaultHandler
                 }
                 this.returnedObject = formMap;
             } else if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(localName)) {
-                this.returnedObject = new AFPPageOverlay();
+                AFPPageOverlay afpPageOverlay = new AFPPageOverlay();
+                this.returnedObject = afpPageOverlay;
                 String name = lastAttributes.getValue("name");
                 if (name != null) {
                     returnedObject.setName(name);
+                }
+                String x = lastAttributes.getValue("x");
+                if (x != null) {
+                    afpPageOverlay.setX(Integer.parseInt(x));
+                }
+                String y = lastAttributes.getValue("y");
+                if (y != null) {
+                    afpPageOverlay.setY(Integer.parseInt(y));
                 }
             } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(localName)) {
                 AFPPageSegmentSetup pageSetupExtn = null;

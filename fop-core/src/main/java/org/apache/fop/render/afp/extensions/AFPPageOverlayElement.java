@@ -39,8 +39,8 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
  */
 public class AFPPageOverlayElement extends AbstractAFPExtensionObject {
 
-    private static final String ATT_X = "x";
-    private static final String ATT_Y = "y";
+    protected static final String ATT_X = "x";
+    protected static final String ATT_Y = "y";
 
     /**
      * Constructs an AFP object (called by Maker).
