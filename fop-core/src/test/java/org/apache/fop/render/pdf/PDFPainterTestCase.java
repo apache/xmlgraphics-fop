@@ -37,7 +37,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.endsWith;
+import static org.mockito.ArgumentMatchers.endsWith;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;

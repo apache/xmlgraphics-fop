@@ -23,12 +23,11 @@ import org.junit.Test;
 import org.xml.sax.Locator;
 
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -86,8 +85,8 @@ public class PageSequenceMasterTestCase {
 
          pageSequenceMaster.getNextSimplePageMaster(false, false, false, false, null);
 
-         verify(mockBlockLevelEventProducer).pageSequenceMasterExhausted((Locator)anyObject(),
-                 nullable(String.class), eq(canResume), (Locator)anyObject());
+         verify(mockBlockLevelEventProducer).pageSequenceMasterExhausted(nullable(Object.class),
+                 nullable(String.class), eq(canResume), nullable(Locator.class));
      }
 
      /**
