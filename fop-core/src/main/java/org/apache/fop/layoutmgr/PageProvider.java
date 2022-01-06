@@ -359,10 +359,10 @@ public class PageProvider implements Constants {
         String pageNumberString = pageSeq.makeFormattedPageNumber(index);
         boolean isFirstPage = (startPageOfPageSequence == index);
         SimplePageMaster spm = pageSeq.getNextSimplePageMaster(
-                index, isFirstPage, isLastPage, isBlank);
+                index, isFirstPage, isLastPage, isBlank, skipPagePositionOnly);
         boolean isPagePositionOnly = pageSeq.hasPagePositionOnly() && !skipPagePositionOnly;
         if (isPagePositionOnly) {
-            spm = pageSeq.getNextSimplePageMaster(index, isFirstPage, true, isBlank);
+            spm = pageSeq.getNextSimplePageMaster(index, isFirstPage, true, isBlank, skipPagePositionOnly);
         }
         Page page = new Page(spm, index, pageNumberString, isBlank, spanAll, isPagePositionOnly);
         //Set unique key obtained from the AreaTreeHandler

@@ -93,7 +93,7 @@ public class RepeatablePageMasterReference extends FObj
     public SimplePageMaster getNextPageMaster(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isLastPage,
-                                        boolean isEmptyPage) {
+                                        boolean isEmptyPage, boolean skipPagePositionOnly) {
         if (getMaximumRepeats() != INFINITE && numberConsumed >= getMaximumRepeats()) {
            return null;
         }
@@ -103,7 +103,7 @@ public class RepeatablePageMasterReference extends FObj
 
     public SimplePageMaster getLastPageMaster(boolean isOddPage, boolean isFirstPage, boolean isEmptyPage,
                                               BlockLevelEventProducer blockLevelEventProducer) {
-        return getNextPageMaster(isOddPage, isFirstPage, true, isEmptyPage);
+        return getNextPageMaster(isOddPage, isFirstPage, true, isEmptyPage, false);
     }
 
     /**

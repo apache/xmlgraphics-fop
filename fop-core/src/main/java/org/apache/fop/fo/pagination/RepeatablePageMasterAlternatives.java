@@ -116,11 +116,8 @@ public class RepeatablePageMasterAlternatives extends FObj
     }
 
     /** {@inheritDoc} */
-    public SimplePageMaster getNextPageMaster(boolean isOddPage,
-                                        boolean isFirstPage,
-                                        boolean isLastPage,
-                                        boolean isBlankPage) {
-
+    public SimplePageMaster getNextPageMaster(boolean isOddPage, boolean isFirstPage, boolean isLastPage,
+                                              boolean isBlankPage, boolean skipPagePositionOnly) {
         if (!isInfinite() && numberConsumed >= getMaximumRepeats()) {
             return null;
         }
@@ -129,6 +126,9 @@ public class RepeatablePageMasterAlternatives extends FObj
 
         for (ConditionalPageMasterReference cpmr : conditionalPageMasterRefs) {
             if (cpmr.isValid(isOddPage, isFirstPage, isLastPage, isBlankPage)) {
+                if (cpmr.getPagePosition() == EN_ONLY && skipPagePositionOnly) {
+                    continue;
+                }
                 return cpmr.getMaster();
             }
         }

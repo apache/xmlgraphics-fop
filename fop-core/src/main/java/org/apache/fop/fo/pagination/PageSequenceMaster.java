@@ -198,7 +198,8 @@ public class PageSequenceMaster extends FObj {
                                                     boolean isFirstPage,
                                                     boolean isLastPage,
                                                     boolean isBlankPage,
-                                                    String mainFlowName)
+                                                    String mainFlowName,
+                                                    boolean skipPagePositionOnly)
                                                       throws PageProductionException {
         if (onlyTryInfinite && currentSubSequence != null && !currentSubSequence.isInfinite()) {
             throw new PageProductionException("Limited to infinite");
@@ -216,7 +217,7 @@ public class PageSequenceMaster extends FObj {
         }
 
         SimplePageMaster pageMaster = currentSubSequence
-            .getNextPageMaster(isOddPage, isFirstPage, isLastPage, isBlankPage);
+            .getNextPageMaster(isOddPage, isFirstPage, isLastPage, isBlankPage, skipPagePositionOnly);
 
         boolean canRecover = true;
 
@@ -238,7 +239,7 @@ public class PageSequenceMaster extends FObj {
             }
 
             pageMaster = currentSubSequence
-                .getNextPageMaster(isOddPage, isFirstPage, isLastPage, isBlankPage);
+                .getNextPageMaster(isOddPage, isFirstPage, isLastPage, isBlankPage, skipPagePositionOnly);
         }
 
         return pageMaster;

@@ -38,11 +38,8 @@ public interface SubSequenceSpecifier {
      * @return the page master name
      * @throws PageProductionException if there's a problem determining the next page master
      */
-    SimplePageMaster getNextPageMaster(boolean isOddPage,
-                                 boolean isFirstPage,
-                                 boolean isLastPage,
-                                 boolean isBlankPage)
-                                    throws PageProductionException;
+    SimplePageMaster getNextPageMaster(boolean isOddPage, boolean isFirstPage, boolean isLastPage, boolean isBlankPage,
+                                       boolean skipPagePositionOnly) throws PageProductionException;
 
     SimplePageMaster getLastPageMaster(boolean isOddPage, boolean isFirstPage, boolean isBlankPage,
                                        BlockLevelEventProducer blockLevelEventProducer)

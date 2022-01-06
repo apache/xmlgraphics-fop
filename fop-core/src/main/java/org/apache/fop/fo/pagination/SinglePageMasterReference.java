@@ -91,7 +91,7 @@ public class SinglePageMasterReference extends FObj
     public SimplePageMaster getNextPageMaster(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isLastPage,
-                                        boolean isBlankPage) {
+                                        boolean isBlankPage, boolean skipPagePositionOnly) {
         if (this.state == FIRST) {
             this.state = DONE;
             return master;
@@ -102,7 +102,7 @@ public class SinglePageMasterReference extends FObj
 
     public SimplePageMaster getLastPageMaster(boolean isOddPage, boolean isFirstPage, boolean isBlankPage,
                                               BlockLevelEventProducer blockLevelEventProducer) {
-        return getNextPageMaster(isOddPage, isFirstPage, true, isBlankPage);
+        return getNextPageMaster(isOddPage, isFirstPage, true, isBlankPage, false);
     }
 
     /** {@inheritDoc} */

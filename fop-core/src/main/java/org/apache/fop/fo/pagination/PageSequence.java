@@ -30,6 +30,7 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
@@ -280,7 +281,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
      * @throws PageProductionException if there's a problem determining the page master
      */
     public SimplePageMaster getNextSimplePageMaster(
-        int page, boolean isFirstPage, boolean isLastPage, boolean isBlank)
+        int page, boolean isFirstPage, boolean isLastPage, boolean isBlank, boolean skipPagePositionOnly)
         throws PageProductionException {
 
         if (pageSequenceMaster == null) {
@@ -295,7 +296,8 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
                     + " isBlank=" + isBlank + ")");
         }
         return pageSequenceMaster.getNextSimplePageMaster(isOddPage,
-            isFirstPage, isLastPage, isBlank, getMainFlow().getFlowName());
+            isFirstPage, isLastPage, isBlank, getMainFlow().getFlowName(),
+                skipPagePositionOnly && forcePageCount != Constants.EN_ODD);
     }
 
     /**

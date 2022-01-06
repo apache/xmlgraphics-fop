@@ -76,14 +76,14 @@ public class PageSequenceMasterTestCase {
 
          //Setup to mock the exhaustion of the last sub-sequence specifier
          when(mockSinglePageMasterReference.getNextPageMaster(anyBoolean(), anyBoolean(),
-                 anyBoolean(), anyBoolean())).thenReturn(null, spm);
+                 anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(null, spm);
 
          //Need this for the method to return normally
          when(mockSinglePageMasterReference.canProcess(nullable(String.class))).thenReturn(true);
 
          when(mockSinglePageMasterReference.isReusable()).thenReturn(canResume);
 
-         pageSequenceMaster.getNextSimplePageMaster(false, false, false, false, null);
+         pageSequenceMaster.getNextSimplePageMaster(false, false, false, false, null, false);
 
          verify(mockBlockLevelEventProducer).pageSequenceMasterExhausted(nullable(Object.class),
                  nullable(String.class), eq(canResume), nullable(Locator.class));
@@ -116,7 +116,7 @@ public class PageSequenceMasterTestCase {
           when(mockRegion.getRegionName()).thenReturn(emptyFlowRegionName);
 
           when(mockSinglePageMasterReference.getNextPageMaster(anyBoolean(), anyBoolean(),
-                  anyBoolean(), anyBoolean()))
+                  anyBoolean(), anyBoolean(), anyBoolean()))
                   .thenReturn(null, mockEmptySPM);
 
           PageSequenceMaster pageSequenceMaster = createPageSequenceMaster(mockLayoutMasterSet,
@@ -127,7 +127,7 @@ public class PageSequenceMasterTestCase {
 
           try {
               pageSequenceMaster.getNextSimplePageMaster(false, false, false, false,
-                      mainFlowRegionName);
+                      mainFlowRegionName, false);
               fail("The next simple page master does not refer to the main flow");
          } catch (PageProductionException ppe) {
              //Passed test

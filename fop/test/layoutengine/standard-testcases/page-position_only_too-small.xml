@@ -18,7 +18,7 @@
 <!-- $Id$ -->
 <testcase>
   <info>
-    <p>When the page-master for page-position="only" cannot accommodate the content, two default 
+    <p>When the page-master for page-position="only" cannot accommodate the content, one default
       pages must be used instead.</p>
   </info>
   <fo>
@@ -51,8 +51,7 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="2" xpath="count(//pageSequence[1]/pageViewport)"/>
+    <eval expected="1" xpath="count(//pageSequence[1]/pageViewport)"/>
     <eval expected="default" xpath="//pageSequence[1]/pageViewport[1]/@simple-page-master-name"/>
-    <eval expected="default" xpath="//pageSequence[1]/pageViewport[2]/@simple-page-master-name"/>
   </checks>
 </testcase>
