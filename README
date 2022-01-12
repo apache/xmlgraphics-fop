@@ -107,6 +107,16 @@ under the ./fop sub-directory.
   RELEASE NOTES
 ==============================================================================
 
+Version 2.7
+===========
+
+Major Changes in Version 2.7
+----------------------------
+
+* Allow to embed native PDF in AFP
+
+This release also contains a number of bug fixes.
+
 Version 2.6
 ===========
 
