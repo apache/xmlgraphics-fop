@@ -1328,7 +1328,7 @@ public class PDFFactory {
                 getDocument().registerObject(stream);
             }
             CustomFont font = getCustomFont(desc);
-            if (font instanceof CIDFont) {
+            if (font instanceof CIDFont && document.getProfile().pdfAMode.getPart() < 2) {
                 CIDFont cidFont = (CIDFont)font;
                 buildCIDSet(descriptor, cidFont);
             }

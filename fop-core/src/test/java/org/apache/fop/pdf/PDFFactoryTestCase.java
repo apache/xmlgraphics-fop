@@ -30,6 +30,7 @@ import java.net.URI;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.xmlgraphics.io.ResourceResolver;
@@ -167,6 +168,25 @@ public class PDFFactoryTestCase {
 
         assertTrue(bos.toString().contains("/Subtype /Type1\n"));
         assertTrue(bos.toString().contains("/Subtype /Type1C"));
+    }
+
+    @Test
+    public void testMakeOTFFontPDFA() throws IOException {
+        InternalResourceResolver rr =
+                ResourceResolverFactory.createDefaultInternalResourceResolver(new File(".").toURI());
+        PDFDocument doc = new PDFDocument("");
+        doc.getProfile().setPDFAMode(PDFAMode.PDFA_2A);
+        PDFFactory pdfFactory = new PDFFactory(doc);
+        URI uri = new File("test/resources/fonts/otf/SourceSansProBold.otf").toURI();
+        CustomFont sb = OFFontLoader.loadFont(new FontUris(uri, null),
+                null, true, EmbeddingMode.SUBSET, null, false, false, rr, false, false, true);
+        for (char c = 0; c < 512; c++) {
+            sb.mapChar(c);
+        }
+        pdfFactory.makeFont("a", "a", "WinAnsiEncoding", sb, sb);
+        PDFFont pdfFont = pdfFactory.getDocument().getFontMap().get("a_1");
+        PDFFontDescriptor fontDescriptor = (PDFFontDescriptor) pdfFont.get("FontDescriptor");
+        assertNull(fontDescriptor.getCIDSet());
     }
 
     @Test
