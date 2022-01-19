@@ -123,12 +123,12 @@ public class PDFLinkTestCase {
             {"/foo/bar 2.pdf", quote("<< /Type /Filespec /F (/foo/bar 2.pdf)")},
 
             // PDF, Relative paths
-            {"foobar.pdf", quote("<< /URI (foobar.pdf)")}, //34
-            {"foo bar.pdf", quote("<< /URI (foo%20bar.pdf)")},
-            {"./foobar.pdf", quote("<< /URI (./foobar.pdf)")},
-            {"./foo bar.pdf", quote("<< /URI (./foo%20bar.pdf)")},
-            {"../foobar.pdf", quote("<< /URI (../foobar.pdf)")},
-            {"../foo bar.pdf", quote("<< /URI (../foo%20bar.pdf)")},
+            {"foobar.pdf", quote("<< /Type /Filespec /F (foobar.pdf)")}, //34
+            {"foo bar.pdf", quote("<< /Type /Filespec /F (foo bar.pdf)")},
+            {"./foobar.pdf", quote("<< /Type /Filespec /F (./foobar.pdf)")},
+            {"./foo bar.pdf", quote("<< /Type /Filespec /F (./foo bar.pdf)")},
+            {"../foobar.pdf", quote("<< /Type /Filespec /F (../foobar.pdf)")},
+            {"../foo bar.pdf", quote("<< /Type /Filespec /F (../foo bar.pdf)")},
 
             // PDF, Windows network paths
             {"\\\\foo\\bar.pdf", quote("<< /Type /Filespec /F (\\\\\\\\foo\\\\bar.pdf)")}, //40
@@ -165,12 +165,18 @@ public class PDFLinkTestCase {
                     + quote("/D [ 2 /XYZ null null null ]")},
 
             // PDF with fragments, Relative paths
-            {"foobar.pdf#dest=aa", quote("<< /URI (foobar.pdf#dest=aa)")}, //55
-            {"foo bar.pdf#page=2", quote("<< /URI (foo%20bar.pdf#page=2)")},
-            {"./foobar.pdf#dest=aa", quote("<< /URI (./foobar.pdf#dest=aa)")},
-            {"./foo bar.pdf#page=2", quote("<< /URI (./foo%20bar.pdf#page=2)")},
-            {"../foobar.pdf#dest=aa", quote("<< /URI (../foobar.pdf#dest=aa)")},
-            {"../foo bar.pdf#page=2", quote("<< /URI (../foo%20bar.pdf#page=2)")},
+            {"foobar.pdf#dest=aa", quote("<< /Type /Filespec /F (foobar.pdf)") + ".*" + quote("/S /GoToR") + ".*"
+                    + quote("/D (aa)")}, //55
+            {"foo bar.pdf#page=2", quote("<< /Type /Filespec /F (foo bar.pdf)") + ".*" + quote("/S /GoToR") + ".*"
+                    + quote("/D [ 2 /XYZ null null null ]")},
+            {"./foobar.pdf#dest=aa", quote("<< /Type /Filespec /F (./foobar.pdf)") + ".*" + quote("/S /GoToR")
+                    + ".*" + quote("/D (aa)")},
+            {"./foo bar.pdf#page=2", quote("<< /Type /Filespec /F (./foo bar.pdf)") + ".*" + quote("/S /GoToR") + ".*"
+                    + quote("/D [ 2 /XYZ null null null ]")},
+            {"../foobar.pdf#dest=aa", quote("<< /Type /Filespec /F (../foobar.pdf)") + ".*" + quote("/S /GoToR")
+                    + ".*" + quote("/D (aa)")},
+            {"../foo bar.pdf#page=2", quote("<< /Type /Filespec /F (../foo bar.pdf)") + ".*" + quote("/S /GoToR") + ".*"
+                    + quote("/D [ 2 /XYZ null null null ]")},
 
             // PDF with fragments, Windows network paths
             {"\\\\foo\\bar.pdf#dest=aa", quote("<< /Type /Filespec /F (\\\\\\\\foo\\\\bar.pdf)") + ".*"
@@ -393,7 +399,7 @@ public class PDFLinkTestCase {
             {"file:examples.html", quote("<< /Type /Filespec /F (examples.html)")},
 
             // parenthesis
-            {"simple_report_(version2.pdf", quote("<< /URI (simple_report_\\(version2.pdf)")}
+            {"simple_report_(version2.pdf", quote("<< /Type /Filespec /F (simple_report_\\(version2.pdf)")}
         });
     }
 
@@ -415,6 +421,6 @@ public class PDFLinkTestCase {
 
         Pattern r = Pattern.compile(expected);
         Matcher m = r.matcher(outString);
-        Assert.assertTrue(m.find());
+        Assert.assertTrue(target + " " + outString, m.find());
     }
 }

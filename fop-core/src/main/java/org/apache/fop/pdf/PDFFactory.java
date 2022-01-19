@@ -589,6 +589,9 @@ public class PDFFactory {
             if (filename == null) {
                 filename = uri.getSchemeSpecificPart();
             }
+            if (scheme == null && filename.toLowerCase().endsWith(".pdf")) {
+                scheme = "file";
+            }
             if (scheme == null) {
                 return new PDFUri(uri.toASCIIString());
             } else if (scheme.equalsIgnoreCase("embedded-file")) {
