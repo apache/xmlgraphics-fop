@@ -38,6 +38,8 @@ import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.PageIndexContext;
 import org.apache.fop.util.XMLUtil;
 
+import static org.apache.fop.render.intermediate.IFConstants.EL_ID;
+
 /**
  * ContentHandler that handles the IF document navigation namespace.
  */
@@ -46,9 +48,11 @@ public class DocumentNavigationHandler extends DefaultHandler
 
     /** Logger instance */
     protected static final Log log = LogFactory.getLog(DocumentNavigationHandler.class);
+    private static final String NAME = "name";
 
     private StringBuffer content = new StringBuffer();
     private Stack objectStack = new Stack();
+    private Map<String, GoToXYAction> unresolvedIds;
 
     private IFDocumentNavigationHandler navHandler;
 
@@ -62,16 +66,27 @@ public class DocumentNavigationHandler extends DefaultHandler
      * @param structureTreeElements the elements representing the structure of the document
      */
     public DocumentNavigationHandler(IFDocumentNavigationHandler navHandler,
-            Map<String, StructureTreeElement> structureTreeElements) {
+            Map<String, StructureTreeElement> structureTreeElements, Map<String, GoToXYAction> unresolvedIds) {
         this.navHandler = navHandler;
         assert structureTreeElements != null;
         this.structureTreeElements = structureTreeElements;
+        this.unresolvedIds = unresolvedIds;
     }
 
     /** {@inheritDoc} */
     public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
         boolean handled = false;
+        if (EL_ID.equals(localName)) {
+            String idref = attributes.getValue(NAME);
+            if (unresolvedIds.containsKey(idref)) {
+                GoToXYAction action = new GoToXYAction(idref);
+                action.setPageIndex(navHandler.getPageIndex());
+                action.setTargetLocation(new Point(0, 0));
+                unresolvedIds.put(idref, action);
+            }
+            handled = true;
+        }
         if (NAMESPACE.equals(uri)) {
             if (BOOKMARK_TREE.getLocalName().equals(localName)) {
                 if (!objectStack.isEmpty()) {
@@ -124,6 +139,7 @@ public class DocumentNavigationHandler extends DefaultHandler
                     final Point location;
                     if (pageIndex < 0) {
                         location = null;
+                        unresolvedIds.put(id, null);
                     } else {
                         if (hasNavigation() && !inBookmark() && pageIndexRelative >= 0) {
                             int currentPageIndex = navHandler.getPageIndex();
@@ -136,6 +152,7 @@ public class DocumentNavigationHandler extends DefaultHandler
                         final int y = XMLUtil
                                 .getAttributeAsInt(attributes, "y");
                         location = new Point(x, y);
+                        unresolvedIds.remove(id);
                     }
                     action = new GoToXYAction(id, pageIndex, location,
                             new PageIndexRelative(pageIndex, pageIndexRelative));

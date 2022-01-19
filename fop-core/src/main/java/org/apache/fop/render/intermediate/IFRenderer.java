@@ -68,6 +68,7 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.AbstractTextArea;
+import org.apache.fop.area.inline.BasicLinkArea;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
@@ -95,7 +96,6 @@ import org.apache.fop.render.intermediate.extensions.GoToXYAction;
 import org.apache.fop.render.intermediate.extensions.Link;
 import org.apache.fop.render.intermediate.extensions.NamedDestination;
 import org.apache.fop.render.intermediate.extensions.URIAction;
-import org.apache.fop.render.pdf.PDFEventProducer;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 
@@ -427,9 +427,6 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 GoToXYAction action = (GoToXYAction)unfinishedGoTos.get(0);
                 noteGoToPosition(action, defaultPos);
             }
-            PDFEventProducer eventProducer = PDFEventProducer.Provider.get(
-                    getUserAgent().getEventBroadcaster());
-            eventProducer.nonFullyResolvedLinkTargets(this, count);
             // dysfunctional if pageref is null
         }
     }
@@ -979,6 +976,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             StructureTreeElement structElem
                     = (StructureTreeElement) ip.getTrait(Trait.STRUCTURE_TREE_ELEMENT);
             action.setStructureTreeElement(structElem);
+            Link link = new Link(action, ipRect);
+            this.deferredLinks.add(link);
+        } else if (ip instanceof BasicLinkArea) {
+            BasicLinkArea linkArea = (BasicLinkArea) ip;
+            String id = linkArea.getResolver().getIDRefs()[0];
+            action = getGoToActionForID(id, -1);
             Link link = new Link(action, ipRect);
             this.deferredLinks.add(link);
         }

@@ -106,12 +106,6 @@ public class EventProcessingTestCase {
     }
 
     @Test
-    public void testArea() throws Exception {
-        doTest("area.fo",
-                AreaEventProducer.class.getName() + ".unresolvedIDReferenceOnPage");
-    }
-
-    @Test
     public void testBookmarks() throws Exception {
         doTest("bookmarks.fo",
                 AreaEventProducer.class.getName() + ".unresolvedIDReference");

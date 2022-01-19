@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,7 +31,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,11 +52,15 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.pdf.PDFLinearizationTestCase;
 import org.apache.fop.pdf.PDFVTTestCase;
 import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFException;
+import org.apache.fop.render.intermediate.IFParser;
+import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.render.intermediate.extensions.AbstractAction;
 import org.apache.fop.render.intermediate.extensions.Bookmark;
 import org.apache.fop.render.intermediate.extensions.BookmarkTree;
@@ -81,7 +92,7 @@ public class DocumentNavigationHandlerTestCase {
             }
         };
         DocumentNavigationHandler navigationHandler = new DocumentNavigationHandler(pdfDocumentNavigationHandler,
-                new HashMap<String, StructureTreeElement>());
+                new HashMap<String, StructureTreeElement>(), new HashMap<String, GoToXYAction>());
         QName xy = DocumentNavigationExtensionConstants.GOTO_XY;
         Attributes attributes = mock(Attributes.class);
         when(attributes.getValue("page-index")).thenReturn("0");
@@ -93,6 +104,28 @@ public class DocumentNavigationHandlerTestCase {
 
         //Since user may merge IF files we want to use current page
         Assert.assertEquals(goToXYActions.get(0).getPageIndex(), currentPage);
+    }
+
+    @Test
+    public void testGotoXYMergedIF() throws Exception {
+        InputStream ifXml = getClass().getResourceAsStream("link.if.xml");
+        ByteArrayOutputStream pdf = iFToPDF(ifXml);
+        Assert.assertTrue(pdf.toString().contains("/S /GoTo"));
+    }
+
+    private ByteArrayOutputStream iFToPDF(InputStream is) throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        FOUserAgent userAgent = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Source src = new StreamSource(is);
+        IFDocumentHandler documentHandler
+                = userAgent.getRendererFactory().createDocumentHandler(userAgent, MimeConstants.MIME_PDF);
+        documentHandler.setResult(new StreamResult(out));
+        IFUtil.setupFonts(documentHandler);
+        IFParser parser = new IFParser();
+        Result res = new SAXResult(parser.getContentHandler(documentHandler, userAgent));
+        transformer.transform(src, res);
+        return out;
     }
 
     @Test
@@ -116,7 +149,7 @@ public class DocumentNavigationHandlerTestCase {
             }
         };
         DocumentNavigationHandler navigationHandler = new DocumentNavigationHandler(pdfDocumentNavigationHandler,
-                new HashMap<String, StructureTreeElement>());
+                new HashMap<String, StructureTreeElement>(), new HashMap<String, GoToXYAction>());
         QName xy = DocumentNavigationExtensionConstants.GOTO_XY;
         Attributes attributes = mock(Attributes.class);
         when(attributes.getValue("page-index")).thenReturn("0");
@@ -150,7 +183,7 @@ public class DocumentNavigationHandlerTestCase {
 
         PDFDocumentNavigationHandler pdfDocumentNavigationHandler = new PDFDocumentNavigationHandler(documentHandler);
         DocumentNavigationHandler navigationHandler = new DocumentNavigationHandler(pdfDocumentNavigationHandler,
-                new HashMap<String, StructureTreeElement>());
+                new HashMap<String, StructureTreeElement>(), new HashMap<String, GoToXYAction>());
         QName xy = DocumentNavigationExtensionConstants.GOTO_XY;
 
         Attributes attributes = mock(Attributes.class);
@@ -199,7 +232,7 @@ public class DocumentNavigationHandlerTestCase {
             }
         };
         DocumentNavigationHandler navigationHandler = new DocumentNavigationHandler(pdfDocumentNavigationHandler,
-                new HashMap<String, StructureTreeElement>());
+                new HashMap<String, StructureTreeElement>(), new HashMap<String, GoToXYAction>());
         Attributes attributes = mock(Attributes.class);
         when(attributes.getValue("page-index")).thenReturn("0");
         when(attributes.getValue("x")).thenReturn("0");

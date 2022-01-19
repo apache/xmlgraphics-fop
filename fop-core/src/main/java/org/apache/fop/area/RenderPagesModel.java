@@ -191,15 +191,6 @@ public class RenderPagesModel extends AreaTreeModel {
     protected void renderPage(PageViewport pageViewport) {
         try {
             renderer.renderPage(pageViewport);
-            if (!pageViewport.isResolved()) {
-                String[] idrefs = pageViewport.getIDRefs();
-                for (String idref : idrefs) {
-                    AreaEventProducer eventProducer = AreaEventProducer.Provider.get(
-                            renderer.getUserAgent().getEventBroadcaster());
-                    eventProducer.unresolvedIDReferenceOnPage(this,
-                            pageViewport.getPageNumberString(), idref);
-                }
-            }
         } catch (Exception e) {
             AreaEventProducer eventProducer = AreaEventProducer.Provider.get(
                     renderer.getUserAgent().getEventBroadcaster());

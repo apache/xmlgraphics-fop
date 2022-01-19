@@ -58,6 +58,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.render.intermediate.extensions.DocumentNavigationExtensionConstants;
 import org.apache.fop.render.intermediate.extensions.DocumentNavigationHandler;
+import org.apache.fop.render.intermediate.extensions.GoToXYAction;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
@@ -164,6 +165,7 @@ public class IFParser implements IFConstants {
 
         private Map<String, StructureTreeElement> structureTreeElements
                 = new HashMap<String, StructureTreeElement>();
+        private Map<String, GoToXYAction> unresolvedIds = new HashMap<>();
 
         private class StructureTreeHandler extends DefaultHandler {
 
@@ -308,12 +310,24 @@ public class IFParser implements IFConstants {
                                     .noStructureTreeInXML(this);
                         }
                         handled = startIFElement(localName, attributes);
+
+                        if (EL_ID.equals(localName) && documentHandler.getDocumentNavigationHandler() != null) {
+                            if (this.navParser == null) {
+                                this.navParser = new DocumentNavigationHandler(
+                                        documentHandler.getDocumentNavigationHandler(),
+                                        structureTreeElements, unresolvedIds);
+                            }
+                            delegate = this.navParser;
+                            delegateDepth++;
+                            delegate.startDocument();
+                            delegate.startElement(uri, localName, qName, attributes);
+                        }
                     }
                 } else if (DocumentNavigationExtensionConstants.NAMESPACE.equals(uri)) {
                     if (this.navParser == null) {
                         this.navParser = new DocumentNavigationHandler(
                                 this.documentHandler.getDocumentNavigationHandler(),
-                                        structureTreeElements);
+                                        structureTreeElements, unresolvedIds);
                     }
                     delegate = this.navParser;
                     delegateDepth++;
@@ -410,6 +424,9 @@ public class IFParser implements IFConstants {
                     ElementHandler elementHandler = elementHandlers.get(localName);
                     if (elementHandler != null) {
                         try {
+                            if (elementHandler instanceof DocumentHandler) {
+                                addUnresolvedIds();
+                            }
                             elementHandler.endElement();
                         } catch (IFException ife) {
                             handleIFException(ife);
@@ -421,6 +438,14 @@ public class IFParser implements IFConstants {
                     if (log.isTraceEnabled()) {
                         log.trace("Ignoring " + localName + " in namespace: " + uri);
                     }
+                }
+            }
+        }
+
+        private void addUnresolvedIds() throws IFException {
+            for (GoToXYAction action : unresolvedIds.values()) {
+                if (action != null) {
+                    documentHandler.getDocumentNavigationHandler().addResolvedAction(action);
                 }
             }
         }
