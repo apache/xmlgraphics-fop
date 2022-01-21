@@ -172,6 +172,45 @@ public class PDFPainterTestCase {
     }
 
     @Test
+    public void testSimulateStyleColor() throws Exception {
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+        foUserAgent = fopFactory.newFOUserAgent();
+        PDFDocumentHandler pdfDocumentHandler = new PDFDocumentHandler(new IFContext(foUserAgent));
+
+        pdfDocumentHandler.setResult(new StreamResult(new ByteArrayOutputStream()));
+        pdfDocumentHandler.startDocument();
+        pdfDocumentHandler.startPage(0, "", "", new Dimension());
+
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("f1", new FontTriplet("a", "italic", 700));
+        MultiByteFont font = new MultiByteFont(null, null);
+        font.setSimulateStyle(true);
+        fi.addMetrics("f1", font);
+        pdfDocumentHandler.setFontInfo(fi);
+        PDFPainter pdfPainter = new PDFPainter(pdfDocumentHandler, null);
+        pdfPainter.setFont("a", "italic", 700, null, 12, Color.red);
+        pdfPainter.drawText(0, 0, 0, 0, null, "test");
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        PDFFilterList filters = pdfPainter.generator.getStream().getFilterList();
+        filters.setDisableAllFilters(true);
+        pdfPainter.generator.getStream().output(bos);
+        Assert.assertEquals(bos.toString(), "<< /Length 1 0 R >>\n"
+                + "stream\n"
+                + "q\n"
+                + "1 0 0 -1 0 0 cm\n"
+                + "1 0 0 rg\n"
+                + "BT\n"
+                + "/f1 0.012 Tf\n"
+                + "1 0 0 RG\n"
+                + "2 Tr 0.31543 w\n"
+                + "1 0 0.3333 -1 0 0 Tm [<0000000000000000>] TJ\n"
+                + "0 Tr\n"
+                + "\n"
+                + "endstream");
+    }
+
+    @Test
     public void testDrawTextWithMultiByteFont() throws IFException {
         StringBuilder output = new StringBuilder();
         PDFDocumentHandler pdfDocumentHandler = makePDFDocumentHandler(output);

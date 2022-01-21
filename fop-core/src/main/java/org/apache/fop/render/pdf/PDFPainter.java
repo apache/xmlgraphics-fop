@@ -469,16 +469,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         PDFTextUtil textutil = generator.getTextUtil();
         textutil.updateTf(fontKey, fontSize, tf.isMultiByte(), tf.isCID());
 
-        double shear = 0;
-        boolean simulateStyle = tf instanceof CustomFont && ((CustomFont) tf).getSimulateStyle();
-        if (simulateStyle) {
-            if (triplet.getWeight() == 700) {
-                generator.add("2 Tr 0.31543 w\n");
-            }
-            if (triplet.getStyle().equals("italic")) {
-                shear = 0.3333;
-            }
-        }
+        double shear = startSimulateStyle(tf, triplet);
 
         generator.updateCharacterSpacing(letterSpacing / 1000f);
 
@@ -531,6 +522,26 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
 
         }
         textutil.writeTJ();
+        endSimulateStyle(tf, triplet);
+    }
+
+    private double startSimulateStyle(Typeface tf, FontTriplet triplet) {
+        double shear = 0;
+        boolean simulateStyle = tf instanceof CustomFont && ((CustomFont) tf).getSimulateStyle();
+        if (simulateStyle) {
+            if (triplet.getWeight() == 700) {
+                generator.updateColor(state.getTextColor(), false, null);
+                generator.add("2 Tr 0.31543 w\n");
+            }
+            if (triplet.getStyle().equals("italic")) {
+                shear = 0.3333;
+            }
+        }
+        return shear;
+    }
+
+    private void endSimulateStyle(Typeface tf, FontTriplet triplet) {
+        boolean simulateStyle = tf instanceof CustomFont && ((CustomFont) tf).getSimulateStyle();
         if (simulateStyle && triplet.getWeight() == 700) {
             generator.add("0 Tr\n");
         }
@@ -556,19 +567,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             double      yoLast          = 0f;
             double      wox             = wordSpacing;
 
-            // FOP-2810
-            boolean simulateStyle = tf instanceof CustomFont && ((CustomFont) tf).getSimulateStyle();
-            double shear = 0;
-
-            if (simulateStyle) {
-                if (triplet.getWeight() == 700) {
-                    generator.add("q\n");
-                    generator.add("2 Tr 0.31543 w\n");
-                }
-                if (triplet.getStyle().equals("italic")) {
-                    shear = 0.3333;
-                }
-            }
+            double shear = startSimulateStyle(tf, triplet);
 
             tu.writeTextMatrix(new AffineTransform(1, 0, shear, -1, x / 1000f, y / 1000f));
             tu.updateTf(fk, fsPoints, tf.isMultiByte(), true);
@@ -589,6 +588,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                 xoLast = xo;
                 yoLast = yo;
             }
+            endSimulateStyle(tf, triplet);
         }
     }
 
