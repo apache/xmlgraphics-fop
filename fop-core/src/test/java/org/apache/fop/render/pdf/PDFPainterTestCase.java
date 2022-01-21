@@ -167,9 +167,8 @@ public class PDFPainterTestCase {
         pdfPainter.drawText(0, 0, 0, 0, null, "test");
 
         assertEquals(sb.toString(), "BT\n/f1 0.012 Tf\n1 0 0.3333 -1 0 0 Tm [<0000000000000000>] TJ\n");
-        verify(pdfContentGenerator).add("q\n");
         verify(pdfContentGenerator).add("2 Tr 0.31543 w\n");
-        verify(pdfContentGenerator).add("Q\n");
+        verify(pdfContentGenerator).add("0 Tr\n");
     }
 
     @Test

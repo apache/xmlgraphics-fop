@@ -473,7 +473,6 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         boolean simulateStyle = tf instanceof CustomFont && ((CustomFont) tf).getSimulateStyle();
         if (simulateStyle) {
             if (triplet.getWeight() == 700) {
-                generator.add("q\n");
                 generator.add("2 Tr 0.31543 w\n");
             }
             if (triplet.getStyle().equals("italic")) {
@@ -533,7 +532,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         }
         textutil.writeTJ();
         if (simulateStyle && triplet.getWeight() == 700) {
-            generator.add("Q\n");
+            generator.add("0 Tr\n");
         }
     }
 
