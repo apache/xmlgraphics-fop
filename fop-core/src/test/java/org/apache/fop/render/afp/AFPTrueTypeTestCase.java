@@ -21,25 +21,22 @@ package org.apache.fop.render.afp;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import org.xml.sax.SAXException;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -53,6 +50,8 @@ import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.fonts.FopCharacterSet;
 import org.apache.fop.afp.modca.PageObject;
+import org.apache.fop.afp.parser.MODCAParser;
+import org.apache.fop.afp.parser.UnparsedStructuredField;
 import org.apache.fop.apps.EnvironmentalProfileFactory;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -65,8 +64,6 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.render.intermediate.IFException;
-
-
 
 public class AFPTrueTypeTestCase {
     private String font;
@@ -90,7 +87,7 @@ public class AFPTrueTypeTestCase {
             + "</fop>";
 
     @Test
-    public void testAFPTrueType() throws IOException, SAXException, TransformerException, URISyntaxException {
+    public void testAFPTrueType() throws Exception {
         String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">\n"
                 + "  <fo:layout-master-set>\n"
                 + "    <fo:simple-page-master master-name=\"simple\">\n"
@@ -189,7 +186,7 @@ public class AFPTrueTypeTestCase {
     }
 
     @Test
-    public void testSVGAFPTrueType() throws IOException, SAXException, TransformerException, URISyntaxException {
+    public void testSVGAFPTrueType() throws Exception {
         String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" "
                 + "xmlns:fox=\"http://xmlgraphics.apache.org/fop/extensions\" "
                 + "xmlns:svg=\"http://www.w3.org/2000/svg\">\n"
@@ -228,7 +225,55 @@ public class AFPTrueTypeTestCase {
         Assert.assertTrue(getAFP(fo).contains("DATA GRAPHICS"));
     }
 
-    private String getAFP(String fo) throws IOException, TransformerException, SAXException, URISyntaxException {
+    @Test
+    public void testSVGAnchorAFP() throws Exception {
+        String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" "
+                + "xmlns:svg=\"http://www.w3.org/2000/svg\">\n"
+                + "  <fo:layout-master-set>\n"
+                + "    <fo:simple-page-master master-name=\"simple\" page-height=\"27.9cm\" page-width=\"21.6cm\">\n"
+                + "      <fo:region-body />\n"
+                + "    </fo:simple-page-master>\n"
+                + "  </fo:layout-master-set>\n"
+                + "  <fo:page-sequence master-reference=\"simple\">\n"
+                + "    <fo:flow flow-name=\"xsl-region-body\">   \n"
+                + "      <fo:block font-size=\"0\">\n"
+                + "        <fo:instream-foreign-object content-height=\"792pt\" content-width=\"612pt\">\n"
+                + "<svg:svg xmlns=\"http://www.w3.org/2000/svg\" height=\"3mm\" viewBox=\"0 0 49.94 3\" "
+                + "width=\"49.94mm\">\n"
+                + "  <svg:g fill=\"black\" stroke=\"none\">\n"
+                + "    <svg:text font-family=\"ExpertSans\" font-size=\"2.8219\" text-anchor=\"middle\" x=\"24.97\" "
+                + "y=\"2.6228\">0000210122010000000100010004</svg:text>\n"
+                + "  </svg:g>\n"
+                + "</svg:svg>\n"
+                + "        </fo:instream-foreign-object>\n"
+                + "      </fo:block>\n"
+                + "    </fo:flow>\n"
+                + "  </fo:page-sequence>\n"
+                + "</fo:root>";
+        ByteArrayOutputStream bos = getAFPBytes(fo);
+        MODCAParser parser = new MODCAParser(new ByteArrayInputStream(bos.toByteArray()));
+        UnparsedStructuredField structuredField;
+        while ((structuredField = parser.readNextStructuredField()) != null) {
+            if (structuredField.toString().contains("Data Graphics")) {
+                break;
+            }
+        }
+        DataInputStream bis = new DataInputStream(new ByteArrayInputStream(structuredField.getData()));
+        bis.skip(34);
+        //X Y coordinates:
+        Assert.assertEquals(bis.readShort(), 3);
+        Assert.assertEquals(bis.readShort(), 5);
+    }
+
+    private String getAFP(String fo) throws Exception {
+        ByteArrayOutputStream bos = getAFPBytes(fo);
+        StringBuilder sb = new StringBuilder();
+        InputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        new AFPParser(false).read(bis, sb);
+        return sb.toString();
+    }
+
+    private ByteArrayOutputStream getAFPBytes(String fo) throws Exception {
         FopFactoryBuilder confBuilder = new FopConfParser(
                 new ByteArrayInputStream(fopxconf.getBytes()),
                 EnvironmentalProfileFactory.createRestrictedIO(new URI("."),
@@ -243,11 +288,7 @@ public class AFPTrueTypeTestCase {
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
         bos.close();
-
-        StringBuilder sb = new StringBuilder();
-        InputStream bis = new ByteArrayInputStream(bos.toByteArray());
-        new AFPParser(false).read(bis, sb);
-        return sb.toString();
+        return bos;
     }
 
     class MyResourceResolver implements ResourceResolver {

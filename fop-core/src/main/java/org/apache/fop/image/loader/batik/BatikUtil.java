@@ -19,8 +19,10 @@
 
 package org.apache.fop.image.loader.batik;
 
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
+import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.dom.AbstractDocument;
 import org.apache.batik.dom.util.DOMUtilities;
 
@@ -53,9 +55,13 @@ public final class BatikUtil {
      * @return the cloned SVG DOM
      */
     public static Document cloneSVGDocument(Document doc) {
-        Document clonedDoc = DOMUtilities.deepCloneDocument(doc, doc.getImplementation());
+        DOMImplementation impl = doc.getImplementation();
+        if (!(impl instanceof SVGDOMImplementation)) {
+            impl = new SVGDOMImplementation();
+        }
+        Document clonedDoc = DOMUtilities.deepCloneDocument(doc, impl);
         if (clonedDoc instanceof AbstractDocument) {
-            ((AbstractDocument)clonedDoc).setDocumentURI(((AbstractDocument)doc).getDocumentURI());
+            clonedDoc.setDocumentURI(doc.getDocumentURI());
         }
         return clonedDoc;
     }

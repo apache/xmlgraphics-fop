@@ -36,6 +36,7 @@ import org.apache.batik.bridge.Mark;
 import org.apache.batik.bridge.StrokingTextPainter;
 import org.apache.batik.bridge.TextNode;
 import org.apache.batik.bridge.TextPainter;
+import org.apache.batik.gvt.font.GVTGlyphVector;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 import org.apache.batik.gvt.text.TextPaintInfo;
 
@@ -157,7 +158,14 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
                     if (font != null) {
                         fontSize = (int) Math.round(afpg2d.convertToAbsoluteLength(font.getFontSize()));
                     }
-                    if (fontSize < 6000) {
+                    if (anchor != null && TextNode.Anchor.ANCHOR_MIDDLE == anchor.getType()) {
+                        GVTGlyphVector gv = run.getLayout().getGlyphVector();
+                        Point2D glyphPos = gv.getGlyphPosition(0);
+                        double advanceChar = afpg2d.convertToAbsoluteLength(advance / txt.length());
+                        nativeTextHandler.drawString(g2d, txt,
+                                (float) (currentLocation.getX() - advanceChar - glyphPos.getX()),
+                                (float) (currentLocation.getY() + glyphPos.getY()));
+                    } else if (fontSize < 6000) {
                         nativeTextHandler.drawString(g2d, txt, (float) (x + tx), (float) y);
                     } else {
                         double scaleX = g2d.getTransform().getScaleX();
