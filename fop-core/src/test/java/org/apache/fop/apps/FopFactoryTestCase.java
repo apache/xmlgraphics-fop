@@ -77,21 +77,22 @@ public class FopFactoryTestCase extends BaseConstructiveUserConfigTest {
 
     @Test
     public void testSecurityManager() throws Exception {
-        System.setSecurityManager(new SecurityManager() {
-            public void checkPermission(Permission perm) {
-                for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
-                    if (element.toString().contains("java.security.AccessController.doPrivileged")
-                            || element.toString().contains("newFop(")
-                            || element.toString().contains("setSecurityManager(")) {
-                        return;
+        try {
+            System.setSecurityManager(new SecurityManager() {
+                public void checkPermission(Permission perm) {
+                    for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
+                        if (element.toString().contains("java.security.AccessController.doPrivileged")
+                                || element.toString().contains("newFop(")
+                                || element.toString().contains("setSecurityManager(")) {
+                            return;
+                        }
                     }
+                    throw new RuntimeException("doPrivileged not used for " + perm);
                 }
-                throw new RuntimeException("doPrivileged not used for " + perm);
-            }
-        });
-        FopFactory fopFactory = FopFactory.newInstance(new URI("."));
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" "
+            });
+            FopFactory fopFactory = FopFactory.newInstance(new URI("."));
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" "
                 + "xmlns:fox=\"http://xmlgraphics.apache.org/fop/extensions\">\n"
                 + "  <fo:layout-master-set>\n"
                 + "    <fo:simple-page-master master-name=\"simple\" page-height=\"27.9cm\" page-width=\"21.6cm\">\n"
@@ -105,11 +106,14 @@ public class FopFactoryTestCase extends BaseConstructiveUserConfigTest {
                 + "</fo:flow>\n"
                 + "  </fo:page-sequence>\n"
                 + "</fo:root>\n";
-        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, fopFactory.newFOUserAgent(), out);
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        Source src = new StreamSource(new ByteArrayInputStream(fo.getBytes()));
-        Result res = new SAXResult(fop.getDefaultHandler());
-        transformer.transform(src, res);
-        System.setSecurityManager(null);
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, fopFactory.newFOUserAgent(), out);
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            Source src = new StreamSource(new ByteArrayInputStream(fo.getBytes()));
+            Result res = new SAXResult(fop.getDefaultHandler());
+            transformer.transform(src, res);
+            System.setSecurityManager(null);
+        } catch (UnsupportedOperationException e) {
+            //skip on java 18
+        }
     }
 }
