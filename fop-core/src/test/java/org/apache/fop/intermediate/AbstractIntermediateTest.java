@@ -192,7 +192,7 @@ public abstract class AbstractIntermediateTest {
             out = new FileOutputStream(tgtFile);
             out = new BufferedOutputStream(out);
         } else {
-            out = new NullOutputStream();
+            out = NullOutputStream.NULL_OUTPUT_STREAM;
         }
         try {
             Source src = new DOMSource(intermediate);

@@ -71,7 +71,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * @return IOFileFilter font directory filter
      */
     protected static IOFileFilter getDirectoryFilter() {
-        return FileFilterUtils.andFileFilter(
+        return FileFilterUtils.and(
                 FileFilterUtils.directoryFileFilter(),
                 FileFilterUtils.notFileFilter(FileFilterUtils.prefixFileFilter("."))
         );
@@ -82,7 +82,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * @return IOFileFilter font file filter
      */
     protected static IOFileFilter getFileFilter() {
-        return FileFilterUtils.andFileFilter(
+        return FileFilterUtils.and(
                 FileFilterUtils.fileFileFilter(),
                 new WildcardFileFilter(
                         new String[] {"*.ttf", "*.otf", "*.pfb", "*.ttc"},

@@ -112,18 +112,18 @@ public class RendererFactoryTestCase {
 
         ua = fopFactory.newFOUserAgent();
         foEventHandler = factory.createFOEventHandler(
-                ua, MimeConstants.MIME_PDF, new NullOutputStream());
+                ua, MimeConstants.MIME_PDF, NullOutputStream.NULL_OUTPUT_STREAM);
         assertTrue(foEventHandler instanceof AreaTreeHandler);
 
         ua = fopFactory.newFOUserAgent();
         foEventHandler = factory.createFOEventHandler(
-                ua, MimeConstants.MIME_RTF, new NullOutputStream());
+                ua, MimeConstants.MIME_RTF, NullOutputStream.NULL_OUTPUT_STREAM);
         assertTrue(foEventHandler instanceof RTFHandler);
 
         ua = fopFactory.newFOUserAgent();
         try {
             foEventHandler = factory.createFOEventHandler(
-                    ua, "invalid/format", new NullOutputStream());
+                    ua, "invalid/format", NullOutputStream.NULL_OUTPUT_STREAM);
             fail("Expected UnsupportedOperationException");
         } catch (UnsupportedOperationException uoe) {
             //expected
@@ -139,7 +139,7 @@ public class RendererFactoryTestCase {
         }
 
         ua = fopFactory.newFOUserAgent();
-        overrideFOEventHandler = new RTFHandler(ua, new NullOutputStream());
+        overrideFOEventHandler = new RTFHandler(ua, NullOutputStream.NULL_OUTPUT_STREAM);
         ua.setFOEventHandlerOverride(overrideFOEventHandler);
         foEventHandler = factory.createFOEventHandler(
                 ua, null, null);

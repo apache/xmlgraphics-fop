@@ -184,7 +184,7 @@ public class ImageHandlingTestCase extends AbstractPostScriptTest {
                 + "rotate=\"30 30 0 15\">Hello SVG with FOP</text>\n"
                 + "</svg>";
         SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(null);
-        Document doc = factory.createDocument(null, IOUtils.toInputStream(svg));
+        Document doc = factory.createDocument(null, IOUtils.toInputStream(svg, "utf-8"));
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         new PSImageHandlerSVG().handleImage(
                 new PSRenderingContext(ua, new PSGenerator(bos), new FontInfo()),
