@@ -36,6 +36,10 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,8 +50,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.xpath.XPathAPI;
-import org.apache.xpath.objects.XObject;
 
 import org.apache.xmlgraphics.io.Resource;
 import org.apache.xmlgraphics.io.ResourceResolver;
@@ -155,14 +157,9 @@ public class URIResolutionTestCase {
         return doc;
     }
 
-    private String evalXPath(Document doc, String xpath) {
-        XObject res;
-        try {
-            res = XPathAPI.eval(doc, xpath);
-        } catch (TransformerException e) {
-            throw new RuntimeException("XPath evaluation failed: " + e.getMessage());
-        }
-        return res.str();
+    private String evalXPath(Document doc, String xpath) throws XPathExpressionException {
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        return (String) xPath.compile(xpath).evaluate(doc, XPathConstants.STRING);
     }
 
     /**

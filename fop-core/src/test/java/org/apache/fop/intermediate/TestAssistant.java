@@ -35,12 +35,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import org.apache.xpath.XPathAPI;
-import org.apache.xpath.objects.XObject;
 
 import org.apache.fop.apps.EnvironmentProfile;
 import org.apache.fop.apps.EnvironmentalProfileFactory;
@@ -128,31 +129,34 @@ public class TestAssistant {
 
     private boolean isBase14KerningEnabled(Document testDoc) {
         try {
-            XObject xo = XPathAPI.eval(testDoc, "/testcase/cfg/base14kerning");
-            String s = xo.str();
+            String s = eval(testDoc, "/testcase/cfg/base14kerning");
             return ("true".equalsIgnoreCase(s));
-        } catch (TransformerException e) {
+        } catch (XPathExpressionException e) {
             throw new RuntimeException("Error while evaluating XPath expression", e);
         }
     }
 
     private boolean isStrictValidation(Document testDoc) {
         try {
-            XObject xo = XPathAPI.eval(testDoc, "/testcase/cfg/strict-validation");
-            return !("false".equalsIgnoreCase(xo.str()));
-        } catch (TransformerException e) {
+            String s = eval(testDoc, "/testcase/cfg/strict-validation");
+            return !("false".equalsIgnoreCase(s));
+        } catch (XPathExpressionException e) {
             throw new RuntimeException("Error while evaluating XPath expression", e);
         }
     }
 
     private boolean isTableBorderOverpaint(Document testDoc) {
         try {
-            XObject xo = XPathAPI.eval(testDoc, "/testcase/cfg/table-border-overpaint");
-            String s = xo.str();
+            String s = eval(testDoc, "/testcase/cfg/table-border-overpaint");
             return "true".equalsIgnoreCase(s);
-        } catch (TransformerException e) {
+        } catch (XPathExpressionException e) {
             throw new RuntimeException("Error while evaluating XPath expression", e);
         }
+    }
+
+    private String eval(Document doc, String xpath) throws XPathExpressionException {
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        return (String) xPath.compile(xpath).evaluate(doc, XPathConstants.STRING);
     }
 
     /**
