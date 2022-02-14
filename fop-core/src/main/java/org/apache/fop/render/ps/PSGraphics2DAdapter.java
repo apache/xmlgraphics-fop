@@ -106,25 +106,27 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
         // scale to viewbox
         transform.translate(fx, fy);
         gen.getCurrentState().concatMatrix(transform);
-        if (paintAsBitmap) {
-            //Fallback solution: Paint to a BufferedImage
-            int resolution = Math.round(context.getUserAgent().getTargetResolution());
-            RendererContextWrapper ctx = RendererContext.wrapRendererContext(context);
-            BufferedImage bi = paintToBufferedImage(painter, ctx, resolution, false, false);
+        try {
+            if (paintAsBitmap) {
+                //Fallback solution: Paint to a BufferedImage
+                int resolution = Math.round(context.getUserAgent().getTargetResolution());
+                RendererContextWrapper ctx = RendererContext.wrapRendererContext(context);
+                BufferedImage bi = paintToBufferedImage(painter, ctx, resolution, false, false);
 
-            float scale = PDFFactory.DEFAULT_PDF_RESOLUTION
-                            / context.getUserAgent().getTargetResolution();
-            graphics.drawImage(bi, new AffineTransform(scale, 0, 0, scale, 0, 0), null);
-        } else {
-            if (painter instanceof GeneralGraphics2DImagePainter) {
-                PSFontUtils.addFallbackFonts(fontInfo, (GeneralGraphics2DImagePainter) painter);
+                float scale = PDFFactory.DEFAULT_PDF_RESOLUTION
+                        / context.getUserAgent().getTargetResolution();
+                graphics.drawImage(bi, new AffineTransform(scale, 0, 0, scale, 0, 0), null);
+            } else {
+                if (painter instanceof GeneralGraphics2DImagePainter) {
+                    PSFontUtils.addFallbackFonts(fontInfo, (GeneralGraphics2DImagePainter) painter);
+                }
+                Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
+                painter.paint(graphics, area);
             }
-            Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
-            painter.paint(graphics, area);
+        } finally {
+            gen.restoreGraphicsState();
+            gen.commentln("%FOPEndGraphics2D");
         }
-
-        gen.restoreGraphicsState();
-        gen.commentln("%FOPEndGraphics2D");
     }
 
 }

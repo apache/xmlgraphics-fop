@@ -51,6 +51,7 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.truetype.SVGGlyphData;
+import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.ImageHandlerUtil;
@@ -171,10 +172,12 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
 
         try {
             drawImage(img, rect, context);
-        } catch (IOException ioe) {
+        } catch (PDFConformanceException e) {
+            throw e;
+        } catch (Exception e) {
             ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
-            eventProducer.imageWritingError(this, ioe);
+            eventProducer.imageWritingError(this, e);
         }
     }
 

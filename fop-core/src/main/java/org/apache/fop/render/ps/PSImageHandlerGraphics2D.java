@@ -98,9 +98,12 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
         if (painter instanceof GeneralGraphics2DImagePainter) {
             PSFontUtils.addFallbackFonts(psContext.getFontInfo(), (GeneralGraphics2DImagePainter) painter);
         }
-        painter.paint(graphics, area);
-        gen.restoreGraphicsState();
-        gen.commentln("%FOPEndGraphics2D");
+        try {
+            painter.paint(graphics, area);
+        } finally {
+            gen.restoreGraphicsState();
+            gen.commentln("%FOPEndGraphics2D");
+        }
     }
 
     /** {@inheritDoc} */
@@ -161,9 +164,12 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
                     gen.writeln("  /Filter /SubFileDecode");
                     gen.writeln("  /DecodeParms << /EODCount 0 /EODString (%FOPEndOfData) >>");
                     gen.writeln(">> /ReusableStreamDecode filter");
-                    paintImageG2D(imageG2D, dimensionsMpt, gen, fontInfo);
-                    gen.writeln("%FOPEndOfData");
-                    gen.writeln("def");
+                    try {
+                        paintImageG2D(imageG2D, dimensionsMpt, gen, fontInfo);
+                    } finally {
+                        gen.writeln("%FOPEndOfData");
+                        gen.writeln("def");
+                    }
                 }
 
                 @Override

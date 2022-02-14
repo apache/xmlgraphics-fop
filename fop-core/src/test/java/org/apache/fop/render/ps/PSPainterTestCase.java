@@ -45,11 +45,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.events.Event;
+import org.apache.fop.events.EventListener;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.Font;
@@ -279,5 +283,27 @@ public class PSPainterTestCase {
         Assert.assertTrue(bos.toString().contains("%FOPBeginSVG"));
         Assert.assertTrue(bos.toString().contains("[0.00012 0 0 0.00012 0 0] CT"));
         Assert.assertTrue(bos.toString().contains("1 0 0 RC"));
+    }
+
+    @Test
+    public void testEventOnImageParseException() throws Exception {
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        PSDocumentHandler dh = new PSDocumentHandler(new IFContext(ua));
+        dh.setResult(new StreamResult(new ByteArrayOutputStream()));
+        PSPainter psPainter = new PSPainter(dh);
+        dh.startDocument();
+        ImageInfo info = new ImageInfo("test/resources/fop/image/logo.jpg", "image/jpeg") {
+            public ImageSize getSize() {
+                throw new RuntimeException();
+            }
+        };
+        final Event[] event = new Event[1];
+        ua.getEventBroadcaster().addEventListener(new EventListener() {
+            public void processEvent(Event e) {
+                event[0] = e;
+            }
+        });
+        psPainter.drawImageUsingImageHandler(info, new Rectangle());
+        Assert.assertEquals(event[0].getEventKey(), "imageWritingError");
     }
 }

@@ -327,6 +327,10 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
                     userAgent.getEventBroadcaster());
             eventProducer.imageError(resTracker, (info != null ? info.toString() : uri),
                     ie, null);
+        } catch (Exception e) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    userAgent.getEventBroadcaster());
+            eventProducer.imageWritingError(this, e);
         }
     }
 

@@ -45,8 +45,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.events.Event;
+import org.apache.fop.events.EventListener;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -139,15 +145,19 @@ public class PDFPainterTestCase {
         assertEquals(pdfPainter.renderingContext.getHints().get("page-number"), 3);
     }
 
-    class MyPDFPainter extends PDFPainter {
-        protected RenderingContext renderingContext;
-        public MyPDFPainter(PDFDocumentHandler documentHandler, PDFLogicalStructureHandler logicalStructureHandler) {
+    static class MyPDFPainter extends PDFPainter {
+        RenderingContext renderingContext;
+        MyPDFPainter(PDFDocumentHandler documentHandler, PDFLogicalStructureHandler logicalStructureHandler) {
             super(documentHandler, logicalStructureHandler);
         }
 
         protected RenderingContext createRenderingContext() {
             renderingContext = super.createRenderingContext();
             return renderingContext;
+        }
+
+        protected void drawImageUsingImageHandler(ImageInfo info, Rectangle rect) throws ImageException, IOException {
+            super.drawImageUsingImageHandler(info, rect);
         }
     }
 
@@ -393,5 +403,28 @@ public class PDFPainterTestCase {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         pdfPainter.generator.getStream().output(bos);
         return bos.toString();
+    }
+
+    @Test
+    public void testEventOnImageParseException() throws Exception {
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        PDFDocumentHandler dh = new PDFDocumentHandler(new IFContext(ua));
+        dh.setResult(new StreamResult(new ByteArrayOutputStream()));
+        dh.startDocument();
+        dh.startPage(0, "", "", new Dimension());
+        MyPDFPainter pdfPainter = new MyPDFPainter(dh, null) {
+            protected void drawImage(Image image, Rectangle rect, RenderingContext context) {
+                throw new RuntimeException();
+            }
+        };
+        ImageInfo info = new ImageInfo("test/resources/fop/image/logo.jpg", "image/jpeg");
+        final Event[] event = new Event[1];
+        ua.getEventBroadcaster().addEventListener(new EventListener() {
+            public void processEvent(Event e) {
+                event[0] = e;
+            }
+        });
+        pdfPainter.drawImageUsingImageHandler(info, new Rectangle());
+        Assert.assertEquals(event[0].getEventKey(), "imageWritingError");
     }
 }

@@ -46,7 +46,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.impl.DefaultImageContext;
 import org.apache.xmlgraphics.image.loader.impl.DefaultImageSessionContext;
@@ -62,7 +64,9 @@ import org.apache.fop.afp.fonts.OutlineFontTestCase;
 import org.apache.fop.afp.fonts.RasterFont;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.events.Event;
 import org.apache.fop.events.EventBroadcaster;
+import org.apache.fop.events.EventListener;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fonts.Font;
@@ -382,5 +386,39 @@ public class AFPPainterTestCase {
                 + "END PAGE PGN00002\n"
                 + "END PAGE_GROUP PGP00001\n"
                 + "END DOCUMENT DOC00001\n");
+    }
+
+    @Test
+    public void testEventOnImageParseException() throws Exception {
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        AFPDocumentHandler dh = new AFPDocumentHandler(new IFContext(ua));
+        dh.setResult(new StreamResult(new ByteArrayOutputStream()));
+        dh.startDocument();
+        dh.startPage(0, "", "", new Dimension());
+        MyAFPPainter afpPainter = new MyAFPPainter(dh);
+        ImageInfo info = new ImageInfo("test/resources/fop/image/logo.jpg", "image/jpeg") {
+            public Image getOriginalImage() {
+                throw new RuntimeException();
+            }
+        };
+        final Event[] event = new Event[1];
+        ua.getEventBroadcaster().addEventListener(new EventListener() {
+            public void processEvent(Event e) {
+                event[0] = e;
+            }
+        });
+        afpPainter.drawImageUsingImageHandler(info, new Rectangle());
+        Assert.assertEquals(event[0].getEventKey(), "imageWritingError");
+    }
+
+    static class MyAFPPainter extends AFPPainter {
+        MyAFPPainter(AFPDocumentHandler documentHandler) {
+            super(documentHandler);
+        }
+
+        protected void drawImageUsingImageHandler(ImageInfo info, Rectangle rect)
+                throws ImageException, IOException {
+            super.drawImageUsingImageHandler(info, rect);
+        }
     }
 }
