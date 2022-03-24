@@ -435,8 +435,12 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         String fontKey = getFontInfo().getInternalFontKey(triplet);
         Typeface typeface = getTypeface(fontKey);
         if (typeface instanceof MultiByteFont && ((MultiByteFont) typeface).hasSVG()) {
-            drawSVGText((MultiByteFont) typeface, triplet, x, y, text, state);
-        } else if ((dp == null) || IFUtil.isDPOnlyDX(dp)) {
+            boolean success = drawSVGText((MultiByteFont) typeface, triplet, x, y, text, state);
+            if (success) {
+                return;
+            }
+        }
+        if ((dp == null) || IFUtil.isDPOnlyDX(dp)) {
             drawTextWithDX(x, y, text, triplet, letterSpacing,
                              wordSpacing, IFUtil.convertDPToDX(dp));
         } else {

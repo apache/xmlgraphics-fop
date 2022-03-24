@@ -476,8 +476,18 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
         drawText(x, y, letterSpacing, wordSpacing, dp, text);
     }
 
-    protected void drawSVGText(MultiByteFont multiByteFont, FontTriplet triplet, int x, int y, String text,
-                               IFState state) throws IFException {
+    protected boolean drawSVGText(MultiByteFont multiByteFont, FontTriplet triplet, int x, int y, String text,
+                                  IFState state) throws IFException {
+        for (int i = 0; i < text.length();) {
+            int codepoint = text.codePointAt(i);
+            if (!Character.isWhitespace(codepoint)) {
+                SVGGlyphData svg = multiByteFont.getSVG(codepoint);
+                if (svg == null) {
+                    return false;
+                }
+            }
+            i += Character.charCount(codepoint);
+        }
         int sizeMillipoints = state.getFontSize();
         Font font = getFontInfo().getFontInstance(triplet, sizeMillipoints);
         int newx = x;
@@ -497,5 +507,6 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
             newx += font.getCharWidth(c);
             i += Character.charCount(c);
         }
+        return true;
     }
 }

@@ -367,6 +367,20 @@ public class PDFPainterTestCase {
     }
 
     @Test
+    public void testSVGFontFallback() throws IFException, IOException {
+        String out = drawSVGFont(null);
+        Assert.assertEquals(out, "<< /Length 1 0 R >>\n"
+                + "stream\n"
+                + "q\n"
+                + "1 0 0 -1 0 0 cm\n"
+                + "BT\n"
+                + "/f1 0.012 Tf\n"
+                + "1 0 0 -1 0 0 Tm [<0000000000000000>] TJ\n"
+                + "\n"
+                + "endstream");
+    }
+
+    @Test
     public void testSVGFontScale() throws IFException, IOException {
         String out = drawSVGFont("<svg xmlns=\"http://www.w3.org/2000/svg\">\n"
                 + "<g transform=\"translate(0 0) translate(0 0) scale(50)\"/>"
@@ -388,9 +402,11 @@ public class PDFPainterTestCase {
         MultiByteFont font = new MultiByteFont(null, null);
         font.setWidthArray(new int[1]);
         Map<Integer, SVGGlyphData> svgs = new HashMap<>();
-        SVGGlyphData svgGlyph = new SVGGlyphData();
-        svgGlyph.setSVG(svg);
-        svgs.put(0, svgGlyph);
+        if (svg != null) {
+            SVGGlyphData svgGlyph = new SVGGlyphData();
+            svgGlyph.setSVG(svg);
+            svgs.put(0, svgGlyph);
+        }
         font.setSVG(svgs);
         font.setBBoxArray(new Rectangle[] {new Rectangle()});
         fi.addMetrics("f1", font);

@@ -363,8 +363,10 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
             String fontKey = getFontKey(triplet);
             Typeface typeface = getTypeface(fontKey);
             if (typeface instanceof MultiByteFont && ((MultiByteFont) typeface).hasSVG()) {
-                drawSVGText((MultiByteFont) typeface, triplet, x, y, text, state);
-                return;
+                boolean success = drawSVGText((MultiByteFont) typeface, triplet, x, y, text, state);
+                if (success) {
+                    return;
+                }
             }
             beginTextObject();
             //TODO Ignored: state.getFontVariant()
