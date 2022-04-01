@@ -496,6 +496,10 @@ public class DataStream {
     public void createInvokeMediumMap(String name) {
         if (currentPageGroup != null) {
             currentPageGroup.createInvokeMediumMap(name);
+        } else if (currentPage != null) {
+            currentPage.createInvokeMediumMap(name);
+        } else {
+            document.createInvokeMediumMap(name);
         }
     }
 

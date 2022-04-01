@@ -22,6 +22,7 @@ package org.apache.fop.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.afp.AFPLineDataInfo;
@@ -58,7 +59,8 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
     private PresentationTextObject currentPresentationTextObject;
 
     /** The list of objects within this resource container */
-    protected List objects = new java.util.ArrayList();
+    protected List objects = new ArrayList();
+    protected List<InvokeMediumMap> invokeMediumMaps = new ArrayList<>();
 
     /** The page width */
     private int width;
@@ -178,6 +180,11 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
             getPresentationTextObject().createControlSequences(producer);
         }
 
+    }
+
+    public void createInvokeMediumMap(String name) {
+        InvokeMediumMap invokeMediumMap = factory.createInvokeMediumMap(name);
+        invokeMediumMaps.add(invokeMediumMap);
     }
 
     /**

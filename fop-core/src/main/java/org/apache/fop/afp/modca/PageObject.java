@@ -183,6 +183,7 @@ public class PageObject extends AbstractResourceGroupContainer {
     protected void writeContent(OutputStream os) throws IOException {
         writeTriplets(os);
 
+        writeObjects(invokeMediumMaps, os);
         getActiveEnvironmentGroup().writeToStream(os);
 
         writeObjects(objects, os);
