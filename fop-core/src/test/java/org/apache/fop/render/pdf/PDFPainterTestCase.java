@@ -54,6 +54,7 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventListener;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.MultiByteFont;
@@ -241,6 +242,33 @@ public class PDFPainterTestCase {
         pdfPainter.drawText(0, 0, 0, 0, null, text);
 
         assertEquals("BT\n/f1 0.012 Tf\n1 0 0 -1 0 0 Tm [<" + expectedHex + ">] TJ\n", output.toString());
+    }
+
+    @Test
+    public void testDrawDpTextWithMultiByteFont() throws IFException {
+        StringBuilder output = new StringBuilder();
+        PDFDocumentHandler pdfDocumentHandler = makePDFDocumentHandler(output);
+        String text = "Hi\uD83D\uDCA9";
+        MultiByteFont font = new MultiByteFont(null, null);
+        font.setWidthArray(new int[10]);
+        font.setCMap(new CMapSegment[]{new CMapSegment(128169, 128169, 1)});
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("f1", new FontTriplet("a", "normal", 400));
+        fi.addMetrics("f1", font);
+        pdfDocumentHandler.setFontInfo(fi);
+        MyPDFPainter pdfPainter = new MyPDFPainter(pdfDocumentHandler, null);
+        pdfPainter.setFont("a", "normal", 400, null, 12, null);
+        int[][] dp = new int[1][0];
+        dp[0] = new int[]{0, 1, 2, 3};
+        pdfPainter.drawText(0, 0, 0, 0, dp, text);
+        assertEquals("BT\n"
+                + "1 0 0 -1 0 0 Tm /f1 0.012 Tf\n"
+                + "0 0.001 Td\n"
+                + "<0000> Tj\n"
+                + "0.002 0.002 Td\n"
+                + "<0000> Tj\n"
+                + "0 0 Td\n"
+                + "<0001> Tj\n", output.toString());
     }
 
     private PDFDocumentHandler makePDFDocumentHandler(final StringBuilder sb) throws IFException {

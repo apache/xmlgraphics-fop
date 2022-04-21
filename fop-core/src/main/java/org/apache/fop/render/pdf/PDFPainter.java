@@ -577,7 +577,14 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             tu.updateTf(fk, fsPoints, tf.isMultiByte(), true);
             generator.updateCharacterSpacing(letterSpacing / 1000f);
             for (int i = 0, n = text.length(); i < n; i++) {
-                char    ch              = text.charAt(i);
+                int ch = text.charAt(i);
+                int mp;
+                if (CharUtilities.containsSurrogatePairAt(text, i)) {
+                    ch = Character.toCodePoint((char) ch, text.charAt(++i));
+                    mp = f.mapCodePoint(ch);
+                } else {
+                    mp = f.mapChar((char)ch);
+                }
                 int[]   pa              = ((i >= dp.length) || (dp[i] == null)) ? paZero : dp[i];
                 double  xo              = xc + pa[0];
                 double  yo              = yc + pa[1];
@@ -586,7 +593,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                 double  xd              = (xo - xoLast) / 1000f;
                 double  yd              = (yo - yoLast) / 1000f;
                 tu.writeTd(xd, yd);
-                tu.writeTj(f.mapChar(ch), tf.isMultiByte(), true);
+                tu.writeTj(mp, tf.isMultiByte(), true);
                 xc += xa + pa[2];
                 yc += ya + pa[3];
                 xoLast = xo;
@@ -596,7 +603,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         }
     }
 
-    private double maybeWordOffsetX(double wox, char ch, Direction dir) {
+    private double maybeWordOffsetX(double wox, int ch, Direction dir) {
         if ((wox != 0)
              && CharUtilities.isAdjustableSpace(ch)
              && ((dir == null) || dir.isHorizontal())) {

@@ -348,7 +348,7 @@ public abstract class PDFTextUtil {
      * Writes a "Tj" command with specified character code.
      * @param ch character code to write
      */
-    public void writeTj(char ch, boolean multibyte, boolean cid) {
+    public void writeTj(int ch, boolean multibyte, boolean cid) {
         StringBuffer sb = new StringBuffer();
         sb.append(startText);
         writeChar(ch, sb, multibyte, cid);
