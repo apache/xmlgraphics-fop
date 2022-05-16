@@ -108,4 +108,20 @@ public class DataStreamTestCase {
         Assert.assertEquals((byte)data.read(), InvokeMediumMap.Type.MAP);
         Assert.assertEquals((byte)data.read(), InvokeMediumMap.Category.MEDIUM_MAP);
     }
+
+    @Test
+    public void testMediumMapBeforePageGroupOnDocument() throws Exception {
+        ds = new DataStream(new Factory(), paintState, outStream);
+        ds.startDocument();
+        ds.createInvokeMediumMap("test");
+        ds.startPageGroup();
+        ds.startPage(1, 1, 0, 1, 1);
+        ds.endPage();
+        ds.endPageGroup();
+        ds.endDocument();
+        ByteArrayInputStream data = new ByteArrayInputStream(outStream.toByteArray());
+        data.skip(21);
+        Assert.assertEquals((byte)data.read(), InvokeMediumMap.Type.MAP);
+        Assert.assertEquals((byte)data.read(), InvokeMediumMap.Category.MEDIUM_MAP);
+    }
 }

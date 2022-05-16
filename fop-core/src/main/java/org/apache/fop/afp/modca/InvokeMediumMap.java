@@ -22,6 +22,7 @@ package org.apache.fop.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
@@ -30,7 +31,7 @@ import org.apache.fop.afp.util.BinaryUtils;
  * the document's current environment. The Medium Map's effect on current environment
  * parameter values lasts until a new Medium Map is invoked.
  */
-public class InvokeMediumMap extends AbstractNamedAFPObject {
+public class InvokeMediumMap extends AbstractNamedAFPObject implements Completable {
 
     /**
      * Constructor for the Invoke Medium Map
@@ -53,5 +54,12 @@ public class InvokeMediumMap extends AbstractNamedAFPObject {
         data[2] = len[1];
 
         os.write(data);
+    }
+
+    public void setComplete(boolean complete) {
+    }
+
+    public boolean isComplete() {
+        return true;
     }
 }
