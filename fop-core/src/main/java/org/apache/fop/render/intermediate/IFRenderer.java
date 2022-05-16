@@ -980,10 +980,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             this.deferredLinks.add(link);
         } else if (ip instanceof BasicLinkArea) {
             BasicLinkArea linkArea = (BasicLinkArea) ip;
-            String id = linkArea.getResolver().getIDRefs()[0];
-            action = getGoToActionForID(id, -1);
-            Link link = new Link(action, ipRect);
-            this.deferredLinks.add(link);
+            if (linkArea.getResolver() != null) {
+                String id = linkArea.getResolver().getIDRefs()[0];
+                action = getGoToActionForID(id, -1);
+                Link link = new Link(action, ipRect);
+                this.deferredLinks.add(link);
+            }
         }
     }
 
