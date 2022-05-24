@@ -1,8 +1,5 @@
-$Id$
-
-==============================================================================
-  APACHE FOP  -  README
-==============================================================================
+APACHE FOP  -  README
+=====================
 
 Contents of this file:
  - What is FOP?
@@ -11,9 +8,6 @@ Contents of this file:
  - How do I build FOP?
  - How do I run FOP?
  - Release Notes
-
-==============================================================================
-
 
 What is FOP?
 ------------
@@ -42,12 +36,12 @@ Legal information on libraries used by Apache FOP can be found in the
 
 Here is a list of files included in Apache FOP but not published under Apache
 License version 2.0:
-- K3 3 of 9 barcode font (TrueType)
-  File: examples/fo/advanced/K3.TTF
-  Info: examples/fo/advanced/K3.README
-- DejaVu LGC Serif font (TrueType)
-  File: test/resources/fonts/DejaVuLGCSerif.ttf
-  Info: test/resources/fonts/DejaVuLGCSerif.LICENSE
+- K3 3 of 9 barcode font (TrueType)  
+  File: `examples/fo/advanced/K3.TTF`  
+  Info: `examples/fo/advanced/K3.README`
+- DejaVu LGC Serif font (TrueType)  
+  File: `test/resources/fonts/DejaVuLGCSerif.ttf`    
+  Info: `test/resources/fonts/DejaVuLGCSerif.LICENSE`
 
     
 Where to get help?
@@ -63,7 +57,7 @@ Before you post any questions, please have a look at the FAQ at
 http://xmlgraphics.apache.org/fop/faq.html and FO help page at 
 http://xmlgraphics.apache.org/fop/fo.html.
 
-Please report bugs to bugzilla at http://issues.apache.org/bugzilla/
+Please report bugs to Jira at https://issues.apache.org/jira/projects/FOP/issues
 
 
 How do I build FOP?
@@ -82,11 +76,11 @@ may be used to build FOP:
 
 Building with Maven (preferred)
 
-% mvn clean install
+    % mvn clean install
 
 Building with Ant (deprecated)
 
-% ant -f fop/build.xml clean all
+    % ant -f fop/build.xml clean all
 
 How do I run FOP?
 -----------------
