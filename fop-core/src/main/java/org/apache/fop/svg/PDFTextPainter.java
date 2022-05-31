@@ -167,6 +167,7 @@ class PDFTextPainter extends NativeTextPainter {
         Paint strokePaint = tpi.strokePaint;
         Stroke stroke = tpi.strokeStroke;
         int fillAlpha = PDFGraphics2D.OPAQUE;
+        int strokeAlpha = PDFGraphics2D.OPAQUE;
         if (fillPaint instanceof Color) {
             Color col = (Color) fillPaint;
             pdf.applyColor(col, true);
@@ -175,13 +176,14 @@ class PDFTextPainter extends NativeTextPainter {
         if (strokePaint instanceof Color) {
             Color col = (Color) strokePaint;
             pdf.applyColor(col, false);
+            strokeAlpha = col.getAlpha();
         }
         pdf.applyPaint(fillPaint, true);
         pdf.applyStroke(stroke);
         if (strokePaint != null) {
             pdf.applyPaint(strokePaint, false);
         }
-        pdf.applyAlpha(fillAlpha, PDFGraphics2D.OPAQUE);
+        pdf.applyAlpha(fillAlpha, strokeAlpha);
     }
 
     @Override
