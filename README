@@ -63,7 +63,7 @@ Before you post any questions, please have a look at the FAQ at
 http://xmlgraphics.apache.org/fop/faq.html and FO help page at 
 http://xmlgraphics.apache.org/fop/fo.html.
 
-Please report bugs to bugzilla at http://issues.apache.org/bugzilla/
+Please report bugs at https://issues.apache.org/jira/browse/FOP
 
 
 How do I build FOP?
