@@ -35,8 +35,24 @@ import org.apache.fop.fonts.MultiByteFont;
 
 public class DefaultScriptTestCase {
     @Test
-    public void testProcessor() {
+    public void testProcessorReorder() {
         String in = "\u00F6\u0323";
+        int[][] gpa = new int[2][1];
+        gpa[0][0] = 1;
+        gpa[1][0] = 1;
+        String actual = getFont().reorderCombiningMarks(in, gpa, OTFScript.DEFAULT, null, null).toString();
+        Assert.assertEquals(actual.charAt(0), 803);
+    }
+
+    @Test
+    public void testProcessorNoReorder() {
+        String in = "\u00F6\u0323";
+        int[][] gpa = new int[2][1];
+        String actual = getFont().reorderCombiningMarks(in, gpa, OTFScript.DEFAULT, null, null).toString();
+        Assert.assertEquals(actual.charAt(0), 57344);
+    }
+
+    private MultiByteFont getFont() {
         MultiByteFont font = new MultiByteFont(null, null);
         font.setWidthArray(new int[0]);
         font.setCMap(new CMapSegment[]{new CMapSegment('\u0323', '\u0323', 1)});
@@ -46,7 +62,6 @@ public class DefaultScriptTestCase {
                 GlyphClassTable.createClassTable(entries), null);
         font.setGDEF(
                 new GlyphDefinitionTable(Collections.singletonList(table), new HashMap<String, ScriptProcessor>()));
-        String actual = font.reorderCombiningMarks(in, null, OTFScript.DEFAULT, null, null).toString();
-        Assert.assertEquals(actual.charAt(0), 803);
+        return font;
     }
 }

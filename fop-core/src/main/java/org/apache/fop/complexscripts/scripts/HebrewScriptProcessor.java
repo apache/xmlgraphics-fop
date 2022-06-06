@@ -25,7 +25,9 @@ public class HebrewScriptProcessor extends DefaultScriptProcessor {
         super(script);
     }
 
-    protected boolean isReorderedMark(GlyphDefinitionTable gdef, int[] glyphs, int[] unscaledWidths, int index) {
+    @Override
+    protected boolean isReorderedMark(
+            GlyphDefinitionTable gdef, int[] glyphs, int[] unscaledWidths, int index, int[] pa) {
         return gdef.isGlyphClass(glyphs[index], GlyphDefinitionTable.GLYPH_CLASS_MARK) && (unscaledWidths[index] != 0);
     }
 }
