@@ -1771,7 +1771,6 @@ public class GlyphPositioningTable extends GlyphTable {
          */
         public DeviceTable(int startSize, int endSize, int[] deltas) {
             assert startSize >= 0;
-            assert startSize <= endSize;
             assert deltas != null;
             assert deltas.length == (endSize - startSize) + 1;
             this.startSize = startSize;
