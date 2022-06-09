@@ -15,28 +15,33 @@
  * limitations under the License.
  */
 
-/* $Id: PDFRenderingUtil.java 1761019 2016-09-16 10:43:45Z ssteiner $ */
+package org.apache.fop.configuration;
 
-package org.apache.fop.render.pdf.extensions;
-
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
-public class PDFEmbeddedFileAttachmentTest {
+public class DefaultConfigurationTestCase {
 
-    @Test
-    public void testGetFilename() {
-        String germanAe = "\u00E4";
-        String unicodeFilename = "t" + germanAe + "st";
-        String src = "src";
-        String desc = "desc";
-        PDFEmbeddedFileAttachment fileAtt = new PDFEmbeddedFileAttachment(unicodeFilename, src, desc);
-        assertEquals(fileAtt.getUnicodeFilename(), unicodeFilename);
-        assertFalse(fileAtt.getFilename().contains(germanAe));
-        assertEquals(fileAtt.getSrc(), src);
-        assertEquals(fileAtt.getDesc(), desc);
+    DefaultConfiguration configuration;
+
+    @Before
+    public void setup() throws Exception {
+        DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();
+        configuration = builder.build(getClass().getResourceAsStream("sample_config.xml"));
     }
 
+    @Test
+    public void testGetChild() {
+        Configuration fontsConfig = configuration.getChild("fonts");
+        assertEquals("fonts element should be direct child", "fop/fonts",  fontsConfig.getLocation());
+    }
+
+    @Test
+    public void testGetChildren() {
+        Configuration[] fontsConfig = configuration.getChildren("fonts");
+        assertEquals("only direct children should match", 1, fontsConfig.length);
+        assertEquals("fonts element should be direct child", "fop/fonts", fontsConfig[0].getLocation());
+    }
 }

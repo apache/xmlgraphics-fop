@@ -23,7 +23,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileAttachmentTest;
+import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileAttachmentTestCase;
 
 /**
  * Test suite for FOP's utility classes.
@@ -47,7 +47,7 @@ import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileAttachmentTest;
         VersionControllerTestCase.class,
         PDFRootTestCase.class,
         PDFFileSpecTestCase.class,
-        PDFEmbeddedFileAttachmentTest.class
+        PDFEmbeddedFileAttachmentTestCase.class
 })
 public class PDFLibraryTestSuite {
 }
