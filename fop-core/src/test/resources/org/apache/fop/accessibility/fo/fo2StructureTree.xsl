@@ -145,6 +145,8 @@
 
   <xsl:template match="fo:wrapper[translate(normalize-space(@role), 'ARTIFCT', 'artifct') = 'artifact']"/>
 
+  <xsl:template match="fo:table-header[@role = 'artifact']"/>
+  <xsl:template match="fo:table-footer[@role = 'artifact']"/>
 
   <!-- Discard descendants of fo:leader -->
   <xsl:template match="fo:leader"/>

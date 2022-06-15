@@ -380,11 +380,12 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
 
     @Override
     public void startHeader(final TableHeader header) {
+        handleStartArtifact(header);
         startContent(new Event(this) {
             public void run() {
                 eventHandler.startHeader(header);
             }
-        }, true);
+        }, false);
         super.startHeader(header);
     }
 
@@ -395,16 +396,18 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
                 eventHandler.endHeader(header);
             }
         });
+        handleEndArtifact(header);
         super.endHeader(header);
     }
 
     @Override
     public void startFooter(final TableFooter footer) {
+        handleStartArtifact(footer);
         startContent(new Event(this) {
             public void run() {
                 eventHandler.startFooter(footer);
             }
-        }, true);
+        }, false);
         super.startFooter(footer);
     }
 
@@ -415,6 +418,7 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
                 eventHandler.endFooter(footer);
             }
         });
+        handleEndArtifact(footer);
         super.endFooter(footer);
     }
 
@@ -444,7 +448,7 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
             public void run() {
                 eventHandler.startRow(tr);
             }
-        }, true);
+        }, false);
         super.startRow(tr);
     }
 
@@ -464,7 +468,7 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
             public void run() {
                 eventHandler.startCell(tc);
             }
-        }, true);
+        }, false);
         super.startCell(tc);
     }
 

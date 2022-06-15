@@ -51,6 +51,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.io.IOUtils;
+
 import org.apache.fop.accessibility.StructureTree2SAXEventAdapter;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.apps.FOPException;
@@ -115,6 +117,11 @@ public class FO2StructureTreeConverterTestCase {
     }
 
     @Test
+    public void testTableArtifact() throws Exception {
+        testConverter("table-artifact.fo");
+    }
+
+    @Test
     public void testLanguage() throws Exception {
         testConverter("language.fo");
     }
@@ -171,6 +178,36 @@ public class FO2StructureTreeConverterTestCase {
                         + "</fo:flow>\n"
                         + "</structure-tree>\n"
                         + "</structure-tree-sequence>\n");
+    }
+
+    @Test
+    public void testRemoveTableHeader() throws Exception {
+        keepEmptyTags = false;
+        String fo = IOUtils.toString(getResource("table-artifact.fo")).replace("role=\"artifact\"", "");
+        compare(fo, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                        + "<structure-tree-sequence>\n"
+                        + "<structure-tree xmlns=\"http://xmlgraphics.apache.org/fop/intermediate\" "
+                        + "xmlns:foi=\"http://xmlgraphics.apache.org/fop/internal\" "
+                        + "xmlns:fox=\"http://xmlgraphics.apache.org/fop/extensions\">\n"
+                        + "<fo:flow xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" flow-name=\"xsl-region-body\">\n"
+                        + "<fo:table>\n"
+                        + "<fo:table-body>\n"
+                        + "<fo:table-row>\n"
+                        + "<fo:table-cell>\n"
+                        + "<fo:block>\n"
+                        + "<marked-content/>\n"
+                        + "<fo:block>\n"
+                        + "<marked-content/>\n"
+                        + "</fo:block>\n"
+                        + "<marked-content/>\n"
+                        + "</fo:block>\n"
+                        + "</fo:table-cell>\n"
+                        + "</fo:table-row>\n"
+                        + "</fo:table-body>\n"
+                        + "</fo:table>\n"
+                        + "</fo:flow>\n"
+                        + "</structure-tree>\n"
+                        + "</structure-tree-sequence>");
     }
 
     private void compare(final String fo, String tree) throws Exception {
