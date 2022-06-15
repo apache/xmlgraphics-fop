@@ -680,6 +680,7 @@ list of possible build targets.
           <include name="fop.jar"/>
         </fileset>
       </classpath>
+      <compilerarg value="-Xlint:cast"/>
     </javac>
     <copy todir="${build.unit.tests.dir}">
       <fileset dir="${test.java.dir}">

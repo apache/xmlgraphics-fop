@@ -183,7 +183,7 @@ public class FO2StructureTreeConverterTestCase {
     @Test
     public void testRemoveTableHeader() throws Exception {
         keepEmptyTags = false;
-        String fo = IOUtils.toString(getResource("table-artifact.fo")).replace("role=\"artifact\"", "");
+        String fo = IOUtils.toString(getResource("table-artifact.fo"), "utf8").replace("role=\"artifact\"", "");
         compare(fo, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                         + "<structure-tree-sequence>\n"
                         + "<structure-tree xmlns=\"http://xmlgraphics.apache.org/fop/intermediate\" "

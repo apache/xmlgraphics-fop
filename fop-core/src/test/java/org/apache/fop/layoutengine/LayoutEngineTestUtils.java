@@ -125,7 +125,7 @@ public final class LayoutEngineTestUtils {
         } catch (TransformerException te) {
             throw new RuntimeException(te);
         }
-        return (String[]) lines.toArray(new String[lines.size()]);
+        return lines.toArray(new String[lines.size()]);
     }
 
     /**

@@ -355,7 +355,7 @@ public class TTXFile {
     public static synchronized TTXFile getFromCache(String filename) {
         assert cache != null;
         TTXFile f;
-        if ((f = (TTXFile) cache.get(filename)) == null) {
+        if ((f = cache.get(filename)) == null) {
             f = new TTXFile();
             f.parse(filename);
             cache.put(filename, f);
@@ -3002,7 +3002,7 @@ public class TTXFile {
             int[] aa = new int [ substitutes.size() ];
             int i = 0;
             for (Integer a : substitutes) {
-                aa[i++] = (int) a;
+                aa[i++] = a;
             }
             clearSubstitutes();
             return aa;
@@ -3024,7 +3024,7 @@ public class TTXFile {
             return entries;
         }
         private RuleLookup[] extractRuleLookups() {
-            RuleLookup[] lookups = (RuleLookup[]) ruleLookups.toArray(new RuleLookup [ ruleLookups.size() ]);
+            RuleLookup[] lookups = ruleLookups.toArray(new RuleLookup [ ruleLookups.size() ]);
             clearRuleLookups();
             return lookups;
         }
@@ -3080,7 +3080,7 @@ public class TTXFile {
             psIndex = -1;
         }
         private PairValues[] extractPairs() {
-            PairValues[] pva = (PairValues[]) pairs.toArray(new PairValues [ pairs.size() ]);
+            PairValues[] pva = pairs.toArray(new PairValues [ pairs.size() ]);
             clearPairs();
             return pva;
         }
@@ -3091,18 +3091,18 @@ public class TTXFile {
             pairSets.clear();
         }
         private PairValues[][] extractPairSets() {
-            PairValues[][] pvm = (PairValues[][]) pairSets.toArray(new PairValues [ pairSets.size() ][]);
+            PairValues[][] pvm = pairSets.toArray(new PairValues [ pairSets.size() ][]);
             clearPairSets();
             return pvm;
         }
         private Anchor[] extractAnchors() {
-            Anchor[] aa = (Anchor[]) anchors.toArray(new Anchor [ anchors.size() ]);
+            Anchor[] aa = anchors.toArray(new Anchor [ anchors.size() ]);
             anchors.clear();
             return aa;
         }
         private MarkAnchor[] extractMarkAnchors() {
             MarkAnchor[] maa = new MarkAnchor [ markAnchors.size() ];
-            maa = (MarkAnchor[]) markAnchors.toArray(new MarkAnchor [ maa.length ]);
+            maa = markAnchors.toArray(new MarkAnchor [ maa.length ]);
             markAnchors.clear();
             return maa;
         }
@@ -3145,7 +3145,7 @@ public class TTXFile {
         }
         private Anchor[][] extractComponents() {
             Anchor[][] cam = new Anchor [ components.size() ][];
-            cam = (Anchor[][]) components.toArray(new Anchor [ cam.length ][]);
+            cam = components.toArray(new Anchor [ cam.length ][]);
             components.clear();
             return cam;
         }

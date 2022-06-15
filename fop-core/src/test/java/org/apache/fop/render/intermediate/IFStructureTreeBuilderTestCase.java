@@ -156,7 +156,7 @@ public class IFStructureTreeBuilderTestCase {
         }
 
         public boolean matches(Attributes attributes) {
-            return attributesEqual(expected, (Attributes) attributes);
+            return attributesEqual(expected, attributes);
         }
 
         private static boolean attributesEqual(Attributes attributes1, Attributes attributes2) {
