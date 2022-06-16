@@ -52,6 +52,15 @@ public class DefaultScriptTestCase {
         Assert.assertEquals(actual.charAt(0), 57344);
     }
 
+    @Test
+    public void testProcessorReorder2() {
+        String in = "\u00F6\u0323";
+        int[][] gpa = new int[2][2];
+        gpa[1][1] = 1;
+        String actual = getFont().reorderCombiningMarks(in, gpa, OTFScript.DEFAULT, null, null).toString();
+        Assert.assertEquals(actual.charAt(0), 803);
+    }
+
     private MultiByteFont getFont() {
         MultiByteFont font = new MultiByteFont(null, null);
         font.setWidthArray(new int[0]);
