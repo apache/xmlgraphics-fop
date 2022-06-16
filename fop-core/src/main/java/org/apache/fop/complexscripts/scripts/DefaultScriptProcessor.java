@@ -103,45 +103,29 @@ public class DefaultScriptProcessor extends ScriptProcessor {
             CharAssociation ba = null;
             int bg = -1;
             int[] bpa = null;
+            int[] order = new int[ng];
             for (int i = 0; i < ng; i++) {
-                int gid = ga [ i ];
-                int[] pa = (gpa != null) ? gpa [ i ] : null;
-                CharAssociation ca = aa [ i ];
+                order[i] = i;
+            }
+            for (int i = 1; i < ng; i++) {
+                int[] pa = (gpa != null) ? gpa[i] : null;
                 if (isReorderedMark(gdef, ga, unscaledWidths, i, pa)) {
-                    nga [ k ] = gid;
-                    naa [ k ] = ca;
-                    if (npa != null) {
-                        npa [ k ] = pa;
-                    }
-                    k++;
-                } else {
-                    if (bg != -1) {
-                        nga [ k ] = bg;
-                        naa [ k ] = ba;
-                        if (npa != null) {
-                            npa [ k ] = bpa;
+                    for (int j = i; j > 0; j--) {
+                        switchGlyphs(order, j);
+                        int[] paj = (gpa != null) ? gpa[order[j]] : null;
+                        if (!isMarkNotReordered(gdef, ga, order[j], paj)) {
+                            break;
                         }
-                        k++;
-                        bg = -1;
-                        ba = null;
-                        bpa = null;
-                    }
-                    if (bg == -1) {
-                        bg = gid;
-                        ba = ca;
-                        bpa = pa;
                     }
                 }
             }
-            if (bg != -1) {
-                nga [ k ] = bg;
-                naa [ k ] = ba;
-                if (npa != null) {
-                    npa [ k ] = bpa;
+            for (int i = 0; i < ng; i++) {
+                nga[i] = ga[order[i]];
+                naa[i] = aa[order[i]];
+                if (gpa != null) {
+                    npa[i] = gpa[order[i]];
                 }
-                k++;
             }
-            assert k == ng;
             if (npa != null) {
                 System.arraycopy(npa, 0, gpa, 0, ng);
             }
@@ -151,9 +135,22 @@ public class DefaultScriptProcessor extends ScriptProcessor {
         }
     }
 
+    private static void switchGlyphs(int[] order, int i) {
+        if (i < 1) {
+            throw new IllegalArgumentException(i + " must be > 0");
+        }
+        int oi = order[i];
+        order[i] = order[i - 1];
+        order[i - 1] = oi;
+    }
+
     protected boolean isReorderedMark(GlyphDefinitionTable gdef, int[] glyphs, int[] unscaledWidths, int index, int[] pa) {
         pa = (pa != null) ? pa : new int[1];
         return gdef.isGlyphClass(glyphs[index], GlyphDefinitionTable.GLYPH_CLASS_MARK) && pa[0] != 0;
     }
 
+    private boolean isMarkNotReordered(GlyphDefinitionTable gdef, int[] glyphs, int index, int[] pa) {
+        pa = (pa != null) ? pa : new int[1];
+        return gdef.isGlyphClass(glyphs[index], GlyphDefinitionTable.GLYPH_CLASS_MARK) && pa[0] == 0;
+    }
 }
