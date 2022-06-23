@@ -21,11 +21,16 @@ package org.apache.fop.fonts;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.net.URI;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import org.apache.commons.io.IOUtils;
+
+import org.apache.xmlgraphics.io.Resource;
+import org.apache.xmlgraphics.io.ResourceResolver;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
@@ -42,6 +47,21 @@ public class FontInfoFinderTestCase {
         new FileOutputStream(ttc).write(ttfBytes);
         EmbedFontInfo[] embedFontInfos = new FontInfoFinder().find(ttc.toURI(), rr, null);
         ttc.delete();
+        Assert.assertNull(embedFontInfos);
+    }
+
+    @Test
+    public void testOOMError() {
+        InternalResourceResolver rr = ResourceResolverFactory.createInternalResourceResolver(new File(".").toURI(),
+            new ResourceResolver() {
+                public Resource getResource(URI uri) {
+                    throw new Error();
+                }
+                public OutputStream getOutputStream(URI uri) {
+                    return null;
+                }
+            });
+        EmbedFontInfo[] embedFontInfos = new FontInfoFinder().find(new File(".").toURI(), rr, null);
         Assert.assertNull(embedFontInfos);
     }
 }
