@@ -653,6 +653,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             LeafPosition restartPosition) {
         log.trace("Restarting line breaking from index " + restartPosition.getIndex());
         int parIndex = restartPosition.getLeafPos();
+
+        for (int i = 0; i < parIndex; i++) {
+            knuthParagraphs.remove(0);
+        }
+        parIndex = 0;
+
         KnuthSequence paragraph = knuthParagraphs.get(parIndex);
         if (paragraph instanceof Paragraph) {
             ((Paragraph) paragraph).ignoreAtStart = 0;

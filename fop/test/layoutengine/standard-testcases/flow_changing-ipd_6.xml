@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that a list can be relaid out when a change in ipd happens across pages.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="PageFront" page-width="8.5in" page-height="11in" margin-bottom="4mm" margin-right="6mm" margin-top="5mm" margin-left="7mm">
+      <fo:region-body margin-bottom="24.87mm" margin-right="55.03mm" margin-top="0mm" margin-left="0mm" region-name="letterPageBody"/>      
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="AlternativePage" page-width="8.5in" page-height="11in" margin-bottom="4mm" margin-right="6mm" margin-top="5mm" margin-left="7mm">
+      <fo:region-body margin-right="0mm" margin-bottom="24.87mm" margin-top="24.87mm" margin-left="0mm" region-name="letterPageBody"/>      
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="BackPage" page-width="11in" page-height="8.5in" margin-bottom="4mm" margin-right="6mm" margin-top="5mm" margin-left="7mm">
+      <fo:region-body margin-bottom="24.87mm" margin-right="0mm" margin-top="0mm" margin-left="0mm" region-name="letterPageBody" />
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="LetterPages">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference page-position="first" master-reference="PageFront"/>
+        <fo:conditional-page-master-reference page-position="rest" master-reference="AlternativePage"/>
+        <fo:conditional-page-master-reference page-position="last" master-reference="BackPage"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence initial-page-number="auto" force-page-count="auto" master-reference="LetterPages">   
+    <fo:flow flow-name="letterPageBody">     
+       <fo:block linefeed-treatment="preserve" background-color="orange">1abitasse platea dictumst quisque sagittis. Orci sagittis eu volutpat odio facilisis mauris sit amet massa. Sed turpis tincidunt id aliquet risus feugiat in ante. Scelerisque eleifend donec pretium vulputate sapien nec sagittis aliquam malesuada. Sed blandit libero volutpat sed. Pulvinar etiam non quam lacus suspendisse faucibus. Leo a diam sollicitudin tempor id eu nisl nunc mi. Sapien eget mi proin sed libero enim. Amet nisl purus in mollis nunc. Ut placerat orci nulla pellentesque dignissim enim. Ipsum suspendisse ultrices gravida dictum fusce ut placerat orci. Eget felis eget nunc lobortis mattis aliquam.
+2orta lorem mollis aliquam ut porttitor. In mollis nunc sed id semper risus in hendrerit. Nibh ipsum consequat nisl vel. Nibh ipsum consequat nisl vel pretium lectus quam id. Mi eget mauris pharetra et. Lacus sed viverra tellus in hac. Odio euismod lacinia at quis risus sed vulputate. Sociis natoque penatibus et magnis dis parturient. Nunc faucibus a pellentesque sit amet porttitor eget. Cras ornare arcu dui vivamus arcu felis bibendum ut. Sit amet massa vitae tortor condimentum lacinia. Et ligula ullamcorper malesuada proin libero nunc consequat interdum varius.
+3uis at consectetur lorem donec massa sapien faucibus et molestie. Id venenatis a condimentum vitae sapien pellentesque habitant morbi. Sed cras ornare arcu dui vivamus arcu felis bibendum ut. Viverra aliquet eget sit amet. Varius vel pharetra vel turpis nunc eget lorem dolor sed. Enim nec dui nunc mattis enim ut. Elit ullamcorper dignissim cras tincidunt lobortis feugiat vivamus at. Sit amet mauris commodo quis imperdiet. Est sit amet facilisis magna etiam tempor orci. Porttitor leo a diam sollicitudin tempor id eu nisl nunc. Netus et malesuada fames ac. Diam quam nulla porttitor massa id neque aliquam vestibulum morbi.
+4lacerat orci nulla pellentesque dignissim enim. Felis eget velit aliquet sagittis id consectetur purus ut faucibus. Turpis egestas sed tempus urna et pharetra pharetra. Pellentesque massa placerat duis ultricies. Accumsan sit amet nulla facilisi morbi tempus iaculis. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Nisi lacus sed viverra tellus in hac habitasse platea. Viverra orci sagittis eu volutpat odio. Lobortis elementum nibh tellus molestie nunc non blandit. Mauris augue neque gravida in fermentum et sollicitudin ac. Arcu cursus vitae congue mauris. Quam pellentesque nec nam aliquam sem et tortor.
+5ellus integer feugiat scelerisque varius morbi enim nunc faucibus. Eu feugiat pretium nibh ipsum consequat nisl. Aenean pharetra magna ac placerat vestibulum lectus mauris ultrices eros. Integer enim neque volutpat ac tincidunt vitae. Pellentesque elit eget gravida cum. Elementum pulvinar etiam non quam lacus suspendisse faucibus interdum posuere. Eget egestas purus viverra accumsan in nisl nisi scelerisque. Cum sociis natoque penatibus et. Pulvinar sapien et ligula ullamcorper malesuada proin libero nunc. Morbi quis commodo odio aenean sed adipiscing diam donec. Vitae congue eu consequat ac felis donec. Ac tortor vitae purus faucibus.
+6ellus mauris a diam maecenas sed enim. Vitae semper quis lectus nulla. Nunc consequat interdum varius sit amet. Id faucibus nisl tincidunt eget nullam. Scelerisque mauris pellentesque pulvinar pellentesque. Sed adipiscing diam donec adipiscing tristique risus nec feugiat in. Dui vivamus arcu felis bibendum ut tristique. Vel turpis nunc eget lorem dolor sed viverra. Odio eu feugiat pretium nibh ipsum consequat nisl vel pretium. Turpis tincidunt id aliquet risus. Libero nunc consequat interdum varius sit amet mattis vulputate enim. Pellentesque elit eget gravida cum sociis natoque.
+7aculis eu non diam phasellus vestibulum lorem sed risus ultricies. Etiam tempor orci eu lobortis elementum nibh. Faucibus et molestie ac feugiat. Elementum eu facilisis sed odio morbi quis commodo odio. Scelerisque eleifend donec pretium vulputate sapien. Sed turpis tincidunt id aliquet risus. Massa eget egestas purus viverra accumsan. Turpis massa sed elementum tempus egestas sed. Sem nulla pharetra diam sit amet nisl suscipit adipiscing. Proin sed libero enim sed faucibus turpis in eu. Morbi quis commodo odio aenean. Proin sagittis nisl rhoncus mattis rhoncus.
+8u non diam phasellus vestibulum lorem sed risus ultricies tristique. Lectus mauris ultrices eros in cursus. Odio aenean sed adipiscing diam donec adipiscing tristique risus nec. Commodo quis imperdiet massa tincidunt nunc. Interdum varius sit amet mattis vulputate enim nulla aliquet porttitor. Semper viverra nam libero justo. Duis at tellus at urna. Volutpat maecenas volutpat blandit aliquam etiam erat. Feugiat in ante metus dictum at tempor commodo ullamcorper a. Ultricies leo integer malesuada nunc vel risus commodo. Adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna neque. Sem fringilla ut morbi tincidunt augue interdum velit.
+9attis aliquam faucibus purus in massa tempor. Congue mauris rhoncus aenean vel. Natoque penatibus et magnis dis parturient montes nascetur ridiculus. Ut ornare lectus sit amet est placerat in egestas erat. Pellentesque habitant morbi tristique senectus et netus et. Est velit egestas dui id ornare arcu odio ut sem. Orci nulla pellentesque dignissim enim. Sed vulputate odio ut enim blandit volutpat. Accumsan tortor posuere ac ut. Malesuada proin libero nunc consequat interdum. In pellentesque massa placerat duis ultricies lacus. Nibh tortor id aliquet lectus proin nibh nisl condimentum.
+10ismod nisi porta lorem mollis aliquam ut porttitor leo. Vel pharetra vel turpis nunc. Commodo viverra maecenas accumsan lacus. Quisque sagittis purus sit amet volutpat. Suspendisse interdum consectetur libero id faucibus nisl. Viverra nam libero justo laoreet sit amet. Etiam tempor orci eu lobortis. Pharetra pharetra massa massa ultricies mi quis hendrerit. Vitae congue eu consequat ac felis donec. Libero justo laoreet sit amet cursus sit amet. Phasellus faucibus scelerisque eleifend donec pretium. Habitant morbi tristique senectus et.
+11tae nunc sed velit dignissim sodales ut eu sem integer. Justo laoreet sit amet cursus sit. Id volutpat lacus laoreet non curabitur gravida arcu ac. Ultrices in iaculis nunc sed augue lacus viverra. Maecenas volutpat blandit aliquam etiam erat. Quisque non tellus orci ac auctor augue. Massa sapien faucibus et molestie ac feugiat sed lectus. Quis auctor elit sed vulputate mi. Odio morbi quis commodo odio aenean. Aliquam sem fringilla ut morbi tincidunt augue interdum. Turpis egestas pretium aenean pharetra magna ac. Mauris nunc congue nisi vitae suscipit tellus mauris a.
+12am vel quam elementum pulvinar etiam. Scelerisque mauris pellentesque pulvinar pellentesque. Adipiscing tristique risus nec feugiat in fermentum posuere urna. Erat pellentesque adipiscing commodo elit. Bibendum at varius vel pharetra vel turpis nunc eget lorem. Ante metus dictum at tempor commodo ullamcorper. Arcu ac tortor dignissim convallis aenean et tortor. A scelerisque purus semper eget duis at. At tempor commodo ullamcorper a lacus vestibulum sed. Vitae elementum curabitur vitae nunc sed velit. Venenatis tellus in metus vulputate eu. Condimentum mattis pellentesque id nibh tortor id aliquet lectus.
+13spendisse ultrices gravida dictum fusce ut placerat orci nulla. Id volutpat lacus laoreet non. Bibendum arcu vitae elementum curabitur vitae nunc sed velit dignissim. Leo a diam sollicitudin tempor id eu. Vel orci porta non pulvinar neque laoreet. Quis imperdiet massa tincidunt nunc. Porttitor eget dolor morbi non arcu risus quis varius. Ac odio tempor orci dapibus ultrices. Enim diam vulputate ut pharetra. Ullamcorper eget nulla facilisi etiam dignissim diam quis enim lobortis. Pulvinar elementum integer enim neque volutpat ac tincidunt vitae. Quis vel eros donec ac odio tempor orci dapibus.
+14as semper auctor neque vitae tempus quam pellentesque nec. Sagittis eu volutpat odio facilisis mauris sit amet. Blandit turpis cursus in hac habitasse platea. Quis auctor elit sed vulputate mi sit amet mauris commodo. Laoreet sit amet cursus sit amet dictum sit amet. Mattis molestie a iaculis at erat pellentesque adipiscing commodo. Cras pulvinar mattis nunc sed blandit libero volutpat sed. Volutpat consequat mauris nunc congue. Volutpat diam ut venenatis tellus in metus vulputate eu. Massa sapien faucibus et molestie ac feugiat sed. Pretium lectus quam id leo in vitae. Pretium vulputate sapien nec sagittis aliquam malesuada bibendum arcu.
+15rta nibh venenatis cras sed felis eget velit. Nisl nisi scelerisque eu ultrices vitae. Accumsan lacus vel facilisis volutpat est velit. Facilisis gravida neque convallis a cras semper auctor neque vitae. Tempor id eu nisl nunc mi ipsum. Adipiscing commodo elit at imperdiet dui accumsan sit. Tellus in metus vulputate eu scelerisque felis. Magna etiam tempor orci eu lobortis. Mattis enim ut tellus elementum sagittis vitae. Sit amet consectetur adipiscing elit duis tristique sollicitudin nibh sit. Sed ullamcorper morbi tincidunt ornare massa eget egestas purus. Eget est lorem ipsum dolor sit amet consectetur.
+16rmentum odio eu feugiat pretium nibh ipsum. Cras sed felis eget velit aliquet sagittis id consectetur. Amet commodo nulla facilisi nullam vehicula ipsum a. Nibh tellus molestie nunc non blandit massa enim nec. Urna neque viverra justo nec ultrices dui. Orci sagittis eu volutpat odio. Auctor augue mauris augue neque. Felis eget velit aliquet sagittis id consectetur purus ut faucibus. In ornare quam viverra orci sagittis eu. Pharetra sit amet aliquam id. Nec tincidunt praesent semper feugiat nibh sed pulvinar proin. Vivamus arcu felis bibendum ut.
+17gnissim enim sit amet venenatis urna cursus eget nunc. Commodo viverra maecenas accumsan lacus vel facilisis volutpat. Velit aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Diam quis enim lobortis scelerisque fermentum dui. Vitae tempus quam pellentesque nec nam. Luctus venenatis lectus magna fringilla urna porttitor rhoncus d</fo:block>      
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="3" xpath="count(//pageViewport)" />
+    <eval expected="1abitasse" xpath="//pageViewport[1]//word" />
+    <eval expected="7aculis" xpath="//pageViewport[2]//lineArea[4]//word" />
+    <eval expected="14as" xpath="//pageViewport[3]//lineArea[3]//word" />
+  </checks>
+</testcase>
