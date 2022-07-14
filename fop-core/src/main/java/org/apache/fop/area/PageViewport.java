@@ -284,7 +284,9 @@ public class PageViewport extends AreaTreeObject implements Resolvable {
      */
     public void replace(PageViewport oldViewPort) {
         this.idFirsts.addAll(oldViewPort.idFirsts);
-        this.unresolvedIDRefs.putAll(oldViewPort.unresolvedIDRefs);
+        if (oldViewPort.unresolvedIDRefs != null) {
+            this.unresolvedIDRefs.putAll(oldViewPort.unresolvedIDRefs);
+        }
         if (oldViewPort.pendingResolved != null) {
             this.pendingResolved.putAll(oldViewPort.pendingResolved);
         }
