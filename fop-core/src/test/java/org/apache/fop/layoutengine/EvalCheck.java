@@ -19,17 +19,20 @@
 
 package org.apache.fop.layoutengine;
 
-import javax.xml.transform.TransformerException;
+import java.util.Iterator;
+
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import org.apache.xml.utils.PrefixResolver;
-import org.apache.xml.utils.PrefixResolverDefault;
-import org.apache.xpath.XPathAPI;
-import org.apache.xpath.objects.XObject;
-
 import org.apache.fop.intermediate.IFCheck;
+import org.apache.fop.util.XMLConstants;
 
 /**
  * Simple check that requires an XPath expression to evaluate to true.
@@ -39,20 +42,33 @@ public class EvalCheck implements LayoutEngineCheck, IFCheck {
     private String expected;
     private String xpath;
     private double tolerance;
-    private PrefixResolver prefixResolver;
+    private NamespaceContext ctx;
 
     /**
      * Creates a new instance from a DOM node.
      * @param node DOM node that defines this check
      */
-    public EvalCheck(Node node) {
+    public EvalCheck(final Node node) {
         this.expected = node.getAttributes().getNamedItem("expected").getNodeValue();
         this.xpath = node.getAttributes().getNamedItem("xpath").getNodeValue();
         Node nd = node.getAttributes().getNamedItem("tolerance");
         if (nd != null) {
             this.tolerance = Double.parseDouble(nd.getNodeValue());
         }
-        this.prefixResolver = new PrefixResolverDefault(node);
+        ctx = new NamespaceContext() {
+            public String getNamespaceURI(String prefix) {
+                if ("xml".equals(prefix)) {
+                    return XMLConstants.XML_NAMESPACE;
+                }
+                return node.lookupNamespaceURI(prefix);
+            }
+            public Iterator getPrefixes(String val) {
+                return null;
+            }
+            public String getPrefix(String uri) {
+                return null;
+            }
+        };
     }
 
     /** {@inheritDoc} */
@@ -66,13 +82,15 @@ public class EvalCheck implements LayoutEngineCheck, IFCheck {
     }
 
     private void doCheck(Document doc) {
-        XObject res;
+        String actual;
         try {
-            res = XPathAPI.eval(doc, xpath, prefixResolver);
-        } catch (TransformerException e) {
+            XPath xPathAPI = XPathFactory.newInstance().newXPath();
+            xPathAPI.setNamespaceContext(ctx);
+            XPathExpression expr = xPathAPI.compile(xpath);
+            actual = (String) expr.evaluate(doc, XPathConstants.STRING);
+        } catch (XPathExpressionException e) {
             throw new RuntimeException("XPath evaluation failed: " + e.getMessage());
         }
-        String actual = res.str(); //Second str() seems to fail. D'oh!
         if (tolerance != 0) {
             double v1 = Double.parseDouble(expected);
             double v2 = Double.parseDouble(actual);

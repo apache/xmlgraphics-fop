@@ -19,16 +19,17 @@
 
 package org.apache.fop.layoutengine;
 
-import javax.xml.transform.TransformerException;
+import java.util.Iterator;
+
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import org.apache.xml.utils.PrefixResolver;
-import org.apache.xml.utils.PrefixResolverDefault;
-import org.apache.xpath.XPathAPI;
-import org.apache.xpath.objects.XBoolean;
-import org.apache.xpath.objects.XObject;
 
 import org.apache.fop.intermediate.IFCheck;
 
@@ -39,19 +40,29 @@ public class TrueCheck implements LayoutEngineCheck, IFCheck {
 
     private String xpath;
     private String failureMessage;
-    private PrefixResolver prefixResolver;
+    private NamespaceContext ctx;
 
     /**
      * Creates a new instance from a DOM node.
      * @param node DOM node that defines this check
      */
-    public TrueCheck(Node node) {
+    public TrueCheck(final Node node) {
         this.xpath = node.getAttributes().getNamedItem("xpath").getNodeValue();
         Node nd = node.getAttributes().getNamedItem("fail-msg");
         if (nd != null) {
             this.failureMessage = nd.getNodeValue();
         }
-        this.prefixResolver = new PrefixResolverDefault(node);
+        ctx = new NamespaceContext() {
+            public String getNamespaceURI(String prefix) {
+                return node.lookupNamespaceURI(prefix);
+            }
+            public Iterator getPrefixes(String val) {
+                return null;
+            }
+            public String getPrefix(String uri) {
+                return null;
+            }
+        };
     }
 
     /** {@inheritDoc} */
@@ -65,13 +76,16 @@ public class TrueCheck implements LayoutEngineCheck, IFCheck {
     }
 
     private void doCheck(Document doc) {
-        XObject res;
+        boolean res;
         try {
-            res = XPathAPI.eval(doc, xpath, prefixResolver);
-        } catch (TransformerException e) {
+            XPath xPathAPI = XPathFactory.newInstance().newXPath();
+            xPathAPI.setNamespaceContext(ctx);
+            XPathExpression expr = xPathAPI.compile(xpath);
+            res = (boolean) expr.evaluate(doc, XPathConstants.BOOLEAN);
+        } catch (XPathExpressionException e) {
             throw new RuntimeException("XPath evaluation failed: " + e.getMessage());
         }
-        if (!XBoolean.S_TRUE.equals(res)) {
+        if (!res) {
             if (failureMessage != null) {
                 throw new AssertionError(failureMessage);
             } else {
