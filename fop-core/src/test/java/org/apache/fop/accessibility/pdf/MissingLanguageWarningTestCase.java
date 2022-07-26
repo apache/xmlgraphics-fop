@@ -57,7 +57,7 @@ public class MissingLanguageWarningTestCase {
         private final String unknownLanguageEventID = PDFEventProducer.class.getName() + ".unknownLanguage";
 
         private final LinkedList<String> expectedLocations = new LinkedList<String>(
-                Arrays.asList("30:37", "34:40"));
+                Arrays.asList("32:36", "35:59"));
 
         public void processEvent(Event event) {
             if (event.getEventID().equals(unknownLanguageEventID)) {

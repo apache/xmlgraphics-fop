@@ -272,8 +272,8 @@ public class XMLRenderer extends AbstractXMLRenderer {
         iter = prefixes.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry)iter.next();
-            String qn = "xmlns:" + (String)entry.getKey();
-            atts.addAttribute("", (String)entry.getKey(), qn,
+            String qn = "xmlns:" + entry.getKey();
+            atts.addAttribute(org.apache.fop.util.XMLConstants.XMLNS_NAMESPACE_URI, (String)entry.getKey(), qn,
                     CDATA, (String)entry.getValue());
         }
     }

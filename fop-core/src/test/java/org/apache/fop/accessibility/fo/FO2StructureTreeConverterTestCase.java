@@ -163,7 +163,7 @@ public class FO2StructureTreeConverterTestCase {
                         + "    </fo:flow>\n"
                         + "  </fo:page-sequence>\n"
                         + "</fo:root>\n",
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
                         + "<structure-tree-sequence>\n"
                         + "<structure-tree xmlns=\"http://xmlgraphics.apache.org/fop/intermediate\" "
                         + "xmlns:foi=\"http://xmlgraphics.apache.org/fop/internal\" "
@@ -184,7 +184,7 @@ public class FO2StructureTreeConverterTestCase {
     public void testRemoveTableHeader() throws Exception {
         keepEmptyTags = false;
         String fo = IOUtils.toString(getResource("table-artifact.fo"), "utf8").replace("role=\"artifact\"", "");
-        compare(fo, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        compare(fo, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
                         + "<structure-tree-sequence>\n"
                         + "<structure-tree xmlns=\"http://xmlgraphics.apache.org/fop/intermediate\" "
                         + "xmlns:foi=\"http://xmlgraphics.apache.org/fop/internal\" "
