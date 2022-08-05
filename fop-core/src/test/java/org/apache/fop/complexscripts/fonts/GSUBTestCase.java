@@ -30,13 +30,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.complexscripts.fonts.GlyphTable.LookupTable;
 import org.apache.fop.complexscripts.fonts.ttx.TTXFile;
 import org.apache.fop.complexscripts.util.GlyphContextTester;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
-
-// CSOFF: LineLength
+import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.truetype.OFFontLoader;
 
 public class GSUBTestCase implements ScriptContextTester, GlyphContextTester {
 
@@ -120,7 +122,8 @@ public class GSUBTestCase implements ScriptContextTester, GlyphContextTester {
                         String[] ogia = ti[1];                  // output glyph id array
                         GlyphSequence igs = tf.getGlyphSequence(igia);
                         GlyphSequence ogs = tf.getGlyphSequence(ogia);
-                        GlyphSequence tgs = GlyphSubstitutionSubtable.substitute(igs, script, language, feature, sta, sct);
+                        GlyphSequence tgs =
+                                GlyphSubstitutionSubtable.substitute(igs, script, language, feature, sta, sct);
                         assertSameGlyphs(ogs, tgs);
                     }
                 }
@@ -151,7 +154,8 @@ public class GSUBTestCase implements ScriptContextTester, GlyphContextTester {
         }
     }
 
-    private GlyphSubstitutionSubtable[] findGSUBSubtables(GlyphSubstitutionTable gsub, String script, String language, String feature, String lid) {
+    private GlyphSubstitutionSubtable[] findGSUBSubtables(
+            GlyphSubstitutionTable gsub, String script, String language, String feature, String lid) {
         LookupTable lt = gsub.getLookupTable(lid);
         if (lt != null) {
             return (GlyphSubstitutionSubtable[]) lt.getSubtables();
@@ -190,5 +194,18 @@ public class GSUBTestCase implements ScriptContextTester, GlyphContextTester {
         GlyphCoverageTable coverageTable = GlyphCoverageTable.createCoverageTable(null);
         GlyphClassTable classTable = GlyphClassTable.createClassTable(Collections.singletonList(coverageTable));
         assertNotNull(classTable);
+    }
+
+    @Test
+    public void testSubRuleSets() throws Exception {
+        File fontfile = new File("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
+        InternalResourceResolver resourceResolver =
+                ResourceResolverFactory.createDefaultInternalResourceResolver(new File(".").toURI());
+        OFFontLoader fontLoader = new OFFontLoader(fontfile.toURI(), resourceResolver);
+        MultiByteFont font = (MultiByteFont) fontLoader.getFont();
+        String in = "\u006A\u0301";
+        String out = "\u0237\u0301";
+        String sub = font.performSubstitution(in, "latn", "dflt", null, false).toString();
+        assertEquals(sub, out);
     }
 }
