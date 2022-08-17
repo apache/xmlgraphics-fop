@@ -19,16 +19,19 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>fop-util</artifactId>
       <version>${project.version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>fop-events</artifactId>
       <version>${project.version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>fop-core</artifactId>
       <version>${project.version}</version>
+      <optional>true</optional>
     </dependency>
     <!-- test deps -->
     <dependency>
