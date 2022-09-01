@@ -217,7 +217,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                          TransparencyIgnoredEventListener listener) {
         this(textAsShapes);
         pdfDoc = doc;
-        this.colorHandler = new PDFColorHandler(doc.getResources());
+        this.colorHandler = new PDFColorHandler(doc.getResources(), page);
         resourceContext = page;
         currentFontName = font;
         currentFontSize = size;
@@ -790,7 +790,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         }
         if (doWrite) {
             StringBuffer sb = new StringBuffer();
-            colorHandler.establishColor(sb, col, fill);
+            colorHandler.establishColor(sb, col, fill, false);
             currentStream.write(sb.toString());
         }
     }

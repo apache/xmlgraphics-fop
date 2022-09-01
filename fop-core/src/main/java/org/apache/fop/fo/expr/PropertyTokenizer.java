@@ -229,7 +229,7 @@ class PropertyTokenizer {
             ++exprIndex;
             scanHexDigits();
             int len = exprIndex - currentTokenStartIndex - 1;
-            if (len % 3 == 0) {
+            if (len % 3 == 0 || len == 8) {
                 currentToken = TOK_COLORSPEC;
             } else {
                 //Actually not a color at all, but an NCNAME starting with "#"

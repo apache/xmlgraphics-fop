@@ -102,7 +102,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         this.pdfDoc = new PDFDocument("Apache FOP Version " + Version.getVersion()
                 + ": PDFDocumentGraphics2D");
         this.pdfContext = new PDFContext();
-        this.colorHandler = new PDFColorHandler(this.pdfDoc.getResources());
+        this.colorHandler = new PDFColorHandler(this.pdfDoc.getResources(), resourceContext);
     }
 
     /**
@@ -237,7 +237,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     public void setBackgroundColor(Color col) {
         StringBuffer sb = new StringBuffer();
         sb.append("q\n");
-        this.colorHandler.establishColor(sb, col, true);
+        this.colorHandler.establishColor(sb, col, true, true);
 
         sb.append("0 0 ").append(width).append(" ").append(height).append(" re\n");
 

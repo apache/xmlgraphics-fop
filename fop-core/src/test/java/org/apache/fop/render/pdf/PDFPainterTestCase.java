@@ -471,4 +471,36 @@ public class PDFPainterTestCase {
         pdfPainter.drawImageUsingImageHandler(info, new Rectangle());
         Assert.assertEquals(event[0].getEventKey(), "imageWritingError");
     }
+
+    @Test
+    public void testAlphaColor() throws Exception {
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+        foUserAgent = fopFactory.newFOUserAgent();
+        PDFDocumentHandler pdfDocumentHandler = new PDFDocumentHandler(new IFContext(foUserAgent));
+        pdfDocumentHandler.setResult(new StreamResult(new ByteArrayOutputStream()));
+        pdfDocumentHandler.startDocument();
+        pdfDocumentHandler.startPage(0, "", "", new Dimension());
+        PDFPainter pdfPainter = new PDFPainter(pdfDocumentHandler, null);
+        pdfPainter.fillRect(new Rectangle(10, 10), new Color(0, 0, 0, 128));
+        PDFFilterList filters = pdfPainter.generator.getStream().getFilterList();
+        filters.setDisableAllFilters(true);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        pdfPainter.generator.getStream().output(bos);
+        Assert.assertEquals("<< /Length 1 0 R >>\n"
+                + "stream\n"
+                + "q\n"
+                + "1 0 0 -1 0 0 cm\n"
+                + "/GS1 gs\n"
+                + "0 g\n"
+                + "0 0 0.01 0.01 re f\n"
+                + "\n"
+                + "endstream", bos.toString());
+        bos.reset();
+        pdfDocumentHandler.getCurrentPage().getGStates().iterator().next().output(bos);
+        Assert.assertEquals(bos.toString(), "<<\n"
+                + "/Type /ExtGState\n"
+                + "/ca 0.5019608\n"
+                + "/CA 1.0\n"
+                + ">>");
+    }
 }

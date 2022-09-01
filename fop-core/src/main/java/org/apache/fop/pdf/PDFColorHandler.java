@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -45,6 +46,7 @@ public class PDFColorHandler {
     private Log log = LogFactory.getLog(PDFColorHandler.class);
 
     private PDFResources resources;
+    private PDFResourceContext resourceContext;
 
     private Map<String, PDFCIELabColorSpace> cieLabColorSpaces;
 
@@ -52,8 +54,9 @@ public class PDFColorHandler {
      * Create a new instance for the given {@link PDFResources}
      * @param resources the PDF resources
      */
-    public PDFColorHandler(PDFResources resources) {
+    public PDFColorHandler(PDFResources resources, PDFResourceContext resourceContext) {
         this.resources = resources;
+        this.resourceContext = resourceContext;
     }
 
     private PDFDocument getDocument() {
@@ -67,7 +70,7 @@ public class PDFColorHandler {
      * @param color the color
      * @param fill true for fill color, false for stroke color
      */
-    public void establishColor(StringBuffer codeBuffer, Color color, boolean fill) {
+    public void establishColor(StringBuffer codeBuffer, Color color, boolean fill, boolean alpha) {
         if (color instanceof ColorWithAlternatives) {
             ColorWithAlternatives colExt = (ColorWithAlternatives)color;
             //Alternate colors have priority
@@ -87,7 +90,7 @@ public class PDFColorHandler {
         //Fallback
         boolean established = establishColorFromColor(codeBuffer, color, fill);
         if (!established) {
-            establishDeviceRGB(codeBuffer, color, fill);
+            establishDeviceRGB(codeBuffer, color, fill, alpha);
         }
     }
 
@@ -188,7 +191,7 @@ public class PDFColorHandler {
         }
     }
 
-    private void establishDeviceRGB(StringBuffer codeBuffer, Color color, boolean fill) {
+    private void establishDeviceRGB(StringBuffer codeBuffer, Color color, boolean fill, boolean alpha) {
         float[] comps;
         if (color.getColorSpace().isCS_sRGB()) {
             comps = color.getColorComponents(null);
@@ -199,6 +202,9 @@ public class PDFColorHandler {
             ColorSpace sRGB = ColorSpace.getInstance(ColorSpace.CS_sRGB);
             comps = color.getColorComponents(sRGB, null);
         }
+        if (alpha) {
+            writeAlpha(color, codeBuffer);
+        }
         if (ColorUtil.isGray(color)) {
             comps = new float[] {comps[0]}; //assuming that all components are the same
             writeColor(codeBuffer, comps, 1, (fill ? "g" : "G"));
@@ -207,7 +213,20 @@ public class PDFColorHandler {
         }
     }
 
+    private void writeAlpha(Color color, StringBuffer codeBuffer) {
+        int alpha = color.getAlpha();
+        if (alpha != 255 && alpha != 0 && resourceContext != null) {
+            Map<String, Float> vals = new HashMap<>();
+            vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, alpha / 255f);
+            vals.put(PDFGState.GSTATE_ALPHA_STROKE, 1.0f);
+            PDFGState gState = getDocument().getFactory().makeGState(vals, PDFGState.DEFAULT);
+            resourceContext.addGState(gState);
+            codeBuffer.append("/").append(gState.getName()).append(" gs\n");
+        }
+    }
+
     private void establishDeviceCMYK(StringBuffer codeBuffer, Color color, boolean fill) {
+        writeAlpha(color, codeBuffer);
         writeColor(codeBuffer, color, 4, (fill ? "k" : "K"));
     }
 

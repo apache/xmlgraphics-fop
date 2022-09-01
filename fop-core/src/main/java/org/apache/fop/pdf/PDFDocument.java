@@ -751,7 +751,7 @@ public class PDFDocument {
             poss = new PDFGState();
             poss.addValues(current);
             poss.addValues(avail);
-            if (poss.equals(wanted)) {
+            if (poss.contentEquals(wanted)) {
                 return avail;
             }
         }

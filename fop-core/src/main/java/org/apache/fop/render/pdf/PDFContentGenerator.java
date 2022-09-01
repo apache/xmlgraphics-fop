@@ -96,7 +96,7 @@ public class PDFContentGenerator {
         };
 
         this.currentState = new PDFPaintingState();
-        this.colorHandler = new PDFColorHandler(document.getResources());
+        this.colorHandler = new PDFColorHandler(document.getResources(), resourceContext);
         this.context = context;
     }
 
@@ -455,7 +455,7 @@ public class PDFContentGenerator {
      */
     protected void setColor(Color col, boolean fill, StringBuffer pdf) {
         if (pdf != null) {
-            colorHandler.establishColor(pdf, col, fill);
+            colorHandler.establishColor(pdf, col, fill, true);
         } else {
             setColor(col, fill, getStream());
         }
