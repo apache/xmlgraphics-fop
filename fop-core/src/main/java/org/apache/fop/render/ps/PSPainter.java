@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Map;
@@ -232,9 +233,12 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
                         throw new UnsupportedOperationException("Non-Color paints NYI");
                     }
                 }
-                generator.defineRect(rect.x / 1000.0, rect.y / 1000.0,
-                        rect.width / 1000.0, rect.height / 1000.0);
-                generator.writeln(generator.mapCommand("fill"));
+                if (fill.getTransparency() != Transparency.OPAQUE) {
+                    PSPainterUtil.drawTransparency(generator, rect, fill);
+                } else {
+                    generator.defineRect(rect.x / 1000.0, rect.y / 1000.0, rect.width / 1000.0, rect.height / 1000.0);
+                    generator.writeln(generator.mapCommand("fill"));
+                }
             } catch (IOException ioe) {
                 throw new IFException("I/O error in fillRect()", ioe);
             }
