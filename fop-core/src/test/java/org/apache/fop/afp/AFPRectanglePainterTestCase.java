@@ -33,6 +33,8 @@ import org.apache.fop.afp.parser.MODCAParser;
 import org.apache.fop.afp.parser.UnparsedStructuredField;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.util.bitmap.BitmapImageUtil;
+import org.apache.fop.util.bitmap.DefaultMonochromeBitmapConverter;
 
 public class AFPRectanglePainterTestCase {
     @Test
@@ -43,7 +45,11 @@ public class AFPRectanglePainterTestCase {
         bis.skip(59);
         Assert.assertEquals(bis.read(), 0x8E); //start
         bis.skip(20);
-        Assert.assertEquals(bis.read(), 170); //mask data
+        if (BitmapImageUtil.createDefaultMonochromeBitmapConverter() instanceof DefaultMonochromeBitmapConverter) {
+            Assert.assertEquals(bis.read(), 255); //mask data
+        } else {
+            Assert.assertEquals(bis.read(), 170); //mask data
+        }
         bis.skip(1299);
         Assert.assertEquals(bis.read(), 0x8F); //end
         bis.skip(89);
