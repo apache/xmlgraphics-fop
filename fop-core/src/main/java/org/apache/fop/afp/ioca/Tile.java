@@ -141,7 +141,7 @@ public class Tile extends AbstractStructuredObject {
         int numFullChunks = dataLength / maxChunkLength;
         int lastChunkLength = dataLength % maxChunkLength;
 
-        byte[] len = BinaryUtils.convert(3 + maxChunkLength, 2);
+        byte[] len = {(byte) 0x1f, (byte) 0xff};
         int off = 0;
         if (numFullChunks > 0) {
             // write out full data chunks

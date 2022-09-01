@@ -188,7 +188,7 @@ public class ImageContent extends AbstractStructuredObject {
         }
     }
 
-    private static final int MAX_DATA_LEN = 8188;
+    private static final int MAX_DATA_LEN = 65535;
 
     /** {@inheritDoc} */
     @Override
