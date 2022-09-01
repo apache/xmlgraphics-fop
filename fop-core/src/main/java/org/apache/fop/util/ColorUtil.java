@@ -24,7 +24,11 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -60,6 +64,8 @@ public final class ColorUtil {
 
     /** The name for the Separation pseudo-profile used for spot colors */
     public static final String SEPARATION_PSEUDO_PROFILE = "#Separation";
+
+    public static final String ALPHA_PSEUDO_PROFILE = "#alpha";
 
     /**
      * Keeps all the predefined and parsed colors.
@@ -290,13 +296,19 @@ public final class ColorUtil {
         return component;
     }
 
-    private static Color parseFallback(String[] args, String value) throws PropertyException {
-        float red = parseComponent1(args[0], value);
-        float green = parseComponent1(args[1], value);
-        float blue = parseComponent1(args[2], value);
+    private static Color parseFallback(ListIterator<String> args, String value) throws PropertyException {
+        float red = parseComponent1(args.next(), value);
+        float green = parseComponent1(args.next(), value);
+        float blue = parseComponent1(args.next(), value);
+        float alpha = 1;
+        if (ALPHA_PSEUDO_PROFILE.equals(args.next())) {
+            alpha = parseComponent1(args.next(), value);
+        } else {
+            args.previous();
+        }
         //Sun's classlib rounds differently with this constructor than when converting to sRGB
         //via CIE XYZ.
-        Color sRGB = new Color(red, green, blue);
+        Color sRGB = new Color(red, green, blue, alpha);
         return sRGB;
     }
 
@@ -356,49 +368,48 @@ public final class ColorUtil {
         int poss = value.indexOf("(");
         int pose = value.indexOf(")");
         if (poss != -1 && pose != -1) {
-            String[] args = value.substring(poss + 1, pose).split(",");
+            String[] argsStr = value.substring(poss + 1, pose).split(",");
 
             try {
-                if (args.length < 5) {
+                if (argsStr.length < 5) {
                     throw new PropertyException("Too few arguments for rgb-icc() function");
                 }
+                ListIterator<String> args = Arrays.asList(argsStr).listIterator();
 
                 //Set up fallback sRGB value
                 Color sRGB = parseFallback(args, value);
 
                 /* Get and verify ICC profile name */
-                String iccProfileName = args[3].trim();
-                if (iccProfileName == null || "".equals(iccProfileName)) {
+                String iccProfileName = args.next().trim();
+                if (iccProfileName.equals("")) {
                     throw new PropertyException("ICC profile name missing");
                 }
                 ColorSpace colorSpace = null;
                 String iccProfileSrc = null;
+                String iccProfile = args.next();
+                String namedColorSpace = args.next();
                 if (isPseudoProfile(iccProfileName)) {
                     if (CMYK_PSEUDO_PROFILE.equalsIgnoreCase(iccProfileName)) {
                         colorSpace = ColorSpaces.getDeviceCMYKColorSpace();
                     } else if (SEPARATION_PSEUDO_PROFILE.equalsIgnoreCase(iccProfileName)) {
-                        colorSpace = new NamedColorSpace(args[5], sRGB,
+                        colorSpace = new NamedColorSpace(namedColorSpace, sRGB,
                                 SEPARATION_PSEUDO_PROFILE, null);
                     } else {
                         assert false : "Incomplete implementation";
                     }
                 } else {
                     /* Get and verify ICC profile source */
-                    iccProfileSrc = args[4].trim();
-                    if (iccProfileSrc == null || "".equals(iccProfileSrc)) {
+                    iccProfileSrc = iccProfile.trim();
+                    if (iccProfileSrc.equals("")) {
                         throw new PropertyException("ICC profile source missing");
                     }
                     iccProfileSrc = unescapeString(iccProfileSrc);
                 }
-                /* ICC profile arguments */
-                int componentStart = 4;
-                if (colorSpace instanceof NamedColorSpace) {
-                    componentStart++;
+
+                if (!(colorSpace instanceof NamedColorSpace)) {
+                    args.previous();
                 }
-                float[] iccComponents = new float[args.length - componentStart - 1];
-                for (int ix = componentStart; ++ix < args.length;) {
-                    iccComponents[ix - componentStart - 1] = Float.parseFloat(args[ix].trim());
-                }
+                float[] iccComponents = getICCComponents(args);
                 if (colorSpace instanceof NamedColorSpace && iccComponents.length == 0) {
                     iccComponents = new float[] {1.0f}; //full tint if not specified
                 }
@@ -415,10 +426,10 @@ public final class ColorUtil {
                     if (ColorSpaces.isDeviceColorSpace(colorSpace)) {
                         //Device-specific colors are handled differently:
                         //sRGB is the primary color with the CMYK as the alternative
-                        Color deviceColor = new Color(colorSpace, iccComponents, 1.0f);
-                        float[] rgbComps = sRGB.getRGBColorComponents(null);
+                        float[] rgbComps = sRGB.getRGBComponents(null);
+                        Color deviceColor = new Color(colorSpace, iccComponents, rgbComps[3]);
                         parsedColor = new ColorWithAlternatives(
-                                rgbComps[0], rgbComps[1], rgbComps[2],
+                                rgbComps[0], rgbComps[1], rgbComps[2], rgbComps[3],
                                 new Color[] {deviceColor});
                     } else {
                         parsedColor = new ColorWithFallback(
@@ -438,6 +449,21 @@ public final class ColorUtil {
                     + ". Must be fop-rgb-icc(r,g,b,NCNAME,src,....)");
         }
         return parsedColor;
+    }
+
+    private static float[] getICCComponents(ListIterator<String> args) {
+        /* ICC profile arguments */
+        List<Float> iccComponentsList = new ArrayList<>();
+        while (args.hasNext()) {
+            iccComponentsList.add(Float.parseFloat(args.next().trim()));
+        }
+        float[] iccComponents = new float[iccComponentsList.size()];
+        int i = 0;
+        for (float component : iccComponentsList) {
+            iccComponents[i] = component;
+            i++;
+        }
+        return iccComponents;
     }
 
     /**
@@ -461,7 +487,7 @@ public final class ColorUtil {
                 }
 
                 //Set up fallback sRGB value
-                Color sRGB = parseFallback(args, value);
+                Color sRGB = parseFallback(Arrays.asList(args).listIterator(), value);
 
                 /* Get and verify ICC profile name */
                 String iccProfileName = args[3].trim();
@@ -768,13 +794,15 @@ public final class ColorUtil {
         String functionName;
 
         Color fallbackColor = getsRGBFallback(color);
-        float[] rgb = fallbackColor.getColorComponents(null);
-        assert rgb.length == 3;
-        StringBuffer sb = new StringBuffer(40);
+        float[] rgb = fallbackColor.getComponents(null);
+        StringBuilder sb = new StringBuilder(40);
         sb.append("(");
         sb.append(rgb[0]).append(",");
         sb.append(rgb[1]).append(",");
         sb.append(rgb[2]).append(",");
+        if (rgb[3] != 1f) {
+            sb.append(ALPHA_PSEUDO_PROFILE + ",").append(rgb[3]).append(",");
+        }
         String profileName = origin.getProfileName();
         sb.append(profileName).append(",");
         if (origin.getProfileURI() != null) {

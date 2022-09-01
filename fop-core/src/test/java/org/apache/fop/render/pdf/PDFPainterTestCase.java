@@ -48,6 +48,8 @@ import static org.mockito.Mockito.when;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.java2d.color.ColorSpaces;
+import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
@@ -474,6 +476,12 @@ public class PDFPainterTestCase {
 
     @Test
     public void testAlphaColor() throws Exception {
+        fillColor(new Color(0, 0, 0, 102), "0 g\n");
+        Color deviceColor = new Color(ColorSpaces.getDeviceCMYKColorSpace(), new float[4], 0.4f);
+        fillColor(new ColorWithAlternatives(0, 0, 0, 102, new Color[]{deviceColor}), "0 0 0 0 k\n");
+    }
+
+    private void fillColor(Color color, String cmd) throws Exception {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         foUserAgent = fopFactory.newFOUserAgent();
         PDFDocumentHandler pdfDocumentHandler = new PDFDocumentHandler(new IFContext(foUserAgent));
@@ -481,7 +489,7 @@ public class PDFPainterTestCase {
         pdfDocumentHandler.startDocument();
         pdfDocumentHandler.startPage(0, "", "", new Dimension());
         PDFPainter pdfPainter = new PDFPainter(pdfDocumentHandler, null);
-        pdfPainter.fillRect(new Rectangle(10, 10), new Color(0, 0, 0, 128));
+        pdfPainter.fillRect(new Rectangle(10, 10), color);
         PDFFilterList filters = pdfPainter.generator.getStream().getFilterList();
         filters.setDisableAllFilters(true);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -491,7 +499,7 @@ public class PDFPainterTestCase {
                 + "q\n"
                 + "1 0 0 -1 0 0 cm\n"
                 + "/GS1 gs\n"
-                + "0 g\n"
+                + cmd
                 + "0 0 0.01 0.01 re f\n"
                 + "\n"
                 + "endstream", bos.toString());
@@ -499,7 +507,7 @@ public class PDFPainterTestCase {
         pdfDocumentHandler.getCurrentPage().getGStates().iterator().next().output(bos);
         Assert.assertEquals(bos.toString(), "<<\n"
                 + "/Type /ExtGState\n"
-                + "/ca 0.5019608\n"
+                + "/ca 0.4\n"
                 + "/CA 1.0\n"
                 + ">>");
     }

@@ -42,6 +42,8 @@
           <fo:block color="rgb-icc(0%,100%,0%, unknown, 1, 0.5, 0)">color "rgb-icc(0%,100%,0%, unknown, 1, 0.5, 0)"</fo:block>
           <fo:block color="cmyk(0%,0%,20%,40%)">color "cmyk(0%,0%,20%,40%)" (Khaki)</fo:block>
           <fo:block color="rgb-icc(153, 153, 102, #CMYK, 0, 0, 0.2, 0.4)">color "rgb-icc(153, 153, 102, #CMYK, 0, 0, 0.2, 0.4)" (Khaki)</fo:block>
+          <fo:block color="rgb-icc(153,153,0.0,#Separation,,Postgelb)">color "rgb-icc(1.0,0.8,0.0,#Separation,,Postgelb)" (Khaki)</fo:block>
+          <fo:block color="fox-rgb-icc(153, 153, 102, 102, #CMYK, 0, 0, 0.2, 0.4)">color "fox-rgb-icc(153, 153, 102, 102, #CMYK, 0, 0, 0.2, 0.4)" (Khaki)</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -58,5 +60,7 @@
     <eval expected="#00ff00" xpath="//block[5]//text/@color"/>
     <eval expected="fop-rgb-icc(0.6,0.6,0.48000002,#CMYK,,0.0,0.0,0.2,0.4)" xpath="//block[6]//text/@color"/>
     <eval expected="fop-rgb-icc(0.6,0.6,0.4,#CMYK,,0.0,0.0,0.2,0.4)" xpath="//block[7]//text/@color"/>
+    <eval expected="fop-rgb-icc(0.6,0.6,0.0,#Separation,,Postgelb)" xpath="//block[8]//text/@color"/>
+    <eval expected="fop-rgb-icc(0.6,0.6,0.4,#alpha,0.4,#CMYK,,0.0,0.0,0.2,0.4)" xpath="//block[9]//text/@color"/>
   </checks>
 </testcase>

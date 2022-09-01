@@ -30,6 +30,12 @@ import org.apache.fop.util.ColorUtil;
  * Implements the rgb-icc() function.
  */
 class RGBICCColorFunction extends FunctionBase {
+    private int colors = 3;
+    public RGBICCColorFunction(boolean fox) {
+        if (fox) {
+            colors = 4;
+        }
+    }
 
     /** {@inheritDoc} */
     public int getRequiredArgsCount() {
@@ -49,12 +55,14 @@ class RGBICCColorFunction extends FunctionBase {
     }
 
     /** {@inheritDoc} */
-    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
+    public Property eval(Property[] args,
+                         PropertyInfo pInfo) throws PropertyException {
         // Map color profile NCNAME to src from declarations/color-profile element
-        String colorProfileName = args[3].getString();
-        Declarations decls = (pInfo.getFO() != null
-                ? pInfo.getFO().getRoot().getDeclarations()
-                : null);
+        String colorProfileName = args[colors].getString();
+        if (colors == 4 && colorProfileName == null) {
+            throw new PropertyException("Alpha channel value missing");
+        }
+        Declarations decls = pInfo.getFO().getRoot().getDeclarations();
         ColorProfile cp = null;
         if (decls == null) {
             //function used in a color-specification
@@ -79,32 +87,36 @@ class RGBICCColorFunction extends FunctionBase {
             }
         }
         String src = (cp != null ? cp.getSrc() : "");
-
-        float red = 0;
-        float green = 0;
-        float blue = 0;
-        red = args[0].getNumber().floatValue();
-        green = args[1].getNumber().floatValue();
-        blue = args[2].getNumber().floatValue();
+        float red = args[0].getNumber().floatValue();
+        float green = args[1].getNumber().floatValue();
+        float blue = args[2].getNumber().floatValue();
+        float alpha = 255;
+        if (colors == 4) {
+            alpha = args[3].getNumber().floatValue();
+        }
         /* Verify rgb replacement arguments */
-        if ((red < 0 || red > 255) || (green < 0 || green > 255) || (blue < 0 || blue > 255)) {
+        if ((red < 0 || red > 255)
+                || (green < 0 || green > 255)
+                || (blue < 0 || blue > 255)) {
             throw new PropertyException("Color values out of range. "
                     + "Arguments to rgb-icc() must be [0..255] or [0%..100%]");
         }
 
         // rgb-icc is replaced with fop-rgb-icc which has an extra fifth argument containing the
         // color profile src attribute as it is defined in the color-profile declarations element.
-        StringBuffer sb = new StringBuffer();
-        sb.append("fop-rgb-icc(");
+        StringBuilder sb = new StringBuilder("fop-rgb-icc(");
         sb.append(red / 255f);
         sb.append(',').append(green / 255f);
         sb.append(',').append(blue / 255f);
-        for (int ix = 3; ix < args.length; ix++) {
-            if (ix == 3) {
+        if (colors == 4) {
+            sb.append("," + ColorUtil.ALPHA_PSEUDO_PROFILE + ",").append(alpha / 255f);
+        }
+        for (int i = colors; i < args.length; i++) {
+            if (i == colors) {
                 sb.append(',').append(colorProfileName);
                 sb.append(',').append(src);
             } else {
-                sb.append(',').append(args[ix]);
+                sb.append(',').append(args[i]);
             }
         }
         sb.append(")");

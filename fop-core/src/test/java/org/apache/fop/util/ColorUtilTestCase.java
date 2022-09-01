@@ -336,4 +336,12 @@ public class ColorUtilTestCase {
 
         assertEquals(colSpec, ColorUtil.colorToString(colActual));
     }
+
+    @Test
+    public void testAlphaColor() throws Exception {
+        String colSpec = "fop-rgb-icc(0.6,0.6,0.4,#alpha,0.4,#CMYK,,0.0,0.0,0.2,0.4)";
+        ColorWithAlternatives colActual2 = (ColorWithAlternatives)ColorUtil.parseColorString(null, colSpec);
+        assertEquals(colActual2.getAlternativeColors()[0].getAlpha(), 102);
+        assertEquals(ColorUtil.colorToString(colActual2), colSpec);
+    }
 }
