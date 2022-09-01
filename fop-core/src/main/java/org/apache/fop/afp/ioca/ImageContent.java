@@ -182,12 +182,18 @@ public class ImageContent extends AbstractStructuredObject {
         }
     }
 
-    private static final int MAX_DATA_LEN = 65535;
+    public void setTransparencyMask(byte[] transparencyMask) {
+        if (transparencyMask != null) {
+            tile.setTransparencyMask(new TransparencyMask(transparencyMask, imageSizeParameter));
+        }
+    }
+
+    private static final int MAX_DATA_LEN = 8188;
 
     /** {@inheritDoc} */
     @Override
     protected void writeContent(OutputStream os) throws IOException {
-        if (imageSizeParameter != null) {
+        if (imageSizeParameter != null && tile == null) {
             imageSizeParameter.writeToStream(os);
         }
 

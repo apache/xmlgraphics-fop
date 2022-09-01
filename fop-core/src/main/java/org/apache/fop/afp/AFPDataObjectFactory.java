@@ -150,6 +150,7 @@ public class AFPDataObjectFactory {
         }
 
         imageObj.setData(imageObjectInfo.getData());
+        imageObj.setTransparencyMask(imageObjectInfo.getTransparencyMask());
 
         return imageObj;
     }

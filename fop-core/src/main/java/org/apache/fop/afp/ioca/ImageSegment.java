@@ -136,6 +136,10 @@ public class ImageSegment extends AbstractNamedAFPObject {
         getImageContent().setImageData(imageData);
     }
 
+    public void setTransparencyMask(byte[] transparencyMask) {
+        getImageContent().setTransparencyMask(transparencyMask);
+    }
+
     /** {@inheritDoc} */
     public void writeContent(OutputStream os) throws IOException {
         if (imageContent != null) {

@@ -31,6 +31,7 @@ public class Tile extends AbstractStructuredObject {
     private TilePosition tilePosition;
     private TileSize tileSize;
     private BandImage bandImage;
+    private TransparencyMask transparencyMask;
     private byte[] data;
 
     private IDEStructureParameter ideStructureParameter;
@@ -50,7 +51,40 @@ public class Tile extends AbstractStructuredObject {
         if (ideStructureParameter != null) {
             ideStructureParameter.writeToStream(os);
         }
+        if (transparencyMask != null) {
+            transparencyMask.writeToStream(os);
+        }
         if (data != null) {
+            writeData(os);
+        }
+    }
+
+    private void writeData(OutputStream os) throws IOException {
+        final byte[] dataHeader = new byte[]{(byte) 0xFE, // ID
+                (byte) 0x9C, // ID
+                0x00, // length
+                0x00, // length
+                0x00, // bandnum
+                0x00, // reserved
+                0x00 // reserved
+        };
+        final int lengthOffset = 2;
+        if (ideSize == 24) {
+            byte[] red = new byte[data.length / 3];
+            byte[] green = new byte[data.length / 3];
+            byte[] blue = new byte[data.length / 3];
+            for (int j = 0; j < data.length / 3; j++) {
+                red[j] = data[3 * j];
+                green[j] = data[3 * j + 1];
+                blue[j] = data[3 * j + 2];
+            }
+            dataHeader[4] = (byte) 0x01;
+            writeChunksToStream(red, dataHeader, lengthOffset, MAX_DATA_LEN, os);
+            dataHeader[4] = (byte) 0x02;
+            writeChunksToStream(green, dataHeader, lengthOffset, MAX_DATA_LEN, os);
+            dataHeader[4] = (byte) 0x03;
+            writeChunksToStream(blue, dataHeader, lengthOffset, MAX_DATA_LEN, os);
+        } else {
             byte[] c = new byte[data.length / 4];
             byte[] m = new byte[data.length / 4];
             byte[] y = new byte[data.length / 4];
@@ -61,15 +95,6 @@ public class Tile extends AbstractStructuredObject {
                 y[j] = data[4 * j + 2];
                 k[j] = data[4 * j + 3];
             }
-            final byte[] dataHeader = new byte[] {(byte) 0xFE, // ID
-                    (byte) 0x9C, // ID
-                    0x00, // length
-                    0x00, // length
-                    0x00, // bandnum
-                    0x00, // reserved
-                    0x00 // reserved
-            };
-            final int lengthOffset = 2;
             dataHeader[4] = (byte) 0x01;
             writeChunksToStream(c, dataHeader, lengthOffset, MAX_DATA_LEN, os);
             dataHeader[4] = (byte) 0x02;
@@ -116,7 +141,7 @@ public class Tile extends AbstractStructuredObject {
         int numFullChunks = dataLength / maxChunkLength;
         int lastChunkLength = dataLength % maxChunkLength;
 
-        byte[] len = {(byte) 0x1f, (byte) 0xff};
+        byte[] len = BinaryUtils.convert(3 + maxChunkLength, 2);
         int off = 0;
         if (numFullChunks > 0) {
             // write out full data chunks
@@ -173,4 +198,7 @@ public class Tile extends AbstractStructuredObject {
         this.bandImage = bandImage;
     }
 
+    public void setTransparencyMask(TransparencyMask transparencyMask) {
+        this.transparencyMask = transparencyMask;
+    }
 }

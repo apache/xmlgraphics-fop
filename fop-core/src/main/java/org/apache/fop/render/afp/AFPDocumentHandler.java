@@ -164,7 +164,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                     getPaintingState(), getDataStream(), getResourceManager());
         } else {
             return new AFPRectanglePainter(
-                    getPaintingState(), getDataStream());
+                    getPaintingState(), getDataStream(), getResourceManager());
         }
     }
 

@@ -45,6 +45,8 @@ public class AFPDataObjectInfo {
     /** the object data in a byte array */
     private byte[] data;
 
+    private byte[] transparencyMask;
+
     /** the object data height resolution */
     private int dataHeightRes;
 
@@ -237,6 +239,14 @@ public class AFPDataObjectInfo {
      */
     public byte[] getData() {
         return this.data;
+    }
+
+    public void setTransparencyMask(byte[] transparencyMask) {
+        this.transparencyMask = transparencyMask;
+    }
+
+    public byte[] getTransparencyMask() {
+        return transparencyMask;
     }
 
     /**

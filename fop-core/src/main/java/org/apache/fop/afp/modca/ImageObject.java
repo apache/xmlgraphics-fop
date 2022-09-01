@@ -79,11 +79,9 @@ public class ImageObject extends AbstractDataObject {
         ImageDataDescriptor imageDataDescriptor
             = factory.createImageDataDescriptor(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
 
-        boolean setImageSize = true;
         if (MimeConstants.MIME_AFP_IOCA_FS45.equals(imageObjectInfo.getMimeType())) {
             imageDataDescriptor.setFunctionSet(ImageDataDescriptor.FUNCTION_SET_FS45);
             if (imageObjectInfo.getBitsPerPixel() == 32) {
-                 setImageSize = false;
                  Tile tile = factory.createTile();
                  TilePosition tilePosition = factory.createTilePosition();
                  TileSize tileSize = factory.createTileSize(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
@@ -101,10 +99,8 @@ public class ImageObject extends AbstractDataObject {
         getObjectEnvironmentGroup().setMapImageObject(
                 new MapImageObject(dataObjectInfo.getMappingOption()));
 
-        if (setImageSize) {
-            // not used for FS45
-            getImageSegment().setImageSize(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
-        }
+        // not used for FS45
+        getImageSegment().setImageSize(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
     }
 
     /**
@@ -162,6 +158,10 @@ public class ImageObject extends AbstractDataObject {
      */
     public void setData(byte[] imageData) {
         getImageSegment().setData(imageData);
+    }
+
+    public void setTransparencyMask(byte[] date) {
+        getImageSegment().setTransparencyMask(date);
     }
 
     /** {@inheritDoc} */
