@@ -46,12 +46,10 @@ import org.apache.xmlgraphics.util.io.Base64EncodeStream;
 public class URIResolverWrapperTestCase {
 
     private static final List<String> BASE_URIS = Collections.unmodifiableList(Arrays.asList(
-                 new String[] {
-                         ".",
-                         "../",
-                         "some/path",
-                         "file:///absolute/file/path"}
-                 ));
+            ".",
+            "../",
+            "some/path",
+            "file:///absolute/file/path"));
 
     private URI base;
 
@@ -150,5 +148,12 @@ public class URIResolverWrapperTestCase {
         } catch (URISyntaxException e) {
             // PASS
         }
+    }
+
+    @Test
+    public void testJarUri() {
+        URI uri = new InternalResourceResolver(URI.create("jar:file:/home/my.jar!/fop.xconf"), null)
+                .resolveFromBase(URI.create("x"));
+        assertEquals(uri.toString(), "jar:file:/home/my.jar!/x");
     }
 }

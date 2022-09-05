@@ -22,8 +22,10 @@ package org.apache.fop.apps.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -110,7 +112,11 @@ public class InternalResourceResolver {
      * @return the resolved URI
      */
     public URI resolveFromBase(URI uri) {
-        return baseUri.resolve(uri);
+        try {
+            return new URL(baseUri.toURL(), uri.toString()).toURI();
+        } catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
+            return baseUri.resolve(uri);
+        }
     }
 
     /**
