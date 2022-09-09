@@ -37,7 +37,16 @@ import org.apache.fop.render.pdf.PDFStructureTreeBuilder;
 
 public class PDFUAWarningTestCase {
 
-    PDFFactory pdfFactory;
+    private PDFFactory pdfFactory;
+
+    @Before
+    public void setUp() {
+        PDFParentTree tree = new  PDFParentTree();
+        PDFDocument doc = new PDFDocument("");
+        doc.makeStructTreeRoot(tree);
+        doc.getProfile().setPDFUAMode(PDFUAMode.PDFUA_1);
+        pdfFactory = new PDFFactory(doc);
+    }
 
     @Test
     public void nestedTableWarningTestCase() throws IOException {
@@ -50,12 +59,15 @@ public class PDFUAWarningTestCase {
         Assert.assertEquals("Div", block.getStructureType().toString());
     }
 
-    @Before
-    public void setUp() {
-        PDFParentTree tree = new  PDFParentTree();
-        PDFDocument doc = new PDFDocument("");
-        doc.makeStructTreeRoot(tree);
-        doc.getProfile().setPDFUAMode(PDFUAMode.PDFUA_1);
-        pdfFactory = new PDFFactory(doc);
+    @Test
+    public void testNoStructureType() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        PDFStructElem structElem = new PDFStructElem();
+        structElem.setDocument(pdfFactory.getDocument());
+        PDFStructElem structElem2 = new PDFStructElem();
+        structElem2.setDocument(pdfFactory.getDocument());
+        structElem.addKid(structElem2);
+        structElem.output(bos);
+        Assert.assertEquals(bos.toString(), "<< /K [<< >>] >>");
     }
 }
