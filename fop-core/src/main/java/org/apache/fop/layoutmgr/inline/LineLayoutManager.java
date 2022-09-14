@@ -887,12 +887,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
             // now try something different
             log.debug("Hyphenation possible? " + canHyphenate);
+            boolean simpleLineBreaking = fobj.getUserAgent().isSimpleLineBreaking();
+
             // Note: if allowedBreaks is guaranteed to be unchanged by alg.findBreakingPoints(),
             // the below check can be simplified to 'if (canHyphenate) ...'
             if (canHyphenate && allowedBreaks != BreakingAlgorithm.ONLY_FORCED_BREAKS) {
                 // consider every hyphenation point as a legal break
                 allowedBreaks = BreakingAlgorithm.ALL_BREAKS;
-            } else {
+            } else if (!simpleLineBreaking) {
                 // try with a higher threshold
                 maxAdjustment = 5;
             }
@@ -905,7 +907,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     log.debug("No set of breaking points found with maxAdjustment = "
                             + maxAdjustment + (canHyphenate ? " and hyphenation" : ""));
                 }
-                maxAdjustment = 20;
+                if (!simpleLineBreaking) {
+                    maxAdjustment = 20;
+                }
                 alg.findBreakingPoints(currPar, maxAdjustment, true, allowedBreaks);
             }
 

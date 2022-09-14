@@ -219,6 +219,10 @@ public final class FopFactory implements ImageContext {
         return config.isTableBorderOverpaint();
     }
 
+    boolean isSimpleLineBreaking() {
+        return config.isSimpleLineBreaking();
+    }
+
     /**
      * Returns a new {@link Fop} instance. FOP will be configured with a default user agent
      * instance. Use this factory method if your output type requires an output stream.

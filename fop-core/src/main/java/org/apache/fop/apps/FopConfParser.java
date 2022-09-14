@@ -57,6 +57,7 @@ public class FopConfParser {
 
     private static final String PREFER_RENDERER = "prefer-renderer";
     private static final String TABLE_BORDER_OVERPAINT = "table-border-overpaint";
+    private static final String SIMPLE_LINE_BREAKING = "simple-line-breaking";
 
     private final Log log = LogFactory.getLog(FopConfParser.class);
 
@@ -275,6 +276,15 @@ public class FopConfParser {
             try {
                 fopFactoryBuilder.setTableBorderOverpaint(
                         cfg.getChild(TABLE_BORDER_OVERPAINT).getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e, false);
+            }
+        }
+
+        if (cfg.getChild(SIMPLE_LINE_BREAKING, false) != null) {
+            try {
+                fopFactoryBuilder.setSimpleLineBreaking(
+                        cfg.getChild(SIMPLE_LINE_BREAKING).getValueAsBoolean());
             } catch (ConfigurationException e) {
                 LogUtil.handleException(log, e, false);
             }

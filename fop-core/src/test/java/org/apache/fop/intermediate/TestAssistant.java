@@ -124,6 +124,7 @@ public class TestAssistant {
         builder.setStrictFOValidation(isStrictValidation(testDoc));
         builder.getFontManager().setBase14KerningEnabled(isBase14KerningEnabled(testDoc));
         builder.setTableBorderOverpaint(isTableBorderOverpaint(testDoc));
+        builder.setSimpleLineBreaking(isSimpleLineBreaking(testDoc));
         return builder.build();
     }
 
@@ -157,6 +158,15 @@ public class TestAssistant {
     private String eval(Document doc, String xpath) throws XPathExpressionException {
         XPath xPath = XPathFactory.newInstance().newXPath();
         return (String) xPath.compile(xpath).evaluate(doc, XPathConstants.STRING);
+    }
+
+    private boolean isSimpleLineBreaking(Document testDoc) {
+        try {
+            String s = eval(testDoc, "/testcase/cfg/simple-line-breaking");
+            return "true".equalsIgnoreCase(s);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException("Error while evaluating XPath expression", e);
+        }
     }
 
     /**

@@ -345,6 +345,11 @@ public final class FopFactoryBuilder {
         return this;
     }
 
+    public FopFactoryBuilder setSimpleLineBreaking(boolean b) {
+        fopFactoryConfigBuilder.setSimpleLineBreaking(b);
+        return this;
+    }
+
     public static class FopFactoryConfigImpl implements FopFactoryConfig {
 
         private final EnvironmentProfile enviro;
@@ -387,6 +392,7 @@ public final class FopFactoryBuilder {
         private Map<String, String> hyphPatNames;
 
         private boolean tableBorderOverpaint;
+        private boolean simpleLineBreaking;
 
         private static final class ImageContextImpl implements ImageContext {
 
@@ -508,6 +514,10 @@ public final class FopFactoryBuilder {
             return tableBorderOverpaint;
         }
 
+        public boolean isSimpleLineBreaking() {
+            return simpleLineBreaking;
+        }
+
         public Map<String, String> getHyphenationPatternNames() {
             return hyphPatNames;
         }
@@ -555,6 +565,8 @@ public final class FopFactoryBuilder {
         void setHyphPatNames(Map<String, String> hyphPatNames);
 
         void setTableBorderOverpaint(boolean b);
+
+        void setSimpleLineBreaking(boolean b);
     }
 
     private static final class CompletedFopFactoryConfigBuilder implements FopFactoryConfigBuilder {
@@ -640,6 +652,10 @@ public final class FopFactoryBuilder {
         }
 
         public void setTableBorderOverpaint(boolean b) {
+            throwIllegalStateException();
+        }
+
+        public void setSimpleLineBreaking(boolean b) {
             throwIllegalStateException();
         }
     }
@@ -729,6 +745,10 @@ public final class FopFactoryBuilder {
 
         public void setTableBorderOverpaint(boolean b) {
             config.tableBorderOverpaint = b;
+        }
+
+        public void setSimpleLineBreaking(boolean b) {
+            config.simpleLineBreaking = b;
         }
     }
 

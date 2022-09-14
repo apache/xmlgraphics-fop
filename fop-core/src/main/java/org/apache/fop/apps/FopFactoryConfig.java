@@ -165,6 +165,8 @@ public interface FopFactoryConfig {
 
     boolean isTableBorderOverpaint();
 
+    boolean isSimpleLineBreaking();
+
     /** @return the hyphenation pattern names */
     Map<String, String> getHyphenationPatternNames();
 
