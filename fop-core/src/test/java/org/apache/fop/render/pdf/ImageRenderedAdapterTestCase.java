@@ -20,6 +20,7 @@
 package org.apache.fop.render.pdf;
 
 import java.awt.Color;
+import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
@@ -181,8 +182,7 @@ public class ImageRenderedAdapterTestCase {
         // ICC Color info
         PDFFactory factory = mock(PDFFactory.class);
         PDFICCStream iccStream = mock(PDFICCStream.class);
-        ICC_Profile iccProfile = mock(ICC_Profile.class);
-        when(iccProfile.getNumComponents()).thenReturn(4);
+        ICC_Profile iccProfile = ICC_Profile.getInstance(ColorSpace.CS_sRGB);
         when(iccStream.getICCProfile()).thenReturn(iccProfile);
         when(factory.makePDFICCStream()).thenReturn(iccStream);
         PDFICCBasedColorSpace iccbcs = new PDFICCBasedColorSpace(null, iccStream);

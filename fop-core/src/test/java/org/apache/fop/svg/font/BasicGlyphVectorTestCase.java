@@ -168,7 +168,10 @@ public class BasicGlyphVectorTestCase extends FOPGVTGlyphVectorTest {
         for (int i = 0; i < 3; i++) {
             glyphVector.setGlyphTransform(i, new AffineTransform(0.7, 0.7, -0.7, 0.7, 0, 0));
         }
-        assertEquals(new Rectangle2D.Float(-2.8f, -5.6f, 37.8f, 16.8f), glyphVector.getLogicalBounds());
+        Rectangle2D bounds = glyphVector.getLogicalBounds();
+        assertEquals(new Rectangle2D.Float(-2.8f, -5.6f, 37.8f, 16.8f),
+                new Rectangle2D.Float((float) bounds.getX(), (float) bounds.getY(),
+                        (float) bounds.getWidth(), (float) bounds.getHeight()));
     }
 
     @Test
