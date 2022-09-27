@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -594,5 +595,26 @@ public class TTFFileTestCase {
         ttfFile.mtxTab = new OFMtxEntry[1];
         ttfFile.mtxTab[0] = new OFMtxEntry();
         ttfFile.readPostScript();
+    }
+
+    @Test
+    public void testStopReadAtLastOffset() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+        dos.writeShort(0);
+        dos.writeShort(4);
+        dos.writeShort(4);
+        dos.writeLong(0);
+        TTFFile ttfFile = new TTFFile();
+        ttfFile.dirTabs = new HashMap<>();
+        ttfFile.dirTabs.put(OFTableName.LOCA, new OFDirTabEntry());
+        ttfFile.dirTabs.put(OFTableName.GLYF, new OFDirTabEntry());
+        ttfFile.fontFile = new FontFileReader(new ByteArrayInputStream(bos.toByteArray()));
+        ttfFile.numberOfGlyphs = 2;
+        ttfFile.mtxTab = new OFMtxEntry[2];
+        ttfFile.mtxTab[0] = new OFMtxEntry();
+        ttfFile.mtxTab[1] = new OFMtxEntry();
+        ttfFile.updateBBoxAndOffset();
+        Assert.assertEquals(ttfFile.mtxTab[0].getBoundingBox()[0], 4);
     }
 }
