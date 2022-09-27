@@ -137,7 +137,7 @@ public class Root extends FObj implements CommonAccessibilityHolder {
                     nodesOutOfOrderError(loc, "fo:layout-master-set", "fo:declarations");
                 } else if (declarations != null) {
                     tooManyNodesError(loc, "fo:declarations");
-                } else if (bookmarkTree != null) {
+                } else if (bookmarkTree != null && getUserAgent().validateStrictly()) {
                     nodesOutOfOrderError(loc, "fo:declarations", "fo:bookmark-tree");
                 } else if (pageSequenceFound) {
                     nodesOutOfOrderError(loc, "fo:declarations", "fo:page-sequence");
