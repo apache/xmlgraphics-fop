@@ -451,8 +451,10 @@ public class PageBreaker extends AbstractBreaker {
         int optimalPageCount = algRestart.findBreakingPoints(effectiveList,
                     newStartPos,
                     1, true, BreakingAlgorithm.ALL_BREAKS);
-        log.debug("restart: optimalPageCount= " + optimalPageCount
-                + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
+        if (algRestart.getPageBreaks() != null) {
+            log.debug("restart: optimalPageCount= " + optimalPageCount
+                    + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
+        }
 
         boolean fitsOnePage
             = optimalPageCount <= pslm.getCurrentPV()

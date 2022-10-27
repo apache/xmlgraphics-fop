@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that footnote content is properly reset when the algorithm has to restart 
+      page breaking after a too short/long node.
+     </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" xmlns:svg="http://www.w3.org/2000/svg">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="PageFront" page-width="210mm" page-height="297mm">
+      <fo:region-body region-name="letterPageBody"/>
+      <fo:region-before precedence="true" extent="297mm" region-name="Background"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master margin="10mm" master-name="PageRest" page-width="210mm" page-height="297mm">
+      <fo:region-body region-name="PageBody"/>
+      <fo:region-after region-name="PageNumber"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master margin="10mm" master-name="PageLast" page-width="210mm" page-height="297mm">
+      <fo:region-body region-name="PageBody"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="LetterPages">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference page-position="first" master-reference="PageFront"/>
+        <fo:conditional-page-master-reference page-position="rest" master-reference="PageRest"/>
+        <fo:conditional-page-master-reference page-position="last" master-reference="PageLast"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence format="1" id="th_default_sequence1" initial-page-number="auto" force-page-count="auto" master-reference="LetterPages">
+    <fo:flow flow-name="PageBody">
+      <fo:block>
+        <fo:table table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+          <fo:table-body>
+            <fo:table-row height="1.69333330790202cm">
+              <fo:table-cell padding="7pt" background-color="#91BFE3">
+                <fo:block>
+                  <fo:block font-size="10pt">
+                    <fo:inline font-size="14pt">This leaflet provides a summary of the significant features, benefits and limitations of the cover provided by the  Insurance plc Contract Works Construction policy. The full terms, conditions and exclusions are shown in the policy document. If you want to see full details of the cover, please refer to the policy document.</fo:inline>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:block>
+          <fo:leader/>
+        </fo:block>
+        <fo:block>
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="12pt" role="H2" id="N10043">Type of insurance and cover</fo:block>
+        <fo:block font-size="10pt">This policy offers ‘All Risks’ protection for materials usually referred to as ‘contract works’. It can also cover owned and hired-in contractors’ plant and employees’ personal tools and effects.</fo:block>
+        <fo:block font-size="10pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="10pt">The duration of this non-investment insurance contract is 12 months or the period of the construction project to be covered.</fo:block>
+        <fo:block font-size="10pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="12pt" role="H2" id="N1005A">Significant features and benefits</fo:block>
+        <fo:list-block font-size="10pt">
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>a</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>b</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>Up to 12 months restricted cover following handover during the maintenance or defects liability period where required by contract.</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>c</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>d</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>e</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>f</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>g</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>h</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>i</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>j</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>k</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>l</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+        </fo:list-block>
+        <fo:block font-size="10pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="12pt" role="H2" id="N100B4">Optional covers available</fo:block>
+        <fo:list-block font-size="10pt">
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>a</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>b</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>c</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+        </fo:list-block>
+        <fo:block font-size="10pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="12pt" role="H2" id="N100D2">Significant and unusual exclusions or limitations</fo:block>
+        <fo:list-block font-size="10pt">
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>a</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>Property defective in material or workmanship design, plan or specification and subsequent damage caused whilst enabling repair.</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>c</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>Theft of unfixed non-ferrous metals of any description unless at the time of the theft either:<fo:list-block font-size="10pt">
+                  <fo:list-item space-after="3pt">
+                    <fo:list-item-label>
+                      <fo:block>-</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body margin-left="15pt">
+                      <fo:block>e</fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item space-after="3pt">
+                    <fo:list-item-label>
+                      <fo:block>-</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body margin-left="15pt">
+                      <fo:block>f</fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                </fo:list-block>
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>Normal wear and tear.</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>a</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>b</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>c</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>d</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>e</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item space-after="3pt">
+            <fo:list-item-label>
+              <fo:block>•</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body margin-left="15pt">
+              <fo:block>f</fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+        </fo:list-block>
+        <fo:block>
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="12pt" role="H2" id="N10133">Insurance Act 2015</fo:block>
+        <fo:block font-size="10pt">This policy is compliant with the principles of the Insurance Act 2015 law reforms. It also incorporates an ‘opt out’ which aims to promote good customer outcomes. We have opted-out of the ‘proportionate reduction of claim remedy’ available to insurers under the Act. This means that in cases of non-disclosure or misrepresentation which are neither deliberate nor reckless, if we would have charged an additional premium had we known the relevant facts, we will charge that premium and pay any claims in full rather than reducing claims payments in proportion to the amount of premium that would have been charged.</fo:block>
+        <fo:block font-size="10pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="10pt">We believe that our ‘additional premium approach’ should, in most situations, be more favourable to our customers when compared to the proportionate reduction of claim remedy. Our additional premium approach does not affect our right to apply the other remedies available under the Act for non-disclosure or misrepresentation.</fo:block>
+        <fo:block font-size="12pt" role="H2" id="N1014D">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="12pt" role="H2" id="N10150">Cancellation Rights</fo:block>
+        <fo:block font-size="10pt">This policy dos not entitle you to a cooling-off period.</fo:block>
+        <fo:block>
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="12pt" role="H2" id="N10161">Claims</fo:block>
+        <fo:block>
+          <fo:leader/>
+        </fo:block>
+        <fo:table table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(8.14)" column-number="1"/>
+          <fo:table-column column-width="proportional-column-width(8.53)" column-number="2"/>
+          <fo:table-column column-width="proportional-column-width(83.33)" column-number="3"/>
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell number-rows-spanned="2">
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell number-columns-spanned="2">
+                <fo:block>
+                  <fo:block font-size="10pt">To make a claim online visit:</fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell number-columns-spanned="2">
+                <fo:block>
+                  <fo:block>a</fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row height="0.423333326975505cm">
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell number-columns-spanned="2">
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row height="0.423333326975505cm">
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="10pt">Call us on:</fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>b</fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:block>
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="12pt" role="H2" id="N101B0">Our complaints procedure</fo:block>
+        <fo:block font-size="10pt">We are committed to providing a high level of customer service. If you do not feel we have delivered this, we would welcome the opportunity to put things right for you.</fo:block>
+        <fo:block font-size="10pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="10pt">Many concerns can be resolved straight away. Therefore in the first instance, please get in touch with your usual contact at  or your broker or insurance intermediary, as they will generally be able to provide you with a prompt response to your satisfaction. Contact details will be provided on correspondence that we or our representatives have sent you.</fo:block>
+        <fo:block font-size="10pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="10pt">If we can resolve your complaint to your satisfaction within the first few days of receipt, we will do so. Otherwise, we will keep you updated with progress and will provide you with our decision as quickly as possible.</fo:block>
+        <fo:block font-size="10pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="10pt">If you are not happy with the outcome of your complaint, you may be able to ask the Financial Ombudsman Service to review your case. </fo:block>
+        <fo:block font-size="10pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="10pt">We will let you know if we believe the ombudsman service can consider your complaint when we provide you with our decision. The service they provide is free and impartial, but you would need to contact them within 6 months of the date of our decision.</fo:block>
+        <fo:block font-size="10pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="10pt">More information about the ombudsman and the type of complaints they can review is available via their website www.financial-ombudsman.org.uk.</fo:block>
+        <fo:block font-size="10pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="10pt">You can also contact them as follows:</fo:block>
+        <fo:block font-size="10pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="10pt">
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column column-width="proportional-column-width(13.73)" column-number="1"/>
+            <fo:table-column column-width="proportional-column-width(86.27)" column-number="2"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Post:</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>a</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Telephone:</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>b</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Email:</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>c</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:block>
+        <fo:block font-size="10pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="10pt">If the Financial Ombudsman Service is unable to consider your complaint, you may wish to obtain advice from the Citizens Advice Bureau or seek legal advice.</fo:block>
+        <fo:block>
+          <fo:leader/>
+        </fo:block>
+        <fo:block font-size="12pt" role="H2" id="N10247">The Financial Services Compensation Scheme (FSCS)</fo:block>
+        <fo:block font-size="10pt">We are covered by the Financial Services Compensation Scheme (FSCS) which means that you may be entitled to compensation if we are unable to meet our obligations to you. Further information is available on www.fscs.org.uk or by contacting the FSCS directly on 0800 678 1100.</fo:block>
+      </fo:block>
+      <fo:block>
+        <fo:footnote>
+          <fo:inline/>
+          <fo:footnote-body>
+            <fo:block>
+
+              <fo:block font-size="8pt">A public limited company incorporated in Ireland. Registration No. 13460.<fo:block/>Registered Office:  House, Ballsbridge Park, Dublin 4, Ireland.<fo:block/>UK Branch registered in England and Wales Registration No. BR7985.<fo:block/>UK Branch Head Office: The  Centre, 3000 Parkway, Whiteley, Fareham, Hampshire PO15 7JZ.</fo:block>
+              <fo:block font-size="8pt"> Insurance plc is authorised and regulated by the Central Bank of Ireland. Authorised by the<fo:block/> Regulation Authority and with deemed variation of permission. Subject to regulation by the<fo:block/>Financial Conduct Authority and limited regulation by the  Regulation Authority. Details of<fo:block/>the Temporary Permissions Regime, which allows EEA-based firms to operate in the UK for a limited<fo:block/>period while seeking full authorisation, are available on the Financial Conduct Authority’s website.<fo:block/>Our FCA Firm Reference Number is 203093.</fo:block>
+              <fo:block font-size="8pt">Communications may be monitored or recorded to improve our service and for security and<fo:block/>regulatory purposes.</fo:block>
+              <fo:block font-size="8pt">ZCYB387.17 (06/22)</fo:block>
+            </fo:block>
+          </fo:footnote-body>
+        </fo:footnote>
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="4" xpath="count(//pageViewport)"/>
+  </checks>
+</testcase>
