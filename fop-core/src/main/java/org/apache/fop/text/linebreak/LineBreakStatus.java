@@ -170,6 +170,16 @@ public class LineBreakStatus {
                 hadSpace = true;
                 return PROHIBITED_BREAK;
 
+            case LineBreakUtils.LINE_BREAK_PROPERTY_JL:
+            case LineBreakUtils.LINE_BREAK_PROPERTY_JV:
+            case LineBreakUtils.LINE_BREAK_PROPERTY_H2:
+            case LineBreakUtils.LINE_BREAK_PROPERTY_H3:
+                // LB 26: Do not break a Korean syllable.
+                if (!hadSpace) {
+                    return PROHIBITED_BREAK;
+                }
+                break;
+
             default:
                 //nop
         }

@@ -41,7 +41,6 @@ public class LineBreakStatusTestCase {
      */
     @Test
     public void testReset() {
-        System.out.println("testReset");
         // TODO
     }
 
@@ -51,8 +50,6 @@ public class LineBreakStatusTestCase {
      */
     @Test
     public void testNextChar() {
-        System.out.println("testNextChar");
-
         // AL -- Ordinary Alphabetic and Symbol Characters (XP)
         assertTrue(testBreak(
             "Nobreak",
@@ -309,6 +306,11 @@ public class LineBreakStatusTestCase {
             "^^" + "^"      + "^^^^^"
             ));
 
+        // hangul syllables
+        assertTrue(testBreak(
+                "Simple" + "\uAC00" + "break",
+                "^^^^^^" + "^"    + "^^^^^"
+        ));
     }
 
     /**
