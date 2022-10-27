@@ -42,7 +42,7 @@ public class GlyfTable {
     private final FontFileReader in;
 
     /** All the composite glyphs that appear in the subset. */
-    private Set<Integer> compositeGlyphs = new TreeSet<Integer>();
+    protected Set<Integer> compositeGlyphs = new TreeSet<Integer>();
 
     /** All the glyphs that are composed, but do not appear in the subset. */
     protected Set<Integer> composedGlyphs = new TreeSet<Integer>();
@@ -56,7 +56,7 @@ public class GlyfTable {
         this.in = in;
     }
 
-    private static enum GlyfFlags {
+    public enum GlyfFlags {
 
         ARG_1_AND_2_ARE_WORDS(4, 2),
         ARGS_ARE_XY_VALUES,
@@ -96,7 +96,7 @@ public class GlyfTable {
          * @param flags the glyph data flags
          * @return offset to the next glyph if any, or 0
          */
-        static int getOffsetToNextComposedGlyf(int flags) {
+        public static int getOffsetToNextComposedGlyf(int flags) {
             int offset = 0;
             for (GlyfFlags flag : GlyfFlags.values()) {
                 offset += (flags & flag.bitMask) > 0 ? flag.argsCountIfSet : flag.argsCountIfNotSet;
@@ -110,7 +110,7 @@ public class GlyfTable {
          * @param flags the glyph data flags
          * @return true if there is another composed glyph, otherwise false.
          */
-        static boolean hasMoreComposites(int flags) {
+        public static boolean hasMoreComposites(int flags) {
             return (flags & MORE_COMPONENTS.bitMask) > 0;
         }
     }
