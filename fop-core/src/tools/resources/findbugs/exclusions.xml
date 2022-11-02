@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FindBugsFilter>
+
+  <!--
+  !
+  ! This file is divided into two parts:
+  ! 1. APPROVED EXCLUSIONS
+  ! 2. TEMPORARY (UNAPPROVED) EXCLUSIONS
+  !
+  ! Approved exclusions come in two sub-types:
+  ! 1. general exclusion of a named bug pattern, meaning that all instances that matches the bug
+  !    pattern identifier are excluded;
+  ! 2. specific exclusions for a named bug pattern, meaning that all instance exclusions are
+  !    explicitly enumerated;
+  !
+  ! All specific exclusions must be accompanied inline (i.e., in the affected source code) by
+  ! a commented out annotation of the form:
+  !
+  ! // @SuppressFBWarnings("pattern identifier")
+  !
+  ! where pattern identifier is one of findbugs' named patterns. At an appropriate point in the
+  ! future, these commented out annotations will be uncommented and exclusion patterns removed
+  ! from this file.
+  !
+  ! Temporary (unapproved) exclusions are short-term work arounds that should be removed as
+  ! soon as possible by either (1) fixing (eliminating) cause of warning, or (2) conversion to
+  ! approved exclusion.
+  !
+  ! The organization of pattern matches employs the following levels (from top down):
+  ! 1. bug pattern
+  ! 2. or clause matching instances
+  ! 3. class name, if applies to class/interface
+  ! 4. and clause matching class/instance and single or or clause of multiple {method,field} members
+  !
+  ! for example,
+  !
+  ! <Match>
+  !   <Bug pattern="pattern identifier"/>
+  !   <Or>
+  !     <And>
+  !       <Class name="dotted class name"/>
+  !       <Member name="unqualified member name"/>
+  !     </And>
+  !   </Or>
+  ! </Match>
+  !
+  -->
+
+  <!-- START - APPROVED EXCLUSIONS -->
+  <Match>
+    <Bug pattern="ES_COMPARING_STRINGS_WITH_EQ"/>
+    <!-- OK; check mainly serves to cover case where both strings are null -->
+    <And>
+      <Class name="org.apache.fop.afp.AFPResourceInfo"/>
+      <Method name="equals"/>
+    </And>
+  </Match>    
+  <Match>
+    <Bug pattern="BC_BAD_CAST_TO_CONCRETE_COLLECTION"/>
+    <!-- TODO - Not sure what to do with those two... Seems messy/hacky -->
+    <And>
+      <Class name="org.apache.fop.area.AreaTreeObject"/>
+      <Method name="clone"/>
+    </And>
+  </Match>    
+  <Match>
+    <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
+    <!-- TODO - See if these can be solved in a better way -->
+    <Or>
+      <And>
+        <Class name="org.apache.fop.layoutmgr.PageBreakingAlgorithm"/>
+        <Or>
+          <Method name="createFootnotePages"/>
+          <Method name="finish"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.render.rtf.RTFHandler"/>
+        <Or>
+          <Method name="endCell"/>
+          <Method name="endFootnoteBody"/>
+          <Method name="endPart"/>
+          <Method name="endRow"/>
+          <Method name="startCell"/>
+          <Method name="startFootnoteBody"/>
+          <Method name="startListItem"/>
+          <Method name="startListLabel"/>
+          <Method name="startPart"/>
+          <Method name="startRow"/>
+        </Or>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.render.intermediate.IFGraphicContext"/>
+        <Method name="clone"/>
+      </And>
+      <And>
+        <Class name="org.apache.fop.svg.text.BidiAttributedCharacterIterator"/>
+        <Method name="clone"/>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="DM_DEFAULT_ENCODING"/>
+    <Or>
+      <!-- default encoding used as a fallback/last resort -->
+      <Or>
+        <And>
+          <Method name="getNameBytes"/>
+          <Or>
+            <Class name="org.apache.fop.afp.fonts.CharacterSet"/>
+            <Class name="org.apache.fop.afp.modca.AbstractNamedAFPObject"/>
+          </Or>
+        </And>
+        <And>
+          <Class name="org.apache.fop.pdf.PDFDocument"/>
+          <Method name="encode"/>
+        </And>
+      </Or>
+      <!-- reads from or writes to terminal/console -->
+      <Or>
+        <And>
+          <Class name="org.apache.fop.fonts.autodetect.WindowsFontDirFinder"/>
+          <Method name="getWinDir"/>
+        </And>
+        <And>
+          <Class name="org.apache.fop.hyphenation.HyphenationTree"/>
+          <Method name="main"/>
+        </And>
+        <And>
+          <Class name="org.apache.fop.render.rtf.rtflib.RtfFile"/>
+          <Method name="main"/>
+        </And>
+      </Or>
+      <!-- private method: byte-to-string and string-to-byte always on the same platform -->
+      <And>
+        <Class name="org.apache.fop.render.afp.AFPPainter$AFPBorderPainterAdapter"/>
+        <Method name="hash"/>
+      </And>
+      <!-- source encoding out of FOP's control (FontBox) -->
+      <Or>
+        <And>
+          <Class name="org.apache.fop.fonts.cff.CFFDataReader"/>
+          <Method name="getString"/>
+        </And>
+        <And>
+          <Class name="org.apache.fop.fonts.truetype.OTFSubSetFile"/>
+          <Or>
+            <Method name="createCFF"/>
+            <Method name="writeROSEntry"/>
+            <Method name="writeStringIndex"/>
+          </Or>
+        </And>
+        <And>
+          <Class name="org.apache.fop.render.ps.PSFontUtils"/>
+          <Method name="embedType2CFF"/>
+        </And>
+      </Or>
+    </Or>
+  </Match>
+  <Match>
+    <!-- class only used when building? -->
+    <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH"/>
+    <And>
+      <Class name="org.apache.fop.hyphenation.SerializeHyphPattern"/>
+      <Method name="serializeFile"/>
+    </And>
+  </Match>
+  <Match>
+    <Bug pattern="DM_EXIT"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.cli.CommandLineOptions"/>
+        <Or>
+          <Method name="parseCustomOutputOption"/>
+          <Method name="parseOptions"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.cli.Main"/>
+        <Or>
+          <Method name="startFOP"/>
+          <Method name="startFOPWithDynamicClasspath"/>
+        </Or>
+      </And>
+      <And>
+        <Class name="org.apache.fop.tools.fontlist.FontListMain"/>
+        <Or>
+          <Method name="parseArguments"/>
+        </Or>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <!-- Only OK as long as the type of the base map remains plain HashMap... -->
+    <Bug pattern="DMI_ENTRY_SETS_MAY_REUSE_ENTRY_OBJECTS"/>
+    <And>
+      <Class name="org.apache.fop.fonts.truetype.OpenFont"/>
+      <Method name="sortDirTabMap"/>
+    </And>
+  </Match>
+  <Match>
+    <Bug pattern="EQ_ALWAYS_TRUE"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.fo.properties.ToBeImplementedProperty"/>
+        <Method name="equals"/>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="MS_EXPOSE_REP"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.fo.FOPropertyMapping"/>
+        <Method name="getGenericMappings"/>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
+    <Or>
+      <Class name="org.apache.fop.apps.MimeConstants"/>
+      <Class name="org.apache.fop.events.EventListener"/>
+      <Class name="org.apache.fop.render.Graphics2DImagePainter"/>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+    <Or>
+      <Class name="org.apache.fop.render.ps.PSFontUtils"/>
+      <Class name="org.apache.fop.render.ps.PSImageUtils"/>
+      <Class name="org.apache.fop.svg.GraphicsConfiguration"/>
+      <Class name="org.apache.fop.svg.PDFTextUtil"/>
+      <Class name="org.apache.fop.util.QName"/>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH"/>
+    <!-- TODO - fix potential file descriptor leak -->
+    <And>
+      <Class name="org.apache.fop.hyphenation.SerializeHyphPattern"/>
+      <Method name="serializeFile"/>
+    </And>
+  </Match>
+  <Match>
+    <Bug pattern="SE_INNER_CLASS"/>
+    <Or>
+      <Class name="org.apache.fop.afp.AFPPaintingState$AFPData"/>
+      <Class name="org.apache.fop.area.inline.AbstractTextArea$TextAdjustingInfo"/>
+      <Class name="org.apache.fop.area.inline.InlineArea$InlineAdjustingInfo"/>
+      <Class name="org.apache.fop.area.LineArea$LineAdjustingInfo"/>
+      <Class name="org.apache.fop.pdf.PDFPaintingState$PDFData"/>
+      <Class name="org.apache.fop.util.AbstractPaintingState$StateStack"/>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.render.awt.viewer.PreviewPanel$Reloader"/>
+        <Method name="run"/>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+    <Or>
+      <!-- TODO - fix later -->
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement"/>
+      <!-- FOs not yet implemented -->
+      <Class name="org.apache.fop.fo.flow.MultiProperties"/>
+      <Class name="org.apache.fop.fo.flow.MultiPropertySet"/>
+      <Class name="org.apache.fop.fo.flow.MultiToggle"/>
+      <Class name="org.apache.fop.fo.flow.table.TableAndCaption"/>
+      <Class name="org.apache.fop.fo.flow.table.TableCaption"/>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+    <Or>
+      <!-- TODO - Implementation incomplete? 
+                  If not, remove unused field(s) and unused accessors -->
+      <Class name="org.apache.fop.complexscripts.fonts.GlyphProcessingState"/>
+      <Class name="org.apache.fop.layoutmgr.inline.InlineStackingLayoutManager"/>
+      <Class name="org.apache.fop.pdf.PDFCMap"/>
+      <Class name="org.apache.fop.render.pdf.PDFSVGHandler$PDFInfo"/>
+      <Class name="org.apache.fop.svg.PDFGraphics2D"/>
+      <!-- Properties not yet implemented -->
+      <Class name="org.apache.fop.fo.flow.MultiToggle"/>
+      <Class name="org.apache.fop.fo.properties.CommonMarginInline"/>
+      <Class name="org.apache.fop.fo.properties.CommonRelativePosition"/>
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD"/>
+    <!-- Properties not yet implemented -->
+    <Class name="org.apache.fop.fo.properties.CommonAural"/>
+  </Match>
+   <Match>
+     <Class name="org.apache.fop.render.pdf.ImageRawPNGAdapter"/>
+     <Or>
+       <Method name="outputContents"/>
+       <Method name="setup"/>
+     </Or>
+     <Or>
+       <Bug pattern="OS_OPEN_STREAM"/>
+       <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH"/>
+     </Or>
+   </Match> 
+  <!-- END - APPROVED EXCLUSIONS -->
+
+  <!-- START - TEMPORARY (UNAPPROVED) EXCLUSIONS -->
+  <Match>
+    <!-- 131 warnings -->
+    <Bug pattern="BC_UNCONFIRMED_CAST"/>
+  </Match>
+  <Match>
+    <!-- 15 warnings -->
+    <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+  </Match>
+  <Match>
+    <!-- 27 warnings -->
+    <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+  </Match>
+  <Match>
+    <!-- 29 warnings -->
+    <Bug pattern="DM_CONVERT_CASE"/>
+  </Match>
+  <Match>
+    <!-- 17 warnings -->
+    <Bug pattern="DM_DEFAULT_ENCODING"/>
+  </Match>
+  <Match>
+    <!-- 20 warnings -->
+    <Bug pattern="DM_FP_NUMBER_CTOR"/>
+  </Match>
+  <Match>
+    <!-- 88 warnings -->
+    <Bug pattern="DM_NUMBER_CTOR"/>
+  </Match>
+  <Match>
+    <!-- 84 warnings -->
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
+    <!-- 55 warnings -->
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <!-- 12 warnings -->
+    <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+  </Match>
+  <Match>
+    <!-- 12 warnings -->
+    <Bug pattern="MS_OOI_PKGPROTECT"/>
+  </Match>
+  <Match>
+    <!-- 15 warnings -->
+    <Bug pattern="MS_PKGPROTECT"/>
+  </Match>
+  <Match>
+    <!-- 11 warnings -->
+    <Bug pattern="NM_CONFUSING"/>
+  </Match>
+  <Match>
+    <!-- 46 warnings -->
+    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+  </Match>
+  <Match>
+    <!-- 10 warnings -->
+    <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+  </Match>
+  <Match>
+    <!-- 23 warnings -->
+    <Bug pattern="REC_CATCH_EXCEPTION"/>
+  </Match>
+  <Match>
+    <!-- 11 warnings -->
+    <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+  </Match>
+  <Match>
+    <!-- 33 warnings -->
+    <Bug pattern="SE_BAD_FIELD"/>
+  </Match>
+  <Match>
+    <!-- 21 warnings -->
+    <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+  </Match>
+  <Match>
+    <!-- 20 warnings -->
+    <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+  </Match>
+  <Match>
+    <!-- 1 warning -->
+    <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+  </Match>
+  <Match>
+    <!-- 12 warnings -->
+    <Bug pattern="URF_UNREAD_FIELD"/>
+  </Match>
+  <Match>
+    <!-- 58 warnings -->
+    <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+  </Match>
+  <Match>
+    <Bug pattern="PT_ABSOLUTE_PATH_TRAVERSAL"/>
+    <And>
+      <Class name="org.apache.fop.servlet.FopServlet"/>
+    </And>    
+  </Match>
+  <!-- Bug in findbugs? -->
+  <Match>
+    <Bug pattern="RC_REF_COMPARISON"/>
+    <Or>
+      <And>
+        <Class name="org.apache.fop.fo.properties.OptionalCharacterProperty"/>
+        <Method name="equals"/>
+      </And>
+    </Or>
+  </Match>
+  
+  <!-- END - TEMPORARY (UNAPPROVED) EXCLUSIONS -->
+
+</FindBugsFilter>

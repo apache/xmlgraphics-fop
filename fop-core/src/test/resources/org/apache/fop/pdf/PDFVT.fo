@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Arial" xmlns:pdf="http://xmlgraphics.apache.org/fop/extensions/pdf">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="simple" page-height="27.9cm" page-width="21.6cm">
+      <fo:region-body />
+       <pdf:vt>
+        <pdf:dictionary key="DPM/CIP4_Root/CIP4_Production/CIP4_Part">
+            <pdf:string key="CIP4_ProductType">frontpages</pdf:string>        
+        </pdf:dictionary> 
+      </pdf:vt>          
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:declarations>
+    <x:xmpmeta xmlns:x="adobe:ns:meta/">
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+        <rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/">
+          <dc:title>Document title</dc:title>
+          <dc:creator>Document author</dc:creator>
+          <dc:description>Document subject</dc:description>
+        </rdf:Description>
+      </rdf:RDF>
+    </x:xmpmeta>
+  </fo:declarations>
+  <fo:page-sequence format="1" id="th_default_sequence1" master-reference="simple">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>page 1</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

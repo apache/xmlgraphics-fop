@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suppressions PUBLIC "-//Puppy Crawl//DTD Suppressions 1.1//EN" "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+<suppressions>
+  <suppress files="CharactersetEncoder.java" checks="FinalClass"/>
+  <suppress files="BidiClass.java" checks="WhitespaceAfter"/>
+  <suppress files="GenerateBidiTestData.java" checks="SimplifyBooleanReturn"/>
+  <suppress files="ArabicScriptProcessor.java" checks="SimplifyBooleanReturn"/>
+  <suppress files="CharScript.java" checks="SimplifyBooleanReturn"/>
+  <suppress files="MergedTableCells.java" checks="AvoidNestedBlocks"/>
+  <suppress files="NestedTable.java" checks="AvoidNestedBlocks"/>
+  <suppress files="MarkersTestCase.java" checks="LocalVariableName"/>
+</suppressions>

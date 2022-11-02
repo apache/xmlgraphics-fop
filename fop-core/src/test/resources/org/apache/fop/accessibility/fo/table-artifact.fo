@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="simple" page-height="27.9cm" page-width="21.6cm">
+      <fo:region-body />
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="simple">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:table border-collapse="separate" table-layout="fixed">
+        <fo:table-column column-width="2in" column-number="1"/>
+        <fo:table-header role="artifact">
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>
+                <fo:block>
+                  <fo:leader/>
+                </fo:block>
+              </fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-header>
+        <fo:table-footer role="artifact">
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>
+                <fo:block>
+                  <fo:leader/>
+                </fo:block>
+              </fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>
+                <fo:block>a</fo:block>
+              </fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

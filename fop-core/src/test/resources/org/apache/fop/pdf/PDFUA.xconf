@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fop version="1.0">
+  
+  <accessibility>true</accessibility>
+  
+  <renderers>
+    <renderer mime="application/pdf">
+
+      <pdf-ua-mode>PDF/UA-1</pdf-ua-mode>
+        
+      <fonts>
+        <font kerning="yes" embed-url="test/resources/fonts/ttf/DejaVuLGCSerif.ttf">
+          <font-triplet name="DejaVu LGC Serif" style="normal" weight="normal"/>
+        </font>
+      </fonts>
+    </renderer>
+  </renderers>
+</fop>

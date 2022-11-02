@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="320pt" page-width="420pt" margin="10pt">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body" text-align="justify" space-before="10pt">
+
+      <fo:block language="en" country="GB" space-before="inherit">This block of text is written in 
+        British English. The following block is in French and translates as: “This block contains 
+        French text and is tagged as such.”</fo:block>
+
+      <fo:block language="fr" country="FR" space-before="inherit">Ce block contient du texte en 
+        français et est marqué comme tel.</fo:block>
+
+      <fo:block language="en" country="GB" space-before="inherit">The following block has no 
+        language information, but since it contains no text no warning should be issued.</fo:block>
+
+      <fo:block border="0.2pt solid black" space-before="inherit">  </fo:block>
+
+      <fo:block language="en" country="GB" space-before="inherit">The following block has no 
+        language information and contains an image with an alt-text, for which a warning should be 
+        issued.</fo:block>
+
+      <fo:block text-align="center"><fo:external-graphic 
+          src="test/resources/images/fop-logo-color-24bit.png"
+          fox:alt-text="FOP logo"/></fo:block>
+
+      <fo:block space-before="inherit">This block contains no language information. However, only 
+        one warning should be issued for all of its lines.</fo:block>
+
+    </fo:flow>
+  </fo:page-sequence>
+
+</fo:root>

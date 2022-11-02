@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<svg width="100" height="140" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="100%" height="100%" fill="none" stroke="black" stroke-width="2"/>
+<g transform="translate(10) scale(20) scale(0.001) translate(0, 1000)"
+  font-family="sans-serif" font-size="1000">
+  <text x="1000" writing-mode="tb">ABCD</text>
+  <text x="2500" writing-mode="tb" glyph-orientation-vertical="0">EFGH</text>
+  <text x="0" y="5000" glyph-orientation-horizontal="270">IJKL</text>
+</g>
+</svg>

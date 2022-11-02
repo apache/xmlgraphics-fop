@@ -1,0 +1,2 @@
+org.apache.fop.render.svg.SVGDocumentHandlerMaker
+org.apache.fop.render.svg.SVGPrintDocumentHandlerMaker

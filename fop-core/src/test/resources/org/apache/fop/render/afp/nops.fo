@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="first" page-height="10.5cm" page-width="14.85cm" margin="2cm">
+      <afp:no-operation name="spm">fo:simple-page-master: first</afp:no-operation>
+      <fo:region-body margin-top="2em "/>
+      <fo:region-before extent="2em"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="rest" page-height="10.5cm" page-width="14.85cm" margin="2cm">
+      <afp:no-operation name="spm">fo:simple-page-master: rest</afp:no-operation>
+      <fo:region-body margin-top="2em "/>
+      <fo:region-before extent="2em"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="main">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference master-reference="first" page-position="first"/>
+        <fo:conditional-page-master-reference master-reference="rest"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  
+  <fo:declarations>
+    <afp:no-operation name="declarations">fo:declarations</afp:no-operation>
+  </fo:declarations>
+  
+  <fo:page-sequence master-reference="main" id="doc1">
+    <afp:no-operation name="ps">fo:page-sequence: start</afp:no-operation>
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>Page 1</fo:block>
+      <fo:block>Page 1</fo:block>
+      <fo:block break-after="page"></fo:block>
+      <fo:block>Page 2</fo:block>
+      <fo:block>Page 2</fo:block>
+      <fo:block break-after="page"></fo:block>
+      <fo:block>Page 3</fo:block>
+      <fo:block>Page 3</fo:block>
+    </fo:flow>
+    <afp:no-operation name="ps">fo:page-sequence: end</afp:no-operation>
+  </fo:page-sequence>
+</fo:root>

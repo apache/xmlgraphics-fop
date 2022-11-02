@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalogue xml:lang="en">
+  <message key="locator">[ (See position {locator})| (See {#gatherContextInfo})| (No context info available)]</message>
+  <message key="reservedKeyword">{keyword} is a reserved keyword{{locator}}. Please use a different keyword for you custom property.</message>
+</catalogue>

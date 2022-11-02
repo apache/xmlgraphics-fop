@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fop version="1.0">
+  <renderers>
+    <renderer mime="application/pdf">
+      <pdf-x-mode>PDF/X-4</pdf-x-mode> 
+      <pdf-vt-mode>PDF/VT-1</pdf-vt-mode>
+      <output-profile>test/resources/color/ISOcoated_v2_300_bas.icc</output-profile>
+      <fonts>
+        <font kerning="yes" embed-url="test/resources/fonts/ttf/DejaVuLGCSerif.ttf">
+          <font-triplet name="Arial" style="normal" weight="normal"/>
+        </font>
+      </fonts>
+    </renderer>
+  </renderers>
+</fop>

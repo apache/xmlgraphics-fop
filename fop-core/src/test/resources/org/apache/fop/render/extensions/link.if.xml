@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://xmlgraphics.apache.org/fop/intermediate" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:nav="http://xmlgraphics.apache.org/fop/intermediate/document-navigation" xmlns:foi="http://xmlgraphics.apache.org/fop/internal">
+    <header>
+        <x:xmpmeta xmlns:x="adobe:ns:meta/">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+                <rdf:Description xmlns:xmp="http://ns.adobe.com/xap/1.0/" rdf:about="">
+                    <xmp:CreatorTool>fop</xmp:CreatorTool>
+                    <xmp:MetadataDate>2022-01-17T14:11:23Z</xmp:MetadataDate>
+                    <xmp:CreateDate>2022-01-17T14:11:23Z</xmp:CreateDate>
+                </rdf:Description>
+            </rdf:RDF>
+        </x:xmpmeta>
+    </header>
+    <page-sequence xml:space="preserve">
+<page index="0" name="1" page-master-name="Page" width="612000" height="792000">
+<page-header/>
+<content>
+<viewport transform="translate(72000,72000)" width="468000" height="612000">
+<font family="Helvetica" style="normal" weight="400" variant="normal" size="12000" color="#000000"/>
+<text x="0" y="10266">Breakdown</text>
+</viewport>
+</content>
+<page-trailer>
+<nav:link rect="72000 73650 124056 11100">
+<nav:goto-xy id="B0" page-index="-1" x="0" y="0"/>
+</nav:link>
+</page-trailer>
+</page>
+</page-sequence>
+<page-sequence xml:space="preserve">
+<page index="1" name="2" page-master-name="Page" width="612000" height="792000">
+<page-header/>
+<content>
+<viewport transform="translate(72000,72000)" width="468000" height="612000">
+<font family="Helvetica" style="normal" weight="400" variant="normal" size="12000" color="#000000"/>
+<id name="B0"/>
+<text x="0" y="10266">test</text>
+</viewport>
+</content>
+<page-trailer/>
+</page>
+</page-sequence>
+    <trailer/>
+</document>

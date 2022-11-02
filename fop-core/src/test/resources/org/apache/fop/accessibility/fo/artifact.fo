@@ -1,0 +1,97 @@
+<?xml version="1.0" standalone="no"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="500pt" page-width="300pt" margin="20pt">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body" text-align="justify">
+
+      <fo:block>This piece of text is normal content that should be read out loud by a screen 
+        reader.</fo:block>
+
+      <fo:block space-before="10pt">The following content will be treated as artifact:</fo:block>
+
+      <fo:wrapper role="artifact">
+        <fo:block-container border="1pt solid black" padding="5pt"  background-color="#F0F0F0" 
+          space-before="10pt" start-indent="6pt" end-indent="6pt" color="#606060">
+          <fo:block start-indent="0" end-indent="0">
+            <fo:block>A block as artifact.</fo:block>
+            <fo:table space-before="5pt" width="100%" table-layout="fixed">
+              <fo:table-column column-width="proportional-column-width(1)"/>
+              <fo:table-column column-width="proportional-column-width(2)"/>
+              <fo:table-header>
+                <fo:table-cell border="1pt solid #606060"><fo:block>Header 1.1</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid #606060"><fo:block>Header 1.2</fo:block></fo:table-cell>
+              </fo:table-header>
+              <fo:table-footer>
+                <fo:table-cell border="1pt solid #606060"><fo:block>Footer 1.1</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid #606060"><fo:block>Footer 1.2</fo:block></fo:table-cell>
+              </fo:table-footer>
+              <fo:table-body>
+                <fo:table-row>
+                  <fo:table-cell border="1pt solid #606060"><fo:block>Cell 1.1</fo:block></fo:table-cell>
+                  <fo:table-cell border="1pt solid #606060"><fo:block>Cell 1.2</fo:block></fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell border="1pt solid #606060"><fo:block>Cell 2.1</fo:block></fo:table-cell>
+                  <fo:table-cell border="1pt solid #606060"><fo:block>Cell 2.2</fo:block></fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+            <fo:list-block space-before="7pt" provisional-distance-between-starts="8pt" 
+              provisional-label-separation="5pt">
+              <fo:list-item>
+                <fo:list-item-label end-indent="label-end()">
+                  <fo:block>•</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()">
+                  <fo:block>Item 1.</fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+              <fo:list-item>
+                <fo:list-item-label end-indent="label-end()">
+                  <fo:block>•</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()">
+                  <fo:block>Item 2.</fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+              <fo:list-item>
+                <fo:list-item-label end-indent="label-end()">
+                  <fo:block>•</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()">
+                  <fo:block>Item 3.</fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+            </fo:list-block>
+            <fo:wrapper>
+              <fo:block>A block in a nested wrapper.</fo:block>
+            </fo:wrapper>
+            <fo:wrapper role="artifact">
+              <fo:block>A block in a nested artifact wrapper.</fo:block>
+            </fo:wrapper>
+            <fo:wrapper>
+              <fo:block>Inside a nested wrapper.
+                <fo:wrapper role="artifact">An artifact wrapper inside the nested wrapper.
+                  <fo:inline><fo:wrapper>Inside a wrapper inside the artifact wrapper that is inside 
+                      the nested wrapper.</fo:wrapper> Outside the wrapper inside the artifact 
+                    wrapper that is inside the nested wrapper.</fo:inline>
+              </fo:wrapper> Outside the artifact wrapper.</fo:block>
+            </fo:wrapper>
+          </fo:block>
+        </fo:block-container>
+      </fo:wrapper>
+
+      <fo:block space-before="10pt">Now we are back to normal content that is part of the logical 
+        structure, should appear in the structure tree and should be read out loud by the screen 
+        reader.</fo:block>
+
+    </fo:flow>
+  </fo:page-sequence>
+
+</fo:root>

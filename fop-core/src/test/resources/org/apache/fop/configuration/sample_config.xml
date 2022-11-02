@@ -1,0 +1,20 @@
+<fop version="1.0">
+
+  <renderers>
+    <renderer mime="application/pdf">
+      <fonts> 
+        <auto-detect/>
+      </fonts>
+    </renderer>
+  </renderers>
+
+  <!-- A substitution can map a font family to another. -->
+  <fonts>
+    <substitutions>  
+        <substitution>
+            <from font-family='courierNew' font-style='normal' font-weight='400'/>   <to font-family='Courier New'/> 
+         </substitution> 
+     </substitutions>
+  </fonts>
+
+</fop>

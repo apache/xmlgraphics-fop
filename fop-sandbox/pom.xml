@@ -1,0 +1,141 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.apache.xmlgraphics</groupId>
+  <artifactId>fop-sandbox</artifactId>
+  <name>Apache FOP Sandbox</name>
+  <description>XML Graphics Format Object Processor Sandbox</description>
+
+  <parent>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>fop-parent</artifactId>
+    <version>2.8.0-SNAPSHOT</version>
+  </parent>
+
+  <dependencies>
+    <!-- compile deps -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>fop-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- test deps -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- generate event collector models -->
+      <!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${antrun.plugin.version}</version>
+        <executions>
+          <execution>
+            <id>codegen-events</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <taskdef name="collectEvents" classname="org.apache.fop.tools.EventProducerCollectorTask" classpathref="maven.compile.classpath"/>
+                <collectEvents destdir="${project.build.outputDirectory}">
+                  <fileset dir="${project.basedir}/src/main/java">
+                    <include name="**/accessibility/AccessibilityEventProducer.java"/>
+                  </fileset>
+                </collectEvents>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      -->
+      <!-- junit testing -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*TestCase.java</include>
+          </includes>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
+        </configuration>
+      </plugin>
+      <!-- jar packaging -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <mainClass>org.apache.fop.cli.Main</mainClass>
+            </manifest>
+            <manifestEntries>
+              <SpecificationTitle>XSL-FO - Extensible Stylesheet Language</SpecificationTitle>
+              <SpecificationVersion>1.1</SpecificationVersion>
+              <SpecificationVendor>World Wide Web Consortium</SpecificationVendor>
+              <SpecificationURL>http://www.w3.org/TR/xsl</SpecificationURL>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      <!-- code analysis - checkstyle -->
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>${project.baseUri}../fop-core/src/tools/resources/checkstyle/checkstyle.xml</configLocation>
+          <headerLocation>${project.baseUri}../fop-core/src/tools/resources/checkstyle/LICENSE.txt</headerLocation>
+          <includeResources>false</includeResources>
+          <includeTestResources>false</includeTestResources>
+          <linkXRef>false</linkXRef>
+          <logViolationsToConsole>true</logViolationsToConsole>
+          <suppressionsLocation>${project.baseUri}../fop-core/src/tools/resources/checkstyle/suppressions.xml</suppressionsLocation>
+          <violationSeverity>warning</violationSeverity>
+        </configuration>
+      </plugin>
+      <!-- code analysis - findbugs -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>${findbugs.plugin.version}</version>
+        <configuration>
+          <excludeFilterFile>src/tools/resources/findbugs/exclusions.xml</excludeFilterFile>
+          <effort>Max</effort>
+          <threshold>Low</threshold>
+        </configuration>
+      </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${basedir}/..</directory>
+        <includes>
+          <include>LICENSE</include>
+          <include>NOTICE</include>
+        </includes>
+        <targetPath>META-INF</targetPath>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </testResource>
+    </testResources>
+  </build>
+
+</project>

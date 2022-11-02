@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalogue xml:lang="de">
+  <message key="hello-world">Hallo Welt!</message>
+</catalogue>

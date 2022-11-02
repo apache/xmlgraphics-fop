@@ -1,0 +1,166 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<toto>
+<keyword-equiv match="aliceblue">#f0f8ff</keyword-equiv>
+<keyword-equiv match="antiquewhite">#faebd7</keyword-equiv>
+<keyword-equiv match="aqua">#00ffff</keyword-equiv>
+<keyword-equiv match="aquamarine">#7fffd4</keyword-equiv>
+<keyword-equiv match="azure">#f0ffff</keyword-equiv>
+<keyword-equiv match="beige">#f5f5dc</keyword-equiv>
+<keyword-equiv match="bisque">#ffe4c4</keyword-equiv>
+<keyword-equiv match="black">#000000</keyword-equiv>
+<keyword-equiv match="blanchedalmond">#ffebcd</keyword-equiv>
+<keyword-equiv match="blue">#0000ff</keyword-equiv>
+<keyword-equiv match="blueviolet">#8a2be2</keyword-equiv>
+<keyword-equiv match="brown">#a52a2a</keyword-equiv>
+<keyword-equiv match="burlywood">#deb887</keyword-equiv>
+<keyword-equiv match="cadetblue">#5f9ea0</keyword-equiv>
+<keyword-equiv match="chartreuse">#7fff00</keyword-equiv>
+<keyword-equiv match="chocolate">#d2691e</keyword-equiv>
+<keyword-equiv match="coral">#ff7f50</keyword-equiv>
+<keyword-equiv match="cornflowerblue">#6495ed</keyword-equiv>
+<keyword-equiv match="cornsilk">#fff8dc</keyword-equiv>
+<keyword-equiv match="crimson">#dc143c</keyword-equiv>
+<keyword-equiv match="cyan">#00ffff</keyword-equiv>
+<keyword-equiv match="darkblue">#00008b</keyword-equiv>
+<keyword-equiv match="darkcyan">#008b8b</keyword-equiv>
+<keyword-equiv match="darkgoldenrod">#b8860b</keyword-equiv>
+<keyword-equiv match="darkgray">#a9a9a9</keyword-equiv>
+<keyword-equiv match="darkgreen">#006400</keyword-equiv>
+<keyword-equiv match="darkgrey">#a9a9a9</keyword-equiv>
+<keyword-equiv match="darkkhaki">#bdb76b</keyword-equiv>
+<keyword-equiv match="darkmagenta">#8b008b</keyword-equiv>
+<keyword-equiv match="darkolivegreen">#556b2f</keyword-equiv>
+<keyword-equiv match="darkorange">#ff8c00</keyword-equiv>
+<keyword-equiv match="darkorchid">#9932cc</keyword-equiv>
+<keyword-equiv match="darkred">#8b0000</keyword-equiv>
+<keyword-equiv match="darksalmon">#e9967a</keyword-equiv>
+<keyword-equiv match="darkseagreen">#8fbc8f</keyword-equiv>
+<keyword-equiv match="darkslateblue">#483d8b</keyword-equiv>
+<keyword-equiv match="darkslategray">#2f4f4f</keyword-equiv>
+<keyword-equiv match="darkslategrey">#2f4f4f</keyword-equiv>
+<keyword-equiv match="darkturquoise">#00ced1</keyword-equiv>
+<keyword-equiv match="darkviolet">#9400d3</keyword-equiv>
+<keyword-equiv match="deeppink">#ff1493</keyword-equiv>
+<keyword-equiv match="deepskyblue">#00bfff</keyword-equiv>
+<keyword-equiv match="dimgray">#696969</keyword-equiv>
+<keyword-equiv match="dimgrey">#696969</keyword-equiv>
+<keyword-equiv match="dodgerblue">#1e90ff</keyword-equiv>
+<keyword-equiv match="firebrick">#b22222</keyword-equiv>
+<keyword-equiv match="floralwhite">#fffaf0</keyword-equiv>
+<keyword-equiv match="forestgreen">#228b22</keyword-equiv>
+<keyword-equiv match="fuchsia">#ff00ff</keyword-equiv>
+<keyword-equiv match="gainsboro">#dcdcdc</keyword-equiv>
+<keyword-equiv match="lightpink">#ffb6c1</keyword-equiv>
+<keyword-equiv match="lightsalmon">#ffa07a</keyword-equiv>
+<keyword-equiv match="lightseagreen">#20b2aa</keyword-equiv>
+<keyword-equiv match="lightskyblue">#87cefa</keyword-equiv>
+<keyword-equiv match="lightslategray">#778899</keyword-equiv>
+<keyword-equiv match="lightslategrey">#778899</keyword-equiv>
+<keyword-equiv match="lightsteelblue">#b0c4de</keyword-equiv>
+<keyword-equiv match="lightyellow">#ffffe0</keyword-equiv>
+<keyword-equiv match="lime">#00ff00</keyword-equiv>
+<keyword-equiv match="limegreen">#32cd32</keyword-equiv>
+<keyword-equiv match="linen">#faf0e6</keyword-equiv>
+<keyword-equiv match="magenta">#ff00ff</keyword-equiv>
+<keyword-equiv match="maroon">#800000</keyword-equiv>
+<keyword-equiv match="mediumaquamarine">#66cdaa</keyword-equiv>
+<keyword-equiv match="mediumblue">#0000cd</keyword-equiv>
+<keyword-equiv match="mediumorchid">#ba55d3</keyword-equiv>
+<keyword-equiv match="mediumpurple">#9370db</keyword-equiv>
+<keyword-equiv match="mediumseagreen">#3cb371</keyword-equiv>
+<keyword-equiv match="mediumslateblue">#7b68ee</keyword-equiv>
+<keyword-equiv match="mediumspringgreen">#00fa9a</keyword-equiv>
+<keyword-equiv match="mediumturquoise">#48d1cc</keyword-equiv>
+<keyword-equiv match="mediumvioletred">#c71585</keyword-equiv>
+<keyword-equiv match="midnightblue">#191970</keyword-equiv>
+<keyword-equiv match="mintcream">#f5fffa</keyword-equiv>
+<keyword-equiv match="mistyrose">#ffe4e1</keyword-equiv>
+<keyword-equiv match="moccasin">#ffe4b5</keyword-equiv>
+<keyword-equiv match="navajowhite">#ffdead</keyword-equiv>
+<keyword-equiv match="navy">#000080</keyword-equiv>
+<keyword-equiv match="oldlace">#fdf5e6</keyword-equiv>
+<keyword-equiv match="olive">#808000</keyword-equiv>
+<keyword-equiv match="olivedrab">#6b8e23</keyword-equiv>
+<keyword-equiv match="orange">#ffa500</keyword-equiv>
+<keyword-equiv match="orangered">#ff4500</keyword-equiv>
+<keyword-equiv match="orchid">#da70d6</keyword-equiv>
+<keyword-equiv match="palegoldenrod">#eee8aa</keyword-equiv>
+<keyword-equiv match="palegreen">#98fb98</keyword-equiv>
+<keyword-equiv match="paleturquoise">#afeeee</keyword-equiv>
+<keyword-equiv match="palevioletred">#db7093</keyword-equiv>
+<keyword-equiv match="papayawhip">#ffefd5</keyword-equiv>
+<keyword-equiv match="peachpuff">#ffdab9</keyword-equiv>
+<keyword-equiv match="peru">#cd853f</keyword-equiv>
+<keyword-equiv match="pink">#ffc0cb</keyword-equiv>
+<keyword-equiv match="plum">#dda0dd</keyword-equiv>
+<keyword-equiv match="powderblue">#b0e0e6</keyword-equiv>
+<keyword-equiv match="purple">#800080</keyword-equiv>
+<keyword-equiv match="red">#ff0000</keyword-equiv>
+<keyword-equiv match="rosybrown">#bc8f8f</keyword-equiv>
+<keyword-equiv match="royalblue">#4169e1</keyword-equiv>
+<keyword-equiv match="saddlebrown">#8b4513</keyword-equiv>
+<keyword-equiv match="salmon">#fa8072</keyword-equiv>
+<keyword-equiv match="ghostwhite">#f8f8ff</keyword-equiv>
+<keyword-equiv match="gold">#ffd700</keyword-equiv>
+<keyword-equiv match="goldenrod">#daa520</keyword-equiv>
+<keyword-equiv match="gray">#808080</keyword-equiv>
+<keyword-equiv match="grey">#808080</keyword-equiv>
+<keyword-equiv match="green">#008000</keyword-equiv>
+<keyword-equiv match="greenyellow">#adff2f</keyword-equiv>
+<keyword-equiv match="honeydew">#f0fff0</keyword-equiv>
+<keyword-equiv match="hotpink">#ff69b4</keyword-equiv>
+<keyword-equiv match="indianred">#cd5c5c</keyword-equiv>
+<keyword-equiv match="indigo">#4b0082</keyword-equiv>
+<keyword-equiv match="ivory">#fffff0</keyword-equiv>
+<keyword-equiv match="khaki">#f0e68c</keyword-equiv>
+<keyword-equiv match="lavender">#e6e6fa</keyword-equiv>
+<keyword-equiv match="lavenderblush">#fff0f5</keyword-equiv>
+<keyword-equiv match="lawngreen">#7cfc00</keyword-equiv>
+<keyword-equiv match="lemonchiffon">#fffacd</keyword-equiv>
+<keyword-equiv match="lightblue">#add8e6</keyword-equiv>
+<keyword-equiv match="lightcoral">#f08080</keyword-equiv>
+<keyword-equiv match="lightcyan">#e0ffff</keyword-equiv>
+<keyword-equiv match="lightgoldenrodyellow">#fafad2</keyword-equiv>
+<keyword-equiv match="lightgray">#d3d3d3</keyword-equiv>
+<keyword-equiv match="lightgreen">#90ee90</keyword-equiv>
+<keyword-equiv match="lightgrey">#d3d3d3</keyword-equiv>
+<keyword-equiv match="sandybrown">#f4a460</keyword-equiv>
+<keyword-equiv match="seagreen">#2e8b57</keyword-equiv>
+<keyword-equiv match="seashell">#fff5ee</keyword-equiv>
+<keyword-equiv match="sienna">#a0522d</keyword-equiv>
+<keyword-equiv match="silver">#c0c0c0</keyword-equiv>
+<keyword-equiv match="skyblue">#87ceeb</keyword-equiv>
+<keyword-equiv match="slateblue">#6a5acd</keyword-equiv>
+<keyword-equiv match="slategray">#708090</keyword-equiv>
+<keyword-equiv match="slategrey">#708090</keyword-equiv>
+<keyword-equiv match="snow">#fffafa</keyword-equiv>
+<keyword-equiv match="springgreen">#00ff7f</keyword-equiv>
+<keyword-equiv match="steelblue">#4682b4</keyword-equiv>
+<keyword-equiv match="tan">#d2b48c</keyword-equiv>
+<keyword-equiv match="teal">#008080</keyword-equiv>
+<keyword-equiv match="thistle">#d8bfd8</keyword-equiv>
+<keyword-equiv match="tomato">#ff6347</keyword-equiv>
+<keyword-equiv match="turquoise">#40e0d0</keyword-equiv>
+<keyword-equiv match="violet">#ee82ee</keyword-equiv>
+<keyword-equiv match="wheat">#f5deb3</keyword-equiv>
+<keyword-equiv match="white">#ffffff</keyword-equiv>
+<keyword-equiv match="whitesmoke">#f5f5f5</keyword-equiv>
+<keyword-equiv match="yellow">#ffff00</keyword-equiv>
+<keyword-equiv match="yellowgreen">#9acd32</keyword-equiv>
+</toto>
