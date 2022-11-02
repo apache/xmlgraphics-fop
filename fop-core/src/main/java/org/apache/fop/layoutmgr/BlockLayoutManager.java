@@ -141,7 +141,9 @@ public class BlockLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
             return childLM.getNextKnuthElements(childLC, alignment);
         } else {
             if (childLM instanceof LineLayoutManager) {
-                assert (restartPosition instanceof LeafPosition);
+                if (!(restartPosition instanceof LeafPosition)) {
+                    restartPosition = null;
+                }
                 return ((LineLayoutManager) childLM).getNextKnuthElements(childLC, alignment,
                         (LeafPosition) restartPosition);
             } else {

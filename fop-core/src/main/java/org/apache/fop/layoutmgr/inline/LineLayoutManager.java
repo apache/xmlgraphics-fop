@@ -651,8 +651,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      */
     public List getNextKnuthElements(LayoutContext context, int alignment,
             LeafPosition restartPosition) {
-        log.trace("Restarting line breaking from index " + restartPosition.getIndex());
-        int parIndex = restartPosition.getLeafPos();
+        int parIndex = 0;
+        int restartPositionIdx = 0;
+        if (restartPosition != null) {
+            log.trace("Restarting line breaking from index " + restartPosition.getIndex());
+            parIndex = restartPosition.getLeafPos();
+            restartPositionIdx = restartPosition.getIndex();
+        }
 
         for (int i = 0; i < parIndex; i++) {
             knuthParagraphs.remove(0);
@@ -664,7 +669,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             ((Paragraph) paragraph).ignoreAtStart = 0;
             isFirstInBlock = false;
         }
-        paragraph.subList(0, restartPosition.getIndex() + 1).clear();
+        paragraph.subList(0, restartPositionIdx + 1).clear();
         Iterator<KnuthElement> iter = paragraph.iterator();
         while (iter.hasNext() && !iter.next().isBox()) {
             iter.remove();

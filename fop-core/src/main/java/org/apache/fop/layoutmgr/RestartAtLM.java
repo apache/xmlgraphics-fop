@@ -92,8 +92,10 @@ class RestartAtLM {
                     position = position.getPosition();
                 }
                 if (position.getPosition() == null) {
-                    position.getLM().getFObj().setForceKeepTogether(true);
-                    invalidPosition = true;
+                    if (!position.getLM().getFObj().isForceKeepTogether()) {
+                        position.getLM().getFObj().setForceKeepTogether(true);
+                        invalidPosition = true;
+                    }
                     return null;
                 }
                 restartAtLM = position.getPosition().getLM();
