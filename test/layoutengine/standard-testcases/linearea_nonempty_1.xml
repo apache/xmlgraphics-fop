@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that no lines are created for which the
+KnuthPossPosIter is empty. It depends on the font used for the word
+'maybe'.
+    </p>
+    <p>
+      This is a cut-down version of test file param-tidy.fo as
+submitted in bug 38053
+(http://issues.apache.org/bugzilla/attachment.cgi?id=17285).
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-size="10pt" text-align="justify" line-height="normal" font-selection-strategy="character-by-character" line-height-shift-adjustment="disregard-shifts" language="en">
+      <fo:layout-master-set>
+          <fo:simple-page-master master-name="blank" page-width="8.5in" page-height="11in" margin-top="0.5in" margin-bottom="0.5in" margin-left="1in - -4pc" margin-right="1in">
+              <fo:region-body display-align="center" margin-bottom="0.5in" margin-top="0.5in" />
+              <fo:region-before region-name="xsl-region-before-blank" extent="0.4in" display-align="before" />
+              <fo:region-after region-name="xsl-region-after-blank" extent="0.4in" display-align="after" />
+            </fo:simple-page-master>
+          <fo:simple-page-master master-name="body-first" page-width="8.5in" page-height="11in" margin-top="0.5in" margin-bottom="0.5in" margin-left="1in - -4pc" margin-right="1in">
+              <fo:region-body margin-bottom="0.5in" margin-top="0.5in" column-gap="12pt" column-count="1" />
+              <fo:region-before region-name="xsl-region-before-first" extent="0.4in" display-align="before" />
+              <fo:region-after region-name="xsl-region-after-first" extent="0.4in" display-align="after" />
+          </fo:simple-page-master>
+          <fo:simple-page-master master-name="body-odd" page-width="8.5in" page-height="11in" margin-top="0.5in" margin-bottom="0.5in" margin-left="1in - -4pc" margin-right="1in">
+              <fo:region-body margin-bottom="0.5in" margin-top="0.5in" column-gap="12pt" column-count="1" />
+              <fo:region-before region-name="xsl-region-before-odd" extent="0.4in" display-align="before" />
+              <fo:region-after region-name="xsl-region-after-odd" extent="0.4in" display-align="after" />
+          </fo:simple-page-master>
+          <fo:simple-page-master master-name="body-even" page-width="8.5in" page-height="11in" margin-top="0.5in" margin-bottom="0.5in" margin-left="1in - -4pc" margin-right="1in">
+              <fo:region-body margin-bottom="0.5in" margin-top="0.5in" column-gap="12pt" column-count="1" />
+              <fo:region-before region-name="xsl-region-before-even" extent="0.4in" display-align="before" />
+              <fo:region-after region-name="xsl-region-after-even" extent="0.4in" display-align="after" />
+          </fo:simple-page-master>
+          <fo:page-sequence-master master-name="body">
+              <fo:repeatable-page-master-alternatives>
+                  <fo:conditional-page-master-reference master-reference="blank" blank-or-not-blank="blank" />
+                  <fo:conditional-page-master-reference master-reference="body-first" page-position="first" />
+                  <fo:conditional-page-master-reference master-reference="body-odd" odd-or-even="odd" />
+                  <fo:conditional-page-master-reference odd-or-even="even" master-reference="body-odd" />
+              </fo:repeatable-page-master-alternatives>
+          </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence hyphenate="true" master-reference="body" language="en" format="1" initial-page-number="auto" force-page-count="no-force" hyphenation-character="-" hyphenation-push-character-count="2" hyphenation-remain-character-count="2">
+          <fo:flow flow-name="xsl-region-body">
+              <fo:block id="olink.doctitle">
+                  <fo:block xmlns:axf="http://www.antennahouse.com/names/XSL/Extensions" id="id382742">
+                      <fo:list-block id="id382851" provisional-distance-between-starts="5em * 0.60+1em" provisional-label-separation="1em" space-before.optimum="1em" space-before.minimum="0.8em" space-before.maximum="1.2em" space-after.optimum="1em" space-after.minimum="0.8em" space-after.maximum="1.2em">
+                          <fo:list-item id="id382899" space-before.optimum="1em" space-before.minimum="0.8em" space-before.maximum="1.2em">
+                              <fo:list-item-label end-indent="label-end()" text-align="start">
+                                  <fo:block>
+                                      <fo:inline>
+                                          <fo:inline font-family="Courier">maybe</fo:inline>
+                                      </fo:inline>
+                                  </fo:block>
+                              </fo:list-item-label>
+                              <fo:list-item-body start-indent="body-start()">
+                                  <fo:block>
+                                      <fo:block>
+                                        Only insert the title to the target document, if requested
+in an
+                                          <fo:inline font-family="Courier">xrefstyle</fo:inline>
+                                        attribute.
+                                      </fo:block>
+                                  </fo:block>
+                              </fo:list-item-body>
+                          </fo:list-item>
+                      </fo:list-block>
+                  </fo:block>
+              </fo:block>
+          </fo:flow>
+      </fo:page-sequence>
+  </fo:root>
+  </fo>
+  <checks>
+    <eval expected="maybe" xpath="//flow/block[1]/block[1]/block[1]/block[1]/block[1]/block[1]/lineArea[1]"/>
+  </checks>
+</testcase>
+

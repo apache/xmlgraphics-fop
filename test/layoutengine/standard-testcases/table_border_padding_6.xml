@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks border and padding conditionality on table.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="PageFront" page-width="210mm" page-height="297mm" margin-bottom="0.5cm" margin-right="1cm" margin-top="1cm" margin-left="1cm">
+
+      <fo:region-body margin-bottom="1cm" margin-right="1cm" margin-top="1cm" margin-left="1cm" region-name="letterPageBody" background-color="red"/>
+      <fo:region-after precedence="true" region-name="letterPageFooter" extent="1cm"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="LetterPages">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference master-reference="PageFront" page-position="first"/>
+        <fo:conditional-page-master-reference master-reference="PageFront" page-position="rest"/>
+        <fo:conditional-page-master-reference master-reference="PageFront" page-position="last"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence format="1" id="th_default_sequence1" force-page-count="no-force" initial-page-number="auto" master-reference="LetterPages">
+    <fo:static-content flow-name="letterPageFooter">
+      <fo:block></fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="letterPageBody">
+      <fo:block>
+        
+      
+        <fo:table keep-together.within-page="always"  table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+          
+          <fo:table-body>
+            <fo:table-row height="0.740833322207133cm">
+              <fo:table-cell padding="2mm"   >
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="14pt"   >
+                    <fo:inline >9.</fo:inline>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+      
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:table keep-together.within-page="always"  table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell padding="2mm"  >
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt" >The interest rate on the loan is fixed when we send you the money. Once fixed it will not change for the duration of the loan. The estimated debt shown in Section 8 will not vary because the interest rate is fixed.</fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:block font-family="Arial" font-size="10pt"  line-height="11pt" >
+          <fo:leader/>
+        </fo:block>
+        <fo:table keep-together.within-page="always" table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+          
+          <fo:table-body>
+            <fo:table-row height="0.740833322207133cm">
+              <fo:table-cell padding="2mm"   >
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="14pt"   >
+                    <fo:inline >10.</fo:inline>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+    
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding="2mm"  border-bottom-style="solid" border-bottom-width="1pt"  border-left-style="solid"  border-right-color="black" border-right-style="solid" border-right-width="1pt">
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt"  line-height="11pt" space-before="12pt">When you look at how the amount you owe goes up, remember also that property prices can go up or down, and this can affect the amount of money left over for you or your estate after the lifetime mortgage is repaid to AA=.</fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt"  line-height="11pt" space-before="12pt">Based on the estimated value of your home now of £350,000 this example shows what the value of your home would be after 20 years if the value went up by 1% each year or went down by 1% each year.  Remember also that the lifetime mortgage may run for more or less than 20 years.  This is an example only and gives no guide to how much the value of your home will actually change.</fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt"  line-height="11pt" space-before="12pt">If your home went up in value by 1% each year – it would be worth £427,067 after 20 years.</fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt"  line-height="11pt" space-before="12pt">If your home went down in value by 1% each year – it would be worth £286,267 after 20 years.</fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:block font-family="Arial" font-size="10pt"  line-height="11pt" >
+          <fo:leader/>
+        </fo:block>
+        <fo:table keep-together.within-page="always"  table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell padding="2mm"   >
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="14pt"   >
+                    <fo:inline >11.</fo:inline>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:table keep-together.within-page="always"  table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell padding="2mm"  border-left-style="solid" >
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt"  line-height="11pt" space-before="12pt">
+                    <fo:inline >Fees payable to AA Equity Release Limited:</fo:inline>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:table keep-together.within-page="always"  table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell padding="2mm"  border-left-style="solid" >
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt"   space-before="4pt">
+                    <fo:inline >Application fee<fo:block/>
+                    </fo:inline>This is paid to AA= and is usually taken off the loan when we send you the money. If your mortgage doesn't complete, all we ask is that you pay any solicitor's fees we've incurred.</fo:block>
+                </fo:block>
+              </fo:table-cell>
+
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:table keep-together.within-page="always"  table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell padding="2mm"  border-bottom-style="solid" border-bottom-width="1pt"  border-left-style="solid" >
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt"  line-height="11pt" space-before="12pt">
+                    <fo:inline >Discharge fee<fo:block/>
+                    </fo:inline>This covers our cost for deregistering our interest in your property when the mortgage is repaid. The figure quoted is the current fee and you may have to pay more than this.</fo:block>
+                </fo:block>
+              </fo:table-cell>
+   
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:table keep-together.within-page="always"  table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+    
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell padding="2mm"  border-left-style="solid" >
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt"   space-before="4pt">
+                    <fo:inline >Other fees:</fo:inline>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+       
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:table keep-together.within-page="always"  table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(83.53)" column-number="1"/>
+          <fo:table-column column-width="proportional-column-width(16.47)" column-number="2"/>
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell padding="2mm"  border-left-style="solid" >
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt"   space-before="4pt">
+                    <fo:inline >Your solicitor’s fees<fo:block/>
+                    </fo:inline>You will have to pay your own solicitor’s fees for any work conducted.  The figure quoted is an estimate; the actual figure may be higher or lower, it is unlikely that you would be able to get a refund of this fee.</fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-right="4mm" padding-top="2mm"  border-left-style="solid"  border-right-color="black" border-right-style="solid" border-right-width="1pt">
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt"   space-before="4pt" text-align="center">£500</fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding="2mm"  border-bottom-style="solid" border-bottom-width="1pt"  border-left-style="solid" >
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt"   space-before="4pt">
+                    <fo:inline >Financial adviser’s fees<fo:block/>
+                    </fo:inline>Your financial adviser may also charge you. The figure quoted is an estimate provided by your financial adviser; the actual figure may be higher or lower, it is unlikely that you would be able to get a refund of this fee.</fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding-right="4mm" padding-top="2mm"  border-bottom-style="solid" border-bottom-width="1pt"  border-left-style="solid"  border-right-color="black" border-right-style="solid" border-right-width="1pt">
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt"   space-before="4pt" text-align="center">£0.00</fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell padding="2mm" number-columns-spanned="2"  border-bottom-style="solid" border-bottom-width="1pt"  border-left-style="solid"  border-right-color="black" border-right-style="solid" border-right-width="1pt">
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="10.5pt"  line-height="11pt" space-before="12pt">You may have to pay other taxes or costs in addition to any fees shown here.</fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:block font-family="Arial" font-size="10pt"  line-height="11pt"  >
+          <fo:leader/>
+        </fo:block>
+        <fo:table keep-together.within-page="always" keep-with-next.within-page="always" table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell padding="2mm"   >
+                <fo:block>
+                  <fo:block font-family="Arial" font-size="14pt"   >
+                    <fo:inline >12.</fo:inline>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:table keep-together.within-page="always"  table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell padding="2mm"  border-bottom-style="solid" border-bottom-width="1pt"  border-left-style="solid"  border-right-color="black" border-right-style="solid" border-right-width="1pt">
+                <fo:block>
+                  <fo:block font-size="18pt">test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:block font-family="Arial" font-size="10pt"  line-height="11pt" >
+          <fo:leader/>
+          <fo:block break-before="page"/>
+        </fo:block>
+     
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+
+  </fo>
+  <checks>
+    <eval expected="12." xpath="//pageViewport[2]//word[1]"/>
+  </checks>
+</testcase>

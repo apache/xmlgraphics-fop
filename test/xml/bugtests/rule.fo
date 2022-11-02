@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+      <fo:simple-page-master master-name="simplePM"
+                    page-height="25cm"
+                    page-width="20cm"
+                    margin-top="1cm"
+                    margin-bottom="1cm"
+                    margin-left="1.5cm"
+                    margin-right="1.5cm">
+        <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
+        <fo:region-before extent="2.5cm"/>
+        <fo:region-after extent="2.5cm"/>
+      </fo:simple-page-master>
+  </fo:layout-master-set>
+
+  <fo:page-sequence master-reference="simplePM">
+      <fo:flow flow-name="xsl-region-body">
+      <fo:block space-before.optimum="1cm">
+        leader-pattern="rule" rule-style="solid" rule-thickness="0.5pt"
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="solid" rule-thickness="0.5pt"></fo:leader>
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="solid" rule-thickness="1pt"></fo:leader>
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="solid" rule-thickness="3pt"></fo:leader>
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="solid" rule-thickness="3mm"></fo:leader>
+      </fo:block>
+
+      <fo:block space-before.optimum="1cm">
+        leader-pattern="rule" rule-style="dotted" rule-thickness="0.5pt"
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="dotted" rule-thickness="0.5pt"></fo:leader>
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="dotted" rule-thickness="1pt"></fo:leader>
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="dotted" rule-thickness="3pt"></fo:leader>
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="dotted" rule-thickness="5mm"></fo:leader>
+      </fo:block>
+
+      <fo:block space-before.optimum="1cm">
+        leader-pattern="rule" rule-dashed="dotted" rule-thickness="0.5pt"
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="dashed" rule-thickness="0.5pt"></fo:leader>
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="dashed" rule-thickness="1pt"></fo:leader>
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="dashed" rule-thickness="3pt"></fo:leader>
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="dashed" rule-thickness="1mm"></fo:leader>
+      </fo:block>
+
+      <fo:block space-before.optimum="1cm">
+        leader-pattern="rule" rule-style="double" rule-thickness="0.5pt"
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="double" rule-thickness="0.5pt"></fo:leader>
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="double" rule-thickness="1pt"></fo:leader>
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="double" rule-thickness="3pt"></fo:leader>
+      </fo:block>
+      <fo:block space-before.optimum="1cm">
+          <fo:leader leader-pattern="rule" rule-style="double" rule-thickness="1mm"></fo:leader>
+      </fo:block>
+
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

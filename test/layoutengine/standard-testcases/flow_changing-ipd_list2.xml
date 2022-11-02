@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that blocks of texts are re-laid out after a change of the flow ipd.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" >
+  <fo:layout-master-set>
+    <fo:simple-page-master margin-right="1in" margin-left="1in" margin-bottom="0.20in" margin-top="0.20in" page-width="8.5in" page-height="11in" master-name="PageA">
+      <fo:region-body margin-right="0in" margin-left="0in" margin-bottom="0.85in" margin-top="2.5in" region-name="Body"/>
+
+    </fo:simple-page-master>
+    <fo:simple-page-master margin-right="0.75in" margin-left="0.75in" margin-bottom="0.20in" margin-top="0.20in" page-width="8.5in" page-height="11in" master-name="PageB">
+      <fo:region-body margin-right="0in" margin-left="0in" margin-bottom="0.85in" margin-top="0.85in" region-name="Body"/>
+
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="PageSequence">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference page-position="first" master-reference="PageA"/>
+        <fo:conditional-page-master-reference page-position="rest" master-reference="PageB"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence format="1" id="TH_LastPage" initial-page-number="auto" force-page-count="auto" master-reference="PageSequence">
+   
+    <fo:flow flow-name="Body">
+      <fo:block>
+      
+        <fo:list-block  font-size="12pt">
+          <fo:list-item  font-size="11pt" space-after="5px">
+            <fo:list-item-label  font-size="11pt">
+              <fo:block>4.</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+              <fo:block>
+                <fo:inline font-weight="bold">Property Not Covered </fo:inline>
+                <fo:block/>We do not cover: <fo:list-block  font-size="12pt">
+                  <fo:list-item  font-size="11pt" space-after="5px">
+                    <fo:list-item-label  font-size="11pt">
+                      <fo:block>a.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                      <fo:block>Articles separately described and specifically insured, regardless of the limit for which they are insured, in this or other insurance; </fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item  font-size="11pt" space-after="5px">
+                    <fo:list-item-label  font-size="11pt">
+                      <fo:block>b.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                      <fo:block>Animals, birds or fish; </fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item  font-size="11pt" space-after="5px">
+                    <fo:list-item-label  font-size="11pt">
+                      <fo:block>c.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                      <fo:block>"Motor vehicles". <fo:block/>This includes a "motor vehicle's" equipment and parts. <fo:block/>However, this Paragraph <fo:inline font-weight="bold">4.c. </fo:inline>does not apply to: <fo:list-block  font-size="12pt">
+                          <fo:list-item  font-size="11pt" space-after="5px">
+                            <fo:list-item-label  font-size="11pt">
+                              <fo:block>(1)</fo:block>
+                            </fo:list-item-label>
+                            <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                              <fo:block>Portable electronic equipment that: <fo:list-block  font-size="12pt">
+                                  <fo:list-item  font-size="11pt" space-after="5px">
+                                    <fo:list-item-label  font-size="11pt">
+                                      <fo:block>(a)</fo:block>
+                                    </fo:list-item-label>
+                                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                                      <fo:block>Reproduces, receives or transmits audio, visual or data signals; and </fo:block>
+                                    </fo:list-item-body>
+                                  </fo:list-item>
+                                  <fo:list-item  font-size="11pt" space-after="5px">
+                                    <fo:list-item-label  font-size="11pt">
+                                      <fo:block>(b)</fo:block>
+                                    </fo:list-item-label>
+                                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                                      <fo:block>Is designed so that it may be operated from a power source other than a "motor vehicle's" electrical system.</fo:block>
+                                    </fo:list-item-body>
+                                  </fo:list-item>
+                                </fo:list-block>
+                              </fo:block>
+                            </fo:list-item-body>
+                          </fo:list-item>
+                          <fo:list-item  font-size="11pt" space-after="5px">
+                            <fo:list-item-label  font-size="11pt">
+                              <fo:block>(2)</fo:block>
+                            </fo:list-item-label>
+                            <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                              <fo:block>"Motor vehicles" not required to be registered for use on public roads or property which are: <fo:list-block  font-size="12pt">
+                                  <fo:list-item  font-size="11pt" space-after="5px">
+                                    <fo:list-item-label  font-size="11pt">
+                                      <fo:block>(a)</fo:block>
+                                    </fo:list-item-label>
+                                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                                      <fo:block>Used solely to service a residence; or </fo:block>
+                                    </fo:list-item-body>
+                                  </fo:list-item>
+                                  <fo:list-item  font-size="11pt" space-after="5px">
+                                    <fo:list-item-label  font-size="11pt">
+                                      <fo:block>(b)</fo:block>
+                                    </fo:list-item-label>
+                                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                                      <fo:block>Designed to assist the handicapped; </fo:block>
+                                    </fo:list-item-body>
+                                  </fo:list-item>
+                                </fo:list-block>
+                              </fo:block>
+                            </fo:list-item-body>
+                          </fo:list-item>
+                        </fo:list-block>
+                      </fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item  font-size="11pt" space-after="5px">
+                    <fo:list-item-label  font-size="11pt">
+                      <fo:block>d.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                      <fo:block>Aircraft, meaning any contrivance used or designed for flight, including any parts whether or not attached to the aircraft. <fo:block/>We do cover model or hobby aircraft not used or designed to carry people or cargo; </fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item  font-size="11pt" space-after="5px">
+                    <fo:list-item-label  font-size="11pt">
+                      <fo:block>e.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                      <fo:block>Hovercraft and parts. Hovercraft means a self-propelled motorized ground effect vehicle and includes, but is not limited to, flarecraft and air cushion vehicles; </fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item  font-size="11pt" space-after="5px">
+                    <fo:list-item-label  font-size="11pt">
+                      <fo:block>f.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                      <fo:block>Property of roomers, boarders and other tenants, except property of roomers and boarders related to an "insured"; </fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item  font-size="11pt" space-after="5px">
+                    <fo:list-item-label  font-size="11pt">
+                      <fo:block>g.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                      <fo:block>Property in an apartment regularly rented or held for rental to others by an "insured"; </fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item  font-size="11pt" space-after="5px">
+                    <fo:list-item-label  font-size="11pt">
+                      <fo:block>h.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                      <fo:block>Property rented or held for rental to others off the "residence premises"; </fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item  font-size="11pt" space-after="5px">
+                    <fo:list-item-label  font-size="11pt">
+                      <fo:block>i.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                      <fo:block>"Business" data, including such data stored in: <fo:list-block  font-size="12pt">
+                          <fo:list-item  font-size="11pt" space-after="5px">
+                            <fo:list-item-label  font-size="11pt">
+                              <fo:block>(1)</fo:block>
+                            </fo:list-item-label>
+                            <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                              <fo:block>Books of account, drawings or other paper records; or </fo:block>
+                            </fo:list-item-body>
+                          </fo:list-item>
+                          <fo:list-item  font-size="11pt" space-after="5px">
+                            <fo:list-item-label  font-size="11pt">
+                              <fo:block>(2)</fo:block>
+                            </fo:list-item-label>
+                            <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                              <fo:block>Computers and related equipment. <fo:block/>We do cover the cost of blank recording or storage media and of prerecorded computer programs available on the retail market; </fo:block>
+                            </fo:list-item-body>
+                          </fo:list-item>
+                        </fo:list-block>
+                      </fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item  font-size="11pt" space-after="5px">
+                    <fo:list-item-label  font-size="11pt">
+                      <fo:block>j.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                      <fo:block>Credit cards, electronic fund transfer cards or access devices used solely for deposit, withdrawal or transfer of funds except as provided in <fo:inline font-weight="bold">D.6. </fo:inline>Credit Card, Electronic Fund Transfer Card Or Access Device, Forgery And Counterfeit Money under Section <fo:inline font-weight="bold">I </fo:inline>– Property Coverages; or </fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item  font-size="11pt" space-after="5px">
+                    <fo:list-item-label  font-size="11pt">
+                      <fo:block>k.</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body  font-size="11pt" start-indent="body-start()">
+                      <fo:block>Water or steam. </fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                </fo:list-block>
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+        </fo:list-block>
+    
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="4." xpath="//pageViewport[1]//flow/block//word"/>
+    <eval expected="Transfer" xpath="//pageViewport[2]//flow/block//word"/>
+  </checks>
+</testcase>

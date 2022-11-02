@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks page-number-citations with all combinations of 
+      definition-level and block-level IDs.
+    </p>
+    <p>
+      TODO:
+      Test table-and-caption and table-caption once implemented.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" 
+              margin="20pt">
+          <fo:region-body background-color="yellow"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence id="page-sequence1" master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block id="block1">block1</fo:block>
+          <fo:list-block id="list1" provisional-distance-between-starts="50pt" provisional-label-separation="5pt">
+            <fo:list-item id="item1">
+              <fo:list-item-label id="item1-label" end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body id="item1-body" start-indent="body-start()">
+                <fo:block>here is text in the list item body</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+          <fo:table id="table1" table-layout="fixed" border-collapse="separate">
+            <fo:table-column column-width="100%"/>
+            <fo:table-header id="table-header1">
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>header</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+            <fo:table-footer id="table-footer1">
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>footer</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-footer>
+            <fo:table-body id="table-body1">
+              <fo:table-row id="table-row1">
+                <fo:table-cell id="table-cell1">
+                  <fo:block>body-content</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block-container id="block-container1">
+            <fo:block>block-container-content</fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body" font-size="8pt">
+          <fo:block><fo:page-number-citation ref-id="page-sequence1"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="block1"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="list1"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="item1"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="item1-label"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="item1-body"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="table1"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="table-header1"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="table-footer1"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="table-body1"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="table-row1"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="table-cell1"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="block-container1"/></fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <true fail-msg="no ID for page-sequence" xpath="'1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]"/>
+    <true fail-msg="no ID for block" xpath="'1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[2]"/>
+    <true fail-msg="no ID for list-block" xpath="'1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[3]"/>
+    <true fail-msg="no ID for list-item" xpath="'1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[4]"/>
+    <true fail-msg="no ID for list-item-label" xpath="'1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[5]"/>
+    <true fail-msg="no ID for list-item-body" xpath="'1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[6]"/>
+    <true fail-msg="no ID for table" xpath="'1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[7]"/>
+    <true fail-msg="no ID for table-header" xpath="'1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[8]"/>
+    <true fail-msg="no ID for table-footer" xpath="'1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[9]"/>
+    <true fail-msg="no ID for table-body" xpath="'1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[10]"/>
+    <true fail-msg="no ID for table-row" xpath="'1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[11]"/>
+    <true fail-msg="no ID for table-cell" xpath="'1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[12]"/>
+    <true fail-msg="no ID for block-container" xpath="'1' = //pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[13]"/>
+  </checks>
+</testcase>

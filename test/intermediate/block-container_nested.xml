@@ -1,0 +1,148 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<testcase>
+  <info>
+    <p>
+      This test checks that IDs coming from a block-container properly appear in the IF output.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page"
+          page-height="320pt" page-width="420pt" margin="10pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce rutrum leo a diam 
+            bibendum auctor. Vivamus porttitor sollicitudin tortor eu vulputate.</fo:block>
+          <fo:block-container space-before="10pt" id="block-container_outer_1" color="purple">
+            <fo:block>In vel libero libero, a semper est. Vivamus dapibus ante id lorem mattis eget 
+              mattis urna sodales.
+              <fo:block-container id="block-container_inner_1" color="blue" start-indent="2em">
+                <fo:block start-indent="0">Vestibulum nec dui urna, in porta mi. Proin varius egestas 
+                  erat. Donec pharetra iaculis dolor, ut rutrum nunc facilisis 
+                  at.</fo:block>
+              </fo:block-container>
+              Proin ante eros, consequat eget semper a, molestie non arcu. Praesent hendrerit dolor vel 
+              leo luctus dapibus.</fo:block>
+          </fo:block-container>
+          <fo:block space-before="10pt">Nullam quam nisl, iaculis ut fermentum et, vestibulum id elit. 
+            Suspendisse fermentum fermentum ullamcorper.</fo:block>
+          <fo:block-container space-before="10pt" color="purple" id="block-container_1">
+            <fo:block>Sed ultrices posuere posuere. Praesent vitae ligula odio.</fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce rutrum leo a diam 
+            bibendum auctor. Vivamus porttitor sollicitudin tortor eu vulputate.</fo:block>
+          <fo:block-container space-before="10pt" id="block-container_outer_2" color="purple">
+            <fo:block>In vel libero libero, a semper est. Vivamus dapibus ante id lorem mattis eget 
+              mattis urna sodales.
+              <fo:block color="black" start-indent="2em">Mauris tincidunt, risus eget vulputate elementum, 
+                turpis lorem aliquet purus, eu sagittis neque sapien vel lectus.
+                <fo:block-container id="block-container_inner_2" color="blue">
+                  <fo:block>Vestibulum nec dui urna, in porta mi. Proin varius egestas erat. Donec 
+                    pharetra iaculis dolor, ut rutrum nunc facilisis at.</fo:block>
+                </fo:block-container>
+                Proin ante eros, consequat eget semper a, molestie non arcu. Praesent hendrerit dolor vel 
+                leo luctus dapibus.</fo:block>
+              Vivamus ut sollicitudin metus. Curabitur sit amet aliquam 
+              enim.</fo:block>
+          </fo:block-container>
+          <fo:block space-before="10pt">Nullam quam nisl, iaculis ut fermentum et, vestibulum id elit. 
+            Suspendisse fermentum fermentum ullamcorper.</fo:block>
+          <fo:block-container space-before="10pt" color="purple" id="block-container_2">
+            <fo:block>Vivamus tellus libero, porttitor a lacinia a, tempor eu dui. Pellentesque 
+              fermentum odio tempor lorem interdum pharetra.</fo:block>
+          </fo:block-container>
+          <fo:block space-before="10pt">Donec auctor venenatis convallis.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+    </fo:root>
+  </fo>
+  <if-checks xmlns:if="http://xmlgraphics.apache.org/fop/intermediate">
+
+    <!-- Page 1 -->
+    <eval expected="16"        xpath="count(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'])"/>
+
+    <eval expected="text" xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][1])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][2])"/>
+    <eval expected="id"   xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][3])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][4])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][5])"/>
+    <eval expected="id"   xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][6])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][7])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][8])"/>
+    <eval expected="id"   xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][9])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][10])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][11])"/>
+    <eval expected="id"   xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][12])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][13])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][14])"/>
+    <eval expected="id"   xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][15])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[1]/descendant::*[local-name() = 'text' or local-name() = 'id'][16])"/>
+
+    <eval expected="block-container_outer_1" xpath="//if:page-sequence[1]/descendant::*[local-name() = 'id'][1]/@name"/>
+    <eval expected="block-container_inner_1" xpath="//if:page-sequence[1]/descendant::*[local-name() = 'id'][2]/@name"/>
+    <eval expected="block-container_outer_1" xpath="//if:page-sequence[1]/descendant::*[local-name() = 'id'][3]/@name"/>
+    <eval expected=""                        xpath="//if:page-sequence[1]/descendant::*[local-name() = 'id'][4]/@name"/>
+    <eval expected="block-container_1"       xpath="//if:page-sequence[1]/descendant::*[local-name() = 'id'][5]/@name"/>
+
+    <!-- Page 2 -->
+    <eval expected="22"        xpath="count(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'])"/>
+
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][1])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][2])"/>
+    <eval expected="id"   xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][3])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][4])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][5])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][6])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][7])"/>
+    <eval expected="id"   xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][8])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][9])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][10])"/>
+    <eval expected="id"   xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][11])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][12])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][13])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][14])"/>
+    <eval expected="id"   xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][15])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][16])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][17])"/>
+    <eval expected="id"   xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][18])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][19])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][20])"/>
+    <eval expected="id"   xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][21])"/>
+    <eval expected="text" xpath="local-name(//if:page-sequence[2]/descendant::*[local-name() = 'text' or local-name() = 'id'][22])"/>
+
+    <eval expected="block-container_outer_2" xpath="//if:page-sequence[2]/descendant::*[local-name() = 'id'][1]/@name"/>
+    <eval expected="block-container_inner_2" xpath="//if:page-sequence[2]/descendant::*[local-name() = 'id'][2]/@name"/>
+    <eval expected="block-container_outer_2" xpath="//if:page-sequence[2]/descendant::*[local-name() = 'id'][3]/@name"/>
+    <eval expected=""                        xpath="//if:page-sequence[2]/descendant::*[local-name() = 'id'][4]/@name"/>
+    <eval expected="block-container_2"       xpath="//if:page-sequence[2]/descendant::*[local-name() = 'id'][5]/@name"/>
+    <eval expected=""                        xpath="//if:page-sequence[2]/descendant::*[local-name() = 'id'][6]/@name"/>
+
+  </if-checks>
+</testcase>

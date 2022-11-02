@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      Simple test for page-height="indefinite". The page-heights should
+      correspond to the sum of the line-heights of the laid out blocks.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="auto" page-height="indefinite">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block line-height="24pt">page1 - block1</fo:block>
+          <fo:block line-height="24pt">page1 - block2</fo:block>
+          <fo:block line-height="24pt">page1 - block3</fo:block>
+          <fo:block break-before="page" line-height="30pt">page2 - block1</fo:block>
+          <fo:block line-height="30pt">page2 - block2</fo:block>
+          <fo:block line-height="30pt">page2 - block3</fo:block>
+          <fo:block break-before="page" line-height="60pt">page3 - block3</fo:block>
+          <fo:block line-height="60pt">page3 - block2</fo:block>
+          <fo:block line-height="60pt">page3 - block3</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="72000" xpath="//pageViewport[@nr=1]/page/regionViewport/@bpd"/>
+    <eval expected="90000" xpath="//pageViewport[@nr=2]/page/regionViewport/@bpd"/>
+    <eval expected="180000" xpath="//pageViewport[@nr=3]/page/regionViewport/@bpd"/>
+  </checks>
+</testcase>

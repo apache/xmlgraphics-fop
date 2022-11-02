@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks absolutely positioned block-containers using top, bottom, left and right distances
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple" page-width="6in" page-height="5in" margin="0.5in">
+          <fo:region-body margin="0.5in"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="simple">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block font-size="48pt">position</fo:block>
+          <fo:block font-size="48pt" text-align="right"><fo:inline>NOT</fo:inline> ok!</fo:block>
+          <fo:block-container absolute-position="absolute" width="51pt" height="30pt" background-color="red" top="57pt" left="109pt">
+            <!-- nested container -->
+            <fo:block-container absolute-position="absolute" width="5pt" height="5pt" background-color="white" bottom="20pt" right="41pt">
+              <fo:block></fo:block>
+            </fo:block-container>
+          </fo:block-container>
+          <fo:block-container absolute-position="absolute" width="51pt" height="30pt" background-color="yellow" top="57pt" right="77pt">
+            <fo:block/>
+          </fo:block-container>
+          <fo:block-container absolute-position="absolute" width="51pt" height="30pt" background-color="blue" bottom="99pt" left="109pt">
+            <fo:block/>
+          </fo:block-container>
+          <fo:block-container absolute-position="absolute" width="51pt" height="30pt" background-color="green" bottom="99pt" right="77pt">
+            <fo:block/>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- *** first block-container *** -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@is-viewport-area"/>
+    <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@positioning"/>
+    <eval expected="109000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@left-position"/>
+    <eval expected="57000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@top-position"/>
+
+    <!-- *** nested block-container *** -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/block[1]/@is-viewport-area"/>
+    <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/block[1]/@positioning"/>
+    <eval expected="5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/block[1]/@left-position"/>
+    <eval expected="5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/block[1]/@top-position"/>
+
+    <!-- *** second block-container *** -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@is-viewport-area"/>
+    <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@positioning"/>
+    <eval expected="160000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@left-position"/>
+    <eval expected="57000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@top-position"/>
+
+    <!-- *** third block-container *** -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[5]/@is-viewport-area"/>
+    <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[5]/@positioning"/>
+    <eval expected="109000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[5]/@left-position"/>
+    <eval expected="87000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[5]/@top-position"/>
+
+    <!-- *** fourth block-container *** -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@is-viewport-area"/>
+    <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@positioning"/>
+    <eval expected="160000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@left-position"/>
+    <eval expected="87000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@top-position"/>
+
+  </checks>
+</testcase>

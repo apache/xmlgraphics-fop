@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the force-page-count property for nonauto
+      values (end-on-even, end-on-odd, even, odd, no-force) and
+      shows the ignoring on the last page-sequence.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal"
+         page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+
+      <fo:page-sequence master-reference="normal" 
+       initial-page-number="201"
+       force-page-count="end-on-even">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>onpage201</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="normal"
+       force-page-count="end-on-even">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>onpage203</fo:block>
+          <fo:block break-before="page">onpage204</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="normal" 
+       force-page-count="end-on-odd">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>onpage205</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="normal" 
+       force-page-count="end-on-odd">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>onpage206</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="normal" 
+       force-page-count="even">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>onpage208</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="normal" 
+       force-page-count="even">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>onpage210</fo:block>
+          <fo:block break-before="page">onpage211</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="normal" 
+       force-page-count="odd">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>onpage212</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="normal" 
+       force-page-count="odd">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>onpage213</fo:block>
+          <fo:block break-before="page">onpage214</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="normal" 
+       force-page-count="no-force">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>onpage216</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="normal" 
+       initial-page-number="auto-even" force-page-count="even">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>onpage218</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="201" xpath="//lineArea[starts-with(., 'onpage201')]/ancestor::pageViewport/@nr"/>
+    <eval expected="0" xpath="sum(//pageViewport[@nr=202]/page/regionViewport/regionBody/mainReference/span/flow/block/@bpda)"/>
+    <eval expected="1" xpath="count(//pageViewport[@nr=202])"/>
+    <eval expected="203" xpath="//lineArea[starts-with(., 'onpage203')]/ancestor::pageViewport/@nr"/>
+    <eval expected="204" xpath="//lineArea[starts-with(., 'onpage204')]/ancestor::pageViewport/@nr"/>
+    <eval expected="205" xpath="//lineArea[starts-with(., 'onpage205')]/ancestor::pageViewport/@nr"/>
+    <eval expected="206" xpath="//lineArea[starts-with(., 'onpage206')]/ancestor::pageViewport/@nr"/>
+    <eval expected="0" xpath="sum(//pageViewport[@nr=207]/page/regionViewport/regionBody/mainReference/span/flow/block/@bpda)"/>
+    <eval expected="1" xpath="count(//pageViewport[@nr=207])"/>
+    <eval expected="208" xpath="//lineArea[starts-with(., 'onpage208')]/ancestor::pageViewport/@nr"/>
+    <eval expected="0" xpath="sum(//pageViewport[@nr=209]/page/regionViewport/regionBody/mainReference/span/flow/block/@bpda)"/>
+    <eval expected="1" xpath="count(//pageViewport[@nr=209])"/>
+    <eval expected="210" xpath="//lineArea[starts-with(., 'onpage210')]/ancestor::pageViewport/@nr"/>
+    <eval expected="211" xpath="//lineArea[starts-with(., 'onpage211')]/ancestor::pageViewport/@nr"/>
+    <eval expected="212" xpath="//lineArea[starts-with(., 'onpage212')]/ancestor::pageViewport/@nr"/>
+    <eval expected="213" xpath="//lineArea[starts-with(., 'onpage213')]/ancestor::pageViewport/@nr"/>
+    <eval expected="214" xpath="//lineArea[starts-with(., 'onpage214')]/ancestor::pageViewport/@nr"/>
+    <eval expected="0" xpath="sum(//pageViewport[@nr=215]/page/regionViewport/regionBody/mainReference/span/flow/block/@bpda)"/>
+    <eval expected="1" xpath="count(//pageViewport[@nr=215])"/>
+    <eval expected="216" xpath="//lineArea[starts-with(., 'onpage216')]/ancestor::pageViewport/@nr"/>
+    <eval expected="0" xpath="count(//pageViewport[@nr=217])"/>
+    <eval expected="218" xpath="//lineArea[starts-with(., 'onpage218')]/ancestor::pageViewport/@nr"/>
+    <eval expected="0" xpath="sum(//pageViewport[@nr=219]/page/regionViewport/regionBody/mainReference/span/flow/block/@bpda)"/>
+    <eval expected="1" xpath="count(//pageViewport[@nr=219])"/>
+    <eval expected="18" xpath="count(//pageViewport)"/>
+    <result expected="18" property="pagecount"/>
+  </checks>
+</testcase>

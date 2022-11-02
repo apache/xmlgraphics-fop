@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that a table immediately following a changing IPD break is handled properly.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="ThirdSectionPages" page-width="210mm" page-height="297mm">
+          <fo:region-body margin-bottom="20mm" margin-right="10mm" margin-top="74mm" margin-left="18mm" column-gap="10mm" column-count="2" region-name="Body"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="FurtherPagesEven" page-width="210mm" page-height="297mm">
+          <fo:region-body margin-bottom="16mm" margin-right="17mm" margin-top="16mm" margin-left="18mm" column-gap="10mm" column-count="2" region-name="Body" background-color="yellow"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="ThirdSectionSequence">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference page-position="first" master-reference="ThirdSectionPages"/>
+            <fo:conditional-page-master-reference master-reference="FurtherPagesEven"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence format="1" id="th_default_sequence6" master-reference="ThirdSectionSequence">
+        <fo:flow flow-name="Body">
+          <fo:block>
+            <fo:block font-size="42pt">test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test</fo:block>
+            <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+              <fo:inline font-family="Gotham Book" font-size="10.5pt"></fo:inline> médicalement nécessaires pris en charge qui sont déterminés par l’équipe médicale, conformément aux Directives cliniques internationales, comme étant :</fo:block>
+            <fo:block font-size="3pt">
+              <fo:leader/>
+            </fo:block>
+            <fo:table table-layout="fixed" width="100%">
+              <fo:table-column column-width="proportional-column-width(5.42)" column-number="1"/>
+              <fo:table-column column-width="proportional-column-width(94.58)" column-number="2"/>
+              <fo:table-body>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+                        <fo:inline>a</fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">nécessaires pour diagnostiquer ou traiter une maladie, une <fo:inline>blessure</fo:inline> ou leurs symptômes ;</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+                        <fo:inline>a</fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">orthodoxes et conformes aux standards de pratique médicale généralement acceptés ;</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+                        <fo:inline>a</fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">cliniquement appropriés en matière de type, fréquence, étendue, site et durée ;</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+                        <fo:inline>a</fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">non destinés principalement à la commodité de l’<fo:inline>assuré,</fo:inline> du <fo:inline>médecin,</fo:inline> de l’<fo:inline>hôpital</fo:inline>, de la <fo:inline>clinique</fo:inline> ou d’un <fo:inline>praticien</fo:inline> ; et</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+                        <fo:inline>a</fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">dispensés dans les posologies les moins intenses appropriées pour la délivrance des services et des fournitures.</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+            <fo:block>
+              <fo:leader/>
+            </fo:block>
+            <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">Quand cela est applicable, l’équipe médicale pourra comparer le rapport coût-efficacité d’autres services, posologies ou fournitures pour déterminer le meilleur.</fo:block>
+            <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+              <fo:leader/>
+            </fo:block>
+            <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+              <fo:inline font-family="Gotham Book" font-size="10.5pt">Pays de nationalité </fo:inline>: pays dont un <fo:inline>assuré </fo:inline>est un ressortissant, un citoyen ou un sujet, comme indiqué dans <fo:inline>votre souscription</fo:inline>.</fo:block>
+            <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+              <fo:leader/>
+            </fo:block>
+            <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+              <fo:inline font-family="Gotham Book" font-size="10.5pt">Pays de résidence habituelle</fo:inline> : pays dans lequel un <fo:inline>assuré </fo:inline>réside habituellement, comme indiqué dans <fo:inline>votre souscription</fo:inline>.</fo:block>
+            <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+              <fo:leader/>
+            </fo:block>
+            <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+              <fo:inline font-family="Gotham Book" font-size="10.5pt">Praticien</fo:inline> : <fo:inline>médecin </fo:inline>ou spécialiste qui est enregistré ou habilité à pratiquer la médecine conformément aux lois du pays, de l’état ou d’une autre zone réglementée dans lesquels le <fo:inline>traitement </fo:inline>est dispensé, et qui n’est pas couvert par le présent <fo:inline>contrat </fo:inline>ou un membre de la famille de quelqu’un couvert par le présent <fo:inline>contrat</fo:inline>.</fo:block>
+            <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+              <fo:leader/>
+            </fo:block>
+            <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+              <fo:inline font-family="Gotham Book" font-size="10.5pt">Preneur d’assurance</fo:inline> : une personne âgée de 18 ans ou plus qui a fait une demande de <fo:inline>souscription </fo:inline>auprès de <fo:inline>nous </fo:inline>ayant été acceptée par écrit par <fo:inline>nous </fo:inline>et qui paie la prime du <fo:inline>contrat</fo:inline>.</fo:block>
+            <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+              <fo:leader/>
+            </fo:block>
+            <fo:block font-family="Gotham Book" font-size="10.5pt" line-height="14pt">
+              <fo:inline font-family="Gotham Book">Prothèse(s)</fo:inline> : un membre artificiel ou outil <fo:inline>nécessaire </fo:inline>aux fins de, ou en lien avec une <fo:inline>intervention chirurgicale</fo:inline>, ou dans le cadre du <fo:inline>traitement </fo:inline>suivant immédiatement une intervention chirurgicale aussi longtemps que cela est médicalement nécessaire, ou qui est médicalement nécessaire</fo:block>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="maladie," xpath="//pageViewport[2]//flow[1]/block[1]/block[3]/block[2]//word[7]"/>
+  </checks>
+</testcase>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      Test fix for https://issues.apache.org/jira/browse/FOP-2410.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple" page-height="3in" page-width="5in">
+          <fo:region-body extent="0.5in"/>
+          <fo:region-before extent="2in"/>
+          <fo:region-after extent="0.5in"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="simple" writing-mode="rl" format="&#x0661;">
+        <fo:static-content flow-name="xsl-region-after">
+          <fo:block text-align="center">| &#x0628;&#x0646; | <fo:page-number/> |</fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block/>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="|" xpath="(//word)[1]"/>
+    <eval expected="1" xpath="(//word)[1]/@level"/>
+    <eval expected="&#x0661;" xpath="(//word)[2]"/>
+    <eval expected="2" xpath="(//word)[2]/@level"/>
+    <eval expected="|" xpath="(//word)[3]"/>
+    <eval expected="1" xpath="(//word)[3]/@level"/>
+    <eval expected="&#x0646;&#x0628;" xpath="(//word)[4]"/>
+    <eval expected="1" xpath="(//word)[4]/@level"/>
+    <eval expected="|" xpath="(//word)[5]"/>
+    <eval expected="1" xpath="(//word)[5]/@level"/>
+  </checks>
+</testcase>

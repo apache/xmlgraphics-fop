@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the element lists of in-flow block-containers with reference orientation.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence id="bc0" master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container width="60pt" reference-orientation="0">
+            <fo:block>ABC</fo:block>
+            <fo:block font-size="200%">ABC</fo:block>
+          </fo:block-container>
+          <fo:block>EOPS</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence id="bc90" master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container width="60pt" reference-orientation="90">
+            <fo:block>ABC</fo:block>
+            <fo:block font-size="200%">ABC</fo:block>
+          </fo:block-container>
+          <fo:block>EOPS</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence id="bc180" master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container width="60pt" reference-orientation="180" background-color="yellow">
+            <fo:block>ABC</fo:block>
+            <fo:block font-size="200%">ABC</fo:block>
+          </fo:block-container>
+          <fo:block>EOPS</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <element-list category="breaker" id="bc0">
+      <!-- content is inlined -->
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="28800"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      
+      <skip>3</skip>
+    </element-list>
+    <element-list category="breaker" id="bc90">
+      <!-- one box with the length of the rotated content-width -->
+      <box w="60000"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      
+      <skip>3</skip>
+    </element-list>
+    <element-list category="breaker" id="bc180">
+      <!-- one box with the length of the effective content-height (auto-heigth) -->
+      <!-- Maybe the element list could be reversed somehow so the b-c can still be broken
+        correctly, even if ref-or="180". But we leave that be for the time being. -->
+      <box w="43200"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      
+      <skip>3</skip>
+    </element-list>
+  </checks>
+</testcase>

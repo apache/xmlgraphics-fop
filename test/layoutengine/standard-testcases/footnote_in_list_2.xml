@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks footnotes as descendants of list-item-body elements.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple" page-height="220pt" page-width="3in"
+          margin="10pt">
+          <fo:region-body background-color="#F0F0F0"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="simple" font-size="8pt" line-height="10pt">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Before the list.</fo:block>
+          <fo:list-block provisional-distance-between-starts="1.2em" provisional-label-separation="2pt">
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>–</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Pellentesque<fo:footnote>
+                  <fo:inline>(1)</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block start-indent="0">
+                        <fo:inline>(1)</fo:inline> First footnote from the list.</fo:block>
+                    </fo:footnote-body>
+                  </fo:footnote> hendrerit euismod velit. Nulla facilisi. Etiam et risus at neque ultrices
+                  facilisis. Donec lectus est, nonummy quis, rhoncus bibendum, porta at, nisl<fo:footnote>
+                  <fo:inline>(2)</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block start-indent="0">
+                        <fo:inline>(2)</fo:inline> Second footnote from the list.</fo:block>
+                    </fo:footnote-body>
+                  </fo:footnote>.
+                </fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>–</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Pellentesque<fo:footnote>
+                  <fo:inline>(3)</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block start-indent="0">
+                        <fo:inline>(3)</fo:inline> Third footnote from the list.</fo:block>
+                    </fo:footnote-body>
+                  </fo:footnote> hendrerit euismod velit. Nulla facilisi. Etiam et risus at neque ultrices
+                  facilisis. Donec lectus est, nonummy quis, rhoncus bibendum, porta at, nisl<fo:footnote>
+                  <fo:inline>(4)</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block start-indent="0">
+                        <fo:inline>(4)</fo:inline> Fourth footnote from the list.</fo:block>
+                    </fo:footnote-body>
+                  </fo:footnote>.
+                </fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="simple" font-size="8pt" line-height="10pt">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="130pt">Before the list.</fo:block>
+          <fo:list-block provisional-distance-between-starts="1.2em" provisional-label-separation="2pt">
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>–</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block orphans="1" widows="1">Lorem ipsum dolor sit amet, consectetuer adipiscing
+                  elit. Pellentesque<fo:footnote>
+                    <fo:inline>(1)</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block start-indent="0">(1) First footnote from the list.</fo:block>
+                    </fo:footnote-body>
+                  </fo:footnote> hendrerit euismod velit. Nulla facilisi. Etiam et risus at neque ultrices
+                  facilisis. Donec lectus est, nonummy quis, rhoncus bibendum, porta at, nisl<fo:footnote>
+                  <fo:inline>(2)</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block start-indent="0">(2) Second footnote from the list.</fo:block>
+                    </fo:footnote-body>
+                  </fo:footnote>.
+                </fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="4" xpath="count(//pageSequence[1]//footnote/block)"/>
+    <eval expected="(1) First footnote from the list."  xpath="//pageSequence[1]//footnote/block[1]"/>
+    <eval expected="(2) Second footnote from the list." xpath="//pageSequence[1]//footnote/block[2]"/>
+    <eval expected="(3) Third footnote from the list."  xpath="//pageSequence[1]//footnote/block[3]"/>
+    <eval expected="(4) Fourth footnote from the list." xpath="//pageSequence[1]//footnote/block[4]"/>
+    <eval expected="1" xpath="count(//pageSequence[2]/pageViewport[1]//footnote/block)"/>
+    <eval expected="(1) First footnote from the list."  xpath="//pageSequence[2]/pageViewport[1]//footnote/block"/>
+    <eval expected="1" xpath="count(//pageSequence[2]/pageViewport[2]//footnote/block)"/>
+    <eval expected="(2) Second footnote from the list."  xpath="//pageSequence[2]/pageViewport[2]//footnote/block"/>
+  </checks>
+</testcase>

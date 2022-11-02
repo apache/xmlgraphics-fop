@@ -1,0 +1,34 @@
+<?xml version="1.0" standalone="no"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="420pt" page-width="320pt" margin="10pt">
+      <fo:region-body background-color="#F0F0F0"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>This table defines padding in collapsing border model:</fo:block>
+      <fo:table width="100%" table-layout="fixed" padding="1em">
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell border="1pt solid black">
+              <fo:block>Cell 1.1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="1pt solid black">
+              <fo:block>Cell 1.2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell border="1pt solid black">
+              <fo:block>Cell 2.1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="1pt solid black">
+              <fo:block>Cell 2.2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

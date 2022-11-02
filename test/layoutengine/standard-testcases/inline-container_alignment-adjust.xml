@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      Checks that the alignment-adjust property on inline-container behaves properly.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page"
+          page-height="170pt" page-width="220pt" margin="10pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="10pt">alignment-adjust="before-edge":</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt" 
+              alignment-adjust="before-edge">
+              <fo:block>Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="10pt">alignment-adjust="text-before-edge":</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt" 
+              alignment-adjust="text-before-edge">
+              <fo:block>Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="10pt">alignment-adjust="after-edge":</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt" 
+              alignment-adjust="after-edge">
+              <fo:block>Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="10pt">alignment-adjust="text-after-edge":</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt" 
+              alignment-adjust="text-after-edge">
+              <fo:block>Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="10pt">alignment-adjust="middle":</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt" 
+              alignment-adjust="middle">
+              <fo:block>Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="10pt">alignment-adjust="central":</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt" 
+              alignment-adjust="central">
+              <fo:block>Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="10pt">alignment-adjust="ideographic":</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt" 
+              alignment-adjust="ideographic">
+              <fo:block>Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="10pt">alignment-adjust="alphabetic":</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt" 
+              alignment-adjust="alphabetic">
+              <fo:block>Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="10pt">alignment-adjust="hanging":</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt" 
+              alignment-adjust="hanging">
+              <fo:block>Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="10pt">alignment-adjust="mathematical":</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt" 
+              alignment-adjust="mathematical">
+              <fo:block>Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="10pt">alignment-adjust="30pt":</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt" 
+              alignment-adjust="30pt">
+              <fo:block>Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="10pt">alignment-adjust="10%":</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt" 
+              alignment-adjust="-10%" dominant-baseline="text-before-edge">
+              <fo:block>Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+    </fo:root>
+  </fo>
+
+  <checks>
+
+    <!-- before-edge -->
+    <eval expected="37416" xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="28800" xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="8616"  xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- text-before-edge -->
+    <eval expected="37416" xpath="//pageSequence[2]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[2]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[2]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="28800" xpath="//pageSequence[2]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="8616"  xpath="//pageSequence[2]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- after-edge -->
+    <eval expected="31284" xpath="//pageSequence[3]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="20184" xpath="//pageSequence[3]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[3]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="28800" xpath="//pageSequence[3]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[3]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- text-after-edge -->
+    <eval expected="31284" xpath="//pageSequence[4]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="20184" xpath="//pageSequence[4]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[4]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="28800" xpath="//pageSequence[4]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[4]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- middle -->
+    <eval expected="28800" xpath="//pageSequence[5]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="5784"  xpath="//pageSequence[5]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[5]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="28800" xpath="//pageSequence[5]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[5]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- central -->
+    <eval expected="28800" xpath="//pageSequence[6]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="5784"  xpath="//pageSequence[6]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[6]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="28800" xpath="//pageSequence[6]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[6]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- ideographic -->
+    <eval expected="28800" xpath="//pageSequence[7]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="11544" xpath="//pageSequence[7]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[7]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="28800" xpath="//pageSequence[7]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[7]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- alphabetic -->
+    <eval expected="28800" xpath="//pageSequence[8]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="8664"  xpath="//pageSequence[8]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[8]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="28800" xpath="//pageSequence[8]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[8]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- hanging -->
+    <eval expected="31656" xpath="//pageSequence[9]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[9]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[9]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="28800" xpath="//pageSequence[9]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="2856"  xpath="//pageSequence[9]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- mathematical -->
+    <eval expected="28800" xpath="//pageSequence[10]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="5784"  xpath="//pageSequence[10]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[10]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="28800" xpath="//pageSequence[10]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[10]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- 30pt -->
+    <eval expected="49764" xpath="//pageSequence[11]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="38664" xpath="//pageSequence[11]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[11]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="28800" xpath="//pageSequence[11]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[11]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- 10% -->
+    <eval expected="38856" xpath="//pageSequence[12]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[12]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[12]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="28800" xpath="//pageSequence[12]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="10056" xpath="//pageSequence[12]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+  </checks>
+</testcase>

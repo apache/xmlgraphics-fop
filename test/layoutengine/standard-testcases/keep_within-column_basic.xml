@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks whether keeps within-column are respected.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page" page-width="400pt" page-height="70pt">
+          <fo:region-body column-count="5" />
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page" font-size="10pt">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block break-before="page">
+            <!-- simple test: keep the second block together within
+                 one column, breaking the preceding block early 
+                 if necessary -->
+            <fo:block id="block-1">
+              [BOB-1] foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar [EOB-1]
+            </fo:block>
+            <fo:block id="block-2" keep-together.within-column="always">
+              [BOB-2] foo bar foo bar foo bar foo bar foo [EOB-2]
+            </fo:block>
+          </fo:block>
+          <fo:block break-before="page">
+            <!-- same as the first, but now a nested block
+                 with a higher integer value, and some content
+                 following -->
+            <fo:block id="block-3" keep-together.within-column="5">
+              [BOB-3] foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              <fo:block font-weight="bold" id="block-3a" keep-together.within-column="always">
+                [BOB-3a] foo bar foo bar foo bar foo bar foo [EOB-3a]
+              </fo:block>
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar [EOB-3]
+            </fo:block>
+          </fo:block>
+          <fo:block break-before="page">
+            <!-- nested block must be kept together within the same
+                 page, while the outer block may be broken, if necessary -->
+            <fo:block font-style="italic" id="block-4" keep-together.within-column="5">
+              [BOB-4] foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              <fo:block id="block-4a" keep-together.within-page="always">
+                [BOB-4a] foo bar foo bar foo bar foo bar foo bar
+                foo bar foo bar foo bar foo bar foo bar foo bar
+                foo bar foo bar foo bar foo bar foo bar foo bar
+                foo bar foo bar foo bar foo bar foo bar foo bar
+                foo bar foo bar foo bar foo bar foo bar foo bar
+                foo bar foo bar foo bar foo bar foo bar foo bar
+                foo bar foo bar foo bar foo bar foo bar foo bar
+                foo bar foo bar foo bar foo bar foo bar [EOB-4a]
+              </fo:block>
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar [EOB-4]
+            </fo:block>
+          </fo:block>
+          <fo:block break-before="page">
+            <!-- test keep-with-next in conjunction with keep-together
+                 respecting the default value for widows/orphans -->
+            <fo:block id="block-5">
+              <fo:block id="block-5a">
+              [BOB-5a] foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar [EOB-5a]
+              </fo:block>
+              <fo:block id="block-5b" keep-with-next.within-column="always">
+              [BOB-5b] foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar [EOB-5b]
+              </fo:block>
+              <fo:block id="block-5c" keep-together.within-column="always">
+              [BOB-5c] foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar [EOB-5c]
+              </fo:block>
+            </fo:block>
+          </fo:block>
+          <fo:block break-before="page">
+            <!-- test keep-together in conjunction with keep-with-previous -->
+            <fo:block id="block-6">
+              <fo:block id="block-6a">
+              [BOB-6a] foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar [EOB-6a]
+              </fo:block>
+              <fo:block id="block-6b" keep-together.within-column="always">
+              [BOB-6b] foo bar foo bar foo bar foo bar foo bar [EOB-6b]
+              </fo:block>
+              <fo:block id="block-6c" keep-with-previous.within-column="always">
+              [BOB-6c] foo bar foo bar foo bar foo bar foo bar
+              foo bar foo bar foo bar foo bar foo bar [EOB-6c]
+              </fo:block>
+            </fo:block>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- check total page-count -->
+    <eval expected="10" xpath="count(//page)" />
+    <!-- block-2 should end up in its own column, column 4 -->
+    <eval expected="1" xpath="count(//block[@prod-id='block-2']/ancestor::flow)" />
+    <eval expected="3" xpath="count(//block[@prod-id='block-2']/ancestor::flow/preceding-sibling::flow)" />
+    <!-- block-3a should end up in its own column, column 5 -->
+    <eval expected="1" xpath="count(//block[@prod-id='block-3a']/ancestor::flow)" />
+    <eval expected="4" xpath="count(//block[@prod-id='block-3a']/ancestor::flow/preceding-sibling::flow)" />
+    <!-- block-4a should end up in its own page -->
+    <eval expected="1" xpath="count(//block[@prod-id='block-4a']/ancestor::page)" />
+    <!-- block 5c should end up in its own column, with two preceding lines from block 5b -->
+    <eval expected="1" xpath="count(//block[@prod-id='block-5c']/ancestor::flow)" />
+    <eval expected="2" xpath="count(//block[@prod-id='block-5c']/preceding-sibling::block/lineArea)" />
+    <!-- block 6b should end up in its own column, with two following lines from block 6c -->
+    <eval expected="1" xpath="count(//block[@prod-id='block-6b']/ancestor::flow)" />
+    <eval expected="2" xpath="count(//block[@prod-id='block-6b']/following-sibling::block/lineArea)" />
+  </checks>
+</testcase>
+

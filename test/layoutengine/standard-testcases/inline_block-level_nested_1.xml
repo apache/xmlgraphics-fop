@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks fo:inline and nested block-level nodes.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="6in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>
+            <fo:inline>before
+              <fo:list-block>
+                <fo:list-item>
+                  <fo:list-item-label end-indent="label-end()">
+                    <fo:block>&#x2022;</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body start-indent="body-start()">
+                    <fo:block id="list-item-body1">Inline list item one.</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+            after</fo:inline>
+          </fo:block>
+          <fo:block space-before="0.5em">
+            <fo:inline>before
+              <fo:table table-layout="fixed" width="100%">
+                <fo:table-column column-width="proportional-column-width(1)"
+                  number-columns-repeated="2"/>"
+                <fo:table-body>
+                  <fo:table-row>
+                    <fo:table-cell id="table-cell1">
+                      <fo:block>cell1</fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell>
+                      <fo:block>cell2</fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                </fo:table-body>
+              </fo:table>
+            after</fo:inline>
+          </fo:block>
+          <fo:block space-before="0.5em">
+            <fo:inline>before
+              <fo:block-container>
+                <fo:block id="block-in-bc">block in block-container</fo:block>
+              </fo:block-container>
+            after</fo:inline>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <element-list category="breaker">
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <glue w="6000" aux="true"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <glue w="6000" aux="true"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <skip>3</skip>
+    </element-list>
+    <true xpath="boolean(//block[@prod-id='list-item-body1'])"/>
+    <true xpath="boolean(//block[@prod-id='table-cell1'])"/>
+    <true xpath="boolean(//block[@prod-id='block-in-bc'])"/>
+  </checks>
+</testcase>

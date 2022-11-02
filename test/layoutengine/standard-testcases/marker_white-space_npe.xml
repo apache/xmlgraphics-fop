@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks for a potential NPE after white-space handling
+      for retrieved markers with only inline content.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master margin-right="6mm" margin-left="7mm" margin-bottom="4mm" margin-top="5mm" page-width="210mm" page-height="297mm" master-name="letterPageFront">
+          <fo:region-body margin-right="59mm" margin-left="8mm" margin-top="53mm" margin-bottom="57mm" region-name="letterPageBody"/>
+          <fo:region-after precedence="false" extent="52mm" region-name="letterPageFooter"/>
+          <fo:region-end precedence="true" extent="49mm" region-name="letterPageSidebar"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence initial-page-number="1" page-break-before="right" master-reference="letterPageFront">
+        <fo:flow flow-name="letterPageBody">
+          <fo:block>page 1</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="letterPageFront">
+        <fo:static-content flow-name="letterPageFooter">
+          <fo:block text-align="right" margin-right="1cm" margin-left="8mm">
+            <fo:retrieve-marker retrieve-position="last-ending-within-page" retrieve-boundary="page-sequence" retrieve-class-name="statementFooterMarker"/>
+          </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="letterPageBody">
+          <fo:block>
+            <fo:block font="bold 16pt Arial">
+              <fo:block>
+                <fo:marker marker-class-name="statementFooterMarker">
+                  <fo:inline font-family="HelveticaNeue-LightCond" font-size="11pt" line-height="13pt" text-align="right">Test Marker</fo:inline>
+                </fo:marker>
+              </fo:block>
+            </fo:block>
+            <fo:block break-before="page">
+              <fo:block>
+                <fo:marker marker-class-name="statementFooterMarker"/>
+              </fo:block>
+            </fo:block>
+          </fo:block>
+          <fo:block id="TH_LastPage"/>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="letterPageFront">
+        <fo:static-content flow-name="letterPageSidebar">
+          <fo:block-container height="284mm">
+            <fo:block> </fo:block>
+          </fo:block-container>
+        </fo:static-content>
+        <fo:flow break-before="odd-page" flow-name="letterPageBody">
+          <fo:block>last page</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks /><!-- none except the default; simply check for non-occurrence of NPE -->
+</testcase>

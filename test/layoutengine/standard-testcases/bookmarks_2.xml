@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase bug="37993">
+  <info>
+    <p>
+      This test checks the handling of duplicate destination in the bookmarks tree. There was a
+      bug earlier (#37993) which made two bookmarks pointing to the same destination impossible.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" 
+              margin="20pt">
+          <fo:region-body background-color="yellow"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:bookmark-tree>
+        <fo:bookmark internal-destination="chapter1">
+          <fo:bookmark-title>Chapter 1</fo:bookmark-title>
+          <fo:bookmark internal-destination="chapter1">
+            <fo:bookmark-title>Nested Chapter 1</fo:bookmark-title>
+          </fo:bookmark>
+        </fo:bookmark>
+        <fo:bookmark internal-destination="chapter1" starting-state="hide">
+          <fo:bookmark-title>Again Chapter 1</fo:bookmark-title>
+        </fo:bookmark>
+        <fo:bookmark internal-destination="chapter2">
+          <fo:bookmark-title>Chapter 2</fo:bookmark-title>
+        </fo:bookmark>
+      </fo:bookmark-tree>
+      <fo:page-sequence id="page-sequence" master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block id="chapter1" font-weight="bold" font-size="larger">Chapter 1</fo:block>
+          <fo:block>Blah blah bla.</fo:block>
+          <fo:block id="chapter2" font-weight="bold" font-size="larger" break-before="page">Chapter 2</fo:block>
+          <fo:block>Blah blah bla.</fo:block>
+          <fo:block id="chapter2-sec1" font-weight="bold">Section 1</fo:block>
+          <fo:block>Blah blah bla.</fo:block>
+          <fo:block id="chapter2-sec2" font-weight="bold">Section 2</fo:block>
+          <fo:block>Blah blah bla.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="2" xpath="count(//pageViewport)"/>
+    
+    <eval expected="Chapter 1" xpath="//bookmarkTree/bookmark[1]/@title"/>
+    <eval expected="true" xpath="//bookmarkTree/bookmark[1]/@show-children"/>
+    <eval expected="Nested Chapter 1" xpath="//bookmarkTree/bookmark[1]/bookmark[1]/@title"/>
+    <eval expected="true" xpath="//bookmarkTree/bookmark[1]/bookmark[1]/@show-children"/>
+    <eval expected="Again Chapter 1" xpath="//bookmarkTree/bookmark[2]/@title"/>
+    <eval expected="false" xpath="//bookmarkTree/bookmark[2]/@show-children"/>
+
+    <eval expected="(P1,chapter1)" xpath="//bookmarkTree/bookmark[1]/@internal-link"/>
+    <eval expected="(P1,chapter1)" xpath="//bookmarkTree/bookmark[1]/bookmark[1]/@internal-link"/>
+    <eval expected="(P1,chapter1)" xpath="//bookmarkTree/bookmark[2]/@internal-link"/>
+    
+  </checks>
+</testcase>

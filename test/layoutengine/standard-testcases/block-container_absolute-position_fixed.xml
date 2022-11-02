@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks block-containers with absolute-position="fixed".
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" margin="20pt">
+          <fo:region-body margin="0pt" background-color="lightgreen"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container left="30pt" top="30pt" width="200pt" height="100pt" absolute-position="fixed" background-color="orange">
+            <fo:block background-color="yellow">absolute-position="fixed"</fo:block>
+          </fo:block-container>
+          <fo:block-container left="30pt" top="30pt" width="200pt" height="100pt" absolute-position="absolute" background-color="orange">
+            <fo:block background-color="yellow">absolute-position="absolute"</fo:block>
+          </fo:block-container>
+          <fo:block-container left="1in" top="3in" width="2in" height="1in" absolute-position="absolute" background-color="lightblue">
+            <fo:block background-color="lightgray" margin="5pt" text-align="end" color="blue">abs-bc blue</fo:block>
+            <fo:block-container left="20pt + 1in" top="20pt + 3in" width="1in" height="40pt" absolute-position="fixed" background-color="blue">
+              <fo:block background-color="yellow" margin="5pt">fixed-bc in abs-bc</fo:block>
+            </fo:block-container>
+            <fo:block background-color="lightgray" margin="5pt" text-align="end" color="red">abs-bc 2 red</fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- 
+      Can't check a lot here because most of the difference between "absolute" and "fixed" is 
+      in the renderer, so this needs to be checked mostly visually. -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@is-viewport-area"/>
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@is-viewport-area"/>
+    <eval expected="fixed" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@positioning"/>
+    <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@positioning"/>
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 0.0]" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ctm"/>
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 0.0]" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@ctm"/>
+    <eval expected="30000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@left-position"/>
+    <eval expected="30000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@left-position"/>
+    <eval expected="30000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@top-position"/>
+    <eval expected="30000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@top-position"/>
+    <eval expected="100000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@bpda"/>
+    <eval expected="100000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@bpda"/>
+    <eval expected="100000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@bpd"/>
+    <eval expected="100000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@bpd"/>
+    <eval expected="200000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ipda"/>
+    <eval expected="200000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@ipda"/>
+    <eval expected="200000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ipd"/>
+    <eval expected="200000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@ipd"/>
+    
+    <!--
+      Note: only the first two block-containers are tested. Though they have the same values 
+      (except for @positioning) the must not be at the same position in a rendered PDF document.
+      
+      Don't throw out the block-containers below the first two because they are a good test to 
+      check whether the break-out mechanism works for "fixed" block-containers. -->
+  </checks>
+</testcase>

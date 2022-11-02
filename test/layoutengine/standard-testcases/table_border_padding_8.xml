@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks border and padding conditionality on table.
+    </p>
+  </info>
+  <fo>
+
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="BlankPage" page-width="210mm" page-height="297mm" margin-bottom="0mm" margin-right="0mm" margin-top="0mm" margin-left="0mm">
+      <fo:region-body margin-bottom="0mm" margin-right="0mm" margin-top="0mm" margin-left="0mm" region-name="Body"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="FirstPage" page-width="210mm" page-height="297mm" margin-bottom="0mm" margin-right="0mm" margin-top="0mm" margin-left="0mm">
+      <fo:region-body margin-bottom="19.5mm" margin-right="65mm" margin-top="20mm" margin-left="20mm" region-name="Body"/>
+
+
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="SecondPage" page-width="210mm" page-height="297mm" margin-bottom="0mm" margin-right="0mm" margin-top="0mm" margin-left="0mm">
+      <fo:region-body margin-bottom="19.5mm" margin-right="65mm" margin-top="20mm" margin-left="20mm" region-name="Body"/>
+
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="RestPage" page-width="210mm" page-height="297mm" margin-bottom="0mm" margin-right="0mm" margin-top="0mm" margin-left="0mm">
+      <fo:region-body margin-bottom="19.5mm" margin-right="65mm" margin-top="20mm" margin-left="20mm" region-name="Body"/>
+
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="PackPages">
+      <fo:repeatable-page-master-reference maximum-repeats="1" master-reference="FirstPage"/>
+      <fo:repeatable-page-master-reference maximum-repeats="1" master-reference="SecondPage"/>
+      <fo:repeatable-page-master-reference maximum-repeats="no-limit" master-reference="RestPage"/>
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference blank-or-not-blank="blank" master-reference="BlankPage"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence format="1" id="th_default_sequence1" master-reference="PackPages">
+
+    <fo:flow flow-name="Body">
+
+      <fo:block>
+
+        <fo:table  table-layout="fixed" width="125mm">
+          <fo:table-column column-width="3mm" column-number="1"/>
+          <fo:table-column column-width="25mm" column-number="2"/>
+          <fo:table-column column-width="95mm" column-number="3"/>
+          <fo:table-column column-width="2mm" column-number="4"/>
+          <fo:table-body>
+            <fo:table-row keep-together.within-page="always" keep-with-next.within-page="always">
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="1mm">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="8.5pt" line-height="13pt" space-before="10pt">
+                    <fo:inline>What you've got left to pay</fo:inline>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+              
+                  <fo:table table-layout="fixed" width="95mm">
+                    <fo:table-column column-width="95mm" column-number="1"/>
+                    <fo:table-body>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>
+                            <fo:block font-size="8.5pt" line-height="13pt" space-before="10pt">
+                              <fo:inline font-size="9pt" space-before="10pt" line-height="13pt">You're paying by monthly Direct Debit</fo:inline>
+                            </fo:block>
+                            <fo:list-block font-size="9pt" space-before="2.5pt" line-height="13pt" keep-together.within-page="always" keep-with-previous.within-page="always">
+                              <fo:list-item space-after="3pt" space-before="3pt">
+                                <fo:list-item-label end-indent="label-end()">
+                                  <fo:block>&gt;</fo:block>
+                                </fo:list-item-label>
+                                <fo:list-item-body start-indent="2.5mm">
+                                  <fo:block>We'll take a first Direct Debit of £146.50 on or just after 1 September 2016.</fo:block>
+                                </fo:list-item-body>
+                              </fo:list-item>
+    
+                            </fo:list-block>
+                            <fo:block font-size="9pt" line-height="13pt">
+                              <fo:inline>&gt;</fo:inline> More on page [[P;1057000239;1;1]]</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                    </fo:table-body>
+                  </fo:table>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="1mm">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:table border-right="0.5pt solid rgb-icc(220, 7, 116, #CMYK, 0.11, 0.97, 0.53, 0.03)"  fox:border-end-radius-after="2.5mm" border-bottom="0.5pt solid rgb-icc(220, 7, 116, #CMYK, 0.11, 0.97, 0.53, 0.03)" fox:border-start-radius-after="2.5mm" fox:border-after-radius-end="2.5mm" fox:border-after-radius-start="2.5mm" table-layout="fixed" width="125mm">
+          <fo:table-column column-width="125mm" column-number="1"/>
+          <fo:table-body>
+            <fo:table-row keep-together.within-page="always" keep-with-next.within-page="always" height="4mm">
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+       
+
+      </fo:block>
+
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="73113" xpath="//span/@bpd"/>
+  </checks>
+</testcase>

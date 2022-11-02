@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      Checks that the inline-container is properly aligned with the parent area.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page"
+          page-height="320pt" page-width="220pt" margin="10pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>By default the alignment is with the baseline of the first descendant 
+            line-area.</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt">
+              <fo:block font-size="20pt">Inside the inline-container.</fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt">
+              <fo:block space-before="20pt" space-before.conditionality="retain">
+                <fo:block-container space-before="10pt" space-before.conditionality="retain" 
+                  border="4pt solid" padding="2pt" start-indent="6pt" end-indent="6pt">
+                  <fo:block font-size="20pt" start-indent="0" end-indent="0">Inside the 
+                    inline-container.</fo:block>
+                </fo:block-container>
+              </fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>This inline-container has no line-area descendant. The after edge of its 
+            allocation rectangle should be aligned with the baseline.</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt">
+              <fo:block border="6pt solid" padding="2pt" start-indent="8pt" end-indent="8pt"/>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>The first line-area descendant is in fo:list-item-body.</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt">
+              <fo:list-block provisional-distance-between-starts="10pt" 
+                provisional-label-separation="5pt">
+                <fo:list-item>
+                  <fo:list-item-label end-indent="label-end()">
+                    <fo:block/>
+                  </fo:list-item-label>
+                  <fo:list-item-body start-indent="body-start()">
+                    <fo:block>
+                      <fo:block font-size="8pt">List item</fo:block>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>This inline-container contains a block that contains an inline that contains a 
+            block.</fo:block>
+          <fo:block>The line before. The line before. Before: <fo:inline-container width="100pt">
+              <fo:block><fo:inline><fo:block>inline</fo:block></fo:inline></fo:block>
+            </fo:inline-container> After the inline-container.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+
+  <checks>
+    <!-- Page sequence 1 -->
+    <eval expected="72000" xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/@bpd"/>
+    <!--
+      The font used is Helvetica, ascender 718, descender −207.
+      Default font size is 12pt => baseline offset = 718 * 12 = 8616mpt
+      Default line height is 1.2 * font-size
+        => space-before = (line-height − (ascender − descender) * font-size) / 2
+                        = (1.2 * 12000 − (718 + 207) * 12) / 2
+                        = 1650
+      At font size 20, the distance between the before-edge of the inline-container’s child block 
+      area and the first line area’s baseline is space-before + baseline-offset = 2750 + 14360 = 17110
+      So the word "Before:" must be offset by 17110 − 8616 = 8494
+    -->
+    <eval expected="Before: " xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/text[1]"/>
+    <eval expected="8494"     xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"     xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+
+    <eval expected="72000" xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <eval expected=" After the" xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/text[2]"/>
+    <eval expected="8494"       xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/text[2]/@offset"/>
+    <eval expected="8616"       xpath="//pageSequence[1]//flow/block[2]/lineArea[2]/text[2]/@baseline"/>
+
+    <!-- Page sequence 2 -->
+    <eval expected="34494"  xpath="//pageSequence[2]//flow/block/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"   xpath="//pageSequence[2]//flow/block/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="104000" xpath="//pageSequence[2]//flow/block/lineArea[2]/viewport/@bpd"/>
+    <eval expected="0"      xpath="//pageSequence[2]//flow/block/lineArea[2]/viewport/@offset"/>
+
+    <!-- Page sequence 3 -->
+    <!-- bpd = max(text ascent, ascent of inline-container) + text descent
+             = 16000 + 207 * 12 -->
+    <eval expected="18484" xpath="//pageSequence[3]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="7384"  xpath="//pageSequence[3]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[3]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="16000" xpath="//pageSequence[3]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[3]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- Page sequence 4 -->
+    <eval expected="11372" xpath="//pageSequence[4]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[4]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[4]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="9600"  xpath="//pageSequence[4]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="1772"  xpath="//pageSequence[4]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+
+    <!-- Page sequence 5 -->
+    <eval expected="14400" xpath="//pageSequence[5]//flow/block[2]/lineArea[2]/@bpd"/>
+    <eval expected="1650"  xpath="//pageSequence[5]//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="8616"  xpath="//pageSequence[5]//flow/block[2]/lineArea[2]/text[1]/@baseline"/>
+    <eval expected="14400" xpath="//pageSequence[5]//flow/block[2]/lineArea[2]/viewport/@bpd"/>
+    <eval expected="0"     xpath="//pageSequence[5]//flow/block[2]/lineArea[2]/viewport/@offset"/>
+  </checks>
+</testcase>

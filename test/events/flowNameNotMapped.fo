@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<fo:layout-master-set>
+<fo:simple-page-master master-name="CoverPage_A4">
+<fo:region-body region-name="CoverPage_Body"/>
+</fo:simple-page-master>
+<fo:simple-page-master master-name="ContentPage_A4">
+<fo:region-body region-name="ContentPage_Body"/>
+</fo:simple-page-master>
+</fo:layout-master-set>
+<fo:page-sequence master-reference="CoverPage_A4">
+<fo:flow flow-name="ContentPage_Body"> 
+<fo:block>hi</fo:block> 
+</fo:flow>
+</fo:page-sequence>
+</fo:root>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks absolutely positioned block-containers with auto-height and shrinks.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container id="bc0" width="80pt" absolute-position="absolute"
+              left="10pt" top="10pt" overflow="visible"
+              keep-together.within-column="always"
+              background-color="lightgray">
+            <fo:block space-after.maximum="1em" space-after.optimum="0.3em"
+              space-before.maximum="1em" space-before.optimum="0.3em">
+              Lorem ipsum dolor sit amet.
+            </fo:block>
+            <fo:block space-after.maximum="1em" space-after.optimum="0.3em"
+              space-before.maximum="1em" space-before.optimum="0.3em">
+              Lorem ipsum dolor sit amet.
+            </fo:block>
+            <fo:block space-after.maximum="1em" space-after.optimum="0.3em"
+              space-before.maximum="1em" space-before.optimum="0.3em">
+              Lorem ipsum dolor sit amet.
+            </fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="93600" xpath="//block[@prod-id='bc0' and boolean(@is-reference-area)]/@bpd"/>
+    <eval expected="28800" xpath="//block[@prod-id='bc0' and boolean(@is-reference-area)]/block[1]/@bpda"/>
+    <eval expected="32400" xpath="//block[@prod-id='bc0' and boolean(@is-reference-area)]/block[2]/@bpda"/>
+    <eval expected="32400" xpath="//block[@prod-id='bc0' and boolean(@is-reference-area)]/block[3]/@bpda"/>
+    <eval expected="3600" xpath="//block[@prod-id='bc0' and boolean(@is-reference-area)]/block[2]/@space-before"/>
+    <eval expected="3600" xpath="//block[@prod-id='bc0' and boolean(@is-reference-area)]/block[3]/@space-before"/>
+  </checks>
+</testcase>

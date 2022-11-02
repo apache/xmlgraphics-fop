@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" language="en" country="GB">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="220pt" page-width="320pt" margin="10pt">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body" hyphenate="true" font-family="sans-serif">
+      <fo:block role="H1" font-weight="bold" font-size="150%"
+        space-before.minimum="1.5em"
+        space-before.optimum="2em"
+        space-before.maximum="3em"
+        space-before.precedence="1000"
+        space-after.minimum="0.2em"
+        space-after.optimum="0.2em"
+        space-after.maximum="0.5em"
+        space-after.precedence="1000">Title 1: To Start With</fo:block>
+      <fo:block role="Header2" font-weight="bold" font-size="120%"
+        space-before.minimum="1.2em"
+        space-before.optimum="1.5em"
+        space-before.maximum="2em"
+        space-before.precedence="900"
+        space-after.minimum="0.2em"
+        space-after.optimum="0.2em"
+        space-after.maximum="0.5em"
+        space-after.precedence="900">A Sub-Title With a Non-Standard Role</fo:block>
+      <fo:block text-align="justify">Apache FOP (Formatting Objects Processor) is a print formatter 
+        driven by XSL formatting objects (XSL-FO) and an output independent formatter. It is a Java 
+        application that reads a formatting object (FO) tree and renders the resulting pages to a 
+        specified output.</fo:block>
+      <fo:block role="H2" font-weight="bold" font-size="120%"
+        space-before.minimum="1.2em"
+        space-before.optimum="1.5em"
+        space-before.maximum="2em"
+        space-before.precedence="900"
+        space-after.minimum="0.2em"
+        space-after.optimum="0.2em"
+        space-after.maximum="0.5em"
+        space-after.precedence="900">Title 2: Another Sub-Title</fo:block>
+      <fo:block text-align="justify">Apache FOP (Formatting Objects Processor) is a print formatter 
+        driven by XSL formatting objects (XSL-FO) and an output independent formatter. It is a Java 
+        application that reads a formatting object (FO) tree and renders the resulting pages to a 
+        specified output.</fo:block>
+      <fo:block role="H1" font-weight="bold" font-size="150%"
+        space-before.minimum="1.5em"
+        space-before.optimum="2em"
+        space-before.maximum="3em"
+        space-before.precedence="1000"
+        space-after.minimum="0.2em"
+        space-after.optimum="0.2em"
+        space-after.maximum="0.5em"
+        space-after.precedence="1000">Title 1: Second Title</fo:block>
+      <fo:block role="H2" font-weight="bold" font-size="120%"
+        space-before.minimum="1.2em"
+        space-before.optimum="1.5em"
+        space-before.maximum="2em"
+        space-before.precedence="900"
+        space-after.minimum="0.2em"
+        space-after.optimum="0.2em"
+        space-after.maximum="0.5em"
+        space-after.precedence="900">Title 2: A Sample Table</fo:block>
+      <fo:block>See data below:</fo:block>
+      <fo:table table-layout="fixed" width="70%" start-indent="15%" border="0.5pt solid black">
+        <fo:table-header start-indent="0" font-weight="bold" role="TableHeader">
+          <fo:table-row>
+            <fo:table-cell border="0.5pt solid black" padding="2pt">
+              <fo:block>Header 1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="0.5pt solid black" padding="2pt">
+              <fo:block>Header 2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-header>
+        <fo:table-footer start-indent="0" font-weight="bold">
+          <fo:table-row>
+            <fo:table-cell border="0.5pt solid black" padding="2pt">
+              <fo:block>Footer 1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="0.5pt solid black" padding="2pt">
+              <fo:block>Footer 2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-footer>
+        <fo:table-body start-indent="0">
+          <fo:table-row>
+            <fo:table-cell border="0.5pt solid black" padding="2pt">
+              <fo:block>Cell 1.1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="0.5pt solid black" padding="2pt">
+              <fo:block>Cell 1.2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell border="0.5pt solid black" padding="2pt">
+              <fo:block>Cell 2.1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="0.5pt solid black" padding="2pt">
+              <fo:block>Cell 2.2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+      <fo:block text-align="justify" space-before="0.5em">That’s all folks.</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

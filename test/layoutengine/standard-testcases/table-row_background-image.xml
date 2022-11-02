@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks background image on a fo:table-row.
+    </p>
+  </info>
+  <variables>
+    <img>../resources/images/bgimg300dpi.jpg</img>
+  </variables>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column number-columns-repeated="3" column-width="proportional-column-width(1)"/>
+            <fo:table-header>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Header Col 1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Header Col 2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Header Col 3</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+            <fo:table-body>
+              <fo:table-row height="1in" background-color="yellow" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
+                <fo:table-cell>
+                  <fo:block>Row 1 Col 1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Row 1 Col 2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Row 1 Col 3</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Row 2 Col 1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Row 2 Col 2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Row 2 Col 3</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block>Table with centered background image on row 1</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="120000" xpath="//flow/block/block[4]/@ipd"/>
+    <eval expected="72000" xpath="//flow/block/block[4]/@bpd"/>
+    <eval expected="color=#ffff00,url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=156960,vertical=12960" xpath="//flow/block/block[4]/@background"/>
+    <eval expected="" xpath="//flow/block/block[4]/@left-offset"/>
+
+    <eval expected="120000" xpath="//flow/block/block[6]/@ipd"/>
+    <eval expected="72000" xpath="//flow/block/block[6]/@bpd"/>
+    <eval expected="color=#ffff00,url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=36960,vertical=12960" xpath="//flow/block/block[6]/@background"/>
+    <eval expected="120000" xpath="//flow/block/block[6]/@left-offset"/>
+
+    <eval expected="120000" xpath="//flow/block/block[8]/@ipd"/>
+    <eval expected="72000" xpath="//flow/block/block[8]/@bpd"/>
+    <eval expected="color=#ffff00,url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=-83040,vertical=12960" xpath="//flow/block/block[8]/@background"/>
+    <eval expected="240000" xpath="//flow/block/block[8]/@left-offset"/>
+
+  </checks>
+</testcase>

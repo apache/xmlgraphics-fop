@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      Bugfix: 
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master page-width="216mm" page-height="303mm" master-name="Page1">
+          <fo:region-body region-name="PageBody"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master page-width="210mm" page-height="297mm" master-name="Page3">
+          <fo:region-body region-name="PageBody" />
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="StatementPages">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference master-reference="Page1" page-position="first"/>
+            <fo:conditional-page-master-reference master-reference="Page3" page-position="last"/>
+            <fo:conditional-page-master-reference master-reference="Page3" page-position="rest"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence format="1" id="th_default_sequence1" initial-page-number="auto" master-reference="StatementPages">
+        <fo:flow flow-name="PageBody">
+          <fo:block>Before the table</fo:block>
+          <fo:table table-layout="fixed" page-break-before="always" border-collapse="collapse">
+            <fo:table-column />
+            <fo:table-body>
+              <fo:table-row display-align="center" space-before="7pt" vertical-align="middle" height="1cm">
+                <fo:table-cell background-color="#E6E6E6" border-bottom-color="silver" border-bottom-style="solid" border-bottom-width="1pt">
+                  <fo:block>
+                    <fo:block color="rgb-icc(0, 161, 222, #CMYK, 0.85, 0.19, 0, 0) " font-family="TheSansB7" font-size="12pt" font-style="normal" font-weight="normal" line-height="14pt" text-align="right">Investment details</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+
+            </fo:table-body>
+          </fo:table>
+          <fo:block break-before="page"/>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="Before the table" xpath="//pageViewport[1]//flow/block[1]//text"/>
+    <eval expected="595275" xpath="//pageViewport[2]//flow/block[1]/@ipd"/>
+    <eval expected="28846" xpath="//pageViewport[2]//flow/block[1]/@bpd"/>
+  </checks>
+</testcase>

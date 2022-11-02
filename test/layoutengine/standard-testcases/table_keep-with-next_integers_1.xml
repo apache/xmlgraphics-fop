@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that keep-with-next works on tables.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" widows="0" orphans="0">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="10 * 14.4pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>block1</fo:block>
+          <fo:table width="100%" table-layout="fixed" keep-with-next.within-column="1">
+            <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>cell1/1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell1/2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block>block2</fo:block>
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row keep-with-next.within-column="1">
+                <fo:table-cell>
+                  <fo:block>cell1/1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell1/2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block keep-with-next.within-column="1">cell1/1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell1/2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row keep-with-next.within-column="1">
+                <fo:table-cell>
+                  <fo:block>cell1/1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell1/2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block>block3</fo:block>
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>cell1/1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block keep-with-next.within-column="1">cell1/2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block>block4</fo:block>
+          <fo:table width="100%" table-layout="fixed" keep-with-next.within-column="1">
+            <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row keep-with-next.within-column="2">
+                <fo:table-cell>
+                  <fo:block>cell1/1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block keep-with-next.within-column="always">cell1/2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block>block5</fo:block>
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>cell1/1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <!-- Check that keeps are processed correctly inside the cell -->
+                  <fo:block keep-with-next.within-column="1">cell1/2</fo:block>
+                  <fo:block>cell1/2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <!-- This cell stops earlier than the one next to it -->
+                  <fo:block keep-with-next.within-column="1">cell1/1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell1/2</fo:block>
+                  <fo:block>cell1/2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block>block6</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <element-list category="breaker">
+      <box/>
+      <penalty w="0" p="0"/>
+      <!-- table 1 starts -->
+      <box/>
+      <!-- table 1 end -->
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="0"/>
+      <!-- table 2 starts -->
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <!-- table 2 end -->
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="0"/>
+      <!-- table 3 starts -->
+      <box/>
+      <!-- table 3 end -->
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="0"/>
+      <!-- table 4 starts -->
+      <box/>
+      <!-- table 4 end -->
+      <penalty w="0" p="INF"/>
+      <box/>
+      <penalty w="0" p="0"/>
+      <!-- table 5 starts -->
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="0"/>
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <!-- table 5 end -->
+      <penalty w="0" p="999"/>
+      <box/>
+      
+      <skip>3</skip>
+    </element-list>
+  </checks>
+</testcase>

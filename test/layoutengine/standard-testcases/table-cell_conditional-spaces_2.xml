@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that conditional spaces work properly when a table-cell is broken over two
+      pages. Here there is a row-spanning cell in order to complicate things.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page" page-height="7cm" page-width="10cm" margin="1cm">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page" font-family="serif" font-size="14pt">
+        <fo:flow flow-name="xsl-region-body">
+
+          <fo:block break-before="page">1. Unbroken table:</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black">
+            <fo:table-column number-columns-repeated="2"
+              column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row background-color="yellow">
+                <fo:table-cell number-rows-spanned="2">
+                  <fo:block space-after="20pt"
+                    space-after.conditionality="discard">Cell 1.1 Line 1</fo:block>
+                  <fo:block space-before="10pt"
+                    space-before.conditionality="retain">Cell 1.1 Line 2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block space-after="15pt"
+                    space-after.conditionality="retain">Cell 1.2 Line 1</fo:block>
+                  <fo:block space-before="10pt"
+                    space-before.conditionality="retain">Cell 1.2 Line 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row background-color="grey">
+                <fo:table-cell>
+                  <fo:block space-after="5pt"
+                    space-after.conditionality="retain">Cell 2.2 Line 1</fo:block>
+                  <fo:block space-before="10pt"
+                    space-before.conditionality="retain">Cell 2.2 Line 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block break-before="page" space-after="2.7cm">2. Cells 1.1 and 1.2 split:</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black">
+            <fo:table-column number-columns-repeated="2"
+              column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row background-color="yellow">
+                <fo:table-cell number-rows-spanned="2">
+                  <fo:block space-after="20pt"
+                    space-after.conditionality="discard">Cell 1.1 Line 1</fo:block>
+                  <fo:block space-before="10pt"
+                    space-before.conditionality="retain">Cell 1.1 Line 2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block space-after="15pt"
+                    space-after.conditionality="retain">Cell 1.2 Line 1</fo:block>
+                  <fo:block space-before="10pt"
+                    space-before.conditionality="discard">Cell 1.2 Line 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row background-color="grey">
+                <fo:table-cell>
+                  <fo:block space-after="5pt"
+                    space-after.conditionality="retain">Cell 2.2 Line 1</fo:block>
+                  <fo:block space-before="10pt"
+                    space-before.conditionality="retain">Cell 2.2 Line 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block break-before="page" space-after="2.5cm">3. Cell 1.1 split, cell 1.2
+            not:</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black">
+            <fo:table-column number-columns-repeated="2"
+              column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row background-color="yellow">
+                <fo:table-cell number-rows-spanned="2">
+                  <fo:block space-after="20pt"
+                    space-after.conditionality="discard">Cell 1.1 Line 1</fo:block>
+                  <fo:block space-before="10pt"
+                    space-before.conditionality="retain">Cell 1.1 Line 2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block space-after="15pt"
+                    space-after.conditionality="retain">Cell 1.2 Line 1</fo:block>
+                  <fo:block space-before="10pt"
+                    space-before.conditionality="discard">Cell 1.2 Line 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row background-color="grey">
+                <fo:table-cell>
+                  <fo:block space-after="5pt"
+                    space-after.conditionality="retain">Cell 2.2 Line 1</fo:block>
+                  <fo:block space-before="10pt"
+                    space-before.conditionality="retain">Cell 2.2 Line 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block break-before="page" space-after="1.5cm">4. Cell 2.2 split:</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black">
+            <fo:table-column number-columns-repeated="2"
+              column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row background-color="yellow">
+                <fo:table-cell number-rows-spanned="2">
+                  <fo:block space-after="20pt"
+                    space-after.conditionality="discard">Cell 1.1 Line 1</fo:block>
+                  <fo:block space-before="10pt"
+                    space-before.conditionality="retain">Cell 1.1 Line 2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block space-after="15pt"
+                    space-after.conditionality="retain">Cell 1.2 Line 1</fo:block>
+                  <fo:block space-before="10pt"
+                    space-before.conditionality="discard">Cell 1.2 Line 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row background-color="grey">
+                <fo:table-cell>
+                  <fo:block space-after="5pt"
+                    space-after.conditionality="discard">Cell 2.2 Line 1</fo:block>
+                  <fo:block space-before="10pt"
+                    space-before.conditionality="retain">Cell 2.2 Line 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- Seven pages -->
+    <eval expected="7" xpath="count(//pageViewport)"/>
+
+    <!-- 1. table not broken -->
+    <eval expected="92200" xpath="//pageViewport[1]//flow/block[2]/@bpd"/>
+    <!-- Cell 1.2 -->
+    <!-- Block for yellow background -->
+    <eval expected="48600" xpath="//pageViewport[1]//flow/block[2]/block[1]/@bpd"/>
+    <eval expected="48600" xpath="//pageViewport[1]//flow/block[2]/block[2]/@bpd"/>
+    <eval expected="15000" xpath="//pageViewport[1]//flow/block[2]/block[2]/block[1]/@space-after"/>
+    <eval expected="0" xpath="count(//pageViewport[1]//flow/block[2]/block[2]/block[2]/@space-before)"/>
+    <!-- Cell 1.1 -->
+    <!-- Block for yellow background -->
+    <eval expected="92200" xpath="//pageViewport[1]//flow/block[2]/block[3]/@bpd"/>
+    <eval expected="20000" xpath="//pageViewport[1]//flow/block[2]/block[4]/block[1]/@space-after"/>
+    <eval expected="0" xpath="count(//pageViewport[1]//flow/block[2]/block[4]/block[2]/@space-before)"/>
+    <!-- Cell 2.2 -->
+    <!-- Block for grey background -->
+    <eval expected="43600" xpath="//pageViewport[1]//flow/block[2]/block[5]/@bpd"/>
+    <eval expected="43600" xpath="//pageViewport[1]//flow/block[2]/block[6]/@bpd"/>
+    <eval expected="0" xpath="count(//pageViewport[1]//flow/block[2]/block[6]/block[1]/@space-after)"/>
+    <eval expected="10000" xpath="//pageViewport[1]//flow/block[2]/block[6]/block[2]/@space-before"/>
+
+    <!-- 2. Cells 1.1 and 1.2 split -->
+    <!-- First page -->
+    <eval expected="31800" xpath="//pageViewport[2]//flow/block[2]/@bpd"/>
+    <!-- Cell 1.1 Line 1 -->
+    <!-- Block for yellow background -->
+    <eval expected="31800" xpath="//pageViewport[2]//flow/block[2]/block[1]/@bpd"/>
+    <eval expected="0" xpath="count(//pageViewport[2]//flow/block[2]/block[2]/block[1]/@space-after)"/>
+    <!-- Cell 1.2 Line 1 -->
+    <!-- Block for yellow background -->
+    <eval expected="31800" xpath="//pageViewport[2]//flow/block[2]/block[3]/@bpd"/>
+    <eval expected="15000" xpath="//pageViewport[2]//flow/block[2]/block[4]/block[1]/@space-after"/>
+    <!-- Second page -->
+    <eval expected="60400" xpath="//pageViewport[3]//flow/block[1]/@bpd"/>
+    <!-- Cell 1.2 Line 2 -->
+    <!-- Block for yellow background -->
+    <eval expected="16800" xpath="//pageViewport[3]//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="16800" xpath="//pageViewport[3]//flow/block[1]/block[2]/@bpd"/>
+    <eval expected="0" xpath="count(//pageViewport[3]//flow/block[1]/block[2]/@space-before)"/>
+    <!-- Cell 1.1 Line 2 -->
+    <!-- Block for yellow background -->
+    <eval expected="60400" xpath="//pageViewport[3]//flow/block[1]/block[3]/@bpd"/>
+    <eval expected="16800" xpath="//pageViewport[3]//flow/block[1]/block[4]/block[1]/@bpd"/>
+    <eval expected="10000" xpath="//pageViewport[3]//flow/block[1]/block[4]/block[1]/@space-before"/>
+    <!-- Cell 2.2 -->
+    <!-- Block for grey background -->
+    <eval expected="43600" xpath="//pageViewport[3]//flow/block[1]/block[5]/@bpd"/>
+    <eval expected="43600" xpath="//pageViewport[3]//flow/block[1]/block[6]/@bpd"/>
+    <eval expected="0" xpath="count(//pageViewport[3]//flow/block[1]/block[6]/block[1]/@space-after)"/>
+    <eval expected="10000" xpath="//pageViewport[3]//flow/block[1]/block[6]/block[2]/@space-before"/>
+
+    <!-- 3. Cell 1.1 split, cell 1.2 not -->
+    <!-- First page -->
+    <eval expected="48600" xpath="//pageViewport[4]//flow/block[2]/@bpd"/>
+    <!-- Cell 1.1 Line 1 -->
+    <!-- Block for yellow background -->
+    <eval expected="48600" xpath="//pageViewport[4]//flow/block[2]/block[1]/@bpd"/>
+    <eval expected="0" xpath="count(//pageViewport[4]//flow/block[2]/block[2]/block[1]/@space-after)"/>
+    <!-- Cell 1.2 Line 1 -->
+    <!-- Block for yellow background -->
+    <eval expected="48600" xpath="//pageViewport[4]//flow/block[2]/block[3]/@bpd"/>
+    <eval expected="15000" xpath="//pageViewport[4]//flow/block[2]/block[4]/block[1]/@space-after"/>
+    <eval expected="0" xpath="count(//pageViewport[4]//flow/block[2]/block[4]/block[2]/@space-before)"/>
+    <!-- Second page -->
+    <eval expected="43600" xpath="//pageViewport[5]//flow/block[1]/@bpd"/>
+    <!-- Cell 1.1 Line 2 -->
+    <!-- Block for yellow background -->
+    <eval expected="43600" xpath="//pageViewport[5]//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="16800" xpath="//pageViewport[5]//flow/block[1]/block[2]/block[1]/@bpd"/>
+    <eval expected="10000" xpath="//pageViewport[5]//flow/block[1]/block[2]/block[1]/@space-before"/>
+    <!-- Cell 2.2 -->
+    <!-- Block for grey background -->
+    <eval expected="43600" xpath="//pageViewport[5]//flow/block[1]/block[3]/@bpd"/>
+    <eval expected="43600" xpath="//pageViewport[5]//flow/block[1]/block[4]/@bpd"/>
+    <eval expected="0" xpath="count(//pageViewport[5]//flow/block[1]/block[4]/block[1]/@space-after)"/>
+    <eval expected="10000" xpath="//pageViewport[5]//flow/block[1]/block[4]/block[2]/@space-before"/>
+
+    <!-- 4. Cell 2.2 split -->
+    <!-- First page -->
+    <eval expected="65400" xpath="//pageViewport[6]//flow/block[2]/@bpd"/>
+    <!-- Cell 1.2 -->
+    <!-- Block for yellow background -->
+    <eval expected="48600" xpath="//pageViewport[6]//flow/block[2]/block[1]/@bpd"/>
+    <eval expected="48600" xpath="//pageViewport[6]//flow/block[2]/block[2]/@bpd"/>
+    <eval expected="15000" xpath="//pageViewport[6]//flow/block[2]/block[2]/block[1]/@space-after"/>
+    <eval expected="0" xpath="count(//pageViewport[6]//flow/block[2]/block[2]/block[2]/@space-before)"/>
+    <!-- Cell 1.1 -->
+    <!-- Block for yellow background -->
+    <eval expected="65400" xpath="//pageViewport[6]//flow/block[2]/block[3]/@bpd"/>
+    <eval expected="20000" xpath="//pageViewport[6]//flow/block[2]/block[4]/block[1]/@space-after"/>
+    <eval expected="0" xpath="count(//pageViewport[6]//flow/block[2]/block[4]/block[2]/@space-before)"/>
+    <!-- Cell 2.2 Line 1 -->
+    <!-- Block for grey background -->
+    <eval expected="16800" xpath="//pageViewport[6]//flow/block[2]/block[5]/@bpd"/>
+    <eval expected="16800" xpath="//pageViewport[6]//flow/block[2]/block[6]/@bpd"/>
+    <eval expected="0" xpath="count(//pageViewport[6]//flow/block[2]/block[6]/block[1]/@space-after)"/>
+    <!-- Second page -->
+    <eval expected="26800" xpath="//pageViewport[7]//flow/block[1]/@bpd"/>
+    <!-- Block for yellow background -->
+    <eval expected="26800" xpath="//pageViewport[7]//flow/block[1]/block[1]/@bpd"/>
+    <!-- Cell 2.2 Line 2 -->
+    <!-- Block for grey background -->
+    <eval expected="26800" xpath="//pageViewport[7]//flow/block[1]/block[3]/@bpd"/>
+    <eval expected="26800" xpath="//pageViewport[7]//flow/block[1]/block[4]/@bpd"/>
+    <eval expected="10000" xpath="//pageViewport[7]//flow/block[1]/block[4]/block[1]/@space-before"/>
+
+  </checks>
+</testcase>

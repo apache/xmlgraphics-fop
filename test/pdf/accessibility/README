@@ -1,0 +1,41 @@
+This directory contains sample FO files for testing the accessibility features
+of FOP.
+
+Every FO file in this directory has a corresponding PDF file in the pdf/
+sub-directory. The fop.xconf configuration file was used.
+
+The PDF files have been checked with Adobe Acrobat Professional 9, using both 
+the full accessibility checker and the read-aloud feature. The checker reports 
+no error /and/ the entire document can be read aloud.
+
+
+!! DO NOT MODIFY THOSE FILES, NEITHER THE FO NOR THE PDF !!
+
+
+... Or at least, know what you are doing
+If the FO files are modified, the resulting PDFs must be checked again, both 
+with the checker and the read-aloud feature. (Sometimes the checker reports no 
+problem yet part or all of the document cannot be read aloud.)
+
+The purpose of this infrastructure is to be able to quickly re-test the 
+accessibility processing chain when any change has been made to it. The 
+configuration file disables the compression of the PDF streams, so it is 
+possible to compare a re-generated PDF with the original one by using a simple 
+diff tool. The files will not be identical because of the different creation 
+dates (and the ID key in the trailer), but apart from that there should be no 
+difference.
+
+The rationale is that using a diff tool is much quicker and less tedious than 
+running Acrobat's accessibility checker and read-aloud feature every time.
+
+
+To re-generate the PDF files:
+    ../../fop -c fop.xconf text_1.fo pdf/text_1.new.pdf
+    diff pdf/text_1_painter.pdf pdf/text_1.new.pdf
+Or, going through the intermediate format:
+    ../../fop -c fop.xconf text_1.fo -if application/pdf text_1_if.xml
+    ../../fop -c fop.xconf -ifin text_1_if.xml pdf/text_1.new.pdf
+    diff pdf/text_1.pdf pdf/text_1.new.pdf
+
+
+$Id$

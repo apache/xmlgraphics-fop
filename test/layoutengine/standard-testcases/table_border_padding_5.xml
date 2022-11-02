@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks border and padding conditionality on table.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+
+  <fo:layout-master-set>
+
+    <fo:simple-page-master master-name="letterOnePageFront" page-width="210mm" page-height="297mm" margin-bottom="4mm" margin-right="6mm" margin-top="5mm" margin-left="7mm">
+      <fo:region-body margin-bottom="16mm" margin-right="59mm" margin-top="24mm" margin-left="6mm" region-name="letterOnePageBody"/>
+
+
+    </fo:simple-page-master>
+
+    <fo:simple-page-master master-name="letterOnePageRolloverLastNonBlank" page-width="210mm" page-height="297mm" margin-bottom="4mm" margin-right="6mm" margin-top="5mm" margin-left="7mm">
+      <fo:region-body margin-bottom="20mm" background-color="yellow" margin-right="12mm" margin-top="15mm" margin-left="6mm" region-name="letterOnePageBody"/>
+
+    </fo:simple-page-master>
+  
+
+    <fo:page-sequence-master master-name="condLetterOnePage">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference page-position="first" master-reference="letterOnePageFront"/>
+        <fo:conditional-page-master-reference page-position="rest" master-reference="letterOnePageRolloverLastNonBlank"/>
+
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+
+  </fo:layout-master-set>
+
+  <fo:page-sequence format="1" id="secondseq" initial-page-number="1" force-page-count="end-on-even" master-reference="condLetterOnePage">
+
+    <fo:flow flow-name="letterOnePageBody">
+
+      <fo:block>
+
+        <fo:block-container height="25cm">
+          <fo:block></fo:block>
+        </fo:block-container>
+
+        <fo:block font-size="13pt" line-height="14pt" margin-top="2mm" keep-with-next="always">Spread the cost with no extra charge </fo:block>
+        
+        <fo:block-container height="12cm">
+          <fo:block></fo:block>
+        </fo:block-container>
+    
+   
+        <fo:table  border-bottom-style="solid" border-bottom-width="0.5pt"  border-left-style="solid" border-left-width="0.5pt" border-right-color="#7F7F7F" border-right-style="solid" border-right-width="0.5pt"  border-top-style="solid" border-top-width="0.5pt" table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(1.14916111238796)" column-number="1"/>
+          <fo:table-column column-width="proportional-column-width(30)" column-number="2"/>
+          <fo:table-column column-width="proportional-column-width(1)" column-number="3"/>
+          <fo:table-column column-width="proportional-column-width(11.33)" column-number="4"/>
+          <fo:table-column column-width="proportional-column-width(11.33)" column-number="5"/>
+          <fo:table-column column-width="proportional-column-width(11.33)" column-number="6"/>
+          <fo:table-column column-width="proportional-column-width(11.33)" column-number="7"/>
+          <fo:table-column column-width="proportional-column-width(11.200838887612)" column-number="8"/>
+          <fo:table-column column-width="proportional-column-width(11.33)" column-number="9"/>
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="10pt" line-height="12pt" space-before="1.5mm" space-before.conditionality="retain">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="10pt" line-height="12pt" space-before="1.5mm" space-before.conditionality="retain">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block>
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell   border-left-style="solid" border-left-width="0.5pt">
+                <fo:block>
+                  <fo:block font-size="10pt" line-height="12pt" space-before="1.5mm" space-before.conditionality="retain" text-align="center">Monthly/<fo:block/>Quarterly<fo:block/>Direct Debit</fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell   border-left-style="solid" border-left-width="0.5pt">
+                <fo:block>
+                  <fo:block font-size="10pt" line-height="12pt" space-before="1.5mm" space-before.conditionality="retain" text-align="center">Quarterly Credit/Debit Card</fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell   border-left-style="solid" border-left-width="0.5pt">
+                <fo:block>
+                  <fo:block font-size="10pt" line-height="12pt" space-before="1.5mm" space-before.conditionality="retain" text-align="center">Annual Direct<fo:block/>Debit</fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell   border-left-style="solid" border-left-width="0.5pt">
+                <fo:block>
+                  <fo:block font-size="10pt" line-height="12pt" space-before="1.5mm" space-before.conditionality="retain" text-align="center">Annual Credit/<fo:block/>Debit Card</fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell   border-left-style="solid" border-left-width="0.5pt">
+                <fo:block>
+                  <fo:block font-size="10pt" line-height="12pt" space-before="1.5mm" space-before.conditionality="retain" text-align="center">Credit/<fo:block/>Debit Card</fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell   border-left-style="solid" border-left-width="0.5pt">
+                <fo:block>
+                  <fo:block font-size="10pt" line-height="12pt" space-before="1.5mm" space-before.conditionality="retain" text-align="center">Cheque</fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  border-top-style="solid" border-top-width="0.25pt" font-family="ZapfDingbats" font-size="11pt" line-height="13pt" padding-top="2pt" space-before="1.5mm" space-before.conditionality="retain" text-align="right">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  border-top-style="solid" border-top-width="0.25pt" font-size="10pt" line-height="12pt" padding-top="2pt" space-before="1.5mm" space-before.conditionality="retain">
+                    <fo:inline font-size="10pt" line-height="11pt" space-before="0.5mm">
+                      <fo:inline font-weight="bold">Free</fo:inline>
+                    </fo:inline> - we won't charge you any extra in the coming policy year</fo:block>
+                </fo:block>
+              </fo:table-cell>
+
+            </fo:table-row>
+            <fo:table-row height="0.714374989271164cm">
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  border-top-style="solid" border-top-width="0.25pt" font-family="ZapfDingbats" font-size="11pt" line-height="13pt" padding-top="2pt" space-before="1.5mm" space-before.conditionality="retain" text-align="right">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  border-top-style="solid" border-top-width="0.25pt" font-size="10pt" line-height="12pt" padding-top="2pt" space-before="1.5mm" space-before.conditionality="retain">
+                    <fo:inline font-size="10pt" line-height="11pt" space-before="0.5mm">
+                      <fo:inline font-weight="bold">Convenient</fo:inline>
+                    </fo:inline> - never miss payments</fo:block>
+                </fo:block>
+              </fo:table-cell>
+
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  border-top-style="solid" border-top-width="0.25pt" font-family="ZapfDingbats" font-size="11pt" line-height="13pt" padding-top="2pt" space-before="1.5mm" space-before.conditionality="retain" text-align="right">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  border-top-style="solid" border-top-width="0.25pt" font-size="10pt" line-height="12pt" padding-top="2pt" space-before="1.5mm" space-before.conditionality="retain">
+                    <fo:inline font-size="10pt" line-height="11pt" space-before="0.5mm">
+                      <fo:inline font-weight="bold">You're always covered</fo:inline>
+                    </fo:inline> - even if you're away at your renewal date</fo:block>
+                </fo:block>
+              </fo:table-cell>
+
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  border-top-style="solid" border-top-width="0.25pt" font-family="ZapfDingbats" font-size="11pt" line-height="13pt" padding-top="2pt" space-before="1.5mm" space-before.conditionality="retain" text-align="right">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  border-top-style="solid" border-top-width="0.25pt" font-size="10pt" line-height="12pt" padding-top="2pt" space-before="1.5mm" space-before.conditionality="retain">
+                    <fo:inline font-size="10pt" line-height="11pt" space-before="0.5mm">
+                      <fo:inline font-weight="bold">Extra security</fo:inline>
+                    </fo:inline> -  payments are backed by the Direct Debit Guarantee</fo:block>
+                </fo:block>
+              </fo:table-cell>
+
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  border-top-style="solid" border-top-width="0.25pt" font-family="ZapfDingbats" font-size="11pt" line-height="13pt" padding-top="2pt" space-before="1.5mm" space-before.conditionality="retain" text-align="right">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  border-top-style="solid" border-top-width="0.25pt" font-size="10pt" line-height="12pt" padding-top="2pt" space-before="1.5mm" space-before.conditionality="retain">
+                    <fo:inline font-size="10pt" line-height="11pt" space-before="0.5mm">
+                      <fo:inline font-weight="bold">Easy to budget</fo:inline>
+                    </fo:inline> - spread the payments</fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  border-top-style="solid" border-top-width="0.25pt" font-family="ZapfDingbats" font-size="11pt" line-height="13pt" padding-top="2pt" space-before="1.5mm" space-before.conditionality="retain" text-align="right">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:block color="white" font-size="6pt">
+          <fo:leader/>
+        </fo:block>
+        <fo:table keep-together.within-page="always" table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(23)" column-number="1"/>
+
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="1pt" line-height="1pt">
+                    <fo:leader/>
+                  </fo:block>
+                  <fo:block font-size="11pt" line-height="13pt" space-before="1mm" space-before.conditionality="retain" text-align="left" background-color="red">
+                    <fo:external-graphic scaling="uniform" src="url(a)" width="2.9633333333333334cm" content-width="2.9633333333333334cm" height="1.3546666666666667cm" content-height="1.3546666666666667cm"/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block font-size="1pt" line-height="1pt">
+                    <fo:leader/>
+                  </fo:block>
+                  <fo:block font-size="11pt" line-height="13pt" space-before="1mm" space-before.conditionality="retain">As a 1234 customer, you are eligible to join our free membership programme called Possibilities. Possibilities brings you VIP experiences and exclusive access to events and great offers. For more information and to join Possibilities, simply speak to our advisers when you call to renew or visit 1234.co.uk/membership</fo:block>
+                </fo:block>
+              </fo:table-cell>
+
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+      </fo:block>
+
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="Possibilities." xpath="//pageViewport[2]//block[last()]//block[last()]/block[2]//word[15]"/>
+  </checks>
+</testcase>

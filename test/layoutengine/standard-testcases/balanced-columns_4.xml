@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks balancing when KnuthGlue elements are introduced
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page"
+          page-height="320pt" page-width="420pt" margin="10pt">
+          <fo:region-body column-count="2"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body" text-align="justify">
+
+          <fo:block border="1pt solid black" border-before-width.conditionality="retain" 
+            border-after-width.conditionality="retain">Lorem ipsum dolor sit amet, consectetur 
+            adipiscing elit. Vestibulum arcu felis, gravida vitae laoreet in, molestie nec libero. 
+            Mauris non enim diam. Pellentesque nisl diam, aliquet nec euismod vitae, convallis nec 
+            massa. Mauris gravida arcu ac erat euismod molestie. Maecenas eget neque in sem aliquam 
+            viverra. Vivamus dictum lobortis scelerisque. In cursus venenatis arcu, id vulputate nisi 
+            interdum non. Nulla venenatis porta ipsum. Aenean mattis placerat nibh, porttitor consequat 
+            orci suscipit sed. Sed eget orci nisi, eget commodo arcu. Nulla urna urna, tristique ac 
+            sagittis ut, mollis in leo. Praesent et dui nulla. Nullam nec dui quis velit pretium 
+            tristique. Nullam et neque eros. Sed non dolor id dolor vulputate faucibus. Suspendisse non 
+            lacus eget nibh faucibus scelerisque eget vel nunc. In malesuada ornare eros vitae sagittis. 
+            Aliquam erat volutpat. Aenean feugiat dignissim lobortis.</fo:block>
+
+          <fo:block span="all"/>
+
+        </fo:flow>
+      </fo:page-sequence>
+
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="placerat" xpath="//span[1]/flow[1]/block[1]/lineArea[14]/text[1]/word[5]"/>
+    <eval expected="nibh," xpath="//span[1]/flow[2]/block[1]/lineArea[1]/text[1]/word[1]"/>
+  </checks>
+</testcase>

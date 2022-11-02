@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fop version="1.0">
+  <base>.</base>
+  <renderers>
+   <renderer mime="application/x-afp">
+      <fonts>
+        <font>
+          <afp-font name="TEST" type="raster" codepage="bad:\\lkja" encoding="Cp500" ebcdic-dbcs="true">
+            <afp-raster-font size="36" characterset="C0N200Z0"/>
+          </afp-font>
+          <font-triplet name="TEST" style="normal" weight="normal"/>
+        </font>
+      </fonts>
+    </renderer>
+  </renderers>
+</fop>

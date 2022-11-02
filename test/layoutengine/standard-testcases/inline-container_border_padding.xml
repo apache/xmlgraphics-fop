@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the borders and the like for instream-foreign-object.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block background-color="orange">
+            Before <fo:inline-container border-style="solid" border-width="5pt 10pt 20pt 15pt" padding="15pt 20pt 10pt 5pt" background-color="white">
+                <fo:block>inside the container</fo:block>
+            </fo:inline-container> after
+          </fo:block>
+          <fo:block background-color="yellow" font-size="100pt">
+            BC <fo:inline-container border-style="solid" border-width="5pt 10pt 20pt 15pt" padding="15pt 20pt 10pt 5pt" background-color="white">
+                <fo:block font-size="12pt">inside the container</fo:block>
+            </fo:inline-container> AC
+          </fo:block>
+          <fo:block font-size="9pt">
+           In both blocks we have a setting of border-width="5pt 10pt 20pt 15pt" padding="15pt 20pt 10pt 5pt" on the i-f-o.
+           In the first block the i-f-o determines the height of the line in the 2nd block the font is bigger than the i-f-o.
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- first e-g -->
+    <eval expected="20000" xpath="//flow/block[1]/lineArea/viewport/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[1]/lineArea/viewport/@bpd"/>
+    <eval expected="70000" xpath="//flow/block[1]/lineArea/viewport/@bpda"/>
+    <eval expected="1650" xpath="//flow/block[1]/lineArea/viewport/@offset"/>
+    <eval expected="20000 30000 20000 30000" xpath="//flow/block[1]/lineArea/viewport/@bap"/>
+    <eval expected="color=#ffffff" xpath="//flow/block[1]/lineArea/viewport/@background"/>
+    <eval expected="(solid,#000000,5000)" xpath="//flow/block[1]/lineArea/viewport/@border-before"/>
+    <eval expected="(solid,#000000,20000)" xpath="//flow/block[1]/lineArea/viewport/@border-after"/>
+    <eval expected="(solid,#000000,15000)" xpath="//flow/block[1]/lineArea/viewport/@border-start"/>
+    <eval expected="(solid,#000000,10000)" xpath="//flow/block[1]/lineArea/viewport/@border-end"/>
+    <eval expected="15000" xpath="//flow/block[1]/lineArea/viewport/@padding-before"/>
+    <eval expected="10000" xpath="//flow/block[1]/lineArea/viewport/@padding-after"/>
+    <eval expected="5000" xpath="//flow/block[1]/lineArea/viewport/@padding-start"/>
+    <eval expected="20000" xpath="//flow/block[1]/lineArea/viewport/@padding-end"/>
+    <eval expected="20000 20000 20000 20000" xpath="//flow/block[1]/lineArea/viewport/foreignObject/@pos"/>
+    <!-- second e-g -->
+    <eval expected="20000" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
+    <eval expected="70000" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
+    <eval expected="15550" xpath="//flow/block[2]/lineArea/viewport/@offset"/>
+    <eval expected="20000 30000 20000 30000" xpath="//flow/block[2]/lineArea/viewport/@bap"/>
+    <eval expected="color=#ffffff" xpath="//flow/block[2]/lineArea/viewport/@background"/>
+    <eval expected="(solid,#000000,5000)" xpath="//flow/block[2]/lineArea/viewport/@border-before"/>
+    <eval expected="(solid,#000000,20000)" xpath="//flow/block[2]/lineArea/viewport/@border-after"/>
+    <eval expected="(solid,#000000,15000)" xpath="//flow/block[2]/lineArea/viewport/@border-start"/>
+    <eval expected="(solid,#000000,10000)" xpath="//flow/block[2]/lineArea/viewport/@border-end"/>
+    <eval expected="15000" xpath="//flow/block[2]/lineArea/viewport/@padding-before"/>
+    <eval expected="10000" xpath="//flow/block[2]/lineArea/viewport/@padding-after"/>
+    <eval expected="5000" xpath="//flow/block[2]/lineArea/viewport/@padding-start"/>
+    <eval expected="20000" xpath="//flow/block[2]/lineArea/viewport/@padding-end"/>
+    <eval expected="20000 20000 20000 20000" xpath="//flow/block[2]/lineArea/viewport/foreignObject/@pos"/>
+  </checks>
+</testcase>

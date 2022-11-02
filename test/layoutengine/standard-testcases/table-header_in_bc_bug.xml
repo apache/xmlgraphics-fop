@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks a bug where the header is omitted when the table is a descendant of a block-container.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="3in" page-height="1in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container>
+          <!--fo:block-->
+          <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+            <fo:table-column column-width="100pt" text-align="right"/>
+            <fo:table-header>
+              <fo:table-row>
+                <fo:table-cell padding-left="3pt" padding-top="1pt" border-style="solid" border-width="thin" padding-right="0.25cm" id="header-cell">
+                  <fo:block text-align="center">Header</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell padding-left="3pt" padding-top="1pt" border-style="solid" border-width="thin" padding-right="0.25cm">
+                  <fo:block text-align="right">1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell padding-left="3pt" padding-top="1pt" border-style="solid" border-width="thin" padding-right="0.25cm">
+                  <fo:block text-align="right">2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell padding-left="3pt" padding-top="1pt" border-style="solid" border-width="thin" padding-right="0.25cm">
+                  <fo:block text-align="right">3</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell padding-left="3pt" padding-top="1pt" border-style="solid" border-width="thin" padding-right="0.25cm">
+                  <fo:block text-align="right">4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell padding-left="3pt" padding-top="1pt" border-style="solid" border-width="thin" padding-right="0.25cm">
+                  <fo:block text-align="right">5</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell padding-left="3pt" padding-top="1pt" border-style="solid" border-width="thin" padding-right="0.25cm">
+                  <fo:block text-align="right">6</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <!--/fo:block-->
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="1" xpath="count(//pageViewport[1]//block[@prod-id='header-cell'])"/>
+    <eval expected="1" xpath="count(//pageViewport[2]//block[@prod-id='header-cell'])"/>
+  </checks>
+</testcase>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Gladiator">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="320pt" page-width="420pt" margin="10pt">
+      <fo:region-body display-align="center"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body" text-align="center">
+      <fo:block start-indent="50pt" end-indent="50pt" font-size="15pt" space-after="10pt">SVG 
+        referencing a bitmap image that has transparency</fo:block>
+      <fo:block><fo:instream-foreign-object>
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+            width="100" height="100">
+            <rect x="0" y="0" width="100%" height="100%" fill="none" stroke="black" 
+              stroke-width="2"/>
+            <image x="0" y="0" width="100%" height="100%" 
+              xlink:href="resources/images/list-item.png"/>
+          </svg>
+      </fo:instream-foreign-object></fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fop version="1.0">
+  <base>.</base>
+  <strict-validation>false</strict-validation>
+  <renderers>
+   <renderer mime="application/x-afp">
+      <fonts>
+        <font>
+          <afp-font name="TEST" type="raster" codepage="T1V10500" encoding="Cp500" ebcdic-dbcs="true">
+            <afp-raster-font size="36" characterset="THIS NAME IS TOO LONG"/>
+          </afp-font>
+          <font-triplet name="TEST" style="normal" weight="normal"/>
+        </font>
+      </fonts>
+    </renderer>
+  </renderers>
+</fop>

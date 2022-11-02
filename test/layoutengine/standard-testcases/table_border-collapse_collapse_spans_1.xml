@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks tables with the collapsing-border model and simple spanning cells.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="16cm" page-height="20cm" margin="20pt">
+          <fo:region-body margin="0pt"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+
+          <fo:block>Before the tables</fo:block>
+          <!-- table 1 -->
+          <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell number-rows-spanned="2"
+                  background-color="yellow"
+                  border-top="16pt solid black"
+                  border-bottom="10pt solid blue"
+                  border-left="12pt solid red"
+                  border-right="4pt solid teal">
+                  <fo:block>Cell 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell
+                  border-top="4pt solid silver"
+                  border-bottom="10pt solid navy"
+                  border-left="10pt solid purple"
+                  border-right="4pt solid olive">
+                  <fo:block>Cell 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell
+                  border-top="10pt solid black"
+                  border-bottom="6pt solid silver"
+                  border-left="3pt solid red"
+                  border-right="10pt solid teal">
+                  <fo:block>Cell 2.2 Cell 2.2 Cell 2.2 Cell 2.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block>Between tables</fo:block>
+          <!-- table 2 -->
+          <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell
+                  border-top="12pt solid black"
+                  border-bottom="12pt solid blue"
+                  border-left="12pt solid red"
+                  border-right="4pt solid teal">
+                  <fo:block>Cell 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell number-rows-spanned="2"
+                  background-color="yellow"
+                  padding="10pt"
+                  border-top="4pt solid silver"
+                  border-bottom="4pt solid purple"
+                  border-left="4pt solid purple"
+                  border-right="10pt solid olive">
+                  <fo:block>Cell 1.2 Cell 1.2 Cell 1.2 Cell 1.2 Cell 1.2 Cell 1.2 Cell 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell
+                  border-top="6pt solid silver"
+                  border-bottom="6pt solid navy"
+                  border-left="6pt solid purple"
+                  border-right="16pt solid olive">
+                  <fo:block>Cell 2.1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block>Between tables</fo:block>
+          <!-- table 3 -->
+          <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell number-columns-spanned="2"
+                  background-color="yellow"
+                  padding-top="4pt"
+                  padding-bottom="5pt"
+                  padding-left="6pt"
+                  padding-right="7pt"
+                  border-top="2pt solid black"
+                  border-bottom="4pt solid blue"
+                  border-left="2pt solid red"
+                  border-right="2pt solid teal">
+                  <fo:block>Cell 1.1 Cell 1.1 Cell 1.1 Cell 1.1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell
+                  border-top="1pt solid silver"
+                  border-bottom="6pt solid navy"
+                  border-left="6pt solid purple"
+                  border-right="6pt solid olive">
+                  <fo:block>Cell 2.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell
+                  border-top="10pt solid black"
+                  border-bottom="10pt solid silver"
+                  border-left="10pt solid red"
+                  border-right="10pt solid olive">
+                  <fo:block>Cell 2.2 Cell 2.2 Cell 2.2 Cell 2.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block>Between tables</fo:block>
+          <!-- table 4 -->
+          <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell
+                  border-top="12pt solid black"
+                  border-bottom="12pt solid blue"
+                  border-left="12pt solid red"
+                  border-right="12pt solid teal">
+                  <fo:block>Cell 1.1 Cell 1.1 Cell 1.1 Cell 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell
+                  border-top="4pt solid silver"
+                  border-bottom="10pt solid navy"
+                  border-left="4pt solid purple"
+                  border-right="4pt solid purple">
+                  <fo:block>Cell 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell number-columns-spanned="2"
+                  background-color="yellow"
+                  padding-top="10pt"
+                  padding-bottom="15pt"
+                  padding-left="20pt"
+                  padding-right="30pt"
+                  border-top="15pt solid silver"
+                  border-bottom="6pt solid navy"
+                  border-left="6pt solid purple"
+                  border-right="6pt solid olive">
+                  <fo:block>Cell 2.1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+
+    <!-- table 1 -->
+    <eval expected="58200" xpath="//flow/block[2]/@bpd"/>
+    <eval expected="58200" xpath="//flow/block[2]/@bpda"/>
+    <!-- cell 1.2 -->
+    <eval expected="93000" xpath="//flow/block[2]/block[1]/@ipd"/>
+    <eval expected="107000" xpath="//flow/block[2]/block[1]/@ipda"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/@bpd"/>
+    <eval expected="28400" xpath="//flow/block[2]/block[1]/@bpda"/>
+    <eval expected="105000" xpath="//flow/block[2]/block[1]/@left-offset"/>
+    <eval expected="-2000" xpath="//flow/block[2]/block[1]/@top-offset"/>
+    <eval expected="(solid,#c0c0c0,4000,collapse-outer)" xpath="//flow/block[2]/block[1]/@border-before"/>
+    <eval expected="(solid,#000080,10000,collapse-inner)" xpath="//flow/block[2]/block[1]/@border-after"/>
+    <eval expected="(solid,#800080,10000,collapse-inner)" xpath="//flow/block[2]/block[1]/@border-start"/>
+    <eval expected="(solid,#808000,4000,collapse-outer)" xpath="//flow/block[2]/block[1]/@border-end"/>
+    <!-- cell 1.1 -->
+    <eval expected="89000" xpath="//flow/block[2]/block[2]/@ipd"/>
+    <eval expected="111000" xpath="//flow/block[2]/block[2]/@ipda"/>
+    <eval expected="13400" xpath="//flow/block[2]/block[2]/@bpd"/>
+    <eval expected="29400" xpath="//flow/block[2]/block[2]/@bpda"/>
+    <eval expected="6000" xpath="//flow/block[2]/block[2]/@left-offset"/>
+    <eval expected="-8000" xpath="//flow/block[2]/block[2]/@top-offset"/>
+    <eval expected="(solid,#000000,16000,collapse-outer)" xpath="//flow/block[2]/block[2]/@border-before"/>
+    <eval expected=""                                     xpath="//flow/block[2]/block[2]/@border-after"/>
+    <eval expected="(solid,#ff0000,12000,collapse-outer)" xpath="//flow/block[2]/block[2]/@border-start"/>
+    <eval expected="(solid,#800080,10000,collapse-inner)" xpath="//flow/block[2]/block[2]/@border-end"/>
+    <eval expected="92000" xpath="//flow/block[2]/block[3]/@ipd"/>
+    <eval expected="108000" xpath="//flow/block[2]/block[3]/@ipda"/>
+    <eval expected="31800" xpath="//flow/block[2]/block[3]/@bpd"/>
+    <eval expected="41800" xpath="//flow/block[2]/block[3]/@bpda"/>
+    <eval expected="6000" xpath="//flow/block[2]/block[3]/@left-offset"/>
+    <eval expected="21400" xpath="//flow/block[2]/block[3]/@top-offset"/>
+    <eval expected=""                                     xpath="//flow/block[2]/block[3]/@border-before"/>
+    <eval expected="(solid,#0000ff,10000,collapse-outer)" xpath="//flow/block[2]/block[3]/@border-after"/>
+    <eval expected="(solid,#ff0000,12000,collapse-outer)" xpath="//flow/block[2]/block[3]/@border-start"/>
+    <eval expected="(solid,#008080,4000,collapse-inner)" xpath="//flow/block[2]/block[3]/@border-end"/>
+    <eval expected="89000" xpath="//flow/block[2]/block[4]/@ipd"/>
+    <eval expected="89000" xpath="//flow/block[2]/block[4]/@ipda"/>
+    <eval expected="45200" xpath="//flow/block[2]/block[4]/@bpd"/>
+    <eval expected="45200" xpath="//flow/block[2]/block[4]/@bpda"/>
+    <eval expected="6000" xpath="//flow/block[2]/block[4]/@left-offset"/>
+    <eval expected="8000" xpath="//flow/block[2]/block[4]/@top-offset"/>
+    <!-- cell 2.2 -->
+    <eval expected="93000" xpath="//flow/block[2]/block[5]/@ipd"/>
+    <eval expected="107000" xpath="//flow/block[2]/block[5]/@ipda"/>
+    <eval expected="28800" xpath="//flow/block[2]/block[5]/@bpd"/>
+    <eval expected="44800" xpath="//flow/block[2]/block[5]/@bpda"/>
+    <eval expected="102000" xpath="//flow/block[2]/block[5]/@left-offset"/>
+    <eval expected="16400" xpath="//flow/block[2]/block[5]/@top-offset"/>
+    <eval expected="(solid,#000000,10000,collapse-inner)" xpath="//flow/block[2]/block[5]/@border-before"/>
+    <eval expected="(solid,#c0c0c0,6000,collapse-outer)" xpath="//flow/block[2]/block[5]/@border-after"/>
+    <eval expected="(solid,#008080,4000,collapse-inner)" xpath="//flow/block[2]/block[5]/@border-start"/>
+    <eval expected="(solid,#008080,10000,collapse-outer)" xpath="//flow/block[2]/block[5]/@border-end"/>
+
+    <!-- table 2 -->
+    <eval expected="96000" xpath="//flow/block[4]/@bpd"/>
+    <eval expected="96000" xpath="//flow/block[4]/@bpda"/>
+    <!-- cell 1.1 -->
+    <eval expected="92000" xpath="//flow/block[4]/block[1]/@ipd"/>
+    <eval expected="108000" xpath="//flow/block[4]/block[1]/@ipda"/>
+    <eval expected="14400" xpath="//flow/block[4]/block[1]/@bpd"/>
+    <eval expected="38400" xpath="//flow/block[4]/block[1]/@bpda"/>
+    <eval expected="6000" xpath="//flow/block[4]/block[1]/@left-offset"/>
+    <eval expected="-6000" xpath="//flow/block[4]/block[1]/@top-offset"/>
+    <eval expected="(solid,#000000,12000,collapse-outer)" xpath="//flow/block[4]/block[1]/@border-before"/>
+    <eval expected="(solid,#0000ff,12000,collapse-inner)" xpath="//flow/block[4]/block[1]/@border-after"/>
+    <eval expected="(solid,#ff0000,12000,collapse-outer)" xpath="//flow/block[4]/block[1]/@border-start"/>
+    <eval expected="(solid,#008080,4000,collapse-inner)" xpath="//flow/block[4]/block[1]/@border-end"/>
+    <!-- cell 2.1 -->
+    <eval expected="89000" xpath="//flow/block[4]/block[2]/@ipd"/>
+    <eval expected="111000" xpath="//flow/block[4]/block[2]/@ipda"/>
+    <eval expected="60600" xpath="//flow/block[4]/block[2]/@bpd"/>
+    <eval expected="78600" xpath="//flow/block[4]/block[2]/@bpda"/>
+    <eval expected="3000" xpath="//flow/block[4]/block[2]/@left-offset"/>
+    <eval expected="20400" xpath="//flow/block[4]/block[2]/@top-offset"/>
+    <eval expected="(solid,#0000ff,12000,collapse-inner)" xpath="//flow/block[4]/block[2]/@border-before"/>
+    <eval expected="(solid,#000080,6000,collapse-outer)" xpath="//flow/block[4]/block[2]/@border-after"/>
+    <eval expected="(solid,#800080,6000,collapse-outer)" xpath="//flow/block[4]/block[2]/@border-start"/>
+    <eval expected="(solid,#808000,16000,collapse-inner)" xpath="//flow/block[4]/block[2]/@border-end"/>
+    <!-- cell 1.2 -->
+    <eval expected="93000" xpath="//flow/block[4]/block[3]/@ipd"/>
+    <eval expected="107000" xpath="//flow/block[4]/block[3]/@ipda"/>
+    <eval expected="24400" xpath="//flow/block[4]/block[3]/@bpd"/>
+    <eval expected="28400" xpath="//flow/block[4]/block[3]/@bpda"/>
+    <eval expected="102000" xpath="//flow/block[4]/block[3]/@left-offset"/>
+    <eval expected="-2000" xpath="//flow/block[4]/block[3]/@top-offset"/>
+    <eval expected="(solid,#c0c0c0,4000,collapse-outer)" xpath="//flow/block[4]/block[3]/@border-before"/>
+    <eval expected=""                                    xpath="//flow/block[4]/block[3]/@border-after"/>
+    <eval expected="(solid,#800080,4000,collapse-inner)" xpath="//flow/block[4]/block[3]/@border-start"/>
+    <eval expected="(solid,#808000,10000,collapse-outer)" xpath="//flow/block[4]/block[3]/@border-end"/>
+    <eval expected="87000" xpath="//flow/block[4]/block[4]/@ipd"/>
+    <eval expected="113000" xpath="//flow/block[4]/block[4]/@ipda"/>
+    <eval expected="67600" xpath="//flow/block[4]/block[4]/@bpd"/>
+    <eval expected="71600" xpath="//flow/block[4]/block[4]/@bpda"/>
+    <eval expected="108000" xpath="//flow/block[4]/block[4]/@left-offset"/>
+    <eval expected="26400" xpath="//flow/block[4]/block[4]/@top-offset"/>
+    <eval expected=""                                    xpath="//flow/block[4]/block[4]/@border-before"/>
+    <eval expected="(solid,#800080,4000,collapse-outer)" xpath="//flow/block[4]/block[4]/@border-after"/>
+    <eval expected="(solid,#808000,16000,collapse-inner)" xpath="//flow/block[4]/block[4]/@border-start"/>
+    <eval expected="(solid,#808000,10000,collapse-outer)" xpath="//flow/block[4]/block[4]/@border-end"/>
+    <eval expected="67000" xpath="//flow/block[4]/block[5]/@ipd"/>
+    <eval expected="87000" xpath="//flow/block[4]/block[5]/@ipda"/>
+    <eval expected="72000" xpath="//flow/block[4]/block[5]/@bpd"/>
+    <eval expected="92000" xpath="//flow/block[4]/block[5]/@bpda"/>
+    <eval expected="118000" xpath="//flow/block[4]/block[5]/@left-offset"/>
+    <eval expected="2000" xpath="//flow/block[4]/block[5]/@top-offset"/>
+
+    <!-- table 3 -->
+    <eval expected="68200" xpath="//flow/block[6]/@bpd"/>
+    <eval expected="68200" xpath="//flow/block[6]/@bpda"/>
+    <!-- cell 1.1 -->
+    <eval expected="99000" xpath="//flow/block[6]/block[1]/@ipd"/>
+    <eval expected="101000" xpath="//flow/block[6]/block[1]/@ipda"/>
+    <eval expected="26400" xpath="//flow/block[6]/block[1]/@bpd"/>
+    <eval expected="32400" xpath="//flow/block[6]/block[1]/@bpda"/>
+    <eval expected="1000" xpath="//flow/block[6]/block[1]/@left-offset"/>
+    <eval expected="-1000" xpath="//flow/block[6]/block[1]/@top-offset"/>
+    <eval expected="(solid,#000000,2000,collapse-outer)" xpath="//flow/block[6]/block[1]/@border-before"/>
+    <eval expected="(solid,#0000ff,4000,collapse-inner)" xpath="//flow/block[6]/block[1]/@border-after"/>
+    <eval expected="(solid,#ff0000,2000,collapse-outer)" xpath="//flow/block[6]/block[1]/@border-start"/>
+    <eval expected=""                                    xpath="//flow/block[6]/block[6]/@border-end"/>
+    <eval expected="99000" xpath="//flow/block[6]/block[2]/@ipd"/>
+    <eval expected="101000" xpath="//flow/block[6]/block[2]/@ipda"/>
+    <eval expected="23400" xpath="//flow/block[6]/block[2]/@bpd"/>
+    <eval expected="35400" xpath="//flow/block[6]/block[2]/@bpda"/>
+    <eval expected="100000" xpath="//flow/block[6]/block[2]/@left-offset"/>
+    <eval expected="-1000" xpath="//flow/block[6]/block[2]/@top-offset"/>
+    <eval expected="(solid,#000000,2000,collapse-outer)" xpath="//flow/block[6]/block[2]/@border-before"/>
+    <eval expected="(solid,#000000,10000,collapse-inner)" xpath="//flow/block[6]/block[2]/@border-after"/>
+    <eval expected=""                                    xpath="//flow/block[6]/block[2]/@border-start"/>
+    <eval expected="(solid,#008080,2000,collapse-outer)" xpath="//flow/block[6]/block[2]/@border-end"/>
+    <eval expected="185000" xpath="//flow/block[6]/block[3]/@ipd"/>
+    <eval expected="198000" xpath="//flow/block[6]/block[3]/@ipda"/>
+    <eval expected="14400" xpath="//flow/block[6]/block[3]/@bpd"/>
+    <eval expected="23400" xpath="//flow/block[6]/block[3]/@bpda"/>
+    <eval expected="7000" xpath="//flow/block[6]/block[3]/@left-offset"/>
+    <eval expected="1000" xpath="//flow/block[6]/block[3]/@top-offset"/>
+    <!-- cell 2.1 -->
+    <eval expected="92000" xpath="//flow/block[6]/block[4]/@ipd"/>
+    <eval expected="108000" xpath="//flow/block[6]/block[4]/@ipda"/>
+    <eval expected="33800" xpath="//flow/block[6]/block[4]/@bpd"/>
+    <eval expected="43800" xpath="//flow/block[6]/block[4]/@bpda"/>
+    <eval expected="3000" xpath="//flow/block[6]/block[4]/@left-offset"/>
+    <eval expected="27400" xpath="//flow/block[6]/block[4]/@top-offset"/>
+    <eval expected="(solid,#0000ff,4000,collapse-inner)" xpath="//flow/block[6]/block[4]/@border-before"/>
+    <eval expected="(solid,#000080,6000,collapse-outer)" xpath="//flow/block[6]/block[4]/@border-after"/>
+    <eval expected="(solid,#800080,6000,collapse-outer)" xpath="//flow/block[6]/block[4]/@border-start"/>
+    <eval expected="(solid,#ff0000,10000,collapse-inner)" xpath="//flow/block[6]/block[4]/@border-end"/>
+    <!-- cell 2.2 -->
+    <eval expected="90000" xpath="//flow/block[6]/block[5]/@ipd"/>
+    <eval expected="110000" xpath="//flow/block[6]/block[5]/@ipda"/>
+    <eval expected="28800" xpath="//flow/block[6]/block[5]/@bpd"/>
+    <eval expected="48800" xpath="//flow/block[6]/block[5]/@bpda"/>
+    <eval expected="105000" xpath="//flow/block[6]/block[5]/@left-offset"/>
+    <eval expected="24400" xpath="//flow/block[6]/block[5]/@top-offset"/>
+    <eval expected="(solid,#000000,10000,collapse-inner)" xpath="//flow/block[6]/block[5]/@border-before"/>
+    <eval expected="(solid,#c0c0c0,10000,collapse-outer)" xpath="//flow/block[6]/block[5]/@border-after"/>
+    <eval expected="(solid,#ff0000,10000,collapse-inner)" xpath="//flow/block[6]/block[5]/@border-start"/>
+    <eval expected="(solid,#808000,10000,collapse-outer)" xpath="//flow/block[6]/block[5]/@border-end"/>
+
+    <!-- table 4 -->
+    <eval expected="92200" xpath="//flow/block[8]/@bpd"/>
+    <eval expected="92200" xpath="//flow/block[8]/@bpda"/>
+    <!-- cell 1.1 -->
+    <eval expected="88000" xpath="//flow/block[8]/block[1]/@ipd"/>
+    <eval expected="112000" xpath="//flow/block[8]/block[1]/@ipda"/>
+    <eval expected="28800" xpath="//flow/block[8]/block[1]/@bpd"/>
+    <eval expected="55800" xpath="//flow/block[8]/block[1]/@bpda"/>
+    <eval expected="6000" xpath="//flow/block[8]/block[1]/@left-offset"/>
+    <eval expected="-6000" xpath="//flow/block[8]/block[1]/@top-offset"/>
+    <eval expected="(solid,#000000,12000,collapse-outer)" xpath="//flow/block[8]/block[1]/@border-before"/>
+    <eval expected="(solid,#c0c0c0,15000,collapse-inner)" xpath="//flow/block[8]/block[1]/@border-after"/>
+    <eval expected="(solid,#ff0000,12000,collapse-outer)" xpath="//flow/block[8]/block[1]/@border-start"/>
+    <eval expected="(solid,#008080,12000,collapse-inner)" xpath="//flow/block[8]/block[1]/@border-end"/>
+    <!-- cell 1.2 -->
+    <eval expected="92000" xpath="//flow/block[8]/block[2]/@ipd"/>
+    <eval expected="108000" xpath="//flow/block[8]/block[2]/@ipda"/>
+    <eval expected="32800" xpath="//flow/block[8]/block[2]/@bpd"/>
+    <eval expected="51800" xpath="//flow/block[8]/block[2]/@bpda"/>
+    <eval expected="106000" xpath="//flow/block[8]/block[2]/@left-offset"/>
+    <eval expected="-2000" xpath="//flow/block[8]/block[2]/@top-offset"/>
+    <eval expected="(solid,#c0c0c0,4000,collapse-outer)" xpath="//flow/block[8]/block[2]/@border-before"/>
+    <eval expected="(solid,#c0c0c0,15000,collapse-inner)" xpath="//flow/block[8]/block[2]/@border-after"/>
+    <eval expected="(solid,#008080,12000,collapse-inner)" xpath="//flow/block[8]/block[2]/@border-start"/>
+    <eval expected="(solid,#800080,4000,collapse-outer)" xpath="//flow/block[8]/block[2]/@border-end"/>
+    <!-- cell 2.1 -->
+    <eval expected="97000" xpath="//flow/block[8]/block[3]/@ipd"/>
+    <eval expected="103000" xpath="//flow/block[8]/block[3]/@ipda"/>
+    <eval expected="39400" xpath="//flow/block[8]/block[3]/@bpd"/>
+    <eval expected="60400" xpath="//flow/block[8]/block[3]/@bpda"/>
+    <eval expected="3000" xpath="//flow/block[8]/block[3]/@left-offset"/>
+    <eval expected="34800" xpath="//flow/block[8]/block[3]/@top-offset"/>
+    <eval expected="(solid,#c0c0c0,15000,collapse-inner)" xpath="//flow/block[8]/block[3]/@border-before"/>
+    <eval expected="(solid,#000080,6000,collapse-outer)" xpath="//flow/block[8]/block[3]/@border-after"/>
+    <eval expected="(solid,#800080,6000,collapse-outer)" xpath="//flow/block[8]/block[3]/@border-start"/>
+    <eval expected=""                                     xpath="//flow/block[8]/block[3]/@border-end"/>
+    <eval expected="97000" xpath="//flow/block[8]/block[4]/@ipd"/>
+    <eval expected="103000" xpath="//flow/block[8]/block[4]/@ipda"/>
+    <eval expected="39400" xpath="//flow/block[8]/block[4]/@bpd"/>
+    <eval expected="60400" xpath="//flow/block[8]/block[4]/@bpda"/>
+    <eval expected="100000" xpath="//flow/block[8]/block[4]/@left-offset"/>
+    <eval expected="34800" xpath="//flow/block[8]/block[4]/@top-offset"/>
+    <eval expected="(solid,#c0c0c0,15000,collapse-inner)" xpath="//flow/block[8]/block[4]/@border-before"/>
+    <eval expected="(solid,#000080,6000,collapse-outer)" xpath="//flow/block[8]/block[4]/@border-after"/>
+    <eval expected=""                                     xpath="//flow/block[8]/block[4]/@border-start"/>
+    <eval expected="(solid,#808000,6000,collapse-outer)" xpath="//flow/block[8]/block[4]/@border-end"/>
+    <eval expected="144000" xpath="//flow/block[8]/block[5]/@ipd"/>
+    <eval expected="194000" xpath="//flow/block[8]/block[5]/@ipda"/>
+    <eval expected="14400" xpath="//flow/block[8]/block[5]/@bpd"/>
+    <eval expected="39400" xpath="//flow/block[8]/block[5]/@bpda"/>
+    <eval expected="23000" xpath="//flow/block[8]/block[5]/@left-offset"/>
+    <eval expected="49800" xpath="//flow/block[8]/block[5]/@top-offset"/>
+
+  </checks>
+</testcase>

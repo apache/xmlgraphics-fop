@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      Bugzilla #50196: padding-start ignored when a table-header/footer is repeated.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="220pt" page-height="120pt" 
+          margin="10pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-header>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>
+                    <fo:inline id="header" padding-start="10pt">Table header</fo:inline>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+            <fo:table-footer>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>
+                    <fo:inline id="footer" padding-start="10pt">Table footer</fo:inline>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-footer>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>Before page break</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row break-before="page">
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>After page break</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="10000" xpath="//pageViewport[1]//inlineparent[@prod-id='header']/@padding-start"/>
+    <eval expected="10000" xpath="//pageViewport[1]//inlineparent[@prod-id='footer']/@padding-start"/>
+    <eval expected="10000" xpath="//pageViewport[2]//inlineparent[@prod-id='header']/@padding-start"/>
+    <eval expected="10000" xpath="//pageViewport[2]//inlineparent[@prod-id='footer']/@padding-start"/>
+  </checks>
+</testcase>

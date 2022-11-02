@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hyphenation-info>
+<hyphen-min before="2" after="3"/>
+
+<classes>
+h
+e
+l
+o
+</classes>
+
+<exceptions>
+</exceptions>
+
+<patterns>
+1he
+1lo
+</patterns>
+
+</hyphenation-info>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks for white-space related bugs as reported in Bugzilla 45097.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="all-pages" margin-top="0.5in" margin-bottom="0.5in" margin-left="0.38in" margin-right="0.38in" page-width="8.5in" page-height="11in">
+          <fo:region-body margin-top="0.5in + 1mm" margin-bottom="0.5in + 1mm"/>
+          <fo:region-before extent="0.5in"/>
+          <fo:region-after extent="0.5in"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="all-pages">
+        <fo:static-content flow-name="xsl-region-before"><fo:block/></fo:static-content>
+        <fo:static-content flow-name="xsl-region-after"><fo:block/></fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>
+            <fo:block><fo:leader leader-pattern="space"/></fo:block>
+            <fo:block text-decoration="underline">Example 1: white-space-collapse="false" linefeed-treatment="preserve" white-space-treatment="preserve"</fo:block>
+            <fo:block font-family="Courier" 
+                      white-space-collapse="false" 
+                      linefeed-treatment="preserve" 
+                      white-space-treatment="preserve"><fo:block><fo:inline id="inline-1a" border="1mm solid red">     ***     </fo:inline></fo:block><fo:block><fo:inline border="1mm solid red">*************</fo:inline></fo:block><fo:block><fo:inline id="inline-1b" border="1mm solid red">     ***     </fo:inline></fo:block></fo:block>
+    
+            <fo:block><fo:leader leader-pattern="space"/></fo:block>
+            <fo:block text-decoration="underline">Example 2: white-space-collapse="false" linefeed-treatment="preserve" w/ inlines</fo:block>
+            <fo:block font-family="Courier" 
+                      white-space-collapse="false" 
+                      linefeed-treatment="preserve"><fo:block><fo:inline id="inline-2a" border="1mm solid red">     ***     </fo:inline></fo:block><fo:block><fo:inline border="1mm solid red">*************</fo:inline></fo:block><fo:block><fo:inline id="inline-2b" border="1mm solid red">     ***     </fo:inline></fo:block></fo:block>
+    
+          </fo:block>
+          <fo:block><fo:leader leader-pattern="space"/></fo:block>
+          <fo:block text-decoration="underline">Example 1: white-space-collapse="false" linefeed-treatment="preserve" white-space-treatment="preserve"</fo:block>
+          <fo:block font-family="Courier" 
+                    white-space-collapse="false" 
+                    linefeed-treatment="preserve" 
+                    white-space-treatment="preserve"><fo:block><fo:inline id="inline-3a" border="1mm solid red">     ***     </fo:inline></fo:block><fo:block><fo:inline border="1mm solid red">*************</fo:inline></fo:block><fo:block><fo:inline id="inline-3b" border="1mm solid red">     ***     </fo:inline></fo:block></fo:block>
+    
+          <fo:block><fo:leader leader-pattern="space"/></fo:block>
+          <fo:block text-decoration="underline">Example 2: white-space-collapse="false" linefeed-treatment="preserve" w/ inlines</fo:block>
+          <fo:block font-family="Courier" 
+                    white-space-collapse="false" 
+                    linefeed-treatment="preserve"><fo:block><fo:inline id="inline-4a" border="1mm solid red">     ***     </fo:inline></fo:block><fo:block><fo:inline border="1mm solid red">*************</fo:inline></fo:block><fo:block><fo:inline id="inline-4b" border="1mm solid red">     ***     </fo:inline></fo:block></fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="10" xpath="count(//inlineparent[@prod-id='inline-1a']//space)" />
+    <eval expected="10" xpath="count(//inlineparent[@prod-id='inline-1b']//space)" />
+    <eval expected="0" xpath="count(//inlineparent[@prod-id='inline-2a']//space)" />
+    <eval expected="0" xpath="count(//inlineparent[@prod-id='inline-2b']//space)" />
+    <eval expected="10" xpath="count(//inlineparent[@prod-id='inline-3a']//space)" />
+    <eval expected="10" xpath="count(//inlineparent[@prod-id='inline-3b']//space)" />
+    <eval expected="0" xpath="count(//inlineparent[@prod-id='inline-4a']//space)" />
+    <eval expected="0" xpath="count(//inlineparent[@prod-id='inline-4b']//space)" />
+  </checks>
+</testcase>

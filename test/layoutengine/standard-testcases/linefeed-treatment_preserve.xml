@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks linefeed-preservation.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master page-width="21cm" page-height="29.7cm" master-name="spm0">
+          <fo:region-body region-name="region-body" margin-bottom="1cm" margin-top="1.5cm"/>
+          <fo:region-before region-name="header" precedence="false" extent="4cm"/>
+          <fo:region-after region-name="footer" extent="1cm"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="spm0">
+        <fo:flow flow-name="region-body">
+          <fo:block hyphenate="false" font="8pt monospace" 
+                text-align="start" wrap-option="no-wrap" 
+                white-space="pre" line-stacking-strategy="font-height"
+                background-color="yellow">First line yellow background
+<fo:inline background-color="red">Second line red background
+Third line red background</fo:inline>
+<fo:inline background-color="pink"> 
+Fifth line pink background; the above line has one preserved space character.</fo:inline>
+
+Seventh line yellow background; the above line is empty.</fo:block>
+          <fo:block linefeed-treatment="preserve" background-color="blue"
+                    text-align="start" font="8pt Courier" color="yellow">
+            <fo:inline background-color="orange">
+            
+            
+            
+             One line, surrounded by some linefeeds; orange line in blue block
+            
+            
+            
+            </fo:inline>
+          </fo:block>
+    		</fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="7" xpath="count(//block[1]/lineArea)" />
+    <eval expected="10" xpath="count(//block[2]/lineArea)" />
+  </checks>
+</testcase>

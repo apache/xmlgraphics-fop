@@ -1,0 +1,73 @@
+Testing procedure for FOP
+
+(to be written using appropriate xml document)
+
+To Write a new test
+
+Determine what type of test it is:
+- basic conformance test
+- complex conformance, interaction
+- bugtest for fop
+
+You will add the test to the appropriate file.
+
+Write the test. You can either write an fo document which is copied using copy.xsl or simply write a fragment and use one of the standard document xsl's.
+
+Put the test in test/xml.
+Put the information for the test in testsuite xml file, including a result.
+
+1) Aim
+
+Need an infrastructure to develop and perform tests.
+Prevent regressions and make checking results easier.
+Quantify the features and conformance.
+
+This must be done in a uniform and simple way.
+
+Ideally the testing and verification should all be automatic.
+
+A new release must not break any previously working features.
+
+Every time a new feature is added then tests should be made that test the feature in all possible situations.
+
+2) Infrastructure
+
+Each test for a feature must be designed to test only that feature and contain no other possible interactions.
+
+Tests should be as simple as possible and demonstrate the feature working.
+
+2.1) Options
+1. For each possible parameter have a file which fully excercises the parameter over all reasonable bounds. This will mean that the fo must be in a format that will ensure each test is independant (which may not always be possible). A typical test will be large and have some overhead.
+
+2. For each individual test have a separate fo file or fo fragment.
+
+The tests are specified in an xml file which is processed using an xsl file (which may simply copy the xml).
+
+This will be done as a build target.
+
+There should be an indication about whether the test is correct for the reference FOP snapshot. This will mean that all changes after the snapshot must not break the test and may improve the result for tests that do not work.
+
+2.2) Details
+
+make a "test" dir at top level
+have a script which can update the code to the snapshot tag, build and create an FOP jar.
+this will then be used as the reference point for comparing results.
+the tests are run and compared with the results from the reference FOP.
+all differences are reported, especially ones that change a test that is marked as working (ie. regressions)
+
+the output will not be compressed so that the pdf markup can be compared using a diff.
+
+Each test must contain a unique id, catagory, a description, the test fo data and pass/fail status.
+
+There will be a number of catagories of test fo files (and possibly sub-catagories).
+These will include conformance, bugtests and system tests.
+
+
+3) Problems
+
+The reference build must be done on a clean cvs build for the appropriate tag.
+The information must be updated appropriately to ensure that the results are correct.
+
+
+
+

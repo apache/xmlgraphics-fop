@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id: table-border-separate3.xml 627324 2008-02-13 09:35:01Z maxberger $ -->
+<testcase>
+  <info>
+    <p>This test checks correct placement of table borders of spanned table cells in right-to-left writing mode.</p>
+  </info>
+  <fo>
+    <fo:root 
+      xmlns:fo="http://www.w3.org/1999/XSL/Format" font-size="10pt">
+      <fo:layout-master-set>
+        <fo:simple-page-master margin="20mm" master-name="A4" page-height="210mm" page-width="297mm">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="A4">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container writing-mode="rl-tb">
+            <fo:table border-collapse="collapse" table-layout="fixed" width="100%">
+              <fo:table-column column-width="50%"/>
+              <fo:table-column column-width="30%"/>
+              <fo:table-column column-width="20%"/>
+              <fo:table-body>
+                <fo:table-row height="10pt" keep-together.within-page="auto">
+                  <fo:table-cell border-color="#000000" border-style="solid" border-width="1pt" number-columns-spanned="3">
+                    <fo:block>A1,B1,C1</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell border-color="#000000" border-style="solid">
+                    <fo:block>A2</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-color="#000000" border-style="solid">
+                    <fo:block>B2</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-color="#000000" border-style="solid">
+                    <fo:block>C2</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell border-color="#000000" border-style="solid" number-columns-spanned="2">
+                    <fo:block>A2,B2</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-color="#000000" border-style="solid">
+                    <fo:block>C2</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell border-color="#000000" border-style="solid">
+                    <fo:block>A3</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-color="#000000" border-style="solid" number-columns-spanned="2">
+                    <fo:block>B3,C3</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- ************** ROW 1 ************** -->
+    <!-- Border top, bottom and left of TCU 1 -->
+    <eval expected="500" xpath="//flow/block[1]/block[1]/block[1]/block[1][@border-before and @border-after and @border-end and not(@border-start)]/@left-offset"/>
+    <eval expected="-500" xpath="//flow/block[1]/block[1]/block[1]/block[1][@border-before and @border-after and @border-end and not(@border-start)]/@top-offset"/>
+
+    <!-- Border top and bottom of TCU 2 -->
+    <eval expected="364252" xpath="//flow/block[1]/block[1]/block[1]/block[2][@border-before and @border-after and not(@border-end) and not(@border-start)]/@left-offset"/>
+    <eval expected="-500" xpath="//flow/block[1]/block[1]/block[1]/block[2][@border-before and @border-after and not(@border-end) and not(@border-start)]/@top-offset"/>
+
+    <!-- Border top, bottom and right of TCU 3 -->
+    <eval expected="582803" xpath="//flow/block[1]/block[1]/block[1]/block[3][@border-before and @border-after and @border-start and not(@border-end)]/@left-offset"/>
+    <eval expected="-500" xpath="//flow/block[1]/block[1]/block[1]/block[3][@border-before and @border-after and @border-start and not(@border-end)]/@top-offset"/>
+
+
+    <!-- ************** ROW 2 ************** -->
+    <!-- Border top, bottom, left and right of TCU 1 -->
+    <eval expected="364752" xpath="//flow/block[1]/block[1]/block[1]/block[5][.//word = 'A2'][@border-before and @border-after and @border-start and @border-end]/@left-offset"/>
+    <eval expected="12500" xpath="//flow/block[1]/block[1]/block[1]/block[5][.//word = 'A2'][@border-before and @border-after and @border-start and @border-end]/@top-offset"/>
+
+    <!-- Border top, bottom, left and right of TCU 2 -->
+    <eval expected="146201" xpath="//flow/block[1]/block[1]/block[1]/block[6][.//word = 'B2'][@border-before and @border-after and @border-end and @border-start]/@left-offset"/>
+    <eval expected="12500" xpath="//flow/block[1]/block[1]/block[1]/block[6][.//word = 'B2'][@border-before and @border-after and @border-end and @border-start]/@top-offset"/>
+
+    <!-- Border top, bottom, left and right of TCU 3 -->
+    <eval expected="500" xpath="//flow/block[1]/block[1]/block[1]/block[7][.//word = 'C2'][@border-before and @border-after and @border-end and @border-start]/@left-offset"/>
+    <eval expected="12500" xpath="//flow/block[1]/block[1]/block[1]/block[7][.//word = 'C2'][@border-before and @border-after and @border-end and @border-start]/@top-offset"/>
+
+    <!-- ************** ROW 3 ************** -->
+    <!-- Border top, bottom and left of TCU 2 -->
+    <eval expected="146201" xpath="//flow/block[1]/block[1]/block[1]/block[8][@border-before and @border-after and @border-end and not(@border-start)]/@left-offset"/>
+    <eval expected="25500" xpath="//flow/block[1]/block[1]/block[1]/block[8][@border-before and @border-after and @border-end and not(@border-start)]/@top-offset"/>
+
+    <!-- Border top, bottom and right of TCU 3 -->
+    <eval expected="509953" xpath="//flow/block[1]/block[1]/block[1]/block[9][@border-before and @border-after and not(@border-end) and @border-start]/@left-offset"/>
+    <eval expected="25500" xpath="//flow/block[1]/block[1]/block[1]/block[9][@border-before and @border-after and not(@border-end) and @border-start]/@top-offset"/>
+
+    <!-- Border top, bottom, left and right of TCU 1 -->
+    <eval expected="500" xpath="//flow/block[1]/block[1]/block[1]/block[11][.//word = 'C2'][@border-before and @border-after and @border-start and @border-end]/@left-offset"/>
+    <eval expected="25500" xpath="//flow/block[1]/block[1]/block[1]/block[11][.//word = 'C2'][@border-before and @border-after and @border-start and @border-end]/@top-offset"/>
+
+
+    <!-- ************** ROW 4 ************** -->
+    <!-- Border top, bottom, left and right of TCU 3 -->
+    <eval expected="364752" xpath="//flow/block[1]/block[1]/block[1]/block[12][.//word = 'A3'][@border-before and @border-after and @border-end and @border-start]/@left-offset"/>
+    <eval expected="38500" xpath="//flow/block[1]/block[1]/block[1]/block[12][.//word = 'A3'][@border-before and @border-after and @border-end and @border-start]/@top-offset"/>
+
+    <!-- Border top, bottom and left of TCU 1 -->
+    <eval expected="500" xpath="//flow/block[1]/block[1]/block[1]/block[13][@border-before and @border-after and @border-end and not(@border-start)]/@left-offset"/>
+    <eval expected="38500" xpath="//flow/block[1]/block[1]/block[1]/block[13][@border-before and @border-after and @border-end and not(@border-start)]/@top-offset"/>
+
+    <!-- Border top, bottom and right of TCU 2 -->
+    <eval expected="218551" xpath="//flow/block[1]/block[1]/block[1]/block[14][@border-before and @border-after and @border-start and not(@border-end)]/@left-offset"/>
+    <eval expected="38500" xpath="//flow/block[1]/block[1]/block[1]/block[14][@border-before and @border-after and @border-start and not(@border-end)]/@top-offset"/>
+  </checks>
+</testcase>

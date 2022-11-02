@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id $ -->
+<!-- This test verifies the correspondence mapping: height/width -> bpd/ipd -->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:test="http://xmlgraphics.apache.org/fop/test">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="A4" page-height="29.7cm" page-width="21cm" margin="2cm">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="A4">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block-container height="360pt" min-height="120pt" max-height="720pt"
+                          width="360pt" min-width="120pt" max-width="504pt">
+        <test:assert property="block-progression-dimension.minimum" expected="120000mpt" />
+        <test:assert property="block-progression-dimension.optimum" expected="360000mpt" />
+        <test:assert property="block-progression-dimension.maximum" expected="720000mpt" />
+        <test:assert property="inline-progression-dimension.minimum" expected="120000mpt" />
+        <test:assert property="inline-progression-dimension.optimum" expected="360000mpt" />
+        <test:assert property="inline-progression-dimension.maximum" expected="504000mpt" />
+        
+        <fo:block>
+          <fo:block>Hello World!</fo:block>
+        </fo:block>
+      </fo:block-container>
+      <fo:block-container writing-mode="tb-rl"
+                          height="360pt" min-height="120pt" max-height="720pt"
+                          width="360pt" min-width="120pt" max-width="504pt">
+        <test:assert property="inline-progression-dimension.minimum" expected="120000mpt" />
+        <test:assert property="inline-progression-dimension.optimum" expected="360000mpt" />
+        <test:assert property="inline-progression-dimension.maximum" expected="720000mpt" />
+        <test:assert property="block-progression-dimension.minimum" expected="120000mpt" />
+        <test:assert property="block-progression-dimension.optimum" expected="360000mpt" />
+        <test:assert property="block-progression-dimension.maximum" expected="504000mpt" />
+        
+        <fo:block>
+          <fo:block>Hello World!</fo:block>
+        </fo:block>
+      </fo:block-container>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

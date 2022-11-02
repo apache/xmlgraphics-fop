@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks for the use of an 'only' conditional-page-master-reference (XSL 1.1)
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master margin-left="20mm" margin-right="20mm" page-height="297mm" page-width="210mm" master-name="OnlyPage" margin-bottom="5mm" margin-top="12mm">
+      <fo:region-body region-name="Body" margin-bottom="30mm" margin-top="105mm" background-color="red" />
+    </fo:simple-page-master>
+    <fo:simple-page-master page-height="297mm" page-width="210mm" master-name="FrontPage" margin-bottom="5mm" margin-left="20mm" margin-right="20mm" margin-top="12mm">
+      <fo:region-body region-name="Body" margin-bottom="70mm" margin-top="105mm" background-color="green" />
+    </fo:simple-page-master>
+    <fo:simple-page-master page-height="297mm" page-width="210mm" master-name="BackPage" margin-bottom="5mm" margin-left="20mm" margin-right="20mm" margin-top="15mm">
+      <fo:region-body region-name="Body" margin-bottom="30mm" margin-top="20mm" background-color="transparent" />
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="LetterPages">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference master-reference="OnlyPage" page-position="only" />
+        <fo:conditional-page-master-reference master-reference="FrontPage" page-position="first" />
+        <fo:conditional-page-master-reference master-reference="BackPage" page-position="rest" />
+        <fo:conditional-page-master-reference master-reference="BackPage" page-position="last" />
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="LetterPages" force-page-count="auto" initial-page-number="auto">
+
+    <fo:flow flow-name="Body">
+      <fo:block>
+        <fo:block>1test</fo:block>
+        <fo:block>2test</fo:block>
+        <fo:block>3test</fo:block>
+        <fo:block>4test</fo:block>
+        <fo:block>5test</fo:block>
+        <fo:block>6test</fo:block>
+        <fo:block>7test</fo:block>
+        <fo:block>8test</fo:block>
+        <fo:block>9test</fo:block>
+        <fo:block>10test</fo:block>
+        <fo:block>11test</fo:block>
+        <fo:block>12test</fo:block>
+        <fo:block>13test</fo:block>
+        <fo:block>14test</fo:block>
+        <fo:block>15test</fo:block>
+        <fo:block>16test</fo:block>
+        <fo:block>17test</fo:block>
+        <fo:block>18test</fo:block>
+        <fo:block>19test</fo:block>
+        <fo:block>20test</fo:block>
+        <fo:block>21test</fo:block>
+      </fo:block>
+
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="21test" xpath="//pageViewport[1]//flow/block/block[21]/lineArea[1]/text/word[1]"/>
+  </checks>
+</testcase>

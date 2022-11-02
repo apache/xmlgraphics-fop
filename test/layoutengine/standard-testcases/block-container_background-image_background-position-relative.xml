@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks relative positioned background images on a fo:block-container.
+    </p>
+  </info>
+  <variables>
+    <img>../resources/images/box1.png</img>
+  </variables>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" margin="0pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container margin="0pt" padding="5pt 10pt 20pt 15pt" left="0in" top="0in" width="90pt" height="70pt" absolute-position="absolute" background-color="blue" 
+             background-image="##img"
+             background-position-horizontal="right" 
+             background-repeat="no-repeat">
+            <fo:block>image in top right corner</fo:block>
+          </fo:block-container>
+          <fo:block-container margin="0pt" padding="5pt 10pt 20pt 15pt" left="120pt" top="0in" width="90pt" height="70pt" absolute-position="absolute" background-color="green" 
+             background-image="##img"
+             background-position-horizontal="right" 
+             background-position-vertical="center" 
+             background-repeat="no-repeat">
+            <fo:block>image in center right</fo:block>
+          </fo:block-container>
+          <fo:block-container margin="0pt" padding="5pt 10pt 20pt 15pt" left="240pt" top="0in" width="90pt" height="70pt" absolute-position="absolute" background-color="yellow" 
+             background-image="##img"
+             background-position-horizontal="right" 
+             background-position-vertical="bottom" 
+             background-repeat="no-repeat">
+            <fo:block>image in bottom right corner</fo:block>
+          </fo:block-container>
+          <fo:block-container margin="0pt" padding="5pt 10pt 20pt 15pt" left="0in" top="100pt" width="90pt" height="70pt" absolute-position="absolute" background-color="yellow" 
+             background-image="##img"
+             background-position-horizontal="center" 
+             background-repeat="no-repeat">
+            <fo:block>image in top center</fo:block>
+          </fo:block-container>
+          <fo:block-container margin="0pt" padding="5pt 10pt 20pt 15pt" left="120pt" top="100pt" width="90pt" height="70pt" absolute-position="absolute" background-color="blue" 
+             background-image="##img"
+             background-position-horizontal="center" 
+             background-position-vertical="center" 
+             background-repeat="no-repeat">
+            <fo:block>image in center</fo:block>
+          </fo:block-container>
+          <fo:block-container margin="0pt" padding="5pt 10pt 20pt 15pt" left="240pt" top="100pt" width="90pt" height="70pt" absolute-position="absolute" background-color="green" 
+             background-image="##img"
+             background-position-horizontal="center" 
+             background-position-vertical="bottom" 
+             background-repeat="no-repeat">
+            <fo:block>image in bottom center</fo:block>
+          </fo:block-container>
+          <fo:block-container margin="0pt" padding="5pt 10pt 20pt 15pt" left="0in" top="200pt" width="90pt" height="70pt" absolute-position="absolute" background-color="green" 
+             background-image="##img"
+             background-repeat="no-repeat">
+            <fo:block>image in top left</fo:block>
+          </fo:block-container>
+          <fo:block-container margin="0pt" padding="5pt 10pt 20pt 15pt" left="120pt" top="200pt" width="90pt" height="70pt" absolute-position="absolute" background-color="yellow" 
+             background-image="##img"
+             background-position-vertical="center" 
+             background-repeat="no-repeat">
+            <fo:block>image in center left</fo:block>
+          </fo:block-container>
+          <fo:block-container margin="0pt" padding="5pt 10pt 20pt 15pt" left="240pt" top="200pt" width="90pt" height="70pt" absolute-position="absolute" background-color="blue" 
+             background-image="##img"
+             background-position-vertical="bottom" 
+             background-repeat="no-repeat">
+            <fo:block>image in bottom left</fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- first container in row 1 -->
+    <eval expected="color=#0000ff,url=../resources/images/box1.png,repeat=no-repeat,horiz=74991,vertical=0" xpath="//flow/block[1]/@background"/>
+    <!-- second container in row 1 -->
+    <eval expected="color=#008000,url=../resources/images/box1.png,repeat=no-repeat,horiz=74991,vertical=27495" xpath="//flow/block[2]/@background"/>
+    <!-- third container in row 1 -->
+    <eval expected="color=#ffff00,url=../resources/images/box1.png,repeat=no-repeat,horiz=74991,vertical=54991" xpath="//flow/block[3]/@background"/>
+    <!-- first container in row 2 -->
+    <eval expected="color=#ffff00,url=../resources/images/box1.png,repeat=no-repeat,horiz=37495,vertical=0" xpath="//flow/block[4]/@background"/>
+    <!-- second container in row 2 -->
+    <eval expected="color=#0000ff,url=../resources/images/box1.png,repeat=no-repeat,horiz=37495,vertical=27495" xpath="//flow/block[5]/@background"/>
+    <!-- third container in row 2 -->
+    <eval expected="color=#008000,url=../resources/images/box1.png,repeat=no-repeat,horiz=37495,vertical=54991" xpath="//flow/block[6]/@background"/>
+    <!-- first container in row 3 -->
+    <eval expected="color=#008000,url=../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=0" xpath="//flow/block[7]/@background"/>
+    <!-- second container in row 3 -->
+    <eval expected="color=#ffff00,url=../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=27495" xpath="//flow/block[8]/@background"/>
+    <!-- third container in row 3 -->
+    <eval expected="color=#0000ff,url=../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=54991" xpath="//flow/block[9]/@background"/>
+  </checks>
+</testcase>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that keep-together works on tables that have a cell spanning several rows.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page"
+          page-height="320pt" page-width="420pt" margin="10pt">
+          <fo:region-body background-color="#F0F0F0"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body" font-size="8pt" line-height="10pt">
+          <fo:block>Block</fo:block>
+          <fo:block space-before="245pt">Before the table</fo:block>
+          <fo:table table-layout="fixed" width="100%" id="table" keep-together.within-page="always">
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell id="Cell 1.1" border="1pt solid black" number-rows-spanned="2">
+                  <fo:block>Cell 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell id="Cell 1.2" border="1pt solid black">
+                  <fo:block>Cell 1.2</fo:block>
+                  <fo:block>Cell 1.2</fo:block>
+                  <fo:block>Cell 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell id="Cell 2.2" border="1pt solid black">
+                  <fo:block>Cell 2.2</fo:block>
+                  <fo:block>Cell 2.2</fo:block>
+                  <fo:block>Cell 2.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="0"     xpath="count(//pageViewport[1]//block[@prod-id='table'])"/>
+    <eval expected="62000" xpath="//pageViewport[2]//block[@prod-id='table']/@bpd"/>
+    <eval expected="61000" xpath="//pageViewport[2]//block[@prod-id='Cell 1.1']/@bpd"/>
+    <eval expected="30000" xpath="//pageViewport[2]//block[@prod-id='Cell 1.2']/@bpd"/>
+    <eval expected="30000" xpath="//pageViewport[2]//block[@prod-id='Cell 2.2']/@bpd"/>
+  </checks>
+</testcase>

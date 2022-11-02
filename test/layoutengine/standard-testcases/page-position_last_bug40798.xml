@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks for the use of a 'last' conditional-page-master-reference 
+      for a first/only page (see: https://issues.apache.org/bugzilla/show_bug.cgi?id=40798)
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+           font-family="Times" font-size="20pt">
+    
+       <fo:layout-master-set>
+         <fo:simple-page-master master-name="only-page-layout"
+                             page-height="297mm" page-width="210mm"
+                             margin-top="15mm" margin-bottom="15mm"
+                             margin-left="15mm" margin-right="15mm">
+           <fo:region-body region-name="frame-body" margin-top="10mm"/>
+           <fo:region-before region-name="only-region" extent="10mm"/>
+         </fo:simple-page-master>
+         <fo:simple-page-master master-name="first-page-layout"
+                             page-height="297mm" page-width="210mm"
+                             margin-top="15mm" margin-bottom="15mm"
+                             margin-left="15mm" margin-right="15mm">
+           <fo:region-body region-name="frame-body" margin-top="10mm"/>
+           <fo:region-before region-name="first-region" extent="10mm"/>
+         </fo:simple-page-master>
+         <fo:simple-page-master master-name="last-page-layout"
+                             page-height="297mm" page-width="210mm"
+                             margin-top="15mm" margin-bottom="15mm"
+                             margin-left="15mm" margin-right="15mm">
+           <fo:region-body region-name="frame-body" margin-top="10mm"/>
+           <fo:region-before region-name="last-region" extent="10mm"/>
+         </fo:simple-page-master>
+         <fo:simple-page-master master-name="rest-page-layout"
+                             page-height="297mm" page-width="210mm"
+                             margin-top="15mm" margin-bottom="15mm"
+                             margin-left="15mm" margin-right="15mm">
+           <fo:region-body region-name="frame-body" margin-top="10mm"/>
+           <fo:region-before region-name="rest-region" extent="10mm"/>
+         </fo:simple-page-master>
+    
+       <fo:page-sequence-master master-name="whatever">
+         <fo:repeatable-page-master-alternatives maximum-repeats="1">
+           <fo:conditional-page-master-reference master-reference="only-page-layout"
+                                              page-position="last"/>
+           <fo:conditional-page-master-reference master-reference="first-page-layout"
+                                              page-position="first"/>
+         </fo:repeatable-page-master-alternatives>
+         <fo:repeatable-page-master-alternatives maximum-repeats="no-limit">
+           <fo:conditional-page-master-reference master-reference="last-page-layout"
+                                              page-position="last"/>
+           <fo:conditional-page-master-reference master-reference="rest-page-layout"
+                                              page-position="rest"/>
+         </fo:repeatable-page-master-alternatives>
+       </fo:page-sequence-master>
+    
+       </fo:layout-master-set>
+    
+       <fo:page-sequence master-reference="whatever">
+         <fo:static-content flow-name="first-region">
+           <fo:block id="header.first.1" text-align="center">first</fo:block>
+         </fo:static-content>
+         <fo:static-content flow-name="only-region">
+           <fo:block id="header.only.1" text-align="center">only</fo:block>
+         </fo:static-content>
+         <fo:flow flow-name="frame-body">
+           <fo:block>This is the only page</fo:block>
+         </fo:flow>
+       </fo:page-sequence>
+       <fo:page-sequence master-reference="whatever">
+         <fo:static-content flow-name="only-region">
+           <fo:block id="header.only.2" text-align="center">only</fo:block>
+         </fo:static-content>
+         <fo:static-content flow-name="first-region">
+           <fo:block id="header.first.2" text-align="center">first</fo:block>
+         </fo:static-content>
+         <fo:static-content flow-name="last-region">
+           <fo:block id="header.last.2" text-align="center">last</fo:block>
+         </fo:static-content>
+         <fo:static-content flow-name="rest-region">
+           <fo:block id="header.rest.2" text-align="center">rest</fo:block>
+         </fo:static-content>
+         <fo:flow flow-name="frame-body">
+           <fo:block>This is the first page</fo:block>
+           <fo:block break-before="page">This is a middle page</fo:block>
+           <fo:block break-before="page">This is a middle page</fo:block>
+           <fo:block break-before="page">This is the last page</fo:block>
+         </fo:flow>
+       </fo:page-sequence>
+      
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="header.only.1" xpath="(/areaTree/pageSequence[1]//regionBefore)[1]/block[1]/@prod-id" />
+    <eval expected="header.first.2" xpath="(/areaTree/pageSequence[2]//regionBefore)[1]/block[1]/@prod-id" />
+    <eval expected="header.rest.2" xpath="(/areaTree/pageSequence[2]//regionBefore)[2]/block[1]/@prod-id" />
+    <eval expected="header.rest.2" xpath="(/areaTree/pageSequence[2]//regionBefore)[3]/block[1]/@prod-id" />
+    <eval expected="header.last.2" xpath="(/areaTree/pageSequence[2]//regionBefore)[4]/block[1]/@prod-id" />
+  </checks>
+</testcase>

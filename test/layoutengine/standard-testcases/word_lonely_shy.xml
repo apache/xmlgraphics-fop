@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that a word consisting of one or more Soft Hyphens is rendered as an empty word.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+
+<fo:layout-master-set>
+  <fo:simple-page-master page-width="297mm" page-height="210mm" master-name="a4"><fo:region-body/></fo:simple-page-master>
+</fo:layout-master-set>
+
+  <fo:page-sequence initial-page-number="auto" master-reference="a4">
+  <fo:flow flow-name="xsl-region-body">
+	<fo:block>Name: hy (hyphen), Unicode: U+002D (45)</fo:block>
+    <fo:block>-</fo:block>
+	<fo:block>Name: shy (soft hyphen = discretionary hyphen), Unicode: U+00AD (173)</fo:block>
+    <fo:block>­ ­ ­­ ­­­ ­­­­ a ­ b ­­ c ­­­ d ­­­­</fo:block>
+  </fo:flow>
+</fo:page-sequence>
+
+</fo:root>
+  </fo>
+  <checks>
+      <eval expected="" xpath="//flow/block[4]/lineArea/text/*[1]"/>
+      <eval expected=" " xpath="//flow/block[4]/lineArea/text/*[2]"/>
+      <eval expected="" xpath="//flow/block[4]/lineArea/text/*[3]"/>
+      <eval expected=" " xpath="//flow/block[4]/lineArea/text/*[4]"/>
+      <eval expected="" xpath="//flow/block[4]/lineArea/text/*[5]"/>
+      <eval expected=" " xpath="//flow/block[4]/lineArea/text/*[6]"/>
+      <eval expected="" xpath="//flow/block[4]/lineArea/text/*[7]"/>
+      <eval expected=" " xpath="//flow/block[4]/lineArea/text/*[8]"/>
+      <eval expected="" xpath="//flow/block[4]/lineArea/text/*[9]"/>
+      <eval expected=" " xpath="//flow/block[4]/lineArea/text/*[10]"/>
+      <eval expected="a" xpath="//flow/block[4]/lineArea/text/*[11]"/>
+      <eval expected=" " xpath="//flow/block[4]/lineArea/text/*[12]"/>
+      <eval expected="" xpath="//flow/block[4]/lineArea/text/*[13]"/>
+      <eval expected=" " xpath="//flow/block[4]/lineArea/text/*[14]"/>
+      <eval expected="b" xpath="//flow/block[4]/lineArea/text/*[15]"/>
+      <eval expected=" " xpath="//flow/block[4]/lineArea/text/*[16]"/>
+      <eval expected="" xpath="//flow/block[4]/lineArea/text/*[17]"/>
+      <eval expected=" " xpath="//flow/block[4]/lineArea/text/*[18]"/>
+      <eval expected="c" xpath="//flow/block[4]/lineArea/text/*[19]"/>
+      <eval expected=" " xpath="//flow/block[4]/lineArea/text/*[20]"/>
+      <eval expected="" xpath="//flow/block[4]/lineArea/text/*[21]"/>
+      <eval expected=" " xpath="//flow/block[4]/lineArea/text/*[22]"/>
+      <eval expected="d" xpath="//flow/block[4]/lineArea/text/*[23]"/>
+      <eval expected=" " xpath="//flow/block[4]/lineArea/text/*[24]"/>
+      <eval expected="" xpath="//flow/block[4]/lineArea/text/*[25]"/>
+<!--
+      <word offset="0"/>
+      <space offset="0"> </space>
+      <word offset="0"/>
+      <space offset="0"> </space>
+      <word offset="0"/>
+      <space offset="0"> </space>
+      <word offset="0"/>
+      <space offset="0"> </space>
+      <word offset="0"/>
+      <space offset="0"> </space>
+      <word offset="0">a</word>
+      <space offset="0"> </space>
+      <word offset="0"/>
+      <space offset="0"> </space>
+      <word offset="0">b</word>
+      <space offset="0"> </space>
+      <word offset="0"/>
+      <space offset="0"> </space>
+      <word offset="0">c</word>
+      <space offset="0"> </space>
+      <word offset="0"/>
+      <space offset="0"> </space>
+      <word offset="0">d</word>
+      <space offset="0"> </space>
+      <word offset="0"/>
+-->
+  </checks>
+</testcase>
+

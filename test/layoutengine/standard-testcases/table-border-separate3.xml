@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks tables, especially table-cells. This test: borders in conjunction with empty-cells.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" border-collapse="separate">
+            <fo:table-column column-width="160pt"/>
+            <fo:table-column column-width="200pt"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell background-color="yellow" border="solid 5pt">
+                  <fo:block/>
+                </fo:table-cell>
+                <fo:table-cell border="solid 5pt">
+                  <fo:block>cell2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row empty-cells="show">
+                <fo:table-cell background-color="yellow" border="solid 5pt">
+                  <fo:block/>
+                </fo:table-cell>
+                <fo:table-cell border="solid 5pt">
+                  <fo:block>cell4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row empty-cells="hide">
+                <fo:table-cell background-color="yellow" border="solid 5pt">
+                  <fo:block/>
+                </fo:table-cell>
+                <fo:table-cell border="solid 5pt">
+                  <fo:block>cell6</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="color=#ffff00" xpath="//flow/block[1]/block[1]/@background"/>
+    <eval expected="5000 5000 5000 5000" xpath="//flow/block[1]/block[1]/@bap"/>
+    <eval expected="cell2" xpath="//flow/block[1]/block[2]/block[1]/lineArea"/>
+
+    <eval expected="color=#ffff00" xpath="//flow/block[1]/block[3]/@background"/>
+    <eval expected="5000 5000 5000 5000" xpath="//flow/block[1]/block[3]/@bap"/>
+    <eval expected="cell4" xpath="//flow/block[1]/block[4]/block[1]/lineArea"/>
+
+    <true xpath="not(boolean(//flow/block[1]/block[5]/@background))"/>
+    <eval expected="0 0 0 0" xpath="//flow/block[1]/block[5]/@bap"/>
+    <eval expected="cell6" xpath="//flow/block[1]/block[6]/block[1]/lineArea"/>
+  </checks>
+</testcase>

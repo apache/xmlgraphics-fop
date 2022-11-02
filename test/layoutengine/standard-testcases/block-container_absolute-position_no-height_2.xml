@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks absolutely positioned block-containers where the content-bpd isn't specified.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container id="bc0" width="80pt" absolute-position="absolute" left="10pt" top="10pt" overflow="visible"
+            reference-orientation="0" background-color="lightgray">
+            <fo:block>ABC</fo:block>
+            <fo:block font-size="200%">ABC</fo:block>
+          </fo:block-container>
+          <fo:block-container id="bc90" width="80pt" absolute-position="absolute" left="10pt" top="120pt" overflow="visible"
+            reference-orientation="90" background-color="lightgray">
+            <fo:block>ABC</fo:block>
+            <fo:block font-size="200%">ABC</fo:block>
+          </fo:block-container>
+          <fo:block-container id="bc180" width="80pt" absolute-position="absolute" left="120pt" top="10pt" overflow="visible"
+            reference-orientation="180" background-color="lightgray">
+            <fo:block>ABC</fo:block>
+            <fo:block font-size="200%">ABC</fo:block>
+          </fo:block-container>
+          <fo:block-container id="bc270" width="80pt" absolute-position="absolute" left="120pt" top="240pt" overflow="visible"
+            reference-orientation="270" background-color="lightgray">
+            <fo:block>ABC</fo:block>
+            <fo:block font-size="200%">ABC</fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- 0 -->
+    <eval expected="80000" xpath="//block[@prod-id='bc0' and boolean(@is-viewport-area)]/@ipd"/>
+    <eval expected="43200" xpath="//block[@prod-id='bc0' and boolean(@is-viewport-area)]/@bpd"/>
+    <eval expected="80000" xpath="//block[@prod-id='bc0' and boolean(@is-reference-area)]/@ipd"/>
+    <eval expected="43200" xpath="//block[@prod-id='bc0' and boolean(@is-reference-area)]/@bpd"/>
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 0.0]" xpath="//block[@prod-id='bc0' and boolean(@is-viewport-area)]/@ctm"/>
+    <!-- 90 -->
+    <eval expected="43200" xpath="//block[@prod-id='bc90' and boolean(@is-viewport-area)]/@ipd"/>
+    <eval expected="80000" xpath="//block[@prod-id='bc90' and boolean(@is-viewport-area)]/@bpd"/>
+    <eval expected="80000" xpath="//block[@prod-id='bc90' and boolean(@is-reference-area)]/@ipd"/>
+    <eval expected="43200" xpath="//block[@prod-id='bc90' and boolean(@is-reference-area)]/@bpd"/>
+    <eval expected="[0.0 -1.0 1.0 0.0 0.0 80000.0]" xpath="//block[@prod-id='bc90' and boolean(@is-viewport-area)]/@ctm"/>
+    <!-- 180 -->
+    <eval expected="80000" xpath="//block[@prod-id='bc180' and boolean(@is-viewport-area)]/@ipd"/>
+    <eval expected="43200" xpath="//block[@prod-id='bc180' and boolean(@is-viewport-area)]/@bpd"/>
+    <eval expected="80000" xpath="//block[@prod-id='bc180' and boolean(@is-reference-area)]/@ipd"/>
+    <eval expected="43200" xpath="//block[@prod-id='bc180' and boolean(@is-reference-area)]/@bpd"/>
+    <eval expected="[-1.0 -0.0 0.0 -1.0 80000.0 43200.0]" xpath="//block[@prod-id='bc180' and boolean(@is-viewport-area)]/@ctm"/>
+    <!-- 270 -->
+    <eval expected="43200" xpath="//block[@prod-id='bc270' and boolean(@is-viewport-area)]/@ipd"/>
+    <eval expected="80000" xpath="//block[@prod-id='bc270' and boolean(@is-viewport-area)]/@bpd"/>
+    <eval expected="80000" xpath="//block[@prod-id='bc270' and boolean(@is-reference-area)]/@ipd"/>
+    <eval expected="43200" xpath="//block[@prod-id='bc270' and boolean(@is-reference-area)]/@bpd"/>
+    <eval expected="[0.0 1.0 -1.0 0.0 43200.0 0.0]" xpath="//block[@prod-id='bc270' and boolean(@is-viewport-area)]/@ctm"/>
+  </checks>
+</testcase>

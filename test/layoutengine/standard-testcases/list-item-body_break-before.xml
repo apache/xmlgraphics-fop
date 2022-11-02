@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>This test checks basic breaks in list bodies.</p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master margin="5pt" page-width="11cm" page-height="3cm"
+          master-name="page">
+          <fo:region-body />
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:list-block provisional-distance-between-starts="20pt"
+            provisional-label-separation="5pt">
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>(a)</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>
+                  This content starts on page 1 and overflows to page 2. This content starts on page 1 and
+                  overflows to page 2. This content starts on page 1 and overflows to page 2. This content
+                  starts on page 1 and overflows to page 2. This content starts on page 1 and overflows to
+                  page 2. This content starts on page 1 and overflows to page 2. This content starts on page 1
+                  and overflows to page 2.
+                  <fo:block break-before="page" />
+                  This content is on page 3.
+                  <fo:block break-before="page" />
+                  This content is on page 4.
+                </fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>(b)</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>
+                  <fo:block break-before="page" />
+                  This content is on page 5.
+                </fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>(c)</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block break-before="page">
+                  This content is on page 6.
+                </fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item break-before="page">
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>(d)</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>
+                  This content is on page 7.
+                </fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="3" xpath="//lineArea[starts-with(., 'This content is on page 3.')]/ancestor::pageViewport/@nr" />
+    <eval expected="4" xpath="//lineArea[starts-with(., 'This content is on page 4.')]/ancestor::pageViewport/@nr" />
+    <eval expected="5" xpath="//lineArea[starts-with(., '(b)')]/ancestor::pageViewport/@nr" />
+    <eval expected="6" xpath="//lineArea[starts-with(., '(c)')]/ancestor::pageViewport/@nr" />
+    <eval expected="7" xpath="//lineArea[starts-with(., '(d)')]/ancestor::pageViewport/@nr" />
+  </checks>
+</testcase>

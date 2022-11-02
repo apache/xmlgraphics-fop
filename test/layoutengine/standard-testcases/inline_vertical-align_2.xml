@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks inline level vertical align.
+      This example is taken from the spec section 7.13.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5.5in" page-height="7.5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block background-color="yellow" margin="2pt 0pt 2pt 0pt" font-size="10pt">
+            This is a longer line that provides a context for the line with images aligned on it.
+            Before edge <fo:external-graphic src="url(../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../resources/images/arrow_down_large.png)" vertical-align="top" />,
+            after edge <fo:external-graphic src="url(../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../resources/images/arrow_up_medium.png)" vertical-align="bottom" />,
+            middle <fo:external-graphic src="url(../resources/images/arrow_up_down_small.png)" vertical-align="middle" />,
+            none <fo:external-graphic src="url(../resources/images/line_medium.png)" />. 
+            And this is a line of text that follows the line with the objects aligned on it.
+          </fo:block>
+          <fo:block background-color="yellow" margin="2pt 0pt 2pt 0pt" font-size="10pt">
+            This is a longer line that provides a context for the line with images aligned on it.
+            Before edge <fo:external-graphic src="url(../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../resources/images/arrow_down_large.png)" vertical-align="top" />,
+            after edge <fo:external-graphic src="url(../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../resources/images/arrow_up_medium.png)" vertical-align="bottom" />,
+            middle <fo:external-graphic src="url(../resources/images/arrow_up_down_small.png)" vertical-align="middle" />.
+            And this is a line of text that follows the line with the objects aligned on it.
+          </fo:block>
+          <fo:block background-color="yellow" margin="2pt 0pt 2pt 0pt" font-size="10pt">
+            This is a longer line that provides a context for the line with images aligned on it.
+            Before edge <fo:external-graphic src="url(../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../resources/images/arrow_down_large.png)" vertical-align="top" />,
+            after edge <fo:external-graphic src="url(../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../resources/images/arrow_up_medium.png)" vertical-align="bottom" />.
+            And this is a line of text that follows the line with the objects aligned on it.
+          </fo:block>
+          <fo:block background-color="yellow" margin="2pt 0pt 2pt 0pt" font-size="10pt">
+            This is a longer line that provides a context for the line with images aligned on it.
+            Before edge <fo:external-graphic src="url(../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../resources/images/arrow_down_medium.png)" vertical-align="top" />,
+            after edge <fo:external-graphic src="url(../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../resources/images/arrow_up_large.png)" vertical-align="bottom" />.
+            And this is a line of text that follows the line with the objects aligned on it.
+          </fo:block>
+          <fo:block background-color="yellow" margin="2pt 0pt 2pt 0pt" font-size="10pt">
+            This is a longer line that provides a context for the line with images aligned on it.
+            Before edge <fo:external-graphic src="url(../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../resources/images/arrow_down_medium.png)" vertical-align="top" />,
+            after edge <fo:external-graphic src="url(../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../resources/images/arrow_up_large.png)" vertical-align="bottom" />,
+            middle <fo:external-graphic src="url(../resources/images/arrow_up_down_small.png)" vertical-align="middle" />.
+            And this is a line of text that follows the line with the objects aligned on it.
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="48812" tolerance="5" xpath="//flow/block[1]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea[2]/viewport[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea[2]/viewport[2]/@offset"/>
+    <eval expected="48812" tolerance="5" xpath="//flow/block[1]/lineArea[2]/text[2]/@offset"/>
+    <eval expected="35995" tolerance="5" xpath="//flow/block[1]/lineArea[2]/viewport[3]/@offset"/>
+    <eval expected="17998" tolerance="5" xpath="//flow/block[1]/lineArea[2]/viewport[4]/@offset"/>
+    <eval expected="48812" tolerance="5" xpath="//flow/block[1]/lineArea[2]/text[3]/@offset"/>
+    <eval expected="34379" tolerance="5" xpath="//flow/block[1]/lineArea[2]/viewport[5]/@offset"/>
+    <eval expected="48812" tolerance="5" xpath="//flow/block[1]/lineArea[2]/text[4]/@offset"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea[2]/viewport[6]/@offset"/>
+    <eval expected="48812" tolerance="5" xpath="//flow/block[1]/lineArea[2]/text[5]/@offset"/>
+
+    <eval expected="14433" tolerance="5" xpath="//flow/block[2]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[2]/lineArea[2]/viewport[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[2]/lineArea[2]/viewport[2]/@offset"/>
+    <eval expected="14433" tolerance="5" xpath="//flow/block[2]/lineArea[2]/text[2]/@offset"/>
+    <eval expected="35995" tolerance="5" xpath="//flow/block[2]/lineArea[2]/viewport[3]/@offset"/>
+    <eval expected="17998" tolerance="5" xpath="//flow/block[2]/lineArea[2]/viewport[4]/@offset"/>
+    <eval expected="14433" tolerance="5" xpath="//flow/block[2]/lineArea[2]/text[3]/@offset"/>
+    <eval expected="0" xpath="//flow/block[2]/lineArea[2]/viewport[5]/@offset"/>
+    <eval expected="14433" tolerance="5" xpath="//flow/block[2]/lineArea[2]/text[4]/@offset"/>
+
+    <eval expected="0" xpath="//flow/block[3]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea[2]/viewport[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea[2]/viewport[2]/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea[2]/text[2]/@offset"/>
+    <eval expected="35995" tolerance="5" xpath="//flow/block[3]/lineArea[2]/viewport[3]/@offset"/>
+    <eval expected="17998" tolerance="5" xpath="//flow/block[3]/lineArea[2]/viewport[4]/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea[2]/text[3]/@offset"/>
+
+    <eval expected="0" xpath="//flow/block[4]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[2]/viewport[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[2]/viewport[2]/@offset"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[2]/text[2]/@offset"/>
+    <eval expected="35995" tolerance="5" xpath="//flow/block[4]/lineArea[2]/viewport[3]/@offset"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[2]/viewport[4]/@offset"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[2]/text[3]/@offset"/>
+
+    <eval expected="14433" tolerance="5" xpath="//flow/block[5]/lineArea[2]/text[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[5]/lineArea[2]/viewport[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[5]/lineArea[2]/viewport[2]/@offset"/>
+    <eval expected="14433" tolerance="5" xpath="//flow/block[5]/lineArea[2]/text[2]/@offset"/>
+    <eval expected="35995" tolerance="5" xpath="//flow/block[5]/lineArea[2]/viewport[3]/@offset"/>
+    <eval expected="0" xpath="//flow/block[5]/lineArea[2]/viewport[4]/@offset"/>
+    <eval expected="14433" tolerance="5" xpath="//flow/block[5]/lineArea[2]/text[3]/@offset"/>
+    <eval expected="0" xpath="//flow/block[5]/lineArea[2]/viewport[5]/@offset"/>
+    <eval expected="14433" tolerance="5" xpath="//flow/block[5]/lineArea[2]/text[4]/@offset"/>
+  </checks>
+</testcase>

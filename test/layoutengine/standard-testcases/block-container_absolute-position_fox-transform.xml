@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks absolutely positioned block-containers with fox:transform.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container id="ro0" left="10pt" top="10pt" width="150pt" height="100pt" absolute-position="absolute" background-color="orange" margin="0pt" border="solid 5pt" border-top-color="red" reference-orientation="0">
+            <fo:block background-color="yellow" start-indent="0pt" end-indent="0pt">ro = 0</fo:block>
+          </fo:block-container>
+          <fo:block-container id="ro90" left="190pt" top="10pt" width="150pt" height="100pt" absolute-position="absolute" background-color="orange" margin="0pt" border="solid 5pt" border-top-color="red" reference-orientation="90" fox:transform="rotate(2)">
+            <fo:block background-color="yellow" start-indent="0pt" end-indent="0pt">ro = 90</fo:block>
+          </fo:block-container>
+          <fo:block-container id="ro180" left="10pt" top="190pt" width="150pt" height="100pt" absolute-position="absolute" background-color="orange" margin="0pt" border="solid 5pt" border-top-color="red" reference-orientation="180" fox:transform="scale(0.5) skewX(45)">
+            <fo:block background-color="yellow" start-indent="0pt" end-indent="0pt">ro = 180</fo:block>
+          </fo:block-container>
+          <fo:block-container id="ro270" left="190pt" top="190pt" width="150pt" height="100pt" absolute-position="absolute" background-color="orange" margin="0pt" border="solid 5pt" border-top-color="red" reference-orientation="270">
+            <fo:block background-color="yellow" start-indent="0pt" end-indent="0pt">ro = 270</fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+    <eval expected="rotate(2)" xpath="//block[@prod-id='ro90']/@fox:transform"/>
+    <eval expected="scale(0.5) skewX(45)" xpath="//block[@prod-id='ro180']/@fox:transform"/>
+  </checks>
+</testcase>

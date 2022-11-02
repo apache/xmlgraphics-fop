@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!--
+
+Generated from glb12.ttf by Apache FOP's TTFReader
+
+$Id$
+
+-->
+<font-metrics metrics-version="2" type="TRUETYPE">
+  <font-name>Gladiator,Bold</font-name>
+  <embed/>
+  <cap-height>691</cap-height>
+  <x-height>429</x-height>
+  <ascender>765</ascender>
+  <descender>-234</descender>
+  <bbox>
+    <left>-157</left>
+    <bottom>-250</bottom>
+    <right>1181</right>
+    <top>1071</top>
+  </bbox>
+  <flags>33</flags>
+  <stemv>0</stemv>
+  <italicangle>0</italicangle>
+  <subtype>TRUETYPE</subtype>
+  <singlebyte-extras>
+    <encoding>WinAnsiEncoding</encoding>
+    <first-char>0</first-char>
+    <last-char>255</last-char>
+    <widths>
+      <char idx="0" wdt="432"/>
+      <char idx="1" wdt="432"/>
+      <char idx="2" wdt="432"/>
+      <char idx="3" wdt="432"/>
+      <char idx="4" wdt="432"/>
+      <char idx="5" wdt="432"/>
+      <char idx="6" wdt="432"/>
+      <char idx="7" wdt="432"/>
+      <char idx="8" wdt="432"/>
+      <char idx="9" wdt="432"/>
+      <char idx="10" wdt="432"/>
+      <char idx="11" wdt="432"/>
+      <char idx="12" wdt="432"/>
+      <char idx="13" wdt="432"/>
+      <char idx="14" wdt="432"/>
+      <char idx="15" wdt="432"/>
+      <char idx="16" wdt="432"/>
+      <char idx="17" wdt="432"/>
+      <char idx="18" wdt="432"/>
+      <char idx="19" wdt="432"/>
+      <char idx="20" wdt="432"/>
+      <char idx="21" wdt="432"/>
+      <char idx="22" wdt="432"/>
+      <char idx="23" wdt="432"/>
+      <char idx="24" wdt="432"/>
+      <char idx="25" wdt="432"/>
+      <char idx="26" wdt="432"/>
+      <char idx="27" wdt="432"/>
+      <char idx="28" wdt="432"/>
+      <char idx="29" wdt="432"/>
+      <char idx="30" wdt="432"/>
+      <char idx="31" wdt="432"/>
+      <char idx="32" wdt="332"/>
+      <char idx="33" wdt="376"/>
+      <char idx="34" wdt="525"/>
+      <char idx="35" wdt="980"/>
+      <char idx="36" wdt="625"/>
+      <char idx="37" wdt="754"/>
+      <char idx="38" wdt="886"/>
+      <char idx="39" wdt="311"/>
+      <char idx="40" wdt="398"/>
+      <char idx="41" wdt="398"/>
+      <char idx="42" wdt="601"/>
+      <char idx="43" wdt="652"/>
+      <char idx="44" wdt="311"/>
+      <char idx="45" wdt="331"/>
+      <char idx="46" wdt="311"/>
+      <char idx="47" wdt="500"/>
+      <char idx="48" wdt="541"/>
+      <char idx="49" wdt="541"/>
+      <char idx="50" wdt="541"/>
+      <char idx="51" wdt="541"/>
+      <char idx="52" wdt="541"/>
+      <char idx="53" wdt="541"/>
+      <char idx="54" wdt="541"/>
+      <char idx="55" wdt="541"/>
+      <char idx="56" wdt="541"/>
+      <char idx="57" wdt="541"/>
+      <char idx="58" wdt="311"/>
+      <char idx="59" wdt="311"/>
+      <char idx="60" wdt="500"/>
+      <char idx="61" wdt="805"/>
+      <char idx="62" wdt="500"/>
+      <char idx="63" wdt="569"/>
+      <char idx="64" wdt="805"/>
+      <char idx="65" wdt="729"/>
+      <char idx="66" wdt="708"/>
+      <char idx="67" wdt="725"/>
+      <char idx="68" wdt="748"/>
+      <char idx="69" wdt="683"/>
+      <char idx="70" wdt="665"/>
+      <char idx="71" wdt="769"/>
+      <char idx="72" wdt="808"/>
+      <char idx="73" wdt="347"/>
+      <char idx="74" wdt="347"/>
+      <char idx="75" wdt="769"/>
+      <char idx="76" wdt="644"/>
+      <char idx="77" wdt="1109"/>
+      <char idx="78" wdt="767"/>
+      <char idx="79" wdt="821"/>
+      <char idx="80" wdt="689"/>
+      <char idx="81" wdt="821"/>
+      <char idx="82" wdt="708"/>
+      <char idx="83" wdt="689"/>
+      <char idx="84" wdt="685"/>
+      <char idx="85" wdt="767"/>
+      <char idx="86" wdt="689"/>
+      <char idx="87" wdt="1181"/>
+      <char idx="88" wdt="729"/>
+      <char idx="89" wdt="729"/>
+      <char idx="90" wdt="644"/>
+      <char idx="91" wdt="542"/>
+      <char idx="92" wdt="500"/>
+      <char idx="93" wdt="542"/>
+      <char idx="94" wdt="253"/>
+      <char idx="95" wdt="432"/>
+      <char idx="96" wdt="311"/>
+      <char idx="97" wdt="515"/>
+      <char idx="98" wdt="556"/>
+      <char idx="99" wdt="492"/>
+      <char idx="100" wdt="556"/>
+      <char idx="101" wdt="517"/>
+      <char idx="102" wdt="311"/>
+      <char idx="103" wdt="556"/>
+      <char idx="104" wdt="575"/>
+      <char idx="105" wdt="311"/>
+      <char idx="106" wdt="311"/>
+      <char idx="107" wdt="556"/>
+      <char idx="108" wdt="311"/>
+      <char idx="109" wdt="839"/>
+      <char idx="110" wdt="575"/>
+      <char idx="111" wdt="547"/>
+      <char idx="112" wdt="556"/>
+      <char idx="113" wdt="556"/>
+      <char idx="114" wdt="440"/>
+      <char idx="115" wdt="492"/>
+      <char idx="116" wdt="359"/>
+      <char idx="117" wdt="575"/>
+      <char idx="118" wdt="476"/>
+      <char idx="119" wdt="711"/>
+      <char idx="120" wdt="496"/>
+      <char idx="121" wdt="476"/>
+      <char idx="122" wdt="496"/>
+      <char idx="123" wdt="432"/>
+      <char idx="124" wdt="311"/>
+      <char idx="125" wdt="432"/>
+      <char idx="126" wdt="253"/>
+      <char idx="127" wdt="432"/>
+      <char idx="128" wdt="432"/>
+      <char idx="129" wdt="432"/>
+      <char idx="130" wdt="432"/>
+      <char idx="131" wdt="432"/>
+      <char idx="132" wdt="432"/>
+      <char idx="133" wdt="432"/>
+      <char idx="134" wdt="432"/>
+      <char idx="135" wdt="432"/>
+      <char idx="136" wdt="253"/>
+      <char idx="137" wdt="432"/>
+      <char idx="138" wdt="0"/>
+      <char idx="139" wdt="432"/>
+      <char idx="140" wdt="0"/>
+      <char idx="141" wdt="432"/>
+      <char idx="142" wdt="0"/>
+      <char idx="143" wdt="432"/>
+      <char idx="144" wdt="432"/>
+      <char idx="145" wdt="311"/>
+      <char idx="146" wdt="311"/>
+      <char idx="147" wdt="525"/>
+      <char idx="148" wdt="525"/>
+      <char idx="149" wdt="432"/>
+      <char idx="150" wdt="855"/>
+      <char idx="151" wdt="1109"/>
+      <char idx="152" wdt="253"/>
+      <char idx="153" wdt="432"/>
+      <char idx="154" wdt="0"/>
+      <char idx="155" wdt="432"/>
+      <char idx="156" wdt="0"/>
+      <char idx="157" wdt="432"/>
+      <char idx="158" wdt="0"/>
+      <char idx="159" wdt="0"/>
+      <char idx="160" wdt="332"/>
+      <char idx="161" wdt="376"/>
+      <char idx="162" wdt="432"/>
+      <char idx="163" wdt="0"/>
+      <char idx="164" wdt="432"/>
+      <char idx="165" wdt="432"/>
+      <char idx="166" wdt="432"/>
+      <char idx="167" wdt="0"/>
+      <char idx="168" wdt="395"/>
+      <char idx="169" wdt="432"/>
+      <char idx="170" wdt="432"/>
+      <char idx="171" wdt="657"/>
+      <char idx="172" wdt="432"/>
+      <char idx="173" wdt="432"/>
+      <char idx="174" wdt="432"/>
+      <char idx="175" wdt="253"/>
+      <char idx="176" wdt="432"/>
+      <char idx="177" wdt="432"/>
+      <char idx="178" wdt="432"/>
+      <char idx="179" wdt="432"/>
+      <char idx="180" wdt="304"/>
+      <char idx="181" wdt="432"/>
+      <char idx="182" wdt="432"/>
+      <char idx="183" wdt="432"/>
+      <char idx="184" wdt="151"/>
+      <char idx="185" wdt="432"/>
+      <char idx="186" wdt="432"/>
+      <char idx="187" wdt="657"/>
+      <char idx="188" wdt="432"/>
+      <char idx="189" wdt="432"/>
+      <char idx="190" wdt="432"/>
+      <char idx="191" wdt="569"/>
+      <char idx="192" wdt="547"/>
+      <char idx="193" wdt="729"/>
+      <char idx="194" wdt="729"/>
+      <char idx="195" wdt="729"/>
+      <char idx="196" wdt="729"/>
+      <char idx="197" wdt="729"/>
+      <char idx="198" wdt="432"/>
+      <char idx="199" wdt="725"/>
+      <char idx="200" wdt="683"/>
+      <char idx="201" wdt="683"/>
+      <char idx="202" wdt="683"/>
+      <char idx="203" wdt="683"/>
+      <char idx="204" wdt="347"/>
+      <char idx="205" wdt="347"/>
+      <char idx="206" wdt="347"/>
+      <char idx="207" wdt="347"/>
+      <char idx="208" wdt="0"/>
+      <char idx="209" wdt="767"/>
+      <char idx="210" wdt="821"/>
+      <char idx="211" wdt="821"/>
+      <char idx="212" wdt="821"/>
+      <char idx="213" wdt="821"/>
+      <char idx="214" wdt="821"/>
+      <char idx="215" wdt="432"/>
+      <char idx="216" wdt="0"/>
+      <char idx="217" wdt="767"/>
+      <char idx="218" wdt="767"/>
+      <char idx="219" wdt="767"/>
+      <char idx="220" wdt="767"/>
+      <char idx="221" wdt="729"/>
+      <char idx="222" wdt="0"/>
+      <char idx="223" wdt="432"/>
+      <char idx="224" wdt="515"/>
+      <char idx="225" wdt="515"/>
+      <char idx="226" wdt="515"/>
+      <char idx="227" wdt="515"/>
+      <char idx="228" wdt="515"/>
+      <char idx="229" wdt="515"/>
+      <char idx="230" wdt="432"/>
+      <char idx="231" wdt="492"/>
+      <char idx="232" wdt="517"/>
+      <char idx="233" wdt="517"/>
+      <char idx="234" wdt="517"/>
+      <char idx="235" wdt="517"/>
+      <char idx="236" wdt="311"/>
+      <char idx="237" wdt="311"/>
+      <char idx="238" wdt="311"/>
+      <char idx="239" wdt="311"/>
+      <char idx="240" wdt="0"/>
+      <char idx="241" wdt="575"/>
+      <char idx="242" wdt="547"/>
+      <char idx="243" wdt="547"/>
+      <char idx="244" wdt="547"/>
+      <char idx="245" wdt="547"/>
+      <char idx="246" wdt="547"/>
+      <char idx="247" wdt="432"/>
+      <char idx="248" wdt="0"/>
+      <char idx="249" wdt="575"/>
+      <char idx="250" wdt="575"/>
+      <char idx="251" wdt="575"/>
+      <char idx="252" wdt="575"/>
+      <char idx="253" wdt="476"/>
+      <char idx="254" wdt="0"/>
+      <char idx="255" wdt="476"/>
+    </widths>
+  </singlebyte-extras>
+</font-metrics>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master page-width="10.0cm" page-height="10.0cm" master-name="testpage">
+      <fo:region-body />
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="testpage">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block-container overflow="error-if-overflow" position="absolute" height="20pt" width="40pt" left="30pt" top="20pt">
+        <fo:block>abcdefghijklmnopqrstuvwxyz</fo:block>
+      </fo:block-container>
+      <fo:block-container overflow="error-if-overflow" position="absolute" height="65pt" width="40pt" left="90pt" top="20pt">
+        <fo:block>abc def ghi jkl mno pqr stu vwx yz</fo:block>
+      </fo:block-container>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

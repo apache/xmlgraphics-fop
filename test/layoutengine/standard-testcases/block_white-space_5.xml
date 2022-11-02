@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks white space handling between block-level elements nested in blocks.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>
+            <fo:block border="0.2pt solid red">block1</fo:block>
+            <fo:block border="0.2pt solid red">block2</fo:block>
+          </fo:block>
+          <fo:block space-before="1em">
+            <fo:block-container border="0.2pt solid blue">
+              <fo:block>block1</fo:block>
+            </fo:block-container>
+            <fo:block-container border="0.2pt solid blue">
+              <fo:block>block2</fo:block>
+            </fo:block-container>
+          </fo:block>
+          <fo:block space-before="1em">
+            <fo:table table-layout="fixed" width="100%" border="0.2pt solid green" border-collapse="separate">
+              <fo:table-column column-width="proportional-column-width(1)"/>
+              <fo:table-body>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block>Table 1 Cell</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+            <fo:table table-layout="fixed" width="100%" border="0.2pt solid green" border-collapse="separate">
+              <fo:table-column column-width="proportional-column-width(1)"/>
+              <fo:table-body>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block>Table 2 Cell</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+          </fo:block>
+          <fo:block space-before="1em">
+            <fo:list-block border="0.2pt solid orange">
+              <fo:list-item>
+                <fo:list-item-label>
+                  <fo:block>x</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body>
+                  <fo:block>block1</fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+            </fo:list-block>
+            <fo:list-block border="0.2pt solid orange">
+              <fo:list-item>
+                <fo:list-item-label>
+                  <fo:block>x</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body>
+                  <fo:block>block2</fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+            </fo:list-block>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- No line areas must be generated between the nested elements -->
+    <eval expected="0" xpath="count(//flow/block[1]/lineArea)"/>
+    <eval expected="0" xpath="count(//flow/block[2]/lineArea)"/>
+    <eval expected="0" xpath="count(//flow/block[3]/lineArea)"/>
+    <eval expected="0" xpath="count(//flow/block[4]/lineArea)"/>
+  </checks>
+</testcase>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks external-graphics with content-width
+      (values: scale-to-fit, scale-down-to-fit and scale-up-to-fit)
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" font-size="0" line-height="1">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>
+            <fo:external-graphic id="img1" src="../resources/images/bgimg72dpi.jpg"/>
+          </fo:block>
+          <fo:block>
+            <fo:external-graphic id="img2" src="../resources/images/bgimg72dpi.jpg"
+              inline-progression-dimension="250pt" block-progression-dimension="250pt"
+              content-height="scale-to-fit" content-width="scale-to-fit"/>
+          </fo:block>
+          <fo:block>
+            <fo:external-graphic id="img3" src="../resources/images/bgimg72dpi.jpg"
+              inline-progression-dimension="250pt" block-progression-dimension="250pt"
+              content-height="scale-down-to-fit" content-width="scale-down-to-fit"/>
+          </fo:block>
+          <fo:block>
+            <fo:external-graphic id="img4" src="../resources/images/bgimg72dpi.jpg"
+              inline-progression-dimension="250pt" block-progression-dimension="250pt"
+              content-height="scale-up-to-fit" content-width="scale-up-to-fit"/>
+          </fo:block>
+          <fo:block>
+            <fo:external-graphic id="img5" src="../resources/images/bgimg300dpi.jpg"
+              inline-progression-dimension="250pt" block-progression-dimension="250pt"
+              content-height="scale-down-to-fit" content-width="scale-down-to-fit"/>
+          </fo:block>
+          <fo:block>
+            <fo:external-graphic id="img6" src="../resources/images/bgimg300dpi.jpg"
+              inline-progression-dimension="250pt" block-progression-dimension="250pt"
+              content-height="scale-up-to-fit" content-width="scale-up-to-fit"/>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="192000" xpath="//image[@prod-id='img1']/../@ipd"/>
+    <eval expected="192000" xpath="//image[@prod-id='img1']/../@bpd"/>
+    <eval expected="0 0 192000 192000" xpath="//image[@prod-id='img1']/../@pos"/>
+    
+    <eval expected="250000" xpath="//image[@prod-id='img2']/../@ipd"/>
+    <eval expected="250000" xpath="//image[@prod-id='img2']/../@bpd"/>
+    <eval expected="0 0 250000 250000" xpath="//image[@prod-id='img2']/../@pos"/>
+    
+    <eval expected="250000" xpath="//image[@prod-id='img3']/../@ipd"/>
+    <eval expected="250000" xpath="//image[@prod-id='img3']/../@bpd"/>
+    <eval expected="0 0 192000 192000" xpath="//image[@prod-id='img3']/../@pos"/>
+    
+    <eval expected="250000" xpath="//image[@prod-id='img4']/../@ipd"/>
+    <eval expected="250000" xpath="//image[@prod-id='img4']/../@bpd"/>
+    <eval expected="0 0 250000 250000" xpath="//image[@prod-id='img4']/../@pos"/>
+
+    <eval expected="250000" xpath="//image[@prod-id='img5']/../@ipd"/>
+    <eval expected="250000" xpath="//image[@prod-id='img5']/../@bpd"/>
+    <eval expected="0 0 46080 46080" xpath="//image[@prod-id='img5']/../@pos"/>
+    
+    <eval expected="250000" xpath="//image[@prod-id='img6']/../@ipd"/>
+    <eval expected="250000" xpath="//image[@prod-id='img6']/../@bpd"/>
+    <eval expected="0 0 250000 250000" xpath="//image[@prod-id='img6']/../@pos"/>
+  </checks>
+</testcase>

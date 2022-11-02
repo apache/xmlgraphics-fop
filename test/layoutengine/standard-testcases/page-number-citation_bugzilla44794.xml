@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks page-number-citation and page-number-citation-last on block and inline
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="3in" 
+              margin="20pt">
+          <fo:region-body background-color="yellow"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence id="page-sequence1" master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+  
+          <fo:block id="outer-block1">
+            block: <fo:page-number-citation ref-id="block-inline1"/> to <fo:page-number-citation-last ref-id="block-inline1"/>.
+          </fo:block>
+          <fo:block id="outer-block2">
+            inline: <fo:page-number-citation ref-id="inline1"/> to <fo:page-number-citation-last ref-id="inline1"/>.
+          </fo:block>
+          
+          <fo:block id="outer-block3" border="0.5pt solid black">
+            <fo:block id="block-inline1" border="0.5pt solid black" space-after.optimum="2em">text<fo:inline id="inline1" >XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX</fo:inline>text</fo:block>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body" font-size="8pt">
+          <fo:block id="outer-block4">
+            inline: <fo:page-number-citation ref-id="inline1" /> to <fo:page-number-citation-last ref-id="inline1" />
+          </fo:block>
+          <fo:block id="outer-block5">
+            block: <fo:page-number-citation ref-id="block-inline1" /> to <fo:page-number-citation-last ref-id="block-inline1" />
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <true fail-msg="Wrong page-number-citation for block before" xpath="'1' = (//block[@prod-id='outer-block1']//word)[2]"/>
+    <true fail-msg="Wrong page-number-citation-last for block before" xpath="'2' = (//block[@prod-id='outer-block1']//word)[4]"/>
+    <true fail-msg="Wrong page-number-citation for inline before" xpath="'1' = (//block[@prod-id='outer-block2']//word)[2]"/>
+    <true fail-msg="Wrong page-number-citation-last for inline before" xpath="'2' = (//block[@prod-id='outer-block2']//word)[4]"/>
+    <true fail-msg="Wrong page-number-citation for block after" xpath="'1' = (//block[@prod-id='outer-block5']//word)[2]"/>
+    <true fail-msg="Wrong page-number-citation-last for block after" xpath="'2' = (//block[@prod-id='outer-block5']//word)[4]"/>
+    <true fail-msg="Wrong page-number-citation for inline after" xpath="'1' = (//block[@prod-id='outer-block4']//word)[2]"/>
+    <true fail-msg="Wrong page-number-citation-last for inline after" xpath="'2' = (//block[@prod-id='outer-block4']//word)[4]"/>
+  </checks>
+</testcase>

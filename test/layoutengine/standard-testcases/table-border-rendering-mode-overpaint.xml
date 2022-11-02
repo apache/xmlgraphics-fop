@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks if table borders are overpainted.
+    </p>
+  </info>
+  <cfg>
+    <table-border-overpaint>true</table-border-overpaint>
+  </cfg>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="body">
+          <fo:region-body margin="15mm"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="body">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table border-before-width.conditionality="retain" border-collapse="collapse" text-align="start" border="none" table-layout="fixed" width="100%">
+            <fo:table-column column-number="1"/>
+            <fo:table-column column-number="2"/>
+            <fo:table-column column-number="3"/>
+            <fo:table-column column-number="4"/>
+            <fo:table-column column-number="5"/>
+            <fo:table-column column-number="6"/>
+            <fo:table-column column-number="7"/>
+            <fo:table-column column-number="8"/>
+            <fo:table-header start-indent="0pt" end-indent="0pt" border-top="0.5pt solid green" border-right="0.5pt solid green" border-left="0.5pt solid green">
+              <fo:table-row keep-with-next.within-column="always" keep-with-previous.within-column="auto">
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid white" border-right="0.5pt solid white" background-color="green" color="white" number-rows-spanned="3">
+                  <fo:block font-weight="bold">Color Name</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid white" background-color="green" color="white" number-columns-spanned="7">
+                  <fo:block font-weight="bold">Color Value</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row keep-with-next.within-column="always" keep-with-previous.within-column="auto">
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid white" border-right="0.5pt solid white" background-color="green" color="white" number-columns-spanned="3">
+                  <fo:block font-weight="bold">RGB</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid white" background-color="green" color="white" number-columns-spanned="4">
+                  <fo:block font-weight="bold">CMYK</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row keep-with-next.within-column="always" keep-with-previous.within-column="auto">
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid white" border-right="0.5pt solid white" background-color="green" color="white">
+                  <fo:block font-weight="bold">R</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid white" border-right="0.5pt solid white" background-color="green" color="white">
+                  <fo:block font-weight="bold">G</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid white" border-right="0.5pt solid white" background-color="green" color="white">
+                  <fo:block font-weight="bold">B</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid white" border-right="0.5pt solid white" background-color="green" color="white">
+                  <fo:block font-weight="bold">C</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid white" border-right="0.5pt solid white" background-color="green" color="white">
+                  <fo:block font-weight="bold">M</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid white" border-right="0.5pt solid white" background-color="green" color="white">
+                  <fo:block font-weight="bold">Y</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid white" background-color="green" color="white">
+                  <fo:block font-weight="bold">K</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+            <fo:table-body start-indent="0pt" end-indent="0pt" border-bottom="0.5pt solid green" border-right="0.5pt solid green" border-left="0.5pt solid green">
+              <fo:table-row keep-with-next.within-column="always" keep-with-previous.within-column="auto">
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>Red</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>255</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>0</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>0</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>0.00</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>1.00</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>1.00</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green">
+                  <fo:block>0.00</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row keep-with-next.within-column="auto" keep-with-previous.within-column="auto">
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>Green</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>0</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>255</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>0</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>1.00</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>0.00</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green" border-right="0.5pt solid green">
+                  <fo:block>1.00</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-bottom="0.5pt solid green">
+                  <fo:block>0.00</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row keep-with-next.within-column="auto" keep-with-previous.within-column="always">
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-right="0.5pt solid green">
+                  <fo:block>Blue</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-right="0.5pt solid green">
+                  <fo:block>0</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-right="0.5pt solid green">
+                  <fo:block>0</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-right="0.5pt solid green">
+                  <fo:block>255</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-right="0.5pt solid green">
+                  <fo:block>1.00</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-right="0.5pt solid green">
+                  <fo:block>1.00</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm" border-right="0.5pt solid green">
+                  <fo:block>0.00</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-top="1.3mm" padding-bottom="1.3mm" padding-left="2.5mm" padding-right="2.5mm">
+                  <fo:block>0.00</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="130" xpath="count(//block)"/>
+    <eval expected="52" xpath="count(//block/@border-start)"/>
+    <eval expected="(solid,#008000,500,collapse-inner)" xpath="//flow/block/block[91]/@border-end"/>
+    <eval expected="(solid,#008000,500,collapse-inner)" xpath="//flow/block/block[92]/@border-start"/>
+    <eval expected="(solid,#008000,500,collapse-inner)" xpath="//flow/block/block[93]/@border-end"/>
+    <eval expected="(solid,#008000,500,collapse-inner)" xpath="//flow/block/block[94]/@border-start"/>
+  </checks>
+</testcase>

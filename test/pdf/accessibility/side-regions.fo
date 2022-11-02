@@ -1,0 +1,181 @@
+<?xml version="1.0" standalone="no"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="first-page"
+      page-height="100pt" page-width="150pt">
+      <fo:region-body margin="12pt" display-align="center" background-color="#FFF0F0"/>
+      <fo:region-before region-name="first-page-before" extent="10pt" precedence="true" 
+        display-align="after"/>
+      <fo:region-after region-name="first-page-after" extent="10pt" precedence="true"/>
+      <fo:region-start region-name="first-page-start" extent="10pt" reference-orientation="90" 
+        display-align="after"/>
+      <fo:region-end region-name="first-page-end" extent="10pt" reference-orientation="-90" 
+        display-align="after"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="odd-page"
+      page-height="100pt" page-width="150pt">
+      <fo:region-body margin="12pt" display-align="center" background-color="#FFFFF0"/>
+      <fo:region-before region-name="odd-page-before" extent="10pt" precedence="true" 
+        display-align="after"/>
+      <fo:region-after region-name="odd-page-after" extent="10pt" precedence="true"/>
+      <fo:region-start region-name="odd-page-start" extent="10pt" reference-orientation="90" 
+        display-align="after"/>
+      <fo:region-end region-name="odd-page-end" extent="10pt" reference-orientation="-90" 
+        display-align="after"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="even-page"
+      page-height="100pt" page-width="150pt">
+      <fo:region-body margin="12pt" display-align="center" background-color="#F0FFF0"/>
+      <fo:region-before region-name="even-page-before" extent="10pt" precedence="true" 
+        display-align="after"/>
+      <fo:region-after region-name="even-page-after" extent="10pt" precedence="true"/>
+      <fo:region-start region-name="even-page-start" extent="10pt" reference-orientation="90" 
+        display-align="after"/>
+      <fo:region-end region-name="even-page-end" extent="10pt" reference-orientation="-90" 
+        display-align="after"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="blank-page"
+      page-height="100pt" page-width="150pt">
+      <fo:region-body margin="12pt" display-align="center" background-color="#F0F0F0"/>
+      <fo:region-before region-name="blank-page-before" extent="10pt" precedence="true" 
+        display-align="after"/>
+      <fo:region-after region-name="blank-page-after" extent="10pt" precedence="true"/>
+      <fo:region-start region-name="blank-page-start" extent="10pt" reference-orientation="90" 
+        display-align="after"/>
+      <fo:region-end region-name="blank-page-end" extent="10pt" reference-orientation="-90" 
+        display-align="after"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="last-page"
+      page-height="100pt" page-width="150pt">
+      <fo:region-body margin="45pt 12pt" display-align="center" background-color="#F0F0FF"/>
+      <fo:region-before region-name="last-page-before" extent="10pt" precedence="true" 
+        display-align="after"/>
+      <fo:region-after region-name="last-page-after" extent="10pt" precedence="true"/>
+      <fo:region-start region-name="last-page-start" extent="10pt" reference-orientation="90" 
+        display-align="after"/>
+      <fo:region-end region-name="last-page-end" extent="10pt" reference-orientation="-90" 
+        display-align="after"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="pages">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference page-position="first" master-reference="first-page"/>
+        <fo:conditional-page-master-reference page-position="last" master-reference="last-page"/>
+        <fo:conditional-page-master-reference blank-or-not-blank="blank" 
+          master-reference="blank-page"/>
+        <fo:conditional-page-master-reference odd-or-even="odd" master-reference="odd-page"/>
+        <fo:conditional-page-master-reference odd-or-even="even" master-reference="even-page"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="pages" force-page-count="even" font-size="4pt" 
+    text-align="center">
+
+    <fo:static-content flow-name="first-page-before">
+      <fo:block start-indent="12pt" end-indent="12pt" border-bottom="0.5pt solid red" 
+        padding-bottom="0.5pt">First Page Before.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="first-page-after">
+      <fo:block start-indent="12pt" end-indent="12pt" border-top="0.5pt solid red" 
+        padding-top="0.5pt">First Page After.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="first-page-start">
+      <fo:block start-indent="2pt" end-indent="2pt" border-bottom="0.5pt solid red" 
+        padding-bottom="0.5pt">First Page Start.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="first-page-end">
+      <fo:block start-indent="2pt" end-indent="2pt" border-bottom="0.5pt solid red" 
+        padding-bottom="0.5pt">First Page End.</fo:block>
+    </fo:static-content>
+
+    <fo:static-content flow-name="odd-page-after">
+      <fo:block start-indent="12pt" end-indent="12pt" border-top="0.5pt solid orange" 
+        padding-top="0.5pt">Odd Page After.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="odd-page-end">
+      <fo:block start-indent="2pt" end-indent="2pt" border-bottom="0.5pt solid orange" 
+        padding-bottom="0.5pt">Odd Page End.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="odd-page-start">
+      <fo:block start-indent="2pt" end-indent="2pt" border-bottom="0.5pt solid orange" 
+        padding-bottom="0.5pt">Odd Page Start.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="odd-page-before">
+      <fo:block start-indent="12pt" end-indent="12pt" border-bottom="0.5pt solid orange" 
+        padding-bottom="0.5pt">Odd Page Before.</fo:block>
+    </fo:static-content>
+
+    <fo:static-content flow-name="even-page-end">
+      <fo:block start-indent="2pt" end-indent="2pt" border-bottom="0.5pt solid green" 
+        padding-bottom="0.5pt">Even Page End.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="even-page-start">
+      <fo:block start-indent="2pt" end-indent="2pt" border-bottom="0.5pt solid green" 
+        padding-bottom="0.5pt">Even Page Start.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="even-page-after">
+      <fo:block start-indent="12pt" end-indent="12pt" border-top="0.5pt solid green" 
+        padding-top="0.5pt">Even Page After.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="even-page-before">
+      <fo:block start-indent="12pt" end-indent="12pt" border-bottom="0.5pt solid green" 
+        padding-bottom="0.5pt">Even Page Before.</fo:block>
+    </fo:static-content>
+
+    <fo:static-content flow-name="blank-page-start">
+      <fo:block start-indent="2pt" end-indent="2pt" border-bottom="0.5pt solid black" 
+        padding-bottom="0.5pt">Blank Page Start.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="blank-page-after">
+      <fo:block start-indent="12pt" end-indent="12pt" border-top="0.5pt solid black" 
+        padding-top="0.5pt">Blank Page After.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="blank-page-before">
+      <fo:block start-indent="12pt" end-indent="12pt" border-bottom="0.5pt solid black" 
+        padding-bottom="0.5pt">Blank Page Before.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="blank-page-end">
+      <fo:block start-indent="2pt" end-indent="2pt" border-bottom="0.5pt solid black" 
+        padding-bottom="0.5pt">Blank Page End.</fo:block>
+    </fo:static-content>
+
+    <fo:static-content flow-name="last-page-before">
+      <fo:block start-indent="12pt" end-indent="12pt" border-bottom="0.5pt solid blue" 
+        padding-bottom="0.5pt">Last Page Before.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="last-page-end">
+      <fo:block start-indent="2pt" end-indent="2pt" border-bottom="0.5pt solid blue" 
+        padding-bottom="0.5pt">Last Page End.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="last-page-after">
+      <fo:block start-indent="12pt" end-indent="12pt" border-top="0.5pt solid blue" 
+        padding-top="0.5pt">Last Page After.</fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="last-page-start">
+      <fo:block start-indent="2pt" end-indent="2pt" border-bottom="0.5pt solid blue" 
+        padding-bottom="0.5pt">Last Page Start.</fo:block>
+    </fo:static-content>
+
+    <fo:static-content flow-name="xsl-footnote-separator">
+      <fo:block>
+        <fo:leader leader-pattern="rule" leader-length="40%" rule-thickness="0.5pt"/>
+      </fo:block>
+    </fo:static-content>
+
+    <fo:flow flow-name="xsl-region-body" font-size="8pt" line-height="10pt">
+      <fo:block>Apache™ FOP (Formatting Objects Processor) is a print formatter driven by XSL 
+        formatting objects (XSL-FO) and an output independent formatter.</fo:block>
+      <fo:block break-before="page">It is an application<fo:footnote><fo:inline>*</fo:inline> 
+          <fo:footnote-body><fo:block font-size="80%">* written in 
+              Java</fo:block></fo:footnote-body></fo:footnote> that reads a formatting object (FO) 
+        tree and renders the resulting pages to a specified output.</fo:block>
+      <fo:block break-before="page">The FOP project is part of the Apache Software Foundation, which 
+        is a wider community of users and developers of open source projects.</fo:block>
+      <fo:block break-before="page">Apache™ FOP (Formatting Objects Processor) is a print formatter 
+        driven by XSL formatting objects (XSL-FO) and an output independent formatter.</fo:block>
+      <fo:block break-before="page">It is a Java application that reads a formatting object (FO) 
+        tree and renders the resulting pages to a specified output.</fo:block>
+      <fo:block break-before="page">The FOP project is part of the Apache Software Foundation, which 
+        is a wider community of users and developers of open source projects.</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

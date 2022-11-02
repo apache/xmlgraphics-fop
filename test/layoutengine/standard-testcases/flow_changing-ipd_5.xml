@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that a list can be relaid out when a change in ipd happens across pages.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="narrow" page-height="200pt" page-width="400pt" margin="50pt">
+          <fo:region-body background-color="#F0F0F0"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="wide" page-height="200pt" page-width="600pt" margin="50pt">
+          <fo:region-body background-color="#F0F0F0"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="pages">
+          <fo:single-page-master-reference master-reference="narrow"/>
+          <fo:repeatable-page-master-reference master-reference="wide"/>
+        </fo:page-sequence-master>
+        <fo:page-sequence-master master-name="alternate">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference odd-or-even="odd" master-reference="wide"/>
+            <fo:conditional-page-master-reference odd-or-even="even" master-reference="narrow"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="alternate">
+        <fo:flow flow-name="xsl-region-body">
+      <fo:block widows="1" orphans="1">
+        <fo:list-block>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>(a)</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>(a)</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>(a)</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>(a)</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>(a)</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>(a)</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>(a)</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+              <fo:block>(a)</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+              <fo:block>
+In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+        </fo:list-block>
+      </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="In olden times when wishing still helped one, there lived a king whose daughters were all" xpath="//pageViewport[1]/page/regionViewport[1]//flow[1]/block[1]/block[1]/block[1]/block[2]/block[1]/lineArea[1]" />
+    <eval expected="In olden times when wishing still helped one, there" xpath="//pageViewport[2]/page/regionViewport[1]//flow[1]/block[1]/block[1]/block[1]/block[2]/block[1]/lineArea[1]" />
+    <eval expected="lived a king whose daughters were all beautiful, but the youngest was so beautiful that" xpath="//pageViewport[3]/page/regionViewport[1]//flow[1]/block[1]/block[1]/block[1]/block[1]/block[1]/lineArea[1]" />
+    <eval expected="beautiful, but the youngest was so beautiful that the" xpath="//pageViewport[4]/page/regionViewport[1]//flow[1]/block[1]/block[1]/block[1]/block[1]/block[1]/lineArea[1]" />
+    <eval expected="itself, which has seen so much, was astonished whenever it shone in her face." xpath="//pageViewport[5]/page/regionViewport[1]//flow[1]/block[1]/block[1]/block[1]/block[1]/block[1]/lineArea[1]" />
+  </checks>
+</testcase>

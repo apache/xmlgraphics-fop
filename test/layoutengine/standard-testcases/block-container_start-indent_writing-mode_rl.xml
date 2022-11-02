@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks indents on block-containers in a right-to-left writing mode context.
+    </p>
+    <p>
+      Since block-container generates a reference-area and no margin is specified the block-container as well as its 
+      nested block inherit the start-indent of the top-most block. Since block-container also creates a viewport 
+      the orange block is effectively indented two times by 10 pt. (See 5.3.2 in XSL 1.0)
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true" writing-mode="rl">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block font-style="italic">Outer block with start-indent="10pt"</fo:block>
+          <fo:block start-indent="10pt">
+            <fo:block background-color="yellow">fo:block|fo:block</fo:block>
+            <fo:block-container>
+              <fo:block background-color="orange">fo:block|fo:block-container|fo:block</fo:block>
+            </fo:block-container>
+            <fo:block-container start-indent="15pt" background-color="palegoldenrod" space-before="5pt">
+              <fo:block background-color="red">fo:block|fo:block-container|fo:block</fo:block>
+              <fo:block start-indent="0pt" background-color="red">fo:block|fo:block-container|fo:block start-indent="0pt"</fo:block>
+            </fo:block-container>
+          </fo:block>
+          <fo:block font-style="italic" space-before="10pt">Outer block with margin-right="10pt"</fo:block>
+          <fo:block margin-right="10pt">
+            <fo:block background-color="yellow">fo:block|fo:block</fo:block>
+            <fo:block-container>
+              <fo:block background-color="orange">fo:block|fo:block-container|fo:block</fo:block>
+            </fo:block-container>
+            <fo:block-container start-indent="15pt" background-color="palegoldenrod" space-before="5pt">
+              <fo:block background-color="red">fo:block|fo:block-container|fo:block</fo:block>
+              <fo:block start-indent="0pt" background-color="red">fo:block|fo:block-container|fo:block start-indent="0pt"</fo:block>
+            </fo:block-container>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- Outer block with the start-indent property -->
+    <eval expected="10000" xpath="//flow/block[2]/@start-indent"/>
+    <eval expected="10000" xpath="//flow/block[2]/@space-start"/>
+    <eval expected="350000" xpath="//flow/block[2]/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[2]/@ipda"/>
+    <!-- yellow block -->
+    <eval expected="10000" xpath="//flow/block[2]/block[1]/@start-indent"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[1]/@space-start"/>
+    <eval expected="350000" xpath="//flow/block[2]/block[1]/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[2]/block[1]/@ipda"/>
+    <!-- block-container -->
+    <eval expected="10000" xpath="//flow/block[2]/block[2]/@start-indent"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[2]/@space-start"/>
+    <eval expected="350000" xpath="//flow/block[2]/block[2]/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[2]/block[2]/@ipda"/>
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 0.0]" xpath="//flow/block[2]/block[2]/@ctm"/>
+    <eval expected="1" xpath="//flow/block[2]/block[2]/@level"/>
+    <!-- block-container's reference area -->
+    <eval expected="350000" xpath="//flow/block[2]/block[2]/block[1]/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[2]/block[2]/block[1]/@ipda"/>
+    <!-- orange block inside the block-container -->
+    <eval expected="10000" xpath="//flow/block[2]/block[2]/block[1]/block[1]/@start-indent"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[2]/block[1]/block[1]/@space-start"/>
+    <eval expected="340000" xpath="//flow/block[2]/block[2]/block[1]/block[1]/@ipd"/>
+    <eval expected="340000" xpath="//flow/block[2]/block[2]/block[1]/block[1]/@ipda"/>
+    <eval expected="340000" xpath="//flow/block[2]/block[2]/block[1]/block[1]/lineArea/@ipd"/>
+    <eval expected="156352" xpath="//flow/block[2]/block[2]/block[1]/block[1]/lineArea/@end-indent"/>
+    <eval expected="1" xpath="//flow/block[2]/block[2]/block[1]/block[1]/lineArea/@level"/>
+    
+    <!-- block-container with start-indent -->
+    <eval expected="15000" xpath="//flow/block[2]/block[3]/@start-indent"/>
+    <eval expected="15000" xpath="//flow/block[2]/block[3]/@space-start"/>
+    <eval expected="345000" xpath="//flow/block[2]/block[3]/@ipd"/>
+    <!-- block-container's reference area -->
+    <eval expected="345000" xpath="//flow/block[2]/block[3]/block[1]/@ipd"/>
+    <!-- first red block inside the block-container -->
+    <eval expected="15000" xpath="//flow/block[2]/block[3]/block[1]/block[1]/@start-indent"/>
+    <eval expected="15000" xpath="//flow/block[2]/block[3]/block[1]/block[1]/@space-start"/>
+    <eval expected="330000" xpath="//flow/block[2]/block[3]/block[1]/block[1]/@ipd"/>
+    <!-- second red block inside the block-container -->
+    <true xpath="not(boolean(//flow/block[2]/block[3]/block[1]/block[2]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[2]/block[3]/block[1]/block[2]/@space-indent))"/>
+    <eval expected="345000" xpath="//flow/block[2]/block[3]/block[1]/block[2]/@ipd"/>
+
+    <!-- === Same game with margin-left instead of start-indent on outer block === -->    
+    <!-- === This triggered an earlier bug.                                    === -->
+    <!-- Outer block with the start-indent property -->
+    <eval expected="10000" xpath="//flow/block[4]/@start-indent"/>
+    <eval expected="10000" xpath="//flow/block[4]/@space-start"/>
+    <eval expected="350000" xpath="//flow/block[4]/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[4]/@ipda"/>
+    <!-- yellow block -->
+    <eval expected="10000" xpath="//flow/block[4]/block[1]/@start-indent"/>
+    <eval expected="10000" xpath="//flow/block[4]/block[1]/@space-start"/>
+    <eval expected="350000" xpath="//flow/block[4]/block[1]/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[4]/block[1]/@ipda"/>
+    <!-- block-container -->
+    <eval expected="10000" xpath="//flow/block[4]/block[2]/@start-indent"/>
+    <eval expected="10000" xpath="//flow/block[4]/block[2]/@space-start"/>
+    <eval expected="350000" xpath="//flow/block[4]/block[2]/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[4]/block[2]/@ipda"/>
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 0.0]" xpath="//flow/block[4]/block[2]/@ctm"/>
+    <eval expected="1" xpath="//flow/block[4]/block[2]/@level"/>
+    <!-- block-container's reference area -->
+    <eval expected="350000" xpath="//flow/block[4]/block[2]/block[1]/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[4]/block[2]/block[1]/@ipda"/>
+    <!-- orange block inside the block-container -->
+    <eval expected="10000" xpath="//flow/block[4]/block[2]/block[1]/block[1]/@start-indent"/>
+    <eval expected="10000" xpath="//flow/block[4]/block[2]/block[1]/block[1]/@space-start"/>
+    <eval expected="340000" xpath="//flow/block[4]/block[2]/block[1]/block[1]/@ipd"/>
+    <eval expected="340000" xpath="//flow/block[4]/block[2]/block[1]/block[1]/@ipda"/>
+    <eval expected="340000" xpath="//flow/block[2]/block[2]/block[1]/block[1]/lineArea/@ipd"/>
+    <eval expected="156352" xpath="//flow/block[2]/block[2]/block[1]/block[1]/lineArea/@end-indent"/>
+    <eval expected="1" xpath="//flow/block[2]/block[2]/block[1]/block[1]/lineArea/@level"/>
+    
+    <!-- block-container with start-indent -->
+    <eval expected="15000" xpath="//flow/block[4]/block[3]/@start-indent"/>
+    <eval expected="15000" xpath="//flow/block[4]/block[3]/@space-start"/>
+    <eval expected="345000" xpath="//flow/block[4]/block[3]/@ipd"/>
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 0.0]" xpath="//flow/block[4]/block[3]/@ctm"/>
+    <eval expected="1" xpath="//flow/block[4]/block[3]/@level"/>
+    <!-- block-container's reference area -->
+    <eval expected="345000" xpath="//flow/block[4]/block[3]/block[1]/@ipd"/>
+    <!-- first red block inside the block-container -->
+    <eval expected="15000" xpath="//flow/block[4]/block[3]/block[1]/block[1]/@start-indent"/>
+    <eval expected="15000" xpath="//flow/block[4]/block[3]/block[1]/block[1]/@space-start"/>
+    <eval expected="330000" xpath="//flow/block[4]/block[3]/block[1]/block[1]/@ipd"/>
+    <eval expected="330000" xpath="//flow/block[4]/block[3]/block[1]/block[1]/lineArea/@ipd"/>
+    <eval expected="146352" xpath="//flow/block[4]/block[3]/block[1]/block[1]/lineArea/@end-indent"/>
+    <eval expected="1" xpath="//flow/block[2]/block[2]/block[1]/block[1]/lineArea/@level"/>
+    <!-- second red block inside the block-container -->
+    <true xpath="not(boolean(//flow/block[4]/block[3]/block[1]/block[2]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[4]/block[3]/block[1]/block[2]/@space-indent))"/>
+    <eval expected="345000" xpath="//flow/block[4]/block[3]/block[1]/block[2]/@ipd"/>
+  </checks>
+</testcase>

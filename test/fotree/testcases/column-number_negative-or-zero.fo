@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+         xmlns:test="http://xmlgraphics.apache.org/fop/test">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="normal" page-width="5in" page-height="2in" 
+          margin="20pt">
+      <fo:region-body />
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="normal">
+    <fo:flow flow-name="xsl-region-body">
+      <!-- testcase for specified negative or zero values -->
+      <fo:table border-collapse="separate" table-layout="fixed" width="7.5in">
+        <fo:table-column column-width="60pt" column-number="0">
+          <test:assert property="column-number" expected="1" />
+        </fo:table-column>
+        <fo:table-column column-width="7in" column-number="-1">
+          <test:assert property="column-number" expected="2" />
+        </fo:table-column>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell column-number="-3">
+              <test:assert property="column-number" expected="1" />
+              <fo:block>Cell1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell column-number="0">
+              <test:assert property="column-number" expected="2" />
+              <fo:block>Cell2
+              </fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+

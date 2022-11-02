@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks border and padding conditionality on table.
+    </p>
+  </info>
+  <fo>
+
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="first-page" page-width="210mm" page-height="297mm" margin-bottom="0mm" margin-right="0mm" margin-top="0mm" margin-left="0mm">
+
+      <fo:region-body margin-top="110mm" background-repeat="no-repeat" background-position="center center" margin-bottom="30mm" margin-right="28mm" margin-left="28mm" region-name="body" background-color="yellow"/>
+
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="continuation-page" margin="0mm" page-width="210mm" page-height="297mm">
+
+      <fo:region-body margin-top="20mm" background-position="center center" background-repeat="no-repeat" margin-right="28mm" margin-left="28mm" region-name="body" margin-bottom="31.75mm"/>
+
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="x-page-sequence">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference master-reference="first-page" page-position="first"/>
+        <fo:conditional-page-master-reference master-reference="continuation-page" page-position="rest"/>
+        <fo:conditional-page-master-reference master-reference="continuation-page" page-position="last"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+
+  <fo:page-sequence format="1" id="th_default_sequence1" master-reference="x-page-sequence" initial-page-number="auto" force-page-count="auto">
+
+    <fo:flow flow-name="body">
+     
+      
+      <fo:block>
+        <fo:block  font-size="11pt" keep-together.within-page="always" space-after="11pt">Mr.Test Fop3</fo:block>
+        <fo:block  font-size="11pt" keep-together.within-page="always" space-after="11pt" text-align="justify">Thank you for your recent application for X recognition.</fo:block>
+        <fo:block  font-size="11pt" keep-together.within-page="always" space-after="11pt" text-align="justify">I am pleased to confirm that we will recognise you as a complementary medicine practitioner in the field of    String from &lt;&lt;&lt;Date&gt;&gt;&gt; on GP referral. We will allow benefit towards any eligible treatment provided to X members on or after this date. As a recognised practitioner you will receive claims payment directly from us. </fo:block>
+        <fo:block  font-size="11pt" keep-together.within-page="always" space-after="11pt" text-align="justify">Your X Provider Number is 999999 and should be quoted on accounts and in all correspondence. Please note that for claims to be eligible the patient must have been referred to you by their GP or a recognised X Consultant. May I remind you that it is a condition of your recognition that you maintain your professional indemnity insurance.</fo:block>
+        <fo:block  font-size="11pt" keep-together.within-page="always" space-after="11pt" text-align="justify">Finally, our Provider Services team are available to answer any queries you may have about working with X. Their telephone number is 08457 55 33 33*. Calls will be automatically directed to the first available assistant. It is important that we maintain accurate and up to date records in order to ensure the speedy settlement of claims made by your patients who are X members. It would help us therefore, if you would inform us of any changes in your address or your professional circumstances by contacting our Provider Services team directly.</fo:block>
+        <fo:block  font-size="11pt" keep-together.within-page="always" keep-with-next.within-page="always" space-after="11pt">If you have any further queries regarding recognition, please do not hesitate to contact me.</fo:block>
+        <fo:block  font-size="11pt" keep-together.within-page="always" keep-with-next.within-page="always">
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block  font-size="11pt" keep-together.within-page="always" keep-with-next.within-page="always" space-after="22mm">Yours sincerely</fo:block>
+                    <fo:block  font-size="11pt" keep-together.within-page="always" keep-with-next.within-page="always">Mrs.FOP HOP</fo:block>
+                    <fo:block  font-size="11pt" keep-together.within-page="always" keep-with-next.within-page="always">Healthcare Consultant</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:block>
+        <fo:block  font-size="11pt" keep-together.within-page="always" keep-with-next.within-page="always">Provider Recognition Team</fo:block>
+        <fo:block  font-size="11pt" keep-together.within-page="always" keep-with-next.within-page="always" space-after="11pt">01400654800**<fo:block/> </fo:block>
+        <fo:table table-layout="fixed" width="100%">
+          <fo:table-column column-width="proportional-column-width(1.89)" column-number="1"/>
+          <fo:table-column column-width="proportional-column-width(98.11)" column-number="2"/>
+          <fo:table-body>
+            <fo:table-row height="0.396874994039536cm">
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  font-size="8pt" keep-together.within-page="always" keep-with-next.within-page="always">*</fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  font-size="8pt" keep-together.within-page="always" keep-with-next.within-page="always">Lines are open 8.00am - 6.00pm  Monday to Friday and 8.00am - 1.00pm each Saturday.  <fo:block/>Calls may be recorded and may be monitored.</fo:block>
+                  <fo:block  font-size="6pt">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  font-size="8pt" keep-together.within-page="always" keep-with-previous.within-page="always">**</fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block  font-size="8pt" keep-together.within-page="always" keep-with-previous.within-page="always">Lines are open 9.00am - 5.00pm Monday to Friday. <fo:block/>Calls may be recorded and may be monitored.</fo:block>
+                  <fo:block  font-size="6pt">
+                    <fo:leader/>
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+        <fo:block break-before="page" font-family="Helvetica" font-size="0pt" line-height="0pt">Break Before</fo:block>  
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+
+  </fo>
+  <checks>
+    <eval expected="If" xpath="//pageViewport[2]//word[1]"/>
+  </checks>
+</testcase>

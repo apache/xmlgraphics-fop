@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks if simple line breaking is enabled
+    </p>
+  </info>
+  <cfg>
+    <simple-line-breaking>true</simple-line-breaking>
+  </cfg>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="body">
+          <fo:region-body margin="15mm"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="body">
+        <fo:flow flow-name="xsl-region-body">
+        <fo:block>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero, expedita voluptatem, dolorem totam eos ex, quas quaerat architecto reprehenderit sit illo voluptatum. Molestias, fuga assumenda quis. Libero est vero voluptatum iusto sint repudiandae deserunt nisi neque quidem veritatis, asperiores eos, consectetur cupiditate repellat culpa, error architecto pariatur voluptates hic alias itaque esse quod totam labore. Officia assumenda incidunt quisquam. Voluptatibus est sequi non eaque, animi illum ea itaque beatae vel voluptas odio autem, cum ducimus ut? Dolores ipsum voluptate, dicta. Omnis veniam deserunt obcaecati, eligendi nobis enim reiciendis laudantium magnam officiis deleniti necessitatibus illo, laboriosam inventore iusto ullam beatae maiores. Ex libero, explicabo nemo modi. Iure officia, cumque itaque delectus beatae natus totam quibusdam vitae voluptatibus. Commodi excepturi, accusantium mollitia minus, debitis ut doloribus voluptate sequi tempora dolorem amet assumenda. Expedita corporis neque id iusto, ipsa nesciunt. Soluta fuga laudantium possimus eveniet harum quo impedit iure modi iste cumque nihil error delectus explicabo perspiciatis aliquam, repellat assumenda hic provident deleniti nisi rem, vitae? Tempore ullam sit similique ratione possimus, cumque hic corrupti rerum molestiae inventore libero, porro placeat distinctio neque aliquid veritatis tenetur magni ab debitis saepe, unde ea. Ut inventore ratione consequuntur blanditiis, possimus qui iste autem, aspernatur in illum distinctio magni nostrum obcaecati harum neque dolorum excepturi, culpa ipsa laboriosam est. Facilis at quaerat repudiandae impedit vero explicabo quod aspernatur, voluptates quis cum, consequuntur expedita eius laboriosam architecto obcaecati officia autem commodi quae velit alias odio a mollitia soluta labore? Officia dolores magni voluptatum odio dolor officiis aperiam blanditiis eaque quasi nulla nihil exercitationem dolorum reprehenderit aliquam fugit totam est amet error cum porro, fugiat vitae reiciendis dicta. Corrupti eos ducimus at. Asperiores dolor, in placeat, reprehenderit repellendus inventore, similique magni id quo officiis unde doloribus minima quibusdam quasi odio labore? Illum ea possimus dolores dolore repellendus nobis similique aut libero eaque, vitae, natus, facilis illo! Corrupti quos consectetur mollitia maiores doloribus repudiandae, aperiam quam officia vel facilis molestias accusamus voluptas eligendi libero nemo quae cupiditate perferendis accusantium aspernatur expedita. Tenetur ipsa impedit qui, dolorum sequi, labore quas pariatur quidem officia, amet temporibus iste. Nobis, delectus, iusto. Suscipit corporis sapiente accusamus eveniet? Expedita vel illum harum iste vitae magnam aspernatur soluta, illo vero at sed officia neque eaque! Ipsa necessitatibus totam, placeat modi provident nihil atque fugiat saepe voluptatibus sint explicabo repellendus magnam dignissimos enim illum debitis, eveniet in animi officia omnis excepturi dolores velit vero. Consectetur recusandae magnam ea eveniet hic tempore reprehenderit, suscipit dolore a officiis nesciunt vero aut quod atque et voluptates ipsa, praesentium obcaecati labore aliquid doloremque ullam. Dolores, delectus consequuntur quasi ullam, architecto, at enim fugit voluptatibus harum quisquam sequi assumenda aspernatur! Quidem atque dolores, rem dignissimos provident et beatae sit reprehenderit ipsam tenetur alias facere aliquam numquam iusto eos enim expedita aliquid. Vel sit amet minus voluptatum, inventore officia, atque facilis possimus quisquam. Incidunt esse ea nesciunt ullam perferendis quisquam ipsam autem. Ipsam eligendi temporibus, nulla odio corporis qui sequi ducimus excepturi perspiciatis doloribus tenetur laborum corrupti pariatur illum sunt ipsum, itaque nesciunt mollitia aliquid eaque sint cumque atque blanditiis molestias in! Esse quidem soluta ducimus dolore aliquam repudiandae quae ipsa asperiores perferendis voluptate. Harum ad placeat necessitatibus assumenda omnis laudantium, commodi repudiandae laborum in asperiores nisi esse reprehenderit autem deserunt nihil velit sit quo earum odit vitae quaerat mollitia. Dolores non ducimus consectetur eos voluptatum excepturi nostrum at veritatis sapiente saepe, eaque minima iste, praesentium aspernatur, earum debitis commodi maiores possimus, impedit culpa inventore. Quidem hic iusto totam praesentium quia odit ut blanditiis provident inventore odio aperiam nulla, sed iste ratione, laboriosam dolore itaque dolorem, consequuntur voluptas facere. Labore dolor consequuntur numquam earum iure quae consequatur, eius fugiat repudiandae accusamus magnam? Quis fuga laboriosam alias quia inventore doloribus nam omnis veniam deserunt harum eveniet ducimus magnam voluptas enim ipsam non fugit, perspiciatis repellendus. Voluptatem illo, corporis, ut quas quo velit nostrum libero! Incidunt quam quisquam expedita debitis dolore nam sequi ullam, soluta ipsa esse, quo amet tenetur commodi maiores hic. Non ex illo nostrum explicabo dolorem ut nihil, dignissimos aliquid maxime. Iusto beatae, veritatis obcaecati voluptate, excepturi eveniet. Voluptates pariatur saepe, enim a, minima laboriosam, eveniet omnis non eaque ea doloribus dolorum ex tenetur earum qui voluptatibus. Velit, sequi, inventore! Id est at quia sunt voluptatum odio dignissimos illo quam enim quod nulla tempore veritatis commodi dolor, sint quaerat, beatae, reiciendis! Iste neque obcaecati rem nulla, sit reprehenderit et eaque nihil culpa repudiandae. Unde placeat totam voluptatem impedit maxime expedita eos error reiciendis similique eligendi ullam quam, doloremque nostrum quod consectetur animi doloribus ipsa neque, quas minima porro nihil exercitationem. Obcaecati, rerum, illo. Quisquam nam iusto tempore odio mollitia ad perferendis tempora explicabo veniam dignissimos quaerat libero illo at vel dolorem nisi ipsa deleniti enim, ex voluptas quo qui molestias nostrum similique. Tenetur amet excepturi fuga error totam aliquid optio illum, possimus laboriosam quos dolorum quo provident assumenda dolore recusandae iure quibusdam tempora! Debitis rem totam eveniet nesciunt harum natus atque vitae corrupti ea et illum impedit illo aliquid ipsa tempora dolore a, doloribus ullam dignissimos placeat. Quae explicabo sed at autem deleniti enim beatae vel quaerat amet, quibusdam quisquam. Quidem natus nostrum quo modi tempora, incidunt obcaecati. Quidem recusandae quisquam neque amet corrupti? Dolores voluptas cupiditate doloribus odio quam, ipsam magni facilis corporis molestias fugiat incidunt harum aperiam fuga quas sequi quisquam ipsum illo illum! Eum, corporis aliquid sequi libero laboriosam nobis, velit nihil, beatae voluptas laudantium nam quas omnis voluptatem temporibus repellendus molestias? Tempore minus corrupti tenetur, praesentium sed iusto illum nulla aperiam sapiente enim natus quod vero fuga consectetur quisquam culpa, hic tempora, error dignissimos voluptatibus itaque amet pariatur. Ullam quo neque, rerum necessitatibus, laboriosam quaerat officia est perspiciatis quisquam cupiditate velit dolor accusantium repudiandae, esse dolores laudantium! Nihil omnis, rerum. Nulla veniam minima est nemo nihil tenetur repudiandae dolor laborum dolores, reprehenderit corporis esse porro voluptates vero odio saepe dolorum,</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="973" xpath="count(//word)"/>
+    <eval expected="80" xpath="count(//lineArea)"/>
+    <eval expected="2" xpath="count(//pageViewport)"/>
+    <eval expected="Lorem" xpath="//pageViewport[1]//word"/>
+    <eval expected="consequuntur" xpath="//pageViewport[2]//word"/>
+  </checks>
+</testcase>

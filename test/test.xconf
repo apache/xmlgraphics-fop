@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<fop version="1.0">
+
+  <!-- Switch off font caching for the purposes of unit testing -->
+  <use-cache>false</use-cache>
+  <font-base>.</font-base>
+  
+  <renderers>
+    <renderer mime="application/pdf">
+      <filterList type="tiff">
+        <value>ascii-85</value>
+      </filterList>
+      <filterList type="default">
+        <value>null</value>
+      </filterList>
+      <filterList type="image">
+        <value>null</value>
+      </filterList>
+      <filterList type="content">
+        <value>null</value>
+      </filterList>
+      <fonts>
+        <font metrics-url="resources/fonts/ttf/glb12.ttf.xml" embed-url="resources/fonts/ttf/glb12.ttf">
+          <font-triplet name="Gladiator" style="normal" weight="normal"/>
+          <font-triplet name="Gladiator" style="normal" weight="bold"/>
+        </font>
+        <font metrics-url="resources/fonts/ttf/glb12.ttf.ansi.xml" embed-url="resources/fonts/ttf/glb12.ttf">
+          <font-triplet name="Gladiator-Ansi" style="normal" weight="normal"/>
+          <font-triplet name="Gladiator-Ansi" style="normal" weight="bold"/>
+        </font>
+      </fonts>
+    </renderer>
+  </renderers>
+</fop>

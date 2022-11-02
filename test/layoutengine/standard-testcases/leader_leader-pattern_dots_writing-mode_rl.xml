@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks leaders with leader-pattern="dots"
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true" writing-mode="rl">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>
+            <fo:leader leader-pattern="dots"/>
+            <fo:bidi-override unicode-bidi="embed" direction="ltr">Default dots pattern</fo:bidi-override>
+          </fo:block>
+          <fo:block>
+            <fo:leader leader-pattern="dots" leader-pattern-width="use-font-metrics" background-color="yellow"/>
+            <fo:bidi-override unicode-bidi="embed" direction="ltr">leader-pattern-width="use-font-metrics"</fo:bidi-override>
+          </fo:block>
+          <fo:block>
+            <fo:leader leader-pattern="dots" leader-length="20mm" leader-pattern-width="5mm" background-color="yellow"/>
+            <fo:bidi-override unicode-bidi="embed" direction="ltr">leader-length="20mm" leader-pattern-width="5mm"</fo:bidi-override>
+          </fo:block>
+          <fo:block>
+            <fo:leader leader-pattern="dots" leader-length="20%" leader-pattern-width="5mm" background-color="yellow"/>
+            <fo:bidi-override unicode-bidi="embed" direction="ltr">leader-length="20%" leader-pattern-width="5mm"</fo:bidi-override>
+          </fo:block>
+          <fo:block>
+            <fo:leader leader-pattern="dots" leader-pattern-width="1pt" background-color="yellow"/>
+            <fo:bidi-override unicode-bidi="embed" direction="ltr">leader-pattern-width="1pt"</fo:bidi-override>
+          </fo:block>
+          <fo:block>
+            <fo:leader leader-pattern="dots" leader-length="20%" leader-pattern-width="5%" background-color="yellow"/>
+            <fo:bidi-override unicode-bidi="embed" direction="ltr">leader-length="20%" leader-pattern-width="5%"</fo:bidi-override>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+
+    <eval expected="11100" xpath="//flow/block[1]/lineArea/@bpd"/>
+    <eval expected="360000" xpath="//flow/block[1]/lineArea/@ipd"/>
+    <eval expected="239940" xpath="//flow/block[1]/lineArea/@end-indent"/>
+    <eval expected="104724" xpath="//flow/block[1]/lineArea/inlineparent[1]/@ipd"/>
+    <eval expected="2" xpath="//flow/block[1]/lineArea/inlineparent[1]/@level"/>
+    <eval expected="12000" xpath="//flow/block[1]/lineArea/inlineparent[2]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[1]/lineArea/inlineparent[2]/@level"/>
+    <eval expected="3" xpath="count(//flow/block[1]/lineArea/inlineparent[2]/text)"/>
+
+    <eval expected="11100" xpath="//flow/block[2]/lineArea/@bpd"/>
+    <eval expected="360000" xpath="//flow/block[2]/lineArea/@ipd"/>
+    <eval expected="136416" xpath="//flow/block[2]/lineArea/@end-indent"/>
+    <eval expected="208248" xpath="//flow/block[2]/lineArea/inlineparent[1]/@ipd"/>
+    <eval expected="2" xpath="//flow/block[2]/lineArea/inlineparent[1]/@level"/>
+    <eval expected="12000" xpath="//flow/block[2]/lineArea/inlineparent[2]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[2]/lineArea/inlineparent[2]/@level"/>
+    <eval expected="3" xpath="count(//flow/block[2]/lineArea/inlineparent[2]/text)"/>
+
+    <eval expected="11100" xpath="//flow/block[3]/lineArea/@bpd"/>
+    <eval expected="360000" xpath="//flow/block[3]/lineArea/@ipd"/>
+    <eval expected="28844" xpath="//flow/block[3]/lineArea/@end-indent"/>
+    <eval expected="271128" xpath="//flow/block[3]/lineArea/inlineparent[1]/@ipd"/>
+    <eval expected="2" xpath="//flow/block[3]/lineArea/inlineparent[1]/@level"/>
+    <eval expected="56692" xpath="//flow/block[3]/lineArea/inlineparent[2]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[3]/lineArea/inlineparent[2]/@level"/>
+    <eval expected="8" xpath="count(//flow/block[3]/lineArea/inlineparent[2]/*)"/>
+    <eval expected="4" xpath="count(//flow/block[3]/lineArea/inlineparent[2]/space)"/>
+    <eval expected="4" xpath="count(//flow/block[3]/lineArea/inlineparent[2]/text)"/>
+    <eval expected="space" xpath="local-name(//flow/block[3]/lineArea/inlineparent[2]/*[position()=1])"/>
+    <eval expected="text" xpath="local-name(//flow/block[3]/lineArea/inlineparent[2]/*[position()=2])"/>
+    <eval expected="10837" xpath="//flow/block[3]/lineArea/inlineparent[2]/space[1]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[3]/lineArea/inlineparent[2]/space[1]/@level"/>
+    <eval expected="3336" xpath="//flow/block[3]/lineArea/inlineparent[2]/text[1]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[3]/lineArea/inlineparent[2]/text[1]/@level"/>
+    <eval expected="space" xpath="local-name(//flow/block[3]/lineArea/inlineparent[2]/*[position()=3])"/>
+    <eval expected="text" xpath="local-name(//flow/block[3]/lineArea/inlineparent[2]/*[position()=4])"/>
+    <eval expected="10837" xpath="//flow/block[3]/lineArea/inlineparent[2]/space[2]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[3]/lineArea/inlineparent[2]/space[2]/@level"/>
+    <eval expected="3336" xpath="//flow/block[3]/lineArea/inlineparent[2]/text[2]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[3]/lineArea/inlineparent[2]/text[2]/@level"/>
+    <eval expected="space" xpath="local-name(//flow/block[3]/lineArea/inlineparent[2]/*[position()=5])"/>
+    <eval expected="text" xpath="local-name(//flow/block[3]/lineArea/inlineparent[2]/*[position()=6])"/>
+    <eval expected="10837" xpath="//flow/block[3]/lineArea/inlineparent[2]/space[3]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[3]/lineArea/inlineparent[2]/space[3]/@level"/>
+    <eval expected="3336" xpath="//flow/block[3]/lineArea/inlineparent[2]/text[3]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[3]/lineArea/inlineparent[2]/text[3]/@level"/>
+    <eval expected="space" xpath="local-name(//flow/block[3]/lineArea/inlineparent[2]/*[position()=7])"/>
+    <eval expected="text" xpath="local-name(//flow/block[3]/lineArea/inlineparent[2]/*[position()=8])"/>
+    <eval expected="10837" xpath="//flow/block[3]/lineArea/inlineparent[2]/space[4]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[3]/lineArea/inlineparent[2]/space[4]/@level"/>
+    <eval expected="3336" xpath="//flow/block[3]/lineArea/inlineparent[2]/text[4]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[3]/lineArea/inlineparent[2]/text[4]/@level"/>
+
+    <eval expected="11100" xpath="//flow/block[4]/lineArea/@bpd"/>
+    <eval expected="360000" xpath="//flow/block[4]/lineArea/@ipd"/>
+    <eval expected="22860" xpath="//flow/block[4]/lineArea/@end-indent"/>
+    <eval expected="261804" xpath="//flow/block[4]/lineArea/inlineparent[1]/@ipd"/>
+    <eval expected="2" xpath="//flow/block[4]/lineArea/inlineparent[1]/@level"/>
+    <eval expected="72000" xpath="//flow/block[4]/lineArea/inlineparent[2]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[4]/lineArea/inlineparent[2]/@level"/>
+    <eval expected="10" xpath="count(//flow/block[4]/lineArea/inlineparent[2]/*)"/>
+    <eval expected="5" xpath="count(//flow/block[4]/lineArea/inlineparent[2]/space)"/>
+    <eval expected="5" xpath="count(//flow/block[4]/lineArea/inlineparent[2]/text)"/>
+    <eval expected="space" xpath="local-name(//flow/block[4]/lineArea/inlineparent[2]/*[position()=1])"/>
+    <eval expected="text" xpath="local-name(//flow/block[4]/lineArea/inlineparent[2]/*[position()=2])"/>
+    <eval expected="10837" xpath="//flow/block[4]/lineArea/inlineparent[2]/space[1]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[4]/lineArea/inlineparent[2]/space[1]/@level"/>
+    <eval expected="3336" xpath="//flow/block[4]/lineArea/inlineparent[2]/text[1]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[4]/lineArea/inlineparent[2]/text[1]/@level"/>
+    <eval expected="space" xpath="local-name(//flow/block[4]/lineArea/inlineparent[2]/*[position()=3])"/>
+    <eval expected="text" xpath="local-name(//flow/block[4]/lineArea/inlineparent[2]/*[position()=4])"/>
+    <eval expected="10837" xpath="//flow/block[4]/lineArea/inlineparent[2]/space[2]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[4]/lineArea/inlineparent[2]/space[2]/@level"/>
+    <eval expected="3336" xpath="//flow/block[4]/lineArea/inlineparent[2]/text[2]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[4]/lineArea/inlineparent[2]/text[2]/@level"/>
+    <eval expected="space" xpath="local-name(//flow/block[4]/lineArea/inlineparent[2]/*[position()=5])"/>
+    <eval expected="text" xpath="local-name(//flow/block[4]/lineArea/inlineparent[2]/*[position()=6])"/>
+    <eval expected="10837" xpath="//flow/block[4]/lineArea/inlineparent[2]/space[3]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[4]/lineArea/inlineparent[2]/space[3]/@level"/>
+    <eval expected="3336" xpath="//flow/block[4]/lineArea/inlineparent[2]/text[3]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[4]/lineArea/inlineparent[2]/text[3]/@level"/>
+    <eval expected="space" xpath="local-name(//flow/block[4]/lineArea/inlineparent[2]/*[position()=7])"/>
+    <eval expected="text" xpath="local-name(//flow/block[4]/lineArea/inlineparent[2]/*[position()=8])"/>
+    <eval expected="10837" xpath="//flow/block[4]/lineArea/inlineparent[2]/space[4]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[4]/lineArea/inlineparent[2]/space[4]/@level"/>
+    <eval expected="3336" xpath="//flow/block[4]/lineArea/inlineparent[2]/text[4]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[4]/lineArea/inlineparent[2]/text[4]/@level"/>
+    <eval expected="space" xpath="local-name(//flow/block[4]/lineArea/inlineparent[2]/*[position()=9])"/>
+    <eval expected="text" xpath="local-name(//flow/block[4]/lineArea/inlineparent[2]/*[position()=10])"/>
+    <eval expected="10837" xpath="//flow/block[4]/lineArea/inlineparent[2]/space[5]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[4]/lineArea/inlineparent[2]/space[5]/@level"/>
+    <eval expected="3336" xpath="//flow/block[4]/lineArea/inlineparent[2]/text[5]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[4]/lineArea/inlineparent[2]/text[5]/@level"/>
+
+    <eval expected="11100" xpath="//flow/block[5]/lineArea/@bpd"/>
+    <eval expected="360000" xpath="//flow/block[5]/lineArea/@ipd"/>
+    <eval expected="205752" xpath="//flow/block[5]/lineArea/@end-indent"/>
+    <eval expected="138912" xpath="//flow/block[5]/lineArea/inlineparent[1]/@ipd"/>
+    <eval expected="2" xpath="//flow/block[5]/lineArea/inlineparent[1]/@level"/>
+    <eval expected="12000" xpath="//flow/block[5]/lineArea/inlineparent[2]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[5]/lineArea/inlineparent[2]/@level"/>
+    <eval expected="3" xpath="count(//flow/block[5]/lineArea/inlineparent[2]/*)"/>
+    <eval expected="3" xpath="count(//flow/block[5]/lineArea/inlineparent[2]/text)"/>
+    <eval expected="text" xpath="local-name(//flow/block[5]/lineArea/inlineparent[2]/*[position()=1])"/>
+    <eval expected="3336" xpath="//flow/block[5]/lineArea/inlineparent[2]/text[1]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[5]/lineArea/inlineparent[2]/text[1]/@level"/>
+    <eval expected="text" xpath="local-name(//flow/block[5]/lineArea/inlineparent[2]/*[position()=2])"/>
+    <eval expected="3336" xpath="//flow/block[5]/lineArea/inlineparent[2]/text[2]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[5]/lineArea/inlineparent[2]/text[2]/@level"/>
+    <eval expected="text" xpath="local-name(//flow/block[5]/lineArea/inlineparent[2]/*[position()=3])"/>
+    <eval expected="3336" xpath="//flow/block[5]/lineArea/inlineparent[2]/text[3]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[5]/lineArea/inlineparent[2]/text[3]/@level"/>
+
+    <eval expected="11100" xpath="//flow/block[6]/lineArea/@bpd"/>
+    <eval expected="360000" xpath="//flow/block[6]/lineArea/@ipd"/>
+    <eval expected="32184" xpath="//flow/block[6]/lineArea/@end-indent"/>
+    <eval expected="252480" xpath="//flow/block[6]/lineArea/inlineparent[1]/@ipd"/>
+    <eval expected="2" xpath="//flow/block[6]/lineArea/inlineparent[1]/@level"/>
+    <eval expected="72000" xpath="//flow/block[6]/lineArea/inlineparent[2]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[6]/lineArea/inlineparent[2]/@level"/>
+    <eval expected="8" xpath="count(//flow/block[6]/lineArea/inlineparent[2]/*)"/>
+    <eval expected="4" xpath="count(//flow/block[6]/lineArea/inlineparent[2]/space)"/>
+    <eval expected="4" xpath="count(//flow/block[6]/lineArea/inlineparent[2]/text)"/>
+    <eval expected="space" xpath="local-name(//flow/block[6]/lineArea/inlineparent[2]/*[position()=1])"/>
+    <eval expected="text" xpath="local-name(//flow/block[6]/lineArea/inlineparent[2]/*[position()=2])"/>
+    <eval expected="14664" xpath="//flow/block[6]/lineArea/inlineparent[2]/space[1]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[6]/lineArea/inlineparent[2]/space[1]/@level"/>
+    <eval expected="3336" xpath="//flow/block[6]/lineArea/inlineparent[2]/text[1]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[6]/lineArea/inlineparent[2]/text[1]/@level"/>
+    <eval expected="space" xpath="local-name(//flow/block[6]/lineArea/inlineparent[2]/*[position()=3])"/>
+    <eval expected="text" xpath="local-name(//flow/block[6]/lineArea/inlineparent[2]/*[position()=4])"/>
+    <eval expected="14664" xpath="//flow/block[6]/lineArea/inlineparent[2]/space[2]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[6]/lineArea/inlineparent[2]/space[2]/@level"/>
+    <eval expected="3336" xpath="//flow/block[6]/lineArea/inlineparent[2]/text[2]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[6]/lineArea/inlineparent[2]/text[2]/@level"/>
+    <eval expected="space" xpath="local-name(//flow/block[6]/lineArea/inlineparent[2]/*[position()=5])"/>
+    <eval expected="text" xpath="local-name(//flow/block[6]/lineArea/inlineparent[2]/*[position()=6])"/>
+    <eval expected="14664" xpath="//flow/block[6]/lineArea/inlineparent[2]/space[3]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[6]/lineArea/inlineparent[2]/space[3]/@level"/>
+    <eval expected="3336" xpath="//flow/block[6]/lineArea/inlineparent[2]/text[3]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[6]/lineArea/inlineparent[2]/text[3]/@level"/>
+    <eval expected="space" xpath="local-name(//flow/block[6]/lineArea/inlineparent[2]/*[position()=7])"/>
+    <eval expected="text" xpath="local-name(//flow/block[6]/lineArea/inlineparent[2]/*[position()=8])"/>
+    <eval expected="14664" xpath="//flow/block[6]/lineArea/inlineparent[2]/space[4]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[6]/lineArea/inlineparent[2]/space[4]/@level"/>
+    <eval expected="3336" xpath="//flow/block[6]/lineArea/inlineparent[2]/text[4]/@ipd"/>
+    <eval expected="1" xpath="//flow/block[6]/lineArea/inlineparent[2]/text[4]/@level"/>
+
+  </checks>
+</testcase>

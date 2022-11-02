@@ -1,0 +1,1067 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      A footnote from a repeated table-header should appear on every page where the header is 
+      repeated.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" line-height="10pt" font-size="8pt">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page" page-height="100pt" page-width="220pt" margin="10pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="tall-page" page-height="150pt" page-width="220pt" margin="10pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Footnote in header of split table<fo:footnote><fo:inline>*</fo:inline><fo:footnote-body><fo:block>* Footnote before the 
+                  table</fo:block></fo:footnote-body></fo:footnote></fo:block>
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-header>
+              <fo:table-cell>
+                <fo:block>Header 1.1<fo:footnote>
+                    <fo:inline>†</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block>† Footnote from the table-header</fo:block>
+                    </fo:footnote-body>
+                </fo:footnote></fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>Header 1.2</fo:block>
+              </fo:table-cell>
+            </fo:table-header>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 2.1<fo:footnote>
+                      <fo:inline>¹</fo:inline>
+                      <fo:footnote-body>
+                        <fo:block>¹ Footnote from cell 2.1</fo:block>
+                      </fo:footnote-body>
+                  </fo:footnote></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 2.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 3.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 3.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 4.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 4.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 5.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 5.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 6.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 6.2<fo:footnote>
+                      <fo:inline>²</fo:inline>
+                      <fo:footnote-body>
+                        <fo:block>² Footnote from cell 6.2</fo:block>
+                      </fo:footnote-body>
+                  </fo:footnote></fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 7.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 7.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 8.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 8.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 9.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 9.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 10.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 10.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 11.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 11.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 12.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 12.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 13.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 13.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 14.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 14.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 15.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 15.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 16.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 16.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 17.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 17.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 18.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 18.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 19.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 19.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 20.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 20.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Footnote in header of non-split table<fo:footnote><fo:inline>*</fo:inline><fo:footnote-body><fo:block>* Footnote before the 
+                  table</fo:block></fo:footnote-body></fo:footnote></fo:block>
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-header>
+              <fo:table-cell>
+                <fo:block>Header 1.1<fo:footnote>
+                    <fo:inline>†</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block>† Footnote from the table-header</fo:block>
+                    </fo:footnote-body>
+                </fo:footnote></fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>Header 1.2</fo:block>
+              </fo:table-cell>
+            </fo:table-header>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 2.1<fo:footnote>
+                      <fo:inline>¹</fo:inline>
+                      <fo:footnote-body>
+                        <fo:block>¹ Footnote from cell 2.1</fo:block>
+                      </fo:footnote-body>
+                  </fo:footnote></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 2.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 3.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 3.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Footnote in footer of split table<fo:footnote><fo:inline>*</fo:inline><fo:footnote-body><fo:block>* Footnote before the 
+                  table</fo:block></fo:footnote-body></fo:footnote></fo:block>
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-footer>
+              <fo:table-cell>
+                <fo:block>Footer 1.1<fo:footnote>
+                    <fo:inline>†</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block>† Footnote from the table-footer</fo:block>
+                    </fo:footnote-body>
+                </fo:footnote></fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>Footer 1.2</fo:block>
+              </fo:table-cell>
+            </fo:table-footer>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 2.1<fo:footnote>
+                      <fo:inline>¹</fo:inline>
+                      <fo:footnote-body>
+                        <fo:block>¹ Footnote from cell 2.1</fo:block>
+                      </fo:footnote-body>
+                  </fo:footnote></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 2.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 3.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 3.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 4.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 4.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 5.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 5.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 6.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 6.2<fo:footnote>
+                      <fo:inline>²</fo:inline>
+                      <fo:footnote-body>
+                        <fo:block>² Footnote from cell 6.2</fo:block>
+                      </fo:footnote-body>
+                  </fo:footnote></fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 7.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 7.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 8.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 8.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 9.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 9.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 10.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 10.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 11.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 11.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 12.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 12.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 13.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 13.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 14.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 14.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 15.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 15.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 16.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 16.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 17.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 17.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 18.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 18.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 19.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 19.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 20.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 20.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Footnote in footer of non-split table<fo:footnote><fo:inline>*</fo:inline><fo:footnote-body><fo:block>* Footnote before the 
+                  table</fo:block></fo:footnote-body></fo:footnote></fo:block>
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-footer>
+              <fo:table-cell>
+                <fo:block>Footer 1.1<fo:footnote>
+                    <fo:inline>†</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block>† Footnote from the table-footer</fo:block>
+                    </fo:footnote-body>
+                </fo:footnote></fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>Footer 1.2</fo:block>
+              </fo:table-cell>
+            </fo:table-footer>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 2.1<fo:footnote>
+                      <fo:inline>¹</fo:inline>
+                      <fo:footnote-body>
+                        <fo:block>¹ Footnote from cell 2.1</fo:block>
+                      </fo:footnote-body>
+                  </fo:footnote></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 2.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 3.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 3.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Footnote in header and footer of split table<fo:footnote><fo:inline>*</fo:inline><fo:footnote-body><fo:block>* Footnote before 
+                  the table</fo:block></fo:footnote-body></fo:footnote></fo:block>
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-header>
+              <fo:table-cell>
+                <fo:block>Header 1.1<fo:footnote>
+                    <fo:inline>†</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block>† Footnote from the table-header</fo:block>
+                    </fo:footnote-body>
+                </fo:footnote></fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>Header 1.2</fo:block>
+              </fo:table-cell>
+            </fo:table-header>
+            <fo:table-footer>
+              <fo:table-cell>
+                <fo:block>Footer 1.1<fo:footnote>
+                    <fo:inline>‡</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block>‡ Footnote from the table-footer</fo:block>
+                    </fo:footnote-body>
+                </fo:footnote></fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>Footer 1.2</fo:block>
+              </fo:table-cell>
+            </fo:table-footer>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 1.1<fo:footnote>
+                      <fo:inline>¹</fo:inline>
+                      <fo:footnote-body>
+                        <fo:block>¹ Footnote from cell 1.1</fo:block>
+                      </fo:footnote-body>
+                  </fo:footnote></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 2.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 2.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 3.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 3.2<fo:footnote>
+                      <fo:inline>²</fo:inline>
+                      <fo:footnote-body>
+                        <fo:block>² Footnote from cell 3.2</fo:block>
+                      </fo:footnote-body>
+                  </fo:footnote></fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 4.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 4.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 5.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 5.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 6.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 6.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 7.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 7.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 8.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 8.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 9.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 9.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 10.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 10.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 11.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 11.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 12.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 12.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Footnote in header and footer of non-split table<fo:footnote><fo:inline>*</fo:inline><fo:footnote-body><fo:block>* Footnote 
+                  before the table</fo:block></fo:footnote-body></fo:footnote></fo:block>
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-header>
+              <fo:table-cell>
+                <fo:block>Header 1.1<fo:footnote>
+                    <fo:inline>†</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block>† Footnote from the table-header</fo:block>
+                    </fo:footnote-body>
+                </fo:footnote></fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>Header 1.2</fo:block>
+              </fo:table-cell>
+            </fo:table-header>
+            <fo:table-footer>
+              <fo:table-cell>
+                <fo:block>Footer 1.1<fo:footnote>
+                    <fo:inline>‡</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block>‡ Footnote from the table-footer</fo:block>
+                    </fo:footnote-body>
+                </fo:footnote></fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>Footer 1.2</fo:block>
+              </fo:table-cell>
+            </fo:table-footer>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 1.1<fo:footnote>
+                      <fo:inline>¹</fo:inline>
+                      <fo:footnote-body>
+                        <fo:block>¹ Footnote from cell 1.1</fo:block>
+                      </fo:footnote-body>
+                  </fo:footnote></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Footnote in header and footer of split table omitting headings at 
+            breaks<fo:footnote><fo:inline>*</fo:inline><fo:footnote-body><fo:block>* Footnote before the 
+                  table</fo:block></fo:footnote-body></fo:footnote></fo:block>
+          <fo:table width="100%" table-layout="fixed" table-omit-header-at-break="true" table-omit-footer-at-break="true">
+            <fo:table-header>
+              <fo:table-cell>
+                <fo:block>Header 1.1<fo:footnote>
+                    <fo:inline>†</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block>† Footnote from the table-header</fo:block>
+                    </fo:footnote-body>
+                </fo:footnote></fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>Header 1.2</fo:block>
+              </fo:table-cell>
+            </fo:table-header>
+            <fo:table-footer>
+              <fo:table-cell>
+                <fo:block>Footer 1.1<fo:footnote>
+                    <fo:inline>‡</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block>‡ Footnote from the table-footer</fo:block>
+                    </fo:footnote-body>
+                </fo:footnote></fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>Footer 1.2</fo:block>
+              </fo:table-cell>
+            </fo:table-footer>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 1.1<fo:footnote>
+                      <fo:inline>¹</fo:inline>
+                      <fo:footnote-body>
+                        <fo:block>¹ Footnote from cell 1.1</fo:block>
+                      </fo:footnote-body>
+                  </fo:footnote></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 2.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 2.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 3.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 3.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Cell 4.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cell 4.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block>After the table<fo:footnote><fo:inline>**</fo:inline><fo:footnote-body><fo:block>** Footnote after the 
+                  table</fo:block></fo:footnote-body></fo:footnote></fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="tall-page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Nested tables</fo:block>
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-header>
+              <fo:table-cell>
+                <fo:block>Outer Header<fo:footnote>
+                    <fo:inline>(oh)</fo:inline>
+                    <fo:footnote-body>
+                      <fo:block>oh Footnote from the outer header</fo:block>
+                    </fo:footnote-body>
+                </fo:footnote></fo:block>
+              </fo:table-cell>
+            </fo:table-header>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:table width="100%" table-layout="fixed">
+                    <fo:table-header>
+                      <fo:table-cell>
+                        <fo:block>Inner Header 1.1<fo:footnote>
+                            <fo:inline>(ih)</fo:inline>
+                            <fo:footnote-body>
+                              <fo:block>ih Footnote from the inner header</fo:block>
+                            </fo:footnote-body>
+                        </fo:footnote></fo:block>
+                      </fo:table-cell>
+                      <fo:table-cell>
+                        <fo:block>Inner Header 1.2</fo:block>
+                      </fo:table-cell>
+                    </fo:table-header>
+                    <fo:table-footer>
+                      <fo:table-cell>
+                        <fo:block>Inner Footer 1.1<fo:footnote>
+                            <fo:inline>(if)</fo:inline>
+                            <fo:footnote-body>
+                              <fo:block>if Footnote from the inner footer</fo:block>
+                            </fo:footnote-body>
+                        </fo:footnote></fo:block>
+                      </fo:table-cell>
+                      <fo:table-cell>
+                        <fo:block>Inner Footer 1.2</fo:block>
+                      </fo:table-cell>
+                    </fo:table-footer>
+                    <fo:table-body>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 1.1<fo:footnote>
+                              <fo:inline>¹</fo:inline>
+                              <fo:footnote-body>
+                                <fo:block>¹ Footnote from inner 1.1</fo:block>
+                              </fo:footnote-body>
+                          </fo:footnote></fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 1.2</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 2.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 2.2</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 3.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 3.2</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 4.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 4.2</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 5.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 5.2</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 6.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 6.2</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 7.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 7.2</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 8.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 8.2</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 9.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 9.2</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 10.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 10.3</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 11.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 11.3</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 12.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 12.3</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 13.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 13.3</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>Inner 14.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>Inner 14.3</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                    </fo:table-body>
+                  </fo:table>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="3"                          xpath="count(//pageSequence[1]/pageViewport[1]//footnote/block)"/>
+    <eval expected="* Footnote before the table"      xpath="//pageSequence[1]/pageViewport[1]//footnote/block[1]"/>
+    <eval expected="† Footnote from the table-header" xpath="//pageSequence[1]/pageViewport[1]//footnote/block[2]"/>
+    <eval expected="¹ Footnote from cell 2.1"         xpath="//pageSequence[1]/pageViewport[1]//footnote/block[3]"/>
+    <eval expected="Cell 4.1"                         xpath="//pageSequence[1]/pageViewport[2]//flow/block[1]/block[3]"/>
+    <eval expected="2"                          xpath="count(//pageSequence[1]/pageViewport[2]//footnote/block)"/>
+    <eval expected="† Footnote from the table-header" xpath="//pageSequence[1]/pageViewport[2]//footnote/block[1]"/>
+    <eval expected="² Footnote from cell 6.2"         xpath="//pageSequence[1]/pageViewport[2]//footnote/block[2]"/>
+    <eval expected="Cell 9.1"                         xpath="//pageSequence[1]/pageViewport[3]//flow/block[1]/block[3]"/>
+    <eval expected="1"                          xpath="count(//pageSequence[1]/pageViewport[3]//footnote/block)"/>
+    <eval expected="† Footnote from the table-header" xpath="//pageSequence[1]/pageViewport[3]//footnote/block"/>
+    <eval expected="Cell 15.1"                        xpath="//pageSequence[1]/pageViewport[4]//flow/block[1]/block[3]"/>
+    <eval expected="1"                          xpath="count(//pageSequence[1]/pageViewport[4]//footnote/block)"/>
+    <eval expected="† Footnote from the table-header" xpath="//pageSequence[1]/pageViewport[4]//footnote/block"/>
+
+    <eval expected="1"                          xpath="count(//pageSequence[2]/pageViewport)"/>
+    <eval expected="3"                          xpath="count(//pageSequence[2]//footnote/block)"/>
+    <eval expected="* Footnote before the table"      xpath="//pageSequence[2]//footnote/block[1]"/>
+    <eval expected="† Footnote from the table-header" xpath="//pageSequence[2]//footnote/block[2]"/>
+    <eval expected="¹ Footnote from cell 2.1"         xpath="//pageSequence[2]//footnote/block[3]"/>
+
+    <eval expected="3"                          xpath="count(//pageSequence[3]/pageViewport[1]//footnote/block)"/>
+    <eval expected="* Footnote before the table"      xpath="//pageSequence[3]/pageViewport[1]//footnote/block[1]"/>
+    <eval expected="¹ Footnote from cell 2.1"         xpath="//pageSequence[3]/pageViewport[1]//footnote/block[2]"/>
+    <eval expected="† Footnote from the table-footer" xpath="//pageSequence[3]/pageViewport[1]//footnote/block[3]"/>
+    <eval expected="Cell 4.1"                         xpath="//pageSequence[3]/pageViewport[2]//flow/block[1]/block[1]"/>
+    <eval expected="2"                          xpath="count(//pageSequence[3]/pageViewport[2]//footnote/block)"/>
+    <eval expected="² Footnote from cell 6.2"         xpath="//pageSequence[3]/pageViewport[2]//footnote/block[1]"/>
+    <eval expected="† Footnote from the table-footer" xpath="//pageSequence[3]/pageViewport[2]//footnote/block[2]"/>
+    <eval expected="Cell 9.1"                         xpath="//pageSequence[3]/pageViewport[3]//flow/block[1]/block[1]"/>
+    <eval expected="1"                          xpath="count(//pageSequence[3]/pageViewport[3]//footnote/block)"/>
+    <eval expected="† Footnote from the table-footer" xpath="//pageSequence[3]/pageViewport[3]//footnote/block"/>
+    <eval expected="1"                          xpath="count(//pageSequence[3]/pageViewport[4]//footnote/block)"/>
+    <eval expected="Cell 15.1"                        xpath="//pageSequence[3]/pageViewport[4]//flow/block[1]/block[1]"/>
+    <eval expected="† Footnote from the table-footer" xpath="//pageSequence[3]/pageViewport[4]//footnote/block"/>
+
+    <eval expected="1"                          xpath="count(//pageSequence[4]/pageViewport)"/>
+    <eval expected="3"                          xpath="count(//pageSequence[4]//footnote/block)"/>
+    <eval expected="* Footnote before the table"      xpath="//pageSequence[4]//footnote/block[1]"/>
+    <eval expected="¹ Footnote from cell 2.1"         xpath="//pageSequence[4]//footnote/block[2]"/>
+    <eval expected="† Footnote from the table-footer" xpath="//pageSequence[4]//footnote/block[3]"/>
+
+    <eval expected="4"                          xpath="count(//pageSequence[5]/pageViewport[1]//footnote/block)"/>
+    <eval expected="* Footnote before the table"      xpath="//pageSequence[5]/pageViewport[1]//footnote/block[1]"/>
+    <eval expected="† Footnote from the table-header" xpath="//pageSequence[5]/pageViewport[1]//footnote/block[2]"/>
+    <eval expected="¹ Footnote from cell 1.1"         xpath="//pageSequence[5]/pageViewport[1]//footnote/block[3]"/>
+    <eval expected="‡ Footnote from the table-footer" xpath="//pageSequence[5]/pageViewport[1]//footnote/block[4]"/>
+    <eval expected="Cell 2.1"                         xpath="//pageSequence[5]/pageViewport[2]//flow/block[1]/block[3]"/>
+    <eval expected="3"                          xpath="count(//pageSequence[5]/pageViewport[2]//footnote/block)"/>
+    <eval expected="† Footnote from the table-header" xpath="//pageSequence[5]/pageViewport[2]//footnote/block[1]"/>
+    <eval expected="² Footnote from cell 3.2"         xpath="//pageSequence[5]/pageViewport[2]//footnote/block[2]"/>
+    <eval expected="‡ Footnote from the table-footer" xpath="//pageSequence[5]/pageViewport[2]//footnote/block[3]"/>
+    <eval expected="Cell 5.1"                         xpath="//pageSequence[5]/pageViewport[3]//flow/block[1]/block[3]"/>
+    <eval expected="2"                          xpath="count(//pageSequence[5]/pageViewport[3]//footnote/block)"/>
+    <eval expected="† Footnote from the table-header" xpath="//pageSequence[5]/pageViewport[3]//footnote/block[1]"/>
+    <eval expected="‡ Footnote from the table-footer" xpath="//pageSequence[5]/pageViewport[3]//footnote/block[2]"/>
+    <eval expected="Cell 9.1"                         xpath="//pageSequence[5]/pageViewport[4]//flow/block[1]/block[3]"/>
+    <eval expected="2"                          xpath="count(//pageSequence[5]/pageViewport[4]//footnote/block)"/>
+    <eval expected="† Footnote from the table-header" xpath="//pageSequence[5]/pageViewport[4]//footnote/block[1]"/>
+    <eval expected="‡ Footnote from the table-footer" xpath="//pageSequence[5]/pageViewport[4]//footnote/block[2]"/>
+
+    <eval expected="1"                          xpath="count(//pageSequence[6]/pageViewport)"/>
+    <eval expected="4"                          xpath="count(//pageSequence[6]//footnote/block)"/>
+    <eval expected="* Footnote before the table"      xpath="//pageSequence[6]//footnote/block[1]"/>
+    <eval expected="† Footnote from the table-header" xpath="//pageSequence[6]//footnote/block[2]"/>
+    <eval expected="¹ Footnote from cell 1.1"         xpath="//pageSequence[6]//footnote/block[3]"/>
+    <eval expected="‡ Footnote from the table-footer" xpath="//pageSequence[6]//footnote/block[4]"/>
+
+    <eval expected="3"                          xpath="count(//pageSequence[7]/pageViewport[1]//footnote/block)"/>
+    <eval expected="* Footnote before the table"      xpath="//pageSequence[7]/pageViewport[1]//footnote/block[1]"/>
+    <eval expected="† Footnote from the table-header" xpath="//pageSequence[7]/pageViewport[1]//footnote/block[2]"/>
+    <eval expected="¹ Footnote from cell 1.1"         xpath="//pageSequence[7]/pageViewport[1]//footnote/block[3]"/>
+    <eval expected="2"                          xpath="count(//pageSequence[7]/pageViewport[2]//footnote/block)"/>
+    <eval expected="‡ Footnote from the table-footer" xpath="//pageSequence[7]/pageViewport[2]//footnote/block[1]"/>
+    <eval expected="** Footnote after the table"      xpath="//pageSequence[7]/pageViewport[2]//footnote/block[2]"/>
+
+    <eval expected="4"                           xpath="count(//pageSequence[8]/pageViewport[1]//footnote/block)"/>
+    <eval expected="oh Footnote from the outer header" xpath="//pageSequence[8]/pageViewport[1]//footnote/block[1]"/>
+    <eval expected="ih Footnote from the inner header" xpath="//pageSequence[8]/pageViewport[1]//footnote/block[2]"/>
+    <eval expected="¹ Footnote from inner 1.1"         xpath="//pageSequence[8]/pageViewport[1]//footnote/block[3]"/>
+    <eval expected="if Footnote from the inner footer" xpath="//pageSequence[8]/pageViewport[1]//footnote/block[4]"/>
+    <eval expected="Inner 6.1"                         xpath="//pageSequence[8]/pageViewport[2]//flow/block[1]/block[2]/block/block[3]"/>
+    <eval expected="3"                           xpath="count(//pageSequence[8]/pageViewport[2]//footnote/block)"/>
+    <eval expected="oh Footnote from the outer header" xpath="//pageSequence[8]/pageViewport[2]//footnote/block[1]"/>
+    <eval expected="ih Footnote from the inner header" xpath="//pageSequence[8]/pageViewport[2]//footnote/block[2]"/>
+    <eval expected="if Footnote from the inner footer" xpath="//pageSequence[8]/pageViewport[2]//footnote/block[3]"/>
+    <eval expected="Inner 13.1"                        xpath="//pageSequence[8]/pageViewport[3]//flow/block[1]/block[2]/block/block[3]"/>
+    <eval expected="3"                           xpath="count(//pageSequence[8]/pageViewport[3]//footnote/block)"/>
+    <eval expected="oh Footnote from the outer header" xpath="//pageSequence[8]/pageViewport[3]//footnote/block[1]"/>
+    <eval expected="ih Footnote from the inner header" xpath="//pageSequence[8]/pageViewport[3]//footnote/block[2]"/>
+    <eval expected="if Footnote from the inner footer" xpath="//pageSequence[8]/pageViewport[3]//footnote/block[3]"/>
+  </checks>
+</testcase>

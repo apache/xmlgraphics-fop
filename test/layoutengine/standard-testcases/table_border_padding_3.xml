@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks border and padding conditionality on table.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" xmlns:svg="http://www.w3.org/2000/svg">  
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="letterOnePageFront" page-width="210mm" page-height="297mm" margin-bottom="4mm" margin-right="6mm" margin-top="5mm" margin-left="7mm">
+      <fo:region-body margin-bottom="16mm" margin-right="59mm" margin-top="24mm" margin-left="6mm" region-name="letterOnePageBody"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="letterOnePageRolloverLastBlank" page-width="210mm" page-height="297mm" margin-bottom="4mm" margin-right="6mm" margin-top="5mm" margin-left="7mm">
+      <fo:region-body margin-left="12mm" margin-bottom="20mm" margin-right="12mm" margin-top="15mm" region-name="letterOnePageBody"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="letterOnePageRolloverLastNonBlank" page-width="210mm" page-height="297mm" margin-bottom="4mm" margin-right="6mm" margin-top="5mm" margin-left="7mm">
+      <fo:region-body margin-bottom="20mm" background-color="yellow" margin-right="12mm" margin-top="15mm" margin-left="6mm" region-name="letterOnePageBody"/>
+    </fo:simple-page-master>     
+    <fo:page-sequence-master master-name="condLetterOnePage">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference page-position="first" master-reference="letterOnePageFront"/>
+        <fo:conditional-page-master-reference page-position="rest" master-reference="letterOnePageRolloverLastNonBlank"/>
+        <fo:conditional-page-master-reference blank-or-not-blank="blank" odd-or-even="even" page-position="last" master-reference="letterOnePageRolloverLastBlank"/>
+        <fo:conditional-page-master-reference blank-or-not-blank="not-blank" odd-or-even="even" page-position="last" master-reference="letterOnePageRolloverLastNonBlank"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>   
+  </fo:layout-master-set>  
+  <fo:page-sequence format="1" id="secondseq" initial-page-number="1" force-page-count="end-on-even" master-reference="condLetterOnePage">    
+    <fo:flow flow-name="letterOnePageBody">      
+        <fo:block font-size="80pt">test test test test test test test test test test test test test test</fo:block>              
+       <fo:block>        
+       <fo:block id="1" line-height="130mm">test</fo:block>
+        <fo:table table-layout="fixed" width="100%" background-color="pink">
+          <fo:table-column column-width="proportional-column-width(30)" column-number="1"/>
+          <fo:table-column column-width="proportional-column-width(70)" column-number="2"/>
+          <fo:table-body>          
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block id="2" font-size="10pt">Free - we won't charge you any extra in the coming policy year</fo:block>
+                </fo:block>
+              </fo:table-cell>              
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <fo:block id="3" font-size="10pt" padding-top="2pt" space-before="1.5mm" space-before.conditionality="retain">
+                      Convenient - never miss payments</fo:block>
+                </fo:block>
+              </fo:table-cell>            
+            </fo:table-row>       
+          </fo:table-body>
+        </fo:table>                    
+        <fo:block id="4" line-height="100mm" background-color="red">test2</fo:block>          
+      </fo:block> 
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="test2" xpath="//pageViewport[3]//block/block[1]//word"/>
+  </checks>
+</testcase>

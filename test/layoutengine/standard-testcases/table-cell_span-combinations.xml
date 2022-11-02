@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks spanned cells (especially that no cell generates more than one area).
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell id="cell1" number-columns-spanned="4" border="solid 0.5pt">
+                  <fo:block>cell1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell id="cell2" number-rows-spanned="3" display-align="center" border="solid 0.5pt">
+                  <fo:block text-align="center">cell2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell id="cell3" number-rows-spanned="3" border="solid 0.5pt">
+                  <fo:block>cell3</fo:block>
+                </fo:table-cell>
+                <fo:table-cell id="cell4" number-columns-spanned="2" number-rows-spanned="2" border="solid 0.5pt"  background-color="lightgray">
+                  <fo:block>cell4</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block> </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell id="cell5" border="solid 0.5pt">
+                  <fo:block>cell5</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell id="cell6" number-columns-spanned="4" border="solid 0.5pt">
+                  <fo:block text-align="end">cell6</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="1" xpath="count(//pageViewport)"/>
+    <eval expected="1" xpath="count(//block[@prod-id = 'cell1'])"/>
+    <eval expected="1" xpath="count(//block[@prod-id = 'cell2'])"/>
+    <eval expected="1" xpath="count(//block[@prod-id = 'cell3'])"/>
+    <eval expected="1" xpath="count(//block[@prod-id = 'cell4'])"/>
+    <eval expected="1" xpath="count(//block[@prod-id = 'cell5'])"/>
+    <eval expected="1" xpath="count(//block[@prod-id = 'cell6'])"/>
+    <eval expected="44200" xpath="//block[@prod-id = 'cell2']/@bpd"/>
+    <eval expected="28800" xpath="//block[@prod-id = 'cell4']/@bpd"/>
+  </checks>
+</testcase>

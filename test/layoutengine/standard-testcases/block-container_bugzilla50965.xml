@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks for a regression in block-container layout, where margins
+      were counted twice, leading to an incorrect CTM for the block area.
+      See also Bugzilla 50965.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page" page-height="100mm"
+    page-width="100mm">
+          <fo:region-body/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="ps">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference master-reference="page" page-position="first"/>
+            <fo:conditional-page-master-reference master-reference="page" page-position="rest"/>
+            <fo:conditional-page-master-reference master-reference="page" page-position="last"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="ps">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container margin-left="20mm">
+            <fo:block-container page-break-before="always">
+              <fo:block>A</fo:block>
+            </fo:block-container>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="[1.0 0.0 0.0 1.0 56692.0 0.0]" xpath="//flow[1]/block[1]/@ctm" />
+  </checks>
+</testcase>

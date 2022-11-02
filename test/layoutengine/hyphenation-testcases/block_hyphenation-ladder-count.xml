@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      Checks hyphenation for various languages
+    </p>
+  </info>
+  <fo>
+
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="simple"
+                  page-height="29.7cm"
+                  page-width="21cm"
+                  margin-top="1cm"
+                  margin-bottom="2cm"
+                  margin-left="7cm"
+                  margin-right="3cm">
+      <fo:region-body margin-top="1.5cm"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <!-- end: defines page layout -->
+
+
+  <fo:page-sequence master-reference="simple">
+
+    <fo:flow flow-name="xsl-region-body"
+                text-align="justify">
+
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        US English hypenation-ladder-count="no-limit"
+      </fo:block>
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
+                space-after="3pt"
+                language="en"
+                country="US"
+                hyphenate="true"
+                hyphenation-ladder-count="no-limit"
+                >
+        This document has been reviewed by W3C Members and other interested parties and has been endorsed by the Director as a
+        W3C Recommendation. It is a stable document and may be used as reference material or cited as a normative reference from
+        another document. W3C's role in making the Recommendation is to draw attention to the specification and to promote its
+        widespread deployment. This enhances the functionality and interoperability of the Web.
+      </fo:block>
+
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        US English hypenation-ladder-count="1"
+      </fo:block>
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
+                space-after="3pt"
+                language="en"
+                country="US"
+                hyphenate="true"
+                hyphenation-ladder-count="1"
+                >
+        This document has been reviewed by W3C Members and other interested parties and has been endorsed by the Director as a
+        W3C Recommendation. It is a stable document and may be used as reference material or cited as a normative reference from
+        another document. W3C's role in making the Recommendation is to draw attention to the specification and to promote its
+        widespread deployment. This enhances the functionality and interoperability of the Web.
+      </fo:block>
+
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        US English hypenation-ladder-count="2"
+      </fo:block>
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
+                space-after="3pt"
+                language="en"
+                country="US"
+                hyphenate="true"
+                hyphenation-ladder-count="2"
+                >
+        This document has been reviewed by W3C Members and other interested parties and has been endorsed by the Director as a
+        W3C Recommendation. It is a stable document and may be used as reference material or cited as a normative reference from
+        another document. W3C's role in making the Recommendation is to draw attention to the specification and to promote its
+        widespread deployment. This enhances the functionality and interoperability of the Web.
+      </fo:block>
+
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        US English hypenation-ladder-count="3"
+      </fo:block>
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
+                space-after="3pt"
+                language="en"
+                country="US"
+                hyphenate="true"
+                hyphenation-ladder-count="3"
+                >
+        This document has been reviewed by W3C Members and other interested parties and has been endorsed by the Director as a
+        W3C Recommendation. It is a stable document and may be used as reference material or cited as a normative reference from
+        another document. W3C's role in making the Recommendation is to draw attention to the specification and to promote its
+        widespread deployment. This enhances the functionality and interoperability of the Web.
+      </fo:block>
+
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        US English hypenation-ladder-count="4"
+      </fo:block>
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
+                space-after="3pt"
+                language="en"
+                country="US"
+                hyphenate="true"
+                hyphenation-ladder-count="4"
+                >
+        This document has been reviewed by W3C Members and other interested parties and has been endorsed by the Director as a
+        W3C Recommendation. It is a stable document and may be used as reference material or cited as a normative reference from
+        another document. W3C's role in making the Recommendation is to draw attention to the specification and to promote its
+        widespread deployment. This enhances the functionality and interoperability of the Web.
+      </fo:block>
+
+      <fo:block break-before="page"
+            font-size="12pt"
+            font-family="sans-serif"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        German hypenation-ladder-count="no-limit"
+      </fo:block>
+
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
+                space-after="3pt"
+                language="de"
+                hyphenate="true"
+                hyphenation-ladder-count="no-limit"
+                >
+        1. Warum TEI?
+        Die Verwendungszeit elektronischer Editionen wird von mehreren
+        Faktoren verkürzt: der kurzen Lebensdauer der Programme, die zu
+        ihrer Darstellung verwendet werden, der etwas längeren der
+        Betriebssysteme, unter denen die Darstellungsprogramme laufen,
+        der logischen Einrichtung des Datenträgers, auf dem sich die
+        Edition befindet, und dessen physischer Dauer.
+      </fo:block>
+
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        German hypenation-ladder-count="1"
+      </fo:block>
+
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
+                space-after="3pt"
+                language="de"
+                hyphenate="true"
+                hyphenation-ladder-count="1"
+                >
+        1. Warum TEI?
+        Die Verwendungszeit elektronischer Editionen wird von mehreren
+        Faktoren verkürzt: der kurzen Lebensdauer der Programme, die zu
+        ihrer Darstellung verwendet werden, der etwas längeren der
+        Betriebssysteme, unter denen die Darstellungsprogramme laufen,
+        der logischen Einrichtung des Datenträgers, auf dem sich die
+        Edition befindet, und dessen physischer Dauer.
+      </fo:block>
+
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        German hypenation-ladder-count="2"
+      </fo:block>
+
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
+                space-after="3pt"
+                language="de"
+                hyphenate="true"
+                hyphenation-ladder-count="2"
+                >
+        1. Warum TEI?
+        Die Verwendungszeit elektronischer Editionen wird von mehreren
+        Faktoren verkürzt: der kurzen Lebensdauer der Programme, die zu
+        ihrer Darstellung verwendet werden, der etwas längeren der
+        Betriebssysteme, unter denen die Darstellungsprogramme laufen,
+        der logischen Einrichtung des Datenträgers, auf dem sich die
+        Edition befindet, und dessen physischer Dauer.
+      </fo:block>
+
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        German hypenation-ladder-count="3"
+      </fo:block>
+
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
+                space-after="3pt"
+                language="de"
+                hyphenate="true"
+                hyphenation-ladder-count="3"
+                >
+        1. Warum TEI?
+        Die Verwendungszeit elektronischer Editionen wird von mehreren
+        Faktoren verkürzt: der kurzen Lebensdauer der Programme, die zu
+        ihrer Darstellung verwendet werden, der etwas längeren der
+        Betriebssysteme, unter denen die Darstellungsprogramme laufen,
+        der logischen Einrichtung des Datenträgers, auf dem sich die
+        Edition befindet, und dessen physischer Dauer.
+      </fo:block>
+
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        German hypenation-ladder-count="4"
+      </fo:block>
+
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
+                space-after="3pt"
+                language="de"
+                hyphenate="true"
+                hyphenation-ladder-count="4"
+                >
+        1. Warum TEI?
+        Die Verwendungszeit elektronischer Editionen wird von mehreren
+        Faktoren verkürzt: der kurzen Lebensdauer der Programme, die zu
+        ihrer Darstellung verwendet werden, der etwas längeren der
+        Betriebssysteme, unter denen die Darstellungsprogramme laufen,
+        der logischen Einrichtung des Datenträgers, auf dem sich die
+        Edition befindet, und dessen physischer Dauer.
+      </fo:block>
+
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+</fo>
+  <checks>
+    <eval expected="8" xpath="count(//pageViewport[1]//flow/block[2]/lineArea)"/>
+    <eval expected="Di-" xpath="//pageViewport[1]//flow/block[2]/lineArea[2]/text/word[10]"/>
+    <eval expected="norma-" xpath="//pageViewport[1]//flow/block[2]/lineArea[4]/text/word[12]"/>
+    <eval expected="mak-" xpath="//pageViewport[1]//flow/block[2]/lineArea[5]/text/word[9]"/>
+    <eval expected="specifi-" xpath="//pageViewport[1]//flow/block[2]/lineArea[6]/text/word[10]"/>
+    <eval expected="en-" xpath="//pageViewport[1]//flow/block[2]/lineArea[7]/text/word[9]"/>
+
+    <eval expected="9" xpath="count(//pageViewport[1]//flow/block[4]/lineArea)"/>
+    <eval expected="Di-" xpath="//pageViewport[1]//flow/block[4]/lineArea[2]/text/word[10]"/>
+    <eval expected="nor-" xpath="//pageViewport[1]//flow/block[4]/lineArea[4]/text/word[12]"/>
+    <eval expected="in" xpath="//pageViewport[1]//flow/block[4]/lineArea[5]/text/word[8]"/>
+    <eval expected="the" xpath="//pageViewport[1]//flow/block[4]/lineArea[6]/text/word[9]"/>
+    <eval expected="deployment." xpath="//pageViewport[1]//flow/block[4]/lineArea[7]/text/word[7]"/>
+
+    <eval expected="8" xpath="count(//pageViewport[1]//flow/block[6]/lineArea)"/>
+    <eval expected="Di-" xpath="//pageViewport[1]//flow/block[6]/lineArea[2]/text/word[10]"/>
+    <eval expected="norma-" xpath="//pageViewport[1]//flow/block[6]/lineArea[4]/text/word[12]"/>
+    <eval expected="making" xpath="//pageViewport[1]//flow/block[6]/lineArea[5]/text/word[9]"/>
+    <eval expected="specifica-" xpath="//pageViewport[1]//flow/block[6]/lineArea[6]/text/word[9]"/>
+    <eval expected="en-" xpath="//pageViewport[1]//flow/block[6]/lineArea[7]/text/word[9]"/>
+
+    <eval expected="8" xpath="count(//pageViewport[1]//flow/block[8]/lineArea)"/>
+    <eval expected="Di-" xpath="//pageViewport[1]//flow/block[8]/lineArea[2]/text/word[10]"/>
+    <eval expected="norma-" xpath="//pageViewport[1]//flow/block[8]/lineArea[4]/text/word[12]"/>
+    <eval expected="making" xpath="//pageViewport[1]//flow/block[8]/lineArea[5]/text/word[9]"/>
+    <eval expected="specifica-" xpath="//pageViewport[1]//flow/block[8]/lineArea[6]/text/word[9]"/>
+    <eval expected="en-" xpath="//pageViewport[1]//flow/block[8]/lineArea[7]/text/word[9]"/>
+
+    <eval expected="8" xpath="count(//pageViewport[1]//flow/block[10]/lineArea)"/>
+    <eval expected="Di-" xpath="//pageViewport[1]//flow/block[10]/lineArea[2]/text/word[10]"/>
+    <eval expected="norma-" xpath="//pageViewport[1]//flow/block[10]/lineArea[4]/text/word[12]"/>
+    <eval expected="mak-" xpath="//pageViewport[1]//flow/block[10]/lineArea[5]/text/word[9]"/>
+    <eval expected="specifi-" xpath="//pageViewport[1]//flow/block[10]/lineArea[6]/text/word[10]"/>
+    <eval expected="en-" xpath="//pageViewport[1]//flow/block[10]/lineArea[7]/text/word[9]"/>
+
+    <eval expected="7" xpath="count(//pageViewport[2]//flow/block[2]/lineArea)"/>
+    <eval expected="Editio-" xpath="//pageViewport[2]//flow/block[2]/lineArea[1]/text/word[7]"/>
+    <eval expected="Le-" xpath="//pageViewport[2]//flow/block[2]/lineArea[2]/text/word[9]"/>
+    <eval expected="verwen-" xpath="//pageViewport[2]//flow/block[2]/lineArea[3]/text/word[8]"/>
+    <eval expected="un-" xpath="//pageViewport[2]//flow/block[2]/lineArea[4]/text/word[8]"/>
+    <eval expected="logischen" xpath="//pageViewport[2]//flow/block[2]/lineArea[5]/text/word[7]"/>
+    <eval expected="be-" xpath="//pageViewport[2]//flow/block[2]/lineArea[6]/text/word[9]"/>
+
+    <eval expected="7" xpath="count(//pageViewport[2]//flow/block[4]/lineArea)"/>
+    <eval expected="Edi-" xpath="//pageViewport[2]//flow/block[4]/lineArea[1]/text/word[7]"/>
+    <eval expected="kurzen" xpath="//pageViewport[2]//flow/block[4]/lineArea[2]/text/word[8]"/>
+    <eval expected="ver-" xpath="//pageViewport[2]//flow/block[4]/lineArea[3]/text/word[8]"/>
+    <eval expected="Betriebssysteme," xpath="//pageViewport[2]//flow/block[4]/lineArea[4]/text/word[7]"/>
+    <eval expected="lo-" xpath="//pageViewport[2]//flow/block[4]/lineArea[5]/text/word[7]"/>
+    <eval expected="die" xpath="//pageViewport[2]//flow/block[4]/lineArea[6]/text/word[8]"/>
+
+    <eval expected="7" xpath="count(//pageViewport[2]//flow/block[6]/lineArea)"/>
+    <eval expected="Edi-" xpath="//pageViewport[2]//flow/block[6]/lineArea[1]/text/word[7]"/>
+    <eval expected="kurzen" xpath="//pageViewport[2]//flow/block[6]/lineArea[2]/text/word[8]"/>
+    <eval expected="ver-" xpath="//pageViewport[2]//flow/block[6]/lineArea[3]/text/word[8]"/>
+    <eval expected="Betriebssysteme," xpath="//pageViewport[2]//flow/block[6]/lineArea[4]/text/word[7]"/>
+    <eval expected="logi-" xpath="//pageViewport[2]//flow/block[6]/lineArea[5]/text/word[7]"/>
+    <eval expected="Edi-" xpath="//pageViewport[2]//flow/block[6]/lineArea[6]/text/word[9]"/>
+
+    <eval expected="7" xpath="count(//pageViewport[2]//flow/block[8]/lineArea)"/>
+    <eval expected="Editio-" xpath="//pageViewport[2]//flow/block[8]/lineArea[1]/text/word[7]"/>
+    <eval expected="Le-" xpath="//pageViewport[2]//flow/block[8]/lineArea[2]/text/word[9]"/>
+    <eval expected="ver-" xpath="//pageViewport[2]//flow/block[8]/lineArea[3]/text/word[8]"/>
+    <eval expected="Betriebssysteme," xpath="//pageViewport[2]//flow/block[8]/lineArea[4]/text/word[7]"/>
+    <eval expected="logi-" xpath="//pageViewport[2]//flow/block[8]/lineArea[5]/text/word[7]"/>
+    <eval expected="Edi-" xpath="//pageViewport[2]//flow/block[8]/lineArea[6]/text/word[9]"/>
+
+    <eval expected="7" xpath="count(//pageViewport[2]//flow/block[10]/lineArea)"/>
+    <eval expected="Editio-" xpath="//pageViewport[2]//flow/block[10]/lineArea[1]/text/word[7]"/>
+    <eval expected="Le-" xpath="//pageViewport[2]//flow/block[10]/lineArea[2]/text/word[9]"/>
+    <eval expected="verwen-" xpath="//pageViewport[2]//flow/block[10]/lineArea[3]/text/word[8]"/>
+    <eval expected="un-" xpath="//pageViewport[2]//flow/block[10]/lineArea[4]/text/word[8]"/>
+    <eval expected="logischen" xpath="//pageViewport[2]//flow/block[10]/lineArea[5]/text/word[7]"/>
+    <eval expected="be-" xpath="//pageViewport[2]//flow/block[10]/lineArea[6]/text/word[9]"/>
+
+  </checks>
+</testcase>

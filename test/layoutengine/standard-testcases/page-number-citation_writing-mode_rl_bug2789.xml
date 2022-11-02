@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks fo:page-number-citation in a RTL writing-mode context.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Arial" writing-mode="rl-tb">
+      <fo:layout-master-set>
+        <fo:simple-page-master margin="20mm" master-name="odd" page-height="297mm" page-width="210mm">
+          <fo:region-body/>
+            </fo:simple-page-master>
+        </fo:layout-master-set>
+        <fo:page-sequence master-reference="odd" writing-mode="rl-tb">
+          <fo:flow flow-name="xsl-region-body">
+            <fo:block>AASDFASDFASDFASDF</fo:block>
+            <fo:block break-before="page">B</fo:block>
+            <fo:block break-before="page">B</fo:block>
+            <fo:block break-before="page">A</fo:block>
+            <fo:block break-before="page">A</fo:block>
+            <fo:block break-before="page">A</fo:block>
+            <fo:block break-before="page">A</fo:block>
+            <fo:block break-before="page">A</fo:block>
+            <fo:block break-before="page">A</fo:block>
+            <fo:block break-before="page">A</fo:block>
+            <fo:block break-before="page">A</fo:block>
+            <fo:block break-before="page">A</fo:block>
+            <fo:block id="b1">A</fo:block>
+            <fo:block id="b3" break-before="page">
+              البيانات <fo:page-number-citation ref-id="b1"/>.
+            </fo:block>
+          </fo:flow>
+        </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="13" xpath="count(//pageSequence/pageViewport)"/>
+    <eval expected="." xpath="//pageViewport[@nr=13]/page/regionViewport/regionBody/mainReference/span/flow/block/lineArea/text[1]/word"/>
+    <eval expected="12" xpath="//pageViewport[@nr=13]/page/regionViewport/regionBody/mainReference/span/flow/block/lineArea/text[2]/word"/>
+    <eval expected="3000" xpath="//pageViewport[@nr=13]/page/regionViewport/regionBody/mainReference/span/flow/block/lineArea/text[1]/@ipd"/>
+    <eval expected="12000" xpath="//pageViewport[@nr=13]/page/regionViewport/regionBody/mainReference/span/flow/block/lineArea/text[2]/@ipd"/>
+    <eval expected="51000" xpath="//pageViewport[@nr=13]/page/regionViewport/regionBody/mainReference/span/flow/block/lineArea/text[3]/@ipd"/>
+  </checks>
+</testcase>
