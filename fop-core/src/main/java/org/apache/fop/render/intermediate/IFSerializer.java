@@ -914,8 +914,11 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
         atts.addAttribute("", "rect", "rect",
                 XMLConstants.CDATA, IFUtil.toString(link.getTargetRect()));
         if (getUserAgent().isAccessibilityEnabled()) {
-            addStructRefAttribute(atts,
-                    ((IFStructureTreeElement) link.getAction().getStructureTreeElement()).getId());
+            IFStructureTreeElement structureTreeElement =
+                    (IFStructureTreeElement) link.getAction().getStructureTreeElement();
+            if (structureTreeElement != null) {
+                addStructRefAttribute(atts, structureTreeElement.getId());
+            }
         }
         try {
             handler.startElement(DocumentNavigationExtensionConstants.LINK, atts);

@@ -32,6 +32,10 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.xml.sax.ErrorHandler;
@@ -105,6 +109,7 @@ abstract class AbstractIFTest extends AbstractIntermediateTest {
         DOMResult domResult = new DOMResult();
 
         FOUserAgent userAgent = createUserAgent();
+        userAgent.setAccessibility(isAccessibility(testDoc));
 
         //Create an instance of the target renderer so the XMLRenderer can use its font setup
         IFDocumentHandler targetHandler = userAgent.getRendererFactory().createDocumentHandler(
@@ -124,9 +129,23 @@ abstract class AbstractIFTest extends AbstractIntermediateTest {
         return (Document) domResult.getNode();
     }
 
+    private boolean isAccessibility(Document testDoc) {
+        try {
+            String s = eval(testDoc, "/testcase/cfg/accessibility");
+            return "true".equals(s);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String eval(Document doc, String xpath) throws XPathExpressionException {
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        return (String) xPath.compile(xpath).evaluate(doc, XPathConstants.STRING);
+    }
+
     @Override
     protected void validate(Document doc) throws SAXException, IOException {
-        if (IF_SCHEMA == null) {
+        if (IF_SCHEMA == null || isAccessibility(testDoc)) {
             return; //skip validation;
         }
         Validator validator = IF_SCHEMA.newValidator();
