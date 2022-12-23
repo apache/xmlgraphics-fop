@@ -19,6 +19,11 @@
 
 package org.apache.fop.fonts;
 
+import java.io.PrintStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -30,19 +35,22 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.apache.commons.io.output.NullPrintStream;
+
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.EnumProperty;
 import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.fo.properties.FontFamilyProperty;
 import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
-
 
 public class FontSelectorTestCase {
 
@@ -136,4 +144,34 @@ public class FontSelectorTestCase {
         return CommonFont.getInstance(pList);
     }
 
+
+    @Test
+    public void testFontCacheWithThreads() throws Exception {
+        PrintStream old = System.err;
+        System.setErr(new NullPrintStream());
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        for (int i = 0; i < 100000; i++) {
+            executor.submit(new FontTask());
+        }
+        executor.shutdown();
+        executor.awaitTermination(1, TimeUnit.DAYS);
+        System.setErr(old);
+    }
+
+    static class FontTask implements Runnable {
+        public void run() {
+            try {
+                Root r = new Root(null);
+                StaticPropertyList pList = new StaticPropertyList(r, null);
+                Property x = new FontFamilyProperty.Maker(Constants.PR_FONT_FAMILY).make(pList, "a-963191172", null);
+                pList.putExplicit(Constants.PR_FONT_FAMILY, x);
+                CommonFont.getInstance(pList);
+                x = new FontFamilyProperty.Maker(Constants.PR_FONT_FAMILY).make(pList, "a385863058", null);
+                pList.putExplicit(Constants.PR_FONT_FAMILY, x);
+                CommonFont.getInstance(pList);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }

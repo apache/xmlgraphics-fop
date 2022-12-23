@@ -189,6 +189,14 @@ public final class PropertyCache<T> {
     }
 
     private boolean eq(Object p, Object q) {
-        return (p == q || p.equals(q));
+        if (p == q) {
+            return true;
+        }
+        cleanupLock.lock();
+        try {
+            return p.equals(q);
+        } finally {
+            cleanupLock.unlock();
+        }
     }
 }
