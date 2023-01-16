@@ -196,7 +196,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
             mdr.addTriplet(new FontFullyQualifiedNameTriplet((byte) fontRef));
 
             setupTruetypeMDR(mdr, false);
-            mdr.addTriplet(new DataObjectFontTriplet(size / 1000));
+            mdr.addTriplet(new DataObjectFontTriplet(size / 1000f));
             mdr.finishElement();
         } else {
             if (mapCodedFont == null) {
@@ -248,9 +248,9 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     }
 
     static class DataObjectFontTriplet extends AbstractTriplet {
-        private int pointSize;
+        private float pointSize;
 
-        public DataObjectFontTriplet(int size) {
+        public DataObjectFontTriplet(float size) {
             super(DATA_OBJECT_FONT_DESCRIPTOR);
             pointSize = size;
         }
@@ -262,7 +262,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         public void writeToStream(OutputStream os) throws IOException {
             byte[] data = getData();
             data[3] = 0x20;
-            byte[] pointSizeBytes = BinaryUtils.convert(pointSize * 20, 2);
+            byte[] pointSizeBytes = BinaryUtils.convert(Math.round(pointSize * 20), 2);
             data[4] = pointSizeBytes[0]; //vfs
             data[5] = pointSizeBytes[1];
 //            data[6] = pointSizeBytes[0]; //hsf
