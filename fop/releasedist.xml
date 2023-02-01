@@ -54,6 +54,18 @@
       <include name="fop/lib/xmlgraphics-commons*"/>
     </patternset>
   </fileset>
+  <fileset id="dist.lib2" dir="${basedir}/..">
+    <include name="fop/target/dependency/README*"/>
+    <include name="fop/target/dependency/batik*"/>
+    <include name="fop/target/dependency/commons-io*"/>
+    <include name="fop/target/dependency/commons-logging*"/>
+    <include name="fop/target/dependency/fontbox*"/>
+    <include name="fop/target/dependency/serializer*"/>
+    <include name="fop/target/dependency/xalan*"/>
+    <include name="fop/target/dependency/xerces*"/>
+    <include name="fop/target/dependency/xml-apis*"/>
+    <include name="fop/target/dependency/xmlgraphics-commons*"/>
+  </fileset>
   <patternset id="dist.src.lib.build">
     <include name="fop/lib/build/asm*"/>
     <include name="fop/lib/build/hamcrest*"/>
@@ -63,7 +75,17 @@
     <include name="fop/lib/build/pmd*"/>
     <include name="fop/lib/build/qdox*"/>
     <include name="fop/lib/build/xmlunit*"/>
-  </patternset>  
+  </patternset>
+  <fileset id="dist.src.lib.build2" dir="${basedir}/..">
+    <include name="fop*/target/dependency/asm*"/>
+    <include name="fop*/target/dependency/hamcrest*"/>
+    <include name="fop*/target/dependency/jaxen*"/>
+    <include name="fop*/target/dependency/mockito*"/>
+    <include name="fop*/target/dependency/objenesis*"/>
+    <include name="fop*/target/dependency/pmd*"/>
+    <include name="fop*/target/dependency/qdox*"/>
+    <include name="fop*/target/dependency/xmlunit*"/>
+  </fileset>  
   <fileset dir="${basedir}/.." id="dist.src">
     <include name="KEYS"/>
     <include name="LICENSE"/>
@@ -146,11 +168,14 @@
     </exec>
   </target>  
   
-  <target name="dist" depends="dist-src,dist-bin" description="Generates the distribution package"/>
+  <target name="dist" depends="mvn-build,dist-src,dist-bin" description="Generates the distribution package"/>
   
-  <target name="dist-bin" depends="mvn-build">
+  <target name="dist-bin">
     <echo message="Building the binary distribution files (zip,tar)"/>
     <mkdir dir="${dist.bin.result.dir}"/>
+    <!--<copy todir="${dist.bin.result.dir}/fop/lib" flatten="true">
+      <fileset refid="dist.lib2"/>
+    </copy>-->
     <copy todir="${dist.bin.result.dir}">
       <fileset refid="dist.bin"/>
       <fileset refid="dist.bin.lib"/>
@@ -178,6 +203,12 @@
   <target name="dist-src">
     <echo message="Building the source distribution files (zip,tar)"/>
     <mkdir dir="${dist.src.result.dir}"/>
+    <!--<copy todir="${dist.src.result.dir}/fop/lib" flatten="true">
+      <fileset refid="dist.lib2"/>
+    </copy>
+    <copy todir="${dist.src.result.dir}/fop/lib/build" flatten="true">
+      <fileset refid="dist.src.lib.build2"/>
+    </copy>-->
     <copy todir="${dist.src.result.dir}">
       <fileset refid="dist.src"/>
     </copy>
@@ -201,6 +232,7 @@
       <arg value="clean"/>
       <arg value="install"/>
       <arg value="javadoc:javadoc"/>
+      <arg value="dependency:copy-dependencies"/>
       <arg value="-DskipTests"/>
     </exec>
   </target>  
