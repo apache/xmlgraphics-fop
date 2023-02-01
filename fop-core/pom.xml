@@ -55,6 +55,11 @@
       <artifactId>batik-transcoder</artifactId>
       <version>${batik.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>batik-codec</artifactId>
+      <version>${batik.version}</version>
+    </dependency>    
     <!-- fop deps -->
     <dependency>
       <groupId>${project.groupId}</groupId>
