@@ -1,0 +1,208 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project basedir="." name="fop">
+
+  <property name="name" value="fop"/>
+  <property name="version" value="2.8.0-SNAPSHOT"/>
+  <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
+  <property name="dist.src.dir" value="${basedir}/dist-src"/>
+  <property name="dist.bin.result.dir" value="${dist.bin.dir}/${name}-${version}"/>
+  <property name="dist.src.result.dir" value="${dist.src.dir}/${name}-${version}"/>
+  
+  <property name="build.dir" value="${basedir}/build"/>
+  <property name="build.javadocs.dir" value="${basedir}/../fop-core/target/site/apidocs"/>
+
+  <fileset dir="${basedir}/.." id="dist.bin">
+    <include name="KEYS"/>
+    <include name="LICENSE"/>
+    <include name="NOTICE"/>
+    <include name="README"/>
+    <include name="fop/conf/**"/>
+    <include name="fop/examples/**"/>
+    <include name="fop/fop"/>
+    <include name="fop/fop.bat"/>
+    <include name="fop/fop.cmd"/>
+    <include name="fop/fop.js"/>
+    <include name="fop/status.xml"/>
+  </fileset>
+  <fileset dir="${basedir}/.." id="dist.bin.lib">
+    <patternset id="dist.lib">
+      <include name="fop/lib/README*"/>
+      <include name="fop/lib/batik*"/>
+      <include name="fop/lib/commons-io*"/>
+      <include name="fop/lib/commons-logging*"/>
+      <include name="fop/lib/fontbox*"/>
+      <include name="fop/lib/serializer*"/>
+      <include name="fop/lib/xalan*"/>
+      <include name="fop/lib/xerces*"/>
+      <include name="fop/lib/xml-apis*"/>
+      <include name="fop/lib/xmlgraphics-commons*"/>
+    </patternset>
+  </fileset>
+  <patternset id="dist.src.lib.build">
+    <include name="fop/lib/build/asm*"/>
+    <include name="fop/lib/build/hamcrest*"/>
+    <include name="fop/lib/build/jaxen*"/>
+    <include name="fop/lib/build/mockito*"/>
+    <include name="fop/lib/build/objenesis*"/>
+    <include name="fop/lib/build/pmd*"/>
+    <include name="fop/lib/build/qdox*"/>
+    <include name="fop/lib/build/xmlunit*"/>
+  </patternset>  
+  <fileset dir="${basedir}/.." id="dist.src">
+    <include name="KEYS"/>
+    <include name="LICENSE"/>
+    <include name="NOTICE"/>
+    <include name="README"/>
+    <include name="fop/build.*"/>
+    <include name="fop/checkstyle*"/>
+    <exclude name="fop/checkstyle-noframes.xsl"/>
+    <include name="fop/conf/**"/>
+    <include name="fop/examples/**"/>
+    <include name="fop/findbugs*"/>
+    <include name="fop/fop"/>
+    <include name="fop/fop.bat"/>
+    <include name="fop/fop.cmd"/>
+    <include name="fop/fop.js"/>
+    <include name="fop/forrest.*"/>
+    <include name="fop/hyph/hyphenation.dtd"/>
+    <include name="fop/hyph/readme"/>
+    <include name="fop/jacoco*"/>
+    <include name="fop/known-issues.xml"/>
+    <include name="fop/lib/servlet*"/>
+    <include name="fop/status.xml"/>
+    <include name="fop*/pom.xml"/>
+    <include name="pom.xml"/>
+    <include name="*/src/**"/>
+    <include name="fop/test/**"/>
+    <patternset refid="dist.lib"/>
+    <patternset refid="dist.src.lib.build"/>
+  </fileset>  
+  
+  <target name="release-dist" depends="dist" description="Generates the distribution package and signs the release">
+    <property name="bin.suffix" value="bin"/>
+    <input message="Passphrase for your default private key" addproperty="pwd">
+        <handler classname="org.apache.tools.ant.input.SecureInputHandler" />
+    </input>
+    <antcall target="sha512">
+      <param name="sign.archive" value="${name}-${version}-src.zip"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${name}-${version}-src.zip"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="sha512">
+      <param name="sign.archive" value="${name}-${version}-src.tar.gz"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${name}-${version}-src.tar.gz"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="sha512">
+      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.zip"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.zip"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+    <antcall target="sha512">
+      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.tar.gz"/>
+    </antcall>
+    <antcall target="sign-file">
+      <param name="sign.archive" value="${name}-${version}-${bin.suffix}.tar.gz"/>
+      <param name="pwd" value="${pwd}"/>
+    </antcall>
+  </target>
+  
+  <target name="sha512">
+    <property name="sha512.exec" value="sha512sum"/>
+    <property name="sha512.options" value=""/>
+    <exec executable="${sha512.exec}" output="${sign.archive}.sha512">
+      <arg line="${sha512.options} ${sign.archive}"/>
+    </exec>
+  </target>
+  
+  <target name="sign-file">
+    <property name="gpg.exec" value="gpg"/>
+    <property name="gpg.options" value="--armor --detach-sign --force-v3-sigs --batch --verbose --passphrase-fd 0"/>
+    <delete file="${sign.archive}.asc"/>
+    <exec executable="${gpg.exec}" inputstring="${pwd}">
+      <arg line="${gpg.options} ${sign.archive}"/>
+    </exec>
+  </target>  
+  
+  <target name="dist" depends="dist-src,dist-bin" description="Generates the distribution package"/>
+  
+  <target name="dist-bin" depends="mvn-build">
+    <echo message="Building the binary distribution files (zip,tar)"/>
+    <mkdir dir="${dist.bin.result.dir}"/>
+    <copy todir="${dist.bin.result.dir}">
+      <fileset refid="dist.bin"/>
+      <fileset refid="dist.bin.lib"/>
+    </copy>
+    <copy todir="${dist.bin.result.dir}/javadocs">
+      <fileset dir="${build.javadocs.dir}"/>
+    </copy>
+    <mkdir dir="${dist.bin.result.dir}/fop/build"/>
+    <copy todir="${dist.bin.result.dir}/fop/build" file="target/fop-${version}.jar"/>
+    <chmod file="${dist.bin.result.dir}/fop/fop" perm="ugo+rx"/>
+    <zip zipfile="${name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
+    <tar longfile="gnu" destfile="${name}-${version}-bin.tar">
+      <tarfileset dir="${dist.bin.dir}" filemode="755">
+        <include name="${name}-${version}/fop/fop"/>
+      </tarfileset>
+      <tarfileset dir="${dist.bin.dir}">
+        <include name="**"/>
+        <exclude name="${name}-${version}/fop/fop"/>
+      </tarfileset>
+    </tar>
+    <gzip zipfile="${name}-${version}-bin.tar.gz" src="${name}-${version}-bin.tar"/>
+    <delete file="${name}-${version}-bin.tar"/>
+  </target>  
+  
+  <target name="dist-src">
+    <echo message="Building the source distribution files (zip,tar)"/>
+    <mkdir dir="${dist.src.result.dir}"/>
+    <copy todir="${dist.src.result.dir}">
+      <fileset refid="dist.src"/>
+    </copy>
+    <chmod file="${dist.src.result.dir}/fop/fop" perm="ugo+rx"/>
+    <zip zipfile="${name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
+    <tar longfile="gnu" destfile="${name}-${version}-src.tar">
+      <tarfileset dir="${dist.src.dir}" filemode="755">
+        <include name="${name}-${version}/fop/fop"/>
+      </tarfileset>
+      <tarfileset dir="${dist.src.dir}">
+        <include name="**"/>
+        <exclude name="${name}-${version}/fop/fop"/>
+      </tarfileset>
+    </tar>
+    <gzip zipfile="${name}-${version}-src.tar.gz" src="${name}-${version}-src.tar"/>
+    <delete file="${name}-${version}-src.tar"/>
+  </target>
+  
+  <target name="mvn-build">
+    <exec executable="mvn" dir="${basedir}/.." failonerror="true">
+      <arg value="clean"/>
+      <arg value="install"/>
+      <arg value="javadoc:javadoc"/>
+      <arg value="-DskipTests"/>
+    </exec>
+  </target>  
+  
+</project>
