@@ -43,19 +43,15 @@
   <fileset dir="${basedir}/.." id="dist.bin.lib">
     <patternset id="dist.lib">
       <include name="fop/lib/README*"/>
-      <include name="fop/lib/batik*"/>
-      <include name="fop/lib/commons-io*"/>
-      <include name="fop/lib/commons-logging*"/>
-      <include name="fop/lib/fontbox*"/>
-      <include name="fop/lib/serializer*"/>
-      <include name="fop/lib/xalan*"/>
-      <include name="fop/lib/xerces*"/>
-      <include name="fop/lib/xml-apis*"/>
-      <include name="fop/lib/xmlgraphics-commons*"/>
+      <include name="fop/lib/batik*.txt"/>
+      <include name="fop/lib/commons-io*.txt"/>
+      <include name="fop/lib/commons-logging*.txt"/>
+      <include name="fop/lib/xml-apis*.txt"/>
+      <include name="fop/lib/xml-apis*.html"/>
+      <include name="fop/lib/xmlgraphics-commons*.txt"/>
     </patternset>
   </fileset>
   <fileset id="dist.lib2" dir="${basedir}/..">
-    <include name="fop/target/dependency/README*"/>
     <include name="fop/target/dependency/batik*"/>
     <include name="fop/target/dependency/commons-io*"/>
     <include name="fop/target/dependency/commons-logging*"/>
@@ -67,22 +63,15 @@
     <include name="fop/target/dependency/xmlgraphics-commons*"/>
   </fileset>
   <patternset id="dist.src.lib.build">
-    <include name="fop/lib/build/asm*"/>
-    <include name="fop/lib/build/hamcrest*"/>
-    <include name="fop/lib/build/jaxen*"/>
-    <include name="fop/lib/build/mockito*"/>
-    <include name="fop/lib/build/objenesis*"/>
-    <include name="fop/lib/build/pmd*"/>
-    <include name="fop/lib/build/qdox*"/>
-    <include name="fop/lib/build/xmlunit*"/>
+    <include name="fop/lib/build/*.txt"/>
+    <exclude name="fop/lib/build/asm*"/>
+    <exclude name="fop/lib/build/jaxen*"/>
+    <exclude name="fop/lib/build/pmd*"/>
   </patternset>
   <fileset id="dist.src.lib.build2" dir="${basedir}/..">
-    <include name="fop*/target/dependency/asm*"/>
     <include name="fop*/target/dependency/hamcrest*"/>
-    <include name="fop*/target/dependency/jaxen*"/>
     <include name="fop*/target/dependency/mockito*"/>
     <include name="fop*/target/dependency/objenesis*"/>
-    <include name="fop*/target/dependency/pmd*"/>
     <include name="fop*/target/dependency/qdox*"/>
     <include name="fop*/target/dependency/xmlunit*"/>
   </fileset>  
@@ -173,9 +162,9 @@
   <target name="dist-bin">
     <echo message="Building the binary distribution files (zip,tar)"/>
     <mkdir dir="${dist.bin.result.dir}"/>
-    <!--<copy todir="${dist.bin.result.dir}/fop/lib" flatten="true">
+    <copy todir="${dist.bin.result.dir}/fop/lib" flatten="true">
       <fileset refid="dist.lib2"/>
-    </copy>-->
+    </copy>
     <copy todir="${dist.bin.result.dir}">
       <fileset refid="dist.bin"/>
       <fileset refid="dist.bin.lib"/>
@@ -203,12 +192,12 @@
   <target name="dist-src">
     <echo message="Building the source distribution files (zip,tar)"/>
     <mkdir dir="${dist.src.result.dir}"/>
-    <!--<copy todir="${dist.src.result.dir}/fop/lib" flatten="true">
+    <copy todir="${dist.src.result.dir}/fop/lib" flatten="true">
       <fileset refid="dist.lib2"/>
     </copy>
     <copy todir="${dist.src.result.dir}/fop/lib/build" flatten="true">
       <fileset refid="dist.src.lib.build2"/>
-    </copy>-->
+    </copy>
     <copy todir="${dist.src.result.dir}">
       <fileset refid="dist.src"/>
     </copy>
