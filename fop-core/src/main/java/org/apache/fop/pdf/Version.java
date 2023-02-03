@@ -39,7 +39,9 @@ public enum Version {
     /** PDF v1.6 */
     V1_6("1.6"),
     /** PDF v1.7 */
-    V1_7("1.7");
+    V1_7("1.7"),
+    /** PDF v2.0 */
+    V2_0("2.0");
 
     private String version;
 

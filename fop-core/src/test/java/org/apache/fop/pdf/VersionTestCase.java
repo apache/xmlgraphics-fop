@@ -37,7 +37,11 @@ public class VersionTestCase {
     public void testGetValue() {
         int index = 0;
         for (Version version : Version.values()) {
-            assertEquals(version, Version.getValueOf("1." + index++));
+            if (index > 7) {
+                assertEquals(version, Version.getValueOf("2.0"));
+            } else {
+                assertEquals(version, Version.getValueOf("1." + index++));
+            }
         }
     }
 
@@ -55,7 +59,11 @@ public class VersionTestCase {
         // Test all the normal values
         int index = 0;
         for (Version version : Version.values()) {
-            assertTrue(version.toString().equals("1." + index++));
+            if (index > 7) {
+                assertTrue(version.toString().equals("2.0"));
+            } else {
+                assertTrue(version.toString().equals("1." + index++));
+            }
         }
     }
 
@@ -73,16 +81,15 @@ public class VersionTestCase {
                 Version.V1_4,
                 Version.V1_5,
                 Version.V1_6,
-                Version.V1_7
+                Version.V1_7,
+                Version.V2_0
         };
 
         Version[] actual = Version.values();
 
         for (int i = 0; i < actual.length - 1; i++) {
             assertEquals(-1, actual[i].compareTo(expected[i + 1]));
-
             assertEquals(0, actual[i].compareTo(expected[i]));
-
             assertEquals(1, actual[i + 1].compareTo(expected[i]));
         }
     }
