@@ -67,13 +67,13 @@ public final class AreaAdditionUtil {
             }
             if (pos instanceof NonLeafPosition && pos.getPosition() != null) {
                 // pos was created by a child of this FlowLM
-                positionList.add(pos.getPosition());
-                lastLM = (pos.getPosition().getLM());
+                add(pos.getPosition(), positionList);
+                lastLM = pos.getPosition().getLM();
                 if (firstLM == null) {
                     firstLM = lastLM;
                 }
             } else if (pos instanceof SpaceHandlingBreakPosition) {
-                positionList.add(pos);
+                add(pos, positionList);
             } else {
                 // pos was created by this LM, so it must be ignored
             }
@@ -119,8 +119,11 @@ public final class AreaAdditionUtil {
                     parentLM.isFirst(firstPos),
                     parentLM.isLast(lastPos));
         }
-
-
     }
 
+    private static void add(Position pos, LinkedList<Position> positionList) {
+        if (!positionList.isEmpty() || pos.getLM() != null) {
+            positionList.add(pos);
+        }
+    }
 }
