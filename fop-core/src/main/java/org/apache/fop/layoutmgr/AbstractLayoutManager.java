@@ -315,7 +315,9 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
      * @return True if it is the first Position
      */
     public boolean isFirst(Position pos) {
-        //log.trace("isFirst() smallestPosNumberChecked=" + smallestPosNumberChecked + " " + pos);
+        if (pos == null) {
+            return false;
+        }
         verifyNonNullPosition(pos);
         if (pos.getIndex() == this.smallestPosNumberChecked) {
             return true;
@@ -333,6 +335,9 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
      * @return True if it is the last Position
      */
     public boolean isLast(Position pos) {
+        if (pos == null) {
+            return false;
+        }
         verifyNonNullPosition(pos);
         return (pos.getIndex() == this.lastGeneratedPosition
                 && isFinished());
