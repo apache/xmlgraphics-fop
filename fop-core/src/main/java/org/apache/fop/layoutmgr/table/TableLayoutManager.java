@@ -318,7 +318,7 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
     }
 
     private boolean supportResize(FONode node) {
-        if (node instanceof AbstractGraphics) {
+        if (node instanceof AbstractGraphics || contentLM.bodyIter.rowIndex == 1) {
             return false;
         }
         FONode.FONodeIterator iterator = node.getChildNodes();

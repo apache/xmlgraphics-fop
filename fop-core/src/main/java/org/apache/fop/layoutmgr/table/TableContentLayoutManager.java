@@ -64,7 +64,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private static final Log LOG = LogFactory.getLog(TableContentLayoutManager.class);
 
     private TableLayoutManager tableLM;
-    private TableRowIterator bodyIter;
+    protected TableRowIterator bodyIter;
     private TableRowIterator headerIter;
     private TableRowIterator footerIter;
     private LinkedList headerList;

@@ -48,7 +48,7 @@ public class TableRowIterator {
 
     private Iterator rowGroupsIter;
 
-    private int rowIndex;
+    protected int rowIndex;
 
     /**
      * Creates a new TableRowIterator.

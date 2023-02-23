@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that a table immediately following a changing IPD break is handled properly.
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="PageFront" page-width="210mm" page-height="297mm" margin-bottom="10mm" margin-top="10mm">
+      <fo:region-body margin-bottom="6mm" region-name="letterPageBody"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master margin-bottom="10mm" margin-top="10mm" master-name="Body Page" page-width="210mm" page-height="297mm">
+      <fo:region-body margin-bottom="6mm" region-name="letterPageBody"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="Last Page" margin-bottom="10mm" margin-top="10mm" page-width="210mm" page-height="297mm">
+      <fo:region-body margin-right="25mm" margin-left="25mm" margin-bottom="6mm" region-name="letterPageBody" background-color="yellow"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="LayoutSequence">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference page-position="first" master-reference="PageFront"/>
+        <fo:conditional-page-master-reference page-position="rest" master-reference="Body Page"/>
+        <fo:conditional-page-master-reference page-position="last" master-reference="Last Page"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="LayoutSequence">
+    <fo:flow flow-name="letterPageBody">
+      <fo:block line-height="270mm">test</fo:block>
+      <fo:table table-layout="fixed" width="100%">
+        <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell border-top-style="solid">
+              <fo:block>
+                <fo:block>test</fo:block>
+              </fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="434156" xpath="//pageViewport[2]//lineArea/@end-indent"/>
+  </checks>
+</testcase>
