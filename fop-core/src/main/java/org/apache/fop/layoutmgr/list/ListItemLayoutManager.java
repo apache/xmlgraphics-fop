@@ -436,6 +436,15 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
             addedBoxHeight += boxHeight;
             ListItemPosition stepPosition = new ListItemPosition(this, start[0], end[0], start[1], end[1]);
             stepPosition.setOriginalLabelPosition(originalLabelPosition);
+            if (originalBodyPosition != null && originalBodyPosition.getLM() instanceof ListItemContentLayoutManager) {
+                // Happens when ListItem has multiple blocks and a block (that's not the last block) ends at the same
+                // page height as a IPD change (e.g. FOP-3098). originalBodyPosition (reset) position needs to be a
+                // Block so that BlockStackingLayoutManager can stack it. Lookahead to find next Block.
+                Position block = extractBlock(elementLists[1], end[1] + 1);
+                if (block != null) {
+                    originalBodyPosition = block;
+                }
+            }
             stepPosition.setOriginalBodyPosition(originalBodyPosition);
 
             if (floats.isEmpty()) {
@@ -465,6 +474,37 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
         }
 
         return returnList;
+    }
+
+    /**
+     * Extracts a block Position from a ListElement at a given index in a list of ListItem body elements.
+     * @param bodyElements The ListItem body elements.
+     * @param index        The index of the ListElement containing the block.
+     * @return             The required block Position as a LeafPosition or null on failure.
+     */
+    private Position extractBlock(List<ListElement> bodyElements, int index) {
+        ListElement listElement;
+        Position position = null;
+        Position retval = null;
+        do {
+            if (bodyElements == null || index >= bodyElements.size()) {
+                break;
+            }
+            listElement = bodyElements.get(index);
+            if (listElement != null
+                    && listElement.getLayoutManager() instanceof ListItemContentLayoutManager) {
+                position = listElement.getPosition();
+                if (position != null
+                        && position.getLM() instanceof ListItemContentLayoutManager) {
+                    position = position.getPosition();
+                    if (position != null
+                            && position.getLM() instanceof BlockLayoutManager) {
+                        retval = new LeafPosition(position.getPosition().getLM(), 0);
+                    }
+                }
+            }
+        } while (false);
+        return retval;
     }
 
     private boolean shouldWeAvoidBreak(List returnList, LayoutManager lm) {

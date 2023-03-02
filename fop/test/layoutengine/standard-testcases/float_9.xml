@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testcase>
+  <info>
+    <p>
+      This test checks floats.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+             font-family="Arial"
+             font-size="10pt">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="A4-portrait"
+                               page-height="297mm"
+                               page-width="210mm"
+                               margin="25mm 15mm 20mm 15mm">
+          <fo:region-body region-name="body" margin="0mm 0mm 0mm 0mm"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="pages">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference master-reference="A4-portrait"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="pages">
+        <fo:flow flow-name="body">
+          <fo:block>
+            <fo:block font-size="13.5pt"
+                      space-before="10mm"
+                      space-before.precedence="20"
+                      space-after="4mm"
+                      font-family="Arial">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam</fo:block>
+            <fo:block space-after="10pt">
+              <fo:float float="right">
+                <fo:block>
+                  <fo:external-graphic width="130pt"
+                                       height="130pt"
+                                       content-width="100pt"
+                                       content-height="100pt"
+                                       src="unknown-token"/>
+                </fo:block>
+              </fo:float>
+              <fo:inline font-size="12pt">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
+                eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+                accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+                ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing e</fo:inline>
+            </fo:block>
+          </fo:block>
+          <fo:list-block space-before="0mm"
+                         provisional-distance-between-starts="6mm"
+                         provisional-label-separation="1mm">
+            <fo:list-item space-before="0mm">
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block font-size="4pt"> </fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block font-size="12pt">Yes, I would like to use all the options listed below in the sections
+                  Individual Consent, XXXXXXXX-XXXX Ecosystem Consent and Further Individualization and give the
+                  corresponding consent to the use of my dataX Plus another line of text Plus another line of text Plus
+                  another line of</fo:block>
+                <fo:block>
+                  123456789
+                </fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- Check float dimensions -->
+    <eval expected="130000" xpath="//pageViewport/page/regionViewport//flow/block[2]/block/lineArea/viewport/@ipda" />
+    <eval expected="130000" xpath="//pageViewport/page/regionViewport//flow/block[2]/block/lineArea/viewport/@bpda" />
+
+    <!-- Check ipd of layout of content of first ListItemBody block, rendered alongside float. This unit test is
+        negated if the last word is wrapped. -->
+    <eval expected="380237" xpath="//pageViewport/page/regionViewport//flow/block[4]/@ipd" />
+    <eval expected="of" xpath="
+        //pageViewport/page/regionViewport//flow/block[4]/block/block[2]/block/lineArea[4]/text/word[last()]/text()" />
+
+    <!-- Check ipd and content of second ListItemBody block, rendered beneath float -->
+    <eval expected="510237" xpath="//pageViewport/page/regionViewport//flow/block[5]/@ipd" />
+    <eval expected="123456789" xpath="
+        //pageViewport/page/regionViewport//flow/block[5]/block/block/block/lineArea/text/word/text()" />
+  </checks>
+</testcase>
+
