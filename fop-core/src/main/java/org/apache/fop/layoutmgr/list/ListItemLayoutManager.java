@@ -498,6 +498,7 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
                         && position.getLM() instanceof ListItemContentLayoutManager) {
                     position = position.getPosition();
                     if (position != null
+                            && position.getPosition() != null
                             && position.getLM() instanceof BlockLayoutManager) {
                         retval = new LeafPosition(position.getPosition().getLM(), 0);
                     }
