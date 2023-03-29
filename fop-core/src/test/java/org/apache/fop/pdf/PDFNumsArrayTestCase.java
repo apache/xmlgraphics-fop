@@ -25,20 +25,25 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test case for {@link PDFNumsArray}.
+ * Test case for {@link PDFNumsArray}. Uses default PDF doc (version 1.4) - requires text values and number values to be
+ * included as refs.
  */
 public class PDFNumsArrayTestCase extends PDFObjectTestCase {
+    private static final String TEST_NAME = "Test name";
+    private static final int TEST_NUMBER = 10;
     private PDFNumsArray numsArray;
-    private String expectedString = "[0 /Test#20name 1 10]";
+    private String expectedString = "[0 1 0 R 1 2 0 R]";
+    private String expectedStringName = "/Test#20name";
+    private String expectedStringNumber = Integer.valueOf(TEST_NUMBER).toString();
 
     @Before
     public void setUp() {
         numsArray = new PDFNumsArray(parent);
-        numsArray.put(0, new PDFName("Test name"));
-        PDFNumber num = new PDFNumber();
-        num.setNumber(10);
-        numsArray.put(1, num);
         numsArray.setDocument(doc);
+        numsArray.put(0, new PDFName(TEST_NAME));
+        PDFNumber num = new PDFNumber();
+        num.setNumber(TEST_NUMBER);
+        numsArray.put(1, num);
 
         pdfObjectUnderTest = numsArray;
     }
@@ -50,5 +55,7 @@ public class PDFNumsArrayTestCase extends PDFObjectTestCase {
     @Test
     public void testOutput() throws IOException {
         testOutputStreams(expectedString, numsArray);
+        testOutputStreams(expectedStringName, doc.objects.get(1));
+        testOutputStreams(expectedStringNumber, doc.objects.get(2));
     }
 }

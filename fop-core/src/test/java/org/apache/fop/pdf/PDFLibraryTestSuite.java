@@ -40,6 +40,7 @@ import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileAttachmentTestCase;
         PDFDocumentTestCase.class,
         PDFNullTestCase.class,
         PDFNumsArrayTestCase.class,
+        PDFNumsArrayPDFV17TestCase.class,
         PDFRectangleTestCase.class,
         PDFReferenceTestCase.class,
         PDFResourcesTestCase.class,

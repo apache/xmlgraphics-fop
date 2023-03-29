@@ -119,14 +119,6 @@ public class PDFLogicalStructureHandler {
      * Receive notification of the end of the current page.
      */
     void endPage() {
-        // TODO
-        // Values in a number tree must be indirect references to the PDF
-        // objects associated to the keys. To enforce that the array is
-        // registered to the PDF document. Unfortunately that can't be done
-        // earlier since a call to PDFContentGenerator.flushPDFDoc can be made
-        // before the array is complete, which would result in only part of it
-        // being output to the PDF.
-        // This should really be handled by PDFNumsArray
         pdfDoc.registerObject(pageParentTreeArray);
         parentTree.addToNums(currentPage.getStructParents(), pageParentTreeArray);
     }

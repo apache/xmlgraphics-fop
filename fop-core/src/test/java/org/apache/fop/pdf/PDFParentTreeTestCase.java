@@ -24,7 +24,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 /**
  * Tests that the nums array in the ParentTree dictionary is correctly being split into
@@ -76,7 +76,7 @@ public class PDFParentTreeTestCase {
      */
     @Test
     public void testOutOfOrderSplit() throws Exception {
-        PDFStructElem structElem = mock(PDFStructElem.class);
+        PDFStructElem structElem = spy(PDFStructElem.class);
         for (int num = 50; num < 53; num++) {
             parentTree.addToNums(num, structElem);
         }
@@ -98,7 +98,7 @@ public class PDFParentTreeTestCase {
      * @throws Exception
      */
     private int getArrayNumber(int elementNumber) throws Exception {
-        PDFStructElem structElem = mock(PDFStructElem.class);
+        PDFStructElem structElem = spy(PDFStructElem.class);
         for (int structParent = 0; structParent < elementNumber; structParent++) {
             parentTree.addToNums(structParent, structElem);
         }
