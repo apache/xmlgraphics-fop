@@ -8,3 +8,5 @@ build/
 # miscellaneous
 *~
 *.bak
+.idea
+*.iml
