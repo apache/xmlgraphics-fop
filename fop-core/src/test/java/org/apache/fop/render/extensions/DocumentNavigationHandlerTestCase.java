@@ -109,13 +109,14 @@ public class DocumentNavigationHandlerTestCase {
     @Test
     public void testGotoXYMergedIF() throws Exception {
         InputStream ifXml = getClass().getResourceAsStream("link.if.xml");
-        ByteArrayOutputStream pdf = iFToPDF(ifXml);
+        ByteArrayOutputStream pdf = iFToPDF(ifXml, "<fop/>");
         Assert.assertTrue(pdf.toString().contains("/S /GoTo"));
     }
 
-    private ByteArrayOutputStream iFToPDF(InputStream is) throws Exception {
+    private ByteArrayOutputStream iFToPDF(InputStream is, String fopxconf) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        FOUserAgent userAgent = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        FOUserAgent userAgent = FopFactory.newInstance(new File(".").toURI(),
+                new ByteArrayInputStream(fopxconf.getBytes())).newFOUserAgent();
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         Source src = new StreamSource(is);
         IFDocumentHandler documentHandler
@@ -254,5 +255,20 @@ public class DocumentNavigationHandlerTestCase {
         Bookmark b = (Bookmark) trees.get(0).getBookmarks().get(0);
         GoToXYAction a = (GoToXYAction) b.getAction();
         Assert.assertEquals(a.getPageIndex(), 0);
+    }
+
+    @Test
+    public void testGotoXYMissingDestIF() throws Exception {
+        InputStream ifXml = getClass().getResourceAsStream("linkmissingdest.if.xml");
+        String fopxconf = "<fop version=\"1.0\">\n"
+                + "  <accessibility>true</accessibility>\n"
+                + "  <renderers>\n"
+                + "    <renderer mime=\"application/pdf\">\n"
+                + "      <version>1.5</version>\n"
+                + "    </renderer>\n"
+                + "  </renderers>\n"
+                + "</fop>";
+        ByteArrayOutputStream pdf = iFToPDF(ifXml, fopxconf);
+        Assert.assertTrue(pdf.toString().contains("/S /GoTo"));
     }
 }

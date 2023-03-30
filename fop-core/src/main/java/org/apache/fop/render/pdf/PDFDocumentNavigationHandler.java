@@ -29,6 +29,7 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFactory;
 import org.apache.fop.pdf.PDFGoTo;
 import org.apache.fop.pdf.PDFLink;
+import org.apache.fop.pdf.PDFObject;
 import org.apache.fop.pdf.PDFOutline;
 import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFStructElem;
@@ -214,4 +215,9 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         return action.getID();
     }
 
+    public void registerIncompleteActions() {
+        for (Object action : incompleteActions.values()) {
+            getPDFDoc().addObject((PDFObject) action);
+        }
+    }
 }

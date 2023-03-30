@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://xmlgraphics.apache.org/fop/intermediate" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:nav="http://xmlgraphics.apache.org/fop/intermediate/document-navigation" xmlns:foi="http://xmlgraphics.apache.org/fop/internal">
+<header>
+<locale xml:lang="en"/>
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+<dc:creator>creator</dc:creator>
+<dc:title>Document title</dc:title>
+</rdf:Description>
+</rdf:RDF>
+</x:xmpmeta>
+</header>
+<page-sequence xml:lang="en" xml:space="preserve">
+<structure-tree xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+<fo:flow xmlns:fo="http://www.w3.org/1999/XSL/Format" flow-name="xsl-region-body">
+<fo:block>
+<marked-content foi:struct-id="0"/>
+<fo:basic-link fox:alt-text="" foi:struct-id="1">
+<marked-content foi:struct-id="2" foi:struct-ref="1"/>
+</fo:basic-link>
+<marked-content foi:struct-id="3"/>
+</fo:block>
+</fo:flow>
+</structure-tree>
+<page index="0" name="1" page-master-name="FirstPage" width="612000" height="792000">
+<page-header/>
+<content>
+<viewport transform="translate(54000,108000)" width="504000" height="630000">
+<font family="any" style="normal" weight="400" variant="normal" size="12000" color="#000000"/>
+<text x="0" y="9996" foi:struct-ref="2">test</text>
+</viewport>
+</content>
+<page-trailer>
+<nav:link rect="54000 109800 16668 10800">
+<nav:goto-xy id="1" page-index="-1" x="0" y="0"/>
+</nav:link>
+</page-trailer>
+</page>
+</page-sequence>
+<trailer/>
+</document>
