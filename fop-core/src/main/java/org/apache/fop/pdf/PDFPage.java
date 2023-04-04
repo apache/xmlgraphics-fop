@@ -183,4 +183,7 @@ public class PDFPage extends PDFResourceContext {
         put("Tabs", value);
     }
 
+    public void setMetadata(PDFMetadata meta) {
+        put("Metadata", meta.makeReference());
+    }
 }

@@ -26,6 +26,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.fo.extensions.xmp.XMPMetaElement;
 
 // CSOFF: LineLengthCheck
 
@@ -132,6 +133,8 @@ public class PDFDictionaryElement extends PDFCollectionEntryElement {
         } else if (child instanceof PDFCollectionEntryElement) {
             PDFCollectionEntryExtension entry = ((PDFCollectionEntryElement) child).getExtension();
             extension.addEntry(entry);
+        } else if (child instanceof XMPMetaElement) {
+            extension.setExtension(child.getExtensionAttachment());
         }
     }
 

@@ -22,6 +22,8 @@ package org.apache.fop.render.pdf.extensions;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.fop.fo.extensions.ExtensionAttachment;
+
 // CSOFF: LineLengthCheck
 
 public class PDFDictionaryExtension extends PDFCollectionExtension {
@@ -34,6 +36,7 @@ public class PDFDictionaryExtension extends PDFCollectionExtension {
     private PDFDictionaryType dictionaryType;
     private Map<String, String> properties;
     private List<PDFCollectionEntryExtension> entries;
+    private ExtensionAttachment extension;
 
     PDFDictionaryExtension() {
         this(PDFDictionaryType.Dictionary);
@@ -79,6 +82,14 @@ public class PDFDictionaryExtension extends PDFCollectionExtension {
 
     public List<PDFCollectionEntryExtension> getEntries() {
         return entries;
+    }
+
+    public void setExtension(ExtensionAttachment entry) {
+        extension = entry;
+    }
+
+    public ExtensionAttachment getExtension() {
+        return extension;
     }
 
     public PDFCollectionEntryExtension findEntry(String key) {

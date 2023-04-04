@@ -1,0 +1,38 @@
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:pdf="http://xmlgraphics.apache.org/fop/extensions/pdf">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="simple">
+      <fo:region-body/>
+      <fo:region-before/>
+      <fo:region-after/>
+      <pdf:page page-numbers="*">
+        <x:xmpmeta xmlns:x="adobe:ns:meta/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:abc="http://www.abc.de/abc/">
+            <rdf:Description rdf:about="" abc:def="val"/>
+            <rdf:Description rdf:about=""  xmlns:pdfaExtension="http://www.aiim.org/pdfa/ns/extension/"
+                             xmlns:pdfaSchema="http://www.aiim.org/pdfa/ns/schema#"
+                             xmlns:pdfaProperty="http://www.aiim.org/pdfa/ns/property#">
+              <pdfaExtension:schemas>
+                <rdf:Bag>
+                  <rdf:li rdf:parseType="Resource">
+                    <pdfaSchema:property>
+                      <rdf:Seq>
+                        <rdf:li rdf:parseType="Resource">
+                          <pdfaProperty:name>split</pdfaProperty:name>
+                        </rdf:li>
+                      </rdf:Seq>
+                    </pdfaSchema:property>
+                  </rdf:li>
+                </rdf:Bag>
+              </pdfaExtension:schemas>
+            </rdf:Description>
+          </rdf:RDF>
+        </x:xmpmeta>
+      </pdf:page>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="simple">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>SLIDE 1</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

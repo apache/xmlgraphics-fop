@@ -23,6 +23,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.apache.xmlgraphics.util.XMLizable;
+
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.util.GenerationHelperContentHandler;
 
@@ -70,6 +72,9 @@ public class PDFDictionaryAttachment extends PDFExtensionAttachment {
         handler.startElement(CATEGORY, ln, qn, attributes);
         for (PDFCollectionEntryExtension entry : dictionary.getEntries()) {
             toSAX(handler, entry);
+        }
+        if (extension.getExtension() != null) {
+            ((XMLizable) extension.getExtension()).toSAX(handler);
         }
         handler.endElement(CATEGORY, ln, qn);
     }

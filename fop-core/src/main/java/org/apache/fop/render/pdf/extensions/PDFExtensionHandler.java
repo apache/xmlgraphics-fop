@@ -29,6 +29,11 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.xmp.XMPConstants;
+import org.apache.xmlgraphics.xmp.XMPHandler;
+
+import org.apache.fop.fo.extensions.xmp.XMPContentHandlerFactory;
+import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 
@@ -50,6 +55,7 @@ public class PDFExtensionHandler extends DefaultHandler implements ContentHandle
     private Stack<PDFCollectionExtension> collections = new Stack<PDFCollectionExtension>();
     private boolean captureContent;
     private StringBuffer characters;
+    private XMPHandler xmpHandler;
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -141,6 +147,11 @@ public class PDFExtensionHandler extends DefaultHandler implements ContentHandle
             } else {
                 throw new SAXException("Unhandled element " + localName + " in namespace: " + uri);
             }
+        } else if (XMPConstants.XMP_NAMESPACE.equals(uri) || xmpHandler != null) {
+            if (xmpHandler == null) {
+                xmpHandler = (XMPHandler) new XMPContentHandlerFactory().createContentHandler();
+            }
+            xmpHandler.startElement(uri, localName, qName, attributes);
         } else {
             log.warn("Unhandled element " + localName + " in namespace: " + uri);
         }
@@ -154,11 +165,15 @@ public class PDFExtensionHandler extends DefaultHandler implements ContentHandle
             }
             characters.append(data, start, length);
         }
+        if (xmpHandler != null) {
+            xmpHandler.characters(data, start, length);
+        }
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (PDFExtensionAttachment.CATEGORY.equals(uri)) {
+            setExtension();
             if (PDFEmbeddedFileAttachment.ELEMENT.equals(localName)) {
                 String name = lastAttributes.getValue("filename");
                 String src = lastAttributes.getValue("src");
@@ -209,7 +224,19 @@ public class PDFExtensionHandler extends DefaultHandler implements ContentHandle
                 }
             }
         }
+        if (xmpHandler != null) {
+            xmpHandler.endElement(uri, localName, qName);
+        }
         captureContent = false;
+    }
+
+    private void setExtension() {
+        if (xmpHandler != null) {
+            PDFPageExtension pdfPageExtension = (PDFPageExtension) collections.peek();
+            XMPMetadata wrapper = new XMPMetadata(xmpHandler.getMetadata());
+            pdfPageExtension.setExtension(wrapper);
+            xmpHandler = null;
+        }
     }
 
     @Override

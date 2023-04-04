@@ -47,6 +47,7 @@ import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFArray;
@@ -467,6 +468,7 @@ class PDFRenderingUtil {
             assert extension instanceof PDFPageExtension;
             if (((PDFPageExtension) extension).matchesPageNumber(currentPage.getPageIndex() + 1)) {
                 augmentDictionary(currentPage, extension);
+                renderExtension(currentPage, extension.getExtension());
             }
         } else if (type == PDFDictionaryType.Info) {
             PDFInfo info = pdfDoc.getInfo();
@@ -487,6 +489,15 @@ class PDFRenderingUtil {
             d.put("LastModified", date);
         } else {
             throw new IllegalStateException();
+        }
+    }
+
+    private void renderExtension(PDFPage currentPage, ExtensionAttachment extension) {
+        if (extension instanceof XMPMetadata) {
+            XMPMetadata metadata = (XMPMetadata) extension;
+            Metadata docXMP = metadata.getMetadata();
+            PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(docXMP, metadata.isReadOnly());
+            currentPage.setMetadata(pdfMetadata);
         }
     }
 

@@ -24,6 +24,7 @@ import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.render.pdf.extensions.PDFPageElement;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 
@@ -51,7 +52,7 @@ public abstract class AbstractMetadataElement extends FONode implements ObjectBu
 
     /** {@inheritDoc} */
     public ExtensionAttachment getExtensionAttachment() {
-        if (parent instanceof FObj) {
+        if (parent instanceof FObj || parent instanceof PDFPageElement) {
             if (attachment == null) {
                 attachment = new XMPMetadata();
             }
