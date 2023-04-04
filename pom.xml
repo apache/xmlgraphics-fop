@@ -30,7 +30,7 @@
     <surefire.plugin.version>2.18.1</surefire.plugin.version>
     <war.plugin.version>3.3.2</war.plugin.version>
     <xml.plugin.version>1.0.1</xml.plugin.version>
-    <xmlgraphics.commons.version>2.8.0-SNAPSHOT</xmlgraphics.commons.version>
+    <xmlgraphics.commons.version>2.9.0-SNAPSHOT</xmlgraphics.commons.version>
     <xmlunit.version>1.2</xmlunit.version>
     <jdk.path>${env.JAVA_HOME}</jdk.path>
   </properties>

@@ -70,7 +70,8 @@ public class PDFPageXMPTestCase {
     public void textFO() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         foToOutput(out, MimeConstants.MIME_PDF);
-        Assert.assertTrue(out.toString().replace("\r", "").contains(XMP));
+        String pdf = trimLines(out.toString());
+        Assert.assertTrue(pdf, pdf.contains(XMP));
     }
 
     @Test
@@ -78,7 +79,17 @@ public class PDFPageXMPTestCase {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         foToOutput(out, MimeConstants.MIME_FOP_IF);
         out = iFToPDF(new ByteArrayInputStream(out.toByteArray()));
-        Assert.assertTrue(out.toString().replace("\r", "").contains(XMP));
+        String pdf = trimLines(out.toString());
+        Assert.assertTrue(pdf, pdf.contains(XMP));
+    }
+
+    private String trimLines(String pdf) {
+        pdf = pdf.replace("\r", "");
+        StringBuilder sb = new StringBuilder();
+        for (String line : pdf.split("\n")) {
+            sb.append(line.trim()).append("\n");
+        }
+        return sb.toString();
     }
 
     private ByteArrayOutputStream iFToPDF(InputStream is) throws Exception {
